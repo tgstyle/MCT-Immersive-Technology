@@ -1,0 +1,15 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "forge:fluid",
+		"transform": "forge:default-item"
+	},
+	"variants": {
+		"distwater": [{
+			"custom": { "fluid": "distwater" }
+		}],
+		"steam": [{
+			"custom": { "fluid": "steam" }
+		}]
+	}
+}

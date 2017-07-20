@@ -1,0 +1,14 @@
+#CREATIVE TAB
+itemGroup.immersivetech=Immersive Tech
+
+
+#ITEMS
+item.immersivetech.material.salt.name=Salt
+
+
+#FLUIDS
+tile.immersivetech.fluidDistWater.name=Distilled Water
+tile.immersivetech.fluidSteam.name=Steam
+
+fluid.distwater=Distilled Water
+fluid.steam=Steam
