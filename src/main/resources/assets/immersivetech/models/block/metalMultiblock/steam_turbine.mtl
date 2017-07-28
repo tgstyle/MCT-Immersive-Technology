@@ -1,0 +1,6 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl steam_turbine
+
+map_Kd immersivetech:blocks\metalMultiblock_steam_turbine

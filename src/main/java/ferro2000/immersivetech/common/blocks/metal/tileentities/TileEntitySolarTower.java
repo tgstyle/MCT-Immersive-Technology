@@ -42,14 +42,23 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	public int reflectorNum;
 	public int processTime = 0;
 	
-	public boolean[] reflector = new boolean[4];
-
+	public int ref0;
+	public int ref1;
+	public int ref2;
+	public int ref3;
+	
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket)
 	{
 		super.readCustomNBT(nbt, descPacket);
 		tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
 		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
+		
+		ref0 = nbt.getInteger("ref0");
+		ref1 = nbt.getInteger("ref1");
+		ref2 = nbt.getInteger("ref2");
+		ref3 = nbt.getInteger("ref3");
+		
 		if(!descPacket)
 			inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
 	}
@@ -59,6 +68,12 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
 		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
+		
+		nbt.setInteger("ref0", ref0);
+		nbt.setInteger("ref1", ref1);
+		nbt.setInteger("ref2", ref2);
+		nbt.setInteger("ref3", ref3);
+				
 		if(!descPacket)
 			nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
@@ -158,7 +173,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 		}
 	}
 	
-	boolean checkReflector() {
+	protected boolean checkReflector() {
 		
 		boolean ver = false;
 		
@@ -184,6 +199,8 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 				fw = fw.rotateY();
 			}
 			
+			setReflectorNum(0, cont);
+			
 			for(int i=1;i<maxRange;i++) {
 				
 				if(cont==0) {
@@ -194,7 +211,6 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 					pos = this.getPos().offset(fw,i).add(0,2,0);
 				}
 				
-				
 				if(!Utils.isBlockAt(worldObj, pos, Blocks.AIR, 0)) {
 					tile = worldObj.getTileEntity(pos);
 					if(tile instanceof TileEntitySolarReflector) {
@@ -203,6 +219,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 							if(fr==EnumFacing.NORTH || fr==EnumFacing.SOUTH) {
 								if(((TileEntitySolarReflector) tile).sun) {
 									ver = true;
+									setReflectorNum(1, cont);
 									refNum++;
 								}
 								break;
@@ -211,6 +228,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 							if(fr==EnumFacing.EAST || fr==EnumFacing.WEST) {
 								if(((TileEntitySolarReflector) tile).sun) {
 									ver = true;
+									setReflectorNum(1, cont);
 									refNum++;
 								}
 								break;
@@ -232,7 +250,26 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 		
 	}
 	
-	int getSpeed() {
+	protected void setReflectorNum(int value, int ind) {
+		
+		switch(ind) {
+			case 0:
+				ref0 = value;
+				break;
+			case 1:
+				ref1 = value;
+				break;
+			case 2:
+				ref2 = value;
+				break;
+			case 3:
+				ref3 = value;
+				break;
+		}
+		
+	}
+	
+	protected int getSpeed() {
 		
 		int i = 1;
 		

@@ -26,16 +26,15 @@ public class GuiSolarTower extends GuiContainer {
 		super.drawScreen(mx, my, partial);
 		
 		ArrayList<String> tooltip = new ArrayList();
-		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft+62,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/guiSolarTower.png", tooltip);
-		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+112,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/guiSolarTower.png", tooltip);
-		if(mx>guiLeft+157&&mx<guiLeft+164 && my>guiTop+21&&my<guiTop+67)
-			tooltip.add(tile.getEnergyStored(null)+"/"+tile.getMaxEnergyStored(null)+" RF");
-
+		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft+102,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/guiSolarTower.png", tooltip);
+		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+126,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/guiSolarTower.png", tooltip);
+		
 		if(!tooltip.isEmpty())
 		{
 			ClientUtils.drawHoveringText(tooltip, mx, my, fontRendererObj, guiLeft+xSize,-1);
 			RenderHelper.enableGUIStandardItemLighting();
 		}
+		
 	}
 
 	@Override
@@ -44,11 +43,21 @@ public class GuiSolarTower extends GuiContainer {
 		ClientUtils.bindTexture("immersivetech:textures/gui/guiSolarTower.png");
 		this.drawTexturedModalRect(guiLeft,guiTop, 0, 0, xSize, ySize);
 		
-		int stored = (int)(46*(tile.getEnergyStored(null)/(float)tile.getMaxEnergyStored(null)));
-		ClientUtils.drawGradientRect(guiLeft+158,guiTop+22+(46-stored), guiLeft+165,guiTop+68, 0xffb51500, 0xff600b00);
-
-		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft+62,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/guiSolarTower.png", null);
-		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+112,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/guiSolarTower.png", null);
+		if(tile.ref0==1) {
+			this.drawTexturedModalRect(guiLeft+32, guiTop+24, 198, 31, 10, 10);
+		}
+		if(tile.ref1==1) {
+			this.drawTexturedModalRect(guiLeft+16, guiTop+40, 198, 31, 10, 10);
+		}
+		if(tile.ref2==1) {
+			this.drawTexturedModalRect(guiLeft+32, guiTop+56, 198, 31, 10, 10);
+		}
+		if(tile.ref3==1) {
+			this.drawTexturedModalRect(guiLeft+48, guiTop+40, 198, 31, 10, 10);
+		}
+		
+		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft+102,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/guiSolarTower.png", null);
+		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+126,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/guiSolarTower.png", null);
 	}
 
 }

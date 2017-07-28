@@ -12,3 +12,16 @@ tile.immersivetech.fluidSteam.name=Steam
 
 fluid.distwater=Distilled Water
 fluid.steam=Steam
+
+desc.immersiveengineering.info.multiblock.IT:Distiller=Distiller
+desc.immersiveengineering.info.multiblock.IT:SolarTower=Solar Tower
+desc.immersiveengineering.info.multiblock.IT:SolarReflector=Solar Reflector
+desc.immersiveengineering.info.multiblock.IT:SteamTurbine=Steam Turbine
+
+ie.manual.category.it.name=Immersive Tech
+
+ie.manual.entry.solarTower.name=Solar Tower
+ie.manual.entry.solarTower.subtext=The power of the sun
+
+ie.manual.entry.steamTurbine.name=Steam Turbine
+ie.manual.entry.steamTurbine.subtext=Ciuf ciuf!

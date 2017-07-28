@@ -224,7 +224,7 @@ public class MultiblockSolarTower implements IMultiblock {
 
 	@Override
 	public float getManualScale() {
-		return 13;
+		return 12;
 	}
 
 	@Override

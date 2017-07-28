@@ -4,16 +4,19 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
+import blusunrize.immersiveengineering.api.ManualHelper;
+import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
 import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
-import blusunrize.immersiveengineering.common.util.IELogger;
-import blusunrize.immersiveengineering.common.util.compat.IECompatModule;
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.common.CommonProxy;
 import ferro2000.immersivetech.common.ITContent;
 import ferro2000.immersivetech.common.blocks.BlockITFluid;
+import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarReflector;
+import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTower;
+import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
 import ferro2000.immersivetech.common.items.ItemITBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -31,6 +34,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.registry.GameData;
 
 public class ClientProxy extends CommonProxy{
+	
+	public static final String CAT_IT = "it";
 	
 	@Override
 	public void preInit(){
@@ -138,6 +143,12 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void postInit(){
+		
+		ManualHelper.addEntry("solarTower", CAT_IT, 
+				new ManualPageMultiblock(ManualHelper.getManual(), "solarTower0", MultiblockSolarTower.instance),
+				new ManualPageMultiblock(ManualHelper.getManual(), "solarTower1", MultiblockSolarReflector.instance));
+		ManualHelper.addEntry("steamTurbine", CAT_IT, 
+				new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", MultiblockSteamTurbine.instance));
 		
 	}
 	

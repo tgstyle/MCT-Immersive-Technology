@@ -8,6 +8,7 @@ import ferro2000.immersivetech.common.blocks.ItemBlockITBase;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityDistiller;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarReflector;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarTower;
+import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySteamTurbine;
 import ferro2000.immersivetech.common.blocks.metal.types.BlockType_MetalMultiblock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -58,38 +59,8 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
 				return new TileEntitySolarTower();
 			case SOLAR_REFLECTOR:
 				return new TileEntitySolarReflector();
-			/*case METAL_PRESS:
-				return new TileEntityMetalPress();
-			case CRUSHER:
-				return new TileEntityCrusher();
-			case TANK:
-				return new TileEntitySheetmetalTank();
-			case SILO:
-				return new TileEntitySilo();
-			case ASSEMBLER:
-				return new TileEntityAssembler();
-			case AUTO_WORKBENCH:
-				return new TileEntityAutoWorkbench();
-			case BOTTLING_MACHINE:
-				return new TileEntityBottlingMachine();
-			case SQUEEZER:
-				return new TileEntitySqueezer();
-			case FERMENTER:
-				return new TileEntityFermenter();
-			case REFINERY:
-				return new TileEntityRefinery();
-			case DIESEL_GENERATOR:
-				return new TileEntityDieselGenerator();
-			case EXCAVATOR:
-				return new TileEntityExcavator();
-			case BUCKET_WHEEL:
-				return new TileEntityBucketWheel();
-			case ARC_FURNACE:
-				return new TileEntityArcFurnace();
-			case LIGHTNINGROD:
-				return new TileEntityLightningrod();
-			case MIXER:
-				return new TileEntityMixer();*/
+			case STEAM_TURBINE:
+				return new TileEntitySteamTurbine();
 		}
 		return null;
 	}
@@ -103,53 +74,6 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
 			TileEntityMultiblockPart tile = (TileEntityMultiblockPart)te;
 			if(tile instanceof TileEntityMultiblockMetal && ((TileEntityMultiblockMetal) tile).isRedstonePos())
 				return true;
-			/*if(te instanceof TileEntityMetalPress)
-			{
-				return tile.pos<3 || (tile.pos==7&&side==EnumFacing.UP);
-			}
-			else if(te instanceof TileEntityCrusher)
-			{
-				return tile.pos%5==0 || tile.pos==2 || tile.pos==9 || (tile.pos==19 && side.getOpposite()==tile.facing);
-			}
-			else if(te instanceof TileEntitySheetmetalTank)
-			{
-				return tile.pos==4||tile.pos==40||(tile.pos>=18&&tile.pos<36);
-			}
-			else if(te instanceof TileEntitySilo)
-			{
-				return tile.pos==4||tile.pos==58||(tile.pos>=18&&tile.pos<54);
-			}
-			else if(te instanceof TileEntitySqueezer || te instanceof TileEntityFermenter)
-			{
-				return tile.pos==0||tile.pos==9 || tile.pos==5 || (tile.pos==11&&side.getOpposite()==tile.facing);
-			}
-			else if(te instanceof TileEntityRefinery)
-			{
-				return tile.pos==2 || tile.pos==5||tile.pos==9 || (tile.pos==19&&side.getOpposite()==tile.facing) || (tile.pos==27&&side==tile.facing);
-			}
-			else if(te instanceof TileEntityDieselGenerator)
-			{
-				if(tile.pos==0||tile.pos==2)
-					return side.getAxis()==tile.facing.rotateY().getAxis();
-				else if(tile.pos>=15&&tile.pos<=17)
-					return side == EnumFacing.UP;
-				else if(tile.pos==23)
-					return side==(tile.mirrored?tile.facing.rotateYCCW():tile.facing.rotateY());
-			}
-			else if(te instanceof TileEntityExcavator)
-			{
-				if(tile.pos%18<9 || (tile.pos>=18&&tile.pos<36))
-					return true;
-			}
-			else if(te instanceof TileEntityArcFurnace)
-			{
-				if(tile.pos==2 || tile.pos==25 || tile.pos==52)
-					return side.getOpposite()==tile.facing || (tile.pos == 52 && side == EnumFacing.UP);
-				if(tile.pos==82 || tile.pos==86 || tile.pos==88 || tile.pos==112)
-					return side==EnumFacing.UP;
-				if( (tile.pos>=21&&tile.pos<=23) || (tile.pos>=46&&tile.pos<=48) || (tile.pos>=71&&tile.pos<=73))
-					return side==tile.facing;
-			}*/
 		}
 		return super.isSideSolid(state, world, pos, side);
 	}

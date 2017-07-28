@@ -6,15 +6,18 @@ import blusunrize.immersiveengineering.api.MultiblockHandler;
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.craftings.DistillerRecipes;
 import ferro2000.immersivetech.api.craftings.SolarTowerRecipes;
+import ferro2000.immersivetech.api.energy.SteamHandler;
 import ferro2000.immersivetech.common.blocks.BlockITBase;
 import ferro2000.immersivetech.common.blocks.BlockITFluid;
 import ferro2000.immersivetech.common.blocks.metal.BlockMetalMultiblock;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockDistiller;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarReflector;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTower;
+import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityDistiller;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarReflector;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarTower;
+import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySteamTurbine;
 import ferro2000.immersivetech.common.items.ItemITBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -81,15 +84,26 @@ public class ITContent {
 		registerTile(TileEntityDistiller.class);
 		registerTile(TileEntitySolarTower.class);
 		registerTile(TileEntitySolarReflector.class);
+		registerTile(TileEntitySteamTurbine.class);
 		
 		MultiblockHandler.registerMultiblock(MultiblockDistiller.instance);
 		MultiblockHandler.registerMultiblock(MultiblockSolarTower.instance);
 		MultiblockHandler.registerMultiblock(MultiblockSolarReflector.instance);
+		MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
 		
 		/*RECIPES*/
 		/*MULTIBLOCKS*/
 		DistillerRecipes.addRecipe(new FluidStack(fluidDistWater, 10), new FluidStack(FluidRegistry.WATER, 20), new ItemStack(itemMaterial, 1, 0), 50, 1, 0.005F);
-		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 10), new FluidStack(fluidDistWater, 20), 10);
+		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 10), new FluidStack(FluidRegistry.WATER, 20), 10);
+		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 20), new FluidStack(fluidDistWater, 30), 10);
+		
+		/*HANDLER*/
+		/*STEAM*/
+		SteamHandler.registerSteam(fluidSteam, 125);
+		SteamHandler.registerSteam(FluidRegistry.getFluid("steam"), 125);
+		
+		SteamHandler.registerDrillSteam(fluidSteam);
+		SteamHandler.registerDrillSteam(FluidRegistry.getFluid("steam"));
 		
 	}
 	
