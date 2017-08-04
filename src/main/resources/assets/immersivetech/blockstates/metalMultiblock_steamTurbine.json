@@ -61,7 +61,7 @@
 			"false":{
 				"model": "immersivetech:metalMultiblock/steam_turbine.obj"},
 			"true":{
-				"model": "immersivetech:metalMultiblock/steam_turbine.obj"}
+				"model": "immersivetech:metalMultiblock/steam_turbine_mirrored.obj"}
 		}
 	}
 }

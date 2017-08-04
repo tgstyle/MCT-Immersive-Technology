@@ -30,65 +30,66 @@ public class MultiblockSteamTurbine implements IMultiblock {
 
 	public static MultiblockSteamTurbine instance = new MultiblockSteamTurbine();
 	
-	static ItemStack[][][] structure = new ItemStack[3][3][7];
+	static ItemStack[][][] structure = new ItemStack[4][12][3];
 	static{
-		for(int h=0;h<3;h++) {
-			for(int l=0;l<3;l++) {
-				for(int w=0;w<7;w++) {
-					if(h==0) {
-						if(w==5 || (w==1 && l!=1)) {
-							structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal,1,BlockTypes_MetalsAll.STEEL.getMeta());
-						}else if(w==1 && l==1) {
-							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.GENERATOR.getMeta());
-						}else if(w>1 && w<5) {
-							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
-						}else if(w==6 && l==2) {
-							structure[h][l][w]=new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
-						}else {
-							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
-						}
-					}else if(h==1) {
-						if(w==0) {
-							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.COIL_HV.getMeta());
-						}else if(l==1 && (w>0 && w<6)) {
-							structure[h][l][w] = new ItemStack(IEContent.blockStorage,1,BlockTypes_MetalsIE.STEEL.getMeta());
-						}else if(l!=1 && (w==3 || w==5)) {
-							structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal,1,BlockTypes_MetalsAll.STEEL.getMeta());
-						}else if(l!=1 && (w==2 || w==4)) {
-							structure[h][l][w] = new ItemStack(Blocks.GLASS,1,0);
-						}else if(w==1 && l!=1){
-							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.GENERATOR.getMeta());
-						}else {
-							if(l==0) {
-								structure[h][l][w]=new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
-							}else if(l==1) {
-								structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.RADIATOR.getMeta());
-							}else {
-								structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta());
-							}
-						}
-					}else if(h==2) {
-						if(w==0) {
-							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
-						}else if(w==2 || w==4) {
-							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
-						}else if(w==6) {
-							structure[h][l][w]=new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
-						}else if(w==1 && l==1) {
-							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.GENERATOR.getMeta());
-						}else if(w==3) {
-							if(l==1) {
-								structure[h][l][w]=new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
-							}else {
-								structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.RADIATOR.getMeta());
-							}
-						}else {
-							structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal,1,BlockTypes_MetalsAll.STEEL.getMeta());
-						}
+				
+		for(int h=0;h<4;h++) {
+			for(int l=0;l<12;l++) {
+				for(int w=0;w<3;w++) {
+					
+					if((h==2 && l==1) || 
+							(h==2 && l==0 && w==2) ||
+							((l==4 || l==9) && (w==0 || w==2)) || 
+							(h==2 && w==1 && (l==4 || l==9)) ||
+							(h==3 && (w==0 || w==2)) || 
+							(h==3 && w==1 && (l<3 || l>7))) {
+						continue;
 					}
+					
+					if(h==0) {
+						if(l==11 && (w==0 || w==2)) {
+							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.GENERATOR.getMeta());
+						}else {
+							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
+						}
+					}else if(h==1){
+						if(w==1 && l<11) {
+							structure[h][l][w] = new ItemStack(IEContent.blockStorage,1,BlockTypes_MetalsIE.STEEL.getMeta());
+						}else if(w==1 && l==11) {
+							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.GENERATOR.getMeta());
+						}else if(l==11 && (w==0 || w==2)) {
+							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.COIL_HV.getMeta());
+						}else if(l==0 && w==2) {
+							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta());
+						}else if(l<3 && w==0) {
+							structure[h][l][w]=new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
+						}else if((w==2 && ((l>0 && l<3) || (l>5 && l<8))) || (w==0 && (l>5 && l<8))) {
+							structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal,1,BlockTypes_MetalsAll.STEEL.getMeta());
+						}else {
+							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
+						}
+					}else if(h==2){
+						if(l==11) {
+							if(w==1) {
+								structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.COIL_HV.getMeta());
+							}else {
+								structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.GENERATOR.getMeta());
+							}
+						}else if(l==0){
+							structure[h][l][w]=new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
+						}else if((l==2 || l==6 || l==7) && (w==0 || w==2)){
+							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
+						}else {
+							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
+						}
+					}else {
+						structure[h][l][w]=new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
+					}
+					
 				}
 			}
 		}
+		
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -96,13 +97,13 @@ public class MultiblockSteamTurbine implements IMultiblock {
 	
 	@Override
 	public String getUniqueName() {
-		return "IT:GasTurbine";
+		return "IT:SteamTurbine";
 	}
 
 	@Override
 	public boolean isBlockTrigger(IBlockState state) {
-		return state.getBlock()==IEContent.blockSheetmetal && 
-				(state.getBlock().getMetaFromState(state)==BlockTypes_MetalsAll.STEEL.getMeta());
+		return state.getBlock()==IEContent.blockStorage && 
+				(state.getBlock().getMetaFromState(state)==BlockTypes_MetalsIE.STEEL.getMeta());
 	}
 
 	@Override
@@ -121,11 +122,19 @@ public class MultiblockSteamTurbine implements IMultiblock {
 		if(!bool){
 			return false;
 		}
-		
-		for(int h=-1;h<=1;h++)
-			for(int l=0;l<=2;l++)
-				for(int w=-3;w<=3;w++)
-				{
+				
+		for(int h=-1;h<=2;h++) {
+			for(int l=0;l<=11;l++) {
+				for(int w=-1;w<=1;w++) {
+										
+					if((h==1 && l==1) || 
+							(h==1 && l==0 && w==1) ||
+							((l==4 || l==9) && (w==-1 || w==1)) || 
+							(h==1 && w==0 && (l==4 || l==9)) ||
+							(h==2 && (w==-1 || w==1)) || 
+							(h==2 && w==0 && (l<3 || l>7))) {
+						continue;
+					}
 					
 					int ww = mirror?-w:w;
 					BlockPos pos2 = pos.offset(side, l).offset(side.rotateY(), ww).add(0, h, 0);
@@ -136,147 +145,129 @@ public class MultiblockSteamTurbine implements IMultiblock {
 						TileEntitySteamTurbine tile = (TileEntitySteamTurbine)curr;
 						tile.facing=side;
 						tile.formed=true;
-						tile.pos = (h+1)*21 + l*7 + (w+3);
+						tile.pos = (h+1)*36 + l*3 + (w+1);
 						tile.offset = new int[]{(side==EnumFacing.WEST?-l: side==EnumFacing.EAST?l: side==EnumFacing.NORTH?ww: -ww),h,(side==EnumFacing.NORTH?-l: side==EnumFacing.SOUTH?l: side==EnumFacing.EAST?ww : -ww)};
 						tile.mirrored=mirror;
 						tile.markDirty();
 						world.addBlockEvent(pos2, ITContent.blockMetalMultiblock, 255, 0);
 					}
+					
 				}
+			}
+		}
+		
 		return true;
 	}
 	
 	boolean structureCheck(World world, BlockPos startPos, EnumFacing dir, boolean mirror){
-		for(int h=-1;h<=1;h++) {
-			for(int l=0;l<=2;l++) {
-				for(int w=-3;w<=3;w++) {
+				
+		for(int h=-1;h<=2;h++) {
+			for(int l=0;l<=11;l++) {
+				for(int w=-1;w<=1;w++) {
+										
+					if((h==1 && l==1) || 
+							(h==1 && l==0 && w==1) ||
+							((l==4 || l==9) && (w==-1 || w==1)) || 
+							(h==1 && w==0 && (l==4 || l==9)) ||
+							(h==2 && (w==-1 || w==1)) || 
+							(h==2 && w==0 && (l<3 || l>7))) {
+						continue;
+					}
 					
 					int ww = mirror?-w:w;
 					BlockPos pos = startPos.offset(dir, l).offset(dir.rotateY(), ww).add(0, h, 0);
 					
 					if(h==-1) {
-						if(w==-3 || (w==3 && l<2)) {
+						if(l==11 && (w==-1 || w==1)) {
+							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.GENERATOR.getMeta())){
+								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+								return false;
+							}
+						}else {
 							if(!Utils.isOreBlockAt(world, pos, "scaffoldingSteel")){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
-						}else if(w>-2 && w<2) {
-							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())){
+						}
+					}else if(h==0){
+						if(w==0 && l<11) {
+							if(!Utils.isOreBlockAt(world, pos, "blockSteel")){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
-						}else if(w==3 && l==2) {
-							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())){
-								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-								return false;
-							}
-						}else if(w==-2 && l==1) {
+						}else if(w==0 && l==11) {
 							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.GENERATOR.getMeta())){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
-						}else {
-							if(!Utils.isOreBlockAt(world, pos, "blockSheetmetalSteel")){
-								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-								return false;
-							}
-						}
-					}else if(h==0) {
-						if(w==-3) {
+						}else if(l==11 && (w==-1 || w==1)) {
 							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.COIL_HV.getMeta())){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
-						}else if(l==1 && w>-3) {
-							if(w==3) {
-								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.RADIATOR.getMeta())){
-									//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-									return false;
-								}
-							}else {
-								if(!Utils.isOreBlockAt(world, pos, "blockSteel")){
-									//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-									return false;
-								}
-							}
-						}else if(w==-2 && l!=1) {
-							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.GENERATOR.getMeta())){
+						}else if(l==0 && w==1) {
+							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta())){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
-						}else if(l!=1 && (w==-1 || w==1)) {
-							if(!Utils.isBlockAt(world, pos, Blocks.GLASS, 0)){
+						}else if(l<3 && w==-1) {
+							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
-						}else if(w==3) {
-							if(l==0) {
-								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())){
-									//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-									return false;
-								}
-							}else if(l==1) {
-								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.RADIATOR.getMeta())){
-									//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-									return false;
-								}
-							}else {
-								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta())){
-									//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-									return false;
-								}
+						}else if((w==1 && ((l>0 && l<3) || (l>5 && l<8))) || (w==-1 && (l>5 && l<8))) {
+							if(!Utils.isOreBlockAt(world, pos, "blockSheetmetalSteel")){
+								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+								return false;
 							}
 						}else {
-							if(!Utils.isOreBlockAt(world, pos, "blockSheetmetalSteel")){
+							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())){
+								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+								return false;
+							}
+						}
+					}else if(h==1){
+						if(l==11) {
+							if(w==0) {
+								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.COIL_HV.getMeta())){
+									//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+									return false;
+								}
+							}else {
+								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.GENERATOR.getMeta())){
+									//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+									return false;
+								}
+							}
+						}else if(l==0){
+							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())){
+								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+								return false;
+							}
+						}else if((l==2 || l==6 || l==7) && (w==-1 || w==1)){
+							if(!Utils.isOreBlockAt(world, pos, "scaffoldingSteel")){
+								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+								return false;
+							}
+						}else {
+							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
 						}
 					}else {
-						if(w==-3) {
-							if(!Utils.isOreBlockAt(world, pos, "scaffoldingSteel")){
-								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-								return false;
-							}
-						}else if(w==-1 || w==1) {
-							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())){
-								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-								return false;
-							}
-						}else if(w==3) {
-							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())){
-								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-								return false;
-							}
-						}else if(w==0) {
-							if(l==1) {
-								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())){
-									//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-									return false;
-								}
-							}else {
-								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.RADIATOR.getMeta())){
-									//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-									return false;
-								}
-							}
-						}else if(w==-2 && l==1){
-							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.GENERATOR.getMeta())){
-								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-								return false;
-							}
-						}else {
-							if(!Utils.isOreBlockAt(world, pos, "blockSheetmetalSteel")){
-								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-								return false;
-							}
+						if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())){
+							//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+							return false;
 						}
 					}
 					
 				}
 			}
 		}
+		
 		return true;
+	
 	}
 
 	@Override
@@ -285,16 +276,14 @@ public class MultiblockSteamTurbine implements IMultiblock {
 	}
 
 	static final IngredientStack[] materials = new IngredientStack[]{
-			new IngredientStack("scaffoldingSteel", 8),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDevice1, 6, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())),
+			new IngredientStack("scaffoldingSteel", 36),
+			new IngredientStack(new ItemStack(IEContent.blockMetalDevice1, 8, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta())),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 15, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 3, BlockTypes_MetalDecoration0.RADIATOR.getMeta())),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 4, BlockTypes_MetalDecoration0.GENERATOR.getMeta())),
+			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 24, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())),
+			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 5, BlockTypes_MetalDecoration0.GENERATOR.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 3, BlockTypes_MetalDecoration0.COIL_HV.getMeta())),
-			new IngredientStack(new ItemStack(Blocks.GLASS, 4, 0)),
-			new IngredientStack("blockSheetmetalSteel", 14),
-			new IngredientStack("blockSteel", 5),};
+			new IngredientStack("blockSheetmetalSteel", 6),
+			new IngredientStack("blockSteel", 11),};
 	
 	@Override
 	public IngredientStack[] getTotalMaterials() {
@@ -308,7 +297,7 @@ public class MultiblockSteamTurbine implements IMultiblock {
 
 	@Override
 	public float getManualScale() {
-		return 10;
+		return 8;
 	}
 
 	@Override
