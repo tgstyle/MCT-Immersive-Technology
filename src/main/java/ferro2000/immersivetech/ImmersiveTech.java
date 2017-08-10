@@ -47,29 +47,6 @@ public class ImmersiveTech {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event)
 	{
-		/*DistillationRecipe.energyModifier = IPConfig.Machines.distillationTower_energyModifier;
-		DistillationRecipe.timeModifier = IPConfig.Machines.distillationTower_timeModifier;
-		
-		PumpjackHandler.oilChance = IPConfig.Reservoirs.reservoir_chance;
-		
-		Config.manual_int.put("distillationTower_operationCost", (int) (2048 * IPConfig.Machines.distillationTower_energyModifier));
-		Config.manual_int.put("pumpjack_consumption", IPConfig.Machines.pumpjack_consumption);
-		Config.manual_int.put("pumpjack_speed", IPConfig.Machines.pumpjack_speed);
-		
-		int oil_min = 1000000;
-		int oil_max = 5000000;
-		for (ReservoirType type : PumpjackHandler.reservoirList.keySet())
-		{
-			if (type.name.equals("oil"))
-			{
-				oil_min = type.minSize;
-				oil_max = type.maxSize;
-				break;
-			}
-		}
-		Config.manual_int.put("pumpjack_days", (((oil_max + oil_min) / 2) + oil_min) / (IPConfig.Machines.pumpjack_speed * 24000));*/
-
-		
 		
 		ITContent.init();
 		
@@ -79,7 +56,6 @@ public class ImmersiveTech {
 		
 		proxy.initEnd();
 		
-		//MinecraftForge.EVENT_BUS.register(new EventHandler());
 	}
 	
 	@Mod.EventHandler
@@ -87,7 +63,6 @@ public class ImmersiveTech {
 	{
 		proxy.postInit();
 		proxy.postInitEnd();
-		//PumpjackHandler.recalculateChances(true);
 	}
 	
 	public static <T extends IForgeRegistryEntry<?>> T register(T object, String name)
@@ -122,21 +97,7 @@ public class ImmersiveTech {
 	
 	@Mod.EventHandler
 	public void serverStarted(FMLServerStartedEvent event)
-	{/*
-		if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
-		{
-			World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
-			if(!world.isRemote)
-			{
-				IPSaveData worldData = (IPSaveData) world.loadItemData(IPSaveData.class, IPSaveData.dataName);
-				if(worldData == null)
-				{
-					worldData = new IPSaveData(IPSaveData.dataName);
-					world.setItemData(IPSaveData.dataName, worldData);
-				}
-				IPSaveData.setInstance(world.provider.getDimension(), worldData);
-			}
-		}*/
+	{
 	}
 	
 	public static CreativeTabs creativeTab = new CreativeTabs(MODID)

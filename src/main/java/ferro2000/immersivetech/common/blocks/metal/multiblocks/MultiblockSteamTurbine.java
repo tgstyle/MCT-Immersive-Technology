@@ -53,10 +53,8 @@ public class MultiblockSteamTurbine implements IMultiblock {
 							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
 						}
 					}else if(h==1){
-						if(w==1 && l<11) {
+						if(w==1) {
 							structure[h][l][w] = new ItemStack(IEContent.blockStorage,1,BlockTypes_MetalsIE.STEEL.getMeta());
-						}else if(w==1 && l==11) {
-							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.GENERATOR.getMeta());
 						}else if(l==11 && (w==0 || w==2)) {
 							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.COIL_HV.getMeta());
 						}else if(l==0 && w==2) {
@@ -83,7 +81,11 @@ public class MultiblockSteamTurbine implements IMultiblock {
 							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
 						}
 					}else {
-						structure[h][l][w]=new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
+						if(l==3) {
+							structure[h][l][w]=new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
+						}else {
+							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.RADIATOR.getMeta());
+						}
 					}
 					
 				}
@@ -190,13 +192,8 @@ public class MultiblockSteamTurbine implements IMultiblock {
 							}
 						}
 					}else if(h==0){
-						if(w==0 && l<11) {
+						if(w==0) {
 							if(!Utils.isOreBlockAt(world, pos, "blockSteel")){
-								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-								return false;
-							}
-						}else if(w==0 && l==11) {
-							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.GENERATOR.getMeta())){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
@@ -256,9 +253,16 @@ public class MultiblockSteamTurbine implements IMultiblock {
 							}
 						}
 					}else {
-						if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())){
-							//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-							return false;
+						if(l==3) {
+							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())){
+								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+								return false;
+							}
+						}else {
+							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.RADIATOR.getMeta())){
+								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+								return false;
+							}
 						}
 					}
 					
@@ -277,13 +281,14 @@ public class MultiblockSteamTurbine implements IMultiblock {
 
 	static final IngredientStack[] materials = new IngredientStack[]{
 			new IngredientStack("scaffoldingSteel", 36),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDevice1, 8, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())),
+			new IngredientStack(new ItemStack(IEContent.blockMetalDevice1, 6, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta())),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 24, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 5, BlockTypes_MetalDecoration0.GENERATOR.getMeta())),
+			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 23, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())),
+			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 4, BlockTypes_MetalDecoration0.GENERATOR.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 3, BlockTypes_MetalDecoration0.COIL_HV.getMeta())),
+			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 4, BlockTypes_MetalDecoration0.RADIATOR.getMeta())),
 			new IngredientStack("blockSheetmetalSteel", 6),
-			new IngredientStack("blockSteel", 11),};
+			new IngredientStack("blockSteel", 12),};
 	
 	@Override
 	public IngredientStack[] getTotalMaterials() {

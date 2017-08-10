@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 import ferro2000.immersivetech.ImmersiveTech;
+import ferro2000.immersivetech.api.craftings.DistillerRecipes;
 import ferro2000.immersivetech.api.craftings.SolarTowerRecipes;
 import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Configuration;
@@ -31,6 +32,11 @@ public class Config {
 			@Comment({"A modifier to apply to the time of every Solar Tower recipe"})
 			public static int solarTower_timeModifier = 1;
 			
+			@Comment({"A modifier to apply to the time of every Distiller recipe"})
+			public static int distiller_timeModifier = 1;
+			@Comment({"A modifier to apply to the energy costs of every Distiller recipe"})
+			public static int distiller_energyModifier = 1;
+			
 		}
 		
 	}
@@ -41,6 +47,9 @@ public class Config {
 	{
 
 		SolarTowerRecipes.timeModifier = ITConfig.Machines.solarTower_timeModifier;
+		
+		DistillerRecipes.timeModifier = ITConfig.Machines.distiller_timeModifier;
+		DistillerRecipes.energyModifier = ITConfig.Machines.distiller_energyModifier;
 
 		
 	}

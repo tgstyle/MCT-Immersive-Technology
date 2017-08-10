@@ -20,6 +20,9 @@ desc.immersiveengineering.info.multiblock.IT:SteamTurbine=Steam Turbine
 
 ie.manual.category.it.name=Immersive Tech
 
+ie.manual.entry.distiller.name=Distiller
+ie.manual.entry.distiller.subtext=More clear than water
+
 ie.manual.entry.solarTower.name=Solar Tower
 ie.manual.entry.solarTower.subtext=The power of the sun
 

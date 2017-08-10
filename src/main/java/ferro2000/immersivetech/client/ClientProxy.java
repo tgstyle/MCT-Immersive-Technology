@@ -14,6 +14,7 @@ import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.common.CommonProxy;
 import ferro2000.immersivetech.common.ITContent;
 import ferro2000.immersivetech.common.blocks.BlockITFluid;
+import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockDistiller;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarReflector;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
@@ -144,6 +145,8 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public void postInit(){
 		
+		ManualHelper.addEntry("distiller", CAT_IT, 
+				new ManualPageMultiblock(ManualHelper.getManual(), "distiller0", MultiblockDistiller.instance));
 		ManualHelper.addEntry("solarTower", CAT_IT, 
 				new ManualPageMultiblock(ManualHelper.getManual(), "solarTower0", MultiblockSolarTower.instance),
 				new ManualPageMultiblock(ManualHelper.getManual(), "solarTower1", MultiblockSolarReflector.instance));

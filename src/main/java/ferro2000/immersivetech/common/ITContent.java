@@ -93,14 +93,14 @@ public class ITContent {
 		
 		/*RECIPES*/
 		/*MULTIBLOCKS*/
-		DistillerRecipes.addRecipe(new FluidStack(fluidDistWater, 10), new FluidStack(FluidRegistry.WATER, 20), new ItemStack(itemMaterial, 1, 0), 50, 1, 0.005F);
-		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 10), new FluidStack(FluidRegistry.WATER, 20), 10);
-		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 20), new FluidStack(fluidDistWater, 30), 10);
+		DistillerRecipes.addRecipe(new FluidStack(fluidDistWater, 50), new FluidStack(FluidRegistry.WATER, 100), new ItemStack(itemMaterial, 1, 0), 50, 1, 0.0025F);
+		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 100), new FluidStack(FluidRegistry.WATER, 200), 10);
+		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 150), new FluidStack(fluidDistWater, 200), 10);
 		
 		/*HANDLER*/
 		/*STEAM*/
-		SteamHandler.registerSteam(fluidSteam, 125);
-		SteamHandler.registerSteam(FluidRegistry.getFluid("steam"), 125);
+		SteamHandler.registerSteam(fluidSteam, 250);
+		SteamHandler.registerSteam(FluidRegistry.getFluid("steam"), 250);
 		
 		SteamHandler.registerDrillSteam(fluidSteam);
 		SteamHandler.registerDrillSteam(FluidRegistry.getFluid("steam"));

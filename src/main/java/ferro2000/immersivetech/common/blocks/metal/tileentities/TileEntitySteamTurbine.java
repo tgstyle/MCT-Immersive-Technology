@@ -67,15 +67,18 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 					int output = ITConfig.Machines.steamTurbine_output;
 					int connected = 0;
 					TileEntity[] receivers = new TileEntity[3];
+					
 					for(int i = 0; i < 3; i++)
 					{
 						receivers[i] = getEnergyOutput(i);
+						
 						if(receivers[i] != null)
 						{
-							if(EnergyHelper.insertFlux(receivers[i], facing.rotateY(), 4096, true)>0)
+							if(EnergyHelper.insertFlux(receivers[i], getEnergyFacing(i), 4096, true)>0)
 								connected++;
 						}
 					}
+					
 					if(connected > 0 && tanks[0].getFluidAmount() >= fluidConsumed)
 					{
 						if(!active)
@@ -84,10 +87,9 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 						}
 						tanks[0].drain(fluidConsumed, true);
 						int splitOutput = output / connected;
-						int leftover = output % connected;
 						for(int i = 0; i < 3; i++)
 							if(receivers[i] != null)
-								EnergyHelper.insertFlux(receivers[i], facing.rotateY(), splitOutput + (leftover-- > 0 ? 1 : 0), false);
+								EnergyHelper.insertFlux(receivers[i], getEnergyFacing(i), splitOutput, false);
 					} else if(active)
 					{
 						active = false;
@@ -108,12 +110,37 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 		
 	}
 	
-	TileEntity getEnergyOutput(int w)
+	private TileEntity getEnergyOutput(int w)
 	{
-		TileEntity eTile = worldObj.getTileEntity(this.getBlockPosForPos(21+w*7).offset(facing.rotateYCCW(),1));
-		if(EnergyHelper.isFluxReceiver(eTile, facing.rotateY()))
+		TileEntity eTile;
+		
+		if(w==0) {
+			eTile = worldObj.getTileEntity(this.getBlockPosForPos(69).offset(mirrored? facing.rotateY() : facing.rotateYCCW(),1));
+		}else if(w==1) {
+			eTile = worldObj.getTileEntity(this.getBlockPosForPos(71).offset(mirrored? facing.rotateYCCW() : facing.rotateY(),1));
+		}else {
+			eTile = worldObj.getTileEntity(this.getBlockPosForPos(106).add(0,1,0));
+		}
+		
+		if(EnergyHelper.isFluxReceiver(eTile, getEnergyFacing(w))) {
 			return eTile;
+		}
 		return null;
+	}
+	
+	private EnumFacing getEnergyFacing(int ind) {
+		
+		EnumFacing f = facing;
+		
+		if((ind==0 && !mirrored) || (ind==1 && mirrored)) {
+			f = f.rotateY();
+		}else if((ind==1 && !mirrored) || (ind==0 && mirrored)) {
+			f = f.rotateYCCW();
+		}else {
+			f = EnumFacing.DOWN;
+		}
+		
+		return f;
 	}
 
 	@Override
@@ -124,7 +151,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
 		TileEntitySteamTurbine master = master();
-		if(master != null && pos == 27 && (side == null || side==facing.rotateY()))
+		if(master != null && pos == 36 && (side == null || side==facing.getOpposite()))
 			return master.tanks;
 		return new FluidTank[0];
 	}
@@ -506,7 +533,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 			float minZ = fl==EnumFacing.NORTH? .25f : fl==EnumFacing.SOUTH? 0 : fw==EnumFacing.SOUTH? .5f : 0;
 			float maxZ = fl==EnumFacing.SOUTH? .75f : fl==EnumFacing.NORTH? 1 : fw==EnumFacing.SOUTH? 1 : .5f;
 			
-			return Lists.newArrayList(new AxisAlignedBB(minX,0,minZ, maxX,.375f,maxZ).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			return Lists.newArrayList(new AxisAlignedBB(minX,0,minZ, maxX,.4375f,maxZ).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 			
 		}
 		
@@ -936,7 +963,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 			float minZ = fl==EnumFacing.NORTH? 0 : fl==EnumFacing.SOUTH? .75f : fw==EnumFacing.SOUTH? .5f : 0;
 			float maxZ = fl==EnumFacing.SOUTH? 1 : fl==EnumFacing.NORTH? .25f : fw==EnumFacing.SOUTH? 1 : .5f;
 			
-			return Lists.newArrayList(new AxisAlignedBB(minX,0,minZ, maxX,.375f,maxZ).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			return Lists.newArrayList(new AxisAlignedBB(minX,0,minZ, maxX,.4375f,maxZ).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 						
 		}
 		
@@ -1007,7 +1034,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 
 	@Override
 	public int[] getEnergyPos() {
-		return new int[] {21,28,35};
+		return new int[] {69,71,106};
 	}
 
 	@Override
