@@ -43,8 +43,8 @@ public class ClientProxy extends CommonProxy{
 		
 		ClientUtils.mc().getFramebuffer().enableStencil();
 		ModelLoaderRegistry.registerLoader(IEOBJLoader.instance);
-		OBJLoader.INSTANCE.addDomain("immersivetech");
-		IEOBJLoader.instance.addDomain("immersivetech");
+		OBJLoader.INSTANCE.addDomain(ImmersiveTech.MODID);
+		IEOBJLoader.instance.addDomain(ImmersiveTech.MODID);
 		
 	}
 	
@@ -100,7 +100,7 @@ public class ClientProxy extends CommonProxy{
 				{
 					for(int meta = 0; meta < ipMetaItem.getSubNames().length; meta++)
 					{
-						ResourceLocation loc = new ResourceLocation("immersivetech", ipMetaItem.itemName + "/" + ipMetaItem.getSubNames()[meta]);
+						ResourceLocation loc = new ResourceLocation(ImmersiveTech.MODID, ipMetaItem.itemName + "/" + ipMetaItem.getSubNames()[meta]);
 
 						ModelBakery.registerItemVariants(ipMetaItem, loc);
 						ModelLoader.setCustomModelResourceLocation(ipMetaItem, meta, new ModelResourceLocation(loc, "inventory"));
@@ -108,7 +108,7 @@ public class ClientProxy extends CommonProxy{
 				}
 				else
 				{
-					final ResourceLocation loc = new ResourceLocation("immersivetech", ipMetaItem.itemName);
+					final ResourceLocation loc = new ResourceLocation(ImmersiveTech.MODID, ipMetaItem.itemName);
 					ModelBakery.registerItemVariants(ipMetaItem, loc);
 					ModelLoader.setCustomMeshDefinition(ipMetaItem, new ItemMeshDefinition()
 					{
