@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.api.crafting.IngredientStack;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsIE;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration0;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration1;
 import blusunrize.immersiveengineering.common.blocks.wooden.BlockTypes_WoodenDecoration;
@@ -45,7 +46,7 @@ public class MultiblockSolarReflector implements IMultiblock{
 					}
 				}else if(h==3) {
 					if(w==1) {
-						structure[h][0][w] = new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
+						structure[h][0][w] = new ItemStack(IEContent.blockStorage,1,BlockTypes_MetalsIE.SILVER.getMeta());
 					}else {
 						structure[h][0][w] = new ItemStack(IEContent.blockWoodenDecoration,1, BlockTypes_WoodenDecoration.FENCE.getMeta());
 					}
@@ -64,8 +65,8 @@ public class MultiblockSolarReflector implements IMultiblock{
 
 	@Override
 	public boolean isBlockTrigger(IBlockState state) {
-		return state.getBlock()==IEContent.blockMetalDecoration0 && 
-				(state.getBlock().getMetaFromState(state)==BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
+		return state.getBlock()==IEContent.blockStorage && 
+				(state.getBlock().getMetaFromState(state)==BlockTypes_MetalsIE.SILVER.getMeta());
 	}
 
 	@Override
@@ -97,7 +98,6 @@ public class MultiblockSolarReflector implements IMultiblock{
 						tile.formed=true;
 						tile.pos = (h+3)*3 + (w+1);
 						tile.offset = new int[]{(side==EnumFacing.NORTH?w: side==EnumFacing.SOUTH?-w: 0),h,(side==EnumFacing.EAST?w : side==EnumFacing.WEST?-w: 0)};
-						//tile.offset = new int[]{(side==EnumFacing.WEST?-w: side==EnumFacing.EAST?w: 0),h,(side==EnumFacing.NORTH?-w: side==EnumFacing.SOUTH?w: 0)};
 						tile.markDirty();
 						world.addBlockEvent(pos2, ITContent.blockMetalMultiblock, 255, 0);
 					}
@@ -134,7 +134,7 @@ public class MultiblockSolarReflector implements IMultiblock{
 					}
 				}else if(h==0) {
 					if(w==0) {
-						if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())){
+						if(!Utils.isOreBlockAt(world, pos, "blockSilver")){
 							//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 							return false;
 						}
@@ -156,7 +156,7 @@ public class MultiblockSolarReflector implements IMultiblock{
 	}
 	
 	static final IngredientStack[] materials = new IngredientStack[] {
-			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())),
+			new IngredientStack(new ItemStack(IEContent.blockStorage, 1, BlockTypes_MetalsIE.STEEL.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 2, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta())),
 			new IngredientStack("scaffoldingSteel", 4),
 			new IngredientStack("fenceTreatedWood", 6)

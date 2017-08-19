@@ -8,11 +8,11 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
-//Only edit below this line, the above code adds and enables the nessasary things for Forge to be setup.
+//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
 version = "1.0"
-group= "ferro2000.immersivetech" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "ferro2000.immersivetech" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "immersivetech"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
@@ -21,20 +21,18 @@ compileJava {
 }
 
 minecraft {
-    version = "1.10.2-12.18.3.2422"
+    version = "1.11.2-13.20.1.2429"
     runDir = "run"
-    replace "@VERSION@", project.version
+	
+	replace "@VERSION@", project.version
+    
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not allways work.
+    // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20161111"
+    mappings = "snapshot_20161220"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-}
-
-jar {
-    archiveName = "${baseName}-1.10.2-${version}.jar"
 }
 
 dependencies {
@@ -61,17 +59,20 @@ dependencies {
 
 }
 
+jar {
+    archiveName = "${baseName}-1.11.2-${version}.jar"
+}
+
 repositories {
 }
 dependencies {
    compile files(
-        'ImmersiveEngineering-0.10-61-deobf.jar'
+        'ImmersiveEngineering-0.11-63-deobf.jar'
     )
 }
 
 processResources
 {
-    // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 

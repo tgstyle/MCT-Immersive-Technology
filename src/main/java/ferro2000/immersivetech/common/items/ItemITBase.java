@@ -1,14 +1,12 @@
 package ferro2000.immersivetech.common.items;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import blusunrize.immersiveengineering.common.items.IEItemInterfaces.IColouredItem;
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.common.ITContent;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -38,7 +36,7 @@ public class ItemITBase extends Item implements IColouredItem
 	}
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs tab, List list)
+	public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list)
 	{
 		if(getSubNames()!=null)
 		{

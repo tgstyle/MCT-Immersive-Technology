@@ -10,6 +10,7 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
 import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
+import blusunrize.lib.manual.ManualPages;
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.common.CommonProxy;
 import ferro2000.immersivetech.common.ITContent;
@@ -146,12 +147,16 @@ public class ClientProxy extends CommonProxy{
 	public void postInit(){
 		
 		ManualHelper.addEntry("distiller", CAT_IT, 
-				new ManualPageMultiblock(ManualHelper.getManual(), "distiller0", MultiblockDistiller.instance));
+				new ManualPageMultiblock(ManualHelper.getManual(), "distiller0", MultiblockDistiller.instance),
+				new ManualPages.Text(ManualHelper.getManual(), "distiller1"));
 		ManualHelper.addEntry("solarTower", CAT_IT, 
 				new ManualPageMultiblock(ManualHelper.getManual(), "solarTower0", MultiblockSolarTower.instance),
-				new ManualPageMultiblock(ManualHelper.getManual(), "solarTower1", MultiblockSolarReflector.instance));
+				new ManualPages.Text(ManualHelper.getManual(), "solarTower1"),
+				new ManualPageMultiblock(ManualHelper.getManual(), "solarTower2", MultiblockSolarReflector.instance),
+				new ManualPages.Text(ManualHelper.getManual(), "solarTower3"));
 		ManualHelper.addEntry("steamTurbine", CAT_IT, 
-				new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", MultiblockSteamTurbine.instance));
+				new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", MultiblockSteamTurbine.instance),
+				new ManualPages.Text(ManualHelper.getManual(), "steamTurbine1"));
 		
 	}
 	

@@ -2,7 +2,6 @@ package ferro2000.immersivetech.common.blocks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
@@ -54,7 +54,9 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	protected Set<BlockRenderLayer> renderLayers = Sets.newHashSet(BlockRenderLayer.SOLID);
 	protected Set<BlockRenderLayer>[] metaRenderLayers;
 	protected Map<Integer, Integer> metaLightOpacities = new HashMap<>();
+	protected Map<Integer, Float> metaHardness = new HashMap<>();
 	protected Map<Integer, Integer> metaResistances = new HashMap<>();
+	protected boolean[] canHammerHarvest;
 	protected boolean[] metaNotNormalBlock;
 	private boolean opaqueCube = false;
 	public BlockITBase(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockITBase> itemBlock, Object... additionalProperties)
@@ -66,6 +68,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		this.isMetaHidden = new boolean[this.enumValues.length];
 		this.hasFlavour = new boolean[this.enumValues.length];
 		this.metaRenderLayers = new Set[this.enumValues.length];
+		this.canHammerHarvest = new boolean[this.enumValues.length];
 
 		ArrayList<IProperty> propList = new ArrayList<IProperty>();
 		ArrayList<IUnlistedProperty> unlistedPropList = new ArrayList<IUnlistedProperty>();
@@ -224,8 +227,9 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		this.metaRenderLayers[Math.max(0, Math.min(meta, this.metaRenderLayers.length-1))] = Sets.newHashSet(layer);
 		return this;
 	}
+
 	@Override
-	public boolean canRenderInLayer(BlockRenderLayer layer)
+	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
 	{
 		if(cachedTileRequestState!=null)
 		{
@@ -247,6 +251,20 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		if(metaLightOpacities.containsKey(meta))
 			return metaLightOpacities.get(meta);
 		return super.getLightOpacity(state,w,pos);
+	}
+
+	public BlockITBase<E> setMetaHardness(int meta, float hardness)
+	{
+		metaHardness.put(meta, hardness);
+		return this;
+	}
+	@Override
+	public float getBlockHardness(IBlockState state, World world, BlockPos pos)
+	{
+		int meta = getMetaFromState(state);
+		if(metaHardness.containsKey(meta))
+			return metaHardness.get(meta);
+		return super.getBlockHardness(state, world, pos);
 	}
 
 	public BlockITBase<E> setMetaExplosionResistance(int meta, int resistance)
@@ -302,7 +320,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	@Override
-	public boolean isVisuallyOpaque()
+	public boolean causesSuffocation(IBlockState state)
 	{
 		if(metaNotNormalBlock == null)
 			return true;
@@ -413,7 +431,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list)
+	public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list)
 	{
 		for(E type : this.enumValues)
 			if(type.listForCreative() && !this.isMetaHidden[type.getMeta()])
@@ -455,8 +473,22 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return super.eventReceived(state, worldIn, pos, eventID, eventParam);
 	}
 
+	public BlockITBase<E> setMetaHammerHarvest(int meta)
+	{
+		canHammerHarvest[meta] = true;
+		return this;
+	}
+	public BlockITBase<E> setHammerHarvest()
+	{
+		for(int i = 0; i < metaNotNormalBlock.length; i++)
+			canHammerHarvest[i] = true;
+		return this;
+	}
 	public boolean allowHammerHarvest(IBlockState blockState)
 	{
+		int meta = getMetaFromState(blockState);
+		if(meta>=0&&meta<canHammerHarvest.length)
+			return canHammerHarvest[meta];
 		return false;
 	}
 	public boolean allowWirecutterHarvest(IBlockState blockState)
@@ -523,7 +555,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 
 				if(entityIn.motionY<0 && entityIn instanceof EntityPlayer && entityIn.isSneaking())
 				{
-					entityIn.motionY=.05;
+					entityIn.motionY=0;
 					return;
 				}
 				if(entityIn.isCollidedHorizontally)

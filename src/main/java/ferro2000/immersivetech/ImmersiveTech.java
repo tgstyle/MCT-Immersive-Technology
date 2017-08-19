@@ -1,7 +1,9 @@
 package ferro2000.immersivetech;
 
+import blusunrize.immersiveengineering.common.Config;
 import blusunrize.immersiveengineering.common.IEContent;
 import ferro2000.immersivetech.common.CommonProxy;
+import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.ITContent;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -38,9 +40,11 @@ public class ImmersiveTech {
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
+		Config.preInit(event);
 		ITContent.preInit();
 		proxy.preInit();
 		proxy.preInitEnd();
+		registerVariables();
 		
 	}
 	
@@ -103,7 +107,7 @@ public class ImmersiveTech {
 	public static CreativeTabs creativeTab = new CreativeTabs(MODID)
 	{
 		@Override
-		public Item getTabIconItem()
+		public ItemStack getTabIconItem()
 		{
 			return null;
 		}
@@ -113,5 +117,12 @@ public class ImmersiveTech {
 			return new ItemStack(IEContent.blockMetalDecoration0,1,6);
 		}
 	};
+	
+	public void registerVariables() {
+		Config.manual_int.put("steamTurbine_output", ITConfig.Machines.steamTurbine_output);
+		Config.manual_int.put("solarTower_steamWater", ITConfig.Machines.solarTower_steamWater);
+		Config.manual_int.put("solarTower_steamDistWater", ITConfig.Machines.solarTower_steamDistWater);
+		Config.manual_int.put("distiller_distWaterWater", ITConfig.Machines.distiller_distWaterWater);
+	}
 
 }

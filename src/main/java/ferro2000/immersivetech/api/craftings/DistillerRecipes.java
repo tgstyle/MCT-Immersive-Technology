@@ -6,9 +6,11 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.common.util.ListUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 
 public class DistillerRecipes extends MultiblockRecipe {
@@ -33,7 +35,7 @@ public class DistillerRecipes extends MultiblockRecipe {
 		
 		this.fluidInputList = Lists.newArrayList(this.input);
 		this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
-		this.outputList = Lists.newArrayList(this.itemOutput);
+		this.outputList = ListUtils.fromItem(this.itemOutput);
 	}
 
 	public static ArrayList<DistillerRecipes> recipeList = new ArrayList();
@@ -95,7 +97,7 @@ public class DistillerRecipes extends MultiblockRecipe {
 	}
 	
 	@Override
-	public List<ItemStack> getActualItemOutputs(TileEntity tile)
+	public NonNullList<ItemStack> getActualItemOutputs(TileEntity tile)
 	{
 		if (tile.getWorld().rand.nextFloat() <= chance)
 		{
@@ -103,7 +105,7 @@ public class DistillerRecipes extends MultiblockRecipe {
 		}
 		else
 		{
-			return Lists.newArrayList();
+			return ListUtils.fromItems();
 		}
 	}
 

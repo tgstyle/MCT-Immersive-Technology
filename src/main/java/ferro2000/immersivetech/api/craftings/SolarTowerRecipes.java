@@ -74,5 +74,6 @@ public class SolarTowerRecipes extends MultiblockRecipe{
 	{
 		return this.totalProcessTime;
 	}
+	
 
 }

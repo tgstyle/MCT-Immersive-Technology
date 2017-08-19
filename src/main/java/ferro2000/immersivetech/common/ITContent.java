@@ -75,6 +75,13 @@ public class ITContent {
 		
 	}
 	
+	public static int distWaterWater = 500;
+	
+	public static int steamWater = 500;
+	public static int steamDistWater = 750;
+	
+	public static int steamBurnTime = 250;
+	
 	public static void init(){
 		
 		/*TILE ENTITIES*/
@@ -93,14 +100,15 @@ public class ITContent {
 		
 		/*RECIPES*/
 		/*MULTIBLOCKS*/
-		DistillerRecipes.addRecipe(new FluidStack(fluidDistWater, 50), new FluidStack(FluidRegistry.WATER, 100), new ItemStack(itemMaterial, 1, 0), 50, 1, 0.0025F);
-		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 100), new FluidStack(FluidRegistry.WATER, 200), 10);
-		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 150), new FluidStack(fluidDistWater, 200), 10);
+		DistillerRecipes.addRecipe(new FluidStack(fluidDistWater, distWaterWater/10), new FluidStack(FluidRegistry.WATER, 100), new ItemStack(itemMaterial, 1, 0), 50, 1, 0.0025F);
+		
+		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, steamWater/5), new FluidStack(FluidRegistry.WATER, 200), 10);
+		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, steamDistWater/5), new FluidStack(fluidDistWater, 200), 10);
 		
 		/*HANDLER*/
 		/*STEAM*/
-		SteamHandler.registerSteam(fluidSteam, 250);
-		SteamHandler.registerSteam(FluidRegistry.getFluid("steam"), 250);
+		SteamHandler.registerSteam(fluidSteam, steamBurnTime);
+		SteamHandler.registerSteam(FluidRegistry.getFluid("steam"), steamBurnTime);
 		
 		SteamHandler.registerDrillSteam(fluidSteam);
 		SteamHandler.registerDrillSteam(FluidRegistry.getFluid("steam"));

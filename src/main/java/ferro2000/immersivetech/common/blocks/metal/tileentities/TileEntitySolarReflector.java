@@ -33,11 +33,11 @@ public class TileEntitySolarReflector extends TileEntityMultiblockPart<TileEntit
 	}
 
 	public boolean sun = false;
-	
+		
 	@Override
 	public void update() {
-		if(!worldObj.isRemote && formed && pos==10) {
-			if(canSeeSun() && worldObj.isDaytime()) {
+		if(!world.isRemote && formed && pos==10) {
+			if(canSeeSun() && world.isDaytime()) {
 				this.sun = true;
 			}else {
 				this.sun = false;
@@ -52,7 +52,7 @@ public class TileEntitySolarReflector extends TileEntityMultiblockPart<TileEntit
 		
 		for(int h=2;h<hh;h++) {
 			pos = this.getPos().add(0,h,0);
-			if(!Utils.isBlockAt(worldObj, pos, Blocks.AIR, 0)) {
+			if(!Utils.isBlockAt(world, pos, Blocks.AIR, 0)) {
 				return false;
 			}
 		}
@@ -88,10 +88,10 @@ public class TileEntitySolarReflector extends TileEntityMultiblockPart<TileEntit
 	@Override
 	public void disassemble() {
 		super.invalidate();
-		if(formed && !worldObj.isRemote)
+		if(formed && !world.isRemote)
 		{
 			BlockPos startPos = this.getPos().add(-offset[0],-offset[1],-offset[2]);
-			if(!(offset[0]==0&&offset[1]==0&&offset[2]==0) && !(worldObj.getTileEntity(startPos) instanceof TileEntitySolarReflector))
+			if(!(offset[0]==0&&offset[1]==0&&offset[2]==0) && !(world.getTileEntity(startPos) instanceof TileEntitySolarReflector))
 				return;
 			
 			int x;
@@ -104,7 +104,7 @@ public class TileEntitySolarReflector extends TileEntityMultiblockPart<TileEntit
 						x = facing==EnumFacing.WEST? 0: facing==EnumFacing.EAST? 0: xx;
 						z = facing==EnumFacing.SOUTH? 0: facing==EnumFacing.NORTH? 0: xx;
 						
-						TileEntity te = worldObj.getTileEntity(startPos.add(x, yy, z));
+						TileEntity te = world.getTileEntity(startPos.add(x, yy, z));
 						if(te instanceof TileEntitySolarReflector)
 						{
 							s = ((TileEntitySolarReflector)te).getOriginalBlock();
@@ -115,12 +115,12 @@ public class TileEntitySolarReflector extends TileEntityMultiblockPart<TileEntit
 						if(s!=null && Block.getBlockFromItem(s.getItem())!=null)
 						{
 							if(startPos.add(x, yy, z).equals(getPos()))
-								worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX()+.5,getPos().getY()+.5,getPos().getZ()+.5, s));
+								world.spawnEntity(new EntityItem(world, getPos().getX()+.5,getPos().getY()+.5,getPos().getZ()+.5, s));
 							else
 							{
 								if(Block.getBlockFromItem(s.getItem())==ITContent.blockMetalMultiblock)
-									worldObj.setBlockToAir(startPos.add(x, yy, z));
-								worldObj.setBlockState(startPos.add(x, yy, z), Block.getBlockFromItem(s.getItem()).getStateFromMeta(s.getItemDamage()));
+									world.setBlockToAir(startPos.add(x, yy, z));
+								world.setBlockState(startPos.add(x, yy, z), Block.getBlockFromItem(s.getItem()).getStateFromMeta(s.getItemDamage()));
 							}
 						}
 					}

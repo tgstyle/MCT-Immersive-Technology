@@ -22,9 +22,20 @@ ie.manual.category.it.name=Immersive Tech
 
 ie.manual.entry.distiller.name=Distiller
 ie.manual.entry.distiller.subtext=More clear than water
+ie.manual.entry.distiller0=The Distiller is a multiblock machine that turns Water in Distilled Water and Salt.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron.
+ie.manual.entry.distiller1=Applying a redstone signal to the control panel at the front will halt the machine's process, this behavior can be inverted by use of the Engineer's Hammer.<br>Water can be input into the Distiller via hatches at the left that are marked with blue dots. The hatch with the orange dot at the right serves as a fluid output and the other hatch at the back serves as a item output.<br>It needs energy to produce Distilled Water and Salt.<br>One bucket of Water produces <config;i;distiller_distWaterWater>mb of Distilled Water.
 
 ie.manual.entry.solarTower.name=Solar Tower
 ie.manual.entry.solarTower.subtext=The power of the sun
+ie.manual.entry.solarTower0=The Solar Tower is a multiblock structure that uses the light of the sun transforming the water in steam.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Redstone Engineering
+ie.manual.entry.solarTower1=Block.<br>The Solar Tower can produce Steam from Water and Distilled Water (Distiller).<br>One Bucket of Distilled Water produces <config;i;solarTower_steamDistWater>mb of Steam.<br>One Bucket of Water produces <config;i;solarTower_steamWater>mb of Steam.<br>Water can be input into the Solar Tower via the two hatches at the left and the right that are marked with blue dots. The hatch with the orange dot at the back serves as a fluid output.<br>The Solar Tower needs at least one Solar Reflector.
+ie.manual.entry.solarTower2=The Solar Reflector is a multiblock structure that reflects the light of the sun to the center of the Solar Tower.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Silver Block. 
+ie.manual.entry.solarTower3=To work, there must not be block between it and the Solar Tower and at the top of the reflector (only in the center), the reflector's figure must fit with the center of the Solar Tower, the distance between the reflector and the Solar Tower must be lower than <config;i;solarTower_range> blocks. Obviously, it works only during the day. 
 
 ie.manual.entry.steamTurbine.name=Steam Turbine
-ie.manual.entry.steamTurbine.subtext=Ciuf ciuf!
+ie.manual.entry.steamTurbine.subtext=Boiling breath
+ie.manual.entry.steamTurbine0=The Steam Turbine is a multiblock structure that uses Steam to produce energy.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Steel Block (short side).
+ie.manual.entry.steamTurbine1=Applying a redstone signal to the control panel at the front will halt the machine's process, this behavior can be inverted by use of the Engineer's Hammer.<br>The fluid pipe in front of the machine rapresents the input of Steam. The energy outputs are in the rear of the machine at top, left and right.<br>The max energy output is of <config;i;steamTurbine_output>Flux/t. If there are more than one energy connector, the energy output will be spit by the number of connectors(<config;i;steamTurbine_output>\connectors number flux/t).
+
+
+<link;distillationTower;§n§oGasoline§r>
