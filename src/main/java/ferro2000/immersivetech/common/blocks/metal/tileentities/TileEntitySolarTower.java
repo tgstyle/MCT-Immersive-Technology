@@ -126,7 +126,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 		{
 
 			ItemStack filledContainer = Utils.fillFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
-			if(filledContainer!=null)
+			if (!filledContainer.isEmpty())
 			{
 				if(!inventory.get(3).isEmpty() && OreDictionary.itemMatches(inventory.get(3), filledContainer, true))
 					inventory.get(3).grow(filledContainer.getCount());
@@ -158,7 +158,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 			
 		}
 
-		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
+		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[1], inventory.get(0), inventory.get(1), null);
 		if (!emptyContainer.isEmpty() && emptyContainer.getCount() > 0)
 		{
 			if(!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), emptyContainer, true))

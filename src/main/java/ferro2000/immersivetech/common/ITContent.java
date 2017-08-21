@@ -25,15 +25,19 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+@Mod.EventBusSubscriber(modid=ImmersiveTech.MODID)
 public class ITContent {
 	
 	/*BLOCKS*/
-	public static ArrayList<Block> registeredITBlocks = new ArrayList();
+	public static ArrayList<Block> registeredITBlocks = new ArrayList<Block>();
 	/*MULTIBLOCKS*/
 	public static BlockITBase blockMetalMultiblock;
 	/*FLUID BLOCKS*/
@@ -41,7 +45,7 @@ public class ITContent {
 	public static BlockITFluid blockFluidSteam;
 	
 	/*ITEMS*/
-	public static ArrayList<Item> registeredITItems = new ArrayList();
+	public static ArrayList<Item> registeredITItems = new ArrayList<Item>();
 	/*MATERIALS*/
 	public static Item itemMaterial;
 	
@@ -56,7 +60,7 @@ public class ITContent {
 		blockMetalMultiblock = new BlockMetalMultiblock();
 		
 		/*FLUIDS*/
-		fluidDistWater = new Fluid("distwater", new ResourceLocation("immersivetech:blocks/fluid/distWater_still"), new ResourceLocation("immersivetech:blocks/fluid/distWater_flow")).setDensity(1000).setViscosity(1000);
+		fluidDistWater = new Fluid("dist_water", new ResourceLocation("immersivetech:blocks/fluid/dist_water_still"), new ResourceLocation("immersivetech:blocks/fluid/dist_water_flow")).setDensity(1000).setViscosity(1000);
 		if(!FluidRegistry.registerFluid(fluidDistWater))
 			fluidDistWater = FluidRegistry.getFluid("distwater");
 		FluidRegistry.addBucketForFluid(fluidDistWater);
@@ -119,6 +123,36 @@ public class ITContent {
 	    String s = tile.getSimpleName();
 	    s = s.substring(s.indexOf("TileEntity") + "TileEntity".length());
 	    GameRegistry.registerTileEntity(tile, ImmersiveTech.MODID + ":" + s);
+	}
+	
+	@SubscribeEvent
+	public static void registerBlocks(RegistryEvent.Register<Block> event)
+	{
+		for(Block block : registeredITBlocks)
+			event.getRegistry().register(block.setRegistryName(createRegistryName(block.getUnlocalizedName())));
+	}
+
+	@SubscribeEvent
+	public static void registerItems(RegistryEvent.Register<Item> event)
+	{
+		for(Item item : registeredITItems)
+			event.getRegistry().register(item.setRegistryName(createRegistryName(item.getUnlocalizedName())));
+
+	}
+
+	private static ResourceLocation createRegistryName(String unlocalized)
+	{
+		unlocalized = unlocalized.substring(unlocalized.indexOf("immersive"));
+		unlocalized = unlocalized.replaceFirst("\\.", ":");
+		return new ResourceLocation(unlocalized);
+	}
+
+	private static Fluid setupFluid(Fluid fluid)
+	{
+		FluidRegistry.addBucketForFluid(fluid);
+		if(!FluidRegistry.registerFluid(fluid))
+			return FluidRegistry.getFluid(fluid.getName());
+		return fluid;
 	}
 
 }

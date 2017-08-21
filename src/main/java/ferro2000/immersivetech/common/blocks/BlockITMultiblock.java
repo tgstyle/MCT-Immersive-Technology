@@ -1,5 +1,8 @@
 package ferro2000.immersivetech.common.blocks;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import net.minecraft.block.material.Material;
@@ -15,9 +18,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEnum> extends BlockITTileProvider<E>
 {
@@ -58,7 +58,7 @@ public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEn
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
 		ItemStack stack = getOriginalBlock(world, pos);
-		if(stack!=null)
+		if(!stack.isEmpty())
 			return stack;
 		return super.getPickBlock(state, target, world, pos, player);
 	}
@@ -67,6 +67,6 @@ public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEn
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof TileEntityMultiblockPart)
 			return ((TileEntityMultiblockPart)te).getOriginalBlock();
-		return null;
+		return ItemStack.EMPTY;
 	}
 }

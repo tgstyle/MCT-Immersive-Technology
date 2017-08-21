@@ -26,15 +26,22 @@ import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
+@Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy{
 	
 	public static final String CAT_IT = "it";
@@ -46,18 +53,21 @@ public class ClientProxy extends CommonProxy{
 		ModelLoaderRegistry.registerLoader(IEOBJLoader.instance);
 		OBJLoader.INSTANCE.addDomain(ImmersiveTech.MODID);
 		IEOBJLoader.instance.addDomain(ImmersiveTech.MODID);
+		MinecraftForge.EVENT_BUS.register(this);
 		
 	}
 	
-	@Override
-	public void preInitEnd(){
+	@SubscribeEvent
+	public static void registerModels(ModelRegistryEvent evt) {
 		for(Block block : ITContent.registeredITBlocks)
 		{
+			final ResourceLocation loc = Block.REGISTRY.getNameForObject(block);
 			Item blockItem = Item.getItemFromBlock(block);
-			final ResourceLocation loc = GameData.getBlockRegistry().getNameForObject(block);
+			if(blockItem==null)
+				throw new RuntimeException("ITEMBLOCK FOR "+loc+" : "+block+" IS NULL");
 			if(block instanceof IIEMetaBlock)
 			{
-				IIEMetaBlock ieMetaBlock = (IIEMetaBlock) block;
+				IIEMetaBlock ieMetaBlock = (IIEMetaBlock)block;
 				if(ieMetaBlock.useCustomStateMapper())
 					ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock));
 				ModelLoader.setCustomMeshDefinition(blockItem, new ItemMeshDefinition()
@@ -71,7 +81,7 @@ public class ClientProxy extends CommonProxy{
 				for(int meta = 0; meta < ieMetaBlock.getMetaEnums().length; meta++)
 				{
 					String location = loc.toString();
-					String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getName() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)) : null;
+					String prop = ieMetaBlock.appendPropertiesToState()?("inventory,"+ieMetaBlock.getMetaProperty().getName()+"="+ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)): null;
 					if(ieMetaBlock.useCustomStateMapper())
 					{
 						String custom = ieMetaBlock.getCustomStateMapping(meta, true);
@@ -94,6 +104,8 @@ public class ClientProxy extends CommonProxy{
 
 		for(Item item : ITContent.registeredITItems)
 		{
+			if(item instanceof ItemBlock)
+				continue;
 			if(item instanceof ItemITBase)
 			{
 				ItemITBase ipMetaItem = (ItemITBase) item;
@@ -123,7 +135,7 @@ public class ClientProxy extends CommonProxy{
 			} 
 			else
 			{
-				final ResourceLocation loc = GameData.getItemRegistry().getNameForObject(item);
+				final ResourceLocation loc = Item.REGISTRY.getNameForObject(item);
 				ModelBakery.registerItemVariants(item, loc);
 				ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
 				{
@@ -135,6 +147,11 @@ public class ClientProxy extends CommonProxy{
 				});
 			}
 		}
+		
+	}
+	
+	@Override
+	public void preInitEnd(){
 		
 	}
 	
@@ -164,7 +181,7 @@ public class ClientProxy extends CommonProxy{
 	{
 		Item item = Item.getItemFromBlock(block);
 		FluidStateMapper mapper = new FluidStateMapper(fluid);
-		if(item != null)
+		if(item != Items.AIR)
 		{
 			ModelLoader.registerItemVariants(item);
 			ModelLoader.setCustomMeshDefinition(item, mapper);

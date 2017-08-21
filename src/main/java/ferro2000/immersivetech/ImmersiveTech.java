@@ -5,12 +5,8 @@ import blusunrize.immersiveengineering.common.IEContent;
 import ferro2000.immersivetech.common.CommonProxy;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.ITContent;
-import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -19,8 +15,6 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 
 @Mod(modid = ImmersiveTech.MODID, name = ImmersiveTech.NAME, version = ImmersiveTech.VERSION, dependencies = "required-after:immersiveengineering;")
 
@@ -43,7 +37,6 @@ public class ImmersiveTech {
 		Config.preInit(event);
 		ITContent.preInit();
 		proxy.preInit();
-		proxy.preInitEnd();
 		registerVariables();
 		
 	}
@@ -53,11 +46,9 @@ public class ImmersiveTech {
 	{
 		
 		ITContent.init();
-		
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
-		
+		proxy.preInitEnd();
 		proxy.init();
-		
 		proxy.initEnd();
 		
 	}
@@ -69,35 +60,6 @@ public class ImmersiveTech {
 		proxy.postInitEnd();
 	}
 	
-	public static <T extends IForgeRegistryEntry<?>> T register(T object, String name)
-	{
-		return registerByFullName(object, MODID+":"+name);
-	}
-	public static <T extends IForgeRegistryEntry<?>> T registerByFullName(T object, String name)
-	{
-		object.setRegistryName(new ResourceLocation(name));
-		return GameRegistry.register(object);
-	}
-	public static Block registerBlockByFullName(Block block, ItemBlock itemBlock, String name)
-	{
-		block = registerByFullName(block, name);
-		registerByFullName(itemBlock, name);
-		return block;
-	}
-	public static Block registerBlockByFullName(Block block, Class<? extends ItemBlock> itemBlock, String name)
-	{
-		try{
-			return registerBlockByFullName(block, itemBlock.getConstructor(Block.class).newInstance(block), name);
-		}catch(Exception e){e.printStackTrace();}
-		return null;
-	}
-	public static Block registerBlock(Block block, Class<? extends ItemBlock> itemBlock, String name)
-	{
-		try{
-			return registerBlockByFullName(block, itemBlock.getConstructor(Block.class).newInstance(block), MODID+":"+name);
-		}catch(Exception e){e.printStackTrace();}
-		return null;
-	}
 	
 	@Mod.EventHandler
 	public void serverStarted(FMLServerStartedEvent event)
@@ -109,7 +71,7 @@ public class ImmersiveTech {
 		@Override
 		public ItemStack getTabIconItem()
 		{
-			return null;
+			return ItemStack.EMPTY;
 		}
 		@Override
 		public ItemStack getIconItemStack()

@@ -26,7 +26,7 @@ public class ItemITBase extends Item implements IColouredItem
 		this.itemName = name;
 		this.subNames = subNames!=null&&subNames.length>0?subNames:null;
 		this.isMetaHidden = new boolean[this.subNames!=null?this.subNames.length:1];
-		ImmersiveTech.register(this, name);
+		//ImmersiveTech.register(this, name);
 		ITContent.registeredITItems.add(this);
 	}
 
@@ -36,16 +36,17 @@ public class ItemITBase extends Item implements IColouredItem
 	}
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list)
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list)
 	{
-		if(getSubNames()!=null)
-		{
-			for(int i=0;i<getSubNames().length;i++)
-				if(!isMetaHidden(i))
-					list.add(new ItemStack(this,1,i));
-		}
-		else
-			list.add(new ItemStack(this));
+		if (this.isInCreativeTab(tab))
+			if (getSubNames() != null)
+			{
+				for (int i = 0; i < getSubNames().length; i++)
+					if (!isMetaHidden(i))
+						list.add(new ItemStack(this,1,i));
+			}
+			else
+				list.add(new ItemStack(this));
 
 	}
 	@Override
@@ -83,5 +84,4 @@ public class ItemITBase extends Item implements IColouredItem
 		this.registerSubModels = register;
 		return this;
 	}
-
 }

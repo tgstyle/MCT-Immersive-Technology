@@ -18,8 +18,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -540,9 +542,9 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 		
 		if(pos==79) {
 			
-			float minX = fl==EnumFacing.WEST? .25f : fl==EnumFacing.EAST? .75f : fw==EnumFacing.EAST? 0 : 0;
+			float minX = fl==EnumFacing.WEST? 0 : fl==EnumFacing.EAST? .75f : fw==EnumFacing.EAST? 0 : 0;
 			float maxX = fl==EnumFacing.EAST? 1 : fl==EnumFacing.WEST? .25f : fw==EnumFacing.EAST? 1 : 1;
-			float minZ = fl==EnumFacing.NORTH? .25f : fl==EnumFacing.SOUTH? .75f : fw==EnumFacing.SOUTH? 0 : 0;
+			float minZ = fl==EnumFacing.NORTH? 0 : fl==EnumFacing.SOUTH? .75f : fw==EnumFacing.SOUTH? 0 : 0;
 			float maxZ = fl==EnumFacing.SOUTH? 1 : fl==EnumFacing.NORTH? .25f : fw==EnumFacing.SOUTH? 1 : 1;
 			
 			return Lists.newArrayList(new AxisAlignedBB(minX,0,minZ, maxX,.5f,maxZ).offset(getPos().getX(),getPos().getY(),getPos().getZ()));

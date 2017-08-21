@@ -1,7 +1,6 @@
 package ferro2000.immersivetech.api.craftings;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.google.common.collect.Lists;
 

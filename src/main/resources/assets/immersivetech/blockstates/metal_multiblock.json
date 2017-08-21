@@ -1,0 +1,85 @@
+{
+	"forge_marker": 1,
+	"defaults":
+	{
+		"transform": "forge:default-block",
+		"custom": { "flip-v": true },
+		"textures": {
+			"particle": "immersiveengineering:blocks/storage_steel"
+		}
+	},
+	"variants":
+	{
+		"inventory,type=solar_tower": [{
+			"model": "immersivetech:metal_multiblock/solar_tower.obj",
+			"transform": {
+				"scale": 0.125,
+				"rotation": [
+					{
+						"x": 20
+					},
+					{
+						"y": -45
+					}
+				],
+				"translation": [ 0, 0, 0 ]
+			}
+		}],
+		"inventory,type=solar_reflector": [{
+			"model": "immersivetech:metal_multiblock/solar_reflector.obj",
+			"transform": {
+				"scale": 0.125,
+				"rotation": [
+					{
+						"x": 20
+					},
+					{
+						"y": -45
+					}
+				],
+				"translation": [ 0, 0, 0 ]
+			}
+		}],
+		"type":
+		{
+			"solar_tower": {
+				"model": "immersivetech:metal_multiblock/solar_tower.obj"
+			},
+			"solar_reflector": {
+				"model": "immersivetech:metal_multiblock/solar_reflector.obj"
+			}
+		},
+		"facing":
+		{
+			"north": { "transform": {
+				"rotation": {"y": 0 }
+			}},
+			"south": { "transform": {
+				"rotation": {"y": 180 }
+			}},
+			"west": { "transform": {
+				"rotation": {"y": 90 }
+			}},
+			"east": { "transform": {
+				"rotation": {"y": -90 }
+			}}
+		},
+		"_0multiblockslave":
+		{
+			"false":{},
+			"true":{
+				"model": "immersiveengineering:ie_empty"
+			}
+		},
+		"_1dynamicrender":
+		{
+			"false":{},
+			"true":{}
+		},
+		"boolean0":
+		{
+			"false":{},
+			"true":{}
+		}
+	}
+}

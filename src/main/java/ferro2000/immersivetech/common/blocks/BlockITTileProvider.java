@@ -41,9 +41,7 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import ferro2000.immersivetech.common.CommonProxy;
-import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -92,25 +90,16 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	public void breakBlock(World world, BlockPos pos, IBlockState state)
 	{
 		TileEntity tile = world.getTileEntity(pos);
-		if(tile != null && ( !(tile instanceof ITileDrop) || !((ITileDrop)tile).preventInventoryDrop()))
+		if(tile != null && ( !(tile instanceof ITileDrop) || !((ITileDrop)tile).preventInventoryDrop()) && tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
 		{
-			if(tile instanceof IIEInventory && ((IIEInventory)tile).getDroppedItems()!=null)
-			{
-				for(ItemStack s : ((IIEInventory)tile).getDroppedItems())
-					if(!s.isEmpty())
-						spawnAsEntity(world, pos, s);
-			}
-			else if(tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
-			{
-				IItemHandler h = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-				if(h instanceof IEInventoryHandler)
-					for(int i = 0; i < h.getSlots(); i++)
-						if(!h.getStackInSlot(i).isEmpty())
-						{
-							spawnAsEntity(world, pos, h.getStackInSlot(i));
-							((IEInventoryHandler)h).setStackInSlot(i, ItemStack.EMPTY);
-						}
-			}
+			IItemHandler h = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+			if (h instanceof IEInventoryHandler)
+				for (int i = 0;i<h.getSlots();i++)
+					if (h.getStackInSlot(i)!=null)
+					{
+						spawnAsEntity(world, pos, h.getStackInSlot(i));
+						((IEInventoryHandler) h).setStackInSlot(i, null);
+					}
 		}
 		if(tile instanceof IHasDummyBlocks)
 		{
@@ -364,16 +353,18 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 		if(tile instanceof IGuiTile && hand == EnumHand.MAIN_HAND && !player.isSneaking())
 		{
 			TileEntity master = ((IGuiTile)tile).getGuiMaster();
-			if(!world.isRemote && master!=null && ((IGuiTile)master).canOpenGui(player))
-				CommonProxy.openGuiForTile(player,(TileEntity & IGuiTile)master);
-			return true;
+			if (((IGuiTile)tile).canOpenGui(player))
+			{
+				if(!world.isRemote && master!=null)
+					CommonProxy.openGuiForTile(player,(TileEntity & IGuiTile)master);
+				return true;
+			}
 		}
 		return false;
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos)
-//	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
+	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
 	{
 		TileEntity tile = world.getTileEntity(pos);
 		if(tile instanceof INeighbourChangeTile && !tile.getWorld().isRemote)
@@ -438,7 +429,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 			if(bounds!=null && !bounds.isEmpty())
 			{
 				for(AxisAlignedBB aabb : bounds)
-					if(aabb!=null && (mask.intersectsWith(aabb)))
+					if(aabb!=null && mask.intersects(aabb))
 						list.add(aabb);
 				return;
 			}

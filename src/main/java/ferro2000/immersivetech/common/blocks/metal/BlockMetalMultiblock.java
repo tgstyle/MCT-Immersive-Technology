@@ -24,7 +24,7 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
 	
 	public BlockMetalMultiblock()
 	{
-		super("metalMultiblock",Material.IRON, PropertyEnum.create("type", BlockType_MetalMultiblock.class), 
+		super("metal_multiblock",Material.IRON, PropertyEnum.create("type", BlockType_MetalMultiblock.class), 
 				ItemBlockITBase.class, IEProperties.DYNAMICRENDER,IEProperties.BOOLEANS[0],Properties.AnimationProperty,IEProperties.OBJ_TEXTURE_REMAP);
 		setHardness(3.0F);
 		setResistance(15.0F);
