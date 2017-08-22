@@ -1,15 +1,15 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "immersivetech",
+  "name": "Immersive Tech",
+  "description": "More tech for IE",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
+  "url": "https://github.com/FerroO2000/Immersive-Tech",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
-  "logoFile": "",
+  "authorList": ["FerroO2000"],
+  "credits": "BluSunrize for Api and Flaxbeard for the examples",
+  "logoFile": "assets/immersivetech/logo.png",
   "screenshots": [],
   "dependencies": []
 }
