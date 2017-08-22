@@ -84,8 +84,6 @@ public class ITContent {
 	public static int steamWater = 500;
 	public static int steamDistWater = 750;
 	
-	public static int steamBurnTime = 250;
-	
 	public static void init(){
 		
 		/*TILE ENTITIES*/
@@ -111,8 +109,8 @@ public class ITContent {
 		
 		/*HANDLER*/
 		/*STEAM*/
-		SteamHandler.registerSteam(fluidSteam, steamBurnTime);
-		SteamHandler.registerSteam(FluidRegistry.getFluid("steam"), steamBurnTime);
+		SteamHandler.registerSteam(fluidSteam, 250);
+		SteamHandler.registerSteam(FluidRegistry.getFluid("steam"), 250);
 		
 		SteamHandler.registerDrillSteam(fluidSteam);
 		SteamHandler.registerDrillSteam(FluidRegistry.getFluid("steam"));

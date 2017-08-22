@@ -1,6 +1,5 @@
 package ferro2000.immersivetech.common;
 
-import blusunrize.immersiveengineering.common.Config.Mapped;
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.craftings.DistillerRecipes;
 import ferro2000.immersivetech.api.craftings.SolarTowerRecipes;
@@ -14,7 +13,7 @@ public class Config {
 	@net.minecraftforge.common.config.Config(modid=ImmersiveTech.MODID)
 	public static class ITConfig{
 		
-		public static Machines machines = new Machines();
+		public static Machines machines;
 		
 		public static class Machines{
 			
@@ -41,8 +40,6 @@ public class Config {
 			/*MISC*/
 			@Comment({"The max distance between the Solar Tower and the Solar Reflectors"})
 			public static int solarTower_range = 10;
-			@Comment({"The burn time of Steam"})
-			public static int steam_burnTime = 250;
 			
 		}
 		
@@ -62,7 +59,6 @@ public class Config {
 		ITContent.distWaterWater = ITConfig.Machines.distiller_distWaterWater;
 		
 		TileEntitySolarTower.range = ITConfig.Machines.solarTower_range;
-		ITContent.steamBurnTime = ITConfig.Machines.steam_burnTime;
 		
 	}
 

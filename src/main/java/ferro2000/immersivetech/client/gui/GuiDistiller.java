@@ -26,8 +26,8 @@ public class GuiDistiller extends GuiContainer {
 		super.drawScreen(mx, my, partial);
 		
 		ArrayList<String> tooltip = new ArrayList();
-		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft+62,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/guiDistiller.png", tooltip);
-		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+112,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/guiDistiller.png", tooltip);
+		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft+62,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/gui_distiller.png", tooltip);
+		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+112,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/gui_distiller.png", tooltip);
 		if(mx>guiLeft+157&&mx<guiLeft+164 && my>guiTop+21&&my<guiTop+67)
 			tooltip.add(tile.getEnergyStored(null)+"/"+tile.getMaxEnergyStored(null)+" RF");
 
@@ -41,14 +41,14 @@ public class GuiDistiller extends GuiContainer {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mx, int my) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		ClientUtils.bindTexture("immersivetech:textures/gui/guiDistiller.png");
+		ClientUtils.bindTexture("immersivetech:textures/gui/gui_distiller.png");
 		this.drawTexturedModalRect(guiLeft,guiTop, 0, 0, xSize, ySize);
 		
 		int stored = (int)(46*(tile.getEnergyStored(null)/(float)tile.getMaxEnergyStored(null)));
 		ClientUtils.drawGradientRect(guiLeft+158,guiTop+22+(46-stored), guiLeft+165,guiTop+68, 0xffb51500, 0xff600b00);
 
-		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft+62,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/guiDistiller.png", null);
-		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+112,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/guiDistiller.png", null);
+		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft+62,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/gui_distiller.png", null);
+		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft+112,guiTop+21, 16,47, 177,31,20,51, mx,my, "immersivetech:textures/gui/gui_distiller.png", null);
 	}
 
 }
