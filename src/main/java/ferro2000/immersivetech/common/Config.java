@@ -1,6 +1,7 @@
 package ferro2000.immersivetech.common;
 
 import ferro2000.immersivetech.ImmersiveTech;
+import ferro2000.immersivetech.api.craftings.BoilerRecipes;
 import ferro2000.immersivetech.api.craftings.DistillerRecipes;
 import ferro2000.immersivetech.api.craftings.SolarTowerRecipes;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarTower;
@@ -21,21 +22,22 @@ public class Config {
 			/*ENERGY*/
 			@Comment({"The Flux per tick that the Steam Turbine will output"})
 			public static int steamTurbine_output = 12288;
+			@Comment({"A modifier to apply to the burn time of steam into the SteamTurbine: (1000 / steamBurnTime) * steamTurbine_burnTimeModifier mb/t"})
+			public static int steamTurbine_burnTimeModifier = 5;
 			
 			/*RECIPE*/
 			@Comment({"A modifier to apply to the time of every Solar Tower recipe"})
 			public static int solarTower_timeModifier = 1;
-			@Comment({"The quantity of Steam from a bucket of Water"})
-			public static int solarTower_steamWater = 500;
-			@Comment({"The quantity of Steam from a bucket of Distilled Water"})
-			public static int solarTower_steamDistWater = 750;
 			
 			@Comment({"A modifier to apply to the time of every Distiller recipe"})
 			public static int distiller_timeModifier = 1;
 			@Comment({"A modifier to apply to the energy costs of every Distiller recipe"})
 			public static int distiller_energyModifier = 1;
-			@Comment({"The quantity of Distilled Water from a bucket of Water"})
-			public static int distiller_distWaterWater = 500;
+			
+			@Comment({"A modifier to apply to the time of every Boiler recipe"})
+			public static int boiler_timeModifier = 1;
+			@Comment({"A modifier to apply to the burn time of fuel into the Boiler: (1000 / fuelBurnTime) * boiler_burnTimeModifier mb/t"})
+			public static int boiler_burnTimeModifier = 4;
 			
 			/*MISC*/
 			@Comment({"The max distance between the Solar Tower and the Solar Reflectors"})
@@ -51,12 +53,11 @@ public class Config {
 	{
 
 		SolarTowerRecipes.timeModifier = ITConfig.Machines.solarTower_timeModifier;
-		ITContent.steamWater = ITConfig.Machines.solarTower_steamWater;
-		ITContent.steamDistWater = ITConfig.Machines.solarTower_steamDistWater;
 		
 		DistillerRecipes.timeModifier = ITConfig.Machines.distiller_timeModifier;
 		DistillerRecipes.energyModifier = ITConfig.Machines.distiller_energyModifier;
-		ITContent.distWaterWater = ITConfig.Machines.distiller_distWaterWater;
+		
+		BoilerRecipes.timeModifier = ITConfig.machines.boiler_timeModifier;
 		
 		TileEntitySolarTower.range = ITConfig.Machines.solarTower_range;
 		

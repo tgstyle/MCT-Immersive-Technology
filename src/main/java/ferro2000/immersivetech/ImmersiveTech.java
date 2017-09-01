@@ -82,9 +82,9 @@ public class ImmersiveTech {
 	
 	public void registerVariables() {
 		Config.manual_int.put("steamTurbine_output", ITConfig.Machines.steamTurbine_output);
-		Config.manual_int.put("solarTower_steamWater", ITConfig.Machines.solarTower_steamWater);
-		Config.manual_int.put("solarTower_steamDistWater", ITConfig.Machines.solarTower_steamDistWater);
-		Config.manual_int.put("distiller_distWaterWater", ITConfig.Machines.distiller_distWaterWater);
+		Config.manual_int.put("solarTower_steamWater", 100);
+		Config.manual_int.put("solarTower_steamDistWater", 100);
+		Config.manual_int.put("distiller_distWaterWater", 100);
 	}
 
 }

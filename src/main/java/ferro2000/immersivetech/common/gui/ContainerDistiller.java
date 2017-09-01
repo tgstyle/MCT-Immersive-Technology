@@ -18,7 +18,7 @@ public class ContainerDistiller extends ContainerIEBase<TileEntityDistiller> {
 		super(inventoryPlayer, tile);
 
 		final TileEntityDistiller tileF = tile;
-		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 0, 12,17, false)
+		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 0, 26,17, false)
 		{
 			@Override
 			public boolean isItemValid(ItemStack itemStack)
@@ -37,7 +37,7 @@ public class ContainerDistiller extends ContainerIEBase<TileEntityDistiller> {
 				return incomplete!=null;
 			}
 		});
-		this.addSlotToContainer(new IESlot.Output(this, this.inv, 1, 12,53));
+		this.addSlotToContainer(new IESlot.Output(this, this.inv, 1, 26,53));
 
 		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 2, 134,17, true)
 		{

@@ -3,17 +3,21 @@ package ferro2000.immersivetech.common;
 import java.util.ArrayList;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
+import blusunrize.immersiveengineering.common.IEContent;
 import ferro2000.immersivetech.ImmersiveTech;
+import ferro2000.immersivetech.api.craftings.BoilerRecipes;
 import ferro2000.immersivetech.api.craftings.DistillerRecipes;
 import ferro2000.immersivetech.api.craftings.SolarTowerRecipes;
 import ferro2000.immersivetech.api.energy.SteamHandler;
 import ferro2000.immersivetech.common.blocks.BlockITBase;
 import ferro2000.immersivetech.common.blocks.BlockITFluid;
 import ferro2000.immersivetech.common.blocks.metal.BlockMetalMultiblock;
+import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockDistiller;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarReflector;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
+import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityBoiler;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityDistiller;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarReflector;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarTower;
@@ -79,11 +83,6 @@ public class ITContent {
 		
 	}
 	
-	public static int distWaterWater = 500;
-	
-	public static int steamWater = 500;
-	public static int steamDistWater = 750;
-	
 	public static void init(){
 		
 		/*TILE ENTITIES*/
@@ -94,26 +93,28 @@ public class ITContent {
 		registerTile(TileEntitySolarTower.class);
 		registerTile(TileEntitySolarReflector.class);
 		registerTile(TileEntitySteamTurbine.class);
+		registerTile(TileEntityBoiler.class);
 		
 		MultiblockHandler.registerMultiblock(MultiblockDistiller.instance);
 		MultiblockHandler.registerMultiblock(MultiblockSolarTower.instance);
 		MultiblockHandler.registerMultiblock(MultiblockSolarReflector.instance);
 		MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
+		MultiblockHandler.registerMultiblock(MultiblockBoiler.instance);
 		
 		/*RECIPES*/
 		/*MULTIBLOCKS*/
-		DistillerRecipes.addRecipe(new FluidStack(fluidDistWater, distWaterWater/10), new FluidStack(FluidRegistry.WATER, 100), new ItemStack(itemMaterial, 1, 0), 50, 1, 0.0025F);
+		DistillerRecipes.addRecipe(new FluidStack(fluidDistWater, 100), new FluidStack(FluidRegistry.WATER, 200), new ItemStack(itemMaterial, 1, 0), 50, 1, 0.0025F);
 		
-		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, steamWater/5), new FluidStack(FluidRegistry.WATER, 200), 10);
-		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, steamDistWater/5), new FluidStack(fluidDistWater, 200), 10);
+		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 100), new FluidStack(FluidRegistry.WATER, 200), 10);
+		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 150), new FluidStack(fluidDistWater, 200), 10);
+		
+		BoilerRecipes.addRecipe(new FluidStack(fluidSteam, 100), new FluidStack(FluidRegistry.WATER, 200), 10);
+		BoilerRecipes.addRecipe(new FluidStack(fluidSteam, 150), new FluidStack(fluidDistWater, 200), 10);
 		
 		/*HANDLER*/
 		/*STEAM*/
-		SteamHandler.registerSteam(fluidSteam, 250);
-		SteamHandler.registerSteam(FluidRegistry.getFluid("steam"), 250);
-		
-		SteamHandler.registerDrillSteam(fluidSteam);
-		SteamHandler.registerDrillSteam(FluidRegistry.getFluid("steam"));
+		SteamHandler.registerSteam(fluidSteam, 50);
+		SteamHandler.registerSteam(FluidRegistry.getFluid("steam"), 50);
 		
 	}
 	

@@ -66,7 +66,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 				int burnTime = SteamHandler.getBurnTime(tanks[0].getFluid().getFluid());
 				if(burnTime > 0)
 				{
-					int fluidConsumed = 1000 / burnTime;
+					int fluidConsumed = (1000 / burnTime) * ITConfig.Machines.steamTurbine_burnTimeModifier;
 					int output = ITConfig.Machines.steamTurbine_output;
 					int connected = 0;
 					TileEntity[] receivers = new TileEntity[3];
@@ -93,8 +93,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 						for(int i = 0; i < 3; i++)
 							if(receivers[i] != null)
 								EnergyHelper.insertFlux(receivers[i], getEnergyFacing(i), splitOutput, false);
-					} else if(active)
-					{
+					} else if(active){
 						active = false;
 					}
 				}

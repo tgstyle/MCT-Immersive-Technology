@@ -1,5 +1,7 @@
 package ferro2000.immersivetech.client;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -12,9 +14,11 @@ import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
 import blusunrize.lib.manual.ManualPages;
 import ferro2000.immersivetech.ImmersiveTech;
+import ferro2000.immersivetech.api.craftings.SolarTowerRecipes;
 import ferro2000.immersivetech.common.CommonProxy;
 import ferro2000.immersivetech.common.ITContent;
 import ferro2000.immersivetech.common.blocks.BlockITFluid;
+import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockDistiller;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarReflector;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTower;
@@ -37,6 +41,7 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -171,6 +176,9 @@ public class ClientProxy extends CommonProxy{
 				new ManualPages.Text(ManualHelper.getManual(), "solarTower1"),
 				new ManualPageMultiblock(ManualHelper.getManual(), "solarTower2", MultiblockSolarReflector.instance),
 				new ManualPages.Text(ManualHelper.getManual(), "solarTower3"));
+		ManualHelper.addEntry("boiler", CAT_IT, 
+				new ManualPageMultiblock(ManualHelper.getManual(), "boiler0", MultiblockBoiler.instance),
+				new ManualPages.Text(ManualHelper.getManual(), "boiler1"));
 		ManualHelper.addEntry("steamTurbine", CAT_IT, 
 				new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", MultiblockSteamTurbine.instance),
 				new ManualPages.Text(ManualHelper.getManual(), "steamTurbine1"));

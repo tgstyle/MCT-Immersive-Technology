@@ -1,0 +1,67 @@
+{
+	"forge_marker": 1,
+	"defaults":
+	{
+		"transform": "forge:default-block",
+		"custom": { "flip-v": true },
+		"textures": {
+			"particle": "immersivetech:blocks/storage_steel"
+		}
+	},
+	"variants":
+	{
+		"inventory,type=boiler": [{
+			"model": "immersivetech:metal_multiblock/boiler.obj",
+			"transform": {
+				"scale": 0.25,
+				"rotation": [
+					{
+						"x": 20
+					},
+					{
+						"y": -45
+					}
+				]
+			}
+		}],
+		"type":
+		{
+			"boiler": {
+			}
+		},
+		"facing":
+		{
+			"north": { "transform": {
+				"rotation": {"y": 0 }
+			}},
+			"south": { "transform": {
+				"rotation": {"y": 180 }
+			}},
+			"west": { "transform": {
+				"rotation": {"y": 90 }
+			}},
+			"east": { "transform": {
+				"rotation": {"y": -90 }
+			}}
+		},
+		"_0multiblockslave":
+		{
+			"false":{},
+			"true":{
+				"model": "builtin/generated"
+			}
+		},
+		"_1dynamicrender":
+		{
+			"false":{},
+			"true":{}
+		},
+		"boolean0": //Mirror
+		{
+			"false":{
+				"model": "immersivetech:metal_multiblock/boiler.obj"},
+			"true":{
+				"model": "immersivetech:metal_multiblock/boiler_mirrored.obj"}
+		}
+	}
+}

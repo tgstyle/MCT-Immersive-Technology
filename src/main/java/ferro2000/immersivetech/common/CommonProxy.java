@@ -5,10 +5,13 @@ import javax.annotation.Nonnull;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITLib;
+import ferro2000.immersivetech.client.gui.GuiBoiler;
 import ferro2000.immersivetech.client.gui.GuiDistiller;
 import ferro2000.immersivetech.client.gui.GuiSolarTower;
+import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityBoiler;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityDistiller;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarTower;
+import ferro2000.immersivetech.common.gui.ContainerBoiler;
 import ferro2000.immersivetech.common.gui.ContainerDistiller;
 import ferro2000.immersivetech.common.gui.ContainerSolarTower;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,6 +47,8 @@ public class CommonProxy implements IGuiHandler {
 				gui = new ContainerDistiller(player.inventory, (TileEntityDistiller) tile);
 			if(ID==ITLib.GUIID_Solar_Tower && tile instanceof TileEntitySolarTower)
 				gui = new ContainerSolarTower(player.inventory, (TileEntitySolarTower) tile);
+			if(ID==ITLib.GUIID_Boiler && tile instanceof TileEntityBoiler)
+				gui = new ContainerBoiler(player.inventory, (TileEntityBoiler) tile);
 			if(gui!=null)
 				((IGuiTile)tile).onGuiOpened(player, false);
 			return gui;
@@ -59,6 +64,8 @@ public class CommonProxy implements IGuiHandler {
 				gui = new GuiDistiller(player.inventory, (TileEntityDistiller) tile);
 			if(ID==ITLib.GUIID_Solar_Tower && tile instanceof TileEntitySolarTower) 
 				gui = new GuiSolarTower(player.inventory, (TileEntitySolarTower) tile);
+			if(ID==ITLib.GUIID_Boiler && tile instanceof TileEntityBoiler) 
+				gui = new GuiBoiler(player.inventory, (TileEntityBoiler) tile);
 			return gui;
 		}
 		return null;
