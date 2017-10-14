@@ -9,15 +9,32 @@ item.immersivetech.material.salt.name=Salt
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=Distilled Water
 tile.immersivetech.fluidSteam.name=Steam
+tile.immersivetech.fluidSlime.name=Liquid Slime
 
 fluid.dist_water=Distilled Water
 fluid.steam=Steam
+fluid.slime=Liquid Slime
+
+
+#TILE ENTITYS
+tile.immersivetech.metal_multiblock.distiller.name=Distiller
+tile.immersivetech.metal_multiblock.solar_tower.name=Solar Tower
+tile.immersivetech.metal_multiblock.solar_reflector.name=Solar Reflector
+tile.immersivetech.metal_multiblock.steam_turbine.name=Steam Turbine
+tile.immersivetech.metal_multiblock.boiler.name=Boiler
+tile.immersivetech.metal_multiblock.alternator.name=Alternator
 
 desc.immersiveengineering.info.multiblock.IT:Distiller=Distiller
 desc.immersiveengineering.info.multiblock.IT:SolarTower=Solar Tower
 desc.immersiveengineering.info.multiblock.IT:SolarReflector=Solar Reflector
 desc.immersiveengineering.info.multiblock.IT:SteamTurbine=Steam Turbine
+desc.immersiveengineering.info.multiblock.IT:Boiler=Boiler
+desc.immersiveengineering.info.multiblock.IT:Alternator=Alternator
 
+tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
+
+
+#MANUAL
 ie.manual.category.it.name=Immersive Tech
 
 ie.manual.entry.distiller.name=Distiller
@@ -34,10 +51,20 @@ ie.manual.entry.solarTower3=To work, there must not be block between it and the 
 
 ie.manual.entry.steamTurbine.name=Steam Turbine
 ie.manual.entry.steamTurbine.subtext=Boiling breath
-ie.manual.entry.steamTurbine0=The Steam Turbine is a multiblock structure that uses Steam to produce energy.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Steel Block (short side).
-ie.manual.entry.steamTurbine1=Applying a redstone signal to the control panel at the front will halt the machine's process, this behavior can be inverted by use of the Engineer's Hammer.<br>The fluid pipe in front of the machine rapresents the input of Steam. The energy outputs are in the rear of the machine at top, left and right.<br>The max energy output is of <config;i;steamTurbine_output> Flux/t. If there are more than one energy connector, the energy output will be spit by the number of connectors(<config;i;steamTurbine_output> \connectors number flux/t).
+ie.manual.entry.steamTurbine0=The Steam Turbine is a multiblock structure that uses Steam to produce kinetic energy.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Steel Block (short side).
+ie.manual.entry.steamTurbine1=Applying a redstone signal to the control panel at the front will halt the machine's process, this behavior can be inverted by use of the Engineer's Hammer.<br>The fluid pipe in front of the machine rapresents the input of Steam. The kinetic energy output is in the rear of the machine (Steel Block). It produces <config;i;steamTurbine_maxTorque> N*m of torque at the max speed of <config;i;steamTurbine_maxSpeed> Rad/s.<br>To work, it needs an <link;alternator;§o§nAlternator§r>.
 
 ie.manual.entry.boiler.name=Boiler
 ie.manual.entry.boiler.subtext=A diesel method
 ie.manual.entry.boiler0=The Boiler is a multiblock structure that uses <link;biodiesel;§o§nDiesel§r> and Water to produce Steam.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron Block (long side).
 ie.manual.entry.boiler1=Applying a redstone signal to the control panel at the front will halt the machine's process, this behavior can be inverted by use of the Engineer's Hammer.<br>Water can be input into the Boiler via hatches at the left that are marked with blue dots. Diesel can be input at the right of the machine. The hatch with the orange dot at the top serves as a fluid output.<br>One bucket of Water produces 500 mB and one of <link;distiller;§n§oDistilled Water§r> produces 750 mB of Steam consuming (1000/burnTime)x<config;i;boiler_burnTimeModifier> mB of Diesel.
+
+ie.manual.entry.alternator.name=Alternator
+ie.manual.entry.alternator.subtext=Let's transform
+ie.manual.entry.alternator0=The Alternatori s a multiblock structure that transforms kinetic energy in electricity. .<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Heavy Engineering Block (short side).
+ie.manual.entry.alternator1=To work, it needs a kinetic energy generator right by the side (<link;steamTurbine;§n§oSteam Turbine§r>). The kinetic energy input is at the back of the machine (where there are the Sheetmetal Blocks) and the Flux output are in front-left and front-right. The machine produces (Speed*Torque)/<config;i;alternator_RfModifier> Flux/t.<br>The Alternator can store <config;i;alternator_energyStorage> Flux.
+ie.manual.entry.alternator1=Steam Turbine and Alternator
+
+ie.manual.entry.redstone.name=Redstone
+ie.manual.entry.redstone.subtext=tick-tock
+ie.manual.entry.redstone0=§6Redstone Timer§r has the function of output a redstone signal depending on the delay inposed on him. The delay time can be set in the Timer’s gui and it has 0.5 Sec of precision before 10 Sec, and 1 Sec after. The Timer can be stopped with a redstone signal.

@@ -13,7 +13,7 @@
 		"inventory,type=boiler": [{
 			"model": "immersivetech:metal_multiblock/boiler.obj",
 			"transform": {
-				"scale": 0.25,
+				"scale": 0.1875,
 				"rotation": [
 					{
 						"x": 20

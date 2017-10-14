@@ -40,6 +40,21 @@
 				"translation": [ 0, 0, 0 ]
 			}
 		}],
+		"inventory,type=alternator": [{
+			"model": "immersivetech:metal_multiblock/alternator.obj",
+			"transform": {
+				"scale": 0.25,
+				"rotation": [
+					{
+						"x": 20
+					},
+					{
+						"y": -45
+					}
+				],
+				"translation": [ 0, 0, 0 ]
+			}
+		}],
 		"type":
 		{
 			"solar_tower": {
@@ -47,6 +62,9 @@
 			},
 			"solar_reflector": {
 				"model": "immersivetech:metal_multiblock/solar_reflector.obj"
+			},
+			"alternator": {
+				"model": "immersivetech:metal_multiblock/alternator.obj"
 			}
 		},
 		"facing":

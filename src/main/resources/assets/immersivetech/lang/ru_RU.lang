@@ -1,0 +1,53 @@
+
+#CREATIVE TAB
+itemGroup.immersivetech=Immersive Tech
+
+
+#ITEMS
+item.immersivetech.material.salt.name=Соль
+
+
+#FLUIDS
+tile.immersivetech.fluidDistWater.name=Дистиллированная Вода
+tile.immersivetech.fluidSteam.name=Пар
+tile.immersivetech.fluidSlime.name=Liquid Slime
+
+fluid.dist_water=Дистиллированная Вода
+fluid.steam=Пар
+fluid.slime=Liquid Slime
+
+desc.immersiveengineering.info.multiblock.IT:Distiller=Дистиллятор
+desc.immersiveengineering.info.multiblock.IT:SolarTower=Солнечная Башня
+desc.immersiveengineering.info.multiblock.IT:SolarReflector=Солнечный Отражатель
+desc.immersiveengineering.info.multiblock.IT:SteamTurbine=Паровая Турбина
+desc.immersiveengineering.info.multiblock.IT:Boiler=Паровой котёл
+desc.immersiveengineering.info.multiblock.IT:Alternator=Alternator
+
+tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
+
+ie.manual.category.it.name=Immersive Tech
+
+ie.manual.entry.distiller.name=Дистиллятор
+ie.manual.entry.distiller.subtext=Более чище, чем вода
+ie.manual.entry.distiller0=Дистиллятор - многоблочная машина, которая превращает воду в дистиллированную воду и соль. <br>Структура строиться, как показано выше, и формируеться с использованием молота инженера на центральном блоке из листового металла.
+ie.manual.entry.distiller1=Сигнал красного камня на панели управления остановит машину, это можно инвертировать с помощью молота иженера. Вода может быть введена в Дистиллятор через люки слева, которые отмечены синими точками , Люк с оранжевой точкой справа служит в качестве выходного потока жидкости, а другой люк сзади служит в качестве выходного элемента. Для получения дистиллированной воды и соли нужна энергия. Одно ведро воды производит <config;i;distiller_distWaterWater> mb дистиллированной воды.
+
+ie.manual.entry.solarTower.name=Солнечная Башня
+ie.manual.entry.solarTower.subtext=Сила солнца
+ie.manual.entry.solarTower0=Солнечная Башня - многоблочная структура, которая использует свет солнца, преобразующая воду в пар. Она строиться, как показано выше, и формируеться с использованием молота инженера на центральном Краснокаменном инженерном блоке.
+ie.manual.entry.solarTower1=Солнечная Башня может вырабатывать Пар из Воды и Дистиллированной Воды (Дистиллятор).<br>Одно Ведро Дистиллированной Воды производит <config;i;solarTower_steamDistWater> mb Пара.<br>Одно Ведро Воды производит <config;i;solarTower_steamWater>mb Пара.<br>Вода может быть введена в Солнечную Башню через два люка слева и справа, отмеченные синими точками. Люк с оранжевой точкой сзади служит в качестве вывода жидкости.<br>The Солнечная Башня нуждается хотя бы в одном Солнечном Рефлекторе (Отражателе).
+ie.manual.entry.solarTower2=Солнечный Отражатель представляет собой многоблочную структуру, отражающую свет солнца до центра Солнечной Башни.<br>Структура строиться, как показано выше, и формируеться с помощью Молота инженера на центральном Серебряном Блоке. 
+ie.manual.entry.solarTower3=Чтобы всё работало, между ним и Солнечной Башней не должно быть блоков и в верхней части отражателя (только в центре), стекло отражателя должно быть направленно к центру Солнечной Башни. Расстояние между отражателем и Солнечной Башней должно быть ниже блоков <config;i;solarTower_range>. Очевидно, что он работает только днём.
+ 
+ie.manual.entry.steamTurbine.name=Паровая Турбина
+ie.manual.entry.steamTurbine.subtext=Кипящие дыхание
+ie.manual.entry.steamTurbine0=Паровая Турбина - многоблочная структура, которая использует пар для производства энергии. Строиться она, как показано выше, и формируеться с использованием молота инженера на центральном стальном блоке (короткая сторона).
+ie.manual.entry.steamTurbine1=Применение сигнала Красного камня на панели управления спереди остановит процесс машины, это можно инвертировать с помощью молота иженера.<br>Жидкостная труба перед машиной представляет собой вход Пара. Выходы энергии находятся в задней части машины сверху, слева и справо.<br>Максимальная выходная мощность: <config;i;steamTurbine_output> Flux/t. Если имеется более одного каннектора, то выход энергии будет распределяться на количество коннекторов (<config;i;steamTurbine_output> \connectors number flux/t).
+
+ie.manual.entry.boiler.name=Паровой котёл
+ie.manual.entry.boiler.subtext=Дизельный метод
+ie.manual.entry.boiler0=Паровой котёл - многоблочная структура, которая использует <link;biodiesel;§o§nДизель§r> и Воду для производства пара. Структура строиться, как показано выше, и формируеться с использованием молота инженера на центральном железобетонном блоке (длинная сторона).
+ie.manual.entry.boiler1=Применение сигнала Красного камня на панели управления спереди остановит процесс машины, это можно инвертировать с помощью молота иженера.<br>Вода может быть введена в котел через люки слева, которые отмечены синими точками. Дизель можно вводить справа от машины.<br>Одно ведро воды производит 500 mB пара и  <link;distiller;§n§oДистиллированная Вода§r> производит 750 mB пара потребляя (1000/burnTime) <config;i;boiler_burnTimeModifier> mB Дизиля.
+
+ie.manual.entry.alternator.name=Alternator
+ie.manual.entry.alternator0=Under developement

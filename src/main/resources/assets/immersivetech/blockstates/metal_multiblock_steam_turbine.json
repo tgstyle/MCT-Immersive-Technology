@@ -48,13 +48,13 @@
 		{
 			"false":{},
 			"true":{
-				"model": "builtin/generated"
+				"model": "immersiveengineering:ie_empty"
 			}
 		},
 		"_1dynamicrender":
 		{
 			"false":{},
-			"true":{}
+			"true":{"model": "immersivetech:metal_multiblock/steam_turbine_rotor.obj"}
 		},
 		"boolean0": //Mirror
 		{

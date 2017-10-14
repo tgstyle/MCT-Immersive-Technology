@@ -8,14 +8,20 @@ item.immersivetech.material.salt.name=盐
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=蒸馏水
 tile.immersivetech.fluidSteam.name=蒸汽
+tile.immersivetech.fluidSlime.name=Liquid Slime
 
 fluid.dist_water=蒸馏水
 fluid.steam=蒸汽
+fluid.slime=Liquid Slime
 
 desc.immersiveengineering.info.multiblock.IT:Distiller=蒸馏器
 desc.immersiveengineering.info.multiblock.IT:SolarTower=太阳能集热塔
 desc.immersiveengineering.info.multiblock.IT:SolarReflector=太阳能反射镜
 desc.immersiveengineering.info.multiblock.IT:SteamTurbine=蒸汽轮机
+desc.immersiveengineering.info.multiblock.IT:Boiler=蒸汽锅炉
+desc.immersiveengineering.info.multiblock.IT:Alternator=Alternator
+
+tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
 
 ie.manual.category.it.name=Immersive Tech
 
@@ -36,7 +42,10 @@ ie.manual.entry.steamTurbine.subtext=沸腾的气息
 ie.manual.entry.steamTurbine0=蒸汽轮机是使用蒸汽来产生能量的多方块结构机械。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右键红石工程块那一侧的正中心的钢块完成搭建。
 ie.manual.entry.steamTurbine1=正中心红点的控制面板是使用红石信号控制机器开关的接口，红石信号的开关与机器的开关的关系可以通过使用工程师锤右键红石控制面板来反转。<br>机器前方的流体管道口为蒸汽的输入口。能量输出口则位于机器后部的顶部，左侧和右侧。<br>蒸汽轮机最大能量输出为<config;i;steamTurbine_output>Flux/t。如果有多个接线器提取，则能量输出将通过接线器的数量，按照（<config;i;steamTurbine_output>÷接线器数量flux/t）的效率输出。
 
-ie.manual.entry.boiler.name=Boiler
-ie.manual.entry.boiler.subtext=A diesel method
-ie.manual.entry.boiler0=The Boiler is a multiblock structure that uses <link;biodiesel;§o§nDiesel§r> and Water to produce Steam.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron Block (long side).
-ie.manual.entry.boiler1=Applying a redstone signal to the control panel at the front will halt the machine's process, this behavior can be inverted by use of the Engineer's Hammer.<br>Water can be input into the Boiler via hatches at the left that are marked with blue dots. Diesel can be input at the right of the machine. The hatch with the orange dot at the top serves as a fluid output.<br>One bucket of Water produces 500 mB and one of <link;distiller;§n§oDistilled Water§r> produces 750 mB of Steam consuming (1000/burnTime)x<config;i;boiler_burnTimeModifier> mB of Diesel.
+ie.manual.entry.boiler.name=蒸汽锅炉
+ie.manual.entry.boiler.subtext=柴油的用法
+ie.manual.entry.boiler0=锅炉是一种多方块结构，它使用 <link;biodiesel;§o§n柴油§r> 和水来生产蒸汽。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右键红石工程块那一侧的正中心的铁板金属块完成搭建。
+ie.manual.entry.boiler1=正中心红点的控制面板是使用红石信号控制机器开关的接口，红石信号的开关与机器的开关的关系可以通过使用工程师锤右键红石控制面板来反转。<br>水可以从左侧（装饰有橙边方形端）的标有蓝点的舱口输入，而柴油则从另一侧蓝点舱口输入。上方的橙点舱口用于流体输出<br>一桶水产生500mB的蒸汽、一桶<link;distiller;§n§o蒸馏水§r>产生750mB的蒸汽并消耗(1000/燃烧时间)x<config;i;boiler_burnTimeModifier>mB的柴油。
+
+ie.manual.entry.alternator.name=Alternator
+ie.manual.entry.alternator0=Under developement

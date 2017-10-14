@@ -1,0 +1,23 @@
+{
+  "type": "forge:ore_shaped",
+  "quarter_turn": false,
+  "result": {
+    "item": "minecraft:slime_ball",
+    "count": 8
+  },
+  "pattern": [
+    "DDD",
+    "DSD",
+    "DDD"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:dirt",
+	  "data": 0
+    },
+    "S": {
+      "type": "immersivetech:fluid",
+      "fluid": "slime"
+    }
+  }
+}
