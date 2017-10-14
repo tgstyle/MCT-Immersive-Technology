@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.common.IEContent;
 import ferro2000.immersivetech.common.CommonProxy;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.ITContent;
+import ferro2000.immersivetech.common.network.TileMessage;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
@@ -15,6 +16,8 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = ImmersiveTech.MODID, name = ImmersiveTech.NAME, version = ImmersiveTech.VERSION, dependencies = "required-after:immersiveengineering;")
 
@@ -27,6 +30,8 @@ public class ImmersiveTech {
 	@SidedProxy(clientSide="ferro2000.immersivetech.client.ClientProxy", serverSide="ferro2000.immersivetech.common.CommonProxy")
 	
 	public static CommonProxy proxy;
+	
+	public static final SimpleNetworkWrapper packetHandler = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
 	
 	@Instance(MODID)
 	public static ImmersiveTech instance;
@@ -47,6 +52,9 @@ public class ImmersiveTech {
 		
 		ITContent.init();
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
+		int messageId = 0;
+		packetHandler.registerMessage(TileMessage.HandlerServer.class, TileMessage.class, messageId++, Side.SERVER);
+		packetHandler.registerMessage(TileMessage.HandlerClient.class, TileMessage.class, messageId++, Side.CLIENT);
 		proxy.preInitEnd();
 		proxy.init();
 		proxy.initEnd();
@@ -81,10 +89,17 @@ public class ImmersiveTech {
 	};
 	
 	public void registerVariables() {
-		Config.manual_int.put("steamTurbine_output", ITConfig.Machines.steamTurbine_output);
-		Config.manual_int.put("solarTower_steamWater", 100);
-		Config.manual_int.put("solarTower_steamDistWater", 100);
-		Config.manual_int.put("distiller_distWaterWater", 100);
+		
+		Config.manual_int.put("steamTurbine_maxTorque", ITConfig.Machines.steamTurbine_maxTorque);
+		Config.manual_int.put("steamTurbine_maxSpeed", ITConfig.Machines.steamTurbine_maxSpeed);
+		
+		Config.manual_int.put("solarTower_range", ITConfig.Machines.solarTower_range);
+		
+		Config.manual_int.put("boiler_burnTimeModifier", ITConfig.Machines.boiler_burnTimeModifier);
+		
+		Config.manual_int.put("alternator_RfModifier", ITConfig.Machines.alternator_RfModifier);
+		Config.manual_int.put("alternator_energyStorage", ITConfig.Machines.alternator_energyStorage);
+		
 	}
 
 }

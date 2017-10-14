@@ -20,11 +20,18 @@ public class Config {
 			
 			/*MULTIBLOCK*/
 			/*ENERGY*/
-			@Comment({"The Flux per tick that the Steam Turbine will output"})
-			public static int steamTurbine_output = 12288;
 			@Comment({"A modifier to apply to the burn time of steam into the SteamTurbine: (1000 / steamBurnTime) * steamTurbine_burnTimeModifier mb/t"})
-			public static int steamTurbine_burnTimeModifier = 5;
+			public static int steamTurbine_burnTimeModifier = 3;
+			@Comment({"The max torque that the Steam Turbine can produce"})
+			public static int steamTurbine_maxTorque = 8192;
+			@Comment({"The max speed that the Steam Turbine can produce"})
+			public static int steamTurbine_maxSpeed = 6144;
 			
+			@Comment({"The max of Flux that the Alternator can store"})
+			public static int alternator_energyStorage = 1200000;
+			@Comment({"A modifier to apply to the Flux production of the Alternator ((speed*torque) / modifier)"})
+			public static int alternator_RfModifier = 800;
+						
 			/*RECIPE*/
 			@Comment({"A modifier to apply to the time of every Solar Tower recipe"})
 			public static int solarTower_timeModifier = 1;

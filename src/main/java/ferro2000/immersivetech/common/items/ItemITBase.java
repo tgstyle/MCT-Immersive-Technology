@@ -10,6 +10,9 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+/**
+ * @author BluSunrize
+ */
 public class ItemITBase extends Item implements IColouredItem
 {
 	public String itemName;

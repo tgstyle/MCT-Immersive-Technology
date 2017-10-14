@@ -140,7 +140,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 			
 		}
 
-		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[1], inventory.get(0), inventory.get(1), null);
+		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
 		if (!emptyContainer.isEmpty() && emptyContainer.getCount() > 0)
 		{
 			if(!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), emptyContainer, true))

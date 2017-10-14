@@ -12,7 +12,9 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
 import ferro2000.immersivetech.api.ITLib;
+import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.craftings.BoilerRecipes;
+import ferro2000.immersivetech.api.craftings.DistillerRecipes;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
 import net.minecraft.entity.player.EntityPlayer;
@@ -203,7 +205,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 
 	@Override
 	public int[] getEnergyPos() {
-		return null;
+		return new int[0];
 	}
 
 	@Override
@@ -223,7 +225,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 
 	@Override
 	public int[] getOutputSlots() {
-		return null;
+		return new int[0];
 	}
 
 	@Override
@@ -294,8 +296,11 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			TileEntityBoiler master = this.master();
 			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
 			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[1].getFluid(), 1000, false);
-			if(master==null || master.tanks[iTank].getFluidAmount()>=master.tanks[iTank].getCapacity())
+
+			if(master==null || master.tanks[1].getFluidAmount()>=master.tanks[1].getCapacity()) {
 				return false;
+			}
+				
 			if(master.tanks[1].getFluid()==null)
 			{
 				BoilerRecipes incompleteRecipes = BoilerRecipes.findRecipe(resourceClone);
@@ -307,7 +312,9 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 				BoilerRecipes incompleteRecipes2 = BoilerRecipes.findRecipe(resourceClone2);
 				return incompleteRecipes1 == incompleteRecipes2;
 			}
-		}else if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY()))) {
+		}
+		
+		if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY()))) {
 			return DieselHandler.isValidFuel(resource.getFluid());
 		}
 		
@@ -368,9 +375,9 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 					fl = fl.getOpposite();
 				}
 				
-				boundingArray = ITLib.smartBoundingBox(.375f, .375f, .75f, 0, .5f, 1, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(.375f, .375f, .75f, 0, .5f, 1, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-				boundingArray = ITLib.smartBoundingBox(0, .5f, .5f, .25f, .5f, 1, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(0, .5f, .5f, .25f, .5f, 1, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 								
 			}
@@ -381,9 +388,9 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 					fl = fl.getOpposite();
 				}
 				
-				boundingArray = ITLib.smartBoundingBox(.4375f, .4375f, 0, 0, .6875f, .9375f, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(.4375f, .4375f, 0, 0, .6875f, .9375f, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-				boundingArray = ITLib.smartBoundingBox(0, .625f, 0, 0, .5f, 1, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(0, .625f, 0, 0, .5f, 1, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 								
 			}
@@ -394,31 +401,31 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 					fl = fl.getOpposite();
 				}
 				
-				boundingArray = ITLib.smartBoundingBox(.4375f, .4375f, 0, .75f, .6875f, .9375f, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(.4375f, .4375f, 0, .75f, .6875f, .9375f, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-				boundingArray = ITLib.smartBoundingBox(.375f, .375f, .25f, .5f, .5f, 1, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(.375f, .375f, .25f, .5f, .5f, 1, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-				boundingArray = ITLib.smartBoundingBox(0, .625f, 0, .5f, .5f, 1, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(0, .625f, 0, .5f, .5f, 1, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-				boundingArray = ITLib.smartBoundingBox(0, .5f, .5f, .25f, .5f, 1, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(0, .5f, .5f, .25f, .5f, 1, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 								
 			}
 			
 			if(pos==4) {
 				
-				boundingArray = ITLib.smartBoundingBox(.625f, .125f, .125f, .75f, .5f, 1, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(.625f, .125f, .125f, .75f, .5f, 1, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-				boundingArray = ITLib.smartBoundingBox(.625f, .125f, .75f, .125f, .5f, 1, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(.625f, .125f, .75f, .125f, .5f, 1, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 								
 			}
 			
 			if(pos==14) {
 				
-				boundingArray = ITLib.smartBoundingBox(.5f, .25f, .375f, .375f, .625f, 1, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(.5f, .25f, .375f, .375f, .625f, 1, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-				boundingArray = ITLib.smartBoundingBox(.4375f, .1875f, .3125f, .3125f, .5f, .625f, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(.4375f, .1875f, .3125f, .3125f, .5f, .625f, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 								
 			}
@@ -433,11 +440,11 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 				fl = fl.getOpposite();
 			}
 			
-			boundingArray = ITLib.smartBoundingBox(0, .25f, .5f, 0, 0, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, .25f, .5f, 0, 0, 1, fl, fw);
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(0, .5f, .125f, .5f, .25f, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, .5f, .125f, .5f, .25f, 1, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(0, .75f, .125f, .5f, 0, .25f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, .75f, .125f, .5f, 0, .25f, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 			
 			return list;
@@ -452,16 +459,16 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			
 			if(pos>27) {
 				
-				boundingArray = ITLib.smartBoundingBox(0, .25f, 0, 0, 0, .5f, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(0, .25f, 0, 0, 0, .5f, fl, fw);
 				List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-				boundingArray = ITLib.smartBoundingBox(0, .5f, 0, 0, .5f, 1, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(0, .5f, 0, 0, .5f, 1, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 						
 				return list;
 
 			}else {
 				
-				boundingArray = ITLib.smartBoundingBox(0, .25f, 0, 0, 0, 1, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(0, .25f, 0, 0, 0, 1, fl, fw);
 				
 				return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 				
@@ -479,16 +486,16 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			
 			if(pos>28) {
 				
-				boundingArray = ITLib.smartBoundingBox(0, .25f, 0, .25f, 0, .5f, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(0, .25f, 0, .25f, 0, .5f, fl, fw);
 				List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-				boundingArray = ITLib.smartBoundingBox(0, .5f, 0, .25f, .5f, 1, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(0, .5f, 0, .25f, .5f, 1, fl, fw);
 				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 				
 				return list;
 				
 			}else {
 				
-				boundingArray = ITLib.smartBoundingBox(0, .25f, 0, .25f, 0, 1, fl, fw);
+				boundingArray = ITUtils.smartBoundingBox(0, .25f, 0, .25f, 0, 1, fl, fw);
 				
 				return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 								
@@ -498,9 +505,9 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		
 		if(pos==19) {
 			
-			boundingArray = ITLib.smartBoundingBox(.5f, 0, 0, 0, 0, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(.5f, 0, 0, 0, 0, 1, fl, fw);
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(0, .75f, .25f, .25f, .5f, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, .75f, .25f, .25f, .5f, 1, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 			
 			return list;
@@ -509,9 +516,9 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		
 		if(pos==20) {
 			
-			boundingArray = ITLib.smartBoundingBox(0, 0, 0, 0, 0, .375f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, 0, 0, 0, 0, .375f, fl, fw);
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(0, 0, .125f, 0, .375f, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, 0, .125f, 0, .375f, 1, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 						
 			return list;
@@ -520,9 +527,9 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		
 		if(pos==23) {
 			
-			boundingArray = ITLib.smartBoundingBox(0, 0, 0, .25f, 0, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, 0, 0, .25f, 0, 1, fl, fw);
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(0, 0, .75f, 0, .25f, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, 0, .75f, 0, .25f, 1, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 			
 			return list;
@@ -531,13 +538,13 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		
 		if(pos==24) {
 			
-			boundingArray = ITLib.smartBoundingBox(.125f, .125f, 0, .125f, .375f, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(.125f, .125f, 0, .125f, .375f, 1, fl, fw);
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(.25f, .25f, .875f, 0, .5f, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(.25f, .25f, .875f, 0, .5f, 1, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(.875f, 0, .25f, .25f, .5f, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(.875f, 0, .25f, .25f, .5f, 1, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(0, .875f, .3125f, .3125f, .5625f, .9375f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, .875f, .3125f, .3125f, .5625f, .9375f, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 						
 			return list;
@@ -546,13 +553,13 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		
 		if(pos==29) {
 			
-			boundingArray = ITLib.smartBoundingBox(.8125f, 0, .375f, .375f, .625f, .875f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(.8125f, 0, .375f, .375f, .625f, .875f, fl, fw);
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(.4375f, .1875f, .3125f, .3125f, .5625f, .9375f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(.4375f, .1875f, .3125f, .3125f, .5625f, .9375f, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(0, .5625f, .0625f, .0625f, 0, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, .5625f, .0625f, .0625f, 0, 1, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(.5f, .25f, .375f, .375f, 0, .5625f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(.5f, .25f, .375f, .375f, 0, .5625f, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 			
 			return list;
@@ -565,13 +572,13 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 				fl = fl.getOpposite();
 			}
 			
-			boundingArray = ITLib.smartBoundingBox(0, .5f, .125f, .5f, 0, .25f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, .5f, .125f, .5f, 0, .25f, fl, fw);
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(0, .25f, .5f, 0, 0, .5f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, .25f, .5f, 0, 0, .5f, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(0, .5f, .5f, 0, .5f, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, .5f, .5f, 0, .5f, 1, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(0, .75f, .125f, .5f, .25f, .5f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, .75f, .125f, .5f, .25f, .5f, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 						
 			return list;
@@ -580,9 +587,9 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		
 		if(pos==35) {
 			
-			boundingArray = ITLib.smartBoundingBox(0, 0, 0, 0, .125f, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, 0, 0, 0, .125f, 1, fl, fw);
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(0, 0, .125f, 0, 0, .125f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, 0, .125f, 0, 0, .125f, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 			
 			return list;
@@ -591,9 +598,9 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 
 		if(pos==38) {
 			
-			boundingArray = ITLib.smartBoundingBox(0, 0, 0, .25f, 0, 1, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, 0, 0, .25f, 0, 1, fl, fw);
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			boundingArray = ITLib.smartBoundingBox(0, 0, .75f, 0, 0, .25f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, 0, .75f, 0, 0, .25f, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 			
 			return list;
@@ -602,7 +609,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		
 		if(pos==39) {
 			
-			boundingArray = ITLib.smartBoundingBox(.125f, .125f, 0, .125f, 0, .125f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(.125f, .125f, 0, .125f, 0, .125f, fl, fw);
 			
 			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 			
@@ -610,7 +617,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		
 		if(pos==44) {
 			
-			boundingArray = ITLib.smartBoundingBox(0, .5625f, .0625f, .0625f, 0, .5f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, .5625f, .0625f, .0625f, 0, .5f, fl, fw);
 			
 			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
 			

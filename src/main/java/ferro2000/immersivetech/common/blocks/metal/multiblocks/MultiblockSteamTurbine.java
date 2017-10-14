@@ -30,14 +30,15 @@ public class MultiblockSteamTurbine implements IMultiblock {
 
 	public static MultiblockSteamTurbine instance = new MultiblockSteamTurbine();
 	
-	static ItemStack[][][] structure = new ItemStack[4][12][3];
+	static ItemStack[][][] structure = new ItemStack[4][10][3];
 	static{
 				
 		for(int h=0;h<4;h++) {
-			for(int l=0;l<12;l++) {
+			for(int l=0;l<10;l++) {
 				for(int w=0;w<3;w++) {
 					
-					if((h==2 && l==1) || 
+					if((h==0 && (l==4 || l==9)) || 
+							(h==2 && l==1) || 
 							(h==2 && l==0 && w==2) ||
 							((l==4 || l==9) && (w==0 || w==2)) || 
 							(h==2 && w==1 && (l==4 || l==9)) ||
@@ -47,38 +48,32 @@ public class MultiblockSteamTurbine implements IMultiblock {
 					}
 					
 					if(h==0) {
-						if(l==11 && (w==0 || w==2)) {
-							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.GENERATOR.getMeta());
-						}else {
+						if(l==0) {
 							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
+						}else if(l==3 || l==5 || l==8) {
+							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
+						}else {
+							structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal,1,BlockTypes_MetalsAll.STEEL.getMeta());
 						}
-					}else if(h==1){
+					}else if(h==1) {
 						if(w==1) {
 							structure[h][l][w] = new ItemStack(IEContent.blockStorage,1,BlockTypes_MetalsIE.STEEL.getMeta());
-						}else if(l==11 && (w==0 || w==2)) {
-							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.COIL_HV.getMeta());
-						}else if(l==0 && w==2) {
+						}else if(w==2 && l==0) {
 							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta());
-						}else if(l<3 && w==0) {
+						}else if(w==0 && l<3) {
 							structure[h][l][w]=new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
-						}else if((w==2 && ((l>0 && l<3) || (l>5 && l<8))) || (w==0 && (l>5 && l<8))) {
+						}else if(l==3 || l==5 || l==8) {
+							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
+						}else {
 							structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal,1,BlockTypes_MetalsAll.STEEL.getMeta());
-						}else {
-							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
 						}
-					}else if(h==2){
-						if(l==11) {
-							if(w==1) {
-								structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.COIL_HV.getMeta());
-							}else {
-								structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.GENERATOR.getMeta());
-							}
-						}else if(l==0){
+					}else if(h==2) {
+						if(l==0) {
 							structure[h][l][w]=new ItemStack(IEContent.blockMetalDevice1,1,BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
-						}else if((l==2 || l==6 || l==7) && (w==0 || w==2)){
-							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1,1,BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
-						}else {
+						}else if(l==3 || l==5 || l==8) {
 							structure[h][l][w]=new ItemStack(IEContent.blockMetalDecoration0,1,BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
+						}else {
+							structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal,1,BlockTypes_MetalsAll.STEEL.getMeta());
 						}
 					}else {
 						if(l==3) {
@@ -104,8 +99,7 @@ public class MultiblockSteamTurbine implements IMultiblock {
 
 	@Override
 	public boolean isBlockTrigger(IBlockState state) {
-		return state.getBlock()==IEContent.blockStorage && 
-				(state.getBlock().getMetaFromState(state)==BlockTypes_MetalsIE.STEEL.getMeta());
+		return Utils.compareToOreName(new ItemStack(state.getBlock(),1,state.getBlock().getMetaFromState(state)), "blockSteel");
 	}
 
 	@Override
@@ -126,10 +120,11 @@ public class MultiblockSteamTurbine implements IMultiblock {
 		}
 				
 		for(int h=-1;h<=2;h++) {
-			for(int l=0;l<=11;l++) {
+			for(int l=0;l<=9;l++) {
 				for(int w=-1;w<=1;w++) {
 										
-					if((h==1 && l==1) || 
+					if((h==-1 && (l==4 || l==9)) || 
+							(h==1 && l==1) || 
 							(h==1 && l==0 && w==1) ||
 							((l==4 || l==9) && (w==-1 || w==1)) || 
 							(h==1 && w==0 && (l==4 || l==9)) ||
@@ -147,7 +142,7 @@ public class MultiblockSteamTurbine implements IMultiblock {
 						TileEntitySteamTurbine tile = (TileEntitySteamTurbine)curr;
 						tile.facing=side;
 						tile.formed=true;
-						tile.pos = (h+1)*36 + l*3 + (w+1);
+						tile.pos = (h+1)*30 + l*3 + (w+1);
 						tile.offset = new int[]{(side==EnumFacing.WEST?-l: side==EnumFacing.EAST?l: side==EnumFacing.NORTH?ww: -ww),h,(side==EnumFacing.NORTH?-l: side==EnumFacing.SOUTH?l: side==EnumFacing.EAST?ww : -ww)};
 						tile.mirrored=mirror;
 						tile.markDirty();
@@ -164,10 +159,11 @@ public class MultiblockSteamTurbine implements IMultiblock {
 	boolean structureCheck(World world, BlockPos startPos, EnumFacing dir, boolean mirror){
 				
 		for(int h=-1;h<=2;h++) {
-			for(int l=0;l<=11;l++) {
+			for(int l=0;l<=9;l++) {
 				for(int w=-1;w<=1;w++) {
 										
-					if((h==1 && l==1) || 
+					if((h==-1 && (l==4 || l==9)) || 
+							(h==1 && l==1) || 
 							(h==1 && l==0 && w==1) ||
 							((l==4 || l==9) && (w==-1 || w==1)) || 
 							(h==1 && w==0 && (l==4 || l==9)) ||
@@ -180,74 +176,62 @@ public class MultiblockSteamTurbine implements IMultiblock {
 					BlockPos pos = startPos.offset(dir, l).offset(dir.rotateY(), ww).add(0, h, 0);
 					
 					if(h==-1) {
-						if(l==11 && (w==-1 || w==1)) {
-							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.GENERATOR.getMeta())){
-								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-								return false;
-							}
-						}else {
+						if(l==0) {
 							if(!Utils.isOreBlockAt(world, pos, "scaffoldingSteel")){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
+						}else if(l==3 || l==5 || l==8) {
+							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())){
+								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+								return false;
+							}
+						}else {
+							if(!Utils.isOreBlockAt(world, pos, "blockSheetmetalSteel")){
+								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+								return false;
+							}
 						}
-					}else if(h==0){
+					}else if(h==0) {
 						if(w==0) {
 							if(!Utils.isOreBlockAt(world, pos, "blockSteel")){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
-						}else if(l==11 && (w==-1 || w==1)) {
-							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.COIL_HV.getMeta())){
-								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-								return false;
-							}
-						}else if(l==0 && w==1) {
+						}else if(w==1 && l==0) {
 							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta())){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
-						}else if(l<3 && w==-1) {
+						}else if(w==-1 && l<3) {
 							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
-						}else if((w==1 && ((l>0 && l<3) || (l>5 && l<8))) || (w==-1 && (l>5 && l<8))) {
+						}else if(l==3 || l==5 || l==8) {
+							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())){
+								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+								return false;
+							}
+						}else {
 							if(!Utils.isOreBlockAt(world, pos, "blockSheetmetalSteel")){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
-						}else {
-							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())){
-								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-								return false;
-							}
 						}
-					}else if(h==1){
-						if(l==11) {
-							if(w==0) {
-								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.COIL_HV.getMeta())){
-									//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-									return false;
-								}
-							}else {
-								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.GENERATOR.getMeta())){
-									//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-									return false;
-								}
-							}
-						}else if(l==0){
+					}else if(h==1) {
+						if(l==0) {
 							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
-						}else if((l==2 || l==6 || l==7) && (w==-1 || w==1)){
-							if(!Utils.isOreBlockAt(world, pos, "scaffoldingSteel")){
+						}else if(l==3 || l==5 || l==8) {
+							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
 						}else {
-							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())){
+							if(!Utils.isOreBlockAt(world, pos, "blockSheetmetalSteel")){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 								return false;
 							}
@@ -280,15 +264,13 @@ public class MultiblockSteamTurbine implements IMultiblock {
 	}
 
 	static final IngredientStack[] materials = new IngredientStack[]{
-			new IngredientStack("scaffoldingSteel", 36),
+			new IngredientStack("scaffoldingSteel", 3),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDevice1, 6, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta())),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 23, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 4, BlockTypes_MetalDecoration0.GENERATOR.getMeta())),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 3, BlockTypes_MetalDecoration0.COIL_HV.getMeta())),
+			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 24, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 4, BlockTypes_MetalDecoration0.RADIATOR.getMeta())),
-			new IngredientStack("blockSheetmetalSteel", 6),
-			new IngredientStack("blockSteel", 12),};
+			new IngredientStack("blockSheetmetalSteel", 27),
+			new IngredientStack("blockSteel", 10),};
 	
 	@Override
 	public IngredientStack[] getTotalMaterials() {
@@ -315,7 +297,7 @@ public class MultiblockSteamTurbine implements IMultiblock {
 	public void renderFormedStructure() {
 		if(renderStack==null)
 			renderStack = new ItemStack(ITContent.blockMetalMultiblock,1,BlockType_MetalMultiblock.STEAM_TURBINE.getMeta());
-		GlStateManager.translate(1.5, .5, .5);
+		GlStateManager.translate(1.5, 1, .5);
 		GlStateManager.rotate(-45, 0, 1, 0);
 		GlStateManager.rotate(-20, 1, 0, 0);
 		GlStateManager.scale(4, 4, 4);

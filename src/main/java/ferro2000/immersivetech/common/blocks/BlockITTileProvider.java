@@ -71,6 +71,9 @@ import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+/**
+ * @author BluSunrize
+ */
 public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlockEnum> extends BlockITBase<E> implements ITileEntityProvider, IColouredBlock
 {
 	private boolean hasColours = false;

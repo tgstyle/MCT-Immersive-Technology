@@ -26,13 +26,13 @@ import net.minecraftforge.fluids.IFluidTank;
 
 public class TileEntitySolarReflector extends TileEntityMultiblockPart<TileEntitySolarReflector> implements IAdvancedSelectionBounds,IAdvancedCollisionBounds {
 	
-	private static final int[] size = {3, 5, 1};
+	private static final int[] size = {5, 1, 3};
+	
+	private boolean sun = false;
 	
 	public TileEntitySolarReflector() {
 		super(size);
 	}
-
-	public boolean sun = false;
 		
 	@Override
 	public void update() {
@@ -45,7 +45,11 @@ public class TileEntitySolarReflector extends TileEntityMultiblockPart<TileEntit
 		}
 	}
 	
-	boolean canSeeSun() {
+	public boolean getSunState() {
+		return this.sun;
+	}
+	
+	private boolean canSeeSun() {
 		
 		BlockPos pos = this.getPos();
 		int hh = 256 - pos.getY();
@@ -86,51 +90,7 @@ public class TileEntitySolarReflector extends TileEntityMultiblockPart<TileEntit
 	}
 
 	@Override
-	public void disassemble() {
-		super.invalidate();
-		if(formed && !world.isRemote)
-		{
-			BlockPos startPos = this.getPos().add(-offset[0],-offset[1],-offset[2]);
-			if(!(offset[0]==0&&offset[1]==0&&offset[2]==0) && !(world.getTileEntity(startPos) instanceof TileEntitySolarReflector))
-				return;
-			
-			int x;
-			int z;
-			
-			for(int yy=-3;yy<=1;yy++)
-				for(int xx=-1;xx<=1;xx++){
-						ItemStack s = null;
-						
-						x = facing==EnumFacing.WEST? 0: facing==EnumFacing.EAST? 0: xx;
-						z = facing==EnumFacing.SOUTH? 0: facing==EnumFacing.NORTH? 0: xx;
-						
-						TileEntity te = world.getTileEntity(startPos.add(x, yy, z));
-						if(te instanceof TileEntitySolarReflector)
-						{
-							s = ((TileEntitySolarReflector)te).getOriginalBlock();
-							((TileEntitySolarReflector)te).formed=false;
-						}
-						if(startPos.add(x, yy, z).equals(getPos()))
-							s = this.getOriginalBlock();
-						if(s!=null && Block.getBlockFromItem(s.getItem())!=null)
-						{
-							if(startPos.add(x, yy, z).equals(getPos()))
-								world.spawnEntity(new EntityItem(world, getPos().getX()+.5,getPos().getY()+.5,getPos().getZ()+.5, s));
-							else
-							{
-								if(Block.getBlockFromItem(s.getItem())==ITContent.blockMetalMultiblock)
-									world.setBlockToAir(startPos.add(x, yy, z));
-								world.setBlockState(startPos.add(x, yy, z), Block.getBlockFromItem(s.getItem()).getStateFromMeta(s.getItemDamage()));
-							}
-						}
-					}
-		}
-		
-	}
-	
-	@Override
 	public float[] getBlockBounds() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

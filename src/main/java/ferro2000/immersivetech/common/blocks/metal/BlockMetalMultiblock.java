@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import ferro2000.immersivetech.common.blocks.BlockITMultiblock;
 import ferro2000.immersivetech.common.blocks.ItemBlockITBase;
+import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityAlternator;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityBoiler;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityDistiller;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarReflector;
@@ -64,6 +65,8 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
 				return new TileEntitySteamTurbine();
 			case BOILER:
 				return new TileEntityBoiler();
+			case ALTERNATOR:
+				return new TileEntityAlternator();
 		}
 		return null;
 	}

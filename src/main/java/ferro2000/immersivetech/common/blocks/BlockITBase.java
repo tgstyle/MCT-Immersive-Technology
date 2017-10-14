@@ -38,6 +38,9 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+/**
+ * @author BluSunrize
+ */
 public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Block implements IIEMetaBlock
 {
 	protected static IProperty[] tempProperties;

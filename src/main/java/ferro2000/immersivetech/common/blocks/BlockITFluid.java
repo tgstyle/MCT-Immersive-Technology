@@ -14,6 +14,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 
+/**
+ * @author BluSunrize
+ */
 public class BlockITFluid extends BlockFluidClassic
 {
 	private int flammability = 0;

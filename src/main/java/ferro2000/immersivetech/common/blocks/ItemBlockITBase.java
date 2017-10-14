@@ -30,6 +30,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+/**
+ * @author BluSunrize
+ */
 public class ItemBlockITBase extends ItemBlock
 {
 	public ItemBlockITBase(Block b)

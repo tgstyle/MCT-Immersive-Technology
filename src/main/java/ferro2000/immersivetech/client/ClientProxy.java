@@ -1,7 +1,5 @@
 package ferro2000.immersivetech.client;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -14,15 +12,19 @@ import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
 import blusunrize.lib.manual.ManualPages;
 import ferro2000.immersivetech.ImmersiveTech;
-import ferro2000.immersivetech.api.craftings.SolarTowerRecipes;
+import ferro2000.immersivetech.client.connectors.ITConnLoader;
+import ferro2000.immersivetech.client.render.TileRenderSteamTurbine;
 import ferro2000.immersivetech.common.CommonProxy;
 import ferro2000.immersivetech.common.ITContent;
 import ferro2000.immersivetech.common.blocks.BlockITFluid;
+import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockAlternator;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockDistiller;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarReflector;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
+import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySteamTurbine;
+import ferro2000.immersivetech.common.blocks.metal.types.BlockType_Connectors;
 import ferro2000.immersivetech.common.items.ItemITBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -41,7 +43,7 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -59,9 +61,13 @@ public class ClientProxy extends CommonProxy{
 		OBJLoader.INSTANCE.addDomain(ImmersiveTech.MODID);
 		IEOBJLoader.instance.addDomain(ImmersiveTech.MODID);
 		MinecraftForge.EVENT_BUS.register(this);
+		ModelLoaderRegistry.registerLoader(new ITConnLoader());
 		
 	}
 	
+	/**
+	 * @author BluSunrize
+	 */
 	@SubscribeEvent
 	public static void registerModels(ModelRegistryEvent evt) {
 		for(Block block : ITContent.registeredITBlocks)
@@ -163,6 +169,8 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public void init(){
 		
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbine.class, new TileRenderSteamTurbine());
+		
 	}
 	
 	@Override
@@ -182,6 +190,12 @@ public class ClientProxy extends CommonProxy{
 		ManualHelper.addEntry("steamTurbine", CAT_IT, 
 				new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", MultiblockSteamTurbine.instance),
 				new ManualPages.Text(ManualHelper.getManual(), "steamTurbine1"));
+		ManualHelper.addEntry("alternator", CAT_IT, 
+				new ManualPageMultiblock(ManualHelper.getManual(), "alternator0", MultiblockAlternator.instance),
+				new ManualPages.Text(ManualHelper.getManual(), "alternator1"),
+				new ManualPages.Image(ManualHelper.getManual(), "alternator2", "immersivetech:textures/misc/alternator.png;0;0;110;50"));
+		ManualHelper.addEntry("redstone", CAT_IT, 
+				new ManualPages.Crafting(ManualHelper.getManual(), "redstone0", new ItemStack(ITContent.blockConnectors, 1, BlockType_Connectors.CONNECTORS_TIMER.getMeta())));
 		
 	}
 	

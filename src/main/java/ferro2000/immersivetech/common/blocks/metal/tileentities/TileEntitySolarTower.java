@@ -40,8 +40,8 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	public FluidTank[] tanks = new FluidTank[]{new FluidTank(32000),new FluidTank(32000)};
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 	
-	public int reflectorNum;
-	public int processTime = 0;
+	private int reflectorNum;
+	private int processTime = 0;
 	
 	public int ref0;
 	public int ref1;
@@ -158,7 +158,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 			
 		}
 
-		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[1], inventory.get(0), inventory.get(1), null);
+		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
 		if (!emptyContainer.isEmpty() && emptyContainer.getCount() > 0)
 		{
 			if(!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), emptyContainer, true))
@@ -222,7 +222,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 						fr = ((TileEntitySolarReflector) tile).facing;
 						if((cont%2==0 && (facing==EnumFacing.NORTH || facing==EnumFacing.SOUTH))||(cont%2!=0 && (facing==EnumFacing.EAST || facing==EnumFacing.WEST))) {
 							if(fr==EnumFacing.NORTH || fr==EnumFacing.SOUTH) {
-								if(((TileEntitySolarReflector) tile).sun) {
+								if(((TileEntitySolarReflector) tile).getSunState()) {
 									ver = true;
 									setReflectorNum(1, cont);
 									refNum++;
@@ -231,7 +231,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 							}
 						}else {
 							if(fr==EnumFacing.EAST || fr==EnumFacing.WEST) {
-								if(((TileEntitySolarReflector) tile).sun) {
+								if(((TileEntitySolarReflector) tile).getSunState()) {
 									ver = true;
 									setReflectorNum(1, cont);
 									refNum++;
@@ -339,7 +339,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 
 	@Override
 	public int[] getEnergyPos() {
-		return null;
+		return new int[0];
 	}
 
 	@Override
@@ -359,7 +359,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 
 	@Override
 	public int[] getOutputSlots() {
-		return null;
+		return new int[0];
 	}
 
 	@Override

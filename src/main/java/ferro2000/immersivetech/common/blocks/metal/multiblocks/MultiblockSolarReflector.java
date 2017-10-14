@@ -65,8 +65,7 @@ public class MultiblockSolarReflector implements IMultiblock{
 
 	@Override
 	public boolean isBlockTrigger(IBlockState state) {
-		return state.getBlock()==IEContent.blockStorage && 
-				(state.getBlock().getMetaFromState(state)==BlockTypes_MetalsIE.SILVER.getMeta());
+		return Utils.compareToOreName(new ItemStack(state.getBlock(),1,state.getBlock().getMetaFromState(state)), "blockSilver");
 	}
 
 	@Override
@@ -156,9 +155,9 @@ public class MultiblockSolarReflector implements IMultiblock{
 	}
 	
 	static final IngredientStack[] materials = new IngredientStack[] {
-			new IngredientStack(new ItemStack(IEContent.blockStorage, 1, BlockTypes_MetalsIE.STEEL.getMeta())),
 			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 2, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta())),
 			new IngredientStack("scaffoldingSteel", 4),
+			new IngredientStack("blockSilver", 1),
 			new IngredientStack("fenceTreatedWood", 6)
 	};
 

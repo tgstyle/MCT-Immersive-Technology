@@ -8,12 +8,15 @@ import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.client.gui.GuiBoiler;
 import ferro2000.immersivetech.client.gui.GuiDistiller;
 import ferro2000.immersivetech.client.gui.GuiSolarTower;
+import ferro2000.immersivetech.client.gui.GuiTimer;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityBoiler;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityDistiller;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarTower;
+import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityTimer;
 import ferro2000.immersivetech.common.gui.ContainerBoiler;
 import ferro2000.immersivetech.common.gui.ContainerDistiller;
 import ferro2000.immersivetech.common.gui.ContainerSolarTower;
+import ferro2000.immersivetech.common.gui.ContainerTimer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -49,6 +52,8 @@ public class CommonProxy implements IGuiHandler {
 				gui = new ContainerSolarTower(player.inventory, (TileEntitySolarTower) tile);
 			if(ID==ITLib.GUIID_Boiler && tile instanceof TileEntityBoiler)
 				gui = new ContainerBoiler(player.inventory, (TileEntityBoiler) tile);
+			if(ID==ITLib.GUIID_Timer && tile instanceof TileEntityTimer)
+				gui = new ContainerTimer(player.inventory, (TileEntityTimer) tile);
 			if(gui!=null)
 				((IGuiTile)tile).onGuiOpened(player, false);
 			return gui;
@@ -66,12 +71,19 @@ public class CommonProxy implements IGuiHandler {
 				gui = new GuiSolarTower(player.inventory, (TileEntitySolarTower) tile);
 			if(ID==ITLib.GUIID_Boiler && tile instanceof TileEntityBoiler) 
 				gui = new GuiBoiler(player.inventory, (TileEntityBoiler) tile);
+			if(ID==ITLib.GUIID_Timer && tile instanceof TileEntityTimer)
+				gui = new GuiTimer(player.inventory, (TileEntityTimer) tile);
 			return gui;
 		}
 		return null;
 	}
 	
 	public EntityPlayer getClientPlayer()
+	{
+		return null;
+	}
+	
+	public World getClientWorld()
 	{
 		return null;
 	}

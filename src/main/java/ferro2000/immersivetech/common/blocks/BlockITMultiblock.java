@@ -19,6 +19,9 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+/**
+ * @author BluSunrize
+ */
 public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEnum> extends BlockITTileProvider<E>
 {
 	public BlockITMultiblock(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockITBase> itemBlock, Object... additionalProperties)
