@@ -40,7 +40,7 @@ public class ITConnLoader implements ICustomModelLoader
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager)
 	{
-		ConnModelReal.cache.clear();
+		ConnModelReal.cache.cleanUp();
 	}
 
 	@Override
