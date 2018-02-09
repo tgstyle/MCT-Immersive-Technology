@@ -521,7 +521,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 					entityIn.motionY=.05;
 					return;
 				}
-				if(entityIn.isCollidedHorizontally)
+				if(entityIn.collidedHorizontally)
 					entityIn.motionY=.2;
 			}
 		}

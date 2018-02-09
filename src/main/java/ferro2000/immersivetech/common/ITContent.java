@@ -41,6 +41,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 
 @Mod.EventBusSubscriber(modid=ImmersiveTech.MODID)
 public class ITContent {
@@ -102,6 +103,10 @@ public class ITContent {
 		/*MATERIALS*/
 		itemMaterial = new ItemITBase("material", 64, "salt");
 		
+		// Register Salt to OreDictionary
+		OreDictionary.registerOre("dustSalt", itemMaterial);
+		OreDictionary.registerOre("itemSalt", itemMaterial);
+		OreDictionary.registerOre("foodSalt", itemMaterial);
 	}
 	
 	public static void init(){
