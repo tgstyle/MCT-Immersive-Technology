@@ -1,0 +1,16 @@
+[
+{
+  "modid": "immersivetech",
+  "name": "Immersive Tech",
+  "description": "More tech for IE",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/FerroO2000/Immersive-Tech",
+  "updateUrl": "",
+  "authorList": ["FerroO2000"],
+  "credits": "",
+  "logoFile": "assets/immersivetech/logo.png",
+  "screenshots": [],
+  "dependencies": []
+}
+]
