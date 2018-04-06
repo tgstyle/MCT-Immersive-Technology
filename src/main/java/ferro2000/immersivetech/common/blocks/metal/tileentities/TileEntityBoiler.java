@@ -296,7 +296,6 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		{
 			TileEntityBoiler master = this.master();
 			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[1].getFluid(), 1000, false);
 
 			if(master==null || master.tanks[1].getFluidAmount()>=master.tanks[1].getCapacity()) {
 				return false;
@@ -309,6 +308,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			}
 			else
 			{
+				FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[1].getFluid(), 1000, false);
 				BoilerRecipes incompleteRecipes1 = BoilerRecipes.findRecipe(resourceClone);
 				BoilerRecipes incompleteRecipes2 = BoilerRecipes.findRecipe(resourceClone2);
 				return incompleteRecipes1 == incompleteRecipes2;
