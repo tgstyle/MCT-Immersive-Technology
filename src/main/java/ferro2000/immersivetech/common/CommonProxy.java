@@ -6,6 +6,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.client.gui.GuiBoiler;
+import ferro2000.immersivetech.client.gui.GuiCokeOvenAdvanced;
 import ferro2000.immersivetech.client.gui.GuiDistiller;
 import ferro2000.immersivetech.client.gui.GuiSolarTower;
 import ferro2000.immersivetech.client.gui.GuiTimer;
@@ -13,7 +14,9 @@ import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityBoiler
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityDistiller;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarTower;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityTimer;
+import ferro2000.immersivetech.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
 import ferro2000.immersivetech.common.gui.ContainerBoiler;
+import ferro2000.immersivetech.common.gui.ContainerCokeOvenAdvanced;
 import ferro2000.immersivetech.common.gui.ContainerDistiller;
 import ferro2000.immersivetech.common.gui.ContainerSolarTower;
 import ferro2000.immersivetech.common.gui.ContainerTimer;
@@ -54,6 +57,8 @@ public class CommonProxy implements IGuiHandler {
 				gui = new ContainerBoiler(player.inventory, (TileEntityBoiler) tile);
 			if(ID==ITLib.GUIID_Timer && tile instanceof TileEntityTimer)
 				gui = new ContainerTimer(player.inventory, (TileEntityTimer) tile);
+			if(ID==ITLib.GUIID_Coke_oven_advanced && tile instanceof TileEntityCokeOvenAdvanced)
+				gui = new ContainerCokeOvenAdvanced(player.inventory, (TileEntityCokeOvenAdvanced) tile);
 			if(gui!=null)
 				((IGuiTile)tile).onGuiOpened(player, false);
 			return gui;
@@ -73,6 +78,8 @@ public class CommonProxy implements IGuiHandler {
 				gui = new GuiBoiler(player.inventory, (TileEntityBoiler) tile);
 			if(ID==ITLib.GUIID_Timer && tile instanceof TileEntityTimer)
 				gui = new GuiTimer(player.inventory, (TileEntityTimer) tile);
+			if(ID==ITLib.GUIID_Coke_oven_advanced && tile instanceof TileEntityCokeOvenAdvanced)
+				gui = new GuiCokeOvenAdvanced(player.inventory, (TileEntityCokeOvenAdvanced) tile);
 			return gui;
 		}
 		return null;

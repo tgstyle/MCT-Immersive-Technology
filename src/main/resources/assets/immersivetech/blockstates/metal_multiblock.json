@@ -22,7 +22,7 @@
 						"y": -45
 					}
 				],
-				"translation": [ 0, 0, 0 ]
+				"translation": [ 0, -.25, -.125 ]
 			}
 		}],
 		"inventory,type=solar_reflector": [{

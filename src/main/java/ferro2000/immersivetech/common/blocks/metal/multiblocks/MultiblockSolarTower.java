@@ -16,6 +16,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -102,7 +103,6 @@ public class MultiblockSolarTower implements IMultiblock {
 				for(int w=-1;w<=1;w++)
 				{
 					if(h==2 && ((l==1 && (w==-1 || w==1)) || (w==0 && (l==0 || l==2)))) {
-						//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 						continue;
 					}
 					
@@ -128,10 +128,6 @@ public class MultiblockSolarTower implements IMultiblock {
 		for(int h=-1;h<=5;h++) {
 			for(int l=0;l<=2;l++) {
 				for(int w=-1;w<=1;w++) {
-					if(h==2 && ((l==1 && (w==-1 || w==1)) || (w==0 && (l==0 || l==2)))) {
-						//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
-						continue;
-					}
 					
 					BlockPos pos = startPos.offset(dir, l).offset(dir.rotateY(), w).add(0, h, 0);
 					
@@ -169,7 +165,7 @@ public class MultiblockSolarTower implements IMultiblock {
 								return false;
 							}
 						}
-					}else if(h>0 && h<5) {
+					}else if(h>0 && h<5 && h!=2) {
 						if((l==1 && (w==-1 || w==1)) || (w==0 && (l==0 || l==2))) {
 							if(!Utils.isOreBlockAt(world, pos, "blockSheetmetalSteel")){
 								//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
@@ -188,6 +184,11 @@ public class MultiblockSolarTower implements IMultiblock {
 						}
 					}else if(h==5) {
 						if(!Utils.isOreBlockAt(world, pos, "scaffoldingSteel")){
+							//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
+							return false;
+						}
+					}else if(h==2 && ((l==1 && (w==-1 || w==1)) || (w==0 && (l==0 || l==2)))) {
+						if(!Utils.isBlockAt(world, pos, Blocks.AIR, 0)){
 							//System.out.println("ERROR AT: h "+h+", l "+l+", w "+w);
 							return false;
 						}
@@ -238,7 +239,7 @@ public class MultiblockSolarTower implements IMultiblock {
 	public void renderFormedStructure() {
 		if(renderStack==null)
 			renderStack = new ItemStack(ITContent.blockMetalMultiblock,1,BlockType_MetalMultiblock.SOLAR_TOWER.getMeta());
-		GlStateManager.translate(1.5, 1, .5);
+		GlStateManager.translate(1.5, 3, .5);
 		GlStateManager.rotate(-45, 0, 1, 0);
 		GlStateManager.rotate(-20, 1, 0, 0);
 		GlStateManager.scale(8,8,8);

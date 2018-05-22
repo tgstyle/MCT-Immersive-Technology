@@ -12,6 +12,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockM
 import blusunrize.immersiveengineering.common.util.Utils;
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.craftings.SolarTowerRecipes;
+import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -47,8 +48,6 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	public int ref1;
 	public int ref2;
 	public int ref3;
-
-	public static int range = 10;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -177,7 +176,8 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 
 		TileEntity tile;
 
-		int maxRange = range;
+		int maxRange = ITConfig.Machines.solarTower_maxRange;
+		int minRange = ITConfig.Machines.solarTower_minRange;
 		int refNum = 0;
 
 		for (int cont = 0; cont < 4; cont++) {
@@ -194,7 +194,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 
 			setReflectorNum(0, cont);
 
-			for (int i = 1; i < maxRange + 2; i++) {
+			for (int i = minRange; i < maxRange + 2; i++) {
 
 				if (cont == 0) {
 					pos = this.getPos().offset(fw, i + 2).add(0, 2, 0);

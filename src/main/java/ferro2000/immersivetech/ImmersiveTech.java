@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.common.IEContent;
 import ferro2000.immersivetech.common.CommonProxy;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.ITContent;
+import ferro2000.immersivetech.common.integration.ITIntegrationModule;
 import ferro2000.immersivetech.common.network.TileMessage;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
@@ -19,7 +21,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = ImmersiveTech.MODID, name = ImmersiveTech.NAME, version = ImmersiveTech.VERSION, dependencies = "required-after:immersiveengineering;")
+@Mod(modid = ImmersiveTech.MODID, name = ImmersiveTech.NAME, version = ImmersiveTech.VERSION, dependencies = "required-after:immersiveengineering;required-after:forge@[14.23.3.2655,);after:jei@[4.7,)")
 
 public class ImmersiveTech {
 	
@@ -43,6 +45,7 @@ public class ImmersiveTech {
 		ITContent.preInit();
 		proxy.preInit();
 		registerVariables();
+		ITIntegrationModule.doModulesPreInit();
 		
 	}
 	
@@ -57,6 +60,7 @@ public class ImmersiveTech {
 		packetHandler.registerMessage(TileMessage.HandlerClient.class, TileMessage.class, messageId++, Side.CLIENT);
 		proxy.preInitEnd();
 		proxy.init();
+		ITIntegrationModule.doModulesInit();
 		proxy.initEnd();
 		
 	}
@@ -65,9 +69,15 @@ public class ImmersiveTech {
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		proxy.postInit();
+		ITIntegrationModule.doModulesPostInit();
 		proxy.postInitEnd();
 	}
 	
+	@Mod.EventHandler
+	public void loadComplete(FMLLoadCompleteEvent event)
+	{
+		ITIntegrationModule.doModulesLoadComplete();
+	}
 	
 	@Mod.EventHandler
 	public void serverStarted(FMLServerStartedEvent event)
@@ -93,12 +103,15 @@ public class ImmersiveTech {
 		Config.manual_int.put("steamTurbine_maxTorque", ITConfig.Machines.steamTurbine_maxTorque);
 		Config.manual_int.put("steamTurbine_maxSpeed", ITConfig.Machines.steamTurbine_maxSpeed);
 		
-		Config.manual_int.put("solarTower_range", ITConfig.Machines.solarTower_range);
+		Config.manual_int.put("solarTower_minRange", ITConfig.Machines.solarTower_minRange);
+		Config.manual_int.put("solarTower_maxRange", ITConfig.Machines.solarTower_maxRange);
 		
 		Config.manual_int.put("boiler_burnTimeModifier", ITConfig.Machines.boiler_burnTimeModifier);
 		
 		Config.manual_int.put("alternator_RfModifier", ITConfig.Machines.alternator_RfModifier);
 		Config.manual_int.put("alternator_energyStorage", ITConfig.Machines.alternator_energyStorage);
+		
+		Config.manual_int.put("cokeOvenPreheater_consumption", ITConfig.Machines.cokeOvenPreheater_consumption);
 		
 	}
 
