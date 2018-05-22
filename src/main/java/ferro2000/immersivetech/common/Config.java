@@ -31,7 +31,11 @@ public class Config {
 			public static int alternator_energyStorage = 1200000;
 			@Comment({"A modifier to apply to the Flux production of the Alternator ((speed*torque) / modifier)"})
 			public static int alternator_RfModifier = 800;
-						
+			/*BLOCK*/
+			/*ENERGY*/
+			@Comment({"The Flux per tick the Coke Oven Preheater will consume to speed up the Coke Oven Advanced"})
+			public static int cokeOvenPreheater_consumption = 32;
+			
 			/*RECIPE*/
 			@Comment({"A modifier to apply to the time of every Solar Tower recipe"})
 			public static int solarTower_timeModifier = 1;
@@ -43,12 +47,14 @@ public class Config {
 			
 			@Comment({"A modifier to apply to the time of every Boiler recipe"})
 			public static int boiler_timeModifier = 1;
-		@Comment({"A modifier to apply to the burn time of fuel into the Boiler: (1000 / fuelBurnTime) * (4 * boiler_burnTimeModifier) mb/t {fuelBurnTime [biodiesel = 125], [fuel = 375], [diesel = 175]}"})
+			@Comment({"A modifier to apply to the burn time of fuel into the Boiler: (1000 / fuelBurnTime) * (4 * boiler_burnTimeModifier) mb/t {fuelBurnTime [biodiesel = 125], [fuel = 375], [diesel = 175]}"})
 			public static int boiler_burnTimeModifier = 1;
 			
 			/*MISC*/
+			@Comment({"The minimun distance between the Solar Tower and the Solar Reflectors"})
+			public static int solarTower_minRange = 5;
 			@Comment({"The max distance between the Solar Tower and the Solar Reflectors"})
-			public static int solarTower_range = 10;
+			public static int solarTower_maxRange = 10;
 			
 		}
 		
@@ -65,8 +71,6 @@ public class Config {
 		DistillerRecipes.energyModifier = ITConfig.Machines.distiller_energyModifier;
 		
 		BoilerRecipes.timeModifier = ITConfig.machines.boiler_timeModifier;
-		
-		TileEntitySolarTower.range = ITConfig.Machines.solarTower_range;
 		
 	}
 

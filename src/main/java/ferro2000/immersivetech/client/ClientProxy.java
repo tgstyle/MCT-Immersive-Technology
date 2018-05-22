@@ -25,6 +25,8 @@ import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTo
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySteamTurbine;
 import ferro2000.immersivetech.common.blocks.metal.types.BlockType_Connectors;
+import ferro2000.immersivetech.common.blocks.metal.types.BlockType_MetalDevice;
+import ferro2000.immersivetech.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import ferro2000.immersivetech.common.items.ItemITBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -172,13 +174,16 @@ public class ClientProxy extends CommonProxy{
 	public void init(){
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbine.class, new TileRenderSteamTurbine());
-		//ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRotor.class, new TileRenderRotor());
 		
 	}
 	
 	@Override
 	public void postInit(){
 		
+		ManualHelper.addEntry("cokeOvenAdvanced", CAT_IT, 
+				new ManualPageMultiblock(ManualHelper.getManual(), "cokeOvenAdvanced0", MultiblockCokeOvenAdvanced.instance),
+				new ManualPages.Text(ManualHelper.getManual(), "cokeOvenAdvanced1"),
+				new ManualPages.Crafting(ManualHelper.getManual(), "cokeOvenAdvanced2", new ItemStack(ITContent.blockMetalDevice, 1, BlockType_MetalDevice.COKE_OVEN_PREHEATER.getMeta())));
 		ManualHelper.addEntry("distiller", CAT_IT, 
 				new ManualPageMultiblock(ManualHelper.getManual(), "distiller0", MultiblockDistiller.instance),
 				new ManualPages.Text(ManualHelper.getManual(), "distiller1"));

@@ -11,6 +11,7 @@ import ferro2000.immersivetech.api.energy.SteamHandler;
 import ferro2000.immersivetech.common.blocks.BlockITBase;
 import ferro2000.immersivetech.common.blocks.BlockITFluid;
 import ferro2000.immersivetech.common.blocks.metal.BlockConnectors;
+import ferro2000.immersivetech.common.blocks.metal.BlockMetalDevice;
 import ferro2000.immersivetech.common.blocks.metal.BlockMetalMultiblock;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockAlternator;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
@@ -20,6 +21,7 @@ import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTo
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityAlternator;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityBoiler;
+import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityCokeOvenPreheater;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityDistiller;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarReflector;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarTower;
@@ -27,6 +29,8 @@ import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySteamT
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityTimer;
 import ferro2000.immersivetech.common.blocks.stone.BlockStoneDecoration;
 import ferro2000.immersivetech.common.blocks.stone.BlockStoneMultiblock;
+import ferro2000.immersivetech.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
+import ferro2000.immersivetech.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
 import ferro2000.immersivetech.common.items.ItemITBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -54,7 +58,7 @@ public class ITContent {
 	/*CONNECTORS*/
 	public static BlockITBase blockConnectors;
 	/*METAL*/
-	//public static BlockITBase blockMetalDevice;
+	public static BlockITBase blockMetalDevice;
 	/*STONE*/
 	public static BlockITBase blockStoneDecoration;
 	/*FLUID BLOCKS*/
@@ -79,7 +83,7 @@ public class ITContent {
 		/*CONNECTORS*/
 		blockConnectors = new BlockConnectors();
 		/*METAL*/
-		//blockMetalDevice = new BlockMetalDevice();
+		blockMetalDevice = new BlockMetalDevice();
 		/*STONE*/
 		blockStoneDecoration = new BlockStoneDecoration();
 		
@@ -122,7 +126,9 @@ public class ITContent {
 		
 		registerTile(TileEntityTimer.class);
 		
-		//registerTile(TileEntityCokeOvenAdvanced.class);
+		registerTile(TileEntityCokeOvenAdvanced.class);
+		
+		registerTile(TileEntityCokeOvenPreheater.class);
 		
 		MultiblockHandler.registerMultiblock(MultiblockDistiller.instance);
 		MultiblockHandler.registerMultiblock(MultiblockSolarTower.instance);
@@ -130,7 +136,7 @@ public class ITContent {
 		MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
 		MultiblockHandler.registerMultiblock(MultiblockBoiler.instance);
 		MultiblockHandler.registerMultiblock(MultiblockAlternator.instance);
-		//MultiblockHandler.registerMultiblock(MultiblockCokeOvenAdvanced.instance);
+		MultiblockHandler.registerMultiblock(MultiblockCokeOvenAdvanced.instance);
 		
 		/*RECIPES*/
 		/*MULTIBLOCKS*/
