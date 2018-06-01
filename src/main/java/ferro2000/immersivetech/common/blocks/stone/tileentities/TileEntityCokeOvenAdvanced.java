@@ -504,12 +504,12 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 	@Override
 	public ItemStack getOriginalBlock() {
 		if(pos<0)
-			return null;
-		ItemStack s = null;
+			return ItemStack.EMPTY;
+		ItemStack s = ItemStack.EMPTY;
 		try{
 			s = MultiblockCokeOvenAdvanced.instance.getStructureManual()[pos/9][pos%9/3][pos%3];
 		}catch(Exception e){e.printStackTrace();}
-		return s!=null?s.copy():null;
+		return s.copy();
 	}
 
 	IItemHandler inputHandler = new IEInventoryHandler(1, this, 0, new boolean[] {true}, new boolean[] {false});

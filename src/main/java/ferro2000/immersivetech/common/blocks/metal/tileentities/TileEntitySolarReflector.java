@@ -82,14 +82,14 @@ public class TileEntitySolarReflector extends TileEntityMultiblockPart<TileEntit
 	@Override
 	public ItemStack getOriginalBlock() {
 		if (pos < 0)
-			return null;
-		ItemStack s = null;
+			return ItemStack.EMPTY;
+		ItemStack s = ItemStack.EMPTY;
 		try {
 			s = MultiblockSolarReflector.instance.getStructureManual()[pos / 3][0][pos % 3];
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return s != null ? s.copy() : null;
+		return s.copy();
 	}
 
 	@Override
