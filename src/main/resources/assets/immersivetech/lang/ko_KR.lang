@@ -64,13 +64,13 @@ ie.manual.entry.cokeOvenAdvanced3=
 ie.manual.entry.distiller.name=증류기
 ie.manual.entry.distiller.subtext=물보가 깨끗합니다.
 ie.manual.entry.distiller0=증류기는 소금물을 증류수와 소금으로 바꾸는 멀티블록 기계입니다.<br>구조물은 위에서 볼 수 있는 것과 같이 건설되며, 중앙의 철 판금의 엔지니어의 망치를 사용하여 제작됩니다.
-ie.manual.entry.distiller1=전면의 조작반에 레드스톤 신호를 부착하면 기계의 공정이 정지되며, 엔지니어의 망치를 사용하면 이러한 동작이 반전될 수 있습니다.<br>물은 파란색 점으로 표시된 왼쪽 해치를 통해 증류기에 주입될 수 있습니다. 오른쪽에 주황색 점이 있는 해치는 유체 출력으로, 뒤쪽에 있는 다른 해치는 아이템 출력으로 사용됩니다.<br>증류수와 소금을 생산하려면 에너지가 필요하다.<br>One bucket of Water produces 500 mB of Distilled Water.
+ie.manual.entry.distiller1=전면의 조작반에 레드스톤 신호를 부착하면 기계의 공정이 정지되며, 엔지니어의 망치를 사용하면 이러한 동작이 반전될 수 있습니다.<br>물은 파란색 점으로 표시된 왼쪽 해치를 통해 증류기에 주입될 수 있습니다. 오른쪽에 주황색 점이 있는 해치는 유체 출력으로, 뒤쪽에 있는 다른 해치는 아이템 출력으로 사용됩니다.<br>증류수와 소금을 생산하려면 에너지가 필요합니다.<br>한 물 양동이는 증류수 500mB을 생산합니다.
 
-ie.manual.entry.solarTower.name=Solar Tower
-ie.manual.entry.solarTower.subtext=The power of the sun
-ie.manual.entry.solarTower0=The Solar Tower is a multiblock structure that uses the light of the sun transforming the water in steam.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Redstone Engineering
-ie.manual.entry.solarTower1=Block.<br>The Solar Tower can produce Steam from Water and <link;distiller;§n§oDistilled Water§r>.<br>One Bucket of Distilled Water produces 750 mB of Steam.<br>One Bucket of Water produces 500 mB of Steam.<br>Water can be input into the Solar Tower via the two hatches at the left and the right that are marked with blue dots. The hatch with the orange dot at the back serves as a fluid output.<br>The Solar Tower needs at least one Solar Reflector to work.
-ie.manual.entry.solarTower2=The Solar Reflector is a multiblock structure that reflects the light of the sun to the center of the Solar Tower.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Silver Block. 
+ie.manual.entry.solarTower.name=태양탑
+ie.manual.entry.solarTower.subtext=태양의 힘
+ie.manual.entry.solarTower0=태양탑은 태양광을 이용해 증기로 물을 변화시키는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며, 중앙 레드스톤 엔지니어링 블록의 엔지니어의 블록을 사용하여 제작됩니다.
+ie.manual.entry.solarTower1=<br>태양탑은 물과 <link;distiller;§n§o증류수§r>로부터 증기를 만듭니다.<br>한 증류수 양동이는 증기 750mB를 생산합니다.<br>한 물 양동이는 증기 500mB를 생산합니다.<br>물은 파란색 점으로 표시된 왼쪽과 오른쪽에 있는 해치 두개를 통해 태양탑으로 들어갈 수 있습니다. 뒤쪽에 주황색 점이 있는 해치가 유체 출력으로 사용됩니다.<br>태양탑이 작동하려면 태양광 반사기가 하나 이상 필요합니다.
+ie.manual.entry.solarTower2=태양광 반사기는 태양광을 태양탑 중앙에 반사시키는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 제작되며, 중앙 은 블록의 엔지니어의 망치를 사용하여 형성됩니다.
 ie.manual.entry.solarTower3=To work, there must not be block between it and the Solar Tower and at the top of the reflector (only in the center), the reflector's figure must fit with the center of the Solar Tower and the distance between the reflector and the Solar Tower must be between <config;i;solarTower_minRange>-<config;i;solarTower_maxRange>. Obviously, it works only during the day.
 
 ie.manual.entry.steamTurbine.name=Steam Turbine
