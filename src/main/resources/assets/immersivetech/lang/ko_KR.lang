@@ -71,24 +71,24 @@ ie.manual.entry.solarTower.subtext=태양의 힘
 ie.manual.entry.solarTower0=태양탑은 태양광을 이용해 증기로 물을 변화시키는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며, 중앙 레드스톤 엔지니어링 블록의 엔지니어의 블록을 사용하여 제작됩니다.
 ie.manual.entry.solarTower1=<br>태양탑은 물과 <link;distiller;§n§o증류수§r>로부터 증기를 만듭니다.<br>한 증류수 양동이는 증기 750mB를 생산합니다.<br>한 물 양동이는 증기 500mB를 생산합니다.<br>물은 파란색 점으로 표시된 왼쪽과 오른쪽에 있는 해치 두개를 통해 태양탑으로 들어갈 수 있습니다. 뒤쪽에 주황색 점이 있는 해치가 유체 출력으로 사용됩니다.<br>태양탑이 작동하려면 태양광 반사기가 하나 이상 필요합니다.
 ie.manual.entry.solarTower2=태양광 반사기는 태양광을 태양탑 중앙에 반사시키는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 제작되며, 중앙 은 블록의 엔지니어의 망치를 사용하여 형성됩니다.
-ie.manual.entry.solarTower3=To work, there must not be block between it and the Solar Tower and at the top of the reflector (only in the center), the reflector's figure must fit with the center of the Solar Tower and the distance between the reflector and the Solar Tower must be between <config;i;solarTower_minRange>-<config;i;solarTower_maxRange>. Obviously, it works only during the day.
+ie.manual.entry.solarTower3=작동하려면 태양탑과 태양탑, 반사기의 상단(중앙에만 있음) 사이에 블록이 없어야 하고 반사기의 상단, 반사기의 수치는 태양탑의 중심과 거리에 맞아야 합니다. 반사기와 태양탑 사이의 거리는 <config;i;solarTower_minRange>과 <config;i;solarTower_maxRange>사이에 있어야 합니다. 확실히, 그것은 낮에만 작동합니다.
 
-ie.manual.entry.steamTurbine.name=Steam Turbine
-ie.manual.entry.steamTurbine.subtext=Boiling breath
-ie.manual.entry.steamTurbine0=The Steam Turbine is a multiblock structure that uses Steam to produce kinetic energy.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Steel Block (short side).
-ie.manual.entry.steamTurbine1=Applying a redstone signal to the control panel at the front will halt the machine's process, this behavior can be inverted by use of the Engineer's Hammer.<br>The fluid pipe in front of the machine rapresents the input of Steam. The kinetic energy output is in the rear of the machine (Steel Block). It produces <config;i;steamTurbine_maxTorque> N*m of torque at the max speed of <config;i;steamTurbine_maxSpeed> Rad/s.<br>To work, it needs an <link;alternator;§o§nAlternator§r>.
+ie.manual.entry.steamTurbine.name=증기 터빈
+ie.manual.entry.steamTurbine.subtext=끓는 숨결
+ie.manual.entry.steamTurbine0=증기 터빈은 증기를 사용하여 운동 에너지를 생성하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 제작되며, 중앙 강철 블록(짧은 쪽)의 엔지니어의 망치를 사용하여 제작됩니다.
+ie.manual.entry.steamTurbine1=전면의 조작반에 레드스톤 신호를 부착하면 기계의 공정이 정지되며, 엔지니어의 망치를 사용하면 이러한 동작이 반전될 수 있습니다.<br>기계 앞에 있는 유체 파이프는 증기의 입력을 나타냅니다. 운동 에너지 출력은 기계 후면(강철 블록)에 있습니다. 최대 속도가 <config;i;steamTurbine_maxSpeed> Rad/s인 <config;i;steamTurbine_maxTorque> N*m의 토크를 생성합니다.<br>작동하려면 <link;alternator;§o§n교류 발전기§r>가 필요합니다.
 
-ie.manual.entry.boiler.name=Boiler
-ie.manual.entry.boiler.subtext=A diesel method
-ie.manual.entry.boiler0=The Boiler is a multiblock structure that uses <link;biodiesel;§o§nDiesel§r> and Water to produce Steam.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron Block (long side).
-ie.manual.entry.boiler1=Applying a redstone signal to the control panel at the front will halt the machine's process, this behavior can be inverted by use of the Engineer's Hammer.<br>Water can be input into the Boiler via hatches at the left that are marked with blue dots. Diesel can be input at the right of the machine. The hatch with the orange dot at the top serves as a fluid output.<br>One bucket of Water produces 500 mB and one of <link;distiller;§n§oDistilled Water§r> produces 750 mB of Steam consuming (1000/burnTime)x<config;i;boiler_burnTimeModifier> mB of Diesel.
+ie.manual.entry.boiler.name=보일러
+ie.manual.entry.boiler.subtext=디젤 방법
+ie.manual.entry.boiler0=보일러는 <link;biodiesel;§o§n정유§r>와 물을 사용하여 증기를 생성하는 멀티블록 구조입니다.<br>이 구조물은 위 그림과 같이 제작되며, 중앙의 철 판금 블록(긴 쪽)에 있는 엔지니어의 망치를 사용하여 제작됩니다.
+ie.manual.entry.boiler1=전면의 조작반에 레드스톤 신호를 부착하면 기계의 공정이 정지되며, 엔지니어의 망치를 사용하면 이러한 동작이 반전될 수 있습니다.<br>물은 파란색 점으로 표시된 왼쪽 해치를 통해 보일러에 입력할 수 있습니다. 기계 우측에서 정유를 입력할 수 있습니다. 상단에 주황색 점이 있는 해치가 유체 출력으로 사용됩니다.<br>한 물 양동이는 증기 500 mB를 생산하고, 한 <link;distiller;§n§o증류수§r> 양동이는 증기 750 mB를 정유 (1000/burnTime)x<config;i;boiler_burnTimeModifier> mB를 소비하면서, 생산합니다.면서 
 
-ie.manual.entry.alternator.name=Alternator
-ie.manual.entry.alternator.subtext=Let's transform
-ie.manual.entry.alternator0=The Alternatori is a multiblock structure that transforms kinetic energy in electricity. .<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Heavy Engineering Block (short side).
-ie.manual.entry.alternator1=To work, it needs a kinetic energy generator right by the side (<link;steamTurbine;§n§oSteam Turbine§r>). The kinetic energy input is at the back of the machine (where there are the Sheetmetal Blocks) and the Flux output are in front-left and front-right. The machine produces (Speed*Torque)/<config;i;alternator_RfModifier> Flux/t.<br>The Alternator can store <config;i;alternator_energyStorage> Flux.
-ie.manual.entry.alternator1=Steam Turbine and Alternator
+ie.manual.entry.alternator.name=교류 발전기
+ie.manual.entry.alternator.subtext=변환 가즈아
+ie.manual.entry.alternator0=교류 발전기는 전기의 운동 에너지를 변환하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며, 중앙 중형 엔지니어링 블록(짧은 쪽)의 엔지니어의 망치를 사용하여 제작됩니다.
+ie.manual.entry.alternator1=작동하려면 측면에 운동 에너지 발전기가 필요합니다(<link;steamTurbine;§n§o증기 터빈§r>). 운동 에너지 입력은 기계의 후면에 있고 플럭스 출력은 전면 왼쪽과 전면 오른쪽에 있습니다. 이 기계는(속도*토크)/<config;i;alternator_RfModifier> Flux/t을 생성합니다.<br>교류 발전기는 <config;i;alternator_energyStorage> Flux을 저장합니다.
+ie.manual.entry.alternator1=증기 터빈과 교류 발전기
 
-ie.manual.entry.redstone.name=Redstone
-ie.manual.entry.redstone.subtext=tick-tock
-ie.manual.entry.redstone0=§6Redstone Timer§r has the function of output a redstone signal depending on the delay inposed on him. The delay time can be set in the Timer’s gui and it has 0.5 Sec of precision before 10 Sec, and 1 Sec after. The Timer can be stopped with a redstone signal.
+ie.manual.entry.redstone.name=레드스톤
+ie.manual.entry.redstone.subtext=틱톡
+ie.manual.entry.redstone0=§6레드스톤 타이머§r는 그에게 부과된 지연에 따라 레드 스톤 신호를 출력하는 기능을 가지고 있습니다. 지연 시간은 타이머 GUI에서 설정할 수 있으며, 지연 시간은 10초 전과 1초 후의 정확도가 0.5초입니다. 타이머는 레드스톤 신호로 중지할 수 있습니다.
