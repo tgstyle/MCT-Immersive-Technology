@@ -46,13 +46,14 @@ public class ImmersiveTech {
 		proxy.preInit();
 		registerVariables();
 		ITIntegrationModule.doModulesPreInit();
+		//ITWireType.init();
 		
 	}
 	
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event)
 	{
-		
+
 		ITContent.init();
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
 		int messageId = 0;
@@ -110,6 +111,7 @@ public class ImmersiveTech {
 		
 		Config.manual_int.put("alternator_RfModifier", ITConfig.Machines.alternator_RfModifier);
 		Config.manual_int.put("alternator_energyStorage", ITConfig.Machines.alternator_energyStorage);
+		Config.manual_int.put("alternator_energyPerTick", ITConfig.Machines.alternator_RfPerTick);
 		
 		Config.manual_int.put("cokeOvenPreheater_consumption", ITConfig.Machines.cokeOvenPreheater_consumption);
 		

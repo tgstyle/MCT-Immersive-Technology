@@ -74,9 +74,13 @@ public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEn
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
+		
 		ItemStack stack = getOriginalBlock(world, pos);
-		if(!stack.isEmpty())
+			
+		if(!stack.isEmpty()) {
 			return stack;
+		}
+		
 		return super.getPickBlock(state, target, world, pos, player);
 	}
 

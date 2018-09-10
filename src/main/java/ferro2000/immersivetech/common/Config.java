@@ -31,6 +31,9 @@ public class Config {
 			public static int alternator_energyStorage = 1200000;
 			@Comment({"A modifier to apply to the Flux production of the Alternator ((speed*torque) / modifier)"})
 			public static int alternator_RfModifier = 800;
+			@Comment({"The max of Flux that the Alternator can output per each energy device connected"})
+			public static int alternator_RfPerTick = 4096;
+			
 			/*BLOCK*/
 			/*ENERGY*/
 			@Comment({"The Flux per tick the Coke Oven Preheater will consume to speed up the Coke Oven Advanced"})

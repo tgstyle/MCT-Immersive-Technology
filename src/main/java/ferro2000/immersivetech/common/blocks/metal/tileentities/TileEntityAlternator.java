@@ -13,6 +13,7 @@ import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxReceiver;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
+import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
@@ -80,14 +81,19 @@ public class TileEntityAlternator extends TileEntityMultiblockPart<TileEntityAlt
 					}
 					
 					tileEntity = Utils.getExistingTileEntity(world, getPos().add(0, h, 0).offset(f, 2));
+					EnumFacing energyFacing = f.getOpposite();
+					
+					if(EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) {
 						
-					if(tileEntity instanceof IFluxReceiver){
+						int output = ITConfig.Machines.alternator_RfPerTick;
 						
-						IFluxReceiver ifr = (IFluxReceiver) tileEntity;
-						int accepted = ifr.receiveEnergy(f.getOpposite(), energyStorage.getEnergyStored(), true);
-						int extracted = energyStorage.extractEnergy(accepted, false);
-						ifr.receiveEnergy(f.getOpposite(), extracted, false);
+						if(EnergyHelper.insertFlux(tileEntity, energyFacing, output, true)>0) {
 							
+							EnergyHelper.insertFlux(tileEntity, energyFacing, output, false);
+							energyStorage.setEnergy(energyStorage.getEnergyStored()-output);
+							
+						}
+						
 					}
 					
 				}

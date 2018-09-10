@@ -7,7 +7,7 @@ import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
 import blusunrize.immersiveengineering.client.gui.elements.GuiButtonIE;
 import blusunrize.immersiveengineering.client.gui.elements.GuiButtonState;
 import ferro2000.immersivetech.ImmersiveTech;
-import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityTimer;
+import ferro2000.immersivetech.common.blocks.connectors.tileentities.TileEntityTimer;
 import ferro2000.immersivetech.common.gui.ContainerTimer;
 import ferro2000.immersivetech.common.network.TileMessage;
 import net.minecraft.client.gui.GuiButton;
