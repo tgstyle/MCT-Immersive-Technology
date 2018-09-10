@@ -7,6 +7,9 @@ import net.minecraft.util.IStringSerializable;
 
 public enum BlockType_Connectors implements IStringSerializable, BlockITBase.IBlockEnum{
 	
+	/*CONNECTORS_TIMER,
+	CONNECTORS_CON_NET;*/
+	
 	CONNECTORS_TIMER;
 
 	@Override

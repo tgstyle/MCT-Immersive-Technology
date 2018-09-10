@@ -10,7 +10,9 @@ import ferro2000.immersivetech.api.craftings.SolarTowerRecipes;
 import ferro2000.immersivetech.api.energy.SteamHandler;
 import ferro2000.immersivetech.common.blocks.BlockITBase;
 import ferro2000.immersivetech.common.blocks.BlockITFluid;
-import ferro2000.immersivetech.common.blocks.metal.BlockConnectors;
+import ferro2000.immersivetech.common.blocks.connectors.BlockConnectors;
+import ferro2000.immersivetech.common.blocks.connectors.tileentities.TileEntityConnectorNet;
+import ferro2000.immersivetech.common.blocks.connectors.tileentities.TileEntityTimer;
 import ferro2000.immersivetech.common.blocks.metal.BlockMetalDevice;
 import ferro2000.immersivetech.common.blocks.metal.BlockMetalMultiblock;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockAlternator;
@@ -26,7 +28,6 @@ import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityDistil
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarReflector;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarTower;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySteamTurbine;
-import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityTimer;
 import ferro2000.immersivetech.common.blocks.stone.BlockStoneDecoration;
 import ferro2000.immersivetech.common.blocks.stone.BlockStoneMultiblock;
 import ferro2000.immersivetech.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
@@ -70,6 +71,9 @@ public class ITContent {
 	/*MATERIALS*/
 	public static Item itemMaterial;
 	
+	/*WIRES*/
+	//public static ItemITWireCoil netCoil;
+	
 	/*FLUIDS*/
 	public static Fluid fluidDistWater;
 	public static Fluid fluidSteam;
@@ -109,6 +113,9 @@ public class ITContent {
 		/*MATERIALS*/
 		itemMaterial = new ItemITBase("material", 64, "salt");
 		
+		/*WIRES*/
+		//netCoil = new ItemITWireCoil();
+		
 	}
 	
 	public static void init(){
@@ -125,6 +132,7 @@ public class ITContent {
 		registerTile(TileEntityAlternator.class);
 		
 		registerTile(TileEntityTimer.class);
+		registerTile(TileEntityConnectorNet.class);
 		
 		registerTile(TileEntityCokeOvenAdvanced.class);
 		

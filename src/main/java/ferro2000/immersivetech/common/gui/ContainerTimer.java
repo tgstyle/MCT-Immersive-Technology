@@ -1,6 +1,6 @@
 package ferro2000.immersivetech.common.gui;
 
-import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityTimer;
+import ferro2000.immersivetech.common.blocks.connectors.tileentities.TileEntityTimer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
