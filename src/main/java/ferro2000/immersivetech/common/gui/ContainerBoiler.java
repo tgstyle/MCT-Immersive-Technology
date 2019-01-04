@@ -1,10 +1,7 @@
 package ferro2000.immersivetech.common.gui;
 
-import java.util.List;
-
 import blusunrize.immersiveengineering.common.gui.ContainerIEBase;
 import blusunrize.immersiveengineering.common.gui.IESlot;
-import ferro2000.immersivetech.api.craftings.BoilerRecipes;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityBoiler;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;

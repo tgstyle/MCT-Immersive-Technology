@@ -18,6 +18,8 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.BlockPos;
 
+import java.io.Console;
+
 public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntitySteamTurbine> {
 	
 	@Override
@@ -57,8 +59,8 @@ public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntity
 		}else {
 			GlStateManager.shadeModel(7424);
 		}
-		
-		GlStateManager.rotate(te.getAnimation().getAnimationRotation() + (te.getAnimation().getAnimationStep()*partialTicks), te.facing.getFrontOffsetX(), 0, te.facing.getFrontOffsetZ());
+
+		GlStateManager.rotate(te.getAnimation().getAnimationRotation() + (te.getAnimation().getAnimationMomentum()*partialTicks), te.facing.getFrontOffsetX(), 0, te.facing.getFrontOffsetZ());
 		
 		worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 		worldRenderer.setTranslation( -.5-blockPos.getX(), -.5-blockPos.getY(),  -.5-blockPos.getZ());

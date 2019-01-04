@@ -3,9 +3,8 @@ package ferro2000.immersivetech.common.blocks.metal.tileentities;
 import java.util.ArrayList;
 import java.util.List;
 
+import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
 import com.google.common.collect.Lists;
-
-import blusunrize.immersiveengineering.api.energy.DieselHandler;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
@@ -13,8 +12,8 @@ import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockM
 import blusunrize.immersiveengineering.common.util.Utils;
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.ITUtils;
-import ferro2000.immersivetech.api.craftings.BoilerRecipes;
-import ferro2000.immersivetech.api.craftings.DistillerRecipes;
+import ferro2000.immersivetech.api.crafting.BoilerFuelRecipe;
+import ferro2000.immersivetech.api.crafting.BoilerRecipe;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,14 +32,24 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler, BoilerRecipes> implements IGuiTile,IAdvancedSelectionBounds,IAdvancedCollisionBounds {
+public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler, IMultiblockRecipe> implements IGuiTile,IAdvancedSelectionBounds,IAdvancedCollisionBounds {
 
 	public TileEntityBoiler() {
 		super(MultiblockBoiler.instance, new int[] {3,3,5}, 0, true);
 	}
 	
-	public FluidTank[] tanks = new FluidTank[] {new FluidTank(12000), new FluidTank(24000), new FluidTank(24000)};
+	public FluidTank[] tanks = new FluidTank[] {
+			new FluidTank(ITConfig.Machines.boiler_fuel_tankSize),
+			new FluidTank(ITConfig.Machines.boiler_input_tankSize),
+			new FluidTank(ITConfig.Machines.boiler_output_tankSize)
+	};
+
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(6, ItemStack.EMPTY);
+	public double heatLevel = 0;
+	public int burnRemaining = 0;
+	public int recipeTimeRemaining = 0;
+	public BoilerFuelRecipe lastFuel;
+	public BoilerRecipe lastRecipe;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket)
@@ -49,6 +58,13 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
 		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
 		tanks[2].readFromNBT(nbt.getCompoundTag("tank2"));
+		heatLevel = nbt.getDouble("heatLevel");
+		burnRemaining = nbt.getInteger("burnRemaining");
+		FluidStack recipeInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("recipe"));
+		if (recipeInput != null) lastRecipe = BoilerRecipe.findRecipe(recipeInput);
+		FluidStack fuelInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("fuel"));
+		if (fuelInput != null) lastFuel = BoilerFuelRecipe.findFuel(fuelInput);
+		recipeTimeRemaining = nbt.getInteger("recipeTimeRemaining");
 		if(!descPacket)
 			inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
 	}
@@ -60,48 +76,97 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
 		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
 		nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound()));
+		nbt.setDouble("heatLevel", heatLevel);
+		nbt.setInteger("burnRemaining", burnRemaining);
+		if (lastRecipe != null && lastRecipe.isValid()) nbt.setTag("recipe", lastRecipe.input.writeToNBT(new NBTTagCompound()));
+		if (lastFuel != null && lastFuel.isValid()) nbt.setTag("fuel", lastFuel.input.writeToNBT(new NBTTagCompound()));
+		nbt.setFloat("recipeTimeRemaining", recipeTimeRemaining);
 		if(!descPacket)
 			nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
-	
+
+	private boolean heatUp() {
+		double previousHeatLevel = heatLevel;
+		if (lastFuel == null) {
+			burnRemaining = 0;
+			return true;
+		}
+		heatLevel = Math.min(lastFuel.heat + heatLevel, ITConfig.Machines.boiler_workingHeatLevel);
+		return previousHeatLevel != heatLevel;
+	}
+
+	private boolean cooldown() {
+		double previousHeatLevel = heatLevel;
+		heatLevel = Math.max(heatLevel - ITConfig.Machines.boiler_heatLossPerTick, 0);
+		return previousHeatLevel != heatLevel;
+	}
+
+	private boolean loseProgress() {
+		int previousProgress = recipeTimeRemaining;
+		if (lastRecipe == null) {
+			recipeTimeRemaining = 0;
+			return true;
+		}
+		recipeTimeRemaining = Math.min(recipeTimeRemaining + ITConfig.Machines.boiler_progressLossInTicks, lastRecipe.time);
+		return previousProgress != recipeTimeRemaining;
+	}
+
+	private boolean gainProgress() {
+		if (lastRecipe == null) {
+			recipeTimeRemaining = 0;
+			return true;
+		}
+		recipeTimeRemaining--;
+		if (recipeTimeRemaining == 0) {
+			tanks[1].drain(lastRecipe.input.amount, true);
+			tanks[2].fillInternal(lastRecipe.output, true);
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	public void update() {
 		super.update();
-		if(world.isRemote || isDummy())
-			return;
+		if(world.isRemote || isDummy()) return;
 		
 		boolean update = false;
-		if(processQueue.size()<this.getProcessQueueMaxLength())
-		{
-			if(!isRSDisabled() && tanks[0].getFluid()!=null && tanks[0].getFluid().getFluid()!=null) {
-				
-				int burnTime = DieselHandler.getBurnTime(tanks[0].getFluid().getFluid());
-				
-				if(burnTime>0) {
-					
-					if(tanks[1].getFluidAmount()>0) {
-						
-						BoilerRecipes recipe = BoilerRecipes.findRecipe(tanks[1].getFluid());
-						if(recipe!=null) {
-							
-							MultiblockProcess<BoilerRecipes> process = new MultiblockProcessInMachine(recipe).setInputTanks(new int[] {1});
-							if(this.addProcessToQueue(process, true)) {
-								
-								int fluidConsumed = (1000 / burnTime) * (4 * ITConfig.Machines.boiler_burnTimeModifier);
-								
-								if(tanks[0].getFluidAmount() >= fluidConsumed) {
-									
-									this.addProcessToQueue(process, false);
-									tanks[0].drain(fluidConsumed, true);
-									update = true;
-									
-								}
-							}
-						}
-					}
-				}	
+
+		if (burnRemaining > 0) {
+			burnRemaining--;
+			if (heatUp()) update = true;
+		} else if (!isRSDisabled() && tanks[0].getFluid() != null) {
+			BoilerFuelRecipe fuel = (
+				lastFuel != null &&
+				lastFuel.isValid() &&
+				tanks[0].getFluid().isFluidEqual(lastFuel.input))?
+				lastFuel : BoilerFuelRecipe.findFuel(tanks[0].getFluid());
+			if (fuel != null && fuel.input.amount <= tanks[0].getFluidAmount()) {
+				lastFuel = fuel;
+				tanks[0].drain(fuel.input.amount, true);
+				burnRemaining = fuel.time;
+				if (heatUp()) update = true;
+			} else if (cooldown()) update = true;
+		} else if (cooldown()) update = true;
+
+		if (heatLevel >= ITConfig.Machines.boiler_workingHeatLevel) {
+			if (recipeTimeRemaining > 0) {
+				if (gainProgress()) update = true;
+			} else if (tanks[1].getFluid() != null) {
+				BoilerRecipe recipe = (
+					lastRecipe != null &&
+					lastRecipe.isValid() &&
+					tanks[1].getFluid().isFluidEqual(lastRecipe.input))?
+					lastRecipe : BoilerRecipe.findRecipe(tanks[1].getFluid());
+				if (recipe != null &&
+					recipe.input.amount <= tanks[1].getFluidAmount() &&
+					recipe.output.amount == tanks[2].fillInternal(recipe.output, false)) {
+					lastRecipe = recipe;
+					recipeTimeRemaining = recipe.time;
+					update = true;
+				}
 			}
-		}
+		} else if (recipeTimeRemaining > 0) if (loseProgress()) update = true;
 
 		if(this.tanks[2].getFluidAmount()>0)
 		{
@@ -120,9 +185,8 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			if(this.tanks[2].getFluidAmount()>0)
 			{
 				FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[2].getFluid(), Math.min(this.tanks[2].getFluidAmount(), 80), false);
-				
-				BlockPos outputPos = this.getPos().add(0,1,0).offset(facing, 1).offset(mirrored? facing.rotateY() : facing.rotateYCCW(),2).offset(EnumFacing.UP);
-				
+
+				BlockPos outputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), mirrored? 2 : -2, 2, 1, facing);
 				IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
 				
 				
@@ -200,8 +264,8 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	@Override
-	protected BoilerRecipes readRecipeFromNBT(NBTTagCompound tag) {
-		return BoilerRecipes.loadFromNBT(tag);
+	protected IMultiblockRecipe readRecipeFromNBT(NBTTagCompound tag) {
+		return null;
 	}
 
 	@Override
@@ -220,7 +284,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	@Override
-	public BoilerRecipes findRecipeForInsertion(ItemStack inserting) {
+	public IMultiblockRecipe findRecipeForInsertion(ItemStack inserting) {
 		return null;
 	}
 
@@ -235,7 +299,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	@Override
-	public boolean additionalCanProcessCheck(MultiblockProcess<BoilerRecipes> process) {
+	public boolean additionalCanProcessCheck(MultiblockProcess<IMultiblockRecipe> process) {
 		return true;
 	}
 
@@ -250,7 +314,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	@Override
-	public void onProcessFinish(MultiblockProcess<BoilerRecipes> process) {
+	public void onProcessFinish(MultiblockProcess<IMultiblockRecipe> process) {
 		
 	}
 
@@ -265,7 +329,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	@Override
-	public float getMinProcessDistance(MultiblockProcess<BoilerRecipes> process) {
+	public float getMinProcessDistance(MultiblockProcess<IMultiblockRecipe> process) {
 		return 0;
 	}
 
@@ -286,40 +350,25 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY())))
 				return new FluidTank[]{master.tanks[0]};
 		}
-		return tanks;
+		return ITUtils.emptyIFluidTankList;
 	}
 
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
 		
-		if(pos == 5 && (side == null || side == (mirrored?facing.rotateY():facing.rotateYCCW())))
-		{
+		if(pos == 5 && (side == null || side == (mirrored?facing.rotateY():facing.rotateYCCW()))) {
 			TileEntityBoiler master = this.master();
-			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
-
-			if(master==null || master.tanks[1].getFluidAmount()>=master.tanks[1].getCapacity()) {
-				return false;
-			}
-				
-			if(master.tanks[1].getFluid()==null)
-			{
-				BoilerRecipes incompleteRecipes = BoilerRecipes.findRecipe(resourceClone);
-				return incompleteRecipes!=null;
-			}
-			else
-			{
-				FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[1].getFluid(), 1000, false);
-				BoilerRecipes incompleteRecipes1 = BoilerRecipes.findRecipe(resourceClone);
-				BoilerRecipes incompleteRecipes2 = BoilerRecipes.findRecipe(resourceClone2);
-				return incompleteRecipes1 == incompleteRecipes2;
-			}
-		}
-		
-		if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY()))) {
-			return DieselHandler.isValidFuel(resource.getFluid());
-		}
-		
-		return false;
+			if(master == null) return false;
+			if (master.tanks[1].fillInternal(resource, false) == 0) return false;
+			if (BoilerRecipe.findRecipe(resource) == null) return false;
+			return true;
+		} else if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY()))) {
+			TileEntityBoiler master = this.master();
+			if(master == null) return false;
+			if (master.tanks[0].fillInternal(resource, false) == 0) return false;
+			if (BoilerFuelRecipe.findFuel(resource) == null) return false;
+			return true;
+		} else return false;
 	}
 
 	@Override
