@@ -2,14 +2,80 @@ package ferro2000.immersivetech.api;
 
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
 import ferro2000.immersivetech.api.energy.MechanicalEnergy;
+import ferro2000.immersivetech.common.Config;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityAlternator;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.IFluidTank;
+
+import java.util.ArrayList;
 
 public class ITUtils {
+
+	public static IFluidTank[] emptyIFluidTankList = new IFluidTank[0];
+
+	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing) {
+		return LocalOffsetToWorldBlockPos(origin, x, y, z, facing, EnumFacing.UP);
+	}
+
+	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing, EnumFacing up) {
+		if (facing.getAxis() == up.getAxis()) throw new IllegalArgumentException("'facing' and 'up' must be perpendicular to each other!");
+		switch (up) {
+			case UP:
+				switch (facing) {
+					case SOUTH: return origin.add(-x, y, z);
+					case NORTH: return origin.add(x, y, -z);
+					case EAST: return origin.add(z, y, x);
+					case WEST: return origin.add(-z, y, -x);
+				} break;
+			case DOWN:
+				switch (facing) {
+					case SOUTH: return origin.add(x, -y, z);
+					case NORTH: return origin.add(-x, -y, -z);
+					case EAST: return origin.add(z, -y, -x);
+					case WEST: return origin.add(-z, -y, x);
+				} break;
+			case NORTH:
+				switch (facing) {
+					case UP: return origin.add(-x, z, -y);
+					case DOWN: return origin.add(x, -z, -y);
+					case EAST: return origin.add(z, x, -y);
+					case WEST: return origin.add(-z, -x, -y);
+				} break;
+			case SOUTH:
+				switch (facing) {
+					case UP: return origin.add(x, z, y);
+					case DOWN: return origin.add(-x, -z, y);
+					case EAST: return origin.add(z, -x, y);
+					case WEST: return origin.add(-z, x, y);
+				} break;
+			case EAST:
+				switch (facing) {
+					case UP: return origin.add(y, z, -x);
+					case DOWN: return origin.add(y, -z, x);
+					case SOUTH: return origin.add(y, x, z);
+					case NORTH: return origin.add(y, -x, -z);
+				} break;
+			case WEST:
+				switch (facing) {
+					case UP: return origin.add(-y, z, x);
+					case DOWN: return origin.add(-y, -z, -x);
+					case SOUTH: return origin.add(-y, -x, z);
+					case NORTH: return origin.add(-y, x, -z);
+				} break;
+		}
+		throw new IllegalArgumentException("This part of the code should never be reached! Has EnumFacing changed?");
+	}
+
+	public static <T> T First(ArrayList<T> list, Object o) {
+		for (T item: list) {
+			if (item.equals(o)) return item;
+		}
+		return null;
+	}
 	
 	public static double[] smartBoundingBox(double A, double B, double C, double D, double minY, double maxY, EnumFacing fl, EnumFacing fw) {
 		
@@ -116,39 +182,12 @@ public class ITUtils {
 		
 	}
 		
-	public static MechanicalEnergyAnimation setRotationAngle(MechanicalEnergyAnimation animation, boolean active) {
-		
-		if(active || animation.getAnimationFadeIn()>0 || animation.getAnimationFadeOut()>0) {
-			
-			int fadeIn = animation.getAnimationFadeIn();
-			int fadeOut = animation.getAnimationFadeOut();
-			float base = 18f;
-			float step = active? base : 0;
-			float rotation = animation.getAnimationRotation();
-			
-			if(animation.getAnimationFadeIn()>0) {
-				
-				step -= (animation.getAnimationFadeIn()/80f) * base;
-				fadeIn--;
-				
-			}
-			
-			if(animation.getAnimationFadeOut()>0) {
-				
-				step += (animation.getAnimationFadeOut()/80f) * base;
-				fadeOut--;
-				
-			}
-			
-			rotation += step;
-			rotation %= 360;
-			
-			return new MechanicalEnergyAnimation(fadeIn, fadeOut, rotation, step);
-			
-		}
-		
-		return new MechanicalEnergyAnimation(0,0,animation.getAnimationRotation(),0);
-		
+	public static boolean setRotationAngle(MechanicalEnergyAnimation animation, float rotationSpeed) {
+        float oldMomentum = animation.getAnimationMomentum();
+		float rotateTo = (animation.getAnimationRotation() + rotationSpeed) % 360;
+		animation.setAnimationRotation(rotateTo);
+        animation.setAnimationMomentum(rotationSpeed);
+        return (oldMomentum != rotationSpeed);
 	}
 
 	public static MechanicalEnergyAnimation getMechanicalEnergyAnimation(World world, BlockPos startPos) {

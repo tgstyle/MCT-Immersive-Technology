@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxProvider;
-import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxReceiver;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
@@ -27,15 +26,19 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import scala.Console;
 
 public class TileEntityAlternator extends TileEntityMultiblockPart<TileEntityAlternator> implements IMechanicalEnergy, IAdvancedSelectionBounds,  IAdvancedCollisionBounds, IFluxProvider{
 
 	FluxStorage energyStorage = new FluxStorage(ITConfig.Machines.alternator_energyStorage);
 	public MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
+
+	private BlockPos[] EnergyOutputPositions = new BlockPos[6];
 	
 	private static int[] size = new int[] {3,4,3};
 		
@@ -43,61 +46,40 @@ public class TileEntityAlternator extends TileEntityMultiblockPart<TileEntityAlt
 		super(size);
 	}
 
+	public int energyGenerated() {
+		float maxEnergy = ITConfig.Machines.mechanicalEnergy_maxSpeed * ITConfig.Machines.mechanicalEnergy_maxTorque;
+		int gen = Math.round((mechanicalEnergy.getEnergy() / maxEnergy) * ITConfig.Machines.alternator_RfPerTick);
+		return gen;
+	}
+
 	@Override
 	public void update() {
 		
-		if(!world.isRemote && formed && pos==13) {
+		if (!world.isRemote && formed && pos==13) {
 			
-			if(ITUtils.checkMechanicalEnergyTransmitter(world, getPos())) {
-				
-				mechanicalEnergy = ITUtils.getMechanicalEnergy(world, getPos());
-				
-			}
+			if (ITUtils.checkMechanicalEnergyTransmitter(world, getPos())) mechanicalEnergy = ITUtils.getMechanicalEnergy(world, getPos());
 			
-			if(mechanicalEnergy.getEnergy()>0) {
-				this.energyStorage.modifyEnergyStored(mechanicalEnergy.getEnergy() / ITConfig.Machines.alternator_RfModifier);
-			}
-			
-			if(energyStorage.getEnergyStored()>0) {
-				
-				TileEntity tileEntity;
-				EnumFacing f;
-				int h = 0;
-				
-				for(int i=0;i<6;i++){
-					
-					f = facing;
-					
-					if(i<3) {
-						
-						f = f.rotateYCCW();
-						h = i-1;
-						
-					}else {
-						
-						f = f.rotateY();
-						h = i-4;
-						
-					}
-					
-					tileEntity = Utils.getExistingTileEntity(world, getPos().add(0, h, 0).offset(f, 2));
-					EnumFacing energyFacing = f.getOpposite();
-					
-					if(EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) {
-						
-						int output = ITConfig.Machines.alternator_RfPerTick;
-						
-						if(EnergyHelper.insertFlux(tileEntity, energyFacing, output, true)>0) {
-							
-							EnergyHelper.insertFlux(tileEntity, energyFacing, output, false);
-							energyStorage.setEnergy(energyStorage.getEnergyStored()-output);
-							
-						}
-						
-					}
-					
-				}
-				
+			if (mechanicalEnergy.getEnergy()>0) this.energyStorage.modifyEnergyStored(energyGenerated());
+
+			TileEntity tileEntity;
+			for(int i=0;i<6;i++){
+				int currentEnergy = energyStorage.getEnergyStored();
+				if(currentEnergy == 0) break;
+				if (EnergyOutputPositions[i] == null)
+					EnergyOutputPositions[i] = ITUtils.LocalOffsetToWorldBlockPos(getPos(), i < 3? -2 : 2, i < 3? i - 1 : i - 4, 0, facing);
+
+				tileEntity = Utils.getExistingTileEntity(world, EnergyOutputPositions[i]);
+				EnumFacing energyFacing = i < 3? facing.rotateY() : facing.rotateYCCW();
+
+				if (!EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) continue;
+
+				int canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, ITConfig.Machines.alternator_RfPerTickPerPort), true);
+
+				if (canReceiveAmount == 0) continue;
+
+				EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
+				energyStorage.setEnergy(currentEnergy - canReceiveAmount);
+
 			}
 			
 		}
@@ -106,13 +88,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart<TileEntityAlt
 	
 	public boolean canRunMechanicalEnergy() {
 		
-		if(energyStorage.getEnergyStored() < energyStorage.getMaxEnergyStored()) {
-			
-			return true;
-			
-		}
-		
-		return false;
+		return true;
 		
 	}
 	

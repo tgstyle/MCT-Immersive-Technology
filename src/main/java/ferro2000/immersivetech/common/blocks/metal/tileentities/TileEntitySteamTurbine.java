@@ -3,33 +3,33 @@ package ferro2000.immersivetech.common.blocks.metal.tileentities;
 import java.util.ArrayList;
 import java.util.List;
 
+import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.Lists;
 
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
-import blusunrize.immersiveengineering.api.energy.DieselHandler;
-import blusunrize.immersiveengineering.common.Config.IEConfig;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
-import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
+import ferro2000.immersivetech.api.crafting.SteamTurbineRecipe;
 import ferro2000.immersivetech.api.energy.MechanicalEnergy;
-import ferro2000.immersivetech.api.energy.SteamHandler;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntitySteamTurbine, IMultiblockRecipe>
 		implements IAdvancedSelectionBounds, IAdvancedCollisionBounds, IMechanicalEnergy {
@@ -38,18 +38,21 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 		super(MultiblockSteamTurbine.instance, new int[] { 4, 10, 3 }, 0, true);
 	}
 
-	public FluidTank[] tanks = new FluidTank[] { new FluidTank(24000) };
+	public BlockPos fluidOutputPos;
+	public int burnRemaining = 0;
+	public FluidTank[] tanks = new FluidTank[] { new FluidTank(ITConfig.Machines.steamTurbine_input_tankSize), new FluidTank(ITConfig.Machines.steamTurbine_output_tankSize) };
 	public MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
-	private boolean active = false;
+	public SteamTurbineRecipe lastRecipe;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 		tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
-		active = nbt.getBoolean("active");
+		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
 		mechanicalEnergy.readFromNBT(nbt);
 		animation.readFromNBT(nbt);
+		burnRemaining = nbt.getInteger("burnRemaining");
 
 	}
 
@@ -57,10 +60,37 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
-		nbt.setBoolean("active", active);
+		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
 		mechanicalEnergy.writeToNBT(nbt);
 		animation.writeToNBT(nbt);
+		nbt.setInteger("burnRemaining", burnRemaining);
 
+	}
+
+	private void speedUp() {
+		int newSpeed = Math.min(ITConfig.Machines.mechanicalEnergy_maxSpeed, mechanicalEnergy.getSpeed() + ITConfig.Machines.steamTurbine_speedGainPerTick);
+		int newTorque = Math.min(ITConfig.Machines.mechanicalEnergy_maxTorque, mechanicalEnergy.getTorque() + ITConfig.Machines.steamTurbine_torqueGainPerTick);
+		mechanicalEnergy.setMechanicalEnergy(newTorque, newSpeed);
+	}
+
+	private void speedDown() {
+		int newSpeed = Math.max(0, mechanicalEnergy.getSpeed() - ITConfig.Machines.steamTurbine_speedLossPerTick);
+		int newTorque = Math.max(0, mechanicalEnergy.getTorque() - ITConfig.Machines.steamTurbine_torqueLossPerTick);
+		mechanicalEnergy.setMechanicalEnergy(newTorque, newSpeed);
+	}
+
+	private void pumpOutputOut() {
+		if (tanks[1].getFluidAmount() == 0) return;
+		if (fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, 2, 8, facing);
+		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, facing.getOpposite());
+		if(output == null) return;
+		FluidStack out = tanks[1].getFluid();
+		int accepted = output.fill(out, false);
+		if(accepted == 0) return;
+		int drained = output.fill(Utils.copyFluidStackWithAmount(out,Math.min(out.amount, accepted),false), true);
+		this.tanks[1].drain(drained, true);
+		this.markDirty();
+		this.markContainingBlockForUpdate(null);
 	}
 
 	@Override
@@ -68,66 +98,41 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 
 		super.update();
 
-		if (isDummy()) {
+		if (isDummy()) return;
 
-			return;
-
+		float rotationSpeed = mechanicalEnergy.getSpeed() == 0? 0f : (
+				(float)mechanicalEnergy.getSpeed() /
+				(float)ITConfig.Machines.mechanicalEnergy_maxSpeed) * ITConfig.Machines.steamTurbine_maxRotationSpeed;
+		if (ITUtils.setRotationAngle(animation, rotationSpeed) && !world.isRemote) {
+			this.markDirty();
+			this.markContainingBlockForUpdate(null);
 		}
 
-		animation = ITUtils.setRotationAngle(animation, active);
+		if (world.isRemote) return;
 
-		if (!world.isRemote) {
+		if (burnRemaining > 0) {
+			burnRemaining--;
+			speedUp();
+		} else if (!isRSDisabled() && tanks[0].getFluid() != null && tanks[0].getFluid().getFluid() != null
+				&& ITUtils.checkMechanicalEnergyReceiver(world, getPos())
+				&& ITUtils.checkAlternatorStatus(world, getPos())) {
 
-			boolean prevActive = active;
+			SteamTurbineRecipe recipe = (
+				lastRecipe != null &&
+				lastRecipe.isValid() &&
+				tanks[0].getFluid().isFluidEqual(lastRecipe.input))?
+				lastRecipe : SteamTurbineRecipe.findFuel(tanks[0].getFluid());
+			if (recipe != null && recipe.input.amount <= tanks[0].getFluidAmount()) {
+				lastRecipe = recipe;
+				tanks[0].drain(recipe.input.amount, true);
+				burnRemaining = recipe.time;
+				if (recipe.output != null) tanks[1].fill(recipe.output, true);
+				speedUp();
+			} else speedDown();
 
-			if (!isRSDisabled() && tanks[0].getFluid() != null && tanks[0].getFluid().getFluid() != null
-					&& ITUtils.checkMechanicalEnergyReceiver(world, getPos())
-					&& ITUtils.checkAlternatorStatus(world, getPos())) {
+		} else speedDown();
 
-				int burnTime = SteamHandler.getBurnTime(tanks[0].getFluid().getFluid());
-
-				if (burnTime > 0) {
-
-					int fluidConsumed = ((1000 / burnTime) / 2) * ITConfig.Machines.steamTurbine_burnTimeModifier;
-
-					if (tanks[0].getFluidAmount() >= fluidConsumed) {
-
-						if (!active) {
-
-							active = true;
-							animation.setAnimationFadeIn(80);
-
-						}
-
-						mechanicalEnergy.setMechanicalEnergy(ITConfig.Machines.steamTurbine_maxTorque,
-								ITConfig.Machines.steamTurbine_maxSpeed);
-						tanks[0].drain(fluidConsumed, true);
-
-					} else if (active) {
-
-						mechanicalEnergy.setMechanicalEnergy(0, 0);
-						active = false;
-						animation.setAnimationFadeOut(160);
-
-					}
-
-				}
-
-			} else if (active) {
-
-				active = false;
-				animation.setAnimationFadeOut(160);
-				mechanicalEnergy.setMechanicalEnergy(0, 0);
-
-			}
-
-			if (prevActive != active) {
-				this.markDirty();
-				this.markContainingBlockForUpdate(null);
-			}
-
-		}
-
+		pumpOutputOut();
 	}
 
 	@Override
@@ -138,21 +143,24 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
 		TileEntitySteamTurbine master = master();
-		if (master != null && pos == 30 && (side == null || side == facing.getOpposite()))
-			return master.tanks;
-		return new FluidTank[0];
+		if (master != null) {
+			if (pos == 30 && (side == null || side == facing.getOpposite())) return new FluidTank[]{master.tanks[0]};
+			else if (pos == 112 && (side == null || side == facing)) return new FluidTank[]{master.tanks[1]};
+		}
+
+		return ITUtils.emptyIFluidTankList;
 	}
 
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resources) {
-		if (resources == null)
-			return false;
-		return SteamHandler.isValidSteam(resources.getFluid());
+		return (resources != null && pos == 30 &&
+				(side == null || side == facing.getOpposite()) &&
+				SteamTurbineRecipe.findFuel(resources) != null);
 	}
 
 	@Override
 	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
-		return false;
+		return (pos == 112 && (side == null || side == facing));
 	}
 
 	@Override
@@ -535,7 +543,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 
 		if (pos == 112) {
 
-			boundingArray = ITUtils.smartBoundingBox(.625f, 0, .125f, .125f, .125f, .875f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0, 0, .125f, .125f, .125f, .875f, fl, fw);
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1],
 					boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),
 							getPos().getY(), getPos().getZ()));
@@ -610,7 +618,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 
 	@Override
 	public int[] getOutputTanks() {
-		return new int[0];
+		return new int[] {1};
 	}
 
 	@Override
