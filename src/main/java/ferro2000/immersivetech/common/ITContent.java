@@ -182,18 +182,18 @@ public class ITContent {
 		}
 
 		if (Machines.enable_solarTower && Machines.register_solarTower_recipes) {
-			SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 100), new FluidStack(FluidRegistry.WATER, 200), 10);
-			SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 150), new FluidStack(fluidDistWater, 200), 10);
+			SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 500), new FluidStack(FluidRegistry.WATER, 100), 1);
+			SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 750), new FluidStack(fluidDistWater, 100), 1);
 		}
 
 		if (Machines.enable_boiler && Machines.register_boiler_recipes) {
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 500), new FluidStack(FluidRegistry.WATER, 100), 20);
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 750), new FluidStack(fluidDistWater, 100), 20);
-			BoilerFuelRecipe.addFuel(new FluidStack(IEContent.fluidBiodiesel, 1000), 100, 10);
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 500), new FluidStack(FluidRegistry.WATER, 100), 1);
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 750), new FluidStack(fluidDistWater, 100), 1);
+			BoilerFuelRecipe.addFuel(new FluidStack(IEContent.fluidBiodiesel, 5), 1, 10);
 		}
 
 		if (Machines.enable_steamTurbine && Machines.register_steamTurbine_recipes) {
-			SteamTurbineRecipe.addFuel(new FluidStack(fluidDistWater, 1000), new FluidStack(fluidSteam, 5000), 20);
+			SteamTurbineRecipe.addFuel(null, new FluidStack(fluidSteam, 500), 1);
 		}
 	}
 	
