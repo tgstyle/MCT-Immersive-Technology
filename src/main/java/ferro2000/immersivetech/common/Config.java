@@ -70,9 +70,6 @@ public class Config {
 			@Comment({"The Flux per tick the Coke Oven Preheater will consume to speed up the Coke Oven Advanced"})
 			public static int cokeOvenPreheater_consumption = 32;
 
-			@Comment({"A modifier to apply to the burn time of fuel into the Boiler: (1000 / fuelBurnTime) * (4 * boiler_burnTimeModifier) mb/t {fuelBurnTime [biodiesel = 125], [fuel = 375], [diesel = 175]}"})
-			public static int boiler_burnTimeModifier = 1;
-
 			@Comment({"The capacity of the fuel tank for the Boiler"})
 			public static int boiler_fuel_tankSize = 2000;
 			@Comment({"The capacity of the input tank for the Boiler"})
