@@ -42,6 +42,8 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	public FluidTank[] tanks = new FluidTank[] {new FluidTank(12000), new FluidTank(24000), new FluidTank(24000)};
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(6, ItemStack.EMPTY);
 
+	public boolean active = false;
+
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket)
 	{
@@ -49,6 +51,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
 		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
 		tanks[2].readFromNBT(nbt.getCompoundTag("tank2"));
+		active = nbt.getBoolean("active");
 		if(!descPacket)
 			inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
 	}
@@ -60,6 +63,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
 		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
 		nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound()));
+		nbt.setBoolean("active", active);
 		if(!descPacket)
 			nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
@@ -73,6 +77,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		boolean update = false;
 		if(processQueue.size()<this.getProcessQueueMaxLength())
 		{
+			active = false;
 			if(!isRSDisabled() && tanks[0].getFluid()!=null && tanks[0].getFluid().getFluid()!=null) {
 				
 				int burnTime = DieselHandler.getBurnTime(tanks[0].getFluid().getFluid());
@@ -94,13 +99,15 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 									this.addProcessToQueue(process, false);
 									tanks[0].drain(fluidConsumed, true);
 									update = true;
-									
+									active = true;
 								}
 							}
 						}
 					}
 				}	
 			}
+		} else {
+			active = true;
 		}
 
 		if(this.tanks[2].getFluidAmount()>0)
