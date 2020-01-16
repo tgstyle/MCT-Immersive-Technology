@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import blusunrize.immersiveengineering.common.util.IELogger;
+import ferro2000.immersivetech.common.integration.Crafttweaker.CraftTweakerHelper;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,7 +25,8 @@ public abstract class ITIntegrationModule {
 
 	static
 	{
-		//eventual other mods
+		moduleClasses.put("crafttweaker", CraftTweakerHelper.class);
+		moduleClasses.put("theoneprobe", OneProbeHelper.class);
 	}
 	
 	public static void doModulesPreInit()

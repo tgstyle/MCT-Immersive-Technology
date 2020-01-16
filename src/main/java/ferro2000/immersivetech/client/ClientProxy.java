@@ -195,10 +195,12 @@ public class ClientProxy extends CommonProxy{
 				new ManualPages.Text(ManualHelper.getManual(), "solarTower3"));
 		ManualHelper.addEntry("boiler", CAT_IT, 
 				new ManualPageMultiblock(ManualHelper.getManual(), "boiler0", MultiblockBoiler.instance),
-				new ManualPages.Text(ManualHelper.getManual(), "boiler1"));
+				new ManualPages.Text(ManualHelper.getManual(), "boiler1"),
+				new ManualPages.Text(ManualHelper.getManual(), "boiler2"));
 		ManualHelper.addEntry("steamTurbine", CAT_IT, 
 				new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", MultiblockSteamTurbine.instance),
-				new ManualPages.Text(ManualHelper.getManual(), "steamTurbine1"));
+				new ManualPages.Text(ManualHelper.getManual(), "steamTurbine1"),
+				new ManualPages.Text(ManualHelper.getManual(), "steamTurbine2"));
 		ManualHelper.addEntry("alternator", CAT_IT, 
 				new ManualPageMultiblock(ManualHelper.getManual(), "alternator0", MultiblockAlternator.instance),
 				new ManualPages.Text(ManualHelper.getManual(), "alternator1"),

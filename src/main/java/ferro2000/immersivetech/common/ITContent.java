@@ -3,11 +3,14 @@ package ferro2000.immersivetech.common;
 import java.util.ArrayList;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
+import blusunrize.immersiveengineering.common.IEContent;
 import ferro2000.immersivetech.ImmersiveTech;
-import ferro2000.immersivetech.api.craftings.BoilerRecipes;
+import ferro2000.immersivetech.api.crafting.BoilerFuelRecipe;
+import ferro2000.immersivetech.api.crafting.BoilerRecipe;
+import ferro2000.immersivetech.api.crafting.SteamTurbineRecipe;
 import ferro2000.immersivetech.api.craftings.DistillerRecipes;
 import ferro2000.immersivetech.api.craftings.SolarTowerRecipes;
-import ferro2000.immersivetech.api.energy.SteamHandler;
+import ferro2000.immersivetech.common.Config.ITConfig.Machines;
 import ferro2000.immersivetech.common.blocks.BlockITBase;
 import ferro2000.immersivetech.common.blocks.BlockITFluid;
 import ferro2000.immersivetech.common.blocks.connectors.BlockConnectors;
@@ -37,6 +40,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -124,47 +128,73 @@ public class ITContent {
 		
 		/*BLOCKS*/
 		/*MULTIBLOCKS*/
-		registerTile(TileEntityDistiller.class);
-		registerTile(TileEntitySolarTower.class);
-		registerTile(TileEntitySolarReflector.class);
-		registerTile(TileEntitySteamTurbine.class);
-		registerTile(TileEntityBoiler.class);
-		registerTile(TileEntityAlternator.class);
-		
+		if (Machines.enable_distiller) {
+			registerTile(TileEntityDistiller.class);
+			MultiblockHandler.registerMultiblock(MultiblockDistiller.instance);
+		}
+
+		if (Machines.enable_alternator) {
+			registerTile(TileEntityAlternator.class);
+			MultiblockHandler.registerMultiblock(MultiblockAlternator.instance);
+		}
+
+		if (Machines.enable_boiler) {
+			registerTile(TileEntityBoiler.class);
+			MultiblockHandler.registerMultiblock(MultiblockBoiler.instance);
+		}
+
+		if (Machines.enable_cokeOvenAdvanced) {
+			registerTile(TileEntityCokeOvenAdvanced.class);
+			MultiblockHandler.registerMultiblock(MultiblockCokeOvenAdvanced.instance);
+			registerTile(TileEntityCokeOvenPreheater.class);
+		}
+
+		if (Machines.enable_solarReflector) {
+			registerTile(TileEntitySolarReflector.class);
+			MultiblockHandler.registerMultiblock(MultiblockSolarReflector.instance);
+		}
+
+		if (Machines.enable_solarTower) {
+			registerTile(TileEntitySolarTower.class);
+			MultiblockHandler.registerMultiblock(MultiblockSolarTower.instance);
+		}
+
+		if (Machines.enable_steamTurbine) {
+			registerTile(TileEntitySteamTurbine.class);
+			MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
+		}
+
 		registerTile(TileEntityTimer.class);
 		registerTile(TileEntityConnectorNet.class);
-		
-		registerTile(TileEntityCokeOvenAdvanced.class);
-		
-		registerTile(TileEntityCokeOvenPreheater.class);
-		
-		MultiblockHandler.registerMultiblock(MultiblockDistiller.instance);
-		MultiblockHandler.registerMultiblock(MultiblockSolarTower.instance);
-		MultiblockHandler.registerMultiblock(MultiblockSolarReflector.instance);
-		MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
-		MultiblockHandler.registerMultiblock(MultiblockBoiler.instance);
-		MultiblockHandler.registerMultiblock(MultiblockAlternator.instance);
-		MultiblockHandler.registerMultiblock(MultiblockCokeOvenAdvanced.instance);
-		
-		/*RECIPES*/
-		/*MULTIBLOCKS*/
-		DistillerRecipes.addRecipe(new FluidStack(fluidDistWater, 100), new FluidStack(FluidRegistry.WATER, 200), new ItemStack(itemMaterial, 1, 0), 50, 1, 0.001F);
-		
-		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 100), new FluidStack(FluidRegistry.WATER, 200), 10);
-		SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 150), new FluidStack(fluidDistWater, 200), 10);
-		
-		BoilerRecipes.addRecipe(new FluidStack(fluidSteam, 100), new FluidStack(FluidRegistry.WATER, 200), 10);
-		BoilerRecipes.addRecipe(new FluidStack(fluidSteam, 150), new FluidStack(fluidDistWater, 200), 10);
-		
-		/*HANDLER*/
-		/*STEAM*/
-		SteamHandler.registerSteam(fluidSteam, 50);
-		SteamHandler.registerSteam(FluidRegistry.getFluid("steam"), 50);
-		
 		OreDictionary.registerOre("dustSalt", itemMaterial);
 		OreDictionary.registerOre("itemSalt", itemMaterial);
 		OreDictionary.registerOre("foodSalt", itemMaterial);
 		
+	}
+
+	@SubscribeEvent
+	public static void registerRecipes(RegistryEvent.Register<IRecipe> event)
+	{
+		/*RECIPES*/
+		/*MULTIBLOCKS*/
+		if (Machines.enable_distiller && Machines.register_distiller_recipes) {
+			DistillerRecipes.addRecipe(new FluidStack(fluidDistWater, 100), new FluidStack(FluidRegistry.WATER, 200), new ItemStack(itemMaterial, 1, 0), 50, 1, 0.001F);
+		}
+
+		if (Machines.enable_solarTower && Machines.register_solarTower_recipes) {
+			SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 500), new FluidStack(FluidRegistry.WATER, 100), 1);
+			SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 750), new FluidStack(fluidDistWater, 100), 1);
+		}
+
+		if (Machines.enable_boiler && Machines.register_boiler_recipes) {
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 500), new FluidStack(FluidRegistry.WATER, 100), 1);
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 750), new FluidStack(fluidDistWater, 100), 1);
+			BoilerFuelRecipe.addFuel(new FluidStack(IEContent.fluidBiodiesel, 5), 1, 10);
+		}
+
+		if (Machines.enable_steamTurbine && Machines.register_steamTurbine_recipes) {
+			SteamTurbineRecipe.addFuel(null, new FluidStack(fluidSteam, 500), 1);
+		}
 	}
 	
 	public static void registerTile(Class<? extends TileEntity> tile){

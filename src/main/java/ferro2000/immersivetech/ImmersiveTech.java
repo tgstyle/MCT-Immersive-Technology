@@ -100,16 +100,14 @@ public class ImmersiveTech {
 	};
 	
 	public void registerVariables() {
-		
-		Config.manual_int.put("steamTurbine_maxTorque", ITConfig.Machines.steamTurbine_maxTorque);
-		Config.manual_int.put("steamTurbine_maxSpeed", ITConfig.Machines.steamTurbine_maxSpeed);
+		Config.manual_int.put("steamTurbine_timeToMax", (ITConfig.Machines.mechanicalEnergy_maxSpeed / ITConfig.Machines.steamTurbine_speedGainPerTick)/20);
 		
 		Config.manual_int.put("solarTower_minRange", ITConfig.Machines.solarTower_minRange);
 		Config.manual_int.put("solarTower_maxRange", ITConfig.Machines.solarTower_maxRange);
+
+		Config.manual_double.put("boiler_cooldownTime", ((ITConfig.Machines.boiler_workingHeatLevel/ITConfig.Machines.boiler_progressLossInTicks)/20));
 		
-		Config.manual_int.put("boiler_burnTimeModifier", ITConfig.Machines.boiler_burnTimeModifier);
-		
-		Config.manual_int.put("alternator_RfModifier", ITConfig.Machines.alternator_RfModifier);
+		Config.manual_int.put("alternator_RfPerTickPerPort", ITConfig.Machines.alternator_RfPerTickPerPort);
 		Config.manual_int.put("alternator_energyStorage", ITConfig.Machines.alternator_energyStorage);
 		Config.manual_int.put("alternator_energyPerTick", ITConfig.Machines.alternator_RfPerTick);
 		
