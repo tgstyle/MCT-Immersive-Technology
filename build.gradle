@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "1.3.9"
+version = "1.3.10"
 group = "ferro2000.immersivetech" 
 archivesBaseName = "immersivetech"
 
@@ -63,12 +63,18 @@ repositories {
         name 'CoFH Maven'
         url "http://maven.covers1624.net/"
     }
+    repositories {//Curseforge maven, in case some other maven goes offline
+        maven {
+            name = "CurseForge"
+            url = "https://minecraft.curseforge.com/api/maven/"
+        }
+    }
 }
 
 dependencies {
 	deobfCompile "blusunrize:ImmersiveEngineering:0.12-+"
     deobfCompile "mezz.jei:jei_1.12.2:4.8.5.133"
-    deobfCompile "elucent:albedo:2.0-SNAPSHOT"
+    deobfCompile "albedo:albedo:0.1.3"
 	compileOnly "mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.+"//1.1x-1.4.4-55
     compileOnly "mcp.mobius.waila:Hwyla:1.8.20-B35_1.12"
 	compileOnly "cofh:RedstoneFlux:1.12-2.+:deobf"
