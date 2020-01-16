@@ -1,0 +1,94 @@
+#CREATIVE TAB
+itemGroup.immersivetech=Immersive Tech
+
+
+#BLOCKS
+#STONE
+tile.immersivetech.stone_decoration.cokebrick_reinforced.name=Армированный коксовый кирпич
+
+
+#ITEMS
+item.immersivetech.material.salt.name=Соль
+
+
+#FLUIDS
+tile.immersivetech.fluidDistWater.name=Дистиллированная вода
+tile.immersivetech.fluidSteam.name=Пар
+tile.immersivetech.fluidSlime.name=Жидкая слизь
+
+fluid.dist_water=Дистиллированная вода
+fluid.steam=Пар
+fluid.slime=Жидкая слизь
+
+
+#TILE ENTITYS
+#METAL
+tile.immersivetech.metal_device.coke_oven_preheater.name=Воздухонагреватель коксовой печи
+
+#METAL MULTIBLOCKS
+tile.immersivetech.metal_multiblock.distiller.name=Дистиллятор
+tile.immersivetech.metal_multiblock.solar_tower.name=Солнечная башня
+tile.immersivetech.metal_multiblock.solar_reflector.name=Солнечный отражатель
+tile.immersivetech.metal_multiblock.steam_turbine.name=Паровая турбина
+tile.immersivetech.metal_multiblock.boiler.name=Паровой котёл
+tile.immersivetech.metal_multiblock.alternator.name=Генератор переменного тока
+
+#STONE MULTIBLOCKS
+tile.immersivetech.stone_multiblock.coke_oven_advanced.name=Продвинутая коксовая печь
+
+#METAL MULTIBLOCKS
+desc.immersiveengineering.info.multiblock.IT:Distiller=Дистиллятор
+desc.immersiveengineering.info.multiblock.IT:SolarTower=Солнечная башня
+desc.immersiveengineering.info.multiblock.IT:SolarReflector=Солнечный отражатель
+desc.immersiveengineering.info.multiblock.IT:SteamTurbine=Паровая турбина
+desc.immersiveengineering.info.multiblock.IT:Boiler=Паровой котёл
+desc.immersiveengineering.info.multiblock.IT:Alternator=Генератор переменного тока
+
+#STONE MULTIBLOCKS
+desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=Продвинутая коксовая печь
+
+#CONNECTORS
+tile.immersivetech.connectors.connectors_timer.name=Таймер из красного камня
+
+
+#MANUAL
+ie.manual.category.it.name=Продвинутые механизмы
+
+ie.manual.entry.cokeOvenAdvanced.name=Продвинутая коксовая печь
+ie.manual.entry.cokeOvenAdvanced.subtext=Теперь быстрее
+ie.manual.entry.cokeOvenAdvanced0=Многоблочная конструкция, которая быстрее вырабатывает коксовый уголь и креозот. Строится, как показано выше и формируется с помощью молота инженера на кирпичном блоке в центре.
+ie.manual.entry.cokeOvenAdvanced1=Позволяет автоматизировать ввод и вывод и может быть оснащена воздухонагревателями для ускорения процесса путём добавления горячего воздуха. Печь изготовлена из армированного кирпича, поэтому советуем потратить свои первые партии стали на это обновление. Подобно улучшенной доменной печи, коксовый уголь выводится спереди, а креозот сзади.
+ie.manual.entry.cokeOvenAdvanced2=§lВоздухонагреватели коксовой печи§r ускоряют очистку угля. Одна печь может иметь до 2-х нагревателей, подключённых к портам на каждой стороне. Каждый нагреватель требует <config;i;cokeOvenPreheater_consumption> RF/t энергии. Уголь подаётся сверху.
+								  
+
+ie.manual.entry.distiller.name=Дистиллятор
+ie.manual.entry.distiller.subtext=Чище чем вода
+ie.manual.entry.distiller0=Многоблочная конструкция, которая превращает воду в дистиллированную воду и соль. Строится, как показано выше и формируется с помощью молота инженера на блоке из листового железа в центре.
+ie.manual.entry.distiller1=Подача сигнала красного камня к терминалу спереди остановит машину (поведение инвертируется молотом инженера).<br>Вода подаётся через синие люки слева. Оранжевый люк справа служит для вывода жидкости, люк сзади для выхода соли.<br>Для работы машины нужна энергия.<br>Одно ведро (1000 mB) воды производит 500 mB дистиллированной воды.
+
+ie.manual.entry.solarTower.name=Солнечная башня
+ie.manual.entry.solarTower.subtext=Энергия солнца
+ie.manual.entry.solarTower0=Многоблочная конструкция, которая использует солнечный свет для испарения воды. Формируется с помощью молотка инженера на краснознаменном инженерном блоке в центре.
+ie.manual.entry.solarTower1=Производит Пар из Воды или <link;distiller;§n§oДистиллированной_воды§r>. Объём производства: 1000 mB воды → 500 mB пара, 1000 mB дистиллированной воды → 750 mB пара. Вода вводится в Солнечную Башню через 2 синих люка. Пар выводится из оранжевого люка. Требует как минимум один солнечный отражатель для работы.
+ie.manual.entry.solarTower2=§lСолнечный отражатель§r - многоблочная конструкция, которая отражает солнечный свет в центр Солнечной башни. Формируется молотом инженера на центральном серебряном блоке.
+ie.manual.entry.solarTower3=Чтобы работать, пространство между центрами отражателя и башни должно быть свободным, фигура отражателя должна соответствовать центру Солнечной башни. Допустимое расстояние между отражателем и солнечной башней: <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> блоков. Очевидно, они работают только в течение дня.
+
+ie.manual.entry.steamTurbine.name=Паровая турбина
+ie.manual.entry.steamTurbine.subtext=Кипящее дыхание
+ie.manual.entry.steamTurbine0=Многоблочная конструкция, использующая пар для производства кинетической энергии. Формируется с помощью молотка инженера на стальном блоке в центре (короткая сторона).
+ie.manual.entry.steamTurbine1=Пар подаётся в трубопровод. Подача сигнала красного камня к терминалу спереди остановит машину (поведение инвертируется молотом инженера). Кинетическая энергия вырабатывается валом в задней части машины (стальной блок). Производит <config;i;steamTurbine_maxTorque> N*m кинетической энергии на максимальной скорости <config;i;steamTurbine_maxSpeed> Rad/s. Для работы ей нужен <link;alternator;§o§nГенератор_переменного_тока§r>.
+
+ie.manual.entry.boiler.name=Паровой котёл
+ie.manual.entry.boiler.subtext=Дизельный метод
+ie.manual.entry.boiler0=Многоблок, который использует <link;biodiesel;§o§nДизель§r> для испарения воды. Формируется с помощью молотка инженера на железобетонном блоке из листового металла в центре (длинная сторона).
+ie.manual.entry.boiler1=Подача сигнала красного камня к терминалу спереди остановит машину (поведение инвертируется молотом инженера). Вода подаётся через передний люк, дизель подаётся через задний люк. Пар выводится из верхнего оранжевого люка.<br>Объём производства: 1000 mB воды → 500 mB пара, 1000 mB <link;distiller;§n§oдистиллированной_воды§r> → 750 mB пара, используя (1000/burnTime)x<config;i;boiler_burnTimeModifier> mB дизеля.
+
+ie.manual.entry.alternator.name=Генератор переменного тока
+ie.manual.entry.alternator.subtext=Давайте преобразуем
+ie.manual.entry.alternator0=Многоблочная конструкция, которая преобразует кинетическую энергию в электричество. Формируется с помощью молотка инженера на тяжёлом инженерном блоке в центре.
+ie.manual.entry.alternator1=Для работы ему требуется пристроенное <link;steamTurbine;§n§oустройство§r>, вырабатывающее кинетическую энергию. Кинетическая энергия вводится сзади станка (там, где имеются блоки из листового металла), электричество выводится через один из 6-ти разъёмов по бокам. Объём производства зависит от скорости вращения. Имеет хранилище для <config;i;alternator_energyStorage> RF. Каждый разъём выводит на подключённое устройство максимум до <config;i;alternator_energyPerTick> RF/t.
+ie.manual.entry.alternator2=Паровая турбина и Генератор переменного тока
+
+ie.manual.entry.redstone.name=Таймер из красного камня
+ie.manual.entry.redstone.subtext=Тик-так
+ie.manual.entry.redstone0=Выводит сигнал красного камня в зависимости от задержки, которая устанавливается в интерфейсе таймера. Точность таймера: 0,5 секунды ниже 10-ти секунд, 1 секунда выше 10-ти секунд. Таймер останавливается сигналом красного камня.
