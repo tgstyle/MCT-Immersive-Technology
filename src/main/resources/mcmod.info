@@ -1,16 +1,15 @@
 [
 {
   "modid": "immersivetech",
-  "name": "Immersive Tech",
+  "name": "Immersive Tech [Unofficial]",
   "description": "More tech for IE",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "https://github.com/FerroO2000/Immersive-Tech",
-  "updateUrl": "",
-  "authorList": ["FerroO2000"],
-  "credits": "",
+  "url": "https://github.com/tgstyle/Immersive-Tech",
+  "authorList": ["Original Author FerroO2000"],
+  "credits": "BluSunrize for Immersive Engineering, and TGstyle for Unofficial version.",
   "logoFile": "assets/immersivetech/logo.png",
   "screenshots": [],
-  "dependencies": []
+  "dependencies": [immersiveengineering]
 }
 ]
