@@ -14,12 +14,14 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvanced
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
+
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
 import ferro2000.immersivetech.api.energy.MechanicalEnergy;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockAlternator;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,20 +30,19 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import scala.Console;
 
-public class TileEntityAlternator extends TileEntityMultiblockPart<TileEntityAlternator> implements IMechanicalEnergy, IAdvancedSelectionBounds,  IAdvancedCollisionBounds, IFluxProvider{
-
+public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAlternator> implements IMechanicalEnergy, IAdvancedSelectionBounds, IAdvancedCollisionBounds, IFluxProvider {
 	FluxStorage energyStorage = new FluxStorage(ITConfig.Machines.alternator_energyStorage);
 	public MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
 	private BlockPos[] EnergyOutputPositions = new BlockPos[6];
-	
-	private static int[] size = new int[] {3,4,3};
-		
+
+	private static int[] size = new int[] {3, 4, 3};
+
 	public TileEntityAlternator() {
 		super(size);
 	}
@@ -54,62 +55,42 @@ public class TileEntityAlternator extends TileEntityMultiblockPart<TileEntityAlt
 
 	@Override
 	public void update() {
-		
-		if (!world.isRemote && formed && pos==13) {
-			
-			if (ITUtils.checkMechanicalEnergyTransmitter(world, getPos())) mechanicalEnergy = ITUtils.getMechanicalEnergy(world, getPos());
-			
-			if (mechanicalEnergy.getEnergy()>0) this.energyStorage.modifyEnergyStored(energyGenerated());
-
+		if(!world.isRemote && formed && pos == 13) {
+			if(ITUtils.checkMechanicalEnergyTransmitter(world, getPos())) mechanicalEnergy = ITUtils.getMechanicalEnergy(world, getPos());
+			if(mechanicalEnergy.getEnergy() > 0) this.energyStorage.modifyEnergyStored(energyGenerated());
 			TileEntity tileEntity;
-			for(int i=0;i<6;i++){
+			for(int i = 0;i < 6;i++) {
 				int currentEnergy = energyStorage.getEnergyStored();
 				if(currentEnergy == 0) break;
-				if (EnergyOutputPositions[i] == null)
-					EnergyOutputPositions[i] = ITUtils.LocalOffsetToWorldBlockPos(getPos(), i < 3? -2 : 2, i < 3? i - 1 : i - 4, 0, facing);
-
+				if(EnergyOutputPositions[i] == null) EnergyOutputPositions[i] = ITUtils.LocalOffsetToWorldBlockPos(getPos(), i < 3 ? -2 : 2, i < 3 ? i - 1 : i - 4, 0, facing);
 				tileEntity = Utils.getExistingTileEntity(world, EnergyOutputPositions[i]);
-				EnumFacing energyFacing = i < 3? facing.rotateY() : facing.rotateYCCW();
-
-				if (!EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) continue;
-
+				EnumFacing energyFacing = i < 3 ? facing.rotateY() : facing.rotateYCCW();
+				if(!EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) continue;
 				int canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, ITConfig.Machines.alternator_RfPerTickPerPort), true);
-
-				if (canReceiveAmount == 0) continue;
-
+				if(canReceiveAmount == 0) continue;
 				EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
 				energyStorage.setEnergy(currentEnergy - canReceiveAmount);
-
 			}
-			
 		}
-		
 	}
-	
 	public boolean canRunMechanicalEnergy() {
-		
 		return true;
-		
 	}
-	
+
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket)
-	{
+	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 		energyStorage.readFromNBT(nbt);
 		mechanicalEnergy.readFromNBT(nbt);
 		animation.readFromNBT(nbt);
-		
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket)
-	{
+	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 		energyStorage.writeToNBT(nbt);
 		mechanicalEnergy.writeToNBT(nbt);
 		animation.writeToNBT(nbt);
-		
 	}
 
 	@Override
@@ -134,263 +115,172 @@ public class TileEntityAlternator extends TileEntityMultiblockPart<TileEntityAlt
 
 	@Override
 	public ItemStack getOriginalBlock() {
-		if(pos<0)
-			return ItemStack.EMPTY;
+		if(pos < 0) return ItemStack.EMPTY;
 		ItemStack s = ItemStack.EMPTY;
-		try{
+		try {
 			s = MultiblockAlternator.instance.getStructureManual()[pos/12][pos%12/3][pos%3];
-		}catch(Exception e){e.printStackTrace();}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		return s.copy();
 	}
 
 	@Override
-	public List<AxisAlignedBB> getAdvancedColisionBounds() {
+	public List <AxisAlignedBB> getAdvancedColisionBounds() {
 		return getAdvancedSelectionBounds();
 	}
 
 	@Override
-	public List<AxisAlignedBB> getAdvancedSelectionBounds() {
-		
-double[] boundingArray = new double[6];
-		
+	public List <AxisAlignedBB> getAdvancedSelectionBounds() {
+		double[] boundingArray = new double[6];
 		EnumFacing fl = facing;
 		EnumFacing fw = facing.rotateY();
-		
-		if(pos==0 || pos==2 || pos==12 || pos==14 || pos==24 || pos==26) {
-			
-			if(pos==2 || pos==14 || pos==26) {
-				fw = fw.getOpposite();
-			}
-			
-			
+		if(pos == 0 || pos == 2 || pos == 12 || pos == 14 || pos == 24 || pos == 26) {
+			if(pos == 2 || pos == 14 || pos == 26) fw = fw.getOpposite();
 			boundingArray = ITUtils.smartBoundingBox(.25f, .25f, 0, .875f, .25f, .75f, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List <AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.25f, .25f, .625f, .25f, .25f, .75f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.375f, .375f, .75f, 0, .375f, .625f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
-			if(pos<=2) {
-				
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+			if(pos <= 2) {
 				boundingArray = ITUtils.smartBoundingBox(0, 0, .125f, .375f, 0, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-				
-			}else {
-				
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+			} else {
 				boundingArray = ITUtils.smartBoundingBox(0, 0, .125f, .375f, 0, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-								
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			}
-			
 			return list;
-			
 		}
-		
-		if(pos==1 || pos==25) {
-			
+		if(pos == 1 || pos == 25) {
 			boundingArray = ITUtils.smartBoundingBox(.25f, .25f, .25f, .25f, .25f, .75f, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List <AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.375f, .375f, 0, .75f, .375f, .625f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.375f, .375f, .75f, 0, .375f, .625f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
-			if(pos==1) {
-				
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+			if(pos == 1) {
 				boundingArray = ITUtils.smartBoundingBox(.375f, .375f, .375f, .375f, .75f, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-												
-			}else {
-				
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+			} else {
 				boundingArray = ITUtils.smartBoundingBox(.375f, .375f, .375f, .375f, 0, .25f, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-								
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			}
-			
 			return list;
-			
 		}
-		
-		if(pos==3 || pos==5) {
-			
-			if(pos==5) {
-				fw = fw.getOpposite();
-			}
-			
+		if(pos == 3 || pos == 5) {
+			if(pos == 5) fw = fw.getOpposite();
 			boundingArray = ITUtils.smartBoundingBox(0, .5f, .5f, 0, 0, 1, fl, fw);
-					
-			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 		}
-		
-		if(pos==9 || pos==11) {
-			
-			if(pos==11) {
-				fw = fw.getOpposite();
-			}
-			
+		if(pos == 9 || pos == 11) {
+			if(pos == 11) fw = fw.getOpposite();
 			boundingArray = ITUtils.smartBoundingBox(.5f, 0, 0, 0, 0, 1, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List <AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, .5f, .5f, 0, 0, 1, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-		
-		if(pos==13) {
-			
+		if(pos == 13) {
 			boundingArray = ITUtils.smartBoundingBox(.25f, .25f, .125f, .125f, .125f, .875f, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List <AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.375f, .375f, 0, .875f, .375f, .625f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.375f, .375f, .875f, 0, .375f, .625f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.375f, .375f, .375f, .375f, .875f, 1, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.375f, .375f, .375f, .375f, 0, .125f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, .75f, .25f, .25f, .25f, .75f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-						
 		}
-		
-		if(pos==15 || pos==17) {
-			
-			if(pos==17) {
-				fw = fw.getOpposite();
-			}
-			
+		if(pos == 15 || pos == 17) {
+			if(pos == 17) fw = fw.getOpposite();
 			boundingArray = ITUtils.smartBoundingBox(0, .75f, .75f, 0, 0, .75f, fl, fw);
-			
-			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-						
+			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 		}
-		
-		if(pos==16) {
-			
+		if(pos == 16) {
 			boundingArray = ITUtils.smartBoundingBox(.5f, 0, 0, 0, 0, 1, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List <AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.25f, .5f, .25f, .25f, .25f, .75f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, .75f, 0, 0, 0, 1, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-		
-		if(pos==18 || pos==20) {
-			
-			if(pos==20) {
-				fw = fw.getOpposite();
-			}
-			
+		if(pos == 18 || pos == 20) {
+			if(pos == 20) fw = fw.getOpposite();
 			boundingArray = ITUtils.smartBoundingBox(0, .25f, .25f, 0, 0, 1, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List <AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.75f, 0, .75f, 0, 0, .75f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-					
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-		
-		if(pos==21 || pos==23) {
-			
-			if(pos==23) {
-				fw = fw.getOpposite();
-			}
-			
+		if(pos == 21 || pos == 23) {
+			if(pos == 23) fw = fw.getOpposite();
 			boundingArray = ITUtils.smartBoundingBox(.75f, 0, .25f, 0, 0, 1, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List <AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.25f, .25f, .75f, 0, 0, 1, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-					
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-		
-		if(pos==30 || pos==32) {
-			
-			if(pos==32) {
-				fw = fw.getOpposite();
-			}
-			
+		if(pos == 30 || pos == 32) {
+			if(pos == 32) fw = fw.getOpposite();
 			boundingArray = ITUtils.smartBoundingBox(0, .25f, .5f, 0, 0, .4375f, fl, fw);
-			
-			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 		}
-		
-		if(pos==31) {
-			
+		if(pos == 31) {
 			boundingArray = ITUtils.smartBoundingBox(0, .25f, 0, 0, 0, .5f, fl, fw);
-			
-			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-						
+			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 		}
-		
-		if(pos==33 || pos==35) {
-			
-			if(pos==35) {
-				fw = fw.getOpposite();
-			}
-			
+		if(pos == 33 || pos == 35) {
+			if(pos == 35) fw = fw.getOpposite();
 			boundingArray = ITUtils.smartBoundingBox(.75f, 0, .5f, 0, 0, .4375f, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List <AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.25f, .25f, .75f, 0, 0, .125f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-		
-		if(pos==34) {
-			
+		if(pos == 34) {
 			boundingArray = ITUtils.smartBoundingBox(.75f, 0, 0, 0, 0, .5f, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List <AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.25f, .25f, 0, 0, 0, .125f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-						
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-						
 		}
-		
 		return null;
-		
 	}
 
 	@Override
-	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop,
-			ArrayList<AxisAlignedBB> list) {
+	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, 
+		ArrayList <AxisAlignedBB> list) {
 		return false;
 	}
 
 	@Override
 	public boolean canConnectEnergy(@Nullable EnumFacing from) {
-		return pos==0 || pos==2 || pos==12 || pos==14 || pos==24 || pos==26;
+		return pos == 0 || pos == 2 || pos == 12 || pos == 14 || pos == 24 || pos == 26;
 	}
 
 	@Override
 	public int extractEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
-		if(pos!=0 || pos!=2 || pos!=12 || pos!=14 || pos!=24 || pos!=26)
-			return 0;
+		if(pos != 0 || pos != 2 || pos != 12 || pos != 14 || pos != 24 || pos != 26) return 0;
 		TileEntityAlternator master = master();
-		return master==null?0:master.energyStorage.extractEnergy(energy, simulate);
+		return master == null ? 0:master.energyStorage.extractEnergy(energy, simulate);
 	}
 
 	@Override
 	public int getEnergyStored(@Nullable EnumFacing from) {
 		TileEntityAlternator master = master();
-		return master==null?0:master.energyStorage.getEnergyStored();
+		return master == null ? 0:master.energyStorage.getEnergyStored();
 	}
 
 	@Override
 	public int getMaxEnergyStored(@Nullable EnumFacing from) {
 		TileEntityAlternator master = master();
-		return master==null?0:master.energyStorage.getMaxEnergyStored();
+		return master == null ? 0:master.energyStorage.getMaxEnergyStored();
 	}
 
 	@Override
@@ -412,7 +302,7 @@ double[] boundingArray = new double[6];
 	public EnumFacing getMechanicalEnergyInputFacing() {
 		return facing;
 	}
-	
+
 	@Override
 	public int inputToCenterDistance() {
 		return 3;
@@ -427,9 +317,9 @@ double[] boundingArray = new double[6];
 	public MechanicalEnergy getEnergy() {
 		return mechanicalEnergy;
 	}
-	
+
 	public MechanicalEnergyAnimation getAnimation() {
 		return animation;
 	}
-	
+
 }

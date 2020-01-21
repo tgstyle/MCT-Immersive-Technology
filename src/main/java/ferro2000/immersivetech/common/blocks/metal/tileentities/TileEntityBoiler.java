@@ -4,18 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
+
 import com.google.common.collect.Lists;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
+
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.crafting.BoilerFuelRecipe;
 import ferro2000.immersivetech.api.crafting.BoilerRecipe;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +29,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
@@ -32,15 +37,14 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler, IMultiblockRecipe> implements IGuiTile,IAdvancedSelectionBounds,IAdvancedCollisionBounds {
-
+public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler, IMultiblockRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 	public TileEntityBoiler() {
-		super(MultiblockBoiler.instance, new int[] {3,3,5}, 0, true);
+		super(MultiblockBoiler.instance, new int[] {3, 3, 5}, 0, true);
 	}
-	
+
 	public FluidTank[] tanks = new FluidTank[] {
-			new FluidTank(ITConfig.Machines.boiler_fuel_tankSize),
-			new FluidTank(ITConfig.Machines.boiler_input_tankSize),
+			new FluidTank(ITConfig.Machines.boiler_fuel_tankSize), 
+			new FluidTank(ITConfig.Machines.boiler_input_tankSize), 
 			new FluidTank(ITConfig.Machines.boiler_output_tankSize)
 	};
 
@@ -52,8 +56,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	public BoilerRecipe lastRecipe;
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket)
-	{
+	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 		tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
 		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
@@ -61,33 +64,30 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		heatLevel = nbt.getDouble("heatLevel");
 		burnRemaining = nbt.getInteger("burnRemaining");
 		FluidStack recipeInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("recipe"));
-		if (recipeInput != null) lastRecipe = BoilerRecipe.findRecipe(recipeInput);
+		if(recipeInput != null) lastRecipe = BoilerRecipe.findRecipe(recipeInput);
 		FluidStack fuelInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("fuel"));
-		if (fuelInput != null) lastFuel = BoilerFuelRecipe.findFuel(fuelInput);
+		if(fuelInput != null) lastFuel = BoilerFuelRecipe.findFuel(fuelInput);
 		recipeTimeRemaining = nbt.getInteger("recipeTimeRemaining");
-		if(!descPacket)
-			inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
+		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
 	}
-	
+
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket)
-	{
+	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
 		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
 		nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound()));
 		nbt.setDouble("heatLevel", heatLevel);
 		nbt.setInteger("burnRemaining", burnRemaining);
-		if (lastRecipe != null && lastRecipe.isValid()) nbt.setTag("recipe", lastRecipe.input.writeToNBT(new NBTTagCompound()));
-		if (lastFuel != null && lastFuel.isValid()) nbt.setTag("fuel", lastFuel.input.writeToNBT(new NBTTagCompound()));
+		if(lastRecipe != null && lastRecipe.isValid()) nbt.setTag("recipe", lastRecipe.input.writeToNBT(new NBTTagCompound()));
+		if(lastFuel != null && lastFuel.isValid()) nbt.setTag("fuel", lastFuel.input.writeToNBT(new NBTTagCompound()));
 		nbt.setFloat("recipeTimeRemaining", recipeTimeRemaining);
-		if(!descPacket)
-			nbt.setTag("inventory", Utils.writeInventory(inventory));
+		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
 
 	private boolean heatUp() {
 		double previousHeatLevel = heatLevel;
-		if (lastFuel == null) {
+		if(lastFuel == null) {
 			burnRemaining = 0;
 			return true;
 		}
@@ -103,7 +103,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 
 	private boolean loseProgress() {
 		int previousProgress = recipeTimeRemaining;
-		if (lastRecipe == null) {
+		if(lastRecipe == null) {
 			recipeTimeRemaining = 0;
 			return true;
 		}
@@ -112,12 +112,12 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	private boolean gainProgress() {
-		if (lastRecipe == null) {
+		if(lastRecipe == null) {
 			recipeTimeRemaining = 0;
 			return true;
 		}
 		recipeTimeRemaining--;
-		if (recipeTimeRemaining == 0) {
+		if(recipeTimeRemaining == 0) {
 			tanks[1].drain(lastRecipe.input.amount, true);
 			tanks[2].fillInternal(lastRecipe.output, true);
 			return true;
@@ -129,114 +129,88 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	public void update() {
 		super.update();
 		if(world.isRemote || isDummy()) return;
-		
 		boolean update = false;
-
-		if (burnRemaining > 0) {
+		if(burnRemaining > 0) {
 			burnRemaining--;
-			if (heatUp()) update = true;
-		} else if (!isRSDisabled() && tanks[0].getFluid() != null) {
+			if(heatUp()) update = true;
+		} else if(!isRSDisabled() && tanks[0].getFluid() != null) {
 			BoilerFuelRecipe fuel = (
-				lastFuel != null &&
-				lastFuel.isValid() &&
-				tanks[0].getFluid().isFluidEqual(lastFuel.input))?
+				lastFuel != null && 
+				lastFuel.isValid() && 
+				tanks[0].getFluid().isFluidEqual(lastFuel.input)) ? 
 				lastFuel : BoilerFuelRecipe.findFuel(tanks[0].getFluid());
-			if (fuel != null && fuel.input.amount <= tanks[0].getFluidAmount()) {
+			if(fuel != null && fuel.input.amount <= tanks[0].getFluidAmount()) {
 				lastFuel = fuel;
 				tanks[0].drain(fuel.input.amount, true);
 				burnRemaining = fuel.time;
-				if (heatUp()) update = true;
-			} else if (cooldown()) update = true;
-		} else if (cooldown()) update = true;
-
-		if (heatLevel >= ITConfig.Machines.boiler_workingHeatLevel) {
-			if (recipeTimeRemaining > 0) {
-				if (gainProgress()) update = true;
-			} else if (tanks[1].getFluid() != null) {
+				if(heatUp()) update = true;
+			} else if(cooldown()) update = true;
+		} else if(cooldown()) update = true;
+		if(heatLevel >= ITConfig.Machines.boiler_workingHeatLevel) {
+			if(recipeTimeRemaining > 0) {
+				if(gainProgress()) update = true;
+			} else if(tanks[1].getFluid() != null) {
 				BoilerRecipe recipe = (
-					lastRecipe != null &&
-					lastRecipe.isValid() &&
-					tanks[1].getFluid().isFluidEqual(lastRecipe.input))?
+					lastRecipe != null && 
+					lastRecipe.isValid() && 
+					tanks[1].getFluid().isFluidEqual(lastRecipe.input)) ? 
 					lastRecipe : BoilerRecipe.findRecipe(tanks[1].getFluid());
-				if (recipe != null &&
-					recipe.input.amount <= tanks[1].getFluidAmount() &&
+				if(recipe != null && 
+					recipe.input.amount <= tanks[1].getFluidAmount() && 
 					recipe.output.amount == tanks[2].fillInternal(recipe.output, false)) {
 					lastRecipe = recipe;
 					recipeTimeRemaining = recipe.time;
 					update = true;
 				}
 			}
-		} else if (recipeTimeRemaining > 0) if (loseProgress()) update = true;
-
-		if(this.tanks[2].getFluidAmount()>0)
-		{
+		} else if(recipeTimeRemaining > 0) if(loseProgress()) update = true;
+		if(this.tanks[2].getFluidAmount() >0) {
 			ItemStack filledContainer = Utils.fillFluidContainer(tanks[2], inventory.get(4), inventory.get(5), null);
-			if(!filledContainer.isEmpty())
-			{
-				if(!inventory.get(5).isEmpty() && OreDictionary.itemMatches(inventory.get(5), filledContainer, true))
-					inventory.get(5).grow(filledContainer.getCount());
-				else if(inventory.get(5).isEmpty())
-					inventory.set(5, filledContainer.copy());
+			if(!filledContainer.isEmpty()) {
+				if(!inventory.get(5).isEmpty() && OreDictionary.itemMatches(inventory.get(5), filledContainer, true)) inventory.get(5).grow(filledContainer.getCount());
+				else if(inventory.get(5).isEmpty()) inventory.set(5, filledContainer.copy());
 				inventory.get(4).shrink(1);
-				if(inventory.get(4).getCount() <= 0)
-					inventory.set(4, ItemStack.EMPTY);
+				if(inventory.get(4).getCount() <= 0) inventory.set(4, ItemStack.EMPTY);
 				update = true;
 			}
-			if(this.tanks[2].getFluidAmount()>0)
-			{
-				FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[2].getFluid(), Math.min(this.tanks[2].getFluidAmount(), 80), false);
-
-				BlockPos outputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), mirrored? 2 : -2, 2, 1, facing);
+			if(this.tanks[2].getFluidAmount() >0) {
+				FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[2].getFluid(), Math.min(this.tanks[2].getFluidAmount(), 1000), true);
+				BlockPos outputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), mirrored ? 2 : -2, 2, 1, facing);
 				IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
-				
-				
-				if(output!=null)
-				{
+				if(output != null) {
 					int accepted = output.fill(out, false);
-					if(accepted>0)
-					{
-						int drained = output.fill(Utils.copyFluidStackWithAmount(out,Math.min(out.amount, accepted),false), true);
+					if(accepted > 0) {
+						int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
 						this.tanks[2].drain(drained, true);
 						update=true;
 					}
 				}
 			}
 		}
-
 		int amount_prev = tanks[0].getFluidAmount();
 		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
-		if(amount_prev!=tanks[0].getFluidAmount())
-		{
-			if(!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), emptyContainer, true))
-				inventory.get(1).grow(emptyContainer.getCount());
-			else if(inventory.get(1).isEmpty())
-				inventory.set(1, emptyContainer.copy());
+		if(amount_prev != tanks[0].getFluidAmount()) {
+			if(!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), emptyContainer, true)) inventory.get(1).grow(emptyContainer.getCount());
+			else if(inventory.get(1).isEmpty()) inventory.set(1, emptyContainer.copy());
 			inventory.get(0).shrink(1);
-			if(inventory.get(0).getCount() <= 0)
-				inventory.set(0, ItemStack.EMPTY);
+			if(inventory.get(0).getCount() <= 0) inventory.set(0, ItemStack.EMPTY);
 			update = true;
 		}
 		amount_prev = tanks[1].getFluidAmount();
 		emptyContainer = Utils.drainFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
-		if(amount_prev!=tanks[1].getFluidAmount())
-		{
-			if(!inventory.get(3).isEmpty() && OreDictionary.itemMatches(inventory.get(3), emptyContainer, true))
-				inventory.get(3).grow(emptyContainer.getCount());
-			else if(inventory.get(3).isEmpty())
-				inventory.set(3, emptyContainer.copy());
+		if(amount_prev != tanks[1].getFluidAmount()) {
+			if(!inventory.get(3).isEmpty() && OreDictionary.itemMatches(inventory.get(3), emptyContainer, true)) inventory.get(3).grow(emptyContainer.getCount());
+			else if(inventory.get(3).isEmpty()) inventory.set(3, emptyContainer.copy());
 			inventory.get(2).shrink(1);
-			if(inventory.get(2).getCount() <= 0)
-				inventory.set(2, ItemStack.EMPTY);
+			if(inventory.get(2).getCount() <= 0) inventory.set(2, ItemStack.EMPTY);
 			update = true;
 		}
-
-		if(update)
-		{
+		if(update) {
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
 		}
 	}
-	
+
 	@Override
 	public NonNullList<ItemStack> getInventory() {
 		return inventory;
@@ -305,17 +279,17 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 
 	@Override
 	public void doProcessOutput(ItemStack output) {
-		
+
 	}
 
 	@Override
 	public void doProcessFluidOutput(FluidStack output) {
-		
+
 	}
 
 	@Override
 	public void onProcessFinish(MultiblockProcess<IMultiblockRecipe> process) {
-		
+
 	}
 
 	@Override
@@ -341,44 +315,38 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
 		TileEntityBoiler master = this.master();
-		if(master!=null)
-		{
-			if(pos==35 && (side==null||side==EnumFacing.UP))
-				return new FluidTank[]{master.tanks[2]};
-			if(pos == 5 && (side == null || side == (mirrored? facing.rotateY() : facing.rotateYCCW())))
-				return new FluidTank[]{master.tanks[1]};
-			if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY())))
-				return new FluidTank[]{master.tanks[0]};
+		if(master != null) {
+			if(pos == 35 && (side == null || side == EnumFacing.UP)) return new FluidTank[]{master.tanks[2]};
+			if(pos == 5 && (side == null || side == (mirrored ? facing.rotateY() : facing.rotateYCCW()))) return new FluidTank[]{master.tanks[1]};
+			if(pos == 9 && (side == null || side == (mirrored ? facing.rotateYCCW() : facing.rotateY()))) return new FluidTank[]{master.tanks[0]};
 		}
 		return ITUtils.emptyIFluidTankList;
 	}
 
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
-		
-		if(pos == 5 && (side == null || side == (mirrored?facing.rotateY():facing.rotateYCCW()))) {
+		if(pos == 5 && (side == null || side == (mirrored ? facing.rotateY():facing.rotateYCCW()))) {
 			TileEntityBoiler master = this.master();
 			if(master == null) return false;
-			if (master.tanks[1].fillInternal(resource, false) == 0) return false;
-			if (BoilerRecipe.findRecipe(resource) == null) return false;
+			if(master.tanks[1].fillInternal(resource, false) == 0) return false;
+			if(BoilerRecipe.findRecipe(resource) == null) return false;
 			return true;
-		} else if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY()))) {
+		} else if(pos == 9 && (side == null || side == (mirrored ? facing.rotateYCCW() : facing.rotateY()))) {
 			TileEntityBoiler master = this.master();
 			if(master == null) return false;
-			if (master.tanks[0].fillInternal(resource, false) == 0) return false;
-			if (BoilerFuelRecipe.findFuel(resource) == null) return false;
+			if(master.tanks[0].fillInternal(resource, false) == 0) return false;
+			if(BoilerFuelRecipe.findFuel(resource) == null) return false;
 			return true;
 		} else return false;
 	}
 
 	@Override
 	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
-		return pos==35 && (side==null||side==EnumFacing.UP);
+		return pos == 35 && (side == null || side == EnumFacing.UP);
 	}
-	
+
 	@Override
-	public TileEntityBoiler getTileForPos(int targetPos)
-	{
+	public TileEntityBoiler getTileForPos(int targetPos) {
 		BlockPos target = getBlockPosForPos(targetPos);
 		TileEntity tile = world.getTileEntity(target);
 		return tile instanceof TileEntityBoiler ? (TileEntityBoiler) tile : null;
@@ -406,278 +374,169 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 
 	@Override
 	public List<AxisAlignedBB> getAdvancedSelectionBounds() {
-		
 		double[] boundingArray = new double[6];
-		
 		EnumFacing fl = facing;
 		EnumFacing fw = facing.rotateY();
-		if(mirrored){
-			fw = fw.getOpposite();
-		}
-		
-		if(pos<15 && pos!=5 && pos!=9) {
-			
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(0,0,0, 1,.5f,1).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
-			if(pos==0 || pos==10) {
-				
-				if(pos!=0) {
-					fl = fl.getOpposite();
-				}
-				
+		if(mirrored) fw = fw.getOpposite();
+		if(pos < 15 && pos != 5 && pos != 9) {
+			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(0, 0, 0, 1, .5f, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+			if(pos == 0 || pos == 10) {
+				if(pos != 0) fl = fl.getOpposite();
 				boundingArray = ITUtils.smartBoundingBox(.375f, .375f, .75f, 0, .5f, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 				boundingArray = ITUtils.smartBoundingBox(0, .5f, .5f, .25f, .5f, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-								
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			}
-			
-			if(pos==1 || pos==2 || pos==11 || pos==12) {
-				
-				if(pos>2) {
-					fl = fl.getOpposite();
-				}
-				
+			if(pos == 1 || pos == 2 || pos == 11 || pos == 12) {
+				if(pos > 2) fl = fl.getOpposite();
 				boundingArray = ITUtils.smartBoundingBox(.4375f, .4375f, 0, 0, .6875f, .9375f, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 				boundingArray = ITUtils.smartBoundingBox(0, .625f, 0, 0, .5f, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-								
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			}
-			
-			if(pos==3 || pos==13) {
-				
-				if(pos!=3) {
-					fl = fl.getOpposite();
-				}
-				
+			if(pos == 3 || pos == 13) {
+				if(pos != 3) fl = fl.getOpposite();
 				boundingArray = ITUtils.smartBoundingBox(.4375f, .4375f, 0, .75f, .6875f, .9375f, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 				boundingArray = ITUtils.smartBoundingBox(.375f, .375f, .25f, .5f, .5f, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 				boundingArray = ITUtils.smartBoundingBox(0, .625f, 0, .5f, .5f, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 				boundingArray = ITUtils.smartBoundingBox(0, .5f, .5f, .25f, .5f, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-								
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			}
-			
-			if(pos==4) {
-				
+			if(pos == 4) {
 				boundingArray = ITUtils.smartBoundingBox(.625f, .125f, .125f, .75f, .5f, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 				boundingArray = ITUtils.smartBoundingBox(.625f, .125f, .75f, .125f, .5f, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-								
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			}
-			
-			if(pos==14) {
-				
+			if(pos == 14) {
 				boundingArray = ITUtils.smartBoundingBox(.5f, .25f, .375f, .375f, .625f, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 				boundingArray = ITUtils.smartBoundingBox(.4375f, .1875f, .3125f, .3125f, .5f, .625f, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-								
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			}
-			
 			return list;
-				
 		}
-		
-		if(pos==15 || pos==25) {
-			
-			if(pos!=15) {
-				fl = fl.getOpposite();
-			}
-			
+		if(pos == 15 || pos == 25) {
+			if(pos != 15) fl = fl.getOpposite();
 			boundingArray = ITUtils.smartBoundingBox(0, .25f, .5f, 0, 0, 1, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, .5f, .125f, .5f, .25f, 1, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, .75f, .125f, .5f, 0, .25f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-		
-		if(pos==16 || pos==17 || pos==26 || pos==27 || pos==31 || pos==32 || pos==41 || pos==42) {
-			
-			if((pos>17 && pos<31) || pos>32) {
-				fl = fl.getOpposite();
-			}
-			
-			if(pos>27) {
-				
+		if(pos == 16 || pos == 17 || pos == 26 || pos == 27 || pos == 31 || pos == 32 || pos == 41 || pos == 42) {
+			if((pos>17 && pos<31) || pos>32) fl = fl.getOpposite();
+			if(pos > 27) {
 				boundingArray = ITUtils.smartBoundingBox(0, .25f, 0, 0, 0, .5f, fl, fw);
-				List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+				List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 				boundingArray = ITUtils.smartBoundingBox(0, .5f, 0, 0, .5f, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-						
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 				return list;
-
-			}else {
-				
+			} else {
 				boundingArray = ITUtils.smartBoundingBox(0, .25f, 0, 0, 0, 1, fl, fw);
-				
-				return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-				
+				return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			}
-			
-			
-			
 		}
-		
-		if(pos==18 || pos==28 || pos==33 || pos==43) {
-			
-			if(pos!=18 && pos!=33) {
-				fl = fl.getOpposite();				
-			}
-			
+		if(pos == 18 || pos == 28 || pos == 33 || pos == 43) {
+			if(pos != 18 && pos != 33) fl = fl.getOpposite();
 			if(pos>28) {
-				
 				boundingArray = ITUtils.smartBoundingBox(0, .25f, 0, .25f, 0, .5f, fl, fw);
-				List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+				List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 				boundingArray = ITUtils.smartBoundingBox(0, .5f, 0, .25f, .5f, 1, fl, fw);
-				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-				
+				list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 				return list;
-				
-			}else {
-				
+			} else {
 				boundingArray = ITUtils.smartBoundingBox(0, .25f, 0, .25f, 0, 1, fl, fw);
-				
-				return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-								
+				return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			}
-			
 		}
-		
-		if(pos==19) {
-			
+		if(pos == 19) {
 			boundingArray = ITUtils.smartBoundingBox(.5f, 0, 0, 0, 0, 1, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, .75f, .25f, .25f, .5f, 1, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-		
-		if(pos==20) {
-			
+		if(pos == 20) {
 			boundingArray = ITUtils.smartBoundingBox(0, 0, 0, 0, 0, .375f, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, 0, .125f, 0, .375f, 1, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-						
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-		
-		if(pos==23) {
-			
+		if(pos == 23) {
 			boundingArray = ITUtils.smartBoundingBox(0, 0, 0, .25f, 0, 1, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, 0, .75f, 0, .25f, 1, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-		
-		if(pos==24) {
-			
+		if(pos == 24) {
 			boundingArray = ITUtils.smartBoundingBox(.125f, .125f, 0, .125f, .375f, 1, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.25f, .25f, .875f, 0, .5f, 1, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.875f, 0, .25f, .25f, .5f, 1, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, .875f, .3125f, .3125f, .5625f, .9375f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-						
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-		
-		if(pos==29) {
-			
+		if(pos == 29) {
 			boundingArray = ITUtils.smartBoundingBox(.8125f, 0, .375f, .375f, .625f, .875f, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.4375f, .1875f, .3125f, .3125f, .5625f, .9375f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, .5625f, .0625f, .0625f, 0, 1, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.5f, .25f, .375f, .375f, 0, .5625f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-		
-		if(pos==30 || pos==40) {
-			
-			if(pos!=30) {
-				fl = fl.getOpposite();
-			}
-			
+		if(pos == 30 || pos == 40) {
+			if(pos != 30) fl = fl.getOpposite();
 			boundingArray = ITUtils.smartBoundingBox(0, .5f, .125f, .5f, 0, .25f, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, .25f, .5f, 0, 0, .5f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, .5f, .5f, 0, .5f, 1, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, .75f, .125f, .5f, .25f, .5f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-						
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-		
-		if(pos==35) {
-			
+		if(pos == 35) {
 			boundingArray = ITUtils.smartBoundingBox(0, 0, 0, 0, .125f, 1, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, 0, .125f, 0, 0, .125f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-
-		if(pos==38) {
-			
+		if(pos == 38) {
 			boundingArray = ITUtils.smartBoundingBox(0, 0, 0, .25f, 0, 1, fl, fw);
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
+			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(0, 0, .75f, 0, 0, .25f, fl, fw);
-			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-			
 		}
-		
-		if(pos==39) {
-			
+		if(pos == 39) {
 			boundingArray = ITUtils.smartBoundingBox(.125f, .125f, 0, .125f, 0, .125f, fl, fw);
-			
-			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 		}
-		
-		if(pos==44) {
-			
+		if(pos == 44) {
 			boundingArray = ITUtils.smartBoundingBox(0, .5625f, .0625f, .0625f, 0, .5f, fl, fw);
-			
-			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(),getPos().getY(),getPos().getZ()));
-			
+			return Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 		}
-				
 		return null;
 	}
 
 	@Override
-	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop,
+	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, 
 			ArrayList<AxisAlignedBB> list) {
 		return false;
 	}
