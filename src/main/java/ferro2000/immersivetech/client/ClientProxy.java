@@ -12,11 +12,13 @@ import blusunrize.immersiveengineering.client.IECustomStateMapper;
 import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
 import blusunrize.lib.manual.ManualPages;
+
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.client.render.TileRenderSteamTurbine;
 import ferro2000.immersivetech.common.CommonProxy;
 import ferro2000.immersivetech.common.ITContent;
 import ferro2000.immersivetech.common.blocks.BlockITFluid;
+import ferro2000.immersivetech.common.blocks.connectors.types.BlockType_Connectors;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockAlternator;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockDistiller;
@@ -24,10 +26,10 @@ import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarRe
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySteamTurbine;
-import ferro2000.immersivetech.common.blocks.metal.types.BlockType_Connectors;
 import ferro2000.immersivetech.common.blocks.metal.types.BlockType_MetalDevice;
 import ferro2000.immersivetech.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import ferro2000.immersivetech.common.items.ItemITBase;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -39,6 +41,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -51,197 +54,140 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
-public class ClientProxy extends CommonProxy{
-	
+public class ClientProxy extends CommonProxy {
 	public static final String CAT_IT = "it";
-	
+
 	@Override
-	public void preInit(){
-		
+	public void preInit() {
 		ClientUtils.mc().getFramebuffer().enableStencil();
 		ModelLoaderRegistry.registerLoader(IEOBJLoader.instance);
 		OBJLoader.INSTANCE.addDomain(ImmersiveTech.MODID);
 		IEOBJLoader.instance.addDomain(ImmersiveTech.MODID);
 		MinecraftForge.EVENT_BUS.register(this);
-		
 	}
-	
-	/**
-	 * @author BluSunrize
-	 */
+
+	/*
+	@author BluSunrize
+	*/
+
+	@SuppressWarnings("deprecation")
 	@SubscribeEvent
 	public static void registerModels(ModelRegistryEvent evt) {
-		
 		WireApi.registerConnectorForRender("conn_timer", new ResourceLocation("immersivetech:block/connector/connectors_timer.obj.ie"), null);
 		WireApi.registerConnectorForRender("conn_con_net", new ResourceLocation("immersivetech:block/connector/connectors_con_net.obj.ie"), null);
-		
-		for(Block block : ITContent.registeredITBlocks)
-		{
+
+		for(Block block : ITContent.registeredITBlocks) {
 			final ResourceLocation loc = Block.REGISTRY.getNameForObject(block);
 			Item blockItem = Item.getItemFromBlock(block);
-			if(blockItem==null)
-				throw new RuntimeException("ITEMBLOCK FOR "+loc+" : "+block+" IS NULL");
-			if(block instanceof IIEMetaBlock)
-			{
+			if(blockItem==null)	throw new RuntimeException("ITEMBLOCK for" + loc + " : " + block + " IS NULL");
+			if(block instanceof IIEMetaBlock) {
 				IIEMetaBlock ieMetaBlock = (IIEMetaBlock)block;
-				if(ieMetaBlock.useCustomStateMapper())
-					ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock));
-				ModelLoader.setCustomMeshDefinition(blockItem, new ItemMeshDefinition()
-				{
+				if(ieMetaBlock.useCustomStateMapper()) ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock));
+				ModelLoader.setCustomMeshDefinition(blockItem, new ItemMeshDefinition() {
 					@Override
-					public ModelResourceLocation getModelLocation(ItemStack stack)
-					{
+					public ModelResourceLocation getModelLocation(ItemStack stack) {
 						return new ModelResourceLocation(loc, "inventory");
 					}
 				});
-				for(int meta = 0; meta < ieMetaBlock.getMetaEnums().length; meta++)
-				{
+				for(int meta = 0; meta < ieMetaBlock.getMetaEnums().length; meta++) {
 					String location = loc.toString();
-					String prop = ieMetaBlock.appendPropertiesToState()?("inventory,"+ieMetaBlock.getMetaProperty().getName()+"="+ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)): null;
-					if(ieMetaBlock.useCustomStateMapper())
-					{
+					String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getName() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)): null;
+					if(ieMetaBlock.useCustomStateMapper()) {
 						String custom = ieMetaBlock.getCustomStateMapping(meta, true);
-						if(custom != null)
-							location += "_" + custom;
-					}
-					try
-					{
+						if(custom != null) location += "_" + custom;
+					} try {
 						ModelLoader.setCustomModelResourceLocation(blockItem, meta, new ModelResourceLocation(location, prop));
-					} catch(NullPointerException npe)
-					{
+					} catch (NullPointerException npe) {
 						throw new RuntimeException("WELP! apparently " + ieMetaBlock + " lacks an item!", npe);
 					}
 				}
-			} else if(block instanceof BlockITFluid)
+			} else if(block instanceof BlockITFluid) {
 				mapFluidState(block, ((BlockITFluid) block).getFluid());
-			else
+			} else {
 				ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(loc, "inventory"));
+			}
 		}
 
-		for(Item item : ITContent.registeredITItems)
-		{
-			if(item instanceof ItemBlock)
-				continue;
-			if(item instanceof ItemITBase)
-			{
+		for(Item item : ITContent.registeredITItems) {
+			if(item instanceof ItemBlock) continue;
+			if(item instanceof ItemITBase) {
 				ItemITBase ipMetaItem = (ItemITBase) item;
-				if(ipMetaItem.registerSubModels && ipMetaItem.getSubNames() != null && ipMetaItem.getSubNames().length > 0)
-				{
-					for(int meta = 0; meta < ipMetaItem.getSubNames().length; meta++)
-					{
+				if(ipMetaItem.registerSubModels && ipMetaItem.getSubNames() != null && ipMetaItem.getSubNames().length > 0) {
+					for(int meta = 0; meta < ipMetaItem.getSubNames().length; meta++) {
 						ResourceLocation loc = new ResourceLocation(ImmersiveTech.MODID, ipMetaItem.itemName + "/" + ipMetaItem.getSubNames()[meta]);
-
 						ModelBakery.registerItemVariants(ipMetaItem, loc);
 						ModelLoader.setCustomModelResourceLocation(ipMetaItem, meta, new ModelResourceLocation(loc, "inventory"));
 					}
-				}
-				else
-				{
+				} else {
 					final ResourceLocation loc = new ResourceLocation(ImmersiveTech.MODID, ipMetaItem.itemName);
 					ModelBakery.registerItemVariants(ipMetaItem, loc);
-					ModelLoader.setCustomMeshDefinition(ipMetaItem, new ItemMeshDefinition()
-					{
+					ModelLoader.setCustomMeshDefinition(ipMetaItem, new ItemMeshDefinition() {
 						@Override
-						public ModelResourceLocation getModelLocation(ItemStack stack)
-						{
+						public ModelResourceLocation getModelLocation(ItemStack stack) {
 							return new ModelResourceLocation(loc, "inventory");
 						}
 					});
 				}
-			} 
-			else
-			{
+			} else {
 				final ResourceLocation loc = Item.REGISTRY.getNameForObject(item);
 				ModelBakery.registerItemVariants(item, loc);
-				ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
-				{
+				ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition() {
 					@Override
-					public ModelResourceLocation getModelLocation(ItemStack stack)
-					{
+					public ModelResourceLocation getModelLocation(ItemStack stack) {
 						return new ModelResourceLocation(loc, "inventory");
 					}
 				});
 			}
 		}
-		
 	}
-	
+
 	@Override
-	public void preInitEnd(){
-		
+	public void preInitEnd() {
 	}
-	
+
 	@Override
-	public void init(){
-		
+	public void init() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbine.class, new TileRenderSteamTurbine());
-		
+
 	}
-	
+
 	@Override
-	public void postInit(){
-		
-		ManualHelper.addEntry("cokeOvenAdvanced", CAT_IT, 
-				new ManualPageMultiblock(ManualHelper.getManual(), "cokeOvenAdvanced0", MultiblockCokeOvenAdvanced.instance),
-				new ManualPages.Text(ManualHelper.getManual(), "cokeOvenAdvanced1"),
-				new ManualPages.Crafting(ManualHelper.getManual(), "cokeOvenAdvanced2", new ItemStack(ITContent.blockMetalDevice, 1, BlockType_MetalDevice.COKE_OVEN_PREHEATER.getMeta())));
-		ManualHelper.addEntry("distiller", CAT_IT, 
-				new ManualPageMultiblock(ManualHelper.getManual(), "distiller0", MultiblockDistiller.instance),
-				new ManualPages.Text(ManualHelper.getManual(), "distiller1"));
-		ManualHelper.addEntry("solarTower", CAT_IT, 
-				new ManualPageMultiblock(ManualHelper.getManual(), "solarTower0", MultiblockSolarTower.instance),
-				new ManualPages.Text(ManualHelper.getManual(), "solarTower1"),
-				new ManualPageMultiblock(ManualHelper.getManual(), "solarTower2", MultiblockSolarReflector.instance),
-				new ManualPages.Text(ManualHelper.getManual(), "solarTower3"));
-		ManualHelper.addEntry("boiler", CAT_IT, 
-				new ManualPageMultiblock(ManualHelper.getManual(), "boiler0", MultiblockBoiler.instance),
-				new ManualPages.Text(ManualHelper.getManual(), "boiler1"),
-				new ManualPages.Text(ManualHelper.getManual(), "boiler2"));
-		ManualHelper.addEntry("steamTurbine", CAT_IT, 
-				new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", MultiblockSteamTurbine.instance),
-				new ManualPages.Text(ManualHelper.getManual(), "steamTurbine1"),
-				new ManualPages.Text(ManualHelper.getManual(), "steamTurbine2"));
-		ManualHelper.addEntry("alternator", CAT_IT, 
-				new ManualPageMultiblock(ManualHelper.getManual(), "alternator0", MultiblockAlternator.instance),
-				new ManualPages.Text(ManualHelper.getManual(), "alternator1"),
-				new ManualPages.Image(ManualHelper.getManual(), "alternator2", "immersivetech:textures/misc/alternator.png;0;0;110;50"));
-		ManualHelper.addEntry("redstone", CAT_IT, 
-				new ManualPages.Crafting(ManualHelper.getManual(), "redstone0", new ItemStack(ITContent.blockConnectors, 1, BlockType_Connectors.CONNECTORS_TIMER.getMeta())));
-		
+	public void postInit() {
+		ManualHelper.addEntry("cokeOvenAdvanced", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "cokeOvenAdvanced0", MultiblockCokeOvenAdvanced.instance), new ManualPages.Text(ManualHelper.getManual(), "cokeOvenAdvanced1"), new ManualPages.Crafting(ManualHelper.getManual(), "cokeOvenAdvanced2", new ItemStack(ITContent.blockMetalDevice, 1, BlockType_MetalDevice.COKE_OVEN_PREHEATER.getMeta())));
+		ManualHelper.addEntry("distiller", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "distiller0", MultiblockDistiller.instance), new ManualPages.Text(ManualHelper.getManual(), "distiller1"));
+		ManualHelper.addEntry("solarTower", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "solarTower0", MultiblockSolarTower.instance), new ManualPages.Text(ManualHelper.getManual(), "solarTower1"), new ManualPageMultiblock(ManualHelper.getManual(), "solarTower2", MultiblockSolarReflector.instance), new ManualPages.Text(ManualHelper.getManual(), "solarTower3"));
+		ManualHelper.addEntry("boiler", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "boiler0", MultiblockBoiler.instance), new ManualPages.Text(ManualHelper.getManual(), "boiler1"), new ManualPages.Text(ManualHelper.getManual(), "boiler2"));
+		ManualHelper.addEntry("steamTurbine", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", MultiblockSteamTurbine.instance), new ManualPages.Text(ManualHelper.getManual(), "steamTurbine1"), new ManualPages.Text(ManualHelper.getManual(), "steamTurbine2"));
+		ManualHelper.addEntry("alternator", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "alternator0", MultiblockAlternator.instance), new ManualPages.Text(ManualHelper.getManual(), "alternator1"), new ManualPages.Image(ManualHelper.getManual(), "alternator2", "immersivetech:textures/misc/alternator.png;0;0;110;50"));
+		ManualHelper.addEntry("redstone", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "redstone0", new ItemStack(ITContent.blockConnectors, 1, BlockType_Connectors.CONNECTORS_TIMER.getMeta())));
 	}
-	
-	private static void mapFluidState(Block block, Fluid fluid)
-	{
+
+	private static void mapFluidState(Block block, Fluid fluid) {
 		Item item = Item.getItemFromBlock(block);
 		FluidStateMapper mapper = new FluidStateMapper(fluid);
-		if(item != Items.AIR)
-		{
+		if(item != Items.AIR) {
 			ModelLoader.registerItemVariants(item);
 			ModelLoader.setCustomMeshDefinition(item, mapper);
 		}
 		ModelLoader.setCustomStateMapper(block, mapper);
 	}
 
-	static class FluidStateMapper extends StateMapperBase implements ItemMeshDefinition
-	{
+	static class FluidStateMapper extends StateMapperBase implements ItemMeshDefinition {
 		public final ModelResourceLocation location;
 
-		public FluidStateMapper(Fluid fluid)
-		{
+		public FluidStateMapper(Fluid fluid) {
 			this.location = new ModelResourceLocation(ImmersiveTech.MODID + ":fluid_block", fluid.getName());
 		}
 
 		@Nonnull
 		@Override
-		protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state)
-		{
+		protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
 			return location;
 		}
 
 		@Nonnull
 		@Override
-		public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
-		{
+		public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) {
 			return location;
 		}
 	}
