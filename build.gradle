@@ -1,43 +1,47 @@
 buildscript {
-    repositories {
-        jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-    }
+	repositories {
+		jcenter()
+		maven { url = "http://files.minecraftforge.net/maven" }
+	}
+	dependencies {
+		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+	}
 }
 
-ext.configFile = file "..//common/common-1.12.properties"
+ext.configFile = file "../common/common-1.12.properties"
 configFile.withReader {
-    def prop = new Properties()
-    prop.load(it)
-    ext.common = new ConfigSlurper().parse prop
+	def prop = new Properties()
+	prop.load(it)
+	ext.common = new ConfigSlurper().parse prop
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 repositories {
 	maven {
-        name 'jared'
-        url "http://blamejared.com/maven"
+		name = 'CoFH Maven'
+		url = 'http://maven.covers1624.net/'
 	}
-    maven {
-        name 'prog'
-        url 'http://dvs1.progwml6.com/files/maven'
-    }
-    maven {
-        name 'hwyla'
-        url 'http://tehnut.info/maven'
-    }	
 	maven {
-		name 'tterrag'
-		url 'http://maven.tterrag.com/'
+		name = 'ChickenBones Maven'
+		url = "http://chickenbones.net/maven/"
+	}	
+	maven {
+		name = 'JEI Maven'
+		url = 'http://dvs1.progwml6.com/files/maven'
 	}
-    maven {
-        name 'CoFH'
-        url 'http://maven.covers1624.net/'
-    }
+	maven {
+		name = 'HWYLA Maven'
+		url = 'http://tehnut.info/maven'
+	}
+	maven {
+		name = 'Immersive Maven'
+		url = 'http://blamejared.com/maven'
+	}
+	maven {
+		name = 'tterrag Maven'
+		url = 'http://maven.tterrag.com/'
+	}	
 }
 
 
@@ -47,45 +51,43 @@ archivesBaseName = modarchivename
 
 sourceCompatibility = targetCompatibility = "1.8"
 compileJava {
-    sourceCompatibility = targetCompatibility = "1.8"
+	sourceCompatibility = targetCompatibility = "1.8"
 }
 
 minecraft {
-    version = common.mcversion + "-" + common.forgeversion
-    mappings = common.mcp_mappings
+	version = common.mcversion + "-" + common.forgeversion
+	mappings = common.mcp_mappings
 	runDir = "run"
-    replace '${version}', modversion+ "." + modsubversion
+	replace '$ {version}', modversion+ "." + modsubversion
 }
 
 dependencies {
-    
-}
-
-jar {
-    archiveName = "${baseName}-1.12-${version}.jar"
-}
-
-
-
-dependencies {
+	compile "mezz.jei:jei_${common.mcversion}:${common.jei_version}"
 	deobfCompile "blusunrize:ImmersiveEngineering:0.12-+"
-    deobfCompile "mezz.jei:jei_${common.mcversion}:${common.jei_version}"
+	deobfCompile "cofh:RedstoneFlux:${common.mcbaseversion}-${common.redf_version}:deobf"
+	deobfCompile "cofh:CoFHCore:${common.mcversion}-${common.cofh_version}:deobf"
+	deobfCompile "cofh:CoFHWorld:${common.mcversion}-${common.cwor_version}:deobf"
+	deobfCompile "cofh:ThermalFoundation:${common.mcversion}-${common.thfo_version}:deobf"
+	deobfCompile "cofh:ThermalExpansion:${common.mcversion}-${common.thex_version}:deobf"
+	deobfCompile "codechicken:CodeChickenLib:${common.mcversion}-${common.cclo_version}:deobf"
 	compileOnly "mcjty.theoneprobe:TheOneProbe-${common.mcbaseversion}:${common.mcbaseversion}-${common.top_version}"
-    compileOnly "mcp.mobius.waila:Hwyla:${common.hwya_version}"
-	compileOnly "cofh:RedstoneFlux:${common.mcbaseversion}-${common.redf_version}:deobf"
+	compileOnly "mcp.mobius.waila:Hwyla:${common.hwya_version}"
+
+
+	compileOnly "CraftTweaker2:CraftTweaker2-MC1120-Main:${common.mcbaseversion}-${common.crft_version}"
 }
 
 processResources {
-    inputs.property "version", project.modversion + "." + project.modsubversion
-    inputs.property "mcversion", project.minecraft.version
+	inputs.property "version", project.modversion + "." + project.modsubversion
+	inputs.property "mcversion", project.minecraft.version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include "mcmod.info"
-                
-        expand "version":project.modversion + "." + project.modsubversion, "mcversion":project.minecraft.version
-    }
-        
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "mcmod.info"
-    }
+	from(sourceSets.main.resources.srcDirs) {
+		include "mcmod.info"
+				
+		expand "version":project.modversion + "." + project.modsubversion, "mcversion":project.minecraft.version
+	}
+		
+	from(sourceSets.main.resources.srcDirs) {
+		exclude "mcmod.info"
+	}
 }
