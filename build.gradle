@@ -58,7 +58,7 @@ minecraft {
 	version = common.mcversion + "-" + common.forgeversion
 	mappings = common.mcp_mappings
 	runDir = "run"
-	replace '$ {version}', modversion+ "." + modsubversion
+	replace '${version}', modversion+ "." + modsubversion
 }
 
 dependencies {
