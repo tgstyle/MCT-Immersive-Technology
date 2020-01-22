@@ -50,6 +50,9 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	public int ref1;
 	public int ref2;
 	public int ref3;
+	
+	private static int solarMaxRange = ITConfig.Machines.solarTower_maxRange;
+	private static int solarMinRange = ITConfig.Machines.solarTower_minRange;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -149,8 +152,8 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	EnumFacing fr;
 	BlockPos pos;
 	TileEntity tile;
-	int maxRange = ITConfig.Machines.solarTower_maxRange;
-	int minRange = ITConfig.Machines.solarTower_minRange;
+	int maxRange = solarMaxRange;
+	int minRange = solarMinRange;
 	int refNum = 0;
 	for(int cont = 0; cont < 4; cont++) {
 		fw = facing;

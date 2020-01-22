@@ -91,11 +91,11 @@ public class ImmersiveTech {
 	};
 
 	public void registerVariables() {
-		Config.manual_int.put("steamTurbine_timeToMax", (ITConfig.Machines.mechanicalEnergy_maxSpeed / ITConfig.Machines.steamTurbine_speedGainPerTick)/20);
+		Config.manual_int.put("steamTurbine_timeToMax", ((ITConfig.Machines.mechanicalEnergy_maxSpeed / ITConfig.Machines.steamTurbine_speedGainPerTick) / 20));
 		Config.manual_int.put("solarTower_minRange", ITConfig.Machines.solarTower_minRange);
 		Config.manual_int.put("solarTower_maxRange", ITConfig.Machines.solarTower_maxRange);
-		Config.manual_double.put("boiler_cooldownTime", ((ITConfig.Machines.boiler_workingHeatLevel / ITConfig.Machines.boiler_progressLossInTicks)/20));
-		Config.manual_int.put("alternator_RfPerTickPerPort", ITConfig.Machines.alternator_RfPerTickPerPort);
+		Config.manual_double.put("boiler_cooldownTime", ((ITConfig.Machines.boiler_workingHeatLevel / ITConfig.Machines.boiler_progressLossInTicks) / 20));
+		Config.manual_int.put("alternator_RfPerTickPerPort", (ITConfig.Machines.alternator_RfPerTick / 6));
 		Config.manual_int.put("alternator_energyStorage", ITConfig.Machines.alternator_energyStorage);
 		Config.manual_int.put("alternator_energyPerTick", ITConfig.Machines.alternator_RfPerTick);
 		Config.manual_int.put("cokeOvenPreheater_consumption", ITConfig.Machines.cokeOvenPreheater_consumption);
