@@ -123,6 +123,10 @@ public class ITContent {
 
 		/*ITEMS*/
 		itemMaterial = new ItemITBase("material", 64, "salt");
+		
+		/*TILE ENTITIES*/
+		registerTile(TileEntityTimer.class);
+		registerTile(TileEntityConnectorNet.class);
 	}
 
 	public static void init() {
@@ -162,13 +166,6 @@ public class ITContent {
 			registerTile(TileEntitySteamTurbine.class);
 			MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
 		}
-
-		/*TILE ENTITIES*/
-		registerTile(TileEntityTimer.class);
-		registerTile(TileEntityConnectorNet.class);
-		OreDictionary.registerOre("dustSalt", itemMaterial);
-		OreDictionary.registerOre("itemSalt", itemMaterial);
-		OreDictionary.registerOre("foodSalt", itemMaterial);
 	}
 
 	@SubscribeEvent
@@ -185,23 +182,22 @@ public class ITContent {
 				distillerItemMeta = 0;
 			}
 			ItemStack distillerItem = new ItemStack(ForgeRegistries.ITEMS.getValue(distillerItemName), 1, distillerItemMeta);
-
 			DistillerRecipes.addRecipe(new FluidStack(fluidDistWater, 100), new FluidStack(FluidRegistry.WATER, 200), distillerItem, 50, 1, distillerChance);
 		}
 
 		if(Machines.enable_solarTower && Machines.register_solarTower_recipes) {
-			SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 500), new FluidStack(FluidRegistry.WATER, 100), 1);
-			SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 750), new FluidStack(fluidDistWater, 100), 1);
+			SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 50), new FluidStack(FluidRegistry.WATER, 100), 1);
+			SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 75), new FluidStack(fluidDistWater, 100), 1);
 		}
 
 		if(Machines.enable_boiler && Machines.register_boiler_recipes) {
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 500), new FluidStack(FluidRegistry.WATER, 100), 1);
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 750), new FluidStack(fluidDistWater, 100), 1);
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 50), new FluidStack(FluidRegistry.WATER, 100), 1);
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 75), new FluidStack(fluidDistWater, 100), 1);
 			BoilerFuelRecipe.addFuel(new FluidStack(IEContent.fluidBiodiesel, 5), 1, 10);
 		}
 
 		if(Machines.enable_steamTurbine && Machines.register_steamTurbine_recipes) {
-			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 50), new FluidStack(fluidSteam, 500), 1);
+			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 10), new FluidStack(fluidSteam, 100), 1);
 		}
 	}
 
@@ -220,13 +216,20 @@ public class ITContent {
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
 		for(Item item : registeredITItems) event.getRegistry().register(item.setRegistryName(createRegistryName(item.getUnlocalizedName())));
-
+		registerOres();
 	}
 
 	private static ResourceLocation createRegistryName(String unlocalized) {
 		unlocalized = unlocalized.substring(unlocalized.indexOf("immersive"));
 		unlocalized = unlocalized.replaceFirst("\\.", ":");
 		return new ResourceLocation(unlocalized);
+	}
+	
+	public static void registerOres() {
+		/*ORE DICTIONARY*/
+		OreDictionary.registerOre("dustSalt", itemMaterial);
+		OreDictionary.registerOre("itemSalt", itemMaterial);
+		OreDictionary.registerOre("foodSalt", itemMaterial);
 	}
 
 }

@@ -38,8 +38,8 @@ public class Config {
 			public static boolean register_distiller_recipes = true;
 
 			/*MACHINES*/
-			@Comment({"The capacity of the input tank forthe Steam Turbine [Default=2000]"})
-			public static int steamTurbine_input_tankSize = 2000;
+			@Comment({"The capacity of the input tank forthe Steam Turbine [Default=10000]"})
+			public static int steamTurbine_input_tankSize = 10000;
 			@Comment({"The capacity of the output tank forthe Steam Turbine [Default=10000]"})
 			public static int steamTurbine_output_tankSize = 10000;
 			@Comment({"The maximum torque that machines can consume or produce [Default=8192]"})
@@ -58,10 +58,8 @@ public class Config {
 			public static float steamTurbine_maxRotationSpeed = 72;
 			@Comment({"The max of Flux that the Alternator can store [Default=1200000]"})
 			public static int alternator_energyStorage = 1200000;
-			@Comment({"Flux production when running at maximum speed and torque [Default=24576]"})
-			public static int alternator_RfPerTick = 24576;
-			@Comment({"The max of Flux that the Alternator can output per each energy device connected [Default=4096]"})
-			public static int alternator_RfPerTickPerPort = 4096;
+			@Comment({"Flux production when running at maximum speed and torque [Default=12288]"})
+			public static int alternator_RfPerTick = 12288;
 
 			/*ENERGY*/
 			@Comment({"The Flux per tick the Coke Oven Preheater will consume to speed up the Coke Oven Advanced [Default=32]"})

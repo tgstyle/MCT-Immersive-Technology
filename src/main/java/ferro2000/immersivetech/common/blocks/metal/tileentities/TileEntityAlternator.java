@@ -42,14 +42,19 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	private BlockPos[] EnergyOutputPositions = new BlockPos[6];
 
 	private static int[] size = new int[] {3, 4, 3};
+	
+	private static int maxSpeed = ITConfig.Machines.mechanicalEnergy_maxSpeed;
+	private static int maxTorque = ITConfig.Machines.mechanicalEnergy_maxTorque;
+	private static int rfPerTick = ITConfig.Machines.alternator_RfPerTick;
+	private static int rfPerTickPerPort = rfPerTick / 6;
 
 	public TileEntityAlternator() {
 		super(size);
 	}
 
 	public int energyGenerated() {
-		float maxEnergy = ITConfig.Machines.mechanicalEnergy_maxSpeed * ITConfig.Machines.mechanicalEnergy_maxTorque;
-		int gen = Math.round((mechanicalEnergy.getEnergy() / maxEnergy) * ITConfig.Machines.alternator_RfPerTick);
+		float maxEnergy = maxSpeed * maxTorque;
+		int gen = Math.round((mechanicalEnergy.getEnergy() / maxEnergy) * rfPerTick);
 		return gen;
 	}
 
@@ -66,7 +71,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 				tileEntity = Utils.getExistingTileEntity(world, EnergyOutputPositions[i]);
 				EnumFacing energyFacing = i < 3 ? facing.rotateY() : facing.rotateYCCW();
 				if(!EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) continue;
-				int canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, ITConfig.Machines.alternator_RfPerTickPerPort), true);
+				int canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, rfPerTickPerPort), true);
 				if(canReceiveAmount == 0) continue;
 				EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
 				energyStorage.setEnergy(currentEnergy - canReceiveAmount);

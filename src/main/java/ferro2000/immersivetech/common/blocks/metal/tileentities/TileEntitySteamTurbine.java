@@ -39,13 +39,24 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal <TileEntit
 	public TileEntitySteamTurbine() {
 		super(MultiblockSteamTurbine.instance, new int[] { 4, 10, 3 }, 0, true);
 	}
-
-	public BlockPos fluidOutputPos;
-	public int burnRemaining = 0;
-	public FluidTank[] tanks = new FluidTank[] {new FluidTank(ITConfig.Machines.steamTurbine_input_tankSize), new FluidTank(ITConfig.Machines.steamTurbine_output_tankSize)};
-	public MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
+	
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
+	public MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
 	public SteamTurbineRecipe lastRecipe;
+	public FluidTank[] tanks = new FluidTank[] {new FluidTank(ITConfig.Machines.steamTurbine_input_tankSize), new FluidTank(ITConfig.Machines.steamTurbine_output_tankSize)};
+
+	public int burnRemaining = 0;
+
+	public static BlockPos fluidOutputPos;
+
+	private static int maxSpeed = ITConfig.Machines.mechanicalEnergy_maxSpeed;
+	private static int maxTorque = ITConfig.Machines.mechanicalEnergy_maxTorque;
+	private static int speedGainPerTick = ITConfig.Machines.steamTurbine_speedGainPerTick;
+	private static int torqueGainPerTick = ITConfig.Machines.steamTurbine_torqueGainPerTick;
+	private static int speedLossPerTick = ITConfig.Machines.steamTurbine_speedLossPerTick;
+	private static int torqueLossPerTick = ITConfig.Machines.steamTurbine_torqueLossPerTick;
+	private static int energyMaxSpeed = ITConfig.Machines.mechanicalEnergy_maxSpeed;
+	private static float maxRotationSpeed = ITConfig.Machines.steamTurbine_maxRotationSpeed;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -68,14 +79,14 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal <TileEntit
 	}
 
 	private void speedUp() {
-		int newSpeed = Math.min(ITConfig.Machines.mechanicalEnergy_maxSpeed, mechanicalEnergy.getSpeed() + ITConfig.Machines.steamTurbine_speedGainPerTick);
-		int newTorque = Math.min(ITConfig.Machines.mechanicalEnergy_maxTorque, mechanicalEnergy.getTorque() + ITConfig.Machines.steamTurbine_torqueGainPerTick);
+		int newSpeed = Math.min(maxSpeed, mechanicalEnergy.getSpeed() + speedGainPerTick);
+		int newTorque = Math.min(maxTorque, mechanicalEnergy.getTorque() + torqueGainPerTick);
 		mechanicalEnergy.setMechanicalEnergy(newTorque, newSpeed);
 	}
 
 	private void speedDown() {
-		int newSpeed = Math.max(0, mechanicalEnergy.getSpeed() - ITConfig.Machines.steamTurbine_speedLossPerTick);
-		int newTorque = Math.max(0, mechanicalEnergy.getTorque() - ITConfig.Machines.steamTurbine_torqueLossPerTick);
+		int newSpeed = Math.max(0, mechanicalEnergy.getSpeed() - speedLossPerTick);
+		int newTorque = Math.max(0, mechanicalEnergy.getTorque() - torqueLossPerTick);
 		mechanicalEnergy.setMechanicalEnergy(newTorque, newSpeed);
 	}
 
@@ -97,7 +108,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal <TileEntit
 	public void update() {
 		super.update();
 		if(isDummy()) return;
-		float rotationSpeed = mechanicalEnergy.getSpeed() == 0 ? 0f : ((float)mechanicalEnergy.getSpeed() / (float)ITConfig.Machines.mechanicalEnergy_maxSpeed) * ITConfig.Machines.steamTurbine_maxRotationSpeed;
+		float rotationSpeed = mechanicalEnergy.getSpeed() == 0 ? 0f : ((float)mechanicalEnergy.getSpeed() / (float) energyMaxSpeed) * maxRotationSpeed;
 		if(ITUtils.setRotationAngle(animation, rotationSpeed) && !world.isRemote) {
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
@@ -108,10 +119,10 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal <TileEntit
 			speedUp();
 		} else if (!isRSDisabled() && tanks[0].getFluid() != null && tanks[0].getFluid().getFluid() != null && ITUtils.checkMechanicalEnergyReceiver(world, getPos()) && ITUtils.checkAlternatorStatus(world, getPos())) {
 			SteamTurbineRecipe recipe = (lastRecipe != null && lastRecipe.isValid() && tanks[0].getFluid().isFluidEqual(lastRecipe.input)) ? lastRecipe : SteamTurbineRecipe.findFuel(tanks[0].getFluid());
-			if(recipe != null && recipe.input.amount >= tanks[0].getFluidAmount()) {
+			if(recipe != null && recipe.input.amount <= tanks[0].getFluidAmount()) {
 				lastRecipe = recipe;
-				tanks[0].drain(recipe.input.amount, true);
 				burnRemaining = recipe.time;
+				tanks[0].drain(recipe.input.amount, true);
 				if(recipe.output != null) tanks[1].fill(recipe.output, true);
 				speedUp();
 			} else speedDown();
