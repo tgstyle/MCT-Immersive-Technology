@@ -5,7 +5,7 @@ import ferro2000.immersivetech.ImmersiveTech;
 import net.minecraftforge.common.config.Config.Comment;
 
 public class Config {
-	@net.minecraftforge.common.config.Config(modid=ImmersiveTech.MODID)
+	@net.minecraftforge.common.config.Config(modid=ImmersiveTech.MODID, name="immersivetechnology")
 	public static class ITConfig {
 		public static Machines machines;
 
