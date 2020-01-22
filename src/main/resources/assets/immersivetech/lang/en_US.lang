@@ -1,5 +1,5 @@
 #CREATIVE TAB
-itemGroup.immersivetech=Immersive Tech
+itemGroup.immersivetech=Immersive Technology
 
 
 #BLOCKS
@@ -43,7 +43,7 @@ tile.immersivetech.metal_multiblock.boiler.name=Boiler
 tile.immersivetech.metal_multiblock.alternator.name=Alternator
 
 #STONE MULTIBLOCKS
-tile.immersivetech.stone_multiblock.coke_oven_advanced.name=Coke Oven Advanced
+tile.immersivetech.stone_multiblock.coke_oven_advanced.name=Advanced Coke Oven
 
 #METAL MULTIBLOCKS
 desc.immersiveengineering.info.multiblock.IT:Distiller=Distiller
@@ -54,18 +54,18 @@ desc.immersiveengineering.info.multiblock.IT:Boiler=Boiler
 desc.immersiveengineering.info.multiblock.IT:Alternator=Alternator
 
 #STONE MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=Coke Oven Advanced
+desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=Advanced Coke Oven
 
 #CONNECTORS
 tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
 
 
 #MANUAL
-ie.manual.category.it.name=Immersive Tech
+ie.manual.category.it.name=Immersive Technology
 
-ie.manual.entry.cokeOvenAdvanced.name=Coke Oven Advanced
+ie.manual.entry.cokeOvenAdvanced.name=Advanced Coke Oven
 ie.manual.entry.cokeOvenAdvanced.subtext=It's fast now
-ie.manual.entry.cokeOvenAdvanced0=The Coke Oven Advanced is a multiblock structure that allows the player to produce Coal Coke and Creosote Oil faster .<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Reinforced Coke Brick Block.
+ie.manual.entry.cokeOvenAdvanced0=The Advanced Coke Oven is a multiblock structure that allows the player to produce Coal Coke and Creosote Oil faster .<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Reinforced Coke Brick Block.
 ie.manual.entry.cokeOvenAdvanced1=It allow the automation of in- and outputs, it can also be outfitted with preheaters to speed up the process by addition of hot air.<br>The furnace is made from reinforced bricks, so you'd be advised to spend your first batches of steel on this upgrade.<br>Similar to the Improved Blast Furnace, the Coal Coke is output at the front and the Creosote Oil at the back. Coal is fed in through the top.
 ie.manual.entry.cokeOvenAdvanced2=Coke Oven Preheaters are used to speed up the refinement process of coal. Each oven can have up to two preheaters connected to the ports on the each side, and each preheater requires <config;i;cokeOvenPreheater_consumption> Flux/t to operate.
 ie.manual.entry.cokeOvenAdvanced3=
