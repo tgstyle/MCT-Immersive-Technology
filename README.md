@@ -1,5 +1,5 @@
 # Immersive Technology
-Energy Technology addon for Immersive Engineering, forke from Immersive Tech.<br/>
+Energy Technology addon for Immersive Engineering, forked from Immersive Tech.<br/>
 
 # Reporting issues
 When you are reporting bugs, please attach the crash report, mod and forge version.<br/>
