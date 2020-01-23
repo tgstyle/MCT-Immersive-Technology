@@ -26,7 +26,7 @@ public class SteamTurbine {
 
 		@Override
 		public String describe() {
-			return "Adding " + SteamTurbineRecipe.recipeCategoryName + " Recipe for'" + recipe.recipeName + "'";
+			return "Adding " + SteamTurbineRecipe.recipeCategoryName + " Recipe for '" + recipe.recipeName + "'";
 		}
 	}
 
@@ -43,7 +43,7 @@ public class SteamTurbine {
 
 		@Override
 		public String describe() {
-			return "Removing " + SteamTurbineRecipe.recipeCategoryName + " Recipes for'" + recipe.recipeName + "'";
+			return "Removing " + SteamTurbineRecipe.recipeCategoryName + " Recipes for '" + recipe.recipeName + "'";
 		}
 	}
 
@@ -65,7 +65,7 @@ public class SteamTurbine {
 	@ZenMethod
 	public static void addFuel(ILiquidStack output, ILiquidStack input0, int time) {
 		if(input0 == null) {
-			CraftTweakerAPI.logError("Can't add recipe for" + SteamTurbineRecipe.recipeCategoryName + " with null input!");
+			CraftTweakerAPI.logError("Can't add recipe for " + SteamTurbineRecipe.recipeCategoryName + " with null input!");
 			return;
 		}
 
@@ -73,12 +73,12 @@ public class SteamTurbine {
 		FluidStack fIn0 = CraftTweakerHelper.toFluidStack(input0);
 
 		if(fIn0 == null) {
-			CraftTweakerAPI.logError("Invalid recipe for" + SteamTurbineRecipe.recipeCategoryName + " with input " + input0.getDisplayName());
+			CraftTweakerAPI.logError("Invalid recipe for " + SteamTurbineRecipe.recipeCategoryName + " with input " + input0.getDisplayName());
 			return;
 		}
 
 		if(ITUtils.First(SteamTurbineRecipe.recipeList, fIn0) != null) {
-			CraftTweakerAPI.logWarning("Recipe for" + SteamTurbineRecipe.recipeCategoryName + " with input " + input0.getDisplayName() + " already exists! Skipping...");
+			CraftTweakerAPI.logWarning("Recipe for " + SteamTurbineRecipe.recipeCategoryName + " with input " + input0.getDisplayName() + " already exists! Skipping...");
 			return;
 		}
 		SteamTurbineRecipe recipe = new SteamTurbineRecipe(fOut, fIn0, time);

@@ -38,9 +38,9 @@ public class Config {
 			public static boolean register_distiller_recipes = true;
 
 			/*MACHINES*/
-			@Comment({"The capacity of the input tank forthe Steam Turbine [Default=10000]"})
+			@Comment({"The capacity of the input tank for the Steam Turbine [Default=10000]"})
 			public static int steamTurbine_input_tankSize = 10000;
-			@Comment({"The capacity of the output tank forthe Steam Turbine [Default=10000]"})
+			@Comment({"The capacity of the output tank for the Steam Turbine [Default=10000]"})
 			public static int steamTurbine_output_tankSize = 10000;
 			@Comment({"The maximum torque that machines can consume or produce [Default=8192]"})
 			public static int mechanicalEnergy_maxTorque = 8192;
@@ -64,11 +64,11 @@ public class Config {
 			/*ENERGY*/
 			@Comment({"The Flux per tick the Coke Oven Preheater will consume to speed up the Coke Oven Advanced [Default=32]"})
 			public static int cokeOvenPreheater_consumption = 32;
-			@Comment({"The capacity of the fuel tank forthe Boiler [Default=2000]"})
+			@Comment({"The capacity of the fuel tank for the Boiler [Default=2000]"})
 			public static int boiler_fuel_tankSize = 2000;
-			@Comment({"The capacity of the input tank forthe Boiler [Default=20000]"})
+			@Comment({"The capacity of the input tank for the Boiler [Default=20000]"})
 			public static int boiler_input_tankSize = 20000;
-			@Comment({"The capacity of the output tank forthe Boiler [Default=20000]"})
+			@Comment({"The capacity of the output tank for the Boiler [Default=20000]"})
 			public static int boiler_output_tankSize = 20000;
 			@Comment({"A boiler can only start processing its recipes once it reaches this heat level [Default=12000.0]"})
 			public static double boiler_workingHeatLevel = 12000.0;
