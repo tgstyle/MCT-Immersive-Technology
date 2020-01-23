@@ -27,7 +27,7 @@ public class Boiler {
 
 		@Override
 		public String describe() {
-			return "Adding " + BoilerRecipe.recipeCategoryName + " Recipe for'" + recipe.recipeName + "'";
+			return "Adding " + BoilerRecipe.recipeCategoryName + " Recipe for '" + recipe.recipeName + "'";
 		}
 	}
 
@@ -44,7 +44,7 @@ public class Boiler {
 
 		@Override
 		public String describe() {
-			return "Removing " + BoilerRecipe.recipeCategoryName + " Recipe for'" + recipe.recipeName + "'";
+			return "Removing " + BoilerRecipe.recipeCategoryName + " Recipe for '" + recipe.recipeName + "'";
 		}
 	}
 
@@ -61,7 +61,7 @@ public class Boiler {
 
 		@Override
 		public String describe() {
-			return "Adding " + BoilerFuelRecipe.recipeCategoryName + " Fuel for'" + recipe.recipeName + "'";
+			return "Adding " + BoilerFuelRecipe.recipeCategoryName + " Fuel for '" + recipe.recipeName + "'";
 		}
 	}
 
@@ -78,7 +78,7 @@ public class Boiler {
 
 		@Override
 		public String describe() {
-			return "Removing " + BoilerFuelRecipe.recipeCategoryName + " Fuel for'" + recipe.recipeName + "'";
+			return "Removing " + BoilerFuelRecipe.recipeCategoryName + " Fuel for '" + recipe.recipeName + "'";
 		}
 	}
 
@@ -100,17 +100,17 @@ public class Boiler {
 	@ZenMethod
 	public static void addFuel(ILiquidStack input, int time, double heat) {
 		if(input == null) {
-			CraftTweakerAPI.logError("Can't add recipe for" + BoilerFuelRecipe.recipeCategoryName + " with null input!");
+			CraftTweakerAPI.logError("Can't add recipe for " + BoilerFuelRecipe.recipeCategoryName + " with null input!");
 			return;
 		}
 		FluidStack fIn = CraftTweakerHelper.toFluidStack(input);
 
 		if(fIn == null) {
-			CraftTweakerAPI.logError("Invalid recipe for" + BoilerFuelRecipe.recipeCategoryName + " with input " + input.getDisplayName());
+			CraftTweakerAPI.logError("Invalid recipe for " + BoilerFuelRecipe.recipeCategoryName + " with input " + input.getDisplayName());
 			return;
 		}
 		if(ITUtils.First(BoilerFuelRecipe.recipeList, fIn) != null) {
-			CraftTweakerAPI.logWarning("Recipe for" + BoilerFuelRecipe.recipeCategoryName + " with input " + input.getDisplayName() + " already exists! Skipping...");
+			CraftTweakerAPI.logWarning("Recipe for " + BoilerFuelRecipe.recipeCategoryName + " with input " + input.getDisplayName() + " already exists! Skipping...");
 			return;
 		}
 		BoilerFuelRecipe recipe = new BoilerFuelRecipe(fIn, time, heat);
@@ -135,26 +135,26 @@ public class Boiler {
 	@ZenMethod
 	public static void addRecipe(ILiquidStack output, ILiquidStack input, int time) {
 		if(input == null) {
-			CraftTweakerAPI.logError("Can't add recipe for" + BoilerRecipe.recipeCategoryName + " with null input!");
+			CraftTweakerAPI.logError("Can't add recipe for " + BoilerRecipe.recipeCategoryName + " with null input!");
 			return;
 		}
 		if(output == null) {
-			CraftTweakerAPI.logError("Can't add recipe for" + BoilerRecipe.recipeCategoryName + " with null output!");
+			CraftTweakerAPI.logError("Can't add recipe for " + BoilerRecipe.recipeCategoryName + " with null output!");
 			return;
 		}
 		FluidStack fOut = CraftTweakerHelper.toFluidStack(output);
 		FluidStack fIn = CraftTweakerHelper.toFluidStack(input);
 
 		if(fIn == null) {
-			CraftTweakerAPI.logError("Invalid recipe for" + BoilerRecipe.recipeCategoryName + " with input " + input.getDisplayName());
+			CraftTweakerAPI.logError("Invalid recipe for " + BoilerRecipe.recipeCategoryName + " with input " + input.getDisplayName());
 			return;
 		}
 		if(fOut == null) {
-			CraftTweakerAPI.logError("Invalid recipe for" + BoilerRecipe.recipeCategoryName + " with output " + output.getDisplayName());
+			CraftTweakerAPI.logError("Invalid recipe for " + BoilerRecipe.recipeCategoryName + " with output " + output.getDisplayName());
 			return;
 		}
 		if(ITUtils.First(BoilerRecipe.recipeList, fIn) != null) {
-			CraftTweakerAPI.logWarning("Recipe for" + BoilerRecipe.recipeCategoryName + " with input " + input.getDisplayName() + " already exists! Skipping...");
+			CraftTweakerAPI.logWarning("Recipe for " + BoilerRecipe.recipeCategoryName + " with input " + input.getDisplayName() + " already exists! Skipping...");
 			return;
 		}
 		BoilerRecipe recipe = new BoilerRecipe(fOut, fIn, time);
