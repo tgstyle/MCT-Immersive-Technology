@@ -4,7 +4,6 @@ import blusunrize.immersiveengineering.common.Config;
 import blusunrize.immersiveengineering.common.IEContent;
 
 import ferro2000.immersivetech.common.CommonProxy;
-import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.ITContent;
 import ferro2000.immersivetech.common.util.ITLogger;
 import ferro2000.immersivetech.common.util.compat.ITCompatModule;
@@ -12,8 +11,8 @@ import ferro2000.immersivetech.common.util.network.MessageTileSync;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -25,32 +24,40 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = ImmersiveTech.MODID, name = ImmersiveTech.NAME, version = ImmersiveTech.VERSION, dependencies = "required-after:immersiveengineering;required-after:forge@[14.23.3.2655, );after:jei@[4.7, )")
+@Mod(
+	modid = ImmersiveTech.MODID,
+	name = ImmersiveTech.NAME,
+	version = ImmersiveTech.VERSION,
+	acceptedMinecraftVersions = "[1.12.2,1.13)",	
+	dependencies = 
+			"required-after:immersiveengineering;" +
+			"required-after:forge@[14.23.3.2655,);")
+
 
 public class ImmersiveTech {
+
 	public static final String MODID = "immersivetech";
-	public static final String NAME = "Immersive Tech";
+	public static final String NAME = "Immersive Technology";
 	public static final String VERSION = "${version}";
 
-	@SidedProxy(clientSide="ferro2000.immersivetech.client.ClientProxy", serverSide="ferro2000.immersivetech.common.CommonProxy")
-
+	@SidedProxy(clientSide = "ferro2000.immersivetech.client.ClientProxy" , serverSide = "ferro2000.immersivetech.common.CommonProxy")
 	public static CommonProxy proxy;
 	public static final SimpleNetworkWrapper packetHandler = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
 
 	@Instance(MODID)
 	public static ImmersiveTech instance;
 
-	@Mod.EventHandler
+	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		ITLogger.logger = event.getModLog();
 		Config.preInit(event);
 		ITContent.preInit();
+		ITContent.registerVariables();
 		proxy.preInit();
-		registerVariables();
 		ITCompatModule.doModulesPreInit();
 	}
 
-	@Mod.EventHandler
+	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		ITContent.init();
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
@@ -63,19 +70,19 @@ public class ImmersiveTech {
 		proxy.initEnd();
 	}
 
-	@Mod.EventHandler
+	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit();
 		ITCompatModule.doModulesPostInit();
 		proxy.postInitEnd();
 	}
 
-	@Mod.EventHandler
+	@EventHandler
 	public void loadComplete(FMLLoadCompleteEvent event) {
 		ITCompatModule.doModulesLoadComplete();
 	}
 
-	@Mod.EventHandler
+	@EventHandler
 	public void serverStarted(FMLServerStartedEvent event) {
 	}
 
@@ -89,16 +96,5 @@ public class ImmersiveTech {
 			return new ItemStack(IEContent.blockMetalDecoration0, 1, 6);
 		}
 	};
-
-	public void registerVariables() {
-		Config.manual_int.put("steamTurbine_timeToMax", ((ITConfig.Machines.mechanicalEnergy_maxSpeed / ITConfig.Machines.steamTurbine_speedGainPerTick) / 20));
-		Config.manual_int.put("solarTower_minRange", ITConfig.Machines.solarTower_minRange);
-		Config.manual_int.put("solarTower_maxRange", ITConfig.Machines.solarTower_maxRange);
-		Config.manual_double.put("boiler_cooldownTime", ((ITConfig.Machines.boiler_workingHeatLevel / ITConfig.Machines.boiler_progressLossInTicks) / 20));
-		Config.manual_int.put("alternator_RfPerTickPerPort", (ITConfig.Machines.alternator_RfPerTick / 6));
-		Config.manual_int.put("alternator_energyStorage", ITConfig.Machines.alternator_energyStorage);
-		Config.manual_int.put("alternator_energyPerTick", ITConfig.Machines.alternator_RfPerTick);
-		Config.manual_int.put("cokeOvenPreheater_consumption", ITConfig.Machines.cokeOvenPreheater_consumption);
-	}
 
 }
