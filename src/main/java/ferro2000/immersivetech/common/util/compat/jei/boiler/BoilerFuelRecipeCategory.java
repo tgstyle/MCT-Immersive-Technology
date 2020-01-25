@@ -1,60 +1,49 @@
 package ferro2000.immersivetech.common.util.compat.jei.boiler;
 
-import ferro2000.immersivetech.api.crafting.BoilerFuelRecipe;
+import java.util.List;
+
+import ferro2000.immersivetech.api.crafting.BoilerRecipe.BoilerFuelRecipe;
 import ferro2000.immersivetech.common.Config;
 import ferro2000.immersivetech.common.ITContent;
 import ferro2000.immersivetech.common.blocks.metal.types.BlockType_MetalMultiblock;
-import ferro2000.immersivetech.common.util.compat.jei.GenericCategory;
+import ferro2000.immersivetech.common.util.compat.jei.ITRecipeCategory;
 import ferro2000.immersivetech.common.util.compat.jei.JEIHelper;
+
 import mezz.jei.api.IGuiHelper;
-import mezz.jei.api.IModRegistry;
-import mezz.jei.api.gui.IDrawable;
-import mezz.jei.api.gui.IGuiFluidStackGroup;
-import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.IRecipeWrapper;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
-import java.util.Collections;
+import net.minecraftforge.fluids.FluidStack;
 
-public class BoilerFuelRecipeCategory extends GenericCategory<BoilerFuelRecipe, BoilerFuelRecipeWrapper> {
+public class BoilerFuelRecipeCategory extends ITRecipeCategory<BoilerFuelRecipe, BoilerFuelRecipeWrapper> {
+	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_boiler_jei.png");
 	private final IDrawable tankOverlay;
-	public static BoilerFuelRecipeCategory instance;
-	public static String categoryName = "it.boilerFuel";
 
-	public static void registerCategory(IGuiHelper guiHelper, IRecipeCategoryRegistration registry) {
-		if(instance != null) return;
-		instance = new BoilerFuelRecipeCategory(guiHelper);
-		registry.addRecipeCategories(instance);
-	}
+	private static int inputTankSize = Config.ITConfig.Machines.boiler_fuel_tankSize;
 
-	public static void registerRest(IModRegistry modRegistry) {
-		if(instance == null) return;
-		modRegistry.addRecipes(Collections.unmodifiableList(BoilerFuelRecipe.recipeList), categoryName);
-		modRegistry.addRecipeCatalyst(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.BOILER.getMeta()), categoryName);
-		modRegistry.handleRecipes(BoilerFuelRecipe.class, instance, categoryName);
-	}
-
-	@Override
-	public IRecipeWrapper getRecipeWrapper(BoilerFuelRecipe recipe) {
-		return new BoilerFuelRecipeWrapper(recipe);
+	@SuppressWarnings("deprecation")
+	public BoilerFuelRecipeCategory(IGuiHelper helper) {
+		super("boilerFuel", "tile.immersivetech.metal_multiblock.boiler.name", helper.createDrawable(background, 0, 0, 176, 77), BoilerFuelRecipe.class, new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.BOILER.getMeta()));
+		tankOverlay = helper.createDrawable(background, 177, 31, 16, 47, -2, 2, -2, 2);
 	}
 
 	@SuppressWarnings("deprecation")
-	private BoilerFuelRecipeCategory(IGuiHelper guiHelper) {
-		super(categoryName, "category.immersivetech.metal_multiblock.boilerFuel", "immersivetech:textures/gui/gui_boiler_jei.png");
-		background = guiHelper.createDrawable(backgroundImage, 0, 0, 176, 77);
-		tankOverlay = guiHelper.createDrawable(backgroundImage, 177, 31, 16, 47, -2, 2, -2, 2);
-	}
-
 	@Override
 	public void setRecipe(IRecipeLayout recipeLayout, BoilerFuelRecipeWrapper recipeWrapper, IIngredients ingredients) {
+		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-		guiFluidStacks.init(0, true, 13, 20, 16, 47, Config.ITConfig.Machines.boiler_fuel_tankSize, false, tankOverlay);
-		guiFluidStacks.set(0, recipeWrapper.recipe.input);
+		guiFluidStacks.init(0, true, 13, 20, 16, 47, inputTankSize, false, tankOverlay);
+		guiFluidStacks.set(0, inputs.get(0));
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
+	}
+	
+	@Override
+	public IRecipeWrapper getRecipeWrapper(BoilerFuelRecipe recipe) {
+		return new BoilerFuelRecipeWrapper(recipe);
 	}
 
 }

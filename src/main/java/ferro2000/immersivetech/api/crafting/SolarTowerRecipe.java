@@ -10,7 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.fluids.FluidStack;
 
-public class SteamTurbineRecipe extends MultiblockRecipe {
+public class SolarTowerRecipe extends MultiblockRecipe {
 	public static float timeModifier = 1;
 
 	public final FluidStack fluidOutput;
@@ -18,7 +18,7 @@ public class SteamTurbineRecipe extends MultiblockRecipe {
 
 	int totalProcessTime;
 
-	public SteamTurbineRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
+	public SolarTowerRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
 		this.fluidOutput = fluidOutput;
 		this.fluidInput = fluidInput;
 		this.totalProcessTime = (int)Math.floor(time * timeModifier);
@@ -26,16 +26,16 @@ public class SteamTurbineRecipe extends MultiblockRecipe {
 		this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
 	}
 
-	public static ArrayList<SteamTurbineRecipe> recipeList = new ArrayList<SteamTurbineRecipe>();
+	public static ArrayList <SolarTowerRecipe> recipeList = new ArrayList<SolarTowerRecipe>();
 
-	public static SteamTurbineRecipe addFuel(FluidStack fluidOutput, FluidStack fluidInput, int time) {
-		SteamTurbineRecipe recipe = new SteamTurbineRecipe(fluidOutput, fluidInput, time);
+	public static SolarTowerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
+		SolarTowerRecipe recipe = new SolarTowerRecipe(fluidOutput, fluidInput, time);
 		recipeList.add(recipe);
 		return recipe;
 	}
 
-	public static SteamTurbineRecipe findFuel(FluidStack fluidInput) {
-		for(SteamTurbineRecipe recipe : recipeList) {
+	public static SolarTowerRecipe findRecipe(FluidStack fluidInput) {
+		for(SolarTowerRecipe recipe : recipeList) {
 			if(fluidInput != null) {
 				if(recipe.fluidInput != null && (fluidInput.containsFluid(recipe.fluidInput))) {
 					return recipe;
@@ -56,11 +56,11 @@ public class SteamTurbineRecipe extends MultiblockRecipe {
 		return nbt;
 	}
 
-	public static SteamTurbineRecipe loadFromNBT(NBTTagCompound nbt) {
+	public static SolarTowerRecipe loadFromNBT(NBTTagCompound nbt) {
 		FluidStack fluidInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input"));
-		return findFuel(fluidInput);
+		return findRecipe(fluidInput);
 	}
-	
+
 	@Override
 	public int getTotalProcessTime() {
 		return this.totalProcessTime;

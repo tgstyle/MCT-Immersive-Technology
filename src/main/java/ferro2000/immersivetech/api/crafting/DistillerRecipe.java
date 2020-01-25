@@ -14,41 +14,41 @@ import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fluids.FluidStack;
 
-public class DistillerRecipes extends MultiblockRecipe {
+public class DistillerRecipe extends MultiblockRecipe {
 	public static float energyModifier = 1;
 	public static float timeModifier = 1;
 	public float chance;
 
 	public final FluidStack fluidOutput;
-	public final FluidStack input;
+	public final FluidStack fluidInput;
 	public final ItemStack itemOutput;
 
 	int totalProcessTime;
 	int totalProcessEnergy;
 
-	public DistillerRecipes(FluidStack fluidOutput, FluidStack input, ItemStack itemOutput, int energy, int time, float chance) {
+	public DistillerRecipe(FluidStack fluidOutput, FluidStack fluidInput, ItemStack itemOutput, int energy, int time, float chance) {
 		this.fluidOutput = fluidOutput;
-		this.input = input;
+		this.fluidInput = fluidInput;
 		this.itemOutput = itemOutput;
 		this.totalProcessEnergy = (int)Math.floor(energy * energyModifier);
 		this.totalProcessTime = (int)Math.floor(time * timeModifier);
 		this.chance = chance;
-		this.fluidInputList = Lists.newArrayList(this.input);
+		this.fluidInputList = Lists.newArrayList(this.fluidInput);
 		this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
 		this.outputList = ListUtils.fromItem(this.itemOutput);
 	}
 
-	public static ArrayList <DistillerRecipes> recipeList = new ArrayList<DistillerRecipes>();
-	public static DistillerRecipes addRecipe(FluidStack fluidOutput, FluidStack input, ItemStack itemOutput, int energy, int time, float chance) {
-		DistillerRecipes r = new DistillerRecipes(fluidOutput, input, itemOutput, energy, time, chance);
+	public static ArrayList <DistillerRecipe> recipeList = new ArrayList<DistillerRecipe>();
+	public static DistillerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, ItemStack itemOutput, int energy, int time, float chance) {
+		DistillerRecipe r = new DistillerRecipe(fluidOutput, fluidInput, itemOutput, energy, time, chance);
 		recipeList.add(r);
 		return r;
 	}
 
-	public static DistillerRecipes findRecipe(FluidStack input)	 {
-		for(DistillerRecipes recipe : recipeList) {
-			if(input != null) {
-				if(recipe.input != null && (input.containsFluid(recipe.input)))	 {
+	public static DistillerRecipe findRecipe(FluidStack fluidInput)	 {
+		for(DistillerRecipe recipe : recipeList) {
+			if(fluidInput != null) {
+				if(recipe.fluidInput != null && (fluidInput.containsFluid(recipe.fluidInput)))	 {
 					return recipe;
 				}
 			}
@@ -63,13 +63,13 @@ public class DistillerRecipes extends MultiblockRecipe {
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-		nbt.setTag("input", input.writeToNBT(new NBTTagCompound()));
+		nbt.setTag("input", fluidInput.writeToNBT(new NBTTagCompound()));
 		return nbt;
 	}
 
-	public static DistillerRecipes loadFromNBT(NBTTagCompound nbt) {
-		FluidStack input = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input"));
-		return findRecipe(input);
+	public static DistillerRecipe loadFromNBT(NBTTagCompound nbt) {
+		FluidStack fluidInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input"));
+		return findRecipe(fluidInput);
 	}
 
 	@Override

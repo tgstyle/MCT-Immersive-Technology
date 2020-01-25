@@ -180,12 +180,12 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 		else if(state.getPropertyKeys().contains(IEProperties.FACING_ALL)) state = state.withProperty(IEProperties.FACING_ALL, getDefaultFacing());
 
 		if(tile instanceof IActiveState) {
-			IProperty boolProp = ((IActiveState) tile).getBoolProperty(IActiveState.class);
+			IProperty<?> boolProp = ((IActiveState) tile).getBoolProperty(IActiveState.class);
 			if(state.getPropertyKeys().contains(boolProp)) state = applyProperty(state, boolProp, ((IActiveState) tile).getIsActive());
 		}
 
 		if(tile instanceof IDualState) {
-			IProperty boolProp = ((IDualState) tile).getBoolProperty(IDualState.class);
+			IProperty<?> boolProp = ((IDualState) tile).getBoolProperty(IDualState.class);
 			if(state.getPropertyKeys().contains(boolProp)) state = applyProperty(state, boolProp, ((IDualState) tile).getIsSecondState());
 		}
 

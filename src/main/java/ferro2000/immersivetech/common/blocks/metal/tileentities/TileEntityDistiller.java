@@ -12,7 +12,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockM
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import ferro2000.immersivetech.api.ITLib;
-import ferro2000.immersivetech.api.crafting.DistillerRecipes;
+import ferro2000.immersivetech.api.crafting.DistillerRecipe;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockDistiller;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,7 +32,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDistiller, DistillerRecipes> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
+public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDistiller, DistillerRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 	public TileEntityDistiller() {
 		super(MultiblockDistiller.instance, new int[] {3, 3, 3}, 16000, true);
 	}
@@ -58,6 +58,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 
 	private boolean wasActive = false;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void update() {
 		super.update();
@@ -65,9 +66,9 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		boolean update = false;
 		if(energyStorage.getEnergyStored() > 0 && processQueue.size() < this.getProcessQueueMaxLength()) {
 			if(tanks[0].getFluidAmount() > 0) {
-				DistillerRecipes recipe = DistillerRecipes.findRecipe(tanks[0].getFluid());
+				DistillerRecipe recipe = DistillerRecipe.findRecipe(tanks[0].getFluid());
 				if(recipe != null) {
-					MultiblockProcessInMachine<DistillerRecipes> process = new MultiblockProcessInMachine(recipe).setInputTanks(new int[] {0});
+					MultiblockProcessInMachine<DistillerRecipe> process = new MultiblockProcessInMachine<DistillerRecipe>(recipe).setInputTanks(new int[] {0});
 					if(this.addProcessToQueue(process, true)) {
 						this.addProcessToQueue(process, false);
 						update = true;
@@ -148,7 +149,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	}
 
 	@Override
-	public boolean additionalCanProcessCheck(MultiblockProcess<DistillerRecipes> process) {
+	public boolean additionalCanProcessCheck(MultiblockProcess<DistillerRecipe> process) {
 		return true;
 	}
 
@@ -165,7 +166,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	}
 
 	@Override
-	public void onProcessFinish(MultiblockProcess<DistillerRecipes> process) {
+	public void onProcessFinish(MultiblockProcess<DistillerRecipe> process) {
 	}
 
 	@Override
@@ -179,7 +180,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	}
 
 	@Override
-	public float getMinProcessDistance(MultiblockProcess<DistillerRecipes> process) {
+	public float getMinProcessDistance(MultiblockProcess<DistillerRecipe> process) {
 		return 0;
 	}
 
@@ -235,11 +236,11 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[0].getFluid(), 1000, false);
 			if(master == null || master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity())	return false;
 			if(master.tanks[0].getFluid() == null) {
-				DistillerRecipes incompleteRecipes = DistillerRecipes.findRecipe(resourceClone);
+				DistillerRecipe incompleteRecipes = DistillerRecipe.findRecipe(resourceClone);
 				return incompleteRecipes != null;
 			} else {
-				DistillerRecipes incompleteRecipes1 = DistillerRecipes.findRecipe(resourceClone);
-				DistillerRecipes incompleteRecipes2 = DistillerRecipes.findRecipe(resourceClone2);
+				DistillerRecipe incompleteRecipes1 = DistillerRecipe.findRecipe(resourceClone);
+				DistillerRecipe incompleteRecipes2 = DistillerRecipe.findRecipe(resourceClone2);
 				return incompleteRecipes1 == incompleteRecipes2;
 			}
 		}
@@ -258,13 +259,13 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	}
 
 	@Override
-	public DistillerRecipes findRecipeForInsertion(ItemStack inserting) {
+	public DistillerRecipe findRecipeForInsertion(ItemStack inserting) {
 		return null;
 	}
 
 	@Override
-	protected DistillerRecipes readRecipeFromNBT(NBTTagCompound tag) {
-		return DistillerRecipes.loadFromNBT(tag);
+	protected DistillerRecipe readRecipeFromNBT(NBTTagCompound tag) {
+		return DistillerRecipe.loadFromNBT(tag);
 	}
 
 	@Override

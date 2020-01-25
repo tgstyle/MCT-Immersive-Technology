@@ -7,51 +7,51 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.IAction;
 import crafttweaker.api.liquid.ILiquidStack;
 
-import ferro2000.immersivetech.api.crafting.SteamTurbineRecipe;
+import ferro2000.immersivetech.api.crafting.SolarTowerRecipe;
 import net.minecraftforge.fluids.FluidStack;
 
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-@ZenClass("mods.immersivetech.SteamTurbine")
-public class SteamTurbine {
+@ZenClass("mods.immersivetech.SolarTower")
+public class SolarTower {
 
 	@ZenMethod
-	public static void addFuel(ILiquidStack outputFluid, ILiquidStack inputFluid, int time) {
+	public static void addRecipe(ILiquidStack outputFluid, ILiquidStack inputFluid, int time) {
 		FluidStack fluidOut = CraftTweakerHelper.toFluidStack(outputFluid);
 		FluidStack fluidIn = CraftTweakerHelper.toFluidStack(inputFluid);
 
-		if(fluidIn == null) return;
+		if(fluidOut == null || fluidIn == null) return;
 
-		SteamTurbineRecipe recipe = new SteamTurbineRecipe(fluidOut, fluidIn, time);
+		SolarTowerRecipe recipe = new SolarTowerRecipe(fluidOut, fluidIn, time);
 		CraftTweakerAPI.apply(new Add(recipe));
 	}
 
 	private static class Add implements IAction {
-		public SteamTurbineRecipe recipe;
-		public Add(SteamTurbineRecipe recipe) {
+		public SolarTowerRecipe recipe;
+		public Add(SolarTowerRecipe recipe) {
 			this.recipe = recipe;
 		}
 
 		@Override
 		public void apply() {
-			SteamTurbineRecipe.recipeList.add(recipe);
+			SolarTowerRecipe.recipeList.add(recipe);
 		}
 
 		@Override
 		public String describe() {
-			return "Adding Steam Turbine Fuel for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName();
+			return "Adding Solar Tower Recipe for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName();
 		}
 	}
 
 	@ZenMethod
-	public static void removeFuel(ILiquidStack inputFluid) {
+	public static void removeRecipe(ILiquidStack inputFluid) {
 		if(CraftTweakerHelper.toFluidStack(inputFluid) != null) CraftTweakerAPI.apply(new Remove(CraftTweakerHelper.toFluidStack(inputFluid)));
 	}
 
 	private static class Remove implements IAction {
 		private final FluidStack inputFluid;
-		ArrayList<SteamTurbineRecipe> removedRecipes = new ArrayList<SteamTurbineRecipe>();
+		ArrayList<SolarTowerRecipe> removedRecipes = new ArrayList<SolarTowerRecipe>();
 
 		public Remove(FluidStack inputFluid) {
 			this.inputFluid = inputFluid;
@@ -59,9 +59,9 @@ public class SteamTurbine {
 
 		@Override
 		public void apply() {
-			Iterator<SteamTurbineRecipe> iterator = SteamTurbineRecipe.recipeList.iterator();
+			Iterator<SolarTowerRecipe> iterator = SolarTowerRecipe.recipeList.iterator();
 			while(iterator.hasNext()) {
-				SteamTurbineRecipe recipe = iterator.next();
+				SolarTowerRecipe recipe = iterator.next();
 				if(recipe != null && recipe.fluidInput.isFluidEqual(inputFluid)) {
 					removedRecipes.add(recipe);
 					iterator.remove();
@@ -71,7 +71,7 @@ public class SteamTurbine {
 
 		@Override
 		public String describe() {
-			return "Removing Steam Turbine Fuel for " + inputFluid.getLocalizedName();
+			return "Removing Solar Tower Input Recipe for " + inputFluid.getLocalizedName();
 		}
 	}
 
