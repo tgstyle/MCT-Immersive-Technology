@@ -44,6 +44,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 	/*
 	* @author BluSunrize
 	*/
+
+@SuppressWarnings("rawtypes")
 public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Block implements IIEMetaBlock {
 	protected static IProperty[] tempProperties;
 	protected static IUnlistedProperty[] tempUnlistedProperties;
@@ -61,6 +63,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	protected boolean[] metaNotNormalBlock;
 	private boolean opaqueCube = false;
 
+	@SuppressWarnings("unchecked")
 	public BlockITBase(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockITBase> itemBlock, Object... additionalProperties) {
 		super(setTempProperties(material, mainProperty, additionalProperties));
 		this.name = name;
@@ -304,6 +307,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return new BlockStateContainer(this, array);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected IBlockState getInitDefaultState() {
 		IBlockState state = this.blockState.getBaseState().withProperty(this.property, enumValues[0]);
 		for(int i = 0; i < this.additionalProperties.length; i++) {
@@ -314,6 +318,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return state;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected <V extends Comparable<V>> IBlockState applyProperty(IBlockState in, IProperty<V> prop, Object val) {
 		return in.withProperty(prop, (V) val);
 	}
@@ -343,6 +348,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return state.getValue(this.property).getMeta();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		for(int i = 0; i < this.additionalProperties.length; i++) {
@@ -353,6 +359,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return state;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		IBlockState state = this.getDefaultState().withProperty(this.property, fromMeta(meta));
@@ -360,7 +367,6 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 			if(this.additionalProperties[i] != null && !this.additionalProperties[i].getAllowedValues().isEmpty())
 				state = applyProperty(state, this.additionalProperties[i], this.additionalProperties[i].getAllowedValues().toArray()[0]);
 		return state;
-		// return this.getDefaultState().withProperty(this.property, fromMeta(meta));
 	}
 
 	protected E fromMeta(int meta) {

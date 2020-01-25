@@ -3,8 +3,6 @@ package ferro2000.immersivetech.common.blocks.metal.tileentities;
 import java.util.ArrayList;
 import java.util.List;
 
-import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
-
 import com.google.common.collect.Lists;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
@@ -15,7 +13,6 @@ import blusunrize.immersiveengineering.common.util.Utils;
 
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.ITUtils;
-import ferro2000.immersivetech.api.crafting.BoilerFuelRecipe;
 import ferro2000.immersivetech.api.crafting.BoilerRecipe;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
@@ -37,7 +34,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler, IMultiblockRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
+public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler, BoilerRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 	public TileEntityBoiler() {
 		super(MultiblockBoiler.instance, new int[] {3, 3, 5}, 0, true);
 	}
@@ -52,7 +49,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	public double heatLevel = 0;
 	public int burnRemaining = 0;
 	public int recipeTimeRemaining = 0;
-	public BoilerFuelRecipe lastFuel;
+	public BoilerRecipe.BoilerFuelRecipe lastFuel;
 	public BoilerRecipe lastRecipe;
 
 	@Override
@@ -66,7 +63,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		FluidStack recipeInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("recipe"));
 		if(recipeInput != null) lastRecipe = BoilerRecipe.findRecipe(recipeInput);
 		FluidStack fuelInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("fuel"));
-		if(fuelInput != null) lastFuel = BoilerFuelRecipe.findFuel(fuelInput);
+		if(fuelInput != null) lastFuel = BoilerRecipe.findFuel(fuelInput);
 		recipeTimeRemaining = nbt.getInteger("recipeTimeRemaining");
 		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
 	}
@@ -79,8 +76,8 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound()));
 		nbt.setDouble("heatLevel", heatLevel);
 		nbt.setInteger("burnRemaining", burnRemaining);
-		if(lastRecipe != null && lastRecipe.isValid()) nbt.setTag("recipe", lastRecipe.input.writeToNBT(new NBTTagCompound()));
-		if(lastFuel != null && lastFuel.isValid()) nbt.setTag("fuel", lastFuel.input.writeToNBT(new NBTTagCompound()));
+		if(lastRecipe != null) nbt.setTag("recipe", lastRecipe.fluidInput.writeToNBT(new NBTTagCompound()));
+		if(lastFuel != null) nbt.setTag("fuel", lastFuel.fluidInput.writeToNBT(new NBTTagCompound()));
 		nbt.setFloat("recipeTimeRemaining", recipeTimeRemaining);
 		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
@@ -91,7 +88,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			burnRemaining = 0;
 			return true;
 		}
-		heatLevel = Math.min(lastFuel.heat + heatLevel, ITConfig.Machines.boiler_workingHeatLevel);
+		heatLevel = Math.min(lastFuel.getHeat() + heatLevel, ITConfig.Machines.boiler_workingHeatLevel);
 		return previousHeatLevel != heatLevel;
 	}
 
@@ -107,7 +104,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			recipeTimeRemaining = 0;
 			return true;
 		}
-		recipeTimeRemaining = Math.min(recipeTimeRemaining + ITConfig.Machines.boiler_progressLossInTicks, lastRecipe.time);
+		recipeTimeRemaining = Math.min(recipeTimeRemaining + ITConfig.Machines.boiler_progressLossInTicks, lastRecipe.getTotalProcessTime());
 		return previousProgress != recipeTimeRemaining;
 	}
 
@@ -118,8 +115,8 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		}
 		recipeTimeRemaining--;
 		if(recipeTimeRemaining == 0) {
-			tanks[1].drain(lastRecipe.input.amount, true);
-			tanks[2].fillInternal(lastRecipe.output, true);
+			tanks[1].drain(lastRecipe.fluidInput.amount, true);
+			tanks[2].fillInternal(lastRecipe.fluidOutput, true);
 			return true;
 		}
 		return false;
@@ -134,15 +131,11 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			burnRemaining--;
 			if(heatUp()) update = true;
 		} else if(!isRSDisabled() && tanks[0].getFluid() != null) {
-			BoilerFuelRecipe fuel = (
-				lastFuel != null && 
-				lastFuel.isValid() && 
-				tanks[0].getFluid().isFluidEqual(lastFuel.input)) ? 
-				lastFuel : BoilerFuelRecipe.findFuel(tanks[0].getFluid());
-			if(fuel != null && fuel.input.amount <= tanks[0].getFluidAmount()) {
+			BoilerRecipe.BoilerFuelRecipe fuel = (lastFuel != null && tanks[0].getFluid().isFluidEqual(lastFuel.fluidInput)) ? lastFuel : BoilerRecipe.findFuel(tanks[0].getFluid());
+			if(fuel != null && fuel.fluidInput.amount <= tanks[0].getFluidAmount()) {
 				lastFuel = fuel;
-				tanks[0].drain(fuel.input.amount, true);
-				burnRemaining = fuel.time;
+				tanks[0].drain(fuel.fluidInput.amount, true);
+				burnRemaining = fuel.getTotalProcessTime();
 				if(heatUp()) update = true;
 			} else if(cooldown()) update = true;
 		} else if(cooldown()) update = true;
@@ -150,16 +143,10 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			if(recipeTimeRemaining > 0) {
 				if(gainProgress()) update = true;
 			} else if(tanks[1].getFluid() != null) {
-				BoilerRecipe recipe = (
-					lastRecipe != null && 
-					lastRecipe.isValid() && 
-					tanks[1].getFluid().isFluidEqual(lastRecipe.input)) ? 
-					lastRecipe : BoilerRecipe.findRecipe(tanks[1].getFluid());
-				if(recipe != null && 
-					recipe.input.amount <= tanks[1].getFluidAmount() && 
-					recipe.output.amount == tanks[2].fillInternal(recipe.output, false)) {
+				BoilerRecipe recipe = (lastRecipe != null && tanks[1].getFluid().isFluidEqual(lastRecipe.fluidInput)) ?	lastRecipe : BoilerRecipe.findRecipe(tanks[1].getFluid());
+				if(recipe != null && recipe.fluidInput.amount <= tanks[1].getFluidAmount() && recipe.fluidOutput.amount == tanks[2].fillInternal(recipe.fluidOutput, false)) {
 					lastRecipe = recipe;
-					recipeTimeRemaining = recipe.time;
+					recipeTimeRemaining = recipe.getTotalProcessTime();
 					update = true;
 				}
 			}
@@ -238,8 +225,8 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	@Override
-	protected IMultiblockRecipe readRecipeFromNBT(NBTTagCompound tag) {
-		return null;
+	protected BoilerRecipe readRecipeFromNBT(NBTTagCompound tag) {
+		return BoilerRecipe.loadFromNBT(tag);
 	}
 
 	@Override
@@ -258,7 +245,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	@Override
-	public IMultiblockRecipe findRecipeForInsertion(ItemStack inserting) {
+	public BoilerRecipe findRecipeForInsertion(ItemStack inserting) {
 		return null;
 	}
 
@@ -273,7 +260,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	@Override
-	public boolean additionalCanProcessCheck(MultiblockProcess<IMultiblockRecipe> process) {
+	public boolean additionalCanProcessCheck(MultiblockProcess<BoilerRecipe> process) {
 		return true;
 	}
 
@@ -288,7 +275,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	@Override
-	public void onProcessFinish(MultiblockProcess<IMultiblockRecipe> process) {
+	public void onProcessFinish(MultiblockProcess<BoilerRecipe> process) {
 
 	}
 
@@ -303,7 +290,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	@Override
-	public float getMinProcessDistance(MultiblockProcess<IMultiblockRecipe> process) {
+	public float getMinProcessDistance(MultiblockProcess<BoilerRecipe> process) {
 		return 0;
 	}
 
@@ -335,7 +322,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			TileEntityBoiler master = this.master();
 			if(master == null) return false;
 			if(master.tanks[0].fillInternal(resource, false) == 0) return false;
-			if(BoilerFuelRecipe.findFuel(resource) == null) return false;
+			if(BoilerRecipe.findFuel(resource) == null) return false;
 			return true;
 		} else return false;
 	}

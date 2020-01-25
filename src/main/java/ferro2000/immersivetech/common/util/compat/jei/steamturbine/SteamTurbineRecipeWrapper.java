@@ -1,36 +1,27 @@
 package ferro2000.immersivetech.common.util.compat.jei.steamturbine;
 
-import ferro2000.immersivetech.api.crafting.SteamTurbineRecipe;
-
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.IRecipeWrapper;
+import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.common.util.compat.jei.MultiblockRecipeWrapper;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class SteamTurbineRecipeWrapper implements IRecipeWrapper {
+public class SteamTurbineRecipeWrapper extends MultiblockRecipeWrapper {
 
-	public SteamTurbineRecipe recipe;
+	public MultiblockRecipe recipe;
 
-	public SteamTurbineRecipeWrapper(SteamTurbineRecipe recipe) {
+	public SteamTurbineRecipeWrapper(MultiblockRecipe recipe) {
+		super(recipe);
 		this.recipe = recipe;
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public void getIngredients(IIngredients ingredients) {
-		ingredients.setInput(FluidStack.class, recipe.input);
-		ingredients.setOutput(FluidStack.class, recipe.output);
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-		String text = I18n.format("keyword.immersivetech.duration") + " " + ((float)recipe.time)/20 + "s";
-		minecraft.fontRenderer.drawString(text, 10, 62, 0x8B8B8B, true);
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+        String text = I18n.format("keyword.immersivetech.duration") + " " + ((float)recipe.getTotalProcessTime()) / 20 + "s";
+        minecraft.fontRenderer.drawString(text, 10, 62, 0x8B8B8B, true);
+    }
 
 }

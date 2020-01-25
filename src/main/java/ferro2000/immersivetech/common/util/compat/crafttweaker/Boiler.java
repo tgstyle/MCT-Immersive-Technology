@@ -1,12 +1,14 @@
 package ferro2000.immersivetech.common.util.compat.crafttweaker;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.IAction;
 import crafttweaker.api.liquid.ILiquidStack;
 
-import ferro2000.immersivetech.api.ITUtils;
-import ferro2000.immersivetech.api.crafting.BoilerFuelRecipe;
 import ferro2000.immersivetech.api.crafting.BoilerRecipe;
+import ferro2000.immersivetech.api.crafting.BoilerRecipe.BoilerFuelRecipe;
 import net.minecraftforge.fluids.FluidStack;
 
 import stanhebben.zenscript.annotations.ZenClass;
@@ -14,9 +16,31 @@ import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenClass("mods.immersivetech.Boiler")
 public class Boiler {
-	private static class AddRecipe implements IAction {
+
+	@ZenMethod
+	public static void addRecipe(ILiquidStack outputFluid, ILiquidStack inputFluid, int time) {
+		FluidStack fluidOut = CraftTweakerHelper.toFluidStack(outputFluid);
+		FluidStack fluidIn = CraftTweakerHelper.toFluidStack(inputFluid);
+
+		if(fluidOut == null || fluidIn == null) return;
+
+		BoilerRecipe recipe = new BoilerRecipe(fluidOut, fluidIn, time);
+		CraftTweakerAPI.apply(new Add(recipe));
+	}
+
+	@ZenMethod
+	public static void addFuel(ILiquidStack inputFluid, int time, double heat) {
+		FluidStack fluidIn = CraftTweakerHelper.toFluidStack(inputFluid);
+
+		if(fluidIn == null) return;
+
+		BoilerFuelRecipe recipe = new BoilerFuelRecipe(fluidIn, time, heat);
+		CraftTweakerAPI.apply(new AddFuel(recipe));
+	}
+
+	private static class Add implements IAction {
 		public BoilerRecipe recipe;
-		public AddRecipe(BoilerRecipe recipe) {
+		public Add(BoilerRecipe recipe) {
 			this.recipe = recipe;
 		}
 
@@ -27,24 +51,7 @@ public class Boiler {
 
 		@Override
 		public String describe() {
-			return "Adding " + BoilerRecipe.recipeCategoryName + " Recipe for '" + recipe.recipeName + "'";
-		}
-	}
-
-	private static class RemoveRecipe implements IAction {
-		public BoilerRecipe recipe;
-		public RemoveRecipe(BoilerRecipe recipe) {
-			this.recipe = recipe;
-		}
-
-		@Override
-		public void apply() {
-			BoilerRecipe.recipeList.remove(recipe);
-		}
-
-		@Override
-		public String describe() {
-			return "Removing " + BoilerRecipe.recipeCategoryName + " Recipe for '" + recipe.recipeName + "'";
+			return "Adding Boiler Recipe for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName();
 		}
 	}
 
@@ -56,109 +63,75 @@ public class Boiler {
 
 		@Override
 		public void apply() {
-			BoilerFuelRecipe.recipeList.add(recipe);
+			BoilerRecipe.fuelList.add(recipe);
 		}
 
 		@Override
 		public String describe() {
-			return "Adding " + BoilerFuelRecipe.recipeCategoryName + " Fuel for '" + recipe.recipeName + "'";
+			return "Adding Boiler Fuel Recipe for " + recipe.fluidInput.getLocalizedName();
 		}
 	}
 
-	private static class RemoveFuel implements IAction {
-		public BoilerFuelRecipe recipe;
-		public RemoveFuel(BoilerFuelRecipe recipe) {
-			this.recipe = recipe;
+	@ZenMethod
+	public static void removeRecipe(ILiquidStack inputFluid) {
+		if(CraftTweakerHelper.toFluidStack(inputFluid) != null) CraftTweakerAPI.apply(new Remove(CraftTweakerHelper.toFluidStack(inputFluid)));
+	}
+
+	@ZenMethod
+	public static void removeFuel(ILiquidStack inputFluid) {
+		if(CraftTweakerHelper.toFluidStack(inputFluid) != null) CraftTweakerAPI.apply(new RemoveFuel(CraftTweakerHelper.toFluidStack(inputFluid)));
+	}
+
+	private static class Remove implements IAction {
+		private final FluidStack inputFluid;
+		ArrayList<BoilerRecipe> removedRecipes = new ArrayList<BoilerRecipe>();
+
+		public Remove(FluidStack inputFluid) {
+			this.inputFluid = inputFluid;
 		}
 
 		@Override
 		public void apply() {
-			BoilerFuelRecipe.recipeList.remove(recipe);
+			Iterator<BoilerRecipe> iterator = BoilerRecipe.recipeList.iterator();
+			while(iterator.hasNext()) {
+				BoilerRecipe recipe = iterator.next();
+				if(recipe != null && recipe.fluidInput.isFluidEqual(inputFluid)) {
+					removedRecipes.add(recipe);
+					iterator.remove();
+				}
+			}
 		}
 
 		@Override
 		public String describe() {
-			return "Removing " + BoilerFuelRecipe.recipeCategoryName + " Fuel for '" + recipe.recipeName + "'";
+			return "Removing Boiler Input Recipe for " + inputFluid.getLocalizedName();
 		}
 	}
 
-	@ZenMethod
-	public static void removeFuel(ILiquidStack input) {
-		FluidStack fluid = CraftTweakerHelper.toFluidStack(input);
-		if(fluid == null) {
-			CraftTweakerAPI.logError("Can't remove " + BoilerFuelRecipe.recipeCategoryName + " Fuel with null input!");
-			return;
-		}
-		BoilerFuelRecipe recipe = ITUtils.First(BoilerFuelRecipe.recipeList, fluid);
-		if(recipe == null) {
-			CraftTweakerAPI.logWarning(BoilerFuelRecipe.recipeCategoryName +" recipe with input " + fluid.getLocalizedName() + " can't be found! Skipping...");
-			return;
-		}
-		CraftTweakerAPI.apply(new RemoveFuel(recipe));
-	}
+	private static class RemoveFuel implements IAction {
+		private final FluidStack inputFluid;
+		ArrayList<BoilerFuelRecipe> removedRecipes = new ArrayList<BoilerFuelRecipe>();
 
-	@ZenMethod
-	public static void addFuel(ILiquidStack input, int time, double heat) {
-		if(input == null) {
-			CraftTweakerAPI.logError("Can't add recipe for " + BoilerFuelRecipe.recipeCategoryName + " with null input!");
-			return;
+		public RemoveFuel(FluidStack inputFluid) {
+			this.inputFluid = inputFluid;
 		}
-		FluidStack fIn = CraftTweakerHelper.toFluidStack(input);
 
-		if(fIn == null) {
-			CraftTweakerAPI.logError("Invalid recipe for " + BoilerFuelRecipe.recipeCategoryName + " with input " + input.getDisplayName());
-			return;
+		@Override
+		public void apply() {
+			Iterator<BoilerFuelRecipe> iterator = BoilerRecipe.fuelList.iterator();
+			while(iterator.hasNext()) {
+				BoilerFuelRecipe recipe = iterator.next();
+				if(recipe != null && recipe.fluidInput.isFluidEqual(inputFluid)) {
+					removedRecipes.add(recipe);
+					iterator.remove();
+				}
+			}
 		}
-		if(ITUtils.First(BoilerFuelRecipe.recipeList, fIn) != null) {
-			CraftTweakerAPI.logWarning("Recipe for " + BoilerFuelRecipe.recipeCategoryName + " with input " + input.getDisplayName() + " already exists! Skipping...");
-			return;
-		}
-		BoilerFuelRecipe recipe = new BoilerFuelRecipe(fIn, time, heat);
-		CraftTweakerAPI.apply(new AddFuel(recipe));
-	}
 
-	@ZenMethod
-	public static void removeRecipe(ILiquidStack input) {
-		FluidStack fluid = CraftTweakerHelper.toFluidStack(input);
-		if(fluid == null) {
-			CraftTweakerAPI.logError("Can't remove " + BoilerRecipe.recipeCategoryName + " recipe with null input!");
-			return;
+		@Override
+		public String describe() {
+			return "Removing Boiler Fuel Recipe for " + inputFluid.getLocalizedName();
 		}
-		BoilerRecipe recipe = ITUtils.First(BoilerRecipe.recipeList, fluid);
-		if(recipe == null) {
-			CraftTweakerAPI.logWarning(BoilerRecipe.recipeCategoryName +" recipe with input " + fluid.getLocalizedName() + " can't be found! Skipping...");
-			return;
-		}
-		CraftTweakerAPI.apply(new RemoveRecipe(recipe));
-	}
-
-	@ZenMethod
-	public static void addRecipe(ILiquidStack output, ILiquidStack input, int time) {
-		if(input == null) {
-			CraftTweakerAPI.logError("Can't add recipe for " + BoilerRecipe.recipeCategoryName + " with null input!");
-			return;
-		}
-		if(output == null) {
-			CraftTweakerAPI.logError("Can't add recipe for " + BoilerRecipe.recipeCategoryName + " with null output!");
-			return;
-		}
-		FluidStack fOut = CraftTweakerHelper.toFluidStack(output);
-		FluidStack fIn = CraftTweakerHelper.toFluidStack(input);
-
-		if(fIn == null) {
-			CraftTweakerAPI.logError("Invalid recipe for " + BoilerRecipe.recipeCategoryName + " with input " + input.getDisplayName());
-			return;
-		}
-		if(fOut == null) {
-			CraftTweakerAPI.logError("Invalid recipe for " + BoilerRecipe.recipeCategoryName + " with output " + output.getDisplayName());
-			return;
-		}
-		if(ITUtils.First(BoilerRecipe.recipeList, fIn) != null) {
-			CraftTweakerAPI.logWarning("Recipe for " + BoilerRecipe.recipeCategoryName + " with input " + input.getDisplayName() + " already exists! Skipping...");
-			return;
-		}
-		BoilerRecipe recipe = new BoilerRecipe(fOut, fIn, time);
-		CraftTweakerAPI.apply(new AddRecipe(recipe));
 	}
 
 }

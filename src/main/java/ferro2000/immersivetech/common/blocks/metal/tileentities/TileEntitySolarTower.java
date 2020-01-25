@@ -12,7 +12,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockM
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import ferro2000.immersivetech.api.ITLib;
-import ferro2000.immersivetech.api.crafting.SolarTowerRecipes;
+import ferro2000.immersivetech.api.crafting.SolarTowerRecipe;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTower;
 
@@ -34,8 +34,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySolarTower, SolarTowerRecipes> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
-
+public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySolarTower, SolarTowerRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 	public TileEntitySolarTower() {
 		super(MultiblockSolarTower.instance, new int[] { 7, 3, 3 }, 0, true);
 	}
@@ -80,6 +79,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 
 	private boolean wasActive = false;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void update() {
 	super.update();
@@ -87,12 +87,12 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	boolean update = false;
 	if(processQueue.size() < this.getProcessQueueMaxLength() && checkReflector()) {
 		if(tanks[0].getFluidAmount() > 0) {
-			SolarTowerRecipes recipe = SolarTowerRecipes.findRecipe(tanks[0].getFluid());
+			SolarTowerRecipe recipe = SolarTowerRecipe.findRecipe(tanks[0].getFluid());
 			if(recipe != null) {
 				this.processTime += getSpeed();
 				if(this.processTime > 30) {
 					this.processTime = 0;
-					MultiblockProcessInMachine<SolarTowerRecipes> process = new MultiblockProcessInMachine(recipe).setInputTanks(new int[] { 0 });
+					MultiblockProcessInMachine<SolarTowerRecipe> process = new MultiblockProcessInMachine<SolarTowerRecipe>(recipe).setInputTanks(new int[] { 0 });
 					if(this.addProcessToQueue(process, true)) {
 						this.addProcessToQueue(process, false);
 						update = true;
@@ -273,8 +273,8 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	}
 
 	@Override
-	protected SolarTowerRecipes readRecipeFromNBT(NBTTagCompound tag) {
-		return SolarTowerRecipes.loadFromNBT(tag);
+	protected SolarTowerRecipe readRecipeFromNBT(NBTTagCompound tag) {
+		return SolarTowerRecipe.loadFromNBT(tag);
 	}
 
 	@Override
@@ -293,7 +293,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	}
 
 	@Override
-	public SolarTowerRecipes findRecipeForInsertion(ItemStack inserting) {
+	public SolarTowerRecipe findRecipeForInsertion(ItemStack inserting) {
 		return null;
 	}
 
@@ -308,7 +308,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	}
 
 	@Override
-	public boolean additionalCanProcessCheck(MultiblockProcess<SolarTowerRecipes> process) {
+	public boolean additionalCanProcessCheck(MultiblockProcess<SolarTowerRecipe> process) {
 		return true;
 	}
 
@@ -325,7 +325,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	}
 
 	@Override
-	public void onProcessFinish(MultiblockProcess<SolarTowerRecipes> process) {
+	public void onProcessFinish(MultiblockProcess<SolarTowerRecipe> process) {
 	}
 
 	@Override
@@ -339,7 +339,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	}
 
 	@Override
-	public float getMinProcessDistance(MultiblockProcess<SolarTowerRecipes> process) {
+	public float getMinProcessDistance(MultiblockProcess<SolarTowerRecipe> process) {
 		return 0;
 	}
 
@@ -369,11 +369,11 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[0].getFluid(), 1000, false);
 			if(master == null || master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
 			if(master.tanks[0].getFluid() == null) {
-				SolarTowerRecipes incompleteRecipes = SolarTowerRecipes.findRecipe(resourceClone);
+				SolarTowerRecipe incompleteRecipes = SolarTowerRecipe.findRecipe(resourceClone);
 				return incompleteRecipes != null;
 			} else {
-				SolarTowerRecipes incompleteRecipes1 = SolarTowerRecipes.findRecipe(resourceClone);
-				SolarTowerRecipes incompleteRecipes2 = SolarTowerRecipes.findRecipe(resourceClone2);
+				SolarTowerRecipe incompleteRecipes1 = SolarTowerRecipe.findRecipe(resourceClone);
+				SolarTowerRecipe incompleteRecipes2 = SolarTowerRecipe.findRecipe(resourceClone2);
 				return incompleteRecipes1 == incompleteRecipes2;
 			}
 		}

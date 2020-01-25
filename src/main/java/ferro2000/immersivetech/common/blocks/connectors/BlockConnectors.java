@@ -42,6 +42,7 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
 		return true;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected BlockStateContainer createBlockState() {
 		BlockStateContainer base = super.createBlockState();

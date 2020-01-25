@@ -6,10 +6,9 @@ import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.IEContent;
 
 import ferro2000.immersivetech.ImmersiveTech;
-import ferro2000.immersivetech.api.crafting.BoilerFuelRecipe;
 import ferro2000.immersivetech.api.crafting.BoilerRecipe;
-import ferro2000.immersivetech.api.crafting.DistillerRecipes;
-import ferro2000.immersivetech.api.crafting.SolarTowerRecipes;
+import ferro2000.immersivetech.api.crafting.DistillerRecipe;
+import ferro2000.immersivetech.api.crafting.SolarTowerRecipe;
 import ferro2000.immersivetech.api.crafting.SteamTurbineRecipe;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.Config.ITConfig.Machines;
@@ -171,29 +170,28 @@ public class ITContent {
 	@SubscribeEvent
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 		/*RECIPES*/
+		if(Machines.enable_boiler && Machines.register_boiler_recipes) {
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 50), new FluidStack(FluidRegistry.WATER, 100), 1);
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 75), new FluidStack(fluidDistWater, 100), 1);
+			BoilerRecipe.addFuel(new FluidStack(IEContent.fluidBiodiesel, 5), 1, 10);
+		}
+
 		if(Machines.enable_distiller && Machines.register_distiller_recipes) {
 			ResourceLocation distillerItemName = new ResourceLocation(ITConfig.Machines.distiller_outputItem);
 			int distillerItemMeta = ITConfig.Machines.distiller_outputItemMeta;
 			float distillerChance = ITConfig.Machines.distiller_outputItemChance;
-			
 			if(!ForgeRegistries.ITEMS.containsKey(distillerItemName)) {
 				ITLogger.error("Item for Salt is invalid, setting default. ", distillerItemName);
 				distillerItemName = itemMaterial.getRegistryName();
 				distillerItemMeta = 0;
 			}
 			ItemStack distillerItem = new ItemStack(ForgeRegistries.ITEMS.getValue(distillerItemName), 1, distillerItemMeta);
-			DistillerRecipes.addRecipe(new FluidStack(fluidDistWater, 100), new FluidStack(FluidRegistry.WATER, 200), distillerItem, 50, 1, distillerChance);
+			DistillerRecipe.addRecipe(new FluidStack(fluidDistWater, 100), new FluidStack(FluidRegistry.WATER, 200), distillerItem, 1000, 2, distillerChance);
 		}
 
 		if(Machines.enable_solarTower && Machines.register_solarTower_recipes) {
-			SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 50), new FluidStack(FluidRegistry.WATER, 100), 1);
-			SolarTowerRecipes.addRecipe(new FluidStack(fluidSteam, 75), new FluidStack(fluidDistWater, 100), 1);
-		}
-
-		if(Machines.enable_boiler && Machines.register_boiler_recipes) {
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 50), new FluidStack(FluidRegistry.WATER, 100), 1);
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 75), new FluidStack(fluidDistWater, 100), 1);
-			BoilerFuelRecipe.addFuel(new FluidStack(IEContent.fluidBiodiesel, 5), 1, 10);
+			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 50), new FluidStack(FluidRegistry.WATER, 100), 1);
+			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 75), new FluidStack(fluidDistWater, 100), 1);
 		}
 
 		if(Machines.enable_steamTurbine && Machines.register_steamTurbine_recipes) {

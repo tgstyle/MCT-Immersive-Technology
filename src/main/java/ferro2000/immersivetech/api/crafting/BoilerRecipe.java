@@ -1,41 +1,130 @@
 package ferro2000.immersivetech.api.crafting;
 
-import ferro2000.immersivetech.api.ITUtils;
+import java.util.ArrayList;
+
+import com.google.common.collect.Lists;
+
+import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+
+import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.fluids.FluidStack;
 
-public class BoilerRecipe extends GenericRecipe {
-	public static RecipeList <BoilerRecipe> recipeList = new RecipeList <> ();
-	public static String recipeCategoryName = "Boiler";
-	public final FluidStack output;
-	public final FluidStack input;
-	public final int time;
+public class BoilerRecipe extends MultiblockRecipe {
+	public static float timeModifier = 1;
 
-	public BoilerRecipe(FluidStack output, FluidStack input, int time) {
-		this.output = output;
-		this.input = input;
-		this.time = time;
-		this.recipeName = input.getLocalizedName();
+	public final FluidStack fluidOutput;
+	public final FluidStack fluidInput;
+
+	int totalProcessTime;
+	double heat;
+
+	public BoilerRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
+		this.fluidOutput = fluidOutput;
+		this.fluidInput = fluidInput;
+		this.totalProcessTime = (int)Math.floor(time * timeModifier);
+		this.fluidInputList = Lists.newArrayList(this.fluidInput);
+		this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
 	}
+	
+	public static ArrayList<BoilerRecipe> recipeList = new ArrayList<BoilerRecipe>();
 
-	@Override
-	public boolean equals(Object object) {
-		if(object instanceof FluidStack) {
-			return this.input.isFluidEqual((FluidStack)object);
-		} else if(object instanceof BoilerRecipe) {
-			return this == object;
-		} else return false;
-	}
-
-	public static BoilerRecipe addRecipe(FluidStack output, FluidStack input, int time) {
-		BoilerRecipe recipe = new BoilerRecipe(output, input, time);
+	public static BoilerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
+		BoilerRecipe recipe = new BoilerRecipe(fluidOutput, fluidInput, time);
 		recipeList.add(recipe);
 		return recipe;
 	}
 
-	public static BoilerRecipe findRecipe(FluidStack input) {
-		if(input == null) return null;
-		return ITUtils.First(recipeList, input);
+	public static BoilerRecipe findRecipe(FluidStack fluidInput) {
+		for(BoilerRecipe recipe : recipeList) {
+			if(fluidInput != null) {
+				if(recipe.fluidInput != null && (fluidInput.containsFluid(recipe.fluidInput))) {
+					return recipe;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public int getMultipleProcessTicks() {
+		return 0;
+	}
+
+	@Override
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+		nbt.setTag("input", fluidInput.writeToNBT(new NBTTagCompound()));
+		return nbt;
+	}
+
+	public static BoilerRecipe loadFromNBT(NBTTagCompound nbt) {
+		FluidStack fluidInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input"));
+		return findRecipe(fluidInput);
+	}
+	
+	@Override
+	public int getTotalProcessTime() {
+		return this.totalProcessTime;
+	}
+
+	public static ArrayList<BoilerFuelRecipe> fuelList = new ArrayList<BoilerFuelRecipe>();
+	
+	public static BoilerFuelRecipe addFuel(FluidStack fluidInput, int time, double heat) {
+		BoilerFuelRecipe recipe = new BoilerFuelRecipe(fluidInput, time, heat);
+		fuelList.add(recipe);
+		return recipe;
+	}
+
+	public static BoilerFuelRecipe findFuel(FluidStack fluidInput) {
+		for(BoilerFuelRecipe recipe : fuelList) {
+			if(fluidInput != null) {
+				if(recipe.fluidInput != null && (fluidInput.containsFluid(recipe.fluidInput))) {
+					return recipe;
+				}
+			}
+		}
+		return null;
+	}
+
+	public static class BoilerFuelRecipe extends MultiblockRecipe {
+		public static float timeModifier = 1;
+
+		public final FluidStack fluidInput;
+
+		int totalProcessTime;
+		double heat;
+
+		public BoilerFuelRecipe(FluidStack fluidInput, int time, double heat) {
+			this.fluidInput = fluidInput;
+			this.totalProcessTime = (int)Math.floor(time * timeModifier);
+			this.heat = heat;
+			this.fluidInputList = Lists.newArrayList(this.fluidInput);
+		}
+
+		@Override
+		public int getMultipleProcessTicks() {
+			return 0;
+		}
+
+		@Override
+		public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+			nbt.setTag("input", fluidInput.writeToNBT(new NBTTagCompound()));
+			return nbt;
+		}
+
+		public static BoilerFuelRecipe loadFromNBT(NBTTagCompound nbt) {
+			FluidStack fluidInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input"));
+			return findFuel(fluidInput);
+		}
+
+		@Override
+		public int getTotalProcessTime() {
+			return this.totalProcessTime;
+		}
+
+		public double getHeat() {
+			return this.heat;
+		}
 	}
 
 }
