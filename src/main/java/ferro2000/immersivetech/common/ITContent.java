@@ -3,6 +3,7 @@ package ferro2000.immersivetech.common;
 import java.util.ArrayList;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
+import blusunrize.immersiveengineering.common.Config;
 import blusunrize.immersiveengineering.common.IEContent;
 
 import ferro2000.immersivetech.ImmersiveTech;
@@ -51,13 +52,13 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
-@Mod.EventBusSubscriber(modid=ImmersiveTech.MODID)
+@EventBusSubscriber(modid=ImmersiveTech.MODID)
 public class ITContent {
 	/*BLOCKS*/
 	public static ArrayList<Block> registeredITBlocks = new ArrayList<Block>();
@@ -228,6 +229,17 @@ public class ITContent {
 		OreDictionary.registerOre("dustSalt", itemMaterial);
 		OreDictionary.registerOre("itemSalt", itemMaterial);
 		OreDictionary.registerOre("foodSalt", itemMaterial);
+	}
+	
+	public static void registerVariables() {
+		Config.manual_int.put("steamTurbine_timeToMax", ((ITConfig.Machines.mechanicalEnergy_maxSpeed / ITConfig.Machines.steamTurbine_speedGainPerTick) / 20));
+		Config.manual_int.put("solarTower_minRange", ITConfig.Machines.solarTower_minRange);
+		Config.manual_int.put("solarTower_maxRange", ITConfig.Machines.solarTower_maxRange);
+		Config.manual_double.put("boiler_cooldownTime", ((ITConfig.Machines.boiler_workingHeatLevel / ITConfig.Machines.boiler_progressLossInTicks) / 20));
+		Config.manual_int.put("alternator_RfPerTickPerPort", (ITConfig.Machines.alternator_RfPerTick / 6));
+		Config.manual_int.put("alternator_energyStorage", ITConfig.Machines.alternator_energyStorage);
+		Config.manual_int.put("alternator_energyPerTick", ITConfig.Machines.alternator_RfPerTick);
+		Config.manual_int.put("cokeOvenPreheater_consumption", ITConfig.Machines.cokeOvenPreheater_consumption);
 	}
 
 }
