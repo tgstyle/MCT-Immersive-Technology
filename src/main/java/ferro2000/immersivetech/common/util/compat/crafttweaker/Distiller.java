@@ -103,7 +103,7 @@ public class Distiller {
 					removedRecipes.add(recipe);
 					iterator.remove();
 				}
-				if(recipe != null && inputFluid == null && recipe.fluidInput.isFluidEqual(inputFluid) && recipe.itemOutput.isItemEqual(outputItem)) {
+				if(recipe != null && recipe.fluidInput.isFluidEqual(inputFluid) && recipe.itemOutput.isItemEqual(outputItem)) {
 					removedRecipes.add(recipe);
 					iterator.remove();
 				}
