@@ -1,16 +1,21 @@
 {
 	"forge_marker": 1,
-	"defaults":
-	{
+	"defaults": {
 		"transform": "forge:default-block",
 		"model": "cube_all"
 	},
-	"variants":
-	{
-		"inventory,type=cokebrick_reinforced": [{"textures": { "all": "immersivetech:blocks/stone_decoration_cokebrick_reinforced" }}],
-		"type":
-		{
-			"cokebrick_reinforced": {"textures": { "all": "immersivetech:blocks/stone_decoration_cokebrick_reinforced" }}
+	"variants": {
+		"inventory,type=cokebrick_reinforced": [{
+			"textures": {
+				"all": "immersivetech:blocks/stone_decoration_cokebrick_reinforced"
+			}
+		}],
+		"type": {
+			"cokebrick_reinforced": {
+				"textures": {
+					"all": "immersivetech:blocks/stone_decoration_cokebrick_reinforced"
+				}
+			}
 		}
 	}
 }

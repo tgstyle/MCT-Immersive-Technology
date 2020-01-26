@@ -6,10 +6,14 @@
 	},
 	"variants": {
 		"dist_water": [{
-			"custom": { "fluid": "dist_water" }
+			"custom": {
+				"fluid": "dist_water"
+			}
 		}],
 		"steam": [{
-			"custom": { "fluid": "steam" }
+			"custom": {
+				"fluid": "steam"
+			}
 		}]
 	}
 }
