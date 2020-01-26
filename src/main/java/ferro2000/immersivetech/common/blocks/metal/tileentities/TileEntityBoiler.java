@@ -37,7 +37,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler, BoilerRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 	public TileEntityBoiler() {
-		super(MultiblockBoiler.instance, new int[] {3, 3, 5}, 0, true);
+		super(MultiblockBoiler.instance, new int[] { 3, 3, 5 }, 0, true);
 	}
 	
 	private static int inputFuelTankSize = ITConfig.Machines.boiler_fuel_tankSize;
@@ -132,7 +132,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			burnRemaining--;
 			if(heatUp()) update = true;
 		} else if(!isRSDisabled() && tanks[0].getFluid() != null) {
-			BoilerRecipe.BoilerFuelRecipe fuel = (lastFuel != null && tanks[0].getFluid().isFluidEqual(lastFuel.fluidInput)) ? lastFuel : BoilerRecipe.findFuel(tanks[0].getFluid());
+			BoilerFuelRecipe fuel = (lastFuel != null && tanks[0].getFluid().isFluidEqual(lastFuel.fluidInput)) ? lastFuel : BoilerRecipe.findFuel(tanks[0].getFluid());
 			if(fuel != null && fuel.fluidInput.amount <= tanks[0].getFluidAmount()) {
 				lastFuel = fuel;
 				tanks[0].drain(fuel.fluidInput.amount, true);
@@ -221,13 +221,18 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	@Override
-	public float[] getBlockBounds() {
-		return null;
+	public IFluidTank[] getInternalTanks() {
+		return tanks;
 	}
-
+	
 	@Override
 	protected BoilerRecipe readRecipeFromNBT(NBTTagCompound tag) {
 		return BoilerRecipe.loadFromNBT(tag);
+	}
+
+	@Override
+	public BoilerRecipe findRecipeForInsertion(ItemStack inserting) {
+		return null;
 	}
 
 	@Override
@@ -238,16 +243,6 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	@Override
 	public int[] getRedstonePos() {
 		return new int[] {19};
-	}
-
-	@Override
-	public IFluidTank[] getInternalTanks() {
-		return tanks;
-	}
-
-	@Override
-	public BoilerRecipe findRecipeForInsertion(ItemStack inserting) {
-		return null;
 	}
 
 	@Override
@@ -349,12 +344,6 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		return pos == 35 && (side == null || side == EnumFacing.UP);
 	}
 
-	@Override
-	public TileEntityBoiler getTileForPos(int targetPos) {
-		BlockPos target = getBlockPosForPos(targetPos);
-		TileEntity tile = world.getTileEntity(target);
-		return tile instanceof TileEntityBoiler ? (TileEntityBoiler) tile : null;
-	}
 
 	@Override
 	public boolean canOpenGui() {
@@ -369,6 +358,18 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	@Override
 	public TileEntity getGuiMaster() {
 		return master();
+	}
+	
+	@Override
+	public TileEntityBoiler getTileForPos(int targetPos) {
+		BlockPos target = getBlockPosForPos(targetPos);
+		TileEntity tile = world.getTileEntity(target);
+		return tile instanceof TileEntityBoiler ? (TileEntityBoiler) tile : null;
+	}
+
+	@Override
+	public float[] getBlockBounds() {
+		return null;
 	}
 
 	@Override

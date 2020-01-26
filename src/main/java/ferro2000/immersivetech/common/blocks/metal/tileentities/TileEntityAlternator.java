@@ -35,18 +35,18 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
 public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAlternator> implements IMechanicalEnergy, IAdvancedSelectionBounds, IAdvancedCollisionBounds, IFluxProvider {
-	FluxStorage energyStorage = new FluxStorage(ITConfig.Machines.alternator_energyStorage);
-	public MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
-	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
+	private static int[] size = new int[] {3, 4, 3};	
 
-	private BlockPos[] EnergyOutputPositions = new BlockPos[6];
-
-	private static int[] size = new int[] {3, 4, 3};
-	
 	private static int maxSpeed = ITConfig.Machines.mechanicalEnergy_maxSpeed;
 	private static int maxTorque = ITConfig.Machines.mechanicalEnergy_maxTorque;
 	private static int rfPerTick = ITConfig.Machines.alternator_RfPerTick;
 	private static int rfPerTickPerPort = rfPerTick / 6;
+
+	private BlockPos[] EnergyOutputPositions = new BlockPos[6];
+
+	public MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
+	FluxStorage energyStorage = new FluxStorage(ITConfig.Machines.alternator_energyStorage);
+	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
 	public TileEntityAlternator() {
 		super(size);
@@ -97,12 +97,70 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 		mechanicalEnergy.writeToNBT(nbt);
 		animation.writeToNBT(nbt);
 	}
+	
+	@Override
+	public boolean canConnectEnergy(@Nullable EnumFacing from) {
+		return pos == 0 || pos == 2 || pos == 12 || pos == 14 || pos == 24 || pos == 26;
+	}
 
 	@Override
-	public float[] getBlockBounds() {
+	public int extractEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
+		if(pos != 0 || pos != 2 || pos != 12 || pos != 14 || pos != 24 || pos != 26) return 0;
+		TileEntityAlternator master = master();
+		return master == null ? 0:master.energyStorage.extractEnergy(energy, simulate);
+	}
+
+	@Override
+	public int getEnergyStored(@Nullable EnumFacing from) {
+		TileEntityAlternator master = master();
+		return master == null ? 0:master.energyStorage.getEnergyStored();
+	}
+
+	@Override
+	public int getMaxEnergyStored(@Nullable EnumFacing from) {
+		TileEntityAlternator master = master();
+		return master == null ? 0:master.energyStorage.getMaxEnergyStored();
+	}
+
+	@Override
+	public boolean isMechanicalEnergyTransmitter() {
+		return false;
+	}
+
+	@Override
+	public boolean isMechanicalEnergyReceiver() {
+		return true;
+	}
+
+	@Override
+	public EnumFacing getMechanicalEnergyOutputFacing() {
 		return null;
 	}
 
+	@Override
+	public EnumFacing getMechanicalEnergyInputFacing() {
+		return facing;
+	}
+
+	@Override
+	public int inputToCenterDistance() {
+		return 3;
+	}
+
+	@Override
+	public int outputToCenterDistance() {
+		return -1;
+	}
+
+	@Override
+	public MechanicalEnergy getEnergy() {
+		return mechanicalEnergy;
+	}
+
+	public MechanicalEnergyAnimation getAnimation() {
+		return animation;
+	}
+	
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
 		return new IFluidTank[0];
@@ -128,6 +186,11 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 			e.printStackTrace();
 		}
 		return s.copy();
+	}
+
+	@Override
+	public float[] getBlockBounds() {
+		return null;
 	}
 
 	@Override
@@ -262,69 +325,6 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, 
 		ArrayList <AxisAlignedBB> list) {
 		return false;
-	}
-
-	@Override
-	public boolean canConnectEnergy(@Nullable EnumFacing from) {
-		return pos == 0 || pos == 2 || pos == 12 || pos == 14 || pos == 24 || pos == 26;
-	}
-
-	@Override
-	public int extractEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
-		if(pos != 0 || pos != 2 || pos != 12 || pos != 14 || pos != 24 || pos != 26) return 0;
-		TileEntityAlternator master = master();
-		return master == null ? 0:master.energyStorage.extractEnergy(energy, simulate);
-	}
-
-	@Override
-	public int getEnergyStored(@Nullable EnumFacing from) {
-		TileEntityAlternator master = master();
-		return master == null ? 0:master.energyStorage.getEnergyStored();
-	}
-
-	@Override
-	public int getMaxEnergyStored(@Nullable EnumFacing from) {
-		TileEntityAlternator master = master();
-		return master == null ? 0:master.energyStorage.getMaxEnergyStored();
-	}
-
-	@Override
-	public boolean isMechanicalEnergyTransmitter() {
-		return false;
-	}
-
-	@Override
-	public boolean isMechanicalEnergyReceiver() {
-		return true;
-	}
-
-	@Override
-	public EnumFacing getMechanicalEnergyOutputFacing() {
-		return null;
-	}
-
-	@Override
-	public EnumFacing getMechanicalEnergyInputFacing() {
-		return facing;
-	}
-
-	@Override
-	public int inputToCenterDistance() {
-		return 3;
-	}
-
-	@Override
-	public int outputToCenterDistance() {
-		return -1;
-	}
-
-	@Override
-	public MechanicalEnergy getEnergy() {
-		return mechanicalEnergy;
-	}
-
-	public MechanicalEnergyAnimation getAnimation() {
-		return animation;
 	}
 
 }
