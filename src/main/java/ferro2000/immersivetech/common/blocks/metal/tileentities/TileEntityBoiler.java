@@ -60,10 +60,6 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		tanks[2].readFromNBT(nbt.getCompoundTag("tank2"));
 		heatLevel = nbt.getDouble("heatLevel");
 		burnRemaining = nbt.getInteger("burnRemaining");
-		FluidStack recipeInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("recipe"));
-		if(recipeInput != null) lastRecipe = BoilerRecipe.findRecipe(recipeInput);
-		FluidStack fuelInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("fuel"));
-		if(fuelInput != null) lastFuel = BoilerRecipe.findFuel(fuelInput);
 		recipeTimeRemaining = nbt.getInteger("recipeTimeRemaining");
 		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
 	}
@@ -76,8 +72,6 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound()));
 		nbt.setDouble("heatLevel", heatLevel);
 		nbt.setInteger("burnRemaining", burnRemaining);
-		if(lastRecipe != null) nbt.setTag("recipe", lastRecipe.fluidInput.writeToNBT(new NBTTagCompound()));
-		if(lastFuel != null) nbt.setTag("fuel", lastFuel.fluidInput.writeToNBT(new NBTTagCompound()));
 		nbt.setFloat("recipeTimeRemaining", recipeTimeRemaining);
 		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
@@ -312,19 +306,27 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
-		if(pos == 5 && (side == null || side == (mirrored ? facing.rotateY():facing.rotateYCCW()))) {
+		if(pos == 5 && (side == null || side == (mirrored?facing.rotateY():facing.rotateYCCW()))) {
 			TileEntityBoiler master = this.master();
-			if(master == null) return false;
-			if(master.tanks[1].fillInternal(resource, false) == 0) return false;
-			if(BoilerRecipe.findRecipe(resource) == null) return false;
-			return true;
-		} else if(pos == 9 && (side == null || side == (mirrored ? facing.rotateYCCW() : facing.rotateY()))) {
-			TileEntityBoiler master = this.master();
-			if(master == null) return false;
-			if(master.tanks[0].fillInternal(resource, false) == 0) return false;
+			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
+			if(master==null || master.tanks[1].getFluidAmount() >= master.tanks[1].getCapacity()) {
+				return false;
+			}
+			if(master.tanks[1].getFluid() == null) {
+				BoilerRecipe incompleteRecipes = BoilerRecipe.findRecipe(resourceClone);
+				return incompleteRecipes != null;
+			} else {
+				FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[1].getFluid(), 1000, false);
+				BoilerRecipe incompleteRecipes1 = BoilerRecipe.findRecipe(resourceClone);
+				BoilerRecipe incompleteRecipes2 = BoilerRecipe.findRecipe(resourceClone2);
+				return incompleteRecipes1 == incompleteRecipes2;
+			}
+		}
+		if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY()))) {
 			if(BoilerRecipe.findFuel(resource) == null) return false;
 			return true;
-		} else return false;
+		}
+		return false;
 	}
 
 	@Override
