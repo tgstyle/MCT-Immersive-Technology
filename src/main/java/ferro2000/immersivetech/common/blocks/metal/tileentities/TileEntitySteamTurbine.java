@@ -51,13 +51,17 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	private static int outputTankSize = Config.ITConfig.Machines.steamTurbine_input_tankSize;
 	private static float maxRotationSpeed = ITConfig.Machines.steamTurbine_maxRotationSpeed;
 	
+	public FluidTank[] tanks = new FluidTank[] {
+		new FluidTank(inputTankSize),
+		new FluidTank(outputTankSize)
+	};
+
 	public int burnRemaining = 0;
 
 	public static BlockPos fluidOutputPos;
 	
 	public MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
 	public SteamTurbineRecipe lastRecipe;
-	public FluidTank[] tanks = new FluidTank[] {new FluidTank(inputTankSize), new FluidTank(outputTankSize)};
 	
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
@@ -150,12 +154,13 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resources) {
+		TileEntitySteamTurbine master = this.master();
+		if(master == null) return false;
 		if((pos == 30) && (side == null || side == facing.getOpposite())) {
-			TileEntitySteamTurbine master = this.master();
 			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resources, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[0].getFluid(), 1000, false);
-			if(master == null || master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
-			if(master.tanks[0].getFluid() == null) {
+			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[iTank].getFluid(), 1000, false);
+			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
+			if(master.tanks[iTank].getFluid() == null) {
 				SteamTurbineRecipe incompleteRecipes = SteamTurbineRecipe.findFuel(resourceClone);
 				return incompleteRecipes != null;
 			} else {
