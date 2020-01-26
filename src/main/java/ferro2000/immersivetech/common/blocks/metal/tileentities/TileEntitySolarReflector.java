@@ -25,6 +25,7 @@ import net.minecraftforge.fluids.IFluidTank;
 
 public class TileEntitySolarReflector extends TileEntityMultiblockPart <TileEntitySolarReflector> implements IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 	private static final int[] size = { 5, 1, 3 };
+
 	public boolean sun = false;
 
 	public TileEntitySolarReflector() {

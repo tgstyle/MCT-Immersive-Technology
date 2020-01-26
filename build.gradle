@@ -63,7 +63,7 @@ minecraft {
 
 dependencies {
 	compile "mezz.jei:jei_${common.mcversion}:${common.jei_version}"
-	deobfCompile "blusunrize:ImmersiveEngineering:0.12-+"
+	deobfCompile "blusunrize:ImmersiveEngineering:${common.imme_version}"
 	deobfCompile "cofh:RedstoneFlux:${common.mcbaseversion}-${common.redf_version}:deobf"
 	deobfCompile "cofh:CoFHCore:${common.mcversion}-${common.cofh_version}:deobf"
 	deobfCompile "cofh:CoFHWorld:${common.mcversion}-${common.cwor_version}:deobf"
