@@ -37,7 +37,11 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		super(MultiblockDistiller.instance, new int[] {3, 3, 3}, 16000, true);
 	}
 
-	public FluidTank[] tanks = new FluidTank[] {new FluidTank(24000), new FluidTank(24000)};
+	public FluidTank[] tanks = new FluidTank[] {
+		new FluidTank(24000),
+		new FluidTank(24000)
+	};
+
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 
 	@Override
@@ -230,12 +234,13 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
+		TileEntityDistiller master = this.master();
+		if(master == null) return false;
 		if(pos == 5 && (side == null || side == (mirrored ? facing.rotateYCCW():facing.rotateY()))) {
-			TileEntityDistiller master = this.master();
 			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[0].getFluid(), 1000, false);
-			if(master == null || master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity())	return false;
-			if(master.tanks[0].getFluid() == null) {
+			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[iTank].getFluid(), 1000, false);
+			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
+			if(master.tanks[iTank].getFluid() == null) {
 				DistillerRecipe incompleteRecipes = DistillerRecipe.findRecipe(resourceClone);
 				return incompleteRecipes != null;
 			} else {

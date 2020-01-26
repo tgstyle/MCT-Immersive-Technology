@@ -38,8 +38,15 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	public TileEntitySolarTower() {
 		super(MultiblockSolarTower.instance, new int[] { 7, 3, 3 }, 0, true);
 	}
+	
+	private static int solarMaxRange = ITConfig.Machines.solarTower_maxRange;
+	private static int solarMinRange = ITConfig.Machines.solarTower_minRange;
 
-	public FluidTank[] tanks = new FluidTank[] { new FluidTank(32000), new FluidTank(32000) };
+	public FluidTank[] tanks = new FluidTank[] {
+		new FluidTank(32000),
+		new FluidTank(32000)
+	};
+
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 
 	private int reflectorNum;
@@ -49,9 +56,6 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	public int ref1;
 	public int ref2;
 	public int ref3;
-	
-	private static int solarMaxRange = ITConfig.Machines.solarTower_maxRange;
-	private static int solarMinRange = ITConfig.Machines.solarTower_minRange;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -363,12 +367,13 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
+		TileEntitySolarTower master = this.master();
+		if(master == null) return false;
 		if((pos == 3 || pos == 5) && (side == null || side.getAxis() == facing.rotateYCCW().getAxis())) {
-			TileEntitySolarTower master = this.master();
 			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[0].getFluid(), 1000, false);
-			if(master == null || master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
-			if(master.tanks[0].getFluid() == null) {
+			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[iTank].getFluid(), 1000, false);
+			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
+			if(master.tanks[iTank].getFluid() == null) {
 				SolarTowerRecipe incompleteRecipes = SolarTowerRecipe.findRecipe(resourceClone);
 				return incompleteRecipes != null;
 			} else {
