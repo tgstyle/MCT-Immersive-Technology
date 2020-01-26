@@ -46,8 +46,11 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEntityCokeOvenAdvanced> implements IIEInventory, IActiveState, IGuiTile, IProcessTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 	private static final int[] size = { 4, 3, 3 };
+
 	public FluidTank tank = new FluidTank(24000);
+
 	NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+
 	public int process = 0;
 	public int processMax = 0;
 	public boolean active = false;
@@ -57,8 +60,24 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 	}
 
 	@Override
-	public PropertyBoolInverted getBoolProperty(Class<? extends IUsesBooleanProperty> inf) {
-		return null;
+	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+		super.readCustomNBT(nbt, descPacket);
+		process = nbt.getInteger("process");
+		processMax = nbt.getInteger("processMax");
+		active = nbt.getBoolean("active");
+		tank.readFromNBT(nbt.getCompoundTag("tank"));
+		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 4);
+	}
+
+	@Override
+	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+		super.writeCustomNBT(nbt, descPacket);
+		nbt.setInteger("process", process);
+		nbt.setInteger("processMax", processMax);
+		nbt.setBoolean("active", active);
+		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
+		nbt.setTag("tank", tankTag);
+		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
 
 	@Override
@@ -146,12 +165,31 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 			}
 		}
 	}
+	
+	@Override
+	public PropertyBoolInverted getBoolProperty(Class<? extends IUsesBooleanProperty> inf) {
+		return null;
+	}
 
 	public CokeOvenRecipe getRecipe() {
 		CokeOvenRecipe recipe = CokeOvenRecipe.findRecipe(inventory.get(0));
 		if(recipe == null) return null;
 		if(inventory.get(1).isEmpty() || (OreDictionary.itemMatches(inventory.get(1), recipe.output, false) && inventory.get(1).getCount() + recipe.output.getCount() <= getSlotLimit(1))) if(tank.getFluidAmount()+recipe.creosoteOutput <= tank.getCapacity()) return recipe;
 		return null;
+	}
+
+	@Override
+	public int[] getCurrentProcessesStep() {
+		TileEntityCokeOvenAdvanced master = master();
+		if(master != this && master != null) return master.getCurrentProcessesStep();
+		return new int[] { processMax - process };
+	}
+
+	@Override
+	public int[] getCurrentProcessesMax() {
+		TileEntityCokeOvenAdvanced master = master();
+		if(master != this && master != null) return master.getCurrentProcessesMax();
+		return new int[] { processMax };
 	}
 
 	private int getProcessSpeed() {
@@ -166,24 +204,112 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 	}
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		super.readCustomNBT(nbt, descPacket);
-		process = nbt.getInteger("process");
-		processMax = nbt.getInteger("processMax");
-		active = nbt.getBoolean("active");
-		tank.readFromNBT(nbt.getCompoundTag("tank"));
-		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 4);
+	public boolean getIsActive() {
+		return this.active;
+	}
+
+	IItemHandler inputHandler = new IEInventoryHandler(1, this, 0, new boolean[] {true}, new boolean[] {false});
+	IItemHandler outputHandler = new IEInventoryHandler(1, this, 1, new boolean[] {false}, new boolean[] {true});
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if((pos == 1 || pos == 31) && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			TileEntityCokeOvenAdvanced master = (TileEntityCokeOvenAdvanced)master();
+			if(master == null) {
+				return null;
+			} else if(pos == 1 && facing == master.facing) {
+				return (T)master.outputHandler;
+			} else if(pos == 31 && facing == EnumFacing.UP) {
+				return (T)master.inputHandler;
+			}
+		}
+		return super.getCapability(capability, facing);
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		super.writeCustomNBT(nbt, descPacket);
-		nbt.setInteger("process", process);
-		nbt.setInteger("processMax", processMax);
-		nbt.setBoolean("active", active);
-		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
-		nbt.setTag("tank", tankTag);
-		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if((pos == 1 || pos == 31) && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			TileEntityCokeOvenAdvanced master = (TileEntityCokeOvenAdvanced)master();
+			if(master == null) {
+				return false;
+			} else if(pos == 1 && facing == master.facing) {
+				return true;
+			} else if(pos == 31 && facing == EnumFacing.UP) {
+				return true;
+			}
+		}
+		return super.hasCapability(capability, facing);
+	}
+
+	@Override
+	public NonNullList<ItemStack> getInventory() {
+		TileEntityCokeOvenAdvanced master = master();
+		if(master != null && master.formed && formed) return master.inventory;
+		return this.inventory;
+	}
+
+	@Override
+	public boolean isStackValid(int slot, ItemStack stack) {
+		if(stack.isEmpty()) return false;
+		if(slot == 0) return CokeOvenRecipe.findRecipe(stack) != null;
+		if(slot == 2) return Utils.isFluidRelatedItemStack(stack);
+		return false;
+	}
+
+	@Override
+	public int getSlotLimit(int slot) {
+		return 64;
+	}
+
+	@Override
+	public void doGraphicalUpdates(int slot) {
+	}
+
+	@Override
+	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
+		TileEntityCokeOvenAdvanced master = master();
+		if(master != null) {
+			if(pos == 7 && (side == null || side == facing)) {
+				return new FluidTank[] {master.tank};
+			}
+		}
+		return new FluidTank[0];
+	}
+
+	@Override
+	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
+		return false;
+	}
+
+	@Override
+	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
+		return (pos == 7 && (side == null || side == facing));
+	}
+
+	@Override
+	public boolean canOpenGui() {
+		return formed;
+	}
+
+	@Override
+	public int getGuiID() {
+		return ITLib.GUIID_Coke_oven_advanced;
+	}
+
+	@Override
+	public TileEntity getGuiMaster() {
+		return master();
+	}
+
+	@Override
+	public ItemStack getOriginalBlock() {
+		if(pos<0) return ItemStack.EMPTY;
+		ItemStack s = ItemStack.EMPTY;
+		try {
+			s = MultiblockCokeOvenAdvanced.instance.getStructureManual()[pos/9][pos%9/3][pos%3];
+		} catch(Exception e) {e.printStackTrace();}
+		return s.copy();
 	}
 
 	@Override
@@ -271,129 +397,6 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 	@Override
 	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, ArrayList<AxisAlignedBB> list) {
 		return false;
-	}
-
-	@Override
-	public int[] getCurrentProcessesStep() {
-		TileEntityCokeOvenAdvanced master = master();
-		if(master != this && master != null) return master.getCurrentProcessesStep();
-		return new int[] { processMax - process };
-	}
-
-	@Override
-	public int[] getCurrentProcessesMax() {
-		TileEntityCokeOvenAdvanced master = master();
-		if(master != this && master != null) return master.getCurrentProcessesMax();
-		return new int[] { processMax };
-	}
-
-	@Override
-	public boolean canOpenGui() {
-		return formed;
-	}
-
-	@Override
-	public int getGuiID() {
-		return ITLib.GUIID_Coke_oven_advanced;
-	}
-
-	@Override
-	public TileEntity getGuiMaster() {
-		return master();
-	}
-
-	@Override
-	public boolean getIsActive() {
-		return this.active;
-	}
-
-	@Override
-	public NonNullList<ItemStack> getInventory() {
-		TileEntityCokeOvenAdvanced master = master();
-		if(master != null && master.formed && formed) return master.inventory;
-		return this.inventory;
-	}
-
-	@Override
-	public boolean isStackValid(int slot, ItemStack stack) {
-		if(stack.isEmpty()) return false;
-		if(slot == 0) return CokeOvenRecipe.findRecipe(stack) != null;
-		if(slot == 2) return Utils.isFluidRelatedItemStack(stack);
-		return false;
-	}
-
-	@Override
-	public int getSlotLimit(int slot) {
-		return 64;
-	}
-
-	@Override
-	public void doGraphicalUpdates(int slot) {
-	}
-
-	@Override
-	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
-		TileEntityCokeOvenAdvanced master = master();
-		if(master != null) {
-			if(pos == 7 && (side == null || side == facing)) {
-				return new FluidTank[] {master.tank};
-			}
-		}
-		return new FluidTank[0];
-	}
-
-	@Override
-	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
-		return false;
-	}
-
-	@Override
-	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
-		return (pos == 7 && (side == null || side == facing));
-	}
-
-	@Override
-	public ItemStack getOriginalBlock() {
-		if(pos<0) return ItemStack.EMPTY;
-		ItemStack s = ItemStack.EMPTY;
-		try {
-			s = MultiblockCokeOvenAdvanced.instance.getStructureManual()[pos/9][pos%9/3][pos%3];
-		} catch(Exception e) {e.printStackTrace();}
-		return s.copy();
-	}
-
-	IItemHandler inputHandler = new IEInventoryHandler(1, this, 0, new boolean[] {true}, new boolean[] {false});
-	IItemHandler outputHandler = new IEInventoryHandler(1, this, 1, new boolean[] {false}, new boolean[] {true});
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if((pos == 1 || pos == 31) && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			TileEntityCokeOvenAdvanced master = (TileEntityCokeOvenAdvanced)master();
-			if(master == null) {
-				return null;
-			} else if(pos == 1 && facing == master.facing) {
-				return (T)master.outputHandler;
-			} else if(pos == 31 && facing == EnumFacing.UP) {
-				return (T)master.inputHandler;
-			}
-		}
-		return super.getCapability(capability, facing);
-	}
-
-	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if((pos == 1 || pos == 31) && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			TileEntityCokeOvenAdvanced master = (TileEntityCokeOvenAdvanced)master();
-			if(master == null) {
-				return false;
-			} else if(pos == 1 && facing == master.facing) {
-				return true;
-			} else if(pos == 31 && facing == EnumFacing.UP) {
-				return true;
-			}
-		}
-		return super.hasCapability(capability, facing);
 	}
 
 }
