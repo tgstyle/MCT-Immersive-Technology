@@ -397,7 +397,6 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 		return new float[] { 0, 0, 0, 1, 1, 1 };
 	}
 
-
 	@Override
 	public List<AxisAlignedBB> getAdvancedColisionBounds() {
 		return getAdvancedSelectionBounds();
