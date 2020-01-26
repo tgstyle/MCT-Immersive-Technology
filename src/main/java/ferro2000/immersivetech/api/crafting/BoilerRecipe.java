@@ -108,12 +108,12 @@ public class BoilerRecipe extends MultiblockRecipe {
 
 		@Override
 		public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-			nbt.setTag("input", fluidInput.writeToNBT(new NBTTagCompound()));
+			nbt.setTag("inputFuel", fluidInput.writeToNBT(new NBTTagCompound()));
 			return nbt;
 		}
 
 		public static BoilerFuelRecipe loadFromNBT(NBTTagCompound nbt) {
-			FluidStack fluidInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input"));
+			FluidStack fluidInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("inputFuel"));
 			return findFuel(fluidInput);
 		}
 
