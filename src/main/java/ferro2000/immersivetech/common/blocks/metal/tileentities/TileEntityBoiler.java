@@ -344,7 +344,6 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		return pos == 35 && (side == null || side == EnumFacing.UP);
 	}
 
-
 	@Override
 	public boolean canOpenGui() {
 		return formed;
