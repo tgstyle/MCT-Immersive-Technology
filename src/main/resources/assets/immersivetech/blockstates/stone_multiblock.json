@@ -1,63 +1,73 @@
 {
 	"forge_marker": 1,
-	"defaults":
-	{
+	"defaults": {
 		"transform": "forge:default-block",
-		"custom": { "flip-v": true },
+		"custom": {
+			"flip-v": true
+		},
 		"textures": {
 			"particle": "immersiveengineering:blocks/storage_steel"
 		}
 	},
-	"variants":
-	{
+	"variants": {
 		"inventory,type=coke_oven_advanced": [{
 			"model": "immersivetech:stone_multiblock/coke_oven_advanced.obj",
 			"transform": {
 				"scale": 0.25,
-				"rotation": [
-					{
+				"rotation": [{
 						"x": 20
 					},
 					{
 						"y": -45
 					}
 				],
-				"translation": [ 0, 0, 0 ]
+				"translation": [0, 0, 0]
 			}
 		}],
-		"type":
-		{
+		"type": {
 			"coke_oven_advanced": {
 				"model": "immersivetech:stone_multiblock/coke_oven_advanced.obj"
 			}
 		},
-		"facing":
-		{
-			"north": { "transform": {
-				"rotation": {"y": 0 }
-			}},
-			"south": { "transform": {
-				"rotation": {"y": 180 }
-			}},
-			"west": { "transform": {
-				"rotation": {"y": 90 }
-			}},
-			"east": { "transform": {
-				"rotation": {"y": -90 }
-			}}
+		"facing": {
+			"north": {
+				"transform": {
+					"rotation": {
+						"y": 0
+					}
+				}
+			},
+			"south": {
+				"transform": {
+					"rotation": {
+						"y": 180
+					}
+				}
+			},
+			"west": {
+				"transform": {
+					"rotation": {
+						"y": 90
+					}
+				}
+			},
+			"east": {
+				"transform": {
+					"rotation": {
+						"y": -90
+					}
+				}
+			}
 		},
-		"_0multiblockslave":
-		{
-			"false":{},
-			"true":{
+		"_0multiblockslave": {
+			"false": {},
+			"true": {
 				"model": "immersiveengineering:ie_empty"
 			}
 		},
-		//active texture
-		"boolean0":
-		{
-			"false":{},
-			"true":{}
+		"boolean0": {
+			"false": {},
+			"true": {}
 		}
 	}
 }
