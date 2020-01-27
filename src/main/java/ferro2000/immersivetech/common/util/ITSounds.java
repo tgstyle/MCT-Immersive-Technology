@@ -17,6 +17,7 @@ public class ITSounds {
     static Set<SoundEvent> registeredEvents = new HashSet<>();
     public static SoundEvent turbine = registerSound("turbine");
     public static SoundEvent alternator = registerSound("alternator");
+    public static SoundEvent boiler = registerSound("boiler");
 
     private static SoundEvent registerSound(String name)
     {
