@@ -14,6 +14,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.crafting.BoilerRecipe;
+import ferro2000.immersivetech.api.crafting.BoilerRecipe.BoilerFuelRecipe;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
 
@@ -36,20 +37,26 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler, BoilerRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 	public TileEntityBoiler() {
-		super(MultiblockBoiler.instance, new int[] {3, 3, 5}, 0, true);
+		super(MultiblockBoiler.instance, new int[] { 3, 3, 5 }, 0, true);
 	}
+	
+	private static int inputFuelTankSize = ITConfig.Machines.boiler_fuel_tankSize;
+	private static int inputTankSize = ITConfig.Machines.boiler_input_tankSize;
+	private static int outputTankSize = ITConfig.Machines.boiler_output_tankSize;
 
 	public FluidTank[] tanks = new FluidTank[] {
-			new FluidTank(ITConfig.Machines.boiler_fuel_tankSize), 
-			new FluidTank(ITConfig.Machines.boiler_input_tankSize), 
-			new FluidTank(ITConfig.Machines.boiler_output_tankSize)
+		new FluidTank(inputFuelTankSize), 
+		new FluidTank(inputTankSize), 
+		new FluidTank(outputTankSize)
 	};
 
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(6, ItemStack.EMPTY);
-	public double heatLevel = 0;
+
 	public int burnRemaining = 0;
 	public int recipeTimeRemaining = 0;
-	public BoilerRecipe.BoilerFuelRecipe lastFuel;
+	public double heatLevel = 0;
+
+	public BoilerFuelRecipe lastFuel;
 	public BoilerRecipe lastRecipe;
 
 	@Override
@@ -125,7 +132,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			burnRemaining--;
 			if(heatUp()) update = true;
 		} else if(!isRSDisabled() && tanks[0].getFluid() != null) {
-			BoilerRecipe.BoilerFuelRecipe fuel = (lastFuel != null && tanks[0].getFluid().isFluidEqual(lastFuel.fluidInput)) ? lastFuel : BoilerRecipe.findFuel(tanks[0].getFluid());
+			BoilerFuelRecipe fuel = (lastFuel != null && tanks[0].getFluid().isFluidEqual(lastFuel.fluidInput)) ? lastFuel : BoilerRecipe.findFuel(tanks[0].getFluid());
 			if(fuel != null && fuel.fluidInput.amount <= tanks[0].getFluidAmount()) {
 				lastFuel = fuel;
 				tanks[0].drain(fuel.fluidInput.amount, true);
@@ -214,13 +221,18 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	@Override
-	public float[] getBlockBounds() {
-		return null;
+	public IFluidTank[] getInternalTanks() {
+		return tanks;
 	}
-
+	
 	@Override
 	protected BoilerRecipe readRecipeFromNBT(NBTTagCompound tag) {
 		return BoilerRecipe.loadFromNBT(tag);
+	}
+
+	@Override
+	public BoilerRecipe findRecipeForInsertion(ItemStack inserting) {
+		return null;
 	}
 
 	@Override
@@ -231,16 +243,6 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	@Override
 	public int[] getRedstonePos() {
 		return new int[] {19};
-	}
-
-	@Override
-	public IFluidTank[] getInternalTanks() {
-		return tanks;
-	}
-
-	@Override
-	public BoilerRecipe findRecipeForInsertion(ItemStack inserting) {
-		return null;
 	}
 
 	@Override
@@ -306,25 +308,33 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
-		if(pos == 5 && (side == null || side == (mirrored?facing.rotateY():facing.rotateYCCW()))) {
-			TileEntityBoiler master = this.master();
+		TileEntityBoiler master = this.master();
+		if(master == null) return false;
+		if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY()))) {
 			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
-			if(master==null || master.tanks[1].getFluidAmount() >= master.tanks[1].getCapacity()) {
-				return false;
+			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[iTank].getFluid(), 1000, false);
+			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
+			if(master.tanks[iTank].getFluid() == null) {
+				BoilerFuelRecipe incompleteRecipes = BoilerRecipe.findFuel(resourceClone);
+				return incompleteRecipes != null;
+			} else {
+				BoilerFuelRecipe incompleteRecipes1 = BoilerRecipe.findFuel(resourceClone);
+				BoilerFuelRecipe incompleteRecipes2 = BoilerRecipe.findFuel(resourceClone2);
+				return incompleteRecipes1 == incompleteRecipes2;
 			}
+		}
+		if(pos == 5 && (side == null || side == (mirrored?facing.rotateY() : facing.rotateYCCW()))) {
+			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
+			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[1].getFluid(), 1000, false);
+			if(master.tanks[1].getFluidAmount() >= master.tanks[1].getCapacity()) return false;
 			if(master.tanks[1].getFluid() == null) {
 				BoilerRecipe incompleteRecipes = BoilerRecipe.findRecipe(resourceClone);
 				return incompleteRecipes != null;
 			} else {
-				FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[1].getFluid(), 1000, false);
 				BoilerRecipe incompleteRecipes1 = BoilerRecipe.findRecipe(resourceClone);
 				BoilerRecipe incompleteRecipes2 = BoilerRecipe.findRecipe(resourceClone2);
 				return incompleteRecipes1 == incompleteRecipes2;
 			}
-		}
-		if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY()))) {
-			if(BoilerRecipe.findFuel(resource) == null) return false;
-			return true;
 		}
 		return false;
 	}
@@ -332,13 +342,6 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	@Override
 	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
 		return pos == 35 && (side == null || side == EnumFacing.UP);
-	}
-
-	@Override
-	public TileEntityBoiler getTileForPos(int targetPos) {
-		BlockPos target = getBlockPosForPos(targetPos);
-		TileEntity tile = world.getTileEntity(target);
-		return tile instanceof TileEntityBoiler ? (TileEntityBoiler) tile : null;
 	}
 
 	@Override
@@ -354,6 +357,18 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	@Override
 	public TileEntity getGuiMaster() {
 		return master();
+	}
+	
+	@Override
+	public TileEntityBoiler getTileForPos(int targetPos) {
+		BlockPos target = getBlockPosForPos(targetPos);
+		TileEntity tile = world.getTileEntity(target);
+		return tile instanceof TileEntityBoiler ? (TileEntityBoiler) tile : null;
+	}
+
+	@Override
+	public float[] getBlockBounds() {
+		return null;
 	}
 
 	@Override

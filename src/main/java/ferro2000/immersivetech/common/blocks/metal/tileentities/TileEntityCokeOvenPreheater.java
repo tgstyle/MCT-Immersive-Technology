@@ -31,22 +31,6 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 	private int dummyNum = 0;
 	private static int cokeOvenConsumption = ITConfig.Machines.cokeOvenPreheater_consumption;
 
-	public int doSpeedup() {
-		int consumed = cokeOvenConsumption;
-		if(this.energyStorage.extractEnergy(consumed, true) == consumed) {
-			if(!active) {
-				active = true;
-				this.markContainingBlockForUpdate(null);
-			}
-			this.energyStorage.extractEnergy(consumed, false);
-			return 1;
-		} else if(active) {
-			active = false;
-			this.markContainingBlockForUpdate(null);
-		}
-		return 0;
-	}
-
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		dummy = nbt.getBoolean("dummy");
@@ -62,6 +46,22 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 		nbt.setInteger("facing", facing.ordinal());
 		nbt.setBoolean("active", active);
 		energyStorage.writeToNBT(nbt);
+	}
+	
+	public int doSpeedup() {
+		int consumed = cokeOvenConsumption;
+		if(this.energyStorage.extractEnergy(consumed, true) == consumed) {
+			if(!active) {
+				active = true;
+				this.markContainingBlockForUpdate(null);
+			}
+			this.energyStorage.extractEnergy(consumed, false);
+			return 1;
+		} else if(active) {
+			active = false;
+			this.markContainingBlockForUpdate(null);
+		}
+		return 0;
 	}
 
 	@Nonnull

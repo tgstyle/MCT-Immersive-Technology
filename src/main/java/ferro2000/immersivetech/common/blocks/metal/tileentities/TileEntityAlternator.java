@@ -369,5 +369,4 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	public MechanicalEnergyAnimation getAnimation() {
 		return animation;
 	}
-
 }
