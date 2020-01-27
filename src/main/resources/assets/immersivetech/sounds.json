@@ -12,5 +12,12 @@
 			"immersivetech:alternator"
 		],
 		"subtitle": "subtitle.immersivetech.alternator"
+	},
+	"boiler": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:boiler"
+		],
+		"subtitle": "subtitle.immersivetech.boiler"
 	}
 }
