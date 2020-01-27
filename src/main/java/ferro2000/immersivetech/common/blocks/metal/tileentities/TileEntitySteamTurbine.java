@@ -11,11 +11,9 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvanced
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 
-import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
 import ferro2000.immersivetech.api.crafting.SteamTurbineRecipe;
-import ferro2000.immersivetech.api.energy.MechanicalEnergy;
 import ferro2000.immersivetech.common.Config;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
@@ -47,11 +45,8 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	}
 
 	private static int maxSpeed = ITConfig.Machines.mechanicalEnergy_maxSpeed;
-	private static int maxTorque = ITConfig.Machines.mechanicalEnergy_maxTorque;
 	private static int speedGainPerTick = ITConfig.Machines.steamTurbine_speedGainPerTick;
-	private static int torqueGainPerTick = ITConfig.Machines.steamTurbine_torqueGainPerTick;
 	private static int speedLossPerTick = ITConfig.Machines.steamTurbine_speedLossPerTick;
-	private static int torqueLossPerTick = ITConfig.Machines.steamTurbine_torqueLossPerTick;
 	private static int energyMaxSpeed = ITConfig.Machines.mechanicalEnergy_maxSpeed;
 	private static int inputTankSize = Config.ITConfig.Machines.steamTurbine_input_tankSize;
 	private static int outputTankSize = Config.ITConfig.Machines.steamTurbine_input_tankSize;
@@ -61,7 +56,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 
 	public static BlockPos fluidOutputPos;
 	
-	public MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
+	public int speed;
 	public SteamTurbineRecipe lastRecipe;
 	public FluidTank[] tanks = new FluidTank[] {new FluidTank(inputTankSize), new FluidTank(outputTankSize)};
 	
@@ -73,7 +68,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 		super.readCustomNBT(nbt, descPacket);
 		tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
 		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
-		mechanicalEnergy.readFromNBT(nbt);
+		speed = nbt.getInteger("speed");
 		animation.readFromNBT(nbt);
 		burnRemaining = nbt.getInteger("burnRemaining");
 	}
@@ -83,21 +78,17 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
 		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
-		mechanicalEnergy.writeToNBT(nbt);
+		nbt.setInteger("speed", speed);
 		animation.writeToNBT(nbt);
 		nbt.setInteger("burnRemaining", burnRemaining);
 	}
 
 	private void speedUp() {
-		int newSpeed = Math.min(maxSpeed, mechanicalEnergy.getSpeed() + speedGainPerTick);
-		int newTorque = Math.min(maxTorque, mechanicalEnergy.getTorque() + torqueGainPerTick);
-		mechanicalEnergy.setMechanicalEnergy(newTorque, newSpeed);
+		speed = Math.min(maxSpeed, speed + speedGainPerTick);
 	}
 
 	private void speedDown() {
-		int newSpeed = Math.max(0, mechanicalEnergy.getSpeed() - speedLossPerTick);
-		int newTorque = Math.max(0, mechanicalEnergy.getTorque() - torqueLossPerTick);
-		mechanicalEnergy.setMechanicalEnergy(newTorque, newSpeed);
+		speed = Math.max(0, speed - speedLossPerTick);
 	}
 
 	private void pumpOutputOut() {
@@ -119,7 +110,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 		BlockPos center = getPos().offset(facing, 5);
 		EntityPlayerSP player = Minecraft.getMinecraft().player;
 		float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
-		float level = (float)mechanicalEnergy.getSpeed() / maxSpeed;
+		float level = (float) speed / maxSpeed;
 		runningSound.updatePitch(level);
 		runningSound.updateVolume((10 * level) / attenuation);
 		if (level > 0) runningSound.playSound();
@@ -130,7 +121,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	public void update() {
 		super.update();
 		if(isDummy()) return;
-		float rotationSpeed = mechanicalEnergy.getSpeed() == 0 ? 0f : ((float)mechanicalEnergy.getSpeed() / (float) energyMaxSpeed) * maxRotationSpeed;
+		float rotationSpeed = speed == 0 ? 0f : ((float) speed / (float) energyMaxSpeed) * maxRotationSpeed;
 		if(ITUtils.setRotationAngle(animation, rotationSpeed) && !world.isRemote) {
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
@@ -507,8 +498,8 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	}
 
 	@Override
-	public MechanicalEnergy getEnergy() {
-		return mechanicalEnergy;
+	public int getEnergy() {
+		return speed;
 	}
 
 	public MechanicalEnergyAnimation getAnimation() {

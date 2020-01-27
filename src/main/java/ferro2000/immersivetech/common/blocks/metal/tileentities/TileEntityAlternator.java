@@ -18,7 +18,6 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
-import ferro2000.immersivetech.api.energy.MechanicalEnergy;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockAlternator;
@@ -44,7 +43,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAlternator> implements IMechanicalEnergy, IAdvancedSelectionBounds, IAdvancedCollisionBounds, IFluxProvider {
 	FluxStorage energyStorage = new FluxStorage(ITConfig.Machines.alternator_energyStorage);
-	public MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
+	public int speed;
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
 	private BlockPos[] EnergyOutputPositions = new BlockPos[6];
@@ -52,7 +51,6 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	private static int[] size = new int[] {3, 4, 3};
 	
 	private static int maxSpeed = ITConfig.Machines.mechanicalEnergy_maxSpeed;
-	private static int maxTorque = ITConfig.Machines.mechanicalEnergy_maxTorque;
 	private static int rfPerTick = ITConfig.Machines.alternator_RfPerTick;
 	private static int rfPerTickPerPort = rfPerTick / 6;
 
@@ -63,8 +61,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	}
 
 	public int energyGenerated() {
-		float maxEnergy = maxSpeed * maxTorque;
-		int gen = Math.round((mechanicalEnergy.getEnergy() / maxEnergy) * rfPerTick);
+		int gen = Math.round(((float)speed / maxSpeed) * rfPerTick);
 		return gen;
 	}
 
@@ -93,8 +90,8 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	public void update() {
 		if(formed && pos == 13) {
 			if (!world.isRemote) {
-				if(ITUtils.checkMechanicalEnergyTransmitter(world, getPos())) mechanicalEnergy = ITUtils.getMechanicalEnergy(world, getPos());
-				if(mechanicalEnergy.getEnergy() > 0) this.energyStorage.modifyEnergyStored(energyGenerated());
+				if(ITUtils.checkMechanicalEnergyTransmitter(world, getPos())) speed = ITUtils.getMechanicalEnergy(world, getPos());
+				if(speed > 0) this.energyStorage.modifyEnergyStored(energyGenerated());
 				TileEntity tileEntity;
 				int currentEnergy = energyStorage.getEnergyStored();
 				for(int i = 0;i < 6;i++) {
@@ -132,7 +129,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 		super.readCustomNBT(nbt, descPacket);
 		energyStorage.readFromNBT(nbt);
 		clientEnergyPercentage = (float) energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
-		mechanicalEnergy.readFromNBT(nbt);
+		speed = nbt.getInteger("speed");
 		animation.readFromNBT(nbt);
 	}
 
@@ -140,7 +137,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 		energyStorage.writeToNBT(nbt);
-		mechanicalEnergy.writeToNBT(nbt);
+		nbt.setInteger("speed", speed);
 		animation.writeToNBT(nbt);
 	}
 
@@ -365,8 +362,8 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	}
 
 	@Override
-	public MechanicalEnergy getEnergy() {
-		return mechanicalEnergy;
+	public int getEnergy() {
+		return speed;
 	}
 
 	public MechanicalEnergyAnimation getAnimation() {
