@@ -61,7 +61,7 @@ public class MessageTileSync implements IMessage {
 		@Override
 		public IMessage onMessage(MessageTileSync message, MessageContext ctx) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
-				World world = ImmersiveTech.proxy.getClientWorld();
+				World world = Minecraft.getMinecraft().world;
 				if (world!=null) {
 					TileEntity tile = world.getTileEntity(message.pos);
 					if(tile instanceof TileEntityIEBase)
