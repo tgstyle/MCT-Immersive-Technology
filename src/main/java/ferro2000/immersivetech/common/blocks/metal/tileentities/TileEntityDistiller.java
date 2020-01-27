@@ -34,10 +34,14 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDistiller, DistillerRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 	public TileEntityDistiller() {
-		super(MultiblockDistiller.instance, new int[] {3, 3, 3}, 16000, true);
+		super(MultiblockDistiller.instance, new int[] { 3, 3, 3 }, 16000, true);
 	}
 
-	public FluidTank[] tanks = new FluidTank[] {new FluidTank(24000), new FluidTank(24000)};
+	public FluidTank[] tanks = new FluidTank[] {
+		new FluidTank(24000),
+		new FluidTank(24000)
+	};
+
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 
 	@Override
@@ -125,12 +129,41 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		}
 	}
 
+
 	@Override
-	public float[] getBlockBounds() {
-		if(pos > 0 && pos < 9 && pos != 5 && pos != 3 && pos != 7) return new float[] {0, 0, 0, 1, .5f, 1};
-		if(pos == 11) return new float[] {facing == EnumFacing.WEST ? .5f:0, 0, facing == EnumFacing.NORTH ? .5f:0, facing == EnumFacing.EAST ? .5f:1, 1, facing == EnumFacing.SOUTH ? .5f:1};
-		if(pos == 21 || pos == 24) return new float[] {0, 0, 0, 1, .5f, 1};
-		return new float[] {0, 0, 0, 1, 1, 1};
+	public NonNullList<ItemStack> getInventory() {
+		return inventory;
+	}
+
+	@Override
+	public boolean isStackValid(int slot, ItemStack stack) {
+		return true;
+	}
+
+	@Override
+	public int getSlotLimit(int slot) {
+		return 64;
+	}
+
+	@Override
+	public void doGraphicalUpdates(int slot) {
+		this.markDirty();
+		this.markContainingBlockForUpdate(null);
+	}
+
+	@Override
+	public IFluidTank[] getInternalTanks() {
+		return tanks;
+	}
+
+	@Override
+	protected DistillerRecipe readRecipeFromNBT(NBTTagCompound tag) {
+		return DistillerRecipe.loadFromNBT(tag);
+	}
+	
+	@Override
+	public DistillerRecipe findRecipeForInsertion(ItemStack inserting) {
+		return null;
 	}
 
 	@Override
@@ -144,8 +177,13 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	}
 
 	@Override
-	public boolean isInWorldProcessingMachine() {
-		return false;
+	public int[] getOutputSlots() {
+		return null ;
+	}
+
+	@Override
+	public int[] getOutputTanks() {
+		return new int[] {1};
 	}
 
 	@Override
@@ -183,38 +221,12 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	public float getMinProcessDistance(MultiblockProcess<DistillerRecipe> process) {
 		return 0;
 	}
-
-
+	
 	@Override
-	public NonNullList<ItemStack> getInventory() {
-		return inventory;
+	public boolean isInWorldProcessingMachine() {
+		return false;
 	}
-
-	@Override
-	public boolean isStackValid(int slot, ItemStack stack) {
-		return true;
-	}
-
-	@Override
-	public int getSlotLimit(int slot) {
-		return 64;
-	}
-
-	@Override
-	public int[] getOutputSlots() {
-		return null ;
-	}
-
-	@Override
-	public int[] getOutputTanks() {
-		return new int[] {1};
-	}
-
-	@Override
-	public IFluidTank[] getInternalTanks() {
-		return tanks;
-	}
-
+	
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
 		TileEntityDistiller master = this.master();
@@ -230,12 +242,13 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
+		TileEntityDistiller master = this.master();
+		if(master == null) return false;
 		if(pos == 5 && (side == null || side == (mirrored ? facing.rotateYCCW():facing.rotateY()))) {
-			TileEntityDistiller master = this.master();
 			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[0].getFluid(), 1000, false);
-			if(master == null || master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity())	return false;
-			if(master.tanks[0].getFluid() == null) {
+			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[iTank].getFluid(), 1000, false);
+			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
+			if(master.tanks[iTank].getFluid() == null) {
 				DistillerRecipe incompleteRecipes = DistillerRecipe.findRecipe(resourceClone);
 				return incompleteRecipes != null;
 			} else {
@@ -250,22 +263,6 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	@Override
 	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
 		return (pos == 3 && (side == null || side == (mirrored ? facing.rotateY():facing.rotateYCCW())));
-	}
-
-	@Override
-	public void doGraphicalUpdates(int slot) {
-		this.markDirty();
-		this.markContainingBlockForUpdate(null);
-	}
-
-	@Override
-	public DistillerRecipe findRecipeForInsertion(ItemStack inserting) {
-		return null;
-	}
-
-	@Override
-	protected DistillerRecipe readRecipeFromNBT(NBTTagCompound tag) {
-		return DistillerRecipe.loadFromNBT(tag);
 	}
 
 	@Override
@@ -288,6 +285,14 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		BlockPos target = getBlockPosForPos(targetPos);
 		TileEntity tile = world.getTileEntity(target);
 		return tile instanceof TileEntityDistiller ? (TileEntityDistiller) tile : null;
+	}
+	
+	@Override
+	public float[] getBlockBounds() {
+		if(pos > 0 && pos < 9 && pos != 5 && pos != 3 && pos != 7) return new float[] {0, 0, 0, 1, .5f, 1};
+		if(pos == 11) return new float[] {facing == EnumFacing.WEST ? .5f:0, 0, facing == EnumFacing.NORTH ? .5f:0, facing == EnumFacing.EAST ? .5f:1, 1, facing == EnumFacing.SOUTH ? .5f:1};
+		if(pos == 21 || pos == 24) return new float[] {0, 0, 0, 1, .5f, 1};
+		return new float[] {0, 0, 0, 1, 1, 1};
 	}
 
 	@Override

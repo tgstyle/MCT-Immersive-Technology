@@ -33,6 +33,22 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	private int increment = 0;
 	private final int maxTarget = 600;
 	private final int minTarget = 10;
+	
+	@Override
+	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+		super.writeCustomNBT(nbt, descPacket);
+		nbt.setInteger("redstoneChannelsending", redstoneChannelsending);
+		nbt.setInteger("target", target);
+		nbt.setInteger("increment", increment);
+	}
+
+	@Override
+	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+		super.readCustomNBT(nbt, descPacket);
+		redstoneChannelsending = nbt.getInteger("redstoneChannelsending");
+		target = nbt.getInteger("target");
+		increment = nbt.getInteger("increment");
+	}
 
 	@Override
 	public void update() {
@@ -123,22 +139,6 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		super.writeCustomNBT(nbt, descPacket);
-		nbt.setInteger("redstoneChannelsending", redstoneChannelsending);
-		nbt.setInteger("target", target);
-		nbt.setInteger("increment", increment);
-	}
-
-	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		super.readCustomNBT(nbt, descPacket);
-		redstoneChannelsending = nbt.getInteger("redstoneChannelsending");
-		target = nbt.getInteger("target");
-		increment = nbt.getInteger("increment");
-	}
-
-	@Override
 	public void receiveMessageFromClient(NBTTagCompound message) {
 		if(message.hasKey("buttonId")) {
 			int id = message.getInteger("buttonId");
@@ -163,42 +163,6 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 		return new Vec3d(.5 + side.getFrontOffsetX() * (.375 - conRadius), .5 + side.getFrontOffsetY() * (.375 - conRadius), .5 + side.getFrontOffsetZ() * (.375 - conRadius));
 	}
 
-	@Override
-	public float[] getBlockBounds() {
-		switch (facing) {
-		case NORTH:
-			return new float[] {.25f, 0, 0, .75f, .75f, 1};
-		case SOUTH:
-			return new float[] {.25f, .25f, 0, .75f, 1, 1};
-		case EAST:
-			return new float[] {0, .25f, .25f, 1, .75f, 1};
-		case WEST:
-			return new float[] {0, .25f, 0, 1, .75f, .75f};
-		default:
-			return new float[] {.25f, 0, .25f, .75f, 1, 1};
-		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	@Override
-	public TextureAtlasSprite getTextureReplacement(IBlockState object, String material) {
-		return null;
-	}
-
-	@SideOnly(Side.CLIENT)
-	@Override
-	public boolean shouldRenderGroup(IBlockState object, String group) {
-		if(MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.SOLID) return false;
-		if("glass".equals(group)) return MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.TRANSLUCENT;
-		return MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.CUTOUT;
-	}
-
-	@SideOnly(Side.CLIENT)
-	@Override
-	public int getRenderColour(IBlockState object, String group) {
-		if("colour_out".equals(group)) return 0xff000000 | EnumDyeColor.byMetadata(this.redstoneChannelsending).getColorValue();
-		return 0xffffffff;
-	}
 
 	@Override
 	public String getCacheKey(IBlockState object) {
@@ -234,6 +198,43 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	@Override
 	public TileEntity getGuiMaster() {
 		return this;
+	}
+
+	@Override
+	public float[] getBlockBounds() {
+		switch (facing) {
+		case NORTH:
+			return new float[] {.25f, 0, 0, .75f, .75f, 1};
+		case SOUTH:
+			return new float[] {.25f, .25f, 0, .75f, 1, 1};
+		case EAST:
+			return new float[] {0, .25f, .25f, 1, .75f, 1};
+		case WEST:
+			return new float[] {0, .25f, 0, 1, .75f, .75f};
+		default:
+			return new float[] {.25f, 0, .25f, .75f, 1, 1};
+		}
+	}
+	
+	@SideOnly(Side.CLIENT)
+	@Override
+	public TextureAtlasSprite getTextureReplacement(IBlockState object, String material) {
+		return null;
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public boolean shouldRenderGroup(IBlockState object, String group) {
+		if(MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.SOLID) return false;
+		if("glass".equals(group)) return MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.TRANSLUCENT;
+		return MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.CUTOUT;
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public int getRenderColour(IBlockState object, String group) {
+		if("colour_out".equals(group)) return 0xff000000 | EnumDyeColor.byMetadata(this.redstoneChannelsending).getColorValue();
+		return 0xffffffff;
 	}
 
 }

@@ -38,8 +38,15 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	public TileEntitySolarTower() {
 		super(MultiblockSolarTower.instance, new int[] { 7, 3, 3 }, 0, true);
 	}
+	
+	private static int solarMaxRange = ITConfig.Machines.solarTower_maxRange;
+	private static int solarMinRange = ITConfig.Machines.solarTower_minRange;
 
-	public FluidTank[] tanks = new FluidTank[] { new FluidTank(32000), new FluidTank(32000) };
+	public FluidTank[] tanks = new FluidTank[] {
+		new FluidTank(32000),
+		new FluidTank(32000)
+	};
+
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 
 	private int reflectorNum;
@@ -49,9 +56,6 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	public int ref1;
 	public int ref2;
 	public int ref3;
-	
-	private static int solarMaxRange = ITConfig.Machines.solarTower_maxRange;
-	private static int solarMinRange = ITConfig.Machines.solarTower_minRange;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -82,130 +86,130 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	@SuppressWarnings("unchecked")
 	@Override
 	public void update() {
-	super.update();
-	if(world.isRemote || isDummy()) return;
-	boolean update = false;
-	if(processQueue.size() < this.getProcessQueueMaxLength() && checkReflector()) {
-		if(tanks[0].getFluidAmount() > 0) {
-			SolarTowerRecipe recipe = SolarTowerRecipe.findRecipe(tanks[0].getFluid());
-			if(recipe != null) {
-				this.processTime += getSpeed();
-				if(this.processTime > 30) {
-					this.processTime = 0;
-					MultiblockProcessInMachine<SolarTowerRecipe> process = new MultiblockProcessInMachine<SolarTowerRecipe>(recipe).setInputTanks(new int[] { 0 });
-					if(this.addProcessToQueue(process, true)) {
-						this.addProcessToQueue(process, false);
+		super.update();
+		if(world.isRemote || isDummy()) return;
+		boolean update = false;
+		if(processQueue.size() < this.getProcessQueueMaxLength() && checkReflector()) {
+			if(tanks[0].getFluidAmount() > 0) {
+				SolarTowerRecipe recipe = SolarTowerRecipe.findRecipe(tanks[0].getFluid());
+				if(recipe != null) {
+					this.processTime += getSpeed();
+					if(this.processTime > 30) {
+						this.processTime = 0;
+						MultiblockProcessInMachine<SolarTowerRecipe> process = new MultiblockProcessInMachine<SolarTowerRecipe>(recipe).setInputTanks(new int[] { 0 });
+						if(this.addProcessToQueue(process, true)) {
+							this.addProcessToQueue(process, false);
+							update = true;
+						}
+					}
+				}
+			}
+		}
+		if(processQueue.size() > 0) {
+			wasActive = true;
+		} else if(wasActive) {
+			wasActive = false;
+			update = true;
+		}
+		if(this.tanks[1].getFluidAmount() > 0) {
+			ItemStack filledContainer = Utils.fillFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
+			if(!filledContainer.isEmpty()) {
+				if(!inventory.get(3).isEmpty() && OreDictionary.itemMatches(inventory.get(3), filledContainer, true)) inventory.get(3).grow(filledContainer.getCount());
+				else if(inventory.get(3).isEmpty()) inventory.set(3, filledContainer.copy());
+				inventory.get(2).shrink(1);
+				if(inventory.get(2).getCount() <= 0) inventory.set(2, ItemStack.EMPTY);
+				update = true;
+			}
+			if(this.tanks[1].getFluidAmount() > 0) {
+				FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[1].getFluid(), Math.min(this.tanks[1].getFluidAmount(), 1000), true);
+				BlockPos outputPos = this.getPos().add(0, -1, 0).offset(facing, 3);
+				IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
+				if(output != null) {
+					int accepted = output.fill(out, false);
+					if(accepted > 0) {
+						int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+						this.tanks[1].drain(drained, true);
 						update = true;
 					}
 				}
 			}
 		}
-	}
-	if(processQueue.size() > 0) {
-		wasActive = true;
-	} else if(wasActive) {
-		wasActive = false;
-		update = true;
-	}
-	if(this.tanks[1].getFluidAmount() > 0) {
-		ItemStack filledContainer = Utils.fillFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
-		if(!filledContainer.isEmpty()) {
-			if(!inventory.get(3).isEmpty() && OreDictionary.itemMatches(inventory.get(3), filledContainer, true)) inventory.get(3).grow(filledContainer.getCount());
-			else if(inventory.get(3).isEmpty()) inventory.set(3, filledContainer.copy());
-			inventory.get(2).shrink(1);
-			if(inventory.get(2).getCount() <= 0) inventory.set(2, ItemStack.EMPTY);
+		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
+		if(!emptyContainer.isEmpty() && emptyContainer.getCount() > 0) {
+			if(!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), emptyContainer, true))
+				inventory.get(1).grow(emptyContainer.getCount());
+			else if(inventory.get(1).isEmpty())
+				inventory.set(1, emptyContainer.copy());
+			inventory.get(0).shrink(1);
+			if(inventory.get(0).getCount() <= 0)
+				inventory.set(0, ItemStack.EMPTY);
 			update = true;
 		}
-		if(this.tanks[1].getFluidAmount() > 0) {
-			FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[1].getFluid(), Math.min(this.tanks[1].getFluidAmount(), 1000), true);
-			BlockPos outputPos = this.getPos().add(0, -1, 0).offset(facing, 3);
-			IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
-			if(output != null) {
-				int accepted = output.fill(out, false);
-				if(accepted > 0) {
-					int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-					this.tanks[1].drain(drained, true);
-					update = true;
+		if(update) {
+			this.markDirty();
+			this.markContainingBlockForUpdate(null);
+			}
+		}
+		protected boolean checkReflector() {
+			boolean ver = false;
+			EnumFacing fw;
+			EnumFacing fr;
+			BlockPos pos;
+			TileEntity tile;
+			int maxRange = solarMaxRange;
+			int minRange = solarMinRange;
+			int refNum = 0;
+			for(int cont = 0; cont < 4; cont++) {
+				fw = facing;
+				if(cont == 1) {
+					fw = fw.rotateYCCW();
+				} else if(cont == 2) {
+					fw = fw.getOpposite();
+				} else if(cont == 3) {
+					fw = fw.rotateY();
 				}
-			}
-		}
-	}
-	ItemStack emptyContainer = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
-	if(!emptyContainer.isEmpty() && emptyContainer.getCount() > 0) {
-		if(!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), emptyContainer, true))
-			inventory.get(1).grow(emptyContainer.getCount());
-		else if(inventory.get(1).isEmpty())
-			inventory.set(1, emptyContainer.copy());
-		inventory.get(0).shrink(1);
-		if(inventory.get(0).getCount() <= 0)
-			inventory.set(0, ItemStack.EMPTY);
-		update = true;
-	}
-	if(update) {
-		this.markDirty();
-		this.markContainingBlockForUpdate(null);
-		}
-	}
-	protected boolean checkReflector() {
-	boolean ver = false;
-	EnumFacing fw;
-	EnumFacing fr;
-	BlockPos pos;
-	TileEntity tile;
-	int maxRange = solarMaxRange;
-	int minRange = solarMinRange;
-	int refNum = 0;
-	for(int cont = 0; cont < 4; cont++) {
-		fw = facing;
-		if(cont == 1) {
-			fw = fw.rotateYCCW();
-		} else if(cont == 2) {
-			fw = fw.getOpposite();
-		} else if(cont == 3) {
-			fw = fw.rotateY();
-		}
-		setReflectorNum(0, cont);
-		for(int i = minRange; i < maxRange + 2; i++) {
-			if(cont == 0) {
-				pos = this.getPos().offset(fw, i + 2).add(0, 2, 0);
-			} else if(cont % 2 != 0) {
-				pos = this.getPos().offset(facing, 1).offset(fw, i + 1).add(0, 2, 0);
-			} else {
-				pos = this.getPos().offset(fw, i).add(0, 2, 0);
-			}
-			if(!Utils.isBlockAt(world, pos, Blocks.AIR, 0)) {
-				tile = world.getTileEntity(pos);
-				if(tile instanceof TileEntitySolarReflector) {
-					fr = ((TileEntitySolarReflector) tile).facing;
-					if((cont % 2 == 0 && (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH)) || (cont % 2 != 0 && (facing == EnumFacing.EAST || facing == EnumFacing.WEST))) {
-						if(fr == EnumFacing.NORTH || fr == EnumFacing.SOUTH) {
-							if(((TileEntitySolarReflector) tile).getSunState()) {
-								ver = true;
-								setReflectorNum(1, cont);
-								refNum++;
-							}
-							break;
-						}
+				setReflectorNum(0, cont);
+				for(int i = minRange; i < maxRange + 2; i++) {
+					if(cont == 0) {
+						pos = this.getPos().offset(fw, i + 2).add(0, 2, 0);
+					} else if(cont % 2 != 0) {
+						pos = this.getPos().offset(facing, 1).offset(fw, i + 1).add(0, 2, 0);
 					} else {
-						if(fr == EnumFacing.EAST || fr == EnumFacing.WEST) {
-							if(((TileEntitySolarReflector) tile).getSunState()) {
-								ver = true;
-								setReflectorNum(1, cont);
-								refNum++;
-							}
-							break;
-						}
+						pos = this.getPos().offset(fw, i).add(0, 2, 0);
 					}
-				} else {
-					break;
+					if(!Utils.isBlockAt(world, pos, Blocks.AIR, 0)) {
+						tile = world.getTileEntity(pos);
+						if(tile instanceof TileEntitySolarReflector) {
+							fr = ((TileEntitySolarReflector) tile).facing;
+							if((cont % 2 == 0 && (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH)) || (cont % 2 != 0 && (facing == EnumFacing.EAST || facing == EnumFacing.WEST))) {
+								if(fr == EnumFacing.NORTH || fr == EnumFacing.SOUTH) {
+									if(((TileEntitySolarReflector) tile).getSunState()) {
+										ver = true;
+										setReflectorNum(1, cont);
+										refNum++;
+									}
+									break;
+								}
+							} else {
+								if(fr == EnumFacing.EAST || fr == EnumFacing.WEST) {
+									if(((TileEntitySolarReflector) tile).getSunState()) {
+										ver = true;
+										setReflectorNum(1, cont);
+										refNum++;
+									}
+									break;
+								}
+							}
+						} else {
+						break;
+					}
 				}
 			}
 		}
+		this.reflectorNum = refNum;
+		return ver;
 	}
-	this.reflectorNum = refNum;
-	return ver;
-	}
-
+	
 	protected void setReflectorNum(int value, int ind) {
 	switch (ind) {
 		case 0:
@@ -251,32 +255,20 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	}
 
 	@Override
-	public float[] getBlockBounds() {
-		if(pos == 0 || pos == 2 || pos == 6 || pos == 8) return new float[] { 0, 0, 0, 1, .5f, 1 };
-		if(pos == 62 || pos == 60 || pos == 54 || pos == 52) return new float[] { 0, .5f, 0, 1, 1, 1 };
-		return new float[] { 0, 0, 0, 1, 1, 1 };
+	public IFluidTank[] getInternalTanks() {
+		return tanks;
 	}
-
-	@Override
-	public boolean canOpenGui() {
-		return formed;
-	}
-
-	@Override
-	public int getGuiID() {
-		return ITLib.GUIID_Solar_Tower;
-	}
-
-	@Override
-	public TileEntity getGuiMaster() {
-		return master();
-	}
-
+	
 	@Override
 	protected SolarTowerRecipe readRecipeFromNBT(NBTTagCompound tag) {
 		return SolarTowerRecipe.loadFromNBT(tag);
 	}
 
+	@Override
+	public SolarTowerRecipe findRecipeForInsertion(ItemStack inserting) {
+		return null;
+	}
+	
 	@Override
 	public int[] getEnergyPos() {
 		return new int[0];
@@ -285,16 +277,6 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	@Override
 	public int[] getRedstonePos() {
 		return new int[] { 10 };
-	}
-
-	@Override
-	public IFluidTank[] getInternalTanks() {
-		return tanks;
-	}
-
-	@Override
-	public SolarTowerRecipe findRecipeForInsertion(ItemStack inserting) {
-		return null;
 	}
 
 	@Override
@@ -363,12 +345,13 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
+		TileEntitySolarTower master = this.master();
+		if(master == null) return false;
 		if((pos == 3 || pos == 5) && (side == null || side.getAxis() == facing.rotateYCCW().getAxis())) {
-			TileEntitySolarTower master = this.master();
 			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[0].getFluid(), 1000, false);
-			if(master == null || master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
-			if(master.tanks[0].getFluid() == null) {
+			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[iTank].getFluid(), 1000, false);
+			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
+			if(master.tanks[iTank].getFluid() == null) {
 				SolarTowerRecipe incompleteRecipes = SolarTowerRecipe.findRecipe(resourceClone);
 				return incompleteRecipes != null;
 			} else {
@@ -386,10 +369,32 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	}
 
 	@Override
+	public boolean canOpenGui() {
+		return formed;
+	}
+
+	@Override
+	public int getGuiID() {
+		return ITLib.GUIID_Solar_Tower;
+	}
+
+	@Override
+	public TileEntity getGuiMaster() {
+		return master();
+	}
+
+	@Override
 	public TileEntitySolarTower getTileForPos(int targetPos) {
 		BlockPos target = getBlockPosForPos(targetPos);
 		TileEntity tile = world.getTileEntity(target);
 		return tile instanceof TileEntitySolarTower ? (TileEntitySolarTower) tile : null;
+	}
+
+	@Override
+	public float[] getBlockBounds() {
+		if(pos == 0 || pos == 2 || pos == 6 || pos == 8) return new float[] { 0, 0, 0, 1, .5f, 1 };
+		if(pos == 62 || pos == 60 || pos == 54 || pos == 52) return new float[] { 0, .5f, 0, 1, 1, 1 };
+		return new float[] { 0, 0, 0, 1, 1, 1 };
 	}
 
 	@Override

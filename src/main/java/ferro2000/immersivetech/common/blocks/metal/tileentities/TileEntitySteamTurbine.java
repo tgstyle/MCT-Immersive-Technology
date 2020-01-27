@@ -57,13 +57,17 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	private static int outputTankSize = Config.ITConfig.Machines.steamTurbine_input_tankSize;
 	private static float maxRotationSpeed = ITConfig.Machines.steamTurbine_maxRotationSpeed;
 	
+	public FluidTank[] tanks = new FluidTank[] {
+		new FluidTank(inputTankSize),
+		new FluidTank(outputTankSize)
+	};
+
 	public int burnRemaining = 0;
 
 	public static BlockPos fluidOutputPos;
 	
 	public MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
 	public SteamTurbineRecipe lastRecipe;
-	public FluidTank[] tanks = new FluidTank[] {new FluidTank(inputTankSize), new FluidTank(outputTankSize)};
 	
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 	private ITSound runningSound;
@@ -158,8 +162,135 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	}
 
 	@Override
-	public float[] getBlockBounds() {
+	public boolean isMechanicalEnergyTransmitter() {
+		return true;
+	}
+
+	@Override
+	public boolean isMechanicalEnergyReceiver() {
+		return false;
+	}
+
+	@Override
+	public EnumFacing getMechanicalEnergyOutputFacing() {
+		return facing;
+	}
+
+	@Override
+	public EnumFacing getMechanicalEnergyInputFacing() {
 		return null;
+	}
+
+	@Override
+	public int inputToCenterDistance() {
+		return -1;
+	}
+
+	@Override
+	public int outputToCenterDistance() {
+		return 9;
+	}
+
+	@Override
+	public MechanicalEnergy getEnergy() {
+		return mechanicalEnergy;
+	}
+
+	public MechanicalEnergyAnimation getAnimation() {
+		return animation;
+	}
+
+	@Override
+	public NonNullList <ItemStack> getInventory() {
+		return null;
+	}
+
+	@Override
+	public boolean isStackValid(int slot, ItemStack stack) {
+		return false;
+	}
+
+	@Override
+	public int getSlotLimit(int slot) {
+		return 0;
+	}
+
+	@Override
+	public void doGraphicalUpdates(int slot) {
+		this.markDirty();
+		this.markContainingBlockForUpdate(null);
+	}
+
+	@Override
+	public IFluidTank[] getInternalTanks() {
+		return tanks;
+	}
+	
+	@Override
+	protected SteamTurbineRecipe readRecipeFromNBT(NBTTagCompound tag) {
+		return SteamTurbineRecipe.loadFromNBT(tag);
+	}
+
+	@Override
+	public SteamTurbineRecipe findRecipeForInsertion(ItemStack inserting) {
+		return null;
+	}
+
+	@Override
+	public int[] getEnergyPos() {
+		return new int[0];
+	}
+
+	@Override
+	public int[] getRedstonePos() {
+		return new int[] { 32 };
+	}
+
+	@Override
+	public int[] getOutputSlots() {
+		return new int[0];
+	}
+
+	@Override
+	public int[] getOutputTanks() {
+		return new int[] {1};
+	}
+
+	@Override
+	public boolean additionalCanProcessCheck(MultiblockProcess <SteamTurbineRecipe> process) {
+		return false;
+	}
+
+	@Override
+	public void doProcessOutput(ItemStack output) {
+	}
+
+	@Override
+	public void doProcessFluidOutput(FluidStack output) {
+	}
+
+	@Override
+	public void onProcessFinish(MultiblockProcess <SteamTurbineRecipe> process) {
+	}
+
+	@Override
+	public int getMaxProcessPerTick() {
+		return 0;
+	}
+
+	@Override
+	public int getProcessQueueMaxLength() {
+		return 0;
+	}
+
+	@Override
+	public float getMinProcessDistance(MultiblockProcess <SteamTurbineRecipe> process) {
+		return 0;
+	}
+	
+	@Override
+	public boolean isInWorldProcessingMachine() {
+		return false;
 	}
 
 	@Override
@@ -174,12 +305,13 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resources) {
+		TileEntitySteamTurbine master = this.master();
+		if(master == null) return false;
 		if((pos == 30) && (side == null || side == facing.getOpposite())) {
-			TileEntitySteamTurbine master = this.master();
 			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resources, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[0].getFluid(), 1000, false);
-			if(master == null || master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
-			if(master.tanks[0].getFluid() == null) {
+			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[iTank].getFluid(), 1000, false);
+			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
+			if(master.tanks[iTank].getFluid() == null) {
 				SteamTurbineRecipe incompleteRecipes = SteamTurbineRecipe.findFuel(resourceClone);
 				return incompleteRecipes != null;
 			} else {
@@ -194,6 +326,11 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	@Override
 	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
 		return (pos == 112 && (side == null || side == facing));
+	}
+	
+	@Override
+	public float[] getBlockBounds() {
+		return null;
 	}
 
 	@Override
@@ -381,138 +518,6 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	@Override
 	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, ArrayList <AxisAlignedBB> list) {
 		return false;
-	}
-
-	@Override
-	public NonNullList <ItemStack> getInventory() {
-		return null;
-	}
-
-	@Override
-	public boolean isStackValid(int slot, ItemStack stack) {
-		return false;
-	}
-
-	@Override
-	public int getSlotLimit(int slot) {
-		return 0;
-	}
-
-	@Override
-	public void doGraphicalUpdates(int slot) {
-		this.markDirty();
-		this.markContainingBlockForUpdate(null);
-	}
-
-	@Override
-	protected SteamTurbineRecipe readRecipeFromNBT(NBTTagCompound tag) {
-		return SteamTurbineRecipe.loadFromNBT(tag);
-	}
-
-	@Override
-	public int[] getEnergyPos() {
-		return new int[0];
-	}
-
-	@Override
-	public int[] getRedstonePos() {
-		return new int[] { 32 };
-	}
-
-	@Override
-	public IFluidTank[] getInternalTanks() {
-		return tanks;
-	}
-
-	@Override
-	public SteamTurbineRecipe findRecipeForInsertion(ItemStack inserting) {
-		return null;
-	}
-
-	@Override
-	public int[] getOutputSlots() {
-		return new int[0];
-	}
-
-	@Override
-	public int[] getOutputTanks() {
-		return new int[] {1};
-	}
-
-	@Override
-	public boolean additionalCanProcessCheck(MultiblockProcess <SteamTurbineRecipe> process) {
-		return false;
-	}
-
-	@Override
-	public void doProcessOutput(ItemStack output) {
-	}
-
-	@Override
-	public void doProcessFluidOutput(FluidStack output) {
-	}
-
-	@Override
-	public void onProcessFinish(MultiblockProcess <SteamTurbineRecipe> process) {
-	}
-
-	@Override
-	public int getMaxProcessPerTick() {
-		return 0;
-	}
-
-	@Override
-	public int getProcessQueueMaxLength() {
-		return 0;
-	}
-
-	@Override
-	public float getMinProcessDistance(MultiblockProcess <SteamTurbineRecipe> process) {
-		return 0;
-	}
-
-	@Override
-	public boolean isInWorldProcessingMachine() {
-		return false;
-	}
-
-	@Override
-	public boolean isMechanicalEnergyTransmitter() {
-		return true;
-	}
-
-	@Override
-	public boolean isMechanicalEnergyReceiver() {
-		return false;
-	}
-
-	@Override
-	public EnumFacing getMechanicalEnergyOutputFacing() {
-		return facing;
-	}
-
-	@Override
-	public EnumFacing getMechanicalEnergyInputFacing() {
-		return null;
-	}
-
-	@Override
-	public int inputToCenterDistance() {
-		return -1;
-	}
-
-	@Override
-	public int outputToCenterDistance() {
-		return 9;
-	}
-
-	@Override
-	public MechanicalEnergy getEnergy() {
-		return mechanicalEnergy;
-	}
-
-	public MechanicalEnergyAnimation getAnimation() {
-		return animation;
 	}
 
 }
