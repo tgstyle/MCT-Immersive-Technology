@@ -3,7 +3,6 @@ package ferro2000.immersivetech.common.util.compat.top;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 
 import ferro2000.immersivetech.ImmersiveTech;
-import ferro2000.immersivetech.api.energy.MechanicalEnergy;
 import ferro2000.immersivetech.common.Config;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityBoiler;
@@ -77,9 +76,8 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 			if(te instanceof ITBlockInterface.IMechanicalEnergy) {
 				TileEntityMultiblockPart<?> master = ((TileEntityMultiblockPart<?>)te).master();
 				if(master == null) return;
-				MechanicalEnergy current = ((ITBlockInterface.IMechanicalEnergy)master).getEnergy();
-				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2)).text("Speed").progress(current.getSpeed(), Config.ITConfig.Machines.mechanicalEnergy_maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("RPM"));
-				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2)).text("Torque").progress(current.getTorque(), Config.ITConfig.Machines.mechanicalEnergy_maxTorque, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("Nm"));
+				int current = ((ITBlockInterface.IMechanicalEnergy)master).getEnergy();
+				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2)).text("Speed").progress(current, Config.ITConfig.Machines.mechanicalEnergy_maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("RPM"));
 			}
 		}
 	}

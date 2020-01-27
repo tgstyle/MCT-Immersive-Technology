@@ -1,7 +1,6 @@
 package ferro2000.immersivetech.api;
 
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
-import ferro2000.immersivetech.api.energy.MechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityAlternator;
 
@@ -135,7 +134,7 @@ public class ITUtils {
 		return false;
 	}
 
-	public static MechanicalEnergy getMechanicalEnergy(World world, BlockPos startPos) {
+	public static int getMechanicalEnergy(World world, BlockPos startPos) {
 		TileEntity tile = world.getTileEntity(startPos);
 		EnumFacing inputFacing = ((IMechanicalEnergy) tile).getMechanicalEnergyInputFacing();
 		BlockPos pos = startPos.offset(inputFacing, ((IMechanicalEnergy) tile).inputToCenterDistance() + 1);
@@ -145,7 +144,7 @@ public class ITUtils {
 		if(tileTransmitter instanceof IMechanicalEnergy) {
 			return ((IMechanicalEnergy) tileTransmitter).getEnergy();
 		} else {
-			return new MechanicalEnergy(0, 0, 0);
+			return 0;
 		}
 	}
 
