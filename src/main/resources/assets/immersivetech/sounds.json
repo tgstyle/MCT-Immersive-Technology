@@ -19,5 +19,12 @@
 			"immersivetech:boiler"
 		],
 		"subtitle": "subtitle.immersivetech.boiler"
+	},
+	"distiller": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:distiller"
+		],
+		"subtitle": "subtitle.immersivetech.distiller"
 	}
 }

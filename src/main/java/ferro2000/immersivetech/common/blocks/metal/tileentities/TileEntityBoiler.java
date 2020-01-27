@@ -134,7 +134,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	public void handleSounds() {
-		if (runningSound == null) runningSound = new ITSound(this, ITSounds.boiler, SoundCategory.BLOCKS, true, 2, 1, getPos().offset(facing, 5));
+		if (runningSound == null) runningSound = new ITSound(this, ITSounds.boiler, SoundCategory.BLOCKS, true, 2, 1, getPos());
 		BlockPos center = getPos();
 		EntityPlayerSP player = Minecraft.getMinecraft().player;
 		float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);

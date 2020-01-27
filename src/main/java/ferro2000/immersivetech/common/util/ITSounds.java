@@ -18,6 +18,7 @@ public class ITSounds {
     public static SoundEvent turbine = registerSound("turbine");
     public static SoundEvent alternator = registerSound("alternator");
     public static SoundEvent boiler = registerSound("boiler");
+    public static SoundEvent distiller = registerSound("distiller");
 
     private static SoundEvent registerSound(String name)
     {
