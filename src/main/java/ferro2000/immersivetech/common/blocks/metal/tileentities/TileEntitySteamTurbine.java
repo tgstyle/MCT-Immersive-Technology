@@ -11,6 +11,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvanced
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 
+import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
 import ferro2000.immersivetech.api.crafting.SteamTurbineRecipe;
@@ -20,11 +21,16 @@ import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
 
+import ferro2000.immersivetech.common.util.ITSound;
+import ferro2000.immersivetech.common.util.ITSounds;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -64,6 +70,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	public SteamTurbineRecipe lastRecipe;
 	
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
+	private ITSound runningSound;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -111,6 +118,18 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 		this.markContainingBlockForUpdate(null);
 	}
 
+	public void handleSounds() {
+		if (runningSound == null) runningSound = new ITSound(this, ITSounds.turbine, SoundCategory.BLOCKS, true, 10, 1, getPos().offset(facing, 5));
+		BlockPos center = getPos().offset(facing, 5);
+		EntityPlayerSP player = Minecraft.getMinecraft().player;
+		float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
+		float level = (float)mechanicalEnergy.getSpeed() / maxSpeed;
+		runningSound.updatePitch(level);
+		runningSound.updateVolume((10 * level) / attenuation);
+		if (level > 0) runningSound.playSound();
+		else runningSound.stopSound();
+	}
+
 	@Override
 	public void update() {
 		super.update();
@@ -120,7 +139,12 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
 		}
-		if(world.isRemote) return;
+
+		if(world.isRemote) {
+			handleSounds();
+			return;
+		}
+
 		if(burnRemaining > 0) {
 			burnRemaining--;
 			speedUp();

@@ -1,0 +1,16 @@
+{
+	"turbine": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:turbine"
+		],
+		"subtitle": "subtitle.immersivetech.turbine"
+	},
+	"alternator": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:alternator"
+		],
+		"subtitle": "subtitle.immersivetech.alternator"
+	}
+}
