@@ -11,6 +11,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.crafting.BoilerRecipe;
@@ -18,12 +19,18 @@ import ferro2000.immersivetech.api.crafting.BoilerRecipe.BoilerFuelRecipe;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
 
+import ferro2000.immersivetech.common.util.ITSound;
+import ferro2000.immersivetech.common.util.ITSounds;
+import ferro2000.immersivetech.common.util.network.MessageTileSync;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -33,6 +40,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler, BoilerRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
@@ -43,6 +51,8 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	private static int inputFuelTankSize = ITConfig.Machines.boiler_fuel_tankSize;
 	private static int inputTankSize = ITConfig.Machines.boiler_input_tankSize;
 	private static int outputTankSize = ITConfig.Machines.boiler_output_tankSize;
+
+	private ITSound runningSound;
 
 	public FluidTank[] tanks = new FluidTank[] {
 		new FluidTank(inputFuelTankSize), 
@@ -123,10 +133,38 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		return false;
 	}
 
+	public void handleSounds() {
+		if (runningSound == null) runningSound = new ITSound(this, ITSounds.boiler, SoundCategory.BLOCKS, true, 2, 1, getPos().offset(facing, 5));
+		BlockPos center = getPos();
+		EntityPlayerSP player = Minecraft.getMinecraft().player;
+		float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
+		float level = (float) (heatLevel / ITConfig.Machines.boiler_workingHeatLevel);
+		runningSound.updatePitch(level);
+		runningSound.updateVolume((2 * level) / attenuation);
+		if (level > 0) runningSound.playSound();
+		else runningSound.stopSound();
+	}
+
+	@Override
+	public void receiveMessageFromServer(NBTTagCompound message) {
+		heatLevel = message.getDouble("heat");
+	}
+
+	public void notifyNearbyClients() {
+		NBTTagCompound tag = new NBTTagCompound();
+		tag.setDouble("heat", heatLevel);
+		BlockPos center = getPos();
+		ImmersiveTech.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
+	}
+
 	@Override
 	public void update() {
 		super.update();
-		if(world.isRemote || isDummy()) return;
+		if (isDummy()) return;
+		if(world.isRemote) {
+			handleSounds();
+			return;
+		}
 		boolean update = false;
 		if(burnRemaining > 0) {
 			burnRemaining--;
@@ -196,6 +234,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		if(update) {
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
+			notifyNearbyClients();
 		}
 	}
 
