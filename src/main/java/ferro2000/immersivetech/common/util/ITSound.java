@@ -12,7 +12,6 @@ import net.minecraft.util.math.BlockPos;
 public class ITSound extends PositionedSound implements ITickableSound {
 
     TileEntity tileEntity;
-    boolean isPlaying;
 
     public ITSound(TileEntity tile, SoundEvent soundIn, SoundCategory categoryIn, boolean repeatIn, float volumeIn, float pitchIn, BlockPos pos) {
         super(soundIn, categoryIn);
@@ -37,18 +36,22 @@ public class ITSound extends PositionedSound implements ITickableSound {
 
     @Override
     public boolean isDonePlaying() {
-        return !isPlaying;
+        SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+        return !handler.isSoundPlaying(this);
     }
 
     public void playSound() {
-        if (!isPlaying) Minecraft.getMinecraft().getSoundHandler().playSound(this);
-        isPlaying = true;
-
+        SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+        if (!handler.isSoundPlaying(this)) {
+            handler.playSound(this);
+        }
     }
 
     public void stopSound() {
-        if (isPlaying) Minecraft.getMinecraft().getSoundHandler().stopSound(this);
-        isPlaying = false;
+        SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+        if (handler.isSoundPlaying(this)) {
+            handler.stopSound(this);
+        }
     }
 
     @Override
