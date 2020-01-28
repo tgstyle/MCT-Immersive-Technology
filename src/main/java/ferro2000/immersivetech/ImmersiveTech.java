@@ -6,7 +6,6 @@ import blusunrize.immersiveengineering.common.IEContent;
 import ferro2000.immersivetech.common.CommonProxy;
 import ferro2000.immersivetech.common.ITContent;
 import ferro2000.immersivetech.common.util.ITLogger;
-import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.compat.ITCompatModule;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
 
@@ -67,7 +66,6 @@ public class ImmersiveTech {
 		packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, messageId++, Side.CLIENT);
 		proxy.preInitEnd();
 		proxy.init();
-		ITSounds.init();
 		ITCompatModule.doModulesInit();
 		proxy.initEnd();
 	}
