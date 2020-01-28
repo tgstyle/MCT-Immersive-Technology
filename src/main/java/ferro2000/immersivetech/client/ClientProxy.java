@@ -30,6 +30,7 @@ import ferro2000.immersivetech.common.blocks.metal.types.BlockType_MetalDevice;
 import ferro2000.immersivetech.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import ferro2000.immersivetech.common.items.ItemITBase;
 
+import ferro2000.immersivetech.common.util.network.MessageTileSync;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -148,7 +149,8 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void init() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbine.class, new TileRenderSteamTurbine());
-
+		int messageId = 0;
+		ImmersiveTech.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, messageId++, Side.CLIENT);
 	}
 
 	@Override

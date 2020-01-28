@@ -62,9 +62,6 @@ public class ImmersiveTech {
 	public void init(FMLInitializationEvent event) {
 		ITContent.init();
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
-		int messageId = 0;
-		packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, messageId++, Side.SERVER);
-		packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, messageId++, Side.CLIENT);
 		proxy.preInitEnd();
 		proxy.init();
 		ITSounds.init();
