@@ -11,15 +11,12 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.List;
-import java.util.Map;
-
-public class ITSound extends PositionedSound implements ITickableSound {
+public class ITSoundHandler extends PositionedSound implements ITickableSound {
 
     TileEntity tileEntity;
     private static List<ISound> playingSounds = Lists.newArrayList();
 
-    public ITSound(TileEntity tile, SoundEvent soundIn, SoundCategory categoryIn, boolean repeatIn, float volumeIn, float pitchIn, BlockPos pos) {
+    public ITSoundHandler(TileEntity tile, SoundEvent soundIn, SoundCategory categoryIn, boolean repeatIn, float volumeIn, float pitchIn, BlockPos pos) {
         super(soundIn, categoryIn);
         Minecraft.getMinecraft().getSoundHandler();
         this.tileEntity = tile;
@@ -66,4 +63,5 @@ public class ITSound extends PositionedSound implements ITickableSound {
     public void update() {
         if(tileEntity == null || tileEntity.isInvalid()) stopSound();
     }
+
 }

@@ -19,7 +19,7 @@ import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
 
-import ferro2000.immersivetech.common.util.ITSound;
+import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -65,7 +65,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	public SteamTurbineRecipe lastRecipe;
 	
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
-	private ITSound runningSound;
+	private ITSoundHandler runningSound;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -110,7 +110,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	}
 
 	public void handleSounds() {
-		if (runningSound == null) runningSound = new ITSound(this, ITSounds.turbine, SoundCategory.BLOCKS, true, 10, 1, getPos().offset(facing, 5));
+		if (runningSound == null) runningSound = new ITSoundHandler(this, ITSounds.turbine, SoundCategory.BLOCKS, true, 10, 1, getPos().offset(facing, 5));
 		BlockPos center = getPos().offset(facing, 5);
 		EntityPlayerSP player = Minecraft.getMinecraft().player;
 		float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
