@@ -45,6 +45,19 @@ public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice>
 	}
 
 	@Override
+	public boolean canIEBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack) {
+		if(stack.getItemDamage() == BlockType_MetalDevice.COKE_OVEN_PREHEATER.getMeta()) {
+			EnumFacing f = EnumFacing.fromAngle(player.rotationYaw);
+			if(f.getAxis() == Axis.Z) {
+				return world.getBlockState(pos.add(1, 0, 0)).getBlock().isReplaceable(world, pos.add(1, 0, 0)) && world.getBlockState(pos.add(-1, 0, 0)).getBlock().isReplaceable(world, pos.add(-1, 0, 0));
+			} else {
+				return world.getBlockState(pos.add(0, 0, 1)).getBlock().isReplaceable(world, pos.add(0, 0, 1)) && world.getBlockState(pos.add(0, 0, -1)).getBlock().isReplaceable(world, pos.add(0, 0, -1));
+			}
+		}
+		return true;
+	}
+
+	@Override
 	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		return state;
@@ -55,25 +68,14 @@ public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice>
 		switch(BlockType_MetalDevice.values()[meta]) {
 		case COKE_OVEN_PREHEATER:
 			return new TileEntityCokeOvenPreheater();
+		default:
+			break;
 		}
 		return null;
 	}
 
 	@Override
 	public boolean allowHammerHarvest(IBlockState state) {
-		return true;
-	}
-
-	@Override
-	public boolean canIEBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack) {
-		if(stack.getItemDamage() == BlockType_MetalDevice.COKE_OVEN_PREHEATER.getMeta()) {
-			EnumFacing f = EnumFacing.fromAngle(player.rotationYaw);
-			if(f.getAxis() == Axis.Z) {
-				return world.getBlockState(pos.add(1, 0, 0)).getBlock().isReplaceable(world, pos.add(1, 0, 0)) && world.getBlockState(pos.add(-1, 0, 0)).getBlock().isReplaceable(world, pos.add(-1, 0, 0));
-			} else {
-				return world.getBlockState(pos.add(0, 0, 1)).getBlock().isReplaceable(world, pos.add(0, 0, 1)) && world.getBlockState(pos.add(0, 0, -1)).getBlock().isReplaceable(world, pos.add(0, 0, -1));
-			}
-		}
 		return true;
 	}
 

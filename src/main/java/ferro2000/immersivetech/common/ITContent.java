@@ -16,10 +16,10 @@ import ferro2000.immersivetech.common.Config.ITConfig.Machines;
 import ferro2000.immersivetech.common.blocks.BlockITBase;
 import ferro2000.immersivetech.common.blocks.BlockITFluid;
 import ferro2000.immersivetech.common.blocks.connectors.BlockConnectors;
-import ferro2000.immersivetech.common.blocks.connectors.tileentities.TileEntityConnectorNet;
 import ferro2000.immersivetech.common.blocks.connectors.tileentities.TileEntityTimer;
 import ferro2000.immersivetech.common.blocks.metal.BlockMetalDevice;
 import ferro2000.immersivetech.common.blocks.metal.BlockMetalMultiblock;
+import ferro2000.immersivetech.common.blocks.metal.BlockMetalTrash;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockAlternator;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockDistiller;
@@ -33,6 +33,9 @@ import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityDistil
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarReflector;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySolarTower;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySteamTurbine;
+import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityTrashEnergy;
+import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityTrashFluid;
+import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityTrashItem;
 import ferro2000.immersivetech.common.blocks.stone.BlockStoneDecoration;
 import ferro2000.immersivetech.common.blocks.stone.BlockStoneMultiblock;
 import ferro2000.immersivetech.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
@@ -72,6 +75,7 @@ public class ITContent {
 
 	/*METAL*/
 	public static BlockITBase<?> blockMetalDevice;
+	public static BlockITBase<?> blockMetalTrash;
 
 	/*STONE*/
 	public static BlockITBase<?> blockStoneDecoration;
@@ -100,6 +104,7 @@ public class ITContent {
 
 		/*METAL*/
 		blockMetalDevice = new BlockMetalDevice();
+		blockMetalTrash = new BlockMetalTrash();
 
 		/*STONE*/
 		blockStoneDecoration = new BlockStoneDecoration();
@@ -126,7 +131,9 @@ public class ITContent {
 		
 		/*TILE ENTITIES*/
 		registerTile(TileEntityTimer.class);
-		registerTile(TileEntityConnectorNet.class);
+		registerTile(TileEntityTrashItem.class);
+		registerTile(TileEntityTrashFluid.class);
+		registerTile(TileEntityTrashEnergy.class);
 	}
 
 	public static void init() {

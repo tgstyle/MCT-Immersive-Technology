@@ -49,7 +49,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		super.readCustomNBT(nbt, descPacket);
 		tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
 		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
-		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
+		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 4);
 	}
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
