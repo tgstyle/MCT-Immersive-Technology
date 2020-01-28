@@ -66,7 +66,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 		ref1 = nbt.getInteger("ref1");
 		ref2 = nbt.getInteger("ref2");
 		ref3 = nbt.getInteger("ref3");
-		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
+		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 4);
 	}
 
 	@Override
