@@ -20,19 +20,26 @@ fluid.dist_water=Distilled Water
 fluid.steam=Steam
 fluid.slime=Liquid Slime
 
+
 #KEYWORDS
 keyword.immersivetech.duration=Lasts
 keyword.immersivetech.generate=Generates
 keyword.immersivetech.heatPerTick=heat per tick
 keyword.immersivetech.totalHeat=total heat
 
+
 #JEI
 category.immersivetech.metal_multiblock.boilerRecipe=Boiler
 category.immersivetech.metal_multiblock.boilerFuel=Boiler Fuels
 
+
 #TILE ENTITYS
 #METAL
 tile.immersivetech.metal_device.coke_oven_preheater.name=Coke Oven Preheater
+tile.immersivetech.metal_trash.trash_item.name=Trash Can
+tile.immersivetech.metal_trash.trash_fluid.name=Fluid Trash Can
+tile.immersivetech.metal_trash.trash_energy.name=Energy Trash Can
+
 
 #METAL MULTIBLOCKS
 tile.immersivetech.metal_multiblock.distiller.name=Distiller
@@ -42,8 +49,10 @@ tile.immersivetech.metal_multiblock.steam_turbine.name=Steam Turbine
 tile.immersivetech.metal_multiblock.boiler.name=Boiler
 tile.immersivetech.metal_multiblock.alternator.name=Alternator
 
+
 #STONE MULTIBLOCKS
 tile.immersivetech.stone_multiblock.coke_oven_advanced.name=Advanced Coke Oven
+
 
 #METAL MULTIBLOCKS
 desc.immersiveengineering.info.multiblock.IT:Distiller=Distiller
@@ -53,8 +62,10 @@ desc.immersiveengineering.info.multiblock.IT:SteamTurbine=Steam Turbine
 desc.immersiveengineering.info.multiblock.IT:Boiler=Boiler
 desc.immersiveengineering.info.multiblock.IT:Alternator=Alternator
 
+
 #STONE MULTIBLOCKS
 desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=Advanced Coke Oven
+
 
 #CONNECTORS
 tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
