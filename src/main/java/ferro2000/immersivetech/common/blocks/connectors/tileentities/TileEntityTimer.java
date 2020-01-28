@@ -6,8 +6,10 @@ import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Conn
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConnectorRedstone;
 
+import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITLib;
 
+import ferro2000.immersivetech.common.util.network.MessageTileSync;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -22,6 +24,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -30,7 +33,6 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	private int lastOutput = 0;
 	private int target = 40;
 	private int tick = 0;
-	private int increment = 0;
 	private final int maxTarget = 600;
 	private final int minTarget = 10;
 
@@ -39,7 +41,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.setInteger("redstoneChannelsending", redstoneChannelsending);
 		nbt.setInteger("target", target);
-		nbt.setInteger("increment", increment);
+		nbt.setInteger("tick", tick);
 	}
 
 	@Override
@@ -47,7 +49,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 		super.readCustomNBT(nbt, descPacket);
 		redstoneChannelsending = nbt.getInteger("redstoneChannelsending");
 		target = nbt.getInteger("target");
-		increment = nbt.getInteger("increment");
+		tick = nbt.getInteger("tick");
 	}
 
 	@Override
@@ -55,11 +57,6 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 		if(!world.isRemote) {
 			BlockPos pos = this.getPos().offset(EnumFacing.SOUTH);
 
-			if(increment != 0) {
-				setTarget();
-				this.increment = 0;
-				this.tick = 0;
-			}
 			if(!stopTimer(pos)) {
 				if(tick == target) {
 					this.lastOutput = 1;
@@ -80,7 +77,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 		return this.target;
 	}
 
-	private void setTarget() {
+	private void setTarget(int increment) {
 		if(increment < 0) {
 			if(target != minTarget) {
 				if(target < 200 && target > 100) {
@@ -102,6 +99,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 				}
 			}
 		}
+		tick = 0;
 	}
 
 	private boolean stopTimer(BlockPos pos) {
@@ -140,14 +138,20 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 
 	@Override
 	public void receiveMessageFromClient(NBTTagCompound message) {
-		if(message.hasKey("buttonId")) {
-			int id = message.getInteger("buttonId");
-			if(id == 0) {
-				this.increment = 1;
-			} else if(id == 1) {
-				this.increment = -1;
-			}
-		}
+		if(!message.hasKey("buttonId")) return;
+		int id = message.getInteger("buttonId");
+		setTarget(id==0?1:-1);
+		markDirty();
+		NBTTagCompound tag = new NBTTagCompound();
+		tag.setInteger("target", target);
+		BlockPos center = getPos();
+		ImmersiveTech.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+	}
+
+	@Override
+	public void receiveMessageFromServer(NBTTagCompound message) {
+		if(!message.hasKey("target")) return;
+		target = message.getInteger("target");
 	}
 
 	@Override
