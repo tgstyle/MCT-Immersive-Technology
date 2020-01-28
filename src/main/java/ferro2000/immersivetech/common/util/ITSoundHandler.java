@@ -1,5 +1,7 @@
 package ferro2000.immersivetech.common.util;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ITickableSound;
 import net.minecraft.client.audio.PositionedSound;
@@ -7,7 +9,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.HashMap;
+import java.util.List;
 
 public class ITSoundHandler extends PositionedSound implements ITickableSound {
 
