@@ -3,8 +3,10 @@ package ferro2000.immersivetech.common.blocks.metal.tileentities;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import blusunrize.immersiveengineering.api.IEEnums;
 import com.google.common.collect.Lists;
 
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
@@ -13,7 +15,9 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvanced
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
+import blusunrize.immersiveengineering.common.util.EnergyHelper.*;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITUtils;
@@ -41,11 +45,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAlternator> implements IMechanicalEnergy, IAdvancedSelectionBounds, IAdvancedCollisionBounds, IFluxProvider {
+public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAlternator> implements IMechanicalEnergy, IAdvancedSelectionBounds, IAdvancedCollisionBounds, IFluxProvider, EnergyHelper.IIEInternalFluxHandler {
 
 	private static int[] size = new int[] {3, 4, 3};	
 
-	FluxStorage energyStorage = new FluxStorage(ITConfig.Machines.alternator_energyStorage);
+	FluxStorage energyStorage = new FluxStorage(ITConfig.Machines.alternator_energyStorage,rfPerTick,rfPerTickPerPort);
 	public int speed;
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
@@ -81,7 +85,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("energy", energyStorage.getEnergyStored());
 		BlockPos center = getPos();
-		ImmersiveTech.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
+		ImmersiveTech.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 	}
 
 	float clientEnergyPercentage;
@@ -104,14 +108,15 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 					int canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, rfPerTickPerPort), true);
 					if(canReceiveAmount == 0) continue;
 					EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
-					energyStorage.setEnergy(currentEnergy - canReceiveAmount);
+					energyStorage.modifyEnergyStored(-canReceiveAmount);
+					currentEnergy = energyStorage.getEnergyStored();
 				}
-				if (oldEnergy != energyStorage.getEnergyStored()) {
+				if (oldEnergy != currentEnergy) {
 					this.markDirty();
 					this.markContainingBlockForUpdate(null);
 					notifyNearbyClients();
 				}
-				oldEnergy = energyStorage.getEnergyStored();
+				oldEnergy = currentEnergy;
 			} else handleSounds();
 		}
 	}
@@ -144,12 +149,12 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	
 	@Override
 	public boolean canConnectEnergy(@Nullable EnumFacing from) {
-		return pos == 0 || pos == 2 || pos == 12 || pos == 14 || pos == 24 || pos == 26;
+		return isEnergyPos(from);
 	}
 
 	@Override
 	public int extractEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
-		if(pos != 0 || pos != 2 || pos != 12 || pos != 14 || pos != 24 || pos != 26) return 0;
+		if(!isEnergyPos(from)) return 0;
 		TileEntityAlternator master = master();
 		return master == null ? 0:master.energyStorage.extractEnergy(energy, simulate);
 	}
@@ -369,5 +374,41 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, 
 		ArrayList <AxisAlignedBB> list) {
 		return false;
+	}
+
+	@Override
+	public int receiveEnergy(@Nullable EnumFacing fd, int amount, boolean simulate) {
+		return 0;
+	}
+
+	@Nonnull
+	@Override
+	public FluxStorage getFluxStorage() {
+		TileEntityAlternator master = this.master();
+		if(master!=null) return master.energyStorage;
+		return energyStorage;
+	}
+
+	@Nonnull
+	@Override
+	public SideConfig getEnergySideConfig(@Nullable EnumFacing enumFacing) {
+		return this.formed && this.isEnergyPos(enumFacing)? SideConfig.OUTPUT: SideConfig.NONE;
+	}
+
+	private boolean isEnergyPos(@Nullable EnumFacing enumFacing) {
+		if (!this.formed || enumFacing == null || enumFacing == EnumFacing.DOWN || enumFacing == EnumFacing.UP) return false;
+		TileEntityAlternator master = this.master();
+		if (master == null) return false;
+		return (enumFacing.rotateY() == master().facing) && (pos == 0 || pos == 12 || pos == 24) ||
+				(enumFacing.rotateYCCW() == master().facing) && (pos == 2 || pos == 14 || pos == 26);
+	}
+
+	IEForgeEnergyWrapper wrapper = new IEForgeEnergyWrapper(this, null);
+
+	@Override
+	public IEForgeEnergyWrapper getCapabilityWrapper(EnumFacing facing) {
+		if(this.formed && this.isEnergyPos(facing))
+			return wrapper;
+		return null;
 	}
 }
