@@ -1,6 +1,8 @@
 package ferro2000.immersivetech.common.util;
 
+import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.ITickableSound;
 import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.client.audio.SoundHandler;
@@ -8,10 +10,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import java.util.List;
+import java.util.Map;
 
 public class ITSoundHandler extends PositionedSound implements ITickableSound {
 
     TileEntity tileEntity;
+    private static List<ISound> playingSounds = Lists.newArrayList();
 
     public ITSoundHandler(TileEntity tile, SoundEvent soundIn, SoundCategory categoryIn, boolean repeatIn, float volumeIn, float pitchIn, BlockPos pos) {
         super(soundIn, categoryIn);
@@ -42,14 +47,16 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
 
     public void playSound() {
         SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
-        if (!handler.isSoundPlaying(this)) {
+        if (!playingSounds.contains(this)) {
+            playingSounds.add(this);
             handler.playSound(this);
         }
     }
 
     public void stopSound() {
         SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
-        if (handler.isSoundPlaying(this)) {
+        if (playingSounds.contains(this)) {
+            playingSounds.remove(this);
             handler.stopSound(this);
         }
     }
