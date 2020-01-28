@@ -25,12 +25,14 @@ import ferro2000.immersivetech.common.gui.ContainerSolarTower;
 import ferro2000.immersivetech.common.gui.ContainerTimer;
 import ferro2000.immersivetech.common.gui.ContainerTrashItem;
 
+import ferro2000.immersivetech.common.util.network.MessageTileSync;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class CommonProxy implements IGuiHandler {
 
@@ -38,7 +40,10 @@ public class CommonProxy implements IGuiHandler {
 
 	public void preInitEnd() {}
 
-	public void init() {}
+	public void init() {
+		int messageId = 0;
+		ImmersiveTech.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, messageId++, Side.SERVER);
+	}
 
 	public void initEnd() {}
 
