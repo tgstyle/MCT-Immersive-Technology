@@ -31,7 +31,6 @@ public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable
 
 	@Override
 	public void update() {
-		if(world.isRemote) return;
 		if(energyStorage.getEnergyStored() > 0) energyStorage.modifyEnergyStored(- energyStorage.getEnergyStored());
 	}
 

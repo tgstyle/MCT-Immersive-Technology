@@ -29,7 +29,6 @@ public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable,
 
 	@Override
 	public void update() {
-		if(world.isRemote) return;
 		if(getFluidAmount() > 0) drain(getFluidAmount(), true);
 	}
 
