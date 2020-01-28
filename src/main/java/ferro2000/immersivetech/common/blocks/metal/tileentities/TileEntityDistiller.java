@@ -11,23 +11,16 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
 
-import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.crafting.DistillerRecipe;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockDistiller;
 
-import ferro2000.immersivetech.common.util.ITSound;
-import ferro2000.immersivetech.common.util.ITSounds;
-import ferro2000.immersivetech.common.util.network.MessageTileSync;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -37,7 +30,6 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDistiller, DistillerRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
@@ -50,8 +42,6 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		new FluidTank(24000)
 	};
 
-	private ITSound runningSound;
-
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 
 	@Override
@@ -59,69 +49,42 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		super.readCustomNBT(nbt, descPacket);
 		tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
 		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
-		running = nbt.getBoolean("running");
 		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 4);
 	}
-
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
 		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
-		nbt.setBoolean("running", running);
 		if(!descPacket)
 		nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
 
-	private boolean running;
-	private float soundVolume;
-	private boolean previousRenderState;
-
-	public void handleSounds() {
-		if (runningSound == null) runningSound = new ITSound(this, ITSounds.distiller, SoundCategory.BLOCKS, true, 1, 1, getPos());
-		if (running) {
-			if (soundVolume < 1) soundVolume += 0.01f;
-		} else if (soundVolume > 0) soundVolume -= 0.01f;
-		if (soundVolume == 0) runningSound.stopSound();
-		else {
-			BlockPos center = getPos();
-			EntityPlayerSP player = Minecraft.getMinecraft().player;
-			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
-			runningSound.updateVolume(soundVolume / attenuation);
-			runningSound.playSound();
-		}
-	}
-
-	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
-		running = message.getBoolean("running");
-	}
-
-	public void notifyNearbyClients() {
-		NBTTagCompound tag = new NBTTagCompound();
-		tag.setBoolean("running", running);
-		BlockPos center = getPos();
-		ImmersiveTech.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
-	}
+	private boolean wasActive = false;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void update() {
 		super.update();
-		if (isDummy()) return;
-		if(world.isRemote) {
-			handleSounds();
-			return;
-		}
+		if(world.isRemote || isDummy())	return;
 		boolean update = false;
 		if(energyStorage.getEnergyStored() > 0 && processQueue.size() < this.getProcessQueueMaxLength()) {
 			if(tanks[0].getFluidAmount() > 0) {
 				DistillerRecipe recipe = DistillerRecipe.findRecipe(tanks[0].getFluid());
 				if(recipe != null) {
 					MultiblockProcessInMachine<DistillerRecipe> process = new MultiblockProcessInMachine<DistillerRecipe>(recipe).setInputTanks(new int[] {0});
-					if(this.addProcessToQueue(process, false)) update = true;
+					if(this.addProcessToQueue(process, true)) {
+						this.addProcessToQueue(process, false);
+						update = true;
+					}
 				}
 			}
+		}
+		if(processQueue.size() > 0) {
+			wasActive = true;
+		} else if(wasActive) {
+			wasActive = false;
+			update = true;
 		}
 		if(this.tanks[1].getFluidAmount() > 0) {
 			ItemStack filledContainer = Utils.fillFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
@@ -164,11 +127,8 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
 		}
-
-		running = shouldRenderAsActive() && !processQueue.isEmpty() && processQueue.get(0).canProcess(this);
-		if (previousRenderState != running) notifyNearbyClients();
-		previousRenderState = running;
 	}
+
 
 	@Override
 	public NonNullList<ItemStack> getInventory() {
