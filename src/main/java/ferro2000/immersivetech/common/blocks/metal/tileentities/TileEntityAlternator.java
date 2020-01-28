@@ -15,69 +15,112 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
-import ferro2000.immersivetech.api.energy.MechanicalEnergy;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockAlternator;
 
+import ferro2000.immersivetech.common.util.ITSound;
+import ferro2000.immersivetech.common.util.ITSounds;
+import ferro2000.immersivetech.common.util.network.MessageTileSync;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAlternator> implements IMechanicalEnergy, IAdvancedSelectionBounds, IAdvancedCollisionBounds, IFluxProvider {
+
 	private static int[] size = new int[] {3, 4, 3};	
 
-	private static int maxSpeed = ITConfig.Machines.mechanicalEnergy_maxSpeed;
-	private static int maxTorque = ITConfig.Machines.mechanicalEnergy_maxTorque;
-	private static int rfPerTick = ITConfig.Machines.alternator_RfPerTick;
-	private static int rfPerTickPerPort = rfPerTick / 6;
+	FluxStorage energyStorage = new FluxStorage(ITConfig.Machines.alternator_energyStorage);
+	public int speed;
+	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
 	private BlockPos[] EnergyOutputPositions = new BlockPos[6];
 
-	public MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
-	FluxStorage energyStorage = new FluxStorage(ITConfig.Machines.alternator_energyStorage);
-	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
+	private static int maxSpeed = ITConfig.Machines.mechanicalEnergy_maxSpeed;
+	private static int rfPerTick = ITConfig.Machines.alternator_RfPerTick;
+	private static int rfPerTickPerPort = rfPerTick / 6;
+
+	private ITSound runningSound;
 
 	public TileEntityAlternator() {
 		super(size);
 	}
 
 	public int energyGenerated() {
-		float maxEnergy = maxSpeed * maxTorque;
-		int gen = Math.round((mechanicalEnergy.getEnergy() / maxEnergy) * rfPerTick);
+		int gen = Math.round(((float)speed / maxSpeed) * rfPerTick);
 		return gen;
 	}
 
+	public void handleSounds() {
+		if (runningSound == null) runningSound = new ITSound(this, ITSounds.alternator, SoundCategory.BLOCKS, true, 2, 1, getPos());
+		BlockPos center = getPos();
+		EntityPlayerSP player = Minecraft.getMinecraft().player;
+		float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
+		runningSound.updatePitch(clientEnergyPercentage);
+		runningSound.updateVolume((2 * clientEnergyPercentage) / attenuation);
+		if (clientEnergyPercentage > 0) runningSound.playSound();
+		else runningSound.stopSound();
+	}
+
+	public void notifyNearbyClients() {
+		NBTTagCompound tag = new NBTTagCompound();
+		tag.setInteger("energy", energyStorage.getEnergyStored());
+		BlockPos center = getPos();
+		ImmersiveTech.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
+	}
+
+	float clientEnergyPercentage;
+	int oldEnergy = energyStorage.getEnergyStored();
+
 	@Override
 	public void update() {
-		if(!world.isRemote && formed && pos == 13) {
-			if(ITUtils.checkMechanicalEnergyTransmitter(world, getPos())) mechanicalEnergy = ITUtils.getMechanicalEnergy(world, getPos());
-			if(mechanicalEnergy.getEnergy() > 0) this.energyStorage.modifyEnergyStored(energyGenerated());
-			TileEntity tileEntity;
-			for(int i = 0;i < 6;i++) {
+		if(formed && pos == 13) {
+			if (!world.isRemote) {
+				if(ITUtils.checkMechanicalEnergyTransmitter(world, getPos())) speed = ITUtils.getMechanicalEnergy(world, getPos());
+				if(speed > 0) this.energyStorage.modifyEnergyStored(energyGenerated());
+				TileEntity tileEntity;
 				int currentEnergy = energyStorage.getEnergyStored();
-				if(currentEnergy == 0) break;
-				if(EnergyOutputPositions[i] == null) EnergyOutputPositions[i] = ITUtils.LocalOffsetToWorldBlockPos(getPos(), i < 3 ? -2 : 2, i < 3 ? i - 1 : i - 4, 0, facing);
-				tileEntity = Utils.getExistingTileEntity(world, EnergyOutputPositions[i]);
-				EnumFacing energyFacing = i < 3 ? facing.rotateY() : facing.rotateYCCW();
-				if(!EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) continue;
-				int canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, rfPerTickPerPort), true);
-				if(canReceiveAmount == 0) continue;
-				EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
-				energyStorage.setEnergy(currentEnergy - canReceiveAmount);
-			}
+				for(int i = 0;i < 6;i++) {
+					if(currentEnergy == 0) break;
+					if(EnergyOutputPositions[i] == null) EnergyOutputPositions[i] = ITUtils.LocalOffsetToWorldBlockPos(getPos(), i < 3 ? -2 : 2, i < 3 ? i - 1 : i - 4, 0, facing);
+					tileEntity = Utils.getExistingTileEntity(world, EnergyOutputPositions[i]);
+					EnumFacing energyFacing = i < 3 ? facing.rotateY() : facing.rotateYCCW();
+					if(!EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) continue;
+					int canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, rfPerTickPerPort), true);
+					if(canReceiveAmount == 0) continue;
+					EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
+					energyStorage.setEnergy(currentEnergy - canReceiveAmount);
+				}
+				if (oldEnergy != energyStorage.getEnergyStored()) {
+					this.markDirty();
+					this.markContainingBlockForUpdate(null);
+					notifyNearbyClients();
+				}
+				oldEnergy = energyStorage.getEnergyStored();
+			} else handleSounds();
 		}
 	}
+
+	@Override
+	public void receiveMessageFromServer(NBTTagCompound message) {
+		clientEnergyPercentage = (float) message.getInteger("energy") / energyStorage.getMaxEnergyStored();
+	}
+
 	public boolean canRunMechanicalEnergy() {
 		return true;
 	}
@@ -86,7 +129,8 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 		energyStorage.readFromNBT(nbt);
-		mechanicalEnergy.readFromNBT(nbt);
+		clientEnergyPercentage = (float) energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
+		speed = nbt.getInteger("speed");
 		animation.readFromNBT(nbt);
 	}
 
@@ -94,7 +138,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 		energyStorage.writeToNBT(nbt);
-		mechanicalEnergy.writeToNBT(nbt);
+		nbt.setInteger("speed", speed);
 		animation.writeToNBT(nbt);
 	}
 	
@@ -153,8 +197,8 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	}
 
 	@Override
-	public MechanicalEnergy getEnergy() {
-		return mechanicalEnergy;
+	public int getEnergy() {
+		return speed;
 	}
 
 	public MechanicalEnergyAnimation getAnimation() {
@@ -326,5 +370,4 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 		ArrayList <AxisAlignedBB> list) {
 		return false;
 	}
-
 }
