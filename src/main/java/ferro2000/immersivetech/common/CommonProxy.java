@@ -41,8 +41,7 @@ public class CommonProxy implements IGuiHandler {
 	public void preInitEnd() {}
 
 	public void init() {
-		int messageId = 0;
-		ImmersiveTech.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, messageId++, Side.SERVER);
+		ImmersiveTech.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
 	}
 
 	public void initEnd() {}
