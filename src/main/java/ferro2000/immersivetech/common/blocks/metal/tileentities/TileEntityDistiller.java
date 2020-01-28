@@ -16,7 +16,7 @@ import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.crafting.DistillerRecipe;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockDistiller;
 
-import ferro2000.immersivetech.common.util.ITSound;
+import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
 import net.minecraft.client.Minecraft;
@@ -50,7 +50,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		new FluidTank(24000)
 	};
 
-	private ITSound runningSound;
+	private ITSoundHandler runningSound;
 
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 
@@ -78,7 +78,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	private boolean previousRenderState;
 
 	public void handleSounds() {
-		if (runningSound == null) runningSound = new ITSound(this, ITSounds.distiller, SoundCategory.BLOCKS, true, 1, 1, getPos());
+		if (runningSound == null) runningSound = new ITSoundHandler(this, ITSounds.distiller, SoundCategory.BLOCKS, true, 1, 1, getPos());
 		if (running) {
 			if (soundVolume < 1) soundVolume += 0.01f;
 		} else if (soundVolume > 0) soundVolume -= 0.01f;

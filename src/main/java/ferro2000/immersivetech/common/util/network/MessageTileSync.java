@@ -2,8 +2,6 @@ package ferro2000.immersivetech.common.util.network;
 
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 
-import ferro2000.immersivetech.ImmersiveTech;
-
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.Minecraft;

@@ -33,7 +33,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	private int increment = 0;
 	private final int maxTarget = 600;
 	private final int minTarget = 10;
-	
+
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);

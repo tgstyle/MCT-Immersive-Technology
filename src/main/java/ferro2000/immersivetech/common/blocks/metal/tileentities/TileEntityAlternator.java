@@ -22,7 +22,7 @@ import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockAlternator;
 
-import ferro2000.immersivetech.common.util.ITSound;
+import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
 import net.minecraft.client.Minecraft;
@@ -55,7 +55,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	private static int rfPerTick = ITConfig.Machines.alternator_RfPerTick;
 	private static int rfPerTickPerPort = rfPerTick / 6;
 
-	private ITSound runningSound;
+	private ITSoundHandler runningSound;
 
 	public TileEntityAlternator() {
 		super(size);
@@ -67,7 +67,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	}
 
 	public void handleSounds() {
-		if (runningSound == null) runningSound = new ITSound(this, ITSounds.alternator, SoundCategory.BLOCKS, true, 2, 1, getPos());
+		if (runningSound == null) runningSound = new ITSoundHandler(this, ITSounds.alternator, SoundCategory.BLOCKS, true, 2, 1, getPos());
 		BlockPos center = getPos();
 		EntityPlayerSP player = Minecraft.getMinecraft().player;
 		float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
