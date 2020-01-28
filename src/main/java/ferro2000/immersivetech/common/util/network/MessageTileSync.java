@@ -15,6 +15,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MessageTileSync implements IMessage {
 	BlockPos pos;
@@ -40,6 +42,7 @@ public class MessageTileSync implements IMessage {
 		ByteBufUtils.writeTag(buf, this.nbt);
 	}
 
+	@SideOnly(Side.SERVER)
 	public static class HandlerServer implements IMessageHandler<MessageTileSync, IMessage> {
 		@Override
 		public IMessage onMessage(MessageTileSync message, MessageContext ctx) {
@@ -54,7 +57,8 @@ public class MessageTileSync implements IMessage {
 			return null;
 		}
 	}
-
+	
+	@SideOnly(Side.CLIENT)
 	public static class HandlerClient implements IMessageHandler<MessageTileSync, IMessage>	{
 		@Override
 		public IMessage onMessage(MessageTileSync message, MessageContext ctx) {
