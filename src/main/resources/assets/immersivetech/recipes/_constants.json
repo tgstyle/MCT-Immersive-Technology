@@ -621,5 +621,13 @@
 			}
 		},
 		"name": "baseConveyor"
+	},
+	{
+		"ingredient": [{
+				"type": "forge:ore_dict",
+				"ore": "chestWood"
+			}
+		],
+		"name": "chestWood"
 	}
 ]

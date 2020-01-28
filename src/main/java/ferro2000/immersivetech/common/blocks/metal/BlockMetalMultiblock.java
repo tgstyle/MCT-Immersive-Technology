@@ -48,18 +48,18 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta) {
 		switch(BlockType_MetalMultiblock.values()[meta]) {
-			case DISTILLER:
-				return new TileEntityDistiller();
-			case SOLAR_TOWER:
-				return new TileEntitySolarTower();
-			case SOLAR_REFLECTOR:
-				return new TileEntitySolarReflector();
-			case STEAM_TURBINE:
-				return new TileEntitySteamTurbine();
-			case BOILER:
-				return new TileEntityBoiler();
 			case ALTERNATOR:
 				return new TileEntityAlternator();
+			case BOILER:
+				return new TileEntityBoiler();
+			case DISTILLER:
+				return new TileEntityDistiller();
+			case SOLAR_REFLECTOR:
+				return new TileEntitySolarReflector();
+			case SOLAR_TOWER:
+				return new TileEntitySolarTower();
+			case STEAM_TURBINE:
+				return new TileEntitySteamTurbine();
 		}
 		return null;
 	}

@@ -1,0 +1,65 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"transform": "forge:default-block",
+		"model": "immersivetech:metal_trash"
+	},
+	"variants": {
+		"inventory,type=trash_item": [{
+			"textures": {
+				"0": "immersivetech:blocks/trash_item_side",
+				"1": "immersivetech:blocks/trash_item_bottom",
+				"2": "immersivetech:blocks/trash_item_top_side",
+				"3": "immersivetech:blocks/trash_item_top",
+				"particle": "immersivetech:blocks/trash_item_side"
+			}
+		}],
+		"inventory,type=trash_fluid": [{
+			"textures": {
+				"0": "immersivetech:blocks/trash_fluid_side",
+				"1": "immersivetech:blocks/trash_fluid_bottom",
+				"2": "immersivetech:blocks/trash_fluid_top_side",
+				"3": "immersivetech:blocks/trash_fluid_top",
+				"particle": "immersivetech:blocks/trash_fluid_side"
+			}
+		}],
+		"inventory,type=trash_energy": [{
+			"textures": {
+				"0": "immersivetech:blocks/trash_energy_side",
+				"1": "immersivetech:blocks/trash_energy_bottom",
+				"2": "immersivetech:blocks/trash_energy_top_side",
+				"3": "immersivetech:blocks/trash_energy_top",
+				"particle": "immersivetech:blocks/trash_energy_side"
+			}
+		}],
+		"type": {
+			"trash_item": {
+				"textures": {
+					"0": "immersivetech:blocks/trash_item_side",
+					"1": "immersivetech:blocks/trash_item_bottom",
+					"2": "immersivetech:blocks/trash_item_top_side",
+					"3": "immersivetech:blocks/trash_item_top",
+					"particle": "immersivetech:blocks/trash_item_side"
+				}
+			},
+			"trash_fluid": {
+				"textures": {
+					"0": "immersivetech:blocks/trash_fluid_side",
+					"1": "immersivetech:blocks/trash_fluid_bottom",
+					"2": "immersivetech:blocks/trash_fluid_top_side",
+					"3": "immersivetech:blocks/trash_fluid_top",
+					"particle": "immersivetech:blocks/trash_fluid_side"
+				}
+			},
+			"trash_energy": {
+				"textures": {
+					"0": "immersivetech:blocks/trash_energy_side",
+					"1": "immersivetech:blocks/trash_energy_bottom",
+					"2": "immersivetech:blocks/trash_energy_top_side",
+					"3": "immersivetech:blocks/trash_energy_top",
+					"particle": "immersivetech:blocks/trash_energy_side"
+				}
+			}
+		}
+	}
+}
