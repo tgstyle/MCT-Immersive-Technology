@@ -1,0 +1,23 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"transform": "forge:default-block",
+		"model": "immersivetech:metal_barrel/metal_barrel"
+	},
+	"variants": {
+		"inventory,type=barrel": [{
+			"textures": {
+				"0": "immersivetech:blocks/metal_barrel_side",
+				"particle": "immersivetech:blocks/metal_barrel_side"
+			}
+		}],
+		"type": {
+			"barrel": {
+				"textures": {
+					"0": "immersivetech:blocks/metal_barrel_side",
+					"particle": "immersivetech:blocks/metal_barrel_side"
+				}
+			}
+		}
+	}
+}

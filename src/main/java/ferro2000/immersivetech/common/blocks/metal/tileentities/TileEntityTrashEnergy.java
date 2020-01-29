@@ -8,17 +8,19 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IEForgeEnergyWrapper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 
+import ferro2000.immersivetech.common.Config.ITConfig;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
 public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable, IIEInternalFluxHandler, IConfigurableSides {
-	
-	private static int trashEnergySize = 1000000;
+
+	private static int trashEnergySize = ITConfig.Machines.energyTrashCapacitorSize;
 
 	FluxStorage energyStorage = new FluxStorage(trashEnergySize);
-	
+
 	public SideConfig[] sideConfig = {SideConfig.INPUT, SideConfig.INPUT, SideConfig.INPUT, SideConfig.INPUT, SideConfig.INPUT, SideConfig.INPUT};
 
 	@Override
@@ -31,7 +33,8 @@ public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable
 
 	@Override
 	public void update() {
-		if(energyStorage.getEnergyStored() > 0) energyStorage.modifyEnergyStored(- energyStorage.getEnergyStored());
+		if(world.isRemote) return;
+		if(energyStorage.getEnergyStored() > 0) energyStorage.setEnergy(0);
 	}
 
 	IEForgeEnergyWrapper[] wrappers = IEForgeEnergyWrapper.getDefaultWrapperArray(this);
@@ -44,7 +47,6 @@ public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable
 
 	@Override
 	public IEForgeEnergyWrapper getCapabilityWrapper(EnumFacing facing) {
-		if(facing == null) return null;
 		return wrappers[facing.ordinal()];
 	}
 

@@ -32,6 +32,7 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 
 	@Override
 	public void update() {
+		if(world.isRemote) return;
 		if(!inventory.get(0).isEmpty()) inventory.clear();
 	}
 

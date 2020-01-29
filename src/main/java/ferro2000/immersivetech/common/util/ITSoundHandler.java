@@ -9,12 +9,15 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 
+import scala.actors.threadpool.locks.ReentrantLock;
+
 import java.util.List;
 
 public class ITSoundHandler extends PositionedSound implements ITickableSound {
 
-    private static HashMap<BlockPos, ITSoundHandler> playingSounds = new HashMap<>();
-    private BlockPos pos;
+    TileEntity tileEntity;
+    private static List<ISound> playingSounds = Lists.newArrayList();
+    ReentrantLock lock = new ReentrantLock();
 
     public static void PlaySound(BlockPos posIn, SoundEvent soundIn, SoundCategory categoryIn, boolean repeatIn, float volumeIn, float pitchIn) {
         ITSoundHandler sound = playingSounds.get(posIn);
@@ -52,12 +55,26 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
         return !playingSounds.containsValue(this);
     }
 
-    @Override
-    public void update() {}
+    public void playSound() {
+        if(lock.isLocked()) throw new RuntimeException("this is not supposed to be multithreaded!!!");
+        lock.lock();
+        SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+        if(!playingSounds.contains(this)) {
+            playingSounds.add(this);
+            handler.playSound(this);
+        }
+        lock.unlock();
+    }
 
-    private void stopSound(boolean keepOnList) {
-        if (!keepOnList) playingSounds.remove(pos);
-        Minecraft.getMinecraft().getSoundHandler().stopSound(this);
+    public void stopSound() {
+        if(lock.isLocked()) throw new RuntimeException("this is not supposed to be multithreaded!!!");
+        lock.lock();
+        SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+        if(playingSounds.contains(this)) {
+            playingSounds.remove(this);
+            handler.stopSound(this);
+        }
+        lock.unlock();
     }
 
     private void stopSound() {

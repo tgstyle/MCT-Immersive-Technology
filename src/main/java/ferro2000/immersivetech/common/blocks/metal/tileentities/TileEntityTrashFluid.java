@@ -2,6 +2,8 @@ package ferro2000.immersivetech.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 
+import ferro2000.immersivetech.common.Config.ITConfig;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -14,8 +16,8 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable, IFluidTank {
-	
-	private static int trashFluidSize = 100000;
+
+	private static int trashFluidSize = ITConfig.Machines.fluidTrashTankSize;
 
 	public FluidTank tank = new FluidTank(trashFluidSize);
 
@@ -29,7 +31,8 @@ public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable,
 
 	@Override
 	public void update() {
-		if(getFluidAmount() > 0) drain(getFluidAmount(), true);
+		if(world.isRemote) return;
+		if(tank.getFluidAmount() > 0) tank.setFluid(null);
 	}
 
 	@Override
@@ -67,7 +70,7 @@ public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable,
 
 	@Override
 	public int fill(FluidStack resource, boolean doFill) {
-		return resource.amount;
+		return Math.min(resource.amount, tank.getCapacity());
 	}
 
 	@Override

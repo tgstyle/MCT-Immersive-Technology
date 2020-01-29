@@ -82,6 +82,10 @@ public class Config {
 			public static int distiller_outputItemMeta = 0;
 			@Comment({"The chance for Salt the distiller should output [Default=0.009999999776482582]"})
 			public static float distiller_outputItemChance = 0.009999999776482582F;
+			@Comment({"Energy Trash Size in IF [Default=0.009999999776482582]"})
+			public static int energyTrashCapacitorSize = 1000000;
+			@Comment({"Fluid Trash Size in mB [Default=100000]"})
+			public static int fluidTrashTankSize = 100000;
 		}
 	}
 
