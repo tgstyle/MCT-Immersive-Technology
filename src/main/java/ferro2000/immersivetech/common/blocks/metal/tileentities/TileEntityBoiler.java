@@ -52,8 +52,6 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	private static int inputTankSize = ITConfig.Machines.boiler_input_tankSize;
 	private static int outputTankSize = ITConfig.Machines.boiler_output_tankSize;
 
-	private ITSoundHandler runningSound;
-
 	public FluidTank[] tanks = new FluidTank[] {
 		new FluidTank(inputFuelTankSize), 
 		new FluidTank(inputTankSize), 
@@ -68,6 +66,8 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 
 	public BoilerFuelRecipe lastFuel;
 	public BoilerRecipe lastRecipe;
+
+	private ITSoundHandler runningSound;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -143,11 +143,6 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		runningSound.updateVolume((2 * level) / attenuation);
 		if (level > 0) runningSound.playSound();
 		else runningSound.stopSound();
-	}
-
-	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
-		heatLevel = message.getDouble("heat");
 	}
 
 	public void notifyNearbyClients() {
@@ -236,6 +231,11 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			this.markContainingBlockForUpdate(null);
 			notifyNearbyClients();
 		}
+	}
+
+	@Override
+	public void receiveMessageFromServer(NBTTagCompound message) {
+		heatLevel = message.getDouble("heat");
 	}
 
 	@Override
