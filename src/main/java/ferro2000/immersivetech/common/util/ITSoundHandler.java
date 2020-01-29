@@ -55,7 +55,11 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
         SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
         if(!playingSounds.contains(this)) {
             playingSounds.add(this);
-            handler.playSound(this);
+            try {
+                handler.playSound(this);
+            } catch (IllegalArgumentException exception) {
+                handler.stopSound(this);
+            }
         }
         lock.unlock();
     }
