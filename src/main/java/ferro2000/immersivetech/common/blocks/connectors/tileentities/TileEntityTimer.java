@@ -54,7 +54,6 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	public void update() {
 		if(!world.isRemote) {
 			BlockPos pos = this.getPos().offset(EnumFacing.SOUTH);
-
 			if(increment != 0) {
 				setTarget();
 				this.increment = 0;

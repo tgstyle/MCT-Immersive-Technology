@@ -161,8 +161,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 
 	@Override
 	public IEForgeEnergyWrapper getCapabilityWrapper(EnumFacing facing) {
-		if(this.formed && this.isEnergyPos(facing))
-			return wrapper;
+		if(this.formed && this.isEnergyPos(facing)) return wrapper;
 		return null;
 	}
 

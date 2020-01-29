@@ -131,12 +131,10 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
 		}
-
 		if(world.isRemote) {
 			handleSounds();
 			return;
 		}
-
 		if(burnRemaining > 0) {
 			burnRemaining--;
 			speedUp();
