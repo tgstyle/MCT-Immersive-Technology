@@ -42,7 +42,6 @@ public class MessageTileSync implements IMessage {
 		ByteBufUtils.writeTag(buf, this.nbt);
 	}
 
-	@SideOnly(Side.SERVER)
 	public static class HandlerServer implements IMessageHandler<MessageTileSync, IMessage> {
 		@Override
 		public IMessage onMessage(MessageTileSync message, MessageContext ctx) {
