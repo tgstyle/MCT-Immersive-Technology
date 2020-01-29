@@ -61,14 +61,15 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	};
 
 	public int burnRemaining = 0;
+	public int speed;
 
 	public static BlockPos fluidOutputPos;
-	
-	public int speed;
+
 	public SteamTurbineRecipe lastRecipe;
-	
-	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
+
 	private ITSoundHandler runningSound;
+
+	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -148,12 +149,10 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
 		}
-
 		if(world.isRemote) {
 			handleSounds();
 			return;
 		}
-
 		if(burnRemaining > 0) {
 			burnRemaining--;
 			speedUp();

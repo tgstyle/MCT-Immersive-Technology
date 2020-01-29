@@ -68,6 +68,8 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	public BoilerFuelRecipe lastFuel;
 	public BoilerRecipe lastRecipe;
 
+	private ITSoundHandler runningSound;
+
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
@@ -159,11 +161,6 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		super.disassemble();
 	}
 
-	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
-		heatLevel = message.getDouble("heat");
-	}
-
 	public void notifyNearbyClients() {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setDouble("heat", heatLevel);
@@ -250,6 +247,11 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			this.markContainingBlockForUpdate(null);
 			notifyNearbyClients();
 		}
+	}
+
+	@Override
+	public void receiveMessageFromServer(NBTTagCompound message) {
+		heatLevel = message.getDouble("heat");
 	}
 
 	@Override
