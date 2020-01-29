@@ -11,6 +11,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvanced
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 
+import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
 import ferro2000.immersivetech.api.crafting.SteamTurbineRecipe;
@@ -21,6 +22,7 @@ import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTu
 
 import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
+import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,6 +40,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntitySteamTurbine, SteamTurbineRecipe> implements IAdvancedSelectionBounds, IAdvancedCollisionBounds, IMechanicalEnergy {
 	public TileEntitySteamTurbine() {
@@ -110,15 +113,30 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	}
 
 	public void handleSounds() {
-		if (runningSound == null) runningSound = new ITSoundHandler(this, ITSounds.turbine, SoundCategory.BLOCKS, true, 10, 1, getPos().offset(facing, 5));
-		BlockPos center = getPos().offset(facing, 5);
-		EntityPlayerSP player = Minecraft.getMinecraft().player;
-		float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
 		float level = (float) speed / maxSpeed;
-		runningSound.updatePitch(level);
-		runningSound.updateVolume((10 * level) / attenuation);
-		if (level > 0) runningSound.playSound();
-		else runningSound.stopSound();
+		BlockPos center = getPos().offset(facing, 5);
+		if (level == 0) ITSoundHandler.StopSound(center);
+		else {
+			EntityPlayerSP player = Minecraft.getMinecraft().player;
+			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
+			ITSoundHandler.PlaySound(center, ITSounds.turbine, SoundCategory.BLOCKS, true, (10 * level) / attenuation, level);
+		}
+	}
+
+	@Override
+	public void onChunkUnload() {
+		if (!isDummy()) ITSoundHandler.StopSound(getPos());
+		super.onChunkUnload();
+	}
+
+	@Override
+	public void disassemble() {
+		if (!isDummy()) {
+			NBTTagCompound tag = new NBTTagCompound();
+			BlockPos center = getPos().offset(facing, 5);
+			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+		}
+		super.disassemble();
 	}
 
 	@Override

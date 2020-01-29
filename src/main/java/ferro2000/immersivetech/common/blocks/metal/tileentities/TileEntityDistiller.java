@@ -14,10 +14,12 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.crafting.DistillerRecipe;
+import ferro2000.immersivetech.common.Config;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockDistiller;
 
 import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
+import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -50,8 +52,6 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		new FluidTank(24000)
 	};
 
-	private ITSoundHandler runningSound;
-
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 
 	@Override
@@ -78,18 +78,32 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	private boolean previousRenderState;
 
 	public void handleSounds() {
-		if (runningSound == null) runningSound = new ITSoundHandler(this, ITSounds.distiller, SoundCategory.BLOCKS, true, 1, 1, getPos());
 		if (running) {
 			if (soundVolume < 1) soundVolume += 0.01f;
 		} else if (soundVolume > 0) soundVolume -= 0.01f;
-		if (soundVolume == 0) runningSound.stopSound();
+		BlockPos center = getPos();
+		if (soundVolume == 0) ITSoundHandler.StopSound(center);
 		else {
-			BlockPos center = getPos();
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
-			runningSound.updateVolume(soundVolume / attenuation);
-			runningSound.playSound();
+			ITSoundHandler.PlaySound(center, ITSounds.distiller, SoundCategory.BLOCKS, true, soundVolume / attenuation, 1);
 		}
+	}
+
+	@Override
+	public void onChunkUnload() {
+		if (!isDummy()) ITSoundHandler.StopSound(getPos());
+		super.onChunkUnload();
+	}
+
+	@Override
+	public void disassemble() {
+		if (!isDummy()) {
+			NBTTagCompound tag = new NBTTagCompound();
+			BlockPos center = getPos();
+			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+		}
+		super.disassemble();
 	}
 
 	@Override

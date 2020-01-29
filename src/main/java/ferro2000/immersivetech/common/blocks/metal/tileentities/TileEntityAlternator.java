@@ -28,6 +28,7 @@ import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockAlterna
 
 import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
+import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -59,26 +60,38 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	private static int rfPerTick = ITConfig.Machines.alternator_RfPerTick;
 	private static int rfPerTickPerPort = rfPerTick / 6;
 
-	private ITSoundHandler runningSound;
-
 	public TileEntityAlternator() {
 		super(size);
 	}
 
 	public int energyGenerated() {
-		int gen = Math.round(((float)speed / maxSpeed) * rfPerTick);
-		return gen;
+		return Math.round(((float)speed / maxSpeed) * rfPerTick);
 	}
 
 	public void handleSounds() {
-		if (runningSound == null) runningSound = new ITSoundHandler(this, ITSounds.alternator, SoundCategory.BLOCKS, true, 2, 1, getPos());
 		BlockPos center = getPos();
-		EntityPlayerSP player = Minecraft.getMinecraft().player;
-		float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
-		runningSound.updatePitch(clientEnergyPercentage);
-		runningSound.updateVolume((2 * clientEnergyPercentage) / attenuation);
-		if (clientEnergyPercentage > 0) runningSound.playSound();
-		else runningSound.stopSound();
+		if (clientEnergyPercentage == 0) ITSoundHandler.StopSound(center);
+		else {
+			EntityPlayerSP player = Minecraft.getMinecraft().player;
+			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
+			ITSoundHandler.PlaySound(center, ITSounds.alternator, SoundCategory.BLOCKS, true, (2 * clientEnergyPercentage) / attenuation, clientEnergyPercentage);
+		}
+	}
+
+	@Override
+	public void onChunkUnload() {
+		if (!isDummy()) ITSoundHandler.StopSound(getPos());
+		super.onChunkUnload();
+	}
+
+	@Override
+	public void disassemble() {
+		if (!isDummy()) {
+			NBTTagCompound tag = new NBTTagCompound();
+			BlockPos center = getPos();
+			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+		}
+		super.disassemble();
 	}
 
 	public void notifyNearbyClients() {
@@ -123,7 +136,14 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 
 	@Override
 	public void receiveMessageFromServer(NBTTagCompound message) {
-		clientEnergyPercentage = (float) message.getInteger("energy") / energyStorage.getMaxEnergyStored();
+		if (message.hasKey("energy")) {
+			clientEnergyPercentage = (float) message.getInteger("energy") / energyStorage.getMaxEnergyStored();
+		}
+	}
+
+	@Override
+	public boolean isDummy() {
+		return pos != 13;
 	}
 
 	public boolean canRunMechanicalEnergy() {
