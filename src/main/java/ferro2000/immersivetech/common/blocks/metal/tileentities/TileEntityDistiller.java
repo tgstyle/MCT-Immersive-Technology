@@ -50,9 +50,13 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		new FluidTank(24000)
 	};
 
-	private ITSoundHandler runningSound;
-
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+
+	private boolean running;
+	private boolean previousRenderState;
+	private float soundVolume;
+
+	private ITSoundHandler runningSound;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -73,10 +77,6 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
 
-	private boolean running;
-	private float soundVolume;
-	private boolean previousRenderState;
-
 	public void handleSounds() {
 		if (runningSound == null) runningSound = new ITSoundHandler(this, ITSounds.distiller, SoundCategory.BLOCKS, true, 1, 1, getPos());
 		if (running) {
@@ -90,11 +90,6 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 			runningSound.updateVolume(soundVolume / attenuation);
 			runningSound.playSound();
 		}
-	}
-
-	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
-		running = message.getBoolean("running");
 	}
 
 	public void notifyNearbyClients() {
@@ -168,6 +163,11 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		running = shouldRenderAsActive() && !processQueue.isEmpty() && processQueue.get(0).canProcess(this);
 		if (previousRenderState != running) notifyNearbyClients();
 		previousRenderState = running;
+	}
+
+	@Override
+	public void receiveMessageFromServer(NBTTagCompound message) {
+		running = message.getBoolean("running");
 	}
 
 	@Override

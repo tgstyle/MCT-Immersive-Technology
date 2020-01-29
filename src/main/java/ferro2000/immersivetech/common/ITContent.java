@@ -17,6 +17,7 @@ import ferro2000.immersivetech.common.blocks.BlockITBase;
 import ferro2000.immersivetech.common.blocks.BlockITFluid;
 import ferro2000.immersivetech.common.blocks.connectors.BlockConnectors;
 import ferro2000.immersivetech.common.blocks.connectors.tileentities.TileEntityTimer;
+import ferro2000.immersivetech.common.blocks.metal.BlockMetalBarrel;
 import ferro2000.immersivetech.common.blocks.metal.BlockMetalDevice;
 import ferro2000.immersivetech.common.blocks.metal.BlockMetalMultiblock;
 import ferro2000.immersivetech.common.blocks.metal.BlockMetalTrash;
@@ -27,6 +28,7 @@ import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarRe
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityAlternator;
+import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityBarrel;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityBoiler;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityCokeOvenPreheater;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityDistiller;
@@ -76,6 +78,7 @@ public class ITContent {
 	/*METAL*/
 	public static BlockITBase<?> blockMetalDevice;
 	public static BlockITBase<?> blockMetalTrash;
+	public static BlockITBase<?> blockMetalBarrel;
 
 	/*STONE*/
 	public static BlockITBase<?> blockStoneDecoration;
@@ -105,6 +108,7 @@ public class ITContent {
 		/*METAL*/
 		blockMetalDevice = new BlockMetalDevice();
 		blockMetalTrash = new BlockMetalTrash();
+		blockMetalBarrel = new BlockMetalBarrel();
 
 		/*STONE*/
 		blockStoneDecoration = new BlockStoneDecoration();
@@ -134,6 +138,7 @@ public class ITContent {
 		registerTile(TileEntityTrashItem.class);
 		registerTile(TileEntityTrashFluid.class);
 		registerTile(TileEntityTrashEnergy.class);
+		registerTile(TileEntityBarrel.class);
 	}
 
 	public static void init() {
