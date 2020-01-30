@@ -71,6 +71,9 @@ desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=Advanced Coke Oven
 #CONNECTORS
 tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
 
+#OSD
+immersivetech.osd.barrel.output=output
+immersivetech.osd.barrel.empty=Empty!
 
 #MANUAL
 ie.manual.category.it.name=Immersive Technology
