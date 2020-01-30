@@ -126,7 +126,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 
 	@Override
 	public void onChunkUnload() {
-		if (!isDummy()) ITSoundHandler.StopSound(getPos());
+		if (!isDummy()) ITSoundHandler.StopSound(getPos().offset(facing, 5));
 		super.onChunkUnload();
 	}
 
