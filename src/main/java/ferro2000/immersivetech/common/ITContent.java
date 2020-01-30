@@ -184,8 +184,8 @@ public class ITContent {
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 		/*RECIPES*/
 		if(Machines.enable_boiler && Machines.register_boiler_recipes) {
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 50), new FluidStack(FluidRegistry.WATER, 100), 1);
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 75), new FluidStack(fluidDistWater, 100), 1);
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 1000), new FluidStack(FluidRegistry.WATER, 2000), 20);
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 1500), new FluidStack(fluidDistWater, 2000), 20);
 			BoilerRecipe.addFuel(new FluidStack(IEContent.fluidBiodiesel, 5), 1, 10);
 		}
 
@@ -199,12 +199,12 @@ public class ITContent {
 				distillerItemMeta = 0;
 			}
 			ItemStack distillerItem = new ItemStack(ForgeRegistries.ITEMS.getValue(distillerItemName), 1, distillerItemMeta);
-			DistillerRecipe.addRecipe(new FluidStack(fluidDistWater, 100), new FluidStack(FluidRegistry.WATER, 200), distillerItem, 1000, 2, distillerChance);
+			DistillerRecipe.addRecipe(new FluidStack(fluidDistWater, 1000), new FluidStack(FluidRegistry.WATER, 2000), distillerItem, 10000, 20, distillerChance);
 		}
 
 		if(Machines.enable_solarTower && Machines.register_solarTower_recipes) {
-			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 50), new FluidStack(FluidRegistry.WATER, 100), 1);
-			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 75), new FluidStack(fluidDistWater, 100), 1);
+			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 1000), new FluidStack(FluidRegistry.WATER, 2000), 60);
+			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 1500), new FluidStack(fluidDistWater, 2000), 60);
 		}
 
 		if(Machines.enable_steamTurbine && Machines.register_steamTurbine_recipes) {
