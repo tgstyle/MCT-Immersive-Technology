@@ -54,6 +54,12 @@ public class Config {
 			public static int alternator_energyStorage = 1200000;
 			@Comment({"Flux production when running at maximum speed and torque [Default=12288]"})
 			public static int alternator_RfPerTick = 12288;
+			@Comment({"How fast the Advanced Coke Oven (no preheaters taken into account) is when compared to the basic Coke Oven. A value of 1 means same speed. [Default=1]"})
+			public static float cokeOvenAdv_baseSpeed = 1;
+			@Comment({"This value gets added, per individual preheater, to the speed of the Advanced Coke Oven [Default=1]"})
+			public static float cokeOvenAdv_preheaterSpeedIncrease = 1;
+			@Comment({"the speed of the Advanced Coke Oven gets multiplied by this value, per individual preheater [Default=1]"})
+			public static float cokeOvenAdv_preheaterSpeedMultiplier = 1;
 
 			/*ENERGY*/
 			@Comment({"The Flux per tick the Coke Oven Preheater will consume to speed up the Coke Oven Advanced [Default=32]"})
