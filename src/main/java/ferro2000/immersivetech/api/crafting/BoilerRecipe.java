@@ -92,6 +92,14 @@ public class BoilerRecipe extends MultiblockRecipe {
 		return null;
 	}
 
+	public static BoilerFuelRecipe findFuelByFluid(Fluid fluidInput) {
+		if (fluidInput == null) return null;
+		for(BoilerFuelRecipe recipe : fuelList) {
+			if (recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
+		}
+		return null;
+	}
+
 	public static class BoilerFuelRecipe extends MultiblockRecipe {
 		public static float timeModifier = 1;
 
