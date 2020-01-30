@@ -3,7 +3,6 @@ package ferro2000.immersivetech.common.blocks.metal.tileentities;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
@@ -14,7 +13,6 @@ import blusunrize.immersiveengineering.common.util.Utils;
 
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITLib;
-import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.crafting.SolarTowerRecipe;
 import ferro2000.immersivetech.common.Config;
 import ferro2000.immersivetech.common.Config.ITConfig;

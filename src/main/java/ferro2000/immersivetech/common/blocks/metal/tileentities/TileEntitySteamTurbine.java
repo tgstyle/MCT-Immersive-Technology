@@ -312,21 +312,13 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	}
 
 	@Override
-	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resources) {
+	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
 		TileEntitySteamTurbine master = this.master();
 		if(master == null) return false;
 		if((pos == 30) && (side == null || side == facing.getOpposite())) {
-			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resources, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[iTank].getFluid(), 1000, false);
 			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
-			if(master.tanks[iTank].getFluid() == null) {
-				SteamTurbineRecipe incompleteRecipes = SteamTurbineRecipe.findFuel(resourceClone);
-				return incompleteRecipes != null;
-			} else {
-				SteamTurbineRecipe incompleteRecipes1 = SteamTurbineRecipe.findFuel(resourceClone);
-				SteamTurbineRecipe incompleteRecipes2 = SteamTurbineRecipe.findFuel(resourceClone2);
-				return incompleteRecipes1 == incompleteRecipes2;
-			}
+			if(master.tanks[iTank].getFluid() == null) return SteamTurbineRecipe.findFuelByFluid(resource.getFluid()) != null;
+			else return resource.getFluid() == master.tanks[iTank].getFluid().getFluid();
 		}
 		return false;
 	}

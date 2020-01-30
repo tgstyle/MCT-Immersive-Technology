@@ -16,6 +16,7 @@ import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.crafting.BoilerRecipe;
 import ferro2000.immersivetech.api.crafting.BoilerRecipe.BoilerFuelRecipe;
+import ferro2000.immersivetech.api.crafting.SteamTurbineRecipe;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
 
@@ -43,6 +44,8 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+
+import javax.annotation.Nonnull;
 
 public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler, BoilerRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 	public TileEntityBoiler() {
@@ -366,30 +369,14 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		TileEntityBoiler master = this.master();
 		if(master == null) return false;
 		if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY()))) {
-			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[iTank].getFluid(), 1000, false);
 			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
-			if(master.tanks[iTank].getFluid() == null) {
-				BoilerFuelRecipe incompleteRecipes = BoilerRecipe.findFuel(resourceClone);
-				return incompleteRecipes != null;
-			} else {
-				BoilerFuelRecipe incompleteRecipes1 = BoilerRecipe.findFuel(resourceClone);
-				BoilerFuelRecipe incompleteRecipes2 = BoilerRecipe.findFuel(resourceClone2);
-				return incompleteRecipes1 == incompleteRecipes2;
-			}
+			if(master.tanks[iTank].getFluid() == null) return BoilerRecipe.findFuelByFluid(resource.getFluid()) != null;
+			else return resource.getFluid() == master.tanks[iTank].getFluid().getFluid();
 		}
 		if(pos == 5 && (side == null || side == (mirrored?facing.rotateY() : facing.rotateYCCW()))) {
-			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[1].getFluid(), 1000, false);
-			if(master.tanks[1].getFluidAmount() >= master.tanks[1].getCapacity()) return false;
-			if(master.tanks[1].getFluid() == null) {
-				BoilerRecipe incompleteRecipes = BoilerRecipe.findRecipe(resourceClone);
-				return incompleteRecipes != null;
-			} else {
-				BoilerRecipe incompleteRecipes1 = BoilerRecipe.findRecipe(resourceClone);
-				BoilerRecipe incompleteRecipes2 = BoilerRecipe.findRecipe(resourceClone2);
-				return incompleteRecipes1 == incompleteRecipes2;
-			}
+			if(master.tanks[1].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
+			if(master.tanks[1].getFluid() == null) return BoilerRecipe.findRecipeByFluid(resource.getFluid()) != null;
+			else return resource.getFluid() == master.tanks[1].getFluid().getFluid();
 		}
 		return false;
 	}
