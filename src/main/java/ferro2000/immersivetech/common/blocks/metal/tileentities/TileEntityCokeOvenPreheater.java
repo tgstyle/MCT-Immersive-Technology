@@ -48,7 +48,7 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 		energyStorage.writeToNBT(nbt);
 	}
 	
-	public int doSpeedup() {
+	public boolean doSpeedup() {
 		int consumed = cokeOvenConsumption;
 		if(this.energyStorage.extractEnergy(consumed, true) == consumed) {
 			if(!active) {
@@ -56,12 +56,12 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 				this.markContainingBlockForUpdate(null);
 			}
 			this.energyStorage.extractEnergy(consumed, false);
-			return 1;
+			return true;
 		} else if(active) {
 			active = false;
 			this.markContainingBlockForUpdate(null);
 		}
-		return 0;
+		return false;
 	}
 
 	@Nonnull
