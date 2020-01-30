@@ -296,17 +296,9 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		TileEntityDistiller master = this.master();
 		if(master == null) return false;
 		if(pos == 5 && (side == null || side == (mirrored ? facing.rotateYCCW():facing.rotateY()))) {
-			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[iTank].getFluid(), 1000, false);
 			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
-			if(master.tanks[iTank].getFluid() == null) {
-				DistillerRecipe incompleteRecipes = DistillerRecipe.findRecipe(resourceClone);
-				return incompleteRecipes != null;
-			} else {
-				DistillerRecipe incompleteRecipes1 = DistillerRecipe.findRecipe(resourceClone);
-				DistillerRecipe incompleteRecipes2 = DistillerRecipe.findRecipe(resourceClone2);
-				return incompleteRecipes1 == incompleteRecipes2;
-			}
+			if(master.tanks[iTank].getFluid() == null) return DistillerRecipe.findRecipeByFluid(resource.getFluid()) != null;
+			else return resource.getFluid() == master.tanks[iTank].getFluid().getFluid();
 		}
 		return false;
 	}
