@@ -39,16 +39,16 @@ public class GuiSolarTower extends GuiIEContainerBase {
 		ClientUtils.bindTexture("immersivetech:textures/gui/gui_solar_tower.png");
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
-		if(tile.ref0 == 1) {
+		if(tile.reflectors[0] > 0) {
 			this.drawTexturedModalRect(guiLeft + 32, guiTop + 24, 198, 31, 10, 10);
 		}
-		if(tile.ref1 == 1) {
+		if(tile.reflectors[1] > 0) {
 			this.drawTexturedModalRect(guiLeft + 16, guiTop + 40, 198, 31, 10, 10);
 		}
-		if(tile.ref2 == 1) {
+		if(tile.reflectors[2] > 0) {
 			this.drawTexturedModalRect(guiLeft + 32, guiTop + 56, 198, 31, 10, 10);
 		}
-		if(tile.ref3 == 1) {
+		if(tile.reflectors[3] > 0) {
 			this.drawTexturedModalRect(guiLeft + 48, guiTop + 40, 198, 31, 10, 10);
 		}
 		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 102, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_solar_tower.png", null);

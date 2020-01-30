@@ -82,6 +82,10 @@ public class Config {
 			public static int solarTower_minRange = 5;
 			@Comment({"The max distance between the Solar Tower and the Solar Reflectors [Default=10]"})
 			public static int solarTower_maxRange = 10;
+			@Comment({"Speed multiplier applied to all Solar Tower recipes (with a single reflector) [Default=1]"})
+			public static float solarTower_speedMultiplier = 1;
+			@Comment({"The speed of the Solar Tower gets multiplied by this value, per individual Solar Reflector past the first one [Default=1.5]"})
+			public static float solarTower_reflectorSpeedMultiplier = 1.5f;
 			@Comment({"The item for Salt the distiller should output [Default=immersivetech:material]"})
 			public static String distiller_outputItem = "immersivetech:material";
 			@Comment({"The item meta for Salt the distiller should output [Default=0]"})
