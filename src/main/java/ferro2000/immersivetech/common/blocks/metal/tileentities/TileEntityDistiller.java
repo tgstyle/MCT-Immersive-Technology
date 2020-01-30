@@ -14,9 +14,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.crafting.DistillerRecipe;
-import ferro2000.immersivetech.common.Config;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockDistiller;
-
 import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
@@ -58,8 +56,6 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	private boolean previousRenderState;
 	private float soundVolume;
 
-	private ITSoundHandler runningSound;
-
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
@@ -80,11 +76,11 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	}
 
 	public void handleSounds() {
-		if (running) {
-			if (soundVolume < 1) soundVolume += 0.01f;
-		} else if (soundVolume > 0) soundVolume -= 0.01f;
+		if(running) {
+			if(soundVolume < 1) soundVolume += 0.01f;
+		} else if(soundVolume > 0) soundVolume -= 0.01f;
 		BlockPos center = getPos();
-		if (soundVolume == 0) ITSoundHandler.StopSound(center);
+		if(soundVolume == 0) ITSoundHandler.StopSound(center);
 		else {
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
@@ -94,14 +90,13 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 
 	@Override
 	public void onChunkUnload() {
-		if (!isDummy()) ITSoundHandler.StopSound(getPos());
+		if(!isDummy()) ITSoundHandler.StopSound(getPos());
 		super.onChunkUnload();
 	}
 
 	@Override
 	public void disassemble() {
-		if (!isDummy()) {
-			NBTTagCompound tag = new NBTTagCompound();
+		if(!isDummy()) {
 			BlockPos center = getPos();
 			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 		}
@@ -119,7 +114,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	@Override
 	public void update() {
 		super.update();
-		if (isDummy()) return;
+		if(isDummy()) return;
 		if(world.isRemote) {
 			handleSounds();
 			return;
@@ -177,7 +172,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		}
 
 		running = shouldRenderAsActive() && !processQueue.isEmpty() && processQueue.get(0).canProcess(this);
-		if (previousRenderState != running) notifyNearbyClients();
+		if(previousRenderState != running) notifyNearbyClients();
 		previousRenderState = running;
 	}
 

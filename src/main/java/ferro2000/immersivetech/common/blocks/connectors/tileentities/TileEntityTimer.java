@@ -29,10 +29,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityTimer extends TileEntityConnectorRedstone implements IGuiTile {
+	private static EnumFacing face;
+	private static BlockPos position;
+
 	private int redstoneChannelsending = 0;
 	private int lastOutput = 0;
 	private int target = 40;
 	private int tick = 0;
+
 	private final int maxTarget = 600;
 	private final int minTarget = 10;
 
@@ -55,8 +59,9 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	@Override
 	public void update() {
 		if(!world.isRemote) {
-			BlockPos pos = this.getPos().offset(EnumFacing.SOUTH);
-			if(!stopTimer(pos)) {
+			if(face == null) face = facing == EnumFacing.SOUTH ? EnumFacing.UP : facing == EnumFacing.NORTH ? EnumFacing.DOWN : facing == EnumFacing.WEST ? EnumFacing.NORTH : EnumFacing.SOUTH;
+			if(position == null) position = this.getPos().offset(face);
+			if(!stopTimer(position)) {
 				if(tick == target) {
 					this.lastOutput = 1;
 					this.tick = 0;
@@ -102,9 +107,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	}
 
 	private boolean stopTimer(BlockPos pos) {
-		EnumFacing f = facing == EnumFacing.SOUTH ? EnumFacing.UP : facing == EnumFacing.NORTH ? EnumFacing.DOWN : facing == EnumFacing.WEST ? EnumFacing.NORTH : EnumFacing.SOUTH;
-
-		if(world.isSidePowered(pos, f)) return true;
+		if(world.isSidePowered(pos, face)) return true;
 		return false;
 	}
 
@@ -139,7 +142,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	public void receiveMessageFromClient(NBTTagCompound message) {
 		if(!message.hasKey("buttonId")) return;
 		int id = message.getInteger("buttonId");
-		setTarget(id==0?1:-1);
+		setTarget(id == 0 ? 1 : - 1);
 		markDirty();
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("target", target);
@@ -166,7 +169,6 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 		return new Vec3d(.5 + side.getFrontOffsetX() * (.375 - conRadius), .5 + side.getFrontOffsetY() * (.375 - conRadius), .5 + side.getFrontOffsetZ() * (.375 - conRadius));
 	}
 
-
 	@Override
 	public String getCacheKey(IBlockState object) {
 		return redstoneChannel + ";" + redstoneChannelsending;
@@ -176,10 +178,6 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
 		if(!hammer)	return null;
 		float time = (float) this.target / 20;
-
-		System.out.println("time: " + time);
-		System.out.println("target: " + target);
-
 		return new String[] {I18n.format(Lib.DESC_INFO + "redstoneChannel.send", I18n.format("item.fireworksCharge." + EnumDyeColor.byMetadata(redstoneChannelsending).getUnlocalizedName())), I18n.format(String.valueOf(time).toString() + " Sec.")};
 	}
 

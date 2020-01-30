@@ -18,7 +18,6 @@ import ferro2000.immersivetech.api.crafting.BoilerRecipe;
 import ferro2000.immersivetech.api.crafting.BoilerRecipe.BoilerFuelRecipe;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
-
 import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
@@ -67,8 +66,6 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 
 	public BoilerFuelRecipe lastFuel;
 	public BoilerRecipe lastRecipe;
-
-	private ITSoundHandler runningSound;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -137,7 +134,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	public void handleSounds() {
 		BlockPos center = getPos();
 		float level = (float) (heatLevel / ITConfig.Machines.boiler_workingHeatLevel);
-		if (level == 0) ITSoundHandler.StopSound(center);
+		if(level == 0) ITSoundHandler.StopSound(center);
 		else {
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
@@ -147,14 +144,13 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 
 	@Override
 	public void onChunkUnload() {
-		if (!isDummy()) ITSoundHandler.StopSound(getPos());
+		if(!isDummy()) ITSoundHandler.StopSound(getPos());
 		super.onChunkUnload();
 	}
 
 	@Override
 	public void disassemble() {
-		if (!isDummy()) {
-			NBTTagCompound tag = new NBTTagCompound();
+		if(!isDummy()) {
 			BlockPos center = getPos();
 			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 		}
@@ -171,7 +167,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	@Override
 	public void update() {
 		super.update();
-		if (isDummy()) return;
+		if(isDummy()) return;
 		if(world.isRemote) {
 			handleSounds();
 			return;

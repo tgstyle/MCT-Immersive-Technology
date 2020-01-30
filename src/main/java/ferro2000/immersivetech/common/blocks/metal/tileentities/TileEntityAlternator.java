@@ -28,7 +28,6 @@ import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -90,7 +89,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 
 	public void handleSounds() {
 		BlockPos center = getPos();
-		if (clientEnergyPercentage == 0) ITSoundHandler.StopSound(center);
+		if(clientEnergyPercentage == 0) ITSoundHandler.StopSound(center);
 		else {
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
@@ -100,14 +99,13 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 
 	@Override
 	public void onChunkUnload() {
-		if (!isDummy()) ITSoundHandler.StopSound(getPos());
+		if(!isDummy()) ITSoundHandler.StopSound(getPos());
 		super.onChunkUnload();
 	}
 
 	@Override
 	public void disassemble() {
-		if (!isDummy()) {
-			NBTTagCompound tag = new NBTTagCompound();
+		if(!isDummy()) {
 			BlockPos center = getPos();
 			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 		}
@@ -124,7 +122,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	@Override
 	public void update() {
 		if(formed && pos == 13) {
-			if (!world.isRemote) {
+			if(!world.isRemote) {
 				if(ITUtils.checkMechanicalEnergyTransmitter(world, getPos())) speed = ITUtils.getMechanicalEnergy(world, getPos());
 				if(speed > 0) this.energyStorage.modifyEnergyStored(energyGenerated());
 				TileEntity tileEntity;
@@ -141,7 +139,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 					energyStorage.modifyEnergyStored(-canReceiveAmount);
 					currentEnergy = energyStorage.getEnergyStored();
 				}
-				if (oldEnergy != currentEnergy) {
+				if(oldEnergy != currentEnergy) {
 					this.markDirty();
 					this.markContainingBlockForUpdate(null);
 					notifyNearbyClients();
@@ -153,7 +151,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 
 	@Override
 	public void receiveMessageFromServer(NBTTagCompound message) {
-		if (message.hasKey("energy")) {
+		if(message.hasKey("energy")) {
 			clientEnergyPercentage = (float) message.getInteger("energy") / energyStorage.getMaxEnergyStored();
 		}
 	}
@@ -166,9 +164,9 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	IEForgeEnergyWrapper wrapper = new IEForgeEnergyWrapper(this, null);
 
 	private boolean isEnergyPos(@Nullable EnumFacing enumFacing) {
-		if (!this.formed || enumFacing == null || enumFacing == EnumFacing.DOWN || enumFacing == EnumFacing.UP) return false;
+		if(!this.formed || enumFacing == null || enumFacing == EnumFacing.DOWN || enumFacing == EnumFacing.UP) return false;
 		TileEntityAlternator master = this.master();
-		if (master == null) return false;
+		if(master == null) return false;
 		return (enumFacing.rotateY() == master().facing) && (pos == 0 || pos == 12 || pos == 24) ||
 				(enumFacing.rotateYCCW() == master().facing) && (pos == 2 || pos == 14 || pos == 26);
 	}
@@ -189,7 +187,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	@Override
 	public FluxStorage getFluxStorage() {
 		TileEntityAlternator master = this.master();
-		if(master!=null) return master.energyStorage;
+		if(master != null) return master.energyStorage;
 		return energyStorage;
 	}
 

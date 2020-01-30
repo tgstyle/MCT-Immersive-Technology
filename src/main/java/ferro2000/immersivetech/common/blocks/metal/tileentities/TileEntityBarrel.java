@@ -4,10 +4,10 @@ import javax.annotation.Nullable;
 
 import org.lwjgl.input.Keyboard;
 
-import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.Utils;
+import ferro2000.immersivetech.ImmersiveTech;
+import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -34,8 +34,12 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 
 	public FluidTank tank = new FluidTank(100000);
 
+	private int acceptedAmount;
+	private int updateClient = 0;
+
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+		acceptedAmount = nbt.getInteger("acceptedAmount");
 		this.readTank(nbt);
 	}
 
@@ -45,6 +49,7 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+		nbt.setInteger("acceptedAmount", acceptedAmount);
 		this.writeTank(nbt, false);
 	}
 
@@ -56,43 +61,47 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 
 	@Override
 	public void update() {
-		if(world.isRemote) return;
-			boolean update = false;
-			if(tank.getFluidAmount() > 0) {
-				if(tank.getFluidAmount() != tank.getCapacity()) {
-					FluidStack fluid = tank.getFluid();
-					fluid.amount = tank.getCapacity() - tank.getFluidAmount();
-					tank.fill(fluid, true);
-					update = true;
-				}
-				for(int index = 0; index < 6; index++) {
-				 	EnumFacing face = EnumFacing.getFront(index);
-					TileEntity tileEntity = world.getTileEntity(getPos().offset(face));
-					int out = Math.min(50, tank.getFluidAmount());
-					if(tileEntity != null && tileEntity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite())) {
-						IFluidHandler handler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite());
-						int accepted = handler.fill(Utils.copyFluidStackWithAmount(tank.getFluid(), out, false), false);
-						FluidStack drained = this.tank.drain(accepted, false);
-					if(drained != null) {
-						handler.fill(drained, true);
-						update = true;
-					}
-				}
+		if(world.isRemote || tank.getFluidAmount() == 0) return;
+		boolean update = false;
+		if(tank.getFluidAmount() > 0) {
+			if(tank.getFluidAmount() != tank.getCapacity()) {
+				FluidStack filled = tank.getFluid();
+				filled.amount = tank.getCapacity() - tank.getFluidAmount();
+				tank.fill(filled, true);
+				update = true;
+			}
+		}
+		for(int index = 0; index < 6; index++) {
+			EnumFacing face = EnumFacing.getFront(index);
+			if(face == null) break;
+			TileEntity tileEntity = world.getTileEntity(getPos().offset(face));
+			if(tileEntity != null && tileEntity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite())) {
+				IFluidHandler output = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite());
+				FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), tank.getCapacity(), true);
+				accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
+				if(updateClient == 0) acceptedAmount = accepted.amount;
+				output.fill(accepted, true);
+				update=true;
 			}
 		}
 		if(update) {
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
 		}
+		if(updateClient >= 19) {
+			updateClient = 0;
+		} else {
+			updateClient++;
+		}
 	}
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		String amount;
+		String amount = null;
 		if(tank.getFluid() != null) {
-			amount = tank.getFluid().getLocalizedName() + ": " + tank.getFluidAmount() + "mB";
+			amount = tank.getFluid().getLocalizedName() + " " + I18n.format(ImmersiveTech.MODID +".osd.barrel.output") + ": " + acceptedAmount + "mB";
 		} else {
-			amount = I18n.format(Lib.GUI + "empty");
+			amount = I18n.format(ImmersiveTech.MODID + ".osd.barrel.empty");
 		}
 		return new String[]{amount};
 	}

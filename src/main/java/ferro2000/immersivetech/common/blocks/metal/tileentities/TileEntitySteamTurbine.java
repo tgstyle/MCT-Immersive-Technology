@@ -19,7 +19,6 @@ import ferro2000.immersivetech.common.Config;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
-
 import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
@@ -66,8 +65,6 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	public static BlockPos fluidOutputPos;
 
 	public SteamTurbineRecipe lastRecipe;
-
-	private ITSoundHandler runningSound;
 
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
@@ -116,7 +113,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	public void handleSounds() {
 		float level = (float) speed / maxSpeed;
 		BlockPos center = getPos().offset(facing, 5);
-		if (level == 0) ITSoundHandler.StopSound(center);
+		if(level == 0) ITSoundHandler.StopSound(center);
 		else {
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
@@ -126,14 +123,13 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 
 	@Override
 	public void onChunkUnload() {
-		if (!isDummy()) ITSoundHandler.StopSound(getPos().offset(facing, 5));
+		if(!isDummy()) ITSoundHandler.StopSound(getPos().offset(facing, 5));
 		super.onChunkUnload();
 	}
 
 	@Override
 	public void disassemble() {
-		if (!isDummy()) {
-			NBTTagCompound tag = new NBTTagCompound();
+		if(!isDummy()) {
 			BlockPos center = getPos().offset(facing, 5);
 			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 		}
@@ -156,7 +152,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 		if(burnRemaining > 0) {
 			burnRemaining--;
 			speedUp();
-		} else if (!isRSDisabled() && tanks[0].getFluid() != null && tanks[0].getFluid().getFluid() != null && ITUtils.checkMechanicalEnergyReceiver(world, getPos()) && ITUtils.checkAlternatorStatus(world, getPos())) {
+		} else if(!isRSDisabled() && tanks[0].getFluid() != null && tanks[0].getFluid().getFluid() != null && ITUtils.checkMechanicalEnergyReceiver(world, getPos()) && ITUtils.checkAlternatorStatus(world, getPos())) {
 			SteamTurbineRecipe recipe = (lastRecipe != null && tanks[0].getFluid().isFluidEqual(lastRecipe.fluidInput)) ? lastRecipe : SteamTurbineRecipe.findFuel(tanks[0].getFluid());
 			if(recipe != null && recipe.fluidInput.amount <= tanks[0].getFluidAmount()) {
 				lastRecipe = recipe;
