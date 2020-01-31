@@ -74,18 +74,19 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 		reflectors = nbt.getIntArray("reflectors");
 		processTime = nbt.getFloat("processTime");
 		isProcessing = nbt.getBoolean("isProcessing");
+		if(reflectors.length != 4) reflectors = new int[4];
 		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 4);
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		super.writeCustomNBT(nbt, descPacket);
-		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
-		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
-		nbt.setIntArray("reflectors", reflectors);
-		nbt.setBoolean("isProcessing", isProcessing);
-		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
-	}
+    public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+        super.writeCustomNBT(nbt, descPacket);
+        nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
+        nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
+        nbt.setIntArray("reflectors", reflectors);
+        nbt.setBoolean("isProcessing", isProcessing);
+        if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
+    }
 
 	public void handleSounds() {
 		if(isProcessing && !isRSDisabled()) {
