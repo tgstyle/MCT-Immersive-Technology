@@ -118,12 +118,11 @@ public class ITContent {
 		if(!FluidRegistry.registerFluid(fluidDistWater)) {
 			fluidDistWater = FluidRegistry.getFluid("distwater");
 		}
-		FluidRegistry.addBucketForFluid(fluidDistWater);
-
 		fluidSteam = new Fluid("steam", new ResourceLocation("immersivetech:blocks/fluid/steam_still"), new ResourceLocation("immersivetech:blocks/fluid/steam_flow")).setDensity(-100).setViscosity(500).setGaseous(true);
 		if(!FluidRegistry.registerFluid(fluidSteam)) {
 			fluidSteam = FluidRegistry.getFluid("steam");
 		}
+		FluidRegistry.addBucketForFluid(fluidDistWater);
 		FluidRegistry.addBucketForFluid(fluidSteam);
 
 		/*FLUID BLOCKS*/
@@ -132,48 +131,42 @@ public class ITContent {
 
 		/*ITEMS*/
 		itemMaterial = new ItemITBase("material", 64, "salt");
-		
+	}
+
+	public static void init() {
 		/*TILE ENTITIES*/
 		registerTile(TileEntityTimer.class);
 		registerTile(TileEntityTrashItem.class);
 		registerTile(TileEntityTrashFluid.class);
 		registerTile(TileEntityTrashEnergy.class);
 		registerTile(TileEntityBarrel.class);
-	}
-
-	public static void init() {
+		
 		/*MULTIBLOCKS*/
 		if(Machines.enable_distiller) {
 			registerTile(TileEntityDistiller.class);
 			MultiblockHandler.registerMultiblock(MultiblockDistiller.instance);
 		}
-
 		if(Machines.enable_alternator) {
 			registerTile(TileEntityAlternator.class);
 			MultiblockHandler.registerMultiblock(MultiblockAlternator.instance);
 		}
-
 		if(Machines.enable_boiler) {
 			registerTile(TileEntityBoiler.class);
 			MultiblockHandler.registerMultiblock(MultiblockBoiler.instance);
 		}
-
 		if(Machines.enable_cokeOvenAdvanced) {
 			registerTile(TileEntityCokeOvenAdvanced.class);
 			MultiblockHandler.registerMultiblock(MultiblockCokeOvenAdvanced.instance);
 			registerTile(TileEntityCokeOvenPreheater.class);
 		}
-
 		if(Machines.enable_solarReflector) {
 			registerTile(TileEntitySolarReflector.class);
 			MultiblockHandler.registerMultiblock(MultiblockSolarReflector.instance);
 		}
-
 		if(Machines.enable_solarTower) {
 			registerTile(TileEntitySolarTower.class);
 			MultiblockHandler.registerMultiblock(MultiblockSolarTower.instance);
 		}
-
 		if(Machines.enable_steamTurbine) {
 			registerTile(TileEntitySteamTurbine.class);
 			MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
@@ -188,7 +181,6 @@ public class ITContent {
 			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 1500), new FluidStack(fluidDistWater, 2000), 20);
 			BoilerRecipe.addFuel(new FluidStack(IEContent.fluidBiodiesel, 5), 1, 10);
 		}
-
 		if(Machines.enable_distiller && Machines.register_distiller_recipes) {
 			ResourceLocation distillerItemName = new ResourceLocation(ITConfig.Machines.distiller_outputItem);
 			int distillerItemMeta = ITConfig.Machines.distiller_outputItemMeta;
@@ -201,12 +193,10 @@ public class ITContent {
 			ItemStack distillerItem = new ItemStack(ForgeRegistries.ITEMS.getValue(distillerItemName), 1, distillerItemMeta);
 			DistillerRecipe.addRecipe(new FluidStack(fluidDistWater, 1000), new FluidStack(FluidRegistry.WATER, 2000), distillerItem, 10000, 20, distillerChance);
 		}
-
 		if(Machines.enable_solarTower && Machines.register_solarTower_recipes) {
 			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 1000), new FluidStack(FluidRegistry.WATER, 2000), 60);
 			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 1500), new FluidStack(fluidDistWater, 2000), 60);
 		}
-
 		if(Machines.enable_steamTurbine && Machines.register_steamTurbine_recipes) {
 			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 10), new FluidStack(fluidSteam, 100), 1);
 		}
@@ -214,9 +204,9 @@ public class ITContent {
 
 	@SuppressWarnings("deprecation")
 	public static void registerTile(Class<? extends TileEntity> tile) {
-		String s = tile.getSimpleName();
-		s = s.substring(s.indexOf("TileEntity") + "TileEntity".length());
-		GameRegistry.registerTileEntity(tile, ImmersiveTech.MODID + ":" + s);
+		String tileEntity = tile.getSimpleName();
+		tileEntity = tileEntity.substring(tileEntity.indexOf("TileEntity") + "TileEntity".length());
+		GameRegistry.registerTileEntity(tile, ImmersiveTech.MODID + ":" + tileEntity);
 	}
 
 	@SubscribeEvent

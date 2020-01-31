@@ -1,4 +1,4 @@
-package ferro2000.immersivetech.common.util;
+package ferro2000.immersivetech.common.util.sound;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ITickableSound;

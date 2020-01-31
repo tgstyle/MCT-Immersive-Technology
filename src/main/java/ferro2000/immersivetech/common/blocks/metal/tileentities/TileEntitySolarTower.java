@@ -17,11 +17,10 @@ import ferro2000.immersivetech.api.crafting.SolarTowerRecipe;
 import ferro2000.immersivetech.common.Config;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTower;
-
-import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
+import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -89,13 +88,13 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 	}
 
 	public void handleSounds() {
-		if (isProcessing && !isRSDisabled()) {
-			if (soundVolume < 1) soundVolume += 0.01f;
-		} else if (soundVolume > 0) soundVolume -= 0.01f;
+		if(isProcessing && !isRSDisabled()) {
+			if(soundVolume < 1) soundVolume += 0.01f;
+		} else if(soundVolume > 0) soundVolume -= 0.01f;
 		BlockPos center = getPos();
 		int activeReflectors = 0;
-		for (int reflector : reflectors) if (reflector > 0) activeReflectors++;
-		if (soundVolume == 0 || activeReflectors == 0) ITSoundHandler.StopSound(center);
+		for(int reflector : reflectors) if(reflector > 0) activeReflectors++;
+		if(soundVolume == 0 || activeReflectors == 0) ITSoundHandler.StopSound(center);
 		else {
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
@@ -105,14 +104,13 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 
 	@Override
 	public void onChunkUnload() {
-		if (!isDummy()) ITSoundHandler.StopSound(getPos());
+		if(!isDummy()) ITSoundHandler.StopSound(getPos());
 		super.onChunkUnload();
 	}
 
 	@Override
 	public void disassemble() {
-		if (!isDummy()) {
-			NBTTagCompound tag = new NBTTagCompound();
+		if(!isDummy()) {
 			BlockPos center = getPos();
 			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 		}
@@ -131,50 +129,48 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 		isProcessing = message.getBoolean("isProcessing");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void update() {
 		super.update();
-		if (isDummy()) return;
+		if(isDummy()) return;
 		if(world.isRemote) {
 			handleSounds();
 			return;
 		}
 		boolean update = false;
-		if (processing == null) {
+		if(processing == null) {
 			processing = SolarTowerRecipe.findRecipe(tanks[0].getFluid());
-			if (processing == null) {
-				if (isProcessing) {
+			if(processing == null) {
+				if(isProcessing) {
 					isProcessing = false;
 					update = true;
 					notifyNearbyClients();
 				}
-			} else if (!isProcessing) {
+			} else if(!isProcessing) {
 				isProcessing = true;
 				update = true;
 				notifyNearbyClients();
 			}
 		}
-		if (!isRSDisabled() && isProcessing && checkReflector()) processTime += getSpeed();
+		if(!isRSDisabled() && isProcessing && checkReflector()) processTime += getSpeed();
 		if(processing != null && processTime >= processing.getTotalProcessTime()) {
-			if (tanks[1].fill(processing.fluidOutput, false) == processing.fluidOutput.amount) {
+			if(tanks[1].fill(processing.fluidOutput, false) == processing.fluidOutput.amount) {
 				this.processTime = 0;
 				tanks[0].drain(processing.fluidInput, true);
 				tanks[1].fill(processing.fluidOutput, true);
 				processing = null;
-				if (!isProcessing) {
+				if(!isProcessing) {
 					update = true;
 					isProcessing = true;
 				}
 			} else {
-				if (isProcessing) {
+				if(isProcessing) {
 					update = true;
 					notifyNearbyClients();
 				}
 				isProcessing = false;
 			}
 		}
-
 		if(this.tanks[1].getFluidAmount() > 0) {
 			ItemStack filledContainer = Utils.fillFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
 			if(!filledContainer.isEmpty()) {
@@ -273,8 +269,8 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 
 	protected float getSpeed() {
 		int activeReflectors = 0;
-		for (int reflectorValue : reflectors) activeReflectors += reflectorValue;
-		if (activeReflectors == 0) return 0;
+		for(int reflectorValue : reflectors) activeReflectors += reflectorValue;
+		if(activeReflectors == 0) return 0;
 		return speedMult * (1 + (activeReflectors - 1) * (reflectorSpeedMult - 1));
 	}
 

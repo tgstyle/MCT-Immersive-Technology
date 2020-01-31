@@ -27,7 +27,7 @@ public class BoilerRecipe extends MultiblockRecipe {
 		this.fluidInputList = Lists.newArrayList(this.fluidInput);
 		this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
 	}
-	
+
 	public static ArrayList<BoilerRecipe> recipeList = new ArrayList<BoilerRecipe>();
 
 	public static BoilerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
@@ -37,17 +37,17 @@ public class BoilerRecipe extends MultiblockRecipe {
 	}
 
 	public static BoilerRecipe findRecipe(FluidStack fluidInput) {
-		if (fluidInput == null) return null;
-		for (BoilerRecipe recipe : recipeList) {
+		if(fluidInput == null) return null;
+		for(BoilerRecipe recipe : recipeList) {
 			if(recipe.fluidInput != null && (fluidInput.containsFluid(recipe.fluidInput))) return recipe;
 		}
 		return null;
 	}
 
 	public static BoilerRecipe findRecipeByFluid(Fluid fluidInput) {
-		if (fluidInput == null) return null;
+		if(fluidInput == null) return null;
 		for(BoilerRecipe recipe : recipeList) {
-			if (recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
+			if(recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
 		}
 		return null;
 	}
@@ -93,9 +93,9 @@ public class BoilerRecipe extends MultiblockRecipe {
 	}
 
 	public static BoilerFuelRecipe findFuelByFluid(Fluid fluidInput) {
-		if (fluidInput == null) return null;
+		if(fluidInput == null) return null;
 		for(BoilerFuelRecipe recipe : fuelList) {
-			if (recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
+			if(recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
 		}
 		return null;
 	}

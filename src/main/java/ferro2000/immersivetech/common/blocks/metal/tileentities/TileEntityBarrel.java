@@ -113,14 +113,14 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 
 	@Override
 	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return true;
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return true;
 		return false;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return (T) this.tank;
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return (T) this.tank;
 		return super.getCapability(capability, facing);
 	}
 

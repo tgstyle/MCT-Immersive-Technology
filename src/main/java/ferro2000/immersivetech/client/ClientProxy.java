@@ -29,9 +29,9 @@ import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySteamT
 import ferro2000.immersivetech.common.blocks.metal.types.BlockType_MetalDevice;
 import ferro2000.immersivetech.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import ferro2000.immersivetech.common.items.ItemITBase;
-import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
+import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;

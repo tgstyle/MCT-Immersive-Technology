@@ -36,17 +36,17 @@ public class SolarTowerRecipe extends MultiblockRecipe {
 	}
 
 	public static SolarTowerRecipe findRecipe(FluidStack fluidInput) {
-		if (fluidInput == null) return null;
-		for (SolarTowerRecipe recipe : recipeList) {
+		if(fluidInput == null) return null;
+		for(SolarTowerRecipe recipe : recipeList) {
 			if(recipe.fluidInput != null && (fluidInput.containsFluid(recipe.fluidInput))) return recipe;
 		}
 		return null;
 	}
 
 	public static SolarTowerRecipe findRecipeByFluid(Fluid fluidInput) {
-		if (fluidInput == null) return null;
+		if(fluidInput == null) return null;
 		for(SolarTowerRecipe recipe : recipeList) {
-			if (recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
+			if(recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
 		}
 		return null;
 	}
