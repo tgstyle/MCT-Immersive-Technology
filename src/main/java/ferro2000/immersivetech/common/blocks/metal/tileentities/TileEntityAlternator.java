@@ -24,10 +24,10 @@ import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockAlternator;
-import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
+import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
-
+import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -59,8 +59,6 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 
 	private float clientEnergyPercentage;
 	private int oldEnergy = energyStorage.getEnergyStored();
-
-	private ITSoundHandler runningSound;
 	
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
@@ -86,19 +84,32 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	}
 
 	public int energyGenerated() {
-		int gen = Math.round(((float)speed / maxSpeed) * rfPerTick);
-		return gen;
+		return Math.round(((float)speed / maxSpeed) * rfPerTick);
 	}
 
 	public void handleSounds() {
-		if (runningSound == null) runningSound = new ITSoundHandler(this, ITSounds.alternator, SoundCategory.BLOCKS, true, 2, 1, getPos());
 		BlockPos center = getPos();
-		EntityPlayerSP player = Minecraft.getMinecraft().player;
-		float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
-		runningSound.updatePitch(clientEnergyPercentage);
-		runningSound.updateVolume((2 * clientEnergyPercentage) / attenuation);
-		if (clientEnergyPercentage > 0) runningSound.playSound();
-		else runningSound.stopSound();
+		if(clientEnergyPercentage == 0) ITSoundHandler.StopSound(center);
+		else {
+			EntityPlayerSP player = Minecraft.getMinecraft().player;
+			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
+			ITSoundHandler.PlaySound(center, ITSounds.alternator, SoundCategory.BLOCKS, true, (2 * clientEnergyPercentage) / attenuation, clientEnergyPercentage);
+		}
+	}
+
+	@Override
+	public void onChunkUnload() {
+		if(!isDummy()) ITSoundHandler.StopSound(getPos());
+		super.onChunkUnload();
+	}
+
+	@Override
+	public void disassemble() {
+		if(!isDummy()) {
+			BlockPos center = getPos();
+			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+		}
+		super.disassemble();
 	}
 
 	public void notifyNearbyClients() {
@@ -111,7 +122,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	@Override
 	public void update() {
 		if(formed && pos == 13) {
-			if (!world.isRemote) {
+			if(!world.isRemote) {
 				if(ITUtils.checkMechanicalEnergyTransmitter(world, getPos())) speed = ITUtils.getMechanicalEnergy(world, getPos());
 				if(speed > 0) this.energyStorage.modifyEnergyStored(energyGenerated());
 				TileEntity tileEntity;
@@ -128,7 +139,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 					energyStorage.modifyEnergyStored(-canReceiveAmount);
 					currentEnergy = energyStorage.getEnergyStored();
 				}
-				if (oldEnergy != currentEnergy) {
+				if(oldEnergy != currentEnergy) {
 					this.markDirty();
 					this.markContainingBlockForUpdate(null);
 					notifyNearbyClients();
@@ -140,15 +151,22 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 
 	@Override
 	public void receiveMessageFromServer(NBTTagCompound message) {
-		clientEnergyPercentage = (float) message.getInteger("energy") / energyStorage.getMaxEnergyStored();
+		if(message.hasKey("energy")) {
+			clientEnergyPercentage = (float) message.getInteger("energy") / energyStorage.getMaxEnergyStored();
+		}
+	}
+
+	@Override
+	public boolean isDummy() {
+		return pos != 13;
 	}
 	
 	IEForgeEnergyWrapper wrapper = new IEForgeEnergyWrapper(this, null);
 
 	private boolean isEnergyPos(@Nullable EnumFacing enumFacing) {
-		if (!this.formed || enumFacing == null || enumFacing == EnumFacing.DOWN || enumFacing == EnumFacing.UP) return false;
+		if(!this.formed || enumFacing == null || enumFacing == EnumFacing.DOWN || enumFacing == EnumFacing.UP) return false;
 		TileEntityAlternator master = this.master();
-		if (master == null) return false;
+		if(master == null) return false;
 		return (enumFacing.rotateY() == master().facing) && (pos == 0 || pos == 12 || pos == 24) ||
 				(enumFacing.rotateYCCW() == master().facing) && (pos == 2 || pos == 14 || pos == 26);
 	}
@@ -169,7 +187,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	@Override
 	public FluxStorage getFluxStorage() {
 		TileEntityAlternator master = this.master();
-		if(master!=null) return master.energyStorage;
+		if(master != null) return master.energyStorage;
 		return energyStorage;
 	}
 

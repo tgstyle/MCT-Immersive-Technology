@@ -47,6 +47,7 @@ public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable
 
 	@Override
 	public IEForgeEnergyWrapper getCapabilityWrapper(EnumFacing facing) {
+		if(facing == null) return null;
 		return wrappers[facing.ordinal()];
 	}
 

@@ -8,6 +8,7 @@ import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 public class SteamTurbineRecipe extends MultiblockRecipe {
@@ -35,12 +36,17 @@ public class SteamTurbineRecipe extends MultiblockRecipe {
 	}
 
 	public static SteamTurbineRecipe findFuel(FluidStack fluidInput) {
+		if(fluidInput == null) return null;
 		for(SteamTurbineRecipe recipe : recipeList) {
-			if(fluidInput != null) {
-				if(recipe.fluidInput != null && (fluidInput.containsFluid(recipe.fluidInput))) {
-					return recipe;
-				}
-			}
+			if(recipe.fluidInput != null && (fluidInput.containsFluid(recipe.fluidInput))) return recipe;
+		}
+		return null;
+	}
+
+	public static SteamTurbineRecipe findFuelByFluid(Fluid fluidInput) {
+		if(fluidInput == null) return null;
+		for(SteamTurbineRecipe recipe : recipeList) {
+			if(recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
 		}
 		return null;
 	}

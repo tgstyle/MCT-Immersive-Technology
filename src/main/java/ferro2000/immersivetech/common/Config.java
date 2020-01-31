@@ -54,6 +54,12 @@ public class Config {
 			public static int alternator_energyStorage = 1200000;
 			@Comment({"Flux production when running at maximum speed and torque [Default=12288]"})
 			public static int alternator_RfPerTick = 12288;
+			@Comment({"How fast the Advanced Coke Oven (no preheaters taken into account) is when compared to the basic Coke Oven. A value of 1 means same speed. [Default=1]"})
+			public static float cokeOvenAdv_baseSpeed = 1;
+			@Comment({"This value gets added, per individual preheater, to the speed of the Advanced Coke Oven [Default=1]"})
+			public static float cokeOvenAdv_preheaterSpeedIncrease = 1;
+			@Comment({"the speed of the Advanced Coke Oven gets multiplied by this value, per individual preheater [Default=1]"})
+			public static float cokeOvenAdv_preheaterSpeedMultiplier = 1;
 
 			/*ENERGY*/
 			@Comment({"The Flux per tick the Coke Oven Preheater will consume to speed up the Coke Oven Advanced [Default=32]"})
@@ -76,6 +82,10 @@ public class Config {
 			public static int solarTower_minRange = 5;
 			@Comment({"The max distance between the Solar Tower and the Solar Reflectors [Default=10]"})
 			public static int solarTower_maxRange = 10;
+			@Comment({"Speed multiplier applied to all Solar Tower recipes (with a single reflector) [Default=1]"})
+			public static float solarTower_speedMultiplier = 1;
+			@Comment({"The speed of the Solar Tower gets multiplied by this value, per individual Solar Reflector past the first one [Default=1.5]"})
+			public static float solarTower_reflectorSpeedMultiplier = 1.5f;
 			@Comment({"The item for Salt the distiller should output [Default=immersivetech:material]"})
 			public static String distiller_outputItem = "immersivetech:material";
 			@Comment({"The item meta for Salt the distiller should output [Default=0]"})

@@ -15,10 +15,10 @@ import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.crafting.DistillerRecipe;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockDistiller;
-
-import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
+import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
+import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -56,8 +56,6 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	private boolean previousRenderState;
 	private float soundVolume;
 
-	private ITSoundHandler runningSound;
-
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
@@ -78,18 +76,31 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	}
 
 	public void handleSounds() {
-		if (runningSound == null) runningSound = new ITSoundHandler(this, ITSounds.distiller, SoundCategory.BLOCKS, true, 1, 1, getPos());
-		if (running) {
-			if (soundVolume < 1) soundVolume += 0.01f;
-		} else if (soundVolume > 0) soundVolume -= 0.01f;
-		if (soundVolume == 0) runningSound.stopSound();
+		if(running) {
+			if(soundVolume < 1) soundVolume += 0.01f;
+		} else if(soundVolume > 0) soundVolume -= 0.01f;
+		BlockPos center = getPos();
+		if(soundVolume == 0) ITSoundHandler.StopSound(center);
 		else {
-			BlockPos center = getPos();
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
-			runningSound.updateVolume(soundVolume / attenuation);
-			runningSound.playSound();
+			ITSoundHandler.PlaySound(center, ITSounds.distiller, SoundCategory.BLOCKS, true, soundVolume / attenuation, 1);
 		}
+	}
+
+	@Override
+	public void onChunkUnload() {
+		if(!isDummy()) ITSoundHandler.StopSound(getPos());
+		super.onChunkUnload();
+	}
+
+	@Override
+	public void disassemble() {
+		if(!isDummy()) {
+			BlockPos center = getPos();
+			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+		}
+		super.disassemble();
 	}
 
 	public void notifyNearbyClients() {
@@ -103,7 +114,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 	@Override
 	public void update() {
 		super.update();
-		if (isDummy()) return;
+		if(isDummy()) return;
 		if(world.isRemote) {
 			handleSounds();
 			return;
@@ -161,7 +172,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		}
 
 		running = shouldRenderAsActive() && !processQueue.isEmpty() && processQueue.get(0).canProcess(this);
-		if (previousRenderState != running) notifyNearbyClients();
+		if(previousRenderState != running) notifyNearbyClients();
 		previousRenderState = running;
 	}
 
@@ -285,17 +296,9 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		TileEntityDistiller master = this.master();
 		if(master == null) return false;
 		if(pos == 5 && (side == null || side == (mirrored ? facing.rotateYCCW():facing.rotateY()))) {
-			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[iTank].getFluid(), 1000, false);
 			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
-			if(master.tanks[iTank].getFluid() == null) {
-				DistillerRecipe incompleteRecipes = DistillerRecipe.findRecipe(resourceClone);
-				return incompleteRecipes != null;
-			} else {
-				DistillerRecipe incompleteRecipes1 = DistillerRecipe.findRecipe(resourceClone);
-				DistillerRecipe incompleteRecipes2 = DistillerRecipe.findRecipe(resourceClone2);
-				return incompleteRecipes1 == incompleteRecipes2;
-			}
+			if(master.tanks[iTank].getFluid() == null) return DistillerRecipe.findRecipeByFluid(resource.getFluid()) != null;
+			else return resource.getFluid() == master.tanks[iTank].getFluid().getFluid();
 		}
 		return false;
 	}

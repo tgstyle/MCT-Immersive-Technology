@@ -26,5 +26,19 @@
 			"immersivetech:distiller"
 		],
 		"subtitle": "subtitle.immersivetech.distiller"
+	},
+	"advCokeOven": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:adv_coke_oven"
+		],
+		"subtitle": "subtitle.immersivetech.advCokeOven"
+	},
+	"solarTower": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:solar_tower"
+		],
+		"subtitle": "subtitle.immersivetech.solarTower"
 	}
 }

@@ -6,7 +6,7 @@
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "https://www.curseforge.com/minecraft/mc-mods/immersive-technology",
-  "authorList": ["FerroO2000", "TGstyle"],
+  "authorList": ["FerroO2000", "TGstyle", "Kurtchekov"],
   "credits": "BluSunrize for Immersive Engineering, derived from Immersive Tech by FerroO2000",
   "logoFile": "assets/immersivetech/logo.png",
   "screenshots": [],

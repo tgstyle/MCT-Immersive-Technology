@@ -18,10 +18,11 @@ import ferro2000.immersivetech.api.crafting.BoilerRecipe;
 import ferro2000.immersivetech.api.crafting.BoilerRecipe.BoilerFuelRecipe;
 import ferro2000.immersivetech.common.Config.ITConfig;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
-
-import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
+import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
+import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -66,8 +67,6 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 
 	public BoilerFuelRecipe lastFuel;
 	public BoilerRecipe lastRecipe;
-
-	private ITSoundHandler runningSound;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -134,15 +133,29 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	}
 
 	public void handleSounds() {
-		if (runningSound == null) runningSound = new ITSoundHandler(this, ITSounds.boiler, SoundCategory.BLOCKS, true, 2, 1, getPos());
 		BlockPos center = getPos();
-		EntityPlayerSP player = Minecraft.getMinecraft().player;
-		float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
 		float level = (float) (heatLevel / ITConfig.Machines.boiler_workingHeatLevel);
-		runningSound.updatePitch(level);
-		runningSound.updateVolume((2 * level) / attenuation);
-		if (level > 0) runningSound.playSound();
-		else runningSound.stopSound();
+		if(level == 0) ITSoundHandler.StopSound(center);
+		else {
+			EntityPlayerSP player = Minecraft.getMinecraft().player;
+			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
+			ITSoundHandler.PlaySound(center, ITSounds.boiler, SoundCategory.BLOCKS, true, (2 * level) / attenuation, level);
+		}
+	}
+
+	@Override
+	public void onChunkUnload() {
+		if(!isDummy()) ITSoundHandler.StopSound(getPos());
+		super.onChunkUnload();
+	}
+
+	@Override
+	public void disassemble() {
+		if(!isDummy()) {
+			BlockPos center = getPos();
+			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+		}
+		super.disassemble();
 	}
 
 	public void notifyNearbyClients() {
@@ -155,7 +168,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	@Override
 	public void update() {
 		super.update();
-		if (isDummy()) return;
+		if(isDummy()) return;
 		if(world.isRemote) {
 			handleSounds();
 			return;
@@ -350,30 +363,14 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		TileEntityBoiler master = this.master();
 		if(master == null) return false;
 		if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY()))) {
-			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[iTank].getFluid(), 1000, false);
 			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
-			if(master.tanks[iTank].getFluid() == null) {
-				BoilerFuelRecipe incompleteRecipes = BoilerRecipe.findFuel(resourceClone);
-				return incompleteRecipes != null;
-			} else {
-				BoilerFuelRecipe incompleteRecipes1 = BoilerRecipe.findFuel(resourceClone);
-				BoilerFuelRecipe incompleteRecipes2 = BoilerRecipe.findFuel(resourceClone2);
-				return incompleteRecipes1 == incompleteRecipes2;
-			}
+			if(master.tanks[iTank].getFluid() == null) return BoilerRecipe.findFuelByFluid(resource.getFluid()) != null;
+			else return resource.getFluid() == master.tanks[iTank].getFluid().getFluid();
 		}
 		if(pos == 5 && (side == null || side == (mirrored?facing.rotateY() : facing.rotateYCCW()))) {
-			FluidStack resourceClone = Utils.copyFluidStackWithAmount(resource, 1000, false);
-			FluidStack resourceClone2 = Utils.copyFluidStackWithAmount(master.tanks[1].getFluid(), 1000, false);
-			if(master.tanks[1].getFluidAmount() >= master.tanks[1].getCapacity()) return false;
-			if(master.tanks[1].getFluid() == null) {
-				BoilerRecipe incompleteRecipes = BoilerRecipe.findRecipe(resourceClone);
-				return incompleteRecipes != null;
-			} else {
-				BoilerRecipe incompleteRecipes1 = BoilerRecipe.findRecipe(resourceClone);
-				BoilerRecipe incompleteRecipes2 = BoilerRecipe.findRecipe(resourceClone2);
-				return incompleteRecipes1 == incompleteRecipes2;
-			}
+			if(master.tanks[1].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
+			if(master.tanks[1].getFluid() == null) return BoilerRecipe.findRecipeByFluid(resource.getFluid()) != null;
+			else return resource.getFluid() == master.tanks[1].getFluid().getFluid();
 		}
 		return false;
 	}

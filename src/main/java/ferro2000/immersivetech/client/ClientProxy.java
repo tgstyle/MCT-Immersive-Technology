@@ -29,8 +29,9 @@ import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySteamT
 import ferro2000.immersivetech.common.blocks.metal.types.BlockType_MetalDevice;
 import ferro2000.immersivetech.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import ferro2000.immersivetech.common.items.ItemITBase;
-
+import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
+import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -52,6 +53,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -67,6 +70,22 @@ public class ClientProxy extends CommonProxy {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
+	@SubscribeEvent()
+	public void PlayerChangedDimensions(PlayerEvent.PlayerChangedDimensionEvent e) {
+		ITSoundHandler.DeleteAllSounds();
+	}
+
+	@SubscribeEvent()
+	public void PlayerLeftSession(PlayerEvent.PlayerLoggedOutEvent e) {
+		ITSoundHandler.DeleteAllSounds();
+	}
+
+	@SubscribeEvent()
+	public void PlayerDisconnected(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
+		ITSoundHandler.DeleteAllSounds();
+	}
+
+	
 	/*
 	@author BluSunrize
 	*/
@@ -152,6 +171,7 @@ public class ClientProxy extends CommonProxy {
 		ImmersiveTech.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
 		//has to be here as well because this one is used when playing Singleplayer, go figure
 		ImmersiveTech.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
+		ImmersiveTech.packetHandler.registerMessage(MessageStopSound.HandlerClient.class, MessageStopSound.class, 1, Side.CLIENT);
 	}
 
 	@Override

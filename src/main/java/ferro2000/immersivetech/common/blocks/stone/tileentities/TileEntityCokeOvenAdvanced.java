@@ -20,17 +20,25 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
+import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.ITUtils;
+import ferro2000.immersivetech.common.Config;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityCokeOvenPreheater;
 import ferro2000.immersivetech.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
-
+import ferro2000.immersivetech.common.util.ITSounds;
+import ferro2000.immersivetech.common.util.network.MessageStopSound;
+import ferro2000.immersivetech.common.util.network.MessageTileSync;
+import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -41,19 +49,24 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEntityCokeOvenAdvanced> implements IIEInventory, IActiveState, IGuiTile, IProcessTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 	private static final int[] size = { 4, 3, 3 };
+	public static float baseSpeed = Config.ITConfig.Machines.cokeOvenAdv_baseSpeed;
+	public static float preheaterAdd = Config.ITConfig.Machines.cokeOvenAdv_preheaterSpeedIncrease;
+	public static float preheaterMult = Config.ITConfig.Machines.cokeOvenAdv_preheaterSpeedMultiplier;
 
 	public FluidTank tank = new FluidTank(24000);
 
 	NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 
-	public int process = 0;
+	public float process = 0;
 	public int processMax = 0;
 	public boolean active = false;
+	private float soundVolume;
 
 	public TileEntityCokeOvenAdvanced() {
 		super(size);
@@ -62,7 +75,7 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
-		process = nbt.getInteger("process");
+		process = nbt.getFloat("process");
 		processMax = nbt.getInteger("processMax");
 		active = nbt.getBoolean("active");
 		tank.readFromNBT(nbt.getCompoundTag("tank"));
@@ -72,7 +85,7 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
-		nbt.setInteger("process", process);
+		nbt.setFloat("process", process);
 		nbt.setInteger("processMax", processMax);
 		nbt.setBoolean("active", active);
 		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
@@ -80,10 +93,54 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
 
+	public void handleSounds() {
+		if (active) {
+			if (soundVolume < 1) soundVolume += 0.01f;
+		} else if (soundVolume > 0) soundVolume -= 0.01f;
+		BlockPos center = getPos();
+		if (soundVolume == 0) ITSoundHandler.StopSound(center);
+		else {
+			EntityPlayerSP player = Minecraft.getMinecraft().player;
+			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
+			ITSoundHandler.PlaySound(center, ITSounds.advCokeOven, SoundCategory.BLOCKS, true, soundVolume / attenuation, 1);
+		}
+	}
+
+	@Override
+	public void onChunkUnload() {
+		if (!isDummy()) ITSoundHandler.StopSound(getPos());
+		super.onChunkUnload();
+	}
+
+	@Override
+	public void disassemble() {
+		if (!isDummy()) {
+			BlockPos center = getPos();
+			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+		}
+		super.disassemble();
+	}
+
+	public void notifyNearbyClients() {
+		NBTTagCompound tag = new NBTTagCompound();
+		tag.setBoolean("active", active);
+		BlockPos center = getPos();
+		ImmersiveTech.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+	}
+
+	@Override
+	public void receiveMessageFromServer(NBTTagCompound message) {
+		active = message.getBoolean("active");
+	}
+
 	@Override
 	public void update() {
 		ApiUtils.checkForNeedlessTicking(this);
-		if(!world.isRemote && formed && !isDummy()) {
+		if(formed && !isDummy()) {
+			if(world.isRemote) {
+				handleSounds();
+				return;
+			}
 			boolean a = active;
 			boolean b = false;
 			if(process > 0) {
@@ -118,10 +175,10 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 				}
 				CokeOvenRecipe recipe = getRecipe();
 				if(recipe != null) {
-					this.process = recipe.time;
-					this.processMax = process;
+					this.process = this.processMax = recipe.time;
 					this.active = true;
 				}
+				notifyNearbyClients();
 			}
 			if(tank.getFluidAmount() > 0 && tank.getFluid() != null && (inventory.get(3).isEmpty() || inventory.get(3).getCount() + 1 <= inventory.get(3).getMaxStackSize())) {
 				ItemStack filledContainer = Utils.fillFluidContainer(tank, inventory.get(2), inventory.get(3), null);
@@ -182,7 +239,7 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 	public int[] getCurrentProcessesStep() {
 		TileEntityCokeOvenAdvanced master = master();
 		if(master != this && master != null) return master.getCurrentProcessesStep();
-		return new int[] { processMax - process };
+		return new int[] { Math.round(processMax - process) };
 	}
 
 	@Override
@@ -192,15 +249,18 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 		return new int[] { processMax };
 	}
 
-	private int getProcessSpeed() {
-		int i = 1;
+	private float getProcessSpeed() {
+		int activePreheaters = 0;
 		for(int k = 0; k < 2; k++) {
 			EnumFacing f = k == 0 ? facing.rotateY() : facing.rotateYCCW();
 			BlockPos pos = getPos().add(0, - 1, 0).offset(f, 2).offset(facing, 1);
-			TileEntity tilePreheater = Utils.getExistingTileEntity(world, pos);
-			if(tilePreheater instanceof TileEntityCokeOvenPreheater) if(((TileEntityCokeOvenPreheater) tilePreheater).facing == f.getOpposite()) i += ((TileEntityCokeOvenPreheater) tilePreheater).doSpeedup();
+			TileEntity tile = Utils.getExistingTileEntity(world, pos);
+			if(!(tile instanceof TileEntityCokeOvenPreheater)) continue;
+			TileEntityCokeOvenPreheater preheater = (TileEntityCokeOvenPreheater)tile;
+			if(preheater.facing != f.getOpposite() || !preheater.doSpeedup()) continue;
+			activePreheaters++;
 		}
-		return i;
+		return (baseSpeed + activePreheaters * preheaterAdd) * (1 + activePreheaters * (preheaterMult - 1));
 	}
 
 	@Override
