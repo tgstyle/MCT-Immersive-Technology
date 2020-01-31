@@ -40,6 +40,7 @@ public class DistillerRecipe extends MultiblockRecipe {
 	}
 
 	public static ArrayList <DistillerRecipe> recipeList = new ArrayList<DistillerRecipe>();
+
 	public static DistillerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, ItemStack itemOutput, int energy, int time, float chance) {
 		DistillerRecipe r = new DistillerRecipe(fluidOutput, fluidInput, itemOutput, energy, time, chance);
 		recipeList.add(r);
@@ -47,17 +48,17 @@ public class DistillerRecipe extends MultiblockRecipe {
 	}
 
 	public static DistillerRecipe findRecipe(FluidStack fluidInput) {
-		if (fluidInput == null) return null;
-		for (DistillerRecipe recipe : recipeList) {
+		if(fluidInput == null) return null;
+		for(DistillerRecipe recipe : recipeList) {
 			if(recipe.fluidInput != null && (fluidInput.containsFluid(recipe.fluidInput))) return recipe;
 		}
 		return null;
 	}
 
 	public static DistillerRecipe findRecipeByFluid(Fluid fluidInput) {
-		if (fluidInput == null) return null;
+		if(fluidInput == null) return null;
 		for(DistillerRecipe recipe : recipeList) {
-			if (recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
+			if(recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
 		}
 		return null;
 	}

@@ -36,17 +36,17 @@ public class SteamTurbineRecipe extends MultiblockRecipe {
 	}
 
 	public static SteamTurbineRecipe findFuel(FluidStack fluidInput) {
-		if (fluidInput == null) return null;
-		for (SteamTurbineRecipe recipe : recipeList) {
+		if(fluidInput == null) return null;
+		for(SteamTurbineRecipe recipe : recipeList) {
 			if(recipe.fluidInput != null && (fluidInput.containsFluid(recipe.fluidInput))) return recipe;
 		}
 		return null;
 	}
 
 	public static SteamTurbineRecipe findFuelByFluid(Fluid fluidInput) {
-		if (fluidInput == null) return null;
+		if(fluidInput == null) return null;
 		for(SteamTurbineRecipe recipe : recipeList) {
-			if (recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
+			if(recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
 		}
 		return null;
 	}

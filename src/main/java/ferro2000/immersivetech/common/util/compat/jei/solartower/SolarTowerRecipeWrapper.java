@@ -2,12 +2,12 @@ package ferro2000.immersivetech.common.util.compat.jei.solartower;
 
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.common.util.compat.jei.MultiblockRecipeWrapper;
-import ferro2000.immersivetech.api.crafting.SolarTowerRecipe;
+
 import ferro2000.immersivetech.common.Config;
+
 import mezz.jei.api.gui.ITickTimer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
 
 import java.text.DecimalFormat;
 

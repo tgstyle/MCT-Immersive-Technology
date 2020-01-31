@@ -1,6 +1,6 @@
 package ferro2000.immersivetech.common.util.network;
 
-import ferro2000.immersivetech.common.util.ITSoundHandler;
+import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

@@ -26,11 +26,10 @@ import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.common.Config;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityCokeOvenPreheater;
 import ferro2000.immersivetech.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
-
-import ferro2000.immersivetech.common.util.ITSoundHandler;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
+import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -116,7 +115,6 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 	@Override
 	public void disassemble() {
 		if (!isDummy()) {
-			NBTTagCompound tag = new NBTTagCompound();
 			BlockPos center = getPos();
 			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 		}
