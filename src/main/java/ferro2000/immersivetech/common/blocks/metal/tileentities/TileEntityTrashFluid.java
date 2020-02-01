@@ -1,12 +1,17 @@
 package ferro2000.immersivetech.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 
+import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.common.Config.ITConfig;
 
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -15,24 +20,82 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable, IFluidTank {
+public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable, IFluidTank, IBlockOverlayText {
 
 	private static int trashFluidSize = ITConfig.Machines.fluidTrashTankSize;
 
 	public FluidTank tank = new FluidTank(trashFluidSize);
 
+	private int acceptedAmount = 0;
+	private int perSecond = 0;
+	private int updateClient = 1;
+	private int lastAmount;
+	private int times;
+
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+		acceptedAmount = nbt.getInteger("acceptedAmount");
+		perSecond = nbt.getInteger("perSecond");
+		this.readTank(nbt);
+	}
+
+	public void readTank(NBTTagCompound nbt) {
+		tank.readFromNBT(nbt.getCompoundTag("tank"));
 	}
 
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+		nbt.setInteger("acceptedAmount", acceptedAmount);
+		nbt.setInteger("perSecond", perSecond);
+		this.writeTank(nbt, false);
+	}
+
+	public void writeTank(NBTTagCompound nbt, boolean toItem) {
+		boolean write = tank.getFluidAmount() > 0;
+		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
+		if(!toItem || write) nbt.setTag("tank", tankTag);
 	}
 
 	@Override
 	public void update() {
 		if(world.isRemote) return;
-		if(tank.getFluidAmount() > 0) tank.setFluid(null);
+		boolean update = false;
+		if(updateClient >= 20) {
+			if(lastAmount > 0 && times > 0) {
+				acceptedAmount = lastAmount;
+				perSecond = times;
+				lastAmount = 0;
+				times = 0;
+				update = true;
+			} else if(acceptedAmount != 0 && perSecond != 0) {
+				acceptedAmount = 0;
+				perSecond = 0;
+				update = true;
+			}
+			updateClient = 1;
+		} else {
+			updateClient++;
+		}
+		if(tank.getFluidAmount() > 0) {
+			lastAmount = tank.getFluidAmount();
+			times++;
+			tank.setFluid(null);
+		}
+		if(update) {
+			this.markDirty();
+			this.markContainingBlockForUpdate(null);
+		}
+	}
+
+	@Override
+	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
+		String amount = I18n.format(ImmersiveTech.MODID + ".osd.trash_fluid.trashing") + ": " + acceptedAmount + " mB / " + perSecond + "xS";
+		return new String[]{amount};
+	}
+
+	@Override
+	public boolean useNixieFont(EntityPlayer player, RayTraceResult mop) {
+		return false;
 	}
 
 	@Override
@@ -70,12 +133,12 @@ public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable,
 
 	@Override
 	public int fill(FluidStack resource, boolean doFill) {
-		return Math.min(resource.amount, tank.getCapacity());
+		return 0;
 	}
 
 	@Override
 	public FluidStack drain(int maxDrain, boolean doDrain) {
-		return tank.drain(maxDrain, doDrain);
+		return tank.drain(0, false);
 	}
 
 }

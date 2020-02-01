@@ -34,8 +34,9 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 
 	public FluidTank tank = new FluidTank(100000);
 
-	private int acceptedAmount;
+	private int acceptedAmount = 0;
 	private int updateClient = 0;
+	private int lastAmount;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -79,7 +80,11 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 				IFluidHandler output = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite());
 				FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), tank.getCapacity(), true);
 				accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
-				if(updateClient == 0) acceptedAmount = accepted.amount;
+				if(accepted.amount >= 0) lastAmount = accepted.amount;
+				if(updateClient >= 40) {
+					acceptedAmount = lastAmount;
+					lastAmount = 0;
+				}
 				output.fill(accepted, true);
 				update=true;
 			}
@@ -88,8 +93,8 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
 		}
-		if(updateClient >= 19) {
-			updateClient = 0;
+		if(updateClient >= 40) {
+			updateClient = 1;
 		} else {
 			updateClient++;
 		}
@@ -146,12 +151,12 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 
 	@Override
 	public int fill(FluidStack resource, boolean doFill) {
-		return resource.amount;
+		return 0;
 	}
 
 	@Override
 	public FluidStack drain(int maxDrain, boolean doDrain) {
-		return tank.drain(maxDrain, doDrain);
+		return tank.drain(0, false);
 	}
 
 	@Override

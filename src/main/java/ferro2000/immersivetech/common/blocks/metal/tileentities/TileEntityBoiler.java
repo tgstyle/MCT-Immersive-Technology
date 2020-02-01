@@ -48,7 +48,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	public TileEntityBoiler() {
 		super(MultiblockBoiler.instance, new int[] { 3, 3, 5 }, 0, true);
 	}
-	
+
 	private static int inputFuelTankSize = ITConfig.Machines.boiler_fuel_tankSize;
 	private static int inputTankSize = ITConfig.Machines.boiler_input_tankSize;
 	private static int outputTankSize = ITConfig.Machines.boiler_output_tankSize;
@@ -207,7 +207,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 				if(inventory.get(4).getCount() <= 0) inventory.set(4, ItemStack.EMPTY);
 				update = true;
 			}
-			if(this.tanks[2].getFluidAmount() >0) {
+			if(this.tanks[2].getFluidAmount() > 0) {
 				FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[2].getFluid(), Math.min(this.tanks[2].getFluidAmount(), 1000), true);
 				BlockPos outputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), mirrored ? 2 : -2, 2, 1, facing);
 				IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
