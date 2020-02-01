@@ -23,7 +23,7 @@ import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
 import ferro2000.immersivetech.common.Config.ITConfig.Machines.Alternator;
 import ferro2000.immersivetech.common.Config.ITConfig.MechanicalEnergy;
-import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
+import ferro2000.immersivetech.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockAlternator;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
