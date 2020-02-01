@@ -10,7 +10,7 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IEForgeEnergyWrapper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 
-import ferro2000.immersivetech.common.Config.ITConfig;
+import ferro2000.immersivetech.common.Config.ITConfig.Machines.CokeOvenPreheater;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,13 +23,14 @@ import net.minecraft.util.math.BlockPos;
 public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIEInternalFluxHandler, IDirectionalTile, IHasDummyBlocks {
 	public EnumFacing facing = EnumFacing.NORTH;
 
+	private static int cokeOvenConsumption = CokeOvenPreheater.cokeOvenPreheater_energy_consumption;
+
 	public FluxStorage energyStorage = new FluxStorage(8000);
 
 	public boolean dummy = false;
 	public boolean active = false;
 
 	private int dummyNum = 0;
-	private static int cokeOvenConsumption = ITConfig.Machines.cokeOvenPreheater_consumption;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {

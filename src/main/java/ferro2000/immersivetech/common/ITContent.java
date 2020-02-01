@@ -11,8 +11,8 @@ import ferro2000.immersivetech.api.crafting.BoilerRecipe;
 import ferro2000.immersivetech.api.crafting.DistillerRecipe;
 import ferro2000.immersivetech.api.crafting.SolarTowerRecipe;
 import ferro2000.immersivetech.api.crafting.SteamTurbineRecipe;
-import ferro2000.immersivetech.common.Config.ITConfig;
-import ferro2000.immersivetech.common.Config.ITConfig.Machines;
+import ferro2000.immersivetech.common.Config.ITConfig.*;
+import ferro2000.immersivetech.common.Config.ITConfig.Machines.*;
 import ferro2000.immersivetech.common.blocks.BlockITBase;
 import ferro2000.immersivetech.common.blocks.BlockITFluid;
 import ferro2000.immersivetech.common.blocks.connectors.BlockConnectors;
@@ -141,33 +141,33 @@ public class ITContent {
 		registerTile(TileEntityTrashEnergy.class);
 		registerTile(TileEntityBarrel.class);
 		
-		/*MULTIBLOCKS*/
-		if(Machines.enable_distiller) {
+		/*MULTIBLOCK TILE ENTITIES*/
+		if(Multiblock.enable_distiller) {
 			registerTile(TileEntityDistiller.class);
 			MultiblockHandler.registerMultiblock(MultiblockDistiller.instance);
 		}
-		if(Machines.enable_alternator) {
+		if(Multiblock.enable_alternator) {
 			registerTile(TileEntityAlternator.class);
 			MultiblockHandler.registerMultiblock(MultiblockAlternator.instance);
 		}
-		if(Machines.enable_boiler) {
+		if(Multiblock.enable_boiler) {
 			registerTile(TileEntityBoiler.class);
 			MultiblockHandler.registerMultiblock(MultiblockBoiler.instance);
 		}
-		if(Machines.enable_cokeOvenAdvanced) {
+		if(Multiblock.enable_advancedCokeOven) {
 			registerTile(TileEntityCokeOvenAdvanced.class);
 			MultiblockHandler.registerMultiblock(MultiblockCokeOvenAdvanced.instance);
 			registerTile(TileEntityCokeOvenPreheater.class);
 		}
-		if(Machines.enable_solarReflector) {
+		if(Multiblock.enable_solarReflector) {
 			registerTile(TileEntitySolarReflector.class);
 			MultiblockHandler.registerMultiblock(MultiblockSolarReflector.instance);
 		}
-		if(Machines.enable_solarTower) {
+		if(Multiblock.enable_solarTower) {
 			registerTile(TileEntitySolarTower.class);
 			MultiblockHandler.registerMultiblock(MultiblockSolarTower.instance);
 		}
-		if(Machines.enable_steamTurbine) {
+		if(Multiblock.enable_steamTurbine) {
 			registerTile(TileEntitySteamTurbine.class);
 			MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
 		}
@@ -176,15 +176,15 @@ public class ITContent {
 	@SubscribeEvent
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 		/*RECIPES*/
-		if(Machines.enable_boiler && Machines.register_boiler_recipes) {
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 1000), new FluidStack(FluidRegistry.WATER, 2000), 20);
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 1500), new FluidStack(fluidDistWater, 2000), 20);
+		if(Multiblock.enable_boiler && Recipes.register_boiler_recipes) {
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 1000), new FluidStack(FluidRegistry.WATER, 2000), 30);
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 1500), new FluidStack(fluidDistWater, 2000), 30);
 			BoilerRecipe.addFuel(new FluidStack(IEContent.fluidBiodiesel, 5), 1, 10);
 		}
-		if(Machines.enable_distiller && Machines.register_distiller_recipes) {
-			ResourceLocation distillerItemName = new ResourceLocation(ITConfig.Machines.distiller_outputItem);
-			int distillerItemMeta = ITConfig.Machines.distiller_outputItemMeta;
-			float distillerChance = ITConfig.Machines.distiller_outputItemChance;
+		if(Multiblock.enable_distiller && Recipes.register_distiller_recipes) {
+			ResourceLocation distillerItemName = new ResourceLocation(Distiller.distiller_output_item);
+			int distillerItemMeta = Distiller.distiller_output_itemMeta;
+			float distillerChance = Distiller.distiller_output_itemChance;
 			if(!ForgeRegistries.ITEMS.containsKey(distillerItemName)) {
 				ITLogger.error("Item for Salt is invalid, setting default. ", distillerItemName);
 				distillerItemName = itemMaterial.getRegistryName();
@@ -193,11 +193,11 @@ public class ITContent {
 			ItemStack distillerItem = new ItemStack(ForgeRegistries.ITEMS.getValue(distillerItemName), 1, distillerItemMeta);
 			DistillerRecipe.addRecipe(new FluidStack(fluidDistWater, 1000), new FluidStack(FluidRegistry.WATER, 2000), distillerItem, 10000, 20, distillerChance);
 		}
-		if(Machines.enable_solarTower && Machines.register_solarTower_recipes) {
+		if(Multiblock.enable_solarTower && Recipes.register_solarTower_recipes) {
 			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 1000), new FluidStack(FluidRegistry.WATER, 2000), 60);
 			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 1500), new FluidStack(fluidDistWater, 2000), 60);
 		}
-		if(Machines.enable_steamTurbine && Machines.register_steamTurbine_recipes) {
+		if(Multiblock.enable_steamTurbine && Recipes.register_steamTurbine_recipes) {
 			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 10), new FluidStack(fluidSteam, 100), 1);
 		}
 	}
@@ -225,23 +225,23 @@ public class ITContent {
 		unlocalized = unlocalized.replaceFirst("\\.", ":");
 		return new ResourceLocation(unlocalized);
 	}
-	
+
 	public static void registerOres() {
 		/*ORE DICTIONARY*/
 		OreDictionary.registerOre("dustSalt", itemMaterial);
 		OreDictionary.registerOre("itemSalt", itemMaterial);
 		OreDictionary.registerOre("foodSalt", itemMaterial);
 	}
-	
+
 	public static void registerVariables() {
-		Config.manual_int.put("steamTurbine_timeToMax", ((ITConfig.Machines.mechanicalEnergy_maxSpeed / ITConfig.Machines.steamTurbine_speedGainPerTick) / 20));
-		Config.manual_int.put("solarTower_minRange", ITConfig.Machines.solarTower_minRange);
-		Config.manual_int.put("solarTower_maxRange", ITConfig.Machines.solarTower_maxRange);
-		Config.manual_double.put("boiler_cooldownTime", ((ITConfig.Machines.boiler_workingHeatLevel / ITConfig.Machines.boiler_progressLossInTicks) / 20));
-		Config.manual_int.put("alternator_RfPerTickPerPort", (ITConfig.Machines.alternator_RfPerTick / 6));
-		Config.manual_int.put("alternator_energyStorage", ITConfig.Machines.alternator_energyStorage);
-		Config.manual_int.put("alternator_energyPerTick", ITConfig.Machines.alternator_RfPerTick);
-		Config.manual_int.put("cokeOvenPreheater_consumption", ITConfig.Machines.cokeOvenPreheater_consumption);
+		Config.manual_int.put("steamTurbine_timeToMax", ((MechanicalEnergy.mechanicalEnergy_speed_max / SteamTurbine.steamTurbine_speed_gainPerTick) / 20));
+		Config.manual_int.put("solarTower_minRange", SolarReflector.solarReflector_minRange);
+		Config.manual_int.put("solarTower_maxRange", SolarReflector.solarReflector_maxRange);
+		Config.manual_double.put("boiler_cooldownTime", ((Boiler.boiler_heat_workingLevel / Boiler.boiler_progress_lossInTicks) / 20));
+		Config.manual_int.put("alternator_RfPerTickPerPort", (Alternator.alternator_energy_perTick / 6));
+		Config.manual_int.put("alternator_energyStorage", Alternator.alternator_energy_capacitorSize);
+		Config.manual_int.put("alternator_energyPerTick", Alternator.alternator_energy_perTick);
+		Config.manual_int.put("cokeOvenPreheater_consumption", CokeOvenPreheater.cokeOvenPreheater_energy_consumption);
 	}
 
 }

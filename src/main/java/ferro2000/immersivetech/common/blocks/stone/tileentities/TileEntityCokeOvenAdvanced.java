@@ -23,13 +23,14 @@ import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.ITUtils;
-import ferro2000.immersivetech.common.Config;
+import ferro2000.immersivetech.common.Config.ITConfig.Machines.AdvancedCokeOven;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityCokeOvenPreheater;
 import ferro2000.immersivetech.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
 import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,9 +56,9 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEntityCokeOvenAdvanced> implements IIEInventory, IActiveState, IGuiTile, IProcessTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 	private static final int[] size = { 4, 3, 3 };
-	public static float baseSpeed = Config.ITConfig.Machines.cokeOvenAdv_baseSpeed;
-	public static float preheaterAdd = Config.ITConfig.Machines.cokeOvenAdv_preheaterSpeedIncrease;
-	public static float preheaterMult = Config.ITConfig.Machines.cokeOvenAdv_preheaterSpeedMultiplier;
+	public static float baseSpeed = AdvancedCokeOven.advancedCokeOven_speed_base;
+	public static float preheaterAdd = AdvancedCokeOven.advancedCokeOven_preheater_speed_increase;
+	public static float preheaterMult = AdvancedCokeOven.advancedCokeOven_preheater_speed_multiplier;
 
 	public FluidTank tank = new FluidTank(24000);
 

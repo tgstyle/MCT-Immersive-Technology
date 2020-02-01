@@ -3,7 +3,7 @@ package ferro2000.immersivetech.common.util.compat.jei.boiler;
 import java.util.List;
 
 import ferro2000.immersivetech.api.crafting.BoilerRecipe;
-import ferro2000.immersivetech.common.Config;
+import ferro2000.immersivetech.common.Config.ITConfig.Machines.Boiler;
 import ferro2000.immersivetech.common.ITContent;
 import ferro2000.immersivetech.common.blocks.metal.types.BlockType_MetalMultiblock;
 import ferro2000.immersivetech.common.util.compat.jei.ITRecipeCategory;
@@ -23,8 +23,8 @@ public class BoilerRecipeCategory extends ITRecipeCategory<BoilerRecipe, BoilerR
 	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_boiler_jei.png");
 	private final IDrawable tankOverlay;
 
-	private static int inputTankSize = Config.ITConfig.Machines.boiler_input_tankSize;
-	private static int outputTankSize = Config.ITConfig.Machines.boiler_output_tankSize;
+	private static int inputTankSize = Boiler.boiler_input_tankSize;
+	private static int outputTankSize = Boiler.boiler_output_tankSize;
 
 	@SuppressWarnings("deprecation")
 	public BoilerRecipeCategory(IGuiHelper helper) {

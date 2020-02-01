@@ -10,7 +10,7 @@ import blusunrize.immersiveengineering.common.util.EnergyHelper.IEForgeEnergyWra
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 
 import ferro2000.immersivetech.ImmersiveTech;
-import ferro2000.immersivetech.common.Config.ITConfig;
+import ferro2000.immersivetech.common.Config.ITConfig.Trash;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,7 +21,7 @@ import net.minecraft.util.math.RayTraceResult;
 
 public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable, IIEInternalFluxHandler, IConfigurableSides, IBlockOverlayText {
 
-	private static int trashEnergySize = ITConfig.Machines.energyTrashCapacitorSize;
+	private static int trashEnergySize = Trash.trash_energy_capacitorSize;
 
 	FluxStorage energyStorage = new FluxStorage(trashEnergySize);
 
