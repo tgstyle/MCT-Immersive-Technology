@@ -35,7 +35,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	private int redstoneChannelsending = 0;
 	private int lastOutput = 0;
 	private int target = 40;
-	private int tick = 0;
+	private int tick = 1;
 
 	private final int maxTarget = 600;
 	private final int minTarget = 10;
@@ -54,27 +54,6 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 		redstoneChannelsending = nbt.getInteger("redstoneChannelsending");
 		target = nbt.getInteger("target");
 		tick = nbt.getInteger("tick");
-	}
-
-	@Override
-	public void update() {
-		if(!world.isRemote) {
-			if(face == null) face = facing == EnumFacing.SOUTH ? EnumFacing.UP : facing == EnumFacing.NORTH ? EnumFacing.DOWN : facing == EnumFacing.WEST ? EnumFacing.NORTH : EnumFacing.SOUTH;
-			if(position == null) position = this.getPos().offset(face);
-			if(!stopTimer(position)) {
-				if(tick == target) {
-					this.lastOutput = 1;
-					this.tick = 0;
-					this.rsDirty = true;
-				} else {
-					this.tick++;
-					if(this.lastOutput == 1) {
-						this.lastOutput = 0;
-					}
-				}
-			}
-		}
-		super.update();
 	}
 
 	public int getTarget() {
@@ -103,12 +82,33 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 				}
 			}
 		}
-		tick = 0;
+		tick = 1;
 	}
 
 	private boolean stopTimer(BlockPos pos) {
 		if(world.isSidePowered(pos, face)) return true;
 		return false;
+	}
+
+	@Override
+	public void update() {
+		if(!world.isRemote) {
+			if(face == null) face = facing == EnumFacing.SOUTH ? EnumFacing.UP : facing == EnumFacing.NORTH ? EnumFacing.DOWN : facing == EnumFacing.WEST ? EnumFacing.NORTH : EnumFacing.SOUTH;
+			if(position == null) position = this.getPos().offset(face);
+			if(!stopTimer(position)) {
+				if(tick == target) {
+					this.lastOutput = 1;
+					this.tick = 1;
+					this.rsDirty = true;
+				} else {
+					this.tick++;
+					if(this.lastOutput == 1) {
+						this.lastOutput = 0;
+					}
+				}
+			}
+		}
+		super.update();
 	}
 
 	@Override
