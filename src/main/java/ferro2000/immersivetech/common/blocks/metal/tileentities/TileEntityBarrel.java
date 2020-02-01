@@ -80,23 +80,23 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 				IFluidHandler output = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite());
 				FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), tank.getCapacity(), true);
 				accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
-				if(accepted.amount >= 0) lastAmount = accepted.amount;
-				if(updateClient >= 40) {
-					acceptedAmount = lastAmount;
-					lastAmount = 0;
+				if(accepted.amount > 0) {
+					lastAmount = accepted.amount;
+					output.fill(accepted, true);
+					update=true;
 				}
-				output.fill(accepted, true);
-				update=true;
 			}
+		}
+		if(updateClient >= 20) {
+			acceptedAmount = lastAmount;
+			lastAmount = 0;
+			updateClient = 1;
+		} else {
+			updateClient++;
 		}
 		if(update) {
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
-		}
-		if(updateClient >= 40) {
-			updateClient = 1;
-		} else {
-			updateClient++;
 		}
 	}
 
@@ -151,7 +151,7 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 
 	@Override
 	public int fill(FluidStack resource, boolean doFill) {
-		return 0;
+		return tank.getCapacity();
 	}
 
 	@Override
