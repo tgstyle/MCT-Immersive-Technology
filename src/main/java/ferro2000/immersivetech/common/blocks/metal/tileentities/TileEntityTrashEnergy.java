@@ -61,26 +61,20 @@ public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable
 	public void update() {
 		if(world.isRemote) return;
 		boolean update = false;
-		if(updateClient >= 20) {
-			if(lastAmount > 0 && times > 0) {
-				acceptedAmount = lastAmount;
-				perSecond = times;
-				lastAmount = 0;
-				times = 0;
-				update = true;
-			} else if(acceptedAmount != 0 && perSecond != 0) {
-				acceptedAmount = 0;
-				perSecond = 0;
-				update = true;
-			}
-			updateClient = 1;
-		} else {
-			updateClient++;
-		}
 		if(energyStorage.getEnergyStored() > 0) {
 			lastAmount = energyStorage.getEnergyStored();
 			times++;
 			energyStorage.setEnergy(0);
+		}
+		if(updateClient >= 20) {
+			acceptedAmount = lastAmount;
+			perSecond = times;
+			lastAmount = 0;
+			times = 0;
+			updateClient = 1;
+			update = true;
+		} else {
+			updateClient++;
 		}
 		if(update) {
 			this.markDirty();
@@ -92,7 +86,7 @@ public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		String amount = I18n.format(ImmersiveTech.MODID + ".osd.trash_energy.trashing") + ": " + acceptedAmount + " IF / " + perSecond + "xSec";
+		String amount = I18n.format(ImmersiveTech.MODID + ".osd.trash_energy.trashed") + ": " + acceptedAmount + " IF " + perSecond + " " + I18n.format(ImmersiveTech.MODID + ".osd.trash_energy.lastsecond");
 		return new String[]{amount};
 	}
 

@@ -60,26 +60,20 @@ public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable,
 	public void update() {
 		if(world.isRemote) return;
 		boolean update = false;
-		if(updateClient >= 20) {
-			if(lastAmount > 0 && times > 0) {
-				acceptedAmount = lastAmount;
-				perSecond = times;
-				lastAmount = 0;
-				times = 0;
-				update = true;
-			} else if(acceptedAmount != 0 && perSecond != 0) {
-				acceptedAmount = 0;
-				perSecond = 0;
-				update = true;
-			}
-			updateClient = 1;
-		} else {
-			updateClient++;
-		}
 		if(tank.getFluidAmount() > 0) {
 			lastAmount = tank.getFluidAmount();
 			times++;
 			tank.setFluid(null);
+		}
+		if(updateClient >= 20) {
+			acceptedAmount = lastAmount;
+			perSecond = times;
+			lastAmount = 0;
+			times = 0;
+			updateClient = 1;
+			update = true;
+		} else {
+			updateClient++;
 		}
 		if(update) {
 			this.markDirty();
@@ -89,7 +83,7 @@ public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable,
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		String amount = I18n.format(ImmersiveTech.MODID + ".osd.trash_fluid.trashing") + ": " + acceptedAmount + " mB / " + perSecond + "xSec";
+		String amount = I18n.format(ImmersiveTech.MODID + ".osd.trash_fluid.trashed") + ": " + acceptedAmount + " mB " + perSecond + " " + I18n.format(ImmersiveTech.MODID + ".osd.trash_fluid.lastsecond");
 		return new String[]{amount};
 	}
 
@@ -133,7 +127,7 @@ public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable,
 
 	@Override
 	public int fill(FluidStack resource, boolean doFill) {
-		return 0;
+		return tank.getCapacity();
 	}
 
 	@Override
