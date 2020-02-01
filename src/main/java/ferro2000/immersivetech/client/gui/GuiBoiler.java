@@ -2,8 +2,7 @@ package ferro2000.immersivetech.client.gui;
 
 import java.util.ArrayList;
 
-import ferro2000.immersivetech.common.Config;
-
+import ferro2000.immersivetech.common.Config.ITConfig.Machines.Boiler;
 import net.minecraft.util.text.TextFormatting;
 
 import org.lwjgl.opengl.GL11;
@@ -20,6 +19,8 @@ import net.minecraft.entity.player.InventoryPlayer;
 public class GuiBoiler extends GuiIEContainerBase {
 	TileEntityBoiler tile;
 
+	private static double workingHeatLevel = Boiler.boiler_heat_workingLevel;
+	
 	public GuiBoiler(InventoryPlayer inventoryPlayer, TileEntityBoiler tile) {
 		super(new ContainerBoiler(inventoryPlayer, tile));
 		this.tile=tile;
@@ -35,7 +36,7 @@ public class GuiBoiler extends GuiIEContainerBase {
 		ClientUtils.handleGuiTank(tile.tanks[2], guiLeft + 123, guiTop + 20, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_boiler.png", tooltip);
 		if(mx >= guiLeft + 100 && mx < guiLeft + 141 && my >= guiTop + 5 && my < guiTop + 14) {
 			tooltip.add("Heat Level");
-			tooltip.add(TextFormatting.RED + "" + tile.heatLevel + "/" + Config.ITConfig.Machines.boiler_workingHeatLevel);
+			tooltip.add(TextFormatting.RED + "" + tile.heatLevel + "/" + workingHeatLevel);
 		}
 		if(!tooltip.isEmpty()) {
 			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, - 1);
@@ -49,7 +50,7 @@ public class GuiBoiler extends GuiIEContainerBase {
 		ClientUtils.bindTexture("immersivetech:textures/gui/gui_boiler.png");
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
-		int heatBarSize = (int)Math.round(41 * (tile.heatLevel / Config.ITConfig.Machines.boiler_workingHeatLevel));
+		int heatBarSize = (int)Math.round(41 * (tile.heatLevel / workingHeatLevel));
 
 		this.drawTexturedModalRect(guiLeft + 100, guiTop + 5, 176, 0, heatBarSize, 9);
 

@@ -1,7 +1,7 @@
 package ferro2000.immersivetech.api;
 
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
-import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
+import ferro2000.immersivetech.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityAlternator;
 
 import net.minecraft.tileentity.TileEntity;

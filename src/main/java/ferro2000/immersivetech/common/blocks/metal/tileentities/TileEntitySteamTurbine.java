@@ -15,13 +15,14 @@ import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
 import ferro2000.immersivetech.api.crafting.SteamTurbineRecipe;
-import ferro2000.immersivetech.common.Config;
-import ferro2000.immersivetech.common.Config.ITConfig;
-import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
+import ferro2000.immersivetech.common.Config.ITConfig.Machines.SteamTurbine;
+import ferro2000.immersivetech.common.Config.ITConfig.MechanicalEnergy;
+import ferro2000.immersivetech.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,14 +47,13 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 		super(MultiblockSteamTurbine.instance, new int[] { 4, 10, 3 }, 0, true);
 	}
 
-	private static int maxSpeed = ITConfig.Machines.mechanicalEnergy_maxSpeed;
-	private static int speedGainPerTick = ITConfig.Machines.steamTurbine_speedGainPerTick;
-	private static int speedLossPerTick = ITConfig.Machines.steamTurbine_speedLossPerTick;
-	private static int energyMaxSpeed = ITConfig.Machines.mechanicalEnergy_maxSpeed;
-	private static int inputTankSize = Config.ITConfig.Machines.steamTurbine_input_tankSize;
-	private static int outputTankSize = Config.ITConfig.Machines.steamTurbine_input_tankSize;
-	private static float maxRotationSpeed = ITConfig.Machines.steamTurbine_maxRotationSpeed;
-	
+	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
+	private static int speedGainPerTick = SteamTurbine.steamTurbine_speed_gainPerTick;
+	private static int speedLossPerTick = SteamTurbine.steamTurbine_speed_lossPerTick;
+	private static int inputTankSize = SteamTurbine.steamTurbine_input_tankSize;
+	private static int outputTankSize = SteamTurbine.steamTurbine_input_tankSize;
+	private static float maxRotationSpeed = SteamTurbine.steamTurbine_speed_maxRotation;
+
 	public FluidTank[] tanks = new FluidTank[] {
 		new FluidTank(inputTankSize),
 		new FluidTank(outputTankSize)
@@ -140,7 +140,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 	public void update() {
 		super.update();
 		if(isDummy()) return;
-		float rotationSpeed = speed == 0 ? 0f : ((float) speed / (float) energyMaxSpeed) * maxRotationSpeed;
+		float rotationSpeed = speed == 0 ? 0f : ((float) speed / (float) maxSpeed) * maxRotationSpeed;
 		if(ITUtils.setRotationAngle(animation, rotationSpeed) && !world.isRemote) {
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);

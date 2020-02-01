@@ -3,8 +3,9 @@ package ferro2000.immersivetech.common.util.compat.top;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 
 import ferro2000.immersivetech.ImmersiveTech;
-import ferro2000.immersivetech.common.Config;
-import ferro2000.immersivetech.common.blocks.ITBlockInterface;
+import ferro2000.immersivetech.common.Config.ITConfig.Machines.Boiler;
+import ferro2000.immersivetech.common.Config.ITConfig.MechanicalEnergy;
+import ferro2000.immersivetech.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntityBoiler;
 import ferro2000.immersivetech.common.util.compat.ITCompatModule;
 import mcjty.theoneprobe.api.*;
@@ -23,6 +24,10 @@ import java.util.function.Function;
 	* Created by Kurtchekov on 2019-01-01.
 	*/
 public class OneProbeHelper extends ITCompatModule implements Function<ITheOneProbe, Void> {
+
+	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
+	private static double workingHeatLevel = Boiler.boiler_heat_workingLevel;
+	
 
 	@Override
 	public void preInit() {
@@ -58,7 +63,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 				TileEntityMultiblockPart<?> master = ((TileEntityMultiblockPart<?>)te).master();
 				if(master == null) return;
 				TileEntityBoiler boiler = (TileEntityBoiler)master;
-				int current = (int)(boiler.heatLevel / Config.ITConfig.Machines.boiler_workingHeatLevel * 100);
+				int current = (int)(boiler.heatLevel / workingHeatLevel * 100);
 				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2)).text("Heat Level").progress(current, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
 			}
 		}
@@ -73,11 +78,11 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 		@Override
 		public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
 			TileEntity te = world.getTileEntity(data.getPos());
-			if(te instanceof ITBlockInterface.IMechanicalEnergy) {
+			if(te instanceof IMechanicalEnergy) {
 				TileEntityMultiblockPart<?> master = ((TileEntityMultiblockPart<?>)te).master();
 				if(master == null) return;
-				int current = ((ITBlockInterface.IMechanicalEnergy)master).getEnergy();
-				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2)).text("Speed").progress(current, Config.ITConfig.Machines.mechanicalEnergy_maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("RPM"));
+				int current = ((IMechanicalEnergy)master).getEnergy();
+				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2)).text("Speed").progress(current, maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("RPM"));
 			}
 		}
 	}

@@ -14,13 +14,14 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.crafting.SolarTowerRecipe;
-import ferro2000.immersivetech.common.Config;
-import ferro2000.immersivetech.common.Config.ITConfig;
+import ferro2000.immersivetech.common.Config.ITConfig.Machines.SolarReflector;
+import ferro2000.immersivetech.common.Config.ITConfig.Machines.SolarTower;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
 import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,10 +49,10 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 		super(MultiblockSolarTower.instance, new int[] { 7, 3, 3 }, 0, true);
 	}
 	
-	private static int solarMaxRange = ITConfig.Machines.solarTower_maxRange;
-	private static int solarMinRange = ITConfig.Machines.solarTower_minRange;
-	private static float speedMult = Config.ITConfig.Machines.solarTower_speedMultiplier;
-	private static float reflectorSpeedMult = Config.ITConfig.Machines.solarTower_reflectorSpeedMultiplier;
+	private static int solarMaxRange = SolarReflector.solarReflector_maxRange;
+	private static int solarMinRange = SolarReflector.solarReflector_minRange;
+	private static float speedMult = SolarTower.solarTower_speed_multiplier;
+	private static float reflectorSpeedMult = SolarTower.solarTower_solarReflector_speed_multiplier;
 
 	public FluidTank[] tanks = new FluidTank[] {
 		new FluidTank(32000),

@@ -3,7 +3,7 @@ package ferro2000.immersivetech.common.util.compat.jei.solartower;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.common.util.compat.jei.MultiblockRecipeWrapper;
 
-import ferro2000.immersivetech.common.Config;
+import ferro2000.immersivetech.common.Config.ITConfig.Machines.SolarTower;
 
 import mezz.jei.api.gui.ITickTimer;
 import net.minecraft.client.Minecraft;
@@ -15,8 +15,8 @@ public class SolarTowerRecipeWrapper extends MultiblockRecipeWrapper {
 
 	public ITickTimer timer;
 	private MultiblockRecipe recipe;
-	private static float speedMult = Config.ITConfig.Machines.solarTower_speedMultiplier;
-	private static float reflectorSpeedMult = Config.ITConfig.Machines.solarTower_reflectorSpeedMultiplier;
+	private static float speedMult = SolarTower.solarTower_speed_multiplier;
+	private static float reflectorSpeedMult = SolarTower.solarTower_solarReflector_speed_multiplier;
 	private static DecimalFormat format = new DecimalFormat("#.####");
 
 	public SolarTowerRecipeWrapper(MultiblockRecipe recipe) {

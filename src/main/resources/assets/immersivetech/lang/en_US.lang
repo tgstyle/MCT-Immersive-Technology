@@ -71,9 +71,14 @@ desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=Advanced Coke Oven
 #CONNECTORS
 tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
 
+
 #OSD
 immersivetech.osd.barrel.output=output
 immersivetech.osd.barrel.empty=Empty!
+immersivetech.osd.trash_energy.trashed=Trashed
+immersivetech.osd.trash_energy.lastsecond=x LastSec.
+immersivetech.osd.trash_fluid.trashed=Trashed
+immersivetech.osd.trash_fluid.lastsecond=x LastSec.
 
 #MANUAL
 ie.manual.category.it.name=Immersive Technology

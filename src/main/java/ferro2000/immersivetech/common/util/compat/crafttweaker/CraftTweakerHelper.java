@@ -7,7 +7,7 @@ import crafttweaker.api.item.IngredientStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.oredict.IOreDictEntry;
 
-import ferro2000.immersivetech.common.Config.ITConfig.Machines;
+import ferro2000.immersivetech.common.Config.ITConfig.Machines.Multiblock;
 import ferro2000.immersivetech.common.util.compat.ITCompatModule;
 
 import net.minecraft.item.ItemStack;
@@ -23,10 +23,10 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 public class CraftTweakerHelper extends ITCompatModule {
 	@Override
 	public void preInit() {
-		if(Machines.enable_boiler) CraftTweakerAPI.registerClass(Boiler.class);
-		if(Machines.enable_distiller) CraftTweakerAPI.registerClass(Distiller.class);
-		if(Machines.enable_solarTower) CraftTweakerAPI.registerClass(SolarTower.class);
-		if(Machines.enable_steamTurbine) CraftTweakerAPI.registerClass(SteamTurbine.class);
+		if(Multiblock.enable_boiler) CraftTweakerAPI.registerClass(Boiler.class);
+		if(Multiblock.enable_distiller) CraftTweakerAPI.registerClass(Distiller.class);
+		if(Multiblock.enable_solarTower) CraftTweakerAPI.registerClass(SolarTower.class);
+		if(Multiblock.enable_steamTurbine) CraftTweakerAPI.registerClass(SteamTurbine.class);
 	}
 
 	@Override
