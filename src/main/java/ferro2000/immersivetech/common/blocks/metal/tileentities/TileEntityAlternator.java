@@ -21,13 +21,15 @@ import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.client.MechanicalEnergyAnimation;
-import ferro2000.immersivetech.common.Config.ITConfig;
+import ferro2000.immersivetech.common.Config.ITConfig.Machines.Alternator;
+import ferro2000.immersivetech.common.Config.ITConfig.MechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.ITBlockInterface.IMechanicalEnergy;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockAlternator;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
 import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,16 +47,15 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAlternator> implements IMechanicalEnergy, IAdvancedSelectionBounds, IAdvancedCollisionBounds, IFluxProvider, IIEInternalFluxHandler {
-	private static int[] size = new int[] {3, 4, 3};	
+	private static int[] size = new int[] {3, 4, 3};
+	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
+	private static int rfPerTick = Alternator.alternator_energy_perTick;
+	private static int rfPerTickPerPort = rfPerTick / 6;
 
-	FluxStorage energyStorage = new FluxStorage(ITConfig.Machines.alternator_energyStorage,rfPerTick,rfPerTickPerPort);
+	FluxStorage energyStorage = new FluxStorage(Alternator.alternator_energy_capacitorSize,rfPerTick,rfPerTickPerPort);
 
 	private BlockPos[] EnergyOutputPositions = new BlockPos[6];
 
-	private static int maxSpeed = ITConfig.Machines.mechanicalEnergy_maxSpeed;
-	private static int rfPerTick = ITConfig.Machines.alternator_RfPerTick;
-	private static int rfPerTickPerPort = rfPerTick / 6;
-	
 	public int speed;
 
 	private float clientEnergyPercentage;

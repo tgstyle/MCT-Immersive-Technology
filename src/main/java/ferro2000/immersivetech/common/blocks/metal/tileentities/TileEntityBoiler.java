@@ -16,7 +16,7 @@ import ferro2000.immersivetech.api.ITLib;
 import ferro2000.immersivetech.api.ITUtils;
 import ferro2000.immersivetech.api.crafting.BoilerRecipe;
 import ferro2000.immersivetech.api.crafting.BoilerRecipe.BoilerFuelRecipe;
-import ferro2000.immersivetech.common.Config.ITConfig;
+import ferro2000.immersivetech.common.Config.ITConfig.Machines.Boiler;
 import ferro2000.immersivetech.common.blocks.metal.multiblocks.MultiblockBoiler;
 import ferro2000.immersivetech.common.util.ITSounds;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
@@ -49,9 +49,12 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		super(MultiblockBoiler.instance, new int[] { 3, 3, 5 }, 0, true);
 	}
 
-	private static int inputFuelTankSize = ITConfig.Machines.boiler_fuel_tankSize;
-	private static int inputTankSize = ITConfig.Machines.boiler_input_tankSize;
-	private static int outputTankSize = ITConfig.Machines.boiler_output_tankSize;
+	private static int inputFuelTankSize = Boiler.boiler_fuel_tankSize;
+	private static int inputTankSize = Boiler.boiler_input_tankSize;
+	private static int outputTankSize = Boiler.boiler_output_tankSize;
+	private static int heatLossPerTick = Boiler.boiler_heat_lossPerTick;
+	private static int progressLossPerTick = Boiler.boiler_progress_lossInTicks;
+	private static double workingHeatLevel = Boiler.boiler_heat_workingLevel;
 
 	public FluidTank[] tanks = new FluidTank[] {
 		new FluidTank(inputFuelTankSize), 
@@ -98,13 +101,13 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			burnRemaining = 0;
 			return true;
 		}
-		heatLevel = Math.min(lastFuel.getHeat() + heatLevel, ITConfig.Machines.boiler_workingHeatLevel);
+		heatLevel = Math.min(lastFuel.getHeat() + heatLevel, workingHeatLevel);
 		return previousHeatLevel != heatLevel;
 	}
 
 	private boolean cooldown() {
 		double previousHeatLevel = heatLevel;
-		heatLevel = Math.max(heatLevel - ITConfig.Machines.boiler_heatLossPerTick, 0);
+		heatLevel = Math.max(heatLevel - heatLossPerTick, 0);
 		return previousHeatLevel != heatLevel;
 	}
 
@@ -114,7 +117,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			recipeTimeRemaining = 0;
 			return true;
 		}
-		recipeTimeRemaining = Math.min(recipeTimeRemaining + ITConfig.Machines.boiler_progressLossInTicks, lastRecipe.getTotalProcessTime());
+		recipeTimeRemaining = Math.min(recipeTimeRemaining + progressLossPerTick, lastRecipe.getTotalProcessTime());
 		return previousProgress != recipeTimeRemaining;
 	}
 
@@ -134,7 +137,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 
 	public void handleSounds() {
 		BlockPos center = getPos();
-		float level = (float) (heatLevel / ITConfig.Machines.boiler_workingHeatLevel);
+		float level = (float) (heatLevel / workingHeatLevel);
 		if(level == 0) ITSoundHandler.StopSound(center);
 		else {
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -186,7 +189,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 				if(heatUp()) update = true;
 			} else if(cooldown()) update = true;
 		} else if(cooldown()) update = true;
-		if(heatLevel >= ITConfig.Machines.boiler_workingHeatLevel) {
+		if(heatLevel >= workingHeatLevel) {
 			if(recipeTimeRemaining > 0) {
 				if(gainProgress()) update = true;
 			} else if(tanks[1].getFluid() != null) {

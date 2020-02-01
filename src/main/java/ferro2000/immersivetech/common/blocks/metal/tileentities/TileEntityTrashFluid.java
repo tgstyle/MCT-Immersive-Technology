@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 
 import ferro2000.immersivetech.ImmersiveTech;
-import ferro2000.immersivetech.common.Config.ITConfig;
+import ferro2000.immersivetech.common.Config.ITConfig.Trash;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,7 +22,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable, IFluidTank, IBlockOverlayText {
 
-	private static int trashFluidSize = ITConfig.Machines.fluidTrashTankSize;
+	private static int trashFluidSize = Trash.trash_fluid_tankSize;
 
 	public FluidTank tank = new FluidTank(trashFluidSize);
 
