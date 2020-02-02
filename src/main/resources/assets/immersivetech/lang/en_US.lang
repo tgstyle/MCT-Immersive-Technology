@@ -102,7 +102,7 @@ ie.manual.entry.boiler1=Applying a redstone signal to the control panel at the f
 ie.manual.entry.boiler2=Before being capable of boiling any water, the structure needs to warm up first, which requires fuel. If disabled or not fed with enough fuel, the structure will slowly cool down, taking about <config;d;boiler_cooldownTime> seconds to fully cool down from working temperature. The default fuel is Diesel.
 
 ie.manual.entry.distiller.name=Distiller
-ie.manual.entry.distiller.subtext=Clearest than water
+ie.manual.entry.distiller.subtext=Clearer than water
 ie.manual.entry.distiller0=The Distiller is a multiblock machine that turns Water in to Distilled Water and Salt.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron.
 ie.manual.entry.distiller1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>Water can be input into the Distiller via a hatch on the right that is marked with a blue dot. The hatch with the orange dot on the left is the liquid output and the other hatch on the back serves as a item output.<br>It needs energy to produce Distilled Water and Salt.<br>One bucket of Water produces 500 mB of Distilled Water.
 
