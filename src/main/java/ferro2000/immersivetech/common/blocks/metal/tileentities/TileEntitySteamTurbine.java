@@ -41,6 +41,8 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntitySteamTurbine, SteamTurbineRecipe> implements IAdvancedSelectionBounds, IAdvancedCollisionBounds, IMechanicalEnergy {
 	public TileEntitySteamTurbine() {
@@ -124,6 +126,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void onChunkUnload() {
 		if (!isDummy()) ITSoundHandler.StopSound(getPos().offset(facing, 5));

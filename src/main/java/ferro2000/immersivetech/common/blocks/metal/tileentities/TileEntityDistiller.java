@@ -39,6 +39,8 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDistiller, DistillerRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
@@ -91,6 +93,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void onChunkUnload() {
 		if (!isDummy()) ITSoundHandler.StopSound(getPos());
