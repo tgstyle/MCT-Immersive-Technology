@@ -42,6 +42,8 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySolarTower, SolarTowerRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
@@ -104,6 +106,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void onChunkUnload() {
 		if(!isDummy()) ITSoundHandler.StopSound(getPos());
