@@ -371,7 +371,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			else return resource.getFluid() == master.tanks[iTank].getFluid().getFluid();
 		}
 		if(pos == 5 && (side == null || side == (mirrored?facing.rotateY() : facing.rotateYCCW()))) {
-			if(master.tanks[1].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
+			if(master.tanks[1].getFluidAmount() >= master.tanks[1].getCapacity()) return false;
 			if(master.tanks[1].getFluid() == null) return BoilerRecipe.findRecipeByFluid(resource.getFluid()) != null;
 			else return resource.getFluid() == master.tanks[1].getFluid().getFluid();
 		}
