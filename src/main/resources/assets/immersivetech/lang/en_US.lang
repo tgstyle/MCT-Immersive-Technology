@@ -15,7 +15,7 @@ item.immersivetech.material.salt.name=Salt
 tile.immersivetech.fluidDistWater.name=Distilled Water
 tile.immersivetech.fluidSteam.name=Steam
 tile.immersivetech.fluidSlime.name=Liquid Slime
-fluid.dist_water=Distilled Water
+fluid.distwater=Distilled Water
 fluid.steam=Steam
 fluid.slime=Liquid Slime
 

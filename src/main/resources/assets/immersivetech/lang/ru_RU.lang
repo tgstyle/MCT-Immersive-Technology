@@ -15,7 +15,7 @@ item.immersivetech.material.salt.name=Соль
 tile.immersivetech.fluidDistWater.name=Дистиллированная вода
 tile.immersivetech.fluidSteam.name=Пар
 tile.immersivetech.fluidSlime.name=Жидкая слизь
-fluid.dist_water=Дистиллированная вода
+fluid.distwater=Дистиллированная вода
 fluid.steam=Пар
 fluid.slime=Жидкая слизь
 

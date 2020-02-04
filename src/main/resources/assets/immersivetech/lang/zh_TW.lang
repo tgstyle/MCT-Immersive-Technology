@@ -15,7 +15,7 @@ item.immersivetech.material.salt.name=鹽
 tile.immersivetech.fluidDistWater.name=蒸餾水
 tile.immersivetech.fluidSteam.name=蒸汽
 tile.immersivetech.fluidSlime.name=液體粘液
-fluid.dist_water=蒸餾水
+fluid.distwater=蒸餾水
 fluid.steam=蒸汽
 fluid.slime=液體粘液
 

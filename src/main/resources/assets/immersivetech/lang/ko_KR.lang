@@ -15,7 +15,7 @@ item.immersivetech.material.salt.name=소금
 tile.immersivetech.fluidDistWater.name=증류수
 tile.immersivetech.fluidSteam.name=증기
 tile.immersivetech.fluidSlime.name=액체 슬라임
-fluid.dist_water=증류수
+fluid.distwater=증류수
 fluid.steam=증기
 fluid.slime=액체 슬라임
 
