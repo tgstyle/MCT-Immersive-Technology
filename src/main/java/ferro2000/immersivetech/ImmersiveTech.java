@@ -56,7 +56,6 @@ public class ImmersiveTech {
 		ITLogger.logger = event.getModLog();
 		Config.preInit(event);
 		ITContent.preInit();
-		ITContent.registerVariables();
 		proxy.preInit();
 		ITCompatModule.doModulesPreInit();
 	}

@@ -32,6 +32,7 @@ import ferro2000.immersivetech.common.items.ItemITBase;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
 import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -185,7 +186,7 @@ public class ClientProxy extends CommonProxy {
 		ManualHelper.addEntry("redstone", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "redstone0", new ItemStack(ITContent.blockConnectors, 1, BlockType_Connectors.CONNECTORS_TIMER.getMeta())));
 	}
 
-	private static void mapFluidState(Block block, Fluid fluid) {
+	private static void mapFluidState(Block block, Fluid fluid)	{
 		Item item = Item.getItemFromBlock(block);
 		FluidStateMapper mapper = new FluidStateMapper(fluid);
 		if(item != Items.AIR) {
@@ -195,7 +196,7 @@ public class ClientProxy extends CommonProxy {
 		ModelLoader.setCustomStateMapper(block, mapper);
 	}
 
-	static class FluidStateMapper extends StateMapperBase implements ItemMeshDefinition {
+	static class FluidStateMapper extends StateMapperBase implements ItemMeshDefinition	{
 		public final ModelResourceLocation location;
 
 		public FluidStateMapper(Fluid fluid) {
@@ -210,7 +211,7 @@ public class ClientProxy extends CommonProxy {
 
 		@Nonnull
 		@Override
-		public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) {
+		public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)	{
 			return location;
 		}
 	}

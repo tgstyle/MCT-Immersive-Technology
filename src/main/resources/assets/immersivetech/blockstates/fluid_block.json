@@ -5,9 +5,9 @@
 		"transform": "forge:default-item"
 	},
 	"variants": {
-		"dist_water": [{
+		"distwater": [{
 			"custom": {
-				"fluid": "dist_water"
+				"fluid": "distwater"
 			}
 		}],
 		"steam": [{
