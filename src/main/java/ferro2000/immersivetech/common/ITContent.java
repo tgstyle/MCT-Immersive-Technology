@@ -115,8 +115,8 @@ public class ITContent {
 		blockStoneDecoration = new BlockStoneDecoration();
 
 		/*FLUIDS*/
-		fluidSteam = new FluidColored("steam", 0xA1B8FF, -100, 500, true);
-		fluidDistWater = new FluidColored("dist_water", 0x7091FF, 1000, 1000, false);
+		fluidSteam = new FluidColored("steam", 0x3E444F, -100, 500, true);
+		fluidDistWater = new FluidColored("distwater", 0x7079E0, 1000, 1000, false);
 
 		/*FLUID BLOCKS*/
 		blockFluidSteam = new BlockITFluid("fluidSteam", fluidSteam, Material.WATER);
@@ -124,6 +124,9 @@ public class ITContent {
 
 		/*ITEMS*/
 		itemMaterial = new ItemITBase("material", 64, "salt");
+		
+		/*MANUAL*/
+		registerVariables();
 	}
 
 	public static void init() {
@@ -170,8 +173,8 @@ public class ITContent {
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 		/*RECIPES*/
 		if(Multiblock.enable_boiler && Recipes.register_boiler_recipes) {
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 1000), new FluidStack(FluidRegistry.WATER, 2000), 40);
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 1500), new FluidStack(fluidDistWater, 2000), 40);
+			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 1000), new FluidStack(FluidRegistry.WATER, 2000), 40);
+			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 1500), new FluidStack(FluidRegistry.getFluid("distwater"), 2000), 40);
 			BoilerRecipe.addFuel(new FluidStack(IEContent.fluidBiodiesel, 5), 1, 10);
 		}
 		if(Multiblock.enable_distiller && Recipes.register_distiller_recipes) {
@@ -184,14 +187,14 @@ public class ITContent {
 				distillerItemMeta = 0;
 			}
 			ItemStack distillerItem = new ItemStack(ForgeRegistries.ITEMS.getValue(distillerItemName), 1, distillerItemMeta);
-			DistillerRecipe.addRecipe(new FluidStack(fluidDistWater, 500), new FluidStack(FluidRegistry.WATER, 1000), distillerItem, 10000, 20, distillerChance);
+			DistillerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 500), new FluidStack(FluidRegistry.WATER, 1000), distillerItem, 10000, 20, distillerChance);
 		}
 		if(Multiblock.enable_solarTower && Recipes.register_solarTower_recipes) {
-			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 1000), new FluidStack(FluidRegistry.WATER, 2000), 80);
-			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 1500), new FluidStack(fluidDistWater, 2000), 80);
+			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 1000), new FluidStack(FluidRegistry.WATER, 2000), 80);
+			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 1500), new FluidStack(FluidRegistry.getFluid("distwater"), 2000), 80);
 		}
 		if(Multiblock.enable_steamTurbine && Recipes.register_steamTurbine_recipes) {
-			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 10), new FluidStack(fluidSteam, 100), 1);
+			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 10), new FluidStack(FluidRegistry.getFluid("steam"), 100), 1);
 		}
 	}
 
