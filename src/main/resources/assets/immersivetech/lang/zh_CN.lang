@@ -78,6 +78,8 @@ immersivetech.osd.trash_energy.trashed=销毁了
 immersivetech.osd.trash_energy.lastsecond=x 每秒。
 immersivetech.osd.trash_fluid.trashed=销毁了
 immersivetech.osd.trash_fluid.lastsecond=x 每秒。
+immersivetech.osd.trash_item.trashed=销毁了
+immersivetech.osd.trash_item.lastsecond=每秒。
 
 
 #MANUAL
