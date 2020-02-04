@@ -42,6 +42,7 @@ import ferro2000.immersivetech.common.blocks.stone.BlockStoneDecoration;
 import ferro2000.immersivetech.common.blocks.stone.BlockStoneMultiblock;
 import ferro2000.immersivetech.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import ferro2000.immersivetech.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
+import ferro2000.immersivetech.common.fluid.FluidColored;
 import ferro2000.immersivetech.common.items.ItemITBase;
 import ferro2000.immersivetech.common.util.ITLogger;
 
@@ -114,20 +115,12 @@ public class ITContent {
 		blockStoneDecoration = new BlockStoneDecoration();
 
 		/*FLUIDS*/
-		fluidDistWater = new Fluid("dist_water", new ResourceLocation("immersivetech:blocks/fluid/dist_water_still"), new ResourceLocation("immersivetech:blocks/fluid/dist_water_flow")).setDensity(1000).setViscosity(1000);
-		if(!FluidRegistry.registerFluid(fluidDistWater)) {
-			fluidDistWater = FluidRegistry.getFluid("distwater");
-		}
-		fluidSteam = new Fluid("steam", new ResourceLocation("immersivetech:blocks/fluid/steam_still"), new ResourceLocation("immersivetech:blocks/fluid/steam_flow")).setDensity(-100).setViscosity(500).setGaseous(true);
-		if(!FluidRegistry.registerFluid(fluidSteam)) {
-			fluidSteam = FluidRegistry.getFluid("steam");
-		}
-		FluidRegistry.addBucketForFluid(fluidDistWater);
-		FluidRegistry.addBucketForFluid(fluidSteam);
+		fluidSteam = new FluidColored("steam", 0xA1B8FF, -100, 500, true);
+		fluidDistWater = new FluidColored("dist_water", 0x7091FF, 1000, 1000, false);
 
 		/*FLUID BLOCKS*/
-		blockFluidDistWater = new BlockITFluid("fluidDistWater", fluidDistWater, Material.WATER);
 		blockFluidSteam = new BlockITFluid("fluidSteam", fluidSteam, Material.WATER);
+		blockFluidDistWater = new BlockITFluid("fluidDistWater", fluidDistWater, Material.WATER);
 
 		/*ITEMS*/
 		itemMaterial = new ItemITBase("material", 64, "salt");
@@ -177,8 +170,8 @@ public class ITContent {
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 		/*RECIPES*/
 		if(Multiblock.enable_boiler && Recipes.register_boiler_recipes) {
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 1000), new FluidStack(FluidRegistry.WATER, 2000), 30);
-			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 1500), new FluidStack(fluidDistWater, 2000), 30);
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 1000), new FluidStack(FluidRegistry.WATER, 2000), 40);
+			BoilerRecipe.addRecipe(new FluidStack(fluidSteam, 1500), new FluidStack(fluidDistWater, 2000), 40);
 			BoilerRecipe.addFuel(new FluidStack(IEContent.fluidBiodiesel, 5), 1, 10);
 		}
 		if(Multiblock.enable_distiller && Recipes.register_distiller_recipes) {
@@ -186,16 +179,16 @@ public class ITContent {
 			int distillerItemMeta = Distiller.distiller_output_itemMeta;
 			float distillerChance = Distiller.distiller_output_itemChance;
 			if(!ForgeRegistries.ITEMS.containsKey(distillerItemName)) {
-				ITLogger.error("Item for Salt is invalid, setting default. ", distillerItemName);
+				ITLogger.error("Item for Salt is invalid, setting default - ", distillerItemName);
 				distillerItemName = itemMaterial.getRegistryName();
 				distillerItemMeta = 0;
 			}
 			ItemStack distillerItem = new ItemStack(ForgeRegistries.ITEMS.getValue(distillerItemName), 1, distillerItemMeta);
-			DistillerRecipe.addRecipe(new FluidStack(fluidDistWater, 1000), new FluidStack(FluidRegistry.WATER, 2000), distillerItem, 10000, 20, distillerChance);
+			DistillerRecipe.addRecipe(new FluidStack(fluidDistWater, 500), new FluidStack(FluidRegistry.WATER, 1000), distillerItem, 10000, 20, distillerChance);
 		}
 		if(Multiblock.enable_solarTower && Recipes.register_solarTower_recipes) {
-			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 1000), new FluidStack(FluidRegistry.WATER, 2000), 60);
-			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 1500), new FluidStack(fluidDistWater, 2000), 60);
+			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 1000), new FluidStack(FluidRegistry.WATER, 2000), 80);
+			SolarTowerRecipe.addRecipe(new FluidStack(fluidSteam, 1500), new FluidStack(fluidDistWater, 2000), 80);
 		}
 		if(Multiblock.enable_steamTurbine && Recipes.register_steamTurbine_recipes) {
 			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 10), new FluidStack(fluidSteam, 100), 1);
@@ -238,7 +231,7 @@ public class ITContent {
 		Config.manual_int.put("solarTower_minRange", SolarReflector.solarReflector_minRange);
 		Config.manual_int.put("solarTower_maxRange", SolarReflector.solarReflector_maxRange);
 		Config.manual_double.put("boiler_cooldownTime", ((Boiler.boiler_heat_workingLevel / Boiler.boiler_progress_lossInTicks) / 20));
-		Config.manual_int.put("alternator_RfPerTickPerPort", (Alternator.alternator_energy_perTick / 6));
+		Config.manual_int.put("alternator_energyPerTickPerPort", (Alternator.alternator_energy_perTick / 6));
 		Config.manual_int.put("alternator_energyStorage", Alternator.alternator_energy_capacitorSize);
 		Config.manual_int.put("alternator_energyPerTick", Alternator.alternator_energy_perTick);
 		Config.manual_int.put("cokeOvenPreheater_consumption", CokeOvenPreheater.cokeOvenPreheater_energy_consumption);

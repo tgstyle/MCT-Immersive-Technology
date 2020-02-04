@@ -45,6 +45,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAlternator> implements IMechanicalEnergy, IAdvancedSelectionBounds, IAdvancedCollisionBounds, IFluxProvider, IIEInternalFluxHandler {
 	private static int[] size = new int[] {3, 4, 3};
@@ -98,6 +100,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void onChunkUnload() {
 		if(!isDummy()) ITSoundHandler.StopSound(getPos());

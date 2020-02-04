@@ -15,7 +15,6 @@ item.immersivetech.material.salt.name=Salt
 tile.immersivetech.fluidDistWater.name=Distilled Water
 tile.immersivetech.fluidSteam.name=Steam
 tile.immersivetech.fluidSlime.name=Liquid Slime
-
 fluid.dist_water=Distilled Water
 fluid.steam=Steam
 fluid.slime=Liquid Slime
@@ -79,47 +78,49 @@ immersivetech.osd.trash_energy.trashed=Trashed
 immersivetech.osd.trash_energy.lastsecond=x LastSec.
 immersivetech.osd.trash_fluid.trashed=Trashed
 immersivetech.osd.trash_fluid.lastsecond=x LastSec.
+immersivetech.osd.trash_item.trashed=Trashed
+immersivetech.osd.trash_item.lastsecond=items in LastSec.
+
 
 #MANUAL
 ie.manual.category.it.name=Immersive Technology
 
-ie.manual.entry.cokeOvenAdvanced.name=Advanced Coke Oven
-ie.manual.entry.cokeOvenAdvanced.subtext=It's fast now
-ie.manual.entry.cokeOvenAdvanced0=The Advanced Coke Oven is a multiblock structure that allows the player to produce Coal Coke and Creosote Oil faster .<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Reinforced Coke Brick Block.
-ie.manual.entry.cokeOvenAdvanced1=It allow the automation of in- and outputs, it can also be outfitted with preheaters to speed up the process by addition of hot air.<br>The furnace is made from reinforced bricks, so you'd be advised to spend your first batches of steel on this upgrade.<br>Similar to the Improved Blast Furnace, the Coal Coke is output at the front and the Creosote Oil at the back. Coal is fed in through the top.
-ie.manual.entry.cokeOvenAdvanced2=Coke Oven Preheaters are used to speed up the refinement process of coal. Each oven can have up to two preheaters connected to the ports on the each side, and each preheater requires <config;i;cokeOvenPreheater_consumption> Flux/t to operate.
-ie.manual.entry.cokeOvenAdvanced3=
+ie.manual.entry.advancedCokeOven.name=Advanced Coke Oven
+ie.manual.entry.advancedCokeOven.subtext=It's fast now
+ie.manual.entry.advancedCokeOven0=The Advanced Coke Oven is a multiblock structure that allows faster production of Coal Coke and Creosote Oil.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Reinforced Coke Brick Block.
+ie.manual.entry.advancedCokeOven1=It allows the automation of input and output of items, it can also be outfitted with preheaters to speed up the process by addition of hot air.<br>The furnace is made from reinforced bricks, so you'd be advised to spend your first batches of steel on this upgrade.<br>Similar to the Improved Blast Furnace, Coal Coke is output at the front and Creosote Oil at the back. Coal is fed in through the top.
+ie.manual.entry.advancedCokeOven2=Coke Oven Preheaters are used to speed up the refinement process of coal. Each oven can have up to two preheaters connected to the ports on each side, and each preheater requires <config;i;cokeOvenPreheater_consumption> Flux/t to operate.
+
+ie.manual.entry.alternator.name=Alternator
+ie.manual.entry.alternator.subtext=Let's transform
+ie.manual.entry.alternator0=The Alternator is a multiblock structure that transforms kinetic energy into electricity.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Heavy Engineering Block (short side).
+ie.manual.entry.alternator1=To work, it needs a kinetic energy generator connected to it (<link;steamTurbine;§n§oSteam Turbine§r>). The kinetic energy input is at the back of the machine (where the Sheetmetal Blocks are) and the Flux outputs are on front-left and front-right. The machine produces up to <config;i;alternator_energyPerTick> Flux/t depending on the Speed.<br>The Alternator can store <config;i;alternator_energyStorage> Flux, outputting <config;i;alternator_energyPerTickPerPort> Flux/t per port.
+ie.manual.entry.alternator2=Steam Turbine with Alternator
+
+ie.manual.entry.boiler.name=Boiler
+ie.manual.entry.boiler.subtext=A liquid fuel method
+ie.manual.entry.boiler0=The Boiler is a multiblock structure that uses liquid fuel and Water to produce Steam.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron Block (long side).
+ie.manual.entry.boiler1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>Water and <link;distiller;§n§oDistilled Water§r> can be input into the Boiler via a hatch on the left that is marked with a blue dot. The fuel can be input at hatch with the blue dot on the right. The hatch with the orange dot at the top serves as the liquid output.
+ie.manual.entry.boiler2=Before being capable of boiling any water, the structure needs to warm up first, which requires fuel. If disabled or not fed with enough fuel, the structure will slowly cool down, taking about <config;d;boiler_cooldownTime> seconds to fully cool down from working temperature. The default fuel is Diesel.
 
 ie.manual.entry.distiller.name=Distiller
-ie.manual.entry.distiller.subtext=Clearest than water
-ie.manual.entry.distiller0=The Distiller is a multiblock machine that turns Water in Distilled Water and Salt.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron.
-ie.manual.entry.distiller1=Applying a redstone signal to the control panel at the front will halt the machine's process, this behavior can be inverted by use of the Engineer's Hammer.<br>Water can be input into the Distiller via hatches at the left that are marked with blue dots. The hatch with the orange dot at the right serves as a fluid output and the other hatch at the back serves as a item output.<br>It needs energy to produce Distilled Water and Salt.<br>One bucket of Water produces 500 mB of Distilled Water.
+ie.manual.entry.distiller.subtext=Clearer than water
+ie.manual.entry.distiller0=The Distiller is a multiblock machine that turns Water in to Distilled Water and Salt.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron.
+ie.manual.entry.distiller1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>Water can be input into the Distiller via a hatch on the right that is marked with a blue dot. The hatch with the orange dot on the left is the liquid output and the other hatch on the back serves as a item output.<br>It needs energy to produce Distilled Water and Salt.<br>One bucket of Water produces 500 mB of Distilled Water.
 
 ie.manual.entry.solarTower.name=Solar Tower
-ie.manual.entry.solarTower.subtext=The power of the sun
-ie.manual.entry.solarTower0=The Solar Tower is a multiblock structure that uses the light of the sun transforming the water in steam.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Redstone Engineering
-ie.manual.entry.solarTower1=Block.<br>The Solar Tower can produce Steam from Water and <link;distiller;§n§oDistilled Water§r>.<br>One Bucket of Distilled Water produces 750 mB of Steam.<br>One Bucket of Water produces 500 mB of Steam.<br>Water can be input into the Solar Tower via the two hatches at the left and the right that are marked with blue dots. The hatch with the orange dot at the back serves as a fluid output.<br>The Solar Tower needs at least one Solar Reflector to work.
-ie.manual.entry.solarTower2=The Solar Reflector is a multiblock structure that reflects the light of the sun to the center of the Solar Tower.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Silver Block. 
-ie.manual.entry.solarTower3=To work, there must not be block between it and the Solar Tower and at the top of the reflector (only in the center), the reflector's figure must fit with the center of the Solar Tower and the distance between the reflector and the Solar Tower must be between <config;i;solarTower_minRange>-<config;i;solarTower_maxRange>. Obviously, it works only during the day.
+ie.manual.entry.solarTower.subtext=The power of the Sun
+ie.manual.entry.solarTower0=The Solar Tower is a multiblock structure that uses the light of the Sun to transform water in steam.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Redstone Engineering
+ie.manual.entry.solarTower1=Block.<br>The Solar Tower can produce Steam from Water and <link;distiller;§n§oDistilled Water§r>.<br>One Bucket of Distilled Water produces 750 mB of Steam.<br>One Bucket of Water produces 500 mB of Steam.<br>Water can be input into the Solar Tower via the two hatches on the left and the right that are marked with blue dots. The hatch with the orange dot on the back serves as a liquid output.<br>The Solar Tower needs at least one Solar Reflector to work.
+ie.manual.entry.solarTower2=The Solar Reflector is a multiblock structure that reflects the light of the Sun to the center of the Solar Tower.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Silver Block. 
+ie.manual.entry.solarTower3=To work, there must not be any blocks between it, the Solar Tower, and at the top of the reflector. The reflector's center silver block must align with the center of the Solar Tower. Also the distance between the reflector and the Solar Tower must be between <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> blocks. Obviously, it works only during the day.
 
 ie.manual.entry.steamTurbine.name=Steam Turbine
 ie.manual.entry.steamTurbine.subtext=Boiling breath
 ie.manual.entry.steamTurbine0=The Steam Turbine is a multiblock structure that uses Steam to produce kinetic energy.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Steel Block (short side).
-ie.manual.entry.steamTurbine1=Applying a redstone signal to the control panel at the front will halt the machine's process, this behavior can be inverted by use of the Engineer's Hammer.<br>The fluid pipe in front of the machine rapresents the input of Steam. The kinetic energy output is in the rear of the machine (Steel Block). Optionally, fluids can be retrieved through the output pipe on the top of the machine.
+ie.manual.entry.steamTurbine1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>The liquid pipe on front of the machine is the input. The kinetic energy output is in the rear of the machine (Steel Block). Optionally, liquids can be retrieved through the output pipe on the top of the machine.
 ie.manual.entry.steamTurbine2=When supplied with steam, the Turbine will slowly speed up, reaching maximum speed after <config;i;steamTurbine_timeToMax> seconds, as long it's constantly fed. Turning it off or failing to provide enough steam slows the Turbine down and reduces its power output.<br>To work, it needs an <link;alternator;§o§nAlternator§r>.
 
-ie.manual.entry.boiler.name=Boiler
-ie.manual.entry.boiler.subtext=A diesel method
-ie.manual.entry.boiler0=The Boiler is a multiblock structure that uses liquid fuels and Water to produce Steam.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron Block (long side).
-ie.manual.entry.boiler1=Applying a redstone signal to the control panel at the front will halt the machine's process, this behavior can be inverted by use of the Engineer's Hammer.<br>Water can be input into the Boiler via hatches at the left that are marked with blue dots. Diesel can be input at the right of the machine. The hatch with the orange dot at the top serves as a fluid output.
-ie.manual.entry.boiler2=Before being capable of boiling any water, the structure needs to warm up first, which requires fuel. If disabled or not fed with enough fuel, the structure will slowly cool down, taking about <config;d;boiler_cooldownTime> seconds to fully cool down from working temperature.
-
-ie.manual.entry.alternator.name=Alternator
-ie.manual.entry.alternator.subtext=Let's transform
-ie.manual.entry.alternator0=The Alternator is a multiblock structure that transforms kinetic energy in electricity. .<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Heavy Engineering Block (short side).
-ie.manual.entry.alternator1=To work, it needs a kinetic energy generator right by the side (<link;steamTurbine;§n§oSteam Turbine§r>). The kinetic energy input is at the back of the machine (where there are the Sheetmetal Blocks) and the Flux output are in front-left and front-right. The machine produces up to <config;i;alternator_RfPerTick> Flux/t depending on the provided Torque * Speed.<br>The Alternator can store <config;i;alternator_energyStorage> Flux.
-ie.manual.entry.alternator1=Steam Turbine and Alternator
-
-ie.manual.entry.redstone.name=Redstone
+ie.manual.entry.redstone.name=Redstone Timer
 ie.manual.entry.redstone.subtext=tick-tock
-ie.manual.entry.redstone0=§6Redstone Timer§r has the function of output a redstone signal depending on the delay inposed on him. The delay time can be set in the Timer’s gui and it has 0.5 Sec of precision before 10 Sec, and 1 Sec after. The Timer can be stopped with a redstone signal.
+ie.manual.entry.redstone0=The §6Redstone Timer§r outputs a short redstone signal depending on the delay imposed on it. The delay time can be set in the Timer’s gui and has 0.5 Seconds of precision, and can be adjusted between 0.5 to 10 Seconds. The Timer can be stopped with a redstone signal.

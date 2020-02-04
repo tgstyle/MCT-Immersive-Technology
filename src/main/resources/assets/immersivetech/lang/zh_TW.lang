@@ -15,7 +15,6 @@ item.immersivetech.material.salt.name=鹽
 tile.immersivetech.fluidDistWater.name=蒸餾水
 tile.immersivetech.fluidSteam.name=蒸汽
 tile.immersivetech.fluidSlime.name=液體粘液
-
 fluid.dist_water=蒸餾水
 fluid.steam=蒸汽
 fluid.slime=液體粘液
@@ -25,6 +24,7 @@ fluid.slime=液體粘液
 #METAL
 tile.immersivetech.metal_device.coke_oven_preheater.name=焦爐預熱器
 
+
 #METAL MULTIBLOCKS
 tile.immersivetech.metal_multiblock.distiller.name=蒸餾機
 tile.immersivetech.metal_multiblock.solar_tower.name=太陽能塔
@@ -33,8 +33,10 @@ tile.immersivetech.metal_multiblock.steam_turbine.name=蒸汽輪機
 tile.immersivetech.metal_multiblock.boiler.name=鍋爐
 tile.immersivetech.metal_multiblock.alternator.name=交流發電機
 
+
 #STONE MULTIBLOCKS
 tile.immersivetech.stone_multiblock.coke_oven_advanced.name=焦爐預熱器
+
 
 #METAL MULTIBLOCKS
 desc.immersiveengineering.info.multiblock.IT:Distiller=蒸餾機
@@ -44,8 +46,10 @@ desc.immersiveengineering.info.multiblock.IT:SteamTurbine=蒸汽輪機
 desc.immersiveengineering.info.multiblock.IT:Boiler=鍋爐
 desc.immersiveengineering.info.multiblock.IT:Alternator=交流發電機
 
+
 #STONE MULTIBLOCKS
 desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=焦爐預熱器
+
 
 #CONNECTORS
 tile.immersivetech.connectors.connectors_timer.name=紅石計時器
@@ -54,12 +58,23 @@ tile.immersivetech.connectors.connectors_timer.name=紅石計時器
 #MANUAL
 ie.manual.category.it.name=擬真科技
 
-ie.manual.entry.cokeOvenAdvanced.name=焦爐預熱器
-ie.manual.entry.cokeOvenAdvanced.subtext=現在速度很快了
-ie.manual.entry.cokeOvenAdvanced0=強化焦爐是一個多方塊結構，可以讓玩家更快速地生產焦煤和雜酚油。<br>結構如上圖所示，使用工程師槌在強化焦爐磚中心結構而形成。
-ie.manual.entry.cokeOvenAdvanced1=它可以實現輸入和輸出的自動化，還可以配備預熱器，以加速熱氣流的流動過程。該爐由加強磚製成，因此建議您可花費一批鋼鐵在此次升級中。類似於改進型高爐，焦煤在前面輸出，後面則輸出雜酚油。煤可從頂部放入。
-ie.manual.entry.cokeOvenAdvanced2=焦爐預熱器用於加速煤的精煉過程。每個強化焦爐最多可以有兩個預熱器連接到每側的端口，每個預熱器需要<config;i;cokeOvenPreheater_consumption> Flux/t 來運轉。
-ie.manual.entry.cokeOvenAdvanced3=
+ie.manual.entry.advancedCokeOven.name=焦爐預熱器
+ie.manual.entry.advancedCokeOven.subtext=現在速度很快了
+ie.manual.entry.advancedCokeOven0=強化焦爐是一個多方塊結構，可以讓玩家更快速地生產焦煤和雜酚油。<br>結構如上圖所示，使用工程師槌在強化焦爐磚中心結構而形成。
+ie.manual.entry.advancedCokeOven1=它可以實現輸入和輸出的自動化，還可以配備預熱器，以加速熱氣流的流動過程。該爐由加強磚製成，因此建議您可花費一批鋼鐵在此次升級中。類似於改進型高爐，焦煤在前面輸出，後面則輸出雜酚油。煤可從頂部放入。
+ie.manual.entry.advancedCokeOven2=焦爐預熱器用於加速煤的精煉過程。每個強化焦爐最多可以有兩個預熱器連接到每側的端口，每個預熱器需要<config;i;cokeOvenPreheater_consumption> Flux/t 來運轉。
+
+ie.manual.entry.alternator.name=交流發電機
+ie.manual.entry.alternator.subtext=能量轉換吧！
+ie.manual.entry.alternator0=交流發電機是一個多方塊結構，可以轉換動能成為電力。<br>該結構如上圖所示構建，並使用工程師槌在中央的重型工程塊（短側）上敲擊形成。
+ie.manual.entry.alternator1=為啟動交流發電機，需要在其一側輸入動能 (<link;蒸汽輪機;§n§o蒸汽輪機§r>)。 動能輸入位於機器的後部（有金屬板方塊的位置），Flux能量輸出位於發電機的左前方和右前方。 該機器可產生 <config;i;alternator_energyPerTick> Flux/t.<br>交流發電機可以儲存 <config;i;alternator_energyStorage> Flux.
+ie.manual.entry.alternator2=蒸汽輪機和交流發電機
+
+ie.manual.entry.boiler.name=鍋爐
+ie.manual.entry.boiler.subtext=使用柴油方法
+ie.manual.entry.boiler0=鍋爐是一個多方塊結構，使用<link;生質柴油;§o§n柴油§r>煮滾水來產生蒸氣.<br>該結構如上圖所示構建，並在長邊的鐵鈑金屬塊中央使用工程師槌來形成。
+ie.manual.entry.boiler1=在前方的控制面板上輸入紅石信號會停止機器的運轉，這種模式可以使用工程師槌來反轉。<br>水可以通過左側帶有藍點標記的艙口輸入鍋爐。 柴油可以輸入到機器的右側。 頂部有橙色圓點的艙口輸出液體。<br>一桶水可產生500 mB（半桶）的水蒸氣；而一桶 <link;蒸餾機;§n§o蒸餾水§r> 可產生750 mB的水蒸氣 (1000/煮沸時間) 的柴油。
+ie.manual.entry.boiler2=
 
 ie.manual.entry.distiller.name=蒸餾機
 ie.manual.entry.distiller.subtext=比水清澈
@@ -76,18 +91,8 @@ ie.manual.entry.solarTower3=要啟動太陽能塔，在太陽能塔中心和反�
 ie.manual.entry.steamTurbine.name=蒸汽輪機
 ie.manual.entry.steamTurbine.subtext=沸騰的氣息
 ie.manual.entry.steamTurbine0=蒸汽輪機是使用蒸汽產生動能的多方塊結構。<br>該結構如上圖所示構建，並使用工程師槌敲擊中央的鋼塊（短邊）而形成。
-ie.manual.entry.steamTurbine1=在前方的控制面板上輸入紅石信號會停止機器的運轉，這種模式可以使用工程師槌來反轉。<br>機器前方的液體管用於蒸汽的輸入。動能輸出位於機器後部（鋼塊）。它以 <config;i;steamTurbine_maxTorque>Rad/s　的最大速度產生 <config;i;steamTurbine_maxSpeed> N * m的扭矩。<br>要啟動它需要一個<link;交流發電機;§o§n交流發電機§r>.
-
-ie.manual.entry.boiler.name=鍋爐
-ie.manual.entry.boiler.subtext=使用柴油方法
-ie.manual.entry.boiler0=鍋爐是一個多方塊結構，使用<link;生質柴油;§o§n柴油§r>煮滾水來產生蒸氣.<br>該結構如上圖所示構建，並在長邊的鐵鈑金屬塊中央使用工程師槌來形成。
-ie.manual.entry.boiler1=在前方的控制面板上輸入紅石信號會停止機器的運轉，這種模式可以使用工程師槌來反轉。<br>水可以通過左側帶有藍點標記的艙口輸入鍋爐。 柴油可以輸入到機器的右側。 頂部有橙色圓點的艙口輸出液體。<br>一桶水可產生500 mB（半桶）的水蒸氣；而一桶 <link;蒸餾機;§n§o蒸餾水§r> 可產生750 mB的水蒸氣 (1000/煮沸時間)x<config;i;boiler_burnTimeModifier> mB 的柴油。
-
-ie.manual.entry.alternator.name=交流發電機
-ie.manual.entry.alternator.subtext=能量轉換吧！
-ie.manual.entry.alternator0=交流發電機是一個多方塊結構，可以轉換動能成為電力。<br>該結構如上圖所示構建，並使用工程師槌在中央的重型工程塊（短側）上敲擊形成。
-ie.manual.entry.alternator1=為啟動交流發電機，需要在其一側輸入動能 (<link;蒸汽輪機;§n§o蒸汽輪機§r>)。 動能輸入位於機器的後部（有金屬板方塊的位置），Flux能量輸出位於發電機的左前方和右前方。 該機器可產生 (Speed*Torque)/<config;i;alternator_RfModifier> Flux/t.<br>交流發電機可以儲存 <config;i;alternator_energyStorage> Flux.
-ie.manual.entry.alternator1=蒸汽輪機和交流發電機
+ie.manual.entry.steamTurbine1=在前方的控制面板上輸入紅石信號會停止機器的運轉，這種模式可以使用工程師槌來反轉。<br>機器前方的液體管用於蒸汽的輸入。動能輸出位於機器後部（鋼塊）。它以 的最大速度產生 的扭矩。<br>要啟動它需要一個<link;交流發電機;§o§n交流發電機§r>.
+ie.manual.entry.steamTurbine2=
 
 ie.manual.entry.redstone.name=紅石計時器
 ie.manual.entry.redstone.subtext=滴答！滴答！

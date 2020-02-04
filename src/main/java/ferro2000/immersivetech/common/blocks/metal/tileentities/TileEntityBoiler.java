@@ -42,6 +42,8 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler, BoilerRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
@@ -146,6 +148,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void onChunkUnload() {
 		if(!isDummy()) ITSoundHandler.StopSound(getPos());
@@ -371,7 +374,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			else return resource.getFluid() == master.tanks[iTank].getFluid().getFluid();
 		}
 		if(pos == 5 && (side == null || side == (mirrored?facing.rotateY() : facing.rotateYCCW()))) {
-			if(master.tanks[1].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
+			if(master.tanks[1].getFluidAmount() >= master.tanks[1].getCapacity()) return false;
 			if(master.tanks[1].getFluid() == null) return BoilerRecipe.findRecipeByFluid(resource.getFluid()) != null;
 			else return resource.getFluid() == master.tanks[1].getFluid().getFluid();
 		}

@@ -11,7 +11,7 @@ import ferro2000.immersivetech.common.util.compat.ITCompatModule;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
-
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -46,6 +46,10 @@ public class ImmersiveTech {
 
 	@Instance(MODID)
 	public static ImmersiveTech instance;
+
+	static {
+		FluidRegistry.enableUniversalBucket();
+	}
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
