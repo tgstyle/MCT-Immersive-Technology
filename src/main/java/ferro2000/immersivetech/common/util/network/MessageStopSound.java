@@ -38,4 +38,10 @@ public class MessageStopSound implements IMessage {
         }
     }
 
+    @SideOnly(Side.SERVER)
+    public static class HandlerServer implements IMessageHandler<MessageStopSound, IMessage>	{
+        @Override
+        public IMessage onMessage(MessageStopSound message, MessageContext ctx) { return null; }
+    }
+
 }
