@@ -30,8 +30,8 @@ public class SteamTurbineRecipeCategory extends ITRecipeCategory<SteamTurbineRec
 
 	@SuppressWarnings("deprecation")
 	public SteamTurbineRecipeCategory(IGuiHelper helper) {
-		super("steamTurbine", "tile.immersivetech.metal_multiblock.steam_turbine.name", helper.createDrawable(background, 0, 0, 96, 78), SteamTurbineRecipe.class, new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.STEAM_TURBINE.getMeta()));
-		tankOverlay = helper.createDrawable(background, 98, 2, 16, 47, -2, 2, -2, 2);
+		super("steamTurbine", "tile.immersivetech.metal_multiblock.steam_turbine.name", helper.createDrawable(background, 0, 0, 116, 69), SteamTurbineRecipe.class, new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.STEAM_TURBINE.getMeta()));
+		tankOverlay = helper.createDrawable(background, 118, 2, 16, 47, -2, 2, -2, 2);
 		IDrawableStatic staticImage = helper.createDrawable(background, 0, 78, 32, 42);
 		this.turbineAndArrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
 	}
@@ -41,11 +41,20 @@ public class SteamTurbineRecipeCategory extends ITRecipeCategory<SteamTurbineRec
 	public void setRecipe(IRecipeLayout recipeLayout, SteamTurbineRecipeWrapper recipeWrapper, IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
+
+		int tankSize = 0;
+		for (List<FluidStack> lists : inputs) {
+			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
+		}
+		for (List<FluidStack> lists : outputs) {
+			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
+		}
+
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-		guiFluidStacks.init(0, true, 11, 11, 16, 47, inputTankSize, true, tankOverlay);
+		guiFluidStacks.init(0, true, 11, 11, 16, 47, tankSize, true, tankOverlay);
 		guiFluidStacks.set(0, inputs.get(0));
 		if(outputs.get(0) != null) {
-			guiFluidStacks.init(1, false, 69, 11, 16, 47, outputTankSize, true, tankOverlay);
+			guiFluidStacks.init(1, false, 89, 11, 16, 47, tankSize, true, tankOverlay);
 			guiFluidStacks.set(1, outputs.get(0));
 		}
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
@@ -58,7 +67,7 @@ public class SteamTurbineRecipeCategory extends ITRecipeCategory<SteamTurbineRec
 	
 	@Override
 	public void drawExtras(Minecraft minecraft) {
-		turbineAndArrow.draw(minecraft, 32, 18);
+		turbineAndArrow.draw(minecraft, 42, 18);
 	}
 
 }
