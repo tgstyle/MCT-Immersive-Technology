@@ -28,7 +28,7 @@ public class SolarTowerRecipeWrapper extends MultiblockRecipeWrapper {
 	public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
 		String text;
 		float time = recipe.getTotalProcessTime() / (speedMult * (1 + timer.getValue() * (reflectorSpeedMult - 1)));
-		text = (GuiScreen.isShiftKeyDown())? Math.round(time) + " ticks" : format.format(time/20) + "s";
+		text = (GuiScreen.isShiftKeyDown())? Math.round(time) + "t" : format.format(time/20) + "s";
 		minecraft.fontRenderer.drawString(text, 21, 10, 0x8B8B8B, true);
 	}
 }
