@@ -41,6 +41,7 @@ public class JEIHelper implements IModPlugin {
 
 	@Override
 	public void registerIngredients(IModIngredientRegistration registry) {
+		//registry.register();
 	}
 
 	@SuppressWarnings("rawtypes")
