@@ -29,6 +29,7 @@ import ferro2000.immersivetech.common.blocks.metal.tileentities.TileEntitySteamT
 import ferro2000.immersivetech.common.blocks.metal.types.BlockType_MetalDevice;
 import ferro2000.immersivetech.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import ferro2000.immersivetech.common.items.ItemITBase;
+import ferro2000.immersivetech.common.util.network.MessageRequestUpdate;
 import ferro2000.immersivetech.common.util.network.MessageStopSound;
 import ferro2000.immersivetech.common.util.network.MessageTileSync;
 import ferro2000.immersivetech.common.util.sound.ITSoundHandler;
@@ -173,6 +174,9 @@ public class ClientProxy extends CommonProxy {
 		//has to be here as well because this one is used when playing Singleplayer, go figure
 		ImmersiveTech.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
 		ImmersiveTech.packetHandler.registerMessage(MessageStopSound.HandlerClient.class, MessageStopSound.class, 1, Side.CLIENT);
+		ImmersiveTech.packetHandler.registerMessage(MessageRequestUpdate.HandlerClient.class, MessageRequestUpdate.class, 2, Side.CLIENT);
+		ImmersiveTech.packetHandler.registerMessage(MessageRequestUpdate.HandlerServer.class, MessageRequestUpdate.class, 2, Side.SERVER);
+
 	}
 
 	@Override
