@@ -59,7 +59,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 	private BlockPos[] EnergyOutputPositions = new BlockPos[6];
 
 	public int speed;
-
+	private int clientUpdateCooldown = 20;
 	private float clientEnergyPercentage;
 	private int oldEnergy = energyStorage.getEnergyStored();
 	
@@ -123,6 +123,10 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 		ImmersiveTech.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 	}
 
+	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
+		world.getChunkFromBlockCoords(this.getPos()).markDirty();
+	}
+
 	@Override
 	public void update() {
 		if(formed && pos == 13) {
@@ -143,10 +147,14 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 					energyStorage.modifyEnergyStored(-canReceiveAmount);
 					currentEnergy = energyStorage.getEnergyStored();
 				}
+				if (clientUpdateCooldown > 0) clientUpdateCooldown--;
 				if(oldEnergy != currentEnergy) {
-					this.markDirty();
+					efficientMarkDirty();
 					this.markContainingBlockForUpdate(null);
-					notifyNearbyClients();
+					if (clientUpdateCooldown == 0) {
+						notifyNearbyClients();
+						clientUpdateCooldown = 20;
+					}
 				}
 				oldEnergy = currentEnergy;
 			} else handleSounds();
