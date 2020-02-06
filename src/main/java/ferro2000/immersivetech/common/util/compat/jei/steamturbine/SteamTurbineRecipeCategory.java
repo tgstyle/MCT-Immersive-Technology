@@ -3,7 +3,6 @@ package ferro2000.immersivetech.common.util.compat.jei.steamturbine;
 import java.util.List;
 
 import ferro2000.immersivetech.api.crafting.SteamTurbineRecipe;
-import ferro2000.immersivetech.common.Config.ITConfig.Machines.SteamTurbine;
 import ferro2000.immersivetech.common.ITContent;
 import ferro2000.immersivetech.common.blocks.metal.types.BlockType_MetalMultiblock;
 import ferro2000.immersivetech.common.util.compat.jei.ITRecipeCategory;
@@ -24,9 +23,6 @@ public class SteamTurbineRecipeCategory extends ITRecipeCategory<SteamTurbineRec
 	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_steam_turbine.png");
 	private final IDrawable tankOverlay;
 	private final IDrawableAnimated turbineAndArrow;
-
-	private static int inputTankSize = SteamTurbine.steamTurbine_input_tankSize;
-	private static int outputTankSize = SteamTurbine.steamTurbine_input_tankSize;
 
 	@SuppressWarnings("deprecation")
 	public SteamTurbineRecipeCategory(IGuiHelper helper) {
