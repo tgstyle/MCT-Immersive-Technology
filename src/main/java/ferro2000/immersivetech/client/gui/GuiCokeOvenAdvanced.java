@@ -2,6 +2,8 @@ package ferro2000.immersivetech.client.gui;
 
 import java.util.ArrayList;
 
+import ferro2000.immersivetech.ImmersiveTech;
+import ferro2000.immersivetech.common.util.network.MessageRequestUpdate;
 import org.lwjgl.opengl.GL11;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
@@ -33,8 +35,14 @@ public class GuiCokeOvenAdvanced extends GuiIEContainerBase {
 		}
 	}
 
+	int time = 0;
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mx, int my) {
+		if (++time == 20) {
+			time = 0;
+			ImmersiveTech.packetHandler.sendToServer(new MessageRequestUpdate(tile));
+		}
+
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		ClientUtils.bindTexture("immersiveengineering:textures/gui/coke_oven.png");
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
