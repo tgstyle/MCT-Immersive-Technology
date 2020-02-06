@@ -73,8 +73,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
 		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
 		nbt.setBoolean("running", running);
-		if(!descPacket)
-		nbt.setTag("inventory", Utils.writeInventory(inventory));
+		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
 
 	public void handleSounds() {
