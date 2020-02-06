@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
 
 import ferro2000.immersivetech.ImmersiveTech;
 import ferro2000.immersivetech.api.crafting.BoilerRecipe;
@@ -175,7 +174,13 @@ public class ITContent {
 		if(Multiblock.enable_boiler && Recipes.register_boiler_recipes) {
 			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 1000), new FluidStack(FluidRegistry.WATER, 2000), 40);
 			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 1500), new FluidStack(FluidRegistry.getFluid("distwater"), 2000), 40);
-			BoilerRecipe.addFuel(new FluidStack(IEContent.fluidBiodiesel, 5), 1, 10);
+			BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("biodiesel"), 5), 1, 10);
+			if(FluidRegistry.getFluid("gasoline") != null) {
+				BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("gasoline"), 5), 1, 10);
+			}
+			if(FluidRegistry.getFluid("diesel") != null) {
+				BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("diesel"), 5), 1, 10);
+			}
 		}
 		if(Multiblock.enable_distiller && Recipes.register_distiller_recipes) {
 			ResourceLocation distillerItemName = new ResourceLocation(Distiller.distiller_output_item);
