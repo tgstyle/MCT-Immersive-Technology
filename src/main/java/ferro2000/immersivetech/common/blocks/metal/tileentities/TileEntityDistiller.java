@@ -113,6 +113,10 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 		ImmersiveTech.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 	}
 
+	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
+		world.getChunkFromBlockCoords(this.getPos()).markDirty();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void update() {
@@ -170,7 +174,7 @@ public class TileEntityDistiller extends TileEntityMultiblockMetal<TileEntityDis
 			update = true;
 		}
 		if(update) {
-			this.markDirty();
+			efficientMarkDirty();
 			this.markContainingBlockForUpdate(null);
 		}
 

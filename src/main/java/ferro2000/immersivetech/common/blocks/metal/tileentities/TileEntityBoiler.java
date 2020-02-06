@@ -69,6 +69,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	public int burnRemaining = 0;
 	public int recipeTimeRemaining = 0;
 	public double heatLevel = 0;
+	private int clientUpdateCooldown = 20;
 
 	public BoilerFuelRecipe lastFuel;
 	public BoilerRecipe lastRecipe;
@@ -132,6 +133,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		if(recipeTimeRemaining == 0) {
 			tanks[1].drain(lastRecipe.fluidInput.amount, true);
 			tanks[2].fillInternal(lastRecipe.fluidOutput, true);
+			markContainingBlockForUpdate(null);
 			return true;
 		}
 		return false;
@@ -171,14 +173,11 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		ImmersiveTech.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
 	}
 
-	@Override
-	public void update() {
-		super.update();
-		if(isDummy()) return;
-		if(world.isRemote) {
-			handleSounds();
-			return;
-		}
+	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
+		world.getChunkFromBlockCoords(this.getPos()).markDirty();
+	}
+
+	private boolean heatLogic() {
 		boolean update = false;
 		if(burnRemaining > 0) {
 			burnRemaining--;
@@ -189,9 +188,15 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 				lastFuel = fuel;
 				tanks[0].drain(fuel.fluidInput.amount, true);
 				burnRemaining = fuel.getTotalProcessTime();
+				markContainingBlockForUpdate(null);
 				if(heatUp()) update = true;
 			} else if(cooldown()) update = true;
 		} else if(cooldown()) update = true;
+		return update;
+	}
+
+	private boolean recipeLogic() {
+		boolean update = false;
 		if(heatLevel >= workingHeatLevel) {
 			if(recipeTimeRemaining > 0) {
 				if(gainProgress()) update = true;
@@ -204,6 +209,11 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 				}
 			}
 		} else if(recipeTimeRemaining > 0) if(loseProgress()) update = true;
+		return update;
+	}
+
+	private boolean outputTankLogic() {
+		boolean update = false;
 		if(this.tanks[2].getFluidAmount() >0) {
 			ItemStack filledContainer = Utils.fillFluidContainer(tanks[2], inventory.get(4), inventory.get(5), null);
 			if(!filledContainer.isEmpty()) {
@@ -211,6 +221,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 				else if(inventory.get(5).isEmpty()) inventory.set(5, filledContainer.copy());
 				inventory.get(4).shrink(1);
 				if(inventory.get(4).getCount() <= 0) inventory.set(4, ItemStack.EMPTY);
+				markContainingBlockForUpdate(null);
 				update = true;
 			}
 			if(this.tanks[2].getFluidAmount() > 0) {
@@ -222,11 +233,16 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 					if(accepted > 0) {
 						int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
 						this.tanks[2].drain(drained, true);
+						markContainingBlockForUpdate(null);
 						update=true;
 					}
 				}
 			}
 		}
+		return update;
+	}
+
+	private boolean fuelTankLogic() {
 		int amount_prev = tanks[0].getFluidAmount();
 		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
 		if(amount_prev != tanks[0].getFluidAmount()) {
@@ -234,21 +250,47 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 			else if(inventory.get(1).isEmpty()) inventory.set(1, emptyContainer.copy());
 			inventory.get(0).shrink(1);
 			if(inventory.get(0).getCount() <= 0) inventory.set(0, ItemStack.EMPTY);
-			update = true;
+			markContainingBlockForUpdate(null);
+			return true;
 		}
-		amount_prev = tanks[1].getFluidAmount();
-		emptyContainer = Utils.drainFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
+		return false;
+	}
+
+	private boolean inputTankLogic() {
+		int amount_prev = tanks[1].getFluidAmount();
+		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
 		if(amount_prev != tanks[1].getFluidAmount()) {
 			if(!inventory.get(3).isEmpty() && OreDictionary.itemMatches(inventory.get(3), emptyContainer, true)) inventory.get(3).grow(emptyContainer.getCount());
 			else if(inventory.get(3).isEmpty()) inventory.set(3, emptyContainer.copy());
 			inventory.get(2).shrink(1);
 			if(inventory.get(2).getCount() <= 0) inventory.set(2, ItemStack.EMPTY);
-			update = true;
+			markContainingBlockForUpdate(null);
+			return true;
 		}
-		if(update) {
-			this.markDirty();
-			this.markContainingBlockForUpdate(null);
-			notifyNearbyClients();
+		return false;
+	}
+
+	@Override
+	public void update() {
+		super.update();
+		if(isDummy()) return;
+		if(world.isRemote) {
+			handleSounds();
+			return;
+		}
+		boolean update = false;
+		if (heatLogic()) update = true;
+		if (recipeLogic()) update = true;
+		if (outputTankLogic()) update = true;
+		if (fuelTankLogic()) update = true;
+		if (inputTankLogic()) update = true;
+		if (clientUpdateCooldown > 0) clientUpdateCooldown--;
+		if (update) {
+			efficientMarkDirty();
+			if (clientUpdateCooldown == 0) {
+				notifyNearbyClients();
+				clientUpdateCooldown = 20;
+			}
 		}
 	}
 
