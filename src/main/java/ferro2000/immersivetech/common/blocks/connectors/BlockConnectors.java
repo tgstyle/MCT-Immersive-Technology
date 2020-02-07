@@ -64,7 +64,6 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
 		return state;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
 		super.neighborChanged(state, world, pos, blockIn, fromPos);
@@ -82,17 +81,17 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		switch(BlockType_Connectors.values()[meta]) {
+	public boolean allowHammerHarvest(IBlockState state) {
+		return true;
+	}
+
+	@Override
+	public TileEntity createBasicTE(World worldIn, BlockType_Connectors type) {
+		switch(type) {
 		case CONNECTORS_TIMER:
 			return new TileEntityTimer();
 		}
 		return null;
-	}
-
-	@Override
-	public boolean allowHammerHarvest(IBlockState state) {
-		return true;
 	}
 
 }

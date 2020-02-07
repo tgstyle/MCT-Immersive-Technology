@@ -54,7 +54,7 @@ public class ItemBlockITBase extends ItemBlock {
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return ((BlockITBase<?>) this.block).getUnlocalizedName(stack);
+		return ((BlockITBase<?>) this.block).getTranslationKey(stack);
 	}
 
 	@Override
