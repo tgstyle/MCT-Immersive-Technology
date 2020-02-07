@@ -16,6 +16,7 @@ import ferro2000.immersivetech.common.ITContent;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -59,7 +60,10 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	protected Set<BlockRenderLayer> renderLayers = Sets.newHashSet(BlockRenderLayer.SOLID);
 	protected Set<BlockRenderLayer>[] metaRenderLayers;
 	protected Map<Integer, Integer> metaLightOpacities = new HashMap<>();
+	protected Map<Integer, Float> metaHardness = new HashMap<>();
 	protected Map<Integer, Integer> metaResistances = new HashMap<>();
+	protected EnumPushReaction[] metaMobilityFlags;
+	protected boolean[] canHammerHarvest;
 	protected boolean[] metaNotNormalBlock;
 	private boolean opaqueCube = false;
 
@@ -72,6 +76,8 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		this.isMetaHidden = new boolean[this.enumValues.length];
 		this.hasFlavour = new boolean[this.enumValues.length];
 		this.metaRenderLayers = new Set[this.enumValues.length];
+		this.canHammerHarvest = new boolean[this.enumValues.length];
+		this.metaMobilityFlags = new EnumPushReaction[this.enumValues.length];
 
 		ArrayList<IProperty> propList = new ArrayList<IProperty>();
 		ArrayList<IUnlistedProperty> unlistedPropList = new ArrayList<IUnlistedProperty>();
@@ -117,8 +123,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 
 	@Override
 	public IBlockState getInventoryState(int meta) {
-		IBlockState state = this.blockState.getBaseState().withProperty(this.property, enumValues[meta]);
-		return state;
+		return getStateFromMeta(meta);
 	}
 
 	@Override
@@ -147,7 +152,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return true;
 	}
 
-	public String getUnlocalizedName(ItemStack stack) {
+	public String getTranslationKey(ItemStack stack) {
 		String subName = getStateFromMeta(stack.getItemDamage()).getValue(property).toString().toLowerCase(Locale.US);
 		return super.getUnlocalizedName() + "." + subName;
 	}
@@ -221,10 +226,8 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 
 	@Override
 	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-		if(cachedTileRequestState != null) {
-			int meta = this.getMetaFromState(cachedTileRequestState);
-			if(meta >= 0 && meta < metaRenderLayers.length && metaRenderLayers[meta] != null) return metaRenderLayers[meta].contains(layer);
-		}
+		int meta = this.getMetaFromState(state);
+		if(meta >= 0 && meta < metaRenderLayers.length&&metaRenderLayers[meta]!=null) return metaRenderLayers[meta].contains(layer);
 		return renderLayers.contains(layer);
 	}
 
@@ -240,6 +243,23 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return super.getLightOpacity(state, w, pos);
 	}
 
+	public BlockITBase<E> setMetaHardness(int meta, float hardness) {
+		metaHardness.put(meta, hardness);
+		return this;
+	}
+
+	/**
+	* @deprecated call via {@link IBlockState#getBlockHardness(World,BlockPos)} whenever possible. Implementing/overriding
+	* is fine.
+	**/
+	@Override
+	public float getBlockHardness(IBlockState state, World world, BlockPos pos) {
+		int meta = getMetaFromState(state);
+		if(metaHardness.containsKey(meta))
+			return metaHardness.get(meta);
+		return super.getBlockHardness(state, world, pos);
+	}
+
 	public BlockITBase<E> setMetaExplosionResistance(int meta, int resistance) {
 		metaResistances.put(meta, resistance);
 		return this;
@@ -250,6 +270,21 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		int meta = getMetaFromState(world.getBlockState(pos));
 		if(metaResistances.containsKey(meta)) return metaResistances.get(meta);
 		return super.getExplosionResistance(world, pos, exploder, explosion);
+	}
+
+	public BlockITBase<E> setMetaMobilityFlag(int meta, EnumPushReaction flag) {
+		metaMobilityFlags[meta] = flag;
+		return this;
+	}
+
+	/**
+	* @deprecated call via {@link IBlockState#getMobilityFlag()} whenever possible. Implementing/overriding is fine.
+	**/
+	@Override
+	public EnumPushReaction getMobilityFlag(IBlockState state) {
+		int meta = getMetaFromState(state);
+		if(metaMobilityFlags[meta]==null) return EnumPushReaction.NORMAL;
+		return metaMobilityFlags[meta];
 	}
 
 	public BlockITBase<E> setNotNormalBlock(int meta) {
@@ -270,33 +305,50 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return (meta < 0 || meta >= metaNotNormalBlock.length) || !metaNotNormalBlock[meta];
 	}
 
+	/**
+	* @return true if the state occupies all of its 1x1x1 cube
+	* @deprecated prefer calling {@link IBlockState#isFullBlock()}
+	**/
 	@Override
 	public boolean isFullBlock(IBlockState state) {
 		return normalBlockCheck(state);
 	}
 
+	/**
+	* @deprecated call via {@link IBlockState#isFullCube()} whenever possible. Implementing/overriding is fine.
+	**/
 	@Override
 	public boolean isFullCube(IBlockState state) {
 		return normalBlockCheck(state);
 	}
 
+	/**
+	* Used to determine ambient occlusion and culling when rebuilding chunks for render
+	* @deprecated call via {@link IBlockState#isOpaqueCube()} whenever possible. Implementing/overriding is fine.
+	**/
 	@Override
 	public boolean isOpaqueCube(IBlockState state) {
 		return normalBlockCheck(state);
 	}
 
+	/**
+	* @deprecated call via {@link IBlockState#causesSuffocation()} whenever possible. Implementing/overriding is fine.
+	**/
+	@Override
+	public boolean causesSuffocation(IBlockState state)	{
+		if(metaNotNormalBlock==null) return true;
+		int majority = 0;
+		for(boolean b : metaNotNormalBlock) {
+			if(b) {
+				majority++;
+			}
+		}
+		return majority < metaNotNormalBlock.length / 2;
+	}
+
 	@Override
 	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
 		return normalBlockCheck(state);
-	}
-
-	// This is a ridiculously hacky workaround, I would not recommend it to anyone.
-	protected static IBlockState cachedTileRequestState;
-
-	@Override
-	public boolean hasTileEntity(IBlockState state) {
-		cachedTileRequestState = state;
-		return super.hasTileEntity(state);
 	}
 
 	protected BlockStateContainer createNotTempBlockState() {
@@ -348,30 +400,15 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return state.getValue(this.property).getMeta();
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-		for(int i = 0; i < this.additionalProperties.length; i++) {
-			if(this.additionalProperties[i] != null && !this.additionalProperties[i].getAllowedValues().isEmpty()) {
-				state = applyProperty(state, this.additionalProperties[i], this.additionalProperties[i].getAllowedValues().toArray()[0]);
-			}
-		}
-		return state;
+	protected E fromMeta(int meta) {
+		if(meta < 0 || meta >= enumValues.length)
+			meta = 0;
+		return enumValues[meta];
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		IBlockState state = this.getDefaultState().withProperty(this.property, fromMeta(meta));
-		for(int i = 0; i < this.additionalProperties.length; i++)
-			if(this.additionalProperties[i] != null && !this.additionalProperties[i].getAllowedValues().isEmpty())
-				state = applyProperty(state, this.additionalProperties[i], this.additionalProperties[i].getAllowedValues().toArray()[0]);
-		return state;
-	}
-
-	protected E fromMeta(int meta) {
-		if(meta < 0 || meta >= enumValues.length) meta = 0;
-		return enumValues[meta];
+		return this.getDefaultState().withProperty(this.property, fromMeta(meta));
 	}
 
 	@Override
@@ -408,7 +445,20 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return super.eventReceived(state, worldIn, pos, eventID, eventParam);
 	}
 
+	public BlockITBase<E> setMetaHammerHarvest(int meta) {
+		canHammerHarvest[meta] = true;
+		return this;
+	}
+
+	public BlockITBase<E> setHammerHarvest() {
+		for(int i = 0; i < metaNotNormalBlock.length; i++)
+			canHammerHarvest[i] = true;
+		return this;
+	}
+
 	public boolean allowHammerHarvest(IBlockState blockState) {
+		int meta = getMetaFromState(blockState);
+		if(meta >= 0 && meta < canHammerHarvest.length) return canHammerHarvest[meta];
 		return false;
 	}
 

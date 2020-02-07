@@ -31,8 +31,13 @@ public class BlockMetalTrash extends BlockITTileProvider<BlockType_MetalTrash> {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int meta) {
-		switch(BlockType_MetalTrash.values()[meta]) {
+	public boolean allowHammerHarvest(IBlockState state) {
+		return true;
+	}
+
+	@Override
+	public TileEntity createBasicTE(World worldIn, BlockType_MetalTrash type) {
+		switch(type) {
 		case TRASH_ITEM:
 			return new TileEntityTrashItem();
 		case TRASH_FLUID:
@@ -43,11 +48,6 @@ public class BlockMetalTrash extends BlockITTileProvider<BlockType_MetalTrash> {
 			break;
 		}
 		return null;
-	}
-
-	@Override
-	public boolean allowHammerHarvest(IBlockState state) {
-		return true;
 	}
 
 }

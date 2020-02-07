@@ -2,8 +2,6 @@ package ferro2000.immersivetech.common.blocks.metal.tileentities;
 
 import javax.annotation.Nullable;
 
-import org.lwjgl.input.Keyboard;
-
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
 import blusunrize.immersiveengineering.common.util.Utils;
 import ferro2000.immersivetech.ImmersiveTech;
@@ -167,11 +165,11 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
 		if(heldItem.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
 			tank.setFluid(null);
-		} else if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT) && heldItem.getUnlocalizedName() == "tile.air") {
+		} else if(player.isSneaking()) {
 			tank.setFluid(null);
 		} else return false;
 		if(FluidUtil.interactWithFluidHandler(player, hand, tank)) {
-			this.markDirty();
+			efficientMarkDirty();
 			this.markContainingBlockForUpdate(null);
 			return true;
 		}

@@ -34,10 +34,10 @@ public class BlockStoneMultiblock extends BlockITMultiblock<BlockType_StoneMulti
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		switch(BlockType_StoneMultiblock.values()[meta]) {
-			case COKE_OVEN_ADVANCED:
-				return new TileEntityCokeOvenAdvanced();
+	public TileEntity createBasicTE(World worldIn, BlockType_StoneMultiblock type) {
+		switch(type) {
+		case COKE_OVEN_ADVANCED:
+			return new TileEntityCokeOvenAdvanced();
 		}
 		return null;
 	}

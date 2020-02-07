@@ -29,19 +29,19 @@ public class BlockMetalBarrel extends BlockITTileProvider<BlockType_MetalBarrel>
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int meta) {
-		switch(BlockType_MetalBarrel.values()[meta]) {
+	public boolean allowHammerHarvest(IBlockState state) {
+		return true;
+	}
+
+	@Override
+	public TileEntity createBasicTE(World worldIn, BlockType_MetalBarrel type) {
+		switch(type) {
 		case BARREL:
 			return new TileEntityBarrel();
 		default:
 			break;
 		}
 		return null;
-	}
-
-	@Override
-	public boolean allowHammerHarvest(IBlockState state) {
-		return true;
 	}
 
 }
