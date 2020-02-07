@@ -47,6 +47,10 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 		if(!inventory.get(0).isEmpty()) nbt.setTag("inventory", inventory.get(0).writeToNBT(new NBTTagCompound()));
 	}
 
+	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
+		world.getChunkFromBlockCoords(this.getPos()).markDirty();
+	}
+
 	@Override
 	public void update() {
 		if(world.isRemote) return;
@@ -66,7 +70,7 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 			updateClient++;
 		}
 		if(update) {
-			this.markDirty();
+			efficientMarkDirty();
 			this.markContainingBlockForUpdate(null);
 		}
 	}
