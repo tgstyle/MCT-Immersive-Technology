@@ -3,7 +3,6 @@ package ferro2000.immersivetech.common.util.compat.jei.boiler;
 import java.util.List;
 
 import ferro2000.immersivetech.api.crafting.BoilerRecipe.BoilerFuelRecipe;
-import ferro2000.immersivetech.common.Config.ITConfig.Machines.Boiler;
 import ferro2000.immersivetech.common.ITContent;
 import ferro2000.immersivetech.common.blocks.metal.types.BlockType_MetalMultiblock;
 import ferro2000.immersivetech.common.util.compat.jei.ITRecipeCategory;
@@ -22,8 +21,6 @@ import net.minecraftforge.fluids.FluidStack;
 public class BoilerFuelRecipeCategory extends ITRecipeCategory<BoilerFuelRecipe, BoilerFuelRecipeWrapper> {
 	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_boiler_jei.png");
 	private final IDrawable tankOverlay;
-
-	private static int inputTankSize = Boiler.boiler_fuel_tankSize;
 
 	@SuppressWarnings("deprecation")
 	public BoilerFuelRecipeCategory(IGuiHelper helper) {

@@ -99,11 +99,11 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 	}
 
 	public void handleSounds() {
-		if (active) {
-			if (soundVolume < 1) soundVolume += 0.01f;
-		} else if (soundVolume > 0) soundVolume -= 0.01f;
+		if(active) {
+			if(soundVolume < 1) soundVolume += 0.01f;
+		} else if(soundVolume > 0) soundVolume -= 0.01f;
 		BlockPos center = getPos();
-		if (soundVolume == 0) ITSoundHandler.StopSound(center);
+		if(soundVolume == 0) ITSoundHandler.StopSound(center);
 		else {
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
@@ -114,13 +114,13 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void onChunkUnload() {
-		if (!isDummy()) ITSoundHandler.StopSound(getPos());
+		if(!isDummy()) ITSoundHandler.StopSound(getPos());
 		super.onChunkUnload();
 	}
 
 	@Override
 	public void disassemble() {
-		if (!isDummy()) {
+		if(!isDummy()) {
 			BlockPos center = getPos();
 			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 		}
@@ -136,8 +136,8 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 
 	@Override
 	public void receiveMessageFromServer(NBTTagCompound message) {
-		if (message.hasKey("active")) active = message.getBoolean("active");
-		else if (message.hasKey("process")) {
+		if(message.hasKey("active")) active = message.getBoolean("active");
+		else if(message.hasKey("process")) {
 			process = message.getFloat("process");
 			processMax = message.getInteger("processMax");
 		}
@@ -162,13 +162,12 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 				handleSounds();
 				return;
 			}
-
 			boolean update = false;
-			if (!inventory.get(0).isEmpty()) {
-				if (processing == null) {
+			if(!inventory.get(0).isEmpty()) {
+				if(processing == null) {
 					processing = getRecipe();
-					if (processing == null) {
-						if (active) {
+					if(processing == null) {
+						if(active) {
 							process = 0;
 							processMax = 0;
 							active = false;
@@ -176,7 +175,7 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 							notifyNearbyClients();
 						}
 					} else {
-						if (!active) {
+						if(!active) {
 							this.process = this.processMax = processing.time;
 							active = true;
 							update = true;
@@ -184,13 +183,12 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 						}
 					}
 				}
-
 				if(active && process > 0) {
 					process -= getProcessSpeed();
 					update = true;
 				}
 				if(processing != null && process <= 0) {
-					if (tank.getFluidAmount() + processing.creosoteOutput <= tank.getCapacity() &&
+					if(tank.getFluidAmount() + processing.creosoteOutput <= tank.getCapacity() &&
 						inventory.get(1).getCount() + getRecipe().output.getCount() <= inventory.get(1).getMaxStackSize()) {
 						Utils.modifyInvStackSize(inventory, 0, -1);
 						if(!inventory.get(1).isEmpty()) {
@@ -208,7 +206,7 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 						processing = null;
 						notifyNearbyClients();
 					} else {
-						if (active) {
+						if(active) {
 							update = true;
 							active = false;
 							notifyNearbyClients();
@@ -216,7 +214,7 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 					}
 				}
 			} else {
-				if (active) {
+				if(active) {
 					active = false;
 					update = true;
 					process = 0;
@@ -225,7 +223,6 @@ public class TileEntityCokeOvenAdvanced extends TileEntityMultiblockPart<TileEnt
 					notifyNearbyClients();
 				}
 			}
-
 			if(tank.getFluidAmount() > 0 && tank.getFluid() != null && (inventory.get(3).isEmpty() || inventory.get(3).getCount() + 1 <= inventory.get(3).getMaxStackSize())) {
 				ItemStack filledContainer = Utils.fillFluidContainer(tank, inventory.get(2), inventory.get(3), null);
 				if(!filledContainer.isEmpty()) {

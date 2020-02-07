@@ -45,25 +45,6 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
 		return null;
 	}
 
-	@Override
-	public TileEntity createNewTileEntity(World world, int meta) {
-		switch(BlockType_MetalMultiblock.values()[meta]) {
-			case ALTERNATOR:
-				return new TileEntityAlternator();
-			case BOILER:
-				return new TileEntityBoiler();
-			case DISTILLER:
-				return new TileEntityDistiller();
-			case SOLAR_REFLECTOR:
-				return new TileEntitySolarReflector();
-			case SOLAR_TOWER:
-				return new TileEntitySolarTower();
-			case STEAM_TURBINE:
-				return new TileEntitySteamTurbine();
-		}
-		return null;
-	}
-
 	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
@@ -83,6 +64,25 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
 	@Override
 	public boolean allowHammerHarvest(IBlockState state) {
 		return true;
+	}
+
+	@Override
+	public TileEntity createBasicTE(World worldIn, BlockType_MetalMultiblock type) {
+		switch(type) {
+		case ALTERNATOR:
+			return new TileEntityAlternator();
+		case BOILER:
+			return new TileEntityBoiler();
+		case DISTILLER:
+			return new TileEntityDistiller();
+		case SOLAR_REFLECTOR:
+			return new TileEntitySolarReflector();
+		case SOLAR_TOWER:
+			return new TileEntitySolarTower();
+		case STEAM_TURBINE:
+			return new TileEntitySteamTurbine();
+		}
+		return null;
 	}
 
 }

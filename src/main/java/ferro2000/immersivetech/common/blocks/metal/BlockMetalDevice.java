@@ -64,19 +64,19 @@ public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice>
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int meta) {
-		switch(BlockType_MetalDevice.values()[meta]) {
+	public boolean allowHammerHarvest(IBlockState state) {
+		return true;
+	}
+
+	@Override
+	public TileEntity createBasicTE(World worldIn, BlockType_MetalDevice type) {
+		switch(type) {
 		case COKE_OVEN_PREHEATER:
 			return new TileEntityCokeOvenPreheater();
 		default:
 			break;
 		}
 		return null;
-	}
-
-	@Override
-	public boolean allowHammerHarvest(IBlockState state) {
-		return true;
 	}
 
 }
