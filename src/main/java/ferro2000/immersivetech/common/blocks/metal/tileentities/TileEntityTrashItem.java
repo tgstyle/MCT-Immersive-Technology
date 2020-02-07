@@ -25,7 +25,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, IIEInventory, IGuiTile, IBlockOverlayText, IBlockBounds {
+public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, IBlockOverlayText, IBlockBounds, IIEInventory, IGuiTile {
 
 	public EnumFacing facing = EnumFacing.NORTH;
 
@@ -109,7 +109,7 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 
 	@Override
 	public int getSlotLimit(int slot) {
-		return 1;
+		return 64;
 	}
 
 	@Override
@@ -135,7 +135,7 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 	
 	@Override
 	public float[] getBlockBounds()	{
-		return new float[]{facing.getAxis()==Axis.X?0: .125f, 0, facing.getAxis()==Axis.Z?0: .125f, facing.getAxis()==Axis.X?1: .875f, 1, facing.getAxis()==Axis.Z?1: .875f};
+		return new float[]{facing.getAxis()==Axis.X ? 0 : .125f, 0, facing.getAxis()==Axis.Z ? .125f : .125f, facing.getAxis()==Axis.X ? 1 : .875f, 1, facing.getAxis()==Axis.Z ? .875f : .875f};
 	}
 
 }
