@@ -3,6 +3,7 @@ package ferro2000.immersivetech.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.api.IEEnums;
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IConfigurableSides;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
@@ -17,9 +18,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.RayTraceResult;
 
-public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable, IIEInternalFluxHandler, IConfigurableSides, IBlockOverlayText {
+public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable, IBlockOverlayText, IBlockBounds, IIEInternalFluxHandler, IConfigurableSides {
+	
+	public EnumFacing facing = EnumFacing.NORTH;
 
 	private static int trashEnergySize = Trash.trash_energy_capacitorSize;
 
@@ -120,6 +124,11 @@ public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable
 	@Override
 	public boolean toggleSide(int side, EntityPlayer p) {
 		return false;
+	}
+
+	@Override
+	public float[] getBlockBounds()	{
+		return new float[]{facing.getAxis()==Axis.X ? 0 : .125f, 0, facing.getAxis()==Axis.Z ? .125f : .125f, facing.getAxis()==Axis.X ? 1 : .875f, 1, facing.getAxis()==Axis.Z ? .875f : .875f};
 	}
 
 }
