@@ -60,6 +60,10 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 		if(!toItem || write) nbt.setTag("tank", tankTag);
 	}
 
+	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
+		world.getChunkFromBlockCoords(this.getPos()).markDirty();
+	}
+
 	@Override
 	public void update() {
 		if(world.isRemote || tank.getFluidAmount() == 0) return;
@@ -95,7 +99,7 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 			updateClient++;
 		}
 		if(update) {
-			this.markDirty();
+			efficientMarkDirty();
 			this.markContainingBlockForUpdate(null);
 		}
 	}

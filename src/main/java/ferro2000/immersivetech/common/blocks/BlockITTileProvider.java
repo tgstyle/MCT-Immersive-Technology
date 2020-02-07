@@ -1,10 +1,13 @@
 package ferro2000.immersivetech.common.blocks;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import blusunrize.immersiveengineering.api.DimensionBlockPos;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler;
@@ -41,7 +44,7 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
-
+import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import ferro2000.immersivetech.common.CommonProxy;
 
 import net.minecraft.block.ITileEntityProvider;
@@ -50,7 +53,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -61,6 +63,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -79,6 +82,9 @@ import net.minecraftforge.items.IItemHandler;
 	*/
 @SuppressWarnings("deprecation")
 public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlockEnum> extends BlockITBase<E> implements ITileEntityProvider, IColouredBlock {
+	
+	private static final Map<DimensionBlockPos, TileEntity> tempTile = new HashMap<>();
+	
 	private boolean hasColours = false;
 
 	public BlockITTileProvider(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockITBase> itemBlock, Object... additionalProperties) {
@@ -86,27 +92,40 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-		return super.getDrops(world, pos, state, fortune);
+	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+		TileEntity tile = world.getTileEntity(pos);
+		DimensionBlockPos dpos = new DimensionBlockPos(pos, world instanceof World ? ((World)world).provider.getDimension(): 0);
+		if(tile == null && tempTile.containsKey(dpos)) tile = tempTile.get(dpos);
+		if(tile != null && (!(tile instanceof ITileDrop) || !((ITileDrop)tile).preventInventoryDrop())) {
+			if(tile instanceof IIEInventory && ((IIEInventory)tile).getDroppedItems() != null) {
+				for(ItemStack s : ((IIEInventory)tile).getDroppedItems()) {
+					if(!s.isEmpty()) drops.add(s);
+				}
+			} else if(tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+				IItemHandler h = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+				if(h instanceof IEInventoryHandler) {
+					for(int i = 0; i < h.getSlots(); i++) {
+						if(!h.getStackInSlot(i).isEmpty()) {
+							drops.add(h.getStackInSlot(i));
+							((IEInventoryHandler)h).setStackInSlot(i, ItemStack.EMPTY);
+						}
+					}
+				}
+			}
+		}
+		if(tile instanceof ITileDrop) {
+			NonNullList<ItemStack> s = ((ITileDrop)tile).getTileDrops(harvesters.get(), state);
+			drops.addAll(s);
+		} else super.getDrops(drops, world, pos, state, fortune);
+		tempTile.remove(dpos);
 	}
 
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState state) {
 		TileEntity tile = world.getTileEntity(pos);
-		if(tile != null && (!(tile instanceof ITileDrop) || !((ITileDrop) tile).preventInventoryDrop()) && tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {IItemHandler h = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-			if(h instanceof IEInventoryHandler) {
-				for(int i = 0; i < h.getSlots(); i++) {
-					if(h.getStackInSlot(i) != null) {
-						spawnAsEntity(world, pos, h.getStackInSlot(i));
-						((IEInventoryHandler) h).setStackInSlot(i, null);
-					}
-				}
-			}
-		}
-		if(tile instanceof IHasDummyBlocks) ((IHasDummyBlocks) tile).breakDummies(pos, state);
-		if(tile instanceof IImmersiveConnectable) {
-			if(!world.isRemote || !Minecraft.getMinecraft().isSingleplayer()) ImmersiveNetHandler.INSTANCE.clearAllConnectionsFor(Utils.toCC(tile), world, !world.isRemote && world.getGameRules().getBoolean("doTileDrops"));
-		}
+		if(tile instanceof IHasDummyBlocks) ((IHasDummyBlocks)tile).breakDummies(pos, state);
+		if(tile instanceof IImmersiveConnectable && !world.isRemote) ImmersiveNetHandler.INSTANCE.clearAllConnectionsFor(Utils.toCC(tile), world, world.getGameRules().getBoolean("doTileDrops"));
+		tempTile.put(new DimensionBlockPos(pos, world.provider.getDimension()), tile);
 		super.breakBlock(world, pos, state);
 		world.removeTileEntity(pos);
 	}

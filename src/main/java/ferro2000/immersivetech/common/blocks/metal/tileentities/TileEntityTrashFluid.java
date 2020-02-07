@@ -1,6 +1,7 @@
 package ferro2000.immersivetech.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 
 import ferro2000.immersivetech.ImmersiveTech;
@@ -11,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.common.capabilities.Capability;
@@ -20,7 +22,9 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable, IFluidTank, IBlockOverlayText {
+public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable, IBlockOverlayText, IBlockBounds, IFluidTank {
+
+	public EnumFacing facing = EnumFacing.NORTH;
 
 	private static int trashFluidSize = Trash.trash_fluid_tankSize;
 
@@ -56,6 +60,10 @@ public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable,
 		if(!toItem || write) nbt.setTag("tank", tankTag);
 	}
 
+	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
+		world.getChunkFromBlockCoords(this.getPos()).markDirty();
+	}
+
 	@Override
 	public void update() {
 		if(world.isRemote) return;
@@ -76,7 +84,7 @@ public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable,
 			updateClient++;
 		}
 		if(update) {
-			this.markDirty();
+			efficientMarkDirty();
 			this.markContainingBlockForUpdate(null);
 		}
 	}
@@ -133,6 +141,11 @@ public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable,
 	@Override
 	public FluidStack drain(int maxDrain, boolean doDrain) {
 		return tank.drain(0, false);
+	}
+
+	@Override
+	public float[] getBlockBounds()	{
+		return new float[]{facing.getAxis()==Axis.X ? 0 : .125f, 0, facing.getAxis()==Axis.Z ? .125f : .125f, facing.getAxis()==Axis.X ? 1 : .875f, 1, facing.getAxis()==Axis.Z ? .875f : .875f};
 	}
 
 }

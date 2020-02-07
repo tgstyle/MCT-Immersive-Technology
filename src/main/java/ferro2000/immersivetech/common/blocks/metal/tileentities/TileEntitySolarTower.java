@@ -134,6 +134,10 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 		isProcessing = message.getBoolean("isProcessing");
 	}
 
+	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
+		world.getChunkFromBlockCoords(this.getPos()).markDirty();
+	}
+
 	@Override
 	public void update() {
 		super.update();
@@ -211,7 +215,7 @@ public class TileEntitySolarTower extends TileEntityMultiblockMetal<TileEntitySo
 			update = true;
 		}
 		if(update) {
-			this.markDirty();
+			efficientMarkDirty();
 			this.markContainingBlockForUpdate(null);
 		}
 	}

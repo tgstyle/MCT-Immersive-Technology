@@ -108,7 +108,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 		if(accepted == 0) return;
 		int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
 		this.tanks[1].drain(drained, true);
-		this.markDirty();
+		efficientMarkDirty();
 		this.markContainingBlockForUpdate(null);
 	}
 
@@ -139,18 +139,22 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 		super.disassemble();
 	}
 
+	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
+		world.getChunkFromBlockCoords(this.getPos()).markDirty();
+	}
+
 	@Override
 	public void update() {
 		super.update();
 		if(isDummy()) return;
-		float rotationSpeed = speed == 0 ? 0f : ((float) speed / (float) maxSpeed) * maxRotationSpeed;
-		if(ITUtils.setRotationAngle(animation, rotationSpeed) && !world.isRemote) {
-			this.markDirty();
-			this.markContainingBlockForUpdate(null);
-		}
 		if(world.isRemote) {
 			handleSounds();
 			return;
+		}
+		float rotationSpeed = speed == 0 ? 0f : ((float) speed / (float) maxSpeed) * maxRotationSpeed;
+		if(ITUtils.setRotationAngle(animation, rotationSpeed)) {
+			efficientMarkDirty();
+			this.markContainingBlockForUpdate(null);
 		}
 		if(burnRemaining > 0) {
 			burnRemaining--;
@@ -162,6 +166,7 @@ public class TileEntitySteamTurbine extends TileEntityMultiblockMetal<TileEntity
 				burnRemaining = recipe.getTotalProcessTime();
 				tanks[0].drain(recipe.fluidInput.amount, true);
 				if(recipe.fluidOutput != null) tanks[1].fill(recipe.fluidOutput, true);
+				this.markContainingBlockForUpdate(null);
 				speedUp();
 			} else speedDown();
 		} else speedDown();
