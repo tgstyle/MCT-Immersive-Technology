@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL11;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
 import blusunrize.immersiveengineering.client.gui.elements.GuiButtonIE;
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.gui.ContainerTimer;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -33,7 +33,7 @@ public class GuiTimer extends GuiIEContainerBase {
 	protected void actionPerformed(GuiButton button) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("buttonId", button.id);
-		ImmersiveTech.packetHandler.sendToServer(new MessageTileSync(tile, tag));
+		ImmersiveTechnology.packetHandler.sendToServer(new MessageTileSync(tile, tag));
 		this.initGui();
 	}
 

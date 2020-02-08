@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.common;
 
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import net.minecraftforge.common.config.Config.Comment;
 
 public class Config {
-	@net.minecraftforge.common.config.Config(modid=ImmersiveTech.MODID, name="immersivetechnology")
+	@net.minecraftforge.common.config.Config(modid=ImmersiveTechnology.MODID, name="immersivetechnology")
 	public static class ITConfig {
 		public static Machines machines;
 		public static MechanicalEnergy mechanicalenergy;

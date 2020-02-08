@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.fluid;
 
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
@@ -9,8 +9,8 @@ import net.minecraftforge.fluids.FluidRegistry;
 public class FluidColored extends Fluid {
 	static final ResourceLocation ICON_MetalStill = new ResourceLocation("tconstruct:blocks/fluids/molten_metal");
 	static final ResourceLocation ICON_MetalFlowing = new ResourceLocation("tconstruct:blocks/fluids/molten_metal_flow");
-	static final ResourceLocation ICON_Still = new ResourceLocation(ImmersiveTech.MODID + ":blocks/fluids/fluid_still");
-	static final ResourceLocation ICON_Flowing = new ResourceLocation(ImmersiveTech.MODID + ":blocks/fluids/fluid_flowing");
+	static final ResourceLocation ICON_Still = new ResourceLocation(ImmersiveTechnology.MODID + ":blocks/fluids/fluid_still");
+	static final ResourceLocation ICON_Flowing = new ResourceLocation(ImmersiveTechnology.MODID + ":blocks/fluids/fluid_flowing");
 
 	int color;
 
@@ -23,7 +23,7 @@ public class FluidColored extends Fluid {
 			this.setViscosity(viscosity);
 			FluidRegistry.registerFluid(this);
 			FluidRegistry.addBucketForFluid(this);
-			ITLogger.info("Added molten fluid: " + ImmersiveTech.MODID + ":" + name);
+			ITLogger.info("Added molten fluid: " + ImmersiveTechnology.MODID + ":" + name);
 		}
 	}
 
@@ -36,7 +36,7 @@ public class FluidColored extends Fluid {
 			this.setGaseous(gaseous);
 			FluidRegistry.registerFluid(this);
 			FluidRegistry.addBucketForFluid(this);
-			ITLogger.info("Added fluid: " + ImmersiveTech.MODID + ":" + name);
+			ITLogger.info("Added fluid: " + ImmersiveTechnology.MODID + ":" + name);
 		}
 	}
 

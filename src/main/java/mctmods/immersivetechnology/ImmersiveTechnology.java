@@ -23,16 +23,16 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 @Mod(
-	modid = ImmersiveTech.MODID,
-	name = ImmersiveTech.NAME,
-	version = ImmersiveTech.VERSION,
+	modid = ImmersiveTechnology.MODID,
+	name = ImmersiveTechnology.NAME,
+	version = ImmersiveTechnology.VERSION,
 	acceptedMinecraftVersions = "[1.12.2,1.13)",	
 	dependencies = 
 			"required-after:immersiveengineering;" +
 			"required-after:forge@[14.23.3.2655,);")
 
 
-public class ImmersiveTech {
+public class ImmersiveTechnology {
 
 	public static final String MODID = "immersivetech";
 	public static final String NAME = "Immersive Technology";
@@ -43,7 +43,7 @@ public class ImmersiveTech {
 	public static final SimpleNetworkWrapper packetHandler = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
 
 	@Instance(MODID)
-	public static ImmersiveTech instance;
+	public static ImmersiveTechnology instance;
 
 	static {
 		FluidRegistry.enableUniversalBucket();

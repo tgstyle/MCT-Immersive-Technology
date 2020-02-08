@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks;
 
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.ITContent;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -25,8 +25,8 @@ public class BlockITFluid extends BlockFluidClassic {
 
 	public BlockITFluid(String name, Fluid fluid, Material material) {
 		super(fluid, material);
-		this.setUnlocalizedName(ImmersiveTech.MODID + "." + name);
-		this.setCreativeTab(ImmersiveTech.creativeTab);
+		this.setUnlocalizedName(ImmersiveTechnology.MODID + "." + name);
+		this.setCreativeTab(ImmersiveTechnology.creativeTab);
 		ITContent.registeredITBlocks.add(this);
 	}
 
