@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBou
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import mctmods.immersivetechnology.ImmersiveTech;
@@ -27,7 +28,7 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 
 	public EnumFacing facing = EnumFacing.NORTH;
 
-	public NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
+	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
 
 	private int acceptedAmount = 0;
 	private int updateClient = 1;
@@ -36,13 +37,13 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		acceptedAmount = nbt.getInteger("acceptedAmount");
-		inventory.set(0, new ItemStack(nbt.getCompoundTag("inventory")));
+		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 3);
 	}
 
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		nbt.setInteger("acceptedAmount", acceptedAmount);
-		if(!inventory.get(0).isEmpty()) nbt.setTag("inventory", inventory.get(0).writeToNBT(new NBTTagCompound()));
+		if(!descPacket && !inventory.isEmpty()) nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
 
 	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
@@ -53,12 +54,13 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 	public void update() {
 		if(world.isRemote) return;
 		boolean update = false;
-		if(!inventory.isEmpty()) {
-			int currentAmount;
-			currentAmount = inventory.get(0).getCount();
+		for(int slot = 0; slot < 3; slot++) {
+			if(inventory.get(slot).isEmpty()) break;
+			int currentAmount = 0;
+			currentAmount = inventory.get(slot).getCount();
 			lastAmount = currentAmount + lastAmount;
-			inventory.clear();
 		}
+		if(lastAmount > 0) inventory.clear();
 		if(updateClient >= 20) {
 			acceptedAmount = lastAmount;
 			lastAmount = 0;
