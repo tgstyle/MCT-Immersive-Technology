@@ -12,7 +12,7 @@ import blusunrize.immersiveengineering.client.IECustomStateMapper;
 import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
 import blusunrize.lib.manual.ManualPages;
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
 import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.ITContent;
@@ -65,8 +65,8 @@ public class ClientProxy extends CommonProxy {
 	public void preInit() {
 		ClientUtils.mc().getFramebuffer().enableStencil();
 		ModelLoaderRegistry.registerLoader(IEOBJLoader.instance);
-		OBJLoader.INSTANCE.addDomain(ImmersiveTech.MODID);
-		IEOBJLoader.instance.addDomain(ImmersiveTech.MODID);
+		OBJLoader.INSTANCE.addDomain(ImmersiveTechnology.MODID);
+		IEOBJLoader.instance.addDomain(ImmersiveTechnology.MODID);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -134,12 +134,12 @@ public class ClientProxy extends CommonProxy {
 				ItemITBase ipMetaItem = (ItemITBase) item;
 				if(ipMetaItem.registerSubModels && ipMetaItem.getSubNames() != null && ipMetaItem.getSubNames().length > 0) {
 					for(int meta = 0; meta < ipMetaItem.getSubNames().length; meta++) {
-						ResourceLocation loc = new ResourceLocation(ImmersiveTech.MODID, ipMetaItem.itemName + "/" + ipMetaItem.getSubNames()[meta]);
+						ResourceLocation loc = new ResourceLocation(ImmersiveTechnology.MODID, ipMetaItem.itemName + "/" + ipMetaItem.getSubNames()[meta]);
 						ModelBakery.registerItemVariants(ipMetaItem, loc);
 						ModelLoader.setCustomModelResourceLocation(ipMetaItem, meta, new ModelResourceLocation(loc, "inventory"));
 					}
 				} else {
-					final ResourceLocation loc = new ResourceLocation(ImmersiveTech.MODID, ipMetaItem.itemName);
+					final ResourceLocation loc = new ResourceLocation(ImmersiveTechnology.MODID, ipMetaItem.itemName);
 					ModelBakery.registerItemVariants(ipMetaItem, loc);
 					ModelLoader.setCustomMeshDefinition(ipMetaItem, new ItemMeshDefinition() {
 						@Override
@@ -168,12 +168,12 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void init() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbine.class, new TileRenderSteamTurbine());
-		ImmersiveTech.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
+		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
 		//has to be here as well because this one is used when playing Singleplayer, go figure
-		ImmersiveTech.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
-		ImmersiveTech.packetHandler.registerMessage(MessageStopSound.HandlerClient.class, MessageStopSound.class, 1, Side.CLIENT);
-		ImmersiveTech.packetHandler.registerMessage(MessageRequestUpdate.HandlerClient.class, MessageRequestUpdate.class, 2, Side.CLIENT);
-		ImmersiveTech.packetHandler.registerMessage(MessageRequestUpdate.HandlerServer.class, MessageRequestUpdate.class, 2, Side.SERVER);
+		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
+		ImmersiveTechnology.packetHandler.registerMessage(MessageStopSound.HandlerClient.class, MessageStopSound.class, 1, Side.CLIENT);
+		ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerClient.class, MessageRequestUpdate.class, 2, Side.CLIENT);
+		ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerServer.class, MessageRequestUpdate.class, 2, Side.SERVER);
 
 	}
 
@@ -202,7 +202,7 @@ public class ClientProxy extends CommonProxy {
 		public final ModelResourceLocation location;
 
 		public FluidStateMapper(Fluid fluid) {
-			this.location = new ModelResourceLocation(ImmersiveTech.MODID + ":fluid_block", fluid.getName());
+			this.location = new ModelResourceLocation(ImmersiveTechnology.MODID + ":fluid_block", fluid.getName());
 		}
 
 		@Nonnull

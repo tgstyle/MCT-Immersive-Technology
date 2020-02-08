@@ -5,7 +5,7 @@ import java.util.Locale;
 
 import blusunrize.immersiveengineering.client.ClientProxy;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -65,7 +65,7 @@ public class ItemBlockITBase extends ItemBlock {
 	public void addInformation(ItemStack stack, World worldIn, List<String> list, ITooltipFlag advInfo) {
 		if(((BlockITBase<?>) block).hasFlavour(stack)) {
 			String subName = ((BlockITBase<?>) this.block).getStateFromMeta(stack.getItemDamage()).getValue(((BlockITBase<?>) this.block).property).toString().toLowerCase(Locale.US);
-			String flavourKey = "desc." + ImmersiveTech.MODID + ".flavor." + ((BlockITBase<?>) this.block).name + "." + subName;
+			String flavourKey = "desc." + ImmersiveTechnology.MODID + ".flavor." + ((BlockITBase<?>) this.block).name + "." + subName;
 			list.add(TextFormatting.GRAY.toString() + I18n.format(flavourKey));
 		}
 		super.addInformation(stack, worldIn, list, advInfo);
