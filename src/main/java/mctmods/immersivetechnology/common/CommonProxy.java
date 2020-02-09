@@ -3,12 +3,12 @@ package mctmods.immersivetechnology.common;
 import javax.annotation.Nonnull;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
-import mctmods.immersivetechnology.ImmersiveTech;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.client.gui.GuiBoiler;
 import mctmods.immersivetechnology.client.gui.GuiCokeOvenAdvanced;
@@ -55,9 +55,9 @@ public class CommonProxy implements IGuiHandler {
 	public void preInitEnd() {}
 
 	public void init() {
-		ImmersiveTech.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
-		ImmersiveTech.packetHandler.registerMessage(MessageStopSound.HandlerServer.class, MessageStopSound.class, 1, Side.SERVER);
-		ImmersiveTech.packetHandler.registerMessage(MessageRequestUpdate.HandlerServer.class, MessageRequestUpdate.class, 2, Side.SERVER);
+		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
+		ImmersiveTechnology.packetHandler.registerMessage(MessageStopSound.HandlerServer.class, MessageStopSound.class, 1, Side.SERVER);
+		ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerServer.class, MessageRequestUpdate.class, 2, Side.SERVER);
 	}
 
 	public void initEnd() {}
@@ -67,7 +67,7 @@ public class CommonProxy implements IGuiHandler {
 	public void postInitEnd() {}
 
 	public static <T extends TileEntity & IGuiTile> void openGuiForTile(@Nonnull EntityPlayer player, @Nonnull T tile) {
-		player.openGui(ImmersiveTech.instance, tile.getGuiID(), tile.getWorld(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ());
+		player.openGui(ImmersiveTechnology.instance, tile.getGuiID(), tile.getWorld(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ());
 	}
 
 	@Override

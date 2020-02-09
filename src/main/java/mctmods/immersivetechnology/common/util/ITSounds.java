@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import java.util.HashSet;
 import java.util.Set;
 
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 
 public class ITSounds {
 
@@ -20,7 +20,7 @@ public class ITSounds {
     public static SoundEvent solarTower = registerSound("solarTower");
 
     private static SoundEvent registerSound(String name) {
-        ResourceLocation location = new ResourceLocation(ImmersiveTech.MODID, name);
+        ResourceLocation location = new ResourceLocation(ImmersiveTechnology.MODID, name);
         SoundEvent event = new SoundEvent(location);
         registeredEvents.add(event.setRegistryName(location));
         return event;

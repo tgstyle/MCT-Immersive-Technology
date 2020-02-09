@@ -8,10 +8,12 @@ import crafttweaker.IAction;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fluids.FluidStack;
 
+import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -68,13 +70,8 @@ public class Distiller {
 	}
 
 	@ZenMethod
-	public static void removeRecipe(ILiquidStack inputFluid) {
-		if(CraftTweakerHelper.toFluidStack(inputFluid) != null) CraftTweakerAPI.apply(new Remove(CraftTweakerHelper.toFluidStack(inputFluid)));
-	}
-
-	@ZenMethod
-	public static void removeRecipe(ILiquidStack inputFluid, IItemStack outputItem) {
-		if(CraftTweakerHelper.toStack(outputItem) != null) CraftTweakerAPI.apply(new Remove(CraftTweakerHelper.toFluidStack(inputFluid), CraftTweakerHelper.toStack(outputItem)));
+	public static void removeRecipe(ILiquidStack inputFluid, @Optional IItemStack outputItem) {
+		if(CraftTweakerHelper.toFluidStack(inputFluid) != null) CraftTweakerAPI.apply(new Remove(CraftTweakerHelper.toFluidStack(inputFluid), CraftTweakerHelper.toStack(outputItem)));
 	}
 
 	private static class Remove implements IAction {
@@ -82,11 +79,6 @@ public class Distiller {
 		private final ItemStack outputItem;
 		ArrayList<DistillerRecipe> removedRecipes = new ArrayList<DistillerRecipe>();
 
-		public Remove(FluidStack inputFluid) {
-			this.outputItem = null;
-			this.inputFluid = inputFluid;
-		}
-		
 		public Remove(FluidStack inputFluid, ItemStack outputItem) {
 			this.inputFluid = inputFluid;
 			this.outputItem = outputItem;
@@ -97,11 +89,7 @@ public class Distiller {
 			Iterator<DistillerRecipe> iterator = DistillerRecipe.recipeList.iterator();
 			while(iterator.hasNext()) {
 				DistillerRecipe recipe = iterator.next();
-				if(recipe != null && outputItem == null && recipe.fluidInput.isFluidEqual(inputFluid)) {
-					removedRecipes.add(recipe);
-					iterator.remove();
-				}
-				if(recipe != null && recipe.fluidInput.isFluidEqual(inputFluid) && recipe.itemOutput.isItemEqual(outputItem)) {
+				if(recipe != null && recipe.fluidInput.isFluidEqual(inputFluid)) {
 					removedRecipes.add(recipe);
 					iterator.remove();
 				}
@@ -110,8 +98,8 @@ public class Distiller {
 
 		@Override
 		public String describe() {
-			if(this.outputItem != null) return "Removing Distiller Input Recipe for " + inputFluid.getLocalizedName() + " -> " + outputItem.getDisplayName();
-			return "Removing Distiller Input Recipe for " + inputFluid.getLocalizedName();
+			if(this.outputItem.getItem() == Items.AIR) return "Removing Distiller Input Recipe for " + inputFluid.getLocalizedName();
+			return "Removing Distiller Input Recipe for " + inputFluid.getLocalizedName() + " -> " + outputItem.getDisplayName();
 		}
 	}
 

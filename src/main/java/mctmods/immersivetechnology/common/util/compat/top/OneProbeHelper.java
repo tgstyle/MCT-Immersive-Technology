@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.common.util.compat.top;
 
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import mcjty.theoneprobe.api.*;
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Boiler;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
@@ -52,7 +52,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 	public static class MiscProvider implements IProbeInfoProvider {
 		@Override
 		public String getID() {
-			return ImmersiveTech.MODID + ":" + "MiscInfo";
+			return ImmersiveTechnology.MODID + ":" + "MiscInfo";
 		}
 
 		@Override
@@ -70,7 +70,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 	public static class MechanicalEnergyProvider implements IProbeInfoProvider {
 		@Override
 		public String getID() {
-			return ImmersiveTech.MODID + ":" + "MechanicalEnergyInfo";
+			return ImmersiveTechnology.MODID + ":" + "MechanicalEnergyInfo";
 		}
 
 		@Override

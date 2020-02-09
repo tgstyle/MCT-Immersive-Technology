@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.recipe.IRecipeCategory;
@@ -80,7 +80,7 @@ public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements I
 
 	@Override
 	public String getModName() {
-		return ImmersiveTech.NAME;
+		return ImmersiveTechnology.NAME;
 	}
 
 }

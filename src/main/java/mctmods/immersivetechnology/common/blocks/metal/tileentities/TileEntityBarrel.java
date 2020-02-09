@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
 import blusunrize.immersiveengineering.common.util.Utils;
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 
 import net.minecraft.block.state.IBlockState;
@@ -106,9 +106,9 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
 		String amount = null;
 		if(tank.getFluid() != null) {
-			amount = tank.getFluid().getLocalizedName() + " " + I18n.format(ImmersiveTech.MODID +".osd.barrel.output") + ": " + acceptedAmount + "mB";
+			amount = tank.getFluid().getLocalizedName() + " " + I18n.format(ImmersiveTechnology.MODID +".osd.barrel.output") + ": " + acceptedAmount + "mB";
 		} else {
-			amount = I18n.format(ImmersiveTech.MODID + ".osd.barrel.empty");
+			amount = I18n.format(ImmersiveTechnology.MODID + ".osd.barrel.empty");
 		}
 		return new String[]{amount};
 	}

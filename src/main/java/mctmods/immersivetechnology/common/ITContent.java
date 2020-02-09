@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.Config;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
-import mctmods.immersivetechnology.ImmersiveTech;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
@@ -52,7 +52,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
-@EventBusSubscriber(modid=ImmersiveTech.MODID)
+@EventBusSubscriber(modid= ImmersiveTechnology.MODID)
 public class ITContent {
 	/*BLOCKS*/
 	public static ArrayList<Block> registeredITBlocks = new ArrayList<Block>();
@@ -203,7 +203,7 @@ public class ITContent {
 	public static void registerTile(Class<? extends TileEntity> tile) {
 		String tileEntity = tile.getSimpleName();
 		tileEntity = tileEntity.substring(tileEntity.indexOf("TileEntity") + "TileEntity".length());
-		GameRegistry.registerTileEntity(tile, ImmersiveTech.MODID + ":" + tileEntity);
+		GameRegistry.registerTileEntity(tile, ImmersiveTechnology.MODID + ":" + tileEntity);
 	}
 
 	@SubscribeEvent
