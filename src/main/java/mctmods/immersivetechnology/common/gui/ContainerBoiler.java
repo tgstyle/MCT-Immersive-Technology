@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.common.gui;
 
 import blusunrize.immersiveengineering.common.gui.ContainerIEBase;
 import blusunrize.immersiveengineering.common.gui.IESlot;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoiler;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -11,11 +11,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-public class ContainerBoiler extends ContainerIEBase<TileEntityBoiler> {
-	public ContainerBoiler(InventoryPlayer inventoryPlayer, TileEntityBoiler tile) {
+public class ContainerBoiler extends ContainerIEBase<TileEntityBoilerMaster> {
+	public ContainerBoiler(InventoryPlayer inventoryPlayer, TileEntityBoilerMaster tile) {
 		super(inventoryPlayer, tile);
 
-		final TileEntityBoiler tileF = tile;
+		final TileEntityBoilerMaster tileF = tile;
 		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 0, 37, 15, 2) {
 			@Override
 			public boolean isItemValid(ItemStack itemStack) {

@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import net.minecraft.util.IStringSerializable;
 
 public enum BlockType_StoneMultiblock implements IStringSerializable, BlockITBase.IBlockEnum {
-	COKE_OVEN_ADVANCED;
+	COKE_OVEN_ADVANCED, COKE_OVEN_ADVANCED_SLAVE;
 
 	@Override
 	public String getName() {

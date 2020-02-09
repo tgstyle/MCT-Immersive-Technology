@@ -13,6 +13,7 @@ import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
 import blusunrize.lib.manual.ManualPages;
 import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
 import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.ITContent;
@@ -24,7 +25,7 @@ import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockDis
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarReflector;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbine;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.items.ItemITBase;
@@ -34,6 +35,7 @@ import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -54,6 +56,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -83,6 +86,14 @@ public class ClientProxy extends CommonProxy {
 	@SubscribeEvent()
 	public void PlayerDisconnected(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
 		ITSoundHandler.DeleteAllSounds();
+	}
+
+	@SubscribeEvent
+	public void onClientTick(TickEvent.ClientTickEvent event) {
+		if (!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
+			Minecraft.getMinecraft().world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
+			ITUtils.REMOVE_FROM_TICKING.clear();
+		}
 	}
 
 	
@@ -167,7 +178,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void init() {
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbine.class, new TileRenderSteamTurbine());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
 		ImmersiveTech.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
 		//has to be here as well because this one is used when playing Singleplayer, go figure
 		ImmersiveTech.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
@@ -217,5 +228,4 @@ public class ClientProxy extends CommonProxy {
 			return location;
 		}
 	}
-
 }

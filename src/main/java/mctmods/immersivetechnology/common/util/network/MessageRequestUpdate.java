@@ -1,8 +1,9 @@
 package mctmods.immersivetechnology.common.util.network;
 
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
+import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
 import io.netty.buffer.ByteBuf;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -40,8 +41,8 @@ public class MessageRequestUpdate implements IMessage {
             world.addScheduledTask(() -> {
                 if(world.isBlockLoaded(message.pos)) {
                     TileEntity tile = world.getTileEntity(message.pos);
-                    if(tile instanceof TileEntityCokeOvenAdvanced)
-                        ((TileEntityCokeOvenAdvanced)tile).updateRequested(ctx.getServerHandler().player);
+                    if(tile instanceof TileEntityCokeOvenAdvancedSlave)
+                        ((TileEntityCokeOvenAdvancedMaster)tile).updateRequested(ctx.getServerHandler().player);
                 }
             });
             return null;

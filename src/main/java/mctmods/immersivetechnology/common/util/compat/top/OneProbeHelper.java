@@ -6,7 +6,8 @@ import mctmods.immersivetechnology.ImmersiveTech;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Boiler;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoiler;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerSlave;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -57,11 +58,10 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 		@Override
 		public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
 			TileEntity te = world.getTileEntity(data.getPos());
-			if(te instanceof TileEntityBoiler) {
-				TileEntityMultiblockPart<?> master = ((TileEntityMultiblockPart<?>)te).master();
+			if(te instanceof TileEntityBoilerSlave) {
+				TileEntityBoilerMaster master = ((TileEntityBoilerSlave)te).master();
 				if(master == null) return;
-				TileEntityBoiler boiler = (TileEntityBoiler)master;
-				int current = (int)(boiler.heatLevel / workingHeatLevel * 100);
+				int current = (int)(master.heatLevel / workingHeatLevel * 100);
 				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2)).text("Heat Level").progress(current, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
 			}
 		}
