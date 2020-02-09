@@ -10,7 +10,10 @@ import blusunrize.immersiveengineering.api.energy.wires.WireApi;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
 import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
+import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
+import blusunrize.immersiveengineering.common.items.ItemEarmuffs;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualPages;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
@@ -36,11 +39,13 @@ import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -94,6 +99,27 @@ public class ClientProxy extends CommonProxy {
 			Minecraft.getMinecraft().world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
 			ITUtils.REMOVE_FROM_TICKING.clear();
 		}
+
+		calculateVolume();
+	}
+
+	public static float volumeAdjustment = 1;
+
+	public void calculateVolume() {
+		float prevVolume = volumeAdjustment;
+		EntityPlayerSP player = ClientUtils.mc().player;
+		if (player == null) return;
+		ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		if (!stack.isEmpty()) {
+			if (IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
+			 else if (ItemNBTHelper.hasKey(stack, "IE:Earmuffs")) {
+				stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");
+				if (!stack.isEmpty() && IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
+				else volumeAdjustment = 1;
+			} else volumeAdjustment = 1;
+		} else volumeAdjustment = 1;
+
+		if (prevVolume != volumeAdjustment) ITSoundHandler.UpdateAllVolumes();
 	}
 
 	
