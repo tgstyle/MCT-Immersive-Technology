@@ -4,7 +4,10 @@ import java.util.ArrayList;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.Config;
-import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
+import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
+import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
+import mctmods.immersivetechnology.ImmersiveTech;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
@@ -25,21 +28,9 @@ import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockDis
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarReflector;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAlternator;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrel;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoiler;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityCokeOvenPreheater;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistiller;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarReflector;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTower;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbine;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashEnergy;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashFluid;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneDecoration;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneMultiblock;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.fluid.FluidColored;
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.util.ITLogger;
@@ -136,32 +127,39 @@ public class ITContent {
 		
 		/*MULTIBLOCK TILE ENTITIES*/
 		if(Multiblock.enable_distiller) {
-			registerTile(TileEntityDistiller.class);
+			registerTile(TileEntityDistillerSlave.class);
+			registerTile(TileEntityDistillerMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockDistiller.instance);
 		}
 		if(Multiblock.enable_alternator) {
-			registerTile(TileEntityAlternator.class);
+			registerTile(TileEntityAlternatorSlave.class);
+			registerTile(TileEntityAlternatorMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockAlternator.instance);
 		}
 		if(Multiblock.enable_boiler) {
-			registerTile(TileEntityBoiler.class);
+			registerTile(TileEntityBoilerSlave.class);
+			registerTile(TileEntityBoilerMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockBoiler.instance);
 		}
 		if(Multiblock.enable_advancedCokeOven) {
-			registerTile(TileEntityCokeOvenAdvanced.class);
+			registerTile(TileEntityCokeOvenAdvancedSlave.class);
+			registerTile(TileEntityCokeOvenAdvancedMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockCokeOvenAdvanced.instance);
 			registerTile(TileEntityCokeOvenPreheater.class);
 		}
 		if(Multiblock.enable_solarReflector) {
-			registerTile(TileEntitySolarReflector.class);
+			registerTile(TileEntitySolarReflectorSlave.class);
+			registerTile(TileEntitySolarReflectorMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockSolarReflector.instance);
 		}
 		if(Multiblock.enable_solarTower) {
-			registerTile(TileEntitySolarTower.class);
+			registerTile(TileEntitySolarTowerSlave.class);
+			registerTile(TileEntitySolarTowerMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockSolarTower.instance);
 		}
 		if(Multiblock.enable_steamTurbine) {
-			registerTile(TileEntitySteamTurbine.class);
+			registerTile(TileEntitySteamTurbineSlave.class);
+			registerTile(TileEntitySteamTurbineMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
 		}
 	}
@@ -242,5 +240,4 @@ public class ITContent {
 		Config.manual_int.put("alternator_energyPerTick", Alternator.alternator_energy_perTick);
 		Config.manual_int.put("cokeOvenPreheater_consumption", CokeOvenPreheater.cokeOvenPreheater_energy_consumption);
 	}
-
 }

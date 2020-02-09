@@ -48,10 +48,17 @@ tile.immersivetech.metal_multiblock.solar_reflector.name=Solar Reflector
 tile.immersivetech.metal_multiblock.steam_turbine.name=Steam Turbine
 tile.immersivetech.metal_multiblock.boiler.name=Boiler
 tile.immersivetech.metal_multiblock.alternator.name=Alternator
+tile.immersivetech.metal_multiblock.distiller_slave.name=Distiller
+tile.immersivetech.metal_multiblock.solar_tower_slave.name=Solar Tower
+tile.immersivetech.metal_multiblock.solar_reflector_slave.name=Solar Reflector
+tile.immersivetech.metal_multiblock.steam_turbine_slave.name=Steam Turbine
+tile.immersivetech.metal_multiblock.boiler_slave.name=Boiler
+tile.immersivetech.metal_multiblock.alternator_slave.name=Alternator
 
 
 #STONE MULTIBLOCKS
 tile.immersivetech.stone_multiblock.coke_oven_advanced.name=Advanced Coke Oven
+tile.immersivetech.stone_multiblock.coke_oven_advanced_slave.name=Advanced Coke Oven
 
 
 #METAL MULTIBLOCKS
