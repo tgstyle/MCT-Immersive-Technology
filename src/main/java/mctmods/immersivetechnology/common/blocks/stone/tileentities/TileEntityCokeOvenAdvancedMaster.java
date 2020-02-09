@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityCokeOvenPreheater;
 import mctmods.immersivetechnology.common.util.ITSounds;
@@ -91,7 +91,7 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
     @Override
     public void disassemble() {
         BlockPos center = getPos();
-        ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
         super.disassemble();
     }
 
@@ -99,7 +99,7 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
         NBTTagCompound tag = new NBTTagCompound();
         tag.setBoolean("active", active);
         BlockPos center = getPos();
-        ImmersiveTech.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
     }
 
     @Override
@@ -115,7 +115,7 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
         NBTTagCompound tag = new NBTTagCompound();
         tag.setFloat("process", process);
         tag.setInteger("processMax", processMax);
-        ImmersiveTech.packetHandler.sendTo(new MessageTileSync(this, tag), player);
+        ImmersiveTechnology.packetHandler.sendTo(new MessageTileSync(this, tag), player);
     }
 
     public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!

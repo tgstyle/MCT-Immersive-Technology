@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
@@ -78,7 +78,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave {
     @Override
     public void disassemble() {
         BlockPos center = getPos();
-        ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
         super.disassemble();
     }
 
@@ -86,7 +86,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setBoolean("running", running);
         BlockPos center = getPos();
-        ImmersiveTech.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
     }
 
     public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!

@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.Config;
@@ -80,7 +80,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
     @Override
     public void disassemble() {
         BlockPos center = getPos();
-        ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
         super.disassemble();
     }
 
@@ -88,7 +88,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("energy", energyStorage.getEnergyStored());
         BlockPos center = getPos();
-        ImmersiveTech.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
     }
 
     public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
