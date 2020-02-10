@@ -10,7 +10,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecor
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistiller;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerSlave;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -76,8 +76,9 @@ public class MultiblockDistiller implements IMultiblock {
 
 	@Override
 	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
-		side = side.getOpposite();
-		if(side == EnumFacing.UP || side == EnumFacing.DOWN) side = EnumFacing.fromAngle(player.rotationYaw);
+		side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
+		IBlockState master = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.DISTILLER.getMeta());
+		IBlockState slave = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.DISTILLER_SLAVE.getMeta());
 		boolean mirror = false;
 		boolean bool = this.structureCheck(world, pos, side, mirror);
 		if(!bool) {
@@ -91,14 +92,15 @@ public class MultiblockDistiller implements IMultiblock {
 					if((h == 0 && w == 0 && l == - 1) || (h == 1 && l < 0)) continue;
 					int ww = mirror ? - w : w;
 					BlockPos pos2 = pos.offset(side, l).offset(side.rotateY(), ww).add(0, h, 0);
-					world.setBlockState(pos2, ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.DISTILLER.getMeta()));
+					int[] offset = new int[] {(side == EnumFacing.WEST ? - l : side == EnumFacing.EAST ? l : side == EnumFacing.NORTH ? ww : - ww), h, (side == EnumFacing.NORTH ? - l : side == EnumFacing.SOUTH ? l : side == EnumFacing.EAST ? ww : - ww)};
+					world.setBlockState(pos2, (offset[0]==0&&offset[1]==0&&offset[2]==0)? master : slave);
 					TileEntity curr = world.getTileEntity(pos2);
-					if(curr instanceof TileEntityDistiller) {
-						TileEntityDistiller tile = (TileEntityDistiller)curr;
+					if(curr instanceof TileEntityDistillerSlave) {
+						TileEntityDistillerSlave tile = (TileEntityDistillerSlave)curr;
 						tile.facing = side;
 						tile.formed = true;
 						tile.pos = (h + 1) * 9 + (l + 1) * 3 + (w + 1);
-						tile.offset = new int[] {(side == EnumFacing.WEST ? - l : side == EnumFacing.EAST ? l : side == EnumFacing.NORTH ? ww : - ww), h, (side == EnumFacing.NORTH ? - l : side == EnumFacing.SOUTH ? l : side == EnumFacing.EAST ? ww : - ww)};
+						tile.offset = offset;
 						tile.mirrored = mirror;
 						tile.markDirty();
 						world.addBlockEvent(pos2, ITContent.blockMetalMultiblock, 255, 0);

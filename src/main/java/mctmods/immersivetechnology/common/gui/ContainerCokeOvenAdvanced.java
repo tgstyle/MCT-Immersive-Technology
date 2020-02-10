@@ -3,13 +3,13 @@ package mctmods.immersivetechnology.common.gui;
 import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import blusunrize.immersiveengineering.common.gui.ContainerIEBase;
 import blusunrize.immersiveengineering.common.gui.IESlot;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
+import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class ContainerCokeOvenAdvanced extends ContainerIEBase<TileEntityCokeOvenAdvanced> {
-	public ContainerCokeOvenAdvanced(InventoryPlayer inventoryPlayer, TileEntityCokeOvenAdvanced tile) {
+public class ContainerCokeOvenAdvanced extends ContainerIEBase<TileEntityCokeOvenAdvancedMaster> {
+	public ContainerCokeOvenAdvanced(InventoryPlayer inventoryPlayer, TileEntityCokeOvenAdvancedMaster tile) {
 		super(inventoryPlayer, tile);
 
 		this.addSlotToContainer(new IESlot(this, this.inv, 0, 30, 35) {
@@ -30,5 +30,4 @@ public class ContainerCokeOvenAdvanced extends ContainerIEBase<TileEntityCokeOve
 		}
 		for(int i = 0 ; i < 9 ; i++) addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 142));
 	}
-
 }

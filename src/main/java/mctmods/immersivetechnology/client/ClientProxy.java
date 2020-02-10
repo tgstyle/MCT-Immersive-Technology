@@ -10,8 +10,12 @@ import blusunrize.immersiveengineering.api.energy.wires.WireApi;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
 import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
+import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
+import blusunrize.immersiveengineering.common.items.ItemEarmuffs;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualPages;
+import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
 import mctmods.immersivetechnology.common.CommonProxy;
@@ -24,7 +28,7 @@ import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockDis
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarReflector;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbine;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.items.ItemITBase;
@@ -34,11 +38,14 @@ import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -54,6 +61,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -83,6 +91,35 @@ public class ClientProxy extends CommonProxy {
 	@SubscribeEvent()
 	public void PlayerDisconnected(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
 		ITSoundHandler.DeleteAllSounds();
+	}
+
+	@SubscribeEvent
+	public void onClientTick(TickEvent.ClientTickEvent event) {
+		if (!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
+			Minecraft.getMinecraft().world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
+			ITUtils.REMOVE_FROM_TICKING.clear();
+		}
+
+		calculateVolume();
+	}
+
+	public static float volumeAdjustment = 1;
+
+	public void calculateVolume() {
+		float prevVolume = volumeAdjustment;
+		EntityPlayerSP player = ClientUtils.mc().player;
+		if (player == null) return;
+		ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		if (!stack.isEmpty()) {
+			if (IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
+			 else if (ItemNBTHelper.hasKey(stack, "IE:Earmuffs")) {
+				stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");
+				if (!stack.isEmpty() && IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
+				else volumeAdjustment = 1;
+			} else volumeAdjustment = 1;
+		} else volumeAdjustment = 1;
+
+		if (prevVolume != volumeAdjustment) ITSoundHandler.UpdateAllVolumes();
 	}
 
 	
@@ -167,7 +204,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void init() {
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbine.class, new TileRenderSteamTurbine());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
 		//has to be here as well because this one is used when playing Singleplayer, go figure
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
@@ -217,5 +254,4 @@ public class ClientProxy extends CommonProxy {
 			return location;
 		}
 	}
-
 }

@@ -10,7 +10,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecor
 import blusunrize.immersiveengineering.common.blocks.wooden.BlockTypes_WoodenDecoration;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarReflector;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarReflectorSlave;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -67,22 +67,24 @@ public class MultiblockSolarReflector implements IMultiblock {
 
 	@Override
 	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
-		side = side.getOpposite();
-		if(side == EnumFacing.UP || side == EnumFacing.DOWN) side = EnumFacing.fromAngle(player.rotationYaw);
+		side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
+		IBlockState master = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_REFLECTOR.getMeta());
+		IBlockState slave = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_REFLECTOR_SLAVE.getMeta());
 		boolean bool = this.structureCheck(world, pos, side);
 		if(!bool) return false;
 		for(int h = - 3 ; h <= 1 ; h ++) {
 			for(int w = - 1 ; w <= 1 ; w ++) {
 				if(h < - 1 && w == 0) continue;
 				BlockPos pos2 = pos.offset(side.rotateY(), w).add(0, h, 0);
-				world.setBlockState(pos2, ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_REFLECTOR.getMeta()));
+				int[] offset = new int[] {(side == EnumFacing.NORTH ? w : side == EnumFacing.SOUTH ? - w : 0), h, (side == EnumFacing.EAST ? w : side == EnumFacing.WEST ? - w : 0)};
+				world.setBlockState(pos2, (offset[0]==0&&offset[1]==0&&offset[2]==0)? master : slave);
 				TileEntity curr = world.getTileEntity(pos2);
-				if(curr instanceof TileEntitySolarReflector) {
-					TileEntitySolarReflector tile = (TileEntitySolarReflector)curr;
+				if(curr instanceof TileEntitySolarReflectorSlave) {
+					TileEntitySolarReflectorSlave tile = (TileEntitySolarReflectorSlave)curr;
 					tile.facing = side;
 					tile.formed = true;
 					tile.pos = (h + 3) * 3 + (w + 1);
-					tile.offset = new int[] {(side == EnumFacing.NORTH ? w : side == EnumFacing.SOUTH ? - w : 0), h, (side == EnumFacing.EAST ? w : side == EnumFacing.WEST ? - w : 0)};
+					tile.offset = offset;
 					tile.markDirty();
 					world.addBlockEvent(pos2, ITContent.blockMetalMultiblock, 255, 0);
 				}
