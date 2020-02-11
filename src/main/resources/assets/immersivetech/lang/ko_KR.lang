@@ -39,16 +39,16 @@ tile.immersivetech.stone_multiblock.coke_oven_advanced.name=고급 코크스 오
 
 
 #METAL MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:Distiller=증류기
-desc.immersiveengineering.info.multiblock.IT:SolarTower=태양탑
-desc.immersiveengineering.info.multiblock.IT:SolarReflector=태양광 반사기
-desc.immersiveengineering.info.multiblock.IT:SteamTurbine=증기 터빈
-desc.immersiveengineering.info.multiblock.IT:Boiler=보일러
-desc.immersiveengineering.info.multiblock.IT:Alternator=교류 발전기
+desc.immersiveengineering.info.multiblock.IT : Distiller=증류기
+desc.immersiveengineering.info.multiblock.IT : SolarTower=태양탑
+desc.immersiveengineering.info.multiblock.IT : SolarReflector=태양광 반사기
+desc.immersiveengineering.info.multiblock.IT : SteamTurbine=증기 터빈
+desc.immersiveengineering.info.multiblock.IT : Boiler=보일러
+desc.immersiveengineering.info.multiblock.IT : Alternator=교류 발전기
 
 
 #STONE MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=고급 코크스 오븐
+desc.immersiveengineering.info.multiblock.IT : CokeOvenAdvanced=고급 코크스 오븐
 
 
 #CONNECTORS
