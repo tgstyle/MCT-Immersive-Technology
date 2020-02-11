@@ -62,16 +62,16 @@ tile.immersivetech.stone_multiblock.coke_oven_advanced_slave.name=Advanced Coke 
 
 
 #METAL MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:Distiller=Distiller
-desc.immersiveengineering.info.multiblock.IT:SolarTower=Solar Tower
-desc.immersiveengineering.info.multiblock.IT:SolarReflector=Solar Reflector
-desc.immersiveengineering.info.multiblock.IT:SteamTurbine=Steam Turbine
-desc.immersiveengineering.info.multiblock.IT:Boiler=Boiler
-desc.immersiveengineering.info.multiblock.IT:Alternator=Alternator
+desc.immersiveengineering.info.multiblock.IT : Distiller=Distiller
+desc.immersiveengineering.info.multiblock.IT : SolarTower=Solar Tower
+desc.immersiveengineering.info.multiblock.IT : SolarReflector=Solar Reflector
+desc.immersiveengineering.info.multiblock.IT : SteamTurbine=Steam Turbine
+desc.immersiveengineering.info.multiblock.IT : Boiler=Boiler
+desc.immersiveengineering.info.multiblock.IT : Alternator=Alternator
 
 
 #STONE MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=Advanced Coke Oven
+desc.immersiveengineering.info.multiblock.IT : CokeOvenAdvanced=Advanced Coke Oven
 
 
 #CONNECTORS
