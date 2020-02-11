@@ -55,16 +55,16 @@ tile.immersivetech.stone_multiblock.coke_oven_advanced.name=高级焦炉
 
 
 #METAL MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:Distiller=蒸馏器
-desc.immersiveengineering.info.multiblock.IT:SolarTower=太阳能集热塔
-desc.immersiveengineering.info.multiblock.IT:SolarReflector=太阳能反射镜
-desc.immersiveengineering.info.multiblock.IT:SteamTurbine=蒸汽轮机
-desc.immersiveengineering.info.multiblock.IT:Boiler=蒸汽锅炉
-desc.immersiveengineering.info.multiblock.IT:Alternator=交流发电机
+desc.immersiveengineering.info.multiblock.IT : Distiller=蒸馏器
+desc.immersiveengineering.info.multiblock.IT : SolarTower=太阳能集热塔
+desc.immersiveengineering.info.multiblock.IT : SolarReflector=太阳能反射镜
+desc.immersiveengineering.info.multiblock.IT : SteamTurbine=蒸汽轮机
+desc.immersiveengineering.info.multiblock.IT : Boiler=蒸汽锅炉
+desc.immersiveengineering.info.multiblock.IT : Alternator=交流发电机
 
 
 #STONE MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=高级焦炉
+desc.immersiveengineering.info.multiblock.IT : CokeOvenAdvanced=高级焦炉
 
 
 #CONNECTORS
