@@ -39,16 +39,16 @@ tile.immersivetech.stone_multiblock.coke_oven_advanced.name=Продвинута
 
 
 #METAL MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:Distiller=Дистиллятор
-desc.immersiveengineering.info.multiblock.IT:SolarTower=Солнечная башня
-desc.immersiveengineering.info.multiblock.IT:SolarReflector=Солнечный отражатель
-desc.immersiveengineering.info.multiblock.IT:SteamTurbine=Паровая турбина
-desc.immersiveengineering.info.multiblock.IT:Boiler=Паровой котёл
-desc.immersiveengineering.info.multiblock.IT:Alternator=Генератор переменного тока
+desc.immersiveengineering.info.multiblock.IT : Distiller=Дистиллятор
+desc.immersiveengineering.info.multiblock.IT : SolarTower=Солнечная башня
+desc.immersiveengineering.info.multiblock.IT : SolarReflector=Солнечный отражатель
+desc.immersiveengineering.info.multiblock.IT : SteamTurbine=Паровая турбина
+desc.immersiveengineering.info.multiblock.IT : Boiler=Паровой котёл
+desc.immersiveengineering.info.multiblock.IT : Alternator=Генератор переменного тока
 
 
 #STONE MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=Продвинутая коксовая печь
+desc.immersiveengineering.info.multiblock.IT : CokeOvenAdvanced=Продвинутая коксовая печь
 
 
 #CONNECTORS
