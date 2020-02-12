@@ -2,7 +2,11 @@ package mctmods.immersivetechnology.common;
 
 import javax.annotation.Nonnull;
 
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
+import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
+import jdk.nashorn.internal.ir.Block;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
@@ -24,6 +28,7 @@ import mctmods.immersivetechnology.common.gui.ContainerDistiller;
 import mctmods.immersivetechnology.common.gui.ContainerSolarTower;
 import mctmods.immersivetechnology.common.gui.ContainerTimer;
 import mctmods.immersivetechnology.common.gui.ContainerTrashItem;
+import mctmods.immersivetechnology.common.util.TemporaryTileEntityRequest;
 import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -38,17 +43,32 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommonProxy implements IGuiHandler {
 
 	public void preInit() {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
+	public static List<TemporaryTileEntityRequest> toReform = new ArrayList<>();
+
 	@SubscribeEvent
 	public void onWorldTick(TickEvent.WorldTickEvent event) {
 		if (!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
 			event.world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
 			ITUtils.REMOVE_FROM_TICKING.clear();
+		}
+
+		//REMOVE THIS GARBAGE WHEN PORTING THIS MOD PAST 1.12
+		if (!toReform.isEmpty() && event.phase == TickEvent.Phase.END) {
+			for (TemporaryTileEntityRequest request : toReform) {
+				request.multiblock.createStructure(request.world, request.position, request.facing.getOpposite(), null);
+				TileEntity te = request.world.getTileEntity(request.position);
+				if (te != null) te.readFromNBT(request.nbtTag);
+			}
+			toReform.clear();
 		}
 	}
 
