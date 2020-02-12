@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common;
 import javax.annotation.Nonnull;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
@@ -27,6 +28,7 @@ import mctmods.immersivetechnology.common.gui.ContainerTrashItem;
 import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -46,7 +48,7 @@ public class CommonProxy implements IGuiHandler {
 
 	@SubscribeEvent
 	public void onWorldTick(TickEvent.WorldTickEvent event) {
-		if (!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
+		if(!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
 			event.world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
 			ITUtils.REMOVE_FROM_TICKING.clear();
 		}
@@ -110,4 +112,5 @@ public class CommonProxy implements IGuiHandler {
 	public World getClientWorld() {
 		return null;
 	}
+
 }

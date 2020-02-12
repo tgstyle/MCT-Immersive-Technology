@@ -9,9 +9,11 @@ import blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsIE;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration0;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice0;
 import blusunrize.immersiveengineering.common.util.Utils;
+
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAlternatorSlave;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -54,7 +56,7 @@ public class MultiblockAlternator implements IMultiblock {
 
 	@Override
 	public String getUniqueName() {
-		return "IT : Alternator";
+		return "IT:Alternator";
 	}
 
 	@Override
