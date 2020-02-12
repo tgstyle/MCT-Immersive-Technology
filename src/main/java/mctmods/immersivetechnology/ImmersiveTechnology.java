@@ -31,7 +31,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 			"required-after:immersiveengineering;" +
 			"required-after:forge@[14.23.3.2655,);")
 
-
 public class ImmersiveTechnology {
 
 	public static final String MODID = "immersivetech";

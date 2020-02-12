@@ -4,8 +4,9 @@ import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
 import blusunrize.immersiveengineering.common.util.Utils;
-import mctmods.immersivetechnology.ImmersiveTechnology;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+
+import mctmods.immersivetechnology.ImmersiveTechnology;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;

@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.client.gui;
 
 import java.util.ArrayList;
 
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
 import net.minecraft.util.text.TextFormatting;
 
 import org.lwjgl.opengl.GL11;
@@ -10,16 +9,17 @@ import org.lwjgl.opengl.GL11;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Boiler;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoiler;
 import mctmods.immersivetechnology.common.gui.ContainerBoiler;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
 
 public class GuiBoiler extends GuiIEContainerBase {
-	TileEntityBoilerMaster tile;
+	TileEntityBoiler tile;
 
 	private static double workingHeatLevel = Boiler.boiler_heat_workingLevel;
 	
-	public GuiBoiler(InventoryPlayer inventoryPlayer, TileEntityBoilerMaster tile) {
+	public GuiBoiler(InventoryPlayer inventoryPlayer, TileEntityBoiler tile) {
 		super(new ContainerBoiler(inventoryPlayer, tile));
 		this.tile=tile;
 	}

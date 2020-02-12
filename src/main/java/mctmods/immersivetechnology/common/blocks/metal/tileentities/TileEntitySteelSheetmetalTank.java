@@ -30,9 +30,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<TileEntitySteelSheetmetalTank> implements IBlockOverlayText, IPlayerInteraction, IComparatorOverride {
-
 	public FluidTank tank = new FluidTank(2048000);
-
 	private int[] oldComps = new int[4];
 	private int masterCompOld;
 

@@ -1,10 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.stone;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
 import mctmods.immersivetechnology.common.blocks.BlockITMultiblock;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
+import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneMultiblock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -28,17 +27,17 @@ public class BlockStoneMultiblock extends BlockITMultiblock<BlockType_StoneMulti
 	@Override
 	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
 		TileEntity te = world.getTileEntity(pos);
-		if(te instanceof TileEntityCokeOvenAdvancedSlave) return ((TileEntityCokeOvenAdvancedSlave)te).pos == 1 || ((TileEntityCokeOvenAdvancedSlave)te).pos == 4 || ((TileEntityCokeOvenAdvancedSlave)te).pos == 7 || (((TileEntityCokeOvenAdvancedSlave)te).pos == 31);
+		if(te instanceof TileEntityCokeOvenAdvanced) return ((TileEntityCokeOvenAdvanced)te).pos == 1 || ((TileEntityCokeOvenAdvanced)te).pos == 4 || ((TileEntityCokeOvenAdvanced)te).pos == 7 || (((TileEntityCokeOvenAdvanced)te).pos == 31);
 		return true;
 	}
 
 	@Override
 	public TileEntity createBasicTE(World worldIn, BlockType_StoneMultiblock type) {
 		switch(type) {
-			case COKE_OVEN_ADVANCED:
-				return new TileEntityCokeOvenAdvancedMaster();
-			case COKE_OVEN_ADVANCED_SLAVE:
-				return new TileEntityCokeOvenAdvancedSlave();
+		case COKE_OVEN_ADVANCED:
+			return new TileEntityCokeOvenAdvanced();
+		default:
+			break;
 		}
 		return null;
 	}

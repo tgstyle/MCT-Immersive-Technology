@@ -94,7 +94,7 @@ public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		String amount = I18n.format(ImmersiveTechnology.MODID + ".osd.trash_energy.trashed") + ": " + acceptedAmount + " if" + perSecond + " " + I18n.format(ImmersiveTechnology.MODID + ".osd.trash_energy.lastsecond");
+		String amount = I18n.format(ImmersiveTechnology.MODID + ".osd.trash_energy.trashed") + ": " + acceptedAmount + " IF " + perSecond + " " + I18n.format(ImmersiveTechnology.MODID + ".osd.trash_energy.lastsecond");
 		return new String[]{amount};
 	}
 

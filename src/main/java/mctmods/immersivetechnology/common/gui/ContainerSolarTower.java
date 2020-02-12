@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.common.gui;
 
 import blusunrize.immersiveengineering.common.gui.ContainerIEBase;
 import blusunrize.immersiveengineering.common.gui.IESlot;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTower;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -11,11 +11,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-public class ContainerSolarTower extends ContainerIEBase<TileEntitySolarTowerMaster> {
-	public ContainerSolarTower(InventoryPlayer inventoryPlayer, TileEntitySolarTowerMaster tile) {
+public class ContainerSolarTower extends ContainerIEBase<TileEntitySolarTower> {
+	public ContainerSolarTower(InventoryPlayer inventoryPlayer, TileEntitySolarTower tile) {
 		super(inventoryPlayer, tile);
 
-		final TileEntitySolarTowerMaster tileF = tile;
+		final TileEntitySolarTower tileF = tile;
 		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 0, 80, 17, 2) {
 			@Override
 			public boolean isItemValid(ItemStack itemStack) {

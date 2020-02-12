@@ -15,9 +15,8 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBl
 import blusunrize.immersiveengineering.common.items.ItemEarmuffs;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualPages;
-
-import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
 import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.ITContent;
@@ -29,7 +28,7 @@ import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockDis
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarReflector;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbine;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.items.ItemITBase;
@@ -37,7 +36,6 @@ import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -95,9 +93,10 @@ public class ClientProxy extends CommonProxy {
 		ITSoundHandler.DeleteAllSounds();
 	}
 
+
 	@SubscribeEvent
 	public void onClientTick(TickEvent.ClientTickEvent event) {
-		if(!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
+		if (!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
 			Minecraft.getMinecraft().world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
 			ITUtils.REMOVE_FROM_TICKING.clear();
 		}
@@ -110,21 +109,20 @@ public class ClientProxy extends CommonProxy {
 	public void calculateVolume() {
 		float prevVolume = volumeAdjustment;
 		EntityPlayerSP player = ClientUtils.mc().player;
-		if(player == null) return;
+		if (player == null) return;
 		ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-		if(!stack.isEmpty()) {
-			if(IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
-			 else if(ItemNBTHelper.hasKey(stack, "IE:Earmuffs")) {
+		if (!stack.isEmpty()) {
+			if (IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
+			 else if (ItemNBTHelper.hasKey(stack, "IE:Earmuffs")) {
 				stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");
-				if(!stack.isEmpty() && IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
+				if (!stack.isEmpty() && IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
 				else volumeAdjustment = 1;
 			} else volumeAdjustment = 1;
 		} else volumeAdjustment = 1;
 
-		if(prevVolume != volumeAdjustment) ITSoundHandler.UpdateAllVolumes();
+		if (prevVolume != volumeAdjustment) ITSoundHandler.UpdateAllVolumes();
 	}
 
-	
 	/*
 	@author BluSunrize
 	*/
@@ -138,7 +136,7 @@ public class ClientProxy extends CommonProxy {
 		for(Block block : ITContent.registeredITBlocks) {
 			final ResourceLocation loc = Block.REGISTRY.getNameForObject(block);
 			Item blockItem = Item.getItemFromBlock(block);
-			if(blockItem == null)	throw new RuntimeException("ITEMBLOCK for" + loc + " : " + block + " IS NULL");
+			if(blockItem==null)	throw new RuntimeException("ITEMBLOCK for" + loc + " : " + block + " IS NULL");
 			if(block instanceof IIEMetaBlock) {
 				IIEMetaBlock ieMetaBlock = (IIEMetaBlock)block;
 				if(ieMetaBlock.useCustomStateMapper()) ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock));
@@ -206,7 +204,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void init() {
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbine.class, new TileRenderSteamTurbine());
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
 		//has to be here as well because this one is used when playing Singleplayer, go figure
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);

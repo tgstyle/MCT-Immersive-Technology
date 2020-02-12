@@ -4,8 +4,10 @@ import org.lwjgl.opengl.GL11;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
+
 import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbine;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -18,11 +20,11 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.BlockPos;
 
-public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntitySteamTurbineMaster> {
+public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntitySteamTurbine> {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void render(TileEntitySteamTurbineMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+	public void render(TileEntitySteamTurbine te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		if(!te.formed || te.isDummy() || !te.getWorld().isBlockLoaded(te.getPos(), false)) {
 			return;
 		}

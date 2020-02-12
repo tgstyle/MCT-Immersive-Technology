@@ -7,18 +7,12 @@ import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import net.minecraft.util.IStringSerializable;
 
 public enum BlockType_MetalMultiblock implements IStringSerializable, BlockITBase.IBlockEnum {
-	DISTILLER(true),
-	SOLAR_TOWER(false),
+	DISTILLER(true), 
+	SOLAR_TOWER(false), 
 	SOLAR_REFLECTOR(false), 
-	STEAM_TURBINE(true),
-	BOILER(true),
+	STEAM_TURBINE(true), 
+	BOILER(true), 
 	ALTERNATOR(false),
-	DISTILLER_SLAVE(true),
-	SOLAR_TOWER_SLAVE(false),
-	STEAM_TURBINE_SLAVE(true),
-	BOILER_SLAVE(true),
-	ALTERNATOR_SLAVE(false),
-	SOLAR_REFLECTOR_SLAVE(false),
 	STEEL_TANK(false);
 
 	private boolean needsCustomState;
