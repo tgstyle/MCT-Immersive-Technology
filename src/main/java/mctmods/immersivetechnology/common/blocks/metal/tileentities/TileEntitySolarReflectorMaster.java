@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 
@@ -43,4 +44,5 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         }
         return true;
     }
+
 }

@@ -9,6 +9,7 @@ import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
@@ -16,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
@@ -251,15 +253,15 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
             return;
         }
         boolean update = false;
-        if (heatLogic()) update = true;
-        if (recipeLogic()) update = true;
-        if (outputTankLogic()) update = true;
-        if (fuelTankLogic()) update = true;
-        if (inputTankLogic()) update = true;
-        if (clientUpdateCooldown > 0) clientUpdateCooldown--;
-        if (update) {
+        if(heatLogic()) update = true;
+        if(recipeLogic()) update = true;
+        if(outputTankLogic()) update = true;
+        if(fuelTankLogic()) update = true;
+        if(inputTankLogic()) update = true;
+        if(clientUpdateCooldown > 0) clientUpdateCooldown--;
+        if(update) {
             efficientMarkDirty();
-            if (clientUpdateCooldown == 0) {
+            if(clientUpdateCooldown == 0) {
                 notifyNearbyClients();
                 clientUpdateCooldown = 20;
             }
@@ -281,4 +283,5 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
     public void receiveMessageFromServer(NBTTagCompound message) {
         heatLevel = message.getDouble("heat");
     }
+
 }

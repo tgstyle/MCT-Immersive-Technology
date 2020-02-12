@@ -5,11 +5,14 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvanced
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
+
 import com.google.common.collect.Lists;
+
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockDistiller;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,6 +22,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
@@ -44,7 +48,7 @@ public class TileEntityDistillerSlave extends TileEntityMultiblockMetal<TileEnti
 
     @Override
     public void update() {
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if(isDummy()) ITUtils.RemoveDummyFromTicking(this);
         super.update();
     }
 
@@ -56,7 +60,7 @@ public class TileEntityDistillerSlave extends TileEntityMultiblockMetal<TileEnti
     TileEntityDistillerMaster master;
 
     public TileEntityDistillerMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
+        if(master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
         master = te instanceof TileEntityDistillerMaster?(TileEntityDistillerMaster)te: null;
@@ -260,4 +264,5 @@ public class TileEntityDistillerSlave extends TileEntityMultiblockMetal<TileEnti
     public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, ArrayList<AxisAlignedBB> list) {
         return false;
     }
+
 }
