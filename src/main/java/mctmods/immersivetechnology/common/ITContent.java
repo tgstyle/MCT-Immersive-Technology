@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.Config;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
+import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
 import mctmods.immersivetechnology.ImmersiveTech;
@@ -124,6 +125,15 @@ public class ITContent {
 		registerTile(TileEntityTrashFluid.class);
 		registerTile(TileEntityTrashEnergy.class);
 		registerTile(TileEntityBarrel.class);
+
+		//MORE TEMPORARY STUFF
+		registerTile(TileEntityCokeOvenAdvanced.class);
+		registerTile(TileEntityAlternator.class);
+		registerTile(TileEntitySteamTurbine.class);
+		registerTile(TileEntityBoiler.class);
+		registerTile(TileEntityDistiller.class);
+		registerTile(TileEntitySolarTower.class);
+		registerTile(TileEntitySolarReflector.class);
 		
 		/*MULTIBLOCK TILE ENTITIES*/
 		if(Multiblock.enable_distiller) {
