@@ -7,10 +7,12 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsAll;
 import blusunrize.immersiveengineering.common.util.Utils;
+
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneDecoration;
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneMultiblock;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -150,4 +152,5 @@ public class MultiblockCokeOvenAdvanced implements IMultiblock {
 		GlStateManager.scale(4, 4, 4);
 		ClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
 	}
+
 }

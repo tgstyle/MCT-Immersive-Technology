@@ -15,6 +15,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBl
 import blusunrize.immersiveengineering.common.items.ItemEarmuffs;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualPages;
+
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
@@ -36,6 +37,7 @@ import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -95,7 +97,7 @@ public class ClientProxy extends CommonProxy {
 
 	@SubscribeEvent
 	public void onClientTick(TickEvent.ClientTickEvent event) {
-		if (!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
+		if(!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
 			Minecraft.getMinecraft().world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
 			ITUtils.REMOVE_FROM_TICKING.clear();
 		}
@@ -108,18 +110,18 @@ public class ClientProxy extends CommonProxy {
 	public void calculateVolume() {
 		float prevVolume = volumeAdjustment;
 		EntityPlayerSP player = ClientUtils.mc().player;
-		if (player == null) return;
+		if(player == null) return;
 		ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-		if (!stack.isEmpty()) {
-			if (IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
-			 else if (ItemNBTHelper.hasKey(stack, "IE:Earmuffs")) {
+		if(!stack.isEmpty()) {
+			if(IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
+			 else if(ItemNBTHelper.hasKey(stack, "IE:Earmuffs")) {
 				stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");
-				if (!stack.isEmpty() && IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
+				if(!stack.isEmpty() && IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
 				else volumeAdjustment = 1;
 			} else volumeAdjustment = 1;
 		} else volumeAdjustment = 1;
 
-		if (prevVolume != volumeAdjustment) ITSoundHandler.UpdateAllVolumes();
+		if(prevVolume != volumeAdjustment) ITSoundHandler.UpdateAllVolumes();
 	}
 
 	
@@ -136,7 +138,7 @@ public class ClientProxy extends CommonProxy {
 		for(Block block : ITContent.registeredITBlocks) {
 			final ResourceLocation loc = Block.REGISTRY.getNameForObject(block);
 			Item blockItem = Item.getItemFromBlock(block);
-			if(blockItem==null)	throw new RuntimeException("ITEMBLOCK for" + loc + " : " + block + " IS NULL");
+			if(blockItem == null)	throw new RuntimeException("ITEMBLOCK for" + loc + " : " + block + " IS NULL");
 			if(block instanceof IIEMetaBlock) {
 				IIEMetaBlock ieMetaBlock = (IIEMetaBlock)block;
 				if(ieMetaBlock.useCustomStateMapper()) ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock));
@@ -254,4 +256,5 @@ public class ClientProxy extends CommonProxy {
 			return location;
 		}
 	}
+
 }
