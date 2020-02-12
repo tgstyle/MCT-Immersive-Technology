@@ -16,10 +16,12 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.*;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
+
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockAlternator;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -63,7 +65,7 @@ public class TileEntityAlternatorSlave extends TileEntityMultiblockPart <TileEnt
 	TileEntityAlternatorMaster master;
 
 	public TileEntityAlternatorMaster master() {
-		if (master != null && !master.tileEntityInvalid) return master;
+		if(master != null && !master.tileEntityInvalid) return master;
 		BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
 		TileEntity te = Utils.getExistingTileEntity(world, masterPos);
 		master = te instanceof TileEntityAlternatorMaster?(TileEntityAlternatorMaster)te: null;

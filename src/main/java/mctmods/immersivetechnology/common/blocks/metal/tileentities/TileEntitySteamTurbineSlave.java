@@ -10,11 +10,13 @@ import com.google.common.collect.Lists;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
+
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,7 +49,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockMetal<TileE
 
     @Override
     public void update() {
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if(isDummy()) ITUtils.RemoveDummyFromTicking(this);
         super.update();
     }
 
@@ -59,7 +61,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockMetal<TileE
     TileEntitySteamTurbineMaster master;
 
     public TileEntitySteamTurbineMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
+        if(master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
         master = te instanceof TileEntitySteamTurbineMaster?(TileEntitySteamTurbineMaster)te: null;
@@ -416,4 +418,5 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockMetal<TileE
     public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, ArrayList <AxisAlignedBB> list) {
         return false;
     }
+
 }
