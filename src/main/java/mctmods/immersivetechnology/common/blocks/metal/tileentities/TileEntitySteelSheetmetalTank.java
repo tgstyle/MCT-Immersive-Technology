@@ -30,7 +30,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<TileEntitySteelSheetmetalTank> implements IBlockOverlayText, IPlayerInteraction, IComparatorOverride {
+
 	public FluidTank tank = new FluidTank(2048000);
+
 	private int[] oldComps = new int[4];
 	private int masterCompOld;
 
@@ -57,7 +59,7 @@ public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<Tile
 	public void update() {
 		ApiUtils.checkForNeedlessTicking(this);
 		if(pos == 4 && !world.isRemote && world.isBlockIndirectlyGettingPowered(getPos()) > 0) {
-			for(int i = 0; i < 6; i ++) {
+			for(int i = 0; i < 6; i++) {
 				if(i != 1 && tank.getFluidAmount() > 0) {
 					EnumFacing f = EnumFacing.getFront(i);
 					int outSize = Math.min(144, tank.getFluidAmount());
@@ -117,12 +119,12 @@ public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<Tile
 	private void updateComparatorValues() {
 		int vol = tank.getCapacity() / 6;
 		if((15 * tank.getFluidAmount()) / tank.getCapacity() != masterCompOld) world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
-		for(int i = 0; i < 4; i ++) {
+		for(int i = 0; i < 4; i++) {
 			int filled = tank.getFluidAmount()-i * vol;
 			int now = Math.min(15, Math.max((15 * filled) / vol, 0));
 			if(now != oldComps[i]) {
-				for(int x = -1; x <= 1; x ++) {
-					for(int z = -1; z <= 1; z ++) {	
+				for(int x = -1; x <= 1; x++) {
+					for(int z = -1; z <= 1; z++) {	
 						BlockPos pos = getPos().add(-offset[0] + x, -offset[1] + i + 1, -offset[2] + z);
 						world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
 					}
@@ -133,8 +135,8 @@ public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<Tile
 
 	@Override
 	public float[] getBlockBounds() {
-		if(pos==9) return new float[]{.375f, 0, .375f, .625f, 1, .625f};
-		if(pos==0||pos==2||pos==6||pos==8) return new float[]{.375f, 0, .375f, .625f, 1, .625f};
+		if(pos == 9) return new float[]{.375f, 0, .375f, .625f, 1, .625f};
+		if(pos == 0 || pos == 2 || pos == 6 || pos == 8) return new float[]{.375f, 0, .375f, .625f, 1, .625f};
 		return new float[]{0, 0, 0, 1, 1, 1};
 	}
 
@@ -185,8 +187,8 @@ public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<Tile
 	@Override
 	@SideOnly(Side.CLIENT)
 	public AxisAlignedBB getRenderBoundingBox() {
-		if(renderAABB==null)
-			if(pos==4) {
+		if(renderAABB == null)
+			if(pos == 4) {
 				renderAABB = new AxisAlignedBB(getPos().add(-1, 0, -1), getPos().add(2, 5, 2));
 			} else {
 				renderAABB = new AxisAlignedBB(getPos(), getPos());
