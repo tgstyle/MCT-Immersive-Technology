@@ -209,14 +209,14 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void init() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbine.class, new TileRenderSteamTurbine());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTank.class, new TileRenderSteelSheetmetalTank());
+
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
 		//has to be here as well because this one is used when playing Singleplayer, go figure
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
 		ImmersiveTechnology.packetHandler.registerMessage(MessageStopSound.HandlerClient.class, MessageStopSound.class, 1, Side.CLIENT);
 		ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerClient.class, MessageRequestUpdate.class, 2, Side.CLIENT);
 		ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerServer.class, MessageRequestUpdate.class, 2, Side.SERVER);
-
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTank.class, new TileRenderSteelSheetmetalTank());
 	}
 
 	@Override
