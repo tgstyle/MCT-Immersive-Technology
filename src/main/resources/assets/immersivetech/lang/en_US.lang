@@ -54,6 +54,7 @@ tile.immersivetech.metal_multiblock.solar_reflector_slave.name=Solar Reflector
 tile.immersivetech.metal_multiblock.steam_turbine_slave.name=Steam Turbine
 tile.immersivetech.metal_multiblock.boiler_slave.name=Boiler
 tile.immersivetech.metal_multiblock.alternator_slave.name=Alternator
+tile.immersivetech.metal_multiblock.steel_tank.name=Steel Fluid Tank
 
 
 #STONE MULTIBLOCKS
@@ -68,6 +69,7 @@ desc.immersiveengineering.info.multiblock.IT:SolarReflector=Solar Reflector
 desc.immersiveengineering.info.multiblock.IT:SteamTurbine=Steam Turbine
 desc.immersiveengineering.info.multiblock.IT:Boiler=Boiler
 desc.immersiveengineering.info.multiblock.IT:Alternator=Alternator
+desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank=Steel Fluid Tank
 
 
 #STONE MULTIBLOCKS
