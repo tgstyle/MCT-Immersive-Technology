@@ -31,7 +31,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<TileEntitySteelSheetmetalTank> implements IBlockOverlayText, IPlayerInteraction, IComparatorOverride {
 
-	public FluidTank tank = new FluidTank(2048000);
+	private static int tankSize = 2048000;
+	
+	public FluidTank tank = new FluidTank(tankSize);
 
 	private int[] oldComps = new int[4];
 	private int masterCompOld;
@@ -58,25 +60,29 @@ public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<Tile
 	@Override
 	public void update() {
 		ApiUtils.checkForNeedlessTicking(this);
+		if(world.isRemote || tank.getFluidAmount() == 0) return;
+		boolean update = false;
 		if(pos == 4 && !world.isRemote && world.isBlockIndirectlyGettingPowered(getPos()) > 0) {
-			for(int i = 0; i < 6; i++) {
-				if(i != 1 && tank.getFluidAmount() > 0) {
-					EnumFacing f = EnumFacing.getFront(i);
-					int outSize = Math.min(144, tank.getFluidAmount());
-					FluidStack out = Utils.copyFluidStackWithAmount(tank.getFluid(), outSize, false);
-					BlockPos outputPos = getPos().offset(f);
-					IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, f.getOpposite());
+			for(int index = 0; index < 6; index++) {
+				if(index != 1 && tank.getFluidAmount() > 0) {
+					EnumFacing face = EnumFacing.getFront(index);
+					BlockPos outputPos = getPos().offset(face);
+					IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, face.getOpposite());
 					if(output != null) {
-						int accepted = output.fill(out, false);
-						if(accepted > 0) {
-							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+						FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(1000, tank.getFluidAmount()), false);
+						accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
+						if(accepted.amount > 0) {
+							int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
 							this.tank.drain(drained, true);
-							this.markContainingBlockForUpdate(null);
-							updateComparatorValues();
+							update=true;
 						}
 					}
 				}
 			}
+		}
+		if(update) {
+			updateComparatorValues();
+			this.markContainingBlockForUpdate(null);
 		}
 	}
 
