@@ -16,6 +16,7 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.*;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
@@ -129,6 +130,7 @@ public class TileEntityAlternator extends TileEntityMultiblockPart <TileEntityAl
 
 	@Override
 	public void update() {
+		ApiUtils.checkForNeedlessTicking(this);
 		if(formed && pos == 13) {
 			if(!world.isRemote) {
 				if(ITUtils.checkMechanicalEnergyTransmitter(world, getPos())) speed = ITUtils.getMechanicalEnergy(world, getPos());

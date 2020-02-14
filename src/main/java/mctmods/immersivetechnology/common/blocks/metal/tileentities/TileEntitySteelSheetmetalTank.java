@@ -62,12 +62,11 @@ public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<Tile
 		ApiUtils.checkForNeedlessTicking(this);
 		if(world.isRemote || tank.getFluidAmount() == 0) return;
 		boolean update = false;
-		if(pos == 4 && !world.isRemote && world.isBlockIndirectlyGettingPowered(getPos()) > 0) {
+		if(pos == 4 && world.isBlockIndirectlyGettingPowered(getPos()) > 0) {
 			for(int index = 0; index < 6; index++) {
-				if(index != 1 && tank.getFluidAmount() > 0) {
+				if(index != 1) {
 					EnumFacing face = EnumFacing.getFront(index);
-					BlockPos outputPos = getPos().offset(face);
-					IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, face.getOpposite());
+					IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
 					if(output != null) {
 						FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(1000, tank.getFluidAmount()), false);
 						accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
