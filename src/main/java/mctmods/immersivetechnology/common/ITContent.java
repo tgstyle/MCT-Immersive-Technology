@@ -244,14 +244,15 @@ public class ITContent {
 	}
 
 	public static void registerVariables() {
-		Config.manual_int.put("steamTurbine_timeToMax", ((MechanicalEnergy.mechanicalEnergy_speed_max / SteamTurbine.steamTurbine_speed_gainPerTick) / 20));
-		Config.manual_int.put("solarTower_minRange", SolarReflector.solarReflector_minRange);
-		Config.manual_int.put("solarTower_maxRange", SolarReflector.solarReflector_maxRange);
-		Config.manual_double.put("boiler_cooldownTime", ((Boiler.boiler_heat_workingLevel / Boiler.boiler_progress_lossInTicks) / 20));
 		Config.manual_int.put("alternator_energyPerTickPerPort", (Alternator.alternator_energy_perTick / 6));
 		Config.manual_int.put("alternator_energyStorage", Alternator.alternator_energy_capacitorSize);
 		Config.manual_int.put("alternator_energyPerTick", Alternator.alternator_energy_perTick);
-		Config.manual_int.put("cokeOvenPreheater_consumption", CokeOvenPreheater.cokeOvenPreheater_energy_consumption);
+		Config.manual_double.put("boiler_cooldownTime", ((Boiler.boiler_heat_workingLevel / Boiler.boiler_progress_lossInTicks) / 20));
+		Config.manual_int.put("cokeOvenPreheater_consumption", CokeOvenPreheater.cokeOvenPreheater_energy_consumption);		
+		Config.manual_int.put("solarTower_minRange", SolarReflector.solarReflector_minRange);
+		Config.manual_int.put("solarTower_maxRange", SolarReflector.solarReflector_maxRange);
+		Config.manual_int.put("steamTurbine_timeToMax", ((MechanicalEnergy.mechanicalEnergy_speed_max / SteamTurbine.steamTurbine_speed_gainPerTick) / 20));
+		Config.manual_int.put("steelTank_tankSize", SteelTank.steelTank_tankSize);
 	}
 
 }
