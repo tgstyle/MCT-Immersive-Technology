@@ -3,8 +3,10 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
-import mctmods.immersivetechnology.ImmersiveTech;
+
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Trash;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -89,7 +91,7 @@ public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable,
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		String amount = I18n.format(ImmersiveTech.MODID + ".osd.trash_fluid.trashed") + ": " + acceptedAmount + " mB " + perSecond + " " + I18n.format(ImmersiveTech.MODID + ".osd.trash_fluid.lastsecond");
+		String amount = I18n.format(ImmersiveTechnology.MODID + ".osd.trash_fluid.trashed") + ": " + acceptedAmount + " mB " + perSecond + " " + I18n.format(ImmersiveTechnology.MODID + ".osd.trash_fluid.lastsecond");
 		return new String[]{amount};
 	}
 

@@ -66,7 +66,7 @@ public class MultiblockDistiller implements IMultiblock {
 
 	@Override
 	public String getUniqueName() {
-		return "IT : Distiller";
+		return "IT:Distiller";
 	}
 
 	@Override

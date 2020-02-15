@@ -36,6 +36,8 @@ public class BlockStoneMultiblock extends BlockITMultiblock<BlockType_StoneMulti
 		switch(type) {
 		case COKE_OVEN_ADVANCED:
 			return new TileEntityCokeOvenAdvanced();
+		default:
+			break;
 		}
 		return null;
 	}

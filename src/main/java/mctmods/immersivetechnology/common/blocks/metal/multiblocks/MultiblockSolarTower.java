@@ -74,7 +74,7 @@ public class MultiblockSolarTower implements IMultiblock {
 
 	@Override
 	public String getUniqueName() {
-		return "IT : SolarTower";
+		return "IT:SolarTower";
 	}
 
 	@Override

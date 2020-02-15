@@ -1,14 +1,15 @@
 package mctmods.immersivetechnology.common;
 
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import net.minecraftforge.common.config.Config.Comment;
 
 public class Config {
-	@net.minecraftforge.common.config.Config(modid=ImmersiveTech.MODID, name="immersivetechnology")
+	@net.minecraftforge.common.config.Config(modid=ImmersiveTechnology.MODID, name="immersivetechnology")
 	public static class ITConfig {
 		public static Machines machines;
 		public static MechanicalEnergy mechanicalenergy;
 		public static Trash trash;
+		public static SteelTank steeltank;
 
 		public static class Machines {
 			public static Multiblock multiblock;
@@ -125,6 +126,11 @@ public class Config {
 			public static int trash_energy_capacitorSize = 1000000;
 			@Comment({"Fluid Trash Size in mB [Default=100000]"})
 			public static int trash_fluid_tankSize = 100000;
+		}
+
+		public static class SteelTank {
+			@Comment({"Steel Tank Size in mB [Default=2048000]"})
+			public static int steelTank_tankSize = 2048000;
 		}
 	}
 

@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.Config;
-import mctmods.immersivetechnology.ImmersiveTech;
+
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
@@ -19,6 +20,7 @@ import mctmods.immersivetechnology.common.blocks.metal.BlockMetalBarrel;
 import mctmods.immersivetechnology.common.blocks.metal.BlockMetalDevice;
 import mctmods.immersivetechnology.common.blocks.metal.BlockMetalMultiblock;
 import mctmods.immersivetechnology.common.blocks.metal.BlockMetalTrash;
+import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteelSheetmetalTank;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockAlternator;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockBoiler;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockDistiller;
@@ -30,9 +32,11 @@ import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBa
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoiler;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityCokeOvenPreheater;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistiller;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarReflector;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTower;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbine;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTank;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashFluid;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
@@ -43,6 +47,7 @@ import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCo
 import mctmods.immersivetechnology.common.fluid.FluidColored;
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.util.ITLogger;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -61,7 +66,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
-@EventBusSubscriber(modid=ImmersiveTech.MODID)
+@EventBusSubscriber(modid=ImmersiveTechnology.MODID)
 public class ITContent {
 	/*BLOCKS*/
 	public static ArrayList<Block> registeredITBlocks = new ArrayList<Block>();
@@ -133,6 +138,7 @@ public class ITContent {
 		registerTile(TileEntityTrashFluid.class);
 		registerTile(TileEntityTrashEnergy.class);
 		registerTile(TileEntityBarrel.class);
+		registerTile(TileEntityBarrelOpen.class);
 		
 		/*MULTIBLOCK TILE ENTITIES*/
 		if(Multiblock.enable_distiller) {
@@ -164,6 +170,8 @@ public class ITContent {
 			registerTile(TileEntitySteamTurbine.class);
 			MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
 		}
+		registerTile(TileEntitySteelSheetmetalTank.class);
+		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
 	}
 
 	@SubscribeEvent
@@ -205,7 +213,7 @@ public class ITContent {
 	public static void registerTile(Class<? extends TileEntity> tile) {
 		String tileEntity = tile.getSimpleName();
 		tileEntity = tileEntity.substring(tileEntity.indexOf("TileEntity") + "TileEntity".length());
-		GameRegistry.registerTileEntity(tile, ImmersiveTech.MODID + ":" + tileEntity);
+		GameRegistry.registerTileEntity(tile, ImmersiveTechnology.MODID + ":" + tileEntity);
 	}
 
 	@SubscribeEvent
@@ -233,14 +241,15 @@ public class ITContent {
 	}
 
 	public static void registerVariables() {
-		Config.manual_int.put("steamTurbine_timeToMax", ((MechanicalEnergy.mechanicalEnergy_speed_max / SteamTurbine.steamTurbine_speed_gainPerTick) / 20));
-		Config.manual_int.put("solarTower_minRange", SolarReflector.solarReflector_minRange);
-		Config.manual_int.put("solarTower_maxRange", SolarReflector.solarReflector_maxRange);
-		Config.manual_double.put("boiler_cooldownTime", ((Boiler.boiler_heat_workingLevel / Boiler.boiler_progress_lossInTicks) / 20));
 		Config.manual_int.put("alternator_energyPerTickPerPort", (Alternator.alternator_energy_perTick / 6));
 		Config.manual_int.put("alternator_energyStorage", Alternator.alternator_energy_capacitorSize);
 		Config.manual_int.put("alternator_energyPerTick", Alternator.alternator_energy_perTick);
-		Config.manual_int.put("cokeOvenPreheater_consumption", CokeOvenPreheater.cokeOvenPreheater_energy_consumption);
+		Config.manual_double.put("boiler_cooldownTime", ((Boiler.boiler_heat_workingLevel / Boiler.boiler_progress_lossInTicks) / 20));
+		Config.manual_int.put("cokeOvenPreheater_consumption", CokeOvenPreheater.cokeOvenPreheater_energy_consumption);		
+		Config.manual_int.put("solarTower_minRange", SolarReflector.solarReflector_minRange);
+		Config.manual_int.put("solarTower_maxRange", SolarReflector.solarReflector_maxRange);
+		Config.manual_int.put("steamTurbine_timeToMax", ((MechanicalEnergy.mechanicalEnergy_speed_max / SteamTurbine.steamTurbine_speed_gainPerTick) / 20));
+		Config.manual_int.put("steelTank_tankSize", SteelTank.steelTank_tankSize);
 	}
 
 }

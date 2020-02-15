@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.api;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAlternator;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -11,9 +12,17 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidTank;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ITUtils {
 	public static IFluidTank[] emptyIFluidTankList = new IFluidTank[0];
+
+	public static final Set<TileEntity> REMOVE_FROM_TICKING = new HashSet<>();
+
+	public static void RemoveDummyFromTicking(TileEntity te) {
+		REMOVE_FROM_TICKING.add(te);
+	}
 
 	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing) {
 		return LocalOffsetToWorldBlockPos(origin, x, y, z, facing, EnumFacing.UP);
@@ -77,7 +86,7 @@ public class ITUtils {
 					break;
 				} break;
 		}
-		throw new IllegalArgumentException("This part of the code should never be reached! Has EnumFacing changed ? ");
+		throw new IllegalArgumentException("This part of the code should never be reached! Has EnumFacing changed?");
 	}
 
 	public static <T> T First(ArrayList <T> list, Object o) {

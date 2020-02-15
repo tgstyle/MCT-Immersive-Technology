@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.items;
 
 import blusunrize.immersiveengineering.common.items.IEItemInterfaces.IColouredItem;
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.ITContent;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -21,9 +21,9 @@ public class ItemITBase extends Item implements IColouredItem {
 	public boolean registerSubModels=true;
 
 	public ItemITBase(String name, int stackSize, String... subNames) {
-		this.setUnlocalizedName(ImmersiveTech.MODID+"."+name);
+		this.setUnlocalizedName(ImmersiveTechnology.MODID+"."+name);
 		this.setHasSubtypes(subNames != null && subNames.length>0);
-		this.setCreativeTab(ImmersiveTech.creativeTab);
+		this.setCreativeTab(ImmersiveTechnology.creativeTab);
 		this.setMaxStackSize(stackSize);
 		this.itemName = name;
 		this.subNames = subNames != null && subNames.length>0 ? subNames:null;

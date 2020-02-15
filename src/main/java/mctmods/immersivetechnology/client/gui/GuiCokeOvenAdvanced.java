@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.client.gui;
 
 import java.util.ArrayList;
 
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.gui.ContainerCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
@@ -39,7 +39,7 @@ public class GuiCokeOvenAdvanced extends GuiIEContainerBase {
 	protected void drawGuiContainerBackgroundLayer(float f, int mx, int my) {
 		if (++time == 20) {
 			time = 0;
-			ImmersiveTech.packetHandler.sendToServer(new MessageRequestUpdate(tile));
+			ImmersiveTechnology.packetHandler.sendToServer(new MessageRequestUpdate(tile));
 		}
 
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

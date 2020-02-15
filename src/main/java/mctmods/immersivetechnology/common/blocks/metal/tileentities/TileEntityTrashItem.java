@@ -7,8 +7,10 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
-import mctmods.immersivetechnology.ImmersiveTech;
+
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITLib;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -77,7 +79,7 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		String amount = I18n.format(ImmersiveTech.MODID + ".osd.trash_item.trashed") + ": " + acceptedAmount + " " + I18n.format(ImmersiveTech.MODID + ".osd.trash_item.lastsecond");
+		String amount = I18n.format(ImmersiveTechnology.MODID + ".osd.trash_item.trashed") + ": " + acceptedAmount + " " + I18n.format(ImmersiveTechnology.MODID + ".osd.trash_item.lastsecond");
 		return new String[]{amount};
 	}
 

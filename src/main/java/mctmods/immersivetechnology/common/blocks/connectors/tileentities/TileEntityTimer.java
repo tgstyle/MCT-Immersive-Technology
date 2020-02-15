@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Connection;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConnectorRedstone;
-import mctmods.immersivetechnology.ImmersiveTech;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import net.minecraft.block.state.IBlockState;
@@ -145,7 +145,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("target", target);
 		BlockPos center = getPos();
-		ImmersiveTech.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 	}
 
 	@Override

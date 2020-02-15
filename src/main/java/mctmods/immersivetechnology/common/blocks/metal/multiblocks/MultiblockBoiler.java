@@ -66,7 +66,7 @@ public class MultiblockBoiler implements IMultiblock {
 
 	@Override
 	public String getUniqueName() {
-		return "IT : Boiler";
+		return "IT:Boiler";
 	}
 
 	@Override

@@ -10,7 +10,8 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvanced
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
-import mctmods.immersivetechnology.ImmersiveTech;
+
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
@@ -21,6 +22,7 @@ import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -159,7 +161,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 	public void disassemble() {
 		if(!isDummy()) {
 			BlockPos center = getPos();
-			ImmersiveTech.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+			ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 		}
 		super.disassemble();
 	}
@@ -168,7 +170,7 @@ public class TileEntityBoiler extends TileEntityMultiblockMetal<TileEntityBoiler
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setDouble("heat", heatLevel);
 		BlockPos center = getPos();
-		ImmersiveTech.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
+		ImmersiveTechnology.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
 	}
 
 	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!

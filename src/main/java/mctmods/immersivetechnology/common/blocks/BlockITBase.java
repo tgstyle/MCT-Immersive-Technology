@@ -10,8 +10,10 @@ import com.google.common.collect.Sets;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
-import mctmods.immersivetechnology.ImmersiveTech;
+
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.ITContent;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
@@ -98,7 +100,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		this.setDefaultState(getInitDefaultState());
 		String registryName = createRegistryName();
 		this.setUnlocalizedName(registryName.replace(':', '.'));
-		this.setCreativeTab(ImmersiveTech.creativeTab);
+		this.setCreativeTab(ImmersiveTechnology.creativeTab);
 		this.adjustSound();
 		ITContent.registeredITBlocks.add(this);
 		try {
@@ -482,7 +484,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	public String createRegistryName() {
-		return ImmersiveTech.MODID + ":" + name;
+		return ImmersiveTechnology.MODID + ":" + name;
 	}
 
 	public interface IBlockEnum extends IStringSerializable {

@@ -7,9 +7,12 @@ import com.google.common.collect.Lists;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
+import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.Utils;
+
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarReflector;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -32,6 +35,7 @@ public class TileEntitySolarReflector extends TileEntityMultiblockPart <TileEnti
 
 	@Override
 	public void update() {
+		ApiUtils.checkForNeedlessTicking(this);
 		if(!world.isRemote && formed && pos == 10) {
 			if(canSeeSun() && world.isDaytime()) {
 				this.sun = true;

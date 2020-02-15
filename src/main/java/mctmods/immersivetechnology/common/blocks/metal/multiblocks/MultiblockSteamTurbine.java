@@ -80,7 +80,7 @@ public class MultiblockSteamTurbine implements IMultiblock {
 
 	@Override
 	public String getUniqueName() {
-		return "IT : SteamTurbine";
+		return "IT:SteamTurbine";
 	}
 
 	@Override
