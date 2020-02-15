@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import java.util.Random;
+
 import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.api.Lib;
@@ -37,11 +39,12 @@ public class TileEntityBarrelOpen extends TileEntityIEBase implements ITickable,
 	public static final int IGNITION_TEMPERATURE = 573;
 
 	private int acceptedAmount = 0;
-	private int updateClient = 0;
-	private int lastAmount;
+	private int lastRandom = 0;
 
 	SidedFluidHandler[] sidedFluidHandler = {new SidedFluidHandler(this, EnumFacing.DOWN), new SidedFluidHandler(this, EnumFacing.UP)};
 	SidedFluidHandler nullsideFluidHandler = new SidedFluidHandler(this, null);
+	
+	private static Random RANDOM = new Random();
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -73,55 +76,36 @@ public class TileEntityBarrelOpen extends TileEntityIEBase implements ITickable,
 	public void update() {
 		if(world.isRemote) return;
 		boolean update = false;
-		float temp = world.getBiome(pos).getTemperature(pos);
-		if(world.getBiomeProvider().getTemperatureAtHeight(temp, pos.getY()) >= 0.15F && world.isRaining() && world.getTopSolidOrLiquidBlock(pos).getY() == pos.getY() + 1) {
-			if(tank.getFluid() == null) {
-				tank.fill(new FluidStack(FluidRegistry.WATER, 100), true);
-			} else if(tank.getFluid().getFluid() == FluidRegistry.WATER && tank.getFluid().amount < tank.getCapacity()) {
-				tank.fill(new FluidStack(FluidRegistry.WATER, 100), true);
+		int random = 1 + RANDOM.nextInt(100);
+		if(random == lastRandom) {
+			float temp = world.getBiome(pos).getTemperature(pos);
+			float heightTemp = world.getBiomeProvider().getTemperatureAtHeight(temp, pos.getY());
+			if(world.isRaining() && world.canSeeSky(pos) && heightTemp > 0.05F && heightTemp < 2.0F) {
+				System.out.println(world.getRainStrength(1.0F));
+				if(tank.getFluid() == null) {
+					tank.fill(new FluidStack(FluidRegistry.WATER, 100), true);
+				} else if(tank.getFluid().getFluid() == FluidRegistry.WATER && tank.getFluid().amount < tank.getCapacity()) {
+					tank.fill(new FluidStack(FluidRegistry.WATER, 100), true);
+				}
+				update = true;
+			} else if(tank.getFluid().isFluidEqual(new FluidStack(FluidRegistry.WATER, 0)) && heightTemp >= 2.0F) {
+				tank.drain(100, true);
+				update = true;
 			}
-			update = true;
 		}
+		lastRandom = random;
 		if(tank.getFluidAmount() > 0) {
-			IFluidHandler output = FluidUtil.getFluidHandler(world, this.getPos(), EnumFacing.DOWN);
-			FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(40, tank.getFluidAmount()), false);
-			System.out.println(accepted.amount);
-			accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
-			System.out.println("A:" + accepted.amount);
-			if(accepted.amount > 0) {
-				int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
-				this.tank.drain(drained, true);
-				update=true;
-			}
-		}
-		/*
-		boolean update = false;
-		if(tank.getFluidAmount() != tank.getCapacity()) {
-			FluidStack filled = tank.getFluid();
-			filled.amount = tank.getCapacity() - tank.getFluidAmount();
-			tank.fill(filled, true);
-			update = true;
-		}
-		for(int index = 0; index < 6; index++) {
-			EnumFacing face = EnumFacing.getFront(index);
-			IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
+			EnumFacing face = EnumFacing.DOWN;
+			IFluidHandler output = FluidUtil.getFluidHandler(world, pos.offset(face), face.getOpposite());
 			if(output != null) {
-				FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), tank.getCapacity(), false);
+				FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(40, tank.getFluidAmount()), false);
 				accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
 				if(accepted.amount > 0) {
-					lastAmount = accepted.amount;
-					output.fill(accepted, true);
+					int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
+					this.tank.drain(drained, true);
 					update=true;
 				}
 			}
-		}
-		*/
-		if(updateClient >= 20) {
-			acceptedAmount = lastAmount;
-			lastAmount = 0;
-			updateClient = 1;
-		} else {
-			updateClient++;
 		}
 		if(update) {
 			efficientMarkDirty();
@@ -134,7 +118,7 @@ public class TileEntityBarrelOpen extends TileEntityIEBase implements ITickable,
 		if(Utils.isFluidRelatedItemStack(player.getHeldItem(EnumHand.MAIN_HAND))) {
 			String string = null;
 			if(tank.getFluid()!=null) {
-				string = tank.getFluid().getLocalizedName()+": "+tank.getFluidAmount()+"mB";
+				string = tank.getFluid().getLocalizedName()+": " + tank.getFluidAmount() + "mB";
 			} else {
 				string = I18n.format(Lib.GUI+"empty");
 			}
