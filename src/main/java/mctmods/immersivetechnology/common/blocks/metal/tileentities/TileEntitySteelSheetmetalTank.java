@@ -11,6 +11,8 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.blocks.wooden.BlockTypes_WoodenDecoration;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import mctmods.immersivetechnology.common.Config.ITConfig.SteelTank;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -31,7 +33,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<TileEntitySteelSheetmetalTank> implements IBlockOverlayText, IPlayerInteraction, IComparatorOverride {
 
-	private static int tankSize = 2048000;
+	private static int tankSize = SteelTank.steelTank_tankSize;
 	
 	public FluidTank tank = new FluidTank(tankSize);
 
@@ -55,6 +57,23 @@ public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<Tile
 		super.writeCustomNBT(nbt, descPacket);
 		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
 		nbt.setTag("tank", tankTag);
+	}
+
+	private void updateComparatorValues() {
+		int vol = tank.getCapacity() / 6;
+		if((15 * tank.getFluidAmount()) / tank.getCapacity() != masterCompOld) world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+		for(int i = 0; i < 4; i++) {
+			int filled = tank.getFluidAmount()-i * vol;
+			int now = Math.min(15, Math.max((15 * filled) / vol, 0));
+			if(now != oldComps[i]) {
+				for(int x = -1; x <= 1; x++) {
+					for(int z = -1; z <= 1; z++) {	
+						BlockPos pos = getPos().add(-offset[0] + x, -offset[1] + i + 1, -offset[2] + z);
+						world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -119,23 +138,6 @@ public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<Tile
 			return ret;
 		}
 		return 0;
-	}
-
-	private void updateComparatorValues() {
-		int vol = tank.getCapacity() / 6;
-		if((15 * tank.getFluidAmount()) / tank.getCapacity() != masterCompOld) world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
-		for(int i = 0; i < 4; i++) {
-			int filled = tank.getFluidAmount()-i * vol;
-			int now = Math.min(15, Math.max((15 * filled) / vol, 0));
-			if(now != oldComps[i]) {
-				for(int x = -1; x <= 1; x++) {
-					for(int z = -1; z <= 1; z++) {	
-						BlockPos pos = getPos().add(-offset[0] + x, -offset[1] + i + 1, -offset[2] + z);
-						world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
-					}
-				}
-			}
-		}
 	}
 
 	@Override
