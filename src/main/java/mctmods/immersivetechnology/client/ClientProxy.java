@@ -18,6 +18,7 @@ import blusunrize.lib.manual.ManualPages;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.client.render.TileRenderBarrelOpen;
 import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
 import mctmods.immersivetechnology.client.render.TileRenderSteelSheetmetalTank;
 import mctmods.immersivetechnology.common.CommonProxy;
@@ -31,6 +32,7 @@ import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSol
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteelSheetmetalTank;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbine;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTank;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
@@ -209,6 +211,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void init() {
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBarrelOpen.class, new TileRenderBarrelOpen());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbine.class, new TileRenderSteamTurbine());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTank.class, new TileRenderSteelSheetmetalTank());
 

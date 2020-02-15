@@ -159,7 +159,8 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 
 	@Override
 	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
-		if(heldItem.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+		FluidStack fluid = FluidUtil.getFluidContained(heldItem);
+		if(fluid != null) {
 			tank.setFluid(null);
 		} else if(player.isSneaking()) {
 			tank.setFluid(null);

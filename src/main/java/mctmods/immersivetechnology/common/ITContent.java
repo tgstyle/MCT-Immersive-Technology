@@ -32,6 +32,7 @@ import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBa
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoiler;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityCokeOvenPreheater;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistiller;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarReflector;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTower;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbine;
@@ -137,6 +138,7 @@ public class ITContent {
 		registerTile(TileEntityTrashFluid.class);
 		registerTile(TileEntityTrashEnergy.class);
 		registerTile(TileEntityBarrel.class);
+		registerTile(TileEntityBarrelOpen.class);
 		
 		/*MULTIBLOCK TILE ENTITIES*/
 		if(Multiblock.enable_distiller) {
