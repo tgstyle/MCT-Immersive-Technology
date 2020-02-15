@@ -17,7 +17,7 @@ import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-@ZenClass("mods.immersivetech.Distiller")
+@ZenClass("mods.immersivetechnology.Distiller")
 public class Distiller {
 	
 	@ZenMethod
