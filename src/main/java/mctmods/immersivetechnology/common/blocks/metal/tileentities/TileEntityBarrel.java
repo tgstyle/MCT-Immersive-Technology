@@ -66,13 +66,11 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 	public void update() {
 		if(world.isRemote || tank.getFluidAmount() == 0) return;
 		boolean update = false;
-		if(tank.getFluidAmount() > 0) {
-			if(tank.getFluidAmount() != tank.getCapacity()) {
-				FluidStack filled = tank.getFluid();
-				filled.amount = tank.getCapacity() - tank.getFluidAmount();
-				tank.fill(filled, true);
-				update = true;
-			}
+		if(tank.getFluidAmount() != tank.getCapacity()) {
+			FluidStack filled = tank.getFluid();
+			filled.amount = tank.getCapacity() - tank.getFluidAmount();
+			tank.fill(filled, true);
+			update = true;
 		}
 		for(int index = 0; index < 6; index++) {
 			EnumFacing face = EnumFacing.getFront(index);
