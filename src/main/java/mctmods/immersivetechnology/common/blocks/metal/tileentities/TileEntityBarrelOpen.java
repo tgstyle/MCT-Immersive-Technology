@@ -78,19 +78,17 @@ public class TileEntityBarrelOpen extends TileEntityIEBase implements ITickable,
 		boolean update = false;
 		int random = 1 + RANDOM.nextInt(100);
 		if(random == lastRandom) {
-			float temp = world.getBiome(pos).getTemperature(pos);
-			float heightTemp = world.getBiomeProvider().getTemperatureAtHeight(temp, pos.getY());
-			if(world.isRaining() && world.canSeeSky(pos) && heightTemp > 0.05F && heightTemp < 2.0F) {
-				System.out.println(world.getRainStrength(1.0F));
-				if(tank.getFluid() == null) {
-					tank.fill(new FluidStack(FluidRegistry.WATER, 100), true);
-				} else if(tank.getFluid().getFluid() == FluidRegistry.WATER && tank.getFluid().amount < tank.getCapacity()) {
-					tank.fill(new FluidStack(FluidRegistry.WATER, 100), true);
+			if(tank.getFluid() == null || tank.getFluid().getFluid() == FluidRegistry.WATER) {
+				float temp = world.getBiomeProvider().getTemperatureAtHeight(world.getBiome(pos).getTemperature(pos), pos.getY());
+				if(world.isRaining() && world.canSeeSky(pos) && temp > 0.05F && temp < 2.0F) {
+					int amount = 100;
+					if(world.isThundering()) amount = 200;
+					this.tank.fill(new FluidStack(FluidRegistry.WATER, amount), true);
+					update = true;
+				} else if(temp >= 2.0F) {
+					this.tank.drain(100, true);
+					update = true;
 				}
-				update = true;
-			} else if(tank.getFluid().isFluidEqual(new FluidStack(FluidRegistry.WATER, 0)) && heightTemp >= 2.0F) {
-				tank.drain(100, true);
-				update = true;
 			}
 		}
 		lastRandom = random;
@@ -146,35 +144,6 @@ public class TileEntityBarrelOpen extends TileEntityIEBase implements ITickable,
 	}
 
 	@Override
-	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
-		FluidStack fluid = FluidUtil.getFluidContained(heldItem);
-		if(!isFluidValid(fluid)) {
-			ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(Lib.CHAT_INFO + "noGasAllowed"));
-			return true;
-		}
-		if(FluidUtil.interactWithFluidHandler(player, hand, tank)) {
-			efficientMarkDirty();
-			this.markContainingBlockForUpdate(null);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public ItemStack getTileDrop(EntityPlayer player, IBlockState state) {
-		ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
-		NBTTagCompound tag = new NBTTagCompound();
-		writeTank(tag, true);
-		if(!tag.hasNoTags()) stack.setTagCompound(tag);
-		return stack;
-	}
-
-	@Override
-	public void readOnPlacement(EntityLivingBase placer, ItemStack stack) {
-		if(stack.hasTagCompound()) readTank(stack.getTagCompound());
-	}
-
-	@Override
 	public int getComparatorInputOverride()	{
 		return (int)(15 * (tank.getFluidAmount() / (float)tank.getCapacity()));
 	}
@@ -224,6 +193,35 @@ public class TileEntityBarrelOpen extends TileEntityIEBase implements ITickable,
 		public IFluidTankProperties[] getTankProperties() {
 			return barrel.tank.getTankProperties();
 		}
+	}
+
+	@Override
+	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
+		FluidStack fluid = FluidUtil.getFluidContained(heldItem);
+		if(!isFluidValid(fluid)) {
+			ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(Lib.CHAT_INFO + "noGasAllowed"));
+			return true;
+		}
+		if(FluidUtil.interactWithFluidHandler(player, hand, tank)) {
+			efficientMarkDirty();
+			this.markContainingBlockForUpdate(null);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public ItemStack getTileDrop(EntityPlayer player, IBlockState state) {
+		ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
+		NBTTagCompound tag = new NBTTagCompound();
+		writeTank(tag, true);
+		if(!tag.hasNoTags()) stack.setTagCompound(tag);
+		return stack;
+	}
+
+	@Override
+	public void readOnPlacement(EntityLivingBase placer, ItemStack stack) {
+		if(stack.hasTagCompound()) readTank(stack.getTagCompound());
 	}
 
 }
