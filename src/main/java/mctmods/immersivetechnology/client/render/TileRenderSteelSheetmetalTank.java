@@ -20,12 +20,10 @@ public class TileRenderSteelSheetmetalTank extends TileEntitySpecialRenderer<Til
 		if(!tile.formed || tile.pos != 4 || !tile.getWorld().isBlockLoaded(tile.getPos(), false)) return;
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x+.5, y, z+.5);
-
 		FluidStack fs = tile.tank.getFluid();
 		GlStateManager.translate(0, 3.5f, 0);
 		float baseScale = .0625f;
 		GlStateManager.scale(baseScale, -baseScale, baseScale);
-
 		double playerDistanceSq = ClientUtils.mc().player.getDistanceSq(tile.getPos());
 		float offset = playerDistanceSq < 64 ? .001f : playerDistanceSq<2304 ? .004f : .015f;
 		float xx = -.5f;

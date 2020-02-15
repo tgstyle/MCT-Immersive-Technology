@@ -30,6 +30,18 @@ import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockDis
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarReflector;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAlternator;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrel;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoiler;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityCokeOvenPreheater;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistiller;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarReflector;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTower;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbine;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashEnergy;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashFluid;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneDecoration;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneMultiblock;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
@@ -136,6 +148,8 @@ public class ITContent {
 		registerTile(TileEntityDistiller.class);
 		registerTile(TileEntitySolarTower.class);
 		registerTile(TileEntitySolarReflector.class);
+
+		registerTile(TileEntityBarrelOpen.class);
 		
 		/*MULTIBLOCK TILE ENTITIES*/
 		if(Multiblock.enable_distiller) {

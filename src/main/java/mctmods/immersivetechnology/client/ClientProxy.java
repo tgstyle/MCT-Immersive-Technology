@@ -17,6 +17,7 @@ import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualPages;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.client.render.TileRenderBarrelOpen;
 import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
 import mctmods.immersivetechnology.client.render.TileRenderSteelSheetmetalTank;
 import mctmods.immersivetechnology.common.CommonProxy;
@@ -31,6 +32,8 @@ import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSol
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteelSheetmetalTank;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbine;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTank;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
@@ -209,6 +212,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void init() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBarrelOpen.class, new TileRenderBarrelOpen());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTank.class, new TileRenderSteelSheetmetalTank());
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
 		//has to be here as well because this one is used when playing Singleplayer, go figure
