@@ -1,17 +1,17 @@
 package mctmods.immersivetechnology.common.util.compat;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.function.Consumer;
-
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.compat.crafttweaker.CraftTweakerHelper;
 import mctmods.immersivetechnology.common.util.compat.top.OneProbeHelper;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.function.Consumer;
 
 	/*
 	* Highly inspired to BluSunrize's class

@@ -1,52 +1,32 @@
 package mctmods.immersivetechnology.common;
 
-import javax.annotation.Nonnull;
-
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
-
-import jdk.nashorn.internal.ir.Block;
-
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.client.gui.*;
+import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
-import mctmods.immersivetechnology.api.ITLib;
-import mctmods.immersivetechnology.client.gui.GuiBoiler;
-import mctmods.immersivetechnology.client.gui.GuiCokeOvenAdvanced;
-import mctmods.immersivetechnology.client.gui.GuiDistiller;
-import mctmods.immersivetechnology.client.gui.GuiSolarTower;
-import mctmods.immersivetechnology.client.gui.GuiTimer;
-import mctmods.immersivetechnology.client.gui.GuiTrashItem;
-import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
-import mctmods.immersivetechnology.common.gui.ContainerBoiler;
-import mctmods.immersivetechnology.common.gui.ContainerCokeOvenAdvanced;
-import mctmods.immersivetechnology.common.gui.ContainerDistiller;
-import mctmods.immersivetechnology.common.gui.ContainerSolarTower;
-import mctmods.immersivetechnology.common.gui.ContainerTimer;
-import mctmods.immersivetechnology.common.gui.ContainerTrashItem;
+import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
+import mctmods.immersivetechnology.common.gui.*;
 import mctmods.immersivetechnology.common.util.TemporaryTileEntityRequest;
 import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 

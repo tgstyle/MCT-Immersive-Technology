@@ -1,8 +1,5 @@
 package mctmods.immersivetechnology.common.util.compat.crafttweaker;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.IAction;
 import crafttweaker.api.item.IItemStack;
@@ -10,12 +7,13 @@ import crafttweaker.api.liquid.ILiquidStack;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fluids.FluidStack;
-
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 @ZenClass("mods.immersivetechnology.Distiller")
 public class Distiller {

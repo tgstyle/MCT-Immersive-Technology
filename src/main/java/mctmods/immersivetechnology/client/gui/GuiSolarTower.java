@@ -1,15 +1,14 @@
 package mctmods.immersivetechnology.client.gui;
 
-import java.util.ArrayList;
-
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
-import org.lwjgl.opengl.GL11;
-
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
 import mctmods.immersivetechnology.common.gui.ContainerSolarTower;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
+import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
 
 public class GuiSolarTower extends GuiIEContainerBase {
 	TileEntitySolarTowerMaster tile;

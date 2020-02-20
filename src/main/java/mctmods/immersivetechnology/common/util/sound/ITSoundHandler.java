@@ -7,6 +7,7 @@ import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+
 import java.util.HashMap;
 
 public class ITSoundHandler extends PositionedSound implements ITickableSound {

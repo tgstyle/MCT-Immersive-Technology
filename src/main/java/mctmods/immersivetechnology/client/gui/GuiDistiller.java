@@ -1,15 +1,14 @@
 package mctmods.immersivetechnology.client.gui;
 
-import java.util.ArrayList;
-
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
-import org.lwjgl.opengl.GL11;
-
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
 import mctmods.immersivetechnology.common.gui.ContainerDistiller;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
+import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
 
 public class GuiDistiller extends GuiIEContainerBase {
 	TileEntityDistillerMaster tile;
