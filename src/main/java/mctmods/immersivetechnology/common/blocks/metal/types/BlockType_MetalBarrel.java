@@ -6,7 +6,8 @@ import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import net.minecraft.util.IStringSerializable;
 
 public enum BlockType_MetalBarrel implements IStringSerializable, BlockITBase.IBlockEnum {
-	BARREL;
+	BARREL,
+	BARREL_OPEN;
 
 	@Override
 	public String getName() {

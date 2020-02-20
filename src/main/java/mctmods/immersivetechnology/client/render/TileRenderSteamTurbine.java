@@ -26,15 +26,12 @@ public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntity
 		if(!te.formed || te.isDummy() || !te.getWorld().isBlockLoaded(te.getPos(), false)) {
 			return;
 		}
-
 		final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
 		BlockPos blockPos = te.getPos();
 		IBlockState state = getWorld().getBlockState(blockPos);
-
 		if(state.getBlock() != ITContent.blockMetalMultiblock) {
 			return;
 		}
-
 		state = state.getBlock().getActualState(state, getWorld(), blockPos);
 		state = state.withProperty(IEProperties.DYNAMICRENDER, true);
 		IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState(state);
@@ -48,13 +45,11 @@ public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntity
 		GlStateManager.blendFunc(770, 771);
 		GlStateManager.enableBlend();
 		GlStateManager.disableCull();
-
 		if(Minecraft.isAmbientOcclusionEnabled()) {
 			GlStateManager.shadeModel(7425);
 		} else {
 			GlStateManager.shadeModel(7424);
 		}
-
 		GlStateManager.rotate(te.getAnimation().getAnimationRotation() + (te.getAnimation().getAnimationMomentum() * partialTicks), te.facing.getFrontOffsetX(), 0, te.facing.getFrontOffsetZ());
 		worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 		worldRenderer.setTranslation(- .5 - blockPos.getX(), - .5 - blockPos.getY(), - .5 - blockPos.getZ());

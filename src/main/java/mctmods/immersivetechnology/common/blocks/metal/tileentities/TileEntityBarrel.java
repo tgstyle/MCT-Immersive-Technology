@@ -13,7 +13,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
@@ -66,22 +65,18 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 	public void update() {
 		if(world.isRemote || tank.getFluidAmount() == 0) return;
 		boolean update = false;
-		if(tank.getFluidAmount() > 0) {
-			if(tank.getFluidAmount() != tank.getCapacity()) {
-				FluidStack filled = tank.getFluid();
-				filled.amount = tank.getCapacity() - tank.getFluidAmount();
-				tank.fill(filled, true);
-				update = true;
-			}
+		if(tank.getFluidAmount() != tank.getCapacity()) {
+			FluidStack filled = tank.getFluid();
+			filled.amount = tank.getCapacity() - tank.getFluidAmount();
+			tank.fill(filled, true);
+			update = true;
 		}
 		for(int index = 0; index < 6; index++) {
 			EnumFacing face = EnumFacing.getFront(index);
-			if(face == null) break;
-			TileEntity tileEntity = world.getTileEntity(getPos().offset(face));
-			if(tileEntity != null && tileEntity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite())) {
-				IFluidHandler output = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite());
-				FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), tank.getCapacity(), true);
-				accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
+			IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
+			if(output != null) {
+				FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), tank.getCapacity(), false);
+				accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
 				if(accepted.amount > 0) {
 					lastAmount = accepted.amount;
 					output.fill(accepted, true);
@@ -163,7 +158,8 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 
 	@Override
 	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
-		if(heldItem.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+		FluidStack fluid = FluidUtil.getFluidContained(heldItem);
+		if(fluid != null) {
 			tank.setFluid(null);
 		} else if(player.isSneaking()) {
 			tank.setFluid(null);

@@ -12,7 +12,7 @@ import net.minecraftforge.fluids.FluidStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-@ZenClass("mods.immersivetech.SolarTower")
+@ZenClass("mods.immersivetechnology.SolarTower")
 public class SolarTower {
 
 	@ZenMethod

@@ -11,6 +11,8 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.blocks.wooden.BlockTypes_WoodenDecoration;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import mctmods.immersivetechnology.common.Config.ITConfig.SteelTank;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -31,7 +33,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<TileEntitySteelSheetmetalTank> implements IBlockOverlayText, IPlayerInteraction, IComparatorOverride {
 
-	public FluidTank tank = new FluidTank(2048000);
+	private static int tankSize = SteelTank.steelTank_tankSize;
+	
+	public FluidTank tank = new FluidTank(tankSize);
 
 	private int[] oldComps = new int[4];
 	private int masterCompOld;
@@ -55,28 +59,48 @@ public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<Tile
 		nbt.setTag("tank", tankTag);
 	}
 
+	private void updateComparatorValues() {
+		int vol = tank.getCapacity() / 6;
+		if((15 * tank.getFluidAmount()) / tank.getCapacity() != masterCompOld) world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+		for(int i = 0; i < 4; i++) {
+			int filled = tank.getFluidAmount()-i * vol;
+			int now = Math.min(15, Math.max((15 * filled) / vol, 0));
+			if(now != oldComps[i]) {
+				for(int x = -1; x <= 1; x++) {
+					for(int z = -1; z <= 1; z++) {	
+						BlockPos pos = getPos().add(-offset[0] + x, -offset[1] + i + 1, -offset[2] + z);
+						world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
+					}
+				}
+			}
+		}
+	}
+
 	@Override
 	public void update() {
 		ApiUtils.checkForNeedlessTicking(this);
-		if(pos == 4 && !world.isRemote && world.isBlockIndirectlyGettingPowered(getPos()) > 0) {
-			for(int i = 0; i < 6; i++) {
-				if(i != 1 && tank.getFluidAmount() > 0) {
-					EnumFacing f = EnumFacing.getFront(i);
-					int outSize = Math.min(144, tank.getFluidAmount());
-					FluidStack out = Utils.copyFluidStackWithAmount(tank.getFluid(), outSize, false);
-					BlockPos outputPos = getPos().offset(f);
-					IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, f.getOpposite());
+		if(world.isRemote || tank.getFluidAmount() == 0) return;
+		boolean update = false;
+		if(pos == 4 && world.isBlockIndirectlyGettingPowered(getPos()) > 0) {
+			for(int index = 0; index < 6; index++) {
+				if(index != 1) {
+					EnumFacing face = EnumFacing.getFront(index);
+					IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
 					if(output != null) {
-						int accepted = output.fill(out, false);
-						if(accepted > 0) {
-							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+						FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(1000, tank.getFluidAmount()), false);
+						accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
+						if(accepted.amount > 0) {
+							int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
 							this.tank.drain(drained, true);
-							this.markContainingBlockForUpdate(null);
-							updateComparatorValues();
+							update=true;
 						}
 					}
 				}
 			}
+		}
+		if(update) {
+			updateComparatorValues();
+			this.markContainingBlockForUpdate(null);
 		}
 	}
 
@@ -114,23 +138,6 @@ public class TileEntitySteelSheetmetalTank extends TileEntityMultiblockPart<Tile
 			return ret;
 		}
 		return 0;
-	}
-
-	private void updateComparatorValues() {
-		int vol = tank.getCapacity() / 6;
-		if((15 * tank.getFluidAmount()) / tank.getCapacity() != masterCompOld) world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
-		for(int i = 0; i < 4; i++) {
-			int filled = tank.getFluidAmount()-i * vol;
-			int now = Math.min(15, Math.max((15 * filled) / vol, 0));
-			if(now != oldComps[i]) {
-				for(int x = -1; x <= 1; x++) {
-					for(int z = -1; z <= 1; z++) {	
-						BlockPos pos = getPos().add(-offset[0] + x, -offset[1] + i + 1, -offset[2] + z);
-						world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
-					}
-				}
-			}
-		}
 	}
 
 	@Override
