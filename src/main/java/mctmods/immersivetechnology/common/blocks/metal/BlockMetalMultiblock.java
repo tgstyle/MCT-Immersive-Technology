@@ -1,19 +1,16 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-
 import mctmods.immersivetechnology.common.blocks.BlockITMultiblock;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.property.Properties;
 
 public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMultiblock> {

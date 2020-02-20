@@ -17,7 +17,6 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.property.Properties;
 
 public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice> {

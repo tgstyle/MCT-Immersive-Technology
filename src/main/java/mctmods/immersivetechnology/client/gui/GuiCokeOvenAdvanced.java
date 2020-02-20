@@ -1,18 +1,16 @@
 package mctmods.immersivetechnology.client.gui;
 
-import java.util.ArrayList;
-
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
-import mctmods.immersivetechnology.ImmersiveTech;
-import mctmods.immersivetechnology.common.gui.ContainerCokeOvenAdvanced;
-import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
-
-import org.lwjgl.opengl.GL11;
-
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
+import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
+import mctmods.immersivetechnology.common.gui.ContainerCokeOvenAdvanced;
+import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
+import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
 
 public class GuiCokeOvenAdvanced extends GuiIEContainerBase {
 	TileEntityCokeOvenAdvancedMaster tile;

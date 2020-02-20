@@ -1,12 +1,11 @@
 package mctmods.immersivetechnology.common.util.compat.jei;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mezz.jei.api.gui.ITooltipCallback;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ITFluidTooltipCallback implements ITooltipCallback<FluidStack> {
 	@Override

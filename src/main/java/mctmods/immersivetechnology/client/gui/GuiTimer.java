@@ -1,7 +1,5 @@
 package mctmods.immersivetechnology.client.gui;
 
-import org.lwjgl.opengl.GL11;
-
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
 import blusunrize.immersiveengineering.client.gui.elements.GuiButtonIE;
@@ -12,6 +10,7 @@ import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import org.lwjgl.opengl.GL11;
 
 public class GuiTimer extends GuiIEContainerBase {
 	TileEntityTimer tile;

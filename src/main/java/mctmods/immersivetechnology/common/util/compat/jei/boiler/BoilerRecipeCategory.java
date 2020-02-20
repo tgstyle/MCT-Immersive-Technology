@@ -1,21 +1,21 @@
 package mctmods.immersivetechnology.common.util.compat.jei.boiler;
 
-import java.util.List;
-
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
-import mezz.jei.api.gui.*;
+import mezz.jei.api.gui.IDrawable;
+import mezz.jei.api.gui.IGuiFluidStackGroup;
+import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.List;
 
 public class BoilerRecipeCategory extends ITRecipeCategory<BoilerRecipe, BoilerRecipeWrapper> {
 	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_boiler_jei.png");

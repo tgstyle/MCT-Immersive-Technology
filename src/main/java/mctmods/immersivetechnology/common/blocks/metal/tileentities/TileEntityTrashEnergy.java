@@ -9,16 +9,14 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IConfigur
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IEForgeEnergyWrapper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
-
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Trash;
-
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.RayTraceResult;
 
 public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable, IBlockOverlayText, IBlockBounds, IIEInternalFluxHandler, IConfigurableSides {
