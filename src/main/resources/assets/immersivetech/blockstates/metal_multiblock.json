@@ -33,8 +33,8 @@
 			"transform": {
 				"scale": 0.125,
 				"rotation": [{
-					"x": 20
-				},
+						"x": 20
+					},
 					{
 						"y": -45
 					}
@@ -69,8 +69,8 @@
 			"transform": {
 				"scale": 0.125,
 				"rotation": [{
-					"x": 20
-				},
+						"x": 20
+					},
 					{
 						"y": -45
 					}
@@ -105,8 +105,8 @@
 			"transform": {
 				"scale": 0.25,
 				"rotation": [{
-					"x": 20
-				},
+						"x": 20
+					},
 					{
 						"y": -45
 					}
@@ -114,6 +114,24 @@
 				"translation": [
 					0,
 					0,
+					0
+				]
+			}
+		}],
+		"inventory,type=steel_tank": [{
+			"model": "immersivetech:metal_multiblock/steel_tank.obj",
+			"transform": {
+				"scale": 0.1875,
+				"rotation": [{
+						"x": 20
+					},
+					{
+						"y": -45
+					}
+				],
+				"translation": [
+					0,
+					-0.25,
 					0
 				]
 			}
@@ -136,6 +154,9 @@
 			},
 			"alternator_slave": {
 				"model": "immersiveengineering:ie_empty"
+			},
+			"steel_tank": {
+				"model": "immersivetech:metal_multiblock/steel_tank.obj"
 			}
 		},
 		"facing": {

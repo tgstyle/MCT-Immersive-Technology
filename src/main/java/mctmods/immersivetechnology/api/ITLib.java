@@ -8,4 +8,5 @@ public class ITLib {
 	public static final int GUIID_Solar_Tower = 3;
 	public static final int GUIID_Timer = 4;
 	public static final int GUIID_Trash_Item = 5;
+
 }
