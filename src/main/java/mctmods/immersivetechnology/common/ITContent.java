@@ -6,6 +6,7 @@ import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.Config;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.blocks.metal.multiblocks.*;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
@@ -25,12 +26,6 @@ import mctmods.immersivetechnology.common.blocks.metal.BlockMetalBarrel;
 import mctmods.immersivetechnology.common.blocks.metal.BlockMetalDevice;
 import mctmods.immersivetechnology.common.blocks.metal.BlockMetalMultiblock;
 import mctmods.immersivetechnology.common.blocks.metal.BlockMetalTrash;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockAlternator;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockBoiler;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockDistiller;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarReflector;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarTower;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAlternator;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrel;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoiler;
@@ -224,6 +219,9 @@ public class ITContent {
 		if(Multiblock.enable_steamTurbine && Recipes.register_steamTurbine_recipes) {
 			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 10), new FluidStack(FluidRegistry.getFluid("steam"), 100), 1);
 		}
+
+		registerTile(TileEntitySteelSheetmetalTank.class);
+		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
 	}
 
 	@SuppressWarnings("deprecation")
