@@ -65,7 +65,6 @@ public class MultiblockSteelSheetmetalTank implements IMultiblock {
 
 	@Override
 	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
-		System.out.println("??");
 		EnumFacing f = EnumFacing.fromAngle(player.rotationYaw);
 		pos = pos.offset(f);
 		if(!(Utils.isOreBlockAt(world, pos.offset(f, - 1).offset(f.rotateY()), "fenceTreatedWood") && Utils.isOreBlockAt(world, pos.offset(f, - 1).offset(f.rotateYCCW()), "fenceTreatedWood"))) {
