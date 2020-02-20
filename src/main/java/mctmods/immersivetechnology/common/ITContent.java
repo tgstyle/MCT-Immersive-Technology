@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.Config;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
@@ -35,6 +36,7 @@ import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCok
 import mctmods.immersivetechnology.common.fluid.FluidColored;
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.util.ITLogger;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -250,4 +252,5 @@ public class ITContent {
 		Config.manual_int.put("alternator_energyPerTick", Alternator.alternator_energy_perTick);
 		Config.manual_int.put("cokeOvenPreheater_consumption", CokeOvenPreheater.cokeOvenPreheater_energy_consumption);
 	}
+
 }

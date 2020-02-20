@@ -9,8 +9,10 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IConfigur
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IEForgeEnergyWrapper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Trash;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -92,7 +94,7 @@ public class TileEntityTrashEnergy extends TileEntityIEBase implements ITickable
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		String amount = I18n.format(ImmersiveTechnology.MODID + ".osd.trash_energy.trashed") + ": " + acceptedAmount + " IF " + perSecond + " " + I18n.format(ImmersiveTechnology.MODID + ".osd.trash_energy.lastsecond");
+		String amount = I18n.format(ImmersiveTechnology.MODID + ".osd.trash_energy.trashed") + ": " + acceptedAmount + " if" + perSecond + " " + I18n.format(ImmersiveTechnology.MODID + ".osd.trash_energy.lastsecond");
 		return new String[]{amount};
 	}
 

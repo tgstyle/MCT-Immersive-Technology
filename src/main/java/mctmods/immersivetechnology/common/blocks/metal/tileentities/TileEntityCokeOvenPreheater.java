@@ -9,7 +9,9 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHasDummy
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IEForgeEnergyWrapper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
+
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.CokeOvenPreheater;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
