@@ -40,7 +40,7 @@ public class BlockStoneMultiblock extends BlockITMultiblock<BlockType_StoneMulti
 			case COKE_OVEN_ADVANCED_SLAVE:
 				return new TileEntityCokeOvenAdvancedSlave();
 		}
-
 		return null;
 	}
+
 }

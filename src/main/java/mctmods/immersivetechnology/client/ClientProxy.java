@@ -136,7 +136,7 @@ public class ClientProxy extends CommonProxy {
 		for(Block block : ITContent.registeredITBlocks) {
 			final ResourceLocation loc = Block.REGISTRY.getNameForObject(block);
 			Item blockItem = Item.getItemFromBlock(block);
-			if(blockItem==null)	throw new RuntimeException("ITEMBLOCK for" + loc + " : " + block + " IS NULL");
+			if(blockItem == null)	throw new RuntimeException("ITEMBLOCK for" + loc + " : " + block + " IS NULL");
 			if(block instanceof IIEMetaBlock) {
 				IIEMetaBlock ieMetaBlock = (IIEMetaBlock)block;
 				if(ieMetaBlock.useCustomStateMapper()) ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock));
