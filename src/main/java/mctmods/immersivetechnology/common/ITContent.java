@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.IEContent;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
@@ -14,10 +15,7 @@ import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import mctmods.immersivetechnology.common.blocks.BlockITFluid;
 import mctmods.immersivetechnology.common.blocks.connectors.BlockConnectors;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
-import mctmods.immersivetechnology.common.blocks.metal.BlockMetalBarrel;
-import mctmods.immersivetechnology.common.blocks.metal.BlockMetalDevice;
-import mctmods.immersivetechnology.common.blocks.metal.BlockMetalMultiblock;
-import mctmods.immersivetechnology.common.blocks.metal.BlockMetalTrash;
+import mctmods.immersivetechnology.common.blocks.metal.*;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.*;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneDecoration;
@@ -111,6 +109,12 @@ public class ITContent {
 		
 		/*MANUAL*/
 		registerVariables();
+
+		IEContent.blockMetalDevice1.setRegistryName("immersiveengineering", "metaldevice1dummy");
+		IEContent.blockMetalDevice1.setUnlocalizedName("immersiveengineering.metaldevice1dummy");
+		IEContent.registeredIEItems.remove(Item.getItemFromBlock(IEContent.blockMetalDevice1));
+		IEContent.registeredIEBlocks.remove(IEContent.blockMetalDevice1);
+		IEContent.blockMetalDevice1 = new BlockMetalDevice1();
 	}
 
 	public static void init() {
@@ -174,6 +178,9 @@ public class ITContent {
 		registerTile(TileEntitySteelSheetmetalTankSlave.class);
 		registerTile(TileEntitySteelSheetmetalTankMaster.class);
 		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
+
+		TileEntityFluidPipe.initCovers();
+		IEContent.registerTile(TileEntityFluidPipe.class);
 	}
 
 	@SubscribeEvent
