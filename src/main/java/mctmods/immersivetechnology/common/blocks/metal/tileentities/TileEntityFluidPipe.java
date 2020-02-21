@@ -349,8 +349,10 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
         if(!world.isRemote)
         {
             boolean changed = false;
-            for(EnumFacing f : EnumFacing.VALUES)
-                changed |= updateConnectionByte(f);
+            for(EnumFacing f : EnumFacing.VALUES) {
+                if (world.isBlockLoaded(pos.offset(f))) changed |= updateConnectionByte(f);
+            }
+
             if(changed)
             {
                 world.notifyNeighborsOfStateChange(pos, getBlockType(), false);
