@@ -9,6 +9,7 @@ import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.*;
+import mctmods.immersivetechnology.common.Config.ITConfig.Experimental;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.Config.ITConfig.SteelTank;
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
@@ -110,11 +111,13 @@ public class ITContent {
 		/*MANUAL*/
 		registerVariables();
 
-		IEContent.blockMetalDevice1.setRegistryName("immersiveengineering", "metaldevice1dummy");
-		IEContent.blockMetalDevice1.setUnlocalizedName("immersiveengineering.metaldevice1dummy");
-		IEContent.registeredIEItems.remove(Item.getItemFromBlock(IEContent.blockMetalDevice1));
-		IEContent.registeredIEBlocks.remove(IEContent.blockMetalDevice1);
-		IEContent.blockMetalDevice1 = new BlockMetalDevice1();
+		if (Experimental.replace_IE_pipes) {
+			IEContent.blockMetalDevice1.setRegistryName("immersiveengineering", "metaldevice1dummy");
+			IEContent.blockMetalDevice1.setUnlocalizedName("immersiveengineering.metaldevice1dummy");
+			IEContent.registeredIEItems.remove(Item.getItemFromBlock(IEContent.blockMetalDevice1));
+			IEContent.registeredIEBlocks.remove(IEContent.blockMetalDevice1);
+			IEContent.blockMetalDevice1 = new BlockMetalDevice1();
+		}
 	}
 
 	public static void init() {
@@ -180,7 +183,7 @@ public class ITContent {
 		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
 
 		TileEntityFluidPipe.initCovers();
-		IEContent.registerTile(TileEntityFluidPipe.class);
+		if (Experimental.replace_IE_pipes) IEContent.registerTile(TileEntityFluidPipe.class);
 	}
 
 	@SubscribeEvent

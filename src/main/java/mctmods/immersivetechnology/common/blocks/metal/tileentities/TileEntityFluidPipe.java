@@ -19,6 +19,7 @@ import blusunrize.immersiveengineering.common.blocks.wooden.BlockTypes_WoodenDec
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import com.google.common.collect.Lists;
+import mctmods.immersivetechnology.api.ITUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -330,15 +331,11 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
     }
 
     @Override
-    public void onNeighborBlockChange(BlockPos otherPos)
-    {
+    public void onNeighborBlockChange(BlockPos otherPos) {
         EnumFacing dir = EnumFacing.getFacingFromVector(otherPos.getX()-pos.getX(),
                 otherPos.getY()-pos.getY(), otherPos.getZ()-pos.getZ());
         if(updateConnectionByte(dir))
-        {
-            world.notifyNeighborsOfStateExcept(pos, getBlockType(), dir);
-            markContainingBlockForUpdate(null);
-        }
+            ITUtils.improvedMarkBlockForUpdate(world, pos, null, EnumSet.complementOf(EnumSet.of(dir)));
     }
 
     @Override
@@ -352,11 +349,7 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
                 if (world.isBlockLoaded(pos.offset(f))) changed |= updateConnectionByte(f);
             }
 
-            if(changed)
-            {
-                world.notifyNeighborsOfStateChange(pos, getBlockType(), false);
-                markContainingBlockForUpdate(null);
-            }
+            if(changed) ITUtils.improvedMarkBlockForUpdate(world, pos, null);
         }
     }
 
@@ -562,7 +555,7 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
     {
         if(id==0)
         {
-            this.markContainingBlockForUpdate(null);
+            ITUtils.improvedMarkBlockForUpdate(world, pos, null);
             return true;
         }
         return false;
@@ -1007,7 +1000,7 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
                     entityitem.setNoPickupDelay();
             }
             pipeCover = ItemStack.EMPTY;
-            this.markContainingBlockForUpdate(null);
+            ITUtils.improvedMarkBlockForUpdate(world, pos, null);
             world.addBlockEvent(getPos(), getBlockType(), 255, 0);
             return true;
         }
@@ -1026,7 +1019,7 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
                         }
                         pipeCover = Utils.copyStackWithAmount(heldItem, 1);
                         heldItem.shrink(1);
-                        this.markContainingBlockForUpdate(null);
+                        ITUtils.improvedMarkBlockForUpdate(world, pos, null);
                         world.addBlockEvent(getPos(), getBlockType(), 255, 0);
                         return true;
                     }
@@ -1035,7 +1028,7 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
             if(heldDye!=-1)
             {
                 color = EnumDyeColor.byDyeDamage(heldDye);
-                markContainingBlockForUpdate(null);
+                ITUtils.improvedMarkBlockForUpdate(world, pos, null);
                 return true;
             }
         }
@@ -1059,7 +1052,7 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
         if(fd!=null)
         {
             toggleSide(fd.ordinal());
-            this.markContainingBlockForUpdate(null);
+            ITUtils.improvedMarkBlockForUpdate(world, pos, null);
             indirectConnections.clear();
             return true;
         }
