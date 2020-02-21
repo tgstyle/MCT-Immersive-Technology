@@ -243,7 +243,6 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
     @Override
     public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket)
     {
-        nbt.setBoolean("HelloFromIT", true);
         nbt.setIntArray("sideConfig", sideConfig);
         if(!pipeCover.isEmpty())
             nbt.setTag("pipeCover", (pipeCover.writeToNBT(new NBTTagCompound())));
