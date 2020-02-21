@@ -1,22 +1,15 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import blusunrize.immersiveengineering.common.util.Utils;
-
-import com.google.common.collect.Lists;
-
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
-
+import blusunrize.immersiveengineering.common.util.Utils;
+import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,10 +19,12 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TileEntitySteamTurbineSlave extends TileEntityMultiblockMetal<TileEntitySteamTurbineSlave, SteamTurbineRecipe> implements IAdvancedSelectionBounds, IAdvancedCollisionBounds, IMechanicalEnergy {
 

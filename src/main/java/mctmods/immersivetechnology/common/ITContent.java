@@ -1,22 +1,15 @@
 package mctmods.immersivetechnology.common;
 
-import java.util.ArrayList;
-
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.Config;
-
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.*;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
-import mctmods.immersivetechnology.common.Config.ITConfig.*;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.*;
+import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
+import mctmods.immersivetechnology.common.Config.ITConfig.SteelTank;
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import mctmods.immersivetechnology.common.blocks.BlockITFluid;
 import mctmods.immersivetechnology.common.blocks.connectors.BlockConnectors;
@@ -25,25 +18,17 @@ import mctmods.immersivetechnology.common.blocks.metal.BlockMetalBarrel;
 import mctmods.immersivetechnology.common.blocks.metal.BlockMetalDevice;
 import mctmods.immersivetechnology.common.blocks.metal.BlockMetalMultiblock;
 import mctmods.immersivetechnology.common.blocks.metal.BlockMetalTrash;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAlternator;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrel;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoiler;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityCokeOvenPreheater;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistiller;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarReflector;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTower;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbine;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashEnergy;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashFluid;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
+import mctmods.immersivetechnology.common.blocks.metal.multiblocks.*;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneDecoration;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneMultiblock;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
+import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
+import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
+import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
 import mctmods.immersivetechnology.common.fluid.FluidColored;
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.util.ITLogger;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -51,7 +36,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -61,6 +45,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.ArrayList;
 
 @EventBusSubscriber(modid= ImmersiveTechnology.MODID)
 public class ITContent {
@@ -183,6 +169,11 @@ public class ITContent {
 			registerTile(TileEntitySteamTurbineMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
 		}
+
+		registerTile(TileEntitySteelSheetmetalTank.class);
+		registerTile(TileEntitySteelSheetmetalTankSlave.class);
+		registerTile(TileEntitySteelSheetmetalTankMaster.class);
+		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
 	}
 
 	@SubscribeEvent
@@ -218,9 +209,6 @@ public class ITContent {
 		if(Multiblock.enable_steamTurbine && Recipes.register_steamTurbine_recipes) {
 			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 10), new FluidStack(FluidRegistry.getFluid("steam"), 100), 1);
 		}
-
-		registerTile(TileEntitySteelSheetmetalTank.class);
-		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
 	}
 
 	@SuppressWarnings("deprecation")

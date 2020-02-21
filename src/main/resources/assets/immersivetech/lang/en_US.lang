@@ -56,6 +56,7 @@ tile.immersivetech.metal_multiblock.steam_turbine_slave.name=Steam Turbine
 tile.immersivetech.metal_multiblock.boiler_slave.name=Boiler
 tile.immersivetech.metal_multiblock.alternator_slave.name=Alternator
 tile.immersivetech.metal_multiblock.steel_tank.name=Steel Fluid Tank
+tile.immersivetech.metal_multiblock.steel_tank_slave.name=Steel Fluid Tank
 
 
 #STONE MULTIBLOCKS

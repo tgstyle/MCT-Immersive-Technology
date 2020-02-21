@@ -1,13 +1,12 @@
 package mctmods.immersivetechnology.common.util;
 
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import mctmods.immersivetechnology.ImmersiveTechnology;
 
 public class ITSounds {
 

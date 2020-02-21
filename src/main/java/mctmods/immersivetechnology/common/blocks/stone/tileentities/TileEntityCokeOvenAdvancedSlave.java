@@ -1,20 +1,13 @@
 package mctmods.immersivetechnology.common.blocks.stone.tileentities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import com.google.common.collect.Lists;
 import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IActiveState;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IProcessTile;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
+import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
@@ -27,11 +20,13 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TileEntityCokeOvenAdvancedSlave extends TileEntityMultiblockPart<TileEntityCokeOvenAdvancedSlave> implements IIEInventory, IGuiTile, IProcessTile, IActiveState, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 

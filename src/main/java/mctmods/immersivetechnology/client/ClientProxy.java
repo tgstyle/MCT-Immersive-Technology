@@ -1,9 +1,5 @@
 package mctmods.immersivetechnology.client;
 
-import java.util.Locale;
-
-import javax.annotation.Nonnull;
-
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.api.energy.wires.WireApi;
@@ -24,17 +20,10 @@ import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.BlockITFluid;
 import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Connectors;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockAlternator;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockBoiler;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockDistiller;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarReflector;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarTower;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteelSheetmetalTank;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbine;
+import mctmods.immersivetechnology.common.blocks.metal.multiblocks.*;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTank;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.items.ItemITBase;
@@ -42,7 +31,6 @@ import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -57,7 +45,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -71,6 +58,9 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
+
+import javax.annotation.Nonnull;
+import java.util.Locale;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
@@ -213,7 +203,7 @@ public class ClientProxy extends CommonProxy {
 	public void init() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBarrelOpen.class, new TileRenderBarrelOpen());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTank.class, new TileRenderSteelSheetmetalTank());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTankMaster.class, new TileRenderSteelSheetmetalTank());
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
 		//has to be here as well because this one is used when playing Singleplayer, go figure
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);

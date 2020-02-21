@@ -136,6 +136,24 @@
 				]
 			}
 		}],
+		"inventory,type=steel_tank_slave": [{
+			"model": "immersivetech:metal_multiblock/steel_tank.obj",
+			"transform": {
+				"scale": 0.1875,
+				"rotation": [{
+					"x": 20
+				},
+					{
+						"y": -45
+					}
+				],
+				"translation": [
+					0,
+					-0.25,
+					0
+				]
+			}
+		}],
 		"type": {
 			"solar_tower": {
 				"model": "immersivetech:metal_multiblock/solar_tower.obj"
@@ -157,6 +175,9 @@
 			},
 			"steel_tank": {
 				"model": "immersivetech:metal_multiblock/steel_tank.obj"
+			},
+			"steel_tank_slave": {
+				"model": "immersiveengineering:ie_empty"
 			}
 		},
 		"facing": {

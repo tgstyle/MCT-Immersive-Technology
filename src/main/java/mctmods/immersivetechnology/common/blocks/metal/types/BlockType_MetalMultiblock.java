@@ -1,10 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal.types;
 
-import java.util.Locale;
-
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
-
 import net.minecraft.util.IStringSerializable;
+
+import java.util.Locale;
 
 public enum BlockType_MetalMultiblock implements IStringSerializable, BlockITBase.IBlockEnum {
 	DISTILLER(true),
@@ -19,7 +18,8 @@ public enum BlockType_MetalMultiblock implements IStringSerializable, BlockITBas
 	BOILER_SLAVE(true),
 	ALTERNATOR_SLAVE(false),
 	SOLAR_REFLECTOR_SLAVE(false),
-	STEEL_TANK(false);
+	STEEL_TANK(false),
+	STEEL_TANK_SLAVE(false);
 
 	private boolean needsCustomState;
 	BlockType_MetalMultiblock(boolean needsCustomState) {

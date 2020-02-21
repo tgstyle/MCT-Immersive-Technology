@@ -1,23 +1,20 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
-
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
-import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SteamTurbine;
+import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;

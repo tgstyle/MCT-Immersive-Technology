@@ -1,7 +1,5 @@
 package mctmods.immersivetechnology.common.util.compat.jei.steamturbine;
 
-import java.util.List;
-
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
@@ -11,12 +9,12 @@ import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.List;
 
 public class SteamTurbineRecipeCategory extends ITRecipeCategory<SteamTurbineRecipe, SteamTurbineRecipeWrapper> {
 	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_steam_turbine.png");

@@ -1,19 +1,16 @@
 package mctmods.immersivetechnology.api.crafting;
 
-import java.util.ArrayList;
-
-import com.google.common.collect.Lists;
-
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.common.util.ListUtils;
-
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.ArrayList;
 
 public class DistillerRecipe extends MultiblockRecipe {
 	public static float energyModifier = 1;
