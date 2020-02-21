@@ -67,7 +67,9 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
 			case STEAM_TURBINE_SLAVE:
 				return new TileEntitySteamTurbineSlave();
 			case STEEL_TANK:
-				return new TileEntitySteelSheetmetalTank();
+				return new TileEntitySteelSheetmetalTankMaster();
+			case STEEL_TANK_SLAVE:
+				return new TileEntitySteelSheetmetalTankSlave();
 		}
 		return null;
 	}

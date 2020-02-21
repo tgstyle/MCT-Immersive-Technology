@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.render;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTank;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -10,9 +10,9 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
 
-public class TileRenderSteelSheetmetalTank extends TileEntitySpecialRenderer<TileEntitySteelSheetmetalTank> {
+public class TileRenderSteelSheetmetalTank extends TileEntitySpecialRenderer<TileEntitySteelSheetmetalTankMaster> {
 	@Override
-	public void render(TileEntitySteelSheetmetalTank tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+	public void render(TileEntitySteelSheetmetalTankMaster tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		if(!tile.formed || tile.pos != 4 || !tile.getWorld().isBlockLoaded(tile.getPos(), false)) return;
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x+.5, y, z+.5);

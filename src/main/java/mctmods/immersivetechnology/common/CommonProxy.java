@@ -48,7 +48,7 @@ public class CommonProxy implements IGuiHandler {
 		//REMOVE THIS GARBAGE WHEN PORTING THIS MOD PAST 1.12
 		if (!toReform.isEmpty() && event.phase == TickEvent.Phase.END) {
 			for (TemporaryTileEntityRequest request : toReform) {
-				request.multiblock.createStructure(request.world, request.position, request.facing.getOpposite(), null);
+				request.multiblock.createStructure(request.world, request.formationPosition == null? request.position : request.formationPosition, request.facing.getOpposite(), null);
 				TileEntity te = request.world.getTileEntity(request.position);
 				if (te != null) te.readFromNBT(request.nbtTag);
 			}

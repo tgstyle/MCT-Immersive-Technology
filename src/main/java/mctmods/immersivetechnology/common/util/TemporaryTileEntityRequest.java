@@ -13,5 +13,6 @@ public class TemporaryTileEntityRequest {
     public NBTTagCompound nbtTag;
     public World world;
     public MultiblockHandler.IMultiblock multiblock;
+    public BlockPos formationPosition;
 
 }
