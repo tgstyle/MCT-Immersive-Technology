@@ -48,7 +48,7 @@ public class MultiblockCokeOvenAdvanced implements IMultiblock {
 
 	@Override
 	public String getUniqueName() {
-		return "IT : CokeOvenAdvanced";
+		return "IT:CokeOvenAdvanced";
 	}
 
 	@Override
