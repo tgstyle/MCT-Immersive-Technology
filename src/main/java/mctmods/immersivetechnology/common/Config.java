@@ -131,6 +131,8 @@ public class Config {
 		public static class SteelTank {
 			@Comment({"Steel Tank Size in mB [Default=2048000]"})
 			public static int steelTank_tankSize = 2048000;
+			@Comment({"How fast can the Steel Tank push fluids out, in mB, when powered by Redstone [Default=1000]"})
+			public static int steelTank_transferSpeed = 1000;
 		}
 	}
 

@@ -169,6 +169,11 @@ public class ITContent {
 			registerTile(TileEntitySteamTurbineMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
 		}
+
+		registerTile(TileEntitySteelSheetmetalTank.class);
+		registerTile(TileEntitySteelSheetmetalTankSlave.class);
+		registerTile(TileEntitySteelSheetmetalTankMaster.class);
+		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
 	}
 
 	@SubscribeEvent
@@ -204,9 +209,6 @@ public class ITContent {
 		if(Multiblock.enable_steamTurbine && Recipes.register_steamTurbine_recipes) {
 			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 10), new FluidStack(FluidRegistry.getFluid("steam"), 100), 1);
 		}
-
-		registerTile(TileEntitySteelSheetmetalTank.class);
-		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
 	}
 
 	@SuppressWarnings("deprecation")
