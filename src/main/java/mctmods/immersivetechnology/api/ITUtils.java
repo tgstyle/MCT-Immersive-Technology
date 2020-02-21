@@ -3,13 +3,18 @@ package mctmods.immersivetechnology.api;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAlternatorMaster;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.IFluidTank;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -237,5 +242,25 @@ public class ITUtils {
 			}
 		}
 		return null;
+	}
+
+	public static EnumSet<EnumFacing> allSides = EnumSet.allOf(EnumFacing.class);
+	public static void improvedMarkBlockForUpdate(World world, BlockPos pos, @Nullable IBlockState newState) {
+		improvedMarkBlockForUpdate(world, pos, newState, allSides);
+	}
+
+	public static void improvedMarkBlockForUpdate(World world, BlockPos pos, @Nullable IBlockState newState, EnumSet<EnumFacing> directions) {
+		IBlockState state = world.getBlockState(pos);
+		if (newState == null) newState = state;
+		world.notifyBlockUpdate(pos, state, newState, 3);
+
+		if (!ForgeEventFactory.onNeighborNotify(world, pos, newState, EnumSet.allOf(EnumFacing.class), true).isCanceled()) {
+			Block blockType = newState.getBlock();
+			for(EnumFacing facing : directions) {
+				BlockPos toNotify = pos.offset(facing);
+				if (world.isBlockLoaded(toNotify)) world.neighborChanged(toNotify, blockType, pos);
+			}
+			world.updateObservingBlocksAt(pos, blockType);
+		}
 	}
 }

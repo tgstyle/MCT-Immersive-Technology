@@ -64,7 +64,32 @@ public class MultiblockSteelSheetmetalTank implements IMultiblock {
 		side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
 		pos = pos.offset(side).down();
 
-		if (!structureCheck(world, pos, side)) return false;
+		if(!(Utils.isOreBlockAt(world, pos.offset(side, - 1).offset(side.rotateY()), "fenceTreatedWood") && Utils.isOreBlockAt(world, pos.offset(side, - 1).offset(side.rotateYCCW()), "fenceTreatedWood"))) {
+			for(int i = 0; i < 4; i ++) {
+				if(Utils.isOreBlockAt(world, pos.add(0, - i, 0).offset(side, - 1).offset(side.rotateY()), "fenceTreatedWood") && Utils.isOreBlockAt(world, pos.add(0, - i, 0).offset(side, - 1).offset(side.rotateYCCW()), "fenceTreatedWood")) {
+					pos = pos.add(0, - i, 0);
+					break;
+				}
+			}
+		}
+		for(int h = 0; h <= 4; h ++) {
+			for(int xx = - 1; xx <= 1; xx ++) {
+				for(int zz = - 1; zz <= 1; zz ++) {
+					if(h == 0) {
+						if(Math.abs(xx) == 1 && Math.abs(zz) == 1) {
+							if(!Utils.isOreBlockAt(world, pos.add(xx, h, zz), "fenceTreatedWood")) return false;
+						} else if(xx == 0 && zz == 0) {
+							if(!Utils.isOreBlockAt(world, pos.add(xx, h, zz), "blockSheetmetalSteel")) return false;
+						}
+					} else {
+						if(h < 4 && xx == 0 && zz == 0) {
+							if(!world.isAirBlock(pos.add(xx, h, zz))) return false;
+						} else if(!Utils.isOreBlockAt(world, pos.add(xx, h, zz), "blockSheetmetalSteel")) return false;
+					}
+				}
+			}
+		}
+
 		if (player == null) {
 			createStructureInternal(world, pos, side);
 			return true;
@@ -102,35 +127,6 @@ public class MultiblockSteelSheetmetalTank implements IMultiblock {
 				}
 			}
 		}
-	}
-
-	private boolean structureCheck(World world, BlockPos pos, EnumFacing side) {
-		if(!(Utils.isOreBlockAt(world, pos.offset(side, - 1).offset(side.rotateY()), "fenceTreatedWood") && Utils.isOreBlockAt(world, pos.offset(side, - 1).offset(side.rotateYCCW()), "fenceTreatedWood"))) {
-			for(int i = 0; i < 4; i ++) {
-				if(Utils.isOreBlockAt(world, pos.add(0, - i, 0).offset(side, - 1).offset(side.rotateY()), "fenceTreatedWood") && Utils.isOreBlockAt(world, pos.add(0, - i, 0).offset(side, - 1).offset(side.rotateYCCW()), "fenceTreatedWood")) {
-					pos = pos.add(0, - i, 0);
-					break;
-				}
-			}
-		}
-		for(int h = 0; h <= 4; h ++) {
-			for(int xx = - 1; xx <= 1; xx ++) {
-				for(int zz = - 1; zz <= 1; zz ++) {
-					if(h == 0) {
-						if(Math.abs(xx) == 1 && Math.abs(zz) == 1) {
-							if(!Utils.isOreBlockAt(world, pos.add(xx, h, zz), "fenceTreatedWood")) return false;
-						} else if(xx == 0 && zz == 0) {
-							if(!Utils.isOreBlockAt(world, pos.add(xx, h, zz), "blockSheetmetalSteel")) return false;
-						}
-					} else {
-						if(h < 4 && xx == 0 && zz == 0) {
-							if(!world.isAirBlock(pos.add(xx, h, zz))) return false;
-						} else if(!Utils.isOreBlockAt(world, pos.add(xx, h, zz), "blockSheetmetalSteel")) return false;
-					}
-				}
-			}
-		}
-		return true;
 	}
 
 	@Override

@@ -10,6 +10,7 @@ public class Config {
 		public static MechanicalEnergy mechanicalenergy;
 		public static Trash trash;
 		public static SteelTank steeltank;
+		public static Experimental experimental;
 
 		public static class Machines {
 			public static Multiblock multiblock;
@@ -134,6 +135,10 @@ public class Config {
 			@Comment({"How fast can the Steel Tank push fluids out, in mB, when powered by Redstone [Default=1000]"})
 			public static int steelTank_transferSpeed = 1000;
 		}
-	}
 
+		public static class Experimental {
+			@Comment({"Replace IE pipes with IT's own version. [Default=true]"})
+			public static boolean replace_IE_pipes = true;
+		}
+	}
 }
