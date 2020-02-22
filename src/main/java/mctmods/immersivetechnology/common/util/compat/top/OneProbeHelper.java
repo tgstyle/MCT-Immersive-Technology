@@ -9,7 +9,6 @@ import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerSlave;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankSlave;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 
@@ -95,12 +94,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 		@Override
 		public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
 			TileEntity te = world.getTileEntity(data.getPos());
-			if(te instanceof TileEntitySteelSheetmetalTankMaster) {
-				TileEntitySteelSheetmetalTankMaster master = ((TileEntitySteelSheetmetalTankMaster)te).master();
-				int current = master.tank.getFluidAmount();
-				int max = master.tank.getCapacity();
-				if(current > 0)	probeInfo.progress(current, max, probeInfo.defaultProgressStyle().suffix("mB").numberFormat(NumberFormat.COMPACT));
-			} else if(te instanceof TileEntitySteelSheetmetalTankSlave) {
+			if(te instanceof TileEntitySteelSheetmetalTankSlave) {
 				TileEntitySteelSheetmetalTankSlave master = ((TileEntitySteelSheetmetalTankSlave)te).master();
 				int current = master.master().tank.getFluidAmount();
 				int max = master.master().tank.getCapacity();
