@@ -12,6 +12,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
@@ -500,6 +501,12 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	@Override
 	public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
 		TileEntity te = world.getTileEntity(pos);
+		if (te instanceof TileEntityMultiblockMetal) {
+			TileEntityMultiblockMetal multiblockTE = (TileEntityMultiblockMetal)te;
+			for (int tePos : multiblockTE.getRedstonePos()) {
+				if (tePos == multiblockTE.pos) return true;
+			}
+		}
 		if(te instanceof IEBlockInterfaces.IRedstoneOutput) return ((IEBlockInterfaces.IRedstoneOutput) te).canConnectRedstone(state, side);
 		return false;
 	}
