@@ -1,4 +1,4 @@
-# Immersive Technology
+# MCT Immersive Technology
 Energy Technology addon for Immersive Engineering, forked from Immersive Tech.<br/>
 
 # Reporting issues
