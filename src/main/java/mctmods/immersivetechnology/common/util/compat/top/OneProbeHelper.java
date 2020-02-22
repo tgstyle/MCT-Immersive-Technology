@@ -2,13 +2,17 @@ package mctmods.immersivetechnology.common.util.compat.top;
 
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import mcjty.theoneprobe.api.*;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Boiler;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerSlave;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankSlave;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -45,6 +49,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 	public Void apply(@Nullable ITheOneProbe input) {
 		input.registerProvider(new MechanicalEnergyProvider());
 		input.registerProvider(new MiscProvider());
+		input.registerProvider(new FluidInfoProvider());
 		return null;
 	}
 
@@ -53,7 +58,6 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 		public String getID() {
 			return ImmersiveTechnology.MODID + ":" + "MiscInfo";
 		}
-
 		@Override
 		public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
 			TileEntity te = world.getTileEntity(data.getPos());
@@ -71,7 +75,6 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 		public String getID() {
 			return ImmersiveTechnology.MODID + ":" + "MechanicalEnergyInfo";
 		}
-
 		@Override
 		public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
 			TileEntity te = world.getTileEntity(data.getPos());
@@ -83,4 +86,27 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 			}
 		}
 	}
+
+	public static class FluidInfoProvider implements IProbeInfoProvider	{
+		@Override
+		public String getID() {
+			return ImmersiveTechnology.MODID + ":" + "FluidInfo";
+		}
+		@Override
+		public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+			TileEntity te = world.getTileEntity(data.getPos());
+			if(te instanceof TileEntitySteelSheetmetalTankMaster) {
+				TileEntitySteelSheetmetalTankMaster master = ((TileEntitySteelSheetmetalTankMaster)te).master();
+				int current = master.tank.getFluidAmount();
+				int max = master.tank.getCapacity();
+				if(current > 0)	probeInfo.progress(current, max, probeInfo.defaultProgressStyle().suffix("mB").numberFormat(NumberFormat.COMPACT));
+			} else if(te instanceof TileEntitySteelSheetmetalTankSlave) {
+				TileEntitySteelSheetmetalTankSlave master = ((TileEntitySteelSheetmetalTankSlave)te).master();
+				int current = master.master().tank.getFluidAmount();
+				int max = master.master().tank.getCapacity();
+				if(current > 0)	probeInfo.progress(current, max, probeInfo.defaultProgressStyle().suffix("mB").numberFormat(NumberFormat.COMPACT));
+			}
+		}
+	}
+
 }
