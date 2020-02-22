@@ -14,7 +14,6 @@ public class ContainerTrashItem extends ContainerIEBase<TileEntityTrashItem> {
 		for(int slot = 0; slot < slotCount; slot++) {
 			this.addSlotToContainer(new Slot(this.inv, slot, 80, 34));
 		}
-
 		for(int i = 0; i < 3; i++) {
 			for(int j = 0; j < 9; j++) {
 				addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));

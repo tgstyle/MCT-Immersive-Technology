@@ -14,6 +14,7 @@ public class ContainerBoiler extends ContainerIEBase<TileEntityBoilerMaster> {
 	public ContainerBoiler(InventoryPlayer inventoryPlayer, TileEntityBoilerMaster tile) {
 		super(inventoryPlayer, tile);
 
+		slotCount = TileEntityBoilerMaster.slotCount;
 		final TileEntityBoilerMaster tileF = tile;
 		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 0, 37, 15, 2) {
 			@Override
@@ -48,7 +49,6 @@ public class ContainerBoiler extends ContainerIEBase<TileEntityBoilerMaster> {
 			}
 		});
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 5, 149, 54));
-		slotCount=6;
 
 		for(int i = 0 ; i < 3 ; i++) {
 			for(int j = 0 ; j < 9 ; j++) {
