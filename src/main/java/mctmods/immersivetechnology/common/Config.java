@@ -4,7 +4,7 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import net.minecraftforge.common.config.Config.Comment;
 
 public class Config {
-	@net.minecraftforge.common.config.Config(modid=ImmersiveTechnology.MODID, name="immersivetechnology")
+	@net.minecraftforge.common.config.Config(modid=ImmersiveTechnology.MODID, name="mctimmersivetechnology")
 	public static class ITConfig {
 		public static Machines machines;
 		public static MechanicalEnergy mechanicalenergy;
