@@ -3,12 +3,12 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
+import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSystem;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockBoiler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -26,7 +26,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityBoilerSlave extends TileEntityMultiblockMetal<TileEntityBoilerSlave, BoilerRecipe> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
+public class TileEntityBoilerSlave extends TileEntityMultiblockNewSystem<TileEntityBoilerSlave, BoilerRecipe, TileEntityBoilerMaster> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 
     public TileEntityBoilerSlave() {
         super(MultiblockBoiler.instance, new int[] { 3, 3, 5 }, 0, true);
