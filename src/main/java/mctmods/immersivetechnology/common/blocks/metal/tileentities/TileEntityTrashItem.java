@@ -54,9 +54,7 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 		if(world.isRemote) return;
 		boolean update = false;
 		for(int slot = 0; slot < 9; slot++) {
-			if(inventory.get(slot).isEmpty()) {
-				break;
-			} else {
+			if(!inventory.get(slot).isEmpty()) {
 				int currentAmount = 0;
 				currentAmount = inventory.get(slot).getCount();
 				lastAmount = currentAmount + lastAmount;
