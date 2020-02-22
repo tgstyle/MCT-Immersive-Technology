@@ -15,7 +15,8 @@ public abstract class TileEntityMultiblockNewSystem<T extends TileEntityMultiblo
         super(mutliblockInstance, structureDimensions, energyCapacity, redstoneControl);
     }
 
-    @Nullable
+    @SuppressWarnings("unchecked")
+	@Nullable
     @Override
     public T getTileForPos(int targetPos) {
         BlockPos target = getBlockPosForPos(targetPos);

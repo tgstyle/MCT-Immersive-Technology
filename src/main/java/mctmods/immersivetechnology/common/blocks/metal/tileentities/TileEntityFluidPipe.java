@@ -63,6 +63,7 @@ import java.util.function.Function;
 
 import static java.util.Collections.newSetFromMap;
 
+@SuppressWarnings("deprecation")
 public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe, IAdvancedHasObjProperty,
         IOBJModelCallback<IBlockState>, IColouredTile, IPlayerInteraction, IHammerInteraction, IPlacementInteraction,
         IAdvancedSelectionBounds, IAdvancedCollisionBounds, IAdditionalDrops, INeighbourChangeTile
@@ -278,7 +279,8 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
         return super.hasCapability(capability, facing);
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
     {
         if(capability==CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY&&facing!=null&&sideConfig[facing.ordinal()]==0)
@@ -731,7 +733,7 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
     {
         if(!cachedOBJStates.containsKey(key))
         {
-            ArrayList<String> parts = new ArrayList();
+            ArrayList<String> parts = new ArrayList<String>();
             Matrix4 rotationMatrix = new Matrix4(TRSRTransformation.identity().getMatrix());//new Matrix4();
             short connections = getConnectionsFromKey(key);
 //			if(pipeCover!=null)
