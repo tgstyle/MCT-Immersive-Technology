@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
+import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSystem;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -24,7 +24,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntitySolarTowerSlave extends TileEntityMultiblockMetal<TileEntitySolarTowerSlave, SolarTowerRecipe> implements IEBlockInterfaces.IGuiTile, IEBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IAdvancedCollisionBounds {
+public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<TileEntitySolarTowerSlave, SolarTowerRecipe, TileEntitySolarTowerMaster> implements IEBlockInterfaces.IGuiTile, IEBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IAdvancedCollisionBounds {
 
     public TileEntitySolarTowerSlave() {
         super(MultiblockSolarTower.instance, new int[] { 7, 3, 3 }, 0, true);
