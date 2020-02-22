@@ -44,7 +44,7 @@ public class TileEntityBoilerSlave extends TileEntityMultiblockMetal<TileEntityB
 
     @Override
     public void update() {
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if(isDummy()) ITUtils.RemoveDummyFromTicking(this);
         super.update();
     }
 
@@ -56,7 +56,7 @@ public class TileEntityBoilerSlave extends TileEntityMultiblockMetal<TileEntityB
     TileEntityBoilerMaster master;
 
     public TileEntityBoilerMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
+        if(master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
         master = te instanceof TileEntityBoilerMaster?(TileEntityBoilerMaster)te: null;

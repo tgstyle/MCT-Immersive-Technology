@@ -39,10 +39,10 @@ public class TileEntitySolarTower extends TileEntitySolarTowerSlave {
     }
 
     public void update() {
-        if (changeTo != null) {
+        if(changeTo != null) {
             //world.setBlockToAir(worldPosition);
             world.setBlockState(worldPosition, changeTo);
-            if (master) {
+            if(master) {
                 TemporaryTileEntityRequest request = new TemporaryTileEntityRequest();
                 request.facing = facing;
                 request.multiblock = getMultiblock();
@@ -70,7 +70,7 @@ public class TileEntitySolarTower extends TileEntitySolarTowerSlave {
         int[] offset = nbt.getIntArray("offset");
         facing = EnumFacing.VALUES[nbt.getInteger("facing")];
         thisNbt = nbt;
-        if (offset[0] == 0 && offset[1] == 0 && offset[2] == 0) master = true;
+        if(offset[0] == 0 && offset[1] == 0 && offset[2] == 0) master = true;
         worldPosition = new BlockPos(x, y, z);
         if(pos < 0) return;
         ItemStack s = ItemStack.EMPTY;
@@ -79,7 +79,7 @@ public class TileEntitySolarTower extends TileEntitySolarTowerSlave {
         } catch(Exception e) {
             e.printStackTrace();
         }
-        if (s == ItemStack.EMPTY) return;
+        if(s == ItemStack.EMPTY) return;
         changeTo = Utils.getStateFromItemStack(s);
     }
 }

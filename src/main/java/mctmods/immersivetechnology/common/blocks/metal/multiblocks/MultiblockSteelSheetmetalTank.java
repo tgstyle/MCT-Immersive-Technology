@@ -90,7 +90,7 @@ public class MultiblockSteelSheetmetalTank implements IMultiblock {
 			}
 		}
 
-		if (player == null) {
+		if(player == null) {
 			createStructureInternal(world, pos, side);
 			return true;
 		}

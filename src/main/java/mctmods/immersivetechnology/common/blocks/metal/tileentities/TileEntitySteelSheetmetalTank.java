@@ -29,10 +29,10 @@ public class TileEntitySteelSheetmetalTank extends TileEntitySteelSheetmetalTank
     int counter = 0;
 
     public void update() {
-        if (++counter > 5 && changeTo != null) {
+        if(++counter > 5 && changeTo != null) {
             //world.setBlockToAir(worldPosition);
             world.setBlockState(worldPosition, changeTo);
-            if (master) {
+            if(master) {
                 TemporaryTileEntityRequest request = new TemporaryTileEntityRequest();
                 request.facing = facing;
                 request.multiblock = getMultiblock();
@@ -60,7 +60,7 @@ public class TileEntitySteelSheetmetalTank extends TileEntitySteelSheetmetalTank
         int[] offset = nbt.getIntArray("offset");
         facing = EnumFacing.VALUES[nbt.getInteger("facing")];
         thisNbt = nbt;
-        if (offset[0] == 0 && offset[1] == 0 && offset[2] == 0) master = true;
+        if(offset[0] == 0 && offset[1] == 0 && offset[2] == 0) master = true;
         worldPosition = new BlockPos(x, y, z);
         if(pos < 0) return;
         ItemStack s = ItemStack.EMPTY;
@@ -69,7 +69,7 @@ public class TileEntitySteelSheetmetalTank extends TileEntitySteelSheetmetalTank
         } catch(Exception e) {
             e.printStackTrace();
         }
-        if (s == ItemStack.EMPTY) return;
+        if(s == ItemStack.EMPTY) return;
         changeTo = Utils.getStateFromItemStack(s);
     }
 }
