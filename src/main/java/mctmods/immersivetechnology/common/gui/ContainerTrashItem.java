@@ -13,7 +13,13 @@ public class ContainerTrashItem extends ContainerIEBase<TileEntityTrashItem> {
 		this.addSlotToContainer(new Slot(this.inv, 0, 80, 34));
 		this.addSlotToContainer(new Slot(this.inv, 1, 80, 34));
 		this.addSlotToContainer(new Slot(this.inv, 2, 80, 34));
-		slotCount=3;
+		this.addSlotToContainer(new Slot(this.inv, 3, 80, 34));
+		this.addSlotToContainer(new Slot(this.inv, 4, 80, 34));
+		this.addSlotToContainer(new Slot(this.inv, 5, 80, 34));
+		this.addSlotToContainer(new Slot(this.inv, 6, 80, 34));
+		this.addSlotToContainer(new Slot(this.inv, 7, 80, 34));
+		this.addSlotToContainer(new Slot(this.inv, 8, 80, 34));
+		slotCount=9;
 
 		for(int i = 0; i < 3; i++) {
 			for(int j = 0; j < 9; j++) {
