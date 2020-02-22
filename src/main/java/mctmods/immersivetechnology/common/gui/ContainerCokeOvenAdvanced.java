@@ -12,6 +12,7 @@ public class ContainerCokeOvenAdvanced extends ContainerIEBase<TileEntityCokeOve
 	public ContainerCokeOvenAdvanced(InventoryPlayer inventoryPlayer, TileEntityCokeOvenAdvancedMaster tile) {
 		super(inventoryPlayer, tile);
 
+		slotCount = TileEntityCokeOvenAdvancedMaster.slotCount;
 		this.addSlotToContainer(new IESlot(this, this.inv, 0, 30, 35) {
 			@Override
 			public boolean isItemValid(ItemStack itemStack) {
@@ -21,7 +22,6 @@ public class ContainerCokeOvenAdvanced extends ContainerIEBase<TileEntityCokeOve
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 1, 85, 35));
 		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 2, 152, 17, 0));
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 3, 152, 53));
-		slotCount=4;
 
 		for(int i = 0 ; i < 3 ; i++) {
 			for(int j = 0 ; j < 9 ; j++) {

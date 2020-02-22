@@ -39,7 +39,8 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave {
             new FluidTank(32000)
     };
 
-    public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+    public static int slotCount = 4;
+    public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
     private float processTime = 0;
     private float soundVolume;
@@ -56,7 +57,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave {
         processTime = nbt.getFloat("processTime");
         isProcessing = nbt.getBoolean("isProcessing");
         if(reflectors.length != 4) reflectors = new int[4];
-        if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 4);
+        if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
     }
 
     @Override
