@@ -118,6 +118,7 @@ public class ITContent {
 			IEContent.registeredIEItems.remove(Item.getItemFromBlock(IEContent.blockMetalDevice1));
 			IEContent.registeredIEBlocks.remove(IEContent.blockMetalDevice1);
 			IEContent.blockMetalDevice1 = new BlockMetalDevice1();
+			ITLogger.info("Replaced IE Pipes with IT Pipes");
 		}
 	}
 

@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.common.util.compat.top;
 
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import mcjty.theoneprobe.api.*;
-
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Boiler;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
@@ -11,13 +10,11 @@ import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBo
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerSlave;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankSlave;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
-
 import javax.annotation.Nullable;
 import java.util.function.Function;
 
