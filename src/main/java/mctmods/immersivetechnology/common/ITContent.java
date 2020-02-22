@@ -184,8 +184,10 @@ public class ITContent {
 		registerTile(TileEntitySteelSheetmetalTankMaster.class);
 		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
 
-		TileEntityFluidPipe.initCovers();
-		if (Experimental.replace_IE_pipes) IEContent.registerTile(TileEntityFluidPipe.class);
+		if (Experimental.replace_IE_pipes) {
+			TileEntityFluidPipe.initCovers();
+			IEContent.registerTile(TileEntityFluidPipe.class);
+		}
 	}
 
 	@SubscribeEvent
