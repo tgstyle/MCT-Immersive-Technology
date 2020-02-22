@@ -502,7 +502,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
 		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof TileEntityMultiblockMetal) {
-			TileEntityMultiblockMetal multiblockTE = (TileEntityMultiblockMetal)te;
+			TileEntityMultiblockMetal<?, ?> multiblockTE = (TileEntityMultiblockMetal<?, ?>)te;
 			for (int tePos : multiblockTE.getRedstonePos()) {
 				if (tePos == multiblockTE.pos) return true;
 			}
