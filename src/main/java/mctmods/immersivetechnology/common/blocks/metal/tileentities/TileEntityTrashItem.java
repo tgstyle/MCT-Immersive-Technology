@@ -36,7 +36,7 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		acceptedAmount = nbt.getInteger("acceptedAmount");
-		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 3);
+		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 9);
 	}
 
 	@Override
@@ -53,11 +53,12 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 	public void update() {
 		if(world.isRemote) return;
 		boolean update = false;
-		for(int slot = 0; slot < 3; slot++) {
-			if(inventory.get(slot).isEmpty()) break;
-			int currentAmount = 0;
-			currentAmount = inventory.get(slot).getCount();
-			lastAmount = currentAmount + lastAmount;
+		for(int slot = 0; slot < 9; slot++) {
+			if(!inventory.get(slot).isEmpty()) {
+				int currentAmount = 0;
+				currentAmount = inventory.get(slot).getCount();
+				lastAmount = currentAmount + lastAmount;
+			}
 		}
 		if(lastAmount > 0) inventory.clear();
 		if(updateClient >= 20) {
