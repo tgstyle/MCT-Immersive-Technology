@@ -27,7 +27,7 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 
 	public EnumFacing facing = EnumFacing.NORTH;
 
-	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
+	public NonNullList<ItemStack> inventory = NonNullList.withSize(9, ItemStack.EMPTY);
 
 	private int acceptedAmount = 0;
 	private int updateClient = 1;
