@@ -112,6 +112,7 @@ public class ITContent {
 		registerVariables();
 
 		if (Experimental.replace_IE_pipes) {
+			IEContent.blockMetalDevice1.setCreativeTab(null);
 			IEContent.blockMetalDevice1.setRegistryName("immersiveengineering", "metaldevice1dummy");
 			IEContent.blockMetalDevice1.setUnlocalizedName("immersiveengineering.metaldevice1dummy");
 			IEContent.registeredIEItems.remove(Item.getItemFromBlock(IEContent.blockMetalDevice1));

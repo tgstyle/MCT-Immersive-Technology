@@ -20,6 +20,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.common.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -358,6 +359,9 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
         TileEntityFluidPipe pipe;
         EnumFacing facing;
 
+        public static int transferRate = Config.ITConfig.Experimental.pipe_transfer_rate;
+        public static int transferRatePressurized = Config.ITConfig.Experimental.pipe_pressurized_transfer_rate;
+
         public PipeFluidHandler(TileEntityFluidPipe pipe, EnumFacing facing)
         {
             this.pipe = pipe;
@@ -367,7 +371,7 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
         @Override
         public IFluidTankProperties[] getTankProperties()
         {
-            return new IFluidTankProperties[]{new FluidTankProperties(null, 1000, true, false)};
+            return new IFluidTankProperties[]{new FluidTankProperties(null, transferRatePressurized, true, false)};
         }
 
         @Override
@@ -419,7 +423,7 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
                         amount = Math.min(amount, canAccept);
                     }
                     int r = output.output.fill(Utils.copyFluidStackWithAmount(resource, amount, true), doFill);
-                    if(r > 50)
+                    if(r > transferRate)
                         pipe.canOutputPressurized(output.containingTile, true);
                     f += r;
                     canAccept -= r;
@@ -435,7 +439,7 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
         {
             return (resource.tag!=null&&resource.tag.hasKey("pressurized"))||
                     pipe.canOutputPressurized(output.containingTile, false)
-                    ?1000: 50;
+                    ?transferRatePressurized: transferRate;
         }
 
         @Nullable
