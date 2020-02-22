@@ -133,7 +133,7 @@ public class TileEntityCokeOvenAdvancedSlave extends TileEntityMultiblockPart<Ti
 
 	@Override
 	public TileEntityCokeOvenAdvancedMaster master() {
-		if (master != null && !master.tileEntityInvalid) return master;
+		if(master != null && !master.tileEntityInvalid) return master;
 		BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
 		TileEntity te = Utils.getExistingTileEntity(world, masterPos);
 		master = te instanceof TileEntityCokeOvenAdvancedMaster?(TileEntityCokeOvenAdvancedMaster)te: null;

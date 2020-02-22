@@ -347,7 +347,7 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
         {
             boolean changed = false;
             for(EnumFacing f : EnumFacing.VALUES) {
-                if (world.isBlockLoaded(pos.offset(f))) changed |= updateConnectionByte(f);
+                if(world.isBlockLoaded(pos.offset(f))) changed |= updateConnectionByte(f);
             }
 
             if(changed) ITUtils.improvedMarkBlockForUpdate(world, pos, null);

@@ -111,7 +111,7 @@ public class ITContent {
 		/*MANUAL*/
 		registerVariables();
 
-		if (Experimental.replace_IE_pipes) {
+		if(Experimental.replace_IE_pipes) {
 			IEContent.blockMetalDevice1.setCreativeTab(null);
 			IEContent.blockMetalDevice1.setRegistryName("immersiveengineering", "metaldevice1dummy");
 			IEContent.blockMetalDevice1.setUnlocalizedName("immersiveengineering.metaldevice1dummy");
@@ -184,7 +184,7 @@ public class ITContent {
 		registerTile(TileEntitySteelSheetmetalTankMaster.class);
 		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
 
-		if (Experimental.replace_IE_pipes) {
+		if(Experimental.replace_IE_pipes) {
 			TileEntityFluidPipe.initCovers();
 			IEContent.registerTile(TileEntityFluidPipe.class);
 		}
