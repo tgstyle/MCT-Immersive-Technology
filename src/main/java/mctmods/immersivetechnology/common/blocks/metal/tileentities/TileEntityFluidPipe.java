@@ -63,10 +63,7 @@ import java.util.function.Function;
 
 import static java.util.Collections.newSetFromMap;
 
-public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe, IAdvancedHasObjProperty,
-        IOBJModelCallback<IBlockState>, IColouredTile, IPlayerInteraction, IHammerInteraction, IPlacementInteraction,
-        IAdvancedSelectionBounds, IAdvancedCollisionBounds, IAdditionalDrops, INeighbourChangeTile
-{
+public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe {
     public static ConcurrentHashMap<BlockPos, Set<DirectionalFluidOutput>> indirectConnections = new ConcurrentHashMap<BlockPos, Set<DirectionalFluidOutput>>();
     public static ArrayList<Function<ItemStack, Boolean>> validPipeCovers = new ArrayList<>();
     public static ArrayList<Function<ItemStack, Boolean>> climbablePipeCovers = new ArrayList<>();
@@ -117,7 +114,7 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
     @Nullable
     private EnumDyeColor color = null;
 
-    public static Set<DirectionalFluidOutput> getConnectedFluidHandlers(BlockPos node, World world)
+    public static Set<DirectionalFluidOutput> getConnectedFluidHandlersIT(BlockPos node, World world)
     {
         if(indirectConnections.containsKey(node))
             return indirectConnections.get(node);
@@ -384,14 +381,14 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
             int canAccept = resource.amount;
             if(canAccept <= 0)
                 return 0;
-            ArrayList<DirectionalFluidOutput> outputList = new ArrayList<>(getConnectedFluidHandlers(pipe.getPos(), pipe.world));
+            ArrayList<DirectionalFluidOutput> outputList = new ArrayList<>(getConnectedFluidHandlersIT(pipe.getPos(), pipe.world));
 
             if(outputList.size() < 1)
 //NO OUTPUTS!
                 return 0;
             BlockPos ccFrom = new BlockPos(pipe.getPos().offset(facing));
             int sum = 0;
-            HashMap<DirectionalFluidOutput, Integer> sorting = new HashMap<DirectionalFluidOutput, Integer>();
+            HashMap<DirectionalFluidOutput, Integer> sorting = new HashMap<>();
             for(DirectionalFluidOutput output : outputList)
             {
                 BlockPos cc = Utils.toCC(output.containingTile);
@@ -399,7 +396,7 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
                 {
                     int limit = getTranferrableAmount(resource, output);
                     int tileSpecificAcceptedFluid = Math.min(limit, canAccept);
-                    int temp = output.output.fill(Utils.copyFluidStackWithAmount(resource, tileSpecificAcceptedFluid, true), false);
+                    int temp = output.output.fill(Utils.copyFluidStackWithAmount(resource, tileSpecificAcceptedFluid, !(output.containingTile instanceof IFluidPipe)), false);
                     if(temp > 0)
                     {
                         sorting.put(output, temp);
@@ -422,24 +419,18 @@ public class TileEntityFluidPipe extends TileEntityIEBase implements IFluidPipe,
                                 Math.min(resource.amount*prio, tileSpecificAcceptedFluid)));
                         amount = Math.min(amount, canAccept);
                     }
-                    int r = output.output.fill(Utils.copyFluidStackWithAmount(resource, amount, true), doFill);
-                    if(r > transferRate)
-                        pipe.canOutputPressurized(output.containingTile, true);
+                    int r = output.output.fill(Utils.copyFluidStackWithAmount(resource, amount, !(output.containingTile instanceof IFluidPipe)), doFill);
                     f += r;
                     canAccept -= r;
-                    if(canAccept <= 0)
-                        break;
+                    if(canAccept <= 0) break;
                 }
                 return f;
             }
             return 0;
         }
 
-        private int getTranferrableAmount(FluidStack resource, DirectionalFluidOutput output)
-        {
-            return (resource.tag!=null&&resource.tag.hasKey("pressurized"))||
-                    pipe.canOutputPressurized(output.containingTile, false)
-                    ?transferRatePressurized: transferRate;
+        private int getTranferrableAmount(FluidStack resource, DirectionalFluidOutput output) {
+            return (resource.tag!=null && resource.tag.hasKey("pressurized"))? transferRatePressurized : transferRate;
         }
 
         @Nullable
