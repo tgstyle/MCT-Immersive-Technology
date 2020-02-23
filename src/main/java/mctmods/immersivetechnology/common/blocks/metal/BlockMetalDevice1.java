@@ -34,7 +34,6 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
-
 import java.util.Arrays;
 
 public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevice1> {
