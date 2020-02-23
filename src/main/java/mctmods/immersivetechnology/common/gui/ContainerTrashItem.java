@@ -10,11 +10,10 @@ public class ContainerTrashItem extends ContainerIEBase<TileEntityTrashItem> {
 	public ContainerTrashItem(InventoryPlayer inventoryPlayer, TileEntityTrashItem tile) {
 		super(inventoryPlayer, tile);
 
-		this.addSlotToContainer(new Slot(this.inv, 0, 80, 34));
-		this.addSlotToContainer(new Slot(this.inv, 1, 80, 34));
-		this.addSlotToContainer(new Slot(this.inv, 2, 80, 34));
-		slotCount=3;
-
+		slotCount = TileEntityTrashItem.slotCount;
+		for(int slot = 0; slot < slotCount; slot++) {
+			this.addSlotToContainer(new Slot(this.inv, slot, 80, 34));
+		}
 		for(int i = 0; i < 3; i++) {
 			for(int j = 0; j < 9; j++) {
 				addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));

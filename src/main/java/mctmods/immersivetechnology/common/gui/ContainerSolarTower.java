@@ -14,6 +14,7 @@ public class ContainerSolarTower extends ContainerIEBase<TileEntitySolarTowerMas
 	public ContainerSolarTower(InventoryPlayer inventoryPlayer, TileEntitySolarTowerMaster tile) {
 		super(inventoryPlayer, tile);
 
+		slotCount = TileEntitySolarTowerMaster.slotCount;
 		final TileEntitySolarTowerMaster tileF = tile;
 		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 0, 80, 17, 2) {
 			@Override
@@ -34,7 +35,6 @@ public class ContainerSolarTower extends ContainerIEBase<TileEntitySolarTowerMas
 			}
 		});
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 3, 148, 53));
-		slotCount=4;
 
 		for(int i = 0 ; i < 3 ; i++) {
 			for(int j = 0 ; j < 9 ; j++) {

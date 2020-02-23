@@ -100,7 +100,8 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
         return null;
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     protected BlockStateContainer createBlockState()
     {
         BlockStateContainer base = super.createBlockState();
@@ -196,6 +197,8 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
                 return new TileEntityTurretGun();
             case BELLJAR:
                 return new TileEntityBelljar();
+		default:
+			break;
         }
         return null;
     }
@@ -210,7 +213,8 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
             mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.indirectConnections.clear();
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
     {
         mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.indirectConnections.clear();

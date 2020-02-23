@@ -27,7 +27,9 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 
 	public EnumFacing facing = EnumFacing.NORTH;
 
-	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
+	public static int slotCount = 9;
+
+	public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
 	private int acceptedAmount = 0;
 	private int updateClient = 1;
@@ -36,7 +38,7 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		acceptedAmount = nbt.getInteger("acceptedAmount");
-		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 3);
+		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
 	}
 
 	@Override
@@ -53,11 +55,12 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 	public void update() {
 		if(world.isRemote) return;
 		boolean update = false;
-		for(int slot = 0; slot < 3; slot++) {
-			if(inventory.get(slot).isEmpty()) break;
-			int currentAmount = 0;
-			currentAmount = inventory.get(slot).getCount();
-			lastAmount = currentAmount + lastAmount;
+		for(int slot = 0; slot < slotCount; slot++) {
+			if(!inventory.get(slot).isEmpty()) {
+				int currentAmount = 0;
+				currentAmount = inventory.get(slot).getCount();
+				lastAmount = currentAmount + lastAmount;
+			}
 		}
 		if(lastAmount > 0) inventory.clear();
 		if(updateClient >= 20) {

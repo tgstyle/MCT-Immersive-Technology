@@ -63,7 +63,9 @@ import java.util.function.Function;
 
 import static java.util.Collections.newSetFromMap;
 
+@SuppressWarnings("deprecation")
 public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe {
+
     public static ConcurrentHashMap<BlockPos, Set<DirectionalFluidOutput>> indirectConnections = new ConcurrentHashMap<BlockPos, Set<DirectionalFluidOutput>>();
     public static ArrayList<Function<ItemStack, Boolean>> validPipeCovers = new ArrayList<>();
     public static ArrayList<Function<ItemStack, Boolean>> climbablePipeCovers = new ArrayList<>();
@@ -275,7 +277,8 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
         return super.hasCapability(capability, facing);
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
     {
         if(capability==CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY&&facing!=null&&sideConfig[facing.ordinal()]==0)
@@ -722,7 +725,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
     {
         if(!cachedOBJStates.containsKey(key))
         {
-            ArrayList<String> parts = new ArrayList();
+            ArrayList<String> parts = new ArrayList<String>();
             Matrix4 rotationMatrix = new Matrix4(TRSRTransformation.identity().getMatrix());//new Matrix4();
             short connections = getConnectionsFromKey(key);
 //			if(pipeCover!=null)
