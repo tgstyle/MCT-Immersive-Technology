@@ -90,16 +90,16 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability==CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
 		return super.hasCapability(capability, facing);
 	}
 
-	IItemHandler inputHandler = new IEInventoryHandler(1, this);
+	IItemHandler inputHandler = new IEInventoryHandler(slotCount, this);
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability==CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)inputHandler;
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)inputHandler;
 		return super.getCapability(capability, facing);
 	}
 
