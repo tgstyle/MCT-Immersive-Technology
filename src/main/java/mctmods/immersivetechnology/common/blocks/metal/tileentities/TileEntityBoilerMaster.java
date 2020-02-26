@@ -40,7 +40,8 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
             new FluidTank(outputTankSize)
     };
 
-    public NonNullList<ItemStack> inventory = NonNullList.withSize(6, ItemStack.EMPTY);
+    public static int slotCount = 6;
+    public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
     public int burnRemaining = 0;
     public int recipeTimeRemaining = 0;
@@ -59,7 +60,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
         heatLevel = nbt.getDouble("heatLevel");
         burnRemaining = nbt.getInteger("burnRemaining");
         recipeTimeRemaining = nbt.getInteger("recipeTimeRemaining");
-        if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
+        if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
     }
 
     @Override

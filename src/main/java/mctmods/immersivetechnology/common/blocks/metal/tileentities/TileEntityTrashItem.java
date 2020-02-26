@@ -27,7 +27,9 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 
 	public EnumFacing facing = EnumFacing.NORTH;
 
-	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
+	public static int slotCount = 9;
+
+	public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
 	private int acceptedAmount = 0;
 	private int updateClient = 1;
@@ -36,7 +38,7 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		acceptedAmount = nbt.getInteger("acceptedAmount");
-		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 9);
+		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
 	}
 
 	@Override
@@ -53,10 +55,8 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 	public void update() {
 		if(world.isRemote) return;
 		boolean update = false;
-		for(int slot = 0; slot < 9; slot++) {
-			if(inventory.get(slot).isEmpty()) {
-				break;
-			} else {
+		for(int slot = 0; slot < slotCount; slot++) {
+			if(!inventory.get(slot).isEmpty()) {
 				int currentAmount = 0;
 				currentAmount = inventory.get(slot).getCount();
 				lastAmount = currentAmount + lastAmount;
@@ -90,16 +90,16 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability==CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
 		return super.hasCapability(capability, facing);
 	}
 
-	IItemHandler inputHandler = new IEInventoryHandler(1, this);
+	IItemHandler inputHandler = new IEInventoryHandler(slotCount, this);
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability==CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)inputHandler;
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)inputHandler;
 		return super.getCapability(capability, facing);
 	}
 

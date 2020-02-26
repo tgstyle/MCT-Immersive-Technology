@@ -14,6 +14,7 @@ public class ContainerDistiller extends ContainerIEBase<TileEntityDistillerMaste
 	public ContainerDistiller(InventoryPlayer inventoryPlayer, TileEntityDistillerMaster tile) {
 		super(inventoryPlayer, tile);
 
+		slotCount = TileEntityDistillerMaster.slotCount;
 		final TileEntityDistillerMaster tileF = tile;
 		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 0, 26, 17, 2) {
 			@Override
@@ -34,7 +35,6 @@ public class ContainerDistiller extends ContainerIEBase<TileEntityDistillerMaste
 			}
 		});
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 3, 134, 53));
-		slotCount=4;
 
 		for(int i = 0 ; i < 3 ; i++) {
 			for(int j = 0 ; j < 9 ; j++) {
