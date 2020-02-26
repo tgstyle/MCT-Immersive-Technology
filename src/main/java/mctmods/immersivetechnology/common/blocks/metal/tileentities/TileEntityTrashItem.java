@@ -74,23 +74,17 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 	}
 
 	@Override
-	public void setInventorySlotContents(int i, ItemStack itemStack) {
-		if (!itemStack.isEmpty()) insertItem(i, itemStack, false);
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
+		return super.hasCapability(capability, facing);
 	}
 
-	@Override
-	public int getInventoryStackLimit() {
-		return Integer.MAX_VALUE;
-	}
+	IItemHandler inputHandler = new IEInventoryHandler(slotCount, this);
 
 	@Override
-	public boolean isUsableByPlayer(EntityPlayer entityPlayer) {
-		return true;
-	}
-
-	@Override
-	public void openInventory(EntityPlayer entityPlayer) {
-
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)inputHandler;
+		return super.getCapability(capability, facing);
 	}
 
 	@Override
