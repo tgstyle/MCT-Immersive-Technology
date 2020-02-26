@@ -45,7 +45,8 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
     private CokeOvenRecipe processing;
 
     public FluidTank tank = new FluidTank(24000);
-    NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+    public static int slotCount = 4;
+    NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
     @Override
     public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -54,7 +55,7 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
         processMax = nbt.getInteger("processMax");
         active = nbt.getBoolean("active");
         tank.readFromNBT(nbt.getCompoundTag("tank"));
-        if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 4);
+        if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
     }
 
     @Override

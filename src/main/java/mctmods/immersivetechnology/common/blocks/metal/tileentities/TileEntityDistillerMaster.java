@@ -31,7 +31,8 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave {
             new FluidTank(24000)
     };
 
-    public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+    public static int slotCount = 4;
+    public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
     private boolean running;
     private boolean previousRenderState;
@@ -43,7 +44,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave {
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
         running = nbt.getBoolean("running");
-        if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 4);
+        if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
     }
 
     @Override
