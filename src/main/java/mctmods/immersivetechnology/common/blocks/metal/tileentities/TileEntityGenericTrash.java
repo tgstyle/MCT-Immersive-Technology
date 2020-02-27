@@ -4,6 +4,7 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,52 +18,100 @@ public abstract class TileEntityGenericTrash extends TileEntityIEBase implements
 
     public EnumFacing facing = EnumFacing.NORTH;
 
-    public int acceptedAmount = 0;
-    public int lastAcceptedAmount = 0;
-    public int perSecond = 0;
-    public int lastPerSecond = 0;
-    public int updateClient = 0;
+    public long acceptedAmount;
+    public long lastAcceptedAmount;
+    public int secondCounter;
+    public int minuteCounter;
+    public long average;
+    public long lastAverage;
+    public int packets;
+    public int packetAverage;
+    public int lastPacketAverage;
+
+    public long[] averages = new long[60];
+    public long[] packetTotals = new long[60];
 
     public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
         world.getChunkFromBlockCoords(this.getPos()).markDirty();
     }
 
+    public void calculateAverages() {
+        long sum = 0;
+        for (long avg : averages) sum += avg;
+        average = sum/60;
+        sum = 0;
+        for (long avg : packetTotals) sum += avg;
+        packetAverage = (int)sum;
+    }
+
     @Override
     public void update() {
         if(world.isRemote) return;
-        if(++updateClient < 20) return;
-        if(acceptedAmount != lastAcceptedAmount || lastPerSecond != perSecond) {
-            efficientMarkDirty();
-            notifyNearbyClients();
+        efficientMarkDirty();
+        if(++secondCounter < 20) return;
+        if (average == 0 && acceptedAmount > 0) { //pre-populate averages to avoid slow build up
+            for (int i = 0; i < 60; i++) averages[i] = acceptedAmount;
+            packetTotals[minuteCounter] = packets;
+            calculateAverages();
         }
+        if (averages[minuteCounter] != acceptedAmount || packetTotals[minuteCounter] != packets) {
+            averages[minuteCounter] = acceptedAmount;
+            packetTotals[minuteCounter] = packets;
+            calculateAverages();
+        }
+        if(lastAverage != average || lastPacketAverage != packetAverage) notifyNearbyClients();
         lastAcceptedAmount = acceptedAmount;
-        lastPerSecond = perSecond;
         acceptedAmount = 0;
-        perSecond = 0;
-        updateClient = 0;
+        packets = 0;
+        secondCounter = 0;
+        if(++minuteCounter == 60) {
+            lastPacketAverage = packetAverage;
+            lastAverage = average;
+            minuteCounter = 0;
+        }
+    }
+
+    abstract public String unit();
+
+    @Override
+    public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
+        return player.isSneaking()?
+                new String[]{
+                        ITUtils.Translate(".osd.general.trashed", false, true) +
+                                average/20 + ITUtils.Translate(unit(), true),
+                        ITUtils.Translate(".osd.general.inpackets", false, true) +
+                                packetAverage + ITUtils.Translate(".osd.general.packetslastminute", true)}
+                : new String[]{ average/20 + ITUtils.Translate(unit(), true) };
     }
 
     @Override
     public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-        lastAcceptedAmount = acceptedAmount = nbt.getInteger("acceptedAmount");
-        lastPerSecond = perSecond = nbt.getInteger("perSecond");
+        lastAcceptedAmount = acceptedAmount = nbt.getLong("acceptedAmount");
+        secondCounter = nbt.getInteger("secondCounter");
+        long avg = nbt.getLong("averages");
+        for (int i = 0; i < 60; i++) averages[i] = avg;
+        calculateAverages();
     }
 
     @Override
     public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-        nbt.setInteger("acceptedAmount", acceptedAmount);
-        nbt.setInteger("perSecond", perSecond);
+        nbt.setLong("acceptedAmount", acceptedAmount);
+        nbt.setInteger("secondCounter", secondCounter);
+        calculateAverages();
+        nbt.setLong("averages", average);
     }
 
     @Override
     public void receiveMessageFromServer(NBTTagCompound message) {
-        readCustomNBT(message, false);
+        packetAverage = message.getInteger("packets");
+        average = message.getLong("average");
     }
 
     public void notifyNearbyClients() {
         NBTTagCompound tag = new NBTTagCompound();
+        tag.setInteger("packets", Math.max(packets, packetAverage));
+        tag.setLong("average", average);
         BlockPos center = getPos();
-        writeCustomNBT(tag, false);
         ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
     }
 
