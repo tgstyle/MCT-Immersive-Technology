@@ -19,14 +19,8 @@ import javax.annotation.Nullable;
 
 public class TileEntityTrashFluid extends TileEntityGenericTrash implements IBlockBounds, IFluidTank, IFluidHandler, IFluidTankProperties {
 
-	@Override
-	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		return new String[]{
-				ITUtils.Translate(".osd.general.trashed", false, true) +
-						lastAcceptedAmount + ITUtils.Translate(".osd.trash_fluid.unit", true),
-				ITUtils.Translate(".osd.general.inpackets", false, true) +
-						lastPerSecond + ITUtils.Translate(".osd.general.packetslastsecond", true)
-		};
+	public String unit() {
+		return ".osd.trash_fluid.unit";
 	}
 
 	@Override
@@ -98,10 +92,10 @@ public class TileEntityTrashFluid extends TileEntityGenericTrash implements IBlo
 
 	@Override
 	public int fill(FluidStack resource, boolean doFill) {
-		int canTransfer = Math.min(resource.amount, Config.ITConfig.Trash.fluid_max_void_rate - acceptedAmount);
+		int canTransfer = (int)Math.min(resource.amount, Config.ITConfig.Trash.fluid_max_void_rate - acceptedAmount);
 		if(doFill) {
 			acceptedAmount += canTransfer;
-			perSecond++;
+			packets++;
 		}
 		return canTransfer;
 	}
