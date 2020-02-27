@@ -31,7 +31,7 @@ public abstract class TileEntityGenericTrash extends TileEntityIEBase implements
     public void update() {
         if(world.isRemote) return;
         if(++updateClient < 20) return;
-        if (acceptedAmount != lastAcceptedAmount || lastPerSecond != perSecond) {
+        if(acceptedAmount != lastAcceptedAmount || lastPerSecond != perSecond) {
             efficientMarkDirty();
             notifyNearbyClients();
         }

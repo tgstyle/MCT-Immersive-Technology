@@ -40,13 +40,13 @@ public class TileEntityTrashEnergy extends TileEntityGenericTrash implements IBl
 
 	@Override
 	public float[] getBlockBounds()	{
-		return new float[]{facing.getAxis()==Axis.X ? 0 : .125f, 0, facing.getAxis()==Axis.Z ? .125f : .125f, facing.getAxis()==Axis.X ? 1 : .875f, 1, facing.getAxis()==Axis.Z ? .875f : .875f};
+		return new float[]{facing.getAxis() == Axis.X ? 0 : .125f, 0, facing.getAxis() == Axis.Z ? .125f : .125f, facing.getAxis() == Axis.X ? 1 : .875f, 1, facing.getAxis() == Axis.Z ? .875f : .875f};
 	}
 
 	@Override
 	public int receiveEnergy(int maxReceive, boolean simulate) {
 		int canTransfer = Math.min(maxReceive, Config.ITConfig.Trash.fluid_max_void_rate - acceptedAmount);
-		if (!simulate) {
+		if(!simulate) {
 			acceptedAmount += canTransfer;
 			perSecond++;
 		}
@@ -77,4 +77,5 @@ public class TileEntityTrashEnergy extends TileEntityGenericTrash implements IBl
 	public boolean canReceive() {
 		return true;
 	}
+	
 }

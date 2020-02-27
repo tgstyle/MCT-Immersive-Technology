@@ -32,14 +32,14 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability==CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
 		return super.hasCapability(capability, facing);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability==CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)this;
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)this;
 		return super.getCapability(capability, facing);
 	}
 
@@ -75,9 +75,13 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
-		return super.hasCapability(capability, facing);
+	public void setInventorySlotContents(int i, ItemStack itemStack) {
+		if(!itemStack.isEmpty()) insertItem(i, itemStack, false);
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return Integer.MAX_VALUE;
 	}
 
 	IItemHandler inputHandler = new IEInventoryHandler(slotCount, this);
@@ -123,11 +127,11 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 	public ItemStack insertItem(int i, @Nonnull ItemStack itemStack, boolean simulate) {
 		ItemStack returnStack;
 		int canFit = Config.ITConfig.Trash.item_max_void_rate - acceptedAmount;
-		if (itemStack.getCount() > canFit) {
+		if(itemStack.getCount() > canFit) {
 			returnStack = itemStack.copy();
 			returnStack.setCount(itemStack.getCount() - canFit);
 		} else returnStack = ItemStack.EMPTY;
-		if (!simulate) {
+		if(!simulate) {
 			acceptedAmount += itemStack.getCount() - returnStack.getCount();
 			perSecond++;
 		}
@@ -164,10 +168,10 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 	public TileEntity getGuiMaster() {
 		return this;
 	}
-	
+
 	@Override
 	public float[] getBlockBounds()	{
-		return new float[]{facing.getAxis()==Axis.X ? 0 : .125f, 0, facing.getAxis()==Axis.Z ? .125f : .125f, facing.getAxis()==Axis.X ? 1 : .875f, 1, facing.getAxis()==Axis.Z ? .875f : .875f};
+		return new float[]{facing.getAxis() == Axis.X ? 0 : .125f, 0, facing.getAxis() == Axis.Z ? .125f : .125f, facing.getAxis() == Axis.X ? 1 : .875f, 1, facing.getAxis() == Axis.Z ? .875f : .875f};
 	}
 
 	@Override
@@ -179,4 +183,5 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 	public boolean hasCustomName() {
 		return false;
 	}
+
 }
