@@ -8,7 +8,6 @@ public class Config {
 	public static class ITConfig {
 		public static Machines machines;
 		public static MechanicalEnergy mechanicalenergy;
-		public static Trash trash;
 		public static SteelTank steeltank;
 		public static Experimental experimental;
 
@@ -120,13 +119,6 @@ public class Config {
 		public static class MechanicalEnergy {
 			@Comment({"The maximum speed that machines can tolerate in RPM [Default=1800]"})
 			public static int mechanicalEnergy_speed_max = 1800;
-		}
-
-		public static class Trash {
-			@Comment({"Energy Trash Size in IF [Default=100000]"})
-			public static int trash_energy_capacitorSize = 1000000;
-			@Comment({"Fluid Trash Size in mB [Default=100000]"})
-			public static int trash_fluid_tankSize = 100000;
 		}
 
 		public static class SteelTank {
