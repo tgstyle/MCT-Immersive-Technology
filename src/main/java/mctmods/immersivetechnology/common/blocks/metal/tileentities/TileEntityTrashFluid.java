@@ -1,100 +1,31 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.common.Config.ITConfig.Trash;
-import net.minecraft.client.resources.I18n;
+import mctmods.immersivetechnology.api.ITUtils;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable, IBlockOverlayText, IBlockBounds, IFluidTank {
+import javax.annotation.Nullable;
 
-	public EnumFacing facing = EnumFacing.NORTH;
-
-	private static int trashFluidSize = Trash.trash_fluid_tankSize;
-
-	public FluidTank tank = new FluidTank(trashFluidSize);
-
-	private int acceptedAmount = 0;
-	private int perSecond = 0;
-	private int updateClient = 1;
-	private int lastAmount;
-	private int times;
-
-	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		acceptedAmount = nbt.getInteger("acceptedAmount");
-		perSecond = nbt.getInteger("perSecond");
-		this.readTank(nbt);
-	}
-
-	public void readTank(NBTTagCompound nbt) {
-		tank.readFromNBT(nbt.getCompoundTag("tank"));
-	}
-
-	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		nbt.setInteger("acceptedAmount", acceptedAmount);
-		nbt.setInteger("perSecond", perSecond);
-		this.writeTank(nbt, false);
-	}
-
-	public void writeTank(NBTTagCompound nbt, boolean toItem) {
-		boolean write = tank.getFluidAmount() > 0;
-		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
-		if(!toItem || write) nbt.setTag("tank", tankTag);
-	}
-
-	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
-		world.getChunkFromBlockCoords(this.getPos()).markDirty();
-	}
-
-	@Override
-	public void update() {
-		if(world.isRemote) return;
-		boolean update = false;
-		if(tank.getFluidAmount() > 0) {
-			lastAmount = tank.getFluidAmount();
-			times++;
-			tank.setFluid(null);
-		}
-		if(updateClient >= 20) {
-			acceptedAmount = lastAmount;
-			perSecond = times;
-			lastAmount = 0;
-			times = 0;
-			updateClient = 1;
-			update = true;
-		} else {
-			updateClient++;
-		}
-		if(update) {
-			efficientMarkDirty();
-			this.markContainingBlockForUpdate(null);
-		}
-	}
+public class TileEntityTrashFluid extends TileEntityGenericTrash implements IBlockBounds, IFluidTank, IFluidHandler, IFluidTankProperties {
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		String amount = I18n.format(ImmersiveTechnology.MODID + ".osd.trash_fluid.trashed") + ": " + acceptedAmount + " mB " + perSecond + " " + I18n.format(ImmersiveTechnology.MODID + ".osd.trash_fluid.lastsecond");
-		return new String[]{amount};
-	}
-
-	@Override
-	public boolean useNixieFont(EntityPlayer player, RayTraceResult mop) {
-		return false;
+		return new String[]{
+				ITUtils.Translate(".osd.general.trashed", false, true) +
+						lastAcceptedAmount + ITUtils.Translate(".osd.trash_fluid.unit", true),
+				ITUtils.Translate(".osd.general.inpackets", false, true) +
+						lastPerSecond + ITUtils.Translate(".osd.general.packetslastsecond", true)
+		};
 	}
 
 	@Override
@@ -106,38 +37,82 @@ public class TileEntityTrashFluid extends TileEntityIEBase implements ITickable,
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return (T) this.tank;
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return (T) this;
 		return super.getCapability(capability, facing);
 	}
 
 	@Override
 	public FluidStack getFluid() {
-		return tank.getFluid();
+		return null;
 	}
 
 	@Override
 	public int getFluidAmount() {
-		return tank.getFluidAmount();
+		return 0;
+	}
+
+	@Nullable
+	@Override
+	public FluidStack getContents() {
+		return null;
 	}
 
 	@Override
 	public int getCapacity() {
-		return tank.getCapacity();
+		return Integer.MAX_VALUE;
 	}
 
 	@Override
+	public boolean canFill() {
+		return true;
+	}
+
+	@Override
+	public boolean canDrain() {
+		return false;
+	}
+
+	@Override
+	public boolean canFillFluidType(FluidStack fluidStack) {
+		return true;
+	}
+
+	@Override
+	public boolean canDrainFluidType(FluidStack fluidStack) {
+		return false;
+	}
+
+	FluidTankInfo info = new FluidTankInfo(null, Integer.MAX_VALUE);
+	IFluidTankProperties[] tank = new IFluidTankProperties[] { this };
+
+	@Override
 	public FluidTankInfo getInfo() {
-		return tank.getInfo();
+		return info;
+	}
+
+	@Override
+	public IFluidTankProperties[] getTankProperties() {
+		return tank;
 	}
 
 	@Override
 	public int fill(FluidStack resource, boolean doFill) {
-		return tank.getCapacity();
+		if (doFill) {
+			acceptedAmount += resource.amount;
+			perSecond++;
+		}
+		return resource.amount;
+	}
+
+	@Nullable
+	@Override
+	public FluidStack drain(FluidStack fluidStack, boolean b) {
+		return null;
 	}
 
 	@Override
 	public FluidStack drain(int maxDrain, boolean doDrain) {
-		return tank.drain(0, false);
+		return null;
 	}
 
 	@Override
