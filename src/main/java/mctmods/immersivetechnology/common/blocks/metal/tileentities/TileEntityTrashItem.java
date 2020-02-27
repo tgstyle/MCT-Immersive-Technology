@@ -20,20 +20,14 @@ import javax.annotation.Nonnull;
 
 public class TileEntityTrashItem extends TileEntityGenericTrash implements IItemHandler, IInventory, IBlockBounds, IGuiTile {
 
-	@Override
-	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		return new String[]{
-				ITUtils.Translate(".osd.general.trashed", false, true) +
-						lastAcceptedAmount + ITUtils.Translate(".osd.trash_item.unit", true),
-				ITUtils.Translate(".osd.general.inpackets", false, true) +
-						lastPerSecond + ITUtils.Translate(".osd.general.packetslastsecond", true)
-		};
+	public String unit() {
+		return ".osd.trash_item.unit";
 	}
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
-		return super.hasCapability(capability, facing);
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -128,14 +122,14 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 	@Override
 	public ItemStack insertItem(int i, @Nonnull ItemStack itemStack, boolean simulate) {
 		ItemStack returnStack;
-		int canFit = Config.ITConfig.Trash.item_max_void_rate - acceptedAmount;
+		long canFit = Config.ITConfig.Trash.item_max_void_rate - acceptedAmount;
 		if(itemStack.getCount() > canFit) {
 			returnStack = itemStack.copy();
-			returnStack.setCount(itemStack.getCount() - canFit);
+			returnStack.setCount(itemStack.getCount() - (int)Math.min(canFit, Integer.MAX_VALUE));
 		} else returnStack = ItemStack.EMPTY;
 		if(!simulate) {
 			acceptedAmount += itemStack.getCount() - returnStack.getCount();
-			perSecond++;
+			packets++;
 		}
 		return returnStack;
 	}

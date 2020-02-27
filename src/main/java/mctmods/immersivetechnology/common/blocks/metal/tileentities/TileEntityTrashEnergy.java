@@ -12,17 +12,9 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
 public class TileEntityTrashEnergy extends TileEntityGenericTrash implements IBlockBounds, IEnergyStorage {
-	
-	public EnumFacing facing = EnumFacing.NORTH;
 
-	@Override
-	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		return new String[]{
-				ITUtils.Translate(".osd.general.trashed", false, true) +
-						lastAcceptedAmount + ITUtils.Translate(".osd.trash_energy.unit", true),
-				ITUtils.Translate(".osd.general.inpackets", false, true) +
-						lastPerSecond + ITUtils.Translate(".osd.general.packetslastsecond", true)
-		};
+	public String unit() {
+		return ".osd.trash_energy.unit";
 	}
 
 	@Override
@@ -45,10 +37,10 @@ public class TileEntityTrashEnergy extends TileEntityGenericTrash implements IBl
 
 	@Override
 	public int receiveEnergy(int maxReceive, boolean simulate) {
-		int canTransfer = Math.min(maxReceive, Config.ITConfig.Trash.fluid_max_void_rate - acceptedAmount);
+		int canTransfer = (int)Math.min(maxReceive, Config.ITConfig.Trash.fluid_max_void_rate - acceptedAmount);
 		if(!simulate) {
 			acceptedAmount += canTransfer;
-			perSecond++;
+			packets++;
 		}
 		return canTransfer;
 	}

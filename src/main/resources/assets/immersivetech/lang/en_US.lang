@@ -85,12 +85,12 @@ tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
 #OSD
 immersivetech.osd.barrel.output=output
 immersivetech.osd.barrel.empty=Empty!
-immersivetech.osd.general.trashed=Trashed a total of
+immersivetech.osd.general.trashed=Trashed an average of
 immersivetech.osd.general.inpackets=in
-immersivetech.osd.general.packetslastsecond=packets during the last second.
-immersivetech.osd.trash_energy.unit=IF
-immersivetech.osd.trash_fluid.unit=mb
-immersivetech.osd.trash_item.unit=items
+immersivetech.osd.general.packetslastminute=packets during the last minute.
+immersivetech.osd.trash_energy.unit=IF/t
+immersivetech.osd.trash_fluid.unit=mb/t
+immersivetech.osd.trash_item.unit=items/t
 
 
 #MANUAL
