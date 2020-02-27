@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.common.Config;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
@@ -97,11 +98,12 @@ public class TileEntityTrashFluid extends TileEntityGenericTrash implements IBlo
 
 	@Override
 	public int fill(FluidStack resource, boolean doFill) {
+		int canTransfer = Math.min(resource.amount, Config.ITConfig.Trash.fluid_max_void_rate - acceptedAmount);
 		if (doFill) {
-			acceptedAmount += resource.amount;
+			acceptedAmount += canTransfer;
 			perSecond++;
 		}
-		return resource.amount;
+		return canTransfer;
 	}
 
 	@Nullable

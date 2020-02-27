@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBou
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.common.Config;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -126,11 +127,17 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 	@Nonnull
 	@Override
 	public ItemStack insertItem(int i, @Nonnull ItemStack itemStack, boolean simulate) {
+		ItemStack returnStack;
+		int canFit = Config.ITConfig.Trash.item_max_void_rate - acceptedAmount;
+		if (itemStack.getCount() > canFit) {
+			returnStack = itemStack.copy();
+			returnStack.setCount(itemStack.getCount() - canFit);
+		} else returnStack = ItemStack.EMPTY;
 		if (!simulate) {
-			acceptedAmount += itemStack.getCount();
+			acceptedAmount += itemStack.getCount() - returnStack.getCount();
 			perSecond++;
 		}
-		return ItemStack.EMPTY;
+		return returnStack;
 	}
 
 	@Nonnull
