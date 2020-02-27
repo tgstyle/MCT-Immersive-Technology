@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.common.Config;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
@@ -44,11 +45,12 @@ public class TileEntityTrashEnergy extends TileEntityGenericTrash implements IBl
 
 	@Override
 	public int receiveEnergy(int maxReceive, boolean simulate) {
+		int canTransfer = Math.min(maxReceive, Config.ITConfig.Trash.fluid_max_void_rate - acceptedAmount);
 		if (!simulate) {
-			acceptedAmount += maxReceive;
+			acceptedAmount += canTransfer;
 			perSecond++;
 		}
-		return maxReceive;
+		return canTransfer;
 	}
 
 	@Override
