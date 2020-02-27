@@ -36,4 +36,5 @@ public class ContainerTrashItem extends Container {
 		}
 		return ItemStack.EMPTY;
 	}
+
 }

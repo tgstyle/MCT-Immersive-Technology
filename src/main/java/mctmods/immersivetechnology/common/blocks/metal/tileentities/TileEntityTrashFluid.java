@@ -99,7 +99,7 @@ public class TileEntityTrashFluid extends TileEntityGenericTrash implements IBlo
 	@Override
 	public int fill(FluidStack resource, boolean doFill) {
 		int canTransfer = Math.min(resource.amount, Config.ITConfig.Trash.fluid_max_void_rate - acceptedAmount);
-		if (doFill) {
+		if(doFill) {
 			acceptedAmount += canTransfer;
 			perSecond++;
 		}
@@ -119,7 +119,7 @@ public class TileEntityTrashFluid extends TileEntityGenericTrash implements IBlo
 
 	@Override
 	public float[] getBlockBounds()	{
-		return new float[]{facing.getAxis()==Axis.X ? 0 : .125f, 0, facing.getAxis()==Axis.Z ? .125f : .125f, facing.getAxis()==Axis.X ? 1 : .875f, 1, facing.getAxis()==Axis.Z ? .875f : .875f};
+		return new float[]{facing.getAxis() == Axis.X ? 0 : .125f, 0, facing.getAxis() == Axis.Z ? .125f : .125f, facing.getAxis() == Axis.X ? 1 : .875f, 1, facing.getAxis() == Axis.Z ? .875f : .875f};
 	}
 
 }
