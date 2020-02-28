@@ -19,6 +19,10 @@ public class TileEntityTrashFluid extends TileEntityGenericTrash implements IBlo
 		return ".osd.trash_fluid.unit";
 	}
 
+	public String unitPerSecond() {
+		return ".osd.trash_fluid.unitlastsecond";
+	}
+
 	@Override
 	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return true;
