@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import mctmods.immersivetechnology.api.ITLib;
-import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -95,7 +95,7 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 
 		@Override
 		public String getName() {
-			return ITUtils.Translate(".metal_trash.trash_item.name");
+			return TranslationKey.TILE_TRASH_ITEM_NAME.text();
 		}
 
 		@Override
@@ -107,14 +107,6 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 		public ITextComponent getDisplayName() {
 			return null;
 		}
-	}
-
-	public String unit() {
-		return ".osd.trash_item.unit";
-	}
-
-	public String unitPerSecond() {
-		return ".osd.trash_item.unitlastsecond";
 	}
 
 	@Override
@@ -188,4 +180,18 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 		return this;
 	}
 
+	@Override
+	public TranslationKey text() {
+		return TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE;
+	}
+
+	@Override
+	public TranslationKey textSneakingFirstLine() {
+		return TranslationKey.OVERLAY_OSD_TRASH_ITEM_SNEAKING_FIRST_LINE;
+	}
+
+	@Override
+	public TranslationKey textSneakingSecondLine() {
+		return TranslationKey.OVERLAY_OSD_TRASH_ITEM_SNEAKING_SECOND_LINE;
+	}
 }

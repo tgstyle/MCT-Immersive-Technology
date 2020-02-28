@@ -8,7 +8,7 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.blocks.wooden.BlockTypes_WoodenDecoration;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.ITUtils;
-import net.minecraft.client.resources.I18n;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -67,13 +67,9 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityMultiblockPart
     public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
         if(Utils.isFluidRelatedItemStack(player.getHeldItem(EnumHand.MAIN_HAND))) {
             FluidStack fs = master() != null ? master.tank.getFluid() : null;
-            String s = null;
-            if(fs != null) {
-                s = fs.getLocalizedName() + " : " + fs.amount + "mB";
-            } else {
-                s = I18n.format(Lib.GUI + "empty");
-            }
-            return new String[]{s};
+            return (fs != null)?
+                new String[]{TranslationKey.OVERLAY_STEEL_TANK_NORMAL_FIRST_LINE.format(fs.getLocalizedName(), fs.amount)}:
+                new String[]{TranslationKey.GUI_EMPTY.text()};
         }
         return null;
     }
