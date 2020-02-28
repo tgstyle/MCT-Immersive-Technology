@@ -13,7 +13,7 @@ public class ContainerTrashItem extends Container {
 
 	public ContainerTrashItem(InventoryPlayer inventoryPlayer, TileEntityTrashItem tile) {
 		this.tile = tile;
-		this.addSlotToContainer(new Slot(tile, 0, 80, 34));
+		this.addSlotToContainer(new Slot(tile.inv, 0, 80, 34));
 		for(int i = 0; i < 3; i++) {
 			for(int j = 0; j < 9; j++) {
 				addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));
