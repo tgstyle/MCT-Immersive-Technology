@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOve
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -72,18 +73,13 @@ public abstract class TileEntityGenericTrash extends TileEntityIEBase implements
 		}
 	}
 
-	abstract public String unit();
-	abstract public String unitPerSecond();
+	abstract public TranslationKey text();
+	abstract public TranslationKey textSneakingFirstLine();
+	abstract public TranslationKey textSneakingSecondLine();
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		return player.isSneaking()?
-				new String[]{
-						ITUtils.Translate(".osd.general.trashed", false, true) +
-								average / 20 + ITUtils.Translate(unit(), true),
-						ITUtils.Translate(".osd.general.inpackets", false, true) +
-								packetAverage + ITUtils.Translate(".osd.general.packetslastminute", true)}
-				: new String[]{ acceptedAmount + ITUtils.Translate(unitPerSecond(), true) };
+		return player.isSneaking()? new String[] { textSneakingFirstLine().format(average / 20), textSneakingSecondLine().format(packetAverage)} : new String[]{ text().format(acceptedAmount) };
 	}
 
 	@Override

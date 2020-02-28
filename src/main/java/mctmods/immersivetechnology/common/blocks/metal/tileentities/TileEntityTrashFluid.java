@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -14,14 +15,6 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import javax.annotation.Nullable;
 
 public class TileEntityTrashFluid extends TileEntityGenericTrash implements IBlockBounds, IFluidTank, IFluidHandler, IFluidTankProperties {
-
-	public String unit() {
-		return ".osd.trash_fluid.unit";
-	}
-
-	public String unitPerSecond() {
-		return ".osd.trash_fluid.unitlastsecond";
-	}
 
 	@Override
 	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
@@ -111,4 +104,18 @@ public class TileEntityTrashFluid extends TileEntityGenericTrash implements IBlo
 		return null;
 	}
 
+	@Override
+	public TranslationKey text() {
+		return TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_FIRST_LINE;
+	}
+
+	@Override
+	public TranslationKey textSneakingFirstLine() {
+		return TranslationKey.OVERLAY_OSD_TRASH_FLUID_SNEAKING_FIRST_LINE;
+	}
+
+	@Override
+	public TranslationKey textSneakingSecondLine() {
+		return TranslationKey.OVERLAY_OSD_TRASH_FLUID_SNEAKING_SECOND_LINE;
+	}
 }

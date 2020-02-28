@@ -21,10 +21,7 @@ fluid.slime=Liquid Slime
 
 
 #KEYWORDS
-keyword.immersivetech.duration=Lasts
 keyword.immersivetech.generate=Generates
-keyword.immersivetech.heatPerTick=heat per tick
-keyword.immersivetech.totalHeat=total heat
 
 
 #JEI
@@ -59,6 +56,28 @@ tile.immersivetech.metal_multiblock.steel_tank.name=Steel Fluid Tank
 tile.immersivetech.metal_multiblock.steel_tank_slave.name=Steel Fluid Tank
 
 
+#OVERLAY
+overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s mB
+overlay.immersivetech.osd.barrel.normal_firstline=%s : %s mB
+overlay.immersivetech.osd.trash_item.normal.firstline=%s items in the last second.
+overlay.immersivetech.osd.trash_item.sneaking.firstline=Trashed an average of %s items/t
+overlay.immersivetech.osd.trash_item.sneaking.secondline=in %s packets during the last minute.
+overlay.immersivetech.osd.trash_fluid.normal.firstline=%s mB in the last second.
+overlay.immersivetech.osd.trash_fluid.sneaking.firstline=Trashed an average of %s mB/t
+overlay.immersivetech.osd.trash_fluid.sneaking.secondline=in %s packets during the last minute.
+overlay.immersivetech.osd.trash_energy.normal.firstline=%s IF in the last second.
+overlay.immersivetech.osd.trash_energy.sneaking.firstline=Trashed an average of %s IF/t
+overlay.immersivetech.osd.trash_energy.sneaking.secondline=in %s packets during the last minute.
+
+
+#GUI
+gui.immersivetech.empty=Empty
+gui.immersivetech.ticks=%st
+gui.immersivetech.seconds=%ss
+gui.immersivetech.boiler.heat_per_tick=%1$s heat per tick
+gui.immersivetech.boiler.total_heat=%s total heat
+
+
 #STONE MULTIBLOCKS
 tile.immersivetech.stone_multiblock.coke_oven_advanced.name=Advanced Coke Oven
 tile.immersivetech.stone_multiblock.coke_oven_advanced_slave.name=Advanced Coke Oven
@@ -81,19 +100,6 @@ desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=Advanced Coke Oven
 #CONNECTORS
 tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
 
-
-#OSD
-immersivetech.osd.barrel.output=output
-immersivetech.osd.barrel.empty=Empty!
-immersivetech.osd.general.trashed=Trashed an average of
-immersivetech.osd.general.inpackets=in
-immersivetech.osd.general.packetslastminute=packets during the last minute.
-immersivetech.osd.trash_energy.unit=IF/t
-immersivetech.osd.trash_fluid.unit=mb/t
-immersivetech.osd.trash_item.unit=items/t
-immersivetech.osd.trash_energy.unitlastsecond=IF in the last second.
-immersivetech.osd.trash_fluid.unitlastsecond=mb in the last second.
-immersivetech.osd.trash_item.unitlastsecond=items in the last second.
 
 #MANUAL
 ie.manual.category.it.name=Immersive Technology

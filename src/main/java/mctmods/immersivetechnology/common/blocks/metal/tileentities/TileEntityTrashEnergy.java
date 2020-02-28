@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -8,13 +9,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 
 public class TileEntityTrashEnergy extends TileEntityGenericTrash implements IEnergyStorage {
 
-	public String unit() {
-		return ".osd.trash_energy.unit";
-	}
 
-	public String unitPerSecond() {
-		return ".osd.trash_energy.unitlastsecond";
-	}
 
 	@Override
 	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
@@ -63,5 +58,19 @@ public class TileEntityTrashEnergy extends TileEntityGenericTrash implements IEn
 	public boolean canReceive() {
 		return true;
 	}
-	
+
+	@Override
+	public TranslationKey text() {
+		return TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_FIRST_LINE;
+	}
+
+	@Override
+	public TranslationKey textSneakingFirstLine() {
+		return TranslationKey.OVERLAY_OSD_TRASH_ENERGY_SNEAKING_FIRST_LINE;
+	}
+
+	@Override
+	public TranslationKey textSneakingSecondLine() {
+		return TranslationKey.OVERLAY_OSD_TRASH_ENERGY_SNEAKING_SECOND_LINE;
+	}
 }

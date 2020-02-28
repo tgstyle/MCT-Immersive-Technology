@@ -5,9 +5,8 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerIn
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.Utils;
-import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -95,13 +94,10 @@ public class TileEntityBarrel extends TileEntityIEBase implements ITickable, IFl
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		String amount = null;
-		if(tank.getFluid() != null) {
-			amount = tank.getFluid().getLocalizedName() + " " + I18n.format(ImmersiveTechnology.MODID +".osd.barrel.output") + ": " + acceptedAmount + "mB";
-		} else {
-			amount = I18n.format(ImmersiveTechnology.MODID + ".osd.barrel.empty");
-		}
-		return new String[]{amount};
+		FluidStack fluid = tank.getFluid();
+		return (fluid != null)?
+				new String[]{TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE.format(fluid.getLocalizedName(), acceptedAmount)}:
+				new String[]{TranslationKey.GUI_EMPTY.text()};
 	}
 
 	@Override
