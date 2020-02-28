@@ -73,6 +73,7 @@ public abstract class TileEntityGenericTrash extends TileEntityIEBase implements
 	}
 
 	abstract public String unit();
+	abstract public String unitPerSecond();
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
@@ -82,7 +83,7 @@ public abstract class TileEntityGenericTrash extends TileEntityIEBase implements
 								average / 20 + ITUtils.Translate(unit(), true),
 						ITUtils.Translate(".osd.general.inpackets", false, true) +
 								packetAverage + ITUtils.Translate(".osd.general.packetslastminute", true)}
-				: new String[]{ average / 20 + ITUtils.Translate(unit(), true) };
+				: new String[]{ acceptedAmount + ITUtils.Translate(unitPerSecond(), true) };
 	}
 
 	@Override
@@ -106,12 +107,14 @@ public abstract class TileEntityGenericTrash extends TileEntityIEBase implements
 	public void receiveMessageFromServer(NBTTagCompound message) {
 		packetAverage = message.getInteger("packets");
 		average = message.getLong("average");
+		acceptedAmount = message.getLong("acceptedAmount");
 	}
 
 	public void notifyNearbyClients() {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("packets", Math.max(packets, packetAverage));
 		tag.setLong("average", average);
+		tag.setLong("acceptedAmount", acceptedAmount);
 		BlockPos center = getPos();
 		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 	}

@@ -113,6 +113,10 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 		return ".osd.trash_item.unit";
 	}
 
+	public String unitPerSecond() {
+		return ".osd.trash_item.unitlastsecond";
+	}
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
