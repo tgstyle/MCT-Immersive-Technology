@@ -27,6 +27,7 @@ import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySt
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.items.ItemITBase;
+import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -45,6 +46,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -93,8 +95,12 @@ public class ClientProxy extends CommonProxy {
 	@SubscribeEvent
 	public void onClientTick(TickEvent.ClientTickEvent event) {
 		if(!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
-			Minecraft.getMinecraft().world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
-			ITUtils.REMOVE_FROM_TICKING.clear();
+			World world = Minecraft.getMinecraft().world;
+			if (world == null) ITLogger.warn("ClientProxy has tried to access null world! This shouldn't normally happen...");
+			else {
+				world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
+				ITUtils.REMOVE_FROM_TICKING.clear();
+			}
 		}
 
 		calculateVolume();

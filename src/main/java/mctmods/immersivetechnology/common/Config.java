@@ -123,10 +123,12 @@ public class Config {
 		}
 
 		public static class Trash {
-			@Comment({"Energy Trash Size in IF [Default=100000]"})
-			public static int trash_energy_capacitorSize = 1000000;
-			@Comment({"Fluid Trash Size in mB [Default=100000]"})
-			public static int trash_fluid_tankSize = 100000;
+			@Comment({"Maximum amount of energy that can be voided per second [Default=2147483647]"})
+			public static int energy_max_void_rate = Integer.MAX_VALUE;
+			@Comment({"Maximum amount of fluid, in mB, that can be voided per second [Default=2147483647]"})
+			public static int fluid_max_void_rate = Integer.MAX_VALUE;
+			@Comment({"Maximum amount of items that can be voided per second [Default=2147483647]"})
+			public static int item_max_void_rate = Integer.MAX_VALUE;
 		}
 
 		public static class SteelTank {

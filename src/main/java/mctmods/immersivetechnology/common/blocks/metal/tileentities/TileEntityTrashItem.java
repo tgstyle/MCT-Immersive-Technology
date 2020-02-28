@@ -1,127 +1,176 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
-import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITLib;
-import net.minecraft.client.resources.I18n;
+import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.common.Config;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, IBlockOverlayText, IBlockBounds, IIEInventory, IGuiTile {
+import javax.annotation.Nonnull;
 
-	public EnumFacing facing = EnumFacing.NORTH;
+public class TileEntityTrashItem extends TileEntityGenericTrash implements IItemHandler, IGuiTile {
 
-	public static int slotCount = 9;
+	public DummyInventory inv = new DummyInventory();
 
-	public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
+	class DummyInventory implements IInventory {
 
-	private int acceptedAmount = 0;
-	private int updateClient = 1;
-	private int lastAmount;
-
-	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		acceptedAmount = nbt.getInteger("acceptedAmount");
-		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
-	}
-
-	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		nbt.setInteger("acceptedAmount", acceptedAmount);
-		if(!descPacket && !inventory.isEmpty()) nbt.setTag("inventory", Utils.writeInventory(inventory));
-	}
-
-	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
-		world.getChunkFromBlockCoords(this.getPos()).markDirty();
-	}
-
-	@Override
-	public void update() {
-		if(world.isRemote) return;
-		boolean update = false;
-		for(int slot = 0; slot < slotCount; slot++) {
-			if(!inventory.get(slot).isEmpty()) {
-				int currentAmount = 0;
-				currentAmount = inventory.get(slot).getCount();
-				lastAmount = currentAmount + lastAmount;
-			}
+		@Override
+		public int getSizeInventory() {
+			return 1;
 		}
-		if(lastAmount > 0) inventory.clear();
-		if(updateClient >= 20) {
-			acceptedAmount = lastAmount;
-			lastAmount = 0;
-			updateClient = 1;
-			update = true;
-		} else {
-			updateClient++;
+
+		@Override
+		public boolean isEmpty() {
+			return true;
 		}
-		if(update) {
-			efficientMarkDirty();
-			this.markContainingBlockForUpdate(null);
+
+		@Nonnull
+		@Override
+		public ItemStack getStackInSlot(int i) {
+			return ItemStack.EMPTY;
+		}
+
+		@Override
+		public ItemStack decrStackSize(int i, int i1) {
+			return ItemStack.EMPTY;
+		}
+
+		@Override
+		public ItemStack removeStackFromSlot(int i) {
+			return ItemStack.EMPTY;
+		}
+
+		@Override
+		public void setInventorySlotContents(int i, ItemStack itemStack) {
+			if(!itemStack.isEmpty()) insertItem(i, itemStack, false);
+		}
+
+		@Override
+		public int getInventoryStackLimit() {
+			return Integer.MAX_VALUE;
+		}
+
+		@Override
+		public void markDirty() {}
+
+		@Override
+		public boolean isUsableByPlayer(EntityPlayer entityPlayer) {
+			return true;
+		}
+
+		@Override
+		public void openInventory(EntityPlayer entityPlayer) {}
+
+		@Override
+		public void closeInventory(EntityPlayer entityPlayer) {}
+
+		@Override
+		public boolean isItemValidForSlot(int i, ItemStack itemStack) {
+			return true;
+		}
+
+		@Override
+		public int getField(int i) {
+			return 0;
+		}
+
+		@Override
+		public void setField(int i, int i1) {}
+
+		@Override
+		public int getFieldCount() {
+			return 0;
+		}
+
+		@Override
+		public void clear() {}
+
+		@Override
+		public String getName() {
+			return ITUtils.Translate(".metal_trash.trash_item.name");
+		}
+
+		@Override
+		public boolean hasCustomName() {
+			return false;
+		}
+
+		@Override
+		public ITextComponent getDisplayName() {
+			return null;
 		}
 	}
 
-	@Override
-	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		String amount = I18n.format(ImmersiveTechnology.MODID + ".osd.trash_item.trashed") + ": " + acceptedAmount + " " + I18n.format(ImmersiveTechnology.MODID + ".osd.trash_item.lastsecond");
-		return new String[]{amount};
+	public String unit() {
+		return ".osd.trash_item.unit";
 	}
 
-	@Override
-	public boolean useNixieFont(EntityPlayer player, RayTraceResult mop) {
-		return false;
+	public String unitPerSecond() {
+		return ".osd.trash_item.unitlastsecond";
 	}
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
-		return super.hasCapability(capability, facing);
+		return false;
 	}
-
-	IItemHandler inputHandler = new IEInventoryHandler(slotCount, this);
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)inputHandler;
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)this;
 		return super.getCapability(capability, facing);
 	}
 
 	@Override
-	public NonNullList<ItemStack> getInventory() {
-		return this.inventory;
+	public int getSlots() {
+		return 9;
 	}
 
+	@Nonnull
 	@Override
-	public boolean isStackValid(int slot, ItemStack stack) {
-		return true;
+	public ItemStack getStackInSlot(int i) {
+		return ItemStack.EMPTY;
+	}
+
+	@Nonnull
+	@Override
+	public ItemStack insertItem(int i, @Nonnull ItemStack itemStack, boolean simulate) {
+		ItemStack returnStack;
+		long canFit = Config.ITConfig.Trash.item_max_void_rate - acceptedAmount;
+		if(itemStack.getCount() > canFit) {
+			returnStack = itemStack.copy();
+			returnStack.setCount(itemStack.getCount() - (int)Math.min(canFit, Integer.MAX_VALUE));
+		} else returnStack = ItemStack.EMPTY;
+		if(!simulate) {
+			acceptedAmount += itemStack.getCount() - returnStack.getCount();
+			packets++;
+		}
+		return returnStack;
+	}
+
+	@Nonnull
+	@Override
+	public ItemStack extractItem(int i, int i1, boolean b) {
+		return ItemStack.EMPTY;
 	}
 
 	@Override
 	public int getSlotLimit(int slot) {
-		return 64;
+		return Integer.MAX_VALUE;
 	}
 
 	@Override
-	public void doGraphicalUpdates(int slot) {
-		this.markDirty();
-		this.markContainingBlockForUpdate(null);
+	public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+		return true;
 	}
 
 	@Override
@@ -137,11 +186,6 @@ public class TileEntityTrashItem extends TileEntityIEBase implements ITickable, 
 	@Override
 	public TileEntity getGuiMaster() {
 		return this;
-	}
-	
-	@Override
-	public float[] getBlockBounds()	{
-		return new float[]{facing.getAxis()==Axis.X ? 0 : .125f, 0, facing.getAxis()==Axis.Z ? .125f : .125f, facing.getAxis()==Axis.X ? 1 : .875f, 1, facing.getAxis()==Axis.Z ? .875f : .875f};
 	}
 
 }

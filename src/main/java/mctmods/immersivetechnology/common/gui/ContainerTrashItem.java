@@ -1,19 +1,19 @@
 package mctmods.immersivetechnology.common.gui;
 
-import blusunrize.immersiveengineering.common.gui.ContainerIEBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 
-public class ContainerTrashItem extends ContainerIEBase<TileEntityTrashItem> {
+public class ContainerTrashItem extends Container {
+
+	TileEntityTrashItem tile;
+
 	public ContainerTrashItem(InventoryPlayer inventoryPlayer, TileEntityTrashItem tile) {
-		super(inventoryPlayer, tile);
-
-		slotCount = TileEntityTrashItem.slotCount;
-		for(int slot = 0; slot < slotCount; slot++) {
-			this.addSlotToContainer(new Slot(this.inv, slot, 80, 34));
-		}
+		this.tile = tile;
+		this.addSlotToContainer(new Slot(tile.inv, 0, 80, 34));
 		for(int i = 0; i < 3; i++) {
 			for(int j = 0; j < 9; j++) {
 				addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));
@@ -25,6 +25,16 @@ public class ContainerTrashItem extends ContainerIEBase<TileEntityTrashItem> {
 	@Override
 	public boolean canInteractWith(EntityPlayer player) {
 		return tile != null && tile.getWorld().getTileEntity(tile.getPos()) == tile && player.getDistanceSq(tile.getPos().getX() + .5, tile.getPos().getY() + .5, tile.getPos().getZ() + .5) <= 64;
+	}
+
+	@Override
+	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+		Slot slot = getSlot(index);
+		if (slot != null && slot.getHasStack()) {
+			tile.insertItem(0, slot.getStack(), false);
+			slot.putStack(ItemStack.EMPTY);
+		}
+		return ItemStack.EMPTY;
 	}
 
 }
