@@ -1,12 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
-import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.Config;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -109,11 +105,6 @@ public class TileEntityTrashFluid extends TileEntityGenericTrash implements IBlo
 	@Override
 	public FluidStack drain(int maxDrain, boolean doDrain) {
 		return null;
-	}
-
-	@Override
-	public float[] getBlockBounds()	{
-		return new float[]{facing.getAxis() == Axis.X ? 0 : .125f, 0, facing.getAxis() == Axis.Z ? .125f : .125f, facing.getAxis() == Axis.X ? 1 : .875f, 1, facing.getAxis() == Axis.Z ? .875f : .875f};
 	}
 
 }
