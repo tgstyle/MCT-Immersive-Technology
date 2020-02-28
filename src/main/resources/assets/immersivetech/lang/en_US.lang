@@ -89,10 +89,10 @@ immersivetech.osd.general.trashed=Trashed an average of
 immersivetech.osd.general.inpackets=in
 immersivetech.osd.general.packetslastminute=packets during the last minute.
 immersivetech.osd.trash_energy.unit=IF/t
-immersivetech.osd.trash_fluid.unit=mb/t
+immersivetech.osd.trash_fluid.unit=mB/t
 immersivetech.osd.trash_item.unit=items/t
 immersivetech.osd.trash_energy.unitlastsecond=IF in the last second.
-immersivetech.osd.trash_fluid.unitlastsecond=mb in the last second.
+immersivetech.osd.trash_fluid.unitlastsecond=mB in the last second.
 immersivetech.osd.trash_item.unitlastsecond=items in the last second.
 
 #MANUAL
