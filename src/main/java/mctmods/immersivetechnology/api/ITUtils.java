@@ -1,10 +1,12 @@
 package mctmods.immersivetechnology.api;
 
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAlternatorMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -25,6 +27,18 @@ public class ITUtils {
 
 	public static void RemoveDummyFromTicking(TileEntity te) {
 		REMOVE_FROM_TICKING.add(te);
+	}
+
+	public static String Translate(String key, boolean addSpaceBefore, boolean addSpaceAfter) {
+		return (addSpaceBefore? " ":"") + I18n.format(ImmersiveTechnology.MODID + key) + (addSpaceAfter? " ":"");
+	}
+
+	public static String Translate(String key, boolean addSpaceBefore) {
+		return Translate(key, addSpaceBefore, false);
+	}
+
+	public static String Translate(String key) {
+		return Translate(key, false, false);
 	}
 
 	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing) {
