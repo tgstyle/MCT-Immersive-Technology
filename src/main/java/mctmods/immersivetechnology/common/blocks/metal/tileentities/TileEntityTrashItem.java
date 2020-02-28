@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
@@ -10,8 +9,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -19,7 +16,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class TileEntityTrashItem extends TileEntityGenericTrash implements IItemHandler, IBlockBounds, IGuiTile {
+public class TileEntityTrashItem extends TileEntityGenericTrash implements IItemHandler, IGuiTile {
 
 	public DummyInventory inv = new DummyInventory();
 
@@ -187,8 +184,4 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 		return this;
 	}
 
-	@Override
-	public float[] getBlockBounds()	{
-		return new float[]{facing.getAxis() == Axis.X ? 0 : .125f, 0, facing.getAxis() == Axis.Z ? .125f : .125f, facing.getAxis() == Axis.X ? 1 : .875f, 1, facing.getAxis() == Axis.Z ? .875f : .875f};
-	}
 }
