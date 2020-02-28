@@ -12,6 +12,10 @@ public class TileEntityTrashEnergy extends TileEntityGenericTrash implements IEn
 		return ".osd.trash_energy.unit";
 	}
 
+	public String unitPerSecond() {
+		return ".osd.trash_energy.unitlastsecond";
+	}
+
 	@Override
 	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
 		if(capability == CapabilityEnergy.ENERGY) return true;
