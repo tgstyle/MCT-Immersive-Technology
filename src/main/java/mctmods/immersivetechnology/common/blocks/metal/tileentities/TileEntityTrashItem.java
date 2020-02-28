@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.common.Config;
@@ -10,13 +9,14 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class TileEntityTrashItem extends TileEntityGenericTrash implements IItemHandler, IBlockBounds, IGuiTile {
+public class TileEntityTrashItem extends TileEntityGenericTrash implements IItemHandler, IGuiTile {
 
 	public DummyInventory inv = new DummyInventory();
 
@@ -180,18 +180,4 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 		return this;
 	}
 
-	@Override
-	public TranslationKey text() {
-		return TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE;
-	}
-
-	@Override
-	public TranslationKey textSneakingFirstLine() {
-		return TranslationKey.OVERLAY_OSD_TRASH_ITEM_SNEAKING_FIRST_LINE;
-	}
-
-	@Override
-	public TranslationKey textSneakingSecondLine() {
-		return TranslationKey.OVERLAY_OSD_TRASH_ITEM_SNEAKING_SECOND_LINE;
-	}
 }
