@@ -1,17 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
-import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.Config;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
-public class TileEntityTrashEnergy extends TileEntityGenericTrash implements IBlockBounds, IEnergyStorage {
+public class TileEntityTrashEnergy extends TileEntityGenericTrash implements IEnergyStorage {
 
 	public String unit() {
 		return ".osd.trash_energy.unit";
@@ -28,11 +23,6 @@ public class TileEntityTrashEnergy extends TileEntityGenericTrash implements IBl
 	public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
 		if(capability == CapabilityEnergy.ENERGY) return (T) this;
 		return super.getCapability(capability, facing);
-	}
-
-	@Override
-	public float[] getBlockBounds()	{
-		return new float[]{facing.getAxis() == Axis.X ? 0 : .125f, 0, facing.getAxis() == Axis.Z ? .125f : .125f, facing.getAxis() == Axis.X ? 1 : .875f, 1, facing.getAxis() == Axis.Z ? .875f : .875f};
 	}
 
 	@Override

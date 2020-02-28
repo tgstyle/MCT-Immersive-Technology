@@ -10,9 +10,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -188,7 +185,13 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 	}
 
 	@Override
-	public float[] getBlockBounds()	{
-		return new float[]{facing.getAxis() == Axis.X ? 0 : .125f, 0, facing.getAxis() == Axis.Z ? .125f : .125f, facing.getAxis() == Axis.X ? 1 : .875f, 1, facing.getAxis() == Axis.Z ? .875f : .875f};
+	public String getName() {
+		return ITUtils.Translate(".metal_trash.trash_item.name");
 	}
+
+	@Override
+	public boolean hasCustomName() {
+		return false;
+	}
+
 }
