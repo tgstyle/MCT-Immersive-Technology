@@ -11,6 +11,7 @@ import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDi
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
+import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityCrate;
 import mctmods.immersivetechnology.common.gui.*;
 import mctmods.immersivetechnology.common.util.TemporaryTileEntityRequest;
 import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
@@ -80,6 +81,7 @@ public class CommonProxy implements IGuiHandler {
 		if(tile instanceof IGuiTile) {
 			Object gui = null;
 			if(ID == ITLib.GUIID_Boiler && tile instanceof TileEntityBoilerMaster) gui = new ContainerBoiler(player.inventory, (TileEntityBoilerMaster) tile);
+			if(ID == ITLib.GUIID_Crate_Item && tile instanceof TileEntityCrate) gui = new ContainerCrateItem(player.inventory, (TileEntityCrate) tile);
 			if(ID == ITLib.GUIID_Coke_oven_advanced && tile instanceof TileEntityCokeOvenAdvancedMaster) gui = new ContainerCokeOvenAdvanced(player.inventory, (TileEntityCokeOvenAdvancedMaster) tile);
 			if(ID == ITLib.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) gui = new ContainerDistiller(player.inventory, (TileEntityDistillerMaster) tile);
 			if(ID == ITLib.GUIID_Solar_Tower && tile instanceof TileEntitySolarTowerMaster) gui = new ContainerSolarTower(player.inventory, (TileEntitySolarTowerMaster) tile);
@@ -97,6 +99,7 @@ public class CommonProxy implements IGuiHandler {
 		if(tile instanceof IGuiTile) {
 			Object gui = null;
 			if(ID == ITLib.GUIID_Boiler && tile instanceof TileEntityBoilerMaster) gui = new GuiBoiler(player.inventory, (TileEntityBoilerMaster) tile);
+			if(ID == ITLib.GUIID_Crate_Item && tile instanceof TileEntityCrate) gui = new GuiCrateItem(player.inventory, (TileEntityCrate) tile);
 			if(ID == ITLib.GUIID_Coke_oven_advanced && tile instanceof TileEntityCokeOvenAdvancedMaster) gui = new GuiCokeOvenAdvanced(player.inventory, (TileEntityCokeOvenAdvancedMaster) tile);
 			if(ID == ITLib.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) gui = new GuiDistiller(player.inventory, (TileEntityDistillerMaster) tile);
 			if(ID == ITLib.GUIID_Solar_Tower && tile instanceof TileEntitySolarTowerMaster) gui = new GuiSolarTower(player.inventory, (TileEntitySolarTowerMaster) tile);

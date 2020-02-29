@@ -2,15 +2,15 @@ package mctmods.immersivetechnology.client.gui;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
-import mctmods.immersivetechnology.common.gui.ContainerTrashItem;
+import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityCrate;
+import mctmods.immersivetechnology.common.gui.ContainerCrateItem;
 import net.minecraft.entity.player.InventoryPlayer;
 
-public class GuiTrashItem extends GuiIEContainerBase {
-	TileEntityTrashItem tile;
+public class GuiCrateItem extends GuiIEContainerBase {
+	TileEntityCrate tile;
 
-	public GuiTrashItem(InventoryPlayer invPlayer, TileEntityTrashItem tile) {
-		super(new ContainerTrashItem(invPlayer, tile));
+	public GuiCrateItem(InventoryPlayer invPlayer, TileEntityCrate tile) {
+		super(new ContainerCrateItem(invPlayer, tile));
 		this.tile=tile;
 	}
 
