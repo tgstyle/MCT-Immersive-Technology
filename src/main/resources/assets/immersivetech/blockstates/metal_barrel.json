@@ -4,6 +4,10 @@
 		"transform": "forge:default-block"
 	},
 	"variants": {
+		"inventory,type=creative_crate": [{
+			"model": "cube_all",
+			"textures": { "all": "immersivetech:blocks/wooden_device_creative_crate"}
+		}],
 		"inventory,type=barrel": [{
 			"model": "immersivetech:metal_barrel/metal_barrel",
 			"textures": {
@@ -21,6 +25,10 @@
 			}
 		}],
 		"type": {
+			"creative_crate": {
+				"model": "cube_all",
+				"textures": { "all": "immersivetech:blocks/wooden_device_creative_crate"}
+			},
 			"barrel": {
 				"model": "immersivetech:metal_barrel/metal_barrel",
 				"textures": {

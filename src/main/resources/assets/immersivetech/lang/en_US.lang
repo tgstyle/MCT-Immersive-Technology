@@ -37,6 +37,7 @@ tile.immersivetech.metal_trash.trash_fluid.name=Fluid Trash Can
 tile.immersivetech.metal_trash.trash_energy.name=Energy Trash Can
 tile.immersivetech.metal_barrel.barrel.name=Creative Barrel
 tile.immersivetech.metal_barrel.barrel_open.name=Open Barrel
+tile.immersivetech.metal_barrel.creative_crate.name=Creative Crate
 
 
 #METAL MULTIBLOCKS
@@ -58,7 +59,12 @@ tile.immersivetech.metal_multiblock.steel_tank_slave.name=Steel Fluid Tank
 
 #OVERLAY
 overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s mB
-overlay.immersivetech.osd.barrel.normal_firstline=%s : %s mB
+overlay.immersivetech.osd.barrel.normal.firstline=%s : Provided %s mB in the last second.
+overlay.immersivetech.osd.barrel.sneaking.firstline=Provided an average of %s mB/t
+overlay.immersivetech.osd.barrel.sneaking.secondline=in %s packets during the last minute.
+overlay.immersivetech.osd.creative_crate.normal.firstline=%s : Provided %s items in the last second.
+overlay.immersivetech.osd.creative_crate.sneaking.firstline=Provided an average of %s items/t
+overlay.immersivetech.osd.creative_crate.sneaking.secondline=in %s packets during the last minute.
 overlay.immersivetech.osd.trash_item.normal.firstline=%s items in the last second.
 overlay.immersivetech.osd.trash_item.sneaking.firstline=Trashed an average of %s items/t
 overlay.immersivetech.osd.trash_item.sneaking.secondline=in %s packets during the last minute.
@@ -99,6 +105,7 @@ desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=Advanced Coke Oven
 
 #CONNECTORS
 tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
+
 
 #MANUAL
 ie.manual.category.it.name=Immersive Technology

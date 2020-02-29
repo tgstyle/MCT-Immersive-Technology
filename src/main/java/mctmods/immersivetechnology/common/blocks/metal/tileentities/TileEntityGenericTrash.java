@@ -4,7 +4,6 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBou
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +14,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 
 public abstract class TileEntityGenericTrash extends TileEntityIEBase implements ITickable, IBlockOverlayText, IBlockBounds {
 
@@ -61,7 +61,7 @@ public abstract class TileEntityGenericTrash extends TileEntityIEBase implements
 			packetTotals[minuteCounter] = packets;
 			calculateAverages();
 		}
-		if(lastAverage != average || lastPacketAverage != packetAverage) notifyNearbyClients();
+		if(lastAverage != average || lastPacketAverage != packetAverage) notifyNearbyClients(new NBTTagCompound());
 		lastAcceptedAmount = acceptedAmount;
 		acceptedAmount = 0;
 		packets = 0;
@@ -79,11 +79,12 @@ public abstract class TileEntityGenericTrash extends TileEntityIEBase implements
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		return player.isSneaking()? new String[] { textSneakingFirstLine().format(average / 20), textSneakingSecondLine().format(packetAverage)} : new String[]{ text().format(acceptedAmount) };
+		return player.isSneaking()? new String[] { textSneakingFirstLine().format((double)average / 20), textSneakingSecondLine().format(packetAverage)} : new String[]{ text().format(acceptedAmount) };
 	}
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return;
 		lastAcceptedAmount = acceptedAmount = nbt.getLong("acceptedAmount");
 		secondCounter = nbt.getInteger("secondCounter");
 		long avg = nbt.getLong("averages");
@@ -93,6 +94,7 @@ public abstract class TileEntityGenericTrash extends TileEntityIEBase implements
 
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return;
 		nbt.setLong("acceptedAmount", acceptedAmount);
 		nbt.setInteger("secondCounter", secondCounter);
 		calculateAverages();
@@ -106,8 +108,7 @@ public abstract class TileEntityGenericTrash extends TileEntityIEBase implements
 		acceptedAmount = message.getLong("acceptedAmount");
 	}
 
-	public void notifyNearbyClients() {
-		NBTTagCompound tag = new NBTTagCompound();
+	public void notifyNearbyClients(NBTTagCompound tag) {
 		tag.setInteger("packets", Math.max(packets, packetAverage));
 		tag.setLong("average", average);
 		tag.setLong("acceptedAmount", acceptedAmount);
