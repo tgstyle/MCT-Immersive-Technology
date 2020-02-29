@@ -79,7 +79,7 @@ public abstract class TileEntityGenericTrash extends TileEntityIEBase implements
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		return player.isSneaking()? new String[] { textSneakingFirstLine().format(average / 20), textSneakingSecondLine().format(packetAverage)} : new String[]{ text().format(acceptedAmount) };
+		return player.isSneaking()? new String[] { textSneakingFirstLine().format((double)average / 20), textSneakingSecondLine().format(packetAverage)} : new String[]{ text().format(acceptedAmount) };
 	}
 
 	@Override
