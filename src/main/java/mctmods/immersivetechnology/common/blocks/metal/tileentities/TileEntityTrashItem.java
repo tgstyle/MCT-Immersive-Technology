@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -16,7 +17,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class TileEntityTrashItem extends TileEntityGenericTrash implements IItemHandler, IGuiTile {
+public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHandler, IGuiTile {
 
 	public DummyInventory inv = new DummyInventory();
 

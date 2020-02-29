@@ -1,13 +1,14 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
-public class TileEntityTrashEnergy extends TileEntityGenericTrash implements IEnergyStorage {
+public class TileEntityTrashEnergy extends TileEntityCommonOSD implements IEnergyStorage {
 
 
 
