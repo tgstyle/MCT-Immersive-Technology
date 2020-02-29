@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,7 +20,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nullable;
 
-public class TileEntityBarrel extends TileEntityGenericTrash implements IFluidTank, IPlayerInteraction, ITileDrop, IFluidTankProperties, IFluidHandler {
+public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank, IPlayerInteraction, ITileDrop, IFluidTankProperties, IFluidHandler {
 
 	public FluidStack infiniteFluid;
 

@@ -37,7 +37,8 @@ tile.immersivetech.metal_trash.trash_fluid.name=Fluid Trash Can
 tile.immersivetech.metal_trash.trash_energy.name=Energy Trash Can
 tile.immersivetech.metal_barrel.barrel.name=Creative Barrel
 tile.immersivetech.metal_barrel.barrel_open.name=Open Barrel
-tile.immersivetech.metal_barrel.creative_crate.name=Creative Crate
+#WOODEN
+tile.immersivetech.wooden_crate.crate.name=Creative Crate
 
 
 #METAL MULTIBLOCKS

@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.blocks.metal.tileentities;
+package mctmods.immersivetechnology.common.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
@@ -16,7 +16,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 
-public abstract class TileEntityGenericTrash extends TileEntityIEBase implements ITickable, IBlockOverlayText, IBlockBounds {
+public abstract class TileEntityCommonOSD extends TileEntityIEBase implements ITickable, IBlockOverlayText, IBlockBounds {
 
 	public EnumFacing facing = EnumFacing.NORTH;
 

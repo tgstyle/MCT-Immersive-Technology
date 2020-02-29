@@ -25,6 +25,8 @@ import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCok
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
+import mctmods.immersivetechnology.common.blocks.wooden.BlockWoodenCrate;
+import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityCrate;
 import mctmods.immersivetechnology.common.fluid.FluidColored;
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.util.ITLogger;
@@ -67,6 +69,9 @@ public class ITContent {
 	/*STONE*/
 	public static BlockITBase<?> blockStoneDecoration;
 
+	/*WOODEN*/
+	public static BlockITBase<?> blockWoodenCrate;
+
 	/*FLUID BLOCKS*/
 	public static BlockITFluid blockFluidDistWater;
 	public static BlockITFluid blockFluidSteam;
@@ -96,6 +101,9 @@ public class ITContent {
 
 		/*STONE*/
 		blockStoneDecoration = new BlockStoneDecoration();
+		
+		/*WOODEN*/
+		blockWoodenCrate = new BlockWoodenCrate();
 
 		/*FLUIDS*/
 		fluidSteam = new FluidColored("steam", 0x3E444F, -100, 500, true);
@@ -129,7 +137,7 @@ public class ITContent {
 		registerTile(TileEntityTrashFluid.class);
 		registerTile(TileEntityTrashEnergy.class);
 		registerTile(TileEntityBarrel.class);
-		registerTile(TileEntityCreativeCrate.class);
+		registerTile(TileEntityCrate.class);
 
 		//MORE TEMPORARY STUFF
 		registerTile(TileEntityCokeOvenAdvanced.class);

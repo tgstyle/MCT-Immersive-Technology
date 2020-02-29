@@ -1,6 +1,7 @@
-package mctmods.immersivetechnology.common.blocks.metal.tileentities;
+package mctmods.immersivetechnology.common.blocks.wooden.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -14,7 +15,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class TileEntityCreativeCrate extends TileEntityGenericTrash implements IItemHandler, IEBlockInterfaces.IPlayerInteraction {
+public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler, IEBlockInterfaces.IPlayerInteraction {
 
     public ItemStack visibleItemStack = ItemStack.EMPTY;
     public ItemStack interactiveItemStack = ItemStack.EMPTY;
