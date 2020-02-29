@@ -58,7 +58,9 @@ tile.immersivetech.metal_multiblock.steel_tank_slave.name=Steel Fluid Tank
 
 #OVERLAY
 overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s mB
-overlay.immersivetech.osd.barrel.normal_firstline=%s : %s mB
+overlay.immersivetech.osd.barrel.normal.firstline=%s : Provided %s mB in the last second.
+overlay.immersivetech.osd.barrel.sneaking.firstline=Provided an average of %s mB/t
+overlay.immersivetech.osd.barrel.sneaking.secondline=in %s packets during the last minute.
 overlay.immersivetech.osd.trash_item.normal.firstline=%s items in the last second.
 overlay.immersivetech.osd.trash_item.sneaking.firstline=Trashed an average of %s items/t
 overlay.immersivetech.osd.trash_item.sneaking.secondline=in %s packets during the last minute.

@@ -278,7 +278,6 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 
     @Override
     public void onLoad() {
-        super.onLoad();
         if(!world.isRemote) {
             boolean changed = false;
             for(EnumFacing f : EnumFacing.VALUES) if(world.isBlockLoaded(pos.offset(f))) changed |= updateConnectionByte(f);
