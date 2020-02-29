@@ -185,7 +185,7 @@ public class TileEntityBarrel extends TileEntityGenericTrash implements IFluidTa
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		return player.isSneaking()? new String[] { textSneakingFirstLine().format(average / 20), textSneakingSecondLine().format(packetAverage)} :
+		return player.isSneaking()? new String[] { textSneakingFirstLine().format((double)average / 20), textSneakingSecondLine().format(packetAverage)} :
 				new String[]{ infiniteFluid != null? text().format(infiniteFluid.getFluid().getName(), acceptedAmount) : TranslationKey.GUI_EMPTY.text() };
 	}
 
