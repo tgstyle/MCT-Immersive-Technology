@@ -65,6 +65,7 @@ public class ITContent {
 	public static BlockITBase<?> blockMetalDevice;
 	public static BlockITBase<?> blockMetalTrash;
 	public static BlockITBase<?> blockMetalBarrel;
+	public static BlockITBase<?> blockValve;
 
 	/*STONE*/
 	public static BlockITBase<?> blockStoneDecoration;
@@ -98,6 +99,7 @@ public class ITContent {
 		blockMetalDevice = new BlockMetalDevice();
 		blockMetalTrash = new BlockMetalTrash();
 		blockMetalBarrel = new BlockMetalBarrel();
+		blockValve = new BlockValve();
 
 		/*STONE*/
 		blockStoneDecoration = new BlockStoneDecoration();
@@ -138,6 +140,7 @@ public class ITContent {
 		registerTile(TileEntityTrashEnergy.class);
 		registerTile(TileEntityBarrel.class);
 		registerTile(TileEntityCrate.class);
+		registerTile(TileEntityFluidValve.class);
 
 		//MORE TEMPORARY STUFF
 		registerTile(TileEntityCokeOvenAdvanced.class);
