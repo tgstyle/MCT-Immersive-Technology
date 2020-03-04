@@ -9,5 +9,6 @@ public class ITLib {
 	public static final int GUIID_Solar_Tower = 4;
 	public static final int GUIID_Timer = 5;
 	public static final int GUIID_Trash_Item = 6;
+	public static final int GUIID_Fluid_Valve = 7;
 
 }

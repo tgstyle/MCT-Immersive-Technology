@@ -1,0 +1,61 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"transform": "forge:default-block",
+		"custom": {
+			"flip-v": true
+		}
+	},
+	"variants": {
+		"inventory,type=fluid_valve": [{
+			"model": "immersivetech:valve/valve.obj"
+		}],
+		"type": {
+			"fluid_valve": { "model": "immersivetech:valve/valve.obj" }
+		},
+		"facing": {
+			"north": {
+				"transform": {
+					"rotation": {
+						"y": 0
+					}
+				}
+			},
+			"south": {
+				"transform": {
+					"rotation": {
+						"y": 180
+					}
+				}
+			},
+			"west": {
+				"transform": {
+					"rotation": {
+						"y": 90
+					}
+				}
+			},
+			"east": {
+				"transform": {
+					"rotation": {
+						"y": -90
+					}
+				}
+			},
+			"up": {
+				"transform": {
+					"rotation": {
+						"x": 90
+					}
+				}
+			},
+			"down": {
+				"transform": {
+					"rotation": {
+						"x": -90
+					}
+				}
+			}
+		}
+	}
+}
