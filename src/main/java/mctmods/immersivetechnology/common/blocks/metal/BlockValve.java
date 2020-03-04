@@ -12,6 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -55,5 +56,10 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
     @Override
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         return getDefaultState().withProperty(IEProperties.FACING_ALL, facing);
+    }
+
+    @Override
+    public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return true;
     }
 }

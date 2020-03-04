@@ -1,7 +1,10 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
+import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITLib;
@@ -18,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -28,9 +32,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.EnumSet;
 
-public class TileEntityFluidValve extends TileEntityCommonOSD implements
-        IEBlockInterfaces.IDirectionalTile, IFluidHandler, IFluidPipe, IEBlockInterfaces.IGuiTile, IEBlockInterfaces.IPlayerInteraction {
+public class TileEntityFluidValve extends TileEntityCommonOSD implements IDirectionalTile, IFluidHandler, IFluidPipe, IGuiTile, IPlayerInteraction {
 
     public EnumFacing facing = EnumFacing.NORTH;
 
@@ -39,6 +43,7 @@ public class TileEntityFluidValve extends TileEntityCommonOSD implements
     public int packetLimit = -1;
     public int timeLimit = -1;
     public int keepSize = -1;
+    public byte redstoneMode = 0;
 
     @Override
     public boolean canOutputPressurized(boolean consumePower) {
@@ -74,6 +79,17 @@ public class TileEntityFluidValve extends TileEntityCommonOSD implements
             tag.setInteger("timeLimit", timeLimit);
             tag.setInteger("keepSize", keepSize);
             ImmersiveTechnology.packetHandler.sendTo(new MessageTileSync(this, tag), (EntityPlayerMP) player);
+            return true;
+        } else if (player.isSneaking() && Utils.isHammer(heldItem)) {
+            if (++redstoneMode > 2) redstoneMode = 0;
+            String translationKey;
+            switch (redstoneMode) {
+                case 1: translationKey = TranslationKey.OVERLAY_REDSTONE_NORMAL.location; break;
+                case 2: translationKey = TranslationKey.OVERLAY_REDSTONE_INVERTED.location; break;
+                default: translationKey = TranslationKey.OVERLAY_REDSTONE_OFF.location;
+            }
+            ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(translationKey));
+            efficientMarkDirty();
             return true;
         }
         return false;
@@ -196,6 +212,7 @@ public class TileEntityFluidValve extends TileEntityCommonOSD implements
         packetLimit = nbt.getInteger("packetLimit");
         timeLimit = nbt.getInteger("timeLimit");
         keepSize = nbt.getInteger("keepSize");
+        redstoneMode = nbt.getByte("redstoneMode");
     }
 
     @Override
@@ -205,6 +222,7 @@ public class TileEntityFluidValve extends TileEntityCommonOSD implements
         nbt.setInteger("packetLimit", packetLimit);
         nbt.setInteger("timeLimit", timeLimit);
         nbt.setInteger("keepSize", keepSize);
+        nbt.setByte("redstoneMode", redstoneMode);
     }
 
     @Override
@@ -214,7 +232,7 @@ public class TileEntityFluidValve extends TileEntityCommonOSD implements
 
     @Override
     public boolean canHammerRotate(EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase entity) {
-        return true;
+        return !entity.isSneaking();
     }
 
     @Override
@@ -246,6 +264,14 @@ public class TileEntityFluidValve extends TileEntityCommonOSD implements
 
     boolean busy = false;
 
+    public int getRSPower() {
+        int toReturn = 0;
+        for (EnumFacing directions : EnumSet.complementOf(EnumSet.of(facing, facing.getOpposite()))) {
+            toReturn = Math.max(world.getRedstonePower(pos.offset(directions,-1), directions), toReturn);
+        }
+        return toReturn;
+    }
+
     @Override
     public int fill(FluidStack fluidStack, boolean doFill) {
         if (busy) return 0;
@@ -255,6 +281,7 @@ public class TileEntityFluidValve extends TileEntityCommonOSD implements
         canAccept = timeLimit != -1? Math.min(Math.max(timeLimit - longToInt(acceptedAmount), 0), canAccept) : canAccept;
         canAccept = keepSize != -1? Math.min(Math.max(keepSize - getTankFill(destination.getTankProperties(), fluidStack), 0), canAccept) : canAccept;
         canAccept = packetLimit != -1? Math.min(canAccept, packetLimit) : canAccept;
+        if (redstoneMode > 0) canAccept *= (double) (redstoneMode == 1? 15 - getRSPower() : getRSPower())/15;
         if (canAccept == 0) return 0;
         int toReturn = 0;
         busy = true;

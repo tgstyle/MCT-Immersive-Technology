@@ -32,9 +32,12 @@ public enum TranslationKey {
     GUI_FLUID_VALVE_LIMIT_DESTINATION("gui.immersivetech.fluid_valve.limitdestination"),
     KEYWORD_GENERATE("keyword.immersivetech.generate"),
     GUI_TICKS("gui.immersivetech.ticks"),
-    GUI_SECONDS("gui.immersivetech.seconds");
+    GUI_SECONDS("gui.immersivetech.seconds"),
+    OVERLAY_REDSTONE_OFF("overlay.immersivetech.redstone_off"),
+    OVERLAY_REDSTONE_NORMAL("overlay.immersivetech.redstone_normal"),
+    OVERLAY_REDSTONE_INVERTED("overlay.immersivetech.redstone_inverted");
 
-    String location;
+    public String location;
     TranslationKey(String location) {
         this.location = location;
     }

@@ -79,6 +79,9 @@ overlay.immersivetech.osd.trash_fluid.sneaking.secondline=in %s packets during t
 overlay.immersivetech.osd.trash_energy.normal.firstline=%s IF in the last second.
 overlay.immersivetech.osd.trash_energy.sneaking.firstline=Trashed an average of %s IF/t
 overlay.immersivetech.osd.trash_energy.sneaking.secondline=in %s packets during the last minute.
+overlay.immersivetech.redstone_off=Redstone Mode Off.
+overlay.immersivetech.redstone_normal=Redstone Mode Normal.
+overlay.immersivetech.redstone_inverted=Redstone Mode Inverted.
 
 
 #GUI
