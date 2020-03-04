@@ -170,21 +170,6 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
-    //public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
-    	//super.onNeighborChange(world, pos, fromPos);
-        super.neighborChanged(state, world, pos, block, fromPos);
-        if(world.getBlockState(pos).getValue(property)==BlockTypes_MetalDevice1.FLUID_PIPE) mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.indirectConnections.clear();
-    }
-
-    @SuppressWarnings("deprecation")
-	@Override
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.indirectConnections.clear();
-        return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
-    }
-
-    @Override
     public boolean allowHammerHarvest(IBlockState state) {
         return true;
     }
