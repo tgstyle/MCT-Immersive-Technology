@@ -130,7 +130,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave {
             if(this.tanks[1].getFluidAmount() > 0) {
                 FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[1].getFluid(), Math.min(this.tanks[1].getFluidAmount(), 80), false);
                 BlockPos outputPos = this.getPos().add(0, -1, 0).offset(fw, 2);
-                IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
+                IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing.rotateY());
                 if(output != null) {
                     int accepted = output.fill(out, false);
                     if(accepted > 0) {
