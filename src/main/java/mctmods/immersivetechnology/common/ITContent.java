@@ -141,6 +141,7 @@ public class ITContent {
 		registerTile(TileEntityBarrel.class);
 		registerTile(TileEntityCrate.class);
 		registerTile(TileEntityFluidValve.class);
+		registerTile(TileEntityLoadController.class);
 
 		//MORE TEMPORARY STUFF
 		registerTile(TileEntityCokeOvenAdvanced.class);
