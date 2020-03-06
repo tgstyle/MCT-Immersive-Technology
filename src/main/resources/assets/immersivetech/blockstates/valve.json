@@ -10,8 +10,24 @@
 		"inventory,type=fluid_valve": [{
 			"model": "immersivetech:valve/valve.obj"
 		}],
+		"inventory,type=load_controller": [{
+			"model": "immersivetech:it_tunnel",
+			"textures": {
+				"side": "immersivetech:blocks/load_controller_side",
+				"top": "immersivetech:blocks/load_controller_top",
+				"bottom": "immersivetech:blocks/load_controller_bottom"
+			}
+		}],
 		"type": {
-			"fluid_valve": { "model": "immersivetech:valve/valve.obj" }
+			"fluid_valve": { "model": "immersivetech:valve/valve.obj" },
+			"load_controller": {
+				"model": "immersivetech:it_tunnel",
+				"textures": {
+					"side": "immersivetech:blocks/load_controller_side",
+					"top": "immersivetech:blocks/load_controller_top",
+					"bottom": "immersivetech:blocks/load_controller_bottom"
+				}
+			}
 		},
 		"facing": {
 			"north": {
