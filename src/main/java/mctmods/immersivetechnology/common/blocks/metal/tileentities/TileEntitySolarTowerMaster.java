@@ -171,7 +171,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave {
             if(this.tanks[1].getFluidAmount() > 0) {
                 FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[1].getFluid(), Math.min(this.tanks[1].getFluidAmount(), 1000), true);
                 BlockPos outputPos = this.getPos().add(0, -1, 0).offset(facing, 3);
-                IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
+                IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing.getOpposite());
                 if(output != null) {
                     int accepted = output.fill(out, false);
                     if(accepted > 0) {
