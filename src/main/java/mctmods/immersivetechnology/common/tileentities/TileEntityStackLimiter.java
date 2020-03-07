@@ -128,7 +128,7 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
     public int getInventoryFill(IItemHandler dest, ItemStack stack) {
         int count = 0;
         for (int index = 0; index < dest.getSlots(); index++) {
-            ItemStack stackInSlot = dest.getStackInSlot(0);
+            ItemStack stackInSlot = dest.getStackInSlot(index);
             if (!stackInSlot.isItemEqual(stack)) continue;
             count += stackInSlot.getCount();
         }
