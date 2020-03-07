@@ -8,6 +8,7 @@ import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.metal.TileEntityFluidValve;
 import mctmods.immersivetechnology.common.blocks.metal.TileEntityLoadController;
+import mctmods.immersivetechnology.common.blocks.metal.TileEntityStackLimiter;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
@@ -109,6 +110,7 @@ public class CommonProxy implements IGuiHandler {
 			if(ID == ITLib.GUIID_Trash_Item && tile instanceof TileEntityTrashItem) gui = new GuiTrashItem(player.inventory, (TileEntityTrashItem) tile);
 			if(ID == ITLib.GUIID_Fluid_Valve && tile instanceof TileEntityFluidValve) gui = new GuiFluidValve((TileEntityFluidValve) tile);
 			if(ID == ITLib.GUIID_Load_Controller && tile instanceof TileEntityLoadController) gui = new GuiLoadController((TileEntityLoadController) tile);
+			if(ID == ITLib.GUIID_Stack_Limiter && tile instanceof TileEntityStackLimiter) gui = new GuiStackLimiter((TileEntityStackLimiter) tile);
 			return gui;
 		}
 		return null;

@@ -18,6 +18,14 @@
 				"bottom": "immersivetech:blocks/load_controller_bottom"
 			}
 		}],
+		"inventory,type=stack_limiter": [{
+			"model": "immersivetech:it_tunnel",
+			"textures": {
+				"side": "immersivetech:blocks/stack_limiter_side",
+				"top": "immersivetech:blocks/stack_limiter_top",
+				"bottom": "immersivetech:blocks/stack_limiter_bottom"
+			}
+		}],
 		"type": {
 			"fluid_valve": { "model": "immersivetech:valve/valve.obj" },
 			"load_controller": {
@@ -26,6 +34,14 @@
 					"side": "immersivetech:blocks/load_controller_side",
 					"top": "immersivetech:blocks/load_controller_top",
 					"bottom": "immersivetech:blocks/load_controller_bottom"
+				}
+			},
+			"stack_limiter": {
+				"model": "immersivetech:it_tunnel",
+				"textures": {
+					"side": "immersivetech:blocks/stack_limiter_side",
+					"top": "immersivetech:blocks/stack_limiter_top",
+					"bottom": "immersivetech:blocks/stack_limiter_bottom"
 				}
 			}
 		},
