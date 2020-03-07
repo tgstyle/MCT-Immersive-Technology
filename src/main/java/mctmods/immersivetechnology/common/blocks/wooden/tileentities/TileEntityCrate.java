@@ -81,10 +81,7 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
         if (interactiveItemStack.isEmpty()) return ItemStack.EMPTY;
         ItemStack toReturn = interactiveItemStack.copy();
         toReturn.setCount(amount);
-        if(!simulate) {
-            acceptedAmount += amount;
-            packets++;
-        }
+        if(!simulate) acceptedAmount += amount;
         return toReturn;
     }
 
@@ -130,8 +127,7 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 
     @Override
     public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-        return player.isSneaking()? new String[] { textSneakingFirstLine().format((double)average / 20), textSneakingSecondLine().format(packetAverage)} :
-                new String[]{ !interactiveItemStack.isEmpty()? text().format(interactiveItemStack.getDisplayName(), acceptedAmount) : TranslationKey.GUI_EMPTY.text() };
+        return new String[]{ !interactiveItemStack.isEmpty()? text().format(interactiveItemStack.getDisplayName(), lastAcceptedAmount) : TranslationKey.GUI_EMPTY.text() };
     }
 
 	@Override
@@ -152,16 +148,6 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
     @Override
     public TranslationKey text() {
         return TranslationKey.OVERLAY_OSD_CREATIVE_CRATE_NORMAL_FIRST_LINE;
-    }
-
-    @Override
-    public TranslationKey textSneakingFirstLine() {
-        return TranslationKey.OVERLAY_OSD_CREATIVE_CRATE_SNEAKING_FIRST_LINE;
-    }
-
-    @Override
-    public TranslationKey textSneakingSecondLine() {
-        return TranslationKey.OVERLAY_OSD_CREATIVE_CRATE_SNEAKING_SECOND_LINE;
     }
 
 }

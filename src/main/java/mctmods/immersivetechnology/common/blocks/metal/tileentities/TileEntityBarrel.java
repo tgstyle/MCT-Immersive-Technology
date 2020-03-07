@@ -48,10 +48,7 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 		for(int index = 0; index < 6; index++) {
 			EnumFacing face = EnumFacing.getFront(index);
 			IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
-			if(output != null) {
-				acceptedAmount += output.fill(infiniteFluid, true);
-				packets++;
-			}
+			if(output != null) acceptedAmount += output.fill(infiniteFluid, true);
 		}
 	}
 
@@ -134,10 +131,7 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 
 	@Override
 	public FluidStack drain(int maxDrain, boolean doDrain) {
-		if (doDrain) {
-			acceptedAmount += maxDrain;
-			packets++;
-		}
+		if (doDrain) acceptedAmount += maxDrain;
 		return new FluidStack(infiniteFluid, maxDrain);
 	}
 
@@ -186,23 +180,12 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		return player.isSneaking()? new String[] { textSneakingFirstLine().format((double)average / 20), textSneakingSecondLine().format(packetAverage)} :
-				new String[]{ infiniteFluid != null? text().format(infiniteFluid.getFluid().getName(), acceptedAmount) : TranslationKey.GUI_EMPTY.text() };
+		return new String[]{ infiniteFluid != null? text().format(infiniteFluid.getFluid().getName(), lastAcceptedAmount) : TranslationKey.GUI_EMPTY.text() };
 	}
 
 	@Override
 	public TranslationKey text() {
 		return TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE;
-	}
-
-	@Override
-	public TranslationKey textSneakingFirstLine() {
-		return TranslationKey.OVERLAY_OSD_BARREL_SNEAKING_FIRST_LINE;
-	}
-
-	@Override
-	public TranslationKey textSneakingSecondLine() {
-		return TranslationKey.OVERLAY_OSD_BARREL_SNEAKING_SECOND_LINE;
 	}
 
 }
