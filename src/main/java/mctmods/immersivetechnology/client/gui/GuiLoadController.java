@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.client.gui;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.common.blocks.metal.TileEntityFluidValve;
 import mctmods.immersivetechnology.common.blocks.metal.TileEntityLoadController;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -12,7 +11,6 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.input.Keyboard;
-
 import java.awt.*;
 import java.io.IOException;
 
