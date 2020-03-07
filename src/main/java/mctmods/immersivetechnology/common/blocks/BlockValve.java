@@ -1,9 +1,9 @@
-package mctmods.immersivetechnology.common.blocks.metal;
+package mctmods.immersivetechnology.common.blocks;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import mctmods.immersivetechnology.common.blocks.BlockITBase;
-import mctmods.immersivetechnology.common.blocks.BlockITTileProvider;
-import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
+import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
+import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
+import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;

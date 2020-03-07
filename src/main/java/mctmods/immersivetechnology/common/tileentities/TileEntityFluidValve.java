@@ -1,49 +1,33 @@
-package mctmods.immersivetechnology.common.blocks.metal;
+package mctmods.immersivetechnology.common.tileentities;
 
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
-import blusunrize.immersiveengineering.common.util.ChatUtils;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.Utils;
-import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.client.gui.GuiFluidValve;
-import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.EnumSet;
 
-public class TileEntityFluidValve extends TileEntityCommonOSD implements IDirectionalTile, IFluidHandler, IFluidPipe, IGuiTile, IPlayerInteraction {
-
-    public EnumFacing facing = EnumFacing.NORTH;
+public class TileEntityFluidValve extends TileEntityCommonValve implements IFluidHandler, IFluidPipe, IEBlockInterfaces.IBlockBounds {
 
     public static DummyTank dummyTank = new DummyTank();
 
-    public int packetLimit = -1;
-    public int timeLimit = -1;
-    public int keepSize = -1;
-    public byte redstoneMode = 0;
+    public TileEntityFluidValve() {
+        super(  TranslationKey.OVERLAY_OSD_FLUID_VALVE_NORMAL_FIRST_LINE,
+                TranslationKey.OVERLAY_OSD_FLUID_VALVE_SNEAKING_FIRST_LINE,
+                TranslationKey.OVERLAY_OSD_FLUID_VALVE_SNEAKING_SECOND_LINE,
+                ITLib.GUIID_Fluid_Valve);
+    }
 
     @Override
     public boolean canOutputPressurized(boolean consumePower) {
@@ -56,62 +40,8 @@ public class TileEntityFluidValve extends TileEntityCommonOSD implements IDirect
     }
 
     @Override
-    public boolean canOpenGui() {
-        return true;
-    }
-
-    @Override
-    public int getGuiID() {
-        return ITLib.GUIID_Fluid_Valve;
-    }
-
-    @Nullable
-    @Override
-    public TileEntity getGuiMaster() {
-        return this;
-    }
-
-    @Override
-    public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote && !Utils.isHammer(heldItem)) {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setInteger("packetLimit", packetLimit);
-            tag.setInteger("timeLimit", timeLimit);
-            tag.setInteger("keepSize", keepSize);
-            ImmersiveTechnology.packetHandler.sendTo(new MessageTileSync(this, tag), (EntityPlayerMP) player);
-            return true;
-        } else if (player.isSneaking() && Utils.isHammer(heldItem)) {
-            if (++redstoneMode > 2) redstoneMode = 0;
-            String translationKey;
-            switch (redstoneMode) {
-                case 1: translationKey = TranslationKey.OVERLAY_REDSTONE_NORMAL.location; break;
-                case 2: translationKey = TranslationKey.OVERLAY_REDSTONE_INVERTED.location; break;
-                default: translationKey = TranslationKey.OVERLAY_REDSTONE_OFF.location;
-            }
-            ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(translationKey));
-            efficientMarkDirty();
-            return true;
-        }
-        return false;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void receiveMessageFromServer(NBTTagCompound message) {
-        if (message.hasKey("packetLimit")) {
-            packetLimit = message.getInteger("packetLimit");
-            timeLimit = message.getInteger("timeLimit");
-            keepSize = message.getInteger("keepSize");
-            Minecraft.getMinecraft().displayGuiScreen(new GuiFluidValve(this));
-        } else super.receiveMessageFromServer(message);
-    }
-
-    @Override
-    public void receiveMessageFromClient(NBTTagCompound message) {
-        packetLimit = message.getInteger("packetLimit");
-        timeLimit = message.getInteger("timeLimit");
-        keepSize = message.getInteger("keepSize");
-        efficientMarkDirty();
+    public void showGui() {
+        Minecraft.getMinecraft().displayGuiScreen(new GuiFluidValve(this));
     }
 
     public static class DummyTank implements IFluidHandler, IFluidTankProperties {
@@ -190,71 +120,6 @@ public class TileEntityFluidValve extends TileEntityCommonOSD implements IDirect
         return super.getCapability(capability, facing);
     }
 
-    @Override
-    public EnumFacing getFacing() {
-        return this.facing;
-    }
-
-    @Override
-    public void setFacing(EnumFacing facing) {
-        this.facing = facing;
-    }
-
-    @Override
-    public int getFacingLimitation() {
-        return 0;
-    }
-
-    @Override
-    public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-        super.readCustomNBT(nbt, descPacket);
-        facing = EnumFacing.getFront(nbt.getByte("facing"));
-        packetLimit = nbt.getInteger("packetLimit");
-        timeLimit = nbt.getInteger("timeLimit");
-        keepSize = nbt.getInteger("keepSize");
-        redstoneMode = nbt.getByte("redstoneMode");
-    }
-
-    @Override
-    public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-        super.writeCustomNBT(nbt, descPacket);
-        nbt.setByte("facing", (byte)facing.getIndex());
-        nbt.setInteger("packetLimit", packetLimit);
-        nbt.setInteger("timeLimit", timeLimit);
-        nbt.setInteger("keepSize", keepSize);
-        nbt.setByte("redstoneMode", redstoneMode);
-    }
-
-    @Override
-    public boolean mirrorFacingOnPlacement(EntityLivingBase placer) {
-        return false;
-    }
-
-    @Override
-    public boolean canHammerRotate(EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase entity) {
-        return !entity.isSneaking();
-    }
-
-    @Override
-    public boolean canRotate(EnumFacing axis) {
-        return true;
-    }
-
-    @Override
-    public TranslationKey text() {
-        return TranslationKey.OVERLAY_OSD_FLUID_VALVE_NORMAL_FIRST_LINE;
-    }
-
-    @Override
-    public TranslationKey textSneakingFirstLine() {
-        return TranslationKey.OVERLAY_OSD_FLUID_VALVE_SNEAKING_FIRST_LINE;
-    }
-
-    @Override
-    public TranslationKey textSneakingSecondLine() {
-        return TranslationKey.OVERLAY_OSD_FLUID_VALVE_SNEAKING_SECOND_LINE;
-    }
-
     IFluidTankProperties[] tank = new IFluidTankProperties[] { new FluidTankProperties(null, Integer.MAX_VALUE, true, false) };
 
     @Override
@@ -263,14 +128,6 @@ public class TileEntityFluidValve extends TileEntityCommonOSD implements IDirect
     }
 
     boolean busy = false;
-
-    public int getRSPower() {
-        int toReturn = 0;
-        for (EnumFacing directions : EnumSet.complementOf(EnumSet.of(facing, facing.getOpposite()))) {
-            toReturn = Math.max(world.getRedstonePower(pos.offset(directions,-1), directions), toReturn);
-        }
-        return toReturn;
-    }
 
     @Override
     public int fill(FluidStack fluidStack, boolean doFill) {
@@ -292,10 +149,6 @@ public class TileEntityFluidValve extends TileEntityCommonOSD implements IDirect
             packets++;
         }
         return toReturn;
-    }
-
-    public static int longToInt(long value) {
-        return value > Integer.MAX_VALUE? Integer.MAX_VALUE : value < Integer.MIN_VALUE? Integer.MIN_VALUE : (int) value;
     }
 
     public static int getTankFill(IFluidTankProperties[] properties, FluidStack toFill) {
