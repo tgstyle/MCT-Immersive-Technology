@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.client.gui;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
+import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import net.minecraft.client.Minecraft;
@@ -15,14 +15,14 @@ import org.lwjgl.input.Keyboard;
 import java.awt.*;
 import java.io.IOException;
 
-public class GuiFluidValve extends GuiScreen {
+public class GuiStackLimiter extends GuiScreen {
 
-    TileEntityFluidValve tile;
+    TileEntityStackLimiter tile;
     GuiTextField limitPacket;
     GuiTextField limitTime;
     GuiTextField destinationKeep;
 
-    public GuiFluidValve(TileEntityFluidValve tile) {
+    public GuiStackLimiter(TileEntityStackLimiter tile) {
         this.tile = tile;
     }
 
@@ -63,11 +63,11 @@ public class GuiFluidValve extends GuiScreen {
         drawModalRectWithCustomSizedTexture((resolution.getScaledWidth() - 216) / 2, (resolution.getScaledHeight() - 82) / 2, 0, 0, 216, 88, 216, 88);
         drawString(this.fontRenderer, TranslationKey.GUI_FLUID_VALVE_FIRSTLINE.text(), width / 2 - 85, height / 2 - 28, Color.WHITE.getRGB());
         limitPacket.drawTextBox();
-        drawString(this.fontRenderer, TranslationKey.GUI_FLUID_VALVE_LIMIT_PACKET.text(), width / 2 - 30, height / 2 - 13, Color.WHITE.getRGB());
+        drawString(this.fontRenderer, TranslationKey.GUI_STACK_LIMITER_LIMIT_PACKET.text(), width / 2 - 30, height / 2 - 13, Color.WHITE.getRGB());
         limitTime.drawTextBox();
-        drawString(this.fontRenderer, TranslationKey.GUI_FLUID_VALVE_LIMIT_TIME.text(), width / 2 - 30, height / 2 + 5, Color.WHITE.getRGB());
+        drawString(this.fontRenderer, TranslationKey.GUI_STACK_LIMITER_LIMIT_TIME.text(), width / 2 - 30, height / 2 + 5, Color.WHITE.getRGB());
         destinationKeep.drawTextBox();
-        drawString(this.fontRenderer, TranslationKey.GUI_FLUID_VALVE_LIMIT_DESTINATION.text(), width / 2 - 30, height / 2 + 23, Color.WHITE.getRGB());
+        drawString(this.fontRenderer, TranslationKey.GUI_STACK_LIMITER_LIMIT_DESTINATION.text(), width / 2 - 30, height / 2 + 23, Color.WHITE.getRGB());
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 

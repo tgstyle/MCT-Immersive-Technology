@@ -29,6 +29,10 @@ import mctmods.immersivetechnology.common.blocks.wooden.BlockWoodenCrate;
 import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityCrate;
 import mctmods.immersivetechnology.common.fluid.FluidColored;
 import mctmods.immersivetechnology.common.items.ItemITBase;
+import mctmods.immersivetechnology.common.blocks.BlockValve;
+import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
+import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
+import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -142,6 +146,7 @@ public class ITContent {
 		registerTile(TileEntityCrate.class);
 		registerTile(TileEntityFluidValve.class);
 		registerTile(TileEntityLoadController.class);
+		registerTile(TileEntityStackLimiter.class);
 
 		//MORE TEMPORARY STUFF
 		registerTile(TileEntityCokeOvenAdvanced.class);

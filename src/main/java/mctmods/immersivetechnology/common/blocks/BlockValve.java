@@ -1,9 +1,9 @@
-package mctmods.immersivetechnology.common.blocks.metal;
+package mctmods.immersivetechnology.common.blocks;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import mctmods.immersivetechnology.common.blocks.BlockITBase;
-import mctmods.immersivetechnology.common.blocks.BlockITTileProvider;
-import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
+import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
+import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
+import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -25,13 +25,15 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
         switch (type) {
             case FLUID_VALVE: return new TileEntityFluidValve();
             case LOAD_CONTROLLER: return new TileEntityLoadController();
+            case STACK_LIMITER: return new TileEntityStackLimiter();
         }
         return null;
     }
 
     public enum BlockType_Valve implements IStringSerializable, BlockITBase.IBlockEnum {
         FLUID_VALVE,
-        LOAD_CONTROLLER;
+        LOAD_CONTROLLER,
+        STACK_LIMITER;
 
         @Override
         public String getName() {
