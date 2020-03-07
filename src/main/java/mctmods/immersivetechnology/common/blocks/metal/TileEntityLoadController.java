@@ -263,12 +263,16 @@ public class TileEntityLoadController extends TileEntityCommonOSD implements IDi
 
     @Override
     public int getEnergyStored() {
-        return getDestination().getEnergyStored();
+        IEnergyStorage dest = getDestination();
+        if (dest == null) return 0;
+        return dest.getEnergyStored();
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return getDestination().getMaxEnergyStored();
+        IEnergyStorage dest = getDestination();
+        if (dest == null) return 0;
+        return dest.getMaxEnergyStored();
     }
 
     @Override
@@ -283,12 +287,16 @@ public class TileEntityLoadController extends TileEntityCommonOSD implements IDi
 
     @Override
     public int getEnergyStored(EnumFacing enumFacing) {
-        return enumFacing == facing? getDestination().getEnergyStored() : 0;
+        IEnergyStorage dest = getDestination();
+        if (dest == null) return 0;
+        return enumFacing == facing? dest.getEnergyStored() : 0;
     }
 
     @Override
     public int getMaxEnergyStored(EnumFacing enumFacing) {
-        return enumFacing == facing? getDestination().getMaxEnergyStored() : 0;
+        IEnergyStorage dest = getDestination();
+        if (dest == null) return 0;
+        return enumFacing == facing? dest.getMaxEnergyStored() : 0;
     }
 
     @Override
