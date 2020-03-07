@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import mctmods.immersivetechnology.api.ITLib;
-import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
+import mctmods.immersivetechnology.common.util.ITrashCanBounds;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -17,7 +17,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHandler, IGuiTile {
+public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHandler, IGuiTile, ITrashCanBounds {
 
 	public DummyInventory inv = new DummyInventory();
 
@@ -137,17 +137,8 @@ public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHan
 	@Nonnull
 	@Override
 	public ItemStack insertItem(int i, @Nonnull ItemStack itemStack, boolean simulate) {
-		ItemStack returnStack;
-		long canFit = Config.ITConfig.Trash.item_max_void_rate - acceptedAmount;
-		if(itemStack.getCount() > canFit) {
-			returnStack = itemStack.copy();
-			returnStack.setCount(itemStack.getCount() - (int)Math.min(canFit, Integer.MAX_VALUE));
-		} else returnStack = ItemStack.EMPTY;
-		if(!simulate) {
-			acceptedAmount += itemStack.getCount() - returnStack.getCount();
-			packets++;
-		}
-		return returnStack;
+		if(!simulate) acceptedAmount += itemStack.getCount();
+		return ItemStack.EMPTY;
 	}
 
 	@Nonnull
@@ -184,15 +175,5 @@ public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHan
 	@Override
 	public TranslationKey text() {
 		return TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE;
-	}
-
-	@Override
-	public TranslationKey textSneakingFirstLine() {
-		return TranslationKey.OVERLAY_OSD_TRASH_ITEM_SNEAKING_FIRST_LINE;
-	}
-
-	@Override
-	public TranslationKey textSneakingSecondLine() {
-		return TranslationKey.OVERLAY_OSD_TRASH_ITEM_SNEAKING_SECOND_LINE;
 	}
 }
