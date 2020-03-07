@@ -39,6 +39,7 @@ tile.immersivetech.metal_barrel.barrel.name=Creative Barrel
 tile.immersivetech.metal_barrel.barrel_open.name=Open Barrel
 tile.immersivetech.valve.fluid_valve.name=Fluid Valve
 tile.immersivetech.valve.load_controller.name=Load Controller
+tile.immersivetech.valve.stack_limiter.name=Stack Limiter
 #WOODEN
 tile.immersivetech.wooden_crate.crate.name=Creative Crate
 
@@ -68,6 +69,9 @@ overlay.immersivetech.osd.fluid_valve.sneaking.secondline=in %s packets during t
 overlay.immersivetech.osd.load_controller.normal.firstline=Allowed %s IF in the last second.
 overlay.immersivetech.osd.load_controller.sneaking.firstline=Allowed an average of %s IF/t
 overlay.immersivetech.osd.load_controller.sneaking.secondline=in %s packets during the last minute.
+overlay.immersivetech.osd.stack_limiter.normal.firstline=Allowed %s items in the last second.
+overlay.immersivetech.osd.stack_limiter.sneaking.firstline=Allowed an average of %s items/t
+overlay.immersivetech.osd.stack_limiter.sneaking.secondline=in %s packets during the last minute.
 overlay.immersivetech.osd.barrel.normal.firstline=%s : Provided %s mB in the last second.
 overlay.immersivetech.osd.barrel.sneaking.firstline=Provided an average of %s mB/t
 overlay.immersivetech.osd.barrel.sneaking.secondline=in %s packets during the last minute.
@@ -101,6 +105,9 @@ gui.immersivetech.fluid_valve.limitdestination=mB in output tank
 gui.immersivetech.load_controller.limitpacket=IF per packet
 gui.immersivetech.load_controller.limittime=IF per second
 gui.immersivetech.load_controller.limitdestination=IF in output storage
+gui.immersivetech.stack_limiter.limitpacket=Items per packet
+gui.immersivetech.stack_limiter.limittime=Items per second
+gui.immersivetech.stack_limiter.limitdestination=Items in output storage
 
 
 #STONE MULTIBLOCKS
