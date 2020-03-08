@@ -8,7 +8,6 @@ public class Config {
 	public static class ITConfig {
 		public static Machines machines;
 		public static MechanicalEnergy mechanicalenergy;
-		public static Trash trash;
 		public static SteelTank steeltank;
 		public static Experimental experimental;
 
@@ -120,15 +119,6 @@ public class Config {
 		public static class MechanicalEnergy {
 			@Comment({"The maximum speed that machines can tolerate in RPM [Default=1800]"})
 			public static int mechanicalEnergy_speed_max = 1800;
-		}
-
-		public static class Trash {
-			@Comment({"Maximum amount of energy that can be voided per second [Default=2147483647]"})
-			public static int energy_max_void_rate = Integer.MAX_VALUE;
-			@Comment({"Maximum amount of fluid, in mB, that can be voided per second [Default=2147483647]"})
-			public static int fluid_max_void_rate = Integer.MAX_VALUE;
-			@Comment({"Maximum amount of items that can be voided per second [Default=2147483647]"})
-			public static int item_max_void_rate = Integer.MAX_VALUE;
 		}
 
 		public static class SteelTank {
