@@ -122,7 +122,8 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
             acceptedAmount += (toReturn == ItemStack.EMPTY)? canAccept : canAccept - toReturn.getCount();
             packets++;
         }
-        return toReturn;
+        return new ItemStack(itemStack.getItem(), (toReturn == ItemStack.EMPTY)? itemStack.getCount() - canAccept :
+                toReturn.getCount() + itemStack.getCount() - canAccept);
     }
 
     public int getInventoryFill(IItemHandler dest, ItemStack stack) {
