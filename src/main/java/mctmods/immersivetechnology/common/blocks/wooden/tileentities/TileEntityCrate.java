@@ -1,15 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.wooden.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
-import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
@@ -19,9 +15,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler, IGuiTile, IPlayerInteraction {
-
-	public InventoryBasic inv = new InventoryBasic("crate", false, 1);
+public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler, IPlayerInteraction {
 
     public ItemStack visibleItemStack = ItemStack.EMPTY;
     public ItemStack interactiveItemStack = ItemStack.EMPTY;
@@ -129,21 +123,6 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
     public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
         return new String[]{ !interactiveItemStack.isEmpty()? text().format(interactiveItemStack.getDisplayName(), lastAcceptedAmount) : TranslationKey.GUI_EMPTY.text() };
     }
-
-	@Override
-	public boolean canOpenGui() {
-		return true;
-	}
-
-	@Override
-	public int getGuiID() {
-		return ITLib.GUIID_Crate_Item;
-	}
-
-	@Override
-	public TileEntity getGuiMaster() {
-		return this;
-	}
     
     @Override
     public TranslationKey text() {
