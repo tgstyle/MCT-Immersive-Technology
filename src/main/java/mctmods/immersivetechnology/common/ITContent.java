@@ -146,6 +146,7 @@ public class ITContent {
 		registerTile(TileEntityTrashFluid.class);
 		registerTile(TileEntityTrashEnergy.class);
 		registerTile(TileEntityBarrel.class);
+		registerTile(TileEntityBarrelOpen.class);
 		registerTile(TileEntityCrate.class);
 		registerTile(TileEntityFluidValve.class);
 		registerTile(TileEntityLoadController.class);
@@ -159,14 +160,13 @@ public class ITContent {
 		registerTile(TileEntityDistiller.class);
 		registerTile(TileEntitySolarTower.class);
 		registerTile(TileEntitySolarReflector.class);
-
-		registerTile(TileEntityBarrelOpen.class);
 		
 		/*MULTIBLOCK TILE ENTITIES*/
-		if(Multiblock.enable_distiller) {
-			registerTile(TileEntityDistillerSlave.class);
-			registerTile(TileEntityDistillerMaster.class);
-			MultiblockHandler.registerMultiblock(MultiblockDistiller.instance);
+		if(Multiblock.enable_advancedCokeOven) {
+			registerTile(TileEntityCokeOvenAdvancedSlave.class);
+			registerTile(TileEntityCokeOvenAdvancedMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockCokeOvenAdvanced.instance);
+			registerTile(TileEntityCokeOvenPreheater.class);
 		}
 		if(Multiblock.enable_alternator) {
 			registerTile(TileEntityAlternatorSlave.class);
@@ -178,33 +178,28 @@ public class ITContent {
 			registerTile(TileEntityBoilerMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockBoiler.instance);
 		}
-		if(Multiblock.enable_advancedCokeOven) {
-			registerTile(TileEntityCokeOvenAdvancedSlave.class);
-			registerTile(TileEntityCokeOvenAdvancedMaster.class);
-			MultiblockHandler.registerMultiblock(MultiblockCokeOvenAdvanced.instance);
-			registerTile(TileEntityCokeOvenPreheater.class);
-		}
-		if(Multiblock.enable_solarReflector) {
-			registerTile(TileEntitySolarReflectorSlave.class);
-			registerTile(TileEntitySolarReflectorMaster.class);
-			MultiblockHandler.registerMultiblock(MultiblockSolarReflector.instance);
+		if(Multiblock.enable_distiller) {
+			registerTile(TileEntityDistillerSlave.class);
+			registerTile(TileEntityDistillerMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockDistiller.instance);
 		}
 		if(Multiblock.enable_solarTower) {
 			registerTile(TileEntitySolarTowerSlave.class);
 			registerTile(TileEntitySolarTowerMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockSolarTower.instance);
+			registerTile(TileEntitySolarReflectorSlave.class);
+			registerTile(TileEntitySolarReflectorMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockSolarReflector.instance);
 		}
 		if(Multiblock.enable_steamTurbine) {
 			registerTile(TileEntitySteamTurbineSlave.class);
 			registerTile(TileEntitySteamTurbineMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
 		}
-
 		registerTile(TileEntitySteelSheetmetalTank.class);
 		registerTile(TileEntitySteelSheetmetalTankSlave.class);
 		registerTile(TileEntitySteelSheetmetalTankMaster.class);
 		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
-
 		if(Experimental.replace_IE_pipes) {
 			TileEntityFluidPipe.initCovers();
 			IEContent.registerTile(TileEntityFluidPipe.class);
