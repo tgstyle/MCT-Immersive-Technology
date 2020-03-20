@@ -157,18 +157,13 @@ public class ITContent {
 		registerTile(TileEntityDistiller.class);
 		registerTile(TileEntitySolarTower.class);
 		registerTile(TileEntitySolarReflector.class);
-		
+
 		/*MULTIBLOCK TILE ENTITIES*/
 		if(Multiblock.enable_advancedCokeOven) {
 			registerTile(TileEntityCokeOvenAdvancedSlave.class);
 			registerTile(TileEntityCokeOvenAdvancedMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockCokeOvenAdvanced.instance);
 			registerTile(TileEntityCokeOvenPreheater.class);
-		}
-		if(Multiblock.enable_alternator) {
-			registerTile(TileEntityAlternatorSlave.class);
-			registerTile(TileEntityAlternatorMaster.class);
-			MultiblockHandler.registerMultiblock(MultiblockAlternator.instance);
 		}
 		if(Multiblock.enable_boiler) {
 			registerTile(TileEntityBoilerSlave.class);
@@ -189,6 +184,9 @@ public class ITContent {
 			MultiblockHandler.registerMultiblock(MultiblockSolarReflector.instance);
 		}
 		if(Multiblock.enable_steamTurbine) {
+			registerTile(TileEntityAlternatorSlave.class);
+			registerTile(TileEntityAlternatorMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockAlternator.instance);
 			registerTile(TileEntitySteamTurbineSlave.class);
 			registerTile(TileEntitySteamTurbineMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
