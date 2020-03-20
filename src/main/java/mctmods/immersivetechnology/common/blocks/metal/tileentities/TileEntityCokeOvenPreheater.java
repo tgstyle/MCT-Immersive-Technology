@@ -8,6 +8,7 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IEForgeEnergyWrapper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.CokeOvenPreheater;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,8 +16,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIEInternalFluxHandler, IDirectionalTile, IHasDummyBlocks {
 	public EnumFacing facing = EnumFacing.NORTH;
@@ -28,7 +31,7 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 	public boolean dummy = false;
 	public boolean active = false;
 
-	private int dummyNum = 0;
+	public BlockPos masterPos;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -48,6 +51,7 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 	}
 	
 	public boolean doSpeedup() {
+		if (dummy) return false;
 		int consumed = cokeOvenConsumption;
 		if(this.energyStorage.extractEnergy(consumed, true) == consumed) {
 			if(!active) {
@@ -81,28 +85,33 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 
 	@Override
 	public void placeDummies(BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ) {
-		EnumFacing dummyDir = facing.getAxis() == Axis.X ? EnumFacing.NORTH : EnumFacing.WEST;
-		BlockPos[] dummyPos = new BlockPos[2];
-		dummyPos[0] = pos.offset(dummyDir);
-		dummyPos[1] = pos.offset(dummyDir.getOpposite());
-		for(int i = 0; i < 2; i++) {
-			world.setBlockState(dummyPos[i], state);
-			((TileEntityCokeOvenPreheater) world.getTileEntity(dummyPos[i])).dummy = true;
-			((TileEntityCokeOvenPreheater) world.getTileEntity(dummyPos[i])).facing = this.facing;
-			((TileEntityCokeOvenPreheater) world.getTileEntity(dummyPos[i])).dummyNum = i + 1;
-		}
+		BlockPos dummyPos = pos.offset(facing.rotateY());
+		world.setBlockState(dummyPos, state);
+		TileEntityCokeOvenPreheater dummyTE = (TileEntityCokeOvenPreheater) world.getTileEntity(dummyPos);
+		dummyTE.dummy = true;
+		dummyTE.facing = facing.rotateY();
+
+		dummyPos = pos.offset(facing.rotateYCCW());
+		world.setBlockState(dummyPos, state);
+		dummyTE = (TileEntityCokeOvenPreheater) world.getTileEntity(dummyPos);
+		dummyTE.dummy = true;
+		dummyTE.facing = facing.rotateYCCW();
 	}
 
 	@Override
-	public void breakDummies(BlockPos pos, IBlockState state) {
-		EnumFacing dummyDir = facing.getAxis() == Axis.X ? EnumFacing.NORTH : EnumFacing.WEST;
-		BlockPos[] dummyPos = new BlockPos[2];
-		dummyPos[0] = pos.offset(dummyDir);
-		dummyPos[1] = pos.offset(dummyDir.getOpposite());
-		for(int i = 0; i < 2; i++) {
-			if(world.getTileEntity(dummyPos[i]) instanceof TileEntityCokeOvenPreheater) {
-				world.setBlockToAir(dummyPos[i]);
-			}
+	public void breakDummies(BlockPos unused, IBlockState unused2) {
+		if (dummy) {
+			if (masterPos == null) findMaster();
+			TileEntity tile = world.getTileEntity(masterPos);
+			if(tile instanceof TileEntityCokeOvenPreheater) ((TileEntityCokeOvenPreheater) tile).breakDummies(null, null);
+		} else {
+			BlockPos dummyPos0 = getPos().offset(facing.rotateY());
+			TileEntityCokeOvenPreheater dummy0 = (TileEntityCokeOvenPreheater)world.getTileEntity(dummyPos0);
+			BlockPos dummyPos1 = getPos().offset(facing.rotateYCCW());
+			TileEntityCokeOvenPreheater dummy1 = (TileEntityCokeOvenPreheater)world.getTileEntity(dummyPos1);
+			if (dummy0 != null) world.setBlockToAir(dummyPos0);
+			if (dummy1 != null) world.setBlockToAir(dummyPos1);
+			world.setBlockToAir(getPos());
 		}
 	}
 
@@ -141,16 +150,46 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 		return false;
 	}
 
+	private void findMaster() {
+		if (!dummy) {
+			masterPos = getPos();
+			return;
+		}
+		TileEntity tile = world.getTileEntity(getPos().offset(facing, -1));
+		if (tile instanceof TileEntityCokeOvenPreheater && ((TileEntityCokeOvenPreheater) tile).isMaster(this)) {
+			masterPos = getPos().offset(facing, -1);
+			return;
+		}
+		tile = world.getTileEntity(getPos().offset(facing.rotateY()));
+		if (tile instanceof TileEntityCokeOvenPreheater && ((TileEntityCokeOvenPreheater) tile).isMaster(this)) { //DUMB SHIT PART 1
+			masterPos = getPos().offset(facing.rotateY());
+			facing = facing.rotateYCCW();
+			this.markContainingBlockForUpdate(null);
+			return;
+		}
+		tile = world.getTileEntity(getPos().offset(facing.rotateYCCW()));
+		if (tile instanceof TileEntityCokeOvenPreheater && ((TileEntityCokeOvenPreheater) tile).isMaster(this)) { //DUMB SHIT PART 2
+			masterPos = getPos().offset(facing.rotateYCCW());
+			facing = facing.rotateY();
+			this.markContainingBlockForUpdate(null);
+			return;
+		}
+		masterPos = getPos();
+	}
+
+	private boolean isMaster(TileEntityCokeOvenPreheater requester) {
+		if (dummy || requester == null) return false;
+		BlockPos dummyPos = getPos().offset(facing.rotateY());
+		if (requester == world.getTileEntity(dummyPos)) return true;
+		dummyPos = getPos().offset(facing.rotateYCCW());
+		return (requester == world.getTileEntity(dummyPos));
+	}
+
 	@Override
 	public FluxStorage getFluxStorage() {
-		if(dummyNum > 0) {
-			EnumFacing dummyDir = facing.getAxis() == Axis.X ? EnumFacing.NORTH : EnumFacing.WEST;
-			TileEntity tile;
-			if(dummyNum == 1) {
-				tile = world.getTileEntity(getPos().offset(dummyDir.getOpposite(), 1));
-			} else {
-				tile = world.getTileEntity(getPos().offset(dummyDir, 1));
-			}
+		if(dummy) {
+			if (masterPos == null) findMaster();
+			TileEntity tile = world.getTileEntity(masterPos);
 			if(tile instanceof TileEntityCokeOvenPreheater) return ((TileEntityCokeOvenPreheater)tile).getFluxStorage();
 		}
 		return energyStorage;
