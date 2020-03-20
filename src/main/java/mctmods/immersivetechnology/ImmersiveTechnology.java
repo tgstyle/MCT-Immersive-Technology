@@ -88,7 +88,7 @@ public class ImmersiveTechnology {
 		}
 		@Override
 		public ItemStack getIconItemStack() {
-			return new ItemStack(IEContent.blockMetalDecoration0, 1, 6);
+			return new ItemStack(ITContent.blockValve, 1, 0);
 		}
 	};
 
