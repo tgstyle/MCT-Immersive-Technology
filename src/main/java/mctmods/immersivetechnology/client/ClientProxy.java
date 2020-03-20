@@ -234,15 +234,15 @@ public class ClientProxy extends CommonProxy {
 		if(Multiblock.enable_solarTower) {
 			ManualHelper.addEntry("solarTower", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "solarTower0", MultiblockSolarTower.instance), new ManualPages.Text(ManualHelper.getManual(), "solarTower1"), new ManualPageMultiblock(ManualHelper.getManual(), "solarTower2", MultiblockSolarReflector.instance), new ManualPages.Text(ManualHelper.getManual(), "solarTower3"));
 		}
-		ManualHelper.addEntry("stackLimiter", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "stackLimiter0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.STACK_LIMITER.getMeta())));
 		if(Multiblock.enable_steamTurbine) {
 			ManualHelper.addEntry("alternator", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "alternator0", MultiblockAlternator.instance), new ManualPages.Text(ManualHelper.getManual(), "alternator1"), new ManualPages.Image(ManualHelper.getManual(), "alternator2", "immersivetech:textures/misc/alternator.png;0;0;110;50"));
 			ManualHelper.addEntry("steamTurbine", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", MultiblockSteamTurbine.instance), new ManualPages.Text(ManualHelper.getManual(), "steamTurbine1"), new ManualPages.Text(ManualHelper.getManual(), "steamTurbine2"));
 		}
 		ManualHelper.addEntry("fluidValve", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "fluidValve0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.FLUID_VALVE.getMeta())));
 		ManualHelper.addEntry("loadController", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "loadController0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.LOAD_CONTROLLER.getMeta())));
-		ManualHelper.addEntry("steelTank", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "steelTank0", MultiblockSteelSheetmetalTank.instance), new ManualPages.Text(ManualHelper.getManual(), "steelTank1"));
 		ManualHelper.addEntry("redstone", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "redstone0", new ItemStack(ITContent.blockConnectors, 1, BlockType_Connectors.CONNECTORS_TIMER.getMeta())));
+		ManualHelper.addEntry("stackLimiter", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "stackLimiter0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.STACK_LIMITER.getMeta())));
+		ManualHelper.addEntry("steelTank", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "steelTank0", MultiblockSteelSheetmetalTank.instance), new ManualPages.Text(ManualHelper.getManual(), "steelTank1"));
 	}
 
 	private static void mapFluidState(Block block, Fluid fluid)	{
