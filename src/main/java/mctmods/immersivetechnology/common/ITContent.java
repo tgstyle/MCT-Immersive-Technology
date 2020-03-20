@@ -14,6 +14,7 @@ import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.Config.ITConfig.SteelTank;
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import mctmods.immersivetechnology.common.blocks.BlockITFluid;
+import mctmods.immersivetechnology.common.blocks.BlockValve;
 import mctmods.immersivetechnology.common.blocks.connectors.BlockConnectors;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.metal.*;
@@ -25,8 +26,13 @@ import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCok
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
+import mctmods.immersivetechnology.common.blocks.wooden.BlockWoodenCrate;
+import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityCrate;
 import mctmods.immersivetechnology.common.fluid.FluidColored;
 import mctmods.immersivetechnology.common.items.ItemITBase;
+import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
+import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
+import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -63,9 +69,13 @@ public class ITContent {
 	public static BlockITBase<?> blockMetalDevice;
 	public static BlockITBase<?> blockMetalTrash;
 	public static BlockITBase<?> blockMetalBarrel;
+	public static BlockITBase<?> blockValve;
 
 	/*STONE*/
 	public static BlockITBase<?> blockStoneDecoration;
+
+	/*WOODEN*/
+	public static BlockITBase<?> blockWoodenCrate;
 
 	/*FLUID BLOCKS*/
 	public static BlockITFluid blockFluidDistWater;
@@ -93,9 +103,13 @@ public class ITContent {
 		blockMetalDevice = new BlockMetalDevice();
 		blockMetalTrash = new BlockMetalTrash();
 		blockMetalBarrel = new BlockMetalBarrel();
+		blockValve = new BlockValve();
 
 		/*STONE*/
 		blockStoneDecoration = new BlockStoneDecoration();
+		
+		/*WOODEN*/
+		blockWoodenCrate = new BlockWoodenCrate();
 
 		/*FLUIDS*/
 		fluidSteam = new FluidColored("steam", 0x3E444F, -100, 500, true);
@@ -129,6 +143,11 @@ public class ITContent {
 		registerTile(TileEntityTrashFluid.class);
 		registerTile(TileEntityTrashEnergy.class);
 		registerTile(TileEntityBarrel.class);
+		registerTile(TileEntityBarrelOpen.class);
+		registerTile(TileEntityCrate.class);
+		registerTile(TileEntityFluidValve.class);
+		registerTile(TileEntityLoadController.class);
+		registerTile(TileEntityStackLimiter.class);
 
 		//MORE TEMPORARY STUFF
 		registerTile(TileEntityCokeOvenAdvanced.class);
@@ -139,51 +158,43 @@ public class ITContent {
 		registerTile(TileEntitySolarTower.class);
 		registerTile(TileEntitySolarReflector.class);
 
-		registerTile(TileEntityBarrelOpen.class);
-		
 		/*MULTIBLOCK TILE ENTITIES*/
-		if(Multiblock.enable_distiller) {
-			registerTile(TileEntityDistillerSlave.class);
-			registerTile(TileEntityDistillerMaster.class);
-			MultiblockHandler.registerMultiblock(MultiblockDistiller.instance);
-		}
-		if(Multiblock.enable_alternator) {
-			registerTile(TileEntityAlternatorSlave.class);
-			registerTile(TileEntityAlternatorMaster.class);
-			MultiblockHandler.registerMultiblock(MultiblockAlternator.instance);
-		}
-		if(Multiblock.enable_boiler) {
-			registerTile(TileEntityBoilerSlave.class);
-			registerTile(TileEntityBoilerMaster.class);
-			MultiblockHandler.registerMultiblock(MultiblockBoiler.instance);
-		}
 		if(Multiblock.enable_advancedCokeOven) {
 			registerTile(TileEntityCokeOvenAdvancedSlave.class);
 			registerTile(TileEntityCokeOvenAdvancedMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockCokeOvenAdvanced.instance);
 			registerTile(TileEntityCokeOvenPreheater.class);
 		}
-		if(Multiblock.enable_solarReflector) {
-			registerTile(TileEntitySolarReflectorSlave.class);
-			registerTile(TileEntitySolarReflectorMaster.class);
-			MultiblockHandler.registerMultiblock(MultiblockSolarReflector.instance);
+		if(Multiblock.enable_boiler) {
+			registerTile(TileEntityBoilerSlave.class);
+			registerTile(TileEntityBoilerMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockBoiler.instance);
+		}
+		if(Multiblock.enable_distiller) {
+			registerTile(TileEntityDistillerSlave.class);
+			registerTile(TileEntityDistillerMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockDistiller.instance);
 		}
 		if(Multiblock.enable_solarTower) {
 			registerTile(TileEntitySolarTowerSlave.class);
 			registerTile(TileEntitySolarTowerMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockSolarTower.instance);
+			registerTile(TileEntitySolarReflectorSlave.class);
+			registerTile(TileEntitySolarReflectorMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockSolarReflector.instance);
 		}
 		if(Multiblock.enable_steamTurbine) {
+			registerTile(TileEntityAlternatorSlave.class);
+			registerTile(TileEntityAlternatorMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockAlternator.instance);
 			registerTile(TileEntitySteamTurbineSlave.class);
 			registerTile(TileEntitySteamTurbineMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
 		}
-
 		registerTile(TileEntitySteelSheetmetalTank.class);
 		registerTile(TileEntitySteelSheetmetalTankSlave.class);
 		registerTile(TileEntitySteelSheetmetalTankMaster.class);
 		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
-
 		if(Experimental.replace_IE_pipes) {
 			TileEntityFluidPipe.initCovers();
 			IEContent.registerTile(TileEntityFluidPipe.class);

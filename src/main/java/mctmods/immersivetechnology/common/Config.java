@@ -8,7 +8,6 @@ public class Config {
 	public static class ITConfig {
 		public static Machines machines;
 		public static MechanicalEnergy mechanicalenergy;
-		public static Trash trash;
 		public static SteelTank steeltank;
 		public static Experimental experimental;
 
@@ -25,20 +24,16 @@ public class Config {
 			public static SteamTurbine steamturbine;
 
 			public static class Multiblock {
-				@Comment({"Can the Steam Turbine Multiblock structure be built ? [Default=true]"})
-				public static boolean enable_steamTurbine = true;
-				@Comment({"Can the Alternator Multiblock structure be built ? [Default=true]"})
-				public static boolean enable_alternator = true;
-				@Comment({"Can the Boiler Multiblock structure be built ? [Default=true]"})
+				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Preheater be built ? [Default=true]"})
+				public static boolean enable_advancedCokeOven = true;
+				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Boiler Multiblock structure be built ? [Default=true]"})
 				public static boolean enable_boiler = true;
-				@Comment({"Can the Distiller Multiblock structure be built ? [Default=true]"})
+				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Distiller Multiblock structure be built ? [Default=true]"})
 				public static boolean enable_distiller = true;
-				@Comment({"Can the Solar Tower Multiblock structure be built ? [Default=true]"})
+				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Solar Tower / Solar Reflector Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_solarTower = true;
-				@Comment({"Can the Solar Reflector Multiblock structure be built ? [Default=true]"})
-				public static boolean enable_solarReflector = true;
-				@Comment({"Can the Coke Oven Advanced Multiblock structure be built ? [Default=true]"})
-			public static boolean enable_advancedCokeOven = true;
+				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Steam Turbine / Alternator Multiblock structures be built ? [Default=true]"})
+				public static boolean enable_steamTurbine = true;
 			}
 			public static class Recipes {
 				@Comment({"Should default Steam Turbine recipes be registered ? [Default=true]"})
@@ -120,15 +115,6 @@ public class Config {
 		public static class MechanicalEnergy {
 			@Comment({"The maximum speed that machines can tolerate in RPM [Default=1800]"})
 			public static int mechanicalEnergy_speed_max = 1800;
-		}
-
-		public static class Trash {
-			@Comment({"Maximum amount of energy that can be voided per second [Default=2147483647]"})
-			public static int energy_max_void_rate = Integer.MAX_VALUE;
-			@Comment({"Maximum amount of fluid, in mB, that can be voided per second [Default=2147483647]"})
-			public static int fluid_max_void_rate = Integer.MAX_VALUE;
-			@Comment({"Maximum amount of items that can be voided per second [Default=2147483647]"})
-			public static int item_max_void_rate = Integer.MAX_VALUE;
 		}
 
 		public static class SteelTank {

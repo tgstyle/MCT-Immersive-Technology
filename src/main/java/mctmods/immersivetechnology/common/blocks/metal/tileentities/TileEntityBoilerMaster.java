@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -202,7 +203,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
             if(this.tanks[2].getFluidAmount() > 0) {
                 FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[2].getFluid(), Math.min(this.tanks[2].getFluidAmount(), 1000), true);
                 BlockPos outputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), mirrored ? 2 : -2, 2, 1, facing);
-                IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing);
+                IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, EnumFacing.DOWN);
                 if(output != null) {
                     int accepted = output.fill(out, false);
                     if(accepted > 0) {

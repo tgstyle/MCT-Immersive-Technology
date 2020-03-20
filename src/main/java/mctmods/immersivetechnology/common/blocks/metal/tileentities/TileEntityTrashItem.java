@@ -2,8 +2,9 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import mctmods.immersivetechnology.api.ITLib;
-import mctmods.immersivetechnology.api.ITUtils;
-import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
+import mctmods.immersivetechnology.common.util.ITrashCanBounds;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -16,7 +17,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class TileEntityTrashItem extends TileEntityGenericTrash implements IItemHandler, IGuiTile {
+public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHandler, IGuiTile, ITrashCanBounds {
 
 	public DummyInventory inv = new DummyInventory();
 
@@ -95,7 +96,7 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 
 		@Override
 		public String getName() {
-			return ITUtils.Translate(".metal_trash.trash_item.name");
+			return TranslationKey.TILE_TRASH_ITEM_NAME.text();
 		}
 
 		@Override
@@ -107,14 +108,6 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 		public ITextComponent getDisplayName() {
 			return null;
 		}
-	}
-
-	public String unit() {
-		return ".osd.trash_item.unit";
-	}
-
-	public String unitPerSecond() {
-		return ".osd.trash_item.unitlastsecond";
 	}
 
 	@Override
@@ -144,17 +137,8 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 	@Nonnull
 	@Override
 	public ItemStack insertItem(int i, @Nonnull ItemStack itemStack, boolean simulate) {
-		ItemStack returnStack;
-		long canFit = Config.ITConfig.Trash.item_max_void_rate - acceptedAmount;
-		if(itemStack.getCount() > canFit) {
-			returnStack = itemStack.copy();
-			returnStack.setCount(itemStack.getCount() - (int)Math.min(canFit, Integer.MAX_VALUE));
-		} else returnStack = ItemStack.EMPTY;
-		if(!simulate) {
-			acceptedAmount += itemStack.getCount() - returnStack.getCount();
-			packets++;
-		}
-		return returnStack;
+		if(!simulate) acceptedAmount += itemStack.getCount();
+		return ItemStack.EMPTY;
 	}
 
 	@Nonnull
@@ -188,4 +172,8 @@ public class TileEntityTrashItem extends TileEntityGenericTrash implements IItem
 		return this;
 	}
 
+	@Override
+	public TranslationKey text() {
+		return TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE;
+	}
 }
