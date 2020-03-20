@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common;
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.Config;
 import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
@@ -70,6 +71,7 @@ public class ITContent {
 	public static BlockITBase<?> blockMetalTrash;
 	public static BlockITBase<?> blockMetalBarrel;
 	public static BlockITBase<?> blockValve;
+	public static BlockIEBase<?> blockMetalDevice1Dummy;
 
 	/*STONE*/
 	public static BlockITBase<?> blockStoneDecoration;
@@ -126,6 +128,7 @@ public class ITContent {
 		registerVariables();
 
 		if(Experimental.replace_IE_pipes) {
+			blockMetalDevice1Dummy = IEContent.blockMetalDevice1;
 			IEContent.blockMetalDevice1.setCreativeTab(null);
 			IEContent.blockMetalDevice1.setRegistryName("immersiveengineering", "metaldevice1dummy");
 			IEContent.blockMetalDevice1.setUnlocalizedName("immersiveengineering.metaldevice1dummy");
