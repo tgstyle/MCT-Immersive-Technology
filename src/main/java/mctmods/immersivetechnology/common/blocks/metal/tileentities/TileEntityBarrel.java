@@ -180,7 +180,7 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		return new String[]{ infiniteFluid != null? text().format(infiniteFluid.getFluid().getName(), lastAcceptedAmount) : TranslationKey.GUI_EMPTY.text() };
+		return new String[]{ infiniteFluid != null? text().format(infiniteFluid.getLocalizedName(), lastAcceptedAmount) : TranslationKey.GUI_EMPTY.text() };
 	}
 
 	@Override
