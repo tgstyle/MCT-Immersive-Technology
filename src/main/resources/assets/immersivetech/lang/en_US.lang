@@ -61,23 +61,23 @@ tile.immersivetech.metal_multiblock.steel_tank_slave.name=Steel Fluid Tank
 
 #OVERLAY
 overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s mB
-overlay.immersivetech.osd.fluid_valve.normal.firstline=Allowed %s mB in the last second.
+overlay.immersivetech.osd.fluid_valve.normal.firstline=Allowed %s mB in the last second
 overlay.immersivetech.osd.fluid_valve.sneaking.firstline=Allowed an average of %s mB/t
-overlay.immersivetech.osd.fluid_valve.sneaking.secondline=in %s packets during the last minute.
-overlay.immersivetech.osd.load_controller.normal.firstline=Allowed %s IF in the last second.
+overlay.immersivetech.osd.fluid_valve.sneaking.secondline=in %s packets during the last minute
+overlay.immersivetech.osd.load_controller.normal.firstline=Allowed %s IF in the last second
 overlay.immersivetech.osd.load_controller.sneaking.firstline=Allowed an average of %s IF/t
-overlay.immersivetech.osd.load_controller.sneaking.secondline=in %s packets during the last minute.
-overlay.immersivetech.osd.stack_limiter.normal.firstline=Allowed %s items in the last second.
+overlay.immersivetech.osd.load_controller.sneaking.secondline=in %s packets during the last minute
+overlay.immersivetech.osd.stack_limiter.normal.firstline=Allowed %s items in the last second
 overlay.immersivetech.osd.stack_limiter.sneaking.firstline=Allowed an average of %s items/t
-overlay.immersivetech.osd.stack_limiter.sneaking.secondline=in %s packets during the last minute.
-overlay.immersivetech.osd.barrel.normal.firstline=%s : Provided %s mB in the last second.
-overlay.immersivetech.osd.creative_crate.normal.firstline=%s : Provided %s items in the last second.
-overlay.immersivetech.osd.trash_item.normal.firstline=%s items in the last second.
-overlay.immersivetech.osd.trash_fluid.normal.firstline=%s mB in the last second.
-overlay.immersivetech.osd.trash_energy.normal.firstline=%s IF in the last second.
-overlay.immersivetech.redstone_off=Redstone Mode Off.
-overlay.immersivetech.redstone_normal=Redstone Mode Normal.
-overlay.immersivetech.redstone_inverted=Redstone Mode Inverted.
+overlay.immersivetech.osd.stack_limiter.sneaking.secondline=in %s packets during the last minute
+overlay.immersivetech.osd.barrel.normal.firstline=%s : %s mB
+overlay.immersivetech.osd.creative_crate.normal.firstline=%s : Provided %s items in the last second
+overlay.immersivetech.osd.trash_item.normal.firstline=%s items in the last second
+overlay.immersivetech.osd.trash_fluid.normal.firstline=%s mB in the last second
+overlay.immersivetech.osd.trash_energy.normal.firstline=%s IF in the last second
+overlay.immersivetech.redstone_off=Redstone Mode Off
+overlay.immersivetech.redstone_normal=Redstone Mode Normal
+overlay.immersivetech.redstone_inverted=Redstone Mode Inverted
 
 
 #GUI
