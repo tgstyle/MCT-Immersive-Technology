@@ -15,6 +15,8 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
@@ -39,6 +41,7 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
         return side == facing;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void showGui() {
         Minecraft.getMinecraft().displayGuiScreen(new GuiFluidValve(this));

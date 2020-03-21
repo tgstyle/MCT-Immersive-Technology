@@ -9,6 +9,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -25,6 +27,7 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
                 ITLib.GUIID_Stack_Limiter);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void showGui() {
         Minecraft.getMinecraft().displayGuiScreen(new GuiStackLimiter(this));
