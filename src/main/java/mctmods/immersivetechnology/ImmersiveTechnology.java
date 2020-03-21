@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology;
 
 import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
 import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.util.ITLogger;
@@ -25,8 +24,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 	acceptedMinecraftVersions = "[1.12.2,1.13)",	
 	dependencies = 
 			"required-after:immersiveengineering;" +
+			"required-after:cofhcore;" +
+			"required-after:redstoneflux;" +
 			"required-after:forge@[14.23.3.2655,);")
-
 
 public class ImmersiveTechnology {
 

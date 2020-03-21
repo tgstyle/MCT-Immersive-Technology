@@ -17,6 +17,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 
     private int[] oldComps = new int[4];
     private int masterCompOld;
+	private int sleep = 0;
 
     private static int tankSize = Config.ITConfig.SteelTank.steelTank_tankSize;
 
@@ -42,11 +43,18 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
                     EnumFacing face = EnumFacing.getFront(index);
                     IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
                     if(output != null) {
-                        FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), false);
-                        accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
-                        if(accepted.amount > 0) {
-                            int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
-                            this.tank.drain(drained, true);
+                        if(sleep == 0) {
+                            FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), false);
+                            accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
+                        	if(accepted.amount > 0) {
+                        		int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
+                        		tank.drain(drained, true);
+                        		sleep = 0;
+                        	} else {
+                        		sleep = 20;
+                        	}
+                        } else {
+                        	sleep--;
                         }
                     }
                 }
