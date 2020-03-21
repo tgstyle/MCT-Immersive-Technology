@@ -11,6 +11,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityLoadController extends TileEntityCommonValve implements IEnergyHandler, IEnergyStorage {
 
@@ -71,6 +73,7 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void showGui() {
         Minecraft.getMinecraft().displayGuiScreen(new GuiLoadController(this));
