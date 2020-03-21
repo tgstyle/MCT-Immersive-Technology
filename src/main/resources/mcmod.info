@@ -5,11 +5,11 @@
   "description": "More Machines for Immersive Engineering",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "https://www.curseforge.com/minecraft/mc-mods/immersive-technology",
+  "url": "https://www.curseforge.com/minecraft/mc-mods/mct-immersive-technology",
   "authorList": ["TGstyle", "Kurtchekov"],
   "credits": "BluSunrize for Immersive Engineering, derived from Immersive Tech by FerroO2000",
   "logoFile": "assets/immersivetech/logo.png",
   "screenshots": [],
-  "dependencies": [immersiveengineering]
+  "dependencies": ["immersiveengineering", "cofhcore", "redstoneflux"]
 }
 ]
