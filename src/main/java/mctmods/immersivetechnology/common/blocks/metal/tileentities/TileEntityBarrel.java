@@ -28,23 +28,23 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 		Fluid fluid = FluidRegistry.getFluid(nbt.getString("fluid"));
-		if (fluid != null) infiniteFluid = new FluidStack(fluid, Integer.MAX_VALUE);
-		else if (nbt.hasKey("tank") && nbt.getCompoundTag("tank").hasKey("FluidName")) {
+		if(fluid != null) infiniteFluid = new FluidStack(fluid, Integer.MAX_VALUE);
+		else if(nbt.hasKey("tank") && nbt.getCompoundTag("tank").hasKey("FluidName")) {
 			fluid = FluidRegistry.getFluid(nbt.getCompoundTag("tank").getString("FluidName"));
-			if (fluid != null) infiniteFluid = new FluidStack(fluid, Integer.MAX_VALUE);
+			if(fluid != null) infiniteFluid = new FluidStack(fluid, Integer.MAX_VALUE);
 		}
 	}
 
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
-		if (infiniteFluid != null) nbt.setString("fluid", infiniteFluid.getFluid().getName());
+		if(infiniteFluid != null) nbt.setString("fluid", infiniteFluid.getFluid().getName());
 	}
 
 	@Override
 	public void update() {
 		super.update();
-		if (world.isRemote || infiniteFluid == null) return;
+		if(world.isRemote || infiniteFluid == null) return;
 		for(int index = 0; index < 6; index++) {
 			EnumFacing face = EnumFacing.getFront(index);
 			IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
@@ -131,7 +131,7 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 
 	@Override
 	public FluidStack drain(int maxDrain, boolean doDrain) {
-		if (doDrain) acceptedAmount += maxDrain;
+		if(doDrain) acceptedAmount += maxDrain;
 		return new FluidStack(infiniteFluid, maxDrain);
 	}
 
@@ -152,20 +152,20 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 
 	@Override
 	public void receiveMessageFromServer(NBTTagCompound message) {
-		if (serializeNBT().hasKey("fluid")) infiniteFluid = new FluidStack(FluidRegistry.getFluid(message.getString("fluid")), Integer.MAX_VALUE);
+		if(serializeNBT().hasKey("fluid")) infiniteFluid = new FluidStack(FluidRegistry.getFluid(message.getString("fluid")), Integer.MAX_VALUE);
 		super.receiveMessageFromServer(message);
 	}
 
 	@Override
 	public void notifyNearbyClients(NBTTagCompound nbt) {
-		if (infiniteFluid != null) nbt.setString("fluid", infiniteFluid.getFluid().getName());
+		if(infiniteFluid != null) nbt.setString("fluid", infiniteFluid.getFluid().getName());
 		super.notifyNearbyClients(nbt);
 	}
 
 	@Override
 	public ItemStack getTileDrop(EntityPlayer player, IBlockState state) {
 		ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
-		if (infiniteFluid != null) {
+		if(infiniteFluid != null) {
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setString("fluid", infiniteFluid.getFluid().getName());
 			stack.setTagCompound(tag);
