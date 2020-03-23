@@ -14,62 +14,62 @@ import net.minecraft.util.math.BlockPos;
 //REMOVE THIS AFTER PORTING!!!
 public class TileEntitySteelSheetmetalTank extends TileEntitySteelSheetmetalTankSlave {
 
-    public MultiblockHandler.IMultiblock getMultiblock() {
-        return MultiblockSteelSheetmetalTank.instance;
-    }
+	public MultiblockHandler.IMultiblock getMultiblock() {
+		return MultiblockSteelSheetmetalTank.instance;
+	}
 
-    public int[] dimensions() {
-        return new int[]{5, 3, 3};
-    }
+	public int[] dimensions() {
+		return new int[]{5, 3, 3};
+	}
 
-    public ItemStack checkPos(int pos) {
-         return getOriginalBlock();
-    }
+	public ItemStack checkPos(int pos) {
+		 return getOriginalBlock();
+	}
 
-    int counter = 0;
+	int counter = 0;
 
-    public void update() {
-        if(++counter > 5 && changeTo != null) {
-            //world.setBlockToAir(worldPosition);
-            world.setBlockState(worldPosition, changeTo);
-            if(master) {
-                TemporaryTileEntityRequest request = new TemporaryTileEntityRequest();
-                request.facing = facing;
-                request.multiblock = getMultiblock();
-                request.nbtTag = thisNbt;
-                request.position = worldPosition;
-                request.formationPosition = worldPosition.offset(facing, -1).up();
-                request.world = world;
-                CommonProxy.toReform.add(request);
-            }
-        }
-    }
+	public void update() {
+		if(++counter > 5 && changeTo != null) {
+			//world.setBlockToAir(worldPosition);
+			world.setBlockState(worldPosition, changeTo);
+			if(master) {
+				TemporaryTileEntityRequest request = new TemporaryTileEntityRequest();
+				request.facing = facing;
+				request.multiblock = getMultiblock();
+				request.nbtTag = thisNbt;
+				request.position = worldPosition;
+				request.formationPosition = worldPosition.offset(facing, -1).up();
+				request.world = world;
+				CommonProxy.toReform.add(request);
+			}
+		}
+	}
 
-    BlockPos worldPosition;
-    IBlockState changeTo;
-    boolean master;
-    EnumFacing facing;
-    NBTTagCompound thisNbt;
+	BlockPos worldPosition;
+	IBlockState changeTo;
+	boolean master;
+	EnumFacing facing;
+	NBTTagCompound thisNbt;
 
-    @Override
-    public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-        pos = nbt.getInteger("pos");
-        int x = nbt.getInteger("x");
-        int y = nbt.getInteger("y");
-        int z = nbt.getInteger("z");
-        int[] offset = nbt.getIntArray("offset");
-        facing = EnumFacing.VALUES[nbt.getInteger("facing")];
-        thisNbt = nbt;
-        if(offset[0] == 0 && offset[1] == 0 && offset[2] == 0) master = true;
-        worldPosition = new BlockPos(x, y, z);
-        if(pos < 0) return;
-        ItemStack s = ItemStack.EMPTY;
-        try {
-            s = checkPos(pos);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        if(s == ItemStack.EMPTY) return;
-        changeTo = Utils.getStateFromItemStack(s);
-    }
+	@Override
+	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+		pos = nbt.getInteger("pos");
+		int x = nbt.getInteger("x");
+		int y = nbt.getInteger("y");
+		int z = nbt.getInteger("z");
+		int[] offset = nbt.getIntArray("offset");
+		facing = EnumFacing.VALUES[nbt.getInteger("facing")];
+		thisNbt = nbt;
+		if(offset[0] == 0 && offset[1] == 0 && offset[2] == 0) master = true;
+		worldPosition = new BlockPos(x, y, z);
+		if(pos < 0) return;
+		ItemStack s = ItemStack.EMPTY;
+		try {
+			s = checkPos(pos);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		if(s == ItemStack.EMPTY) return;
+		changeTo = Utils.getStateFromItemStack(s);
+	}
 }
