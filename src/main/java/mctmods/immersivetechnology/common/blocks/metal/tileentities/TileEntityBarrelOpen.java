@@ -67,22 +67,26 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 			}
 			lastRandom = random;
 		}
-		if(tank.getFluidAmount() > 0) {
-			EnumFacing face = EnumFacing.DOWN;
-			IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
-			if(output != null) {
-				if(sleep == 0) {
-					FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(40, tank.getFluidAmount()), false);
-					accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
-					if(accepted.amount > 0) {
-						int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
-						tank.drain(drained, true);
-						sleep = 0;
-					} else {
-						sleep = 20;
+		for(int index = 0; index < 2; index++) {
+			if(tank.getFluidAmount() > 0 && sideConfig[index] == 1) {
+				if(tank.getFluidAmount() > 0) {
+					EnumFacing face = EnumFacing.getFront(index);
+					IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
+					if(output != null) {
+						if(sleep == 0) {
+							FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(40, tank.getFluidAmount()), false);
+							accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
+							if(accepted.amount > 0) {
+								int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
+								tank.drain(drained, true);
+								sleep = 0;
+							} else {
+								sleep = 20;
+							}
+						} else {
+							sleep--;
+						}
 					}
-				} else {
-					sleep--;
 				}
 			}
 		}
@@ -107,6 +111,11 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 	@Override
 	public int getComparatorInputOverride()	{
 		return (int)(15 * (tank.getFluidAmount() / (float)tank.getCapacity()));
+	}
+
+	@Override
+	public boolean toggleSide(int side, EntityPlayer p) {
+		return false;
 	}
 
 	@Override
