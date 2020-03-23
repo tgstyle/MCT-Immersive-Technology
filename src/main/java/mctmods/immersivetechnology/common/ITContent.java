@@ -147,6 +147,7 @@ public class ITContent {
 		registerTile(TileEntityTrashEnergy.class);
 		registerTile(TileEntityBarrel.class);
 		registerTile(TileEntityBarrelOpen.class);
+		registerTile(TileEntityBarrelSteel.class);
 		registerTile(TileEntityCrate.class);
 		registerTile(TileEntityFluidValve.class);
 		registerTile(TileEntityLoadController.class);
