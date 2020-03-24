@@ -144,7 +144,7 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 	}
 
 	public boolean isFluidValid(FluidStack fluid) {
-		return fluid != null && fluid.getFluid() != null && !fluid.getFluid().isGaseous(fluid);
+		return fluid != null && fluid.getFluid() != null;
 	}
 
 	static class SidedFluidHandler implements IFluidHandler {
@@ -184,11 +184,6 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 
 	@Override
 	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
-		FluidStack fluid = FluidUtil.getFluidContained(heldItem);
-		if(!isFluidValid(fluid)) {
-			ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(Lib.CHAT_INFO + "noGasAllowed"));
-			return true;
-		}
 		if(FluidUtil.interactWithFluidHandler(player, hand, tank)) {
 			return true;
 		}
