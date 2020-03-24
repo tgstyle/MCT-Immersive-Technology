@@ -119,6 +119,11 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 	}
 
 	@Override
+	public boolean isFluidValid(FluidStack fluid) {
+		return fluid != null && fluid.getFluid() != null && !fluid.getFluid().isGaseous(fluid);
+	}
+
+	@Override
 	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
 		FluidStack fluid = FluidUtil.getFluidContained(heldItem);
 		if(!isFluidValid(fluid)) {
