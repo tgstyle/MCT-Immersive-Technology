@@ -3,10 +3,8 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
-import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
@@ -20,7 +18,6 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
