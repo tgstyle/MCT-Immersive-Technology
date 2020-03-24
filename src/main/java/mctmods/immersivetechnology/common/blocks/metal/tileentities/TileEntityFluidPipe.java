@@ -262,8 +262,8 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
                         remaining -= handler.fill(Utils.copyFluidStackWithAmount(resource, remaining, !(handler instanceof IFluidPipe)), doFill);
                         busy = false;
                         if (remaining == 0) {
-                            Collections.shuffle(outputs);
-                            //if (outputs.indexOf(facing) != 0) Collections.swap(outputs, outputs.indexOf(facing),0); //Add some bias for extra TPS juice
+                            //Collections.shuffle(outputs);
+                            if (outputs.indexOf(facing) != 0) Collections.swap(outputs, outputs.indexOf(facing),0); //Add some bias for extra TPS juice
                             return maximum;
                         }
                     }
