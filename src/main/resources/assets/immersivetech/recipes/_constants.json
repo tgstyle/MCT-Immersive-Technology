@@ -36,6 +36,13 @@
 	{
 		"ingredient": {
 			"type": "forge:ore_dict",
+			"ore": "blockSheetmetalSteel"
+		},
+		"name": "blockSheetmetalSteel"
+	},
+	{
+		"ingredient": {
+			"type": "forge:ore_dict",
 			"ore": "blockSteel"
 		},
 		"name": "blockSteel"
@@ -445,6 +452,13 @@
 			"ore": "slabSheetmetalIron"
 		},
 		"name": "slabSheetmetalIron"
+	},
+	{
+		"ingredient": {
+			"type": "forge:ore_dict",
+			"ore": "slabSheetmetalSteel"
+		},
+		"name": "slabSheetmetalSteel"
 	},
 	{
 		"ingredient": {
