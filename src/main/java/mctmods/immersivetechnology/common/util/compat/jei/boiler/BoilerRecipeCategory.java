@@ -34,11 +34,11 @@ public class BoilerRecipeCategory extends ITRecipeCategory<BoilerRecipe, BoilerR
 		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
 
 		int tankSize = 0;
-		for (List<FluidStack> lists : inputs) {
-			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
+		for(List<FluidStack> lists : inputs) {
+			for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
 		}
-		for (List<FluidStack> lists : outputs) {
-			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
+		for(List<FluidStack> lists : outputs) {
+			for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
 		}
 
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();

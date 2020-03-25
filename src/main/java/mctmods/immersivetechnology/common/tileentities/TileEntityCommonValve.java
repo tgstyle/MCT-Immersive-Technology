@@ -104,15 +104,15 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 
 	@Override
 	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
-		if (!world.isRemote && !Utils.isHammer(heldItem)) {
+		if(!world.isRemote && !Utils.isHammer(heldItem)) {
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setInteger("packetLimit", packetLimit);
 			tag.setInteger("timeLimit", timeLimit);
 			tag.setInteger("keepSize", keepSize);
 			ImmersiveTechnology.packetHandler.sendTo(new MessageTileSync(this, tag), (EntityPlayerMP) player);
 			return true;
-		} else if (player.isSneaking() && Utils.isHammer(heldItem)) {
-			if (++redstoneMode > 2) redstoneMode = 0;
+		} else if(player.isSneaking() && Utils.isHammer(heldItem)) {
+			if(++redstoneMode > 2) redstoneMode = 0;
 			String translationKey;
 			switch (redstoneMode) {
 				case 1: translationKey = TranslationKey.OVERLAY_REDSTONE_NORMAL.location; break;
@@ -138,7 +138,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 		timeLimit = nbt.getInteger("timeLimit");
 		keepSize = nbt.getInteger("keepSize");
 		redstoneMode = nbt.getByte("redstoneMode");
-		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return;
+		if(Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return;
 		lastAcceptedAmount = acceptedAmount = nbt.getLong("acceptedAmount");
 		secondCounter = nbt.getInteger("secondCounter");
 		long avg = nbt.getLong("averages");
@@ -153,7 +153,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 		nbt.setInteger("timeLimit", timeLimit);
 		nbt.setInteger("keepSize", keepSize);
 		nbt.setByte("redstoneMode", redstoneMode);
-		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return;
+		if(Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return;
 		nbt.setLong("acceptedAmount", acceptedAmount);
 		nbt.setInteger("secondCounter", secondCounter);
 		calculateAverages();
@@ -182,7 +182,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void receiveMessageFromServer(NBTTagCompound message) {
-		if (message.hasKey("packetLimit")) {
+		if(message.hasKey("packetLimit")) {
 			packetLimit = message.getInteger("packetLimit");
 			timeLimit = message.getInteger("timeLimit");
 			keepSize = message.getInteger("keepSize");
@@ -249,7 +249,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 
 	public int getRSPower() {
 		int toReturn = 0;
-		for (EnumFacing directions : EnumSet.complementOf(EnumSet.of(facing, facing.getOpposite()))) {
+		for(EnumFacing directions : EnumSet.complementOf(EnumSet.of(facing, facing.getOpposite()))) {
 			toReturn = Math.max(world.getRedstonePower(pos.offset(directions,-1), directions), toReturn);
 		}
 		return toReturn;

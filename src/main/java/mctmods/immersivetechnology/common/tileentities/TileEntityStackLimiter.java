@@ -72,10 +72,10 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
-		if (facing == null) return null;
+		if(facing == null) return null;
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			if (facing == this.facing) return (T)this;
-			else if (facing == this.facing.getOpposite()) return (T)dummyInventory;
+			if(facing == this.facing) return (T)this;
+			else if(facing == this.facing.getOpposite()) return (T)dummyInventory;
 		}
 		return super.getCapability(capability, facing);
 	}
@@ -84,7 +84,7 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 
 	public IItemHandler getDestination() {
 		TileEntity dst = Utils.getExistingTileEntity(world, pos.offset(facing, -1));
-		if (dst != null && dst.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing)) {
+		if(dst != null && dst.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing)) {
 			return dst.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
 		}
 		return null;
@@ -93,7 +93,7 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 	@Override
 	public int getSlots() {
 		IItemHandler dest = getDestination();
-		if (dest == null) return 0;
+		if(dest == null) return 0;
 		return dest.getSlots();
 	}
 
@@ -101,27 +101,27 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 	@Override
 	public ItemStack getStackInSlot(int i) {
 		IItemHandler dest = getDestination();
-		if (dest == null) return ItemStack.EMPTY;
+		if(dest == null) return ItemStack.EMPTY;
 		return dest.getStackInSlot(i);
 	}
 
 	@Nonnull
 	@Override
 	public ItemStack insertItem(int i, @Nonnull ItemStack itemStack, boolean simulate) {
-		if (busy) return itemStack;
+		if(busy) return itemStack;
 		IItemHandler destination = getDestination();
-		if (destination == null) return itemStack;
+		if(destination == null) return itemStack;
 		int canAccept = itemStack.getCount();
 		canAccept = timeLimit != -1? Math.min(Math.max(timeLimit - longToInt(acceptedAmount), 0), canAccept) : canAccept;
 		canAccept = keepSize != -1? Math.min(Math.max(keepSize - getInventoryFill(destination, itemStack), 0), canAccept) : canAccept;
 		canAccept = packetLimit != -1? Math.min(canAccept, packetLimit) : canAccept;
-		if (redstoneMode > 0) canAccept *= (double) (redstoneMode == 1? 15 - getRSPower() : getRSPower())/15;
-		if (canAccept == 0) return itemStack;
+		if(redstoneMode > 0) canAccept *= (double) (redstoneMode == 1? 15 - getRSPower() : getRSPower())/15;
+		if(canAccept == 0) return itemStack;
 		ItemStack toReturn;
 		busy = true;
 		toReturn = destination.insertItem(i, new ItemStack(itemStack.getItem(), canAccept), simulate);
 		busy = false;
-		if (!simulate) {
+		if(!simulate) {
 			acceptedAmount += (toReturn == ItemStack.EMPTY)? canAccept : canAccept - toReturn.getCount();
 			packets++;
 		}
@@ -131,9 +131,9 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 
 	public int getInventoryFill(IItemHandler dest, ItemStack stack) {
 		int count = 0;
-		for (int index = 0; index < dest.getSlots(); index++) {
+		for(int index = 0; index < dest.getSlots(); index++) {
 			ItemStack stackInSlot = dest.getStackInSlot(index);
-			if (!stackInSlot.isItemEqual(stack)) continue;
+			if(!stackInSlot.isItemEqual(stack)) continue;
 			count += stackInSlot.getCount();
 		}
 		return count;
@@ -148,14 +148,14 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 	@Override
 	public int getSlotLimit(int i) {
 		IItemHandler dest = getDestination();
-		if (dest == null) return 0;
+		if(dest == null) return 0;
 		return dest.getSlotLimit(i);
 	}
 
 	@Override
 	public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
 		IItemHandler dest = getDestination();
-		if (dest == null) return false;
+		if(dest == null) return false;
 		return dest.isItemValid(slot, stack);
 	}
 }

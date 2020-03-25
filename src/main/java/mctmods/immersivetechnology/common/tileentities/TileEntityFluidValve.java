@@ -107,7 +107,7 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 
 	@Override
 	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
-		if (facing == null) return false;
+		if(facing == null) return false;
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing.getAxis() == this.facing.getAxis()) return true;
 		return false;
 	}
@@ -115,10 +115,10 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
-		if (facing == null) return null;
+		if(facing == null) return null;
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-			if (facing == this.facing) return (T)this;
-			else if (facing == this.facing.getOpposite()) return (T)dummyTank;
+			if(facing == this.facing) return (T)this;
+			else if(facing == this.facing.getOpposite()) return (T)dummyTank;
 		}
 		return super.getCapability(capability, facing);
 	}
@@ -134,20 +134,20 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 
 	@Override
 	public int fill(FluidStack fluidStack, boolean doFill) {
-		if (busy) return 0;
+		if(busy) return 0;
 		IFluidHandler destination = getDestination();
-		if (destination == null) return 0;
+		if(destination == null) return 0;
 		int canAccept = fluidStack.amount;
 		canAccept = timeLimit != -1? Math.min(Math.max(timeLimit - longToInt(acceptedAmount), 0), canAccept) : canAccept;
 		canAccept = keepSize != -1? Math.min(Math.max(keepSize - getTankFill(destination.getTankProperties(), fluidStack), 0), canAccept) : canAccept;
 		canAccept = packetLimit != -1? Math.min(canAccept, packetLimit) : canAccept;
-		if (redstoneMode > 0) canAccept *= (double) (redstoneMode == 1? 15 - getRSPower() : getRSPower())/15;
-		if (canAccept == 0) return 0;
+		if(redstoneMode > 0) canAccept *= (double) (redstoneMode == 1? 15 - getRSPower() : getRSPower())/15;
+		if(canAccept == 0) return 0;
 		int toReturn = 0;
 		busy = true;
 		toReturn = destination.fill(new FluidStack(fluidStack, canAccept), doFill);
 		busy = false;
-		if (doFill) {
+		if(doFill) {
 			acceptedAmount += toReturn;
 			packets++;
 		}
@@ -156,9 +156,9 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 
 	public static int getTankFill(IFluidTankProperties[] properties, FluidStack toFill) {
 		int toReturn = 0;
-		for (IFluidTankProperties property : properties) {
+		for(IFluidTankProperties property : properties) {
 			FluidStack stored = property.getContents();
-			if (stored != null && stored.isFluidEqual(toFill)) toReturn += stored.amount;
+			if(stored != null && stored.isFluidEqual(toFill)) toReturn += stored.amount;
 		}
 		return toReturn;
 	}
@@ -177,7 +177,7 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 
 	public IFluidHandler getDestination() {
 		TileEntity dst = Utils.getExistingTileEntity(world, pos.offset(facing, -1));
-		if (dst != null && dst.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing)) {
+		if(dst != null && dst.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing)) {
 			return dst.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing);
 		}
 		return null;

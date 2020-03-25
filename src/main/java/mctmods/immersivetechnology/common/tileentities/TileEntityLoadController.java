@@ -81,7 +81,7 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 
 	@Override
 	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
-		if (facing == null) return false;
+		if(facing == null) return false;
 		if(capability == CapabilityEnergy.ENERGY && facing.getAxis() == this.facing.getAxis()) return true;
 		return false;
 	}
@@ -89,10 +89,10 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
-		if (facing == null) return null;
+		if(facing == null) return null;
 		if(capability == CapabilityEnergy.ENERGY) {
-			if (facing == this.facing) return (T)this;
-			else if (facing == this.facing.getOpposite()) return (T) dummyBattery;
+			if(facing == this.facing) return (T)this;
+			else if(facing == this.facing.getOpposite()) return (T) dummyBattery;
 		}
 		return super.getCapability(capability, facing);
 	}
@@ -101,20 +101,20 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 
 	@Override
 	public int receiveEnergy(int maxReceive, boolean simulate) {
-		if (busy) return 0;
+		if(busy) return 0;
 		IEnergyStorage destination = getDestination();
-		if (destination == null) return 0;
+		if(destination == null) return 0;
 		int canAccept = maxReceive;
 		canAccept = timeLimit != -1? Math.min(Math.max(timeLimit - longToInt(acceptedAmount), 0), canAccept) : canAccept;
 		canAccept = keepSize != -1? Math.min(Math.max(keepSize - destination.getEnergyStored(), 0), canAccept) : canAccept;
 		canAccept = packetLimit != -1? Math.min(canAccept, packetLimit) : canAccept;
-		if (redstoneMode > 0) canAccept *= (double) (redstoneMode == 1? 15 - getRSPower() : getRSPower())/15;
-		if (canAccept == 0) return 0;
+		if(redstoneMode > 0) canAccept *= (double) (redstoneMode == 1? 15 - getRSPower() : getRSPower())/15;
+		if(canAccept == 0) return 0;
 		int toReturn = 0;
 		busy = true;
 		toReturn = destination.receiveEnergy(canAccept, simulate);
 		busy = false;
-		if (!simulate) {
+		if(!simulate) {
 			acceptedAmount += toReturn;
 			packets++;
 		}
@@ -129,14 +129,14 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 	@Override
 	public int getEnergyStored() {
 		IEnergyStorage dest = getDestination();
-		if (dest == null) return 0;
+		if(dest == null) return 0;
 		return dest.getEnergyStored();
 	}
 
 	@Override
 	public int getMaxEnergyStored() {
 		IEnergyStorage dest = getDestination();
-		if (dest == null) return 0;
+		if(dest == null) return 0;
 		return dest.getMaxEnergyStored();
 	}
 
@@ -153,14 +153,14 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 	@Override
 	public int getEnergyStored(EnumFacing enumFacing) {
 		IEnergyStorage dest = getDestination();
-		if (dest == null) return 0;
+		if(dest == null) return 0;
 		return enumFacing == facing? dest.getEnergyStored() : 0;
 	}
 
 	@Override
 	public int getMaxEnergyStored(EnumFacing enumFacing) {
 		IEnergyStorage dest = getDestination();
-		if (dest == null) return 0;
+		if(dest == null) return 0;
 		return enumFacing == facing? dest.getMaxEnergyStored() : 0;
 	}
 
@@ -171,7 +171,7 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 
 	public IEnergyStorage getDestination() {
 		TileEntity dst = Utils.getExistingTileEntity(world, pos.offset(facing, -1));
-		if (dst != null && dst.hasCapability(CapabilityEnergy.ENERGY, facing)) {
+		if(dst != null && dst.hasCapability(CapabilityEnergy.ENERGY, facing)) {
 			return dst.getCapability(CapabilityEnergy.ENERGY, facing);
 		}
 		return null;
