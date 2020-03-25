@@ -131,6 +131,9 @@ public class Config {
 			public static int pipe_transfer_rate = 50;
 			@Comment({"How much should the pipes be capable of transfering when pressurized, in mb. [Default=1000]"})
 			public static int pipe_pressurized_transfer_rate = 1000;
+			@Comment({"Should pipes fill a known path first, or try to distribute to all outputs randomly? Known path has lower TPS. [Default=true]"})
+			public static boolean pipe_pathing_known = true;
 		}
 	}
+
 }
