@@ -61,7 +61,7 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 						if(world.isThundering()) amount = 200;
 						tank.fill(new FluidStack(FluidRegistry.WATER, amount), true);
 					} else if(temp >= 2.0F) {
-						tank.drain(100, true);
+						tank.drain(Math.min(100, tank.getFluidAmount()), true);
 					}
 				}
 			}
