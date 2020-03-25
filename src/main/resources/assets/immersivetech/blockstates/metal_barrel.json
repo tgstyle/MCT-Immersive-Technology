@@ -21,13 +21,7 @@
 			}
 		}],
 		"inventory,type=barrel_steel": [{
-			"model": "immersivetech:metal_barrel/metal_barrel_steel",
-			"textures": {
-				"side": "immersivetech:blocks/metal_barrel_steel_side",
-				"up": "immersivetech:blocks/metal_barrel_steel_input",
-				"down": "immersivetech:blocks/metal_barrel_steel_output",
-				"particle": "immersivetech:blocks/metal_barrel_steel_side"
-			}
+			"model": "immersivetechnology:smartmodels/conf_sides_v_metal_barrel_barrel_steel"
 		}],
 		"type": {
 			"barrel": {
@@ -47,13 +41,7 @@
 				}
 			},
 			"barrel_steel": {
-			"model": "immersivetech:metal_barrel/metal_barrel_steel",
-			"textures": {
-				"side": "immersivetech:blocks/metal_barrel_steel_side",
-				"up": "immersivetech:blocks/metal_barrel_steel_input",
-				"down": "immersivetech:blocks/metal_barrel_steel_output",
-				"particle": "immersivetech:blocks/metal_barrel_steel_side"
-			}
+				"model": "immersivetechnology:smartmodels/conf_sides_v_metal_barrel_barrel_steel"
 			}
 		}
 	}

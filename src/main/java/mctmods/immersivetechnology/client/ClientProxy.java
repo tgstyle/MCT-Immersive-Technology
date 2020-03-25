@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.client;
 
+import blusunrize.immersiveengineering.api.IEApi;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.api.energy.wires.WireApi;
@@ -13,6 +14,7 @@ import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualPages;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
 import mctmods.immersivetechnology.client.render.TileRenderBarrelOpen;
 import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
 import mctmods.immersivetechnology.client.render.TileRenderSteelSheetmetalTank;
@@ -77,6 +79,8 @@ public class ClientProxy extends CommonProxy {
 		OBJLoader.INSTANCE.addDomain(ImmersiveTechnology.MODID);
 		IEOBJLoader.instance.addDomain(ImmersiveTechnology.MODID);
 		MinecraftForge.EVENT_BUS.register(this);
+
+		ModelLoaderRegistry.registerLoader(new ModelConfigurableSides.Loader());
 	}
 
 	@SubscribeEvent()
@@ -273,6 +277,15 @@ public class ClientProxy extends CommonProxy {
 		public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)	{
 			return location;
 		}
+	}
+
+	static {
+		IEApi.renderCacheClearers.add(ModelConfigurableSides.modelCache::clear);
+	}
+
+	@Override
+	public void clearRenderCaches() {
+		for(Runnable r : IEApi.renderCacheClearers) r.run();
 	}
 
 }
