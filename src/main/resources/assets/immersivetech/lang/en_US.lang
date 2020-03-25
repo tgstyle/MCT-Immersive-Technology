@@ -156,6 +156,10 @@ ie.manual.entry.loadController.name=Load Controller
 ie.manual.entry.loadController.subtext=Energy Underload
 ie.manual.entry.loadController0=The §6Load Controller§r can limit energy moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
 
+ie.manual.entry.openBarrel.name=Open Metal Barrel
+ie.manual.entry.openBarrel.subtext=Open to the Sun or Clouds?
+ie.manual.entry.openBarrel0=The §6Open Metal Barrel§r is a single block tank like the Metal Barrel but with an open top. Fluid can be put in by hand. The Top is Input only and the Bottom is Output only. Leave it out in the Rain and watch it fill! In a Thunderstom Twice as fast! However, don't leave it out in warm environments, water just may evaporate.
+
 ie.manual.entry.solarTower.name=Solar Tower
 ie.manual.entry.solarTower.subtext=The power of the Sun
 ie.manual.entry.solarTower0=The Solar Tower is a multiblock structure that uses the light of the Sun to transform water in steam.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Redstone Engineering
@@ -173,9 +177,13 @@ ie.manual.entry.steamTurbine0=The Steam Turbine is a multiblock structure that u
 ie.manual.entry.steamTurbine1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>The fluid pipe on front of the machine is the input. The kinetic energy output is in the rear of the machine (Steel Block). Optionally, fluids can be retrieved through the output pipe on the top of the machine.
 ie.manual.entry.steamTurbine2=When supplied with steam, the Turbine will slowly speed up, reaching maximum speed after <config;i;steamTurbine_timeToMax> seconds, as long it's constantly fed. Turning it off or failing to provide enough steam slows the Turbine down and reduces its power output.<br>To work, it needs an <link;alternator;§o§nAlternator§r>.
 
-ie.manual.entry.steelTank.name=Steel Tank
+ie.manual.entry.steelBarrel.name=Steel Metal Barrel
+ie.manual.entry.steelBarrel.subtext=Full to the max!
+ie.manual.entry.steelBarrel0=The §6Steel Metal Barrel§r is a single block tank that provides double the space of fluids over a Metal Barrel. Fluid can be put in by hand. The Top and Bottom sides can be configured for input or output with a Hammer.
+
+ie.manual.entry.steelTank.name=Steel Fluid Tank
 ie.manual.entry.steelTank.subtext=Full to the max!
-ie.manual.entry.steelTank0=The Steel Tank is a multiblock that provides space for even larger amounts of fluids. It will store up to <config;i;steelTank_tankSize> mB of any fluid, which can be piped in through the top or bottom block. Fluids can only be extracted from the bottom center block.
+ie.manual.entry.steelTank0=The Steel Fluid Tank is a multiblock that provides space for even larger amounts of fluids. It will store up to <config;i;steelTank_tankSize> mB of any fluid, which can be piped in through the top or bottom block. Fluids can only be extracted from the bottom center block.
 ie.manual.entry.steelTank1=Applying a redstone signal to the bottom center block will make the tank output automatically, a comparator placed there will emit a redstone signal proportional to how full the tank is. Attaching the comparator to one of the top 4 layers results in a signal proportional to the height of the comparator. For example, a comparator attached to the second layer of a tank would not emit any signal until the tank is 1/4 full and have a signal strength of 15 if the tank is half full or more.
 
 ie.manual.entry.redstone.name=Redstone Timer
