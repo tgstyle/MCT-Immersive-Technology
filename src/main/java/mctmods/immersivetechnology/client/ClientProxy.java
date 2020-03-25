@@ -102,13 +102,12 @@ public class ClientProxy extends CommonProxy {
 	public void onClientTick(TickEvent.ClientTickEvent event) {
 		if(!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
 			World world = Minecraft.getMinecraft().world;
-			if (world == null) ITLogger.warn("ClientProxy has tried to access null world! This shouldn't normally happen...");
+			if(world == null) ITLogger.warn("ClientProxy has tried to access null world! This shouldn't normally happen...");
 			else {
 				world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
 				ITUtils.REMOVE_FROM_TICKING.clear();
 			}
 		}
-
 		calculateVolume();
 	}
 

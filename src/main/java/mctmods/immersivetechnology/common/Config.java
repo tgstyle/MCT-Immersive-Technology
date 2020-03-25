@@ -54,9 +54,9 @@ public class Config {
 				public static float advancedCokeOven_preheater_speed_multiplier = 1;
 			}
 			public static class Alternator {
-				@Comment({"The maximum energy an Alternator can store in IF [Default=1200000]"})
+				@Comment({"The maximum energy an Alternator can store in if[Default=1200000]"})
 				public static int alternator_energy_capacitorSize = 1200000;
-				@Comment({"Energy production when running at maximum speed and torque in IF [Default=12288]"})
+				@Comment({"Energy production when running at maximum speed and torque in if[Default=12288]"})
 				public static int alternator_energy_perTick = 12288;
 			}
 			public static class Boiler {
@@ -74,7 +74,7 @@ public class Config {
 				public static int boiler_progress_lossInTicks = 1;
 			}
 			public static class CokeOvenPreheater {
-				@Comment({"The energy per tick the Coke Oven Preheater consumes while processing in IF [Default=32]"})
+				@Comment({"The energy per tick the Coke Oven Preheater consumes while processing in if[Default=32]"})
 				public static int cokeOvenPreheater_energy_consumption = 32;
 			}
 			public static class Distiller {

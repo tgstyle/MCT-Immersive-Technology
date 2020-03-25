@@ -77,12 +77,12 @@ public abstract class GUICommonValve extends GuiScreen {
 
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
-		if (keyCode == Keyboard.KEY_TAB) {
-			if (limitPacket.isFocused()) {
+		if(keyCode == Keyboard.KEY_TAB) {
+			if(limitPacket.isFocused()) {
 				limitPacket.setFocused(false);
 				limitTime.setFocused(true);
 				destinationKeep.setFocused(false);
-			} else if (limitTime.isFocused()) {
+			} else if(limitTime.isFocused()) {
 				limitPacket.setFocused(false);
 				limitTime.setFocused(false);
 				destinationKeep.setFocused(true);
@@ -91,9 +91,9 @@ public abstract class GUICommonValve extends GuiScreen {
 				limitTime.setFocused(false);
 				destinationKeep.setFocused(false);
 			}
-		} else if (keyCode == Keyboard.KEY_E || keyCode == Keyboard.KEY_ESCAPE) {
+		} else if(keyCode == Keyboard.KEY_E || keyCode == Keyboard.KEY_ESCAPE) {
 			super.keyTyped(typedChar, 1);
-		} else if (Arrays.stream(acceptedKeys).anyMatch(x -> x == keyCode)) {
+		} else if(Arrays.stream(acceptedKeys).anyMatch(x -> x == keyCode)) {
 			limitPacket.textboxKeyTyped(typedChar, keyCode);
 			limitTime.textboxKeyTyped(typedChar, keyCode);
 			destinationKeep.textboxKeyTyped(typedChar, keyCode);

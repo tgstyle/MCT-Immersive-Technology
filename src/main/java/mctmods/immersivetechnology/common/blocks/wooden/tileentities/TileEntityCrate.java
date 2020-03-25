@@ -72,7 +72,7 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 	@Nonnull
 	@Override
 	public ItemStack extractItem(int slot, int amount, boolean simulate) {
-		if (interactiveItemStack.isEmpty()) return ItemStack.EMPTY;
+		if(interactiveItemStack.isEmpty()) return ItemStack.EMPTY;
 		ItemStack toReturn = interactiveItemStack.copy();
 		toReturn.setCount(amount);
 		if(!simulate) acceptedAmount += amount;
@@ -91,16 +91,16 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 
 	@Override
 	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
-		if (heldItem.isEmpty()) {
-			if (player.isSneaking()) {
+		if(heldItem.isEmpty()) {
+			if(player.isSneaking()) {
 				visibleItemStack = ItemStack.EMPTY;
 				interactiveItemStack = ItemStack.EMPTY;
 				return true;
-			} else if (!interactiveItemStack.isEmpty()) {
+			} else if(!interactiveItemStack.isEmpty()) {
 				player.inventory.addItemStackToInventory(interactiveItemStack);
 				return true;
 			}
-		} else if (interactiveItemStack.isEmpty()) {
+		} else if(interactiveItemStack.isEmpty()) {
 			setItemStack(heldItem.copy());
 			return true;
 		}
