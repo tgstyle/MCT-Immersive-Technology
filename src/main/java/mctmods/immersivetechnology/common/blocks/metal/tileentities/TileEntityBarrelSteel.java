@@ -62,7 +62,7 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 	public void update() {
 		if(world.isRemote) return;
 		for(int index = 0; index < 2; index++) {
-		if(tank.getFluidAmount() > 0 && sideConfig[index] == 1) {
+			if(tank.getFluidAmount() > 0 && sideConfig[index] == 1) {
 				EnumFacing face = EnumFacing.getFront(index);
 				IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
             	if(output != null) {
