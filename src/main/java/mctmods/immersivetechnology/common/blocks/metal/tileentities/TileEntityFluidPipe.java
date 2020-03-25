@@ -17,7 +17,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITUtils;
-import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.common.Config.ITConfig.Experimental;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -62,8 +62,9 @@ import java.util.function.Function;
 @SuppressWarnings("deprecation")
 public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe {
 
-	public int transferRate = Config.ITConfig.Experimental.pipe_transfer_rate;
-	public int transferRatePressurized = Config.ITConfig.Experimental.pipe_pressurized_transfer_rate;
+	public int transferRate = Experimental.pipe_transfer_rate;
+	public int transferRatePressurized = Experimental.pipe_pressurized_transfer_rate;
+	private static boolean pipePathing = Experimental.pipe_pathing_known;
 
 	public static ArrayList<Function<ItemStack, Boolean>> validPipeCovers = new ArrayList<>();
 	public static ArrayList<Function<ItemStack, Boolean>> climbablePipeCovers = new ArrayList<>();
@@ -261,8 +262,11 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 						remaining -= handler.fill(Utils.copyFluidStackWithAmount(resource, remaining, !(handler instanceof IFluidPipe)), doFill);
 						busy = false;
 						if(remaining == 0) {
-							//Collections.shuffle(outputs);
-							if(outputs.indexOf(facing) != 0) Collections.swap(outputs, outputs.indexOf(facing),0); //Add some bias forextra TPS juice
+							if(pipePathing) {
+								if(outputs.indexOf(facing) != 0) Collections.swap(outputs, outputs.indexOf(facing),0); //Add some bias for extra TPS juice
+							} else {
+								Collections.shuffle(outputs);
+							}
 							return maximum;
 						}
 					}
