@@ -15,45 +15,45 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MessageRequestUpdate implements IMessage {
 
-    BlockPos pos;
+	BlockPos pos;
 
-    public MessageRequestUpdate(TileEntityIEBase tile) {
-        this.pos = tile.getPos();
-    }
+	public MessageRequestUpdate(TileEntityIEBase tile) {
+		this.pos = tile.getPos();
+	}
 
-    public MessageRequestUpdate() {
-    }
+	public MessageRequestUpdate() {
+	}
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-    }
+	@Override
+	public void fromBytes(ByteBuf buf) {
+		this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+	}
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeInt(pos.getX()).writeInt(pos.getY()).writeInt(pos.getZ());
-    }
+	@Override
+	public void toBytes(ByteBuf buf) {
+		buf.writeInt(pos.getX()).writeInt(pos.getY()).writeInt(pos.getZ());
+	}
 
-    public static class HandlerServer implements IMessageHandler<MessageRequestUpdate, IMessage> {
-        @Override
-        public IMessage onMessage(MessageRequestUpdate message, MessageContext ctx) {
-            WorldServer world = ctx.getServerHandler().player.getServerWorld();
-            world.addScheduledTask(() -> {
-                if(world.isBlockLoaded(message.pos)) {
-                    TileEntity tile = world.getTileEntity(message.pos);
-                    if(tile instanceof TileEntityCokeOvenAdvancedSlave)
-                        ((TileEntityCokeOvenAdvancedMaster)tile).updateRequested(ctx.getServerHandler().player);
-                }
-            });
-            return null;
-        }
-    }
+	public static class HandlerServer implements IMessageHandler<MessageRequestUpdate, IMessage> {
+		@Override
+		public IMessage onMessage(MessageRequestUpdate message, MessageContext ctx) {
+			WorldServer world = ctx.getServerHandler().player.getServerWorld();
+			world.addScheduledTask(() -> {
+				if(world.isBlockLoaded(message.pos)) {
+					TileEntity tile = world.getTileEntity(message.pos);
+					if(tile instanceof TileEntityCokeOvenAdvancedSlave)
+						((TileEntityCokeOvenAdvancedMaster)tile).updateRequested(ctx.getServerHandler().player);
+				}
+			});
+			return null;
+		}
+	}
 
-    @SideOnly(Side.CLIENT)
-    public static class HandlerClient implements IMessageHandler<MessageRequestUpdate, IMessage> {
-        @Override
-        public IMessage onMessage(MessageRequestUpdate message, MessageContext ctx) {
-            return null;
-        }
-    }
+	@SideOnly(Side.CLIENT)
+	public static class HandlerClient implements IMessageHandler<MessageRequestUpdate, IMessage> {
+		@Override
+		public IMessage onMessage(MessageRequestUpdate message, MessageContext ctx) {
+			return null;
+		}
+	}
 }

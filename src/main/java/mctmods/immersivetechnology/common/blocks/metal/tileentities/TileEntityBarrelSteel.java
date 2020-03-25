@@ -65,21 +65,21 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 			if(tank.getFluidAmount() > 0 && sideConfig[index] == 1) {
 				EnumFacing face = EnumFacing.getFront(index);
 				IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
-            	if(output != null) {
-                	if(sleep == 0) {
-                    	FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(500, tank.getFluidAmount()), false);
-                    	accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
-                		if(accepted.amount > 0) {
-                			int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
-                			tank.drain(drained, true);
-                			sleep = 0;
-                		} else {
-                			sleep = 20;
-                		}
-                	} else {
-                		sleep--;
-                	}
-            	}
+				if(output != null) {
+					if(sleep == 0) {
+						FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(500, tank.getFluidAmount()), false);
+						accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
+						if(accepted.amount > 0) {
+							int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
+							tank.drain(drained, true);
+							sleep = 0;
+						} else {
+							sleep = 20;
+						}
+					} else {
+						sleep--;
+					}
+				}
 			}
 		}
 	}
