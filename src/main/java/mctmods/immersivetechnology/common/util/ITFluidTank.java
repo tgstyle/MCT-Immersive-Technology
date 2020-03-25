@@ -9,28 +9,28 @@ import javax.annotation.Nullable;
 
 public class ITFluidTank extends FluidTank {
 
-    public interface TankListener {
-        void TankContentsChanged();
-    }
+	public interface TankListener {
+		void TankContentsChanged();
+	}
 
-    TankListener listener;
+	TankListener listener;
 
-    public ITFluidTank(int capacity, @Nonnull TankListener listener) {
-        this(null, capacity, listener);
-    }
+	public ITFluidTank(int capacity, @Nonnull TankListener listener) {
+		this(null, capacity, listener);
+	}
 
-    public ITFluidTank(@Nullable FluidStack fluidStack, int capacity, @Nonnull TankListener listener) {
-        super(fluidStack, capacity);
-        this.listener = listener;
-    }
+	public ITFluidTank(@Nullable FluidStack fluidStack, int capacity, @Nonnull TankListener listener) {
+		super(fluidStack, capacity);
+		this.listener = listener;
+	}
 
-    public ITFluidTank(Fluid fluid, int amount, int capacity, @Nonnull TankListener listener) {
-        this(new FluidStack(fluid, amount), capacity, listener);
-    }
+	public ITFluidTank(Fluid fluid, int amount, int capacity, @Nonnull TankListener listener) {
+		this(new FluidStack(fluid, amount), capacity, listener);
+	}
 
-    @Override
-    protected void onContentsChanged() {
-        listener.TankContentsChanged();
-        super.onContentsChanged();
-    }
+	@Override
+	protected void onContentsChanged() {
+		listener.TankContentsChanged();
+		super.onContentsChanged();
+	}
 }

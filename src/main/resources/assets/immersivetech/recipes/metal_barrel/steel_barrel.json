@@ -2,19 +2,19 @@
 	"type": "forge:ore_shaped",
 	"result": {
 		"item": "immersivetech:metal_barrel",
-		"data": 1
+		"data": 2
 	},
 	"pattern": [
-		"S S",
+		"SSS",
 		"B B",
 		"BBB"
 	],
 	"key": {
 		"B": {
-			"item": "#blockSheetmetalIron"
+			"item": "#blockSheetmetalSteel"
 		},
 		"S": {
-			"item": "#slabSheetmetalIron"
+			"item": "#slabSheetmetalSteel"
 		}
 	}
 }

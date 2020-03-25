@@ -47,7 +47,7 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 	}
 	
 	public boolean doSpeedup() {
-		if (dummy) return false;
+		if(dummy) return false;
 		int consumed = cokeOvenConsumption;
 		if(this.energyStorage.extractEnergy(consumed, true) == consumed) {
 			if(!active) {
@@ -96,8 +96,8 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 
 	@Override
 	public void breakDummies(BlockPos unused, IBlockState unused2) {
-		if (dummy) {
-			if (masterPos == null) findMaster();
+		if(dummy) {
+			if(masterPos == null) findMaster();
 			TileEntity tile = world.getTileEntity(masterPos);
 			if(tile instanceof TileEntityCokeOvenPreheater) ((TileEntityCokeOvenPreheater) tile).breakDummies(null, null);
 		} else {
@@ -105,8 +105,8 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 			TileEntityCokeOvenPreheater dummy0 = (TileEntityCokeOvenPreheater)world.getTileEntity(dummyPos0);
 			BlockPos dummyPos1 = getPos().offset(facing.rotateYCCW());
 			TileEntityCokeOvenPreheater dummy1 = (TileEntityCokeOvenPreheater)world.getTileEntity(dummyPos1);
-			if (dummy0 != null) world.setBlockToAir(dummyPos0);
-			if (dummy1 != null) world.setBlockToAir(dummyPos1);
+			if(dummy0 != null) world.setBlockToAir(dummyPos0);
+			if(dummy1 != null) world.setBlockToAir(dummyPos1);
 			world.setBlockToAir(getPos());
 		}
 	}
@@ -147,24 +147,24 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 	}
 
 	private void findMaster() {
-		if (!dummy) {
+		if(!dummy) {
 			masterPos = getPos();
 			return;
 		}
 		TileEntity tile = world.getTileEntity(getPos().offset(facing, -1));
-		if (tile instanceof TileEntityCokeOvenPreheater && ((TileEntityCokeOvenPreheater) tile).isMaster(this)) {
+		if(tile instanceof TileEntityCokeOvenPreheater && ((TileEntityCokeOvenPreheater) tile).isMaster(this)) {
 			masterPos = getPos().offset(facing, -1);
 			return;
 		}
 		tile = world.getTileEntity(getPos().offset(facing.rotateY()));
-		if (tile instanceof TileEntityCokeOvenPreheater && ((TileEntityCokeOvenPreheater) tile).isMaster(this)) { //DUMB SHIT PART 1
+		if(tile instanceof TileEntityCokeOvenPreheater && ((TileEntityCokeOvenPreheater) tile).isMaster(this)) { //DUMB SHIT PART 1
 			masterPos = getPos().offset(facing.rotateY());
 			facing = facing.rotateYCCW();
 			this.markContainingBlockForUpdate(null);
 			return;
 		}
 		tile = world.getTileEntity(getPos().offset(facing.rotateYCCW()));
-		if (tile instanceof TileEntityCokeOvenPreheater && ((TileEntityCokeOvenPreheater) tile).isMaster(this)) { //DUMB SHIT PART 2
+		if(tile instanceof TileEntityCokeOvenPreheater && ((TileEntityCokeOvenPreheater) tile).isMaster(this)) { //DUMB SHIT PART 2
 			masterPos = getPos().offset(facing.rotateYCCW());
 			facing = facing.rotateY();
 			this.markContainingBlockForUpdate(null);
@@ -174,9 +174,9 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 	}
 
 	private boolean isMaster(TileEntityCokeOvenPreheater requester) {
-		if (dummy || requester == null) return false;
+		if(dummy || requester == null) return false;
 		BlockPos dummyPos = getPos().offset(facing.rotateY());
-		if (requester == world.getTileEntity(dummyPos)) return true;
+		if(requester == world.getTileEntity(dummyPos)) return true;
 		dummyPos = getPos().offset(facing.rotateYCCW());
 		return (requester == world.getTileEntity(dummyPos));
 	}
@@ -184,7 +184,7 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 	@Override
 	public FluxStorage getFluxStorage() {
 		if(dummy) {
-			if (masterPos == null) findMaster();
+			if(masterPos == null) findMaster();
 			TileEntity tile = world.getTileEntity(masterPos);
 			if(tile instanceof TileEntityCokeOvenPreheater) return ((TileEntityCokeOvenPreheater)tile).getFluxStorage();
 		}

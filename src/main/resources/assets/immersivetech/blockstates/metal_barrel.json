@@ -20,6 +20,9 @@
 				"particle": "immersivetech:blocks/metal_barrel_open_side"
 			}
 		}],
+		"inventory,type=barrel_steel": [{
+			"model": "immersivetechnology:smartmodels/conf_sides_v_metal_barrel_barrel_steel"
+		}],
 		"type": {
 			"barrel": {
 				"model": "immersivetech:metal_barrel/metal_barrel",
@@ -36,6 +39,9 @@
 					"down": "immersivetech:blocks/metal_barrel_open_down",
 					"particle": "immersivetech:blocks/metal_barrel_open_side"
 				}
+			},
+			"barrel_steel": {
+				"model": "immersivetechnology:smartmodels/conf_sides_v_metal_barrel_barrel_steel"
 			}
 		}
 	}

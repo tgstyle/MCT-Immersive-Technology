@@ -33,13 +33,14 @@ tile.immersivetech.metal_device.coke_oven_preheater.name=Coke Oven Preheater
 tile.immersivetech.metal_trash.trash_item.name=Trash Can
 tile.immersivetech.metal_trash.trash_fluid.name=Fluid Trash Can
 tile.immersivetech.metal_trash.trash_energy.name=Energy Trash Can
-tile.immersivetech.metal_barrel.barrel.name=Creative Barrel
-tile.immersivetech.metal_barrel.barrel_open.name=Open Barrel
+tile.immersivetech.metal_barrel.barrel.name=Creative Metal Barrel
+tile.immersivetech.metal_barrel.barrel_open.name=Open Metal Barrel
+tile.immersivetech.metal_barrel.barrel_steel.name=Steel Metal Barrel
 tile.immersivetech.valve.fluid_valve.name=Fluid Valve
 tile.immersivetech.valve.load_controller.name=Load Controller
 tile.immersivetech.valve.stack_limiter.name=Stack Limiter
 #WOODEN
-tile.immersivetech.wooden_crate.crate.name=Creative Crate
+tile.immersivetech.wooden_crate.crate.name=Creative Storage Crate
 
 
 #METAL MULTIBLOCKS

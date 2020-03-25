@@ -7,7 +7,8 @@ import java.util.Locale;
 
 public enum BlockType_MetalBarrel implements IStringSerializable, BlockITBase.IBlockEnum {
 	BARREL,
-	BARREL_OPEN;
+	BARREL_OPEN,
+	BARREL_STEEL;
 
 	@Override
 	public String getName() {
