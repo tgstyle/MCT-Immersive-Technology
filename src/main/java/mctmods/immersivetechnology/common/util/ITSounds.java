@@ -10,24 +10,24 @@ import java.util.Set;
 
 public class ITSounds {
 
-    static Set<SoundEvent> registeredEvents = new HashSet<>();
-    public static SoundEvent turbine = registerSound("turbine");
-    public static SoundEvent alternator = registerSound("alternator");
-    public static SoundEvent boiler = registerSound("boiler");
-    public static SoundEvent distiller = registerSound("distiller");
-    public static SoundEvent advCokeOven = registerSound("advCokeOven");
-    public static SoundEvent solarTower = registerSound("solarTower");
+	static Set<SoundEvent> registeredEvents = new HashSet<>();
+	public static SoundEvent turbine = registerSound("turbine");
+	public static SoundEvent alternator = registerSound("alternator");
+	public static SoundEvent boiler = registerSound("boiler");
+	public static SoundEvent distiller = registerSound("distiller");
+	public static SoundEvent advCokeOven = registerSound("advCokeOven");
+	public static SoundEvent solarTower = registerSound("solarTower");
 
-    private static SoundEvent registerSound(String name) {
-        ResourceLocation location = new ResourceLocation(ImmersiveTechnology.MODID, name);
-        SoundEvent event = new SoundEvent(location);
-        registeredEvents.add(event.setRegistryName(location));
-        return event;
-    }
+	private static SoundEvent registerSound(String name) {
+		ResourceLocation location = new ResourceLocation(ImmersiveTechnology.MODID, name);
+		SoundEvent event = new SoundEvent(location);
+		registeredEvents.add(event.setRegistryName(location));
+		return event;
+	}
 
-    public static void init() {
-        for(SoundEvent event : registeredEvents)
-            ForgeRegistries.SOUND_EVENTS.register(event);
-    }
+	public static void init() {
+		for(SoundEvent event : registeredEvents)
+			ForgeRegistries.SOUND_EVENTS.register(event);
+	}
 
 }

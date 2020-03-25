@@ -8,11 +8,11 @@ import net.minecraft.world.World;
 
 public class TemporaryTileEntityRequest {
 
-    public BlockPos position;
-    public EnumFacing facing;
-    public NBTTagCompound nbtTag;
-    public World world;
-    public MultiblockHandler.IMultiblock multiblock;
-    public BlockPos formationPosition;
+	public BlockPos position;
+	public EnumFacing facing;
+	public NBTTagCompound nbtTag;
+	public World world;
+	public MultiblockHandler.IMultiblock multiblock;
+	public BlockPos formationPosition;
 
 }
