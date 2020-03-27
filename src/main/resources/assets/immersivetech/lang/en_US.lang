@@ -97,6 +97,7 @@ gui.immersivetech.load_controller.limitdestination=IF in output storage
 gui.immersivetech.stack_limiter.limitpacket=Items per packet
 gui.immersivetech.stack_limiter.limittime=Items per second
 gui.immersivetech.stack_limiter.limitdestination=Items in output storage
+gui.immersivetech.generic_multiblock_jei_tooltip=Check Engineer's Manual to Build
 
 
 #STONE MULTIBLOCKS
