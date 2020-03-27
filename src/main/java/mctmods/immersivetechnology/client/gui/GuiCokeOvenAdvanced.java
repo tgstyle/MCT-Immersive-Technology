@@ -35,7 +35,7 @@ public class GuiCokeOvenAdvanced extends GuiIEContainerBase {
 	int time = 0;
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mx, int my) {
-		if (++time == 20) {
+		if(++time == 20) {
 			time = 0;
 			ImmersiveTechnology.packetHandler.sendToServer(new MessageRequestUpdate(tile));
 		}

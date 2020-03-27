@@ -24,20 +24,16 @@ public class Config {
 			public static SteamTurbine steamturbine;
 
 			public static class Multiblock {
-				@Comment({"Can the Steam Turbine Multiblock structure be built ? [Default=true]"})
-				public static boolean enable_steamTurbine = true;
-				@Comment({"Can the Alternator Multiblock structure be built ? [Default=true]"})
-				public static boolean enable_alternator = true;
-				@Comment({"Can the Boiler Multiblock structure be built ? [Default=true]"})
+				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Preheater be built ? [Default=true]"})
+				public static boolean enable_advancedCokeOven = true;
+				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Boiler Multiblock structure be built ? [Default=true]"})
 				public static boolean enable_boiler = true;
-				@Comment({"Can the Distiller Multiblock structure be built ? [Default=true]"})
+				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Distiller Multiblock structure be built ? [Default=true]"})
 				public static boolean enable_distiller = true;
-				@Comment({"Can the Solar Tower Multiblock structure be built ? [Default=true]"})
+				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Solar Tower / Solar Reflector Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_solarTower = true;
-				@Comment({"Can the Solar Reflector Multiblock structure be built ? [Default=true]"})
-				public static boolean enable_solarReflector = true;
-				@Comment({"Can the Coke Oven Advanced Multiblock structure be built ? [Default=true]"})
-			public static boolean enable_advancedCokeOven = true;
+				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Steam Turbine / Alternator Multiblock structures be built ? [Default=true]"})
+				public static boolean enable_steamTurbine = true;
 			}
 			public static class Recipes {
 				@Comment({"Should default Steam Turbine recipes be registered ? [Default=true]"})
@@ -58,9 +54,9 @@ public class Config {
 				public static float advancedCokeOven_preheater_speed_multiplier = 1;
 			}
 			public static class Alternator {
-				@Comment({"The maximum energy an Alternator can store in IF [Default=1200000]"})
+				@Comment({"The maximum energy an Alternator can store in if[Default=1200000]"})
 				public static int alternator_energy_capacitorSize = 1200000;
-				@Comment({"Energy production when running at maximum speed and torque in IF [Default=12288]"})
+				@Comment({"Energy production when running at maximum speed and torque in if[Default=12288]"})
 				public static int alternator_energy_perTick = 12288;
 			}
 			public static class Boiler {
@@ -78,7 +74,7 @@ public class Config {
 				public static int boiler_progress_lossInTicks = 1;
 			}
 			public static class CokeOvenPreheater {
-				@Comment({"The energy per tick the Coke Oven Preheater consumes while processing in IF [Default=32]"})
+				@Comment({"The energy per tick the Coke Oven Preheater consumes while processing in if[Default=32]"})
 				public static int cokeOvenPreheater_energy_consumption = 32;
 			}
 			public static class Distiller {
@@ -135,6 +131,9 @@ public class Config {
 			public static int pipe_transfer_rate = 50;
 			@Comment({"How much should the pipes be capable of transfering when pressurized, in mb. [Default=1000]"})
 			public static int pipe_pressurized_transfer_rate = 1000;
+			@Comment({"Should pipes fill a known path first, or try to distribute to all outputs randomly? Known path has lower TPS. [Default=true]"})
+			public static boolean pipe_pathing_known = true;
 		}
 	}
+
 }

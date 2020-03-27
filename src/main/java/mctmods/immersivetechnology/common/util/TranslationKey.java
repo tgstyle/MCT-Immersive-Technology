@@ -40,32 +40,32 @@ public enum TranslationKey {
     OVERLAY_REDSTONE_INVERTED("overlay.immersivetech.redstone_inverted"),
     GUI_GENERIC_MULTIBLOCK_TOOLTIP("gui.immersivetech.generic_multiblock_jei_tooltip");
 
-    public String location;
-    TranslationKey(String location) {
-        this.location = location;
-    }
+	public String location;
+	TranslationKey(String location) {
+		this.location = location;
+	}
 
-    public String text(boolean addSpaceBefore, boolean addSpaceAfter) {
-        return (addSpaceBefore? " ":"") + I18n.format(location) + (addSpaceAfter? " ":"");
-    }
+	public String text(boolean addSpaceBefore, boolean addSpaceAfter) {
+		return (addSpaceBefore? " ":"") + I18n.format(location) + (addSpaceAfter? " ":"");
+	}
 
-    public String text(boolean addSpaceBefore) {
-        return text(addSpaceBefore, false);
-    }
+	public String text(boolean addSpaceBefore) {
+		return text(addSpaceBefore, false);
+	}
 
-    public String text() {
-        return text(false, false);
-    }
+	public String text() {
+		return text(false, false);
+	}
 
-    public String format(boolean addSpaceBefore, boolean addSpaceAfter, Object... parameters) {
-        return (addSpaceBefore? " ":"") + I18n.format(location, parameters) + (addSpaceAfter? " ":"");
-    }
+	public String format(boolean addSpaceBefore, boolean addSpaceAfter, Object... parameters) {
+		return (addSpaceBefore? " ":"") + I18n.format(location, parameters) + (addSpaceAfter? " ":"");
+	}
 
-    public String format(boolean addSpaceBefore, Object... parameters) {
-        return format(addSpaceBefore, false, parameters);
-    }
+	public String format(boolean addSpaceBefore, Object... parameters) {
+		return format(addSpaceBefore, false, parameters);
+	}
 
-    public String format(Object... parameters) {
-        return format(false, false, parameters);
-    }
+	public String format(Object... parameters) {
+		return format(false, false, parameters);
+	}
 }

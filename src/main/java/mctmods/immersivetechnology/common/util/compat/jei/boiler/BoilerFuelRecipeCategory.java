@@ -33,8 +33,8 @@ public class BoilerFuelRecipeCategory extends ITRecipeCategory<BoilerFuelRecipe,
 	public void setRecipe(IRecipeLayout recipeLayout, BoilerFuelRecipeWrapper recipeWrapper, IIngredients ingredients) {
 		int tankSize = 0;
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
-		for (List<FluidStack> lists : inputs) {
-			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
+		for(List<FluidStack> lists : inputs) {
+			for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
 		}
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
 		guiFluidStacks.init(0, true, 13, 20, 16, 47, tankSize, false, tankOverlay);

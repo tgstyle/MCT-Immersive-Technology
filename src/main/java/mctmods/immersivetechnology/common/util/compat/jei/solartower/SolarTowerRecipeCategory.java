@@ -41,15 +41,15 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 	public void setRecipe(IRecipeLayout recipeLayout, SolarTowerRecipeWrapper recipeWrapper, IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		int tankCapacity = 0;
-		for (List<FluidStack> stacks : inputs) {
-			for (FluidStack stack : stacks) {
-				if (stack.amount > tankCapacity) tankCapacity = stack.amount;
+		for(List<FluidStack> stacks : inputs) {
+			for(FluidStack stack : stacks) {
+				if(stack.amount > tankCapacity) tankCapacity = stack.amount;
 			}
 		}
 		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
-		for (List<FluidStack> stacks : outputs) {
-			for (FluidStack stack : stacks) {
-				if (stack.amount > tankCapacity) tankCapacity = stack.amount;
+		for(List<FluidStack> stacks : outputs) {
+			for(FluidStack stack : stacks) {
+				if(stack.amount > tankCapacity) tankCapacity = stack.amount;
 			}
 		}
 
@@ -69,9 +69,9 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 	public void drawExtras(Minecraft minecraft) {
 		int reflectors = timer.getValue();
 		reflectorOverlay.draw(minecraft, 32, 24);
-		if (reflectors >= 1) reflectorOverlay.draw(minecraft, 16, 40);
-		if (reflectors >= 2) reflectorOverlay.draw(minecraft, 48, 40);
-		if (reflectors == 3) reflectorOverlay.draw(minecraft, 32, 56);
+		if(reflectors >= 1) reflectorOverlay.draw(minecraft, 16, 40);
+		if(reflectors >= 2) reflectorOverlay.draw(minecraft, 48, 40);
+		if(reflectors == 3) reflectorOverlay.draw(minecraft, 32, 56);
 	}
 
 	@Override

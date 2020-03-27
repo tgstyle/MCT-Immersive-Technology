@@ -10,38 +10,38 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MessageStopSound implements IMessage {
-    BlockPos pos;
+	BlockPos pos;
 
-    public MessageStopSound(BlockPos tile) {
-        this.pos = tile;
-    }
+	public MessageStopSound(BlockPos tile) {
+		this.pos = tile;
+	}
 
-    public MessageStopSound() {
-    }
+	public MessageStopSound() {
+	}
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-    }
+	@Override
+	public void fromBytes(ByteBuf buf) {
+		this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+	}
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeInt(pos.getX()).writeInt(pos.getY()).writeInt(pos.getZ());
-    }
+	@Override
+	public void toBytes(ByteBuf buf) {
+		buf.writeInt(pos.getX()).writeInt(pos.getY()).writeInt(pos.getZ());
+	}
 
-    @SideOnly(Side.CLIENT)
-    public static class HandlerClient implements IMessageHandler<MessageStopSound, IMessage>	{
-        @Override
-        public IMessage onMessage(MessageStopSound message, MessageContext ctx) {
-            ITSoundHandler.StopSound(message.pos);
-            return null;
-        }
-    }
+	@SideOnly(Side.CLIENT)
+	public static class HandlerClient implements IMessageHandler<MessageStopSound, IMessage>	{
+		@Override
+		public IMessage onMessage(MessageStopSound message, MessageContext ctx) {
+			ITSoundHandler.StopSound(message.pos);
+			return null;
+		}
+	}
 
-    @SideOnly(Side.SERVER)
-    public static class HandlerServer implements IMessageHandler<MessageStopSound, IMessage>	{
-        @Override
-        public IMessage onMessage(MessageStopSound message, MessageContext ctx) { return null; }
-    }
+	@SideOnly(Side.SERVER)
+	public static class HandlerServer implements IMessageHandler<MessageStopSound, IMessage>	{
+		@Override
+		public IMessage onMessage(MessageStopSound message, MessageContext ctx) { return null; }
+	}
 
 }

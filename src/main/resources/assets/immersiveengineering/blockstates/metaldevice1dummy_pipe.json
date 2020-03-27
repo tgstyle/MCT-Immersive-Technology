@@ -1,22 +1,18 @@
 {
 	"forge_marker": 1,
-	"defaults":
-	{
+	"defaults": {
 		"transform": "forge:default-block",
 		"model": "immersiveengineering:metal_device/fluid_pipe.obj.ie",
-		"custom": {"flip-v": true}
+		"custom": {
+			"flip-v": true
+		}
 	},
-	"variants":
-	{
-		"inventory,type=fluid_pipe": [{
-		}],
-		"type":
-		{
-			"fluid_pipe": {
-			}
+	"variants": {
+		"inventory,type=fluid_pipe": [{}],
+		"type": {
+			"fluid_pipe": {}
 		},
-		"facing":
-		{
+		"facing": {
 			"down": {},
 			"up": {},
 			"north": {},
@@ -24,15 +20,13 @@
 			"west": {},
 			"east": {}
 		},
-		"_0multiblockslave":
-		{
-			"false":{},
-			"true":{}
+		"_0multiblockslave": {
+			"false": {},
+			"true": {}
 		},
-		"boolean0":
-		{
-			"false":{},
-			"true":{}
+		"boolean0": {
+			"false": {},
+			"true": {}
 		}
 	}
 }
