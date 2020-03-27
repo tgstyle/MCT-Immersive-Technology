@@ -27,7 +27,7 @@
 		"inventory,type=coke_oven_advanced_slave": [{
 			"model": "immersivetech:stone_multiblock/coke_oven_advanced.obj",
 			"transform": {
-				"scale": 0.25,
+				"scale": 0.22,
 				"rotation": [{
 					"x": 20
 				},
@@ -35,7 +35,7 @@
 						"y": -45
 					}
 				],
-				"translation": [0, 0, 0]
+				"translation": [-0.2, -0.1, 0]
 			}
 		}],
 		"type": {

@@ -13,14 +13,15 @@
 		"inventory,type=boiler_slave": [{
 			"model": "immersivetech:metal_multiblock/boiler.obj",
 			"transform": {
-				"scale": 0.1875,
+				"scale": 0.17,
 				"rotation": [{
-						"x": 20
-					},
+					"x": 20
+				},
 					{
 						"y": -45
 					}
-				]
+				],
+				"translation": [ -0.1, 0, 0 ]
 			}
 		}],
 		"type": {
