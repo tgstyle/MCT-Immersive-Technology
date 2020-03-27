@@ -13,14 +13,15 @@
 		"inventory,type=steam_turbine": [{
 			"model": "immersivetech:metal_multiblock/steam_turbine.obj",
 			"transform": {
-				"scale": 0.25,
+				"scale": 0.115,
 				"rotation": [{
 						"x": 20
 					},
 					{
 						"y": -45
 					}
-				]
+				],
+				"translation": [ -0.3, -0.1, 0 ]
 			}
 		}],
 		"type": {

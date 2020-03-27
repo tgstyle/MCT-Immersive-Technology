@@ -3,9 +3,11 @@ package mctmods.immersivetechnology.common.util.compat.jei.steamturbine;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
+import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
+import mezz.jei.api.IModRegistry;
 import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
@@ -17,13 +19,14 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.List;
 
 public class SteamTurbineRecipeCategory extends ITRecipeCategory<SteamTurbineRecipe, SteamTurbineRecipeWrapper> {
+
 	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_steam_turbine.png");
 	private final IDrawable tankOverlay;
 	private final IDrawableAnimated turbineAndArrow;
 
 	@SuppressWarnings("deprecation")
 	public SteamTurbineRecipeCategory(IGuiHelper helper) {
-		super("steamTurbine", "tile.immersivetech.metal_multiblock.steam_turbine.name", helper.createDrawable(background, 0, 0, 116, 69), SteamTurbineRecipe.class, new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.STEAM_TURBINE.getMeta()));
+		super("steamTurbine", "tile.immersivetech.metal_multiblock.steam_turbine.name", helper.createDrawable(background, 0, 0, 116, 69), SteamTurbineRecipe.class, GenericMultiblockIngredient.STEAM_TURBINE);
 		tankOverlay = helper.createDrawable(background, 118, 2, 16, 47, -2, 2, -2, 2);
 		IDrawableStatic staticImage = helper.createDrawable(background, 0, 78, 32, 42);
 		this.turbineAndArrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);

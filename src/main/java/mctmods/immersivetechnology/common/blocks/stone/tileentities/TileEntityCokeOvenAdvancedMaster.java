@@ -8,6 +8,7 @@ import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityCokeOvenPreheater;
+import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -32,7 +33,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvancedSlave implements IEBlockInterfaces.IActiveState, IEBlockInterfaces.IProcessTile {
+public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvancedSlave implements IEBlockInterfaces.IActiveState, IEBlockInterfaces.IProcessTile, ITFluidTank.TankListener {
 
 	public static float baseSpeed = Config.ITConfig.Machines.AdvancedCokeOven.advancedCokeOven_speed_base;
 	public static float preheaterAdd = Config.ITConfig.Machines.AdvancedCokeOven.advancedCokeOven_preheater_speed_increase;
@@ -44,9 +45,9 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 	private float soundVolume;
 	private CokeOvenRecipe processing;
 
-	public FluidTank tank = new FluidTank(24000);
-	public static int slotCount = 4;
-	NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
+  public ITFluidTank tank = new ITFluidTank(24000, this);
+  public static int slotCount = 4;
+  NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -272,7 +273,12 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 		}
 		return (baseSpeed + activePreheaters * preheaterAdd) * (1 + activePreheaters * (preheaterMult - 1));
 	}
+  
+  IItemHandler inputHandler = new IEInventoryHandler(1, this, 0, new boolean[] {true}, new boolean[] {false});
+  IItemHandler outputHandler = new IEInventoryHandler(1, this, 1, new boolean[] {false}, new boolean[] {true});
 
-	IItemHandler inputHandler = new IEInventoryHandler(1, this, 0, new boolean[] {true}, new boolean[] {false});
-	IItemHandler outputHandler = new IEInventoryHandler(1, this, 1, new boolean[] {false}, new boolean[] {true});
+  @Override
+  public void TankContentsChanged() {
+      this.markContainingBlockForUpdate(null);
+  }
 }

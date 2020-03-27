@@ -19,9 +19,9 @@ public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements I
 	public String localizedName;
 	private final IDrawable background;
 	private final Class<T> recipeClass;
-	private final ItemStack[] displayStacks;
+	private final GenericMultiblockIngredient[] displayStacks;
 
-	public ITRecipeCategory(String uniqueName, String localKey, IDrawable background, Class<T> recipeClass, ItemStack... displayStacks) {
+	public ITRecipeCategory(String uniqueName, String localKey, IDrawable background, Class<T> recipeClass, GenericMultiblockIngredient... displayStacks) {
 		this.uniqueName = uniqueName;
 		this.localizedName = I18n.format(localKey);
 		this.background = background;
@@ -31,7 +31,7 @@ public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements I
 
 	@SuppressWarnings("deprecation")
 	public void addCatalysts(IModRegistry registry) {
-		for(ItemStack stack : displayStacks) registry.addRecipeCategoryCraftingItem(stack, getUid());
+		for(GenericMultiblockIngredient stack : displayStacks) registry.addRecipeCatalyst(stack, getUid());
 	}
 
 	@Nullable

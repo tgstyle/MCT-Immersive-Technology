@@ -1,5 +1,8 @@
 package mctmods.immersivetechnology.common.util.compat.jei;
 
+import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.common.util.compat.jei.cokeoven.CokeOvenRecipeCategory;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe.BoilerFuelRecipe;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
@@ -7,6 +10,8 @@ import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Experimental;
 import mctmods.immersivetechnology.common.ITContent;
+import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
+import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerFuelRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerRecipeCategory;
@@ -16,16 +21,24 @@ import mctmods.immersivetechnology.common.util.compat.jei.steamturbine.SteamTurb
 import mezz.jei.api.*;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.ITooltipCallback;
+import mezz.jei.api.ingredients.IIngredientHelper;
+import mezz.jei.api.ingredients.IIngredientRenderer;
 import mezz.jei.api.ingredients.IModIngredientRegistration;
+import mezz.jei.api.recipe.IIngredientType;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.IRecipeWrapper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import javax.annotation.Nullable;
+import java.util.*;
 
 @JEIPlugin
 public class JEIHelper implements IModPlugin {
@@ -36,7 +49,7 @@ public class JEIHelper implements IModPlugin {
 
 	@Override
 	public void registerIngredients(IModIngredientRegistration registry) {
-		//registry.register();
+		registry.register(GenericMultiblockIngredient.class, GenericMultiblockIngredient.list, new GenericMultiblockHelper(), new GenericMultiblockRenderer());
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -70,6 +83,8 @@ public class JEIHelper implements IModPlugin {
 			cat.addCatalysts(registryIn);
 			modRegistry.handleRecipes(cat.getRecipeClass(), cat, cat.getRecipeCategoryUid());
 		}
+
+		modRegistry.addRecipeCatalyst(GenericMultiblockIngredient.COKE_OVEN_ADVANCED, "ie.cokeoven");
 
 		modRegistry.addRecipes(new ArrayList<Object>((DistillerRecipe.recipeList)), "it.distiller");
 		modRegistry.addRecipes(new ArrayList<Object>((BoilerRecipe.recipeList)), "it.boiler");
