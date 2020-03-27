@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.util.compat.jei.boiler;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
+import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
@@ -23,7 +24,7 @@ public class BoilerRecipeCategory extends ITRecipeCategory<BoilerRecipe, BoilerR
 
 	@SuppressWarnings("deprecation")
 	public BoilerRecipeCategory(IGuiHelper helper) {
-		super("boiler", "tile.immersivetech.metal_multiblock.boiler.name", helper.createDrawable(background, 0, 77, 176, 77), BoilerRecipe.class, new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.BOILER.getMeta()));
+		super("boiler", "tile.immersivetech.metal_multiblock.boiler.name", helper.createDrawable(background, 0, 77, 176, 77), BoilerRecipe.class, GenericMultiblockIngredient.BOILER);
 		tankOverlay = helper.createDrawable(background, 177, 31, 16, 47, -2, 2, -2, 2);
 	}
 

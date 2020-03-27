@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.util.compat.jei.solartower;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
+import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
@@ -29,7 +30,7 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 
 	@SuppressWarnings("deprecation")
 	public SolarTowerRecipeCategory(IGuiHelper helper) {
-		super("solarTower", "tile.immersivetech.metal_multiblock.solar_tower.name", helper.createDrawable(background, 0, 0, 176, 77), SolarTowerRecipe.class, new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.SOLAR_TOWER.getMeta()));
+		super("solarTower", "tile.immersivetech.metal_multiblock.solar_tower.name", helper.createDrawable(background, 0, 0, 176, 77), SolarTowerRecipe.class, GenericMultiblockIngredient.SOLAR_TOWER);
 		tankOverlay = helper.createDrawable(background, 177, 31, 16, 47, -2, 2, -2, 2);
 		reflectorOverlay = helper.createDrawable(background, 198, 31, 10, 10, 0,0,0,0);
 		timer = helper.createTickTimer(200, 3, false);

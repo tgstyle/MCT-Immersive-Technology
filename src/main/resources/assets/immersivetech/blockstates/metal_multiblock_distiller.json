@@ -13,7 +13,7 @@
 		"inventory,type=distiller": [{
 			"model": "immersivetech:metal_multiblock/distiller.obj",
 			"transform": {
-				"scale": 0.25,
+				"scale": 0.23,
 				"rotation": [{
 						"x": 20
 					},
