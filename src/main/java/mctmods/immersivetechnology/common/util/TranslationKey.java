@@ -37,7 +37,8 @@ public enum TranslationKey {
     GUI_SECONDS("gui.immersivetech.seconds"),
     OVERLAY_REDSTONE_OFF("overlay.immersivetech.redstone_off"),
     OVERLAY_REDSTONE_NORMAL("overlay.immersivetech.redstone_normal"),
-    OVERLAY_REDSTONE_INVERTED("overlay.immersivetech.redstone_inverted");
+    OVERLAY_REDSTONE_INVERTED("overlay.immersivetech.redstone_inverted"),
+    GUI_GENERIC_MULTIBLOCK_TOOLTIP("gui.immersivetech.generic_multiblock_jei_tooltip");
 
     public String location;
     TranslationKey(String location) {

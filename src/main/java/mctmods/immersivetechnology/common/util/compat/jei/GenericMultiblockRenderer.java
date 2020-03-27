@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.util.compat.jei;
 
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -25,6 +26,6 @@ public class GenericMultiblockRenderer implements IIngredientRenderer<GenericMul
 
     @Override
     public List<String> getTooltip(Minecraft minecraft, GenericMultiblockIngredient ingredient, ITooltipFlag tooltipFlag) {
-        return Arrays.asList(ingredient.renderStack.getDisplayName());
+        return Arrays.asList(ingredient.renderStack.getDisplayName(), TranslationKey.GUI_GENERIC_MULTIBLOCK_TOOLTIP.text());
     }
 }
