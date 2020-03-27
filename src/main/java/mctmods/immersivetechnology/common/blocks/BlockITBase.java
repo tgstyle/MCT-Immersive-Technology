@@ -315,7 +315,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	/**
-	* Used to determine ambient occlusion and culling when rebuilding chunks for render
+	* Used to determine ambient occlusion and culling when rebuilding chunks forrender
 	* @deprecated call via {@link IBlockState#isOpaqueCube()} whenever possible. Implementing/overriding is fine.
 	**/
 	@Override

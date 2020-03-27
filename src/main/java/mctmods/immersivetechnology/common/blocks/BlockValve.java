@@ -19,48 +19,48 @@ import java.util.Locale;
 
 public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> {
 
-    @Nullable
-    @Override
-    public TileEntity createBasicTE(World worldIn, BlockType_Valve type) {
-        switch (type) {
-            case FLUID_VALVE: return new TileEntityFluidValve();
-            case LOAD_CONTROLLER: return new TileEntityLoadController();
-            case STACK_LIMITER: return new TileEntityStackLimiter();
-        }
-        return null;
-    }
+	@Nullable
+	@Override
+	public TileEntity createBasicTE(World worldIn, BlockType_Valve type) {
+		switch (type) {
+			case FLUID_VALVE: return new TileEntityFluidValve();
+			case LOAD_CONTROLLER: return new TileEntityLoadController();
+			case STACK_LIMITER: return new TileEntityStackLimiter();
+		}
+		return null;
+	}
 
-    public enum BlockType_Valve implements IStringSerializable, BlockITBase.IBlockEnum {
-        FLUID_VALVE,
-        LOAD_CONTROLLER,
-        STACK_LIMITER;
+	public enum BlockType_Valve implements IStringSerializable, BlockITBase.IBlockEnum {
+		FLUID_VALVE,
+		LOAD_CONTROLLER,
+		STACK_LIMITER;
 
-        @Override
-        public String getName() {
-            return this.toString().toLowerCase(Locale.ENGLISH);
-        }
+		@Override
+		public String getName() {
+			return this.toString().toLowerCase(Locale.ENGLISH);
+		}
 
-        @Override
-        public int getMeta() {
-            return ordinal();
-        }
+		@Override
+		public int getMeta() {
+			return ordinal();
+		}
 
-        @Override
-        public boolean listForCreative() {
-            return true;
-        }
-    }
+		@Override
+		public boolean listForCreative() {
+			return true;
+		}
+	}
 
-    public BlockValve() {
-        super("valve", Material.IRON, PropertyEnum.create("type", BlockType_Valve.class), ItemBlockITBase.class, IEProperties.FACING_ALL);
-        this.setHardness(3.0F);
-        this.setResistance(15.0F);
-        lightOpacity = 0;
-        this.setAllNotNormalBlock();
-    }
+	public BlockValve() {
+		super("valve", Material.IRON, PropertyEnum.create("type", BlockType_Valve.class), ItemBlockITBase.class, IEProperties.FACING_ALL);
+		this.setHardness(3.0F);
+		this.setResistance(15.0F);
+		lightOpacity = 0;
+		this.setAllNotNormalBlock();
+	}
 
-    @Override
-    public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return true;
-    }
+	@Override
+	public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+		return true;
+	}
 }

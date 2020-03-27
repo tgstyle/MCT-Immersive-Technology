@@ -30,7 +30,7 @@ public class ContainerTrashItem extends Container {
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
 		Slot slot = getSlot(index);
-		if (slot != null && slot.getHasStack()) {
+		if(slot != null && slot.getHasStack()) {
 			tile.insertItem(0, slot.getStack(), false);
 			slot.putStack(ItemStack.EMPTY);
 		}
