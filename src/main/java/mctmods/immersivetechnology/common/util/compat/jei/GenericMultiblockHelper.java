@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.util.compat.jei;
 
 import mezz.jei.api.ingredients.IIngredientHelper;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
