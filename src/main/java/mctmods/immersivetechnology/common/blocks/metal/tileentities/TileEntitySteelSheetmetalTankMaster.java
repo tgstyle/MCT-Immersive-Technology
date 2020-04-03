@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
-import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.Config.ITConfig.SteelTank;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,7 +18,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 	private int masterCompOld;
 	private int sleep = 0;
 
-	private static int tankSize = Config.ITConfig.SteelTank.steelTank_tankSize;
+	private static int tankSize = SteelTank.steelTank_tankSize;
 
 	public ITFluidTank tank = new ITFluidTank(tankSize, this);
 
@@ -45,6 +44,10 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 					if(output != null) {
 						if(sleep == 0) {
 							FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), false);
+							if (accepted == null) {
+								sleep = 20;
+								return;
+							}
 							accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
 							if(accepted.amount > 0) {
 								int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);

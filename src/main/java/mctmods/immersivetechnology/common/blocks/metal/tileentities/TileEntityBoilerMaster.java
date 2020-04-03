@@ -4,7 +4,8 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
-import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Boiler;
+import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -26,19 +27,19 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
+public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITFluidTank.TankListener {
 
-	private static int inputFuelTankSize = Config.ITConfig.Machines.Boiler.boiler_fuel_tankSize;
-	private static int inputTankSize = Config.ITConfig.Machines.Boiler.boiler_input_tankSize;
-	private static int outputTankSize = Config.ITConfig.Machines.Boiler.boiler_output_tankSize;
-	private static int heatLossPerTick = Config.ITConfig.Machines.Boiler.boiler_heat_lossPerTick;
-	private static int progressLossPerTick = Config.ITConfig.Machines.Boiler.boiler_progress_lossInTicks;
-	private static double workingHeatLevel = Config.ITConfig.Machines.Boiler.boiler_heat_workingLevel;
+	private static int inputFuelTankSize = Boiler.boiler_fuel_tankSize;
+	private static int inputTankSize = Boiler.boiler_input_tankSize;
+	private static int outputTankSize = Boiler.boiler_output_tankSize;
+	private static int heatLossPerTick = Boiler.boiler_heat_lossPerTick;
+	private static int progressLossPerTick = Boiler.boiler_progress_lossInTicks;
+	private static double workingHeatLevel = Boiler.boiler_heat_workingLevel;
 
 	public FluidTank[] tanks = new FluidTank[] {
-			new FluidTank(inputFuelTankSize),
-			new FluidTank(inputTankSize),
-			new FluidTank(outputTankSize)
+			new ITFluidTank(inputFuelTankSize, this),
+			new ITFluidTank(inputTankSize, this),
+			new ITFluidTank(outputTankSize, this)
 	};
 
 	public static int slotCount = 6;
@@ -163,7 +164,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
 			if(fuel != null && fuel.fluidInput.amount <= tanks[0].getFluidAmount()) {
 				lastFuel = fuel;
 				tanks[0].drain(fuel.fluidInput.amount, true);
-				burnRemaining = fuel.getTotalProcessTime();
+				burnRemaining = fuel.getTotalProcessTime() - 1;
 				markContainingBlockForUpdate(null);
 				if(heatUp()) update = true;
 			} else if(cooldown()) update = true;
@@ -181,6 +182,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
 				if(recipe != null && recipe.fluidInput.amount <= tanks[1].getFluidAmount() && recipe.fluidOutput.amount == tanks[2].fillInternal(recipe.fluidOutput, false)) {
 					lastRecipe = recipe;
 					recipeTimeRemaining = recipe.getTotalProcessTime();
+					gainProgress();
 					update = true;
 				}
 			}
@@ -258,14 +260,19 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
 		if(outputTankLogic()) update = true;
 		if(fuelTankLogic()) update = true;
 		if(inputTankLogic()) update = true;
-		if(clientUpdateCooldown > 0) clientUpdateCooldown--;
+		if(clientUpdateCooldown > 1) clientUpdateCooldown--;
 		if(update) {
 			efficientMarkDirty();
-			if(clientUpdateCooldown == 0) {
+			if(clientUpdateCooldown == 1) {
 				notifyNearbyClients();
 				clientUpdateCooldown = 20;
 			}
 		}
+	}
+
+	@Override
+	public void TankContentsChanged() {
+		this.markContainingBlockForUpdate(null);
 	}
 
 	@Override

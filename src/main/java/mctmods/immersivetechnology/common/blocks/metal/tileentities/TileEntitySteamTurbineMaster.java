@@ -7,6 +7,7 @@ import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SteamTurbine;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
+import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
@@ -23,7 +24,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave {
+public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave implements ITFluidTank.TankListener {
 
 	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
 	private static int speedGainPerTick = SteamTurbine.steamTurbine_speed_gainPerTick;
@@ -33,8 +34,8 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave {
 	private static float maxRotationSpeed = SteamTurbine.steamTurbine_speed_maxRotation;
 
 	public FluidTank[] tanks = new FluidTank[] {
-		new FluidTank(inputTankSize),
-		new FluidTank(outputTankSize)
+		new ITFluidTank(inputTankSize, this),
+		new ITFluidTank(outputTankSize, this)
 	};
 
 	public int burnRemaining = 0;
@@ -84,8 +85,6 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave {
 		if(accepted == 0) return;
 		int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
 		this.tanks[1].drain(drained, true);
-		efficientMarkDirty();
-		this.markContainingBlockForUpdate(null);
 	}
 
 	public void handleSounds() {
@@ -135,7 +134,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave {
 			SteamTurbineRecipe recipe = (lastRecipe != null && tanks[0].getFluid().isFluidEqual(lastRecipe.fluidInput)) ? lastRecipe : SteamTurbineRecipe.findFuel(tanks[0].getFluid());
 			if(recipe != null && recipe.fluidInput.amount <= tanks[0].getFluidAmount()) {
 				lastRecipe = recipe;
-				burnRemaining = recipe.getTotalProcessTime();
+				burnRemaining = recipe.getTotalProcessTime() - 1;
 				tanks[0].drain(recipe.fluidInput.amount, true);
 				if(recipe.fluidOutput != null) tanks[1].fill(recipe.fluidOutput, true);
 				this.markContainingBlockForUpdate(null);
@@ -143,6 +142,11 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave {
 			} else speedDown();
 		} else speedDown();
 		pumpOutputOut();
+	}
+
+	@Override
+	public void TankContentsChanged() {
+		this.markContainingBlockForUpdate(null);
 	}
 
 	@Override
