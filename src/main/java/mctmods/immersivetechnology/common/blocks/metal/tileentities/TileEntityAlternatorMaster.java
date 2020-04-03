@@ -6,7 +6,8 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
-import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Alternator;
+import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -24,11 +25,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
 
-	private static int maxSpeed = Config.ITConfig.MechanicalEnergy.mechanicalEnergy_speed_max;
-	private static int rfPerTick = Config.ITConfig.Machines.Alternator.alternator_energy_perTick;
+	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
+	private static int rfPerTick = Alternator.alternator_energy_perTick;
 	private static int rfPerTickPerPort = rfPerTick / 6;
 
-	public FluxStorage energyStorage = new FluxStorage(Config.ITConfig.Machines.Alternator.alternator_energy_capacitorSize,rfPerTick,rfPerTickPerPort);
+	public FluxStorage energyStorage = new FluxStorage(Alternator.alternator_energy_capacitorSize,rfPerTick,rfPerTickPerPort);
 
 	private BlockPos[] EnergyOutputPositions = new BlockPos[6];
 
