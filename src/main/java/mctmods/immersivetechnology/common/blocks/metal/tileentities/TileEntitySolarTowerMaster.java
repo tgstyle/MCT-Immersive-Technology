@@ -114,6 +114,11 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 		isProcessing = message.getBoolean("isProcessing");
 	}
 
+
+	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
+		world.getChunkFromBlockCoords(this.getPos()).markDirty();
+	}
+
 	@Override
 	public void update() {
 		super.update();
@@ -122,15 +127,18 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 			handleSounds();
 			return;
 		}
+		boolean update = false;
 		if(processing == null) {
 			processing = SolarTowerRecipe.findRecipe(tanks[0].getFluid());
 			if(processing == null) {
 				if(isProcessing) {
 					isProcessing = false;
+					update = true;
 					notifyNearbyClients();
 				}
 			} else if(!isProcessing) {
 				isProcessing = true;
+				update = true;
 				notifyNearbyClients();
 			}
 		}
@@ -142,10 +150,12 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 				tanks[1].fill(processing.fluidOutput, true);
 				processing = null;
 				if(!isProcessing) {
+					update = true;
 					isProcessing = true;
 				}
 			} else {
 				if(isProcessing) {
+					update = true;
 					notifyNearbyClients();
 				}
 				isProcessing = false;
@@ -181,6 +191,10 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 			inventory.get(0).shrink(1);
 			if(inventory.get(0).getCount() <= 0)
 				inventory.set(0, ItemStack.EMPTY);
+		}
+		if(update) {
+			efficientMarkDirty();
+			this.markContainingBlockForUpdate(null);
 		}
 	}
 
