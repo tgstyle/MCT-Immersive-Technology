@@ -150,6 +150,10 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 		ImmersiveTechnology.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
 	}
 
+	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
+		world.getChunkFromBlockCoords(this.getPos()).markDirty();
+	}
+
 	private boolean heatLogic() {
 		boolean update = false;
 		if(burnRemaining > 0) {
@@ -256,9 +260,10 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 		if(outputTankLogic()) update = true;
 		if(fuelTankLogic()) update = true;
 		if(inputTankLogic()) update = true;
-		if(clientUpdateCooldown > 0) clientUpdateCooldown--;
+		if(clientUpdateCooldown > 1) clientUpdateCooldown--;
 		if(update) {
-			if(clientUpdateCooldown == 0) {
+			efficientMarkDirty();
+			if(clientUpdateCooldown == 1) {
 				notifyNearbyClients();
 				clientUpdateCooldown = 20;
 			}
