@@ -135,7 +135,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave {
 			SteamTurbineRecipe recipe = (lastRecipe != null && tanks[0].getFluid().isFluidEqual(lastRecipe.fluidInput)) ? lastRecipe : SteamTurbineRecipe.findFuel(tanks[0].getFluid());
 			if(recipe != null && recipe.fluidInput.amount <= tanks[0].getFluidAmount()) {
 				lastRecipe = recipe;
-				burnRemaining = recipe.getTotalProcessTime();
+				burnRemaining = recipe.getTotalProcessTime() - 1;
 				tanks[0].drain(recipe.fluidInput.amount, true);
 				if(recipe.fluidOutput != null) tanks[1].fill(recipe.fluidOutput, true);
 				this.markContainingBlockForUpdate(null);
