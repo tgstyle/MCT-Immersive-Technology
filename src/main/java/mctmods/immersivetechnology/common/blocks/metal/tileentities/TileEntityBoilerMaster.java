@@ -5,6 +5,7 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Boiler;
+import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -26,7 +27,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
+public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITFluidTank.TankListener {
 
 	private static int inputFuelTankSize = Boiler.boiler_fuel_tankSize;
 	private static int inputTankSize = Boiler.boiler_input_tankSize;
@@ -36,9 +37,9 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
 	private static double workingHeatLevel = Boiler.boiler_heat_workingLevel;
 
 	public FluidTank[] tanks = new FluidTank[] {
-			new FluidTank(inputFuelTankSize),
-			new FluidTank(inputTankSize),
-			new FluidTank(outputTankSize)
+			new ITFluidTank(inputFuelTankSize, this),
+			new ITFluidTank(inputTankSize, this),
+			new ITFluidTank(outputTankSize, this)
 	};
 
 	public static int slotCount = 6;
@@ -149,10 +150,6 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
 		ImmersiveTechnology.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
 	}
 
-	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
-		world.getChunkFromBlockCoords(this.getPos()).markDirty();
-	}
-
 	private boolean heatLogic() {
 		boolean update = false;
 		if(burnRemaining > 0) {
@@ -261,12 +258,16 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
 		if(inputTankLogic()) update = true;
 		if(clientUpdateCooldown > 0) clientUpdateCooldown--;
 		if(update) {
-			efficientMarkDirty();
 			if(clientUpdateCooldown == 0) {
 				notifyNearbyClients();
 				clientUpdateCooldown = 20;
 			}
 		}
+	}
+
+	@Override
+	public void TankContentsChanged() {
+		this.markContainingBlockForUpdate(null);
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.*;
+import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -27,7 +28,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave {
+public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implements ITFluidTank.TankListener {
 
 	private static int solarMaxRange = SolarReflector.solarReflector_maxRange;
 	private static int solarMinRange = SolarReflector.solarReflector_minRange;
@@ -35,8 +36,8 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave {
 	private static float reflectorSpeedMult = SolarTower.solarTower_solarReflector_speed_multiplier;
 
 	public FluidTank[] tanks = new FluidTank[] {
-			new FluidTank(32000),
-			new FluidTank(32000)
+			new ITFluidTank(32000, this),
+			new ITFluidTank(32000, this)
 	};
 
 	public static int slotCount = 4;
@@ -113,10 +114,6 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave {
 		isProcessing = message.getBoolean("isProcessing");
 	}
 
-	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
-		world.getChunkFromBlockCoords(this.getPos()).markDirty();
-	}
-
 	@Override
 	public void update() {
 		super.update();
@@ -125,18 +122,15 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave {
 			handleSounds();
 			return;
 		}
-		boolean update = false;
 		if(processing == null) {
 			processing = SolarTowerRecipe.findRecipe(tanks[0].getFluid());
 			if(processing == null) {
 				if(isProcessing) {
 					isProcessing = false;
-					update = true;
 					notifyNearbyClients();
 				}
 			} else if(!isProcessing) {
 				isProcessing = true;
-				update = true;
 				notifyNearbyClients();
 			}
 		}
@@ -148,12 +142,10 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave {
 				tanks[1].fill(processing.fluidOutput, true);
 				processing = null;
 				if(!isProcessing) {
-					update = true;
 					isProcessing = true;
 				}
 			} else {
 				if(isProcessing) {
-					update = true;
 					notifyNearbyClients();
 				}
 				isProcessing = false;
@@ -166,7 +158,6 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave {
 				else if(inventory.get(3).isEmpty()) inventory.set(3, filledContainer.copy());
 				inventory.get(2).shrink(1);
 				if(inventory.get(2).getCount() <= 0) inventory.set(2, ItemStack.EMPTY);
-				update = true;
 			}
 			if(this.tanks[1].getFluidAmount() > 0) {
 				FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[1].getFluid(), Math.min(this.tanks[1].getFluidAmount(), 1000), true);
@@ -177,7 +168,6 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave {
 					if(accepted > 0) {
 						int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
 						this.tanks[1].drain(drained, true);
-						update = true;
 					}
 				}
 			}
@@ -191,12 +181,12 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave {
 			inventory.get(0).shrink(1);
 			if(inventory.get(0).getCount() <= 0)
 				inventory.set(0, ItemStack.EMPTY);
-			update = true;
 		}
-		if(update) {
-			efficientMarkDirty();
-			this.markContainingBlockForUpdate(null);
-		}
+	}
+
+	@Override
+	public void TankContentsChanged() {
+		this.markContainingBlockForUpdate(null);
 	}
 
 	@Override
