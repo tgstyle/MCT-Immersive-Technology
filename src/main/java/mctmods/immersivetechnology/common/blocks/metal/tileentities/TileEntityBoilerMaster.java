@@ -163,7 +163,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
 			if(fuel != null && fuel.fluidInput.amount <= tanks[0].getFluidAmount()) {
 				lastFuel = fuel;
 				tanks[0].drain(fuel.fluidInput.amount, true);
-				burnRemaining = fuel.getTotalProcessTime();
+				burnRemaining = fuel.getTotalProcessTime() - 1;
 				markContainingBlockForUpdate(null);
 				if(heatUp()) update = true;
 			} else if(cooldown()) update = true;
@@ -181,6 +181,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
 				if(recipe != null && recipe.fluidInput.amount <= tanks[1].getFluidAmount() && recipe.fluidOutput.amount == tanks[2].fillInternal(recipe.fluidOutput, false)) {
 					lastRecipe = recipe;
 					recipeTimeRemaining = recipe.getTotalProcessTime();
+					gainProgress();
 					update = true;
 				}
 			}
