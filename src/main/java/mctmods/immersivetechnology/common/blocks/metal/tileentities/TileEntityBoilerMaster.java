@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
-import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Boiler;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -28,12 +28,12 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityBoilerMaster extends TileEntityBoilerSlave {
 
-	private static int inputFuelTankSize = Config.ITConfig.Machines.Boiler.boiler_fuel_tankSize;
-	private static int inputTankSize = Config.ITConfig.Machines.Boiler.boiler_input_tankSize;
-	private static int outputTankSize = Config.ITConfig.Machines.Boiler.boiler_output_tankSize;
-	private static int heatLossPerTick = Config.ITConfig.Machines.Boiler.boiler_heat_lossPerTick;
-	private static int progressLossPerTick = Config.ITConfig.Machines.Boiler.boiler_progress_lossInTicks;
-	private static double workingHeatLevel = Config.ITConfig.Machines.Boiler.boiler_heat_workingLevel;
+	private static int inputFuelTankSize = Boiler.boiler_fuel_tankSize;
+	private static int inputTankSize = Boiler.boiler_input_tankSize;
+	private static int outputTankSize = Boiler.boiler_output_tankSize;
+	private static int heatLossPerTick = Boiler.boiler_heat_lossPerTick;
+	private static int progressLossPerTick = Boiler.boiler_progress_lossInTicks;
+	private static double workingHeatLevel = Boiler.boiler_heat_workingLevel;
 
 	public FluidTank[] tanks = new FluidTank[] {
 			new FluidTank(inputFuelTankSize),

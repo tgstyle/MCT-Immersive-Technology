@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
-import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.common.Config.ITConfig.Machines.*;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -29,10 +29,10 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave {
 
-	private static int solarMaxRange = Config.ITConfig.Machines.SolarReflector.solarReflector_maxRange;
-	private static int solarMinRange = Config.ITConfig.Machines.SolarReflector.solarReflector_minRange;
-	private static float speedMult = Config.ITConfig.Machines.SolarTower.solarTower_speed_multiplier;
-	private static float reflectorSpeedMult = Config.ITConfig.Machines.SolarTower.solarTower_solarReflector_speed_multiplier;
+	private static int solarMaxRange = SolarReflector.solarReflector_maxRange;
+	private static int solarMinRange = SolarReflector.solarReflector_minRange;
+	private static float speedMult = SolarTower.solarTower_speed_multiplier;
+	private static float reflectorSpeedMult = SolarTower.solarTower_solarReflector_speed_multiplier;
 
 	public FluidTank[] tanks = new FluidTank[] {
 			new FluidTank(32000),
