@@ -8,6 +8,7 @@ import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerSlave;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineSlave;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankSlave;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import net.minecraft.block.state.IBlockState;
@@ -98,7 +99,14 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 				int max = master.master().tank.getCapacity();
 				if(current > 0)	probeInfo.progress(current, max, probeInfo.defaultProgressStyle().suffix("mB").numberFormat(NumberFormat.COMPACT));
 			}
+			if(te instanceof TileEntitySteamTurbineSlave) {
+				TileEntitySteamTurbineSlave master = ((TileEntitySteamTurbineSlave)te).master();
+				int current = master.master().tanks[0].getFluidAmount();
+				int max = master.master().tanks[0].getCapacity();
+				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(11)).text("Fuel").progress(current, max, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("mB"));
+			}
 		}
+
 	}
 
 }
