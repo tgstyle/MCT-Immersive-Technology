@@ -37,6 +37,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -51,20 +52,24 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import static java.util.Collections.newSetFromMap;
 
 @SuppressWarnings("deprecation")
 public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe {
 
 	public int transferRate = Experimental.pipe_transfer_rate;
 	public int transferRatePressurized = Experimental.pipe_pressurized_transfer_rate;
-	private static boolean pipePathing = Experimental.pipe_pathing_known;
+
+	public static ConcurrentHashMap<BlockPos, Set<DirectionalFluidOutput>> indirectConnections = new ConcurrentHashMap<BlockPos, Set<DirectionalFluidOutput>>();
 
 	public static ArrayList<Function<ItemStack, Boolean>> validPipeCovers = new ArrayList<>();
 	public static ArrayList<Function<ItemStack, Boolean>> climbablePipeCovers = new ArrayList<>();
@@ -102,8 +107,56 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 	private byte connections = 0;
 	@Nullable
 	private EnumDyeColor color = null;
-	private boolean busy = false;
 
+	public static Set<DirectionalFluidOutput> getConnectedFluidHandlersIT(BlockPos node, World world) {
+		if(indirectConnections.containsKey(node)) return indirectConnections.get(node);
+		ArrayList<BlockPos> openList = new ArrayList<>();
+		ArrayList<BlockPos> closedList = new ArrayList<>();
+		Set<DirectionalFluidOutput> fluidHandlers = Collections.newSetFromMap(new ConcurrentHashMap<>());
+		openList.add(node);
+		while(!openList.isEmpty() && closedList.size() < 1024) {
+			BlockPos next = openList.get(0);
+			TileEntity pipeTile = Utils.getExistingTileEntity(world, next);
+			if(!closedList.contains(next) && (pipeTile instanceof IFluidPipe)) {
+				if(pipeTile instanceof TileEntityFluidPipe)
+					closedList.add(next);
+				IFluidTankProperties[] tankInfo;
+				for(int i = 0; i < 6; i++) {
+					EnumFacing fd = EnumFacing.getFront(i);
+					if(((IFluidPipe)pipeTile).hasOutputConnection(fd)) {
+						BlockPos nextPos = next.offset(fd);
+						TileEntity adjacentTile = Utils.getExistingTileEntity(world, nextPos);
+						if(adjacentTile != null) {
+							if(adjacentTile instanceof TileEntityFluidPipe) openList.add(nextPos);
+							else if(adjacentTile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, fd.getOpposite())) {
+								IFluidHandler handler = adjacentTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, fd.getOpposite());
+								if(handler != null) {
+									tankInfo = handler.getTankProperties();
+									if(tankInfo != null && tankInfo.length > 0)
+										fluidHandlers.add(new DirectionalFluidOutput(handler, adjacentTile, fd));
+								}
+							}
+						}
+					}
+				}
+			}
+			openList.remove(0);
+		}
+		if(FMLCommonHandler.instance().getEffectiveSide()==Side.SERVER) {
+			if(!indirectConnections.containsKey(node)) {
+				indirectConnections.put(node, newSetFromMap(new ConcurrentHashMap<DirectionalFluidOutput, Boolean>()));
+				indirectConnections.get(node).addAll(fluidHandlers);
+			}
+		}
+		return fluidHandlers;
+	}
+
+	@Override
+	public void invalidate() {
+		super.invalidate();
+		if(!world.isRemote) indirectConnections.clear();
+	}
+ 
 	@Override
 	public void onEntityCollision(World world, Entity entity) {
 		if(!(entity instanceof EntityLivingBase)||((EntityLivingBase)entity).isOnLadder()||pipeCover.isEmpty()) {
@@ -159,13 +212,18 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		if(color != null) nbt.setInteger("color", color.getMetadata());
 	}
 
-	PipeFluidHandler[] sidedHandlers = {
-			new PipeFluidHandler(EnumFacing.DOWN),
-			new PipeFluidHandler(EnumFacing.UP),
-			new PipeFluidHandler(EnumFacing.NORTH),
-			new PipeFluidHandler(EnumFacing.SOUTH),
-			new PipeFluidHandler(EnumFacing.WEST),
-			new PipeFluidHandler(EnumFacing.EAST)
+	boolean canOutputPressurized(TileEntity output, boolean consumePower) {
+		if(output instanceof IFluidPipe) return ((IFluidPipe)output).canOutputPressurized(consumePower);
+		return false;
+	}
+
+	PipeFluidHandler[] sidedHandlers = { 
+			new PipeFluidHandler(this, EnumFacing.DOWN), 
+			new PipeFluidHandler(this, EnumFacing.UP), 
+			new PipeFluidHandler(this, EnumFacing.NORTH), 
+			new PipeFluidHandler(this, EnumFacing.SOUTH), 
+			new PipeFluidHandler(this, EnumFacing.WEST), 
+			new PipeFluidHandler(this, EnumFacing.EAST)
 	};
 
 	@Override
@@ -235,10 +293,12 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 	}
 
 	class PipeFluidHandler implements IFluidHandler {
-		ArrayList<EnumFacing> outputs = new ArrayList<>();
+		TileEntityFluidPipe pipe;
+		EnumFacing facing;
 
-		public PipeFluidHandler(EnumFacing facing) {
-			outputs.addAll(EnumSet.complementOf(EnumSet.of(facing)));
+		public PipeFluidHandler(TileEntityFluidPipe pipe, EnumFacing facing) {
+			this.pipe = pipe;
+			this.facing = facing;
 		}
 
 		@Override
@@ -248,35 +308,49 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 
 		@Override
 		public int fill(FluidStack resource, boolean doFill) {
-			if(busy || resource == null) return 0;
-			int maximum = Math.min(resource.amount, getTranferrableAmount(resource));
-			int remaining = maximum;
-			if(remaining <= 0) return 0;
-			for(EnumFacing facing : outputs) {
-				if(!hasOutputConnection(facing)) continue;
-				TileEntity adjacentTile = Utils.getExistingTileEntity(world, pos.offset(facing));
-				if(adjacentTile != null) {
-					IFluidHandler handler = adjacentTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
-					if(handler != null) {
-						busy = true;
-						remaining -= handler.fill(Utils.copyFluidStackWithAmount(resource, remaining, !(handler instanceof IFluidPipe)), doFill);
-						busy = false;
-						if(remaining == 0) {
-							if(pipePathing) {
-								if(outputs.indexOf(facing) != 0) Collections.swap(outputs, outputs.indexOf(facing),0); //Add some bias for extra TPS juice
-							} else {
-								Collections.shuffle(outputs);
-							}
-							return maximum;
-						}
+			if(resource == null) return 0;
+			int canAccept = resource.amount;
+			if(canAccept <= 0) return 0;
+			ArrayList<DirectionalFluidOutput> outputList = new ArrayList<>(getConnectedFluidHandlersIT(pipe.getPos(), pipe.world));
+			if(outputList.size() < 1) return 0;
+			BlockPos ccFrom = new BlockPos(pipe.getPos().offset(facing));
+			int sum = 0;
+			HashMap<DirectionalFluidOutput, Integer> sorting = new HashMap<>();
+			for(DirectionalFluidOutput output : outputList) {
+				BlockPos cc = Utils.toCC(output.containingTile);
+				if(!cc.equals(ccFrom) && pipe.world.isBlockLoaded(cc) && !pipe.equals(output.containingTile)) {
+					int limit = getTranferrableAmount(resource, output);
+					int tileSpecificAcceptedFluid = Math.min(limit, canAccept);
+					int temp = output.output.fill(Utils.copyFluidStackWithAmount(resource, tileSpecificAcceptedFluid, !(output.containingTile instanceof IFluidPipe)), false);
+					if(temp > 0) {
+						sorting.put(output, temp);
+						sum += temp;
 					}
 				}
-
 			}
-			return maximum - remaining;
+			if(sum > 0) {
+				int f = 0;
+				for(DirectionalFluidOutput output : sorting.keySet()) {
+					int amount = sorting.get(output);
+					if(sum > resource.amount) {
+						int limit = getTranferrableAmount(resource, output);
+						int tileSpecificAcceptedFluid = Math.min(limit, canAccept);
+						float prio = amount/(float)sum;
+						amount = (int)Math.ceil(MathHelper.clamp(amount, 1,
+								Math.min(resource.amount*prio, tileSpecificAcceptedFluid)));
+						amount = Math.min(amount, canAccept);
+					}
+					int r = output.output.fill(Utils.copyFluidStackWithAmount(resource, amount, !(output.containingTile instanceof IFluidPipe)), doFill);
+					f += r;
+					canAccept -= r;
+					if(canAccept <= 0) break;
+				}
+				return f;
+			}
+			return 0;
 		}
 
-		private int getTranferrableAmount(FluidStack resource) {
+		private int getTranferrableAmount(FluidStack resource, DirectionalFluidOutput output) {
 			return (resource.tag != null && resource.tag.hasKey("pressurized")) ? transferRatePressurized : transferRate;
 		}
 
@@ -290,6 +364,18 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		@Override
 		public FluidStack drain(int maxDrain, boolean doDrain) {
 			return null;
+		}
+	}
+
+	public static class DirectionalFluidOutput {
+		IFluidHandler output;
+		EnumFacing direction;
+		TileEntity containingTile;
+
+		public DirectionalFluidOutput(IFluidHandler output, TileEntity containingTile, EnumFacing direction) {
+			this.output = output;
+			this.direction = direction;
+			this.containingTile = containingTile;
 		}
 	}
 
@@ -753,6 +839,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		if(fd != null) {
 			toggleSide(fd.ordinal());
 			ITUtils.improvedMarkBlockForUpdate(world, pos, null);
+			indirectConnections.clear();
 			return true;
 		}
 		return false;
