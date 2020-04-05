@@ -10,8 +10,6 @@ import net.minecraftforge.energy.IEnergyStorage;
 
 public class TileEntityTrashEnergy extends TileEntityCommonOSD implements IEnergyStorage, ITrashCanBounds {
 
-
-
 	@Override
 	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
 		if(capability == CapabilityEnergy.ENERGY) return true;
