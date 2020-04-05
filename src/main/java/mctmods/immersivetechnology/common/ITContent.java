@@ -209,8 +209,8 @@ public class ITContent {
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 		/*RECIPES*/
 		if(Multiblock.enable_boiler && Recipes.register_boiler_recipes) {
-			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 2000), new FluidStack(FluidRegistry.WATER, 1000), 40);
-			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 3000), new FluidStack(FluidRegistry.getFluid("distwater"), 1000), 40);
+			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), new FluidStack(FluidRegistry.WATER, 250), 10);
+			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 750), new FluidStack(FluidRegistry.getFluid("distwater"), 250), 10);
 			BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("biodiesel"), 10), 1, 10);
 			if(FluidRegistry.getFluid("gasoline") != null) {
 				BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("gasoline"), 50), 1, 10);
@@ -232,8 +232,8 @@ public class ITContent {
 			DistillerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 500), new FluidStack(FluidRegistry.WATER, 1000), distillerItem, 10000, 20, distillerChance);
 		}
 		if(Multiblock.enable_solarTower && Recipes.register_solarTower_recipes) {
-			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 2000), new FluidStack(FluidRegistry.WATER, 1000), 80);
-			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 3000), new FluidStack(FluidRegistry.getFluid("distwater"), 1000), 80);
+			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), new FluidStack(FluidRegistry.WATER, 250), 20);
+			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 750), new FluidStack(FluidRegistry.getFluid("distwater"), 250), 20);
 		}
 		if(Multiblock.enable_steamTurbine && Recipes.register_steamTurbine_recipes) {
 			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 50), new FluidStack(FluidRegistry.getFluid("steam"), 500), 3);
