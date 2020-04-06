@@ -102,10 +102,13 @@ public class ITContent {
 		blockConnectors = new BlockConnectors();
 
 		/*METAL*/
-		blockMetalDevice = new BlockMetalDevice();
 		blockMetalTrash = new BlockMetalTrash();
 		blockMetalBarrel = new BlockMetalBarrel();
 		blockValve = new BlockValve();
+
+		if(Multiblock.enable_advancedCokeOven) {
+			blockMetalDevice = new BlockMetalDevice();
+		}
 
 		/*STONE*/
 		blockStoneDecoration = new BlockStoneDecoration();
