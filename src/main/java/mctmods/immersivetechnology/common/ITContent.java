@@ -236,7 +236,7 @@ public class ITContent {
 			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 750), new FluidStack(FluidRegistry.getFluid("distwater"), 250), 20);
 		}
 		if(Multiblock.enable_steamTurbine && Recipes.register_steamTurbine_recipes) {
-			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 50), new FluidStack(FluidRegistry.getFluid("steam"), 500), 3);
+			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 10), new FluidStack(FluidRegistry.getFluid("steam"), 100), 1);
 		}
 	}
 
