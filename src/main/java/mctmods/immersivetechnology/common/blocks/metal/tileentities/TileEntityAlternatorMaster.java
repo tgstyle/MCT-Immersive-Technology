@@ -100,7 +100,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
 	public void update() {
 		if(!formed) return;
 		if(!world.isRemote) {
-			if(ITUtils.checkMechanicalEnergyTransmitter(world, getPos())) speed = ITUtils.getMechanicalEnergy(world, getPos());
+			speed = ITUtils.getMechanicalEnergy(world, getPos());
 			if(speed > 0) this.energyStorage.modifyEnergyStored(energyGenerated());
 			TileEntity tileEntity;
 			int currentEnergy = energyStorage.getEnergyStored();
