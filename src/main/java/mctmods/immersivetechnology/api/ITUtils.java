@@ -182,6 +182,7 @@ public class ITUtils {
 		EnumFacing inputFacing = ((IMechanicalEnergy) tile).getMechanicalEnergyInputFacing();
 		BlockPos pos = startPos.offset(inputFacing, ((IMechanicalEnergy) tile).inputToCenterDistance() + 1);
 		TileEntity tileInfo = world.getTileEntity(pos);
+		if (!(tileInfo instanceof IMechanicalEnergy)) return 0;
 		TileEntity tileTransmitter = world.getTileEntity(pos.offset(inputFacing, ((IMechanicalEnergy) tileInfo).outputToCenterDistance()));
 
 		if(tileTransmitter instanceof IMechanicalEnergy) {
