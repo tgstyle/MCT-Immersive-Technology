@@ -45,7 +45,7 @@ public class SteamTurbineRecipeCategory extends ITRecipeCategory<SteamTurbineRec
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
 		guiFluidStacks.init(0, true, 11, 11, 16, 47, tankSize, true, tankOverlay);
 		guiFluidStacks.set(0, inputs.get(0));
-		if(outputs.get(0) != null) {
+		if(!outputs.isEmpty()) {
 			guiFluidStacks.init(1, false, 89, 11, 16, 47, tankSize, true, tankOverlay);
 			guiFluidStacks.set(1, outputs.get(0));
 		}
