@@ -1,18 +1,14 @@
 package mctmods.immersivetechnology.common.util.compat.jei.steamturbine;
 
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
-import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
 import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
-import mezz.jei.api.IModRegistry;
 import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -49,7 +45,7 @@ public class SteamTurbineRecipeCategory extends ITRecipeCategory<SteamTurbineRec
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
 		guiFluidStacks.init(0, true, 11, 11, 16, 47, tankSize, true, tankOverlay);
 		guiFluidStacks.set(0, inputs.get(0));
-		if(outputs.get(0) != null) {
+		if(!outputs.isEmpty()) {
 			guiFluidStacks.init(1, false, 89, 11, 16, 47, tankSize, true, tankOverlay);
 			guiFluidStacks.set(1, outputs.get(0));
 		}

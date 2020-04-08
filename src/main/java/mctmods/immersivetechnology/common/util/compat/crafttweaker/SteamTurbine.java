@@ -38,6 +38,7 @@ public class SteamTurbine {
 
 		@Override
 		public String describe() {
+			if(recipe.fluidOutput == null) return "Adding Steam Turbine Fuel for " + recipe.fluidInput.getLocalizedName();
 			return "Adding Steam Turbine Fuel for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName();
 		}
 	}

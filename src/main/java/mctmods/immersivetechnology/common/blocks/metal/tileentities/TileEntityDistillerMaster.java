@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
+import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -24,11 +25,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class TileEntityDistillerMaster extends TileEntityDistillerSlave {
+public class TileEntityDistillerMaster extends TileEntityDistillerSlave implements ITFluidTank.TankListener {
 
 	public FluidTank[] tanks = new FluidTank[] {
-			new FluidTank(24000),
-			new FluidTank(24000)
+			new ITFluidTank(24000, this),
+			new ITFluidTank(24000, this)
 	};
 
 	public static int slotCount = 4;
@@ -119,7 +120,6 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave {
 				else if(inventory.get(3).isEmpty()) inventory.set(3, filledContainer.copy());
 				inventory.get(2).shrink(1);
 				if(inventory.get(2).getCount() <= 0) inventory.set(2, ItemStack.EMPTY);
-				update = true;
 			}
 			EnumFacing fw;
 			if(!mirrored) {
@@ -136,7 +136,6 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave {
 					if(accepted > 0) {
 						int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
 						this.tanks[1].drain(drained, true);
-						update = true;
 					}
 				}
 			}
@@ -147,7 +146,6 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave {
 			else if(inventory.get(1).isEmpty())	inventory.set(1, emptyContainer.copy());
 			inventory.get(0).shrink(1);
 			if(inventory.get(0).getCount() <= 0) inventory.set(0, ItemStack.EMPTY);
-			update = true;
 		}
 		if(update) {
 			efficientMarkDirty();
@@ -157,6 +155,11 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave {
 		running = shouldRenderAsActive() && !processQueue.isEmpty() && processQueue.get(0).canProcess(this);
 		if(previousRenderState != running) notifyNearbyClients();
 		previousRenderState = running;
+	}
+
+	@Override
+	public void TankContentsChanged() {
+		this.markContainingBlockForUpdate(null);
 	}
 
 	@Override

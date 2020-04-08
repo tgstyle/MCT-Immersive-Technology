@@ -102,10 +102,11 @@ public class ITContent {
 		blockConnectors = new BlockConnectors();
 
 		/*METAL*/
-		blockMetalDevice = new BlockMetalDevice();
 		blockMetalTrash = new BlockMetalTrash();
 		blockMetalBarrel = new BlockMetalBarrel();
 		blockValve = new BlockValve();
+
+		if(Multiblock.enable_advancedCokeOven) blockMetalDevice = new BlockMetalDevice();
 
 		/*STONE*/
 		blockStoneDecoration = new BlockStoneDecoration();
@@ -209,15 +210,11 @@ public class ITContent {
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 		/*RECIPES*/
 		if(Multiblock.enable_boiler && Recipes.register_boiler_recipes) {
-			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 1000), new FluidStack(FluidRegistry.WATER, 2000), 40);
-			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 1500), new FluidStack(FluidRegistry.getFluid("distwater"), 2000), 40);
-			BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("biodiesel"), 5), 1, 10);
-			if(FluidRegistry.getFluid("gasoline") != null) {
-				BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("gasoline"), 5), 1, 10);
-			}
-			if(FluidRegistry.getFluid("diesel") != null) {
-				BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("diesel"), 5), 1, 10);
-			}
+			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), new FluidStack(FluidRegistry.WATER, 250), 10);
+			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 750), new FluidStack(FluidRegistry.getFluid("distwater"), 250), 10);
+			BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("biodiesel"), 10), 1, 10);
+			if(FluidRegistry.getFluid("gasoline") != null) BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("gasoline"), 50), 1, 10);
+			if(FluidRegistry.getFluid("diesel") != null) BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("diesel"), 7), 1, 10);
 		}
 		if(Multiblock.enable_distiller && Recipes.register_distiller_recipes) {
 			ResourceLocation distillerItemName = new ResourceLocation(Distiller.distiller_output_item);
@@ -232,12 +229,10 @@ public class ITContent {
 			DistillerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 500), new FluidStack(FluidRegistry.WATER, 1000), distillerItem, 10000, 20, distillerChance);
 		}
 		if(Multiblock.enable_solarTower && Recipes.register_solarTower_recipes) {
-			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 1000), new FluidStack(FluidRegistry.WATER, 2000), 80);
-			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 1500), new FluidStack(FluidRegistry.getFluid("distwater"), 2000), 80);
+			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), new FluidStack(FluidRegistry.WATER, 250), 20);
+			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 750), new FluidStack(FluidRegistry.getFluid("distwater"), 250), 20);
 		}
-		if(Multiblock.enable_steamTurbine && Recipes.register_steamTurbine_recipes) {
-			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 10), new FluidStack(FluidRegistry.getFluid("steam"), 100), 1);
-		}
+		if(Multiblock.enable_steamTurbine && Recipes.register_steamTurbine_recipes) SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.WATER, 10), new FluidStack(FluidRegistry.getFluid("steam"), 100), 1);
 	}
 
 	@SuppressWarnings("deprecation")
