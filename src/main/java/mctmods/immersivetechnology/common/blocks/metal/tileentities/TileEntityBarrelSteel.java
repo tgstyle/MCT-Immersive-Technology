@@ -28,12 +28,21 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IConfigurableSides, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.ITileDrop, IEBlockInterfaces.IComparatorOverride, ITFluidTank.TankListener {
 
 	public int[] sideConfig = {1, 0};
-	public ITFluidTank tank = new ITFluidTank(24000, this);
+
+	public ITFluidTank tank;
 
 	private int sleep = 0;
 
 	SidedFluidHandler[] sidedFluidHandler = {new SidedFluidHandler(this, EnumFacing.DOWN), new SidedFluidHandler(this, EnumFacing.UP)};
 	SidedFluidHandler nullsideFluidHandler = new SidedFluidHandler(this, null);
+
+	public void createTank() {
+		tank = new ITFluidTank(24000, this);
+	}
+
+	public TileEntityBarrelSteel() {
+		createTank();
+	}
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
