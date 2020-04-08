@@ -18,6 +18,7 @@ import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.Config.ITConfig.Experimental;
+import mctmods.immersivetechnology.common.util.IPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -64,7 +65,7 @@ import java.util.function.Function;
 import static java.util.Collections.newSetFromMap;
 
 @SuppressWarnings("deprecation")
-public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe {
+public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe implements IPipe {
 
 	public static ConcurrentHashMap<BlockPos, Set<DirectionalFluidOutput>> indirectConnections = new ConcurrentHashMap<BlockPos, Set<DirectionalFluidOutput>>();
 
@@ -422,6 +423,11 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		return 1;
 	}
 
+	@Override
+	public boolean hasCover() {
+		return pipeCover.isEmpty();
+	}
+
 	public void toggleSide(int side) {
 		sideConfig[side]++;
 		if(sideConfig[side] > 0) sideConfig[side] = - 1;
@@ -435,6 +441,11 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 			world.addBlockEvent(getPos().offset(fd), getBlockType(), 0, 0);
 		}
 		world.addBlockEvent(getPos(), getBlockType(), 0, 0);
+	}
+
+	@Override
+	public int[] getSideConfig() {
+		return sideConfig;
 	}
 
 	@Override

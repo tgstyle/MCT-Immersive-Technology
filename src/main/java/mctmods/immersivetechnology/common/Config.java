@@ -127,6 +127,8 @@ public class Config {
 		public static class Experimental {
 			@Comment({"Replace IE pipes with IT's own version. [Default=true]"})
 			public static boolean replace_IE_pipes = true;
+			@Comment({"Replace pipe pathing algorithm with IT's own version. Only works if also replacing IE pipes! [Default=true]"})
+			public static boolean replace_pipe_algorithm = true;
 			@Comment({"How much should the pipes be capable of transfering, in mb. [Default=50]"})
 			public static int pipe_transfer_rate = 50;
 			@Comment({"How much should the pipes be capable of transfering when pressurized, in mb. [Default=1000]"})

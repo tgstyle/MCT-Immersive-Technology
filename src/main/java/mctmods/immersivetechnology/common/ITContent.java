@@ -201,8 +201,13 @@ public class ITContent {
 		registerTile(TileEntitySteelSheetmetalTankMaster.class);
 		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
 		if(Experimental.replace_IE_pipes) {
-			TileEntityFluidPipe.initCovers();
-			IEContent.registerTile(TileEntityFluidPipe.class);
+			if (Experimental.replace_pipe_algorithm) {
+				TileEntityFluidPipeAlternative.initCovers();
+				IEHijackedRegisterTile(TileEntityFluidPipeAlternative.class, "FluidPipe");
+			} else {
+				TileEntityFluidPipe.initCovers();
+				IEHijackedRegisterTile(TileEntityFluidPipe.class, "FluidPipe");
+			}
 		}
 	}
 
@@ -240,6 +245,11 @@ public class ITContent {
 		String tileEntity = tile.getSimpleName();
 		tileEntity = tileEntity.substring(tileEntity.indexOf("TileEntity") + "TileEntity".length());
 		GameRegistry.registerTileEntity(tile, ImmersiveTechnology.MODID + ":" + tileEntity);
+	}
+
+	public static void IEHijackedRegisterTile(Class<? extends TileEntity> tile, String name) {
+		GameRegistry.registerTileEntity(tile, "immersiveengineering:" + name);
+		IEContent.registeredIETiles.add(tile);
 	}
 
 	@SubscribeEvent
