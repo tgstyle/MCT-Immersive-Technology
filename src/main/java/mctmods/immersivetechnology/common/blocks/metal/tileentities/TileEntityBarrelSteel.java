@@ -144,6 +144,15 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 		return true;
 	}
 
+	@Override
+	public boolean receiveClientEvent(int id, int arg) {
+		if(id == 0) {
+			this.markContainingBlockForUpdate(null);
+			return true;
+		}
+		return false;
+	}
+
 	public boolean isFluidValid(FluidStack fluid) {
 		return fluid != null && fluid.getFluid() != null;
 	}
