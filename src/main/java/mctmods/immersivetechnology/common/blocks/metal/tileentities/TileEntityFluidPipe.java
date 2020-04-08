@@ -18,6 +18,7 @@ import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.Config.ITConfig.Experimental;
+import mctmods.immersivetechnology.common.util.IPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -64,12 +65,12 @@ import java.util.function.Function;
 import static java.util.Collections.newSetFromMap;
 
 @SuppressWarnings("deprecation")
-public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe {
-
-	public int transferRate = Experimental.pipe_transfer_rate;
-	public int transferRatePressurized = Experimental.pipe_pressurized_transfer_rate;
+public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe implements IPipe {
 
 	public static ConcurrentHashMap<BlockPos, Set<DirectionalFluidOutput>> indirectConnections = new ConcurrentHashMap<BlockPos, Set<DirectionalFluidOutput>>();
+
+	public static int transferRate = Experimental.pipe_transfer_rate;
+	public static int transferRatePressurized = Experimental.pipe_pressurized_transfer_rate;
 
 	public static ArrayList<Function<ItemStack, Boolean>> validPipeCovers = new ArrayList<>();
 	public static ArrayList<Function<ItemStack, Boolean>> climbablePipeCovers = new ArrayList<>();
@@ -121,7 +122,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 				if(pipeTile instanceof TileEntityFluidPipe)
 					closedList.add(next);
 				IFluidTankProperties[] tankInfo;
-				for(int i = 0; i < 6; i++) {
+				for(int i = 0; i < 6; i ++ ) {
 					EnumFacing fd = EnumFacing.getFront(i);
 					if(((IFluidPipe)pipeTile).hasOutputConnection(fd)) {
 						BlockPos nextPos = next.offset(fd);
@@ -142,7 +143,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 			}
 			openList.remove(0);
 		}
-		if(FMLCommonHandler.instance().getEffectiveSide()==Side.SERVER) {
+		if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
 			if(!indirectConnections.containsKey(node)) {
 				indirectConnections.put(node, newSetFromMap(new ConcurrentHashMap<DirectionalFluidOutput, Boolean>()));
 				indirectConnections.get(node).addAll(fluidHandlers);
@@ -156,7 +157,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		super.invalidate();
 		if(!world.isRemote) indirectConnections.clear();
 	}
- 
+
 	@Override
 	public void onEntityCollision(World world, Entity entity) {
 		if(!(entity instanceof EntityLivingBase)||((EntityLivingBase)entity).isOnLadder()||pipeCover.isEmpty()) {
@@ -169,17 +170,14 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 					break;
 				}
 			}
-			if(!climb)
-				return;
+			if(!climb) return;
 			float f5 = 0.15F;
 			if(entity.motionX < - f5) entity.motionX = - f5;
 			if(entity.motionX > f5) entity.motionX = f5;
 			if(entity.motionZ < - f5) entity.motionZ = - f5;
 			if(entity.motionZ > f5) entity.motionZ = f5;
-
 			entity.fallDistance = 0f;
 			if(entity.motionY < - .15) entity.motionY = - 0.15D;
-
 			if(entity.motionY < 0 && entity instanceof EntityPlayer && entity.isSneaking()) {
 				entity.motionY = .05;
 				return;
@@ -292,7 +290,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		}
 	}
 
-	class PipeFluidHandler implements IFluidHandler {
+	static class PipeFluidHandler implements IFluidHandler {
 		TileEntityFluidPipe pipe;
 		EnumFacing facing;
 
@@ -336,8 +334,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 						int limit = getTranferrableAmount(resource, output);
 						int tileSpecificAcceptedFluid = Math.min(limit, canAccept);
 						float prio = amount/(float)sum;
-						amount = (int)Math.ceil(MathHelper.clamp(amount, 1,
-								Math.min(resource.amount*prio, tileSpecificAcceptedFluid)));
+						amount = (int)Math.ceil(MathHelper.clamp(amount, 1, Math.min(resource.amount*prio, tileSpecificAcceptedFluid)));
 						amount = Math.min(amount, canAccept);
 					}
 					int r = output.output.fill(Utils.copyFluidStackWithAmount(resource, amount, !(output.containingTile instanceof IFluidPipe)), doFill);
@@ -400,7 +397,6 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		byte connections = 0;
 		IFluidTankProperties[] tankInfo;
 		for(int i = 5; i >= 0; i--) {
-			//TileEntity con = world.getTileEntity(xCoord + (i == 4 ? - 1 : i == 5 ? 1 : 0),yCoord + (i == 0 ? - 1 : i == 1 ? 1 : 0),zCoord + (i == 2 ? - 1 : i == 3 ? 1 : 0));
 			EnumFacing dir = EnumFacing.getFront(i);
 			TileEntity con = Utils.getExistingTileEntity(world, getPos().offset(dir));
 			connections <<= 1;
@@ -417,15 +413,19 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 
 	public int getConnectionStyle(int connection) {
 		if(sideConfig[connection] == - 1) return 0;
-		if((connections&(1 << connection)) == 0) return 0;
+		if((connections & (1 << connection)) == 0) return 0;
 		if(connections != 3 && connections != 12 && connections != 48) return 1;
-		//TileEntity con = world.getTileEntity(xCoord + (connection == 4 ? - 1 : connection == 5 ? 1 : 0),yCoord + (connection == 0 ? - 1 : connection == 1 ? 1 : 0),zCoord + (connection == 2 ? - 1 : connection == 3 ? 1 : 0));
 		TileEntity con = world.getTileEntity(getPos().offset(EnumFacing.getFront(connection)));
 		if(con instanceof TileEntityFluidPipe) {
 			byte tileConnections = ((TileEntityFluidPipe)con).connections;
 			if(connections == tileConnections) return 0;
 		}
 		return 1;
+	}
+
+	@Override
+	public boolean hasCover() {
+		return pipeCover.isEmpty();
 	}
 
 	public void toggleSide(int side) {
@@ -441,6 +441,11 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 			world.addBlockEvent(getPos().offset(fd), getBlockType(), 0, 0);
 		}
 		world.addBlockEvent(getPos(), getBlockType(), 0, 0);
+	}
+
+	@Override
+	public int[] getSideConfig() {
+		return sideConfig;
 	}
 
 	@Override
@@ -464,23 +469,23 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 			list.add(new AxisAlignedBB(0, 0, 0, 1, 1, 1).grow( - .03125f).offset(getPos()));
 			return list;
 		}
-		if(/*connections == 16||connections == 32||*/connections == 48) {
+		if(connections == 48) {
 			list.add(new AxisAlignedBB(0, .25f, .25f, 1, .75f, .75f).offset(getPos()));
-			if((connections&16) == 0) list.add(new AxisAlignedBB(0, .125f, .125f, .125f, .875f, .875f).offset(getPos()));
-			if((connections&32) == 0) list.add(new AxisAlignedBB(.875f, .125f, .125f, 1, .875f, .875f).offset(getPos()));
-		} else if(/*connections == 4||connections == 8||*/connections == 12) {
+			if((connections & 16) == 0) list.add(new AxisAlignedBB(0, .125f, .125f, .125f, .875f, .875f).offset(getPos()));
+			if((connections & 32) == 0) list.add(new AxisAlignedBB(.875f, .125f, .125f, 1, .875f, .875f).offset(getPos()));
+		} else if(connections == 12) {
 			list.add(new AxisAlignedBB(.25f, .25f, 0, .75f, .75f, 1).offset(getPos()));
-			if((connections&4) == 0) list.add(new AxisAlignedBB(.125f, .125f, 0, .875f, .875f, .125f).offset(getPos()));
-			if((connections&8) == 0) list.add(new AxisAlignedBB(.125f, .125f, .875f, .875f, .875f, 1).offset(getPos()));
+			if((connections & 4) == 0) list.add(new AxisAlignedBB(.125f, .125f, 0, .875f, .875f, .125f).offset(getPos()));
+			if((connections & 8) == 0) list.add(new AxisAlignedBB(.125f, .125f, .875f, .875f, .875f, 1).offset(getPos()));
 		}
-		else if(/*connections == 1||connections == 2||*/connections == 3) {
+		else if(connections == 3) {
 			list.add(new AxisAlignedBB(.25f, 0, .25f, .75f, 1, .75f).offset(getPos()));
-			if((connections&1) == 0) list.add(new AxisAlignedBB(.125f, 0, .125f, .875f, .125f, .875f).offset(getPos()));
-			if((connections&2) == 0) list.add(new AxisAlignedBB(.125f, .875f, .125f, .875f, 1, .875f).offset(getPos()));
+			if((connections & 1) == 0) list.add(new AxisAlignedBB(.125f, 0, .125f, .875f, .125f, .875f).offset(getPos()));
+			if((connections & 2) == 0) list.add(new AxisAlignedBB(.125f, .875f, .125f, .875f, 1, .875f).offset(getPos()));
 		} else {
 			list.add(new AxisAlignedBB(.25f, .25f, .25f, .75f, .75f, .75f).offset(getPos()));
 			for(int i = 0; i < 6; i++) {
-				if((connections&(1 << i)) != 0) list.add(new AxisAlignedBB(i == 4 ? 0 : i == 5 ? .875f : .125f, i == 0 ? 0 : i == 1 ? .875f : .125f, i == 2 ? 0 : i == 3 ? .875f : .125f, i == 4 ? .125f : i == 5 ? 1 : .875f, i == 0 ? .125f : i == 1 ? 1 : .875f, i == 2 ? .125f : i == 3 ? 1 : .875f).offset(getPos()));
+				if((connections & (1 << i)) != 0) list.add(new AxisAlignedBB(i == 4 ? 0 : i == 5 ? .875f : .125f, i == 0 ? 0 : i == 1 ? .875f : .125f, i == 2 ? 0 : i == 3 ? .875f : .125f, i == 4 ? .125f : i == 5 ? 1 : .875f, i == 0 ? .125f : i == 1 ? 1 : .875f, i == 2 ? .125f : i == 3 ? 1 : .875f).offset(getPos()));
 			}
 		}
 		return list;
@@ -494,9 +499,8 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		for(int i = 0; i < 6; i++) {
 			double depth = getConnectionStyle(i) == 0 ? .25 : .125;
 			double size = getConnectionStyle(i) == 0 ? .25 : .125;
-			//if(pipeCover != null) size = 0;
-			if((availableConnections&0x1) == 1) list.add(new AdvancedAABB(new AxisAlignedBB(i == 4 ? 0 : i == 5 ? 1 - depth : size, i == 0 ? 0 : i == 1 ? 1 - depth : size, i == 2 ? 0 : i == 3 ? 1 - depth : size, i == 4 ? depth : i == 5 ? 1 : 1 - size, i == 0 ? depth : i == 1 ? 1 : 1 - size, i == 2 ? depth : i == 3 ? 1 : 1 - size).offset(getPos()), EnumFacing.getFront(i)));
-			if((connections&(1 << i)) != 0) baseAABB[i] += i%2 == 1 ? .125 : - .125;
+			if((availableConnections & 0x1) == 1) list.add(new AdvancedAABB(new AxisAlignedBB(i == 4 ? 0 : i == 5 ? 1 - depth : size, i == 0 ? 0 : i == 1 ? 1 - depth : size, i == 2 ? 0 : i == 3 ? 1 - depth : size, i == 4 ? depth : i == 5 ? 1 : 1 - size, i == 0 ? depth : i == 1 ? 1 : 1 - size, i == 2 ? depth : i == 3 ? 1 : 1 - size).offset(getPos()), EnumFacing.getFront(i)));
+			if((connections & (1 << i)) != 0) baseAABB[i] += i%2 == 1 ? .125 : - .125;
 			baseAABB[i] = Math.min(Math.max(baseAABB[i], 0), 1);
 			availableConnections = (byte)(availableConnections >> 1);
 		}
@@ -519,13 +523,13 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 	public static HashMap<String, OBJState> cachedOBJStates = new HashMap<String, OBJState>();
 
 	static String[] CONNECTIONS = new String[]{
-			"con_yMin", "con_yMax", "con_zMin", "con_zMax", "con_xMin", "con_xMax"
+		"con_yMin", "con_yMax", "con_zMin", "con_zMax", "con_xMin", "con_xMax"
 	};
 
 	String getRenderCacheKey() {
 		StringBuilder key = new StringBuilder();
 		for(int i = 0; i < 6; i++) {
-			if((connections&(1 << i)) != 0) key.append(getConnectionStyle(i) == 1 ? "2" : "1");
+			if((connections & (1 << i)) != 0) key.append(getConnectionStyle(i) == 1 ? "2" : "1");
 			else key.append("0");
 		}
 		if(!pipeCover.isEmpty()) key.append("scaf : ").append(pipeCover);
@@ -533,14 +537,12 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		return key.toString();
 	}
 
-	// Lowest 6 bits are conns, bits 8 to 14 (1&(b>>8)) ore conn style
 	private static short getConnectionsFromKey(String key) {
 		short ret = 0;
 		for(int i = 0; i < 6; i++) {
 			char c = key.charAt(i);
 			switch(c) {
 				case '0' : 
-					//NOP
 					break;
 				case '2' : 
 					ret |= (1 << i)|(1 << (i + 8));
@@ -563,51 +565,29 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		return getStateFromKey(key);
 	}
 
-	//@Override
-	//public HashMap<String, String> getTextureReplacements() {
-	//if(pipeCover != null) {
-	//	HashMap<String,String> map = new HashMap<String,String>();
-	//	map.put("cover","minecraft : blocks/stone");
-	//	Block b = Block.getBlockFromItem(pipeCover.getItem());
-	//	IBlockState state = b != null ? b.getStateFromMeta(pipeCover.getMetadata()) : Blocks.STONE.getDefaultState();
-	//	IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(state);
-	//	if(model != null && model.getParticleTexture() != null)
-	//		map.put("cover", model.getParticleTexture().getIconName());
-	//		return map;
-	//	}
-	//	return null;
-	//}
-
 	public static OBJState getStateFromKey(String key) {
 		if(!cachedOBJStates.containsKey(key)) {
 			ArrayList<String> parts = new ArrayList<String>();
-			Matrix4 rotationMatrix = new Matrix4(TRSRTransformation.identity().getMatrix());//new Matrix4();
+			Matrix4 rotationMatrix = new Matrix4(TRSRTransformation.identity().getMatrix());
 			short connections = getConnectionsFromKey(key);
-			//if(pipeCover != null) parts.add("cover");
-			int totalConnections = Integer.bitCount(connections&255);
-			boolean straightY = (connections&3) == 3;
-			boolean straightZ = (connections&12) == 12;
-			boolean straightX = (connections&48) == 48;
+			int totalConnections = Integer.bitCount(connections & 255);
+			boolean straightY = (connections & 3) == 3;
+			boolean straightZ = (connections & 12) == 12;
+			boolean straightX = (connections & 48) == 48;
 			switch(totalConnections) {
-				case 0 : //stub
+				case 0 : 
 					parts.add("center");
 					break;
-				case 1 : //stopper
+				case 1 : 
 					parts.add("stopper");
-					//default : y - 
-					if((connections&2) != 0)//y + 
-						rotationMatrix.rotate(Math.PI, 0, 0, 1);
-					else if((connections&4) != 0)//z - 
-						rotationMatrix.rotate(Math.PI/2, 1, 0, 0);
-					else if((connections&8) != 0)//z + 
-						rotationMatrix.rotate( - Math.PI/2, 1, 0, 0);
-					else if((connections&16) != 0)//x - 
-						rotationMatrix.rotate( - Math.PI/2, 0, 0, 1);
-					else if((connections&32) != 0)//x + 
-						rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
+					if((connections & 2) != 0) rotationMatrix.rotate(Math.PI, 0, 0, 1);
+					else if((connections & 4) != 0) rotationMatrix.rotate(Math.PI/2, 1, 0, 0);
+					else if((connections & 8) != 0) rotationMatrix.rotate( - Math.PI/2, 1, 0, 0);
+					else if((connections & 16) != 0) rotationMatrix.rotate( - Math.PI/2, 0, 0, 1);
+					else if((connections & 32) != 0) rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
 					parts.add("con_yMin");
 					break;
-				case 2 : //straight or curve
+				case 2 : 
 					if(straightY) {
 						parts.add("pipe_y");
 						if(getConnectionStyle(0, connections) == 1) parts.add("con_yMin");
@@ -624,82 +604,56 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 						parts.add("curve");
 						parts.add("con_yMin");
 						parts.add("con_zMin");
-						byte connectTo = (byte)(connections&60);
-						if((connections&3) != 0) {//curve to top or bottom
-							if(connectTo == 16)//x - 
-								rotationMatrix.rotate(Math.PI/2, 0, 1, 0);
-							else if(connectTo == 32)//x + 
-								rotationMatrix.rotate( - Math.PI/2, 0, 1, 0);
-							else if(connectTo == 8)//z + 
-								rotationMatrix.rotate(Math.PI, 0, 1, 0);
-							if((connections&2) != 0)//flip to top
-								rotationMatrix.rotate(Math.PI, 0, 0, 1);
-							//default : Curve to z - 
-						} else {//curve to horizontal
+						byte connectTo = (byte)(connections & 60);
+						if((connections & 3) != 0) {
+							if(connectTo == 16) rotationMatrix.rotate(Math.PI/2, 0, 1, 0);
+							else if(connectTo == 32) rotationMatrix.rotate( - Math.PI/2, 0, 1, 0);
+							else if(connectTo == 8) rotationMatrix.rotate(Math.PI, 0, 1, 0);
+							if((connections & 2) != 0) rotationMatrix.rotate(Math.PI, 0, 0, 1);
+						} else {
 							rotationMatrix.rotate( - Math.PI/2, 0, 0, 1);
-							if(connectTo == 40)//z + to x + 
-								rotationMatrix.rotate(Math.PI, 1, 0, 0);
-							else if(connectTo == 24)//z + to x - 
-								rotationMatrix.rotate( - Math.PI/2, 1, 0, 0);
-							else if(connectTo == 36)//z - to x + 
-								rotationMatrix.rotate(Math.PI/2, 1, 0, 0);
-							//default : z - to x - 
+							if(connectTo == 40) rotationMatrix.rotate(Math.PI, 1, 0, 0);
+							else if(connectTo == 24) rotationMatrix.rotate( - Math.PI/2, 1, 0, 0);
+							else if(connectTo == 36) rotationMatrix.rotate(Math.PI/2, 1, 0, 0);
 						}
 					}
 					break;
-				case 3 : //tcross or tcurve
-					if(straightX||straightZ||straightY) {//has straight connect
+				case 3 : 
+					if(straightX||straightZ||straightY) {
 						parts.add("tcross");
 						parts.add("con_yMin");
 						parts.add("con_zMin");
 						parts.add("con_zMax");
 						if(straightX) {
 							rotationMatrix.rotate(Math.PI/2, 0, 1, 0);
-							if((connections&4) != 0)//z - 
-								rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
-							else if((connections&8) != 0)//z + 
-								rotationMatrix.rotate( - Math.PI/2, 0, 0, 1);
-							else if((connections&2) != 0)//y + 
-								rotationMatrix.rotate(Math.PI, 0, 0, 1);
-							//default : Curve to y - 
+							if((connections & 4) != 0) rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
+							else if((connections & 8) != 0) rotationMatrix.rotate( - Math.PI/2, 0, 0, 1);
+							else if((connections & 2) != 0) rotationMatrix.rotate(Math.PI, 0, 0, 1);
 						} else if(straightY) {
 							rotationMatrix.rotate(Math.PI/2, 1, 0, 0);
-							if((connections&16) != 0)//x - 
-								rotationMatrix.rotate( - Math.PI/2, 0, 0, 1);
-							else if((connections&32) != 0)//x + 
-								rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
-							else if((connections&8) != 0)//z + 
-								rotationMatrix.rotate(Math.PI, 0, 0, 1);
-							//default : Curve to z - 
-						} else {//default : z straight
-							if((connections&16) != 0)//x - 
-								rotationMatrix.rotate( - Math.PI/2, 0, 0, 1);
-							else if((connections&32) != 0)//x + 
-								rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
-							else if((connections&2) != 0)//y + 
-								rotationMatrix.rotate(Math.PI, 0, 0, 1);
-							//default : Curve to y - 
+							if((connections & 16) != 0) rotationMatrix.rotate( - Math.PI/2, 0, 0, 1);
+							else if((connections & 32) != 0) rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
+							else if((connections & 8) != 0) rotationMatrix.rotate(Math.PI, 0, 0, 1);
+						} else {
+							if((connections & 16) != 0) rotationMatrix.rotate( - Math.PI/2, 0, 0, 1);
+							else if((connections & 32) != 0) rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
+							else if((connections & 2) != 0) rotationMatrix.rotate(Math.PI, 0, 0, 1);
 						}
-					} else {//tcurve
+					} else {
 						parts.add("tcurve");
 						parts.add("con_yMin");
 						parts.add("con_zMin");
 						parts.add("con_xMax");
-						//default y - , z - , x + 
-						if((connections&8) != 0) {//z + 
-							if((connections&16) != 0)//x - 
-								rotationMatrix.rotate(Math.PI, 0, 1, 0);
-							else
-								rotationMatrix.rotate( - Math.PI/2, 0, 1, 0);
-						} else {//z - 
-							if((connections&16) != 0)//x - 
-								rotationMatrix.rotate(Math.PI/2, 0, 1, 0);
+						if((connections & 8) != 0) {
+							if((connections & 16) != 0) rotationMatrix.rotate(Math.PI, 0, 1, 0);
+							else rotationMatrix.rotate( - Math.PI/2, 0, 1, 0);
+						} else {
+							if((connections & 16) != 0) rotationMatrix.rotate(Math.PI/2, 0, 1, 0);
 						}
-						if((connections&2) != 0)//y + 
-							rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
+						if((connections & 2) != 0) rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
 					}
 					break;
-				case 4 : //cross or complex tcross
+				case 4 : 
 					boolean cross = (straightX && straightZ)||(straightX && straightY)||(straightZ && straightY);
 					if(cross) {
 						parts.add("cross");
@@ -707,10 +661,8 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 						parts.add("con_yMax");
 						parts.add("con_zMin");
 						parts.add("con_zMax");
-						if(!straightY)//x and z
-							rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
-						else if(straightX)//x and y
-							rotationMatrix.rotate(Math.PI/2, 0, 1, 0);
+						if(!straightY) rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
+						else if(straightX) rotationMatrix.rotate(Math.PI/2, 0, 1, 0);
 					} else {
 						parts.add("tcross2");
 						parts.add("con_yMin");
@@ -718,50 +670,38 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 						parts.add("con_zMax");
 						parts.add("con_xMax");
 						if(straightZ) {
-							//default y - z + - x + 
-							if((connections&16) != 0)//x - 
-								rotationMatrix.rotate(Math.PI, 0, 1, 0);
-							if((connections&2) != 0)//y + 
-								rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
+							if((connections & 16) != 0) rotationMatrix.rotate(Math.PI, 0, 1, 0);
+							if((connections & 2) != 0) rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
 						} else if(straightY) {
 							rotationMatrix.rotate(Math.PI/2, 1, 0, 0);
-							//default y + - z - x + 
-							if((connections&8) != 0) {//z + 
+							if((connections & 8) != 0) {
 								rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
-								if((connections&16) != 0)//x - 
-									rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
-							} else if((connections&16) != 0)//x - 
-								rotationMatrix.rotate( - Math.PI/2, 0, 0, 1);
+								if((connections & 16) != 0) rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
+							} else if((connections & 16) != 0) rotationMatrix.rotate( - Math.PI/2, 0, 0, 1);
 						} else {
 							rotationMatrix.rotate(Math.PI/2, 0, 1, 0);
-							//default y - z - x + - 
-							if((connections&8) != 0)//z + 
-								rotationMatrix.rotate(Math.PI, 0, 1, 0);
-							if((connections&2) != 0)//y + 
-								rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
+							if((connections & 8) != 0) rotationMatrix.rotate(Math.PI, 0, 1, 0);
+							if((connections & 2) != 0) rotationMatrix.rotate(Math.PI/2, 0, 0, 1);
 						}
 					}
 					break;
-				case 5 : //complete tcross
+				case 5 : 
 					parts.add("tcross3");
 					parts.add("con_yMin");
 					parts.add("con_yMax");
 					parts.add("con_zMin");
 					parts.add("con_zMax");
 					parts.add("con_xMax");
-					//default y + - z + - x + 
 					if(straightZ) {
 						if(straightY) {
-							if((connections&16) != 0)//x - 
-								rotationMatrix.rotate(Math.PI, 0, 1, 0);
-						} else if(straightX) rotationMatrix.rotate(((connections&2) != 0) ? (Math.PI/2) : ( - Math.PI/2), 0, 0, 1);
+							if((connections & 16) != 0) rotationMatrix.rotate(Math.PI, 0, 1, 0);
+						} else if(straightX) rotationMatrix.rotate(((connections & 2) != 0) ? (Math.PI/2) : ( - Math.PI/2), 0, 0, 1);
 					} else if(straightX) {
 						rotationMatrix.rotate(Math.PI/2, 0, 1, 0);
-						if((connections&8) != 0)//z + 
-							rotationMatrix.rotate(Math.PI, 0, 1, 0);
+						if((connections & 8) != 0) rotationMatrix.rotate(Math.PI, 0, 1, 0);
 					}
 					break;
-				case 6 : //Full Crossing
+				case 6 : 
 					parts.add("con_yMin");
 					parts.add("con_yMax");
 					parts.add("con_zMin");
@@ -770,8 +710,6 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 					parts.add("con_xMax");
 					break;
 			}
-			//connetionParts
-			//for(int i=0; i<6; i++) if(((TileEntityFluidPipe)tile).getConnectionStyle(i) == 1) connectionCaps.add(CONNECTIONS[i]);
 			Matrix4 tempMatr = new Matrix4();
 			tempMatr.m03 = tempMatr.m13 = tempMatr.m23 = .5f;
 			rotationMatrix.leftMultiply(tempMatr);
@@ -781,7 +719,6 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		}
 		return cachedOBJStates.get(key);
 	}
-
 
 	@Override
 	public int getRenderColour(int tintIndex) {

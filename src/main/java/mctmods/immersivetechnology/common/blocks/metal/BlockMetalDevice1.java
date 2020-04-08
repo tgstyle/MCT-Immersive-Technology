@@ -14,12 +14,17 @@ import blusunrize.immersiveengineering.client.models.IOBJModelCallback;
 import blusunrize.immersiveengineering.common.blocks.BlockIETileProvider;
 import blusunrize.immersiveengineering.common.blocks.ItemBlockIEBase;
 import blusunrize.immersiveengineering.common.blocks.metal.*;
+import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
+import mctmods.immersivetechnology.common.util.IPipe;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -132,6 +137,14 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 		return true;
 	}
 
+	public TileEntity pipeImplementation() {
+		if (Config.ITConfig.Experimental.replace_pipe_algorithm) {
+			return new mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative();
+		} else {
+			return new mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe();
+		}
+	}
+
 
 	@Override
 	public TileEntity createBasicTE(World world, BlockTypes_MetalDevice1 type) {
@@ -149,7 +162,7 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 			case CHARGING_STATION:
 				return new TileEntityChargingStation();
 			case FLUID_PIPE:
-				return new mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe();
+				return pipeImplementation();
 			case SAMPLE_DRILL:
 				return new TileEntitySampleDrill();
 			case TESLA_COIL:
@@ -174,16 +187,30 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 	}
 
 	@Override
+	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+		if (!Config.ITConfig.Experimental.replace_pipe_algorithm)
+			mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.indirectConnections.clear();
+		return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
+	}
+
+	@Override
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
+		super.neighborChanged(state, world, pos, block, fromPos);
+		if(!Config.ITConfig.Experimental.replace_pipe_algorithm && world.getBlockState(pos).getValue(property)==BlockTypes_MetalDevice1.FLUID_PIPE)
+			mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.indirectConnections.clear();
+	}
+
+	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState state) {
 		if(state.getValue(property)==BlockTypes_MetalDevice1.FLUID_PIPE) {
 			TileEntity te = world.getTileEntity(pos);
-			if(te instanceof TileEntityFluidPipe) {
-				TileEntityFluidPipe here = (TileEntityFluidPipe)te;
+			if(te instanceof IPipe) {
+				IPipe here = (IPipe)te;
 				for(int i = 0; i < 6; i++) {
-					if(here.sideConfig[i]==-1) {
+					if(here.getSideConfig()[i]==-1) {
 						EnumFacing f = EnumFacing.VALUES[i];
 						TileEntity there = world.getTileEntity(pos.offset(f));
-						if(there instanceof TileEntityFluidPipe) ((TileEntityFluidPipe)there).toggleSide(f.getOpposite().ordinal());
+						if(there instanceof IPipe) ((IPipe)there).toggleSide(f.getOpposite().ordinal());
 					}
 				}
 			}

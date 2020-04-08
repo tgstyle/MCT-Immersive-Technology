@@ -7,7 +7,6 @@ import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
@@ -21,32 +20,15 @@ import java.util.Random;
 
 public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 
-	public ITFluidTank tank = new ITFluidTank(12000, this);
+	@Override
+	public void createTank() {
+		tank = new ITFluidTank(12000, this);
+	}
 
 	private int lastRandom = 0;
 	private int sleep = 0;
 
 	private static Random RANDOM = new Random();
-
-	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		this.readTank(nbt);
-	}
-
-	public void readTank(NBTTagCompound nbt) {
-		tank.readFromNBT(nbt.getCompoundTag("tank"));
-	}
-
-	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		this.writeTank(nbt, false);
-	}
-
-	public void writeTank(NBTTagCompound nbt, boolean toItem) {
-		boolean write = tank.getFluidAmount() > 0;
-		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
-		if(!toItem || write) nbt.setTag("tank", tankTag);
-	}
 
 	@Override
 	public void update() {
@@ -93,11 +75,6 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 	}
 
 	@Override
-	public void TankContentsChanged() {
-		this.markContainingBlockForUpdate(null);
-	}
-
-	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
 		if(Utils.isFluidRelatedItemStack(player.getHeldItem(EnumHand.MAIN_HAND))) {
 			FluidStack fluid = tank.getFluid();
@@ -106,11 +83,6 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 					new String[]{TranslationKey.GUI_EMPTY.text()};
 		}
 		return null;
-	}
-
-	@Override
-	public int getComparatorInputOverride()	{
-		return (int)(15 * (tank.getFluidAmount() / (float)tank.getCapacity()));
 	}
 
 	@Override
