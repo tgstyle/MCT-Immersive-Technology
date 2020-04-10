@@ -71,6 +71,7 @@ public class ITContent {
 	public static BlockITBase<?> blockMetalTrash;
 	public static BlockITBase<?> blockMetalBarrel;
 	public static BlockITBase<?> blockValve;
+	public static BlockIEBase<?> blockMetalDevice0Dummy;
 	public static BlockIEBase<?> blockMetalDevice1Dummy;
 
 	/*STONE*/
@@ -131,6 +132,14 @@ public class ITContent {
 		registerVariables();
 
 		if(Experimental.replace_IE_pipes) {
+			blockMetalDevice0Dummy = IEContent.blockMetalDevice0;
+			IEContent.blockMetalDevice0.setCreativeTab(null);
+			IEContent.blockMetalDevice0.setRegistryName("immersiveengineering", "metaldevice0dummy");
+			IEContent.blockMetalDevice0.setUnlocalizedName("immersiveengineering.metaldevice0dummy");
+			IEContent.registeredIEItems.remove(Item.getItemFromBlock(IEContent.blockMetalDevice0));
+			IEContent.registeredIEBlocks.remove(IEContent.blockMetalDevice0);
+			IEContent.blockMetalDevice0 = new BlockMetalDevice0();
+
 			blockMetalDevice1Dummy = IEContent.blockMetalDevice1;
 			IEContent.blockMetalDevice1.setCreativeTab(null);
 			IEContent.blockMetalDevice1.setRegistryName("immersiveengineering", "metaldevice1dummy");
@@ -204,6 +213,7 @@ public class ITContent {
 		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
 		if(Experimental.replace_IE_pipes) {
 			normallyPressurized.add(FluidRegistry.getFluid("steam"));
+			IEHijackedRegisterTile(TileEntityFluidPump.class, "FluidPump");
 			if (Experimental.replace_pipe_algorithm) {
 				TileEntityFluidPipeAlternative.initCovers();
 				IEHijackedRegisterTile(TileEntityFluidPipeAlternative.class, "FluidPipe");

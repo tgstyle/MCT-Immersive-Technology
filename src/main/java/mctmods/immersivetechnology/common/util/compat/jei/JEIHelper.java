@@ -5,7 +5,6 @@ import mctmods.immersivetechnology.api.crafting.BoilerRecipe.BoilerFuelRecipe;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
-import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.Config.ITConfig.Experimental;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
@@ -67,7 +66,10 @@ public class JEIHelper implements IModPlugin {
 	public void register(IModRegistry registryIn) {
 		modRegistry = registryIn;
 
-		if(Experimental.replace_IE_pipes) registryIn.getJeiHelpers().getIngredientBlacklist().addIngredientToBlacklist(new ItemStack(ITContent.blockMetalDevice1Dummy, 1, 0));
+		if(Experimental.replace_IE_pipes) {
+			registryIn.getJeiHelpers().getIngredientBlacklist().addIngredientToBlacklist(new ItemStack(ITContent.blockMetalDevice0Dummy, 1, 0));
+			registryIn.getJeiHelpers().getIngredientBlacklist().addIngredientToBlacklist(new ItemStack(ITContent.blockMetalDevice1Dummy, 1, 0));
+		}
 
 		for(ITRecipeCategory<Object, IRecipeWrapper> cat : categories.values()) {
 			cat.addCatalysts(registryIn);
