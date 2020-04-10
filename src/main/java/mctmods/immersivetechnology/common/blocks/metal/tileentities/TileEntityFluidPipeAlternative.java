@@ -18,6 +18,7 @@ import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.Config.ITConfig.Experimental;
+import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.util.IPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -162,7 +163,8 @@ public class TileEntityFluidPipeAlternative extends blusunrize.immersiveengineer
         }
 
         private int getTranferrableAmount(FluidStack resource) {
-            return (resource.tag != null && resource.tag.hasKey("pressurized")) ? transferRatePressurized : transferRate;
+            return (resource.tag != null && resource.tag.hasKey("pressurized") ||
+                    ITContent.normallyPressurized.contains(resource.getFluid())) ? transferRatePressurized : transferRate;
         }
 
         public void disableSide(EnumFacing side) {

@@ -7,6 +7,7 @@ import crafttweaker.api.item.IngredientStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.oredict.IOreDictEntry;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Multiblock;
+import mctmods.immersivetechnology.common.Config.ITConfig.Experimental;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -24,6 +25,7 @@ public class CraftTweakerHelper extends ITCompatModule {
 		if(Multiblock.enable_distiller) CraftTweakerAPI.registerClass(Distiller.class);
 		if(Multiblock.enable_solarTower) CraftTweakerAPI.registerClass(SolarTower.class);
 		if(Multiblock.enable_steamTurbine) CraftTweakerAPI.registerClass(SteamTurbine.class);
+		if(Experimental.replace_IE_pipes) CraftTweakerAPI.registerClass(PressurizedFluid.class);
 	}
 
 	@Override
