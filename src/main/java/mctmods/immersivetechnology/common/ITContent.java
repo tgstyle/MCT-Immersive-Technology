@@ -93,6 +93,8 @@ public class ITContent {
 	public static Fluid fluidDistWater;
 	public static Fluid fluidSteam;
 
+	public static ArrayList<Fluid> normallyPressurized = new ArrayList<>();
+
 	public static void preInit() {
 		/*MULTIBLOCKS*/
 		blockMetalMultiblock = new BlockMetalMultiblock();
@@ -201,6 +203,7 @@ public class ITContent {
 		registerTile(TileEntitySteelSheetmetalTankMaster.class);
 		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
 		if(Experimental.replace_IE_pipes) {
+			normallyPressurized.add(FluidRegistry.getFluid("steam"));
 			if (Experimental.replace_pipe_algorithm) {
 				TileEntityFluidPipeAlternative.initCovers();
 				IEHijackedRegisterTile(TileEntityFluidPipeAlternative.class, "FluidPipe");
