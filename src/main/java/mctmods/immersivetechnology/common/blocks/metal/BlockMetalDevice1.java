@@ -214,6 +214,13 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 					}
 				}
 			}
+			if (te instanceof TileEntityFluidPipeAlternative) {
+				for (EnumFacing neighborDirection : EnumFacing.values()) {
+					TileEntity neighbor = world.getTileEntity(pos.offset(neighborDirection));
+					if (!(neighbor instanceof TileEntityFluidPipeAlternative)) continue;
+					((TileEntityFluidPipeAlternative)neighbor).neighborPipeRemoved(neighborDirection.getOpposite());
+				}
+			}
 		}
 		super.breakBlock(world, pos, state);
 	}
