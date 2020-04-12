@@ -186,6 +186,7 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
 		if (!Config.ITConfig.Experimental.replace_pipe_algorithm)
