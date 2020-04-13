@@ -186,6 +186,7 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
 		if (!Config.ITConfig.Experimental.replace_pipe_algorithm)
@@ -212,6 +213,13 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 						TileEntity there = world.getTileEntity(pos.offset(f));
 						if(there instanceof IPipe) ((IPipe)there).toggleSide(f.getOpposite().ordinal());
 					}
+				}
+			}
+			if (te instanceof TileEntityFluidPipeAlternative) {
+				for (EnumFacing neighborDirection : EnumFacing.values()) {
+					TileEntity neighbor = world.getTileEntity(pos.offset(neighborDirection));
+					if (!(neighbor instanceof TileEntityFluidPipeAlternative)) continue;
+					((TileEntityFluidPipeAlternative)neighbor).neighborPipeRemoved(neighborDirection.getOpposite());
 				}
 			}
 		}
