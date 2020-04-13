@@ -8,7 +8,7 @@ import net.minecraftforge.fluids.Fluid;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-@ZenClass("mods.immersivetechnology.pressurizedfluid")
+@ZenClass("mods.immersivetechnology.PressurizedFluid")
 public class PressurizedFluid {
 
     @ZenMethod
