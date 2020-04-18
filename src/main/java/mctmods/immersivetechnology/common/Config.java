@@ -125,6 +125,8 @@ public class Config {
 		}
 
 		public static class Experimental {
+			@Comment({"Should the text overlay for trash cans be per tick rather than per second? [Default=false]"})
+			public static boolean per_tick_trash_cans = false;
 			@Comment({"Replace IE pipes with IT's own version. [Default=true]"})
 			public static boolean replace_IE_pipes = true;
 			@Comment({"Replace pipe pathing algorithm with IT's own version. Only works if also replacing IE pipes! [Default=false]"})

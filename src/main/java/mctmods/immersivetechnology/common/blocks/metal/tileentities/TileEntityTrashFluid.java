@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITrashCanBounds;
 import mctmods.immersivetechnology.common.util.TranslationKey;
@@ -77,6 +78,8 @@ public class TileEntityTrashFluid extends TileEntityCommonOSD implements IFluidT
 
 	@Override
 	public TranslationKey text() {
-		return TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_FIRST_LINE;
+		return Config.ITConfig.Experimental.per_tick_trash_cans?
+				TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_ALTERNATIVE :
+				TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_FIRST_LINE;
 	}
 }
