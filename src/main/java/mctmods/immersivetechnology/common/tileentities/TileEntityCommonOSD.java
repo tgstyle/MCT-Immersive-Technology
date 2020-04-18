@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.tileentities;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,7 +47,7 @@ public abstract class TileEntityCommonOSD extends TileEntityIEBase implements IT
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		return new String[]{ text().format(lastAcceptedAmount) };
+		return new String[]{ text().format(Config.ITConfig.Experimental.per_tick_trash_cans? ((float)lastAcceptedAmount)/20 : lastAcceptedAmount) };
 	}
 
 	@Override
