@@ -5,4 +5,5 @@ public interface IPipe {
     boolean hasCover();
     void toggleSide(int side);
     int[] getSideConfig();
+
 }

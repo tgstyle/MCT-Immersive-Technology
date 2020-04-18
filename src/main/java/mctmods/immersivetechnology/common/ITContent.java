@@ -260,6 +260,7 @@ public class ITContent {
 		GameRegistry.registerTileEntity(tile, ImmersiveTechnology.MODID + ":" + tileEntity);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void IEHijackedRegisterTile(Class<? extends TileEntity> tile, String name) {
 		GameRegistry.registerTileEntity(tile, "immersiveengineering:" + name);
 		IEContent.registeredIETiles.add(tile);
