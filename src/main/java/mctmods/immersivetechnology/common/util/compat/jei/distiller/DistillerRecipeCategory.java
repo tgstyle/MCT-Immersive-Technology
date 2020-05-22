@@ -1,15 +1,18 @@
 package mctmods.immersivetechnology.common.util.compat.jei.distiller;
 
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
+import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -46,6 +49,14 @@ public class DistillerRecipeCategory extends ITRecipeCategory<DistillerRecipe, D
 		guiFluidStacks.init(1, false, 112, 21, 16, 47, tankSize, false, tankOverlay);
 		guiFluidStacks.set(1, outputs.get(0));
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
+
+		ItemStack itemOutput = recipeWrapper.recipe.itemOutput;
+		if (!itemOutput.isEmpty()) {
+			IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
+			guiItemStacks.init(0, false, 133, 52);
+			guiItemStacks.set(0, itemOutput);
+			guiItemStacks.addTooltipCallback((slotIndex, input, ingredient, tooltip) -> tooltip.add(TranslationKey.CATEGORY_DISTILLER_CHANCE.format(recipeWrapper.recipe.chance*100) + "%"));
+		}
 	}
 	
 	@Override

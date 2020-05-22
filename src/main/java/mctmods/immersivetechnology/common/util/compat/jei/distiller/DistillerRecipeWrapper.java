@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.util.compat.jei.distiller;
 
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.common.util.compat.jei.MultiblockRecipeWrapper;
+import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -10,9 +11,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class DistillerRecipeWrapper extends MultiblockRecipeWrapper {
 
-	public MultiblockRecipe recipe;
+	public DistillerRecipe recipe;
 
-	public DistillerRecipeWrapper(MultiblockRecipe recipe) {
+	public DistillerRecipeWrapper(DistillerRecipe recipe) {
 		super(recipe);
 		this.recipe = recipe;
 	}
