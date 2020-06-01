@@ -1,56 +1,34 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice0;
-import mctmods.immersivetechnology.common.Config;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.DirectionalFluidOutput;
 import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
-import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.common.Config.IEConfig;
-import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IConfigurableSides;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHasDummyBlocks;
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import blusunrize.immersiveengineering.common.util.ChatUtils;
-import blusunrize.immersiveengineering.common.util.EnergyHelper.IEForgeEnergyWrapper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import blusunrize.immersiveengineering.common.util.Utils;
+import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.DirectionalFluidOutput;
 import mctmods.immersivetechnology.common.util.IPipe;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TileEntityFluidPump extends TileEntityIEBase implements ITickable, IBlockBounds, IHasDummyBlocks, IConfigurableSides, IFluidPipe, IIEInternalFluxHandler, IBlockOverlayText {
-	public int[] sideConfig = new int[]{0, -1, -1, -1, -1, -1};
-	public boolean dummy = false;
-	public FluidTank tank = new FluidTank(4000);
-	public FluxStorage energyStorage = new FluxStorage(8000);
-	public boolean placeCobble = true;
+public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPump implements ITickable, IBlockBounds, IHasDummyBlocks, IConfigurableSides, IFluidPipe, IIEInternalFluxHandler, IBlockOverlayText {
 
 	boolean checkingArea = false;
 	Fluid searchFluid = null;
@@ -204,182 +182,4 @@ public class TileEntityFluidPump extends TileEntityIEBase implements ITickable, 
 		}
 		return 0;
 	}
-
-	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		sideConfig = nbt.getIntArray("sideConfig");
-		if(sideConfig == null || sideConfig.length != 6) sideConfig = new int[]{0, -1, -1, -1, -1, -1};
-		dummy = nbt.getBoolean("dummy");
-		if(nbt.hasKey("placeCobble")) placeCobble = nbt.getBoolean("placeCobble");
-		tank.readFromNBT(nbt.getCompoundTag("tank"));
-		energyStorage.readFromNBT(nbt);
-		if(descPacket) this.markContainingBlockForUpdate(null);
-	}
-
-	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		nbt.setIntArray("sideConfig", sideConfig);
-		nbt.setBoolean("dummy", dummy);
-		nbt.setBoolean("placeCobble", placeCobble);
-		nbt.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
-		energyStorage.writeToNBT(nbt);
-	}
-
-	@Override
-	public SideConfig getSideConfig(int side) {
-		return (side >= 0 && side < 6) ? SideConfig.values()[this.sideConfig[side] + 1] : SideConfig.NONE;
-	}
-
-	@Override
-	public boolean toggleSide(int side, EntityPlayer p) {
-		if(side != 1 && !dummy) {
-			sideConfig[side]++;
-			if(sideConfig[side] > 1) sideConfig[side] = -1;
-			this.markDirty();
-			this.markContainingBlockForUpdate(null);
-			world.addBlockEvent(getPos(), this.getBlockType(), 0, 0);
-			return true;
-		} else if(p.isSneaking()) {
-			TileEntityFluidPump master = this;
-			if(dummy) {
-				TileEntity tmp = world.getTileEntity(pos.down());
-				if(tmp instanceof TileEntityFluidPump) master = (TileEntityFluidPump)tmp;
-			}
-			master.placeCobble = !master.placeCobble;
-			ChatUtils.sendServerNoSpamMessages(p, new TextComponentTranslation(Lib.CHAT_INFO + "pump.placeCobble." + master.placeCobble));
-			return true;
-		}
-		return false;
-	}
-
-	SidedFluidHandler[] sidedFluidHandler = new SidedFluidHandler[6];
-
-	@Override
-	public boolean hasCapability(Capability< ? > capability, @Nullable EnumFacing facing) {
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && !dummy) return true;
-		return super.hasCapability(capability, facing);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && !dummy) {
-			if(sidedFluidHandler[facing.ordinal()] == null) sidedFluidHandler[facing.ordinal()] = new SidedFluidHandler(this, facing);
-			return (T)sidedFluidHandler[facing.ordinal()];
-		}
-		return super.getCapability(capability, facing);
-	}
-
-	@Override
-	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		if(hammer && IEConfig.colourblindSupport && !dummy) {
-			int i = sideConfig[Math.min(sideConfig.length-1, mop.sideHit.ordinal())];
-			int j = sideConfig[Math.min(sideConfig.length-1, mop.sideHit.getOpposite().ordinal())];
-			return new String[]{I18n.format(Lib.DESC_INFO + "blockSide.facing") + ": " + I18n.format(Lib.DESC_INFO + "blockSide.connectFluid." + i), I18n.format(Lib.DESC_INFO + "blockSide.opposite") + ": " + I18n.format(Lib.DESC_INFO + "blockSide.connectFluid." + j)
-			};
-		}
-		return null;
-	}
-
-	@Override
-	public boolean useNixieFont(EntityPlayer player, RayTraceResult mop) {
-		return false;
-	}
-
-	static class SidedFluidHandler implements IFluidHandler {
-		TileEntityFluidPump pump;
-		EnumFacing facing;
-
-		SidedFluidHandler(TileEntityFluidPump pump, EnumFacing facing) {
-			this.pump = pump;
-			this.facing = facing;
-		}
-
-		@Override
-		public int fill(FluidStack resource, boolean doFill) {
-			if(resource == null || pump.sideConfig[facing.ordinal()] != 0) return 0;
-			return pump.tank.fill(resource, doFill);
-		}
-
-		@Override
-		public FluidStack drain(FluidStack resource, boolean doDrain) {
-			if(resource == null) return null;
-			return this.drain(resource.amount, doDrain);
-		}
-
-		@Override
-		public FluidStack drain(int maxDrain, boolean doDrain) {
-			if(pump.sideConfig[facing.ordinal()] != 1) return null;
-			return pump.tank.drain(maxDrain, doDrain);
-		}
-
-		@Override
-		public IFluidTankProperties[] getTankProperties() {
-			return pump.tank.getTankProperties();
-		}
-	}
-
-	@Nonnull
-	@Override
-	public FluxStorage getFluxStorage() {
-		if(dummy) {
-			TileEntity te = world.getTileEntity(getPos().add(0, -1, 0));
-			if(te instanceof TileEntityFluidPump) return ((TileEntityFluidPump)te).getFluxStorage();
-		}
-		return energyStorage;
-	}
-
-	@Nonnull
-	@Override
-	public SideConfig getEnergySideConfig(EnumFacing facing) {
-		return dummy && facing == EnumFacing.UP ? SideConfig.INPUT : SideConfig.NONE;
-	}
-
-	IEForgeEnergyWrapper wrapper = new IEForgeEnergyWrapper(this, EnumFacing.UP);
-
-	@Override
-	public IEForgeEnergyWrapper getCapabilityWrapper(EnumFacing facing) {
-		if(!dummy && facing == EnumFacing.UP) return null;
-		return wrapper;
-	}
-
-	@Override
-	public boolean isDummy() {
-		return dummy;
-	}
-
-	@Override
-	public void placeDummies(BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ) {
-		world.setBlockState(pos.add(0, 1, 0), state);
-		((TileEntityFluidPump)world.getTileEntity(pos.add(0, 1, 0))).dummy = true;
-	}
-
-	@Override
-	public void breakDummies(BlockPos pos, IBlockState state) {
-		for(int i = 0; i <= 1; i++) {
-			if(Utils.isBlockAt(world, getPos().add(0, dummy ? -1 : 0, 0).add(0, i, 0), IEContent.blockMetalDevice0, BlockTypes_MetalDevice0.FLUID_PUMP.getMeta())) world.setBlockToAir(getPos().add(0, dummy ? -1 : 0, 0).add(0, i, 0));
-		}
-	}
-
-	@Override
-	public float[] getBlockBounds() {
-		if(!dummy) return null;
-		return new float[]{.1875f, 0, .1875f, .8125f, 1, .8125f};
-	}
-
-	@Override
-	public boolean canOutputPressurized(boolean consumePower) {
-		int accelPower = IEConfig.Machines.pump_consumption_accelerate;
-		if(energyStorage.extractEnergy(accelPower, true) >= accelPower) {
-			if(consumePower) energyStorage.extractEnergy(accelPower, false);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean hasOutputConnection(EnumFacing side) {
-		return side != null && this.sideConfig[side.ordinal()] == 1;
-	}
-
 }
