@@ -34,6 +34,10 @@ repositories {
 		name = 'HWYLA Maven'
 		url = 'http://tehnut.info/maven'
 	}
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
+    }
 	maven {
 		name = 'Immersive Maven'
 		url = 'http://maven.blamejared.com'
@@ -71,7 +75,7 @@ dependencies {
 	deobfCompile "cofh:ThermalExpansion:${common.mcversion}-${common.thex_version}:deobf"
 	deobfCompile "codechicken:CodeChickenLib:${common.mcversion}-${common.cclo_version}:deobf"
 	compileOnly "mcjty.theoneprobe:TheOneProbe-${common.mcbaseversion}:${common.mcbaseversion}-${common.top_version}"
-	compileOnly "mcp.mobius.waila:Hwyla:${common.hwya_version}"
+	//compileOnly "mcp.mobius.waila:Hwyla:${common.hwya_version}"
 
 
 	compileOnly "CraftTweaker2:CraftTweaker2-MC1120-Main:${common.mcbaseversion}-${common.crft_version}"
