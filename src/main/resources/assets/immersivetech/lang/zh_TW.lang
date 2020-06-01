@@ -1,15 +1,12 @@
 #CREATIVE TAB
-itemGroup.immersivetech=擬真科技
-
+itemGroup.immersivetech=沉浸科技
 
 #BLOCKS
 #STONE
 tile.immersivetech.stone_decoration.cokebrick_reinforced.name=強化焦爐磚
 
-
 #ITEMS
 item.immersivetech.material.salt.name=鹽
-
 
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=蒸餾水
@@ -19,11 +16,34 @@ fluid.distwater=蒸餾水
 fluid.steam=蒸汽
 fluid.slime=液體粘液
 
+#KEYWORDS
+keyword.immersivetech.generate=產生
+
+#JEI
+category.immersivetech.metal_multiblock.boilerRecipe=鍋爐
+category.immersivetech.metal_multiblock.boilerFuel=鍋爐燃料
 
 #TILE ENTITYS
 #METAL
 tile.immersivetech.metal_device.coke_oven_preheater.name=焦爐預熱器
+tile.immersivetech.metal_trash.trash_item.name=垃圾桶
+tile.immersivetech.metal_trash.trash_fluid.name=液體廢棄桶
+tile.immersivetech.metal_trash.trash_energy.name=能量廢棄桶
+tile.immersivetech.metal_barrel.barrel.name=創造金屬桶
+tile.immersivetech.metal_barrel.barrel_open.name=無蓋金屬桶
+tile.immersivetech.metal_barrel.barrel_steel.name=鋼製金屬桶
+tile.immersivetech.valve.fluid_valve.name=液體控制閥
+tile.immersivetech.valve.load_controller.name=能量控制閥
+tile.immersivetech.valve.stack_limiter.name=物品控制閥
 
+#WOODEN
+tile.immersivetech.wooden_crate.crate.name=創造儲物箱
+
+#STONE MULTIBLOCKS
+tile.immersivetech.stone_multiblock.coke_oven_advanced.name=焦爐預熱器
+
+#CONNECTORS
+tile.immersivetech.connectors.connectors_timer.name=紅石計時器
 
 #METAL MULTIBLOCKS
 tile.immersivetech.metal_multiblock.distiller.name=蒸餾機
@@ -32,11 +52,55 @@ tile.immersivetech.metal_multiblock.solar_reflector.name=太陽能反射器
 tile.immersivetech.metal_multiblock.steam_turbine.name=蒸汽輪機
 tile.immersivetech.metal_multiblock.boiler.name=鍋爐
 tile.immersivetech.metal_multiblock.alternator.name=交流發電機
+tile.immersivetech.metal_multiblock.distiller_slave.name=蒸餾機
+tile.immersivetech.metal_multiblock.solar_tower_slave.name=太陽能塔
+tile.immersivetech.metal_multiblock.solar_reflector_slave.name=太陽能反射器
+tile.immersivetech.metal_multiblock.steam_turbine_slave.name=蒸汽輪機
+tile.immersivetech.metal_multiblock.boiler_slave.name=鍋爐
+tile.immersivetech.metal_multiblock.alternator_slave.name=交流發電機
+tile.immersivetech.metal_multiblock.steel_tank.name=鋼製流體儲罐
+tile.immersivetech.metal_multiblock.steel_tank_slave.name=鋼製流體儲罐
 
+#OVERLAY
+overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s mB
+overlay.immersivetech.osd.fluid_valve.normal.firstline=前一秒通過 %s mB 
+overlay.immersivetech.osd.fluid_valve.sneaking.firstline=平均每秒 of %s mB/t
+overlay.immersivetech.osd.fluid_valve.sneaking.secondline=前一分鐘 %s 
+overlay.immersivetech.osd.load_controller.normal.firstline=前一秒通過 %s IF 
+overlay.immersivetech.osd.load_controller.sneaking.firstline=平均每秒 %s IF/t
+overlay.immersivetech.osd.load_controller.sneaking.secondline=前一分鐘 %s 
+overlay.immersivetech.osd.stack_limiter.normal.firstline=前一秒通過 %s 物品
+overlay.immersivetech.osd.stack_limiter.sneaking.firstline=平均每秒 %s 物品/t
+overlay.immersivetech.osd.stack_limiter.sneaking.secondline=前一分鐘 %s 
+overlay.immersivetech.osd.barrel.normal.firstline=%s : %s mB
+overlay.immersivetech.osd.creative_crate.normal.firstline=%s : 前一秒提供 %s 物品
+overlay.immersivetech.osd.trash_item.normal.firstline=前一秒處理 %s 物品
+overlay.immersivetech.osd.trash_fluid.normal.firstline=前一秒處理 %s mB 
+overlay.immersivetech.osd.trash_energy.normal.firstline=前一秒處理 %s IF 
+overlay.immersivetech.osd.trash_item.normal.alternative=前一秒處理 %s 物品/t
+overlay.immersivetech.osd.trash_fluid.normal.alternative=前一秒處理 %s mB/t
+overlay.immersivetech.osd.trash_energy.normal.alternative=前一秒處理 %s IF/t
+overlay.immersivetech.redstone_off=紅石模式關閉
+overlay.immersivetech.redstone_normal=紅石模式開啟
+overlay.immersivetech.redstone_inverted=紅石模式反向
 
-#STONE MULTIBLOCKS
-tile.immersivetech.stone_multiblock.coke_oven_advanced.name=焦爐預熱器
-
+#GUI
+gui.immersivetech.empty=空
+gui.immersivetech.ticks=%st
+gui.immersivetech.seconds=%ss
+gui.immersivetech.boiler.heat_per_tick=%1$s 熱量每tick
+gui.immersivetech.boiler.total_heat=%s 全部熱量
+gui.immersivetech.fluid_valve.firstline=設定上限 (空白取消)...
+gui.immersivetech.fluid_valve.limitpacket=輸入 mB/t
+gui.immersivetech.fluid_valve.limittime=輸入 mB/秒
+gui.immersivetech.fluid_valve.limitdestination=輸出 mB/t
+gui.immersivetech.load_controller.limitpacket=輸入 IF/t
+gui.immersivetech.load_controller.limittime=輸入 IF/秒
+gui.immersivetech.load_controller.limitdestination=輸出 IF/t
+gui.immersivetech.stack_limiter.limitpacket=輸入 物品/t
+gui.immersivetech.stack_limiter.limittime=輸入 物品/秒
+gui.immersivetech.stack_limiter.limitdestination=輸出 物品/t
+gui.immersivetech.generic_multiblock_jei_tooltip=建造請查詢工程師手冊
 
 #METAL MULTIBLOCKS
 desc.immersiveengineering.info.multiblock.IT:Distiller=蒸餾機
@@ -45,20 +109,15 @@ desc.immersiveengineering.info.multiblock.IT:SolarReflector=太陽能反射器
 desc.immersiveengineering.info.multiblock.IT:SteamTurbine=蒸汽輪機
 desc.immersiveengineering.info.multiblock.IT:Boiler=鍋爐
 desc.immersiveengineering.info.multiblock.IT:Alternator=交流發電機
-
+desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank=鋼製流體儲罐
 
 #STONE MULTIBLOCKS
 desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=焦爐預熱器
 
-
-#CONNECTORS
-tile.immersivetech.connectors.connectors_timer.name=紅石計時器
-
-
 #MANUAL
-ie.manual.category.it.name=擬真科技
+ie.manual.category.it.name=沉浸科技
 
-ie.manual.entry.advancedCokeOven.name=焦爐預熱器
+ie.manual.entry.advancedCokeOven.name=強化焦爐
 ie.manual.entry.advancedCokeOven.subtext=現在速度很快了
 ie.manual.entry.advancedCokeOven0=強化焦爐是一個多方塊結構，可以讓玩家更快速地生產焦煤和雜酚油。<br>結構如上圖所示，使用工程師槌在強化焦爐磚中心結構而形成。
 ie.manual.entry.advancedCokeOven1=它可以實現輸入和輸出的自動化，還可以配備預熱器，以加速熱氣流的流動過程。該爐由加強磚製成，因此建議您可花費一批鋼鐵在此次升級中。類似於改進型高爐，焦煤在前面輸出，後面則輸出雜酚油。煤可從頂部放入。
@@ -74,12 +133,18 @@ ie.manual.entry.boiler.name=鍋爐
 ie.manual.entry.boiler.subtext=使用柴油方法
 ie.manual.entry.boiler0=鍋爐是一個多方塊結構，使用<link;生質柴油;§o§n柴油§r>煮滾水來產生蒸氣.<br>該結構如上圖所示構建，並在長邊的鐵鈑金屬塊中央使用工程師槌來形成。
 ie.manual.entry.boiler1=在前方的控制面板上輸入紅石信號會停止機器的運轉，這種模式可以使用工程師槌來反轉。<br>水可以通過左側帶有藍點標記的艙口輸入鍋爐。 柴油可以輸入到機器的右側。 頂部有橙色圓點的艙口輸出液體。<br>一桶水可產生500 mB（半桶）的水蒸氣；而一桶 <link;蒸餾機;§n§o蒸餾水§r> 可產生750 mB的水蒸氣 (1000/煮沸時間) 的柴油。
-ie.manual.entry.boiler2=
+ie.manual.entry.boiler2=在能夠煮沸任何水之前，鍋爐需要用燃料先熱機。如果燃料不足，鍋爐會慢慢降溫。它需要<config;d;boiler_cooldownTime>秒從工作溫度完全降溫。預設燃料是柴油。
 
 ie.manual.entry.distiller.name=蒸餾機
 ie.manual.entry.distiller.subtext=比水清澈
 ie.manual.entry.distiller0=蒸餾機是一個多方塊結構的機器，用以將水轉換成蒸餾水及鹽.<br>該結構如上所示構建，並使用工程師槌敲擊中央的鐵板金屬塊形成。
 ie.manual.entry.distiller1=在前方的控制面板上輸入紅石信號會停止機器的運轉，這種模式可以使用工程師槌來反轉。<br>水可以通過左側帶有藍點標記的艙口輸入蒸餾器中，右側的橙色口輸出液體，後面的另一個小口則輸出物品。機器需要能量來生產蒸餾水和鹽。<br>一桶水能產生500 mB 的蒸餾水。
+
+ie.manual.entry.steamTurbine.name=蒸汽輪機
+ie.manual.entry.steamTurbine.subtext=沸騰的氣息
+ie.manual.entry.steamTurbine0=蒸汽輪機是使用蒸汽產生動能的多方塊結構。<br>該結構如上圖所示構建，並使用工程師槌敲擊中央的鋼塊（短邊）而形成。
+ie.manual.entry.steamTurbine1=在前方的控制面板上輸入紅石信號會停止機器的運轉，這種模式可以使用工程師槌來反轉。<br>機器前方的液體管用於蒸汽的輸入。動能輸出位於機器後部（鋼塊）。它以 的最大速度產生 的扭矩。<br>要啟動它需要一個<link;交流發電機;§o§n交流發電機§r>.
+ie.manual.entry.steamTurbine2=
 
 ie.manual.entry.solarTower.name=太陽能塔
 ie.manual.entry.solarTower.subtext=太陽的力量
@@ -88,12 +153,31 @@ ie.manual.entry.solarTower1=方塊.<br>太陽能塔可以自水或<link;蒸餾�
 ie.manual.entry.solarTower2=太陽能反射器是一個多方塊結構，其可將太陽光線反射到太陽能塔的中心。<br>結構如上所示構建，並在中央銀塊上使用工程師槌敲擊而形成。
 ie.manual.entry.solarTower3=要啟動太陽能塔，在太陽能塔中心和反射器頂部之間不能有阻擋，反射器必須與太陽能塔中心對齊且反射器與太陽能塔之間的距離必須介於<config;i;solarTower_minRange>-<config;i;solarTower_maxRange>之間.很顯然地，太陽能塔僅能在白天作用。.
 
-ie.manual.entry.steamTurbine.name=蒸汽輪機
-ie.manual.entry.steamTurbine.subtext=沸騰的氣息
-ie.manual.entry.steamTurbine0=蒸汽輪機是使用蒸汽產生動能的多方塊結構。<br>該結構如上圖所示構建，並使用工程師槌敲擊中央的鋼塊（短邊）而形成。
-ie.manual.entry.steamTurbine1=在前方的控制面板上輸入紅石信號會停止機器的運轉，這種模式可以使用工程師槌來反轉。<br>機器前方的液體管用於蒸汽的輸入。動能輸出位於機器後部（鋼塊）。它以 的最大速度產生 的扭矩。<br>要啟動它需要一個<link;交流發電機;§o§n交流發電機§r>.
-ie.manual.entry.steamTurbine2=
+ie.manual.entry.fluidValve.name=液體控制閥
+ie.manual.entry.fluidValve.subtext=我只需要一滴
+ie.manual.entry.fluidValve0=液體控制閥可控制流體的流向。 你可以在介面中設定，或是它可以被紅石信號控制。 紅石信號強度15是關閉。 使用工程師槌設定紅石模式。
+
+ie.manual.entry.loadController.name=能量控制閥
+ie.manual.entry.loadController.subtext=能量負載不足
+ie.manual.entry.loadController0=能量控制閥可限制流經它的能量。 你可以在介面中設定，或是它可以被紅石信號控制。 紅石信號強度15是關閉。 使用工程師槌設定紅石模式。
+
+ie.manual.entry.stackLimiter.name=物品控制閥
+ie.manual.entry.stackLimiter.subtext=只需要一對物品
+ie.manual.entry.stackLimiter0=物品控制閥可控制物品的流向。 你可以在介面中設定，或是它可以被紅石信號控制。 紅石信號強度15是關閉。 使用工程師槌設定紅石模式。
+
+ie.manual.entry.openBarrel.name=無蓋金屬桶
+ie.manual.entry.openBarrel.subtext=為太陽或是雲開放?
+ie.manual.entry.openBarrel0=無蓋金屬桶是一個像金屬桶的單方塊儲罐，上方無蓋開放。 流體可以用手倒入。 只能由上方輸入和下方輸出。 雨中可以自動裝水! 雷雨中可以兩倍快! 無論如何，不要放在溫暖的環境中，水可能會蒸發。
+
+ie.manual.entry.steelBarrel.name=鋼製金屬桶
+ie.manual.entry.steelBarrel.subtext=更大的儲存量!
+ie.manual.entry.steelBarrel0=鋼製金屬桶是一個單方塊容器，提供雙倍於金屬桶的流體儲量。 流體可以用手倒入。 上下兩側可以使用工程師槌設定輸入或輸出。
+
+ie.manual.entry.steelTank.name=鋼製流體儲罐
+ie.manual.entry.steelTank.subtext=最大容量!
+ie.manual.entry.steelTank0=鋼製流體儲罐是一個多方塊結構，提供了更大的流體容量。 它可以儲存到 <config;i;steelTank_tankSize> mB 的任何流體，可用管道從上或下輸出入。 流體只能由下方輸出。
+ie.manual.entry.steelTank1=在下方中央方塊提供紅石訊號可以讓儲罐自動輸出，紅石比較器可以依據內部容量發出信號。
 
 ie.manual.entry.redstone.name=紅石計時器
 ie.manual.entry.redstone.subtext=滴答！滴答！
-ie.manual.entry.redstone0=§6Redstone 計時器§r具有輸出紅石信號的功能，其間隔取決於施加於上的延遲時間。 延遲時間可以在定時器的GUI中設置，並且在10秒之前具有0.5秒的精度，而10秒之後則為 1秒。定時器可以通過紅石信號將其停止。
+ie.manual.entry.redstone0=紅石計時器具有輸出紅石信號的功能，其間隔取決於施加於上的延遲時間。 延遲時間可以在定時器的GUI中設置，並且在10秒之前具有0.5秒的精度，而10秒之後則為 1秒。定時器可以通過紅石信號將其停止。
