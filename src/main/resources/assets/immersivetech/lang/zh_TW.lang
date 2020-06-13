@@ -40,7 +40,8 @@ tile.immersivetech.valve.stack_limiter.name=物品控制閥
 tile.immersivetech.wooden_crate.crate.name=創造儲物箱
 
 #STONE MULTIBLOCKS
-tile.immersivetech.stone_multiblock.coke_oven_advanced.name=焦爐預熱器
+tile.immersivetech.stone_multiblock.coke_oven_advanced.name=強化焦爐
+tile.immersivetech.stone_multiblock.coke_oven_advanced_slave.name=強化焦爐
 
 #CONNECTORS
 tile.immersivetech.connectors.connectors_timer.name=紅石計時器
@@ -112,7 +113,7 @@ desc.immersiveengineering.info.multiblock.IT:Alternator=交流發電機
 desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank=鋼製流體儲罐
 
 #STONE MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=焦爐預熱器
+desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=強化焦爐
 
 #MANUAL
 ie.manual.category.it.name=沉浸科技
@@ -131,7 +132,7 @@ ie.manual.entry.alternator2=蒸汽輪機和交流發電機
 
 ie.manual.entry.boiler.name=鍋爐
 ie.manual.entry.boiler.subtext=使用柴油方法
-ie.manual.entry.boiler0=鍋爐是一個多方塊結構，使用<link;生質柴油;§o§n柴油§r>煮滾水來產生蒸氣.<br>該結構如上圖所示構建，並在長邊的鐵鈑金屬塊中央使用工程師槌來形成。
+ie.manual.entry.boiler0=鍋爐是一個多方塊結構，使用<br> <link;生質柴油;§n§o柴油§r> 煮滾水來產生蒸氣。<br>該結構如上圖所示構建，並在長邊的鐵鈑金屬塊中央使用工程師槌來形成。
 ie.manual.entry.boiler1=在前方的控制面板上輸入紅石信號會停止機器的運轉，這種模式可以使用工程師槌來反轉。<br>水可以通過左側帶有藍點標記的艙口輸入鍋爐。 柴油可以輸入到機器的右側。 頂部有橙色圓點的艙口輸出液體。<br>一桶水可產生500 mB（半桶）的水蒸氣；而一桶 <link;蒸餾機;§n§o蒸餾水§r> 可產生750 mB的水蒸氣 (1000/煮沸時間) 的柴油。
 ie.manual.entry.boiler2=在能夠煮沸任何水之前，鍋爐需要用燃料先熱機。如果燃料不足，鍋爐會慢慢降溫。它需要<config;d;boiler_cooldownTime>秒從工作溫度完全降溫。預設燃料是柴油。
 
@@ -143,15 +144,15 @@ ie.manual.entry.distiller1=在前方的控制面板上輸入紅石信號會停�
 ie.manual.entry.steamTurbine.name=蒸汽輪機
 ie.manual.entry.steamTurbine.subtext=沸騰的氣息
 ie.manual.entry.steamTurbine0=蒸汽輪機是使用蒸汽產生動能的多方塊結構。<br>該結構如上圖所示構建，並使用工程師槌敲擊中央的鋼塊（短邊）而形成。
-ie.manual.entry.steamTurbine1=在前方的控制面板上輸入紅石信號會停止機器的運轉，這種模式可以使用工程師槌來反轉。<br>機器前方的液體管用於蒸汽的輸入。動能輸出位於機器後部（鋼塊）。它以 的最大速度產生 的扭矩。<br>要啟動它需要一個<link;交流發電機;§o§n交流發電機§r>.
+ie.manual.entry.steamTurbine1=在前方的控制面板上輸入紅石信號會停止機器的運轉，這種模式可以使用工程師槌來反轉。<br>機器前方的液體管用於蒸汽的輸入。動能輸出位於機器後部（鋼塊）。它以 的最大速度產生 的扭矩。<br>要啟動它需要一個 <link;交流發電機;§o§n交流發電機§r> 。
 ie.manual.entry.steamTurbine2=
 
 ie.manual.entry.solarTower.name=太陽能塔
 ie.manual.entry.solarTower.subtext=太陽的力量
 ie.manual.entry.solarTower0=太陽能塔是一個多方塊結構，利用太陽光將水轉化為水蒸汽。<br>結構如上所示構建，並使用工程師槌敲擊紅石工程塊的中心形成。
-ie.manual.entry.solarTower1=方塊.<br>太陽能塔可以自水或<link;蒸餾機;§n§o蒸餾水>生產水蒸汽。<br>一桶蒸餾水能產生750 mB的水蒸汽。<br>一桶普通水能產生500 mB的水蒸汽。<br>水可以通過左側和右側兩個帶藍點標記的艙口輸入到太陽能塔中。後面帶有橙色圓點的艙口可輸出液體。<br>太陽能塔需要至少一個太陽能反射器才能工作。
+ie.manual.entry.solarTower1=方塊。<br>太陽能塔可以自來水或 <link;蒸餾機;§n§o蒸餾水§r> 生產水蒸汽。<br>一桶蒸餾水能產生750 mB的水蒸汽。<br>一桶普通水能產生500 mB的水蒸汽。<br>水可以通過左側和右側兩個帶藍點標記的艙口輸入到太陽能塔中。後面帶有橙色圓點的艙口可輸出液體。<br>太陽能塔需要至少一個太陽能反射器才能工作。
 ie.manual.entry.solarTower2=太陽能反射器是一個多方塊結構，其可將太陽光線反射到太陽能塔的中心。<br>結構如上所示構建，並在中央銀塊上使用工程師槌敲擊而形成。
-ie.manual.entry.solarTower3=要啟動太陽能塔，在太陽能塔中心和反射器頂部之間不能有阻擋，反射器必須與太陽能塔中心對齊且反射器與太陽能塔之間的距離必須介於<config;i;solarTower_minRange>-<config;i;solarTower_maxRange>之間.很顯然地，太陽能塔僅能在白天作用。.
+ie.manual.entry.solarTower3=要啟動太陽能塔，在太陽能塔中心和反射器頂部之間不能有阻擋，反射器必須與太陽能塔中心對齊且反射器與太陽能塔之間的距離必須介於<config;i;solarTower_minRange>-<config;i;solarTower_maxRange>之間。很顯然地，太陽能塔僅能在白天作用。
 
 ie.manual.entry.fluidValve.name=液體控制閥
 ie.manual.entry.fluidValve.subtext=我只需要一滴

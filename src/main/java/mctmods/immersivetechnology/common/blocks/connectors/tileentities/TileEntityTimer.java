@@ -26,8 +26,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityTimer extends TileEntityConnectorRedstone implements IGuiTile {
-	private static EnumFacing face;
-	private static BlockPos position;
+	private EnumFacing face;
+	private BlockPos position;
 
 	private int redstoneChannelsending = 0;
 	private int lastOutput = 0;
