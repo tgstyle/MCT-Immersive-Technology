@@ -20,8 +20,3 @@ build.bat
 /build/
 /bin/
 /run/
-.idea
-build.gradle
-common-1.12.properties
-gradle/wrapper/gradle-wrapper.properties
-gradle/wrapper/gradle-wrapper.properties
