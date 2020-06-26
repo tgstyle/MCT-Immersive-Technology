@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.multiblocks;
 
+import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.api.crafting.IngredientStack;
 import blusunrize.immersiveengineering.client.ClientUtils;
@@ -93,12 +95,12 @@ public class MultiblockSteamTurbine implements IMultiblock {
 		IBlockState master = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEAM_TURBINE.getMeta());
 		IBlockState slave = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEAM_TURBINE_SLAVE.getMeta());
 		boolean mirror = false;
-		boolean bool = this.structureCheck(world, pos, side, mirror);
-		if(!bool) {
+		if(!this.structureCheck(world, pos, side, mirror)) {
 			mirror = true;
-			bool = this.structureCheck(world, pos, side, mirror);
+			if(!this.structureCheck(world, pos, side, mirror)) return false;
 		}
-		if(!bool) return false;
+		ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
+		if(MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer).isCanceled()) return false;
 		for(int h = - 1 ; h <= 2 ; h ++) {
 			for(int l = 0 ; l <= 9 ; l ++) {
 				for(int w = - 1 ; w <= 1 ; w ++) {
