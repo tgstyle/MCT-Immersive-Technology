@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.multiblocks;
 
+import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.api.crafting.IngredientStack;
 import blusunrize.immersiveengineering.client.ClientUtils;
@@ -86,8 +88,9 @@ public class MultiblockSolarTower implements IMultiblock {
 		side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
 		IBlockState master = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_TOWER.getMeta());
 		IBlockState slave = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_TOWER_SLAVE.getMeta());
-		boolean bool = this.structureCheck(world, pos, side);
-		if(!bool) return false;
+		if(!this.structureCheck(world, pos, side)) return false;
+		ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
+		if(MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer).isCanceled()) return false;
 		for(int h = - 1 ; h <= 5 ; h ++) {
 			for(int l = 0 ; l <= 2 ; l ++) {
 				for(int w = - 1 ; w <= 1 ; w ++) {
