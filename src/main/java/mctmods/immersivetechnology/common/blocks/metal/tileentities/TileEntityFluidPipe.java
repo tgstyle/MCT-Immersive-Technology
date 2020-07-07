@@ -68,7 +68,7 @@ import static java.util.Collections.newSetFromMap;
 @SuppressWarnings("deprecation")
 public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe implements IPipe {
 
-	public static ConcurrentHashMap<BlockPos, Set<DirectionalFluidOutput>> indirectConnections = new ConcurrentHashMap<BlockPos, Set<DirectionalFluidOutput>>();
+	public static ConcurrentHashMap<BlockPos, ArrayList<DirectionalFluidOutput>> indirectConnections = new ConcurrentHashMap<BlockPos, ArrayList<DirectionalFluidOutput>>();
 
 	public static int transferRate = Experimental.pipe_transfer_rate;
 	public static int transferRatePressurized = Experimental.pipe_pressurized_transfer_rate;
@@ -110,11 +110,11 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 	@Nullable
 	private EnumDyeColor color = null;
 
-	public static Set<DirectionalFluidOutput> getConnectedFluidHandlersIT(BlockPos node, World world) {
+	public static ArrayList<DirectionalFluidOutput> getConnectedFluidHandlersIT(BlockPos node, World world) {
 		if(indirectConnections.containsKey(node)) return indirectConnections.get(node);
 		ArrayList<BlockPos> openList = new ArrayList<>();
 		ArrayList<BlockPos> closedList = new ArrayList<>();
-		Set<DirectionalFluidOutput> fluidHandlers = Collections.newSetFromMap(new ConcurrentHashMap<>());
+		ArrayList<DirectionalFluidOutput> fluidHandlers = new ArrayList<>();
 		openList.add(node);
 		while(!openList.isEmpty() && closedList.size() < 1024) {
 			BlockPos next = openList.get(0);
@@ -144,12 +144,8 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 			}
 			openList.remove(0);
 		}
-		if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-			if(!indirectConnections.containsKey(node)) {
-				indirectConnections.put(node, newSetFromMap(new ConcurrentHashMap<DirectionalFluidOutput, Boolean>()));
-				indirectConnections.get(node).addAll(fluidHandlers);
-			}
-		}
+		if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !indirectConnections.containsKey(node))
+			indirectConnections.put(node, fluidHandlers);
 		return fluidHandlers;
 	}
 
@@ -310,7 +306,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 			if(resource == null) return 0;
 			int canAccept = resource.amount;
 			if(canAccept <= 0) return 0;
-			ArrayList<DirectionalFluidOutput> outputList = new ArrayList<>(getConnectedFluidHandlersIT(pipe.getPos(), pipe.world));
+			ArrayList<DirectionalFluidOutput> outputList = getConnectedFluidHandlersIT(pipe.getPos(), pipe.world);
 			if(outputList.size() < 1) return 0;
 			BlockPos ccFrom = new BlockPos(pipe.getPos().offset(facing));
 			int sum = 0;
