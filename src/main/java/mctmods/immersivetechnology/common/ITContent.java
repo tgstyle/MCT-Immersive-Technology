@@ -116,7 +116,6 @@ public class ITContent {
 		if(Multiblock.enable_advancedCokeOven) blockMetalDevice = new BlockMetalDevice();
 
 		/*STONE*/
-
 		blockStoneDecoration = new BlockStoneDecoration();
 		blockStoneDecorationSlab = (BlockITBase<?>)new BlockITSlab<BlockType_StoneDecoration>("stone_decoration_slab", Material.ROCK, PropertyEnum.create("type", BlockType_StoneDecoration.class)).setMetaExplosionResistance(BlockType_StoneDecoration.COKEBRICK_REINFORCED.getMeta(), 180).setHardness(2.0F).setResistance(10.0F);
 
