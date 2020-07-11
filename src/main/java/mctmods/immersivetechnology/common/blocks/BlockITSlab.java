@@ -45,7 +45,7 @@ public class BlockITSlab<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	@Override
 	public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity tile, ItemStack stack) {
 		if(tile instanceof TileEntityITSlab && !player.capabilities.isCreativeMode) {
-			spawnAsEntity(world, pos, new ItemStack(this, ((TileEntityITSlab)tile).slabType == 2?2: 1, this.getMetaFromState(state)));
+			spawnAsEntity(world, pos, new ItemStack(this, ((TileEntityITSlab)tile).slabType == 2 ? 2 : 1, this.getMetaFromState(state)));
 			return;
 		}
 		super.harvestBlock(world, player, pos, state, tile, stack);
@@ -69,7 +69,7 @@ public class BlockITSlab<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		if(te instanceof TileEntityITSlab) {
 			int type = ((TileEntityITSlab)te).slabType;
 			if(type == 2) return BlockFaceShape.SOLID;
-			else if((type == 0 && side == EnumFacing.DOWN)||(type == 1 && side == EnumFacing.UP)) return BlockFaceShape.SOLID;
+			else if((type == 0 && side == EnumFacing.DOWN) || (type == 1 && side == EnumFacing.UP)) return BlockFaceShape.SOLID;
 			else return BlockFaceShape.UNDEFINED;
 		}
 		return BlockFaceShape.SOLID;
