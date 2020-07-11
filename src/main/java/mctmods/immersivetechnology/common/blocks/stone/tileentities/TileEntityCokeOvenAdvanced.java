@@ -82,4 +82,5 @@ public class TileEntityCokeOvenAdvanced extends TileEntityCokeOvenAdvancedSlave 
 		if(s == ItemStack.EMPTY) return;
 		changeTo = Utils.getStateFromItemStack(s);
 	}
+
 }

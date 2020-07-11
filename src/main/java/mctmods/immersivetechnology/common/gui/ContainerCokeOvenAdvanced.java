@@ -30,4 +30,5 @@ public class ContainerCokeOvenAdvanced extends ContainerIEBase<TileEntityCokeOve
 		}
 		for(int i = 0 ; i < 9 ; i++) addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 142));
 	}
+
 }

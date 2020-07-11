@@ -273,11 +273,12 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 		return (baseSpeed + activePreheaters * preheaterAdd) * (1 + activePreheaters * (preheaterMult - 1));
 	}
   
-  IItemHandler inputHandler = new IEInventoryHandler(1, this, 0, new boolean[] {true}, new boolean[] {false});
-  IItemHandler outputHandler = new IEInventoryHandler(1, this, 1, new boolean[] {false}, new boolean[] {true});
+	IItemHandler inputHandler = new IEInventoryHandler(1, this, 0, new boolean[] {true}, new boolean[] {false});
+	IItemHandler outputHandler = new IEInventoryHandler(1, this, 1, new boolean[] {false}, new boolean[] {true});
 
-  @Override
-  public void TankContentsChanged() {
-      this.markContainingBlockForUpdate(null);
-  }
+	@Override
+	public void TankContentsChanged() {
+		this.markContainingBlockForUpdate(null);
+	}
+
 }

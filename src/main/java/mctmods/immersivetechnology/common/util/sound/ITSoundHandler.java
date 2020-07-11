@@ -78,4 +78,5 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
 	public static void UpdateAllVolumes() {
 		playingSounds.forEach((blockPos, itSoundHandler) -> itSoundHandler.updateVolume());
 	}
+
 }

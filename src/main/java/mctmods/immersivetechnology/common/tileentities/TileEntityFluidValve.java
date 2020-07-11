@@ -202,4 +202,5 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 				isX(1, .875f), isY(1, .875f), isZ(1, .875f),
 		};
 	}
+
 }
