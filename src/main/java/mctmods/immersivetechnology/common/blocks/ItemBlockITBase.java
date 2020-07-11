@@ -73,11 +73,11 @@ public class ItemBlockITBase extends ItemBlock {
 
 	@Override
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState) {
-		if(!((BlockITBase<?>) this.block).canIEBlockBePlaced(world, pos, newState, side, hitX, hitY, hitZ, player, stack)) return false;
+		if(!((BlockITBase<?>) this.block).canITBlockBePlaced(world, pos, newState, side, hitX, hitY, hitZ, player, stack)) return false;
 
 		boolean ret = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
 
-		if(ret)	((BlockITBase<?>) this.block).onIEBlockPlacedBy(world, pos, newState, side, hitX, hitY, hitZ, player, stack);
+		if(ret)	((BlockITBase<?>) this.block).onITBlockPlacedBy(world, pos, newState, side, hitX, hitY, hitZ, player, stack);
 		return ret;
 	}
 

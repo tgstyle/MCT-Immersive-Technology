@@ -42,7 +42,7 @@ public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice>
 	}
 
 	@Override
-	public boolean canIEBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack) {
+	public boolean canITBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack) {
 		if(stack.getItemDamage() == BlockType_MetalDevice.COKE_OVEN_PREHEATER.getMeta()) {
 			EnumFacing f = EnumFacing.fromAngle(player.rotationYaw);
 			if(f.getAxis() == Axis.Z) {
