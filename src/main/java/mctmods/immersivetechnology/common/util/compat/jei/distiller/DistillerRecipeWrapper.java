@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.util.compat.jei.distiller;
 
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.common.util.compat.jei.MultiblockRecipeWrapper;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.common.util.TranslationKey;
