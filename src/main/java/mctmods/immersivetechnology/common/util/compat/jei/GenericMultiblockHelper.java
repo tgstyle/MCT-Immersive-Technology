@@ -55,4 +55,5 @@ public class GenericMultiblockHelper implements IIngredientHelper<GenericMultibl
     public String getErrorInfo(@Nullable GenericMultiblockIngredient genericMultiblockIngredient) {
         return (genericMultiblockIngredient == null)? "genericMultiblockIngredient is not supposed to be null!" : "";
     }
+
 }

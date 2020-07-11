@@ -72,4 +72,5 @@ public enum TranslationKey {
 	public String format(Object... parameters) {
 		return format(false, false, parameters);
 	}
+
 }
