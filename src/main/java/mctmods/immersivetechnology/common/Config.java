@@ -24,15 +24,15 @@ public class Config {
 			public static SteamTurbine steamturbine;
 
 			public static class Multiblock {
-				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Preheater be built ? [Default=true]"})
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Preheater be built ? [Default=true]"})
 				public static boolean enable_advancedCokeOven = true;
-				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Boiler Multiblock structure be built ? [Default=true]"})
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Boiler Multiblock structure be built ? [Default=true]"})
 				public static boolean enable_boiler = true;
-				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Distiller Multiblock structure be built ? [Default=true]"})
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Distiller Multiblock structure be built ? [Default=true]"})
 				public static boolean enable_distiller = true;
-				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Solar Tower / Solar Reflector Multiblock structures be built ? [Default=true]"})
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Solar Tower / Solar Reflector Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_solarTower = true;
-				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Steam Turbine / Alternator Multiblock structures be built ? [Default=true]"})
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Steam Turbine / Alternator Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_steamTurbine = true;
 			}
 			public static class Recipes {
