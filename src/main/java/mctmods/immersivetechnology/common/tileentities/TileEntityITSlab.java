@@ -9,7 +9,7 @@ public class TileEntityITSlab extends TileEntityIEBase {
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		slabType = nbt.getInteger("slabType");
-		if(descPacket&&world!=null) this.markContainingBlockForUpdate(null);
+		if(descPacket && world != null) this.markContainingBlockForUpdate(null);
 	}
 
 	@Override
