@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -25,6 +26,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 import java.util.Locale;
+
+import javax.annotation.Nullable;
 
 	/*
 	* @author BluSunrize
@@ -123,6 +126,33 @@ public class ItemBlockITBase extends ItemBlock {
 		AxisAlignedBB axisalignedbb = blockIn.getCollisionBoundingBox(blockIn.getStateFromMeta(stack.getItemDamage()), w, pos);
 		if(axisalignedbb != null && !w.checkNoEntityCollision(axisalignedbb.offset(pos), null)) return false;
 		return block.isReplaceable(w, pos) && blockIn.canPlaceBlockOnSide(w, pos, side);
+	}
+	
+	public static class ItemBlockIENoInventory extends ItemBlockITBase
+	{
+		public ItemBlockIENoInventory(Block b)
+		{
+			super(b);
+		}
+
+		@Nullable
+		@Override
+		public NBTTagCompound getNBTShareTag(ItemStack stack)
+		{
+			NBTTagCompound ret = super.getNBTShareTag(stack);
+			if(ret!=null)
+			{
+				ret = ret.copy();
+				ret.removeTag("inventory");
+			}
+			return ret;
+		}
+
+		@Override
+		public boolean getShareTag()
+		{
+			return super.getShareTag();
+		}
 	}
 
 }

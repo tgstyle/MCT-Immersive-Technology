@@ -15,6 +15,7 @@ import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.Config.ITConfig.SteelTank;
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import mctmods.immersivetechnology.common.blocks.BlockITFluid;
+import mctmods.immersivetechnology.common.blocks.BlockITSlab;
 import mctmods.immersivetechnology.common.blocks.BlockValve;
 import mctmods.immersivetechnology.common.blocks.connectors.BlockConnectors;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
@@ -27,16 +28,19 @@ import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCok
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
+import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneDecoration;
 import mctmods.immersivetechnology.common.blocks.wooden.BlockWoodenCrate;
 import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityCrate;
 import mctmods.immersivetechnology.common.fluid.FluidColored;
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
+import mctmods.immersivetechnology.common.tileentities.TileEntityITSlab;
 import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
 import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -76,6 +80,7 @@ public class ITContent {
 
 	/*STONE*/
 	public static BlockITBase<?> blockStoneDecoration;
+	public static BlockITBase<?> blockStoneDecorationSlab;
 
 	/*WOODEN*/
 	public static BlockITBase<?> blockWoodenCrate;
@@ -96,6 +101,7 @@ public class ITContent {
 
 	public static ArrayList<Fluid> normallyPressurized = new ArrayList<>();
 
+	@SuppressWarnings("unchecked")
 	public static void preInit() {
 		/*MULTIBLOCKS*/
 		blockMetalMultiblock = new BlockMetalMultiblock();
@@ -112,8 +118,10 @@ public class ITContent {
 		if(Multiblock.enable_advancedCokeOven) blockMetalDevice = new BlockMetalDevice();
 
 		/*STONE*/
+
 		blockStoneDecoration = new BlockStoneDecoration();
-		
+		blockStoneDecorationSlab = (BlockITBase)new BlockITSlab("stone_decoration_slab", Material.ROCK, PropertyEnum.create("type", BlockType_StoneDecoration.class)).setMetaHidden(3, 8, BlockType_StoneDecoration.COKEBRICK_REINFORCED.getMeta()).setMetaExplosionResistance(BlockType_StoneDecoration.COKEBRICK_REINFORCED.getMeta(), 180).setHardness(2.0F).setResistance(10.0F);
+
 		/*WOODEN*/
 		blockWoodenCrate = new BlockWoodenCrate();
 
@@ -153,6 +161,7 @@ public class ITContent {
 
 	public static void init() {
 		/*TILE ENTITIES*/
+		registerTile(TileEntityITSlab.class);
 		registerTile(TileEntityTimer.class);
 		registerTile(TileEntityTrashItem.class);
 		registerTile(TileEntityTrashFluid.class);

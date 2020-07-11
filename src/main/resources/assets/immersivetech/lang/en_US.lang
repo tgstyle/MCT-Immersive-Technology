@@ -40,9 +40,12 @@ tile.immersivetech.metal_barrel.barrel_steel.name=Steel Metal Barrel
 tile.immersivetech.valve.fluid_valve.name=Fluid Valve
 tile.immersivetech.valve.load_controller.name=Load Controller
 tile.immersivetech.valve.stack_limiter.name=Stack Limiter
+
+#STONE
+tile.immersivetech.stone_decoration_slab.cokebrick_reinforced.name=Reinforced Coke Brick Slab
+
 #WOODEN
 tile.immersivetech.wooden_crate.crate.name=Creative Storage Crate
-
 
 #METAL MULTIBLOCKS
 tile.immersivetech.metal_multiblock.distiller.name=Distiller
