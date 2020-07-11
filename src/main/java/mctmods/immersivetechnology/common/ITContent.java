@@ -100,7 +100,6 @@ public class ITContent {
 
 	public static ArrayList<Fluid> normallyPressurized = new ArrayList<>();
 
-	@SuppressWarnings("unchecked")
 	public static void preInit() {
 		/*MULTIBLOCKS*/
 		blockMetalMultiblock = new BlockMetalMultiblock();
@@ -119,7 +118,7 @@ public class ITContent {
 		/*STONE*/
 
 		blockStoneDecoration = new BlockStoneDecoration();
-		blockStoneDecorationSlab = (BlockITBase)new BlockITSlab("stone_decoration_slab", Material.ROCK, PropertyEnum.create("type", BlockType_StoneDecoration.class)).setMetaHidden(3, 8, BlockType_StoneDecoration.COKEBRICK_REINFORCED.getMeta()).setMetaExplosionResistance(BlockType_StoneDecoration.COKEBRICK_REINFORCED.getMeta(), 180).setHardness(2.0F).setResistance(10.0F);
+		blockStoneDecorationSlab = (BlockITBase<?>)new BlockITSlab<BlockType_StoneDecoration>("stone_decoration_slab", Material.ROCK, PropertyEnum.create("type", BlockType_StoneDecoration.class)).setMetaExplosionResistance(BlockType_StoneDecoration.COKEBRICK_REINFORCED.getMeta(), 180).setHardness(2.0F).setResistance(10.0F);
 
 		/*WOODEN*/
 		blockWoodenCrate = new BlockWoodenCrate();
