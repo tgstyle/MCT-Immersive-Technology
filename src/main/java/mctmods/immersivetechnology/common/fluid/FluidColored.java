@@ -44,4 +44,5 @@ public class FluidColored extends Fluid {
 	public int getColor() {
 		return color|0xff000000;
 	}
+
 }

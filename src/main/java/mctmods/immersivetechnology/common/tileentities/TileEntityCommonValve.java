@@ -258,4 +258,5 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	public static int longToInt(long value) {
 		return value > Integer.MAX_VALUE? Integer.MAX_VALUE : value < Integer.MIN_VALUE? Integer.MIN_VALUE : (int) value;
 	}
+
 }
