@@ -56,4 +56,5 @@ public class MessageRequestUpdate implements IMessage {
 			return null;
 		}
 	}
+
 }

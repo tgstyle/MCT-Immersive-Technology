@@ -32,7 +32,7 @@ repositories {
 	}
 	maven {
 		name = 'HWYLA Maven'
-		url = 'http://tehnut.info/maven'
+		url = 'http://maven.tehnut.info'
 	}
     maven {
         name = "CurseForge"

@@ -319,7 +319,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public void onIEBlockPlacedBy(World world, BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase placer, ItemStack stack) {
+	public void onITBlockPlacedBy(World world, BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase placer, ItemStack stack) {
 		TileEntity tile = world.getTileEntity(pos);
 
 		if(tile instanceof IDirectionalTile) {

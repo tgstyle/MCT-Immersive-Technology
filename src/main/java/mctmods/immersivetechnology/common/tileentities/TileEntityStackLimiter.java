@@ -158,4 +158,5 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 		if(dest == null) return false;
 		return dest.isItemValid(slot, stack);
 	}
+
 }
