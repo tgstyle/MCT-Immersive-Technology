@@ -14,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -29,12 +28,13 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITFluidTank.TankListener {
 
-	private static int inputFuelTankSize = Boiler.boiler_fuel_tankSize;
 	private static int inputTankSize = Boiler.boiler_input_tankSize;
 	private static int outputTankSize = Boiler.boiler_output_tankSize;
+	private static int inputFuelTankSize = Boiler.boiler_fuel_tankSize;
 	private static int heatLossPerTick = Boiler.boiler_heat_lossPerTick;
 	private static int progressLossPerTick = Boiler.boiler_progress_lossInTicks;
 	private static double workingHeatLevel = Boiler.boiler_heat_workingLevel;
+	public static BlockPos fluidOutputPos;
 
 	public FluidTank[] tanks = new FluidTank[] {
 			new ITFluidTank(inputFuelTankSize, this),
@@ -118,6 +118,18 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 		return false;
 	}
 
+	private void pumpOutputOut() {
+		if(tanks[2].getFluidAmount() == 0) return;
+		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), mirrored ? 2 : -2, 2, 1, facing);
+		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, facing.getOpposite());
+		if(output == null) return;
+		FluidStack out = tanks[2].getFluid();
+		int accepted = output.fill(out, false);
+		if(accepted == 0) return;
+		int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+		this.tanks[2].drain(drained, true);
+	}
+
 	public void handleSounds() {
 		BlockPos center = getPos();
 		float level = (float) (heatLevel / workingHeatLevel);
@@ -192,7 +204,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
 	private boolean outputTankLogic() {
 		boolean update = false;
-		if(this.tanks[2].getFluidAmount() >0) {
+		if(this.tanks[2].getFluidAmount() > 0) {
 			ItemStack filledContainer = Utils.fillFluidContainer(tanks[2], inventory.get(4), inventory.get(5), null);
 			if(!filledContainer.isEmpty()) {
 				if(!inventory.get(5).isEmpty() && OreDictionary.itemMatches(inventory.get(5), filledContainer, true)) inventory.get(5).grow(filledContainer.getCount());
@@ -202,20 +214,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 				markContainingBlockForUpdate(null);
 				update = true;
 			}
-			if(this.tanks[2].getFluidAmount() > 0) {
-				FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[2].getFluid(), Math.min(this.tanks[2].getFluidAmount(), 1000), true);
-				BlockPos outputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), mirrored ? 2 : -2, 2, 1, facing);
-				IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, EnumFacing.DOWN);
-				if(output != null) {
-					int accepted = output.fill(out, false);
-					if(accepted > 0) {
-						int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-						this.tanks[2].drain(drained, true);
-						markContainingBlockForUpdate(null);
-						update=true;
-					}
-				}
-			}
+			pumpOutputOut();
 		}
 		return update;
 	}

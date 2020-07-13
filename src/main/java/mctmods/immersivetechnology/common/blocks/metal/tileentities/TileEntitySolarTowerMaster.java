@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.*;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
@@ -30,14 +31,17 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implements ITFluidTank.TankListener {
 
+	private static int inputTankSize = SolarTower.solarTower_input_tankSize;
+	private static int outputTankSize = SolarTower.solarTower_output_tankSize;	
 	private static int solarMaxRange = SolarReflector.solarReflector_maxRange;
 	private static int solarMinRange = SolarReflector.solarReflector_minRange;
 	private static float speedMult = SolarTower.solarTower_speed_multiplier;
 	private static float reflectorSpeedMult = SolarTower.solarTower_solarReflector_speed_multiplier;
+	public static BlockPos fluidOutputPos;
 
 	public FluidTank[] tanks = new FluidTank[] {
-			new ITFluidTank(32000, this),
-			new ITFluidTank(32000, this)
+			new ITFluidTank(inputTankSize, this),
+			new ITFluidTank(outputTankSize, this)
 	};
 
 	public static int slotCount = 4;
@@ -69,6 +73,18 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 		nbt.setIntArray("reflectors", reflectors);
 		nbt.setBoolean("isProcessing", isProcessing);
 		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
+	}
+
+	private void pumpOutputOut() {
+		if(tanks[1].getFluidAmount() == 0) return;
+		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, -1, 3, facing);
+		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, facing.getOpposite());
+		if(output == null) return;
+		FluidStack out = tanks[1].getFluid();
+		int accepted = output.fill(out, false);
+		if(accepted == 0) return;
+		int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+		this.tanks[1].drain(drained, true);
 	}
 
 	public void handleSounds() {
@@ -169,28 +185,13 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 				inventory.get(2).shrink(1);
 				if(inventory.get(2).getCount() <= 0) inventory.set(2, ItemStack.EMPTY);
 			}
-			if(this.tanks[1].getFluidAmount() > 0) {
-				FluidStack out = Utils.copyFluidStackWithAmount(this.tanks[1].getFluid(), Math.min(this.tanks[1].getFluidAmount(), 1000), true);
-				BlockPos outputPos = this.getPos().add(0, -1, 0).offset(facing, 3);
-				IFluidHandler output = FluidUtil.getFluidHandler(world, outputPos, facing.getOpposite());
-				if(output != null) {
-					int accepted = output.fill(out, false);
-					if(accepted > 0) {
-						int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-						this.tanks[1].drain(drained, true);
-					}
-				}
-			}
 		}
 		ItemStack emptyContainer = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
+		pumpOutputOut();
 		if(!emptyContainer.isEmpty() && emptyContainer.getCount() > 0) {
-			if(!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), emptyContainer, true))
-				inventory.get(1).grow(emptyContainer.getCount());
-			else if(inventory.get(1).isEmpty())
-				inventory.set(1, emptyContainer.copy());
-			inventory.get(0).shrink(1);
-			if(inventory.get(0).getCount() <= 0)
-				inventory.set(0, ItemStack.EMPTY);
+			if(!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), emptyContainer, true)) inventory.get(1).grow(emptyContainer.getCount());
+			else if(inventory.get(1).isEmpty())	inventory.set(1, emptyContainer.copy()); inventory.get(0).shrink(1);
+			if(inventory.get(0).getCount() <= 0) inventory.set(0, ItemStack.EMPTY);
 		}
 		if(update) {
 			efficientMarkDirty();

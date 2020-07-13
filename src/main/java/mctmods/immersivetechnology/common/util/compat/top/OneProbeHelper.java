@@ -106,7 +106,6 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(11)).text("Fuel").progress(current, max, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("mB"));
 			}
 		}
-
 	}
 
 }

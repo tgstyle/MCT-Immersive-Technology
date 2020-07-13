@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
-import mctmods.immersivetechnology.common.Config.ITConfig.SteelTank;
+import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SteelTank;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -12,13 +12,12 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmetalTankSlave implements ITFluidTank.TankListener {
 
+	private static int tankSize = SteelTank.steelTank_tankSize;
 	private static int transferSpeed = SteelTank.steelTank_transferSpeed;
 
 	private int[] oldComps = new int[4];
 	private int masterCompOld;
 	private int sleep = 0;
-
-	private static int tankSize = SteelTank.steelTank_tankSize;
 
 	public ITFluidTank tank = new ITFluidTank(tankSize, this);
 

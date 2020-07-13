@@ -6,6 +6,7 @@ import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.Utils;
+import mctmods.immersivetechnology.common.Config.ITConfig.Barrels;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.block.state.IBlockState;
@@ -27,6 +28,9 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IConfigurableSides, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.ITileDrop, IEBlockInterfaces.IComparatorOverride, ITFluidTank.TankListener {
 
+	private static int tankSize = Barrels.barrel_steel_tankSize;
+	private static int transferSpeed = Barrels.barrel_steel_transferSpeed;
+
 	public int[] sideConfig = {1, 0};
 
 	public ITFluidTank tank;
@@ -37,7 +41,7 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 	SidedFluidHandler nullsideFluidHandler = new SidedFluidHandler(this, null);
 
 	public void createTank() {
-		tank = new ITFluidTank(24000, this);
+		tank = new ITFluidTank(tankSize, this);
 	}
 
 	public TileEntityBarrelSteel() {
@@ -76,7 +80,7 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 				IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
 				if(output != null) {
 					if(sleep == 0) {
-						FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(500, tank.getFluidAmount()), false);
+						FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), false);
 						if (accepted == null) {
 							sleep = 20;
 							return;
@@ -166,8 +170,8 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 		return fluid != null && fluid.getFluid() != null;
 	}
 
-	static class SidedFluidHandler implements IFluidHandler {
-		TileEntityBarrelSteel barrel;
+	public static class SidedFluidHandler implements IFluidHandler {
+		public TileEntityBarrelSteel barrel;
 		EnumFacing facing;
 
 		SidedFluidHandler(TileEntityBarrelSteel barrel, EnumFacing facing) {
