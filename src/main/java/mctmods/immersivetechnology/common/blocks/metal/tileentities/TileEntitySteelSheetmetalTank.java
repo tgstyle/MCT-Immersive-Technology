@@ -30,7 +30,6 @@ public class TileEntitySteelSheetmetalTank extends TileEntitySteelSheetmetalTank
 
 	public void update() {
 		if(++counter > 5 && changeTo != null) {
-			//world.setBlockToAir(worldPosition);
 			world.setBlockState(worldPosition, changeTo);
 			if(master) {
 				TemporaryTileEntityRequest request = new TemporaryTileEntityRequest();
