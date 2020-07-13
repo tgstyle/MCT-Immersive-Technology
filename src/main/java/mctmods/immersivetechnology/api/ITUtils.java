@@ -27,10 +27,6 @@ public class ITUtils {
 		REMOVE_FROM_TICKING.add(te);
 	}
 
-	public static boolean AreBlockPosIdentical(BlockPos a, BlockPos b) {
-		return a.getX() == b.getX() && a.getY() == b.getY() && a.getZ() == b.getZ();
-	}
-
 	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing) {
 		return LocalOffsetToWorldBlockPos(origin, x, y, z, facing, EnumFacing.UP);
 	}
@@ -281,4 +277,5 @@ public class ITUtils {
 			world.updateObservingBlocksAt(pos, blockType);
 		}
 	}
+
 }
