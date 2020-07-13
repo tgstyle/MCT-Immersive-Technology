@@ -27,7 +27,6 @@ public class ITUtils {
 		REMOVE_FROM_TICKING.add(te);
 	}
 
-
 	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing) {
 		return LocalOffsetToWorldBlockPos(origin, x, y, z, facing, EnumFacing.UP);
 	}
@@ -265,4 +264,5 @@ public class ITUtils {
 			world.updateObservingBlocksAt(pos, blockType);
 		}
 	}
+
 }

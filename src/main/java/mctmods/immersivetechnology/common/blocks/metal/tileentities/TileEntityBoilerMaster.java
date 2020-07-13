@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -121,7 +122,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 	private void pumpOutputOut() {
 		if(tanks[2].getFluidAmount() == 0) return;
 		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), -2, 2, 1, facing);
-		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, facing.getOpposite());
+		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, EnumFacing.DOWN);
 		if(output == null) return;
 		FluidStack out = tanks[2].getFluid();
 		int accepted = output.fill(out, false);
