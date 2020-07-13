@@ -230,20 +230,6 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 			this.inventory.set(1, stack);
 		}
 		pumpOutputOut();
-		/*if(tank.getFluidAmount() > 0) {
-			int outSize = Math.min(144, tank.getFluidAmount());
-			FluidStack out = Utils.copyFluidStackWithAmount(tank.getFluid(), outSize, false);
-			BlockPos outPos = getPos().offset(facing, 3).add(0, - 1, 0);
-			IFluidHandler output = FluidUtil.getFluidHandler(world, outPos, facing.getOpposite());
-			if(output != null) {
-				int accepted = output.fill(out, false);
-				if(accepted > 0) {
-					int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-					this.tank.drain(drained, true);
-					this.markContainingBlockForUpdate(null);
-				}
-			}
-		}*/
 		if(update) efficientMarkDirty();
 	}
 
