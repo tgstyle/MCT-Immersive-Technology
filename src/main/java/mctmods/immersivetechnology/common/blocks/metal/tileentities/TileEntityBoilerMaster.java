@@ -120,7 +120,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
 	private void pumpOutputOut() {
 		if(tanks[2].getFluidAmount() == 0) return;
-		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), mirrored ? 2 : -2, 2, 1, facing);
+		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), -2, 2, 1, facing);
 		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, facing.getOpposite());
 		if(output == null) return;
 		FluidStack out = tanks[2].getFluid();
