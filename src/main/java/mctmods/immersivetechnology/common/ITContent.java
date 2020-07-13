@@ -9,7 +9,6 @@ import mctmods.immersivetechnology.api.crafting.*;
 import mctmods.immersivetechnology.common.Config.ITConfig.Experimental;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.*;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
-import mctmods.immersivetechnology.common.Config.ITConfig.SteelTank;
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import mctmods.immersivetechnology.common.blocks.BlockITFluid;
 import mctmods.immersivetechnology.common.blocks.BlockITSlab;

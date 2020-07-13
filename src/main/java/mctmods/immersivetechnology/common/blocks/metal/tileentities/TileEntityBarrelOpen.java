@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
+import mctmods.immersivetechnology.common.Config.ITConfig.Barrels;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,9 +21,12 @@ import java.util.Random;
 
 public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 
+	private static int tankSize = Barrels.barrel_open_tankSize;
+	private static int transferSpeed = Barrels.barrel_open_transferSpeed;
+
 	@Override
 	public void createTank() {
-		tank = new ITFluidTank(12000, this);
+		tank = new ITFluidTank(tankSize, this);
 	}
 
 	private int lastRandom = 0;
@@ -56,7 +60,7 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 					IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
 					if(output != null) {
 						if(sleep == 0) {
-							FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(40, tank.getFluidAmount()), false);
+							FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), false);
 							accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
 							if(accepted.amount > 0) {
 								int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);

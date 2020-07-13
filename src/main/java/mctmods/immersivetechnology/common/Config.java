@@ -8,7 +8,7 @@ public class Config {
 	public static class ITConfig {
 		public static Machines machines;
 		public static MechanicalEnergy mechanicalenergy;
-		public static SteelTank steeltank;
+		public static Barrels barrels;
 		public static Experimental experimental;
 
 		public static class Machines {
@@ -22,6 +22,7 @@ public class Config {
 			public static SolarReflector solarreflector;
 			public static SolarTower solartower;
 			public static SteamTurbine steamturbine;
+			public static SteelTank steeltank;
 
 			public static class Multiblock {
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Preheater be built ? [Default=true]"})
@@ -50,6 +51,8 @@ public class Config {
 				public static boolean register_cooling_tower_recipes = true;
 			}
 			public static class AdvancedCokeOven {
+				@Comment({"The capacity of the tank for the Advanced Coke Oven [Default=24000]"})
+				public static int advancedCokeOven_tankSize = 24000;
 				@Comment({"How fast the Advanced Coke Oven (with no preheaters) is when compared to the basic Coke Oven. A value of 1 means same speed. [Default=1]"})
 				public static float advancedCokeOven_speed_base = 1;
 				@Comment({"This value gets added per preheater, to the speed of the Advanced Coke Oven [Default=1]"})
@@ -64,12 +67,12 @@ public class Config {
 				public static int alternator_energy_perTick = 12288;
 			}
 			public static class Boiler {
-				@Comment({"The capacity of the fuel tank for the Boiler [Default=2000]"})
-				public static int boiler_fuel_tankSize = 2000;
 				@Comment({"The capacity of the input tank for the Boiler [Default=20000]"})
 				public static int boiler_input_tankSize = 20000;
 				@Comment({"The capacity of the output tank for the Boiler [Default=20000]"})
 				public static int boiler_output_tankSize = 20000;
+				@Comment({"The capacity of the fuel tank for the Boiler [Default=2000]"})
+				public static int boiler_fuel_tankSize = 2000;
 				@Comment({"A boiler can only start processing recipes once it reaches this heat level [Default=12000.0]"})
 				public static double boiler_heat_workingLevel = 12000.0;
 				@Comment({"How fast the boiler cools down per tick when turned off or missing fuel [Default=5]"})
@@ -82,14 +85,22 @@ public class Config {
 				public static int cokeOvenPreheater_energy_consumption = 32;
 			}
 			public static class Distiller {
-				@Comment({"The item for Salt the distiller should output [Default=immersivetech:material]"})
+				@Comment({"The capacity of the input tank for the Distiller [Default=24000]"})
+				public static int distiller_input_tankSize = 24000;
+				@Comment({"The capacity of the output tank for the Distiller [Default=24000]"})
+				public static int distiller_output_tankSize = 24000;
+				@Comment({"The item for Salt the Distiller should output [Default=immersivetech:material]"})
 				public static String distiller_output_item = "immersivetech:material";
-				@Comment({"The item meta for Salt the distiller should output [Default=0]"})
+				@Comment({"The item meta for Salt the Distiller should output [Default=0]"})
 				public static int distiller_output_itemMeta = 0;
-				@Comment({"The item chance for Salt the distiller should output [Default=0.009999999776482582]"})
+				@Comment({"The item chance for Salt the Distiller should output [Default=0.009999999776482582]"})
 				public static float distiller_output_itemChance = 0.009999999776482582F;
 			}
 			public static class SolarTower {
+				@Comment({"The capacity of the input tank for the Solar Tower [Default=32000]"})
+				public static int solarTower_input_tankSize = 32000;
+				@Comment({"The capacity of the output tank for the Solar Tower [Default=32000]"})
+				public static int solarTower_output_tankSize = 32000;
 				@Comment({"The Speed multiplier applied to all Solar Tower recipes (with a single reflector) [Default=1]"})
 				public static float solarTower_speed_multiplier = 1;
 				@Comment({"The speed of the Solar Tower gets multiplied by this value, per Solar Reflector past the first one [Default=1.5]"})
@@ -113,21 +124,27 @@ public class Config {
 				@Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
 				public static float steamTurbine_speed_maxRotation = 72;
 			}
-
+			public static class SteelTank {
+				@Comment({"Steel Tank Size in mB [Default=2048000]"})
+				public static int steelTank_tankSize = 2048000;
+				@Comment({"How fast can the Steel Tank push fluids out, in mB, when powered by Redstone [Default=1000]"})
+				public static int steelTank_transferSpeed = 1000;
+			}
 		}
-
 		public static class MechanicalEnergy {
 			@Comment({"The maximum speed that machines can tolerate in RPM [Default=1800]"})
 			public static int mechanicalEnergy_speed_max = 1800;
 		}
-
-		public static class SteelTank {
-			@Comment({"Steel Tank Size in mB [Default=2048000]"})
-			public static int steelTank_tankSize = 2048000;
-			@Comment({"How fast can the Steel Tank push fluids out, in mB, when powered by Redstone [Default=1000]"})
-			public static int steelTank_transferSpeed = 1000;
+		public static class Barrels {
+			@Comment({"The capacity of the tank for the Open Barrel [Default=12000]"})
+			public static int barrel_open_tankSize = 12000;
+			@Comment({"How fast can the Open Barrel push fluids out, in mB [Default=40]"})
+			public static int barrel_open_transferSpeed = 40;
+			@Comment({"The capacity of the tank for the Steel Barrel [Default=24000]"})
+			public static int barrel_steel_tankSize = 24000;
+			@Comment({"How fast can the Steel Barrel push fluids out, in mB [Default=500]"})
+			public static int barrel_steel_transferSpeed = 500;
 		}
-
 		public static class Experimental {
 			@Comment({"Should the text overlay for trash cans be per tick rather than per second? [Default=false]"})
 			public static boolean per_tick_trash_cans = false;
