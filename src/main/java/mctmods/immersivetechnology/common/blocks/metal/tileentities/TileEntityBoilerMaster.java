@@ -35,7 +35,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 	private static int heatLossPerTick = Boiler.boiler_heat_lossPerTick;
 	private static int progressLossPerTick = Boiler.boiler_progress_lossInTicks;
 	private static double workingHeatLevel = Boiler.boiler_heat_workingLevel;
-	private static BlockPos fluidOutputPos;
+	BlockPos fluidOutputPos;
 
 	public FluidTank[] tanks = new FluidTank[] {
 			new ITFluidTank(inputFuelTankSize, this),
@@ -252,6 +252,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 	public void update() {
 		super.update();
 		if(isDummy()) return;
+		if(!formed) return;
 		if(world.isRemote) {
 			handleSounds();
 			return;
