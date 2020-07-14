@@ -30,7 +30,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
 	private static int inputTankSize = Distiller.distiller_input_tankSize;
 	private static int outputTankSize = Distiller.distiller_output_tankSize;
-	private static BlockPos fluidOutputPos;
+	BlockPos fluidOutputPos;
 
 	public FluidTank[] tanks = new FluidTank[] {
 			new ITFluidTank(inputTankSize, this),
@@ -117,6 +117,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 	public void update() {
 		super.update();
 		if(isDummy()) return;
+		if(!formed) return;
 		if(world.isRemote) {
 			handleSounds();
 			return;

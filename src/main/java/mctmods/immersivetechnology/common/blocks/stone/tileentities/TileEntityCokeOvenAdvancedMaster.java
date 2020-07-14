@@ -39,7 +39,7 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 	public static float baseSpeed = AdvancedCokeOven.advancedCokeOven_speed_base;
 	public static float preheaterAdd = AdvancedCokeOven.advancedCokeOven_preheater_speed_increase;
 	public static float preheaterMult = AdvancedCokeOven.advancedCokeOven_preheater_speed_multiplier;
-	public static BlockPos fluidOutputPos;
+	BlockPos fluidOutputPos;
 
 	public float process = 0;
 	public int processMax = 0;
@@ -140,6 +140,8 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 
 	@Override
 	public void update() {
+		super.update();
+		if(isDummy()) return;
 		if(!formed) return;
 		if(world.isRemote) {
 			handleSounds();
