@@ -10,6 +10,8 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
 
 	@Override
 	public void update() {
+		super.update();
+		if(isDummy()) return;
 		if(!world.isRemote && formed) {
 			if(canSeeSun() && world.isDaytime()) {
 				this.sun = true;
