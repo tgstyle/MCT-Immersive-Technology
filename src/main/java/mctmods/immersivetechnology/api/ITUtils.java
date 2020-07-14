@@ -31,9 +31,13 @@ public class ITUtils {
 		return LocalOffsetToWorldBlockPos(origin, x, y, z, facing, EnumFacing.UP);
 	}
 
+	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing, int offsetAmount) {
+		BlockPos offset = origin.offset(facing.rotateY().getOpposite(), offsetAmount);
+		return LocalOffsetToWorldBlockPos(offset, x, y, z, facing, EnumFacing.UP);
+	}
+
 	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing, EnumFacing up) {
-		if(facing.getAxis() == up.getAxis())
-			throw new IllegalArgumentException("'facing' and 'up' must be perpendicular to each other!");
+		if(facing.getAxis() == up.getAxis()) throw new IllegalArgumentException("'facing' and 'up' must be perpendicular to each other!");
 		switch (up) {
 			case UP:
 				switch (facing) {
@@ -132,14 +136,12 @@ public class ITUtils {
 
 	public static double[] smartBoundingBox(double A, double B, double C, double D, double minY, double maxY, EnumFacing fl, EnumFacing fw) {
 		double[] boundingArray = new double[6];
-
 		boundingArray[0] = fl == EnumFacing.WEST ? A : fl == EnumFacing.EAST ? B : fw == EnumFacing.EAST ? C : D;
 		boundingArray[1] = minY;
 		boundingArray[2] = fl == EnumFacing.NORTH ? A : fl == EnumFacing.SOUTH ? B : fw == EnumFacing.SOUTH ? C : D;
 		boundingArray[3] = fl == EnumFacing.EAST ? 1 - A : fl == EnumFacing.WEST ? 1 - B : fw == EnumFacing.EAST ? 1 - D : 1 - C;
 		boundingArray[4] = maxY;
 		boundingArray[5] = fl == EnumFacing.SOUTH ? 1 - A : fl == EnumFacing.NORTH ? 1 - B : fw == EnumFacing.SOUTH ? 1 - D : 1 - C;
-
 		return boundingArray;
 	}
 
@@ -150,10 +152,7 @@ public class ITUtils {
 				EnumFacing inputFacing = ((IMechanicalEnergy) tile).getMechanicalEnergyInputFacing();
 				BlockPos pos = startPos.offset(inputFacing, ((IMechanicalEnergy) tile).inputToCenterDistance() + 1);
 				TileEntity tileTransmitter = world.getTileEntity(pos);
-
-				if(tileTransmitter instanceof IMechanicalEnergy && ((IMechanicalEnergy) tileTransmitter).isMechanicalEnergyTransmitter() && (((IMechanicalEnergy) tileTransmitter).getMechanicalEnergyOutputFacing() == inputFacing.getOpposite())) {
-					return true;
-				}
+				if(tileTransmitter instanceof IMechanicalEnergy && ((IMechanicalEnergy) tileTransmitter).isMechanicalEnergyTransmitter() && (((IMechanicalEnergy) tileTransmitter).getMechanicalEnergyOutputFacing() == inputFacing.getOpposite())) return true;
 			}
 		}
 		return false;
@@ -161,13 +160,11 @@ public class ITUtils {
 
 	public static boolean checkMechanicalEnergyReceiver(World world, BlockPos startPos) {
 		TileEntity tile = world.getTileEntity(startPos);
-
 		if(tile instanceof IMechanicalEnergy) {
 			if(((IMechanicalEnergy) tile).isMechanicalEnergyTransmitter()) {
 				EnumFacing outputFacing = ((IMechanicalEnergy) tile).getMechanicalEnergyOutputFacing();
 				BlockPos pos = startPos.offset(outputFacing, ((IMechanicalEnergy) tile).outputToCenterDistance() + 1);
 				TileEntity tileReceiver = world.getTileEntity(pos);
-
 				if(tileReceiver instanceof IMechanicalEnergy && ((IMechanicalEnergy) tileReceiver).isMechanicalEnergyReceiver() && ((IMechanicalEnergy) tileReceiver).getMechanicalEnergyInputFacing() == outputFacing.getOpposite()) {
 					return true;
 				}
@@ -183,7 +180,6 @@ public class ITUtils {
 		TileEntity tileInfo = world.getTileEntity(pos);
 		if (!(tileInfo instanceof IMechanicalEnergy)) return 0;
 		TileEntity tileTransmitter = world.getTileEntity(pos.offset(inputFacing, ((IMechanicalEnergy) tileInfo).outputToCenterDistance()));
-
 		if(tileTransmitter instanceof IMechanicalEnergy) {
 			return ((IMechanicalEnergy) tileTransmitter).getEnergy();
 		} else {
@@ -197,7 +193,6 @@ public class ITUtils {
 		BlockPos pos = startPos.offset(outputFacing, ((IMechanicalEnergy) tile).outputToCenterDistance() + 1);
 		TileEntity tileInfo = world.getTileEntity(pos);
 		TileEntity tileReceiver = world.getTileEntity(pos.offset(outputFacing, ((IMechanicalEnergy) tileInfo).inputToCenterDistance()));
-
 		if(tileReceiver instanceof TileEntityAlternatorMaster) {
 			if(((TileEntityAlternatorMaster) tileReceiver).canRunMechanicalEnergy()) {
 				return true;
@@ -231,7 +226,6 @@ public class ITUtils {
 	public static EnumFacing getInputFacing(World world, BlockPos startPos) {
 		TileEntity tileTransmitter;
 		BlockPos pos;
-
 		for(EnumFacing f : EnumFacing.HORIZONTALS) {
 			pos = startPos.offset(f, 1);
 			tileTransmitter = world.getTileEntity(pos);
@@ -254,7 +248,6 @@ public class ITUtils {
 		IBlockState state = world.getBlockState(pos);
 		if(newState == null) newState = state;
 		world.notifyBlockUpdate(pos, state, newState, 3);
-
 		if(!ForgeEventFactory.onNeighborNotify(world, pos, newState, EnumSet.allOf(EnumFacing.class), true).isCanceled()) {
 			Block blockType = newState.getBlock();
 			for(EnumFacing facing : directions) {

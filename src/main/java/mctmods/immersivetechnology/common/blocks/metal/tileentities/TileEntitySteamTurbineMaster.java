@@ -32,7 +32,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
 	private static int speedGainPerTick = SteamTurbine.steamTurbine_speed_gainPerTick;
 	private static int speedLossPerTick = SteamTurbine.steamTurbine_speed_lossPerTick;
 	private static float maxRotationSpeed = SteamTurbine.steamTurbine_speed_maxRotation;
-	public static BlockPos fluidOutputPos;
+	private static BlockPos fluidOutputPos;
 
 	public FluidTank[] tanks = new FluidTank[] {
 		new ITFluidTank(inputTankSize, this),
@@ -117,6 +117,8 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
 
 	@Override
 	public void update() {
+		super.update();
+		if(isDummy()) return;
 		if(world.isRemote) {
 			handleSounds();
 			return;
