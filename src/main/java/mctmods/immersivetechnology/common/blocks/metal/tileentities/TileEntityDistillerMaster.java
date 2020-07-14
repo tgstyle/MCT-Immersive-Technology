@@ -30,7 +30,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
 	private static int inputTankSize = Distiller.distiller_input_tankSize;
 	private static int outputTankSize = Distiller.distiller_output_tankSize;
-	public static BlockPos fluidOutputPos;
+	BlockPos fluidOutputPos;
 
 	public FluidTank[] tanks = new FluidTank[] {
 			new ITFluidTank(inputTankSize, this),
@@ -64,8 +64,8 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
 	private void pumpOutputOut() {
 		if(tanks[1].getFluidAmount() == 0) return;
-		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), -2, -1, 0, facing);
-		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, facing.getOpposite());
+		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, -1, 0, facing, 2);
+		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, facing.rotateY());
 		if(output == null) return;
 		FluidStack out = tanks[1].getFluid();
 		int accepted = output.fill(out, false);
@@ -115,6 +115,9 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 	@SuppressWarnings("unchecked")
 	@Override
 	public void update() {
+		super.update();
+		if(isDummy()) return;
+		if(!formed) return;
 		if(world.isRemote) {
 			handleSounds();
 			return;
@@ -129,7 +132,6 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 				}
 			}
 		}
-		super.update();
 		if(this.tanks[1].getFluidAmount() > 0) {
 			ItemStack filledContainer = Utils.fillFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
 			if(!filledContainer.isEmpty()) {
@@ -147,14 +149,13 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 			inventory.get(0).shrink(1);
 			if(inventory.get(0).getCount() <= 0) inventory.set(0, ItemStack.EMPTY);
 		}
+		running = shouldRenderAsActive() && !processQueue.isEmpty() && processQueue.get(0).canProcess(this);
+		if(previousRenderState != running) notifyNearbyClients();
+		previousRenderState = running;
 		if(update) {
 			efficientMarkDirty();
 			this.markContainingBlockForUpdate(null);
 		}
-
-		running = shouldRenderAsActive() && !processQueue.isEmpty() && processQueue.get(0).canProcess(this);
-		if(previousRenderState != running) notifyNearbyClients();
-		previousRenderState = running;
 	}
 
 	@Override
