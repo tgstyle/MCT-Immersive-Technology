@@ -40,7 +40,6 @@ public class TileEntitySteamTurbine extends TileEntitySteamTurbineSlave {
 
 	public void update() {
 		if(changeTo != null) {
-			//world.setBlockToAir(worldPosition);
 			world.setBlockState(worldPosition, changeTo);
 			if(master) {
 				TemporaryTileEntityRequest request = new TemporaryTileEntityRequest();

@@ -37,7 +37,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 	private static int solarMinRange = SolarReflector.solarReflector_minRange;
 	private static float speedMult = SolarTower.solarTower_speed_multiplier;
 	private static float reflectorSpeedMult = SolarTower.solarTower_solarReflector_speed_multiplier;
-	public static BlockPos fluidOutputPos;
+	BlockPos fluidOutputPos;
 
 	public FluidTank[] tanks = new FluidTank[] {
 			new ITFluidTank(inputTankSize, this),
@@ -139,6 +139,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 	public void update() {
 		super.update();
 		if(isDummy()) return;
+		if(!formed) return;
 		if(world.isRemote) {
 			handleSounds();
 			return;
