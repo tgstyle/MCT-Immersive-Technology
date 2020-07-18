@@ -137,8 +137,6 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 
 	@Override
 	public void update() {
-		super.update();
-		if(isDummy()) return;
 		if(!formed) return;
 		if(world.isRemote) {
 			handleSounds();
