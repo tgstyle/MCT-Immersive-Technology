@@ -115,8 +115,6 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 	@SuppressWarnings("unchecked")
 	@Override
 	public void update() {
-		super.update();
-		if(isDummy()) return;
 		if(!formed) return;
 		if(world.isRemote) {
 			handleSounds();
