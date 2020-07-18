@@ -64,7 +64,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
 	private void pumpOutputOut() {
 		if(tanks[1].getFluidAmount() == 0) return;
-		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, -1, 0, facing, 2);
+		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, -1, 0, facing, 2, mirrored);
 		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, facing.rotateY());
 		if(output == null) return;
 		FluidStack out = tanks[1].getFluid();
@@ -130,6 +130,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 				}
 			}
 		}
+		super.update();
 		if(this.tanks[1].getFluidAmount() > 0) {
 			ItemStack filledContainer = Utils.fillFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
 			if(!filledContainer.isEmpty()) {
