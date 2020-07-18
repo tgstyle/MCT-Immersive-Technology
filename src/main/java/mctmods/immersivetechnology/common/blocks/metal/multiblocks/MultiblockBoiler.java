@@ -85,8 +85,10 @@ public class MultiblockBoiler implements IMultiblock {
 			mirror = true;
 			if (!this.structureCheck(world, pos, side, mirror)) return false;
 		}
-		ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
-		if(MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer).isCanceled()) return false;
+		if (player != null) {
+			ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
+			if(MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer).isCanceled()) return false;
+		}
 		for(int h = - 1 ; h <= 1 ; h ++) {
 			for(int l = 0 ; l <= 2 ; l ++) {
 				for(int w = - 2 ; w <= 2 ; w ++) {
