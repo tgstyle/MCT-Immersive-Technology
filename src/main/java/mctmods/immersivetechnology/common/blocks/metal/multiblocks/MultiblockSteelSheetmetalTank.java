@@ -89,14 +89,10 @@ public class MultiblockSteelSheetmetalTank implements IMultiblock {
 				}
 			}
 		}
-
-		if(player == null) {
-			createStructureInternal(world, pos, side);
-			return true;
+		if (player != null) {
+			ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
+			if(MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer).isCanceled()) return false;
 		}
-
-		ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand() : player.getHeldItemOffhand();
-		if(MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer).isCanceled()) return false;
 
 		createStructureInternal(world, pos, side);
 		return true;

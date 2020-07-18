@@ -64,8 +64,10 @@ public class MultiblockCokeOvenAdvanced implements IMultiblock {
 		IBlockState master = ITContent.blockStoneMultiblock.getStateFromMeta(BlockType_StoneMultiblock.COKE_OVEN_ADVANCED.getMeta());
 		IBlockState slave = ITContent.blockStoneMultiblock.getStateFromMeta(BlockType_StoneMultiblock.COKE_OVEN_ADVANCED_SLAVE.getMeta());
 		if(!structureCheck(world, pos, side)) return false;
-		ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
-		if(MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer).isCanceled()) return false;
+		if (player != null) {
+			ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
+			if(MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer).isCanceled()) return false;
+		}
 		for(int h = - 1 ; h <= 2 ; h ++) {
 			for(int l = 0 ; l <= 2 ; l ++) {
 				for(int w = - 1 ; w <= 1 ;w ++) {
