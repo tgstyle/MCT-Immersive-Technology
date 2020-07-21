@@ -216,6 +216,12 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 
 	protected boolean checkReflector() {
 		boolean ver = false;
+		if(!world.isDaytime()) {
+			for(int cont = 0; cont < 4; cont++) {
+				reflectors[cont] = 0;
+			}
+			return ver;
+		}
 		EnumFacing fw;
 		EnumFacing fr;
 		BlockPos pos;
