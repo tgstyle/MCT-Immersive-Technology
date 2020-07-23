@@ -7,20 +7,20 @@ import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import li.cil.oc.api.API;
 
 public class OCHelper extends ITCompatModule {
-    
-    @Override
-    public void preInit() {
-    }
 
-    @Override
-    public void init() {
-        API.driver.add(new BoilerDriver());
-        API.driver.add(new SteamTurbineDriver());
-        API.driver.add(new DistillerDriver());
-        API.driver.add(new SolarTowerDriver());
-    }
+	@Override
+	public void preInit() {
+	}
 
-    @Override
-    public void postInit() {
-    }
+	@Override
+	public void init() {
+		API.driver.add(new BoilerDriver());
+		API.driver.add(new SteamTurbineDriver());
+		API.driver.add(new DistillerDriver());
+		API.driver.add(new SolarTowerDriver());
+	}
+
+	@Override
+	public void postInit() {
+	}
 }
