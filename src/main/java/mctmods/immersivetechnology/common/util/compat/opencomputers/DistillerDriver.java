@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.util.compat.opencomputers;
 
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistiller;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerSlave;
 
 // Largely based on BluSunrize's drivers for the IE machines
