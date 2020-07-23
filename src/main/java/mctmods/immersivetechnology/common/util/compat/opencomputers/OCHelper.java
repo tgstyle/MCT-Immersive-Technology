@@ -17,6 +17,7 @@ public class OCHelper extends ITCompatModule {
         API.driver.add(new BoilerDriver());
         API.driver.add(new SteamTurbineDriver());
         API.driver.add(new DistillerDriver());
+        API.driver.add(new SolarTowerDriver());
     }
 
     @Override
