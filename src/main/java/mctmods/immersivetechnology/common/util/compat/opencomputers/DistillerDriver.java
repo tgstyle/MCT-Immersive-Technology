@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.opencomputers;
 
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerSlave;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistiller;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerSlave;
 
 // Largely based on BluSunrize's drivers for the IE machines
 
@@ -12,26 +13,26 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
 
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistiller;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.codehaus.plexus.util.cli.Arg;
 
 import java.util.HashMap;
 import java.util.Optional;
 
 
-public class BoilerDriver extends DriverSidedTileEntity {
+public class DistillerDriver extends DriverSidedTileEntity {
     @Override
     public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
         TileEntity tile = world.getTileEntity(pos);
 
-        if (tile instanceof TileEntityBoilerSlave) {
-            TileEntityBoilerSlave boiler = (TileEntityBoilerSlave) tile;
-            if (boiler.master() != null && boiler.isRedstonePos()) {
-                return new BoilerEnvironment(world, boiler.getPos());
+        if (tile instanceof TileEntityDistillerSlave) {
+            TileEntityDistillerSlave te = (TileEntityDistillerSlave) tile;
+            if (te.master() != null && te.isRedstonePos()) {
+                return new BoilerEnvironment(world, te.getPos());
             }
         }
         return null;
@@ -39,49 +40,47 @@ public class BoilerDriver extends DriverSidedTileEntity {
 
     @Override
     public Class<?> getTileEntityClass() {
-        return TileEntityBoilerSlave.class;
+        return TileEntityDistillerSlave.class;
     }
 
-    public class BoilerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntityBoilerSlave> {
+    public class BoilerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntityDistillerSlave> {
         public BoilerEnvironment(World world, BlockPos pos) {
-            super(world, pos, TileEntityBoilerSlave.class);
-        }
-
-        @Callback(doc = "function():number -- get the heat level of the boiler")
-        public Object[] getHeat(Context context, Arguments args) {
-            return new Object[] {getTileEntity().master().heatLevel};
-        }
-
-        @Callback(doc = "function():table -- get information about the internal fuel tank")
-        public Object[] getFuelTankInfo(Context context, Arguments args) {
-            return new Object[] {getTileEntity().master().tanks[0].getInfo()};
+            super(world, pos, TileEntityDistillerSlave.class);
         }
 
         @Callback(doc = "function():table -- get information about the input tank")
         public Object[] getInputTankInfo(Context context, Arguments args) {
-            return new Object[] {getTileEntity().master().tanks[1].getInfo()};
+            return new Object[] {getTileEntity().master().tanks[0].getInfo()};
         }
 
         @Callback(doc = "function():table -- get information about the output tank")
         public Object[] getOutputTankInfo(Context context, Arguments args) {
-            return new Object[] {getTileEntity().master().tanks[2].getInfo()};
+            return new Object[] {getTileEntity().master().tanks[1].getInfo()};
+        }
+
+        @Callback(doc = "function():number -- get the stored energy level")
+        public Object[] getEnergyStored(Context context, Arguments args) {
+            return new Object[] {getTileEntity().master().energyStorage.getEnergyStored()};
+        }
+
+        @Callback(doc = "function():number -- get the maximum energy capacity")
+        public Object[] getMaxEnergyStored(Context context, Arguments args) {
+            return new Object[] {getTileEntity().master().energyStorage.getMaxEnergyStored()};
         }
 
         @Callback(doc = "function():table -- get filled fluid canisters in all slots")
         public Object[] getFullCanisters(Context context, Arguments args) {
-            HashMap<String, ItemStack> canisters = new HashMap<>(3);
-            canisters.put("fuel", getTileEntity().master().inventory.get(0));
-            canisters.put("input", getTileEntity().master().inventory.get(2));
-            canisters.put("output", getTileEntity().master().inventory.get(5));
+            HashMap<String, ItemStack> canisters = new HashMap<>(2);
+            canisters.put("input", getTileEntity().master().inventory.get(1));
+            canisters.put("output", getTileEntity().master().inventory.get(3));
             return new Object[] {canisters};
         }
 
         @Callback(doc = "function():table -- get empty fluid canisters in all slots")
         public Object[] getEmptyCanisters(Context context, Arguments args) {
-            HashMap<String, ItemStack> canisters = new HashMap<>(3);
-            canisters.put("fuel", getTileEntity().master().inventory.get(1));
-            canisters.put("input", getTileEntity().master().inventory.get(3));
-            canisters.put("output", getTileEntity().master().inventory.get(4));
+            HashMap<String, ItemStack> canisters = new HashMap<>(2);
+            canisters.put("input", getTileEntity().master().inventory.get(0));
+            canisters.put("output", getTileEntity().master().inventory.get(2));
             return new Object[] {canisters};
         }
 
@@ -113,7 +112,7 @@ public class BoilerDriver extends DriverSidedTileEntity {
 
         @Override
         public String preferredName() {
-            return "it_boiler";
+            return "it_distiller";
         }
 
         @Override

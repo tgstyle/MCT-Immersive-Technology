@@ -26,9 +26,9 @@ public class SteamTurbineDriver extends DriverSidedTileEntity {
         TileEntity tile = world.getTileEntity(pos);
 
         if (tile instanceof TileEntitySteamTurbineSlave) {
-            TileEntitySteamTurbineSlave boiler = (TileEntitySteamTurbineSlave) tile;
-            if (boiler.master() != null && boiler.isRedstonePos()) {
-                return new SteamTurbineEnvironment(world, boiler.getPos());
+            TileEntitySteamTurbineSlave te = (TileEntitySteamTurbineSlave) tile;
+            if (te.master() != null && te.isRedstonePos()) {
+                return new SteamTurbineEnvironment(world, te.getPos());
             }
         }
         return null;
@@ -49,7 +49,7 @@ public class SteamTurbineDriver extends DriverSidedTileEntity {
             return new Object[] {getTileEntity().master().speed};
         }
 
-        @Callback(doc = "function():number -- get information about the turbine steam level")
+        @Callback(doc = "function():table -- get information about the turbine steam level")
         public Object[] getTankInfo(Context context, Arguments args) {
             return new Object[] {getTileEntity().master().tanks[0].getInfo()};
         }
