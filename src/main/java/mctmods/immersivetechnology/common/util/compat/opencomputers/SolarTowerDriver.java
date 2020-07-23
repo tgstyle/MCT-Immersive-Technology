@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.util.compat.opencomputers;
 
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerSlave;
 
 // Largely based on BluSunrize's drivers for the IE machines
@@ -19,7 +20,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.HashMap;
-import java.util.Optional;
 
 
 public class SolarTowerDriver extends DriverSidedTileEntity {
@@ -28,9 +28,10 @@ public class SolarTowerDriver extends DriverSidedTileEntity {
 		TileEntity tile = world.getTileEntity(pos);
 
 		if (tile instanceof TileEntitySolarTowerSlave) {
-			TileEntitySolarTowerSlave tower = (TileEntitySolarTowerSlave) tile;
-			if (tower.master() != null && tower.isRedstonePos()) {
-				return new SolarTowerEnvironment(world, tower.getPos());
+			TileEntitySolarTowerSlave te = (TileEntitySolarTowerSlave) tile;
+			TileEntitySolarTowerMaster tem = te.master();
+			if (tem != null && te.isRedstonePos()) {
+				return new SolarTowerEnvironment(world, tem.getPos());
 			}
 		}
 		return null;
@@ -41,66 +42,50 @@ public class SolarTowerDriver extends DriverSidedTileEntity {
 		return TileEntitySolarTowerSlave.class;
 	}
 
-	public class SolarTowerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntitySolarTowerSlave> {
+	public class SolarTowerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntitySolarTowerMaster> {
 		public SolarTowerEnvironment(World world, BlockPos pos) {
-			super(world, pos, TileEntitySolarTowerSlave.class);
+			super(world, pos, TileEntitySolarTowerMaster.class);
 		}
 
 		@Callback(doc = "function():number -- get the number of reflectors pointing at the tower")
 		public Object[] getReflectors(Context context, Arguments args) {
-			return new Object[] {getTileEntity().master().reflectors};
+			return new Object[] {getTileEntity().reflectors};
 		}
 
 		@Callback(doc = "function():table -- get information about the input tank")
 		public Object[] getInputTankInfo(Context context, Arguments args) {
-			return new Object[] {getTileEntity().master().tanks[0].getInfo()};
+			return new Object[] {getTileEntity().tanks[0].getInfo()};
 		}
 
 		@Callback(doc = "function():table -- get information about the output tank")
 		public Object[] getOutputTankInfo(Context context, Arguments args) {
-			return new Object[] {getTileEntity().master().tanks[1].getInfo()};
+			return new Object[] {getTileEntity().tanks[1].getInfo()};
 		}
 
 		@Callback(doc = "function():table -- get filled fluid canisters in all slots")
 		public Object[] getFullCanisters(Context context, Arguments args) {
 			HashMap<String, ItemStack> canisters = new HashMap<>(2);
-			canisters.put("input", getTileEntity().master().inventory.get(1));
-			canisters.put("output", getTileEntity().master().inventory.get(3));
+			canisters.put("input", getTileEntity().inventory.get(1));
+			canisters.put("output", getTileEntity().inventory.get(3));
 			return new Object[] {canisters};
 		}
 
 		@Callback(doc = "function():table -- get empty fluid canisters in all slots")
 		public Object[] getEmptyCanisters(Context context, Arguments args) {
 			HashMap<String, ItemStack> canisters = new HashMap<>(2);
-			canisters.put("input", getTileEntity().master().inventory.get(0));
-			canisters.put("output", getTileEntity().master().inventory.get(2));
+			canisters.put("input", getTileEntity().inventory.get(0));
+			canisters.put("output", getTileEntity().inventory.get(2));
 			return new Object[] {canisters};
 		}
 
-		/*
-		 enableComputerControl and setEnable almost directly from IE
-		 Reimplemented here since they need to act on the master, which I (Sigma-One) couldn't figure out how to do without reimplementing them
-		 */
 		@Callback(doc = "function(enabled:bool):nil -- Enables or disables computer control for the attached machine")
 		public Object[] enableComputerControl(Context context, Arguments args) {
-			boolean state = args.checkBoolean(0);
-			if (state) {
-				getTileEntity().master().computerOn = Optional.of(state);
-			}
-			else {
-				getTileEntity().master().computerOn = Optional.empty();
-			}
-			return null;
+			return super.enableComputerControl(context, args);
 		}
 
 		@Callback(doc = "function(enabled:bool):nil")
 		public Object[] setEnabled(Context context, Arguments args) {
-			boolean state = args.checkBoolean(0);
-			if (!getTileEntity().master().computerOn.isPresent()) {
-				throw new IllegalStateException("Computer control must be enabled to enable or disable the machine");
-			}
-			getTileEntity().master().computerOn = Optional.of(state);
-			return null;
+			return super.setEnabled(context, args);
 		}
 
 		@Override
