@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.util.compat.opencomputers;
 
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerSlave;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineSlave;
 
 // Largely based on BluSunrize's drivers for the IE machines
 
@@ -20,15 +20,15 @@ import net.minecraft.world.World;
 import java.util.Optional;
 
 
-public class BoilerDriver extends DriverSidedTileEntity {
+public class SteamTurbineDriver extends DriverSidedTileEntity {
     @Override
     public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
         TileEntity tile = world.getTileEntity(pos);
 
-        if (tile instanceof TileEntityBoilerSlave) {
-            TileEntityBoilerSlave boiler = (TileEntityBoilerSlave) tile;
+        if (tile instanceof TileEntitySteamTurbineSlave) {
+            TileEntitySteamTurbineSlave boiler = (TileEntitySteamTurbineSlave) tile;
             if (boiler.master() != null && boiler.isRedstonePos()) {
-                return new BoilerEnvironment(world, boiler.getPos());
+                return new SteamTurbineEnvironment(world, boiler.getPos());
             }
         }
         return null;
@@ -36,32 +36,22 @@ public class BoilerDriver extends DriverSidedTileEntity {
 
     @Override
     public Class<?> getTileEntityClass() {
-        return TileEntityBoilerSlave.class;
+        return TileEntitySteamTurbineSlave.class;
     }
 
-    public class BoilerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntityBoilerSlave> {
-        public BoilerEnvironment(World world, BlockPos pos) {
-            super(world, pos, TileEntityBoilerSlave.class);
+    public class SteamTurbineEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntitySteamTurbineSlave> {
+        public SteamTurbineEnvironment(World world, BlockPos pos) {
+            super(world, pos, TileEntitySteamTurbineSlave.class);
         }
 
-        @Callback(doc = "function():number -- get the heat level of the boiler")
-        public Object[] getHeat(Context context, Arguments args) {
-            return new Object[] {getTileEntity().master().heatLevel};
+        @Callback(doc = "function():number -- get the turbine speed in RPM")
+        public Object[] getSpeed(Context context, Arguments args) {
+            return new Object[] {getTileEntity().master().speed};
         }
 
-        @Callback(doc = "function():number -- get information about the internal fuel tank")
-        public Object[] getFuelTankInfo(Context context, Arguments args) {
+        @Callback(doc = "function():number -- get information about the turbine steam level")
+        public Object[] getTankInfo(Context context, Arguments args) {
             return new Object[] {getTileEntity().master().tanks[0].getInfo()};
-        }
-
-        @Callback(doc = "function():number -- get information about the input tank")
-        public Object[] getInputTankInfo(Context context, Arguments args) {
-            return new Object[] {getTileEntity().master().tanks[1].getInfo()};
-        }
-
-        @Callback(doc = "function():number -- get information about the input tank")
-        public Object[] getOutputTankInfo(Context context, Arguments args) {
-            return new Object[] {getTileEntity().master().tanks[2].getInfo()};
         }
 
         /*
@@ -92,7 +82,7 @@ public class BoilerDriver extends DriverSidedTileEntity {
 
         @Override
         public String preferredName() {
-            return "it_boiler";
+            return "it_steam_turbine";
         }
 
         @Override

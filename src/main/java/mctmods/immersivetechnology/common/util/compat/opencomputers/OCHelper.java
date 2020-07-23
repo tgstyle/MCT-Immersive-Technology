@@ -15,6 +15,7 @@ public class OCHelper extends ITCompatModule {
     @Override
     public void init() {
         API.driver.add(new BoilerDriver());
+        API.driver.add(new SteamTurbineDriver());
     }
 
     @Override
