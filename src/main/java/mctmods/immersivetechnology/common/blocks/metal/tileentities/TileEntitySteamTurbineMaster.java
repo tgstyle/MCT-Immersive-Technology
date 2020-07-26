@@ -76,7 +76,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
 
 	private void pumpOutputOut() {
 		if(tanks[1].getFluidAmount() == 0) return;
-		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, 2, 8, facing);
+		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, 2, 8, facing, mirrored);
 		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, facing.getOpposite());
 		if(output == null) return;
 		FluidStack out = tanks[1].getFluid();

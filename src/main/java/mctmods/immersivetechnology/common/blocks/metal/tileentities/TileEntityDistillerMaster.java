@@ -64,8 +64,8 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
 	private void pumpOutputOut() {
 		if(tanks[1].getFluidAmount() == 0) return;
-		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, -1, 0, facing, 2, mirrored);
-		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, facing.rotateY());
+		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), -2, -1, 0, facing, mirrored);
+		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, mirrored? facing.rotateYCCW() : facing.rotateY());
 		if(output == null) return;
 		FluidStack out = tanks[1].getFluid();
 		int accepted = output.fill(out, false);
