@@ -46,8 +46,11 @@ repositories {
 		name = 'tterrag Maven'
 		url = 'http://maven.tterrag.com/'
 	}
+	maven {
+		name 'ModMaven'
+		url 'https://modmaven.k-4u.nl'
+	}
 }
-
 
 version = common.mcversion + "-" + modversion+ "." + modsubversion
 group = modgroup
@@ -80,6 +83,7 @@ dependencies {
 
 
 	compileOnly "CraftTweaker2:CraftTweaker2-MC1120-Main:${common.mcbaseversion}-${common.crft_version}"
+	compileOnly "li.cil.oc:OpenComputers:MC${common.mcversion}-${common.opcm_version}"
 }
 
 processResources {
