@@ -31,12 +31,9 @@ public class ITUtils {
 		return LocalOffsetToWorldBlockPos(origin, x, y, z, facing, EnumFacing.UP);
 	}
 
-	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing, int offsetAmount, boolean mirrored) {
-		EnumFacing face = facing.rotateY();;
-		if(!mirrored) face = facing.rotateY().getOpposite();
-		BlockPos offset = origin.offset(face, offsetAmount);
-		return LocalOffsetToWorldBlockPos(offset, x, y, z, facing, EnumFacing.UP);
-	}
+	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing, boolean mirrored) {
+        return LocalOffsetToWorldBlockPos(origin, mirrored? -x : x, y, z, facing, EnumFacing.UP);
+    }
 
 	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing, EnumFacing up) {
 		if(facing.getAxis() == up.getAxis()) throw new IllegalArgumentException("'facing' and 'up' must be perpendicular to each other!");
