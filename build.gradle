@@ -70,11 +70,11 @@ dependencies {
 
 	deobfCompile "cofh:RedstoneFlux:${common.mcbaseversion}-${common.redf_version}:deobf"
 	deobfCompile "cofh:CoFHCore:${common.mcversion}-${common.cofh_version}:deobf"
-	deobfCompile "cofh:CoFHWorld:${common.mcversion}-${common.cwor_version}:deobf"
-	deobfCompile "cofh:ThermalFoundation:${common.mcversion}-${common.thfo_version}:deobf"
-	deobfCompile "cofh:ThermalExpansion:${common.mcversion}-${common.thex_version}:deobf"
-	deobfCompile "cofh:ThermalDynamics:${common.mcversion}-${common.thdy_version}:deobf"
-	deobfCompile "codechicken:CodeChickenLib:${common.mcversion}-${common.ccli_version}:deobf"
+
+
+
+
+
 	compileOnly "mcjty.theoneprobe:TheOneProbe-${common.mcbaseversion}:${common.mcbaseversion}-${common.top_version}"
 
 	compileOnly "slimeknights:TConstruct:${common.mcversion}-${common.tcon_version}"
