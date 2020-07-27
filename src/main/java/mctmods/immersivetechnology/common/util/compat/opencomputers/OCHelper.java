@@ -22,5 +22,6 @@ public class OCHelper extends ITCompatModule {
 
 	@Override
 	public void postInit() {
+		ComputerManualHelper.addManualContent();
 	}
 }
