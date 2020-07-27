@@ -197,3 +197,20 @@ ie.manual.entry.steelTank1=Applying a redstone signal to the bottom center block
 ie.manual.entry.redstone.name=Redstone Timer
 ie.manual.entry.redstone.subtext=tick-tock
 ie.manual.entry.redstone0=The §6Redstone Timer§r outputs a short redstone signal depending on the delay imposed on it. The delay time can be set in the Timer’s gui and has 0.5 Seconds of precision, and can be adjusted between 0.5 to 10 Seconds. The Timer can be stopped with a redstone signal.
+
+ie.manual.entry.computer.steamTurbine.name=Steam Turbine ☎
+ie.manual.entry.computer.steamTurbine.subtext=Boiling breath
+ie.manual.entry.computer.boiler.name=Boiler ☎
+ie.manual.entry.computer.boiler.subtext=A fluid fuel method
+ie.manual.entry.computer.distiller.name=Distiller ☎
+ie.manual.entry.computer.distiller.subtext=Clearer than water
+ie.manual.entry.computer.solarTower.name=Solar Tower ☎
+ie.manual.entry.computer.solarTower.subtext=The power of the Sun
+
+ie.manual.entry.computer.steamTurbine0=§lgetSpeed()§r: returns the speed of the turbine in RPM.<br>§lgetTankInfo()§r: returns information about the turbine's steam tank.
+ie.manual.entry.computer.boiler0=§lgetHeat()§r: returns the boiler's heat level.<br>§lgetFuelTankInfo()§r: returns information about the boiler's fuel tank.<br>§lgetInputTankInfo()§r: returns information about the boiler's input tank.<br>§lgetOutputTankInfo()§r: returns information about the boiler's output tank.
+ie.manual.entry.computer.boiler1=§lgetFullCanisters()§r: returns a table with information about the full fluid canisters in the machine, with the keys "input" and "output" referring to each tank.<br>§lgetEmptyCanisters()§r: returns a table with information about the empty fluid canisters in the machine, with the keys "input" and "output" referring to each tank.
+ie.manual.entry.computer.distiller0=§lgetEnergyStored()§r: returns the energy stored in the distiller's internal buffer.<br>§lgetMaxEnergyStored()§r: returns the distiller's internal energy buffer's maximum capacity<br>§lgetInputTankInfo()§r: returns information about the distiller's input tank.<br>§lgetOutputTankInfo()§r: returns information about the distiller's output tank.
+ie.manual.entry.computer.distiller1=§lgetFullCanisters()§r: returns a table with information about the full fluid canisters in the machine, with the keys "input" and "output" referring to each tank.<br>§lgetEmptyCanisters()§r: returns a table with information about the empty fluid canisters in the machine, with the keys "input" and "output" referring to each tank.
+ie.manual.entry.computer.solarTower0=§lgetReflectors()§r: returns a table of the valid reflectors connected to the solar tower.<br>§lgetInputTankInfo()§r: returns information about the tower's input tank.<br>§lgetOutputTankInfo()§r: returns information about the tower's output tank.
+ie.manual.entry.computer.solarTower1=§lgetFullCanisters()§r: returns a table with information about the full fluid canisters in the machine, with the keys "input" and "output" referring to each tank.<br>§lgetEmptyCanisters()§r: returns a table with information about the empty fluid canisters in the machine, with the keys "input" and "output" referring to each tank.
