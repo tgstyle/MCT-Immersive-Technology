@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.opencomputers;
 
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
+import mctmods.immersivetechnology.common.util.compat.opencomputers.ComputerManualHelper;
 
 // Nearly the same thing as IE's OCHelper, so credit to BluSunrize for that
 
@@ -22,5 +23,6 @@ public class OCHelper extends ITCompatModule {
 
 	@Override
 	public void postInit() {
+		ComputerManualHelper.addManualContent();
 	}
 }
