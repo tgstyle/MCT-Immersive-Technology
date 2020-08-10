@@ -121,6 +121,7 @@ public abstract class ITMultiblock<T extends TileEntityMultiblockPart<T>> implem
         for(int h = 0; h < height; h++) {
             for(int l = 0; l < length; l++) {
                 for(int w = 0; w < width; w++) {
+                    if (structure[h][l][w] == AirRef.instance) continue;
                     BlockPos blockPos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? -w : w, h, l, side);
                     IBlockState state = world.getBlockState(blockPos);
                     if (!structure[h][l][w].isEquals(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)))) return true;
