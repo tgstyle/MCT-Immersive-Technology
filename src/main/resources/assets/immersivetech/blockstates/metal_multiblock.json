@@ -10,6 +10,42 @@
 		}
 	},
 	"variants": {
+		"inventory,type=cooling_tower": [{
+			"model": "immersivetech:metal_multiblock/cooling_tower.obj",
+			"transform": {
+				"scale": 0.08,
+				"rotation": [{
+					"x": 20
+				},
+					{
+						"y": -45
+					}
+				],
+				"translation": [
+					-0.25,
+					-0.4,
+					-0.25
+				]
+			}
+		}],
+		"inventory,type=cooling_tower_slave": [{
+			"model": "immersivetech:metal_multiblock/cooling_tower.obj",
+			"transform": {
+				"scale": 0.08,
+				"rotation": [{
+					"x": 20
+				},
+					{
+						"y": -45
+					}
+				],
+				"translation": [
+					-0.25,
+					-0.4,
+					-0.25
+				]
+			}
+		}],
 		"inventory,type=solar_tower": [{
 			"model": "immersivetech:metal_multiblock/solar_tower.obj",
 			"transform": {
@@ -155,6 +191,12 @@
 			}
 		}],
 		"type": {
+			"cooling_tower": {
+				"model": "immersivetech:metal_multiblock/cooling_tower.obj"
+			},
+			"cooling_tower_slave": {
+				"model": "immersiveengineering:ie_empty"
+			},
 			"solar_tower": {
 				"model": "immersivetech:metal_multiblock/solar_tower.obj"
 			},

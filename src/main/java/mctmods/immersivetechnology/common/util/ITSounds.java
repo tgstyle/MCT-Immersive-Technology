@@ -17,6 +17,7 @@ public class ITSounds {
 	public static SoundEvent distiller = registerSound("distiller");
 	public static SoundEvent advCokeOven = registerSound("advCokeOven");
 	public static SoundEvent solarTower = registerSound("solarTower");
+	public static SoundEvent coolingTower = registerSound("coolingTower");
 
 	private static SoundEvent registerSound(String name) {
 		ResourceLocation location = new ResourceLocation(ImmersiveTechnology.MODID, name);

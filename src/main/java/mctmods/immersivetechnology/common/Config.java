@@ -34,6 +34,8 @@ public class Config {
 				public static boolean enable_solarTower = true;
 				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Steam Turbine / Alternator Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_steamTurbine = true;
+				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Cooling Tower Multiblock structures be built ? [Default=true]"})
+				public static boolean enable_coolingTower = true;
 			}
 			public static class Recipes {
 				@Comment({"Should default Steam Turbine recipes be registered ? [Default=true]"})
@@ -43,7 +45,9 @@ public class Config {
 				@Comment({"Should default Solar Tower recipes be registered ? [Default=true]"})
 				public static boolean register_solarTower_recipes = true;
 				@Comment({"Should default Distiller recipes be registered ? [Default=true]"})
-			public static boolean register_distiller_recipes = true;
+				public static boolean register_distiller_recipes = true;
+				@Comment({"Should default Cooling Tower recipes be registered ? [Default=true]"})
+				public static boolean register_cooling_tower_recipes = true;
 			}
 			public static class AdvancedCokeOven {
 				@Comment({"How fast the Advanced Coke Oven (with no preheaters) is when compared to the basic Coke Oven. A value of 1 means same speed. [Default=1]"})

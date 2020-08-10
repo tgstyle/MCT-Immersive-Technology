@@ -1,0 +1,8 @@
+newmtl tower
+map_Kd immersivetech:blocks/metal_multiblock_cooling_tower_top
+
+newmtl base
+map_Kd immersivetech:blocks/metal_multiblock_cooling_tower_bottom
+
+newmtl connectors
+map_Kd immersivetech:blocks/metal_multiblock_cooling_tower_connections

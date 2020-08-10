@@ -1,15 +1,13 @@
 package mctmods.immersivetechnology.common.util.compat.jei;
 
-import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
+import mctmods.immersivetechnology.api.crafting.*;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe.BoilerFuelRecipe;
-import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
-import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
-import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Experimental;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerFuelRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerRecipeCategory;
+import mctmods.immersivetechnology.common.util.compat.jei.coolingtower.CoolingTowerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.distiller.DistillerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.solartower.SolarTowerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.steamturbine.SteamTurbineRecipeCategory;
@@ -57,6 +55,7 @@ public class JEIHelper implements IModPlugin {
 		}
 		if (Multiblock.enable_solarTower) categories.put(SolarTowerRecipe.class, new SolarTowerRecipeCategory(guiHelper));
 		if (Multiblock.enable_steamTurbine) categories.put(SteamTurbineRecipe.class, new SteamTurbineRecipeCategory(guiHelper));
+		if (Multiblock.enable_coolingTower) categories.put(CoolingTowerRecipe.class, new CoolingTowerRecipeCategory(guiHelper));
 			
 		registry.addRecipeCategories(categories.values().toArray(new IRecipeCategory[categories.size()]));
 	}
@@ -85,6 +84,7 @@ public class JEIHelper implements IModPlugin {
 		}
 		if (Multiblock.enable_solarTower) modRegistry.addRecipes(new ArrayList<Object>((SolarTowerRecipe.recipeList)), "it.solarTower");
 		if (Multiblock.enable_steamTurbine) modRegistry.addRecipes(new ArrayList<Object>((SteamTurbineRecipe.recipeList)), "it.steamTurbine");
+		if (Multiblock.enable_coolingTower) modRegistry.addRecipes(new ArrayList<Object>((CoolingTowerRecipe.recipeList)), "it.coolingTower");
 	}
 
 	@SuppressWarnings("deprecation")
