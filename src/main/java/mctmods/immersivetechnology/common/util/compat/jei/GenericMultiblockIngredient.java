@@ -18,6 +18,7 @@ public class GenericMultiblockIngredient {
     public static GenericMultiblockIngredient SOLAR_TOWER;
     public static GenericMultiblockIngredient BOILER;
     public static GenericMultiblockIngredient COKE_OVEN_ADVANCED;
+    public static GenericMultiblockIngredient COOLING_TOWER;
 
     static {
         if (Multiblock.enable_steamTurbine) STEAM_TURBINE = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.STEAM_TURBINE.getMeta()));
@@ -25,6 +26,7 @@ public class GenericMultiblockIngredient {
         if (Multiblock.enable_solarTower) SOLAR_TOWER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.SOLAR_TOWER.getMeta()));
         if (Multiblock.enable_boiler) BOILER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.BOILER.getMeta()));
         if (Multiblock.enable_advancedCokeOven) COKE_OVEN_ADVANCED = new GenericMultiblockIngredient(new ItemStack(ITContent.blockStoneMultiblock, 1, BlockType_StoneMultiblock.COKE_OVEN_ADVANCED.getMeta()));
+        if (Multiblock.enable_coolingTower) COOLING_TOWER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.COOLING_TOWER.getMeta()));
     }
 
     public ItemStack renderStack;

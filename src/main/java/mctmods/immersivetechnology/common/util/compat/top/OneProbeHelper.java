@@ -2,25 +2,29 @@ package mctmods.immersivetechnology.common.util.compat.top;
 
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import mcjty.theoneprobe.api.*;
+import mcjty.theoneprobe.apiimpl.ProbeConfig;
+import mcjty.theoneprobe.apiimpl.elements.ElementProgress;
+import mcjty.theoneprobe.config.Config;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Boiler;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerSlave;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineSlave;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankSlave;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
 
-	/*
+import static mcjty.theoneprobe.api.TextStyleClass.NAME;
+import static mcjty.theoneprobe.api.TextStyleClass.PROGRESS;
+
+/*
 	* Created by Kurtchekov on 2019-01-01.
 	*/
 public class OneProbeHelper extends ITCompatModule implements Function<ITheOneProbe, Void> {
@@ -99,7 +103,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 				int max = master.master().tank.getCapacity();
 				if(current > 0)	probeInfo.progress(current, max, probeInfo.defaultProgressStyle().suffix("mB").numberFormat(NumberFormat.COMPACT));
 			}
-			if(te instanceof TileEntitySteamTurbineSlave) {
+			else if(te instanceof TileEntitySteamTurbineSlave) {
 				TileEntitySteamTurbineSlave master = ((TileEntitySteamTurbineSlave)te).master();
 				int current = master.master().tanks[0].getFluidAmount();
 				int max = master.master().tanks[0].getCapacity();

@@ -19,7 +19,9 @@ public enum BlockType_MetalMultiblock implements IStringSerializable, BlockITBas
 	ALTERNATOR_SLAVE(false),
 	SOLAR_REFLECTOR_SLAVE(false),
 	STEEL_TANK(false),
-	STEEL_TANK_SLAVE(false);
+	STEEL_TANK_SLAVE(false),
+	COOLING_TOWER(false),
+	COOLING_TOWER_SLAVE(false);
 
 	private boolean needsCustomState;
 	BlockType_MetalMultiblock(boolean needsCustomState) {

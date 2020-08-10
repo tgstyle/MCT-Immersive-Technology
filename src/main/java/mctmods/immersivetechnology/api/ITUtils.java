@@ -26,7 +26,11 @@ public class ITUtils {
 	public static void RemoveDummyFromTicking(TileEntity te) {
 		REMOVE_FROM_TICKING.add(te);
 	}
-
+	
+	public static boolean AreBlockPosIdentical(BlockPos a, BlockPos b) {
+		return a.getX() == b.getX() && a.getY() == b.getY() && a.getZ() == b.getZ();
+	}
+	
 	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing) {
 		return LocalOffsetToWorldBlockPos(origin, x, y, z, facing, EnumFacing.UP);
 	}
@@ -141,6 +145,19 @@ public class ITUtils {
 		boundingArray[3] = fl == EnumFacing.EAST ? 1 - A : fl == EnumFacing.WEST ? 1 - B : fw == EnumFacing.EAST ? 1 - D : 1 - C;
 		boundingArray[4] = maxY;
 		boundingArray[5] = fl == EnumFacing.SOUTH ? 1 - A : fl == EnumFacing.NORTH ? 1 - B : fw == EnumFacing.SOUTH ? 1 - D : 1 - C;
+		return boundingArray;
+	}
+
+	public static double[] alternativeSmartBoundingBox(double A, double B, double C, double D, double minY, double maxY, EnumFacing fl, EnumFacing fw) {
+		double[] boundingArray = new double[6];
+
+		boundingArray[0] = fl == EnumFacing.WEST ? 1 - A : fl == EnumFacing.EAST ? A : fw == EnumFacing.EAST ? 1 - C : C;
+		boundingArray[1] = minY;
+		boundingArray[2] = fl == EnumFacing.NORTH ? 1 - A : fl == EnumFacing.SOUTH ? A : fw == EnumFacing.SOUTH ? 1 - C : C;
+		boundingArray[3] = fl == EnumFacing.EAST ? B : fl == EnumFacing.WEST ? 1 - B : fw == EnumFacing.EAST ? 1 - D : D;
+		boundingArray[4] = maxY;
+		boundingArray[5] = fl == EnumFacing.SOUTH ? B : fl == EnumFacing.NORTH ? 1 - B : fw == EnumFacing.SOUTH ? 1 - D : D;
+
 		return boundingArray;
 	}
 

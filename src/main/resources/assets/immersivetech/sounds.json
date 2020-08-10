@@ -40,5 +40,12 @@
 			"immersivetech:solar_tower"
 		],
 		"subtitle": "subtitle.immersivetech.solarTower"
+	},
+	"coolingTower": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:cooling_tower"
+		],
+		"subtitle": "subtitle.immersivetech.coolingTower"
 	}
 }
