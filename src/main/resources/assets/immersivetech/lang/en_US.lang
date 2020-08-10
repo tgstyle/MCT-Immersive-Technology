@@ -206,6 +206,7 @@ ie.manual.entry.redstone0=The §6Redstone Timer§r outputs a short redstone sign
 ie.manual.entry.coolingTower.name=Cooling Tower
 ie.manual.entry.coolingTower.subtext=Keep it cool, man!
 ie.manual.entry.coolingTower0=The Cooling Tower is a multiblock structure that converts exhaust steam back into water. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the Heavy Engineering block.
+ie.manual.entry.coolingTower1=Exhaust Steam goes into the block to the left of the Heavy Engineering block (side with red gauge indicator) while water or distilled water goes into the right one (side with blue gauge indicator).
 
 ie.manual.entry.computer.steamTurbine.name=Steam Turbine ☎
 ie.manual.entry.computer.steamTurbine.subtext=Boiling breath
