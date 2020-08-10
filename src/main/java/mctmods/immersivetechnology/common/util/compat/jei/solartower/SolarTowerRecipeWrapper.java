@@ -31,4 +31,5 @@ public class SolarTowerRecipeWrapper extends MultiblockRecipeWrapper {
 				TranslationKey.GUI_SECONDS.format(format.format(time/20));
 		minecraft.fontRenderer.drawString(text, 21, 10, 0x8B8B8B, true);
 	}
+
 }

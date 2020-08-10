@@ -6,7 +6,8 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.common.Config.ITConfig.Machines.AdvancedCokeOven;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityCokeOvenPreheater;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
@@ -34,9 +35,11 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvancedSlave implements IEBlockInterfaces.IActiveState, IEBlockInterfaces.IProcessTile, ITFluidTank.TankListener {
 
-	public static float baseSpeed = Config.ITConfig.Machines.AdvancedCokeOven.advancedCokeOven_speed_base;
-	public static float preheaterAdd = Config.ITConfig.Machines.AdvancedCokeOven.advancedCokeOven_preheater_speed_increase;
-	public static float preheaterMult = Config.ITConfig.Machines.AdvancedCokeOven.advancedCokeOven_preheater_speed_multiplier;
+	private static int tankSize = AdvancedCokeOven.advancedCokeOven_tankSize;
+	public static float baseSpeed = AdvancedCokeOven.advancedCokeOven_speed_base;
+	public static float preheaterAdd = AdvancedCokeOven.advancedCokeOven_preheater_speed_increase;
+	public static float preheaterMult = AdvancedCokeOven.advancedCokeOven_preheater_speed_multiplier;
+	BlockPos fluidOutputPos;
 
 	public float process = 0;
 	public int processMax = 0;
@@ -44,7 +47,7 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 	private float soundVolume;
 	private CokeOvenRecipe processing;
 
-  public ITFluidTank tank = new ITFluidTank(24000, this);
+  public ITFluidTank tank = new ITFluidTank(tankSize, this);
   public static int slotCount = 4;
   NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
@@ -67,6 +70,18 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
 		nbt.setTag("tank", tankTag);
 		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
+	}
+
+	private void pumpOutputOut() {
+		if(tank.getFluidAmount() == 0) return;
+		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, - 1, 3, facing, mirrored);
+		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, facing.getOpposite());
+		if(output == null) return;
+		FluidStack out = tank.getFluid();
+		int accepted = output.fill(out, false);
+		if(accepted == 0) return;
+		int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+		this.tank.drain(drained, true);
 	}
 
 	public void handleSounds() {
@@ -214,20 +229,7 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 			if(inventoryFront != null) stack = Utils.insertStackIntoInventory(inventoryFront, stack, facing);
 			this.inventory.set(1, stack);
 		}
-		if(tank.getFluidAmount() > 0) {
-			int outSize = Math.min(144, tank.getFluidAmount());
-			FluidStack out = Utils.copyFluidStackWithAmount(tank.getFluid(), outSize, false);
-			BlockPos outPos = getPos().offset(facing, 3).add(0, - 1, 0);
-			IFluidHandler output = FluidUtil.getFluidHandler(world, outPos, facing.getOpposite());
-			if(output != null) {
-				int accepted = output.fill(out, false);
-				if(accepted > 0) {
-					int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-					this.tank.drain(drained, true);
-					this.markContainingBlockForUpdate(null);
-				}
-			}
-		}
+		pumpOutputOut();
 		if(update) efficientMarkDirty();
 	}
 
@@ -273,11 +275,12 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 		return (baseSpeed + activePreheaters * preheaterAdd) * (1 + activePreheaters * (preheaterMult - 1));
 	}
   
-  IItemHandler inputHandler = new IEInventoryHandler(1, this, 0, new boolean[] {true}, new boolean[] {false});
-  IItemHandler outputHandler = new IEInventoryHandler(1, this, 1, new boolean[] {false}, new boolean[] {true});
+	IItemHandler inputHandler = new IEInventoryHandler(1, this, 0, new boolean[] {true}, new boolean[] {false});
+	IItemHandler outputHandler = new IEInventoryHandler(1, this, 1, new boolean[] {false}, new boolean[] {true});
 
-  @Override
-  public void TankContentsChanged() {
-      this.markContainingBlockForUpdate(null);
-  }
+	@Override
+	public void TankContentsChanged() {
+		this.markContainingBlockForUpdate(null);
+	}
+
 }

@@ -28,4 +28,5 @@ public class GenericMultiblockRenderer implements IIngredientRenderer<GenericMul
     public List<String> getTooltip(Minecraft minecraft, GenericMultiblockIngredient ingredient, ITooltipFlag tooltipFlag) {
         return Arrays.asList(ingredient.renderStack.getDisplayName(), TranslationKey.GUI_GENERIC_MULTIBLOCK_TOOLTIP.text());
     }
+
 }

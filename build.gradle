@@ -25,15 +25,19 @@ repositories {
 	maven {
 		name = 'ChickenBones Maven'
 		url = "http://chickenbones.net/maven/"
-	}	
+	}
 	maven {
 		name = 'JEI Maven'
 		url = 'http://dvs1.progwml6.com/files/maven'
 	}
 	maven {
 		name = 'HWYLA Maven'
-		url = 'http://tehnut.info/maven'
+		url = 'http://maven.tehnut.info'
 	}
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
+    }
 	maven {
 		name = 'Immersive Maven'
 		url = 'http://maven.blamejared.com'
@@ -41,9 +45,12 @@ repositories {
 	maven {
 		name = 'tterrag Maven'
 		url = 'http://maven.tterrag.com/'
-	}	
+	}
+	maven {
+		name 'ModMaven'
+		url 'https://modmaven.k-4u.nl'
+	}
 }
-
 
 version = common.mcversion + "-" + modversion+ "." + modsubversion
 group = modgroup
@@ -66,15 +73,17 @@ dependencies {
 	deobfCompile "blusunrize:ImmersiveEngineering:${common.imme_version}"
 	deobfCompile "cofh:RedstoneFlux:${common.mcbaseversion}-${common.redf_version}:deobf"
 	deobfCompile "cofh:CoFHCore:${common.mcversion}-${common.cofh_version}:deobf"
-	deobfCompile "cofh:CoFHWorld:${common.mcversion}-${common.cwor_version}:deobf"
-	deobfCompile "cofh:ThermalFoundation:${common.mcversion}-${common.thfo_version}:deobf"
-	deobfCompile "cofh:ThermalExpansion:${common.mcversion}-${common.thex_version}:deobf"
-	deobfCompile "codechicken:CodeChickenLib:${common.mcversion}-${common.cclo_version}:deobf"
+
+
+
+
+
 	compileOnly "mcjty.theoneprobe:TheOneProbe-${common.mcbaseversion}:${common.mcbaseversion}-${common.top_version}"
 	compileOnly "mcp.mobius.waila:Hwyla:${common.hwya_version}"
 
 
 	compileOnly "CraftTweaker2:CraftTweaker2-MC1120-Main:${common.mcbaseversion}-${common.crft_version}"
+	compileOnly "li.cil.oc:OpenComputers:MC${common.mcversion}-${common.opcm_version}"
 }
 
 processResources {
@@ -83,10 +92,10 @@ processResources {
 
 	from(sourceSets.main.resources.srcDirs) {
 		include "mcmod.info"
-				
+
 		expand "version":project.modversion + "." + project.modsubversion, "mcversion":project.minecraft.version
 	}
-		
+
 	from(sourceSets.main.resources.srcDirs) {
 		exclude "mcmod.info"
 	}

@@ -1,0 +1,17 @@
+{
+	"type": "forge:ore_shaped",
+	"result": {
+		"item": "immersivetech:stone_decoration",
+		"data": 0
+	},
+	"pattern": [
+		"S",
+		"S"
+	],
+	"key": {
+		"S": {
+			"item": "immersivetech:stone_decoration_slab",
+			"data": 0
+		}
+	}
+}
