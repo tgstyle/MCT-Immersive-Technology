@@ -16,6 +16,7 @@ import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
 import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
 import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
 import mctmods.immersivetechnology.common.util.TemporaryTileEntityRequest;
+import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -65,6 +66,7 @@ public class CommonProxy implements IGuiHandler {
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
 		ImmersiveTechnology.packetHandler.registerMessage(MessageStopSound.HandlerServer.class, MessageStopSound.class, 1, Side.SERVER);
 		ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerServer.class, MessageRequestUpdate.class, 2, Side.SERVER);
+		ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerServer.class, BinaryMessageTileSync.class, 3, Side.SERVER);
 	}
 
 	public void initEnd() {}
