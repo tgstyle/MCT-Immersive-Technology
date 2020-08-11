@@ -27,10 +27,10 @@ public class SolarTowerDriver extends DriverSidedTileEntity {
 	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
-		if (tile instanceof TileEntitySolarTowerSlave) {
+		if(tile instanceof TileEntitySolarTowerSlave) {
 			TileEntitySolarTowerSlave te = (TileEntitySolarTowerSlave) tile;
 			TileEntitySolarTowerMaster tem = te.master();
-			if (tem != null && te.isRedstonePos()) {
+			if(tem != null && te.isRedstonePos()) {
 				return new SolarTowerEnvironment(world, tem.getPos());
 			}
 		}

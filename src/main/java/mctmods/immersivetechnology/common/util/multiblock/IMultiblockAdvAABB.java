@@ -11,7 +11,7 @@ import java.util.List;
 public interface IMultiblockAdvAABB extends IEBlockInterfaces.IAdvancedCollisionBounds, IEBlockInterfaces.IAdvancedSelectionBounds {
 
     byte[][][] GetAABBArray();
-    TileEntityMultiblockPart This();
+    TileEntityMultiblockPart<?> This();
 
     default List<AxisAlignedBB> Inject(List <AxisAlignedBB> list, double A, double B, double C, double D, double minY, double maxY) {
         double[] boundingArray = ITUtils.alternativeSmartBoundingBox(A, B, C, D, minY, maxY, This().facing, This().mirrored? This().facing.rotateYCCW() : This().facing.rotateY());
@@ -47,8 +47,8 @@ public interface IMultiblockAdvAABB extends IEBlockInterfaces.IAdvancedCollision
         byte[][][] array = GetAABBArray();
         List<AxisAlignedBB> list = new ArrayList<>();
         byte[][] aabbs = array[This().pos];
-        if (aabbs == null || aabbs.length == 0) return null;
-        for (int index = 0; index < aabbs.length; index++) {
+        if(aabbs == null || aabbs.length == 0) return null;
+        for(int index = 0; index < aabbs.length; index++) {
             Inject(list, aabbs[index]);
         }
         return list;

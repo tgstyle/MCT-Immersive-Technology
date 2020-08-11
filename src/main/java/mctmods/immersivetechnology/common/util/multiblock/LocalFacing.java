@@ -25,8 +25,8 @@ public enum LocalFacing {
     }
 
     public EnumFacing LocalToGlobal(EnumFacing origin) {
-        if (origin == null) return null;
-        switch (this.index) {
+        if(origin == null) return null;
+        switch(this.index) {
             case 0: return RotateDown(origin);
             case 1: return RotateUp(origin);
             case 2: return origin;
@@ -37,16 +37,8 @@ public enum LocalFacing {
         return null;
     }
 
-    private EnumFacing RotateForward(EnumFacing origin) {
-        switch (origin) {
-            case UP: return EnumFacing.SOUTH;
-            case DOWN: return EnumFacing.NORTH;
-            default: return EnumFacing.DOWN;
-        }
-    }
-
     private EnumFacing RotateDown(EnumFacing origin) {
-        switch (origin) {
+        switch(origin) {
             case UP: return EnumFacing.SOUTH;
             case DOWN: return EnumFacing.NORTH;
             default: return EnumFacing.DOWN;
@@ -54,7 +46,7 @@ public enum LocalFacing {
     }
 
     private EnumFacing RotateUp(EnumFacing origin) {
-        switch (origin) {
+        switch(origin) {
             case UP: return EnumFacing.NORTH;
             case DOWN: return EnumFacing.SOUTH;
             default: return EnumFacing.UP;

@@ -252,7 +252,7 @@ public class ClientProxy extends CommonProxy {
 		ManualHelper.addEntry("stackLimiter", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "stackLimiter0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.STACK_LIMITER.getMeta())));
 		ManualHelper.addEntry("steelBarrel", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "steelBarrel0", new ItemStack(ITContent.blockMetalBarrel, 2, BlockType_MetalBarrel.BARREL_STEEL.getMeta())));
 		ManualHelper.addEntry("steelTank", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "steelTank0", MultiblockSteelSheetmetalTank.instance), new ManualPages.Text(ManualHelper.getManual(), "steelTank1"));
-		if (Multiblock.enable_coolingTower)
+		if(Multiblock.enable_coolingTower)
 			ManualHelper.addEntry("coolingTower", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "coolingTower0", MultiblockCoolingTower.instance));
 	}
 
