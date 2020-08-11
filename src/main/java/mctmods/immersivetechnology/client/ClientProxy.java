@@ -254,6 +254,7 @@ public class ClientProxy extends CommonProxy {
 		ManualHelper.addEntry("steelTank", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "steelTank0", MultiblockSteelSheetmetalTank.instance), new ManualPages.Text(ManualHelper.getManual(), "steelTank1"));
 		if (Multiblock.enable_coolingTower)
 			ManualHelper.addEntry("coolingTower", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "coolingTower0", MultiblockCoolingTower.instance), new ManualPages.Text(ManualHelper.getManual(), "coolingTower1"));
+	}
 
 	private static void mapFluidState(Block block, Fluid fluid)	{
 		Item item = Item.getItemFromBlock(block);
