@@ -138,7 +138,7 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 	}
 
 	public TileEntity pipeImplementation() {
-		if (Config.ITConfig.Experimental.replace_pipe_algorithm) {
+		if(Config.ITConfig.Experimental.replace_pipe_algorithm) {
 			return new mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative();
 		} else {
 			return new mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe();
@@ -189,7 +189,7 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 	@SuppressWarnings("deprecation")
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-		if (!Config.ITConfig.Experimental.replace_pipe_algorithm)
+		if(!Config.ITConfig.Experimental.replace_pipe_algorithm)
 			mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.indirectConnections.clear();
 		return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
 	}
@@ -215,10 +215,10 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 					}
 				}
 			}
-			if (te instanceof TileEntityFluidPipeAlternative) {
-				for (EnumFacing neighborDirection : EnumFacing.values()) {
+			if(te instanceof TileEntityFluidPipeAlternative) {
+				for(EnumFacing neighborDirection : EnumFacing.values()) {
 					TileEntity neighbor = world.getTileEntity(pos.offset(neighborDirection));
-					if (!(neighbor instanceof TileEntityFluidPipeAlternative)) continue;
+					if(!(neighbor instanceof TileEntityFluidPipeAlternative)) continue;
 					((TileEntityFluidPipeAlternative)neighbor).neighborPipeRemoved(neighborDirection.getOpposite());
 				}
 			}

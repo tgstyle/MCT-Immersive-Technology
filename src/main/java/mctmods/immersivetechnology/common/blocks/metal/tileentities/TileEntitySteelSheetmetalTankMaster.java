@@ -43,7 +43,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 					if(output != null) {
 						if(sleep == 0) {
 							FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), false);
-							if (accepted == null) {
+							if(accepted == null) {
 								sleep = 20;
 								return;
 							}

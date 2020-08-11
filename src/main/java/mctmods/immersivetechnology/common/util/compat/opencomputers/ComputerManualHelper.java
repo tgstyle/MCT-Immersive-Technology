@@ -12,12 +12,12 @@ public class ComputerManualHelper {
 	private static boolean added = false;
 
 	public static void addManualContent() {
-		if (added) {
+		if(added) {
 			return;
 		}
 		added = true;
 
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+		if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			ManualHelper.getManual().addEntry("computer.steamTurbine", "computers",
 					new ManualPages.Text(ManualHelper.getManual(), "computer.steamTurbine0")
 			);

@@ -48,14 +48,14 @@ public class JEIHelper implements IModPlugin {
 		IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
 		slotDrawable = guiHelper.getSlotDrawable();
 
-		if (Multiblock.enable_distiller) categories.put(DistillerRecipe.class, new DistillerRecipeCategory(guiHelper));
-		if (Multiblock.enable_boiler) {
+		if(Multiblock.enable_distiller) categories.put(DistillerRecipe.class, new DistillerRecipeCategory(guiHelper));
+		if(Multiblock.enable_boiler) {
 			categories.put(BoilerRecipe.class, new BoilerRecipeCategory(guiHelper));
 			categories.put(BoilerFuelRecipe.class, new BoilerFuelRecipeCategory(guiHelper));
 		}
-		if (Multiblock.enable_solarTower) categories.put(SolarTowerRecipe.class, new SolarTowerRecipeCategory(guiHelper));
-		if (Multiblock.enable_steamTurbine) categories.put(SteamTurbineRecipe.class, new SteamTurbineRecipeCategory(guiHelper));
-		if (Multiblock.enable_coolingTower) categories.put(CoolingTowerRecipe.class, new CoolingTowerRecipeCategory(guiHelper));
+		if(Multiblock.enable_solarTower) categories.put(SolarTowerRecipe.class, new SolarTowerRecipeCategory(guiHelper));
+		if(Multiblock.enable_steamTurbine) categories.put(SteamTurbineRecipe.class, new SteamTurbineRecipeCategory(guiHelper));
+		if(Multiblock.enable_coolingTower) categories.put(CoolingTowerRecipe.class, new CoolingTowerRecipeCategory(guiHelper));
 			
 		registry.addRecipeCategories(categories.values().toArray(new IRecipeCategory[categories.size()]));
 	}
@@ -75,16 +75,16 @@ public class JEIHelper implements IModPlugin {
 			modRegistry.handleRecipes(cat.getRecipeClass(), cat, cat.getRecipeCategoryUid());
 		}
 
-		if (Multiblock.enable_advancedCokeOven) modRegistry.addRecipeCatalyst(GenericMultiblockIngredient.COKE_OVEN_ADVANCED, "ie.cokeoven");
+		if(Multiblock.enable_advancedCokeOven) modRegistry.addRecipeCatalyst(GenericMultiblockIngredient.COKE_OVEN_ADVANCED, "ie.cokeoven");
 
-		if (Multiblock.enable_distiller) modRegistry.addRecipes(new ArrayList<Object>((DistillerRecipe.recipeList)), "it.distiller");
-		if (Multiblock.enable_boiler) {
+		if(Multiblock.enable_distiller) modRegistry.addRecipes(new ArrayList<Object>((DistillerRecipe.recipeList)), "it.distiller");
+		if(Multiblock.enable_boiler) {
 			modRegistry.addRecipes(new ArrayList<Object>((BoilerRecipe.recipeList)), "it.boiler");
 			modRegistry.addRecipes(new ArrayList<Object>((BoilerRecipe.fuelList)), "it.boilerFuel");
 		}
-		if (Multiblock.enable_solarTower) modRegistry.addRecipes(new ArrayList<Object>((SolarTowerRecipe.recipeList)), "it.solarTower");
-		if (Multiblock.enable_steamTurbine) modRegistry.addRecipes(new ArrayList<Object>((SteamTurbineRecipe.recipeList)), "it.steamTurbine");
-		if (Multiblock.enable_coolingTower) modRegistry.addRecipes(new ArrayList<Object>((CoolingTowerRecipe.recipeList)), "it.coolingTower");
+		if(Multiblock.enable_solarTower) modRegistry.addRecipes(new ArrayList<Object>((SolarTowerRecipe.recipeList)), "it.solarTower");
+		if(Multiblock.enable_steamTurbine) modRegistry.addRecipes(new ArrayList<Object>((SteamTurbineRecipe.recipeList)), "it.steamTurbine");
+		if(Multiblock.enable_coolingTower) modRegistry.addRecipes(new ArrayList<Object>((CoolingTowerRecipe.recipeList)), "it.coolingTower");
 	}
 
 	@SuppressWarnings("deprecation")

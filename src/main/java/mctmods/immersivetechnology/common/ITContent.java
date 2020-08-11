@@ -214,7 +214,7 @@ public class ITContent {
 			registerTile(TileEntitySteamTurbineMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockSteamTurbine.instance);
 		}
-		if (Multiblock.enable_coolingTower) {
+		if(Multiblock.enable_coolingTower) {
 			registerTile(TileEntityCoolingTowerSlave.class);
 			registerTile(TileEntityCoolingTowerMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockCoolingTower.instance);
@@ -227,7 +227,7 @@ public class ITContent {
 		if(Experimental.replace_IE_pipes) {
 			normallyPressurized.add(FluidRegistry.getFluid("steam"));
 			IEHijackedRegisterTile(TileEntityFluidPump.class, "FluidPump");
-			if (Experimental.replace_pipe_algorithm) {
+			if(Experimental.replace_pipe_algorithm) {
 				TileEntityFluidPipeAlternative.initCovers();
 				IEHijackedRegisterTile(TileEntityFluidPipeAlternative.class, "FluidPipe");
 			} else {
@@ -264,7 +264,7 @@ public class ITContent {
 			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 750), new FluidStack(FluidRegistry.getFluid("distwater"), 250), 40);
 		}
 		if(Multiblock.enable_steamTurbine && Recipes.register_steamTurbine_recipes) SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("exhauststeam"), 100), new FluidStack(FluidRegistry.getFluid("steam"), 100), 1);
-		if (Multiblock.enable_coolingTower && Recipes.register_cooling_tower_recipes) {
+		if(Multiblock.enable_coolingTower && Recipes.register_cooling_tower_recipes) {
 			CoolingTowerRecipe.addRecipe(
 					new FluidStack(FluidRegistry.getFluid("water"), 750),
 					new FluidStack(FluidRegistry.getFluid("water"), 750),

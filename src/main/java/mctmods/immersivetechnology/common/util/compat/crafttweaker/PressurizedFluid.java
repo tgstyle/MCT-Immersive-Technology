@@ -14,14 +14,14 @@ public class PressurizedFluid {
     @ZenMethod
     public static void add(ILiquidStack fluid) {
         Fluid actualFluid = CraftTweakerHelper.toFluidStack(fluid).getFluid();
-        if (ITContent.normallyPressurized.contains(actualFluid)) return;
+        if(ITContent.normallyPressurized.contains(actualFluid)) return;
         CraftTweakerAPI.apply(new Add(actualFluid));
     }
 
     @ZenMethod
     public static void remove(ILiquidStack fluid) {
         Fluid actualFluid = CraftTweakerHelper.toFluidStack(fluid).getFluid();
-        if (!ITContent.normallyPressurized.contains(actualFluid)) return;
+        if(!ITContent.normallyPressurized.contains(actualFluid)) return;
         CraftTweakerAPI.apply(new Remove(actualFluid));
     }
 

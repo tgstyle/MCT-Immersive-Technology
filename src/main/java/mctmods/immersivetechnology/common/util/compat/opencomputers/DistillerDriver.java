@@ -27,10 +27,10 @@ public class DistillerDriver extends DriverSidedTileEntity {
 	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
-		if (tile instanceof TileEntityDistillerSlave) {
+		if(tile instanceof TileEntityDistillerSlave) {
 			TileEntityDistillerSlave te = (TileEntityDistillerSlave) tile;
 			TileEntityDistillerMaster tem = te.master();
-			if (tem != null && te.isRedstonePos()) {
+			if(tem != null && te.isRedstonePos()) {
 				return new DistillerEnvironment(world, tem.getPos());
 			}
 		}

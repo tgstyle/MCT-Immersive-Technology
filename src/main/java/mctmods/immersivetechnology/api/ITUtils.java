@@ -37,9 +37,9 @@ public class ITUtils {
 
 	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing, EnumFacing up) {
 		if(facing.getAxis() == up.getAxis()) throw new IllegalArgumentException("'facing' and 'up' must be perpendicular to each other!");
-		switch (up) {
+		switch(up) {
 			case UP:
-				switch (facing) {
+				switch(facing) {
 					case SOUTH:
 						return origin.add(-x, y, z);
 					case NORTH:
@@ -53,7 +53,7 @@ public class ITUtils {
 				}
 				break;
 			case DOWN:
-				switch (facing) {
+				switch(facing) {
 					case SOUTH:
 						return origin.add(x, -y, z);
 					case NORTH:
@@ -67,7 +67,7 @@ public class ITUtils {
 				}
 				break;
 			case NORTH:
-				switch (facing) {
+				switch(facing) {
 					case UP:
 						return origin.add(-x, z, -y);
 					case DOWN:
@@ -81,7 +81,7 @@ public class ITUtils {
 				}
 				break;
 			case SOUTH:
-				switch (facing) {
+				switch(facing) {
 					case UP:
 						return origin.add(x, z, y);
 					case DOWN:
@@ -95,7 +95,7 @@ public class ITUtils {
 				}
 				break;
 			case EAST:
-				switch (facing) {
+				switch(facing) {
 					case UP:
 						return origin.add(y, z, -x);
 					case DOWN:
@@ -109,7 +109,7 @@ public class ITUtils {
 				}
 				break;
 			case WEST:
-				switch (facing) {
+				switch(facing) {
 					case UP:
 						return origin.add(-y, z, x);
 					case DOWN:
@@ -190,7 +190,7 @@ public class ITUtils {
 		EnumFacing inputFacing = ((IMechanicalEnergy) tile).getMechanicalEnergyInputFacing();
 		BlockPos pos = startPos.offset(inputFacing, ((IMechanicalEnergy) tile).inputToCenterDistance() + 1);
 		TileEntity tileInfo = world.getTileEntity(pos);
-		if (!(tileInfo instanceof IMechanicalEnergy)) return 0;
+		if(!(tileInfo instanceof IMechanicalEnergy)) return 0;
 		TileEntity tileTransmitter = world.getTileEntity(pos.offset(inputFacing, ((IMechanicalEnergy) tileInfo).outputToCenterDistance()));
 		if(tileTransmitter instanceof IMechanicalEnergy) {
 			return ((IMechanicalEnergy) tileTransmitter).getEnergy();
