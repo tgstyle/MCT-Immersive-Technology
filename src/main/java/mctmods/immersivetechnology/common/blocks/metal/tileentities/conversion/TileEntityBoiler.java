@@ -1,9 +1,10 @@
-package mctmods.immersivetechnology.common.blocks.metal.tileentities;
+package mctmods.immersivetechnology.common.blocks.metal.tileentities.conversion;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockBoiler;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerSlave;
 import mctmods.immersivetechnology.common.util.TemporaryTileEntityRequest;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;

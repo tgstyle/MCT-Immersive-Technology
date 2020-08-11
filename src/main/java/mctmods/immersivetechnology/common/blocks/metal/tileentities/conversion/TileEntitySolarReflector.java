@@ -1,9 +1,10 @@
-package mctmods.immersivetechnology.common.blocks.metal.tileentities;
+package mctmods.immersivetechnology.common.blocks.metal.tileentities.conversion;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.CommonProxy;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteelSheetmetalTank;
+import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarReflector;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarReflectorSlave;
 import mctmods.immersivetechnology.common.util.TemporaryTileEntityRequest;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -12,24 +13,34 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 //REMOVE THIS AFTER PORTING!!!
-public class TileEntitySteelSheetmetalTank extends TileEntitySteelSheetmetalTankSlave {
+public class TileEntitySolarReflector extends TileEntitySolarReflectorSlave {
 
 	public MultiblockHandler.IMultiblock getMultiblock() {
-		return MultiblockSteelSheetmetalTank.instance;
+		return MultiblockSolarReflector.instance;
 	}
 
 	public int[] dimensions() {
-		return new int[]{5, 3, 3};
+		return new int[] {5, 1, 3};
 	}
 
 	public ItemStack checkPos(int pos) {
-		 return getOriginalBlock();
+		int[] structureDimensions = dimensions();
+		MultiblockHandler.IMultiblock multiblock = getMultiblock();
+		ItemStack s = ItemStack.EMPTY;
+		try {
+			int blocksPerLevel = structureDimensions[1]*structureDimensions[2];
+			int h = (pos/blocksPerLevel);
+			int l = (pos%blocksPerLevel/structureDimensions[2]);
+			int w = (pos%structureDimensions[2]);
+			s = multiblock.getStructureManual()[h][l][w];
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return s.copy();
 	}
 
-	int counter = 0;
-
 	public void update() {
-		if(++counter > 5 && changeTo != null) {
+		if(changeTo != null) {
 			world.setBlockState(worldPosition, changeTo);
 			if(master) {
 				TemporaryTileEntityRequest request = new TemporaryTileEntityRequest();
@@ -37,13 +48,13 @@ public class TileEntitySteelSheetmetalTank extends TileEntitySteelSheetmetalTank
 				request.multiblock = getMultiblock();
 				request.nbtTag = thisNbt;
 				request.position = worldPosition;
-				request.formationPosition = worldPosition.offset(facing, -1).up();
 				request.world = world;
 				CommonProxy.toReform.add(request);
 			}
 		}
 	}
 
+	int pos;
 	BlockPos worldPosition;
 	IBlockState changeTo;
 	boolean master;
