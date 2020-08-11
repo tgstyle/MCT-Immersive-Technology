@@ -138,7 +138,8 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
             if(tanks[0].getFluidAmount() > 0 || tanks[1].getFluidAmount() > 0) {
                 recipe = CoolingTowerRecipe.findRecipe(tanks[0].getFluid(), tanks[1].getFluid());
                 if(recipe != null) {
-                    MultiblockProcessInMachine<CoolingTowerRecipe> process =
+                    @SuppressWarnings("unchecked")
+					MultiblockProcessInMachine<CoolingTowerRecipe> process =
                             new MultiblockProcessInMachine<>(recipe).setInputTanks(new int[]{0, 1});
                     if(this.addProcessToQueue(process, true)) {
                         this.addProcessToQueue(process, false);
