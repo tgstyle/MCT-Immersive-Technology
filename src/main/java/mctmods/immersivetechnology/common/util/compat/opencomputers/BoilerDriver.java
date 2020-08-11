@@ -27,10 +27,10 @@ public class BoilerDriver extends DriverSidedTileEntity {
 	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
-		if (tile instanceof TileEntityBoilerSlave) {
+		if(tile instanceof TileEntityBoilerSlave) {
 			TileEntityBoilerSlave te = (TileEntityBoilerSlave) tile;
 			TileEntityBoilerMaster tem = te.master();
-			if (tem != null && te.isRedstonePos()) {
+			if(tem != null && te.isRedstonePos()) {
 				return new BoilerEnvironment(world, tem.getPos());
 			}
 		}

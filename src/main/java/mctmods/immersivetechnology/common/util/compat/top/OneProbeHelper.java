@@ -2,9 +2,6 @@ package mctmods.immersivetechnology.common.util.compat.top;
 
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import mcjty.theoneprobe.api.*;
-import mcjty.theoneprobe.apiimpl.ProbeConfig;
-import mcjty.theoneprobe.apiimpl.elements.ElementProgress;
-import mcjty.theoneprobe.config.Config;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Boiler;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
@@ -15,14 +12,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
 
-import static mcjty.theoneprobe.api.TextStyleClass.NAME;
-import static mcjty.theoneprobe.api.TextStyleClass.PROGRESS;
 
 /*
 	* Created by Kurtchekov on 2019-01-01.

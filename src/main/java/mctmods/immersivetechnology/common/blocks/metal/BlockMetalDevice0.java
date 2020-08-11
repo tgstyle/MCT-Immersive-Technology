@@ -9,7 +9,7 @@ public class BlockMetalDevice0 extends blusunrize.immersiveengineering.common.bl
 
     @Override
     public TileEntity createBasicTE(World world, BlockTypes_MetalDevice0 type) {
-        if (type == BlockTypes_MetalDevice0.FLUID_PUMP) return new TileEntityFluidPump();
+        if(type == BlockTypes_MetalDevice0.FLUID_PUMP) return new TileEntityFluidPump();
         else return super.createBasicTE(world,type);
     }
 }

@@ -24,10 +24,10 @@ public class SteamTurbineDriver extends DriverSidedTileEntity {
 	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
-		if (tile instanceof TileEntitySteamTurbineSlave) {
+		if(tile instanceof TileEntitySteamTurbineSlave) {
 			TileEntitySteamTurbineSlave te = (TileEntitySteamTurbineSlave) tile;
 			TileEntitySteamTurbineMaster tem = te.master();
-			if (tem != null && te.isRedstonePos()) {
+			if(tem != null && te.isRedstonePos()) {
 				return new SteamTurbineEnvironment(world, tem.getPos());
 			}
 		}

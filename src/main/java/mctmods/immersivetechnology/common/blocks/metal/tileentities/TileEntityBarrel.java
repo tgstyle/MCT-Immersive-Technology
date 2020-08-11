@@ -131,7 +131,7 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 
 	@Override
 	public FluidStack drain(int maxDrain, boolean doDrain) {
-		if (infiniteFluid == null) return null;
+		if(infiniteFluid == null) return null;
 		if(doDrain) acceptedAmount += maxDrain;
 		return new FluidStack(infiniteFluid, maxDrain);
 	}

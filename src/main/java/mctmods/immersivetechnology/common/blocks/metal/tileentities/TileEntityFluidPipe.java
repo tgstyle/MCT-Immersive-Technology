@@ -811,5 +811,4 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		if(color != null) return color.getColorValue()|(0xff000000);
 		return 0xffffffff;
 	}
-
 }
