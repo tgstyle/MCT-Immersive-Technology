@@ -81,7 +81,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     }
 
     public void notifyNearbyClients() {
-        ByteBuf buffer = Unpooled.copyBoolean(tickedProcesses > 0);
+        ByteBuf buffer = Unpooled.copyBoolean(isRunning);
         BlockPos center = getPos();
         ImmersiveTechnology.packetHandler.sendToAllAround(new BinaryMessageTileSync(center, buffer), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
     }
@@ -98,11 +98,9 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     public void handleSounds() {
         if(isRunning) {
-            gracePeriod = 60;
             if(soundVolume < 1) soundVolume += 0.01f;
         } else {
-            if(gracePeriod > 0) gracePeriod--;
-            else if(soundVolume > 0) soundVolume -= 0.01f;
+            if(soundVolume > 0) soundVolume -= 0.01f;
         }
         if(soundVolume == 0) ITSoundHandler.StopSound(soundOrigin);
         else {
@@ -149,6 +147,15 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
                 }
             }
         }
+
+        if (tickedProcesses > 0) {
+            isRunning = true;
+            gracePeriod = 60;
+        } else {
+            if (gracePeriod == 0) isRunning = false;
+            else gracePeriod--;
+        }
+
         if(clientUpdateCooldown > 1) clientUpdateCooldown--;
         else {
             notifyNearbyClients();
