@@ -25,5 +25,4 @@ public class CoolingTowerRecipeWrapper extends MultiblockRecipeWrapper {
                 TranslationKey.GUI_SECONDS.format(((float)recipe.getTotalProcessTime()) / 20);
         minecraft.fontRenderer.drawString(text, 67, 10, 0x8B8B8B, true);
     }
-
 }

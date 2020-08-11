@@ -1,9 +1,10 @@
-package mctmods.immersivetechnology.common.blocks.stone.tileentities;
+package mctmods.immersivetechnology.common.blocks.metal.tileentities.conversion;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.CommonProxy;
-import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
+import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineSlave;
 import mctmods.immersivetechnology.common.util.TemporaryTileEntityRequest;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -12,14 +13,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 //REMOVE THIS AFTER PORTING!!!
-public class TileEntityCokeOvenAdvanced extends TileEntityCokeOvenAdvancedSlave {
+public class TileEntitySteamTurbine extends TileEntitySteamTurbineSlave {
 
 	public MultiblockHandler.IMultiblock getMultiblock() {
-		return MultiblockCokeOvenAdvanced.instance;
+		return MultiblockSteamTurbine.instance;
 	}
 
 	public int[] dimensions() {
-		return new int[] {4, 3, 3};
+		return new int[] { 4, 10, 3 };
 	}
 
 	public ItemStack checkPos(int pos) {
@@ -40,7 +41,6 @@ public class TileEntityCokeOvenAdvanced extends TileEntityCokeOvenAdvancedSlave 
 
 	public void update() {
 		if(changeTo != null) {
-			//world.setBlockToAir(worldPosition);
 			world.setBlockState(worldPosition, changeTo);
 			if(master) {
 				TemporaryTileEntityRequest request = new TemporaryTileEntityRequest();
@@ -82,5 +82,4 @@ public class TileEntityCokeOvenAdvanced extends TileEntityCokeOvenAdvancedSlave 
 		if(s == ItemStack.EMPTY) return;
 		changeTo = Utils.getStateFromItemStack(s);
 	}
-
 }

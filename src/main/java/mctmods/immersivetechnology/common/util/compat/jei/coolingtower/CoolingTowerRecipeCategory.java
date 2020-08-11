@@ -47,10 +47,10 @@ public class CoolingTowerRecipeCategory extends ITRecipeCategory<CoolingTowerRec
 
         int tankIndex = 0;
         IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-        if (!inputs.isEmpty()) {
+        if(!inputs.isEmpty()) {
             guiFluidStacks.init(tankIndex, true, 11, 11, 16, 47, tankSize, true, tankOverlay);
             guiFluidStacks.set(tankIndex, inputs.get(0));
-            if (inputs.size() == 2) {
+            if(inputs.size() == 2) {
                 tankIndex++;
                 guiFluidStacks.init(tankIndex, true, 34, 11, 16, 47, tankSize, true, tankOverlay);
                 guiFluidStacks.set(tankIndex, inputs.get(1));
@@ -80,5 +80,4 @@ public class CoolingTowerRecipeCategory extends ITRecipeCategory<CoolingTowerRec
         arrow.draw(minecraft, 65, 51);
         drops.draw(minecraft, 68, 28);
     }
-
 }

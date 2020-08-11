@@ -62,16 +62,15 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     }
 
     public void spawnParticles() {
-        if (!isRunning) return;
+        if(!isRunning) return;
         Random rand = new Random();
-        if (rand.nextInt(40) == 0) return;
+        if(rand.nextInt(40) == 0) return;
         int lessParticleSetting = ClientUtils.mc().gameSettings.particleSetting;
-        if (lessParticleSetting == 2 || lessParticleSetting == 1 && rand.nextInt(3) == 0) return;
-
+        if(lessParticleSetting == 2 || lessParticleSetting == 1 && rand.nextInt(3) == 0) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
 
         double distanceLimit = 64;
-        if (particleOrigin.distanceSq(player.posX, player.posY, player.posZ) > distanceLimit * distanceLimit) return;
+        if(particleOrigin.distanceSq(player.posX, player.posY, player.posZ) > distanceLimit * distanceLimit) return;
 
         ParticleSmokeCustomSize cloud = new ParticleSmokeCustomSize(world,
                 particleOrigin.getX() + 2 - rand.nextFloat()*3,
@@ -102,7 +101,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
             gracePeriod = 60;
             if(soundVolume < 1) soundVolume += 0.01f;
         } else {
-            if (gracePeriod > 0) gracePeriod--;
+            if(gracePeriod > 0) gracePeriod--;
             else if(soundVolume > 0) soundVolume -= 0.01f;
         }
         if(soundVolume == 0) ITSoundHandler.StopSound(soundOrigin);
@@ -129,38 +128,33 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     @Override
     public void update() {
         super.update();
-        if (world.isRemote) {
-            if (input0 == null) InitializePoIs();
+        if(world.isRemote) {
+            if(input0 == null) InitializePoIs();
             handleSounds();
             spawnParticles();
             return;
         }
-
         pumpOutputOut();
-
         boolean update = false;
-
-        if (processQueue.size() < this.getProcessQueueMaxLength()) {
-            if (tanks[0].getFluidAmount() > 0 || tanks[1].getFluidAmount() > 0) {
+        if(processQueue.size() < this.getProcessQueueMaxLength()) {
+            if(tanks[0].getFluidAmount() > 0 || tanks[1].getFluidAmount() > 0) {
                 CoolingTowerRecipe recipe = CoolingTowerRecipe.findRecipe(tanks[0].getFluid(), tanks[1].getFluid());
-                if (recipe != null) {
+                if(recipe != null) {
                     MultiblockProcessInMachine<CoolingTowerRecipe> process =
                             new MultiblockProcessInMachine<>(recipe).setInputTanks(new int[]{0, 1});
-                    if (this.addProcessToQueue(process, true)) {
+                    if(this.addProcessToQueue(process, true)) {
                         this.addProcessToQueue(process, false);
                         update = true;
                     }
                 }
             }
         }
-
         if(clientUpdateCooldown > 1) clientUpdateCooldown--;
         else {
             notifyNearbyClients();
             clientUpdateCooldown = 20;
         }
-
-        if (update) {
+        if(update) {
             efficientMarkDirty();
             this.markContainingBlockForUpdate(null);
         }
@@ -190,37 +184,37 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     private BlockPos particleOrigin, soundOrigin, output0Front, output1Front;
 
     private void InitializePoIs() {
-        for (PoIJSONSchema poi : MultiblockCoolingTower.instance.pointsOfInterest) {
-            if (poi.name.equals("input0")) input0 = new PoICache(facing, poi, mirrored);
-            else if (poi.name.equals("input1")) input1 = new PoICache(facing, poi, mirrored);
-            else if (poi.name.equals("output0")) {
+        for(PoIJSONSchema poi : MultiblockCoolingTower.instance.pointsOfInterest) {
+            if(poi.name.equals("input0")) input0 = new PoICache(facing, poi, mirrored);
+            else if(poi.name.equals("input1")) input1 = new PoICache(facing, poi, mirrored);
+            else if(poi.name.equals("output0")) {
                 output0 = new PoICache(facing, poi, mirrored);
                 output0Front = getBlockPosForPos(output0.position).offset(output0.facing);
-            } else if (poi.name.equals("output1")) {
+            } else if(poi.name.equals("output1")) {
                 output1 = new PoICache(facing, poi, mirrored);
                 output1Front = getBlockPosForPos(output1.position).offset(output1.facing);
-            } else if (poi.name.equals("particle")) particleOrigin = getBlockPosForPos(poi.position);
-            else if (poi.name.equals("sound")) soundOrigin = getBlockPosForPos(poi.position);
+            } else if(poi.name.equals("particle")) particleOrigin = getBlockPosForPos(poi.position);
+            else if(poi.name.equals("sound")) soundOrigin = getBlockPosForPos(poi.position);
         }
     }
 
     public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        if (input0 == null) InitializePoIs();
-        if (side == null) return tanks;
-        if (input0.isPoI(side, position)) return new FluidTank[] {tanks[0]};
-        else if (input1.isPoI(side, position)) return new FluidTank[] {tanks[1]};
-        else if (output0.isPoI(side, position)) return new FluidTank[] {tanks[2]};
-        else if (output1.isPoI(side, position)) return new FluidTank[] {tanks[3]};
+        if(input0 == null) InitializePoIs();
+        if(side == null) return tanks;
+        if(input0.isPoI(side, position)) return new FluidTank[] {tanks[0]};
+        else if(input1.isPoI(side, position)) return new FluidTank[] {tanks[1]};
+        else if(output0.isPoI(side, position)) return new FluidTank[] {tanks[2]};
+        else if(output1.isPoI(side, position)) return new FluidTank[] {tanks[3]};
         return ITUtils.emptyIFluidTankList;
     }
 
     public boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) {
-        if (input0 == null) InitializePoIs();
-        if (input0.isPoI(side, position)) {
+        if(input0 == null) InitializePoIs();
+        if(input0.isPoI(side, position)) {
             if(tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
             if(tanks[0].getFluid() == null) return CoolingTowerRecipe.findRecipeByFluid0(resource.getFluid()) != null;
             else return resource.getFluid() == tanks[0].getFluid().getFluid();
-        } else if (input1.isPoI(side, position)) {
+        } else if(input1.isPoI(side, position)) {
             if(tanks[1].getFluidAmount() >= tanks[1].getCapacity()) return false;
             if(tanks[1].getFluid() == null) return CoolingTowerRecipe.findRecipeByFluid1(resource.getFluid()) != null;
             else return resource.getFluid() == tanks[1].getFluid().getFluid();
@@ -229,17 +223,17 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     }
 
     public boolean canDrainTankFrom(int iTank, EnumFacing side, int position) {
-        if (input0 == null) InitializePoIs();
-        if (output0.isPoI(side, position)) {
+        if(input0 == null) InitializePoIs();
+        if(output0.isPoI(side, position)) {
             return tanks[2].getFluidAmount() > 0;
-        } else if (output1.isPoI(side, position)) {
+        } else if(output1.isPoI(side, position)) {
             return tanks[3].getFluidAmount() > 0;
         }
         return false;
     }
 
     private void pumpOutputOut() {
-        if (input0 == null) InitializePoIs();
+        if(input0 == null) InitializePoIs();
         IFluidHandler output;
         if(tanks[2].getFluidAmount() > 0 && (output = FluidUtil.getFluidHandler(world, output0Front, output0.facing.getOpposite())) != null) {
             FluidStack out = tanks[2].getFluid();

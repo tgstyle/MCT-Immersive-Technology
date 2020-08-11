@@ -49,7 +49,7 @@ public abstract class ITMultiblock<T extends TileEntityMultiblockPart<T>> implem
 
     public ITMultiblock(String structurePath, IBlockState master, IBlockState slave) {
         MultiblockJSONSchema data = MultiblockUtils.Load(structurePath);
-        if (data == null) throw new IllegalArgumentException(String.format("Invalid or missing multiblock file %s", structurePath));
+        if(data == null) throw new IllegalArgumentException(String.format("Invalid or missing multiblock file %s", structurePath));
 
         this.uniqueName = data.uniqueName;
         this.masterBlockState = master;
@@ -65,11 +65,11 @@ public abstract class ITMultiblock<T extends TileEntityMultiblockPart<T>> implem
         this.structure = MultiblockUtils.GetStructure(data, width, length, height);
         this.materials = MultiblockUtils.GetMaterials(data);
 
-        if (data.master.mod.equals("ore")) {
+        if(data.master.mod.equals("ore")) {
             trigger = new OreDictRef(data.master.name);
         } else {
             Item item = Item.getByNameOrId(data.master.mod + ":" + data.master.name);
-            if (item == null) throw new IllegalArgumentException(String.format("Invalid item %s:%s",data.master.mod, data.master.name));
+            if(item == null) throw new IllegalArgumentException(String.format("Invalid item %s:%s",data.master.mod, data.master.name));
             trigger = new ItemStackRef(new ItemStack(item, 1, data.master.meta));
         }
 
@@ -97,11 +97,12 @@ public abstract class ITMultiblock<T extends TileEntityMultiblockPart<T>> implem
             for(int l = 0; l < length; l++) {
                 for(int w = 0; w < width; w++) {
                     int position = h * (width * length) + l * width + w;
-                    if (collisionData[position] == null) continue;
+                    if(collisionData[position] == null) continue;
                     BlockPos pos2 = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? -w : w, h, l, side);
                     world.setBlockState(pos2, ITUtils.AreBlockPosIdentical(pos, pos2)? masterBlockState : slaveBlockState);
-                    T tile = (T)world.getTileEntity(pos2);
-                    if (tile != null) {
+                    @SuppressWarnings("unchecked")
+					T tile = (T)world.getTileEntity(pos2);
+                    if(tile != null) {
                         tile.facing = side;
                         tile.formed = true;
                         tile.pos = position;
@@ -124,7 +125,7 @@ public abstract class ITMultiblock<T extends TileEntityMultiblockPart<T>> implem
                     if (structure[h][l][w] == AirRef.instance) continue;
                     BlockPos blockPos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? -w : w, h, l, side);
                     IBlockState state = world.getBlockState(blockPos);
-                    if (!structure[h][l][w].isEquals(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)))) return true;
+                    if(!structure[h][l][w].isEquals(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)))) return true;
                 }
             }
         }
@@ -132,8 +133,8 @@ public abstract class ITMultiblock<T extends TileEntityMultiblockPart<T>> implem
     }
 
     public boolean isPointOfInterest(EnumFacing accessSide, EnumFacing machineFacing, int position, String name) {
-        for (PoIJSONSchema poi : pointsOfInterest) {
-            if (    !poi.name.equals(name) ||
+        for(PoIJSONSchema poi : pointsOfInterest) {
+            if(    !poi.name.equals(name) ||
                     poi.position != position ||
                     poi.facing.LocalToGlobal(machineFacing) != accessSide) continue;
             return true;

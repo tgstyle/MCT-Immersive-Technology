@@ -51,7 +51,7 @@ public class DistillerRecipeCategory extends ITRecipeCategory<DistillerRecipe, D
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
 
 		ItemStack itemOutput = recipeWrapper.recipe.itemOutput;
-		if (!itemOutput.isEmpty()) {
+		if(!itemOutput.isEmpty()) {
 			IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
 			guiItemStacks.init(0, false, 133, 52);
 			guiItemStacks.set(0, itemOutput);

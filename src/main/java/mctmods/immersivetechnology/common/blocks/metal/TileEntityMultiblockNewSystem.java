@@ -19,7 +19,7 @@ public abstract class TileEntityMultiblockNewSystem<T extends TileEntityMultiblo
 		super(instance, structureDimensions, energyCapacity, redstoneControl);
 	}
 
-	public TileEntityMultiblockNewSystem(ITMultiblock instance, int energyCapacity, boolean redstoneControl) {
+	public TileEntityMultiblockNewSystem(ITMultiblock<?> instance, int energyCapacity, boolean redstoneControl) {
 		super(instance, new int[] { instance.height, instance.length, instance.width }, energyCapacity, redstoneControl);
 	}
 
@@ -41,6 +41,7 @@ public abstract class TileEntityMultiblockNewSystem<T extends TileEntityMultiblo
 		return super.hasCapability(capability, facing);
 	}
 
+	@SuppressWarnings({ "unchecked", "hiding" })
 	@Override
 	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
 		if(capability==CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY&&this.getAccessibleFluidTanks(facing).length > 0)

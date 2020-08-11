@@ -13,17 +13,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 public class TileEntityCoolingTowerSlave extends TileEntityMultiblockNewSystem<TileEntityCoolingTowerSlave, CoolingTowerRecipe, TileEntityCoolingTowerMaster> implements IMultiblockAdvAABB {
@@ -204,7 +200,7 @@ public class TileEntityCoolingTowerSlave extends TileEntityMultiblockNewSystem<T
     }
 
     @Override
-    public TileEntityMultiblockPart This() {
+    public TileEntityMultiblockPart<TileEntityCoolingTowerSlave> This() {
         return this;
     }
 }

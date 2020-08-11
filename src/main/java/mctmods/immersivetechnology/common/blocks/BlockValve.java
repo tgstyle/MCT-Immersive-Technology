@@ -22,7 +22,7 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 	@Nullable
 	@Override
 	public TileEntity createBasicTE(World worldIn, BlockType_Valve type) {
-		switch (type) {
+		switch(type) {
 			case FLUID_VALVE: return new TileEntityFluidValve();
 			case LOAD_CONTROLLER: return new TileEntityLoadController();
 			case STACK_LIMITER: return new TileEntityStackLimiter();
