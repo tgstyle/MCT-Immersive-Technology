@@ -43,6 +43,8 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
             new ITFluidTank(10000, this)
     };
 
+    CoolingTowerRecipe recipe;
+
     @Override
     public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -68,14 +70,12 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         int lessParticleSetting = ClientUtils.mc().gameSettings.particleSetting;
         if(lessParticleSetting == 2 || lessParticleSetting == 1 && rand.nextInt(3) == 0) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-
         double distanceLimit = 64;
         if(particleOrigin.distanceSq(player.posX, player.posY, player.posZ) > distanceLimit * distanceLimit) return;
-
         ParticleSmokeCustomSize cloud = new ParticleSmokeCustomSize(world,
-                particleOrigin.getX() + 2 - rand.nextFloat()*3,
+                particleOrigin.getX() + 2 - rand.nextFloat() * 3,
                 particleOrigin.getY(),
-                particleOrigin.getZ() + 2 - rand.nextFloat()*3, 0, 0.02f, 0, 7);
+                particleOrigin.getZ() + 2 - rand.nextFloat() * 3, 0, 0.02f, 0, 7);
         cloud.setRBGColorF(1,1,1);
         ClientUtils.mc().effectRenderer.addEffect(cloud);
     }
@@ -136,7 +136,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         boolean update = false;
         if(processQueue.size() < this.getProcessQueueMaxLength()) {
             if(tanks[0].getFluidAmount() > 0 || tanks[1].getFluidAmount() > 0) {
-                CoolingTowerRecipe recipe = CoolingTowerRecipe.findRecipe(tanks[0].getFluid(), tanks[1].getFluid());
+                recipe = CoolingTowerRecipe.findRecipe(tanks[0].getFluid(), tanks[1].getFluid());
                 if(recipe != null) {
                     MultiblockProcessInMachine<CoolingTowerRecipe> process =
                             new MultiblockProcessInMachine<>(recipe).setInputTanks(new int[]{0, 1});
@@ -240,16 +240,17 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     }
 
     private void pumpOutputOut() {
+        if(recipe == null) return;
         if(input0 == null) InitializePoIs();
         IFluidHandler output;
-        if(tanks[2].getFluidAmount() > 0 && (output = FluidUtil.getFluidHandler(world, output0Front, output0.facing.getOpposite())) != null) {
+        if(tanks[2].getFluidAmount() >= recipe.fluidOutput0.amount && (output = FluidUtil.getFluidHandler(world, output0Front, output0.facing.getOpposite())) != null) {
             FluidStack out = tanks[2].getFluid();
             int accepted = output.fill(out, false);
             if(accepted == 0) return;
             int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
             this.tanks[2].drain(drained, true);
         }
-        if(tanks[3].getFluidAmount() > 0 && (output = FluidUtil.getFluidHandler(world, output1Front, output1.facing.getOpposite())) != null) {
+        if(tanks[3].getFluidAmount() >= recipe.fluidOutput1.amount && (output = FluidUtil.getFluidHandler(world, output1Front, output1.facing.getOpposite())) != null) {
             FluidStack out = tanks[3].getFluid();
             int accepted = output.fill(out, false);
             if(accepted == 0) return;
