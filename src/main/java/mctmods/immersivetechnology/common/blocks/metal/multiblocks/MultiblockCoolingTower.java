@@ -23,7 +23,6 @@ public class MultiblockCoolingTower extends ITMultiblock<TileEntityCoolingTowerS
         super("multiblocks/cooling_tower.json",
                 ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.COOLING_TOWER.getMeta()),
                 ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.COOLING_TOWER_SLAVE.getMeta()));
-        renderFormedStructure();
     }
 
     @Override
