@@ -63,6 +63,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         nbt.setTag("tank3", tanks[3].writeToNBT(new NBTTagCompound()));
     }
 
+    @SideOnly(Side.CLIENT)
     public void spawnParticles() {
         if(!isRunning) return;
         Random rand = new Random();
