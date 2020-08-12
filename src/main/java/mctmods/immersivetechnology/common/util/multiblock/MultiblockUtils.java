@@ -6,14 +6,10 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.ITLogger;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
-
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,16 +18,16 @@ public class MultiblockUtils {
 
     public static MultiblockJSONSchema Load(String path) {
         MultiblockJSONSchema data;
-        ResourceLocation loc = new ResourceLocation(ImmersiveTechnology.MODID, path);
         try {
-            JsonReader reader = new JsonReader(new InputStreamReader(Minecraft.getMinecraft().getResourceManager().getResource(loc).getInputStream()));
+            InputStreamReader stream = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(String.format("assets/%s/%s",ImmersiveTechnology.MODID,path)));
+            JsonReader reader = new JsonReader(stream);
             try {
                 data = new Gson().fromJson(reader, MultiblockJSONSchema.class);
             } catch (JsonSyntaxException i) {
                 ITLogger.error(String.format("Syntax error in file %s", path));
                 throw i;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             ITLogger.error(String.format("Couldn't load file %s", path));
             return null;
         }
