@@ -33,6 +33,7 @@ import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevi
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.util.ITLogger;
+import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -222,6 +223,8 @@ public class ClientProxy extends CommonProxy {
 		ImmersiveTechnology.packetHandler.registerMessage(MessageStopSound.HandlerClient.class, MessageStopSound.class, 1, Side.CLIENT);
 		ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerClient.class, MessageRequestUpdate.class, 2, Side.CLIENT);
 		ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerServer.class, MessageRequestUpdate.class, 2, Side.SERVER);
+		ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerClient.class, BinaryMessageTileSync.class, 3, Side.CLIENT);
+		ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerServer.class, BinaryMessageTileSync.class, 3, Side.SERVER);
 	}
 
 	@Override
@@ -249,6 +252,8 @@ public class ClientProxy extends CommonProxy {
 		ManualHelper.addEntry("stackLimiter", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "stackLimiter0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.STACK_LIMITER.getMeta())));
 		ManualHelper.addEntry("steelBarrel", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "steelBarrel0", new ItemStack(ITContent.blockMetalBarrel, 2, BlockType_MetalBarrel.BARREL_STEEL.getMeta())));
 		ManualHelper.addEntry("steelTank", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "steelTank0", MultiblockSteelSheetmetalTank.instance), new ManualPages.Text(ManualHelper.getManual(), "steelTank1"));
+		if (Multiblock.enable_coolingTower)
+			ManualHelper.addEntry("coolingTower", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "coolingTower0", MultiblockCoolingTower.instance), new ManualPages.Text(ManualHelper.getManual(), "coolingTower1"));
 	}
 
 	private static void mapFluidState(Block block, Fluid fluid)	{

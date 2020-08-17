@@ -70,6 +70,10 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
 				return new TileEntitySteelSheetmetalTankMaster();
 			case STEEL_TANK_SLAVE:
 				return new TileEntitySteelSheetmetalTankSlave();
+			case COOLING_TOWER:
+				return new TileEntityCoolingTowerMaster();
+			case COOLING_TOWER_SLAVE:
+				return new TileEntityCoolingTowerSlave();
 		}
 		return null;
 	}

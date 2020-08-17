@@ -14,8 +14,10 @@ item.immersivetech.material.salt.name=Salt
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=Distilled Water
 tile.immersivetech.fluidSteam.name=Steam
+tile.immersivetech.fluidExhaustSteam.name=Exhaust Steam
 fluid.distwater=Distilled Water
 fluid.steam=Steam
+fluid.exhauststeam=Exhaust Steam
 
 
 #KEYWORDS
@@ -62,6 +64,8 @@ tile.immersivetech.metal_multiblock.boiler_slave.name=Boiler
 tile.immersivetech.metal_multiblock.alternator_slave.name=Alternator
 tile.immersivetech.metal_multiblock.steel_tank.name=Steel Fluid Tank
 tile.immersivetech.metal_multiblock.steel_tank_slave.name=Steel Fluid Tank
+tile.immersivetech.metal_multiblock.cooling_tower.name=Cooling Tower
+tile.immersivetech.metal_multiblock.cooling_tower_slave.name=Cooling Tower
 
 
 #OVERLAY
@@ -120,6 +124,7 @@ desc.immersiveengineering.info.multiblock.IT:SteamTurbine=Steam Turbine
 desc.immersiveengineering.info.multiblock.IT:Boiler=Boiler
 desc.immersiveengineering.info.multiblock.IT:Alternator=Alternator
 desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank=Steel Fluid Tank
+desc.immersiveengineering.info.multiblock.IT:CoolingTower=Cooling Tower
 
 
 #STONE MULTIBLOCKS
@@ -197,6 +202,11 @@ ie.manual.entry.steelTank1=Applying a redstone signal to the bottom center block
 ie.manual.entry.redstone.name=Redstone Timer
 ie.manual.entry.redstone.subtext=tick-tock
 ie.manual.entry.redstone0=The §6Redstone Timer§r outputs a short redstone signal depending on the delay imposed on it. The delay time can be set in the Timer’s gui and has 0.5 Seconds of precision, and can be adjusted between 0.5 to 10 Seconds. The Timer can be stopped with a redstone signal.
+
+ie.manual.entry.coolingTower.name=Cooling Tower
+ie.manual.entry.coolingTower.subtext=Keep it cool, man!
+ie.manual.entry.coolingTower0=The Cooling Tower is a multiblock structure that converts exhaust steam back into water. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the Heavy Engineering block.
+ie.manual.entry.coolingTower1=Exhaust Steam goes into the block to the left of the Heavy Engineering block (side with red gauge indicator) while water or distilled water goes into the right one (side with blue gauge indicator).
 
 ie.manual.entry.computer.steamTurbine.name=Steam Turbine ☎
 ie.manual.entry.computer.steamTurbine.subtext=Boiling breath

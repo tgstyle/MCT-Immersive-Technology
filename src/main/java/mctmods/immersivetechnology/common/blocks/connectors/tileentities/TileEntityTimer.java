@@ -200,7 +200,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 
 	@Override
 	public float[] getBlockBounds() {
-		switch (facing) {
+		switch(facing) {
 		case NORTH:
 			return new float[] {.25f, 0, 0, .75f, .75f, 1};
 		case SOUTH:

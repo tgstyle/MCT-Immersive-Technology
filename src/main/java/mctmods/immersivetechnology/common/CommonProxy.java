@@ -6,16 +6,14 @@ import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
 import mctmods.immersivetechnology.common.gui.*;
 import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
 import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
 import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
 import mctmods.immersivetechnology.common.util.TemporaryTileEntityRequest;
+import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -24,6 +22,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -40,6 +39,12 @@ public class CommonProxy implements IGuiHandler {
 	}
 
 	public static List<TemporaryTileEntityRequest> toReform = new ArrayList<>();
+
+	@SubscribeEvent
+	public void onWorldUnload(WorldEvent.Unload event) {
+		//sanitation
+		TileEntityFluidPipe.indirectConnections.clear();
+	}
 
 	@SubscribeEvent
 	public void onWorldTick(TickEvent.WorldTickEvent event) {
@@ -65,6 +70,7 @@ public class CommonProxy implements IGuiHandler {
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
 		ImmersiveTechnology.packetHandler.registerMessage(MessageStopSound.HandlerServer.class, MessageStopSound.class, 1, Side.SERVER);
 		ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerServer.class, MessageRequestUpdate.class, 2, Side.SERVER);
+		ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerServer.class, BinaryMessageTileSync.class, 3, Side.SERVER);
 	}
 
 	public void initEnd() {}
