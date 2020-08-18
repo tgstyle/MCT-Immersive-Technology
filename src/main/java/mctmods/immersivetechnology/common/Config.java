@@ -23,6 +23,7 @@ public class Config {
 			public static SolarTower solartower;
 			public static SteamTurbine steamturbine;
 			public static SteelTank steeltank;
+			public static CoolingTower coolingTower;
 
 			public static class Multiblock {
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Preheater be built ? [Default=true]"})
@@ -59,6 +60,12 @@ public class Config {
 				public static float advancedCokeOven_preheater_speed_increase = 1;
 				@Comment({"The speed of the Advanced Coke Oven gets multiplied by this value per preheater [Default=1]"})
 				public static float advancedCokeOven_preheater_speed_multiplier = 1;
+			}
+			public static class CoolingTower {
+				@Comment({"The capacity of the input tanks for the Cooling Tower [Default=10000]"})
+				public static int coolingTower_input_tankSize = 10000;
+				@Comment({"The capacity of the output tanks for the Cooling Tower [Default=10000]"})
+				public static int coolingTower_output_tankSize = 10000;
 			}
 			public static class Alternator {
 				@Comment({"The maximum energy an Alternator can store in if[Default=1200000]"})

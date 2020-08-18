@@ -7,6 +7,7 @@ import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
+import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockCoolingTower;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
@@ -36,11 +37,14 @@ import java.util.Random;
 
 public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver {
 
+    private static int inputTankSize = Config.ITConfig.Machines.CoolingTower.coolingTower_input_tankSize;
+    private static int outputTankSize = Config.ITConfig.Machines.CoolingTower.coolingTower_output_tankSize;
+
     public FluidTank[] tanks = new FluidTank[] {
-            new ITFluidTank(10000, this),
-            new ITFluidTank(10000, this),
-            new ITFluidTank(10000, this),
-            new ITFluidTank(10000, this)
+            new ITFluidTank(inputTankSize, this),
+            new ITFluidTank(inputTankSize, this),
+            new ITFluidTank(outputTankSize, this),
+            new ITFluidTank(outputTankSize, this)
     };
 
     CoolingTowerRecipe recipe;
