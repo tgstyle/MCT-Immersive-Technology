@@ -28,6 +28,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
 	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
 	private static int rfPerTick = Alternator.alternator_energy_perTick;
 	private static int rfPerTickPerPort = rfPerTick / 6;
+	private static boolean soundRPM = Alternator.alternator_sound_RPM;
 
 	public FluxStorage energyStorage = new FluxStorage(Alternator.alternator_energy_capacitorSize,rfPerTick,rfPerTickPerPort);
 
@@ -37,6 +38,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
 	private int clientUpdateCooldown = 20;
 	private float clientEnergyPercentage;
 	private int oldEnergy = energyStorage.getEnergyStored();
+	private int oldSpeed = maxSpeed;
 
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
@@ -44,9 +46,10 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 		energyStorage.readFromNBT(nbt);
-		clientEnergyPercentage = (float) energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
 		speed = nbt.getInteger("speed");
 		animation.readFromNBT(nbt);
+		if(!soundRPM) clientEnergyPercentage = (float) energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
+		else clientEnergyPercentage = (float) speed / maxSpeed;
 	}
 
 	@Override
@@ -67,7 +70,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
 		else {
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
-			ITSoundHandler.PlaySound(center, ITSounds.alternator, SoundCategory.BLOCKS, true, (2 * clientEnergyPercentage) / attenuation, clientEnergyPercentage);
+			ITSoundHandler.PlaySound(center, ITSounds.alternator, SoundCategory.BLOCKS, true, (3 * clientEnergyPercentage) / attenuation, clientEnergyPercentage);
 		}
 	}
 
@@ -87,7 +90,8 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
 
 	public void notifyNearbyClients() {
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setInteger("energy", energyStorage.getEnergyStored());
+		if(!soundRPM) tag.setInteger("clientEnergy", energyStorage.getEnergyStored());
+		else tag.setInteger("clientSpeed", speed);
 		BlockPos center = getPos();
 		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 	}
@@ -117,23 +121,34 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
 				currentEnergy = energyStorage.getEnergyStored();
 			}
 			if(clientUpdateCooldown > 0) clientUpdateCooldown--;
-			if(oldEnergy != currentEnergy) {
-				efficientMarkDirty();
-				this.markContainingBlockForUpdate(null);
-				if(clientUpdateCooldown == 0) {
-					notifyNearbyClients();
-					clientUpdateCooldown = 20;
+			if(!soundRPM) {
+				if(oldEnergy != currentEnergy) {
+					efficientMarkDirty();
+					this.markContainingBlockForUpdate(null);
+					if(clientUpdateCooldown == 0) {
+						notifyNearbyClients();
+						clientUpdateCooldown = 20;
+					}
+				}
+			} else {
+				if(oldSpeed != speed) {
+					efficientMarkDirty();
+					this.markContainingBlockForUpdate(null);
+					if(clientUpdateCooldown == 0) {
+						notifyNearbyClients();
+						clientUpdateCooldown = 20;
+					}
 				}
 			}
 			oldEnergy = currentEnergy;
+			oldSpeed = speed;
 		} else handleSounds();
 	}
 
 	@Override
 	public void receiveMessageFromServer(NBTTagCompound message) {
-		if(message.hasKey("energy")) {
-			clientEnergyPercentage = (float) message.getInteger("energy") / energyStorage.getMaxEnergyStored();
-		}
+		if(!soundRPM && message.hasKey("clientEnergy")) clientEnergyPercentage = (float) message.getInteger("clientEnergy") / energyStorage.getMaxEnergyStored();
+		else if(message.hasKey("clientSpeed")) clientEnergyPercentage = (float) message.getInteger("clientSpeed") / maxSpeed;
 	}
 
 	@Override

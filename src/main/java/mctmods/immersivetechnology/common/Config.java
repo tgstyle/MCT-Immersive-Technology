@@ -72,6 +72,8 @@ public class Config {
 				public static int alternator_energy_capacitorSize = 1200000;
 				@Comment({"Energy production when running at maximum speed and torque in if[Default=12288]"})
 				public static int alternator_energy_perTick = 12288;
+				@Comment({"Alternator sound based RPM or Capacity [Default=true]"})
+				public static boolean alternator_sound_RPM = true;
 			}
 			public static class Boiler {
 				@Comment({"The capacity of the input tank for the Boiler [Default=20000]"})
