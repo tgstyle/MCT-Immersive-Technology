@@ -80,11 +80,11 @@ public class Config {
 				public static int boiler_output_tankSize = 20000;
 				@Comment({"The capacity of the fuel tank for the Boiler [Default=2000]"})
 				public static int boiler_fuel_tankSize = 2000;
-				@Comment({"A boiler can only start processing recipes once it reaches this heat level [Default=12000.0]"})
+				@Comment({"A Boiler can only start processing recipes once it reaches this heat level [Default=12000.0]"})
 				public static double boiler_heat_workingLevel = 12000.0;
-				@Comment({"How fast the boiler cools down per tick when turned off or missing fuel [Default=5]"})
+				@Comment({"How fast the Boiler cools down per tick when turned off or missing fuel [Default=5]"})
 				public static int boiler_heat_lossPerTick = 5;
-				@Comment({"How fast the boiler loses progress in ticks when the heat drops below processing heat level [Default=1]"})
+				@Comment({"How fast the Boiler loses progress in ticks when the heat drops below processing heat level [Default=1]"})
 				public static int boiler_progress_lossInTicks = 1;
 			}
 			public static class CokeOvenPreheater {
@@ -108,10 +108,16 @@ public class Config {
 				public static int solarTower_input_tankSize = 32000;
 				@Comment({"The capacity of the output tank for the Solar Tower [Default=32000]"})
 				public static int solarTower_output_tankSize = 32000;
-				@Comment({"The Speed multiplier applied to all Solar Tower recipes (with a single reflector) [Default=1]"})
+				@Comment({"The heat speed multiplier applied to all Solar Tower recipes (with a single reflector) [Default=1]"})
 				public static float solarTower_speed_multiplier = 1;
-				@Comment({"The speed of the Solar Tower gets multiplied by this value, per Solar Reflector past the first one [Default=1.5]"})
+				@Comment({"The heat speed of the Solar Tower gets multiplied by this value, per Solar Reflector past the first one [Default=1.5]"})
 				public static float solarTower_solarReflector_speed_multiplier = 1.5f;
+				@Comment({"A Solar Tower can only start processing recipes once it reaches this heat level [Default=6000.0]"})
+				public static double solarTower_heat_workingLevel = 6000.0;
+				@Comment({"How fast the Solar Tower cools down per tick when turned off or at night [Default=1]"})
+				public static int solarTower_heat_lossPerTick = 1;
+				@Comment({"How fast the the Solar Tower loses progress in ticks when the heat drops below processing heat level [Default=1]"})
+				public static int solarTower_progress_lossInTicks = 1;
 			}
 			public static class SolarReflector {
 				@Comment({"The minimum distance between the Solar Reflectors and the Solar Tower [Default=5]"})
