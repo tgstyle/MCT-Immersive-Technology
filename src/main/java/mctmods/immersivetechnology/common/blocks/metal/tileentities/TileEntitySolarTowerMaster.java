@@ -87,6 +87,12 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 				reflectors[cont] = 0;
 			}
 			return update;
+		} else if(world.isRaining()) {
+			for(int cont = 0; cont < 4; cont++) {
+				reflectors[cont] = 0;
+			}
+			update = true;
+			return update;
 		}
 		EnumFacing fw;
 		EnumFacing fr;
