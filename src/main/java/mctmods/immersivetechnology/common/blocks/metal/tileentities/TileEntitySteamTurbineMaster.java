@@ -106,9 +106,9 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
 
 	@Override
 	public void disassemble() {
+		super.disassemble();
 		BlockPos center = getPos().offset(facing, 5);
 		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
-		super.disassemble();
 	}
 
 	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!

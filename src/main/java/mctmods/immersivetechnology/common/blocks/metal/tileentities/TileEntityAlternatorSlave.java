@@ -125,6 +125,11 @@ public class TileEntityAlternatorSlave extends TileEntityMultiblockPart <TileEnt
 	}
 
 	@Override
+	public boolean isValid() {
+		return formed;
+	}
+
+	@Override
 	public boolean isMechanicalEnergyTransmitter() {
 		return false;
 	}
@@ -155,8 +160,13 @@ public class TileEntityAlternatorSlave extends TileEntityMultiblockPart <TileEnt
 	}
 
 	@Override
-	public int getEnergy() {
+	public int getSpeed() {
 		return master() == null ? 0 : master.speed;
+	}
+
+	@Override
+	public float getTorqueMultiplier() {
+		return 0;
 	}
 
 	public MechanicalEnergyAnimation getAnimation() {

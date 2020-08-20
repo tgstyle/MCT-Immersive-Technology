@@ -64,6 +64,11 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 	}
 
 	@Override
+	public boolean isValid() {
+		return formed;
+	}
+
+	@Override
 	public boolean isMechanicalEnergyTransmitter() {
 		return true;
 	}
@@ -94,8 +99,13 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 	}
 
 	@Override
-	public int getEnergy() {
+	public int getSpeed() {
 		return master() == null? 0 : master.speed;
+	}
+
+	@Override
+	public float getTorqueMultiplier() {
+		return 1;
 	}
 
 	public MechanicalEnergyAnimation getAnimation() {
