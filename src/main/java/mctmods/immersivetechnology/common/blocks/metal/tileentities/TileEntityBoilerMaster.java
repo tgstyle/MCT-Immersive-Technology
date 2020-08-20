@@ -74,7 +74,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 		nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound()));
 		nbt.setDouble("heatLevel", heatLevel);
 		nbt.setInteger("burnRemaining", burnRemaining);
-		nbt.setFloat("recipeTimeRemaining", recipeTimeRemaining);
+		nbt.setInteger("recipeTimeRemaining", recipeTimeRemaining);
 		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
 
@@ -161,6 +161,11 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 		tag.setDouble("heat", heatLevel);
 		BlockPos center = getPos();
 		ImmersiveTechnology.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
+	}
+
+	@Override
+	public void receiveMessageFromServer(NBTTagCompound message) {
+		heatLevel = message.getDouble("heat");
 	}
 
 	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
@@ -285,11 +290,6 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 	public TileEntityBoilerMaster master() {
 		master = this;
 		return this;
-	}
-
-	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
-		heatLevel = message.getDouble("heat");
 	}
 
 }
