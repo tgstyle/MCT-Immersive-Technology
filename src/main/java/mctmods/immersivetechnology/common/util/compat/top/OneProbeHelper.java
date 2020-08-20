@@ -77,7 +77,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 			if(te instanceof IMechanicalEnergy) {
 				TileEntityMultiblockPart<?> master = ((TileEntityMultiblockPart<?>)te).master();
 				if(master == null) return;
-				int current = ((IMechanicalEnergy)master).getEnergy();
+				int current = ((IMechanicalEnergy)master).getSpeed();
 				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2)).text("Speed").progress(current, maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("RPM"));
 			}
 		}

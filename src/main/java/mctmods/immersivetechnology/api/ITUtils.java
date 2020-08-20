@@ -185,17 +185,17 @@ public class ITUtils {
 		return false;
 	}
 
-	public static int getMechanicalEnergy(World world, BlockPos startPos) {
+	public static IMechanicalEnergy getMechanicalEnergy(World world, BlockPos startPos) {
 		TileEntity tile = world.getTileEntity(startPos);
 		EnumFacing inputFacing = ((IMechanicalEnergy) tile).getMechanicalEnergyInputFacing();
 		BlockPos pos = startPos.offset(inputFacing, ((IMechanicalEnergy) tile).inputToCenterDistance() + 1);
 		TileEntity tileInfo = world.getTileEntity(pos);
-		if(!(tileInfo instanceof IMechanicalEnergy)) return 0;
+		if(!(tileInfo instanceof IMechanicalEnergy)) return null;
 		TileEntity tileTransmitter = world.getTileEntity(pos.offset(inputFacing, ((IMechanicalEnergy) tileInfo).outputToCenterDistance()));
 		if(tileTransmitter instanceof IMechanicalEnergy) {
-			return ((IMechanicalEnergy) tileTransmitter).getEnergy();
+			return (IMechanicalEnergy) tileTransmitter;
 		} else {
-			return 0;
+			return null;
 		}
 	}
 
