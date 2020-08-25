@@ -24,8 +24,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 	acceptedMinecraftVersions = "[1.12.2,1.13)",	
 	dependencies = 
 			"required-after:immersiveengineering@[0.12-92,);" +
-			"required-after:cofhcore;" +
-			"required-after:redstoneflux;" +
 			"required-after:forge@[14.23.3.2655,);")
 
 public class ImmersiveTechnology {
