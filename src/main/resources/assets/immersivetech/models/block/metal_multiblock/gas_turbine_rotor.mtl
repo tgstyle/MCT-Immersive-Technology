@@ -1,0 +1,13 @@
+# Blender MTL File: 'gas_turbine (1).blend'
+# Material Count: 1
+
+newmtl steam_turbine
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd immersivetech:blocks\\metal_multiblock_steam_turbine

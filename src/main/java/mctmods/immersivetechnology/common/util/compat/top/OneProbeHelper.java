@@ -96,9 +96,13 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 				int current = master.master().tank.getFluidAmount();
 				int max = master.master().tank.getCapacity();
 				if(current > 0)	probeInfo.progress(current, max, probeInfo.defaultProgressStyle().suffix("mB").numberFormat(NumberFormat.COMPACT));
-			}
-			else if(te instanceof TileEntitySteamTurbineSlave) {
+			} else if(te instanceof TileEntitySteamTurbineSlave) {
 				TileEntitySteamTurbineSlave master = ((TileEntitySteamTurbineSlave)te).master();
+				int current = master.master().tanks[0].getFluidAmount();
+				int max = master.master().tanks[0].getCapacity();
+				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(11)).text("Fuel").progress(current, max, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("mB"));
+			} else if(te instanceof TileEntityGasTurbineSlave) {
+				TileEntityGasTurbineSlave master = ((TileEntityGasTurbineSlave)te).master();
 				int current = master.master().tanks[0].getFluidAmount();
 				int max = master.master().tanks[0].getCapacity();
 				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(11)).text("Fuel").progress(current, max, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("mB"));

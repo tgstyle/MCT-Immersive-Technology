@@ -22,7 +22,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -111,7 +110,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float) player.getDistanceSq(soundOrigin.getX(), soundOrigin.getY(), soundOrigin.getZ()) / 8, 1);
-            ITSoundHandler.PlaySound(soundOrigin, ITSounds.coolingTower, SoundCategory.BLOCKS, true, (10 * soundVolume) / attenuation, 1);
+            ITSounds.coolingTower.PlayRepeating(soundOrigin, (10 * soundVolume) / attenuation, 1);
         }
     }
 

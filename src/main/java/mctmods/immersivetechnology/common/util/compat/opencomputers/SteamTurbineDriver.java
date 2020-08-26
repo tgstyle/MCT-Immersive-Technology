@@ -54,6 +54,11 @@ public class SteamTurbineDriver extends DriverSidedTileEntity {
 			return new Object[] {getTileEntity().tanks[0].getInfo()};
 		}
 
+		@Callback(doc = "function():table -- get information about the turbine output tank level")
+		public Object[] getOutputTankInfo(Context context, Arguments args) {
+			return new Object[] {getTileEntity().tanks[1].getInfo()};
+		}
+
 		@Callback(doc = "function(enabled:bool):nil -- Enables or disables computer control for the attached machine")
 		public Object[] enableComputerControl(Context context, Arguments args) {
 			return super.enableComputerControl(context, args);
