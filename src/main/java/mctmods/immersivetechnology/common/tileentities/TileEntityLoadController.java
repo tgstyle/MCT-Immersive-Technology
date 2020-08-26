@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
-import cofh.redstoneflux.api.IEnergyHandler;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.client.gui.GuiLoadController;
 import mctmods.immersivetechnology.common.util.TranslationKey;
@@ -14,7 +13,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityLoadController extends TileEntityCommonValve implements IEnergyHandler, IEnergyStorage {
+public class TileEntityLoadController extends TileEntityCommonValve implements IEnergyStorage {
 
 	public static DummyBattery dummyBattery = new DummyBattery();
 
@@ -25,22 +24,7 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 				ITLib.GUIID_Load_Controller);
 	}
 
-	public static class DummyBattery implements IEnergyHandler, IEnergyStorage {
-
-		@Override
-		public int getEnergyStored(EnumFacing enumFacing) {
-			return 0;
-		}
-
-		@Override
-		public int getMaxEnergyStored(EnumFacing enumFacing) {
-			return 0;
-		}
-
-		@Override
-		public boolean canConnectEnergy(EnumFacing enumFacing) {
-			return true;
-		}
+	public static class DummyBattery implements IEnergyStorage {
 
 		@Override
 		public int receiveEnergy(int i, boolean b) {
@@ -148,25 +132,6 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 	@Override
 	public boolean canReceive() {
 		return true;
-	}
-
-	@Override
-	public int getEnergyStored(EnumFacing enumFacing) {
-		IEnergyStorage dest = getDestination();
-		if(dest == null) return 0;
-		return enumFacing == facing? dest.getEnergyStored() : 0;
-	}
-
-	@Override
-	public int getMaxEnergyStored(EnumFacing enumFacing) {
-		IEnergyStorage dest = getDestination();
-		if(dest == null) return 0;
-		return enumFacing == facing? dest.getMaxEnergyStored() : 0;
-	}
-
-	@Override
-	public boolean canConnectEnergy(EnumFacing enumFacing) {
-		return enumFacing.getAxis() == facing.getAxis();
 	}
 
 	public IEnergyStorage getDestination() {

@@ -6,6 +6,8 @@ import net.minecraft.util.EnumFacing;
 public class ITBlockInterfaces {
 
 	public interface IMechanicalEnergy {
+		boolean isValid();
+
 		boolean isMechanicalEnergyTransmitter();
 		boolean isMechanicalEnergyReceiver();
 
@@ -15,7 +17,8 @@ public class ITBlockInterfaces {
 		int inputToCenterDistance();
 		int outputToCenterDistance();
 
-		int getEnergy();
+		int getSpeed();
+		float getTorqueMultiplier();
 		MechanicalEnergyAnimation getAnimation();
 	}
 

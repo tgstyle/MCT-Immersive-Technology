@@ -3,12 +3,18 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
+import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Alternator;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
+import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.util.ITSounds;
+import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
+import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
@@ -23,7 +29,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
+public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implements IBinaryMessageReceiver {
 
 	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
 	private static int rfPerTick = Alternator.alternator_energy_perTick;
@@ -35,8 +41,11 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
 	private BlockPos[] EnergyOutputPositions = new BlockPos[6];
 
 	public int speed;
+	public float torqueMult;
+	public ITBlockInterfaces.IMechanicalEnergy provider;
 	private int clientUpdateCooldown = 20;
 	private float clientEnergyPercentage;
+	private float oldClientEnergyPercentage;
 	private int oldEnergy = energyStorage.getEnergyStored();
 	private int oldSpeed = maxSpeed;
 
@@ -46,25 +55,23 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 		energyStorage.readFromNBT(nbt);
-		speed = nbt.getInteger("speed");
 		animation.readFromNBT(nbt);
-		if(!soundRPM) clientEnergyPercentage = (float) energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
-		else clientEnergyPercentage = (float) speed / maxSpeed;
 	}
 
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 		energyStorage.writeToNBT(nbt);
-		nbt.setInteger("speed", speed);
 		animation.writeToNBT(nbt);
 	}
 
 	public int energyGenerated() {
-		return Math.round(((float)speed / maxSpeed) * rfPerTick);
+		return Math.round(((float)speed / maxSpeed) * torqueMult * rfPerTick);
 	}
 
 	public void handleSounds() {
+		if (oldClientEnergyPercentage == clientEnergyPercentage) return;
+		oldClientEnergyPercentage = clientEnergyPercentage;
 		BlockPos center = getPos();
 		if(clientEnergyPercentage == 0) ITSoundHandler.StopSound(center);
 		else {
@@ -83,28 +90,35 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
 
 	@Override
 	public void disassemble() {
+		super.disassemble();
 		BlockPos center = getPos();
 		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
-		super.disassemble();
 	}
 
 	public void notifyNearbyClients() {
-		NBTTagCompound tag = new NBTTagCompound();
-		if(!soundRPM) tag.setInteger("clientEnergy", energyStorage.getEnergyStored());
-		else tag.setInteger("clientSpeed", speed);
 		BlockPos center = getPos();
-		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+		ImmersiveTechnology.packetHandler.sendToAllTracking(
+				new BinaryMessageTileSync(center, Unpooled.copyInt(energyStorage.getEnergyStored(), speed)),
+				new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 	}
 
 	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
 		world.getChunkFromBlockCoords(this.getPos()).markDirty();
 	}
 
+	public void checkProvider() {
+		if (provider == null || !provider.isValid()) provider = ITUtils.getMechanicalEnergy(world, getPos());
+		if (provider != null) {
+			speed = provider.getSpeed();
+			torqueMult = provider.getTorqueMultiplier();
+		} else if (speed > 0) speed = Math.max(speed - Config.ITConfig.Machines.SteamTurbine.steamTurbine_speed_lossPerTick, 0);
+	}
+
 	@Override
 	public void update() {
 		if(!formed) return;
 		if(!world.isRemote) {
-			speed = ITUtils.getMechanicalEnergy(world, getPos());
+			checkProvider();
 			if(speed > 0) this.energyStorage.modifyEnergyStored(energyGenerated());
 			TileEntity tileEntity;
 			int currentEnergy = energyStorage.getEnergyStored();
@@ -121,34 +135,18 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
 				currentEnergy = energyStorage.getEnergyStored();
 			}
 			if(clientUpdateCooldown > 0) clientUpdateCooldown--;
-			if(!soundRPM) {
-				if(oldEnergy != currentEnergy) {
-					efficientMarkDirty();
-					this.markContainingBlockForUpdate(null);
-					if(clientUpdateCooldown == 0) {
-						notifyNearbyClients();
-						clientUpdateCooldown = 20;
-					}
-				}
-			} else {
-				if(oldSpeed != speed) {
-					efficientMarkDirty();
-					this.markContainingBlockForUpdate(null);
-					if(clientUpdateCooldown == 0) {
-						notifyNearbyClients();
-						clientUpdateCooldown = 20;
-					}
-				}
+			if(oldEnergy != currentEnergy || oldSpeed != speed) { //check both since this is done server-side and clients get to decide which one to use
+				efficientMarkDirty();
+				this.markContainingBlockForUpdate(null);
+				notifyNearbyClients();
+				clientUpdateCooldown = 20;
+			} else if(clientUpdateCooldown == 0) { //sync with clients every now and then, even if there's no change of values
+				notifyNearbyClients();
+				clientUpdateCooldown = 20;
 			}
 			oldEnergy = currentEnergy;
 			oldSpeed = speed;
 		} else handleSounds();
-	}
-
-	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
-		if(!soundRPM && message.hasKey("clientEnergy")) clientEnergyPercentage = (float) message.getInteger("clientEnergy") / energyStorage.getMaxEnergyStored();
-		else if(message.hasKey("clientSpeed")) clientEnergyPercentage = (float) message.getInteger("clientSpeed") / maxSpeed;
 	}
 
 	@Override
@@ -164,4 +162,10 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave {
 		return this;
 	}
 
+	@Override
+	public void receiveMessageFromServer(ByteBuf buf) {
+		int energy = buf.readInt();
+		int speed = buf.readInt();
+		clientEnergyPercentage = (!soundRPM)? (float) energy / energyStorage.getMaxEnergyStored() : (float) speed / maxSpeed;
+	}
 }
