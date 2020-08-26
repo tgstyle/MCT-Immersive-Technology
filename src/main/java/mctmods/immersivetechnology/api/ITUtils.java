@@ -1,8 +1,6 @@
 package mctmods.immersivetechnology.api;
 
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
-import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAlternatorMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
@@ -27,6 +25,14 @@ public class ITUtils {
 		REMOVE_FROM_TICKING.add(te);
 	}
 
+	public static float remapRange(float inMin, float inMax, float outMin, float outMax, float value) {
+		return outMin + ((value-inMin)/inMax) * (outMax - outMin);
+	}
+	
+	public static boolean AreBlockPosIdentical(BlockPos a, BlockPos b) {
+		return a.getX() == b.getX() && a.getY() == b.getY() && a.getZ() == b.getZ();
+	}
+	
 	public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing) {
 		return LocalOffsetToWorldBlockPos(origin, x, y, z, facing, EnumFacing.UP);
 	}
@@ -157,98 +163,12 @@ public class ITUtils {
 		return boundingArray;
 	}
 
-	public static boolean checkMechanicalEnergyTransmitter(World world, BlockPos startPos) {
-		TileEntity tile = world.getTileEntity(startPos);
-		if(tile instanceof IMechanicalEnergy) {
-			if(((IMechanicalEnergy) tile).isMechanicalEnergyReceiver()) {
-				EnumFacing inputFacing = ((IMechanicalEnergy) tile).getMechanicalEnergyInputFacing();
-				BlockPos pos = startPos.offset(inputFacing, ((IMechanicalEnergy) tile).inputToCenterDistance() + 1);
-				TileEntity tileTransmitter = world.getTileEntity(pos);
-				if(tileTransmitter instanceof IMechanicalEnergy && ((IMechanicalEnergy) tileTransmitter).isMechanicalEnergyTransmitter() && (((IMechanicalEnergy) tileTransmitter).getMechanicalEnergyOutputFacing() == inputFacing.getOpposite())) return true;
-			}
-		}
-		return false;
-	}
-
-	public static boolean checkMechanicalEnergyReceiver(World world, BlockPos startPos) {
-		TileEntity tile = world.getTileEntity(startPos);
-		if(tile instanceof IMechanicalEnergy) {
-			if(((IMechanicalEnergy) tile).isMechanicalEnergyTransmitter()) {
-				EnumFacing outputFacing = ((IMechanicalEnergy) tile).getMechanicalEnergyOutputFacing();
-				BlockPos pos = startPos.offset(outputFacing, ((IMechanicalEnergy) tile).outputToCenterDistance() + 1);
-				TileEntity tileReceiver = world.getTileEntity(pos);
-				if(tileReceiver instanceof IMechanicalEnergy && ((IMechanicalEnergy) tileReceiver).isMechanicalEnergyReceiver() && ((IMechanicalEnergy) tileReceiver).getMechanicalEnergyInputFacing() == outputFacing.getOpposite()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	public static IMechanicalEnergy getMechanicalEnergy(World world, BlockPos startPos) {
-		TileEntity tile = world.getTileEntity(startPos);
-		EnumFacing inputFacing = ((IMechanicalEnergy) tile).getMechanicalEnergyInputFacing();
-		BlockPos pos = startPos.offset(inputFacing, ((IMechanicalEnergy) tile).inputToCenterDistance() + 1);
-		TileEntity tileInfo = world.getTileEntity(pos);
-		if(!(tileInfo instanceof IMechanicalEnergy)) return null;
-		TileEntity tileTransmitter = world.getTileEntity(pos.offset(inputFacing, ((IMechanicalEnergy) tileInfo).outputToCenterDistance()));
-		if(tileTransmitter instanceof IMechanicalEnergy) {
-			return (IMechanicalEnergy) tileTransmitter;
-		} else {
-			return null;
-		}
-	}
-
-	public static boolean checkAlternatorStatus(World world, BlockPos startPos) {
-		TileEntity tile = world.getTileEntity(startPos);
-		EnumFacing outputFacing = ((IMechanicalEnergy) tile).getMechanicalEnergyOutputFacing();
-		BlockPos pos = startPos.offset(outputFacing, ((IMechanicalEnergy) tile).outputToCenterDistance() + 1);
-		TileEntity tileInfo = world.getTileEntity(pos);
-		TileEntity tileReceiver = world.getTileEntity(pos.offset(outputFacing, ((IMechanicalEnergy) tileInfo).inputToCenterDistance()));
-		if(tileReceiver instanceof TileEntityAlternatorMaster) {
-			if(((TileEntityAlternatorMaster) tileReceiver).canRunMechanicalEnergy()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public static boolean setRotationAngle(MechanicalEnergyAnimation animation, float rotationSpeed) {
 		float oldMomentum = animation.getAnimationMomentum();
 		float rotateTo = (animation.getAnimationRotation() + rotationSpeed) % 360;
 		animation.setAnimationRotation(rotateTo);
 		animation.setAnimationMomentum(rotationSpeed);
 		return (oldMomentum != rotationSpeed);
-	}
-
-	public static MechanicalEnergyAnimation getMechanicalEnergyAnimation(World world, BlockPos startPos) {
-		TileEntity tile = world.getTileEntity(startPos);
-		EnumFacing inputFacing = ((IMechanicalEnergy) tile).getMechanicalEnergyInputFacing();
-		BlockPos pos = startPos.offset(inputFacing, ((IMechanicalEnergy) tile).inputToCenterDistance() + 1);
-		TileEntity tileInfo = world.getTileEntity(pos);
-		TileEntity tileTransmitter = world.getTileEntity(pos.offset(inputFacing, ((IMechanicalEnergy) tileInfo).outputToCenterDistance()));
-
-		if(tileTransmitter instanceof IMechanicalEnergy) {
-			return ((IMechanicalEnergy) tileTransmitter).getAnimation();
-		} else {
-			return new MechanicalEnergyAnimation();
-		}
-	}
-
-	public static EnumFacing getInputFacing(World world, BlockPos startPos) {
-		TileEntity tileTransmitter;
-		BlockPos pos;
-		for(EnumFacing f : EnumFacing.HORIZONTALS) {
-			pos = startPos.offset(f, 1);
-			tileTransmitter = world.getTileEntity(pos);
-
-			if(tileTransmitter instanceof IMechanicalEnergy) {
-				if(((IMechanicalEnergy) tileTransmitter).isMechanicalEnergyTransmitter() && ((IMechanicalEnergy) tileTransmitter).getMechanicalEnergyOutputFacing() == f.getOpposite()) {
-					return f;
-				}
-			}
-		}
-		return null;
 	}
 
 	public static EnumSet<EnumFacing> allSides = EnumSet.allOf(EnumFacing.class);

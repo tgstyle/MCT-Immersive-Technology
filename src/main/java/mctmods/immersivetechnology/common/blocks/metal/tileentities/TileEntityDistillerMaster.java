@@ -15,7 +15,6 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -83,7 +82,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 		else {
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
-			ITSoundHandler.PlaySound(center, ITSounds.distiller, SoundCategory.BLOCKS, true, soundVolume / attenuation, 1);
+			ITSounds.distiller.PlayRepeating(center, soundVolume / attenuation, 1);
 		}
 	}
 

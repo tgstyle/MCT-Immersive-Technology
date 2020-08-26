@@ -24,6 +24,7 @@ public class Config {
 			public static SteamTurbine steamturbine;
 			public static SteelTank steeltank;
 			public static CoolingTower coolingTower;
+			public static GasTurbine gasTurbine;
 
 			public static class Multiblock {
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Preheater be built ? [Default=true]"})
@@ -38,6 +39,8 @@ public class Config {
 				public static boolean enable_steamTurbine = true;
 				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Cooling Tower Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_coolingTower = true;
+				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Gas Turbine Multiblock structures be built ? [Default=true]"})
+				public static boolean enable_gasTurbine = true;
 			}
 			public static class Recipes {
 				@Comment({"Should default Steam Turbine recipes be registered ? [Default=true]"})
@@ -50,6 +53,8 @@ public class Config {
 				public static boolean register_distiller_recipes = true;
 				@Comment({"Should default Cooling Tower recipes be registered ? [Default=true]"})
 				public static boolean register_cooling_tower_recipes = true;
+				@Comment({"Should default Gas Turbine recipes be registered ? [Default=true]"})
+				public static boolean register_gas_turbine_recipes = true;
 			}
 			public static class AdvancedCokeOven {
 				@Comment({"The capacity of the tank for the Advanced Coke Oven [Default=24000]"})
@@ -138,6 +143,26 @@ public class Config {
 				public static int steamTurbine_speed_lossPerTick = 6;
 				@Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
 				public static float steamTurbine_speed_maxRotation = 72;
+			}
+			public static class GasTurbine {
+				@Comment({"The power consumption of the electric starter for the Gas Turbine [Default=4096]"})
+				public static int gasTurbine_electric_starter_consumption = 4096;
+				@Comment({"The power consumption  of the sparkplug for the Gas Turbine [Default=1024]"})
+				public static int gasTurbine_sparkplug_consumption = 1024;
+				@Comment({"The capacity of the electric starter for the Gas Turbine [Default=4096]"})
+				public static int gasTurbine_electric_starter_size = 4096;
+				@Comment({"The capacity of the sparkplug for the Gas Turbine [Default=1024]"})
+				public static int gasTurbine_sparkplug_size = 1024;
+				@Comment({"The capacity of the input tank for the Gas Turbine [Default=10000]"})
+				public static int gasTurbine_input_tankSize = 10000;
+				@Comment({"The capacity of the output tank for the Gas Turbine [Default=10000]"})
+				public static int gasTurbine_output_tankSize = 10000;
+				@Comment({"How fast the Gas Turbine increases in speed per tick [Default=3]"})
+				public static int gasTurbine_speed_gainPerTick = 3;
+				@Comment({"How fast the Gas Turbine loses speed per tick when inactive [Default=6]"})
+				public static int gasTurbine_speed_lossPerTick = 6;
+				@Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
+				public static float gasTurbine_speed_maxRotation = 72;
 			}
 			public static class SteelTank {
 				@Comment({"Steel Tank Size in mB [Default=2048000]"})

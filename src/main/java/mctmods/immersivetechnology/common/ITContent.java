@@ -18,13 +18,7 @@ import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEnt
 import mctmods.immersivetechnology.common.blocks.metal.*;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.*;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.conversion.TileEntityAlternator;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.conversion.TileEntityBoiler;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.conversion.TileEntityDistiller;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.conversion.TileEntitySolarReflector;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.conversion.TileEntitySolarTower;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.conversion.TileEntitySteamTurbine;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.conversion.TileEntitySteelSheetmetalTank;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.conversion.*;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneDecoration;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneMultiblock;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
@@ -68,6 +62,7 @@ public class ITContent {
 
 	/*MULTIBLOCKS*/
 	public static BlockITBase<?> blockMetalMultiblock;
+	public static BlockITBase<?> blockMetalMultiblock1;
 	public static BlockITBase<?> blockStoneMultiblock;
 
 	/*CONNECTORS*/
@@ -92,6 +87,7 @@ public class ITContent {
 	public static BlockITFluid blockFluidDistWater;
 	public static BlockITFluid blockFluidSteam;
 	public static BlockITFluid blockFluidExhaustSteam;
+	public static BlockITFluid blockFlueGas;
 
 	/*ITEMS*/
 	public static ArrayList<Item> registeredITItems = new ArrayList<Item>();
@@ -103,12 +99,14 @@ public class ITContent {
 	public static Fluid fluidDistWater;
 	public static Fluid fluidSteam;
 	public static Fluid fluidExhaustSteam;
+	public static Fluid fluidFlueGas;
 
 	public static ArrayList<Fluid> normallyPressurized = new ArrayList<>();
 
 	public static void preInit() {
 		/*MULTIBLOCKS*/
 		blockMetalMultiblock = new BlockMetalMultiblock();
+		blockMetalMultiblock1 = new blockMetalMultiblock1();
 		blockStoneMultiblock = new BlockStoneMultiblock();
 
 		/*CONNECTORS*/
@@ -132,11 +130,13 @@ public class ITContent {
 		fluidSteam = new FluidColored("steam", 0x3E444F, -100, 500, true);
 		fluidExhaustSteam = new FluidColored("exhauststeam", 0xC1C1C5, -100, 500, true);
 		fluidDistWater = new FluidColored("distwater", 0x7079E0, 1000, 1000, false);
+		fluidFlueGas = new FluidColored("fluegas", 0xFFFFFF, -100, 500, true);
 
 		/*FLUID BLOCKS*/
 		blockFluidSteam = new BlockITFluid("fluidSteam", fluidSteam, Material.WATER);
 		blockFluidExhaustSteam = new BlockITFluid("exhaustSteam", fluidExhaustSteam, Material.WATER);
 		blockFluidDistWater = new BlockITFluid("fluidDistWater", fluidDistWater, Material.WATER);
+		blockFlueGas = new BlockITFluid("fluidFlueGas", fluidFlueGas, Material.WATER);
 
 		/*ITEMS*/
 		itemMaterial = new ItemITBase("material", 64, "salt");
@@ -226,6 +226,11 @@ public class ITContent {
 			registerTile(TileEntityCoolingTowerMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockCoolingTower.instance);
 		}
+		if(Multiblock.enable_gasTurbine) {
+			registerTile(TileEntityGasTurbineSlave.class);
+			registerTile(TileEntityGasTurbineMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockGasTurbine.instance);
+		}
 
 		registerTile(TileEntitySteelSheetmetalTank.class);
 		registerTile(TileEntitySteelSheetmetalTankSlave.class);
@@ -233,6 +238,8 @@ public class ITContent {
 		MultiblockHandler.registerMultiblock(MultiblockSteelSheetmetalTank.instance);
 		if(Experimental.replace_IE_pipes) {
 			normallyPressurized.add(FluidRegistry.getFluid("steam"));
+			normallyPressurized.add(FluidRegistry.getFluid("fluegas"));
+			normallyPressurized.add(FluidRegistry.getFluid("exhauststeam"));
 			IEHijackedRegisterTile(TileEntityFluidPump.class, "FluidPump");
 			if(Experimental.replace_pipe_algorithm) {
 				TileEntityFluidPipeAlternative.initCovers();
@@ -251,6 +258,7 @@ public class ITContent {
 			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 450), new FluidStack(FluidRegistry.WATER, 250), 10);
 			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), new FluidStack(FluidRegistry.getFluid("distwater"), 250), 10);
 			BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("biodiesel"), 10), 1, 10);
+			BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 100), 1, 10);
 			if(FluidRegistry.getFluid("gasoline") != null) BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("gasoline"), 50), 1, 10);
 			if(FluidRegistry.getFluid("diesel") != null) BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("diesel"), 7), 1, 10);
 		}
@@ -270,7 +278,15 @@ public class ITContent {
 			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 450), new FluidStack(FluidRegistry.WATER, 250), 20);
 			SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), new FluidStack(FluidRegistry.getFluid("distwater"), 250), 20);
 		}
-		if(Multiblock.enable_steamTurbine && Recipes.register_steamTurbine_recipes) SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("exhauststeam"), 100), new FluidStack(FluidRegistry.getFluid("steam"), 100), 1);
+		if(Multiblock.enable_steamTurbine && Recipes.register_steamTurbine_recipes) {
+			SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("exhauststeam"), 100), new FluidStack(FluidRegistry.getFluid("steam"), 100), 1);
+		}
+		if(Multiblock.enable_gasTurbine && Recipes.register_gas_turbine_recipes) {
+			GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("biodiesel"), 160), 10);
+			if(FluidRegistry.getFluid("gasoline") != null) GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("gasoline"), 800), 10);
+			if(FluidRegistry.getFluid("diesel") != null) GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("diesel"), 114), 10);
+			if(FluidRegistry.getFluid("kerosene") != null) GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("diesel"), 150), 10);
+		}
 		if(Multiblock.enable_coolingTower && Recipes.register_cooling_tower_recipes) {
 			CoolingTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("water"), 750), new FluidStack(FluidRegistry.getFluid("water"), 750), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 900), new FluidStack(FluidRegistry.getFluid("water"), 1000), 3);
 			CoolingTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 700), new FluidStack(FluidRegistry.getFluid("distwater"), 700), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 900), new FluidStack(FluidRegistry.getFluid("distwater"), 1000), 3);
