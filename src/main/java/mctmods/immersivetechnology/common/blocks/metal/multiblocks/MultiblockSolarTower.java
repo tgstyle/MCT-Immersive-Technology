@@ -195,7 +195,8 @@ public class MultiblockSolarTower implements IMultiblock {
 	@SideOnly(Side.CLIENT)
 	public void renderFormedStructure() {
 		if(renderStack == null) renderStack = new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.SOLAR_TOWER.getMeta());
-		GlStateManager.translate(1.5, 3, .5);
+		GlStateManager.translate(0.1, 0.25, 0.125);
+		GlStateManager.translate(1, 3.5, 2);
 		GlStateManager.rotate(- 45, 0, 1, 0);
 		GlStateManager.rotate(- 20, 1, 0, 0);
 		GlStateManager.scale(8, 8, 8);
