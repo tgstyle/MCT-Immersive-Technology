@@ -97,7 +97,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         float level = ITUtils.remapRange(0, maxSpeed, 0.5f, 1.5f, speed);
         if (input == null) InitializePoIs();
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        float attenuation = Math.max((float) player.getDistanceSq(runningSoundOrigin.getX(), runningSoundOrigin.getY(), runningSoundOrigin.getZ()) / 32, 1);
+        float attenuation = Math.max((float) player.getDistanceSq(runningSoundOrigin.getX(), runningSoundOrigin.getY(), runningSoundOrigin.getZ()) / 64, 1);
         if(speed == 0) ITSoundHandler.StopSound(runningSoundOrigin);
         else ITSounds.gasTurbineRunning.PlayRepeating(runningSoundOrigin, (level - 0.5f) / (4 * attenuation), level);
         if (starterRunning) {
