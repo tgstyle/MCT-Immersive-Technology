@@ -8,12 +8,23 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
 import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
 import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
 import blusunrize.immersiveengineering.common.items.ItemEarmuffs;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualPages;
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.client.gui.GuiBoiler;
+import mctmods.immersivetechnology.client.gui.GuiCokeOvenAdvanced;
+import mctmods.immersivetechnology.client.gui.GuiDistiller;
+import mctmods.immersivetechnology.client.gui.GuiFluidValve;
+import mctmods.immersivetechnology.client.gui.GuiLoadController;
+import mctmods.immersivetechnology.client.gui.GuiSolarTower;
+import mctmods.immersivetechnology.client.gui.GuiStackLimiter;
+import mctmods.immersivetechnology.client.gui.GuiTimer;
+import mctmods.immersivetechnology.client.gui.GuiTrashItem;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
 import mctmods.immersivetechnology.client.render.TileRenderBarrelOpen;
 import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
@@ -24,16 +35,25 @@ import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Multiblock;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.BlockITFluid;
 import mctmods.immersivetechnology.common.blocks.BlockValve.BlockType_Valve;
+import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Connectors;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.*;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityGasTurbineMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalBarrel;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
+import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
 import mctmods.immersivetechnology.common.items.ItemITBase;
+import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
+import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
+import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
@@ -48,12 +68,15 @@ import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -302,6 +325,25 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void clearRenderCaches() {
 		for(Runnable r : IEApi.renderCacheClearers) r.run();
+	}
+
+	@Override
+	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+		TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
+		if(tile instanceof IGuiTile) {
+			Object gui = null;
+			if(ID == ITLib.GUIID_Boiler && tile instanceof TileEntityBoilerMaster) gui = new GuiBoiler(player.inventory, (TileEntityBoilerMaster) tile);
+			if(ID == ITLib.GUIID_Coke_oven_advanced && tile instanceof TileEntityCokeOvenAdvancedMaster) gui = new GuiCokeOvenAdvanced(player.inventory, (TileEntityCokeOvenAdvancedMaster) tile);
+			if(ID == ITLib.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) gui = new GuiDistiller(player.inventory, (TileEntityDistillerMaster) tile);
+			if(ID == ITLib.GUIID_Solar_Tower && tile instanceof TileEntitySolarTowerMaster) gui = new GuiSolarTower(player.inventory, (TileEntitySolarTowerMaster) tile);
+			if(ID == ITLib.GUIID_Timer && tile instanceof TileEntityTimer) gui = new GuiTimer(player.inventory, (TileEntityTimer) tile);
+			if(ID == ITLib.GUIID_Trash_Item && tile instanceof TileEntityTrashItem) gui = new GuiTrashItem(player.inventory, (TileEntityTrashItem) tile);
+			if(ID == ITLib.GUIID_Fluid_Valve && tile instanceof TileEntityFluidValve) gui = new GuiFluidValve((TileEntityFluidValve) tile);
+			if(ID == ITLib.GUIID_Load_Controller && tile instanceof TileEntityLoadController) gui = new GuiLoadController((TileEntityLoadController) tile);
+			if(ID == ITLib.GUIID_Stack_Limiter && tile instanceof TileEntityStackLimiter) gui = new GuiStackLimiter((TileEntityStackLimiter) tile);
+			return gui;
+		}
+		return null;
 	}
 
 }

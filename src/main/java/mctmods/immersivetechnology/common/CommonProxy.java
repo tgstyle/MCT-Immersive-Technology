@@ -4,14 +4,10 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
-import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
 import mctmods.immersivetechnology.common.gui.*;
-import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
-import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
-import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
 import mctmods.immersivetechnology.common.util.TemporaryTileEntityRequest;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
@@ -102,20 +98,6 @@ public class CommonProxy implements IGuiHandler {
 
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-		if(tile instanceof IGuiTile) {
-			Object gui = null;
-			if(ID == ITLib.GUIID_Boiler && tile instanceof TileEntityBoilerMaster) gui = new GuiBoiler(player.inventory, (TileEntityBoilerMaster) tile);
-			if(ID == ITLib.GUIID_Coke_oven_advanced && tile instanceof TileEntityCokeOvenAdvancedMaster) gui = new GuiCokeOvenAdvanced(player.inventory, (TileEntityCokeOvenAdvancedMaster) tile);
-			if(ID == ITLib.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) gui = new GuiDistiller(player.inventory, (TileEntityDistillerMaster) tile);
-			if(ID == ITLib.GUIID_Solar_Tower && tile instanceof TileEntitySolarTowerMaster) gui = new GuiSolarTower(player.inventory, (TileEntitySolarTowerMaster) tile);
-			if(ID == ITLib.GUIID_Timer && tile instanceof TileEntityTimer) gui = new GuiTimer(player.inventory, (TileEntityTimer) tile);
-			if(ID == ITLib.GUIID_Trash_Item && tile instanceof TileEntityTrashItem) gui = new GuiTrashItem(player.inventory, (TileEntityTrashItem) tile);
-			if(ID == ITLib.GUIID_Fluid_Valve && tile instanceof TileEntityFluidValve) gui = new GuiFluidValve((TileEntityFluidValve) tile);
-			if(ID == ITLib.GUIID_Load_Controller && tile instanceof TileEntityLoadController) gui = new GuiLoadController((TileEntityLoadController) tile);
-			if(ID == ITLib.GUIID_Stack_Limiter && tile instanceof TileEntityStackLimiter) gui = new GuiStackLimiter((TileEntityStackLimiter) tile);
-			return gui;
-		}
 		return null;
 	}
 
