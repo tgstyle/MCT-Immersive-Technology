@@ -5,7 +5,6 @@ import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.crafting.IngredientStack;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import mctmods.immersivetechnology.api.ITUtils;
-import mctmods.immersivetechnology.common.ITContent;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -109,7 +108,7 @@ public abstract class ITMultiblock<T extends TileEntityMultiblockPart<T>> implem
                         tile.offset = new int[] { pos2.getX() - pos.getX(), pos2.getY() - pos.getY(), pos2.getZ() - pos.getZ() };
                         tile.mirrored = mirror;
                         tile.markDirty();
-                        world.addBlockEvent(pos2, ITContent.blockMetalMultiblock, 255, 0);
+                        world.addBlockEvent(pos2, slaveBlockState.getBlock(), 255, 0);
                     }
                 }
             }

@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.common.util.compat.opencomputers;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.lib.manual.ManualPages;
-
 import mctmods.immersivetechnology.common.Config;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -37,6 +36,11 @@ public class ComputerManualHelper {
 			ManualHelper.getManual().addEntry("computer.solarTower", "computers",
 					new ManualPages.Text(ManualHelper.getManual(), "computer.solarTower0"),
 					new ManualPages.Text(ManualHelper.getManual(), "computer.solarTower1")
+			);
+			if (Config.ITConfig.Machines.Multiblock.enable_gasTurbine)
+			ManualHelper.getManual().addEntry("computer.gasTurbine", "computers",
+					new ManualPages.Text(ManualHelper.getManual(), "computer.gasTurbine0"),
+					new ManualPages.Text(ManualHelper.getManual(), "computer.gasTurbine1")
 			);
 		}
 	}

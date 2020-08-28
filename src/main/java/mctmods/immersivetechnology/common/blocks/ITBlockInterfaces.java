@@ -8,14 +8,8 @@ public class ITBlockInterfaces {
 	public interface IMechanicalEnergy {
 		boolean isValid();
 
-		boolean isMechanicalEnergyTransmitter();
-		boolean isMechanicalEnergyReceiver();
-
-		EnumFacing getMechanicalEnergyOutputFacing();
-		EnumFacing getMechanicalEnergyInputFacing();
-
-		int inputToCenterDistance();
-		int outputToCenterDistance();
+		boolean isMechanicalEnergyTransmitter(EnumFacing facing);
+		boolean isMechanicalEnergyReceiver(EnumFacing facing);
 
 		int getSpeed();
 		float getTorqueMultiplier();

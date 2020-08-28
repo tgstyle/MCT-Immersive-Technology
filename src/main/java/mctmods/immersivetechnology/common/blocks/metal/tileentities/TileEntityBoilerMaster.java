@@ -16,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -138,7 +137,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 		else {
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
-			ITSoundHandler.PlaySound(center, ITSounds.boiler, SoundCategory.BLOCKS, true, (2 * level) / attenuation, level);
+			ITSounds.boiler.PlayRepeating(center, (2 * level) / attenuation, level);
 		}
 	}
 
