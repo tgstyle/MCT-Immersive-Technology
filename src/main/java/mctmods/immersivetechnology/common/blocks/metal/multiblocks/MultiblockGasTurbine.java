@@ -41,6 +41,7 @@ public class MultiblockGasTurbine extends ITMultiblock<TileEntityGasTurbineSlave
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void renderFormedStructure() {
         if(renderStack == null) renderStack = new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.GAS_TURBINE.getMeta());
         GlStateManager.translate(.3, .1, 0);
