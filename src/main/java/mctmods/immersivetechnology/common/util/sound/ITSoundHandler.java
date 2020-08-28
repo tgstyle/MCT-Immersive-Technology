@@ -4,6 +4,7 @@ import mctmods.immersivetechnology.client.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ITickableSound;
 import net.minecraft.client.audio.PositionedSound;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -16,16 +17,21 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
 	private BlockPos pos;
 	private float unmodifiedVolume;
 
-	public static void PlaySound(BlockPos posIn, SoundEvent soundIn, SoundCategory categoryIn, boolean repeatIn, float volumeIn, float pitchIn) {
+	public static void PlayOnceSound(BlockPos posIn, SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn) {
+		EntityPlayerSP player = Minecraft.getMinecraft().player;
+		player.world.playSound(player, posIn, soundIn, categoryIn, volumeIn, pitchIn);
+	}
+
+	public static void PlayRepeatingSound(BlockPos posIn, SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn) {
 		ITSoundHandler sound = playingSounds.get(posIn);
 		if(sound == null) {
-			sound = new ITSoundHandler(posIn, soundIn, categoryIn, repeatIn, volumeIn, pitchIn);
+			sound = new ITSoundHandler(posIn, soundIn, categoryIn, true, volumeIn, pitchIn);
 			playingSounds.put(posIn, sound);
 		} else {
 			sound.unmodifiedVolume = volumeIn;
 			sound.volume = volumeIn * ClientProxy.volumeAdjustment;
 			sound.pitch = pitchIn;
-			sound.repeat = repeatIn;
+			sound.repeat = true;
 		}
 	}
 
@@ -52,6 +58,10 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
 	@Override
 	public boolean isDonePlaying() {
 		return !playingSounds.containsValue(this);
+	}
+
+	public static boolean isPlaying(BlockPos posIn) {
+		return playingSounds.get(posIn) != null;
 	}
 
 	@Override

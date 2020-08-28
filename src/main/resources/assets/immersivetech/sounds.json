@@ -47,5 +47,33 @@
 			"immersivetech:cooling_tower"
 		],
 		"subtitle": "subtitle.immersivetech.coolingTower"
+	},
+	"gasTurbineRunning": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:gas_running"
+		],
+		"subtitle": "subtitle.immersivetech.gasTurbineRunning"
+	},
+	"gasTurbineStarter": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:gas_starter"
+		],
+		"subtitle": "subtitle.immersivetech.gasTurbineStarter"
+	},
+	"gasTurbineArc": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:gas_arc"
+		],
+		"subtitle": "subtitle.immersivetech.gasTurbineArc"
+	},
+	"gasTurbineSpark": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:gas_spark"
+		],
+		"subtitle": "subtitle.immersivetech.gasTurbineSpark"
 	}
 }

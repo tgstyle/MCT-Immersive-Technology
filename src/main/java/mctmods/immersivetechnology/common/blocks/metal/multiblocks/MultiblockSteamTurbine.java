@@ -215,10 +215,11 @@ public class MultiblockSteamTurbine implements IMultiblock {
 	@SideOnly(Side.CLIENT)
 	public void renderFormedStructure() {
 		if(renderStack == null) renderStack = new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.STEAM_TURBINE.getMeta());
-		GlStateManager.translate(1.5, 1, .5);
+		GlStateManager.translate(0.3, 0.1, 0);
+		GlStateManager.translate(2.4, 2, 3.2);
 		GlStateManager.rotate(- 45, 0, 1, 0);
 		GlStateManager.rotate(- 20, 1, 0, 0);
-		GlStateManager.scale(4, 4, 4);
+		GlStateManager.scale(8.7, 8.7, 8.7);
 		GlStateManager.disableCull();
 		ClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
 		GlStateManager.enableCull();

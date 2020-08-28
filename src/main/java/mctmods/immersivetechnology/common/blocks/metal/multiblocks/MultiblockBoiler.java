@@ -190,10 +190,11 @@ public class MultiblockBoiler implements IMultiblock {
 	@Override
 	public void renderFormedStructure() {
 		if(renderStack == null) renderStack = new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.BOILER.getMeta());
-		GlStateManager.translate(.5, 1.5, 2.5);
+		GlStateManager.translate(.1, 0, 0);
+		GlStateManager.translate(0.8, 1.5, 3);
 		GlStateManager.rotate(- 45, 0, 1, 0);
 		GlStateManager.rotate(- 20, 1, 0, 0);
-		GlStateManager.scale(5.5, 5.5, 5.5);
+		GlStateManager.scale(5.88, 5.88, 5.88);
 		GlStateManager.disableCull();
 		ClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
 		GlStateManager.enableCull();

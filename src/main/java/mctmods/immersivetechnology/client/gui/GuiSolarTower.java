@@ -8,7 +8,6 @@ import mctmods.immersivetechnology.common.gui.ContainerSolarTower;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.text.TextFormatting;
-
 import org.lwjgl.opengl.GL11;
 
 import java.text.DecimalFormat;

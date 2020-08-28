@@ -8,22 +8,21 @@ import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
-import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Alternator;
+import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SteamTurbine;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -34,6 +33,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
 	private static int rfPerTick = Alternator.alternator_energy_perTick;
 	private static int rfPerTickPerPort = rfPerTick / 6;
+	private static int speedLossPerTick = SteamTurbine.steamTurbine_speed_lossPerTick;
 	private static boolean soundRPM = Alternator.alternator_sound_RPM;
 
 	public FluxStorage energyStorage = new FluxStorage(Alternator.alternator_energy_capacitorSize,rfPerTick,rfPerTickPerPort);
@@ -41,11 +41,10 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 	private BlockPos[] EnergyOutputPositions = new BlockPos[6];
 
 	public int speed;
-	public float torqueMult;
+	public float torqueMult = 1;
 	public ITBlockInterfaces.IMechanicalEnergy provider;
 	private int clientUpdateCooldown = 20;
 	private float clientEnergyPercentage;
-	private float oldClientEnergyPercentage;
 	private int oldEnergy = energyStorage.getEnergyStored();
 	private int oldSpeed = maxSpeed;
 
@@ -70,14 +69,13 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 	}
 
 	public void handleSounds() {
-		if (oldClientEnergyPercentage == clientEnergyPercentage) return;
-		oldClientEnergyPercentage = clientEnergyPercentage;
 		BlockPos center = getPos();
 		if(clientEnergyPercentage == 0) ITSoundHandler.StopSound(center);
 		else {
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
-			ITSoundHandler.PlaySound(center, ITSounds.alternator, SoundCategory.BLOCKS, true, (3 * clientEnergyPercentage) / attenuation, clientEnergyPercentage);
+			float level = ITUtils.remapRange(0, 1, 0.5f, 1.0f, clientEnergyPercentage);
+			ITSounds.alternator.PlayRepeating(center, (5 * clientEnergyPercentage) / attenuation, level);
 		}
 	}
 
@@ -107,11 +105,19 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 	}
 
 	public void checkProvider() {
-		if (provider == null || !provider.isValid()) provider = ITUtils.getMechanicalEnergy(world, getPos());
+		if (provider == null || !provider.isValid()) {
+			TileEntity tile = world.getTileEntity(getPos().offset(facing, 4));
+			if (tile instanceof IMechanicalEnergy) {
+				IMechanicalEnergy possibleProvider = (IMechanicalEnergy)tile;
+				if (possibleProvider.isValid() && possibleProvider.isMechanicalEnergyTransmitter(facing.getOpposite())) {
+					provider = possibleProvider;
+				}
+			}
+		}
 		if (provider != null) {
 			speed = provider.getSpeed();
 			torqueMult = provider.getTorqueMultiplier();
-		} else if (speed > 0) speed = Math.max(speed - Config.ITConfig.Machines.SteamTurbine.steamTurbine_speed_lossPerTick, 0);
+		} else if (speed > 0) speed = Math.max(speed - speedLossPerTick, 0);
 	}
 
 	@Override
@@ -122,13 +128,14 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 			if(speed > 0) this.energyStorage.modifyEnergyStored(energyGenerated());
 			TileEntity tileEntity;
 			int currentEnergy = energyStorage.getEnergyStored();
+			int transferRate = (int)Math.ceil(rfPerTickPerPort * torqueMult);
 			for(int i = 0;i < 6;i++) {
 				if(currentEnergy == 0) break;
 				if(EnergyOutputPositions[i] == null) EnergyOutputPositions[i] = ITUtils.LocalOffsetToWorldBlockPos(getPos(), i < 3 ? -2 : 2, i < 3 ? i - 1 : i - 4, 0, facing);
 				tileEntity = Utils.getExistingTileEntity(world, EnergyOutputPositions[i]);
 				EnumFacing energyFacing = i < 3 ? facing.rotateY() : facing.rotateYCCW();
 				if(!EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) continue;
-				int canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, rfPerTickPerPort), true);
+				int canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, transferRate), true);
 				if(canReceiveAmount == 0) continue;
 				EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
 				energyStorage.modifyEnergyStored(-canReceiveAmount);
@@ -167,5 +174,9 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 		int energy = buf.readInt();
 		int speed = buf.readInt();
 		clientEnergyPercentage = (!soundRPM)? (float) energy / energyStorage.getMaxEnergyStored() : (float) speed / maxSpeed;
+	}
+
+	public boolean isMechanicalEnergyReceiver(EnumFacing facing, int position) {
+		return this.facing == facing && position == 22;
 	}
 }
