@@ -8,8 +8,8 @@ import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
-import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Alternator;
+import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SteamTurbine;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
@@ -33,6 +33,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
 	private static int rfPerTick = Alternator.alternator_energy_perTick;
 	private static int rfPerTickPerPort = rfPerTick / 6;
+	private static int speedLossPerTick = SteamTurbine.steamTurbine_speed_lossPerTick;
 	private static boolean soundRPM = Alternator.alternator_sound_RPM;
 
 	public FluxStorage energyStorage = new FluxStorage(Alternator.alternator_energy_capacitorSize,rfPerTick,rfPerTickPerPort);
@@ -116,7 +117,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 		if (provider != null) {
 			speed = provider.getSpeed();
 			torqueMult = provider.getTorqueMultiplier();
-		} else if (speed > 0) speed = Math.max(speed - Config.ITConfig.Machines.SteamTurbine.steamTurbine_speed_lossPerTick, 0);
+		} else if (speed > 0) speed = Math.max(speed - speedLossPerTick, 0);
 	}
 
 	@Override
