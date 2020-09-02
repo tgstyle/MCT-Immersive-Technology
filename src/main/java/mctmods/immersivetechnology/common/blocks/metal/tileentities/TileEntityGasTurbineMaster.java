@@ -159,14 +159,14 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     public void ignite() {
-        sparkplugStorage.extractEnergy(sparkplugConsumption, false);
+        sparkplugStorage.modifyEnergyStored(-sparkplugConsumption);
         ignited = true;
         ignitionGracePeriod = 60;
         BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.buffer());
     }
 
     public boolean canIgnite() {
-        return sparkplugConsumption == sparkplugStorage.extractEnergy(sparkplugConsumption, true);
+        return sparkplugConsumption <= sparkplugStorage.getEnergyStored();
     }
 
     @Override
@@ -194,8 +194,9 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
         ignited = ignitionGracePeriod > 0;
         boolean canRun = !isRSDisabled() && isValidAlternator();
-        if (canRun && electricStarterConsumption == starterStorage.extractEnergy(electricStarterConsumption, false)) {
+        if (canRun && electricStarterConsumption <= starterStorage.getEnergyStored()) {
             starterRunning = true;
+            starterStorage.modifyEnergyStored(-electricStarterConsumption);
         } else starterRunning = false;
 
         if (speed < maxSpeed / 4) {

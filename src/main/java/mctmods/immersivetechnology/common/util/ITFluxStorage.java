@@ -23,6 +23,8 @@ public class ITFluxStorage extends FluxStorage implements IEnergyStorage {
         super(capacity);
         this.canExtract = canExtract;
         this.canReceive = canReceive;
+        if (!canExtract) limitExtract = 0;
+        if (!canReceive) limitReceive = 0;
     }
 
     @Override
