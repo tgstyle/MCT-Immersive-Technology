@@ -159,14 +159,14 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     public void ignite() {
-        sparkplugStorage.extractEnergy(sparkplugConsumption, false);
+        sparkplugStorage.modifyEnergyStored(-sparkplugConsumption);
         ignited = true;
         ignitionGracePeriod = 60;
         BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.buffer());
     }
 
     public boolean canIgnite() {
-        return sparkplugConsumption == sparkplugStorage.extractEnergy(sparkplugConsumption, true);
+        return sparkplugConsumption <= sparkplugStorage.getEnergyStored();
     }
 
     @Override
@@ -194,8 +194,9 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
         ignited = ignitionGracePeriod > 0;
         boolean canRun = !isRSDisabled() && isValidAlternator();
-        if (canRun && electricStarterConsumption == starterStorage.extractEnergy(electricStarterConsumption, false)) {
+        if (canRun && electricStarterConsumption <= starterStorage.getEnergyStored()) {
             starterRunning = true;
+            starterStorage.modifyEnergyStored(-electricStarterConsumption);
         } else starterRunning = false;
 
         if (speed < maxSpeed / 4) {
@@ -231,7 +232,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
         speed = nbt.getInteger("speed");
         starterRunning = nbt.getBoolean("starter");
-        ignited = nbt.getBoolean("ignited");
+        ignitionGracePeriod = nbt.getInteger("ignitionGracePeriod");
         animation.readFromNBT(nbt);
         burnRemaining = nbt.getInteger("burnRemaining");
         starterStorage.readFromNBT(nbt.getCompoundTag("starterStorage"));
@@ -245,7 +246,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
         nbt.setInteger("speed", speed);
         nbt.setBoolean("starter", starterRunning);
-        nbt.setBoolean("ignited", ignited);
+        nbt.setInteger("ignitionGracePeriod", ignitionGracePeriod);
         animation.writeToNBT(nbt);
         nbt.setInteger("burnRemaining", burnRemaining);
         nbt.setTag("starterStorage", starterStorage.writeToNBT(new NBTTagCompound()));
