@@ -124,7 +124,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 						fr = ((TileEntitySolarReflectorMaster) tile).facing;
 						if((cont % 2 == 0 && (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH)) || (cont % 2 != 0 && (facing == EnumFacing.EAST || facing == EnumFacing.WEST))) {
 							if(fr == EnumFacing.NORTH || fr == EnumFacing.SOUTH) {
-								if(((TileEntitySolarReflectorMaster) tile).getSunState()) {
+								if(((TileEntitySolarReflectorMaster) tile).canSeeSun()) {
 									update = true;
 									reflectors[cont] = 1;
 								}
@@ -132,7 +132,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 							}
 						} else {
 							if(fr == EnumFacing.EAST || fr == EnumFacing.WEST) {
-								if(((TileEntitySolarReflectorMaster) tile).getSunState()) {
+								if(((TileEntitySolarReflectorMaster) tile).canSeeSun()) {
 									update = true;
 									reflectors[cont] = 1;
 								}
