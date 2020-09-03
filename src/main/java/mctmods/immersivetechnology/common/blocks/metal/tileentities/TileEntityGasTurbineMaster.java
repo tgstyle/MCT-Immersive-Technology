@@ -232,7 +232,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
         speed = nbt.getInteger("speed");
         starterRunning = nbt.getBoolean("starter");
-        ignited = nbt.getBoolean("ignited");
+        ignitionGracePeriod = nbt.getInteger("ignitionGracePeriod");
         animation.readFromNBT(nbt);
         burnRemaining = nbt.getInteger("burnRemaining");
         starterStorage.readFromNBT(nbt.getCompoundTag("starterStorage"));
@@ -246,7 +246,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
         nbt.setInteger("speed", speed);
         nbt.setBoolean("starter", starterRunning);
-        nbt.setBoolean("ignited", ignited);
+        nbt.setInteger("ignitionGracePeriod", ignitionGracePeriod);
         animation.writeToNBT(nbt);
         nbt.setInteger("burnRemaining", burnRemaining);
         nbt.setTag("starterStorage", starterStorage.writeToNBT(new NBTTagCompound()));
