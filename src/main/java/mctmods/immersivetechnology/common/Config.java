@@ -145,8 +145,8 @@ public class Config {
 				public static float steamTurbine_speed_maxRotation = 72;
 			}
 			public static class GasTurbine {
-				@Comment({"The power consumption of the electric starter for the Gas Turbine [Default=4096]"})
-				public static int gasTurbine_electric_starter_consumption = 4096;
+				@Comment({"The power consumption of the electric starter for the Gas Turbine [Default=3072]"})
+				public static int gasTurbine_electric_starter_consumption = 3072;
 				@Comment({"The power consumption  of the sparkplug for the Gas Turbine [Default=1024]"})
 				public static int gasTurbine_sparkplug_consumption = 1024;
 				@Comment({"The capacity of the electric starter for the Gas Turbine [Default=3072]"})
