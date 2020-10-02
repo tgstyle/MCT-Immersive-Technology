@@ -227,6 +227,12 @@ public class ITContent {
 			MultiblockHandler.registerMultiblock(MultiblockCoolingTower.instance);
 		}
 		if(Multiblock.enable_gasTurbine) {
+			// Enable alternator if not enabled with steam turbine
+			if(!Multiblock.enable_steamTurbine) {
+				registerTile(TileEntityAlternatorSlave.class);
+				registerTile(TileEntityAlternatorMaster.class);
+				MultiblockHandler.registerMultiblock(MultiblockAlternator.instance);
+			}
 			registerTile(TileEntityGasTurbineSlave.class);
 			registerTile(TileEntityGasTurbineMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockGasTurbine.instance);
