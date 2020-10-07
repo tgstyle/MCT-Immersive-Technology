@@ -14,22 +14,22 @@ item.immersivetech.material.salt.name=盐
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=蒸馏水
 tile.immersivetech.fluidSteam.name=蒸汽
-tile.immersivetech.fluidSlime.name=液态史莱姆黏液
+tile.immersivetech.fluidExhaustSteam.name=残热蒸汽
+tile.immersivetech.fluidFlueGas.name=烟道气
 fluid.distwater=蒸馏水
 fluid.steam=蒸汽
-fluid.slime=液态史莱姆黏液
+fluid.exhauststeam=残热蒸汽
+fluid.fluegas=烟道气
 
 
 #KEYWORDS
-keyword.immersivetech.duration=持续
-keyword.immersivetech.generate=并产生
-keyword.immersivetech.heatPerTick=每tick的热量
-keyword.immersivetech.totalHeat=的总热量
+keyword.immersivetech.generate=产生
 
 
 #JEI
 category.immersivetech.metal_multiblock.boilerRecipe=锅炉
 category.immersivetech.metal_multiblock.boilerFuel=锅炉燃料
+category.immersivetech.metal_multiblock.distillerChance=概率: %s
 
 
 #TILE ENTITYS
@@ -39,7 +39,17 @@ tile.immersivetech.metal_trash.trash_item.name=垃圾桶
 tile.immersivetech.metal_trash.trash_fluid.name=流体垃圾桶
 tile.immersivetech.metal_trash.trash_energy.name=能量垃圾桶
 tile.immersivetech.metal_barrel.barrel.name=创造模式金属桶
+tile.immersivetech.metal_barrel.barrel_open.name=无盖金属桶
+tile.immersivetech.metal_barrel.barrel_steel.name=钢制金属桶
+tile.immersivetech.valve.fluid_valve.name=流体控制阀
+tile.immersivetech.valve.load_controller.name=载荷控制器
+tile.immersivetech.valve.stack_limiter.name=物品控制器
 
+#STONE
+tile.immersivetech.stone_decoration_slab.cokebrick_reinforced.name=强化高炉砖台阶
+
+#WOODEN
+tile.immersivetech.wooden_crate.crate.name=创造存储箱
 
 #METAL MULTIBLOCKS
 tile.immersivetech.metal_multiblock.distiller.name=蒸馏器
@@ -48,10 +58,66 @@ tile.immersivetech.metal_multiblock.solar_reflector.name=太阳能反射镜
 tile.immersivetech.metal_multiblock.steam_turbine.name=蒸汽轮机
 tile.immersivetech.metal_multiblock.boiler.name=蒸汽锅炉
 tile.immersivetech.metal_multiblock.alternator.name=交流发电机
+tile.immersivetech.metal_multiblock.distiller_slave.name=蒸馏器
+tile.immersivetech.metal_multiblock.solar_tower_slave.name=太阳能集热塔
+tile.immersivetech.metal_multiblock.solar_reflector_slave.name=太阳能反射镜
+tile.immersivetech.metal_multiblock.steam_turbine_slave.name=蒸汽轮机
+tile.immersivetech.metal_multiblock.boiler_slave.name=蒸汽锅炉
+tile.immersivetech.metal_multiblock.alternator_slave.name=交流发电机
+tile.immersivetech.metal_multiblock.steel_tank.name=钢制流体储罐
+tile.immersivetech.metal_multiblock.steel_tank_slave.name=钢制流体储罐
+tile.immersivetech.metal_multiblock.cooling_tower.name=冷却塔
+tile.immersivetech.metal_multiblock.cooling_tower_slave.name=冷却塔
+tile.immersivetech.metal_multiblock1.gas_turbine.name=燃气轮机
+tile.immersivetech.metal_multiblock1.gas_turbine_slave.name=燃气轮机
+
+
+#OVERLAY
+overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s mB
+overlay.immersivetech.osd.fluid_valve.normal.firstline=允许通过 %s mB 在最后一秒
+overlay.immersivetech.osd.fluid_valve.sneaking.firstline=平均允许 %s mB/t
+overlay.immersivetech.osd.fluid_valve.sneaking.secondline=在 %s 个分组及最后一分钟内
+overlay.immersivetech.osd.load_controller.normal.firstline=允许通过 %s IF 在最后一秒
+overlay.immersivetech.osd.load_controller.sneaking.firstline=平均允许 %s IF/t
+overlay.immersivetech.osd.load_controller.sneaking.secondline=在 %s 个分组及最后一分钟内
+overlay.immersivetech.osd.stack_limiter.normal.firstline=允许通过 %s 个物品在最后一秒
+overlay.immersivetech.osd.stack_limiter.sneaking.firstline=平均允许 %s 物品/t
+overlay.immersivetech.osd.stack_limiter.sneaking.secondline=在 %s 个分组及最后一分钟内
+overlay.immersivetech.osd.barrel.normal.firstline=%s : %s mB
+overlay.immersivetech.osd.creative_crate.normal.firstline=%s : 提供 %s 个物品在最后一秒
+overlay.immersivetech.osd.trash_item.normal.firstline=%s 个物品在最后一秒
+overlay.immersivetech.osd.trash_fluid.normal.firstline=%s mB 在最后一秒
+overlay.immersivetech.osd.trash_energy.normal.firstline=%s IF 在最后一秒
+overlay.immersivetech.osd.trash_item.normal.alternative=%s items/t 在最后一秒
+overlay.immersivetech.osd.trash_fluid.normal.alternative=%s mB/t 在最后一秒
+overlay.immersivetech.osd.trash_energy.normal.alternative=%s IF/t 在最后一秒
+overlay.immersivetech.redstone_off=红石控制模式：关
+overlay.immersivetech.redstone_normal=红石控制模式：正常
+overlay.immersivetech.redstone_inverted=红石控制模式：反相
+
+
+#GUI
+gui.immersivetech.empty=空
+gui.immersivetech.ticks=%st
+gui.immersivetech.seconds=%ss
+gui.immersivetech.boiler.heat_per_tick=%1$s 热度/Tick
+gui.immersivetech.boiler.total_heat=总产热 %s 
+gui.immersivetech.fluid_valve.firstline=限制至(留空则禁用)...
+gui.immersivetech.fluid_valve.limitpacket=mB 每个分组
+gui.immersivetech.fluid_valve.limittime=mB 每秒
+gui.immersivetech.fluid_valve.limitdestination=mB 在内置输出储罐
+gui.immersivetech.load_controller.limitpacket=IF 每个分组
+gui.immersivetech.load_controller.limittime=IF 每秒
+gui.immersivetech.load_controller.limitdestination=IF 在内置输出缓存
+gui.immersivetech.stack_limiter.limitpacket=Items 每个分组
+gui.immersivetech.stack_limiter.limittime=Items 每秒
+gui.immersivetech.stack_limiter.limitdestination=个物品在内置输出堆栈
+gui.immersivetech.generic_multiblock_jei_tooltip=查阅工程师手册进行搭建
 
 
 #STONE MULTIBLOCKS
 tile.immersivetech.stone_multiblock.coke_oven_advanced.name=高级焦炉
+tile.immersivetech.stone_multiblock.coke_oven_advanced_slave.name=高级焦炉
 
 
 #METAL MULTIBLOCKS
@@ -61,6 +127,9 @@ desc.immersiveengineering.info.multiblock.IT:SolarReflector=太阳能反射镜
 desc.immersiveengineering.info.multiblock.IT:SteamTurbine=蒸汽轮机
 desc.immersiveengineering.info.multiblock.IT:Boiler=蒸汽锅炉
 desc.immersiveengineering.info.multiblock.IT:Alternator=交流发电机
+desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank=钢制液体储罐
+desc.immersiveengineering.info.multiblock.IT:CoolingTower=冷却塔
+desc.immersiveengineering.info.multiblock.IT:GasTurbine=燃气轮机
 
 
 #STONE MULTIBLOCKS
@@ -71,17 +140,6 @@ desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=高级焦炉
 tile.immersivetech.connectors.connectors_timer.name=红石计时器
 
 
-#OSD
-immersivetech.osd.barrel.output=输出
-immersivetech.osd.barrel.empty=空的！
-immersivetech.osd.trash_energy.trashed=销毁了
-immersivetech.osd.trash_energy.lastsecond=x 每秒。
-immersivetech.osd.trash_fluid.trashed=销毁了
-immersivetech.osd.trash_fluid.lastsecond=x 每秒。
-immersivetech.osd.trash_item.trashed=销毁了
-immersivetech.osd.trash_item.lastsecond=每秒。
-
-
 #MANUAL
 ie.manual.category.it.name=沉浸科技
 
@@ -89,12 +147,12 @@ ie.manual.entry.advancedCokeOven.name=更高级的焦炉
 ie.manual.entry.advancedCokeOven.subtext=现在速度快多了
 ie.manual.entry.advancedCokeOven0=高级焦炉是一种多方块结构，能够让玩家快速的获取焦煤和杂酚油。<br>在先前的章节已经展示了搭建结构，使用工程师锤敲击中心的强化焦炉砖方块即可构建。
 ie.manual.entry.advancedCokeOven1=它支持自动化输入输出，也可以配合预热器来提供热空气，加快进度。<br>这个焦炉是用的强化砖构建而成的，极力推荐你将首次获取的钢材用于制作这个结构。<br>和强化高炉一样，焦煤从前端输出，杂酚油从后端输出。煤炭从顶部输入。
-ie.manual.entry.advancedCokeOven2=焦炉预热器可以用于加快煤炭的精炼速度。每个焦炉最多只能连接两个预热器，且只能连接在两侧端口。每个预热器都需要<config;i;cokeOvenPreheater_consumption>Flux/t的能量供给才能运行。
+ie.manual.entry.advancedCokeOven2=焦炉预热器可以用于加快煤炭的精炼速度。每个焦炉最多只能连接两个预热器，且只能连接在两侧端口。每个预热器都需要<config;i;cokeOvenPreheater_consumption>IF/t的能量供给才能运行。
 
 ie.manual.entry.alternator.name=交流发电机
 ie.manual.entry.alternator.subtext=让我们变换
 ie.manual.entry.alternator0=交流发电机是将蒸汽轮机的动能转换为电能的多方块结构<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击高压线圈那一侧的正中心的重型工程块完成搭建。
-ie.manual.entry.alternator1=要发电的话，它需要连接（<link;steamTurbine;§n§o 蒸汽轮机§r>）的动能轴那端来配合工作。将轮机动能轴连接到交流发电机的传动端（中间有钢块的那端），而电能输出端则在另一端的左右两边。发电机根据轮机所提供的动能速度来产生最高<config;i;alternator_energyPerTick>Flux/t的能量。<br>而交流发电机本身可以存储<config;i;alternator_energyStorage>Flux的能量，它能在每个端口输出<config;i;alternator_energyPerTickPerPort>Flux/t的能量。
+ie.manual.entry.alternator1=它需要受<link;steamTurbine;§n§o蒸汽轮机§r>的动能轴端驱动来产生电能。将轮机动能轴连接到交流发电机的传动端（中间有钢块的那端），而电能输出端则在另一端的左右两边。发电机根据轮机所提供的动能速度来产生最高<config;i;alternator_energyPerTick>Flux/t的能量。<br>而交流发电机本身可以存储<config;i;alternator_energyStorage>Flux的能量，它能在每个端口输出<config;i;alternator_energyPerTickPerPort>Flux/t的能量。
 ie.manual.entry.alternator2=蒸汽轮机和搭配的交流发电机
 
 ie.manual.entry.boiler.name=蒸汽锅炉
@@ -108,19 +166,77 @@ ie.manual.entry.distiller.subtext=比水更清澈
 ie.manual.entry.distiller0=蒸馏器是一种多方块结构机械，它可以将水蒸馏成蒸馏水和盐。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击正面中央的铁板金属块完成搭建。
 ie.manual.entry.distiller1=正中心红点的控制面板是使用红石信号控制机器开关的接口，红石信号的开关与机器的开关的关系可以通过使用工程师锤右击红石控制面板来反转。<br>水可以通过机器左侧标有蓝点的舱口输入到蒸馏器中。相对的另一侧带有橙点的舱口则用作液体输出，而另一个橙点舱口作为物品的输出口。<br>蒸馏器需要能源供应才能将水蒸馏成蒸馏水和盐。<br>它会将一桶水蒸馏成500mB的蒸馏水。
 
+ie.manual.entry.fluidValve.name=流体控制阀
+ie.manual.entry.fluidValve.subtext=我只需要一滴
+ie.manual.entry.fluidValve0=§6流体控制阀§r可以控制通过它的流体，并且你可以在GUI里设定参数，也可以通过红石信号强度控制其，当红石信号强度是15时为关闭。 可在潜行时使用工程师锤设置红石控制模式。
+
+ie.manual.entry.loadController.name=载荷控制器
+ie.manual.entry.loadController.subtext=能量不足！
+ie.manual.entry.loadController0=§6载荷控制器§r可以控制通过它的能量，并且你可以在GUI里设定参数，也可以通过红石信号强度控制其，当红石信号强度是15时为关闭。 可在潜行时使用工程师锤设置红石控制模式。
+
+ie.manual.entry.openBarrel.name=无盖金属桶
+ie.manual.entry.openBarrel.subtext=向太阳或白云开放？
+ie.manual.entry.openBarrel0=§6无盖金属桶§r是类似金属桶的单方块储罐，只不过其顶部没有被盖住，流体可以直接手持倒入，并且只能通过顶部输入，底部输出。同时放置在露天处下雨时将被慢慢装满，在雷雨天可以两倍速度装满。不过，如果将其放在温热环境，水可能会被蒸发...
+
 ie.manual.entry.solarTower.name=太阳能集热塔
 ie.manual.entry.solarTower.subtext=太阳的力量
 ie.manual.entry.solarTower0=太阳能集热塔是一种多方块结构机械，它可以利用阳光，将水转换成蒸汽。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击正面的红石工程块完成搭建。
-ie.manual.entry.solarTower1=太阳能集热塔可以将水或<link;distiller;§n§o 蒸馏水§r>转换成蒸汽。<br>一桶蒸馏水可以产生750mB的蒸汽。<br>一桶水可以产生500mB的蒸汽。<br>水可以通过左侧和右侧的标有蓝点的两个舱口输入太阳能集热塔。背面带有橙点的舱口用作流体输出。<br>太阳能集热塔至少需要一个太阳能反射镜才能工作。
+ie.manual.entry.solarTower1=太阳能集热塔可将水或<link;distiller;§n§o蒸馏水§r>转换成蒸汽。<br>一桶蒸馏水可产生3000mB的蒸汽。<br>一桶水可产生2000mB的蒸汽。<br>水可以通过左侧和右侧的标有蓝点的两个舱口输入太阳能集热塔。背面带有橙点的舱口用作流体输出。<br>太阳能集热塔至少需要一个太阳能反射镜才能工作。它在白天可被太阳持续加热，而在晚上不断降温，同时其热度变化受生物群系气温影响。
 ie.manual.entry.solarTower2=太阳能反射镜是将太阳光反射到太阳能集热塔中心的多方块结构机械。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击正面的银块完成搭建。
 ie.manual.entry.solarTower3=为了实现工作，反射镜的中心（银块位置）与太阳能塔之间不能有阻隔方块，反射镜的中心（银块位置）必须对准太阳能塔的中心（塔中间开口位置），反射镜和太阳能塔之间的距离必须在<config;i;solarTower_minRange>-<config;i;solarTower_maxRange>个方块之间。显然，太阳能塔和反射镜只能在白天工作。
+
+ie.manual.entry.stackLimiter.name=堆栈限制器
+ie.manual.entry.stackLimiter.subtext=只需要一对物品！
+ie.manual.entry.stackLimiter0=§6堆栈限制器§r可以控制通过它的物品，并且你可以在GUI里设定参数，也可以通过红石信号强度控制其，当红石信号强度是15时为关闭。 可在潜行时使用工程师锤设置红石控制模式。
 
 ie.manual.entry.steamTurbine.name=蒸汽轮机
 ie.manual.entry.steamTurbine.subtext=沸腾的气息
 ie.manual.entry.steamTurbine0=蒸汽轮机是使用蒸汽来产生能量的多方块结构机械。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击红石工程块那一侧的正中心的钢块完成搭建。
 ie.manual.entry.steamTurbine1=正中心红点的控制面板是使用红石信号控制机器开关的接口，红石信号的开关与机器的开关的关系可以通过使用工程师锤右击红石控制面板来反转。<br>机器前方的流体管道口为蒸汽的输入口。动能输出口位于机器后部（钢块处）。你可以从机器的顶部管道把蒸汽冷却后冷凝残余的水排出（不是必要的）。
-ie.manual.entry.steamTurbine2=当供给蒸汽时，蒸汽轮机便会工作，它会不断加速运转，并在<config;i;steamTurbine_timeToMax>秒后达到最大运转速度。将轮机中途关闭或不能提供足够的蒸汽则会降低轮机的速度，从而降低其输出功率。<br>而要输出能量，你需要在轮机旁连接一台<link;alternator;§o§n交流发电机§r>.
+ie.manual.entry.steamTurbine2=当供给蒸汽时，蒸汽轮机便会工作，它会不断加速运转，并在<config;i;steamTurbine_timeToMax>秒后达到最大运转速度。将轮机中途关闭或不能提供足够的蒸汽则会降低轮机的速度，从而降低其输出功率。<br>你需要在蒸汽轮机的动能轴末端连接一台<link;Alternator;§n§o交流发电机§r>来配合输出电能。
+
+ie.manual.entry.gasTurbine.name=燃气轮机
+ie.manual.entry.gasTurbine.subtext=并非来自747
+ie.manual.entry.gasTurbine0=燃气轮机是使用可燃燃料产生动能的多方块结构机械。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击红石工程块那一侧的正中心的钢块完成搭建。
+ie.manual.entry.gasTurbine1=提供燃料并吸入足够的空气，蒸汽轮机将缓慢加速。保持供应燃料，在启动约30秒后便可达到最大转速和效率。如果在高速运转状态将其关闭，燃气轮机的转速会缓慢降低，如果其转速降至1/4以下，则需要重新加速才可继续使用。燃气轮机在燃烧燃料期间，排气量保持不变。<br>你需要在燃气轮机的动能轴末端连接一台<link;Alternator;§n§o交流发电机§r>来配合输出电能。
+ie.manual.entry.gasTurbine2=机器前方的流体管道口为燃料的输入口，两侧有用作不同目的的电源插口。高压插口需要提供3072IF/t来启动燃气轮机，并将其加速至1/4转速。但继续保持该输入将会导致机器熄火，而不是继续提速。因此需要断开该插口转而使用中压插口（位于控制面板侧）供能将燃料点燃（在燃气轮机启动阶段及不能提供足够的燃料超过3秒都需要重新点燃）。
+ie.manual.entry.gasTurbine3=与蒸汽轮机类似，燃气轮机从后部传动轴输出动能，气体输出口则刚好位于传动轴下方。这些气体有特别的作用，因为通过燃烧它们可以增加轮机的效率。尽管燃气轮机本身的效率会比柴油发电机要差，但是对于搭建更大的而且更复杂的电能输出系统而言，这才是燃气轮机的令人瞩目的地方。<br>通过<link;gasTurbine;§n§oCCGT§r>（对于船员而言是COGAS）产生的烟道气作为锅炉的燃料来产生蒸汽动力时，可获得巨大效益。
+
+
+ie.manual.entry.steelBarrel.name=钢制金属桶
+ie.manual.entry.steelBarrel.subtext=全力以赴！
+ie.manual.entry.steelBarrel0=§6钢制金属桶§r是拥有金属桶两倍容量的单方块储罐，流体可以直接手持倒入。他的顶部与底部均可通过工程师锤配置输入与输出。
+
+ie.manual.entry.steelTank.name=钢制流体储罐
+ie.manual.entry.steelTank.subtext=全力以赴！
+ie.manual.entry.steelTank0=钢制流体储罐是提供更大的流体容量的多方块结构。它可以存储 <config;i;steelTank_tankSize> mB的任意流体, 它可用管道从顶部或底部输入，但是流体只能从底部输出。
+ie.manual.entry.steelTank1=在下方中央方块提供红石信号可以让储罐自动输出，红石比较器可以依据内部容量发出信号。
 
 ie.manual.entry.redstone.name=红石计时器
 ie.manual.entry.redstone.subtext=滴答！滴答！
 ie.manual.entry.redstone0=§6红石计时器§r拥有输出红石脉冲的功能，材质中的红心方形方块端为脉冲输出端，上方为连接红石线缆的控制端。脉冲的频率取决于设置好的延迟。你可以在GUI中设置脉冲延迟的数据，GUI中设置10秒以下的脉冲精度为0.5秒，10秒以上的脉冲精度为1秒。红石计时器可以使用红石信号停止。
+
+ie.manual.entry.coolingTower.name=冷却塔
+ie.manual.entry.coolingTower.subtext=保持冷静，朋友！
+ie.manual.entry.coolingTower0=冷却塔是可以将残热蒸汽冷却成水的多方块结构。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击重型工程块完成搭建。
+ie.manual.entry.coolingTower1=残热蒸汽输入口位于重型工程块的左边，水或蒸馏水输入口位于重型工程块的右边。冷却后的水或蒸馏水在背面输出。
+
+ie.manual.entry.computer.steamTurbine.name=蒸汽轮机 ☎
+ie.manual.entry.computer.steamTurbine.subtext=沸腾的呼吸
+ie.manual.entry.computer.boiler.name=蒸汽锅炉 ☎
+ie.manual.entry.computer.boiler.subtext=柴油的用法
+ie.manual.entry.computer.distiller.name=蒸馏器 ☎
+ie.manual.entry.computer.distiller.subtext=比水更清澈
+ie.manual.entry.computer.solarTower.name=太阳能集热塔 ☎
+ie.manual.entry.computer.solarTower.subtext=太阳的力量
+ie.manual.entry.computer.gasTurbine.name=燃气轮机 ☎
+ie.manual.entry.computer.gasTurbine.subtext=并非来自747
+
+ie.manual.entry.computer.steamTurbine0=§lgetSpeed()§r:返回蒸汽轮机的转速。<br>§lgetTankInfo()§r:返回关于蒸汽轮机蒸汽储罐的信息。<br>§lgetOutputTankInfo()§r:返回关于蒸汽轮机输出储罐的信息。
+ie.manual.entry.computer.boiler0=§lgetHeat()§r:返回蒸汽锅炉的热度。<br>§lgetFuelTankInfo()§r:返回关于锅炉蒸汽储罐信息<br>§lgetInputTankInfo()§r:返回关于锅炉输入储罐的信息。<br>§lgetOutputTankInfo()§r:返回关于锅炉输出储罐的信息。
+ie.manual.entry.computer.boiler1=§lgetFullCanisters()§r:返回一张包含机器中已满液罐的信息，并带有引用自每个储罐的键“input”和“output”的表。<br>§lgetEmptyCanisters()§r:返回一张包含机器中已满液罐的信息，并带有引用自每个储罐的键“input”和“output”的表。
+ie.manual.entry.computer.distiller0=§lgetEnergyStored()§r:返回存储在蒸馏器内部缓冲中的电量。<br>§lgetMaxEnergyStored()§r:返回蒸馏器的内部电量缓冲的最大容量。<br>§lgetInputTankInfo()§r:返回关于蒸馏器输入储罐的信息。<br>§lgetOutputTankInfo()§r:返回关于蒸馏器输出储罐的信息。
+ie.manual.entry.computer.distiller1=§lgetFullCanisters()§r:返回一张包含机器中已满液罐的信息，并带有引用自每个储罐的键“input”和“output”的表。<br>§lgetEmptyCanisters()§r:返回一张表，该表包含机器中空液罐的信息，并带有引用自每个储罐的键“input”和“output”。
+ie.manual.entry.computer.solarTower0=§lgetReflectors()§r:返回一张连接到太阳能塔的有效反射镜的表。<br>§lgetInputTankInfo()§r: 返回关于集热塔输入储罐的信息。<br>§lgetOutputTankInfo()§r:返回关于集热塔输出储罐的信息。
+ie.manual.entry.computer.solarTower1=§lgetFullCanisters()§r:返回一张包含机器中已满液罐的信息，并带有引用自每个储罐的键“input”和“output”的表。<br>§lgetEmptyCanisters()§r:返回一张包含机器中空液罐的信息，并带有引用自每个储罐的键“input”和“output”的表。
+ie.manual.entry.computer.gasTurbine0=§lgetSpeed()§r:返回燃气轮机的转速。<br>§lgetInputTankInfo()§r:返回关于燃气轮机燃料储罐的信息。<br>§lgetOutputTankInfo()§r:返回关于蒸汽轮机输出储罐的信息。
