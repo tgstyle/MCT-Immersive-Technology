@@ -230,7 +230,7 @@ ie.manual.entry.computer.distiller.subtext=比水更清澈
 ie.manual.entry.computer.solarTower.name=太阳能集热塔 ☎
 ie.manual.entry.computer.solarTower.subtext=太阳的力量
 ie.manual.entry.computer.gasTurbine.name=燃气轮机 ☎
-ie.manual.entry.computer.gasTurbine.subtext=并非来自 747
+ie.manual.entry.computer.gasTurbine.subtext=并非来自747
 
 ie.manual.entry.computer.steamTurbine0=§lgetSpeed()§r:返回蒸汽轮机的转速。<br>§lgetTankInfo()§r:返回关于蒸汽轮机蒸汽储罐的信息。<br>§lgetOutputTankInfo()§r:返回关于蒸汽轮机输出储罐的信息。
 ie.manual.entry.computer.boiler0=§lgetHeat()§r:返回蒸汽锅炉的热度。<br>§lgetFuelTankInfo()§r:返回关于锅炉蒸汽储罐信息<br>§lgetInputTankInfo()§r:返回关于锅炉输入储罐的信息。<br>§lgetOutputTankInfo()§r:返回关于锅炉输出储罐的信息。
