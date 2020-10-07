@@ -14,12 +14,12 @@ item.immersivetech.material.salt.name=盐
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=蒸馏水
 tile.immersivetech.fluidSteam.name=蒸汽
-tile.immersivetech.fluidExhaustSteam.name=残热蒸汽
-tile.immersivetech.fluidFlueGas.name=烟道气
+tile.immersivetech.fluidExhaustSteam.name=余热蒸汽
+tile.immersivetech.fluidFlueGas.name=燃气
 fluid.distwater=蒸馏水
 fluid.steam=蒸汽
-fluid.exhauststeam=残热蒸汽
-fluid.fluegas=烟道气
+fluid.exhauststeam=余热蒸汽
+fluid.fluegas=燃气
 
 
 #KEYWORDS
@@ -152,7 +152,7 @@ ie.manual.entry.advancedCokeOven2=焦炉预热器可以用于加快煤炭的精�
 ie.manual.entry.alternator.name=交流发电机
 ie.manual.entry.alternator.subtext=让我们变换
 ie.manual.entry.alternator0=交流发电机是将蒸汽轮机的动能转换为电能的多方块结构<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击高压线圈那一侧的正中心的重型工程块完成搭建。
-ie.manual.entry.alternator1=它需要受<link;steamTurbine;§n§o蒸汽轮机§r>的动能轴端驱动来产生电能。将轮机动能轴连接到交流发电机的传动端（中间有钢块的那端），而电能输出端则在另一端的左右两边。发电机根据轮机所提供的动能速度来产生最高<config;i;alternator_energyPerTick>IF/t的能量。<br>而交流发电机本身可以存储<config;i;alternator_energyStorage>IF的能量，它能在每个端口输出<config;i;alternator_energyPerTickPerPort>IF/t的能量。
+ie.manual.entry.alternator1=它需要受<link;steamTurbine;§n§o蒸汽轮机§r>的动能轴端驱动来产生电能。将轮机动能轴连接到交流发电机的传动端（中间有钢块的那端），而电能输出端则在另一端的左右两边。发电机根据轮机所提供的动能速度来产生最高<config;i;alternator_energyPerTick>IF/t的能量。<br>而交流发电机本身可以存储<config;i;alternator_energyStorage>IF的能量，它能在每个端口输出<config;i;alternator_energyPerTickPerPort>IF/t的能量。红石比较器可以放置在其末端中央，依据发电机内部能量等级发出信号。
 ie.manual.entry.alternator2=蒸汽轮机和搭配的交流发电机
 
 ie.manual.entry.boiler.name=蒸汽锅炉
@@ -200,7 +200,7 @@ ie.manual.entry.gasTurbine.subtext=并非来自747
 ie.manual.entry.gasTurbine0=燃气轮机是使用可燃燃料产生动能的多方块结构机械。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击红石工程块那一侧的正中心的钢块完成搭建。
 ie.manual.entry.gasTurbine1=提供燃料并吸入足够的空气，蒸汽轮机将缓慢加速。保持供应燃料，在启动约30秒后便可达到最大转速和效率。如果在高速运转状态将其关闭，燃气轮机的转速会缓慢降低，如果其转速降至1/4以下，则需要重新加速才可继续使用。燃气轮机在燃烧燃料期间，排气量保持不变。<br>你需要在燃气轮机的动能轴末端连接一台<link;Alternator;§n§o交流发电机§r>来配合输出电能。
 ie.manual.entry.gasTurbine2=机器前方的流体管道口为燃料的输入口，两侧有用作不同目的的电源插口。高压插口需要提供3072IF/t来启动燃气轮机，并将其加速至1/4转速。但继续保持该输入将会导致机器熄火，而不是继续提速。因此需要断开该插口转而使用中压插口（位于控制面板侧）供能将燃料点燃（在燃气轮机启动阶段及不能提供足够的燃料超过3秒都需要重新点燃）。
-ie.manual.entry.gasTurbine3=与蒸汽轮机类似，燃气轮机从后部传动轴输出动能，气体输出口则刚好位于传动轴下方。这些气体有特别的作用，因为通过燃烧它们可以增加轮机的效率。尽管燃气轮机本身的效率会比柴油发电机要差，但是对于搭建更大的而且更复杂的电能输出系统而言，这才是燃气轮机的令人瞩目的地方。<br>通过<link;gasTurbine;§n§oCCGT§r>（对于船员而言是COGAS）产生的烟道气作为锅炉的燃料来产生蒸汽动力时，可获得巨大效益。
+ie.manual.entry.gasTurbine3=与蒸汽轮机类似，燃气轮机从后部传动轴输出动能，气体输出口则刚好位于传动轴下方。这些气体有特别的作用，因为通过燃烧它们可以增加轮机的效率。尽管燃气轮机本身的效率会比柴油发电机要差，但是对于搭建更大的而且更复杂的电能输出系统而言，这才是燃气轮机的令人瞩目的地方。<br>通过<link;gasTurbine;§n§oCCGT§r>（对于船员而言是COGAS）产生的燃气作为锅炉的燃料来产生蒸汽动力时，可获得巨大效益。
 
 
 ie.manual.entry.steelBarrel.name=钢制金属桶
@@ -218,8 +218,8 @@ ie.manual.entry.redstone0=§6红石计时器§r拥有输出红石脉冲的功能
 
 ie.manual.entry.coolingTower.name=冷却塔
 ie.manual.entry.coolingTower.subtext=保持冷静，朋友！
-ie.manual.entry.coolingTower0=冷却塔是可以将残热蒸汽冷却成水的多方块结构。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击重型工程块完成搭建。
-ie.manual.entry.coolingTower1=残热蒸汽输入口位于重型工程块的左边，水或蒸馏水输入口位于重型工程块的右边。冷却后的水或蒸馏水在背面输出。
+ie.manual.entry.coolingTower0=冷却塔是可以将余热蒸汽冷却成水的多方块结构。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击重型工程块完成搭建。
+ie.manual.entry.coolingTower1=余热蒸汽输入口位于重型工程块的左边，水或蒸馏水输入口位于重型工程块的右边。冷却后的水或蒸馏水在背面输出。
 
 ie.manual.entry.computer.steamTurbine.name=蒸汽轮机 ☎
 ie.manual.entry.computer.steamTurbine.subtext=沸腾的呼吸
