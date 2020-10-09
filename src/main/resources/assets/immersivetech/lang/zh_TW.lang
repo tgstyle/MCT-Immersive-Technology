@@ -74,23 +74,23 @@ tile.immersivetech.metal_multiblock1.gas_turbine_slave.name=燃氣輪機
 
 #OVERLAY
 overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s mB
-overlay.immersivetech.osd.fluid_valve.normal.firstline=允許通過 %s mB 在最後一秒
-overlay.immersivetech.osd.fluid_valve.sneaking.firstline=平均允許 %s mB/t
-overlay.immersivetech.osd.fluid_valve.sneaking.secondline=在 %s 個分組及最後一分鐘內
-overlay.immersivetech.osd.load_controller.normal.firstline=允許通過 %s IF 在最後一秒
-overlay.immersivetech.osd.load_controller.sneaking.firstline=平均允許 %s IF/t
-overlay.immersivetech.osd.load_controller.sneaking.secondline=在 %s 個分組及最後一分鐘內
-overlay.immersivetech.osd.stack_limiter.normal.firstline=允許通過 %s 個物品在最後一秒
-overlay.immersivetech.osd.stack_limiter.sneaking.firstline=平均允許 %s 物品/t
-overlay.immersivetech.osd.stack_limiter.sneaking.secondline=在 %s 個分組及最後一分鐘內
-overlay.immersivetech.osd.barrel.normal.firstline=%s : %s mB
-overlay.immersivetech.osd.creative_crate.normal.firstline=%s : 提供 %s 個物品在最後一秒
-overlay.immersivetech.osd.trash_item.normal.firstline=%s 個物品在最後一秒
-overlay.immersivetech.osd.trash_fluid.normal.firstline=%s mB 在最後一秒
-overlay.immersivetech.osd.trash_energy.normal.firstline=%s IF 在最後一秒
-overlay.immersivetech.osd.trash_item.normal.alternative=%s items/t 在最後一秒
-overlay.immersivetech.osd.trash_fluid.normal.alternative=%s mB/t 在最後一秒
-overlay.immersivetech.osd.trash_energy.normal.alternative=%s IF/t 在最後一秒
+overlay.immersivetech.osd.fluid_valve.normal.firstline=允許通過 %s mB 在最近一秒
+overlay.immersivetech.osd.fluid_valve.sneaking.firstline=在 %s 個分組及最近一分鐘內
+overlay.immersivetech.osd.fluid_valve.sneaking.secondline=平均通過 %s mB/Tick
+overlay.immersivetech.osd.load_controller.normal.firstline=允許通過 %s IF 在最近一秒
+overlay.immersivetech.osd.load_controller.sneaking.firstline=在 %s 個分組及最近一分鐘內
+overlay.immersivetech.osd.load_controller.sneaking.secondline=平均通過 %s IF/Tick
+overlay.immersivetech.osd.stack_limiter.normal.firstline=允許通過 %s 個物品在最近一秒
+overlay.immersivetech.osd.stack_limiter.sneaking.firstline=在 %s 個分組及最近一分鐘內
+overlay.immersivetech.osd.stack_limiter.sneaking.secondline=平均通過 %s 物品/Tick
+overlay.immersivetech.osd.barrel.normal.firstline=在最近一秒提供 %s %s mB
+overlay.immersivetech.osd.creative_crate.normal.firstline=在最近一秒提供 %s %s 個
+overlay.immersivetech.osd.trash_item.normal.firstline=銷毀 %s 個物品在最近一秒
+overlay.immersivetech.osd.trash_fluid.normal.firstline=銷毀 %s mB 在最近一秒
+overlay.immersivetech.osd.trash_energy.normal.firstline=銷毀 %s IF 在最近一秒
+overlay.immersivetech.osd.trash_item.normal.alternative=銷毀 %s 物品/Tick 在最近一秒
+overlay.immersivetech.osd.trash_fluid.normal.alternative=銷毀 %s mB/Tick 在最近一秒
+overlay.immersivetech.osd.trash_energy.normal.alternative=銷毀 %s IF/Tick 在最近一秒
 overlay.immersivetech.redstone_off=紅石控制模式：關
 overlay.immersivetech.redstone_normal=紅石控制模式：正常
 overlay.immersivetech.redstone_inverted=紅石控制模式：反相
@@ -103,14 +103,14 @@ gui.immersivetech.seconds=%ss
 gui.immersivetech.boiler.heat_per_tick=%1$s 熱度/Tick
 gui.immersivetech.boiler.total_heat=總產熱 %s 
 gui.immersivetech.fluid_valve.firstline=限制至(留空則禁用)...
-gui.immersivetech.fluid_valve.limitpacket=mB 每個分組
-gui.immersivetech.fluid_valve.limittime=mB 每秒
+gui.immersivetech.fluid_valve.limitpacket=mB 每個分組中
+gui.immersivetech.fluid_valve.limittime=mB 每秒內
 gui.immersivetech.fluid_valve.limitdestination=mB 在內置輸出儲罐
-gui.immersivetech.load_controller.limitpacket=IF 每個分組
-gui.immersivetech.load_controller.limittime=IF 每秒
+gui.immersivetech.load_controller.limitpacket=IF 每個分組中
+gui.immersivetech.load_controller.limittime=IF 每秒內
 gui.immersivetech.load_controller.limitdestination=IF 在內置輸出緩存
-gui.immersivetech.stack_limiter.limitpacket=Items 每個分組
-gui.immersivetech.stack_limiter.limittime=Items 每秒
+gui.immersivetech.stack_limiter.limitpacket=個物品在每個分組中
+gui.immersivetech.stack_limiter.limittime=個物品每秒內
 gui.immersivetech.stack_limiter.limitdestination=個物品在內置輸出堆疊
 gui.immersivetech.generic_multiblock_jei_tooltip=查閱工程師手冊進行搭建
 
@@ -145,14 +145,14 @@ ie.manual.category.it.name=沉浸科技
 
 ie.manual.entry.advancedCokeOven.name=更高級的焦爐
 ie.manual.entry.advancedCokeOven.subtext=現在速度快多了
-ie.manual.entry.advancedCokeOven0=高級焦爐是一種多方塊結構，能夠讓玩家快速的獲取焦煤和雜酚油。<br>在先前的章節已經展示了搭建結構，使用工程師錘敲擊中心的強化焦爐磚方塊即可構建。
-ie.manual.entry.advancedCokeOven1=它支援自動化輸入輸出，也可以配合預熱器來提供熱空氣，加快進度。<br>這個焦爐是用的強化磚構建而成的，極力推薦你將首次獲取的鋼材用於製作這個結構。<br>和強化高爐一樣，焦煤從前端輸出，雜酚油從後端輸出。煤炭從頂部輸入。
+ie.manual.entry.advancedCokeOven0=高級焦爐是一種多方塊結構，能夠讓玩家快速的獲取焦煤和雜酚油。<br>具體結構如上圖所示，全部搭建完成後，使用工程師錘敲擊位於正面中心位置的強化焦爐磚方塊完成搭建。
+ie.manual.entry.advancedCokeOven1=它支援自動化的輸入輸出，也可以配合預熱器來提供熱空氣，加快進度。<br>這個焦爐是用的強化磚構建而成的，極力推薦你將首次獲取的鋼材用於製作這個結構。<br>和強化高爐一樣，焦煤從前端輸出，雜酚油從後端輸出。煤炭從頂部輸入。
 ie.manual.entry.advancedCokeOven2=焦爐預熱器可以用於加快煤炭的精煉速度。每個焦爐最多只能連接兩個預熱器，且只能連接在兩側埠。每個預熱器都需要<config;i;cokeOvenPreheater_consumption>IF/t的能量供給才能運行。
 
 ie.manual.entry.alternator.name=交流發電機
 ie.manual.entry.alternator.subtext=讓我們變換
 ie.manual.entry.alternator0=交流發電機是將蒸汽輪機的動能轉換為電能的多方塊結構<br>具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊高壓線圈那一側的正中心的重型工程塊完成搭建。
-ie.manual.entry.alternator1=它需要受<link;steamTurbine;§n§o蒸汽輪機§r>的動能軸端驅動來產生電能。將輪機動能軸連接到交流發電機的傳動端（中間有鋼塊的那端），而電能輸出端則在另一端的左右兩邊。發電機根據輪機所提供的動能速度來產生最高<config;i;alternator_energyPerTick>Flux/t的能量。<br>而交流發電機本身可以存儲<config;i;alternator_energyStorage>Flux的能量，它能在每個埠輸出<config;i;alternator_energyPerTickPerPort>Flux/t的能量。
+ie.manual.entry.alternator1=它需要受<link;steamTurbine;§n§o蒸汽輪機§r>的動能軸端驅動來產生電能。將輪機動能軸連接到交流發電機的傳動端（中間有鋼塊的那端），而電能輸出端則在另一端的左右兩邊。發電機根據輪機所提供的動能速度來產生最高<config;i;alternator_energyPerTick>IF/t的能量。<br>而交流發電機本身可以存儲<config;i;alternator_energyStorage>IF的能量，它能在每個埠輸出<config;i;alternator_energyPerTickPerPort>IF/t的能量。
 ie.manual.entry.alternator2=蒸汽輪機和搭配的交流發電機
 
 ie.manual.entry.boiler.name=蒸汽鍋爐
@@ -168,15 +168,15 @@ ie.manual.entry.distiller1=正中心紅點的控制台是使用紅石信號控�
 
 ie.manual.entry.fluidValve.name=流體控制閥
 ie.manual.entry.fluidValve.subtext=我只需要一滴
-ie.manual.entry.fluidValve0=§6流體控制閥§r可以控制通過它的流體，並且你可以在GUI裡設定參數，也可以通過紅石信號強度控制其，當紅石信號強度是15時為關閉。 可在潛行時使用工程師錘設置紅石控制模式。
+ie.manual.entry.fluidValve0=§6流體控制閥§r可以控制通過它的流體，並且你可以在介面裡設定參數，也可以通過紅石信號強度控制其，當紅石信號強度是15時為關閉。 可在潛行時使用工程師錘設置紅石控制模式。
 
 ie.manual.entry.loadController.name=載荷控制器
 ie.manual.entry.loadController.subtext=能量不足！
-ie.manual.entry.loadController0=§6載荷控制器§r可以控制通過它的能量，並且你可以在GUI裡設定參數，也可以通過紅石信號強度控制其，當紅石信號強度是15時為關閉。 可在潛行時使用工程師錘設置紅石控制模式。
+ie.manual.entry.loadController0=§6載荷控制器§r可以控制通過它的能量，並且你可以在介面裡設定參數，也可以通過紅石信號強度控制其，當紅石信號強度是15時為關閉。 可在潛行時使用工程師錘設置紅石控制模式。
 
 ie.manual.entry.openBarrel.name=無蓋金屬桶
 ie.manual.entry.openBarrel.subtext=向太陽或白雲開放？
-ie.manual.entry.openBarrel0=§6無蓋金屬桶§r是類似金屬桶的單方塊儲罐，只不過其頂部沒有被蓋住，流體可以直接手持倒入，同時只能通過頂部輸入，底部輸出。并且放置在露天處下雨時將被慢慢裝滿，在雷雨天可以兩倍速度裝滿。不過，如果將其放在溫熱環境，水可能會被蒸發...
+ie.manual.entry.openBarrel0=§6無蓋金屬桶§r是類似金屬桶的單方塊儲罐，只不過其頂部沒有被蓋住，流體可以直接手持倒入，並且只能通過頂部輸入，底部輸出。同時放置在露天處下雨時將被慢慢裝滿，在雷雨天可以兩倍速度裝滿。不過，如果將其放在溫熱環境，水可能會被蒸發...
 
 ie.manual.entry.solarTower.name=太陽能集熱塔
 ie.manual.entry.solarTower.subtext=太陽的力量
@@ -187,7 +187,7 @@ ie.manual.entry.solarTower3=為了實現工作，反射鏡的中心（銀塊位�
 
 ie.manual.entry.stackLimiter.name=堆疊限制器
 ie.manual.entry.stackLimiter.subtext=只需要一對物品！
-ie.manual.entry.stackLimiter0=§6堆疊限制器§r可以控制通過它的物品，並且你可以在GUI裡設定參數，也可以通過紅石信號強度控制其，當紅石信號強度是15時為關閉。 可在潛行時使用工程師錘設置紅石控制模式。
+ie.manual.entry.stackLimiter0=§6堆疊限制器§r可以控制通過它的物品，並且你可以在介面裡設定參數，也可以通過紅石信號強度控制其，當紅石信號強度是15時為關閉。 可在潛行時使用工程師錘設置紅石控制模式。
 
 ie.manual.entry.steamTurbine.name=蒸汽輪機
 ie.manual.entry.steamTurbine.subtext=沸騰的氣息
@@ -198,9 +198,9 @@ ie.manual.entry.steamTurbine2=當供給蒸汽時，蒸汽輪機便會工作，�
 ie.manual.entry.gasTurbine.name=燃氣輪機
 ie.manual.entry.gasTurbine.subtext=並非來自747
 ie.manual.entry.gasTurbine0=燃氣輪機是使用可燃燃料產生動能的多方塊結構機械。<br>具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊紅石工程塊那一側的正中心的鋼塊完成搭建。
-ie.manual.entry.gasTurbine1=提供燃料並吸入足夠的空氣，蒸汽輪機將緩慢加速。保持供應燃料，在啟動約30秒後便可達到最大速度和效率。如果在高速運轉狀態將其關閉，燃氣輪機的轉速會緩慢降低，如果其轉速降至1/4以下，則需要重新加速才可繼續使用。燃氣輪機在燃燒燃料期間，排氣量保持不變。<br>你需要在燃氣輪機的動能軸末端連接一台<link;Alternator;§n§o交流發電機§r>來配合輸出電能。
-ie.manual.entry.gasTurbine2=機器前方的流體管道口為燃料的輸入口，兩側有用作不同目的的電源插口。高壓插口需要提供3072IF/t來啟動燃氣輪機，並將其加速至1/4轉速。但繼續保持該輸入將會導致機器熄火，而不是繼續提速。因此需要斷開該插口轉而使用中壓插口（位於控制面板側）供能將燃料點燃（在燃氣輪機啟動階段及不能提供足夠的燃料超過3秒都需要重新點燃）。
-ie.manual.entry.gasTurbine3=與蒸汽輪機類似，燃氣輪機從後部傳動軸輸出動能，氣體輸出口則剛好位於傳動軸下方。這些氣體有特別的作用，因為通過燃燒它們可以增加輪機的效率。儘管燃氣輪機本身的效率會比柴油發電機要差，但是對於搭建更大的而且更複雜的電能輸出系統而言，這才是燃氣輪機的令人矚目的地方。<br>通過<link;Gas Turbine;§n§oCCGT§r>（對於船員而言是COGAS）產生的煙道氣作為鍋爐的燃料來產生蒸汽動力時，可獲得巨大效益。
+ie.manual.entry.gasTurbine1=提供燃料並吸入足夠的空氣，蒸汽輪機將緩慢加速。保持供應燃料，在啟動約30秒後便可達到最大轉速和效率。如果在高速運轉狀態將其關閉，燃氣輪機的轉速會緩慢降低，如果其轉速降至1/4以下，則需要重新加速才可繼續使用。燃氣輪機在燃燒燃料期間，排氣量保持不變。<br>你需要在燃氣輪機的動能軸末端連接一台<link;Alternator;§n§o交流發電機§r>來配合輸出電能。
+ie.manual.entry.gasTurbine2=機器前方的流體管道口為燃料的輸入口，兩側有用作不同目的的電源插口。高壓插口需要提供3072IF/t來啟動燃氣輪機，並將其加速至1/4轉速。但繼續保持該輸入將會導致機器熄火，而不是繼續提速。因此需要斷開該插口轉而使用中壓插口（位於控制台側）供能將燃料點燃（在燃氣輪機啟動階段及不能提供足夠的燃料超過3秒都需要重新點燃）。
+ie.manual.entry.gasTurbine3=與蒸汽輪機類似，燃氣輪機從後部傳動軸輸出動能，氣體輸出口則剛好位於傳動軸下方。這些氣體有特別的作用，因為通過燃燒它們可以增加輪機的效率。儘管燃氣輪機本身的效率會比柴油發電機要差，但是對於搭建更大的而且更複雜的電能輸出系統而言，這才是燃氣輪機的令人矚目的地方。<br>通過<link;gasTurbine;§n§oCCGT§r>（對於船員而言是COGAS）產生的煙道氣作為鍋爐的燃料來產生蒸汽動力時，可獲得巨大效益。
 
 
 ie.manual.entry.steelBarrel.name=鋼制金屬桶
@@ -214,7 +214,7 @@ ie.manual.entry.steelTank1=在下方中央方塊提供紅石信號可以讓儲�
 
 ie.manual.entry.redstone.name=紅石計時器
 ie.manual.entry.redstone.subtext=滴答！滴答！
-ie.manual.entry.redstone0=§6紅石計時器§r擁有輸出紅石脈衝的功能，材質中的紅心方形方塊端為脈衝輸出端，上方為連接紅石線纜的控制端。脈衝的頻率取決於設置好的延遲。你可以在GUI中設置脈衝延遲的資料，GUI中設置10秒以下的脈衝精度為0.5秒，10秒以上的脈衝精度為1秒。紅石計時器可以使用紅石信號停止。
+ie.manual.entry.redstone0=§6紅石計時器§r擁有輸出紅石脈衝的功能，材質中的紅心方形方塊端為脈衝輸出端，上方為連接紅石線纜的控制端。脈衝的頻率取決於設置好的延遲。你可以在介面中設置脈衝延遲的資料，介面中設置10秒以下的脈衝精度為0.5秒，10秒以上的脈衝精度為1秒。紅石計時器可以使用紅石信號停止。
 
 ie.manual.entry.coolingTower.name=冷卻塔
 ie.manual.entry.coolingTower.subtext=保持冷靜，朋友！
@@ -239,4 +239,4 @@ ie.manual.entry.computer.distiller0=§lgetEnergyStored()§r:返回存儲在蒸�
 ie.manual.entry.computer.distiller1=§lgetFullCanisters()§r:返回一張包含機器中已滿液罐的資訊，並帶有引用自每個儲罐的鍵“input”和“output”的表。<br>§lgetEmptyCanisters()§r:返回一張表，該表包含機器中空液罐的資訊，並帶有引用自每個儲罐的鍵“input”和“output”。
 ie.manual.entry.computer.solarTower0=§lgetReflectors()§r:返回一張連接到太陽能塔的有效反射鏡的表。<br>§lgetInputTankInfo()§r: 返回關於集熱塔輸入儲罐的資訊。<br>§lgetOutputTankInfo()§r:返回關於集熱塔輸出儲罐的資訊。
 ie.manual.entry.computer.solarTower1=§lgetFullCanisters()§r:返回一張包含機器中已滿液罐的資訊，並帶有引用自每個儲罐的鍵“input”和“output”的表。<br>§lgetEmptyCanisters()§r:返回一張包含機器中空液罐的資訊，並帶有引用自每個儲罐的鍵“input”和“output”的表。
-ie.manual.entry.computer.gasTurbine0=§lgetSpeed()§r:返回燃氣輪機的轉速。<br>§lgetInputTankInfo()§r:返回關於燃氣輪機燃料儲罐的資訊。<br>§lgetOutputTankInfo()§r:返回關於蒸汽輪機輸出儲罐的資訊。
+ie.manual.entry.computer.gasTurbine0=§lgetSpeed()§r:返回燃氣輪機的轉速。<br>§lgetInputTankInfo()§r:返回關於燃氣輪機燃料儲罐的資訊。<br>§lgetOutputTankInfo()§r:返回關於蒸汽輪機輸出儲罐
