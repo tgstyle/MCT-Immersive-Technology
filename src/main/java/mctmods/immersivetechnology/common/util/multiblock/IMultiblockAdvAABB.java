@@ -45,12 +45,12 @@ public interface IMultiblockAdvAABB extends IEBlockInterfaces.IAdvancedCollision
     @Override
     default List <AxisAlignedBB> getAdvancedSelectionBounds() {
         byte[][][] array = GetAABBArray();
-        List<AxisAlignedBB> list = new ArrayList<>();
+        int position = This().pos;
+        if (position < 0 || position >= array.length) return null;
         byte[][] aabbs = array[This().pos];
         if(aabbs == null || aabbs.length == 0) return null;
-        for(int index = 0; index < aabbs.length; index++) {
-            Inject(list, aabbs[index]);
-        }
+        List<AxisAlignedBB> list = new ArrayList<>();
+        for(int index = 0; index < aabbs.length; index++) Inject(list, aabbs[index]);
         return list;
     }
 
