@@ -117,16 +117,18 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 		canAccept = packetLimit != -1? Math.min(canAccept, packetLimit) : canAccept;
 		if(redstoneMode > 0) canAccept *= (double) (redstoneMode == 1? 15 - getRSPower() : getRSPower())/15;
 		if(canAccept == 0) return itemStack;
-		ItemStack toReturn;
+		ItemStack toReturn = itemStack.copy();
+		toReturn.setCount(canAccept);
 		busy = true;
-		toReturn = destination.insertItem(i, new ItemStack(itemStack.getItem(), canAccept), simulate);
+		ItemStack inserted = destination.insertItem(i, toReturn, simulate);
 		busy = false;
 		if(!simulate) {
-			acceptedAmount += (toReturn == ItemStack.EMPTY)? canAccept : canAccept - toReturn.getCount();
+			acceptedAmount += (inserted == ItemStack.EMPTY)? canAccept : canAccept - inserted.getCount();
 			packets++;
 		}
-		return new ItemStack(itemStack.getItem(), (toReturn == ItemStack.EMPTY)? itemStack.getCount() - canAccept :
-				toReturn.getCount() + itemStack.getCount() - canAccept);
+		toReturn.setCount((inserted == ItemStack.EMPTY)? itemStack.getCount() - canAccept :
+				inserted.getCount() + itemStack.getCount() - canAccept);
+		return toReturn;
 	}
 
 	public int getInventoryFill(IItemHandler dest, ItemStack stack) {
