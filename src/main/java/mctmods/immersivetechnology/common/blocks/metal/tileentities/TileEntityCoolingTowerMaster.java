@@ -245,17 +245,16 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     }
 
     private void pumpOutputOut() {
-        if(recipe == null) return;
         if(input0 == null) InitializePoIs();
         IFluidHandler output;
-        if(tanks[2].getFluidAmount() >= recipe.fluidOutput0.amount && (output = FluidUtil.getFluidHandler(world, output0Front, output0.facing.getOpposite())) != null) {
+        if(tanks[2].getFluidAmount() > 0 && (output = FluidUtil.getFluidHandler(world, output0Front, output0.facing.getOpposite())) != null) {
             FluidStack out = tanks[2].getFluid();
             int accepted = output.fill(out, false);
             if(accepted == 0) return;
             int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
             this.tanks[2].drain(drained, true);
         }
-        if(tanks[3].getFluidAmount() >= recipe.fluidOutput1.amount && (output = FluidUtil.getFluidHandler(world, output1Front, output1.facing.getOpposite())) != null) {
+        if(tanks[3].getFluidAmount() > 0 && (output = FluidUtil.getFluidHandler(world, output1Front, output1.facing.getOpposite())) != null) {
             FluidStack out = tanks[3].getFluid();
             int accepted = output.fill(out, false);
             if(accepted == 0) return;
