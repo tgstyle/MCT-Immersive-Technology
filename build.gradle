@@ -50,6 +50,10 @@ repositories {
 		name = 'ModMaven'
 		url 'https://modmaven.dev'
 	}
+	maven {
+		name = 'ModMaven 2'
+		url 'https://modmaven.dev/'
+	}
 }
 
 version = common.mcversion + "-" + modversion+ "." + modsubversion
