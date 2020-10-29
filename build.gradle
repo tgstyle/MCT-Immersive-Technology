@@ -47,8 +47,8 @@ repositories {
 		url = 'http://maven.tterrag.com/'
 	}
 	maven {
-		name 'ModMaven'
-		url 'https://modmaven.k-4u.nl'
+		name = 'ModMaven'
+		url 'https://modmaven.dev'
 	}
 }
 
