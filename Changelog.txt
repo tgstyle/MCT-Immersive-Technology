@@ -1,0 +1,408 @@
+1.1.84
+Official MCT Discord https://discord.gg/ujY2mV9
+Hopefully fixes issue #183 
+Fixed Stack Limiter creating wrong stacks on output side, now also properly handles "items in output storage" limit. Closes issue #192
+
+1.1.83
+Update zh_CN.lang and zh_TW.lang (PilyziFox)
+Make sure the alternator is enabled with the gas turbine (Sigma-One)
+
+1.8.82
+Fixed Gas Turbine still requiring way too much power to start up
+(Check configs on the gas turbine power change, value will need to be reset)
+
+1.8.81
+Fixed reflectors not recalculating their states after being loaded
+Fixed issue where the gas turbine requires ignition whenever it gets loaded
+Gas Turbine can now correctly accept power provided by IE's connectors, 
+ - also made them slightly cheaper to run, down to 3072FE per tick, to account for power attenuation on the wires
+(Check configs on the gas turbine power change, value will need to be reset)
+
+1.8.80
+Fixed gas turbine's mirrored model... again
+
+1.8.79
+Fixed a minor misalignment of the Gas Turbine's mirrored 3d model
+Fixed gas turbine disassembling the wrong way
+
+1.8.78
+Fixed several problems related to sounds played by both Alternator and Steam Turbine
+Added checks to OC compact for disabled machines
+Removed RedstoneFlux dependency from code, deals with #166
+Fixed multiblock renders for several machines in the IE manual
+Added Gas Turbine, tweaked sound system
+
+1.8.77
+Actually merged the changes...
+
+1.8.76
+Solar Tower Update - Now depends on heat, Heats up during day, Cools down during night, Biome impacts heat up and cool down temps
+Finishing up the Solar Tower revamp - Added temp to GUI, Keep temp when raining (not thundering)
+Alternator sound is now based on RPM  - Config option to change it back to Capacity
+
+1.8.75
+Registered Cooling Tower's CraftTweaker implementation, fixes #159
+
+1.8.74
+Made Particle Spawning System be client-side only
+
+1.8.73
+New Multiblock Structure - Cooling Tower
+New Multiblock model for the cooling tower(Sigma-One)
+Turbines now return "Exhaust Steam" by default to be recovered in the Cooling Tower
+Balancing change for the boiler and solar tower, distilled water now produces about 11% more steam than water (Silfryi Kalsandryn)
+If you input Water in the Cooling tower it returns Water from "Exhaust Steam"
+If you input Distilled Water in the Cooling tower it returns Distilled Water from "Exhaust Steam"
+New Multiblock code being integrated eventually to all multiblocks (currently only used on the cooling tower)
+Fix tower feeding itself for cooling
+Fixed IE pipes that stop working when reloading a save without closing the client first
+
+1.7.72
+Fixed NPE caused by empty creative barrel
+Add IE manual entries for OpenComputers drivers (Sigma-One)
+
+1.7.71
+Fixup mirrored coords
+Add OpenComputers driver for Solar Tower (Thanks Sigma-One)
+Add OpenComputers driver for Distiller (Thanks Sigma-One)
+Add OpenComputers driver for Steam Turbine (Thanks Sigma-One)
+Add OpenComputers driver for Boiler (Thanks Sigma-One)
+
+1.7.70
+Fix the Solar Tower so it only runs during the day
+
+1.7.69
+More Configuration Options!
+Fluids now output from Multiblocks based on a detected amount (except steel tank, but it's configurable)
+Check configs as the Steel Tank was not in the Multiblock section
+Fix some static values that would prevent fluid outputs on multiple Steam Turbines
+Fix Advanced Coke Oven not working
+Fix Distiller not working
+Fix Solar Tower outputting too much steam, it should be half the boiler amount
+
+1.7.68
+Pulled and Replaced by version 1.7.69
+
+1.7.67
+Pulled and Replaced by version 1.7.69
+
+1.7.66
+Pulled and Replaced by version 1.7.69
+
+1.7.65
+Pulled and Replaced by version 1.7.69
+
+1.7.64
+Add Reinforced Coke Brick Slab
+Fix Typo in Config
+Add version check for IE (Fixes crash when not using later versions of IE)
+Code Cleanup
+
+1.7.63
+Added Multiblock Stages support 
+
+1.7.62
+Fixed timer sometimes not responding to RS signal
+Update zh_TW.lang
+
+1.7.61
+Fixed compat with IP over the IE pump
+Added Item Output to Distiller's JEI page
+Update zh_TW.lang
+
+1.7.60
+Config option to change trash OSD to per tick
+
+1.7.59
+Added CraftTweaker function for adding always-pressurized fluids to Pipes (Steam is enabled by default)
+ - Only if replace_IE_pipes in config is true
+Hijacked IE pump, can now change its transfer rate when fluid is pressurized
+ - Uses pipe_pressurized_transfer_rate in config file to determine its transfer rate into IT pipes
+Performance boost for IT implementation of pipes
+ - Only if replace_pipe_algorithm in config is true
+
+1.7.58
+Missed some side config for Steel Barrel
+Fix Open Barrel having 2 tanks
+Players can now choose which implementation of pipes to use (IT Pipe algorithm in config)
+
+1.7.57
+Actually Remove Config Option for Pipes (pipe_pathing_known is unused)
+More Steam Turbine steam input balancing tweaks
+Make Coke Preheater block not exist when disabled
+Fixed Alternator producing power even after the Steam Turbine has been destroyed
+Disabling multiblocks now also hides it from JEI 
+Fix Steam Turbine warnings if output recipe is null 
+
+1.7.56
+Revert some pipe logic
+ - Config value for pipe_pathing_known removed
+Also sped up recipes for Steam production, keeping new ratio
+
+1.7.55
+*** Major Balancing Changes***
+Boiler Biodiesel consumption is now 10Mb instead of 5Mb (Silfryi)
+Boiler Gasoline consumption is now 50Mb instead of 5Mb (Silfryi)
+Boiler Diesel consumption is now 7Mb instead of 5Mb (Silfryi)
+This puts them more in line with IE and IP power production values
+
+**Steam now produces more per mB of water then less**
+1000Mb Water Produces 2000Mb Steam
+1000Mb Distilled Water Produces 3000Mb Steam
+Steam Turbine now consumes 500Mb of steam per operation and returns 50Mb water by default
+**To accommodate this you will need pumps to extract Steam from the Boiler and Solar Tower at Pressurized Rates in pipes (1000Mb)**
+
+An optimal setup for one Steam Turbine would be -
+3 Distillers outputting Distilled water to -
+1 Solar Tower with 4 Solar Reflectors and
+
+1 Boiler
+Then feed a Steam Turbine with -
+1 Pump extracting Steam from the Solar Tower and
+1 Pump extracting Steam from the Boiler
+
+Also Optimized tanks on various TEs
+A fix for #98 Boiler Fuel Consumption was half what it should be
+A fix for #97 Fluid stack could be Null in some cases
+
+1.7.54
+Implement #90, multiblock structures now show in JEI
+Fix #91 Fluids not updating properly in the Advanced Coke Oven
+
+1.7.53
+Make Pipe Pathing configurable - 2 options in the config, always use a known path until full, or use a random path
+	- caution on known paths, multiple tanks with the same fluid will have loops. Use valves to alleviate loops
+Added a Steel Barrel, top/bottom faces are configurable
+Added manual entries for Barrels
+Prevent Open Barrel from underfilling
+Last feature release for 1.12, bugfixes are the only thing planned from now on
+
+1.7.52
+Add dependencies for CoFH Core and Redstone Flux
+Creative Barrel now shows localized fluid name
+Optimizations on the Open Barrel
+Fix Open Barrel OSD when holding valid capability handler
+
+1.7.51
+Fix for server side crash with valves
+
+1.7.50
+4 new blocks!
+- Creative Crate, a chest that can have an item inserted, and allows extraction of an infinite amount of that item
+- Fluid Valve, allows limiting Fluids moving through it
+- Stack Limiter, allows limiting Items moving through it
+- Load Controller, allows limiting Energy moving through it
+Config has some removed items, check your configs!
+Holding shift for more details on trash cans was removed in favor of new valve blocks
+Make sure dummy block is hidden in JEI
+Changed Creative Tab Icon
+Fixed Preheater IF display issue for TOP #72
+Fixed Preheater being bad in many more ways
+Add manual entries for new blocks
+Add recipes for new blocks
+Remove Manual entries when Multiblock is disabled #74
+Alternator and Steam Turbine now both disable if Steam Turbine is disabled
+Solar Tower and Solar Reflector now both disable if Steam Turbine is disabled
+Improvements to Fluid Pipes
+
+1.7.49
+Reworked Trash Cans, they now show how many items trashed in the last second while looking at them, and while sneaking gives an average over the last minute
+Trash has changed config options, check your config and fix accordingly
+Fix for Issue #56
+Fix for DDD crash using item ducts
+
+1.7.48
+Fixed Item Trash crash in certain conditions
+Fixed pipes never transfering at pressurized rates
+
+1.7.47
+Major changes! Please take note!
+TileEntitys have been changed dramatically to improve performance
+This change should be fully compatible with previous versions of Immersive Technology and Immersive Tech
+There is a feature to go a long with this that fixes many issues with IE Pipes, if disabled your world may not convert correctly
+Reverting from this version to earlier versions is not supported, and may cause issues, back up your world if you feel you need to revert!
+Config Filename has changed! Make sure to update your values!
+IE Pipes, have been patched with IT Pipes there is a config option to disable this
+IE Pipes (IT Pipes) will no longer break on chunk borders, and refresh their states properly on reload
+IE Pipes (IT Pipes) normal and pressurized values are controlled in the config (NOT IE Config)
+Added more slots to the item trash can(9 total)
+Fixed multiblock interdiction for the Advanced Coke Oven
+Added TOP values for the Steel Tank
+and many more tweaks, formatting, import changes
+
+1.6.43
+Add recipe for Open Barrel (why would you need one?)
+
+1.6.42
+Change ZenClass name to be compatible with modtweaker - 4.0.18
+*changed from mods.immersivetech to mods.immersivetechnology*
+
+1.6.41
+Fix Multiblock Interdiction and Names
+Some Optimizaions
+Added Steel Tank, output can be up to 1 bucket if supported, tank size is adjustable
+Added Open Barrel, it will collect rain water if left in the open, it will lose water in hot biomes and the nether, only input on top or by hand, output on bottom.
+
+1.6.40
+*Immersive Tech 1.12-1.3.10 can still swap seamlessly with this version*
+Fix CraftTweaker Removal for Distiller single fluid
+Added a few more slots to Item Trash to handle mass deletions
+Major Refactoring - Not much original (if any) code is still left, refactored to fit other mctmods
+Major Revamp of BlockITBase & BlockITTileProvider 
+Also a fix for server errors on Creative Barrel
+
+1.5.35
+Fix Item Trash not Dropping
+More performance improvements
+Blockbounds change for all Trash Cans
+Efficiency Improvements for Trash and Creative Barrel
+
+1.5.34
+Added Gasoline Fuel Recipe for Boiler
+Added Diesel Fuel Recipe for Boiler
+Switched Biodiesel Recipe to look for first registered fluid
+Removed Unused Imports
+Bit of formatting cleanup
+Fix #28
+Revamp of JEI pages
+Adv Coke Oven Substantial Performance Improvement
+
+1.5.33
+Fix crash on server with fluids
+Make fluid use more universal (hopefully fixes texture issues)
+
+1.5.32
+Balancing changes for the SteamTurbine
+Updated English Localization
+Removed invalid entries in other localizations, i'm sure they need proper translation (please help)
+Added MCT to the mod logo
+Added Chinese Localization (Thanks to Aemande123)
+Fix issue #21
+Fixed Boiler Input for Fluids
+Changed Fluids to colorable fluids
+Added OSD for Item Trash
+Added Item Trash OSD to CN translation (Probably needs to be fixed up)
+
+1.5.31
+*Config Rewrite* - Organize and cache values in certain areas, all old values are unused and will need to be set to the new values
+Fixed up OSD On the energy trash, fluid trash and creative barrel
+OSD for Fluid and Energy Trash
+Timer changed to be 1 second instead of 1.05 seconds
+
+1.5.30
+Fix names... Bump Version
+
+1.4.28
+Revamp of the audio system, Crashes and weird sound behavior should be finally gone now
+Fixes issue #15 plus a typo in the steam turbine's code
+Speed of Advanced Coke Oven and its Preheaters can now be configured
+Added sound to Advanced Coke Oven
+Cache some commonly used values on the Timer, improves some performance
+Removed some debug code on the Timer
+Creative Barrel Optimizaions
+Added check to Barrel to prevent crash when empty
+Fix Creative Barrel can drain to 0 in certain conditions
+Changed and Added some localizization to OSD on the Creative Barrel
+Solar Tower Revamp, with sounds
+Fix for machines not accepting fluid when empty 
+Put TEs all in Init
+Refactored Sound Handler
+Some code cleanup
+Fix for array out of bounds, Check for worlds with existing Solar Towers
+
+1.4.27
+Remove Scala Dependency 
+
+1.4.26
+Thanks to Kurtchekov for the Sounds, and Alternator fixes!
+Config has changed, it is suggested to delete it and let it be re-created.
+
+Added sounds to Alternator and Steam Turbine, Steam Turbine's sound depends on rotation speed while Alternator's depends on stored energy levels
+Removed torque since it did absolutely nothing, should be more intuitive now to players and also slightly improve performance
+Added sound to the boiler, proportional to the heat level
+Added sound to the Distiller, plays during the processing of recipes
+Fix Dedicated Server Crash 
+Alternator now produces the correct amount of RF and, as a bonus, can finally connect to RF/FE cables! Some minor fixes and tweaks along the way as well...
+Fixed several problems with Timer and streamlined the way it works under the hood
+Creative Barrel will tank input from Bucket or Pipes and set the fluid in the Barrel to max amount
+Fixed model location and images to be more consistent
+Added config options for Energy Trash and Fluid Trash in case of not wanting to destroy as much per tick
+Energy Trash now shows amount that is being trashed in TOP
+Hopefully the final sound fix
+Temp Fix to prevent Sounds Crashing the Client
+
+1.4.25
+Removed Unused Code
+Added Trash for Items
+Added Trash for Fluids
+Added Trash for Energy
+More code Consistency
+Fixed slot amount on NBT
+Fixed Particles on Break
+More TE consistency changes
+More consistency on TE common code
+Add checks to Fuel Input on Boiler
+Start some Consistency on Common Code for TEs
+
+1.4.24
+More Fixes for Boiler and Release
+
+1.4.23
+Testing Boiler Fixes on Server, not quite there yet
+Fixed minor errors in json files
+Old name creeped back in, not sure how...
+
+1.4.22
+Removed the Generic Recipes
+Rewrote almost all machine Recipes to IE MultiblockRecipe
+Combined Distiller Recipes in to one class
+Muted some warnings
+Adjusted recipe defaults
+Rewrote JEI for most Machines
+Full CraftTweaker Support on all Machines
+
+1.4.21
+Add name to config to prevent conflicts with immersive tech config file
+
+1.4.20
+Fix Recipes to reflect what it says in the manual
+Fix the output on the Alternator per port
+Fix the Steam Turbine output and accompanying Recipe
+Set static values on TEs for items loaded from config
+Increased default tank size on Steam Turbine
+Lowered max RF output defaults on Steam Turbine
+Removed config RF tick per port and set it to 1/6th the max output (keep RF production from happening out of nowhere)
+Register TEs in preInit
+Register ore entries after items are registered
+
+1.4.19
+Update archive name
+
+1.4.18
+Fixed link in mcmod.info
+
+1.4.17
+Updated Manual to reflect changes needed for release
+
+1.4.16
+Updated Modinfo to reflect changes needed for release
+
+1.4.15
+Actually fix version info....
+
+1.4.14
+Fix mod link and version info
+
+1.4.13
+Initial Unofficial Release
+Fixed 3D model warnings
+Fixed Steam Turbine
+Fixed GUI errors coming from JEI
+Fixed bucket inputs on Distiller, Solar Tower and others
+Added configurable salt item for Distiller
+Russian Language by Shellyoung
+Some Crafttweaker support by Kurtchekov (untested)
+Fluid Output on the Steam Turbine by Kurtchekov
+A lot of Formatting, and more, and much much more
+Refactoring
+Added logging
