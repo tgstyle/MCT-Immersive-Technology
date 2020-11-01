@@ -1,9 +1,12 @@
-1.1.84
+1.8.85
 Official MCT Discord https://discord.gg/ujY2mV9
+Fixed Kerosene recipe for the gas turbine crashing the game
+
+1.8.84
 Hopefully fixes issue #183 
 Fixed Stack Limiter creating wrong stacks on output side, now also properly handles "items in output storage" limit. Closes issue #192
 
-1.1.83
+1.8.83
 Update zh_CN.lang and zh_TW.lang (PilyziFox)
 Make sure the alternator is enabled with the gas turbine (Sigma-One)
 
