@@ -1,5 +1,8 @@
-1.8.85
+1.8.86
 Official MCT Discord https://discord.gg/ujY2mV9
+Comparator support for the Alternator
+
+1.8.85
 Fixed Kerosene recipe for the gas turbine crashing the game
 
 1.8.84

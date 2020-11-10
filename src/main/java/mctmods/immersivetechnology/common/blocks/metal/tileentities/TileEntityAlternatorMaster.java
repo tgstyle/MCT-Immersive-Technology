@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
 import io.netty.buffer.ByteBuf;
@@ -28,7 +29,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implements IBinaryMessageReceiver {
+public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implements IBinaryMessageReceiver, IEBlockInterfaces.IComparatorOverride {
 
 	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
 	private static int rfPerTick = Alternator.alternator_energy_perTick;
@@ -178,5 +179,10 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
 	public boolean isMechanicalEnergyReceiver(EnumFacing facing, int position) {
 		return this.facing == facing && position == 22;
+	}
+
+	@Override
+	public int getComparatorInputOverride() {
+		return 15 * energyStorage.getEnergyStored()/energyStorage.getMaxEnergyStored();
 	}
 }
