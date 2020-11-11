@@ -152,7 +152,7 @@ ie.manual.entry.advancedCokeOven2=焦爐預熱器可以用於加快煤炭的精�
 ie.manual.entry.alternator.name=交流發電機
 ie.manual.entry.alternator.subtext=讓我們變換
 ie.manual.entry.alternator0=交流發電機是將蒸汽輪機的動能轉換為電能的多方塊結構<br>具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊高壓線圈那一側的正中心的重型工程塊完成搭建。
-ie.manual.entry.alternator1=它需要受<link;steamTurbine;§n§o蒸汽輪機§r>的動能軸端驅動來產生電能。將輪機動能軸連接到交流發電機的傳動端（中間有鋼塊的那端），而電能輸出端則在另一端的左右兩邊。發電機根據輪機所提供的動能速度來產生最高<config;i;alternator_energyPerTick>IF/t的能量。<br>而交流發電機本身可以存儲<config;i;alternator_energyStorage>IF的能量，它能在每個埠輸出<config;i;alternator_energyPerTickPerPort>IF/t的能量。紅石比較器可以放置在其末端中央，依據其内部能量等級輸出信號。
+ie.manual.entry.alternator1=它需要受<link;steamTurbine;§n§o蒸汽輪機§r>的動能軸端驅動來產生電能。將輪機動能軸連接到交流發電機的傳動端（中間有鋼塊的那端），而電能輸出端則在另一端的左右兩邊。發電機根據輪機所提供的動能速度來產生最高<config;i;alternator_energyPerTick>IF/t的能量。<br>而交流發電機本身可以存儲<config;i;alternator_energyStorage>IF的能量，它能在每個埠輸出<config;i;alternator_energyPerTickPerPort>IF/t的能量。紅石比較器可以放置在其末端中央，依據發電機内部能量等級輸出信號。
 ie.manual.entry.alternator2=蒸汽輪機和搭配的交流發電機
 
 ie.manual.entry.boiler.name=蒸汽鍋爐
