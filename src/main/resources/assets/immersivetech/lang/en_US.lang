@@ -152,7 +152,7 @@ ie.manual.entry.advancedCokeOven2=Coke Oven Preheaters are used to speed up the 
 ie.manual.entry.alternator.name=Alternator
 ie.manual.entry.alternator.subtext=Let's transform
 ie.manual.entry.alternator0=The Alternator is a multiblock structure that transforms kinetic energy into electricity.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Heavy Engineering Block (short side).
-ie.manual.entry.alternator1=To work, it needs a kinetic energy generator connected to it (<link;steamTurbine;§n§oSteam Turbine§r>). The kinetic energy input is at the back of the machine (where the Sheetmetal Blocks are) and the Flux outputs are on front-left and front-right. The machine produces up to <config;i;alternator_energyPerTick> Flux/t depending on the Speed.<br>The Alternator can store <config;i;alternator_energyStorage> Flux, outputting <config;i;alternator_energyPerTickPerPort> Flux/t per port.
+ie.manual.entry.alternator1=To work, it needs a kinetic energy generator connected to it (<link;steamTurbine;§n§oSteam Turbine§r>). The kinetic energy input is at the back of the machine (where the Sheetmetal Blocks are) and the Flux outputs are on front-left and front-right. The machine produces up to <config;i;alternator_energyPerTick> Flux/t depending on the Speed.<br>The Alternator can store <config;i;alternator_energyStorage> Flux, outputting <config;i;alternator_energyPerTickPerPort> Flux/t per port. A comparator can be placed against the central block to output the current energy level, with 0 being empty and 15 being full.
 ie.manual.entry.alternator2=Steam Turbine with Alternator
 
 ie.manual.entry.boiler.name=Boiler

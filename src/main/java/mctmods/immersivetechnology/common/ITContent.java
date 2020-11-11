@@ -291,7 +291,7 @@ public class ITContent {
 			GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("biodiesel"), 160), 10);
 			if(FluidRegistry.getFluid("gasoline") != null) GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("gasoline"), 800), 10);
 			if(FluidRegistry.getFluid("diesel") != null) GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("diesel"), 114), 10);
-			if(FluidRegistry.getFluid("kerosene") != null) GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("diesel"), 150), 10);
+			if(FluidRegistry.getFluid("kerosene") != null) GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("kerosene"), 150), 10);
 		}
 		if(Multiblock.enable_coolingTower && Recipes.register_cooling_tower_recipes) {
 			CoolingTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("water"), 750), new FluidStack(FluidRegistry.getFluid("water"), 750), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 900), new FluidStack(FluidRegistry.getFluid("water"), 1000), 3);
