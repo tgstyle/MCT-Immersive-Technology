@@ -14,11 +14,11 @@ item.immersivetech.material.salt.name=盐
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=蒸馏水
 tile.immersivetech.fluidSteam.name=蒸汽
-tile.immersivetech.fluidExhaustSteam.name=残热蒸汽
+tile.immersivetech.fluidExhaustSteam.name=余热蒸汽
 tile.immersivetech.fluidFlueGas.name=烟道气
 fluid.distwater=蒸馏水
 fluid.steam=蒸汽
-fluid.exhauststeam=残热蒸汽
+fluid.exhauststeam=余热蒸汽
 fluid.fluegas=烟道气
 
 
@@ -218,8 +218,8 @@ ie.manual.entry.redstone0=§6红石计时器§r拥有输出红石脉冲的功能
 
 ie.manual.entry.coolingTower.name=冷却塔
 ie.manual.entry.coolingTower.subtext=保持冷静，朋友！
-ie.manual.entry.coolingTower0=冷却塔是可以将残热蒸汽冷却成水的多方块结构。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击重型工程块完成搭建。
-ie.manual.entry.coolingTower1=残热蒸汽输入口位于重型工程块的左边，水或蒸馏水输入口位于重型工程块的右边。冷却后的水或蒸馏水在背面输出。
+ie.manual.entry.coolingTower0=冷却塔是可以将余热蒸汽冷却成水的多方块结构。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击重型工程块完成搭建。
+ie.manual.entry.coolingTower1=余热蒸汽输入口位于重型工程块的左边，水或蒸馏水输入口位于重型工程块的右边。冷却后的水或蒸馏水在背面输出。
 
 ie.manual.entry.computer.steamTurbine.name=蒸汽轮机 ☎
 ie.manual.entry.computer.steamTurbine.subtext=沸腾的呼吸
