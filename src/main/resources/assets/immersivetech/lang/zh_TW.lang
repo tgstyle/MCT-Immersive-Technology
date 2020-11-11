@@ -15,11 +15,11 @@ item.immersivetech.material.salt.name=鹽
 tile.immersivetech.fluidDistWater.name=蒸餾水
 tile.immersivetech.fluidSteam.name=蒸汽
 tile.immersivetech.fluidExhaustSteam.name=餘熱蒸汽
-tile.immersivetech.fluidFlueGas.name=煙道氣
+tile.immersivetech.fluidFlueGas.name=燃氣
 fluid.distwater=蒸餾水
 fluid.steam=蒸汽
 fluid.exhauststeam=餘熱蒸汽
-fluid.fluegas=煙道氣
+fluid.fluegas=燃氣
 
 
 #KEYWORDS
@@ -200,7 +200,7 @@ ie.manual.entry.gasTurbine.subtext=並非來自747
 ie.manual.entry.gasTurbine0=燃氣輪機是使用可燃燃料產生動能的多方塊結構機械。<br>具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊紅石工程塊那一側的正中心的鋼塊完成搭建。
 ie.manual.entry.gasTurbine1=提供燃料並吸入足夠的空氣，蒸汽輪機將緩慢加速。保持供應燃料，在啟動約30秒後便可達到最大轉速和效率。如果在高速運轉狀態將其關閉，燃氣輪機的轉速會緩慢降低，如果其轉速降至1/4以下，則需要重新加速才可繼續使用。燃氣輪機在燃燒燃料期間，排氣量保持不變。<br>你需要在燃氣輪機的動能軸末端連接一台<link;Alternator;§n§o交流發電機§r>來配合輸出電能。
 ie.manual.entry.gasTurbine2=機器前方的流體管道口為燃料的輸入口，兩側有用作不同目的的電源插口。高壓插口需要提供3072IF/t來啟動燃氣輪機，並將其加速至1/4轉速。但繼續保持該輸入將會導致機器熄火，而不是繼續提速。因此需要斷開該插口轉而使用中壓插口（位於控制台側）供能將燃料點燃（在燃氣輪機啟動階段及不能提供足夠的燃料超過3秒都需要重新點燃）。
-ie.manual.entry.gasTurbine3=與蒸汽輪機類似，燃氣輪機從後部傳動軸輸出動能，氣體輸出口則剛好位於傳動軸下方。這些氣體有特別的作用，因為通過燃燒它們可以增加輪機的效率。儘管燃氣輪機本身的效率會比柴油發電機要差，但是對於搭建更大的而且更複雜的電能輸出系統而言，這才是燃氣輪機的令人矚目的地方。<br>通過<link;gasTurbine;§n§oCCGT§r>（對於船員而言是COGAS）產生的煙道氣作為鍋爐的燃料來產生蒸汽動力時，可獲得巨大效益。
+ie.manual.entry.gasTurbine3=與蒸汽輪機類似，燃氣輪機從後部傳動軸輸出動能，氣體輸出口則剛好位於傳動軸下方。這些氣體有特別的作用，因為通過燃燒它們可以增加輪機的效率。儘管燃氣輪機本身的效率會比柴油發電機要差，但是對於搭建更大的而且更複雜的電能輸出系統而言，這才是燃氣輪機的令人矚目的地方。<br>通過<link;gasTurbine;§n§oCCGT§r>（對於船員而言是COGAS）產生的燃氣作為鍋爐的燃料來產生蒸汽動力時，可獲得巨大效益。
 
 
 ie.manual.entry.steelBarrel.name=鋼制金屬桶
