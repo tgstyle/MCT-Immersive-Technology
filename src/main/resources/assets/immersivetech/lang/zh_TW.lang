@@ -14,11 +14,11 @@ item.immersivetech.material.salt.name=鹽
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=蒸餾水
 tile.immersivetech.fluidSteam.name=蒸汽
-tile.immersivetech.fluidExhaustSteam.name=殘熱蒸汽
+tile.immersivetech.fluidExhaustSteam.name=餘熱蒸汽
 tile.immersivetech.fluidFlueGas.name=煙道氣
 fluid.distwater=蒸餾水
 fluid.steam=蒸汽
-fluid.exhauststeam=殘熱蒸汽
+fluid.exhauststeam=餘熱蒸汽
 fluid.fluegas=煙道氣
 
 
@@ -218,8 +218,8 @@ ie.manual.entry.redstone0=§6紅石計時器§r擁有輸出紅石脈衝的功能
 
 ie.manual.entry.coolingTower.name=冷卻塔
 ie.manual.entry.coolingTower.subtext=保持冷靜，朋友！
-ie.manual.entry.coolingTower0=冷卻塔是可以將殘熱蒸汽冷卻成水的多方塊結構。<br>具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊重型工程塊完成搭建。
-ie.manual.entry.coolingTower1=殘熱蒸汽輸入口位於重型工程塊的左邊，水或蒸餾水輸入口位於重型工程塊的右邊。冷卻後的水或蒸餾水在背面輸出。
+ie.manual.entry.coolingTower0=冷卻塔是可以將餘熱蒸汽冷卻成水的多方塊結構。<br>具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊重型工程塊完成搭建。
+ie.manual.entry.coolingTower1=餘熱蒸汽輸入口位於重型工程塊的左邊，水或蒸餾水輸入口位於重型工程塊的右邊。冷卻後的水或蒸餾水在背面輸出。
 
 ie.manual.entry.computer.steamTurbine.name=蒸汽輪機 ☎
 ie.manual.entry.computer.steamTurbine.subtext=沸騰的呼吸
