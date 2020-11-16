@@ -17,10 +17,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -108,8 +110,22 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityMultiblockPart
 
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
-		if(master() != null && (pos == 4 || pos == 40)) return new FluidTank[]{master.tank};
+		if(master() != null && (side == null || pos == 4 || pos == 40)) return new FluidTank[]{master.tank};
 		return new FluidTank[0];
+	}
+
+	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if(capability== CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY&&this.getAccessibleFluidTanks(facing).length > 0)
+			return true;
+		return super.hasCapability(capability, facing);
+	}
+
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if(capability==CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY&&this.getAccessibleFluidTanks(facing).length > 0)
+			return (T)new MultiblockFluidWrapper(this, facing);
+		return super.getCapability(capability, facing);
 	}
 
 	@Override

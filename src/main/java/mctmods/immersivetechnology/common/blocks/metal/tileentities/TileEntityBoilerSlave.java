@@ -162,9 +162,10 @@ public class TileEntityBoilerSlave extends TileEntityMultiblockNewSystem<TileEnt
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
 		if(master() != null) {
-			if(pos == 35 && (side == null || side == EnumFacing.UP)) return new FluidTank[]{master.tanks[2]};
-			if(pos == 5 && (side == null || side == (mirrored ? facing.rotateY() : facing.rotateYCCW()))) return new FluidTank[]{master.tanks[1]};
-			if(pos == 9 && (side == null || side == (mirrored ? facing.rotateYCCW() : facing.rotateY()))) return new FluidTank[]{master.tanks[0]};
+			if (side == null) return master.tanks;
+			else if(pos == 35 && side == EnumFacing.UP) return new FluidTank[]{master.tanks[2]};
+			else if(pos == 5 && side == (mirrored ? facing.rotateY() : facing.rotateYCCW())) return new FluidTank[]{master.tanks[1]};
+			else if(pos == 9 && side == (mirrored ? facing.rotateYCCW() : facing.rotateY())) return new FluidTank[]{master.tanks[0]};
 		}
 		return ITUtils.emptyIFluidTankList;
 	}
@@ -172,14 +173,14 @@ public class TileEntityBoilerSlave extends TileEntityMultiblockNewSystem<TileEnt
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
 		if(master() == null) return false;
-		if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY()))) {
+		if(pos == 9 && side == (mirrored? facing.rotateYCCW() : facing.rotateY())) {
 			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
-			if(master.tanks[iTank].getFluid() == null) return BoilerRecipe.findFuelByFluid(resource.getFluid()) != null;
+			else if(master.tanks[iTank].getFluid() == null) return BoilerRecipe.findFuelByFluid(resource.getFluid()) != null;
 			else return resource.getFluid() == master.tanks[iTank].getFluid().getFluid();
 		}
-		if(pos == 5 && (side == null || side == (mirrored?facing.rotateY() : facing.rotateYCCW()))) {
+		if(pos == 5 && side == (mirrored?facing.rotateY() : facing.rotateYCCW())) {
 			if(master.tanks[1].getFluidAmount() >= master.tanks[1].getCapacity()) return false;
-			if(master.tanks[1].getFluid() == null) return BoilerRecipe.findRecipeByFluid(resource.getFluid()) != null;
+			else if(master.tanks[1].getFluid() == null) return BoilerRecipe.findRecipeByFluid(resource.getFluid()) != null;
 			else return resource.getFluid() == master.tanks[1].getFluid().getFluid();
 		}
 		return false;
@@ -187,7 +188,7 @@ public class TileEntityBoilerSlave extends TileEntityMultiblockNewSystem<TileEnt
 
 	@Override
 	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
-		return pos == 35 && (side == null || side == EnumFacing.UP);
+		return pos == 35 && side == EnumFacing.UP;
 	}
 
 	@Override

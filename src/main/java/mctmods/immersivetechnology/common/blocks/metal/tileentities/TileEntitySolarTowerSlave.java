@@ -161,11 +161,9 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
 		if(master() != null) {
-			if((pos == 3 || pos == 5) && (side == null || side.getAxis() == facing.rotateYCCW().getAxis())) {
-				return new FluidTank[] { master.tanks[0] };
-			} else if(pos == 7 && (side == null || side == facing)) {
-				return new FluidTank[] { master.tanks[1] };
-			}
+			if (side == null) return master.tanks;
+			else if((pos == 3 || pos == 5) && side.getAxis() == facing.rotateYCCW().getAxis()) return new FluidTank[] { master.tanks[0] };
+			else if(pos == 7 && side == facing) return new FluidTank[] { master.tanks[1] };
 		}
 		return new FluidTank[0];
 	}
@@ -173,7 +171,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
 		if(master() == null) return false;
-		if((pos == 3 || pos == 5) && (side == null || side.getAxis() == facing.rotateYCCW().getAxis())) {
+		if((pos == 3 || pos == 5) && side.getAxis() == facing.rotateYCCW().getAxis()) {
 			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
 			if(master.tanks[iTank].getFluid() == null) return SolarTowerRecipe.findRecipeByFluid(resource.getFluid()) != null;
 			else return resource.getFluid() == master.tanks[iTank].getFluid().getFluid();
@@ -183,7 +181,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 
 	@Override
 	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
-		return (pos == 7 && (side == null || side == facing));
+		return pos == 7 && side == facing;
 	}
 
 	@Override

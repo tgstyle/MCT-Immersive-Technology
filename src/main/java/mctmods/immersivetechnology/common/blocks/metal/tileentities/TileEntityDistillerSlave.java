@@ -163,11 +163,9 @@ public class TileEntityDistillerSlave extends TileEntityMultiblockNewSystem<Tile
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
 		if(master() != null) {
-			if(pos == 5 && (side == null || side == (mirrored ? facing.rotateYCCW():facing.rotateY()))) {
-				return new FluidTank[] {master.tanks[0]};
-			} else if(pos == 3 && (side == null || side == (mirrored ? facing.rotateY():facing.rotateYCCW()))) {
-				return new FluidTank[] {master.tanks[1]};
-			}
+			if (side == null) return master.tanks;
+			else if(pos == 5 && side == (mirrored ? facing.rotateYCCW():facing.rotateY())) return new FluidTank[] {master.tanks[0]};
+			else if(pos == 3 && side == (mirrored ? facing.rotateY():facing.rotateYCCW())) return new FluidTank[] {master.tanks[1]};
 		}
 		return new FluidTank[0];
 	}
@@ -175,7 +173,7 @@ public class TileEntityDistillerSlave extends TileEntityMultiblockNewSystem<Tile
 	@Override
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
 		if(master() == null) return false;
-		if(pos == 5 && (side == null || side == (mirrored ? facing.rotateYCCW():facing.rotateY()))) {
+		if(pos == 5 && side == (mirrored ? facing.rotateYCCW():facing.rotateY())) {
 			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
 			if(master.tanks[iTank].getFluid() == null) return DistillerRecipe.findRecipeByFluid(resource.getFluid()) != null;
 			else return resource.getFluid() == master.tanks[iTank].getFluid().getFluid();
@@ -185,7 +183,7 @@ public class TileEntityDistillerSlave extends TileEntityMultiblockNewSystem<Tile
 
 	@Override
 	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
-		return (pos == 3 && (side == null || side == (mirrored ? facing.rotateY():facing.rotateYCCW())));
+		return pos == 3 && side == (mirrored ? facing.rotateY():facing.rotateYCCW());
 	}
 
 	@Override

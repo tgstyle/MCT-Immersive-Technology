@@ -189,8 +189,9 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
 		TileEntitySteamTurbineMaster master = master();
 		if(master != null) {
-			if(pos == 30 && (side == null || side == facing.getOpposite())) return new FluidTank[] {master.tanks[0]};
-			else if(pos == 112 && (side == null || side == facing)) return new FluidTank[] {master.tanks[1]};
+			if (side == null) return master.tanks;
+			else if(pos == 30 && side == facing.getOpposite()) return new FluidTank[] {master.tanks[0]};
+			else if(pos == 112 && side == facing) return new FluidTank[] {master.tanks[1]};
 		}
 		return ITUtils.emptyIFluidTankList;
 	}
@@ -199,7 +200,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
 		TileEntitySteamTurbineMaster master = this.master();
 		if(master == null) return false;
-		if((pos == 30) && (side == null || side == facing.getOpposite())) {
+		if(pos == 30 && side == facing.getOpposite()) {
 			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
 			if(master.tanks[iTank].getFluid() == null) return SteamTurbineRecipe.findFuelByFluid(resource.getFluid()) != null;
 			else return resource.getFluid() == master.tanks[iTank].getFluid().getFluid();
@@ -209,7 +210,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 
 	@Override
 	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
-		return (pos == 112 && (side == null || side == facing));
+		return pos == 112 && side == facing;
 	}
 
 	@Override

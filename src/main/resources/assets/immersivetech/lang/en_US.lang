@@ -24,6 +24,9 @@ fluid.fluegas=Flue Gas
 
 #KEYWORDS
 keyword.immersivetech.generate=Generates
+keyword.immersivetech.heat_level=Heat Level
+keyword.immersivetech.rotations_per_minute=RPM
+keyword.immersivetech.speed=Speed
 
 
 #JEI

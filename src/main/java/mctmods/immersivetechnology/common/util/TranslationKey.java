@@ -42,7 +42,10 @@ public enum TranslationKey {
     OVERLAY_REDSTONE_NORMAL("overlay.immersivetech.redstone_normal"),
     OVERLAY_REDSTONE_INVERTED("overlay.immersivetech.redstone_inverted"),
     GUI_GENERIC_MULTIBLOCK_TOOLTIP("gui.immersivetech.generic_multiblock_jei_tooltip"),
-    CATEGORY_DISTILLER_CHANCE("category.immersivetech.metal_multiblock.distillerChance");
+    CATEGORY_DISTILLER_CHANCE("category.immersivetech.metal_multiblock.distillerChance"),
+    KEYWORD_HEAT_LEVEL("keyword.immersivetech.heat_level"),
+    KEYWORD_RPM("keyword.immersivetech.rotations_per_minute"),
+    KEYWORD_SPEED("keyword.immersivetech.speed");
 
 	public String location;
 	TranslationKey(String location) {
