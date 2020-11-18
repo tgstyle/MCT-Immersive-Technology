@@ -1,5 +1,10 @@
-1.8.86
+1.8.87
 Official MCT Discord https://discord.gg/ujY2mV9
+Fixed interaction between pumps and cauldrons
+Update zh_CN.lang and zh_TW.lang (PilyziFox)
+Standardized The One Probe display for multiblock internal tanks
+
+1.8.86
 Comparator support for the Alternator
 
 1.8.85
