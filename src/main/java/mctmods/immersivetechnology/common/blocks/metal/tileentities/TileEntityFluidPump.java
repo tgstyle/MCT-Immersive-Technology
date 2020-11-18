@@ -58,10 +58,9 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 					TileEntity tile = Utils.getExistingTileEntity(world, output);
 					if(tile != null && tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, f.getOpposite())) {
 						IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, f.getOpposite());
-						FluidStack drain = handler.drain(Config.ITConfig.Experimental.pipe_pressurized_transfer_rate, false);
-						if(drain == null || drain.amount <= 0) continue;
-						int out = this.outputFluid(drain, false);
-						handler.drain(out, true);
+						FluidStack drain = handler.drain(tank.getCapacity() - tank.getFluidAmount(), false);
+						if(drain == null || drain.amount <= 0 || !tank.canFillFluidType(drain)) continue;
+						handler.drain(tank.fill(drain, true), true);
 					} else if(world.getTotalWorldTime()%20 == ((getPos().getX()^getPos().getZ())&19) && world.getBlockState(getPos().offset(f)).getBlock() == Blocks.WATER && IEConfig.Machines.pump_infiniteWater && tank.fill(new FluidStack(FluidRegistry.WATER, 1000), false) == 1000 && this.energyStorage.extractEnergy(IEConfig.Machines.pump_consumption, true) >= IEConfig.Machines.pump_consumption) {
 						int connectedSources = 0;
 						for(EnumFacing f2 : EnumFacing.HORIZONTALS) {
