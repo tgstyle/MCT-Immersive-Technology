@@ -1,5 +1,9 @@
-1.8.87
+1.8.88
 Official MCT Discord https://discord.gg/ujY2mV9
+Changed manual entry for the gas turbine to be clearer. (Silfryi)
+Fixed Multiblocks crashing the game right after being formed
+
+1.8.87
 Fixed interaction between pumps and cauldrons
 Update zh_CN.lang and zh_TW.lang (PilyziFox)
 Standardized The One Probe display for multiblock internal tanks

@@ -100,9 +100,12 @@ public class MultiblockUtils {
     }
 
     public static ItemStack GetItemStack(int position, ItemStack[][][] source) {
+        if (position == -1) return ItemStack.EMPTY;
         int length = source[0].length;
         int width = source[0][0].length;
-        return source   [position / (length * width)]
+        int height = position / (length * width);
+        if (height >= source.length) return ItemStack.EMPTY;
+        return source   [height]
                         [(position - (position % width)) / width % length]
                         [position % width];
     }
