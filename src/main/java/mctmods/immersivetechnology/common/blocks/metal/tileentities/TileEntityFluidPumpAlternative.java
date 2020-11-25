@@ -34,7 +34,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPump implements ITickable, IBlockBounds, IHasDummyBlocks, IConfigurableSides, IFluidPipe, IIEInternalFluxHandler, IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction {
+public class TileEntityFluidPumpAlternative extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPump implements ITickable, IBlockBounds, IHasDummyBlocks, IConfigurableSides, IFluidPipe, IIEInternalFluxHandler, IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction {
 
 	boolean checkingArea = false;
 	Fluid searchFluid = null;
@@ -230,10 +230,10 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 		ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(fillFirstMode? TranslationKey.CHAT_PUMP_FILL_FIRST_MODE.location : TranslationKey.CHAT_PUMP_PUSH_ONLY_MODE.location));
 	}
 
-	public TileEntityFluidPump master() {
+	public TileEntityFluidPumpAlternative master() {
 		if (!dummy) return this;
 		TileEntity te = Utils.getExistingTileEntity(world, pos.down());
-		return te instanceof TileEntityFluidPump?(TileEntityFluidPump)te: null;
+		return te instanceof TileEntityFluidPumpAlternative?(TileEntityFluidPumpAlternative)te: null;
 	}
 
 	@Override
