@@ -26,15 +26,16 @@ import javax.annotation.Nullable;
 public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank, IPlayerInteraction, ITileDrop, IFluidTankProperties, IFluidHandler {
 
 	public FluidStack infiniteFluid;
+	public FluidStack infiniteFluidPressurized;
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 		Fluid fluid = FluidRegistry.getFluid(nbt.getString("fluid"));
-		if(fluid != null) infiniteFluid = new FluidStack(fluid, Integer.MAX_VALUE);
+		if(fluid != null) setFluid(fluid);
 		else if(nbt.hasKey("tank") && nbt.getCompoundTag("tank").hasKey("FluidName")) {
 			fluid = FluidRegistry.getFluid(nbt.getCompoundTag("tank").getString("FluidName"));
-			if(fluid != null) infiniteFluid = new FluidStack(fluid, Integer.MAX_VALUE);
+			if(fluid != null) setFluid(fluid);
 		}
 	}
 
@@ -53,14 +54,7 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 			IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
 			if(output != null) {
 				TileEntity tile = Utils.getExistingTileEntity(world, getPos().offset(face));
-				if(tile instanceof IPipe) {
-					infiniteFluid.tag = new NBTTagCompound();
-					infiniteFluid.tag.setBoolean("pressurized", true);
-					acceptedAmount += output.fill(infiniteFluid, true);
-				} else {
-					acceptedAmount += output.fill(infiniteFluid, false);
-					output.fill(Utils.copyFluidStackWithAmount(infiniteFluid, (int) acceptedAmount, true), true);
-				}
+				acceptedAmount += output.fill((tile instanceof IPipe)?infiniteFluidPressurized : infiniteFluid, true);
 			}
 		}
 	}
@@ -153,20 +147,28 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
 		FluidStack fluid = FluidUtil.getFluidContained(heldItem);
 		if(fluid != null) {
-			infiniteFluid = new FluidStack(fluid, Integer.MAX_VALUE);
+			setFluid(fluid.getFluid());
 			efficientMarkDirty();
 			return true;
 		} else if(player.isSneaking()) {
 			infiniteFluid = null;
+			infiniteFluidPressurized = null;
 			efficientMarkDirty();
 			return true;
 		}
 		return FluidUtil.interactWithFluidHandler(player, hand, this);
 	}
 
+	public void setFluid(Fluid fluid) {
+		infiniteFluid = new FluidStack(fluid, Integer.MAX_VALUE);
+		infiniteFluidPressurized = new FluidStack(fluid, Integer.MAX_VALUE);
+		infiniteFluidPressurized.tag = new NBTTagCompound();
+		infiniteFluidPressurized.tag.setBoolean("pressurized", true);
+	}
+
 	@Override
 	public void receiveMessageFromServer(NBTTagCompound message) {
-		if(serializeNBT().hasKey("fluid")) infiniteFluid = new FluidStack(FluidRegistry.getFluid(message.getString("fluid")), Integer.MAX_VALUE);
+		if(serializeNBT().hasKey("fluid")) setFluid(FluidRegistry.getFluid(message.getString("fluid")));
 		super.receiveMessageFromServer(message);
 	}
 
