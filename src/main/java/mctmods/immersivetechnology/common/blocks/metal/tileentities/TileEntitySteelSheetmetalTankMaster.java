@@ -50,7 +50,6 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 								return;
 							}
 							TileEntity tile = Utils.getExistingTileEntity(world, getPos().offset(face));
-							System.out.println(tile instanceof IPipe);
 							if(tile instanceof IPipe) {
 								accepted.tag = new NBTTagCompound();
 								accepted.tag.setBoolean("pressurized", true);
