@@ -233,11 +233,12 @@ public class TileEntityGasTurbineSlave extends TileEntityMultiblockNewSystem<Til
         } else return super.hasCapability(capability, facing);
     }
 
-    @SuppressWarnings({ "unchecked", "hiding" })
+    @SuppressWarnings({ "unchecked" })
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if(capability == CapabilityEnergy.ENERGY) {
             return master() != null? (T)master.getEnergyAtPosition(facing, pos) : null;
         } else return super.getCapability(capability, facing);
     }
+
 }
