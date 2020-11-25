@@ -2,13 +2,16 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
+import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
+import mctmods.immersivetechnology.common.util.IPipe;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
@@ -48,7 +51,17 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 		for(int index = 0; index < 6; index++) {
 			EnumFacing face = EnumFacing.getFront(index);
 			IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
-			if(output != null) acceptedAmount += output.fill(infiniteFluid, true);
+			if(output != null) {
+				TileEntity tile = Utils.getExistingTileEntity(world, getPos().offset(face));
+				if(tile instanceof IPipe) {
+					infiniteFluid.tag = new NBTTagCompound();
+					infiniteFluid.tag.setBoolean("pressurized", true);
+					acceptedAmount += output.fill(infiniteFluid, true);
+				} else {
+					acceptedAmount += output.fill(infiniteFluid, false);
+					output.fill(Utils.copyFluidStackWithAmount(infiniteFluid, (int) acceptedAmount, true), true);
+				}
+			}
 		}
 	}
 
