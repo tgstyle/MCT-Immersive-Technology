@@ -18,38 +18,10 @@ configFile.withReader {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 repositories {
-	maven {
-		name = 'CoFH Maven'
-		url = 'http://maven.covers1624.net/'
-	}
-	maven {
-		name = 'ChickenBones Maven'
-		url = "http://chickenbones.net/maven/"
-	}
-	maven {
-		name = 'JEI Maven'
-		url = 'http://dvs1.progwml6.com/files/maven'
-	}
-	maven {
-		name = 'HWYLA Maven'
-		url = 'http://maven.tehnut.info'
-	}
     maven {
         name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
+        url = "https://www.cursemaven.com"
     }
-	maven {
-		name = 'Immersive Maven'
-		url = 'http://maven.blamejared.com'
-	}
-	maven {
-		name = 'tterrag Maven'
-		url = 'http://maven.tterrag.com/'
-	}
-	maven {
-		name = 'ModMaven'
-		url 'https://modmaven.dev'
-	}
 }
 
 version = common.mcversion + "-" + modversion+ "." + modsubversion
@@ -69,21 +41,21 @@ minecraft {
 }
 
 dependencies {
-	compile "mezz.jei:jei_${common.mcversion}:${common.jei_version}"
-	deobfCompile "blusunrize:ImmersiveEngineering:${common.imme_version}"
+	compile "curse.maven:${common.jei_version}"
+	deobfCompile "curse.maven:${common.imme_version}"
+	deobfCompile "curse.maven:${common.redf_version}"
+	deobfCompile "curse.maven:${common.cofh_version}"
+	deobfCompile "curse.maven:${common.cwor_version}"
+	deobfCompile "curse.maven:${common.thfo_version}"
+
+	deobfCompile "curse.maven:${common.thdy_version}"
+	deobfCompile "curse.maven:${common.ccli_version}"
+	compileOnly "curse.maven:${common.top_version}"
+	compileOnly "curse.maven:${common.hwya_version}"
 
 
-
-
-
-
-
-	compileOnly "mcjty.theoneprobe:TheOneProbe-${common.mcbaseversion}:${common.mcbaseversion}-${common.top_version}"
-	compileOnly "mcp.mobius.waila:Hwyla:${common.hwya_version}"
-
-
-	compileOnly "CraftTweaker2:CraftTweaker2-MC1120-Main:${common.mcbaseversion}-${common.crft_version}"
-	compileOnly "li.cil.oc:OpenComputers:MC${common.mcversion}-${common.opcm_version}"
+	compileOnly "curse.maven:${common.crft_version}"
+	compileOnly "curse.maven:${common.opcm_version}"
 }
 
 processResources {
