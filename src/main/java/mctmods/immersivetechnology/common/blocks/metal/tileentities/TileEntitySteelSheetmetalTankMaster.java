@@ -2,8 +2,10 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SteelTank;
+import mctmods.immersivetechnology.common.util.IPipe;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
@@ -17,7 +19,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 
 	private int[] oldComps = new int[4];
 	private int masterCompOld;
-	private int sleep = 0;
+	private int sleep = 1;
 
 	public ITFluidTank tank = new ITFluidTank(tankSize, this);
 
@@ -41,17 +43,23 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 					EnumFacing face = EnumFacing.getFront(index);
 					IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
 					if(output != null) {
-						if(sleep == 0) {
-							FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), false);
+						if(sleep == 1) {
+							FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), true);
 							if(accepted == null) {
 								sleep = 20;
 								return;
 							}
-							accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
+							TileEntity tile = Utils.getExistingTileEntity(world, getPos().offset(face));
+							System.out.println(tile instanceof IPipe);
+							if(tile instanceof IPipe) {
+								accepted.tag = new NBTTagCompound();
+								accepted.tag.setBoolean("pressurized", true);
+							}
+							accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), false);
 							if(accepted.amount > 0) {
 								int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
 								tank.drain(drained, true);
-								sleep = 0;
+								sleep =1;
 							} else {
 								sleep = 20;
 							}
