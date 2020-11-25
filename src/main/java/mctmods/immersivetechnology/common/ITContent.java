@@ -247,13 +247,8 @@ public class ITContent {
 			normallyPressurized.add(FluidRegistry.getFluid("fluegas"));
 			normallyPressurized.add(FluidRegistry.getFluid("exhauststeam"));
 			IEHijackedRegisterTile(TileEntityFluidPump.class, "FluidPump");
-			if(Experimental.replace_pipe_algorithm) {
-				TileEntityFluidPipeAlternative.initCovers();
-				IEHijackedRegisterTile(TileEntityFluidPipeAlternative.class, "FluidPipe");
-			} else {
-				TileEntityFluidPipe.initCovers();
-				IEHijackedRegisterTile(TileEntityFluidPipe.class, "FluidPipe");
-			}
+			TileEntityFluidPipeAlternative.initCovers();
+			IEHijackedRegisterTile(TileEntityFluidPipeAlternative.class, "FluidPipe");
 		}
 	}
 

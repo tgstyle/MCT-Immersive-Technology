@@ -24,6 +24,18 @@ public class TileEntityFluidPipeAlternative extends blusunrize.immersiveengineer
 	public int transferRate = Experimental.pipe_transfer_rate;
 	public int transferRatePressurized = Experimental.pipe_pressurized_transfer_rate;
 
+	interface IPathingMethod {
+		void DoPathing(EnumFacing lastValid, ArrayList<EnumFacing> outputs);
+	}
+
+	public static IPathingMethod pathingMethod = Experimental.pipe_last_served?
+	(lastValid, outputs) -> {
+		if (outputs.indexOf(lastValid) != 0) Collections.swap(outputs, outputs.indexOf(lastValid),0);
+	} : (lastValid, outputs) -> {
+		outputs.remove(lastValid);
+		outputs.add(lastValid);
+	};
+
 	private boolean busy = false;
 
 	PipeFluidHandler[] sidedHandlers = {
@@ -81,18 +93,17 @@ public class TileEntityFluidPipeAlternative extends blusunrize.immersiveengineer
 		private int fastFill(FluidStack resource, boolean doFill) {
 			if(busy) return 0;
 			int remaining = resource.amount;
+			lastValidDirection = null;
 
 			for(EnumFacing facing : outputs) {
 				PipeFluidHandler fastFillOutput = fastFillOutputs.get(facing);
 				if(fastFillOutput != null) {
 					busy = true;
-					remaining -= fastFillOutput.fastFill(new FluidStack(resource, remaining), doFill);
+					remaining -= fastFillOutput.fillInternal(new FluidStack(resource, remaining), doFill);
 					busy = false;
-					if(remaining == 0) {
-						if(outputs.indexOf(facing) != 0) Collections.swap(outputs, outputs.indexOf(facing),0); //Add some bias forextra TPS juice
-						return resource.amount;
-					}
-					continue;
+					if(remaining > 0) continue;
+					lastValidDirection = facing;
+					return resource.amount;
 				}
 
 				TileEntity adjacentTile = Utils.getExistingTileEntity(world, pos.offset(facing));
@@ -103,20 +114,29 @@ public class TileEntityFluidPipeAlternative extends blusunrize.immersiveengineer
 						remaining -= handler.fill(Utils.copyFluidStackWithAmount(resource, remaining, !(handler instanceof IFluidPipe)), doFill);
 						busy = false;
 						if(handler instanceof PipeFluidHandler) fastFillOutputs.put(facing, (PipeFluidHandler)handler);
-						if(remaining == 0) {
-							if(outputs.indexOf(facing) != 0) Collections.swap(outputs, outputs.indexOf(facing),0); //Add some bias forextra TPS juice
-							return resource.amount;
-						}
+						if(remaining > 0) continue;
+						lastValidDirection = facing;
+						return resource.amount;
 					}
 				}
 			}
 			return resource.amount - remaining;
 		}
 
+		private EnumFacing lastValidDirection;
+
+		private int fillInternal(FluidStack resource, boolean doFill) {
+			int toReturn = fastFill(resource, doFill);
+			if (doFill && lastValidDirection != null) pathingMethod.DoPathing(lastValidDirection, outputs);
+			return toReturn;
+		}
+
 		@Override
 		public int fill(FluidStack resource, boolean doFill) {
 			if(resource == null || resource.amount == 0) return 0;
-			return fastFill(new FluidStack(resource, Math.min(resource.amount, getTranferrableAmount(resource))), doFill);
+			int toReturn = fastFill(new FluidStack(resource, Math.min(resource.amount, getTranferrableAmount(resource))), doFill);
+			if (doFill && lastValidDirection != null) pathingMethod.DoPathing(lastValidDirection, outputs);
+			return toReturn;
 		}
 
 		private int getTranferrableAmount(FluidStack resource) {
