@@ -1,5 +1,17 @@
-1.8.88
+1.8.89
 Official MCT Discord https://discord.gg/ujY2mV9
+CHECK CONFIGS! Some entries have been changed/removed
+Refactor Fluid Pump to Distinguish from IE
+Removed an old implementation of the hijacked IE pipe, cleaned up code as result
+Tweaked creative barrel a bit
+Testing pressurized fluid output on creative barrel
+Fix Steel Tank stops outputting
+Add notification entry for new pump modes in manual
+Make the Steel Tank output at Pressurized rate
+Wire Cutters can be used on hijacked pumps to change their internal tank mode: fill internal tank first, then push out contents or only push out contents
+Alternative pipe now has two options for fluid pathing: round robin and last served
+
+1.8.88
 Changed manual entry for the gas turbine to be clearer. (Silfryi)
 Fixed Multiblocks crashing the game right after being formed
 
