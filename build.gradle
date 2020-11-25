@@ -43,13 +43,13 @@ minecraft {
 dependencies {
 	compile "curse.maven:${common.jei_version}"
 	deobfCompile "curse.maven:${common.imme_version}"
-	deobfCompile "curse.maven:${common.redf_version}"
-	deobfCompile "curse.maven:${common.cofh_version}"
-	deobfCompile "curse.maven:${common.cwor_version}"
-	deobfCompile "curse.maven:${common.thfo_version}"
 
-	deobfCompile "curse.maven:${common.thdy_version}"
-	deobfCompile "curse.maven:${common.ccli_version}"
+
+
+
+
+
+
 	compileOnly "curse.maven:${common.top_version}"
 	compileOnly "curse.maven:${common.hwya_version}"
 
