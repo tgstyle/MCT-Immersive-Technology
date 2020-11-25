@@ -38,8 +38,7 @@ public class CommonProxy implements IGuiHandler {
 
 	@SubscribeEvent
 	public void onWorldUnload(WorldEvent.Unload event) {
-		//sanitation
-		TileEntityFluidPipe.indirectConnections.clear();
+
 	}
 
 	@SubscribeEvent

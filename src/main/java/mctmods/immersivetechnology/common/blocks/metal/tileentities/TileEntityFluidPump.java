@@ -12,7 +12,6 @@ import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.Config;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.DirectionalFluidOutput;
 import mctmods.immersivetechnology.common.util.IPipe;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.block.state.IBlockState;
@@ -163,6 +162,18 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 		if(closedList.size() >= closedListMax || openList.isEmpty()) checkingArea = false;
 	}
 
+	public static class DirectionalFluidOutput {
+		IFluidHandler output;
+		EnumFacing direction;
+		TileEntity containingTile;
+
+		public DirectionalFluidOutput(IFluidHandler output, TileEntity containingTile, EnumFacing direction) {
+			this.output = output;
+			this.direction = direction;
+			this.containingTile = containingTile;
+		}
+	}
+
 	public int outputFluid(FluidStack fs, boolean simulate) {
 		if(fs == null) return 0;
 
@@ -172,7 +183,7 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 		int accelPower = IEConfig.Machines.pump_consumption_accelerate;
 		final int fluidForSort = canAccept;
 		int sum = 0;
-		HashMap<TileEntityFluidPipe.DirectionalFluidOutput, Integer> sorting = new HashMap<DirectionalFluidOutput, Integer>();
+		HashMap<DirectionalFluidOutput, Integer> sorting = new HashMap<>();
 		for(EnumFacing f : EnumFacing.values()) {
 			if(sideConfig[f.ordinal()] == 1) {
 				TileEntity tile = Utils.getExistingTileEntity(world, getPos().offset(f));
