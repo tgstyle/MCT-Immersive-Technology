@@ -34,6 +34,10 @@ category.immersivetech.metal_multiblock.boilerRecipe=Boiler
 category.immersivetech.metal_multiblock.boilerFuel=Boiler Fuels
 category.immersivetech.metal_multiblock.distillerChance=Chance: %s
 
+#chat
+chat.immersivetech.fluid_pump.fill_first_mode=Pump will fill internal tank first, then push out contents
+chat.immersivetech.fluid_pump.push_only_mode=Pump will only push out contents
+
 
 #TILE ENTITYS
 #METAL

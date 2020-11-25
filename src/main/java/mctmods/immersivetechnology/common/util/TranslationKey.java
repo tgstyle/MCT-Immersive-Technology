@@ -45,7 +45,9 @@ public enum TranslationKey {
     CATEGORY_DISTILLER_CHANCE("category.immersivetech.metal_multiblock.distillerChance"),
     KEYWORD_HEAT_LEVEL("keyword.immersivetech.heat_level"),
     KEYWORD_RPM("keyword.immersivetech.rotations_per_minute"),
-    KEYWORD_SPEED("keyword.immersivetech.speed");
+    KEYWORD_SPEED("keyword.immersivetech.speed"),
+    CHAT_PUMP_FILL_FIRST_MODE("chat.immersivetech.fluid_pump.fill_first_mode"),
+    CHAT_PUMP_PUSH_ONLY_MODE("chat.immersivetech.fluid_pump.push_only_mode");
 
 	public String location;
 	TranslationKey(String location) {

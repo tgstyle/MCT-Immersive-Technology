@@ -3,22 +3,29 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.common.Config.IEConfig;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IConfigurableSides;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHasDummyBlocks;
+import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.DirectionalFluidOutput;
 import mctmods.immersivetechnology.common.util.IPipe;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -28,10 +35,11 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPump implements ITickable, IBlockBounds, IHasDummyBlocks, IConfigurableSides, IFluidPipe, IIEInternalFluxHandler, IBlockOverlayText {
+public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPump implements ITickable, IBlockBounds, IHasDummyBlocks, IConfigurableSides, IFluidPipe, IIEInternalFluxHandler, IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction {
 
 	boolean checkingArea = false;
 	Fluid searchFluid = null;
+	boolean fillFirstMode = true;
 	ArrayList<BlockPos> openList = new ArrayList<BlockPos>();
 	ArrayList<BlockPos> closedList = new ArrayList<BlockPos>();
 	ArrayList<BlockPos> checked = new ArrayList<BlockPos>();
@@ -40,6 +48,32 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 		int toReturn = 0;
 		for(EnumFacing directions : EnumFacing.values()) toReturn = Math.max(world.getRedstonePower(position.offset(directions, -1), directions), toReturn);
 		return toReturn;
+	}
+
+	public boolean canPressurize() {
+		boolean hasTank = false;
+		for(EnumFacing f : EnumFacing.values()) {
+			if(sideConfig[f.ordinal()] != 1) continue;
+			TileEntity tile = Utils.getExistingTileEntity(world, getPos().offset(f));
+			if(tile == null || !tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, f.getOpposite())) continue;
+			if(tile instanceof IPipe) continue;
+			hasTank = true;
+		}
+		if (hasTank) return true;
+		return energyStorage.extractEnergy(IEConfig.Machines.pump_consumption_accelerate, true) >= IEConfig.Machines.pump_consumption_accelerate;
+	}
+
+	public void drainFromTank(IFluidHandler handler) {
+		if (!fillFirstMode) {
+			FluidStack drain = handler.drain(canPressurize() ? Config.ITConfig.Experimental.pipe_pressurized_transfer_rate : Config.ITConfig.Experimental.pipe_transfer_rate, false);
+			if (drain == null || drain.amount <= 0) return;
+			int out = this.outputFluid(drain, false);
+			handler.drain(out, true);
+		} else {
+			FluidStack drain = handler.drain(tank.getCapacity() - tank.getFluidAmount(), false);
+			if (drain == null || drain.amount <= 0 || !tank.canFillFluidType(drain)) return;
+			handler.drain(tank.fill(drain, true), true);
+		}
 	}
 		
 	@Override
@@ -53,24 +87,22 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 
 		if(getRSPower(getPos()) > 0 || getRSPower(getPos().add(0, 1, 0)) > 0) {
 			for(EnumFacing f : EnumFacing.values()) {
-				if(sideConfig[f.ordinal()] == 0) {
-					BlockPos output = getPos().offset(f);
-					TileEntity tile = Utils.getExistingTileEntity(world, output);
-					if(tile != null && tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, f.getOpposite())) {
-						IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, f.getOpposite());
-						FluidStack drain = handler.drain(tank.getCapacity() - tank.getFluidAmount(), false);
-						if(drain == null || drain.amount <= 0 || !tank.canFillFluidType(drain)) continue;
-						handler.drain(tank.fill(drain, true), true);
-					} else if(world.getTotalWorldTime()%20 == ((getPos().getX()^getPos().getZ())&19) && world.getBlockState(getPos().offset(f)).getBlock() == Blocks.WATER && IEConfig.Machines.pump_infiniteWater && tank.fill(new FluidStack(FluidRegistry.WATER, 1000), false) == 1000 && this.energyStorage.extractEnergy(IEConfig.Machines.pump_consumption, true) >= IEConfig.Machines.pump_consumption) {
-						int connectedSources = 0;
-						for(EnumFacing f2 : EnumFacing.HORIZONTALS) {
-							IBlockState waterState = world.getBlockState(getPos().offset(f).offset(f2));
-							if(waterState.getBlock() == Blocks.WATER && Blocks.WATER.getMetaFromState(waterState) == 0) connectedSources++;
-						}
-						if(connectedSources > 1) {
-							this.energyStorage.extractEnergy(IEConfig.Machines.pump_consumption, false);
-							this.tank.fill(new FluidStack(FluidRegistry.WATER, 1000), true);
-						}
+				if(sideConfig[f.ordinal()] != 0) continue;
+				BlockPos output = getPos().offset(f);
+				TileEntity tile = Utils.getExistingTileEntity(world, output);
+				if(tile != null && tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, f.getOpposite())) {
+					IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, f.getOpposite());
+					if (handler == null) continue;
+					drainFromTank(handler);
+				} else if(world.getTotalWorldTime()%20 == ((getPos().getX()^getPos().getZ())&19) && world.getBlockState(getPos().offset(f)).getBlock() == Blocks.WATER && IEConfig.Machines.pump_infiniteWater && tank.fill(new FluidStack(FluidRegistry.WATER, 1000), false) == 1000 && this.energyStorage.extractEnergy(IEConfig.Machines.pump_consumption, true) >= IEConfig.Machines.pump_consumption) {
+					int connectedSources = 0;
+					for(EnumFacing f2 : EnumFacing.HORIZONTALS) {
+						IBlockState waterState = world.getBlockState(getPos().offset(f).offset(f2));
+						if(waterState.getBlock() == Blocks.WATER && Blocks.WATER.getMetaFromState(waterState) == 0) connectedSources++;
+					}
+					if(connectedSources > 1) {
+						this.energyStorage.extractEnergy(IEConfig.Machines.pump_consumption, false);
+						this.tank.fill(new FluidStack(FluidRegistry.WATER, 1000), true);
 					}
 				}
 			}
@@ -180,5 +212,23 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 			return f;
 		}
 		return 0;
+	}
+
+	public void flipFillMode(EntityPlayer player) {
+		fillFirstMode = !fillFirstMode;
+		ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(fillFirstMode? TranslationKey.CHAT_PUMP_FILL_FIRST_MODE.location : TranslationKey.CHAT_PUMP_PUSH_ONLY_MODE.location));
+	}
+
+	public TileEntityFluidPump master() {
+		if (!dummy) return this;
+		TileEntity te = Utils.getExistingTileEntity(world, pos.down());
+		return te instanceof TileEntityFluidPump?(TileEntityFluidPump)te: null;
+	}
+
+	@Override
+	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
+		if (!Utils.isWirecutter(heldItem)) return false;
+		master().flipFillMode(player);
+		return true;
 	}
 }
