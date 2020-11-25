@@ -19,7 +19,6 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 
 	private int[] oldComps = new int[4];
 	private int masterCompOld;
-	private int sleep = 1;
 
 	public ITFluidTank tank = new ITFluidTank(tankSize, this);
 
@@ -43,27 +42,18 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 					EnumFacing face = EnumFacing.getFront(index);
 					IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
 					if(output != null) {
-						if(sleep == 1) {
-							FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), true);
-							if(accepted == null) {
-								sleep = 20;
-								return;
-							}
+						FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), true);
+						if(accepted != null) {
 							TileEntity tile = Utils.getExistingTileEntity(world, getPos().offset(face));
 							if(tile instanceof IPipe) {
 								accepted.tag = new NBTTagCompound();
 								accepted.tag.setBoolean("pressurized", true);
 							}
-							accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), false);
+							accepted.amount = output.fill(accepted, false);
 							if(accepted.amount > 0) {
 								int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
 								tank.drain(drained, true);
-								sleep =1;
-							} else {
-								sleep = 20;
-							}
-						} else {
-							sleep--;
+							} 
 						}
 					}
 				}
@@ -114,4 +104,5 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
 		nbt.setTag("tank", tankTag);
 	}
+
 }
