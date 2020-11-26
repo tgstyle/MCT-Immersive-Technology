@@ -1,6 +1,9 @@
-1.8.89
+1.8.90
 Official MCT Discord https://discord.gg/ujY2mV9
 CHECK CONFIGS! Some entries have been changed/removed
+Pump now saves its mode between reloads
+
+1.8.89
 Refactor Fluid Pump to Distinguish from IE
 Removed an old implementation of the hijacked IE pipe, cleaned up code as result
 Tweaked creative barrel a bit
