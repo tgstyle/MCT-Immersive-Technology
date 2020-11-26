@@ -43,6 +43,18 @@ public class TileEntityFluidPumpAlternative extends blusunrize.immersiveengineer
 	ArrayList<BlockPos> closedList = new ArrayList<BlockPos>();
 	ArrayList<BlockPos> checked = new ArrayList<BlockPos>();
 
+	@Override
+	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+		fillFirstMode = nbt.getBoolean("fillfirstmode");
+		super.readCustomNBT(nbt, descPacket);
+	}
+
+	@Override
+	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+		nbt.setBoolean("fillfirstmode", fillFirstMode);
+		super.writeCustomNBT(nbt, descPacket);
+	}
+
 	public int getRSPower(BlockPos position) {
 		int toReturn = 0;
 		for(EnumFacing directions : EnumFacing.values()) toReturn = Math.max(world.getRedstonePower(position.offset(directions, -1), directions), toReturn);
