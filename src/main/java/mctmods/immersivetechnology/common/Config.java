@@ -150,7 +150,7 @@ public class Config {
 				@Comment({"The power consumption  of the sparkplug for the Gas Turbine [Default=1024]"})
 				public static int gasTurbine_sparkplug_consumption = 1024;
 				@Comment({"The capacity of the electric starter for the Gas Turbine [Default=3072]"})
-				public static int gasTurbine_electric_starter_size = 3072;
+				public static int gasTurbine_electric_starter_size = 6144;
 				@Comment({"The capacity of the sparkplug for the Gas Turbine [Default=1024]"})
 				public static int gasTurbine_sparkplug_size = 1024;
 				@Comment({"The capacity of the input tank for the Gas Turbine [Default=10000]"})
