@@ -327,6 +327,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     private void pumpOutputOut() {
+        if (tanks[1].getFluidAmount() == 0) return;
         if(input == null) InitializePoIs();
         IFluidHandler output;
         if((output = FluidUtil.getFluidHandler(world, outputFront, this.output.facing.getOpposite())) != null) {
