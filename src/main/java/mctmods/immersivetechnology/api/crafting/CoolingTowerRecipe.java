@@ -101,7 +101,7 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
 
     public static CoolingTowerRecipe loadFromNBT(NBTTagCompound nbt) {
         FluidStack fluidInput0 = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input0"));
-        FluidStack fluidInput1 = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input0"));
+        FluidStack fluidInput1 = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input1"));
         return findRecipe(fluidInput0, fluidInput1);
     }
 
