@@ -8,7 +8,9 @@ import java.util.Locale;
 public enum BlockType_MetalMultiblock1 implements IStringSerializable, BlockITBase.IBlockEnum {
 
     GAS_TURBINE(true),
-    GAS_TURBINE_SLAVE(true);
+    GAS_TURBINE_SLAVE(true),
+    HEAT_EXCHANGER(true),
+    HEAT_EXCHANGER_SLAVE(true);
 
     private boolean needsCustomState;
     BlockType_MetalMultiblock1(boolean needsCustomState) {

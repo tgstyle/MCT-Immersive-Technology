@@ -23,6 +23,7 @@ public class ITSounds {
 	public static ITSoundEvent gasTurbineStarter = registerSound("gasTurbineStarter", SoundCategory.BLOCKS);
 	public static ITSoundEvent gasTurbineArc = registerSound("gasTurbineArc", SoundCategory.BLOCKS);
 	public static ITSoundEvent gasTurbineSpark = registerSound("gasTurbineSpark", SoundCategory.BLOCKS);
+	public static ITSoundEvent heatExchanger = registerSound("heatExchanger", SoundCategory.BLOCKS);
 
 	private static ITSoundEvent registerSound(String name, SoundCategory category) {
 		ResourceLocation location = new ResourceLocation(ImmersiveTechnology.MODID, name);

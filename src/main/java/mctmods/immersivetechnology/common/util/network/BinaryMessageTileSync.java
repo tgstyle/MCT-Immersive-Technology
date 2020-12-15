@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.util.network;
 import io.netty.buffer.ByteBuf;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -45,12 +46,13 @@ public class BinaryMessageTileSync implements IMessage {
     public static class HandlerServer implements IMessageHandler<BinaryMessageTileSync, IMessage> {
         @Override
         public IMessage onMessage(BinaryMessageTileSync message, MessageContext ctx) {
-            WorldServer world = ctx.getServerHandler().player.getServerWorld();
+            EntityPlayerMP player = ctx.getServerHandler().player;
+            WorldServer world = player.getServerWorld();
             world.addScheduledTask(() -> {
                 if(world.isBlockLoaded(message.pos)) {
                     TileEntity tile = world.getTileEntity(message.pos);
                     if(tile instanceof IBinaryMessageReceiver)
-                        ((IBinaryMessageReceiver)tile).receiveMessageFromClient(message.buffer);
+                        ((IBinaryMessageReceiver)tile).receiveMessageFromClient(message.buffer, player);
                 }
             });
             return null;

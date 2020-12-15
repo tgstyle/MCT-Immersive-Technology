@@ -237,6 +237,11 @@ public class ITContent {
 			registerTile(TileEntityGasTurbineMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockGasTurbine.instance);
 		}
+		if(Multiblock.enable_heatExchanger) {
+			registerTile(TileEntityHeatExchangerSlave.class);
+			registerTile(TileEntityHeatExchangerMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockHeatExchanger.instance);
+		}
 
 		registerTile(TileEntitySteelSheetmetalTank.class);
 		registerTile(TileEntitySteelSheetmetalTankSlave.class);
@@ -291,6 +296,10 @@ public class ITContent {
 		if(Multiblock.enable_coolingTower && Recipes.register_cooling_tower_recipes) {
 			CoolingTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("water"), 750), new FluidStack(FluidRegistry.getFluid("water"), 750), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 900), new FluidStack(FluidRegistry.getFluid("water"), 1000), 3);
 			CoolingTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 700), new FluidStack(FluidRegistry.getFluid("distwater"), 700), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 900), new FluidStack(FluidRegistry.getFluid("distwater"), 1000), 3);
+		}
+		if(Multiblock.enable_heatExchanger && Recipes.register_heat_exchanger_recipes) {
+			HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 450), null, new FluidStack(FluidRegistry.WATER, 250), new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), 64, 10);
+			HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), null, new FluidStack(FluidRegistry.getFluid("distwater"), 250), new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), 64, 10);
 		}
 	}
 

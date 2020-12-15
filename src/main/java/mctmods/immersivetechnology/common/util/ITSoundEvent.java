@@ -19,7 +19,15 @@ public class ITSoundEvent extends SoundEvent {
         ITSoundHandler.PlayOnceSound(posIn, this, soundCategory, volumeIn, pitchIn);
     }
 
+    public void PlayOnce(BlockPos posIn, float volumeIn) {
+        ITSoundHandler.PlayOnceSound(posIn, this, soundCategory, volumeIn, 1);
+    }
+
     public void PlayRepeating(BlockPos posIn, float volumeIn, float pitchIn) {
         ITSoundHandler.PlayRepeatingSound(posIn, this, soundCategory, volumeIn, pitchIn);
+    }
+
+    public void PlayRepeating(BlockPos posIn, float volumeIn) {
+        ITSoundHandler.PlayRepeatingSound(posIn, this, soundCategory, volumeIn, 1);
     }
 }

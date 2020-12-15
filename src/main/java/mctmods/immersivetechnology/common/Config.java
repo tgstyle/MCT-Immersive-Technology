@@ -25,6 +25,7 @@ public class Config {
 			public static SteelTank steeltank;
 			public static CoolingTower coolingTower;
 			public static GasTurbine gasTurbine;
+			public static HeatExchanger heatExchanger;
 
 			public static class Multiblock {
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Preheater be built ? [Default=true]"})
@@ -41,6 +42,8 @@ public class Config {
 				public static boolean enable_coolingTower = true;
 				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Gas Turbine Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_gasTurbine = true;
+				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Heat Exchanger Multiblock structures be built ? [Default=true]"})
+				public static boolean enable_heatExchanger = true;
 			}
 			public static class Recipes {
 				@Comment({"Should default Steam Turbine recipes be registered ? [Default=true]"})
@@ -55,6 +58,8 @@ public class Config {
 				public static boolean register_cooling_tower_recipes = true;
 				@Comment({"Should default Gas Turbine recipes be registered ? [Default=true]"})
 				public static boolean register_gas_turbine_recipes = true;
+				@Comment({"Should default Heat Exchanger recipes be registered ? [Default=true]"})
+				public static boolean register_heat_exchanger_recipes = true;
 			}
 			public static class AdvancedCokeOven {
 				@Comment({"The capacity of the tank for the Advanced Coke Oven [Default=24000]"})
@@ -71,6 +76,14 @@ public class Config {
 				public static int coolingTower_input_tankSize = 10000;
 				@Comment({"The capacity of the output tanks for the Cooling Tower [Default=10000]"})
 				public static int coolingTower_output_tankSize = 10000;
+			}
+			public static class HeatExchanger {
+				@Comment({"The capacity of the input tanks for the Heat Exchanger [Default=10000]"})
+				public static int heatExchanger_input_tankSize = 10000;
+				@Comment({"The capacity of the output tanks for the Heat Exchanger [Default=10000]"})
+				public static int heatExchanger_output_tankSize = 10000;
+				@Comment({"The maximum energy a Heat Exchanger can store in if[Default=2048]"})
+				public static int heatExchanger_energy_size = 2048;
 			}
 			public static class Alternator {
 				@Comment({"The maximum energy an Alternator can store in if[Default=1200000]"})

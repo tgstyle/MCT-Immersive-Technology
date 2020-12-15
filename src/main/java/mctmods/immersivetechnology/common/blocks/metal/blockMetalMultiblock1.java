@@ -5,6 +5,8 @@ import mctmods.immersivetechnology.common.blocks.BlockITMultiblock;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityGasTurbineMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityGasTurbineSlave;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHeatExchangerMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHeatExchangerSlave;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock1;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -45,6 +47,10 @@ public class blockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
                 return new TileEntityGasTurbineMaster();
             case GAS_TURBINE_SLAVE:
                 return new TileEntityGasTurbineSlave();
+            case HEAT_EXCHANGER:
+                return new TileEntityHeatExchangerMaster();
+            case HEAT_EXCHANGER_SLAVE:
+                return new TileEntityHeatExchangerSlave();
         }
         return null;
     }

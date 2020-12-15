@@ -47,7 +47,8 @@ public enum TranslationKey {
     KEYWORD_RPM("keyword.immersivetech.rotations_per_minute"),
     KEYWORD_SPEED("keyword.immersivetech.speed"),
     CHAT_PUMP_FILL_FIRST_MODE("chat.immersivetech.fluid_pump.fill_first_mode"),
-    CHAT_PUMP_PUSH_ONLY_MODE("chat.immersivetech.fluid_pump.push_only_mode");
+    CHAT_PUMP_PUSH_ONLY_MODE("chat.immersivetech.fluid_pump.push_only_mode"),
+    GUI_IF_PER_TICK("gui.immersivetech.if_per_tick");
 
 	public String location;
 	TranslationKey(String location) {

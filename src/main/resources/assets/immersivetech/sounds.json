@@ -75,5 +75,12 @@
 			"immersivetech:gas_spark"
 		],
 		"subtitle": "subtitle.immersivetech.gasTurbineSpark"
+	},
+	"heatExchanger": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:heat_exchanger"
+		],
+		"subtitle": "subtitle.immersivetech.heatExchanger"
 	}
 }

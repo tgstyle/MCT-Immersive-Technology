@@ -42,6 +42,11 @@ public class ComputerManualHelper {
 					new ManualPages.Text(ManualHelper.getManual(), "computer.gasTurbine0"),
 					new ManualPages.Text(ManualHelper.getManual(), "computer.gasTurbine1")
 			);
+			if (Config.ITConfig.Machines.Multiblock.enable_heatExchanger)
+			ManualHelper.getManual().addEntry("computer.heatExchanger", "computers",
+					new ManualPages.Text(ManualHelper.getManual(), "computer.heatExchanger0"),
+					new ManualPages.Text(ManualHelper.getManual(), "computer.heatExchanger1")
+			);
 		}
 	}
 }

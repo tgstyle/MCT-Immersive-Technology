@@ -11,6 +11,7 @@ import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerRecipeCat
 import mctmods.immersivetechnology.common.util.compat.jei.coolingtower.CoolingTowerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.distiller.DistillerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.gasturbine.GasTurbineRecipeCategory;
+import mctmods.immersivetechnology.common.util.compat.jei.heatexchanger.HeatExchangerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.solartower.SolarTowerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.steamturbine.SteamTurbineRecipeCategory;
 import mezz.jei.api.*;
@@ -60,6 +61,7 @@ public class JEIHelper implements IModPlugin {
 		if(Multiblock.enable_steamTurbine) categories.put(SteamTurbineRecipe.class, new SteamTurbineRecipeCategory(guiHelper));
 		if(Multiblock.enable_coolingTower) categories.put(CoolingTowerRecipe.class, new CoolingTowerRecipeCategory(guiHelper));
 		if(Multiblock.enable_gasTurbine) categories.put(GasTurbineRecipe.class, new GasTurbineRecipeCategory(guiHelper));
+		if(Multiblock.enable_heatExchanger) categories.put(HeatExchangerRecipe.class, new HeatExchangerRecipeCategory(guiHelper));
 			
 		registry.addRecipeCategories(categories.values().toArray(new IRecipeCategory[categories.size()]));
 	}
@@ -90,6 +92,7 @@ public class JEIHelper implements IModPlugin {
 		if(Multiblock.enable_steamTurbine) modRegistry.addRecipes(new ArrayList<Object>((SteamTurbineRecipe.recipeList)), "it.steamTurbine");
 		if(Multiblock.enable_coolingTower) modRegistry.addRecipes(new ArrayList<Object>((CoolingTowerRecipe.recipeList)), "it.coolingTower");
 		if(Multiblock.enable_gasTurbine) modRegistry.addRecipes(new ArrayList<Object>((GasTurbineRecipe.recipeList)), "it.gasTurbine");
+		if(Multiblock.enable_heatExchanger) modRegistry.addRecipes(new ArrayList<Object>((HeatExchangerRecipe.recipeList)), "it.heatExchanger");
 	}
 
 	@SuppressWarnings("deprecation")

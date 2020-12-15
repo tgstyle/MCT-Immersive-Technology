@@ -27,6 +27,7 @@ public class CraftTweakerHelper extends ITCompatModule {
 		if(Multiblock.enable_steamTurbine) CraftTweakerAPI.registerClass(SteamTurbine.class);
 		if(Multiblock.enable_coolingTower) CraftTweakerAPI.registerClass(CoolingTower.class);
 		if(Multiblock.enable_gasTurbine) CraftTweakerAPI.registerClass(GasTurbine.class);
+		if(Multiblock.enable_heatExchanger) CraftTweakerAPI.registerClass(HeatExchanger.class);
 		if(Experimental.replace_IE_pipes) CraftTweakerAPI.registerClass(PressurizedFluid.class);
 	}
 

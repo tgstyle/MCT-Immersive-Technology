@@ -77,6 +77,8 @@ tile.immersivetech.metal_multiblock.cooling_tower.name=Cooling Tower
 tile.immersivetech.metal_multiblock.cooling_tower_slave.name=Cooling Tower
 tile.immersivetech.metal_multiblock1.gas_turbine.name=Gas Turbine
 tile.immersivetech.metal_multiblock1.gas_turbine_slave.name=Gas Turbine
+tile.immersivetech.metal_multiblock1.heat_exchanger.name=Heat Exchanger
+tile.immersivetech.metal_multiblock1.heat_exchanger_slave.name=Heat Exchanger
 
 
 #OVERLAY
@@ -107,6 +109,7 @@ overlay.immersivetech.redstone_inverted=Redstone Mode Inverted
 gui.immersivetech.empty=Empty
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss
+gui.immersivetech.if_per_tick=%s IF/t
 gui.immersivetech.boiler.heat_per_tick=%1$s heat per tick
 gui.immersivetech.boiler.total_heat=%s total heat
 gui.immersivetech.fluid_valve.firstline=Limit to (leave blank to disable)...
@@ -137,6 +140,7 @@ desc.immersiveengineering.info.multiblock.IT:Alternator=Alternator
 desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank=Steel Fluid Tank
 desc.immersiveengineering.info.multiblock.IT:CoolingTower=Cooling Tower
 desc.immersiveengineering.info.multiblock.IT:GasTurbine=Gas Turbine
+desc.immersiveengineering.info.multiblock.IT:HeatExchanger=Heat Exchanger
 
 
 #STONE MULTIBLOCKS
@@ -227,6 +231,11 @@ ie.manual.entry.coolingTower.subtext=Keep it cool, man!
 ie.manual.entry.coolingTower0=The Cooling Tower is a multiblock structure that converts exhaust steam back into water. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the Heavy Engineering block.
 ie.manual.entry.coolingTower1=Exhaust Steam goes into the block to the left of the Heavy Engineering block (side with red gauge indicator) while water or distilled water goes into the right one (side with blue gauge indicator).
 
+ie.manual.entry.heatExchanger.name=Heat Exchanger
+ie.manual.entry.heatExchanger.subtext=Entropy says hi
+ie.manual.entry.heatExchanger0=The Heat Exchanger is a multiblock structure that quickly moves heat from one fluid to another. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Iron Sheetmetal next to the Redstone Engineering Block.
+ie.manual.entry.heatExchanger1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. <br>Water and <link;distiller;§n§oDistilled Water§r> can be fed to the Heat Exchanger via a hatch on the top that is marked with a blue dot. The hatch with the orange dot at the top serves as the fluid output for steam. <link;gasTurbine;§n§oFlue Gas§r> can be fed to the hatch marked with a blue dot on the bottom layer. The hatch marked with the orange dot at the bottom layer serves as the fluid output for previously hot fluids.
+
 ie.manual.entry.computer.steamTurbine.name=Steam Turbine ☎
 ie.manual.entry.computer.steamTurbine.subtext=Boiling breath
 ie.manual.entry.computer.boiler.name=Boiler ☎
@@ -237,6 +246,8 @@ ie.manual.entry.computer.solarTower.name=Solar Tower ☎
 ie.manual.entry.computer.solarTower.subtext=The power of the Sun
 ie.manual.entry.computer.gasTurbine.name=Gas Turbine ☎
 ie.manual.entry.computer.gasTurbine.subtext=Not part of a 747
+ie.manual.entry.computer.heatExchanger.name=Heat Exchanger ☎
+ie.manual.entry.computer.heatExchanger.subtext=Entropy says hi
 
 ie.manual.entry.computer.steamTurbine0=§lgetSpeed()§r: returns the speed of the turbine in RPM.<br>§lgetTankInfo()§r: returns information about the turbine's steam tank.<br>§lgetOutputTankInfo()§r: returns information about the turbine's output tank.
 ie.manual.entry.computer.boiler0=§lgetHeat()§r: returns the boiler's heat level.<br>§lgetFuelTankInfo()§r: returns information about the boiler's fuel tank.<br>§lgetInputTankInfo()§r: returns information about the boiler's input tank.<br>§lgetOutputTankInfo()§r: returns information about the boiler's output tank.
@@ -246,5 +257,7 @@ ie.manual.entry.computer.distiller1=§lgetFullCanisters()§r: returns a table wi
 ie.manual.entry.computer.solarTower0=§lgetReflectors()§r: returns a table of the valid reflectors connected to the solar tower.<br>§lgetInputTankInfo()§r: returns information about the tower's input tank.<br>§lgetOutputTankInfo()§r: returns information about the tower's output tank.
 ie.manual.entry.computer.solarTower1=§lgetFullCanisters()§r: returns a table with information about the full fluid canisters in the machine, with the keys "input" and "output" referring to each tank.<br>§lgetEmptyCanisters()§r: returns a table with information about the empty fluid canisters in the machine, with the keys "input" and "output" referring to each tank.
 ie.manual.entry.computer.gasTurbine0=§lgetSpeed()§r: returns the speed of the turbine in RPM.<br>§lgetInputTankInfo()§r: returns information about the turbine's fuel tank.<br>§lgetOutputTankInfo()§r: returns information about the turbine's output tank.
+ie.manual.entry.computer.heatExchanger0=§lgetFirstInputTankInfo()§r: returns a table with information about the heat exchanger's first input tank (upper loop).<br>§lgetSecondInputTankInfo()§r: returns a table with information about the heat exchanger's second input tank (lower loop).
+ie.manual.entry.computer.heatExchanger1=§lgetFirstOutputTankInfo()§r: returns a table with information about the heat exchanger's first output tank (upper loop).<br>§lgetSecondOutputTankInfo()§r: returns a table with information about the heat exchanger's second output tank (lower loop).
 
 ie.manual.entry.fluidPipes3=In order for the pump to pick up fluid blocks, it will need a power input at the top and a redstone signal. Pumps can also be used to extract from tanks and other fluid containers that do not have an automatic output. This will also require a redstone signal, but won't consume power.<br><br>Pumps have a new mode! The operating mode of the Fluid Pump can be changed by right clicking it with an Engineer's Wire Cutter. Toggle the mode if it's not behaving as expected.
