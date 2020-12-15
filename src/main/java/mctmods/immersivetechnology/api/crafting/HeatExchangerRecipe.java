@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.api.crafting;
 
-import blusunrize.immersiveengineering.api.crafting.IJEIRecipe;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import com.google.common.collect.Lists;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,7 +7,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class HeatExchangerRecipe extends MultiblockRecipe {
 
@@ -33,7 +31,7 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
         this.fluidInputList = Lists.newArrayList(fluidInput0, fluidInput1);
     }
 
-    public static ArrayList<HeatExchangerRecipe> recipeList = new ArrayList<HeatExchangerRecipe>();
+    public static ArrayList<HeatExchangerRecipe> recipeList = new ArrayList<>();
 
     public static HeatExchangerRecipe addRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidInput0, FluidStack fluidInput1, int energy, int time) {
         HeatExchangerRecipe recipe = new HeatExchangerRecipe(fluidOutput0, fluidOutput1, fluidInput0, fluidInput1, energy, time);
@@ -122,7 +120,7 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
     @Override
     public void setupJEI() {
         super.setupJEI();
-        jeiFluidOutputList = new ArrayList();
+        jeiFluidOutputList = new ArrayList<>();
         jeiFluidOutputList.add(fluidOutput0.copy());
         if (fluidOutput1 != null) jeiFluidOutputList.add(fluidOutput1.copy());
     }
