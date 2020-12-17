@@ -61,7 +61,8 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 				TileEntityBoilerMaster master = ((TileEntityBoilerSlave)te).master();
 				if(master == null) return;
 				int current = (int)(master.heatLevel / workingHeatLevel * 100);
-				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2)).text(TranslationKey.KEYWORD_HEAT_LEVEL.text()).progress(current, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
+				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+						.text("{*keyword.immersivetech.heat_level*}").progress(current, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
 			}
 		}
 	}
@@ -79,8 +80,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 				if(master == null) return;
 				int current = ((IMechanicalEnergy)master).getSpeed();
 				probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-						.text(TranslationKey.KEYWORD_SPEED.text())
-						.progress(current, maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix(TranslationKey.KEYWORD_RPM.text()));
+						.text("{*keyword.immersivetech.speed*}")
+						.progress(current, maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL))
+						.text("{*keyword.immersivetech.rotations_per_minute*}");
 			}
 		}
 	}
