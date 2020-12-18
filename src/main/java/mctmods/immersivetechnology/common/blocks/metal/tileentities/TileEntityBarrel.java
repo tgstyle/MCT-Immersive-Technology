@@ -3,12 +3,16 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import blusunrize.immersiveengineering.common.util.Utils;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.IPipe;
 import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -20,6 +24,7 @@ import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import javax.annotation.Nullable;
 
@@ -167,18 +172,6 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 	}
 
 	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
-		if(serializeNBT().hasKey("fluid")) setFluid(FluidRegistry.getFluid(message.getString("fluid")));
-		super.receiveMessageFromServer(message);
-	}
-
-	@Override
-	public void notifyNearbyClients(NBTTagCompound nbt) {
-		if(infiniteFluid != null) nbt.setString("fluid", infiniteFluid.getFluid().getName());
-		super.notifyNearbyClients(nbt);
-	}
-
-	@Override
 	public ItemStack getTileDrop(EntityPlayer player, IBlockState state) {
 		ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
 		if(infiniteFluid != null) {
@@ -196,7 +189,25 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
+		if (requestCooldown == 0) {
+			ByteBuf message = Unpooled.copyBoolean(true);
+			BinaryMessageTileSync.sendToServer(getPos(), message);
+			requestCooldown = 20;
+		}
 		return new String[]{ infiniteFluid != null? text().format(infiniteFluid.getLocalizedName(), lastAcceptedAmount) : TranslationKey.GUI_EMPTY.text() };
+	}
+
+	@Override
+	public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
+		ByteBuf message = Unpooled.copyLong(lastAcceptedAmount);
+		ByteBufUtils.writeUTF8String(message, infiniteFluid.getFluid().getName());
+		BinaryMessageTileSync.sendToPlayer(player, getPos(), message);
+	}
+
+	@Override
+	public void receiveMessageFromServer(ByteBuf buf) {
+		lastAcceptedAmount = buf.readLong();
+		setFluid(FluidRegistry.getFluid(ByteBufUtils.readUTF8String(buf)));
 	}
 
 	@Override

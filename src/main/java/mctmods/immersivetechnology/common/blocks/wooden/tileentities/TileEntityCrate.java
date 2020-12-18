@@ -1,15 +1,20 @@
 package mctmods.immersivetechnology.common.blocks.wooden.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -108,20 +113,26 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 	}
 
 	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
-		setItemStack(new ItemStack(message.getCompoundTag("item")));
-		super.receiveMessageFromServer(message);
-	}
-
-	@Override
-	public void notifyNearbyClients(NBTTagCompound nbt) {
-		nbt.setTag("item", interactiveItemStack.writeToNBT(new NBTTagCompound()));
-		super.notifyNearbyClients(nbt);
-	}
-
-	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
+		if (requestCooldown == 0) {
+			ByteBuf message = Unpooled.copyBoolean(true);
+			BinaryMessageTileSync.sendToServer(getPos(), message);
+			requestCooldown = 20;
+		}
 		return new String[]{ !interactiveItemStack.isEmpty()? text().format(interactiveItemStack.getDisplayName(), lastAcceptedAmount) : TranslationKey.GUI_EMPTY.text() };
+	}
+
+	@Override
+	public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
+		ByteBuf message = Unpooled.copyLong(lastAcceptedAmount);
+		ByteBufUtils.writeItemStack(message, interactiveItemStack);
+		BinaryMessageTileSync.sendToPlayer(player, getPos(), message);
+	}
+
+	@Override
+	public void receiveMessageFromServer(ByteBuf buf) {
+		lastAcceptedAmount = buf.readLong();
+		setItemStack(ByteBufUtils.readItemStack(buf));
 	}
 	
 	@Override

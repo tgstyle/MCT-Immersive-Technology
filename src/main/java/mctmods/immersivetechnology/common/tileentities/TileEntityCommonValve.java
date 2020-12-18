@@ -4,8 +4,12 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
+import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,10 +20,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -28,7 +30,7 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 
 public abstract class TileEntityCommonValve extends TileEntityIEBase implements IEBlockInterfaces.IDirectionalTile, ITickable,
-		IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IGuiTile {
+		IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IGuiTile, IBinaryMessageReceiver {
 
 	final TranslationKey overlayNormal;
 	final TranslationKey overlaySneakingFirstLine;
@@ -77,7 +79,10 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 
 	@Override
 	public void update() {
-		if(world.isRemote) return;
+		if(world.isRemote) {
+			if (requestCooldown > 0) requestCooldown--;
+			return;
+		}
 		efficientMarkDirty();
 		if(++secondCounter < 20) return;
 		if(average == 0 && acceptedAmount > 0) {//pre-populate averages to avoid slow build up
@@ -90,7 +95,6 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 			packetTotals[minuteCounter] = packets;
 			calculateAverages();
 		}
-		if(lastAverage != average || lastPacketAverage != packetAverage) notifyNearbyClients(new NBTTagCompound());
 		lastAcceptedAmount = acceptedAmount;
 		acceptedAmount = 0;
 		packets = 0;
@@ -126,9 +130,31 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 		return false;
 	}
 
+	int requestCooldown = 0;
+
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		return player.isSneaking()? new String[] { overlaySneakingFirstLine.format((double)average / 20), overlaySneakingSecondLine.format(packetAverage)} : new String[]{ overlayNormal.format(acceptedAmount) };
+		if (requestCooldown == 0) {
+			ByteBuf message = Unpooled.copyBoolean(true);
+			BinaryMessageTileSync.sendToServer(getPos(), message);
+			requestCooldown = 20;
+		}
+		return player.isSneaking()? new String[] { overlaySneakingFirstLine.format((double)average / 20), overlaySneakingSecondLine.format(packetAverage)} : new String[]{ overlayNormal.format(lastAcceptedAmount) };
+	}
+
+	@Override
+	public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
+		ByteBuf message = Unpooled.copyInt(Math.max(packets, packetAverage));
+		message.writeLong(average);
+		message.writeLong(lastAcceptedAmount);
+		BinaryMessageTileSync.sendToPlayer(player, getPos(), message);
+	}
+
+	@Override
+	public void receiveMessageFromServer(ByteBuf buf) {
+		packetAverage = buf.readInt();
+		average = buf.readLong();
+		lastAcceptedAmount = buf.readLong();
 	}
 
 	@Override
@@ -187,10 +213,6 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 			timeLimit = message.getInteger("timeLimit");
 			keepSize = message.getInteger("keepSize");
 			showGui();
-		} else {
-			packetAverage = message.getInteger("packets");
-			average = message.getLong("average");
-			acceptedAmount = message.getLong("acceptedAmount");
 		}
 	}
 
@@ -202,20 +224,10 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 		efficientMarkDirty();
 	}
 
-	public void notifyNearbyClients(NBTTagCompound tag) {
-		tag.setInteger("packets", Math.max(packets, packetAverage));
-		tag.setLong("average", average);
-		tag.setLong("acceptedAmount", acceptedAmount);
-		BlockPos center = getPos();
-		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
-	}
-
 	@Override
 	public boolean useNixieFont(EntityPlayer player, RayTraceResult mop) {
 		return false;
 	}
-
-
 
 	@Override
 	public EnumFacing getFacing() {

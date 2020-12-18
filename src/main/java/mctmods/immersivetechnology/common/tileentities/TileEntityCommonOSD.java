@@ -2,18 +2,19 @@ package mctmods.immersivetechnology.common.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import mctmods.immersivetechnology.ImmersiveTechnology;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
+import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
+import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-public abstract class TileEntityCommonOSD extends TileEntityIEBase implements ITickable, IBlockOverlayText {
+public abstract class TileEntityCommonOSD extends TileEntityIEBase implements ITickable, IBlockOverlayText, IBinaryMessageReceiver {
 
 	public long acceptedAmount = 0;
 	public long lastAcceptedAmount = 0;
@@ -35,9 +36,11 @@ public abstract class TileEntityCommonOSD extends TileEntityIEBase implements IT
 
 	@Override
 	public void update() {
-		if(world.isRemote) return;
+		if(world.isRemote) {
+			if (requestCooldown > 0) requestCooldown--;
+			return;
+		}
 		if(++secondCounter < 20) return;
-		notifyNearbyClients(new NBTTagCompound());
 		lastAcceptedAmount = acceptedAmount;
 		acceptedAmount = 0;
 		secondCounter = 0;
@@ -45,20 +48,27 @@ public abstract class TileEntityCommonOSD extends TileEntityIEBase implements IT
 
 	abstract public TranslationKey text();
 
+	public int requestCooldown = 0;
+
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
+		if (requestCooldown == 0) {
+			ByteBuf message = Unpooled.copyBoolean(true);
+			BinaryMessageTileSync.sendToServer(getPos(), message);
+			requestCooldown = 20;
+		}
 		return new String[]{ text().format(Config.ITConfig.Experimental.per_tick_trash_cans? ((float)lastAcceptedAmount)/20 : lastAcceptedAmount) };
 	}
 
 	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
-		lastAcceptedAmount = message.getLong("acceptedAmount");
+	public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
+		ByteBuf message = Unpooled.copyLong(lastAcceptedAmount);
+		BinaryMessageTileSync.sendToPlayer(player, getPos(), message);
 	}
 
-	public void notifyNearbyClients(NBTTagCompound tag) {
-		tag.setLong("acceptedAmount", acceptedAmount);
-		BlockPos center = getPos();
-		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+	@Override
+	public void receiveMessageFromServer(ByteBuf buf) {
+		lastAcceptedAmount = buf.readLong();
 	}
 
 	@Override

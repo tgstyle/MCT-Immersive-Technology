@@ -19,8 +19,19 @@ public class BinaryMessageTileSync implements IMessage {
     BlockPos pos;
     ByteBuf buffer;
 
+    public static void sendToServer(BlockPos pos, ByteBuf buf) {
+        ImmersiveTechnology.packetHandler.sendToServer(new BinaryMessageTileSync(pos, buf));
+        buf.release();
+    }
+
+    public static void sendToPlayer(EntityPlayerMP player, BlockPos pos, ByteBuf buf) {
+        ImmersiveTechnology.packetHandler.sendTo(new BinaryMessageTileSync(pos, buf), player);
+        buf.release();
+    }
+
     public static void sendToAllTracking(World world, BlockPos pos, ByteBuf buf) {
         ImmersiveTechnology.packetHandler.sendToAllTracking(new BinaryMessageTileSync(pos, buf), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 0));
+        buf.release();
     }
 
     public BinaryMessageTileSync(BlockPos tile, ByteBuf buffer) {
