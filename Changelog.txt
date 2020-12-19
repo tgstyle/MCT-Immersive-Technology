@@ -1,5 +1,13 @@
-1.8.90
+1.8.91
 Official MCT Discord https://discord.gg/ujY2mV9
+Added Heat Exchanger. Please, use it instead of the boiler for processing Flue Gas. For now, both of them can handle that recipe, but in later versions only the Heat Exchanger will be able to. You will still be able to re-add the recipe using CraftTweaker.
+Removed misinformation present in the IE Manual concerning the Gas Turbine. It hasn't ever needed open air intakes.
+Fixed valves and similar TEs not updating their values on the client when connected to a dedicated server, plus network optimizations.
+Boiler and turbines now properly show their info on The One Probe when connected to a dedicated server.
+Gas Turbine now recognizes OreDictionary for Steel Sheet Metal.
+Gas Turbine won't crash anymore if its output is completely emptied.
+
+1.8.90
 CHECK CONFIGS! Some entries have been changed/removed
 Pump now saves its mode between reloads
 
