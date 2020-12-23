@@ -82,13 +82,13 @@ public class Config {
 				public static int heatExchanger_input_tankSize = 10000;
 				@Comment({"The capacity of the output tanks for the Heat Exchanger [Default=10000]"})
 				public static int heatExchanger_output_tankSize = 10000;
-				@Comment({"The maximum energy a Heat Exchanger can store in if[Default=2048]"})
+				@Comment({"The maximum energy a Heat Exchanger can store [Default=2048]"})
 				public static int heatExchanger_energy_size = 2048;
 			}
 			public static class Alternator {
-				@Comment({"The maximum energy an Alternator can store in if[Default=1200000]"})
+				@Comment({"The maximum energy an Alternator can store [Default=1200000]"})
 				public static int alternator_energy_capacitorSize = 1200000;
-				@Comment({"Energy production when running at maximum speed and torque in if[Default=12288]"})
+				@Comment({"Energy production when running at maximum speed and torque [Default=12288]"})
 				public static int alternator_energy_perTick = 12288;
 				@Comment({"Alternator sound based RPM or Capacity [Default=true]"})
 				public static boolean alternator_sound_RPM = true;
@@ -108,7 +108,7 @@ public class Config {
 				public static int boiler_progress_lossInTicks = 1;
 			}
 			public static class CokeOvenPreheater {
-				@Comment({"The energy per tick the Coke Oven Preheater consumes while processing in if[Default=32]"})
+				@Comment({"The energy per tick the Coke Oven Preheater consumes while processing [Default=32]"})
 				public static int cokeOvenPreheater_energy_consumption = 32;
 			}
 			public static class Distiller {
