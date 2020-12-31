@@ -1,5 +1,8 @@
-1.8.91
+1.8.92
 Official MCT Discord https://discord.gg/ujY2mV9
+Update ru_ru.lang - Thanks kellixon
+
+1.8.91
 Added Heat Exchanger. Please, use it instead of the boiler for processing Flue Gas. For now, both of them can handle that recipe, but in later versions only the Heat Exchanger will be able to. You will still be able to re-add the recipe using CraftTweaker.
 Removed misinformation present in the IE Manual concerning the Gas Turbine. It hasn't ever needed open air intakes.
 Fixed valves and similar TEs not updating their values on the client when connected to a dedicated server, plus network optimizations.
