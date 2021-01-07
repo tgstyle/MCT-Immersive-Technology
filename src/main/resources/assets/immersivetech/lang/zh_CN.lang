@@ -29,7 +29,7 @@ keyword.immersivetech.generate=产生
 #JEI
 category.immersivetech.metal_multiblock.boilerRecipe=锅炉
 category.immersivetech.metal_multiblock.boilerFuel=锅炉燃料
-category.immersivetech.metal_multiblock.distillerChance=概率: %s
+category.immersivetech.metal_multiblock.distillerChance=产率: %s
 
 
 #TILE ENTITYS
@@ -70,6 +70,8 @@ tile.immersivetech.metal_multiblock.cooling_tower.name=冷却塔
 tile.immersivetech.metal_multiblock.cooling_tower_slave.name=冷却塔
 tile.immersivetech.metal_multiblock1.gas_turbine.name=燃气轮机
 tile.immersivetech.metal_multiblock1.gas_turbine_slave.name=燃气轮机
+tile.immersivetech.metal_multiblock1.heat_exchanger.name=热交换器
+tile.immersivetech.metal_multiblock1.heat_exchanger_slave.name=热交换器
 
 
 #OVERLAY
@@ -130,6 +132,7 @@ desc.immersiveengineering.info.multiblock.IT:Alternator=交流发电机
 desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank=钢制液体储罐
 desc.immersiveengineering.info.multiblock.IT:CoolingTower=冷却塔
 desc.immersiveengineering.info.multiblock.IT:GasTurbine=燃气轮机
+desc.immersiveengineering.info.multiblock.IT:HeatExchanger=热交换器
 
 
 #STONE MULTIBLOCKS
@@ -198,7 +201,7 @@ ie.manual.entry.steamTurbine2=当供给蒸汽时，蒸汽轮机便会工作，�
 ie.manual.entry.gasTurbine.name=燃气轮机
 ie.manual.entry.gasTurbine.subtext=并非来自747
 ie.manual.entry.gasTurbine0=燃气轮机是使用可燃燃料产生动能的多方块结构机械。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击红石工程块那一侧的正中心的钢块完成搭建。
-ie.manual.entry.gasTurbine1=提供燃料并吸入足够的空气，蒸汽轮机将缓慢加速。保持供应燃料，在启动约30秒后便可达到最大转速和效率。如果在高速运转状态将其关闭，燃气轮机的转速会缓慢降低，如果其转速降至1/4以下，则需要重新加速才可继续使用。燃气轮机在燃烧燃料期间，排气量保持不变。<br>你需要在燃气轮机的动能轴末端连接一台<link;Alternator;§n§o交流发电机§r>来配合输出电能。
+ie.manual.entry.gasTurbine1=为燃气轮机足够的燃料，机器将缓慢加速。保持供应燃料，在启动约30秒后便可达到最大转速和效率。对于一些燃烧热低的燃料可能需要通过加压输送来维持足够的供应量。如果在高速运转状态将其关闭，燃气轮机的转速会缓慢降低，如果其转速降至1/4以下，则需要重新加速才可继续使用。燃气轮机在燃烧燃料期间，排气量保持不变。<br>你需要在燃气轮机的动能轴末端连接一台<link;Alternator;§n§o交流发电机§r>来配合输出电能。
 ie.manual.entry.gasTurbine2=机器前方的流体管道口为燃料的输入口，两侧有用作不同目的的电源插口。高压插口需要提供3072IF/t来启动燃气轮机，并将其加速至1/4转速。但继续保持该输入将会导致机器熄火，而不是继续提速。因此需要断开该插口转而使用中压插口（位于控制面板侧）供能将燃料点燃（在燃气轮机启动阶段及不能提供足够的燃料超过3秒都需要重新点燃）。
 ie.manual.entry.gasTurbine3=与蒸汽轮机类似，燃气轮机从后部传动轴输出动能，气体输出口则刚好位于传动轴下方。这些气体有特别的作用，因为通过燃烧它们可以增加轮机的效率。尽管燃气轮机本身的效率会比柴油发电机要差，但是对于搭建更大的而且更复杂的电能输出系统而言，这才是燃气轮机的令人瞩目的地方。<br>通过<link;gasTurbine;§n§oCCGT§r>（对于船员而言是COGAS）产生的燃气作为锅炉的燃料来产生蒸汽动力时，可获得巨大效益。
 
@@ -221,6 +224,12 @@ ie.manual.entry.coolingTower.subtext=保持冷静，朋友！
 ie.manual.entry.coolingTower0=冷却塔是可以将余热蒸汽冷却成水的多方块结构。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击重型工程块完成搭建。
 ie.manual.entry.coolingTower1=余热蒸汽输入口位于重型工程块的左边，水或蒸馏水输入口位于重型工程块的右边。冷却后的水或蒸馏水在背面输出。
 
+ie.manual.entry.heatExchanger.name=热交换器
+ie.manual.entry.heatExchanger.subtext=你好，克劳修斯！
+ie.manual.entry.heatExchanger0=热交换器是一种可以快速将某种流体的热度转移到另外一种流体的多方块结构. <br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击位于红石工程块一侧的正中央的铁板金属块完成搭建
+ie.manual.entry.heatExchanger1=正中心红点的控制面板是使用红石信号控制机器开关的接口，红石信号的开关与机器的开关的关系可以通过使用工程师锤右击红石控制面板来反转。 <br>水和 <link;distiller;§n§o蒸馏水§r> 可以通过顶部标有蓝点的输入口输入，蒸汽通过标有橙点的输出口输出。
+ie.manual.entry.heatExchanger2=<link;gasTurbine;§n§o燃气§r>通过热交换器底部的蓝色输入口输入，然后通过底部的橙色输出口输出已经进行过热交换的燃气。
+
 ie.manual.entry.computer.steamTurbine.name=蒸汽轮机 ☎
 ie.manual.entry.computer.steamTurbine.subtext=沸腾的呼吸
 ie.manual.entry.computer.boiler.name=蒸汽锅炉 ☎
@@ -231,6 +240,8 @@ ie.manual.entry.computer.solarTower.name=太阳能集热塔 ☎
 ie.manual.entry.computer.solarTower.subtext=太阳的力量
 ie.manual.entry.computer.gasTurbine.name=燃气轮机 ☎
 ie.manual.entry.computer.gasTurbine.subtext=并非来自747
+ie.manual.entry.computer.heatExchanger.name=热交换器 ☎
+ie.manual.entry.computer.heatExchanger.subtext=你好，克劳修斯！
 
 ie.manual.entry.computer.steamTurbine0=§lgetSpeed()§r:返回蒸汽轮机的转速。<br>§lgetTankInfo()§r:返回关于蒸汽轮机蒸汽储罐的信息。<br>§lgetOutputTankInfo()§r:返回关于蒸汽轮机输出储罐的信息。
 ie.manual.entry.computer.boiler0=§lgetHeat()§r:返回蒸汽锅炉的热度。<br>§lgetFuelTankInfo()§r:返回关于锅炉蒸汽储罐信息<br>§lgetInputTankInfo()§r:返回关于锅炉输入储罐的信息。<br>§lgetOutputTankInfo()§r:返回关于锅炉输出储罐的信息。
@@ -240,3 +251,7 @@ ie.manual.entry.computer.distiller1=§lgetFullCanisters()§r:返回一张包含�
 ie.manual.entry.computer.solarTower0=§lgetReflectors()§r:返回一张连接到太阳能塔的有效反射镜的表。<br>§lgetInputTankInfo()§r: 返回关于集热塔输入储罐的信息。<br>§lgetOutputTankInfo()§r:返回关于集热塔输出储罐的信息。
 ie.manual.entry.computer.solarTower1=§lgetFullCanisters()§r:返回一张包含机器中已满液罐的信息，并带有引用自每个储罐的键“input”和“output”的表。<br>§lgetEmptyCanisters()§r:返回一张包含机器中空液罐的信息，并带有引用自每个储罐的键“input”和“output”的表。
 ie.manual.entry.computer.gasTurbine0=§lgetSpeed()§r:返回燃气轮机的转速。<br>§lgetInputTankInfo()§r:返回关于燃气轮机燃料储罐的信息。<br>§lgetOutputTankInfo()§r:返回关于蒸汽轮机输出储罐的信息。
+ie.manual.entry.computer.heatExchanger0=§lgetFirstInputTankInfo()§r: 返回一张包含热交换器顶部输入储罐的信息的表。<br>§lgetSecondInputTankInfo()§r: 返回一张包含热交换器底部输入储罐的信息的表。
+ie.manual.entry.computer.heatExchanger1=§lgetFirstOutputTankInfo()§r: 返回一张包含热交换器顶部输出储罐的信息的表。<br>§lgetSecondOutputTankInfo()§r: 返回一张包含热交换器底部输出储罐的信息的表。
+
+ie.manual.entry.fluidPipes3=为了使泵能提取流体方块，它需要在顶部有能量输入和红石信号。泵也可以用来从储罐和其他没有自动输出的流体容器中抽取。这同样需要红石信号，但不会消耗功率，正如预期的那样。<br><br>泵有了新模式! 通过用工程剪线钳右键单击流体泵，可以改变其工作模式。如果运行模式不符合预期，可以切换模式。
