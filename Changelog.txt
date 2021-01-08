@@ -1,5 +1,8 @@
-1.8.92
+1.8.93
 Official MCT Discord https://discord.gg/ujY2mV9
+Update chinese translation about Heat Exchanger - PilyziFox
+
+1.8.92
 Update ru_ru.lang - Thanks kellixon
 
 1.8.91
