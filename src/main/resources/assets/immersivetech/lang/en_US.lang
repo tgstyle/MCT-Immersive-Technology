@@ -16,10 +16,12 @@ tile.immersivetech.fluidDistWater.name=Distilled Water
 tile.immersivetech.fluidSteam.name=Steam
 tile.immersivetech.fluidExhaustSteam.name=Exhaust Steam
 tile.immersivetech.fluidFlueGas.name=Flue Gas
+tile.immersivetech.fluidHighPressureSteam.name=High Pressure Steam
 fluid.distwater=Distilled Water
 fluid.steam=Steam
 fluid.exhauststeam=Exhaust Steam
 fluid.fluegas=Flue Gas
+fluid.highpressuresteam=High Pressure Steam
 
 
 #KEYWORDS
@@ -79,6 +81,8 @@ tile.immersivetech.metal_multiblock1.gas_turbine.name=Gas Turbine
 tile.immersivetech.metal_multiblock1.gas_turbine_slave.name=Gas Turbine
 tile.immersivetech.metal_multiblock1.heat_exchanger.name=Heat Exchanger
 tile.immersivetech.metal_multiblock1.heat_exchanger_slave.name=Heat Exchanger
+tile.immersivetech.metal_multiblock1.high_pressure_steam_turbine.name=High Pressure Steam Turbine
+tile.immersivetech.metal_multiblock1.high_pressure_steam_turbine_slave.name=High Pressure Steam Turbine
 
 
 #OVERLAY
@@ -141,6 +145,7 @@ desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank=Steel Fluid Tan
 desc.immersiveengineering.info.multiblock.IT:CoolingTower=Cooling Tower
 desc.immersiveengineering.info.multiblock.IT:GasTurbine=Gas Turbine
 desc.immersiveengineering.info.multiblock.IT:HeatExchanger=Heat Exchanger
+desc.immersiveengineering.info.multiblock.IT:HighPressureSteamTurbine=High Pressure Steam Turbine
 
 
 #STONE MULTIBLOCKS
@@ -206,6 +211,12 @@ ie.manual.entry.steamTurbine0=The Steam Turbine is a multiblock structure that u
 ie.manual.entry.steamTurbine1=When supplied with steam, the Turbine will slowly speed up, reaching maximum speed after <config;i;steamTurbine_timeToMax> seconds, as long it's constantly fed. Turning it off or failing to provide enough steam slows the Turbine down and reduces its power output.<br>To work, it needs an <link;alternator;§o§nAlternator§r>.
 ie.manual.entry.steamTurbine2=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>The fluid pipe on front of the machine is the input. The kinetic energy output is in the rear of the machine (Steel Block). Optionally, fluids can be retrieved through the output pipe on the top of the machine.
 
+ie.manual.entry.highPressureSteamTurbine.name=High Pressure Steam Turbine
+ie.manual.entry.highPressureSteamTurbine.subtext=Double Rankine
+ie.manual.entry.highPressureSteamTurbine0=The High Pressure Steam Turbine is a multiblock structure that uses High Pressure Steam to produce kinetic energy. The structure is built as shown and formed by using the Engineer's Hammer on the central block (short side).
+ie.manual.entry.highPressureSteamTurbine1=When supplied with steam, the Turbine will slowly speed up, reaching maximum speed after <config;i;highPressureSteamTurbine_timeToMax> seconds, as long it's constantly fed. Turning it off or failing to provide enough steam slows the Turbine down and reduces its power output.<br>To work, it needs an <link;alternator;§o§nAlternator§r>.
+ie.manual.entry.highPressureSteamTurbine2=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>The fluid pipe on front of the machine is the input. The kinetic energy output is in the rear of the machine. Optionally, fluids can be retrieved through the output pipe on the top of the machine.
+
 ie.manual.entry.gasTurbine.name=Gas Turbine
 ie.manual.entry.gasTurbine.subtext=Not part of a 747
 ie.manual.entry.gasTurbine0=The Gas Turbine is a multiblock structure that uses combustible fuels to produce kinetic energy. The structure is built as shown, and formed by using the Engineer's hammer on the central steel block (short side). To work, the turbine needs an <link;alternator;§o§nAlternator§r>.
@@ -249,6 +260,8 @@ ie.manual.entry.computer.gasTurbine.name=Gas Turbine ☎
 ie.manual.entry.computer.gasTurbine.subtext=Not part of a 747
 ie.manual.entry.computer.heatExchanger.name=Heat Exchanger ☎
 ie.manual.entry.computer.heatExchanger.subtext=Entropy says hi
+ie.manual.entry.computer.highPressureSteamTurbine.name=High Pressure Steam Turbine ☎
+ie.manual.entry.computer.highPressureSteamTurbine.subtext=Double Rankine
 
 ie.manual.entry.computer.steamTurbine0=§lgetSpeed()§r: returns the speed of the turbine in RPM.<br>§lgetTankInfo()§r: returns information about the turbine's steam tank.<br>§lgetOutputTankInfo()§r: returns information about the turbine's output tank.
 ie.manual.entry.computer.boiler0=§lgetHeat()§r: returns the boiler's heat level.<br>§lgetFuelTankInfo()§r: returns information about the boiler's fuel tank.<br>§lgetInputTankInfo()§r: returns information about the boiler's input tank.<br>§lgetOutputTankInfo()§r: returns information about the boiler's output tank.
@@ -260,5 +273,6 @@ ie.manual.entry.computer.solarTower1=§lgetFullCanisters()§r: returns a table w
 ie.manual.entry.computer.gasTurbine0=§lgetSpeed()§r: returns the speed of the turbine in RPM.<br>§lgetInputTankInfo()§r: returns information about the turbine's fuel tank.<br>§lgetOutputTankInfo()§r: returns information about the turbine's output tank.
 ie.manual.entry.computer.heatExchanger0=§lgetFirstInputTankInfo()§r: returns a table with information about the heat exchanger's first input tank (upper loop).<br>§lgetSecondInputTankInfo()§r: returns a table with information about the heat exchanger's second input tank (lower loop).
 ie.manual.entry.computer.heatExchanger1=§lgetFirstOutputTankInfo()§r: returns a table with information about the heat exchanger's first output tank (upper loop).<br>§lgetSecondOutputTankInfo()§r: returns a table with information about the heat exchanger's second output tank (lower loop).
+ie.manual.entry.computer.highPressureSteamTurbine0=§lgetSpeed()§r: returns the speed of the turbine in RPM.<br>§lgetTankInfo()§r: returns information about the turbine's steam tank.<br>§lgetOutputTankInfo()§r: returns information about the turbine's output tank.
 
 ie.manual.entry.fluidPipes3=In order for the pump to pick up fluid blocks, it will need a power input at the top and a redstone signal. Pumps can also be used to extract from tanks and other fluid containers that do not have an automatic output. This will also require a redstone signal, but won't consume power.<br><br>Pumps have a new mode! The operating mode of the Fluid Pump can be changed by right clicking it with an Engineer's Wire Cutter. Toggle the mode if it's not behaving as expected.

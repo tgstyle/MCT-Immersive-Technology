@@ -28,6 +28,7 @@ import mctmods.immersivetechnology.client.gui.GuiTrashItem;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
 import mctmods.immersivetechnology.client.render.TileRenderBarrelOpen;
 import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
+import mctmods.immersivetechnology.client.render.TileRenderHighPressureSteamTurbine;
 import mctmods.immersivetechnology.client.render.TileRenderSteelSheetmetalTank;
 import mctmods.immersivetechnology.client.render.TileRendererGasTurbine;
 import mctmods.immersivetechnology.common.CommonProxy;
@@ -44,6 +45,7 @@ import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDi
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityGasTurbineMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHighPressureSteamTurbineMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalBarrel;
@@ -241,6 +243,7 @@ public class ClientProxy extends CommonProxy {
 	public void init() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGasTurbineMaster.class, new TileRendererGasTurbine());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHighPressureSteamTurbineMaster.class, new TileRenderHighPressureSteamTurbine());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBarrelOpen.class, new TileRenderBarrelOpen());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTankMaster.class, new TileRenderSteelSheetmetalTank());
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
@@ -272,6 +275,9 @@ public class ClientProxy extends CommonProxy {
 		}
 		if(Multiblock.enable_steamTurbine) {
 			ManualHelper.addEntry("steamTurbine", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", MultiblockSteamTurbine.instance), new ManualPages.Text(ManualHelper.getManual(), "steamTurbine1"), new ManualPages.Text(ManualHelper.getManual(), "steamTurbine2"));
+		}
+		if(Multiblock.enable_highPressureSteamTurbine) {
+			ManualHelper.addEntry("highPressureSteamTurbine", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "highPressureSteamTurbine0", MultiblockHighPressureSteamTurbine.instance), new ManualPages.Text(ManualHelper.getManual(), "highPressureSteamTurbine1"), new ManualPages.Text(ManualHelper.getManual(), "highPressureSteamTurbine2"));
 		}
 		if(Multiblock.enable_gasTurbine) {
 			ManualHelper.addEntry("gasTurbine", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "gasTurbine0", MultiblockGasTurbine.instance), new ManualPages.Text(ManualHelper.getManual(), "gasTurbine1"), new ManualPages.Text(ManualHelper.getManual(), "gasTurbine2"), new ManualPages.Text(ManualHelper.getManual(), "gasTurbine3"));

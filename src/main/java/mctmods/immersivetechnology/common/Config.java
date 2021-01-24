@@ -26,6 +26,7 @@ public class Config {
 			public static CoolingTower coolingTower;
 			public static GasTurbine gasTurbine;
 			public static HeatExchanger heatExchanger;
+			public static HighPressureSteamTurbine highPressureSteamturbine;
 
 			public static class Multiblock {
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Preheater be built ? [Default=true]"})
@@ -38,12 +39,14 @@ public class Config {
 				public static boolean enable_solarTower = true;
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Steam Turbine / Alternator Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_steamTurbine = true;
-				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Cooling Tower Multiblock structures be built ? [Default=true]"})
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Cooling Tower Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_coolingTower = true;
-				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Gas Turbine Multiblock structures be built ? [Default=true]"})
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Gas Turbine Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_gasTurbine = true;
-				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Heat Exchanger Multiblock structures be built ? [Default=true]"})
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Heat Exchanger Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_heatExchanger = true;
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the High Pressure Steam Turbine Multiblock structures be built ? [Default=false]"})
+				public static boolean enable_highPressureSteamTurbine = false;
 			}
 			public static class Recipes {
 				@Comment({"Should default Steam Turbine recipes be registered ? [Default=true]"})
@@ -60,6 +63,8 @@ public class Config {
 				public static boolean register_gas_turbine_recipes = true;
 				@Comment({"Should default Heat Exchanger recipes be registered ? [Default=true]"})
 				public static boolean register_heat_exchanger_recipes = true;
+				@Comment({"Should default High Pressure Steam Turbine recipes be registered ? [Default=true]"})
+				public static boolean register_highPressureSteamTurbine_recipes = true;
 			}
 			public static class AdvancedCokeOven {
 				@Comment({"The capacity of the tank for the Advanced Coke Oven [Default=24000]"})
@@ -176,6 +181,20 @@ public class Config {
 				public static int gasTurbine_speed_lossPerTick = 6;
 				@Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
 				public static float gasTurbine_speed_maxRotation = 72;
+			}
+			public static class HighPressureSteamTurbine {
+				@Comment({"The capacity of the input tank for the Steam Turbine [Default=10000]"})
+				public static int highPressureSteamTurbine_input_tankSize = 10000;
+				@Comment({"The capacity of the output tank for the Steam Turbine [Default=10000]"})
+				public static int highPressureSteamTurbine_output_tankSize = 10000;
+				@Comment({"How fast the Steam Turbine increases in speed per tick [Default=3]"})
+				public static int highPressureSteamTurbine_speed_gainPerTick = 1;
+				@Comment({"How fast the Steam Turbine loses speed per tick when inactive [Default=6]"})
+				public static int highPressureSteamTurbine_speed_lossPerTick = 6;
+				@Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
+				public static float highPressureSteamTurbine_speed_maxRotation = 72;
+				@Comment({"Should the steam turbine use tungsten, if it exists? Otherwise the turbine will use nickel [Default=true]"})
+				public static boolean highPressureSteamTurbine_turbine_material = true;
 			}
 			public static class SteelTank {
 				@Comment({"Steel Tank Size in mB [Default=2048000]"})

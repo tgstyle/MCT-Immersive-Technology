@@ -22,6 +22,7 @@ public class GenericMultiblockIngredient {
     public static GenericMultiblockIngredient COOLING_TOWER;
     public static GenericMultiblockIngredient GAS_TURBINE;
     public static GenericMultiblockIngredient HEAT_EXCHANGER;
+    public static GenericMultiblockIngredient HIGH_PRESSURE_STEAM_TURBINE;
 
     static {
         if(Multiblock.enable_steamTurbine) STEAM_TURBINE = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.STEAM_TURBINE.getMeta()));
@@ -32,6 +33,7 @@ public class GenericMultiblockIngredient {
         if(Multiblock.enable_coolingTower) COOLING_TOWER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.COOLING_TOWER.getMeta()));
         if(Multiblock.enable_gasTurbine) GAS_TURBINE = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.GAS_TURBINE.getMeta()));
         if(Multiblock.enable_heatExchanger) HEAT_EXCHANGER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.HEAT_EXCHANGER.getMeta()));
+        if(Multiblock.enable_highPressureSteamTurbine) HIGH_PRESSURE_STEAM_TURBINE = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.HIGH_PRESSURE_STEAM_TURBINE.getMeta()));
     }
 
     public ItemStack renderStack;

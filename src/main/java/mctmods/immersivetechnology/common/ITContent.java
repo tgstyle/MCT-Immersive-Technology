@@ -88,6 +88,7 @@ public class ITContent {
 	public static BlockITFluid blockFluidSteam;
 	public static BlockITFluid blockFluidExhaustSteam;
 	public static BlockITFluid blockFlueGas;
+	public static BlockITFluid blockFluidHighPressureSteam;
 
 	/*ITEMS*/
 	public static ArrayList<Item> registeredITItems = new ArrayList<Item>();
@@ -100,6 +101,7 @@ public class ITContent {
 	public static Fluid fluidSteam;
 	public static Fluid fluidExhaustSteam;
 	public static Fluid fluidFlueGas;
+	public static Fluid fluidHighPressureSteam;
 
 	public static ArrayList<Fluid> normallyPressurized = new ArrayList<>();
 
@@ -131,12 +133,14 @@ public class ITContent {
 		fluidExhaustSteam = new FluidColored("exhauststeam", 0xC1C1C5, -100, 500, true);
 		fluidDistWater = new FluidColored("distwater", 0x7079E0, 1000, 1000, false);
 		fluidFlueGas = new FluidColored("fluegas", 0xFFFFFF, -100, 500, true);
+		fluidHighPressureSteam = new FluidColored("highpressuresteam", 0x606978, -300, 500, true);
 
 		/*FLUID BLOCKS*/
 		blockFluidSteam = new BlockITFluid("fluidSteam", fluidSteam, Material.WATER);
 		blockFluidExhaustSteam = new BlockITFluid("exhaustSteam", fluidExhaustSteam, Material.WATER);
 		blockFluidDistWater = new BlockITFluid("fluidDistWater", fluidDistWater, Material.WATER);
 		blockFlueGas = new BlockITFluid("fluidFlueGas", fluidFlueGas, Material.WATER);
+		blockFluidHighPressureSteam = new BlockITFluid("fluidHighPressureSteam", fluidHighPressureSteam, Material.WATER);
 
 		/*ITEMS*/
 		itemMaterial = new ItemITBase("material", 64, "salt");
@@ -187,6 +191,7 @@ public class ITContent {
 		registerTile(TileEntityDistiller.class);
 		registerTile(TileEntitySolarTower.class);
 		registerTile(TileEntitySolarReflector.class);
+		registerTile(TileEntityHighPressureSteamTurbine.class);
 
 		/*MULTIBLOCK TILE ENTITIES*/
 		if(Multiblock.enable_advancedCokeOven) {
@@ -241,6 +246,17 @@ public class ITContent {
 			registerTile(TileEntityHeatExchangerSlave.class);
 			registerTile(TileEntityHeatExchangerMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockHeatExchanger.instance);
+		}
+		if(Multiblock.enable_highPressureSteamTurbine) {
+			// Enable alternator if not enabled with steam turbine
+			if(!Multiblock.enable_steamTurbine || Multiblock.enable_gasTurbine) {
+				registerTile(TileEntityAlternatorSlave.class);
+				registerTile(TileEntityAlternatorMaster.class);
+				MultiblockHandler.registerMultiblock(MultiblockAlternator.instance);
+			}
+			registerTile(TileEntityHighPressureSteamTurbineSlave.class);
+			registerTile(TileEntityHighPressureSteamTurbineMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockHighPressureSteamTurbine.instance);
 		}
 
 		registerTile(TileEntitySteelSheetmetalTank.class);
@@ -301,6 +317,9 @@ public class ITContent {
 			HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 450), null, new FluidStack(FluidRegistry.WATER, 250), new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), 64, 10);
 			HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), null, new FluidStack(FluidRegistry.getFluid("distwater"), 250), new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), 64, 10);
 		}
+		if(Multiblock.enable_highPressureSteamTurbine && Recipes.register_highPressureSteamTurbine_recipes) {
+			HighPressureSteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("steam"), 100), new FluidStack(FluidRegistry.getFluid("highpressuresteam"), 100), 1);
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -349,6 +368,7 @@ public class ITContent {
 		Config.manual_int.put("solarTower_minRange", SolarReflector.solarReflector_minRange);
 		Config.manual_int.put("solarTower_maxRange", SolarReflector.solarReflector_maxRange);
 		Config.manual_int.put("steamTurbine_timeToMax", ((MechanicalEnergy.mechanicalEnergy_speed_max / SteamTurbine.steamTurbine_speed_gainPerTick) / 20));
+		Config.manual_int.put("highPressureSteamTurbine_timeToMax", ((MechanicalEnergy.mechanicalEnergy_speed_max / HighPressureSteamTurbine.highPressureSteamTurbine_speed_gainPerTick) / 20));
 		Config.manual_int.put("steelTank_tankSize", SteelTank.steelTank_tankSize);
 	}
 

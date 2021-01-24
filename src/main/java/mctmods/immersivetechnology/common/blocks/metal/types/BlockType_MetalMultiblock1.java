@@ -10,7 +10,9 @@ public enum BlockType_MetalMultiblock1 implements IStringSerializable, BlockITBa
     GAS_TURBINE(true),
     GAS_TURBINE_SLAVE(true),
     HEAT_EXCHANGER(true),
-    HEAT_EXCHANGER_SLAVE(true);
+    HEAT_EXCHANGER_SLAVE(true),
+    HIGH_PRESSURE_STEAM_TURBINE(true),
+    HIGH_PRESSURE_STEAM_TURBINE_SLAVE(true);
 
     private boolean needsCustomState;
     BlockType_MetalMultiblock1(boolean needsCustomState) {
