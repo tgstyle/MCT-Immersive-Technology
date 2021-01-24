@@ -267,6 +267,7 @@ public class ITContent {
 			normallyPressurized.add(FluidRegistry.getFluid("steam"));
 			normallyPressurized.add(FluidRegistry.getFluid("fluegas"));
 			normallyPressurized.add(FluidRegistry.getFluid("exhauststeam"));
+			normallyPressurized.add(FluidRegistry.getFluid("highpressuresteam"));
 			IEHijackedRegisterTile(TileEntityFluidPumpAlternative.class, "FluidPump");
 			TileEntityFluidPipeAlternative.initCovers();
 			IEHijackedRegisterTile(TileEntityFluidPipeAlternative.class, "FluidPipe");
