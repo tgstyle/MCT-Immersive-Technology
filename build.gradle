@@ -1,12 +1,20 @@
 buildscript {
 	repositories {
-		jcenter()
 		maven { url = "http://files.minecraftforge.net/maven" }
+		jcenter()
+		mavenCentral()
 	}
 	dependencies {
-		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
 	}
 }
+
+apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 ext.configFile = file "./common-minecraft-version.properties"
 configFile.withReader {
@@ -14,8 +22,6 @@ configFile.withReader {
 	prop.load(it)
 	ext.common = new ConfigSlurper().parse prop
 }
-
-apply plugin: 'net.minecraftforge.gradle.forge'
 
 repositories {
     maven {
@@ -34,15 +40,66 @@ compileJava {
 }
 
 minecraft {
-	version = common.mcversion + "-" + common.forgeversion
-	mappings = common.mcp_mappings
-	runDir = "run"
-	replace '${version}', modversion+ "." + modsubversion
+	mappings channel: 'snapshot', version: '20201028-1.16.3'
+
+	runs {
+		client {
+			workingDirectory project.file('run')
+
+			// Recommended logging data for a userdev environment
+			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+			// Recommended logging level for the console
+			property 'forge.logging.console.level', 'debug'
+
+			mods {
+				immersivetechnology {
+					source sourceSets.main
+				}
+			}
+		}
+
+		server {
+			workingDirectory project.file('run')
+
+			// Recommended logging data for a userdev environment
+			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+			// Recommended logging level for the console
+			property 'forge.logging.console.level', 'debug'
+
+			mods {
+				immersivetechnology {
+					source sourceSets.main
+				}
+			}
+		}
+
+		data {
+			workingDirectory project.file('run')
+
+			// Recommended logging data for a userdev environment
+			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+			// Recommended logging level for the console
+			property 'forge.logging.console.level', 'debug'
+
+			// Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+			args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
+			mods {
+				immersivetechnology {
+					source sourceSets.main
+				}
+			}
+		}
+	}
 }
 
 dependencies {
+	minecraft "net.minecraftforge:forge:${common.mcversion}-${common.forgeversion}"
 	compile "curse.maven:${common.jei_version}"
-	deobfCompile "curse.maven:${common.imme_version}"
+	compile fg.deobf("curse.maven:${common.imme_version}")
 
 	compileOnly "curse.maven:${common.top_version}"
 	compileOnly "curse.maven:${common.hwya_version}"
@@ -52,16 +109,12 @@ dependencies {
 }
 
 processResources {
-	inputs.property "version", project.modversion + "." + project.modsubversion
-	inputs.property "mcversion", project.minecraft.version
-
 	from(sourceSets.main.resources.srcDirs) {
-		include "mcmod.info"
-
-		expand "version":project.modversion + "." + project.modsubversion, "mcversion":project.minecraft.version
+		include 'META-INF/mods.toml'
+		expand 'version': project.version
 	}
-
 	from(sourceSets.main.resources.srcDirs) {
-		exclude "mcmod.info"
+		exclude 'META-INF/mods.toml'
 	}
+	outputs.upToDateWhen { false }
 }
