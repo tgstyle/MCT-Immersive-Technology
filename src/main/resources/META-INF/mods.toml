@@ -1,0 +1,33 @@
+modLoader="javafml"
+loaderVersion="[35,)"
+issueTrackerURL="https://github.com/tgstyle/MCT-Immersive-Technology/issues"
+license="GPL-3.0"
+
+[[mods]] #mandatory
+modId="immersivetech"
+version="${version}"
+displayName="Immersive Technology"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/mct-immersive-technology"
+authors=".."
+description="Energy Technology addon for Immersive Engineering, forked from Immersive Tech."
+
+[[dependencies.immersiveengineering]]
+modId="immersiveengineering"
+mandatory=true
+versionRange="[1.16.5-4.2.1-131,)"
+ordering="BEFOR"
+side="BOTH"
+
+[[dependencies.immersivetech]]
+modId="forge"
+mandatory=true
+versionRange="[35,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.immersivetech]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.16.5]"
+ordering="NONE"
+side="BOTH"
