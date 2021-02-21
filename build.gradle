@@ -8,7 +8,7 @@ buildscript {
 	}
 }
 
-ext.configFile = file "../common/common-1.12.properties"
+ext.configFile = file "./common-minecraft-version.properties"
 configFile.withReader {
 	def prop = new Properties()
 	prop.load(it)
@@ -44,15 +44,8 @@ dependencies {
 	compile "curse.maven:${common.jei_version}"
 	deobfCompile "curse.maven:${common.imme_version}"
 
-
-
-
-
-
-
 	compileOnly "curse.maven:${common.top_version}"
 	compileOnly "curse.maven:${common.hwya_version}"
-
 
 	compileOnly "curse.maven:${common.crft_version}"
 	compileOnly "curse.maven:${common.opcm_version}"
