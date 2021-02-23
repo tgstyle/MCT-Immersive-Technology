@@ -1,0 +1,266 @@
+{
+  "_comment": "CREATIVE TAB",
+  "itemGroup.immersivetech": "Immersive Technology",
+
+
+  "_comment": "BLOCKS",
+  "_comment": "STONE",
+  "block.immersivetech.stone_decoration.cokebrick_reinforced": "Reinforced Coke Brick",
+
+
+  "_comment": "ITEMS",
+  "item.immersivetech.material.salt": "Salt",
+
+
+  "_comment": "FLUIDS",
+  "block.immersivetech.fluidDistWater": "Distilled Water",
+  "block.immersivetech.fluidSteam": "Steam",
+  "block.immersivetech.fluidExhaustSteam": "Exhaust Steam",
+  "block.immersivetech.fluidFlueGas": "Flue Gas",
+  "fluid.distwater": "Distilled Water",
+  "fluid.steam": "Steam",
+  "fluid.exhauststeam": "Exhaust Steam",
+  "fluid.fluegas": "Flue Gas",
+
+
+  "_comment": "KEYWORDS",
+  "keyword.immersivetech.generate": "Generates",
+  "keyword.immersivetech.heat_level": "Heat Level",
+  "keyword.immersivetech.rotations_per_minute": "RPM",
+  "keyword.immersivetech.speed": "Speed",
+
+
+  "_comment": "JEI",
+  "category.immersivetech.metal_multiblock.boilerRecipe": "Boiler",
+  "category.immersivetech.metal_multiblock.boilerFuel": "Boiler Fuels",
+  "category.immersivetech.metal_multiblock.distillerChance": "Chance: %s",
+
+  "_comment": "chat",
+  "chat.immersivetech.fluid_pump.fill_first_mode": "Pump will fill internal tank first, then push out contents",
+  "chat.immersivetech.fluid_pump.push_only_mode": "Pump will only push out contents",
+
+
+  "_comment": "TILE ENTITYS",
+  "_comment": "METAL",
+  "block.immersivetech.metal_device.coke_oven_preheater": "Coke Oven Preheater",
+  "block.immersivetech.metal_trash.trash_item": "Trash Can",
+  "block.immersivetech.metal_trash.trash_fluid": "Fluid Trash Can",
+  "block.immersivetech.metal_trash.trash_energy": "Energy Trash Can",
+  "block.immersivetech.metal_barrel.barrel": "Creative Metal Barrel",
+  "block.immersivetech.metal_barrel.barrel_open": "Open Metal Barrel",
+  "block.immersivetech.metal_barrel.barrel_steel": "Steel Metal Barrel",
+  "block.immersivetech.valve.fluid_valve": "Fluid Valve",
+  "block.immersivetech.valve.load_controller": "Load Controller",
+  "block.immersivetech.valve.stack_limiter": "Stack Limiter",
+
+  "_comment": "STONE",
+  "block.immersivetech.stone_decoration_slab.cokebrick_reinforced": "Reinforced Coke Brick Slab",
+
+  "_comment": "WOODEN",
+  "block.immersivetech.wooden_crate.crate": "Creative Storage Crate",
+
+  "_comment": "METAL MULTIBLOCKS",
+  "block.immersivetech.metal_multiblock.distiller": "Distiller",
+  "block.immersivetech.metal_multiblock.solar_tower": "Solar Tower",
+  "block.immersivetech.metal_multiblock.solar_reflector": "Solar Reflector",
+  "block.immersivetech.metal_multiblock.steam_turbine": "Steam Turbine",
+  "block.immersivetech.metal_multiblock.boiler": "Boiler",
+  "block.immersivetech.metal_multiblock.alternator": "Alternator",
+  "block.immersivetech.metal_multiblock.distiller_slave": "Distiller",
+  "block.immersivetech.metal_multiblock.solar_tower_slave": "Solar Tower",
+  "block.immersivetech.metal_multiblock.solar_reflector_slave": "Solar Reflector",
+  "block.immersivetech.metal_multiblock.steam_turbine_slave": "Steam Turbine",
+  "block.immersivetech.metal_multiblock.boiler_slave": "Boiler",
+  "block.immersivetech.metal_multiblock.alternator_slave": "Alternator",
+  "block.immersivetech.metal_multiblock.steel_tank": "Steel Fluid Tank",
+  "block.immersivetech.metal_multiblock.steel_tank_slave": "Steel Fluid Tank",
+  "block.immersivetech.metal_multiblock.cooling_tower": "Cooling Tower",
+  "block.immersivetech.metal_multiblock.cooling_tower_slave": "Cooling Tower",
+  "block.immersivetech.metal_multiblock1.gas_turbine": "Gas Turbine",
+  "block.immersivetech.metal_multiblock1.gas_turbine_slave": "Gas Turbine",
+  "block.immersivetech.metal_multiblock1.heat_exchanger": "Heat Exchanger",
+  "block.immersivetech.metal_multiblock1.heat_exchanger_slave": "Heat Exchanger",
+
+
+  "_comment": "OVERLAY",
+  "overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline": "%s : %s mB",
+  "overlay.immersivetech.osd.fluid_valve.normal.firstline": "Allowed %s mB in the last second",
+  "overlay.immersivetech.osd.fluid_valve.sneaking.firstline": "Allowed an average of %s mB/t",
+  "overlay.immersivetech.osd.fluid_valve.sneaking.secondline": "in %s packets during the last minute",
+  "overlay.immersivetech.osd.load_controller.normal.firstline": "Allowed %s IF in the last second",
+  "overlay.immersivetech.osd.load_controller.sneaking.firstline": "Allowed an average of %s IF/t",
+  "overlay.immersivetech.osd.load_controller.sneaking.secondline": "in %s packets during the last minute",
+  "overlay.immersivetech.osd.stack_limiter.normal.firstline": "Allowed %s items in the last second",
+  "overlay.immersivetech.osd.stack_limiter.sneaking.firstline": "Allowed an average of %s items/t",
+  "overlay.immersivetech.osd.stack_limiter.sneaking.secondline": "in %s packets during the last minute",
+  "overlay.immersivetech.osd.barrel.normal.firstline": "%s : %s mB",
+  "overlay.immersivetech.osd.creative_crate.normal.firstline": "%s : Provided %s items in the last second",
+  "overlay.immersivetech.osd.trash_item.normal.firstline": "%s items in the last second",
+  "overlay.immersivetech.osd.trash_fluid.normal.firstline": "%s mB in the last second",
+  "overlay.immersivetech.osd.trash_energy.normal.firstline": "%s IF in the last second",
+  "overlay.immersivetech.osd.trash_item.normal.alternative": "%s items/t in the last second",
+  "overlay.immersivetech.osd.trash_fluid.normal.alternative": "%s mB/t in the last second",
+  "overlay.immersivetech.osd.trash_energy.normal.alternative": "%s IF/t in the last second",
+  "overlay.immersivetech.redstone_off": "Redstone Mode Off",
+  "overlay.immersivetech.redstone_normal": "Redstone Mode Normal",
+  "overlay.immersivetech.redstone_inverted": "Redstone Mode Inverted",
+
+
+  "_comment": "GUI",
+  "gui.immersivetech.empty": "Empty",
+  "gui.immersivetech.ticks": "%st",
+  "gui.immersivetech.seconds": "%ss",
+  "gui.immersivetech.if_per_tick": "%s IF/t",
+  "gui.immersivetech.boiler.heat_per_tick": "%1$s heat per tick",
+  "gui.immersivetech.boiler.total_heat": "%s total heat",
+  "gui.immersivetech.fluid_valve.firstline": "Limit to (leave blank to disable)...",
+  "gui.immersivetech.fluid_valve.limitpacket": "mB per packet",
+  "gui.immersivetech.fluid_valve.limittime": "mB per second",
+  "gui.immersivetech.fluid_valve.limitdestination": "mB in output tank",
+  "gui.immersivetech.load_controller.limitpacket": "IF per packet",
+  "gui.immersivetech.load_controller.limittime": "IF per second",
+  "gui.immersivetech.load_controller.limitdestination": "IF in output storage",
+  "gui.immersivetech.stack_limiter.limitpacket": "Items per packet",
+  "gui.immersivetech.stack_limiter.limittime": "Items per second",
+  "gui.immersivetech.stack_limiter.limitdestination": "Items in output storage",
+  "gui.immersivetech.generic_multiblock_jei_tooltip": "Check Engineer's Manual to Build",
+
+
+  "_comment": "STONE MULTIBLOCKS",
+  "block.immersivetech.stone_multiblock.coke_oven_advanced": "Advanced Coke Oven",
+  "block.immersivetech.stone_multiblock.coke_oven_advanced_slave": "Advanced Coke Oven",
+
+
+  "_comment": "METAL MULTIBLOCKS",
+  "desc.immersiveengineering.info.multiblock.IT:Distiller": "Distiller",
+  "desc.immersiveengineering.info.multiblock.IT:SolarTower": "Solar Tower",
+  "desc.immersiveengineering.info.multiblock.IT:SolarReflector": "Solar Reflector",
+  "desc.immersiveengineering.info.multiblock.IT:SteamTurbine": "Steam Turbine",
+  "desc.immersiveengineering.info.multiblock.IT:Boiler": "Boiler",
+  "desc.immersiveengineering.info.multiblock.IT:Alternator": "Alternator",
+  "desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank": "Steel Fluid Tank",
+  "desc.immersiveengineering.info.multiblock.IT:CoolingTower": "Cooling Tower",
+  "desc.immersiveengineering.info.multiblock.IT:GasTurbine": "Gas Turbine",
+  "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "Heat Exchanger",
+
+
+  "_comment": "STONE MULTIBLOCKS",
+  "desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced": "Advanced Coke Oven",
+
+
+  "_comment": "CONNECTORS",
+  "block.immersivetech.connectors.connectors_timer": "Redstone Timer",
+
+
+  "_comment": "MANUAL",
+  "ie.manual.category.it": "Immersive Technology",
+
+  "ie.manual.entry.advancedCokeOven": "Advanced Coke Oven",
+  "ie.manual.entry.advancedCokeOven.subtext": "It's fast now",
+  "ie.manual.entry.advancedCokeOven0": "The Advanced Coke Oven is a multiblock structure that allows faster production of Coal Coke and Creosote Oil.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Reinforced Coke Brick Block.",
+  "ie.manual.entry.advancedCokeOven1": "It allows the automation of input and output of items, it can also be outfitted with preheaters to speed up the process by addition of hot air.<br>The furnace is made from reinforced bricks, so you'd be advised to spend your first batches of steel on this upgrade.<br>Similar to the Improved Blast Furnace, Coal Coke is output at the front and Creosote Oil at the back. Coal is fed in through the top.",
+  "ie.manual.entry.advancedCokeOven2": "Coke Oven Preheaters are used to speed up the refinement process of coal. Each oven can have up to two preheaters connected to the ports on each side, and each preheater requires <config;i;cokeOvenPreheater_consumption> Flux/t to operate.",
+
+  "ie.manual.entry.alternator": "Alternator",
+  "ie.manual.entry.alternator.subtext": "Let's transform",
+  "ie.manual.entry.alternator0": "The Alternator is a multiblock structure that transforms kinetic energy into electricity.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Heavy Engineering Block (short side).",
+  "ie.manual.entry.alternator1": "To work, it needs a kinetic energy generator connected to it (<link;steamTurbine;§n§oSteam Turbine§r>). The kinetic energy input is at the back of the machine (where the Sheetmetal Blocks are) and the Flux outputs are on front-left and front-right. The machine produces up to <config;i;alternator_energyPerTick> Flux/t depending on the Speed.<br>The Alternator can store <config;i;alternator_energyStorage> Flux, outputting <config;i;alternator_energyPerTickPerPort> Flux/t per port. A comparator can be placed against the central block to output the current energy level, with 0 being empty and 15 being full.",
+  "ie.manual.entry.alternator2": "Steam Turbine with Alternator",
+
+  "ie.manual.entry.boiler": "Boiler",
+  "ie.manual.entry.boiler.subtext": "A fluid fuel method",
+  "ie.manual.entry.boiler0": "The Boiler is a multiblock structure that uses fluid fuel and Water to produce Steam.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron Block (long side).",
+  "ie.manual.entry.boiler1": "Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>Water and <link;distiller;§n§oDistilled Water§r> can be input into the Boiler via a hatch on the left that is marked with a blue dot. The fuel can be input at hatch with the blue dot on the right. The hatch with the orange dot at the top serves as the fluid output.",
+  "ie.manual.entry.boiler2": "Before being capable of boiling any water, the structure needs to warm up first, which requires fuel. If disabled or not fed with enough fuel, the structure will slowly cool down, taking about <config;d;boiler_cooldownTime> seconds to fully cool down from working temperature. The default fuel is Diesel.",
+
+  "ie.manual.entry.distiller": "Distiller",
+  "ie.manual.entry.distiller.subtext": "Clearer than water",
+  "ie.manual.entry.distiller0": "The Distiller is a multiblock machine that turns Water in to Distilled Water and Salt.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron.",
+  "ie.manual.entry.distiller1": "Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>Water can be input into the Distiller via a hatch on the right that is marked with a blue dot. The hatch with the orange dot on the left is the fluid output and the other hatch on the back serves as a item output.<br>It needs energy to produce Distilled Water and Salt.<br>One bucket of Water produces 500 mB of Distilled Water.",
+
+  "ie.manual.entry.fluidValve": "Fluid Valve",
+  "ie.manual.entry.fluidValve.subtext": "I only need a drop",
+  "ie.manual.entry.fluidValve0": "The §6Fluid Valve§r can limit fluids moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.",
+
+  "ie.manual.entry.loadController": "Load Controller",
+  "ie.manual.entry.loadController.subtext": "Energy Underload",
+  "ie.manual.entry.loadController0": "The §6Load Controller§r can limit energy moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.",
+
+  "ie.manual.entry.openBarrel": "Open Metal Barrel",
+  "ie.manual.entry.openBarrel.subtext": "Open to the Sun or Clouds?",
+  "ie.manual.entry.openBarrel0": "The §6Open Metal Barrel§r is a single block tank like the Metal Barrel but with an open top. Fluid can be put in by hand. The Top is Input only and the Bottom is Output only. Leave it out in the Rain and watch it fill! In a Thunderstom Twice as fast! However, don't leave it out in warm environments, water just may evaporate.",
+
+  "ie.manual.entry.solarTower": "Solar Tower",
+  "ie.manual.entry.solarTower.subtext": "The power of the Sun",
+  "ie.manual.entry.solarTower0": "The Solar Tower is a multiblock structure that uses the light of the Sun to transform water in steam.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Redstone Engineering",
+  "ie.manual.entry.solarTower1": "Block.<br>The Solar Tower can produce Steam from Water and <link;distiller;§n§oDistilled Water§r>.<br>One Bucket of Distilled Water produces 3000 mB of Steam.<br>One Bucket of Water produces 2000 mB of Steam.<br>Water can be input into the Solar Tower via the two hatches on the left and the right that are marked with blue dots. The hatch with the orange dot on the back serves as a fluid output.<br>The Solar Tower needs at least one Solar Reflector to work.",
+  "ie.manual.entry.solarTower2": "The Solar Reflector is a multiblock structure that reflects the light of the Sun to the center of the Solar Tower.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Silver Block.",
+  "ie.manual.entry.solarTower3": "To work, there must not be any blocks between it, the Solar Tower, and at the top of the reflector. The reflector's center silver block must align with the center of the Solar Tower. Also the distance between the reflector and the Solar Tower must be between <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> blocks. Obviously, it works only during the day.",
+
+  "ie.manual.entry.stackLimiter": "Stack Limiter",
+  "ie.manual.entry.stackLimiter.subtext": "Only need a couple items",
+  "ie.manual.entry.stackLimiter0": "The §6Stack Limiter§r can limit items moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.",
+
+  "ie.manual.entry.steamTurbine": "Steam Turbine",
+  "ie.manual.entry.steamTurbine.subtext": "Boiling breath",
+  "ie.manual.entry.steamTurbine0": "The Steam Turbine is a multiblock structure that uses Steam to produce kinetic energy.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Steel Block (short side).",
+  "ie.manual.entry.steamTurbine1": "When supplied with steam, the Turbine will slowly speed up, reaching maximum speed after <config;i;steamTurbine_timeToMax> seconds, as long it's constantly fed. Turning it off or failing to provide enough steam slows the Turbine down and reduces its power output.<br>To work, it needs an <link;alternator;§o§nAlternator§r>.",
+  "ie.manual.entry.steamTurbine2": "Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>The fluid pipe on front of the machine is the input. The kinetic energy output is in the rear of the machine (Steel Block). Optionally, fluids can be retrieved through the output pipe on the top of the machine.",
+
+  "ie.manual.entry.gasTurbine": "Gas Turbine",
+  "ie.manual.entry.gasTurbine.subtext": "Not part of a 747",
+  "ie.manual.entry.gasTurbine0": "The Gas Turbine is a multiblock structure that uses combustible fuels to produce kinetic energy. The structure is built as shown, and formed by using the Engineer's hammer on the central steel block (short side). To work, the turbine needs an <link;alternator;§o§nAlternator§r>.",
+  "ie.manual.entry.gasTurbine1": "When the turbine is supplied with adequate fuel, the turbine will slowly speed up until it hits max speed and efficiency about 30 seconds into the spinup process. Some fuels may require large enough amounts to be fed into the turbine to require pressurized transport, and if the turbine runs out of fuel it willl begin to slow down. If the turbine is at speed while shut down, it will slowly lose speed. If it slows down to below 1/4 speed, it will need to be spun back up before it can be used again.",
+  "ie.manual.entry.gasTurbine2": "The fluid pipe on the front of the turbine is the input, and the two power plugs on the sides of the turbine each serve a different input purpose. The HV plug consumes 4096 IF/t to start the turbine up to 1/4 speed, at which point more flux input will cause the turbine to stall and not spin up past 1/4 speed. The MV plug uses 1024 IF to ignite the fuel if the turbine is not currently burning fuel - this happens on startup and any time the turbine has no fuel for 3 or more seconds.",
+  "ie.manual.entry.gasTurbine3": "The turbine outputs kinetic energy from the rear, and the result gasses just below the kinetic energy output. These gasses have a special place, in that they can be burned to increase the efficiency of the turbine.  While usually worse than the diesel generator, for a greater power output and complexity, this output is where the gas turbine really shines. CCGT (or COGAS for the mariners out there) allows even larger returns on combustible fuels when used in the boiler for steam power.",
+
+  "ie.manual.entry.steelBarrel": "Steel Metal Barrel",
+  "ie.manual.entry.steelBarrel.subtext": "Full to the max!",
+  "ie.manual.entry.steelBarrel0": "The §6Steel Metal Barrel§r is a single block tank that provides double the space of fluids over a Metal Barrel. Fluid can be put in by hand. The Top and Bottom sides can be configured for input or output with a Hammer.",
+
+  "ie.manual.entry.steelTank": "Steel Fluid Tank",
+  "ie.manual.entry.steelTank.subtext": "Full to the max!",
+  "ie.manual.entry.steelTank0": "The Steel Fluid Tank is a multiblock that provides space for even larger amounts of fluids. It will store up to <config;i;steelTank_tankSize> mB of any fluid, which can be piped in through the top or bottom block. Fluids can only be extracted from the bottom center block.",
+  "ie.manual.entry.steelTank1": "Applying a redstone signal to the bottom center block will make the tank output automatically, a comparator placed there will emit a redstone signal proportional to how full the tank is. Attaching the comparator to one of the top 4 layers results in a signal proportional to the height of the comparator. For example, a comparator attached to the second layer of a tank would not emit any signal until the tank is 1/4 full and have a signal strength of 15 if the tank is half full or more.",
+
+  "ie.manual.entry.redstone": "Redstone Timer",
+  "ie.manual.entry.redstone.subtext": "tick-tock",
+  "ie.manual.entry.redstone0": "The §6Redstone Timer§r outputs a short redstone signal depending on the delay imposed on it. The delay time can be set in the Timer’s gui and has 0.5 Seconds of precision, and can be adjusted between 0.5 to 10 Seconds. The Timer can be stopped with a redstone signal.",
+
+  "ie.manual.entry.coolingTower": "Cooling Tower",
+  "ie.manual.entry.coolingTower.subtext": "Keep it cool, man!",
+  "ie.manual.entry.coolingTower0": "The Cooling Tower is a multiblock structure that converts exhaust steam back into water. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the Heavy Engineering block.",
+  "ie.manual.entry.coolingTower1": "Exhaust Steam goes into the block to the left of the Heavy Engineering block (side with red gauge indicator) while water or distilled water goes into the right one (side with blue gauge indicator).",
+
+  "ie.manual.entry.heatExchanger": "Heat Exchanger",
+  "ie.manual.entry.heatExchanger.subtext": "Entropy says hi",
+  "ie.manual.entry.heatExchanger0": "The Heat Exchanger is a multiblock structure that quickly moves heat from one fluid to another. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Iron Sheetmetal next to the Redstone Engineering Block.",
+  "ie.manual.entry.heatExchanger1": "Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. <br>Water and <link;distiller;§n§oDistilled Water§r> can be fed to the Heat Exchanger via a hatch on the top that is marked with a blue dot. The hatch with the orange dot at the top serves as the fluid output for steam.",
+  "ie.manual.entry.heatExchanger2": "<link;gasTurbine;§n§oFlue Gas§r> can be fed to the hatch marked with a blue dot on the bottom layer. The hatch marked with the orange dot at the bottom layer serves as the fluid output for previously hot fluids.",
+
+  "ie.manual.entry.computer.steamTurbine": "Steam Turbine ☎",
+  "ie.manual.entry.computer.steamTurbine.subtext": "Boiling breath",
+  "ie.manual.entry.computer.boiler": "Boiler ☎",
+  "ie.manual.entry.computer.boiler.subtext": "A fluid fuel method",
+  "ie.manual.entry.computer.distiller": "Distiller ☎",
+  "ie.manual.entry.computer.distiller.subtext": "Clearer than water",
+  "ie.manual.entry.computer.solarTower": "Solar Tower ☎",
+  "ie.manual.entry.computer.solarTower.subtext": "The power of the Sun",
+  "ie.manual.entry.computer.gasTurbine": "Gas Turbine ☎",
+  "ie.manual.entry.computer.gasTurbine.subtext": "Not part of a 747",
+  "ie.manual.entry.computer.heatExchanger": "Heat Exchanger ☎",
+  "ie.manual.entry.computer.heatExchanger.subtext": "Entropy says hi",
+
+  "ie.manual.entry.computer.steamTurbine0": "§lgetSpeed()§r: returns the speed of the turbine in RPM.<br>§lgetTankInfo()§r: returns information about the turbine's steam tank.<br>§lgetOutputTankInfo()§r: returns information about the turbine's output tank.",
+  "ie.manual.entry.computer.boiler0": "§lgetHeat()§r: returns the boiler's heat level.<br>§lgetFuelTankInfo()§r: returns information about the boiler's fuel tank.<br>§lgetInputTankInfo()§r: returns information about the boiler's input tank.<br>§lgetOutputTankInfo()§r: returns information about the boiler's output tank.",
+  "ie.manual.entry.computer.boiler1": "§lgetFullCanisters()§r: returns a table with information about the full fluid canisters in the machine, with the keys \"input\" and \"output\" referring to each tank.<br>§lgetEmptyCanisters()§r: returns a table with information about the empty fluid canisters in the machine, with the keys \"input\" and \"output\" referring to each tank.",
+  "ie.manual.entry.computer.distiller0": "§lgetEnergyStored()§r: returns the energy stored in the distiller's internal buffer.<br>§lgetMaxEnergyStored()§r: returns the distiller's internal energy buffer's maximum capacity<br>§lgetInputTankInfo()§r: returns information about the distiller's input tank.<br>§lgetOutputTankInfo()§r: returns information about the distiller's output tank.",
+  "ie.manual.entry.computer.distiller1": "§lgetFullCanisters()§r: returns a table with information about the full fluid canisters in the machine, with the keys \"input\" and \"output\" referring to each tank.<br>§lgetEmptyCanisters()§r: returns a table with information about the empty fluid canisters in the machine, with the keys \"input\" and \"output\" referring to each tank.",
+  "ie.manual.entry.computer.solarTower0": "§lgetReflectors()§r: returns a table of the valid reflectors connected to the solar tower.<br>§lgetInputTankInfo()§r: returns information about the tower's input tank.<br>§lgetOutputTankInfo()§r: returns information about the tower's output tank.",
+  "ie.manual.entry.computer.solarTower1": "§lgetFullCanisters()§r: returns a table with information about the full fluid canisters in the machine, with the keys \"input\" and \"output\" referring to each tank.<br>§lgetEmptyCanisters()§r: returns a table with information about the empty fluid canisters in the machine, with the keys \"input\" and \"output\" referring to each tank.",
+  "ie.manual.entry.computer.gasTurbine0": "§lgetSpeed()§r: returns the speed of the turbine in RPM.<br>§lgetInputTankInfo()§r: returns information about the turbine's fuel tank.<br>§lgetOutputTankInfo()§r: returns information about the turbine's output tank.",
+  "ie.manual.entry.computer.heatExchanger0": "§lgetFirstInputTankInfo()§r: returns a table with information about the heat exchanger's first input tank (upper loop).<br>§lgetSecondInputTankInfo()§r: returns a table with information about the heat exchanger's second input tank (lower loop).",
+  "ie.manual.entry.computer.heatExchanger1": "§lgetFirstOutputTankInfo()§r: returns a table with information about the heat exchanger's first output tank (upper loop).<br>§lgetSecondOutputTankInfo()§r: returns a table with information about the heat exchanger's second output tank (lower loop).",
+
+  "ie.manual.entry.fluidPipes3": "In order for the pump to pick up fluid blocks, it will need a power input at the top and a redstone signal. Pumps can also be used to extract from tanks and other fluid containers that do not have an automatic output. This will also require a redstone signal, but won't consume power.<br><br>Pumps have a new mode! The operating mode of the Fluid Pump can be changed by right clicking it with an Engineer's Wire Cutter. Toggle the mode if it's not behaving as expected."
+}

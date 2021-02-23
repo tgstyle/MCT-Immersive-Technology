@@ -1,0 +1,266 @@
+{
+  "_comment": "CREATIVE TAB",
+  "itemGroup.immersivetech": "Immersive Technology",
+
+
+  "_comment": "BLOCKS",
+  "_comment": "STONE",
+  "block.immersivetech.stone_decoration.cokebrick_reinforced": "Армированный коксовый кирпич",
+
+
+  "_comment": "ITEMS",
+  "item.immersivetech.material.salt": "Соль",
+
+
+  "_comment": "FLUIDS",
+  "block.immersivetech.fluidDistWater": "Дистиллированная вода",
+  "block.immersivetech.fluidSteam": "Пар",
+  "block.immersivetech.fluidExhaustSteam": "Выхлопной пар",
+  "block.immersivetech.fluidFlueGas": "Дымовой газ",
+  "fluid.distwater": "Дистиллированная вода",
+  "fluid.steam": "Пар",
+  "fluid.exhauststeam": "Выхлопной пар",
+  "fluid.fluegas": "Дымовой газ",
+
+
+  "_comment": "KEYWORDS",
+  "keyword.immersivetech.generate": "Генерирует",
+  "keyword.immersivetech.heat_level": "Уровень тепла",
+  "keyword.immersivetech.rotations_per_minute": "об/мин.",
+  "keyword.immersivetech.speed": "Скорость",
+
+
+  "_comment": "JEI",
+  "category.immersivetech.metal_multiblock.boilerRecipe": "Паровой котел",
+  "category.immersivetech.metal_multiblock.boilerFuel": "Топливо парового котла",
+  "category.immersivetech.metal_multiblock.distillerChance": "Шанс: %s",
+
+  "_comment": "chat",
+  "chat.immersivetech.fluid_pump.fill_first_mode": "Помпа сначала заполнит внутренний резервуар, а затем вытолкнет его содержимое.",
+  "chat.immersivetech.fluid_pump.push_only_mode": "Помпа будет только выталкивать содержимое",
+
+
+  "_comment": "TILE ENTITYS",
+  "_comment": "METAL",
+  "block.immersivetech.metal_device.coke_oven_preheater": "Подогреватель коксовой печи",
+  "block.immersivetech.metal_trash.trash_item": "Корзина",
+  "block.immersivetech.metal_trash.trash_fluid": "Жидкостная корзина",
+  "block.immersivetech.metal_trash.trash_energy": "Энергетическая корзина",
+  "block.immersivetech.metal_barrel.barrel": "Творческая металлическая бочка",
+  "block.immersivetech.metal_barrel.barrel_open": "Открытая металлическая бочка",
+  "block.immersivetech.metal_barrel.barrel_steel": "Стальная металлическая бочка",
+  "block.immersivetech.valve.fluid_valve": "Жидкостный клапан",
+  "block.immersivetech.valve.load_controller": "Контроллер загрузки",
+  "block.immersivetech.valve.stack_limiter": "Ограничитель стека",
+
+  "_comment": "STONE",
+  "block.immersivetech.stone_decoration_slab.cokebrick_reinforced": "Армированная коксовая кирпичная плита",
+
+  "_comment": "WOODEN",
+  "block.immersivetech.wooden_crate.crate": "Творческий ящик хранения",
+
+  "_comment": "METAL MULTIBLOCKS",
+  "block.immersivetech.metal_multiblock.distiller": "Дистиллятор",
+  "block.immersivetech.metal_multiblock.solar_tower": "Солнечная башня",
+  "block.immersivetech.metal_multiblock.solar_reflector": "Солнечный отражатель",
+  "block.immersivetech.metal_multiblock.steam_turbine": "Паровая турбина",
+  "block.immersivetech.metal_multiblock.boiler": "Паровой котел",
+  "block.immersivetech.metal_multiblock.alternator": "Альтернатор",
+  "block.immersivetech.metal_multiblock.distiller_slave": "Дистиллятор",
+  "block.immersivetech.metal_multiblock.solar_tower_slave": "Солнечная башня",
+  "block.immersivetech.metal_multiblock.solar_reflector_slave": "Солнечный отражатель",
+  "block.immersivetech.metal_multiblock.steam_turbine_slave": "Паровая турбина",
+  "block.immersivetech.metal_multiblock.boiler_slave": "Паровой котел",
+  "block.immersivetech.metal_multiblock.alternator_slave": "Альтернатор",
+  "block.immersivetech.metal_multiblock.steel_tank": "Стальной жидкостный резервуар",
+  "block.immersivetech.metal_multiblock.steel_tank_slave": "Стальной жидкостный резервуар",
+  "block.immersivetech.metal_multiblock.cooling_tower": "Охлаждающая башня",
+  "block.immersivetech.metal_multiblock.cooling_tower_slave": "Охлаждающая башня",
+  "block.immersivetech.metal_multiblock1.gas_turbine": "Газовая турбина",
+  "block.immersivetech.metal_multiblock1.gas_turbine_slave": "Газовая турбина",
+  "block.immersivetech.metal_multiblock1.heat_exchanger": "Теплообменник",
+  "block.immersivetech.metal_multiblock1.heat_exchanger_slave": "Теплообменник",
+
+
+  "_comment": "OVERLAY",
+  "overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline": "%s : %s мВ",
+  "overlay.immersivetech.osd.fluid_valve.normal.firstline": "Допускается %s мВ за последнюю секунду",
+  "overlay.immersivetech.osd.fluid_valve.sneaking.firstline": "Допускается в среднем %s мВ/тик",
+  "overlay.immersivetech.osd.fluid_valve.sneaking.secondline": "in %s пакетов за последнюю минуту",
+  "overlay.immersivetech.osd.load_controller.normal.firstline": "Допускается %s IF за последнюю секунду",
+  "overlay.immersivetech.osd.load_controller.sneaking.firstline": "Допускается в среднем %s IF/тик",
+  "overlay.immersivetech.osd.load_controller.sneaking.secondline": "in %s пакетов за последнюю минуту",
+  "overlay.immersivetech.osd.stack_limiter.normal.firstline": "Допускается %s предметов за последнюю секунду",
+  "overlay.immersivetech.osd.stack_limiter.sneaking.firstline": "Допускается в среднем %s предметов/тик",
+  "overlay.immersivetech.osd.stack_limiter.sneaking.secondline": "in %s пакетов за последнюю минуту",
+  "overlay.immersivetech.osd.barrel.normal.firstline": "%s : %s mB",
+  "overlay.immersivetech.osd.creative_crate.normal.firstline": "%s : Предоставляет %s предметов за последнюю секунду",
+  "overlay.immersivetech.osd.trash_item.normal.firstline": "%s предметов за последнюю секунду",
+  "overlay.immersivetech.osd.trash_fluid.normal.firstline": "%s мВ за последнюю секунду",
+  "overlay.immersivetech.osd.trash_energy.normal.firstline": "%s IF за последнюю секунду",
+  "overlay.immersivetech.osd.trash_item.normal.alternative": "%s предметов/тик за последнюю секунду",
+  "overlay.immersivetech.osd.trash_fluid.normal.alternative": "%s мВ/тик за последнюю секунду",
+  "overlay.immersivetech.osd.trash_energy.normal.alternative": "%s IF/тик за последнюю секунду",
+  "overlay.immersivetech.redstone_off": "Редстоун режим выкл.",
+  "overlay.immersivetech.redstone_normal": "Редстоун режим нормальный",
+  "overlay.immersivetech.redstone_inverted": "Редстоун режим инвентированный",
+
+
+  "_comment": "GUI",
+  "gui.immersivetech.empty": "Пусто",
+  "gui.immersivetech.ticks": "%sт",
+  "gui.immersivetech.seconds": "%sс",
+  "gui.immersivetech.if_per_tick": "%s IF/тик",
+  "gui.immersivetech.boiler.heat_per_tick": "%1$s тепла за тик",
+  "gui.immersivetech.boiler.total_heat": "%s общего тепла",
+  "gui.immersivetech.fluid_valve.firstline": "Ограничить до (оставьте поле пустым, чтобы отключить)...",
+  "gui.immersivetech.fluid_valve.limitpacket": "мВ за пакет",
+  "gui.immersivetech.fluid_valve.limittime": "мВ за секунду",
+  "gui.immersivetech.fluid_valve.limitdestination": "мВ в выходном резервуаре",
+  "gui.immersivetech.load_controller.limitpacket": "IF за пакет",
+  "gui.immersivetech.load_controller.limittime": "IF за секунду",
+  "gui.immersivetech.load_controller.limitdestination": "IF в выходном хранилище",
+  "gui.immersivetech.stack_limiter.limitpacket": "Предметов за пакет",
+  "gui.immersivetech.stack_limiter.limittime": "Предметов за секунду",
+  "gui.immersivetech.stack_limiter.limitdestination": "Предметов в выходном хранилище",
+  "gui.immersivetech.generic_multiblock_jei_tooltip": "Проверьте руководство инженера, чтобы построить",
+
+
+  "_comment": "STONE MULTIBLOCKS",
+  "block.immersivetech.stone_multiblock.coke_oven_advanced": "Улучшенная коксовая печь",
+  "block.immersivetech.stone_multiblock.coke_oven_advanced_slave": "Улучшенная коксовая печь",
+
+
+  "_comment": "METAL MULTIBLOCKS",
+  "desc.immersiveengineering.info.multiblock.IT:Distiller": "Дистиллятор",
+  "desc.immersiveengineering.info.multiblock.IT:SolarTower": "Солнечная башня",
+  "desc.immersiveengineering.info.multiblock.IT:SolarReflector": "Солнечный отражатель",
+  "desc.immersiveengineering.info.multiblock.IT:SteamTurbine": "Паровая турбина",
+  "desc.immersiveengineering.info.multiblock.IT:Boiler": "Паровой котел",
+  "desc.immersiveengineering.info.multiblock.IT:Alternator": "Альтернатор",
+  "desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank": "Стальной жидкостный резервуар",
+  "desc.immersiveengineering.info.multiblock.IT:CoolingTower": "Охлаждающая башня",
+  "desc.immersiveengineering.info.multiblock.IT:GasTurbine": "Газовая турбина",
+  "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "Теплообменник",
+
+
+  "_comment": "STONE MULTIBLOCKS",
+  "desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced": "Улучшенная коксовая печь",
+
+
+  "_comment": "CONNECTORS",
+  "block.immersivetech.connectors.connectors_timer": "Редстоун таймер",
+
+
+  "_comment": "MANUAL",
+  "ie.manual.category.it": "Immersive Technology",
+
+  "ie.manual.entry.advancedCokeOven": "Улучшенная коксовая печь",
+  "ie.manual.entry.advancedCokeOven.subtext": "Теперь это быстро",
+  "ie.manual.entry.advancedCokeOven0": "Усиленная коксовая печь - это многоблочная конструкция, которая позволяет быстрее производить угольный кокс и креозотовое масло.<br>Конструкция строится так, как показано выше, и формируется с помощью инженерного молотка на центральном армированном коксовом кирпичном блоке.",
+  "ie.manual.entry.advancedCokeOven1": "Он позволяет автоматизировать ввод и вывод предметов, а также может быть оснащен подогревателями для ускорения процесса за счет добавления горячего воздуха.<br>Печь сделана из армированного кирпича, поэтому вам советуют потратить свои первые партии стали на эту модернизацию.<br>Как и в усовершенствованной доменной печи, угольный кокс выпускается спереди, а креозотовое масло - сзади. Уголь подается через верхнюю часть.",
+  "ie.manual.entry.advancedCokeOven2": "Подогреватели коксовых печей используются для ускорения процесса рафинирования угля. Каждая печь может иметь до двух подогревателей, подключенных к портам с каждой стороны, и каждый подогреватель требует <config;i;cokeOvenPreheater_consumption> Flux/тик для работы",
+
+  "ie.manual.entry.alternator": "Альтернатор",
+  "ie.manual.entry.alternator.subtext": "Давайте поменяем",
+  "ie.manual.entry.alternator0": "Альтернатор представляет собой многоблочную конструкцию, преобразующую кинетическую энергию в электричество.<br>Конструкция строится так, как показано выше, и формируется с помощью инженерного молотка на центральном тяжелом инженерном блоке (короткая сторона).",
+  "ie.manual.entry.alternator1": "Для работы ему нужен подключенный к нему генератор кинетической энергии (<link;steamTurbine;§n§oSteam Turbine§r>). Вход кинетической энергии находится в задней части машины (где находятся блоки из листового металла), а выход потока - спереди слева и спереди справа. Машина производит до <config;i;alternator_energyPerTick> Flux/тик в зависимости от скорости.<br>Альтернатор может хранить <config;i;alternator_energyStorage> Flux, выводя <config;i;alternator_energyPerTickPerPort> Flux/тик на порт. Рядом с центральным блоком можно установить компаратор для вывода текущего уровня энергии, где 0 - пустой, а 15 - полный.",
+  "ie.manual.entry.alternator2": "Паровая турбина с альтернатором",
+
+  "ie.manual.entry.boiler": "Паровой котел",
+  "ie.manual.entry.boiler.subtext": "Метод жидкого топлива",
+  "ie.manual.entry.boiler0": "Паровой котел - это многоблочная конструкция, в которой для производства пара используется жидкое топливо и вода.<br>Конструкция строится так, как показано выше, и формируется с помощью инженерного молотка на центральном металлическом железном блоке (длинная сторона).",
+  "ie.manual.entry.boiler1": "Применение сигнала редстоуна к панели управления на передней панели остановит движение машины, это поведение может быть инвертировано с помощью молотка инженера.<br>Вода и <link;distiller;§n§oDistilled Water§r> могут быть введены в котел через люк слева, отмеченный синей точкой. Топливо можно подавать в люк с синей точкой справа. Люк с оранжевой точкой наверху служит выходом жидкости.",
+  "ie.manual.entry.boiler2": "Прежде чем вскипятить любую воду, конструкция должна сначала прогреться, что требует топлива. Если его отключить или не дать достаточное количество топлива, конструкция будет медленно остывать, занимая около <config;d;boiler_cooldownTime> секунды, чтобы полностью остыть от рабочей температуры. По умолчанию используется дизельное топливо.",
+
+  "ie.manual.entry.distiller": "Дистиллятор",
+  "ie.manual.entry.distiller.subtext": "Чище воды",
+  "ie.manual.entry.distiller0": "Дистиллятор - это многоблочная машина, которая превращает воду в дистиллированную воду и соль.<br>Конструкция строится так, как показано выше, и формируется с помощью инженерного молотка на центральном листовом железе.",
+  "ie.manual.entry.distiller1": "Применение сигнала редстоуна к панели управления на передней панели остановит движение машины, это поведение может быть инвертировано с помощью молотка инженера.<br>Вода может быть введена в дистиллятор через люк справа, отмеченный синей точкой. Люк с оранжевой точкой слева - это выход жидкости,а другой люк сзади служит выходом элемента.<br>Ему нужна энергия для производства дистиллированной воды и соли.<br>Одно ведро воды производит 500 мВ дистиллированной воды.",
+
+  "ie.manual.entry.fluidValve": "Жидкостный клапан",
+  "ie.manual.entry.fluidValve.subtext": "Мне нужно только выбросить",
+  "ie.manual.entry.fluidValve0": "§6Жидкостный клапан§r может ограничить движение жидкостей через него. Вы можете указать в графическом интерфейсе конкретные параметры или управлять силой сигнала редстоун. Редстоун с сигналом 15 выключен. Включите режим редстоуна, сидя с молотком.",
+
+  "ie.manual.entry.loadController": "Контроллер загрузки",
+  "ie.manual.entry.loadController.subtext": "Энергетическая недогрузка",
+  "ie.manual.entry.loadController0": "§6Контроллер загрузки§r может ограничить энергию, движущуюся через него. Вы можете указать в графическом интерфейсе конкретные параметры или управлять силой сигнала редстоун. Редстоун с сигналом 15 выключен. Включите режим редстоуна, сидя с молотком.",
+
+  "ie.manual.entry.openBarrel": "Открытая металлическая бочка",
+  "ie.manual.entry.openBarrel.subtext": "Открытый солнцу или облакам?",
+  "ie.manual.entry.openBarrel0": "§6Открытая металлическая бочка§r представляет собой одноблочный бак, похожий на металлическую бочку, но с открытым верхом. Жидкость можно вводить вручную. Верх - это только вход, а низ - только выход. Оставь его под дождем и смотри, как он наполняется! В грозу в два раза быстрее! Однако не оставляйте его в теплой среде, вода просто может испариться.",
+
+  "ie.manual.entry.solarTower": "Солнечная башня",
+  "ie.manual.entry.solarTower.subtext": "Сила солнца",
+  "ie.manual.entry.solarTower0": "Солнечная башня - это многоблочная конструкция, которая использует солнечный свет для превращения воды в пар.<br>Структура построена как показано выше и сформирована с помощью инженерного молотка на центральном редстоунском инженерном заводе",
+  "ie.manual.entry.solarTower1": "Блок.<br>Солнечная башня может производить пар из воды и <link;distiller;§n§oDistilled Water§r>.<br>Одно ведро дистиллированной воды производит 3000 мВ пара.<br>Одно ведро воды производит 2000 мВ пара.<br>Вода может быть введена в солнечную башню через два люка слева и справа, которые отмечены синими точками. Люк с оранжевой точкой на задней стенке служит для вывода жидкости.<br>Солнечная башня нуждается, по крайней мере, в одном солнечном отражателе для работы.",
+  "ie.manual.entry.solarTower2": "Солнечный отражатель представляет собой многоблочную конструкцию, которая отражает свет солнца в центр солнечной башни.<br>Конструкция построена так, как показано выше, и сформирована с помощью инженерного молотка на центральном серебряном блоке.",
+  "ie.manual.entry.solarTower3": "Чтобы работать, между ней, солнечной башней и верхушкой отражателя не должно быть никаких блоков. Центральный серебряный блок отражателя должен совпадать с центром солнечной башни. Кроме того, расстояние между отражателем и солнечной башней должно быть между <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> блоков. Очевидно, он работает только днем.",
+
+  "ie.manual.entry.stackLimiter": "Ограничитель стека",
+  "ie.manual.entry.stackLimiter.subtext": "Нужна всего пара предметов",
+  "ie.manual.entry.stackLimiter0": "§6Ограничитель стека§r может ограничить перемещение предметов через него. Вы можете указать в графическом интерфейсе конкретные параметры или управлять силой сигнала редстоун. Редстоун с сигналом 15 выключен. Включите режим редстоуна, сидя с молотком.",
+
+  "ie.manual.entry.steamTurbine": "Паровая турбина",
+  "ie.manual.entry.steamTurbine.subtext": "Кипящее дыхание",
+  "ie.manual.entry.steamTurbine0": "Паровая турбина представляет собой многоблочную конструкцию, которая использует пар для производства кинетической энергии.<br>Конструкция строится так, как показано выше, и формируется с помощью инженерного молотка на центральном стальном блоке (короткая сторона).",
+  "ie.manual.entry.steamTurbine1": "При подаче пара турбина будет медленно ускоряться, достигая максимальной скорости после <config;i;steamTurbine_timeToMax> секунд, пока ее постоянно наполняют. Выключение или отсутствие достаточного количества пара замедляет работу турбины и снижает ее выходную мощность.<br>Чтобы работать, он нуждается в <link;alternator;§o§nAlternator§r>.",
+  "ie.manual.entry.steamTurbine2": "Применение сигнала редстоуна к панели управления на передней панели остановит движение машины, это поведение может быть инвертировано с помощью молотка инженера.<br>Входная труба для жидкости находится в передней части машины. Выход кинетической энергии находится в задней части машины (стальной блок). Опционально жидкости могут быть извлечены через выходную трубу в верхней части машины.",
+
+  "ie.manual.entry.gasTurbine": "Газовая турбина",
+  "ie.manual.entry.gasTurbine.subtext": "Не часть 747",
+  "ie.manual.entry.gasTurbine0": "Газовая турбина представляет собой многоблочную конструкцию, использующую горючее топливо для получения кинетической энергии. Конструкция строится так, как показано на рисунке, и формируется с помощью инженерного молотка на центральном стальном блоке (короткая сторона). Чтобы работать, турбина нуждается в <link;alternator;§o§nAlternator§r>.",
+  "ie.manual.entry.gasTurbine1": "Когда турбина будет снабжена достаточным количеством топлива, она будет медленно разгоняться до тех пор, пока не достигнет максимальной скорости и КПД примерно через 30 секунд после начала процесса раскрутки. Некоторые виды топлива могут потребовать подачи в турбину достаточно большого количества, чтобы обеспечить транспортировку под давлением, и если в турбине закончится топливо, она начнет замедляться. Если турбина находится на скорости во время выключения, она будет медленно терять скорость. Если он замедлится ниже 1/4 скорости, его нужно будет раскрутить обратно, прежде чем его можно будет использовать снова.",
+  "ie.manual.entry.gasTurbine2": "Жидкостная труба на передней части турбины является входом, а две силовые вилки по бокам турбины служат для разных целей ввода. Разъем HV потребляет 4096 IF/тик, чтобы запустить турбину до 1/4 скорости, и в этот момент больший входной поток приведет к остановке турбины и не будет вращаться выше 1/4 скорости. Разъем MV использует 1024 IF/тик для воспламенения топлива, если турбина в данный момент не сжигает топливо - это происходит при запуске и в любое время, когда турбина не имеет топлива в течение 3 или более тиков.",
+  "ie.manual.entry.gasTurbine3": "Турбина выводит кинетическую энергию сзади, и в результате образуются газы чуть ниже выхода кинетической энергии. Эти газы занимают особое место, так как их можно сжигать для повышения КПД турбины. В то время как обычно хуже, чем дизельный генератор, для большей выходной мощности и сложности, эта выходная мощность - это то, где газовая турбина действительно сияет. CCGT (или COGAS для моряков) обеспечивает еще большую отдачу от горючего топлива при использовании в котле для выработки пара.",
+
+  "ie.manual.entry.steelBarrel": "Стальная металлическая бочка",
+  "ie.manual.entry.steelBarrel.subtext": "Полный до максимума!",
+  "ie.manual.entry.steelBarrel0": "§6Стальная металлическая бочка§r представляет собой одноблочный резервуар, который обеспечивает двойное пространство жидкости над металлической бочкой. Жидкость можно вводить вручную. Верхняя и нижняя стороны могут быть сконфигурированы для ввода или вывода с помощью молотка.",
+
+  "ie.manual.entry.steelTank": "Стальной жидкостный резервуар",
+  "ie.manual.entry.steelTank.subtext": "Полный до максимума!",
+  "ie.manual.entry.steelTank0": "Стальной резервуар для жидкости представляет собой мультиблок, который обеспечивает пространство для еще большего количества жидкостей. Он будет хранить до <config;i;steelTank_tankSize> мВ любой жидкости, которую можно пустить по трубе через верхний или нижний блок. Жидкости могут быть извлечены только из нижнего центрального блока.",
+  "ie.manual.entry.steelTank1": "Применение сигнала редстоуна к нижнему центральному блоку приведет к автоматическому выходу бака, компаратор, размещенный там, будет излучать сигнал редстоуна, пропорциональный тому, насколько полон резервуар. Прикрепление компаратора к одному из верхних 4-х слоев приводит к появлению сигнала, пропорционального высоте компаратора. Например, компаратор, прикрепленный ко второму слою резервуара, не будет излучать никакого сигнала до тех пор, пока резервуар не будет заполнен на 1/4, и будет иметь уровень сигнала 15, если резервуар заполнен наполовину или более.",
+
+  "ie.manual.entry.redstone": "Редстоун таймер",
+  "ie.manual.entry.redstone.subtext": "тик-так",
+  "ie.manual.entry.redstone0": "§6Редстоун таймер§r выводит короткий сигнал редстоуна в зависимости от наложенной на него задержки. Время задержки может быть установлено в графическом интерфейсе таймера и имеет точность 0,5 секунды, а также может регулироваться от 0,5 до 10 секунд. Таймер может быть остановлен сигналом редстоуна.",
+
+  "ie.manual.entry.coolingTower": "Охлаждающая башня",
+  "ie.manual.entry.coolingTower.subtext": "Успокойся, парень!",
+  "ie.manual.entry.coolingTower0": "Охлаждающая башня представляет собой многоблочную конструкцию, которая преобразует отработанный пар обратно в воду. <br>Конструкция строится так, как показано выше, и формируется с помощью инженерного молотка на тяжелом инженерном блоке.",
+  "ie.manual.entry.coolingTower1": "Отработанный пар поступает в блок слева от блока тяжелого машиностроения (сторона с красным индикатором манометра), а вода или дистиллированная вода - в правый блок (сторона с синим индикатором манометра).",
+
+  "ie.manual.entry.heatExchanger": "Теплообменник",
+  "ie.manual.entry.heatExchanger.subtext": "Энтропия говорит \"Привет\"",
+  "ie.manual.entry.heatExchanger0": "Теплообменник представляет собой многоблочную конструкцию, которая быстро перемещает тепло от одной жидкости к другой. <br>Конструкция построена, как показано выше, и сформирована с помощью инженерного молотка на центральном железном листовом металле рядом с инженерным блоком редстоуна.",
+  "ie.manual.entry.heatExchanger1": "Применение сигнала редстоуна к панели управления на передней панели остановит движение машины, это поведение может быть инвертировано с помощью молотка инженера. <br>Вода и <link;distiller;§n§oDistilled Water§r> может подаваться в теплообменник через люк сверху, отмеченный синей точкой. Люк с оранжевой точкой наверху служит выходом жидкости для пара.",
+  "ie.manual.entry.heatExchanger2": "<link;gasTurbine;§n§oFlue Gas§r> можно подавать в люк, отмеченный синей точкой на нижнем слое. Люк, отмеченный оранжевой точкой в нижнем слое, служит выходом жидкости для ранее горячих жидкостей.",
+
+  "ie.manual.entry.computer.steamTurbine": "Паровая турбина ☎",
+  "ie.manual.entry.computer.steamTurbine.subtext": "Кипящее дыхание",
+  "ie.manual.entry.computer.boiler": "Паровой котел ☎",
+  "ie.manual.entry.computer.boiler.subtext": "Метод жидкого топлива",
+  "ie.manual.entry.computer.distiller": "Дистиллятор ☎",
+  "ie.manual.entry.computer.distiller.subtext": "Чище воды",
+  "ie.manual.entry.computer.solarTower": "Солнечная башня ☎",
+  "ie.manual.entry.computer.solarTower.subtext": "Сила солнца",
+  "ie.manual.entry.computer.gasTurbine": "Газовая турбина ☎",
+  "ie.manual.entry.computer.gasTurbine.subtext": "Не часть 747",
+  "ie.manual.entry.computer.heatExchanger": "Теплообменник ☎",
+  "ie.manual.entry.computer.heatExchanger.subtext": "Энтропия говорит \"Привет\"",
+
+  "ie.manual.entry.computer.steamTurbine0": "§lgetSpeed()§r: возвращает частоту вращения турбины в об/мин.<br>§lgetTankInfo()§r: возвращает информацию о паровом резервуаре турбины.<br>§lgetOutputTankInfo()§r: возвращает информацию о выходном резервуаре турбины.",
+  "ie.manual.entry.computer.boiler0": "§lgetHeat()§r: возвращает уровень тепла котла.<br>§lgetFuelTankInfo()§r: возвращает информацию о топливном резервуаре котла.<br>§lgetInputTankInfo()§r: возвращает информацию о входном резервуаре котла.<br>§lgetOutputTankInfo()§r: возвращает информацию о выходном резервуаре котла.",
+  "ie.manual.entry.computer.boiler1": "§lgetFullCanisters()§r: возвращает таблицу с информацией о полных канистрах жидкости в машине, с клавишами \"вход\" и \"выход\", относящимися к каждому резервуару.<br>§lgetEmptyCanisters()§r: возвращает таблицу с информацией о пустых канистрах жидкости в машине, с клавишами \"вход\" и \"выход\", относящимися к каждому резервуару.",
+  "ie.manual.entry.computer.distiller0": "§lgetEnergyStored()§r: возвращает энергию, накопленную во внутреннем буфере дистиллятора.<br>§lgetMaxEnergyStored()§r: возвращает максимальную емкость внутреннего энергетического буфера дистиллятора<br>§lgetInputTankInfo()§r: возвращает информацию о входном резервуаре дистиллятора.<br>§lgetOutputTankInfo()§r: возвращает информацию о выходном резервуаре дистиллятора.",
+  "ie.manual.entry.computer.distiller1": "§lgetFullCanisters()§r: возвращает таблицу с информацией о полных канистрах жидкости в машине, с клавишами \"вход\" и \"выход\", относящимися к каждому резервуару.<br>§lgetEmptyCanisters()§r: возвращает таблицу с информацией о пустых канистрах жидкости в машине, с клавишами \"вход\" и \"выход\", относящимися к каждому резервуару.",
+  "ie.manual.entry.computer.solarTower0": "§lgetReflectors()§r: возвращает таблицу допустимых отражателей, подключенных к солнечной башне.<br>§lgetInputTankInfo()§r: возвращает информацию о входном резервуаре башни.<br>§lgetOutputTankInfo()§r: возвращает информацию о выходном резервуаре башни.",
+  "ie.manual.entry.computer.solarTower1": "§lgetFullCanisters()§r: возвращает таблицу с информацией о полных канистрах жидкости в машине, с клавишами \"вход\" и \"выход\", относящимися к каждому резервуару.<br>§lgetEmptyCanisters()§r: возвращает таблицу с информацией о пустых канистрах жидкости в машине, с клавишами \"вход\" и \"выход\", относящимися к каждому резервуару.",
+  "ie.manual.entry.computer.gasTurbine0": "§lgetSpeed()§r: возвращает частоту вращения турбины в об/мин.<br>§lgetInputTankInfo()§r: возвращает информацию о топливном резервуаре турбины.<br>§lgetOutputTankInfo()§r: возвращает информацию о выходном резервуаре турбины.",
+  "ie.manual.entry.computer.heatExchanger0": "§lgetFirstInputTankInfo()§r: возвращает таблицу с информацией о первом входном резервуаре теплообменника (верхний контур).<br>§lgetSecondInputTankInfo()§r: возвращает таблицу с информацией о втором входном резервуаре теплообменника (нижний контур).",
+  "ie.manual.entry.computer.heatExchanger1": "§lgetFirstOutputTankInfo()§r: возвращает таблицу с информацией о первом выходном резервуаре теплообменника (верхний контур).<br>§lgetSecondOutputTankInfo()§r: возвращает таблицу с информацией о втором выходном резервуаре теплообменника (нижний контур).",
+
+  "ie.manual.entry.fluidPipes3": "Для того, чтобы помпа забирала жидкие блоки, ему понадобится входная мощность в верхней части и сигнал редстоуна. Помпы также могут использоваться для извлечения из резервуаров и других емкостей жидкости,которые не имеют автоматического выхода. Это также потребует сигнала редстоуна, но не будет потреблять энергию. <br><br>Помпы имеют новый режим! Режим работы жидкостной помпы можно изменить, щелкнув по нему ПКМ с помощью инженерного резака для проволоки. Переключите режим, если он ведет себя не так, как ожидалось."
+}
