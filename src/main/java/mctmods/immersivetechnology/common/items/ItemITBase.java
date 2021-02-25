@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.items;
-
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.common.items.IEBaseItem;
 import blusunrize.immersiveengineering.common.items.IEItemInterfaces.IColouredItem;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.ITContent;
@@ -14,50 +15,78 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * @author BluSunrize
  */
 public class ItemITBase extends Item implements IColouredItem {
+
     public String itemName;
     protected String[] subNames;
     boolean[] isMetaHidden;
     public boolean registerSubModels = true;
 
-    public ItemITBase(String name, int stackSize, String... subNames) {
-        this.setUnlocalizedName(ImmersiveTechnology.MODID + "." + name);
-        this.setHasSubtypes(subNames != null && subNames.length > 0);
-        this.setCreativeTab(ImmersiveTechnology.creativeTab);
-        this.setMaxStackSize(stackSize);
+    public ItemITBase(String name) {
+        this(name, new Properties());
+    }
+
+    public ItemITBase(String name, Properties props)
+    {
+        super(props.group(ImmersiveEngineering.itemGroup)); // TODO make IT own item group
         this.itemName = name;
-        this.subNames = subNames != null && subNames.length > 0 ? subNames : null;
-        this.isMetaHidden = new boolean[this.subNames != null ? this.subNames.length : 1];
+        setRegistryName(ImmersiveTechnology.MODID, name);
+        this.isMetaHidden = new boolean[0];
         ITContent.registeredITItems.add(this);
     }
+
+    public ItemITBase(String name, Properties props, int stackSize)
+    {
+        super(props.group(ImmersiveEngineering.itemGroup).maxStackSize(stackSize)); // TODO make IT own item group
+        this.itemName = name;
+        setRegistryName(ImmersiveTechnology.MODID, name);
+        this.isMetaHidden = new boolean[0];
+        ITContent.registeredITItems.add(this);
+    }
+
+//    public IEBaseItem(String name, Properties props)
+//    {
+//        super(props.group(ImmersiveEngineering.itemGroup));
+//        this.itemName = name;
+//        setRegistryName(ImmersiveEngineering.MODID, name);
+//        IEContent.registeredIEItems.add(this);
+//    }
+
+//    public ItemITBase(String name, int stackSize, String... subNames) {
+//        this.setUnlocalizedName(ImmersiveTechnology.MODID + "." + name);
+//        this.setHasSubtypes(subNames != null && subNames.length > 0);
+//        this.setCreativeTab(ImmersiveTechnology.creativeTab);
+//        this.setMaxStackSize(stackSize);
+//        this.itemName = name;
+//        this.subNames = subNames != null && subNames.length > 0 ? subNames : null;
+//        this.isMetaHidden = new boolean[this.subNames != null ? this.subNames.length : 1];
+//        ITContent.registeredITItems.add(this);
+//    }
 
     public String[] getSubNames() {
         return subNames;
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
     public void getSubItems(ItemGroup tab, NonNullList<ItemStack> list) {
-        if (this.isInCreativeTab(tab)) {
-            if (getSubNames() != null) {
-                for (int i = 0; i < getSubNames().length; i++) {
-                    if (!isMetaHidden(i)) {
-                        list.add(new ItemStack(this, 1, i));
-                    }
-                }
-            } else {
-                list.add(new ItemStack(this));
-            }
-        }
-    }
-
-    @Override
-    public String getUnlocalizedName(ItemStack stack) {
         if (getSubNames() != null) {
-            String subName = stack.getItemDamage() < getSubNames().length ? getSubNames()[stack.getItemDamage()] : "";
-            return this.getUnlocalizedName() + "." + subName;
+            for (int i = 0; i < getSubNames().length; i++) {
+                if (!isMetaHidden(i)) {
+                    list.add(new ItemStack(this, 1));
+                }
+            }
+        } else {
+            list.add(new ItemStack(this));
         }
-        return this.getUnlocalizedName();
     }
+//
+//    @Override
+//    public String getUnlocalizedName(ItemStack stack) {
+//        if (getSubNames() != null) {
+//            String subName = stack.getItemDamage() < getSubNames().length ? getSubNames()[stack.getItemDamage()] : "";
+//            return this.getUnlocalizedName() + "." + subName;
+//        }
+//        return this.getUnlocalizedName();
+//    }
 
     public ItemITBase setMetaHidden(int... meta) {
         for (int i : meta) {
