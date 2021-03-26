@@ -1,5 +1,8 @@
-1.8.93
+1.8.94
 Official MCT Discord https://discord.gg/ujY2mV9
+Fix gas turbine description - Hawk777
+
+1.8.93
 Update chinese translation about Heat Exchanger - PilyziFox
 
 1.8.92
