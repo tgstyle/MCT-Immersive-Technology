@@ -10,6 +10,7 @@ import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerFuelRecip
 import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.coolingtower.CoolingTowerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.distiller.DistillerRecipeCategory;
+import mctmods.immersivetechnology.common.util.compat.jei.electrolyticcrucbilebattery.ElectrolyticCrucibleBatteryRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.gasturbine.GasTurbineRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.heatexchanger.HeatExchangerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.solartower.SolarTowerRecipeCategory;
@@ -64,6 +65,7 @@ public class JEIHelper implements IModPlugin {
 		if(Multiblock.enable_gasTurbine) categories.put(GasTurbineRecipe.class, new GasTurbineRecipeCategory(guiHelper));
 		if(Multiblock.enable_heatExchanger) categories.put(HeatExchangerRecipe.class, new HeatExchangerRecipeCategory(guiHelper));
 		if(Multiblock.enable_highPressureSteamTurbine) categories.put(HighPressureSteamTurbineRecipe.class, new HighPressureSteamTurbineRecipeCategory(guiHelper));
+		if(Multiblock.enable_electrolyticCrucibleBattery) categories.put(ElectrolyticCrucibleBatteryRecipe.class, new ElectrolyticCrucibleBatteryRecipeCategory(guiHelper));
 			
 		registry.addRecipeCategories(categories.values().toArray(new IRecipeCategory[categories.size()]));
 	}
@@ -96,6 +98,7 @@ public class JEIHelper implements IModPlugin {
 		if(Multiblock.enable_gasTurbine) modRegistry.addRecipes(new ArrayList<Object>((GasTurbineRecipe.recipeList)), "it.gasTurbine");
 		if(Multiblock.enable_heatExchanger) modRegistry.addRecipes(new ArrayList<Object>((HeatExchangerRecipe.recipeList)), "it.heatExchanger");
 		if(Multiblock.enable_highPressureSteamTurbine) modRegistry.addRecipes(new ArrayList<Object>((HighPressureSteamTurbineRecipe.recipeList)), "it.highPressureSteamTurbine");
+		if(Multiblock.enable_electrolyticCrucibleBattery) modRegistry.addRecipes(new ArrayList<Object>((ElectrolyticCrucibleBatteryRecipe.recipeList)), "it.electrolyticCrucibleBattery");
 	}
 
 	@SuppressWarnings("deprecation")

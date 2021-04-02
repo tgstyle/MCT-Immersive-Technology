@@ -38,6 +38,7 @@ import mctmods.immersivetechnology.common.util.ITLogger;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -258,6 +259,11 @@ public class ITContent {
 			registerTile(TileEntityHighPressureSteamTurbineMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockHighPressureSteamTurbine.instance);
 		}
+		if(Multiblock.enable_electrolyticCrucibleBattery) {
+			registerTile(TileEntityElectrolyticCrucibleBatterySlave.class);
+			registerTile(TileEntityElectrolyticCrucibleBatteryMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockElectrolyticCrucibleBattery.instance);
+		}
 
 		registerTile(TileEntitySteelSheetmetalTank.class);
 		registerTile(TileEntitySteelSheetmetalTankSlave.class);
@@ -320,6 +326,11 @@ public class ITContent {
 		}
 		if(Multiblock.enable_highPressureSteamTurbine && Recipes.register_highPressureSteamTurbine_recipes) {
 			HighPressureSteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("steam"), 100), new FluidStack(FluidRegistry.getFluid("highpressuresteam"), 100), 1);
+		}
+		if(Multiblock.enable_electrolyticCrucibleBattery && Recipes.register_electrolyticCrucibleBattery_recipes) {
+			if(FluidRegistry.isFluidRegistered("hydrogen") && FluidRegistry.isFluidRegistered("oxygen")) ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("hydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("oxygen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 500), 2048, 250);
+			else if(FluidRegistry.isFluidRegistered("liquidhydrogen") && FluidRegistry.isFluidRegistered("liquidoxygen")) ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("liquidhydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("liquidoxgyen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 1000), 2048, 250);
+			else if(FluidRegistry.isFluidRegistered("fluidhydrogen") && FluidRegistry.isFluidRegistered("fluidoxygen")) ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("fluidhydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("fluidoxygen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 500), 2048, 250);
 		}
 	}
 

@@ -1,0 +1,5 @@
+# Blender MTL File: 'electrolytic_crucible_battery.blend'
+# Material Count: 1
+
+newmtl electrolytic_cell_battery
+map_Kd immersivetech:blocks/metal_multiblock_electrolytic_crucible_battery

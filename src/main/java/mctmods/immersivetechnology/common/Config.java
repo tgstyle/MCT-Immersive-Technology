@@ -27,6 +27,7 @@ public class Config {
 			public static GasTurbine gasTurbine;
 			public static HeatExchanger heatExchanger;
 			public static HighPressureSteamTurbine highPressureSteamturbine;
+			public static ElectrolyticCrucibleBattery electrolyticCrucibleBattery;
 
 			public static class Multiblock {
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Preheater be built ? [Default=true]"})
@@ -47,6 +48,8 @@ public class Config {
 				public static boolean enable_heatExchanger = true;
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the High Pressure Steam Turbine Multiblock structures be built ? [Default=false]"})
 				public static boolean enable_highPressureSteamTurbine = false;
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the High Pressure Steam Turbine Multiblock structures be built ? [Default=true]"})
+				public static boolean enable_electrolyticCrucibleBattery = true;
 			}
 			public static class Recipes {
 				@Comment({"Should default Steam Turbine recipes be registered ? [Default=true]"})
@@ -65,6 +68,8 @@ public class Config {
 				public static boolean register_heat_exchanger_recipes = true;
 				@Comment({"Should default High Pressure Steam Turbine recipes be registered ? [Default=true]"})
 				public static boolean register_highPressureSteamTurbine_recipes = true;
+				@Comment({"Should default High Pressure Steam Turbine recipes be registered ? [Default=true]"})
+				public static boolean register_electrolyticCrucibleBattery_recipes = true;
 			}
 			public static class AdvancedCokeOven {
 				@Comment({"The capacity of the tank for the Advanced Coke Oven [Default=24000]"})
@@ -195,6 +200,14 @@ public class Config {
 				public static float highPressureSteamTurbine_speed_maxRotation = 72;
 				@Comment({"Should the steam turbine use tungsten, if it exists? Otherwise the turbine will use nickel [Default=true]"})
 				public static boolean highPressureSteamTurbine_turbine_material = true;
+			}
+			public static class ElectrolyticCrucibleBattery {
+				@Comment({"The capacity of the input tanks for the Electrolytic Crucible Battery [Default=10000]"})
+				public static int electrolyticCrucibleBattery_input_tankSize = 10000;
+				@Comment({"The capacity of the output tanks for the Electrolytic Crucible Battery [Default=10000]"})
+				public static int electrolyticCrucibleBattery_output_tankSize = 10000;
+				@Comment({"The maximum energy an Electrolytic Crucible Battery can store [Default=16384]"})
+				public static int electrolyticCrucibleBattery_energy_size = 16384;
 			}
 			public static class SteelTank {
 				@Comment({"Steel Tank Size in mB [Default=2048000]"})

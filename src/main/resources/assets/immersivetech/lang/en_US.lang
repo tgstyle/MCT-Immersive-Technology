@@ -83,6 +83,8 @@ tile.immersivetech.metal_multiblock1.heat_exchanger.name=Heat Exchanger
 tile.immersivetech.metal_multiblock1.heat_exchanger_slave.name=Heat Exchanger
 tile.immersivetech.metal_multiblock1.high_pressure_steam_turbine.name=High Pressure Steam Turbine
 tile.immersivetech.metal_multiblock1.high_pressure_steam_turbine_slave.name=High Pressure Steam Turbine
+tile.immersivetech.metal_multiblock1.electrolytic_crucible_battery.name=Electrolytic Crucible Battery
+tile.immersivetech.metal_multiblock1.electrolytic_crucible_battery_slave.name=Electrolytic Crucible Battery
 
 
 #OVERLAY
@@ -146,6 +148,7 @@ desc.immersiveengineering.info.multiblock.IT:CoolingTower=Cooling Tower
 desc.immersiveengineering.info.multiblock.IT:GasTurbine=Gas Turbine
 desc.immersiveengineering.info.multiblock.IT:HeatExchanger=Heat Exchanger
 desc.immersiveengineering.info.multiblock.IT:HighPressureSteamTurbine=High Pressure Steam Turbine
+desc.immersiveengineering.info.multiblock.IT:electrolyticCrucibleBattery=Electrolytic Crucible Battery
 
 
 #STONE MULTIBLOCKS
@@ -247,6 +250,13 @@ ie.manual.entry.heatExchanger.subtext=Entropy says hi
 ie.manual.entry.heatExchanger0=The Heat Exchanger is a multiblock structure that quickly moves heat from one fluid to another. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Iron Sheetmetal next to the Redstone Engineering Block.
 ie.manual.entry.heatExchanger1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. <br>Water and <link;distiller;§n§oDistilled Water§r> can be fed to the Heat Exchanger via a hatch on the top that is marked with a blue dot. The hatch with the orange dot at the top serves as the fluid output for steam.
 ie.manual.entry.heatExchanger2=<link;gasTurbine;§n§oFlue Gas§r> can be fed to the hatch marked with a blue dot on the bottom layer. The hatch marked with the orange dot at the bottom layer serves as the fluid output for previously hot fluids.
+
+ie.manual.entry.electrolyticCrucibleBattery.name=Electrolytic Crucible Battery
+ie.manual.entry.electrolyticCrucibleBattery.subtext=The power of electricity compels you!
+ie.manual.entry.electrolyticCrucibleBattery0=The Electrolytic Crucible Battery is a multiblock that uses a continuous electrical current to split fluids into their constituent parts and to plate metals from liquids.
+ie.manual.entry.electrolyticCrucibleBattery1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. The singular blue hatch is the fluid input, and the two separated fluids will be output from the top ports on the back, while the items and spent electrolyte will be output from the bottom
+ie.manual.entry.electrolyticCrucibleBattery2=The multiblock is most commonly used to provide molten sodium for a <link;solarTower;§n§oSolar Tower§r>, electrolysed from molten salt. It can be formed by hitting the block that is the item output with an Engineer's Hammer.
+
 
 ie.manual.entry.computer.steamTurbine.name=Steam Turbine ☎
 ie.manual.entry.computer.steamTurbine.subtext=Boiling breath

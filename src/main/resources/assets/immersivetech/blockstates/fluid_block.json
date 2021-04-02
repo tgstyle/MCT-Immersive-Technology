@@ -24,6 +24,11 @@
 			"custom": {
 				"fluid": "fluegas"
 			}
+		}],
+		"highpressuresteam": [{
+			"custom": {
+				"fluid": "highpressuresteam"
+			}
 		}]
 	}
 }

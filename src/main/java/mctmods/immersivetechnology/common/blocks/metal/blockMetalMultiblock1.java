@@ -52,6 +52,10 @@ public class blockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
                 return new TileEntityHighPressureSteamTurbineMaster();
             case HIGH_PRESSURE_STEAM_TURBINE_SLAVE:
                 return new TileEntityHighPressureSteamTurbineSlave();
+            case ELECTROLYTIC_CRUCIBLE_BATTERY:
+                return new TileEntityElectrolyticCrucibleBatteryMaster();
+            case ELECTROLYTIC_CRUCIBLE_BATTERY_SLAVE:
+                return new TileEntityElectrolyticCrucibleBatterySlave();
         }
         return null;
     }
