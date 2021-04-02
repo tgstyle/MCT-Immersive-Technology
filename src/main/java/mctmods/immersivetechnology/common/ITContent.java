@@ -53,6 +53,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.OreIngredient;
 
 import java.util.ArrayList;
 
@@ -264,6 +265,11 @@ public class ITContent {
 			registerTile(TileEntityElectrolyticCrucibleBatteryMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockElectrolyticCrucibleBattery.instance);
 		}
+		if(Multiblock.enable_meltingCrucible) {
+			registerTile(TileEntityMeltingCrucibleSlave.class);
+			registerTile(TileEntityMeltingCrucibleMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockMeltingCrucible.instance);
+		}
 
 		registerTile(TileEntitySteelSheetmetalTank.class);
 		registerTile(TileEntitySteelSheetmetalTankSlave.class);
@@ -331,6 +337,9 @@ public class ITContent {
 			if(FluidRegistry.isFluidRegistered("hydrogen") && FluidRegistry.isFluidRegistered("oxygen")) ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("hydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("oxygen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 500), 2048, 250);
 			else if(FluidRegistry.isFluidRegistered("liquidhydrogen") && FluidRegistry.isFluidRegistered("liquidoxygen")) ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("liquidhydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("liquidoxgyen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 1000), 2048, 250);
 			else if(FluidRegistry.isFluidRegistered("fluidhydrogen") && FluidRegistry.isFluidRegistered("fluidoxygen")) ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("fluidhydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("fluidoxygen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 500), 2048, 250);
+		}
+		if(Multiblock.enable_meltingCrucible && Recipes.register_meltingCrucible_recipes) {
+			MeltingCrucibleRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("lava"), 1000), new OreIngredient("cobblestone"), 512, 80);
 		}
 	}
 

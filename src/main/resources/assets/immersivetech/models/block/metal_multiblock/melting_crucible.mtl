@@ -1,0 +1,5 @@
+# Blender MTL File: 'melting_crucible.blend'
+# Material Count: 1
+
+newmtl melting_crucible
+map_Kd immersivetech:blocks/metal_multiblock_melting_crucible

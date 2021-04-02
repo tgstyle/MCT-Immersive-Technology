@@ -56,6 +56,10 @@ public class blockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
                 return new TileEntityElectrolyticCrucibleBatteryMaster();
             case ELECTROLYTIC_CRUCIBLE_BATTERY_SLAVE:
                 return new TileEntityElectrolyticCrucibleBatterySlave();
+            case MELTING_CRUCIBLE:
+                return new TileEntityMeltingCrucibleMaster();
+            case MELTING_CRUCIBLE_SLAVE:
+                return new TileEntityMeltingCrucibleSlave();
         }
         return null;
     }

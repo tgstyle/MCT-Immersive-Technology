@@ -14,7 +14,9 @@ public enum BlockType_MetalMultiblock1 implements IStringSerializable, BlockITBa
     HIGH_PRESSURE_STEAM_TURBINE(true),
     HIGH_PRESSURE_STEAM_TURBINE_SLAVE(true),
     ELECTROLYTIC_CRUCIBLE_BATTERY(true),
-    ELECTROLYTIC_CRUCIBLE_BATTERY_SLAVE(true);
+    ELECTROLYTIC_CRUCIBLE_BATTERY_SLAVE(true),
+    MELTING_CRUCIBLE(true),
+    MELTING_CRUCIBLE_SLAVE(true);
 
     private boolean needsCustomState;
     BlockType_MetalMultiblock1(boolean needsCustomState) {

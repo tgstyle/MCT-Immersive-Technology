@@ -296,6 +296,8 @@ public class ClientProxy extends CommonProxy {
 			ManualHelper.addEntry("heatExchanger", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "heatExchanger0", MultiblockHeatExchanger.instance), new ManualPages.Text(ManualHelper.getManual(), "heatExchanger1"), new ManualPages.Text(ManualHelper.getManual(), "heatExchanger2"));
 		if (Multiblock.enable_electrolyticCrucibleBattery)
 			ManualHelper.addEntry("electrolyticCrucibleBattery", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "electrolyticCrucibleBattery0", MultiblockElectrolyticCrucibleBattery.instance), new ManualPages.Text(ManualHelper.getManual(), "electrolyticCrucibleBattery1"), new ManualPages.Text(ManualHelper.getManual(), "electrolyticCrucibleBattery2"));
+		if (Multiblock.enable_meltingCrucible)
+		ManualHelper.addEntry("meltingCrucible", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "meltingCrucible0", MultiblockMeltingCrucible.instance), new ManualPages.Text(ManualHelper.getManual(), "meltingCrucible1"));
 	}
 
 	private static void mapFluidState(Block block, Fluid fluid)	{

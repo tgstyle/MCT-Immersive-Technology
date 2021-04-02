@@ -30,6 +30,7 @@ public class CraftTweakerHelper extends ITCompatModule {
 		if(Multiblock.enable_heatExchanger) CraftTweakerAPI.registerClass(HeatExchanger.class);
 		if(Multiblock.enable_highPressureSteamTurbine) CraftTweakerAPI.registerClass(HighPressureSteamTurbine.class);
 		if(Multiblock.enable_electrolyticCrucibleBattery) CraftTweakerAPI.registerClass(ElectrolyticCrucibleBattery.class);
+		if(Multiblock.enable_meltingCrucible) CraftTweakerAPI.registerClass(MeltingCrucible.class);
 		if(Experimental.replace_IE_pipes) CraftTweakerAPI.registerClass(PressurizedFluid.class);
 	}
 
