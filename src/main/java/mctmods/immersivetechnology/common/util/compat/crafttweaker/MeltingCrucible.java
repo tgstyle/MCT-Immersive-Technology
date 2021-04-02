@@ -1,7 +1,9 @@
 package mctmods.immersivetechnology.common.util.compat.crafttweaker;
 
+import blusunrize.immersiveengineering.api.crafting.IngredientStack;
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.IAction;
+import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import mctmods.immersivetechnology.api.crafting.HeatExchangerRecipe;
@@ -16,11 +18,11 @@ import stanhebben.zenscript.annotations.ZenMethod;
 public class MeltingCrucible {
 
     @ZenMethod
-    public static void addRecipe(ILiquidStack outputFluid, IItemStack inputItem, int energy, int time) {
+    public static void addRecipe(ILiquidStack outputFluid, IIngredient inputItem, int energy, int time) {
         FluidStack fluidOut = CraftTweakerHelper.toFluidStack(outputFluid);
-        ItemStack itemIn = CraftTweakerHelper.toStack(inputItem);
+        IngredientStack itemIn = CraftTweakerHelper.toIEIngredientStack(inputItem);
 
-        if(inputItem.isEmpty() || fluidOut == null) return;
+        if(inputItem.getItems().isEmpty() || fluidOut == null) return;
 
         MeltingCrucibleRecipe recipe = new MeltingCrucibleRecipe(fluidOut, itemIn, energy, time);
         CraftTweakerAPI.apply(new MeltingCrucible.Add(recipe));

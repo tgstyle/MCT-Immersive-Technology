@@ -36,7 +36,6 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 	@SuppressWarnings("deprecation")
 	@Override
 	public void setRecipe(IRecipeLayout recipeLayout, MeltingCrucibleRecipeWrapper recipeWrapper, IIngredients ingredients) {
-		//List<List<FluidStack>> inputs = ingredients.getInputs(VanillaTypes.FLUID);
 		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
 		int tankSize = 0;
@@ -47,7 +46,7 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 
 		IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
 		guiItemStacks.init(0, true, 11, 41);
-		guiItemStacks.set(0, recipeWrapper.recipe.itemInput.stackList);
+		guiItemStacks.set(0, recipeWrapper.recipe.itemInput.getExampleStack());
 
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
 		if(!outputs.isEmpty()) {
