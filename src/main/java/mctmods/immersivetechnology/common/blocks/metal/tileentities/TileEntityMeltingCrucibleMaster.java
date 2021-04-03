@@ -56,14 +56,14 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
-        if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+        inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
     }
 
     @Override
     public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
-        if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
+        nbt.setTag("inventory", Utils.writeInventory(inventory));
     }
 
     public void requestUpdate() {
@@ -199,7 +199,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
     @Override
     public void onProcessFinish(@Nonnull MultiblockProcess<MeltingCrucibleRecipe> process) {
-        inventory.get(0).shrink(process.recipe.itemInput.inputSize);
+        //inventory.get(0).shrink(process.recipe.itemInput.inputSize);
         tanks[0].fill(process.recipe.fluidOutput, true);
     }
 

@@ -26,6 +26,8 @@ public class MeltingCrucibleRecipe extends MultiblockRecipe {
     public MeltingCrucibleRecipe(FluidStack fluidOutput, Object itemInput, int energy, int time) {
         this.fluidOutput = fluidOutput;
         this.itemInput =  ApiUtils.createIngredientStack(itemInput);
+        this.inputList = new ArrayList<>();
+        this.inputList.add(ApiUtils.createIngredientStack(itemInput));
         this.totalProcessTime = (int)Math.floor(time * timeModifier);
         this.totalProcessEnergy = (int)Math.floor(energy * energyModifier);
     }
@@ -78,7 +80,7 @@ public class MeltingCrucibleRecipe extends MultiblockRecipe {
     @Override
     public void setupJEI() {
         super.setupJEI();
-        inputList = Lists.newArrayList(itemInput);
+        //inputList = Lists.newArrayList(itemInput);
         jeiFluidOutputList = new ArrayList<>();
         jeiFluidOutputList.add(fluidOutput.copy());
     }
