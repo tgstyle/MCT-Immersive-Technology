@@ -156,7 +156,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
                             (recipe.fluidOutput2 == null || tanks[3].fill(recipe.fluidOutput2, false) == recipe.fluidOutput2.amount)) {
                     @SuppressWarnings("unchecked")
                     MultiblockProcessInMachine<ElectrolyticCrucibleBatteryRecipe> process =
-                            new MultiblockProcessInMachine<>(recipe).setInputTanks(0, 1);
+                            new MultiblockProcessInMachine<>(recipe).setInputTanks(0);
                     if(this.addProcessToQueue(process, true)) {
                         this.addProcessToQueue(process, false);
                         update = true;

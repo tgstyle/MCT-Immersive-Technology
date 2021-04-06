@@ -87,8 +87,6 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
     @Override
     public void setupJEI() {
         super.setupJEI();
-        jeiFluidInputList = new ArrayList<>();
-        jeiFluidInputList.add(fluidInput0.copy());
         jeiFluidOutputList = new ArrayList<>();
         jeiFluidOutputList.add(fluidOutput0.copy());
         if (fluidOutput1 != null) jeiFluidOutputList.add(fluidOutput1.copy());

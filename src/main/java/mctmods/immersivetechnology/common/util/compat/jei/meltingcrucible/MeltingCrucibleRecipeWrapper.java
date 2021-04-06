@@ -25,7 +25,7 @@ public class MeltingCrucibleRecipeWrapper extends MultiblockRecipeWrapper {
 				TranslationKey.GUI_TICKS.format(recipe.getTotalProcessTime()) :
 				TranslationKey.GUI_SECONDS.format(((float)recipe.getTotalProcessTime()) / 20);
 		minecraft.fontRenderer.drawString(text, 59, 8, 0x8B8B8B, true);
-		minecraft.fontRenderer.drawString(TranslationKey.GUI_IF_PER_TICK.format(recipe.getTotalProcessEnergy()),59, 20, 0x8B8B8B, true);
+		minecraft.fontRenderer.drawString(TranslationKey.GUI_IF_PER_TICK.format(recipe.getTotalProcessEnergy()/recipe.getTotalProcessTime()),59, 20, 0x8B8B8B, true);
 	}
 
 }
