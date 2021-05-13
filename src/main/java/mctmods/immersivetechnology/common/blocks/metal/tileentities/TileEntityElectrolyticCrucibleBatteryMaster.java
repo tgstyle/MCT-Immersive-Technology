@@ -209,10 +209,13 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         if (process.recipe.fluidOutput2 != null) tanks[3].fill(process.recipe.fluidOutput2, true);
 
         //Item output
-        ItemStack output = null;
-        TileEntity inventoryTile = this.world.getTileEntity(output3Front);
-        if(inventoryTile != null) output = Utils.insertStackIntoInventory(inventoryTile, process.recipe.itemOutput.copy(), facing.getOpposite());
-        if(output == null) Utils.dropStackAtPos(world, output3Front, process.recipe.itemOutput, facing);
+        if (process.recipe.itemOutput != null && !process.recipe.itemOutput.isEmpty()) {
+            ItemStack output = null;
+            TileEntity inventoryTile = this.world.getTileEntity(output3Front);
+            if (inventoryTile != null)
+                output = Utils.insertStackIntoInventory(inventoryTile, process.recipe.itemOutput.copy(), facing.getOpposite());
+            if (output == null) Utils.dropStackAtPos(world, output3Front, process.recipe.itemOutput, facing);
+        }
     }
 
     @Override
