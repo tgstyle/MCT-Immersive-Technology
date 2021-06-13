@@ -20,4 +20,7 @@ public class AdvancedRocketryHelper {
         //No gas turbines in vacuum, nor boilers in vacuum. Provide some oxygen for them or use solar
         return !AtmosphereHandler.hasAtmosphereHandler(world.provider.getDimension()) || AtmosphereHandler.getOxygenHandler(world.provider.getDimension()).getAtmosphereType(pos).allowsCombustion();
     }
+    public static double getWaterPartialPressureMultiplier(World world, BlockPos pos) {
+        return DimensionManager.getEffectiveDimId(world, pos).getAtmosphereDensity()/100d;
+    }
 }

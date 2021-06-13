@@ -26,7 +26,7 @@ import java.util.List;
 
 public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<TileEntitySolarTowerSlave, SolarTowerRecipe, TileEntitySolarTowerMaster> implements IEBlockInterfaces.IGuiTile, IEBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IAdvancedCollisionBounds {
 	public TileEntitySolarTowerSlave() {
-		super(MultiblockSolarTower.instance, new int[] { 13, 3, 3 }, 0, true);
+		super(MultiblockSolarTower.instance, new int[] { 21, 3, 3 }, 0, true);
 	}
 
 	@Override
@@ -217,23 +217,23 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 		boolean rotated = (fl == EnumFacing.NORTH || fl == EnumFacing.SOUTH);
 		int h = (pos - (pos % 9)) / 9;
 
-		if(pos == 90 || pos == 92 || pos == 96 || pos == 98 || pos == 108 || pos == 110 || pos == 114 || pos == 116) {
+		if(pos == 162 || pos == 164 || pos == 166 || pos == 170 || pos == 180 || pos == 182 || pos == 186 || pos == 188) {
 			float minY = 0;
 			float maxY = .5f;
-			if(h == 12) {
+			if(h == 20) {
 				minY = .5f;
 				maxY = 1;
 			}
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(0, minY, 0, 1, maxY, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			if(pos == 96 || pos == 98 || pos == 110 || pos == 116) fl = fl.getOpposite();
-			if(pos == 92 || pos == 98 || pos == 114 || pos == 116) fw = fw.getOpposite();
+			if(pos == 168 || pos == 170 || pos == 182 || pos == 188) fl = fl.getOpposite();
+			if(pos == 164 || pos == 170 || pos == 186 || pos == 188) fw = fw.getOpposite();
 			float minX = fl == EnumFacing.WEST ? .6875f : fl == EnumFacing.EAST ? .0625f : fw == EnumFacing.EAST ? .0625f : .6875f;
 			float maxX = fl == EnumFacing.EAST ? .3125f : fl == EnumFacing.WEST ? .9375f : fw == EnumFacing.EAST ? .3125f : .9375f;
 			float minZ = fl == EnumFacing.NORTH ? .6875f : fl == EnumFacing.SOUTH ? .0625f : fw == EnumFacing.SOUTH ? .0625f : .6875f;
 			float maxZ = fl == EnumFacing.SOUTH ? .3125f : fl == EnumFacing.NORTH ? .9375f : fw == EnumFacing.SOUTH ? .3125f : .9375f;
 			minY = .5f;
 			maxY = 1;
-			if(pos > 98) {
+			if(pos > 170) {
 				minY = 0;
 				maxY = .5f;
 			}
@@ -322,7 +322,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 				list.add(new AxisAlignedBB(0, 0, 0.5, 0.5, 0.5, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			}
 			return list;
-		} else if ((h == 2 || h == 5 || h == 6 || h == 9) && pos % 9 == 4) {
+		} else if ((h == 2 || h == 5 || h == 6 || h == 13 || h == 14 || h == 17) && pos % 9 == 4) {
 			float minX = rotated ? 0f : 0.25f;
 			float maxX = rotated ? 0.25f : 0.75f;
 			float minZ = !rotated ? 0f : 0.25f;
@@ -335,9 +335,9 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 			maxZ = !rotated ? 1f : 0.75f;
 			list.add(new AxisAlignedBB(minX, 0.0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-		} else if (h > 1 && h < 10 && (pos % 9 == 0 || pos % 9 == 2 || pos % 9 == 6 || pos % 9 == 8)) {
+		} else if (h > 1 && h < 18 && (pos % 9 == 0 || pos % 9 == 2 || pos % 9 == 6 || pos % 9 == 8)) {
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(0.3125, 0, 0.3125, 0.6875, 1, 0.6875).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			if (h == 3 || h == 8) {
+			if (h == 3 || h == 8 || h == 11 || h == 16) {
 				int pos2 = pos;
 				if (mirrored) {
 					if (pos % 9 == 8 || pos % 9 == 6) {
@@ -362,7 +362,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 				}
 			}
 			return list;
-		} else if (h == 4 || h == 7 && (pos % 9 == 1 || pos % 9 == 3 || pos % 9 == 5 || pos % 9 == 7)) {
+		} else if (h == 4 || h == 7 || h == 12 || h == 15 && (pos % 9 == 1 || pos % 9 == 3 || pos % 9 == 5 || pos % 9 == 7)) {
 			List<AxisAlignedBB> list = Lists.newArrayList();
 			if ((!rotated && (pos % 9 == 1 || pos % 9 == 7)) || (rotated  && (pos % 9 == 3 || pos % 9 == 5))) {
 				list.add(new AxisAlignedBB(0.375, 0, 0, 0.625, 1, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
@@ -370,9 +370,9 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 				list.add(new AxisAlignedBB(0, 0, 0.375, 1, 1, 0.625).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			}
 			return list;
-		} else if (h == 5 || h == 6 && (pos % 9 == 1 || pos % 9 == 3 || pos % 9 == 5 || pos % 9 == 7)) {
+		} else if (h == 5 || h == 6 || h == 13 || h == 14 && (pos % 9 == 1 || pos % 9 == 3 || pos % 9 == 5 || pos % 9 == 7)) {
 			List<AxisAlignedBB> list = Lists.newArrayList();
-			if ( h == 6) {
+			if ( h == 6 || h == 14) {
 				if ((!rotated && (pos % 9 == 1 || pos % 9 == 7)) || (rotated && (pos % 9 == 3 || pos % 9 == 5))) {
 					list.add(new AxisAlignedBB(0.375, 0.5, 0.125, 0.625, 1, 0.875).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 					list.add(new AxisAlignedBB(0.3125, 0, 0.25, 0.6875, 0.5, 0.75).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
@@ -390,7 +390,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 				}
 			}
 			return list;
-		} else if ((h == 2 || h == 3 || h == 8 || h == 9) && (pos % 9 ==3 || pos % 9 == 5)) {
+		} else if ((h == 2 || h == 3 || h == 8 || h == 9 || h == 10 || h == 11 || h == 16 || h == 17) && (pos % 9 == 3 || pos % 9 == 5)) {
 			if (pos % 9 == 3) {
 				float minX = fl == EnumFacing.SOUTH ? 0.0f : fl == EnumFacing.NORTH ? 0.75f : 0.25f;
 				float maxX = fl == EnumFacing.SOUTH ? 0.25f : fl == EnumFacing.NORTH ? 1.0f : 0.75f;
@@ -406,7 +406,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 
 				return Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			}
-		} else if (pos == 99) {
+		} else if (pos == 171) {
 			float minX = fl == EnumFacing.WEST ? .6875f : fl == EnumFacing.EAST ? .0625f : fw == EnumFacing.EAST ? .0625f : .6875f;
 			float maxX = fl == EnumFacing.EAST ? .3125f : fl == EnumFacing.WEST ? .9375f : fw == EnumFacing.EAST ? .3125f : .9375f;
 			float minZ = fl == EnumFacing.NORTH ? .6875f : fl == EnumFacing.SOUTH ? .0625f : fw == EnumFacing.SOUTH ? .0625f : .6875f;
@@ -419,7 +419,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 			maxZ = fl == EnumFacing.NORTH ? .5f : fl == EnumFacing.SOUTH ? 1 : fw == EnumFacing.NORTH ? .5f : 1;
 			list.add(new AxisAlignedBB(0, 0, minZ, 1, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-		} else if (pos == 101) {
+		} else if (pos == 173) {
 			fw = fw.getOpposite();
 			float minX = fl == EnumFacing.WEST ? .6875f : fl == EnumFacing.EAST ? .0625f : fw == EnumFacing.EAST ? .0625f : .6875f;
 			float maxX = fl == EnumFacing.EAST ? .3125f : fl == EnumFacing.WEST ? .9375f : fw == EnumFacing.EAST ? .3125f : .9375f;
@@ -433,7 +433,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 			maxZ = fl == EnumFacing.NORTH ? .5f : fl == EnumFacing.SOUTH ? 1 : fw == EnumFacing.NORTH ? .5f : 1;
 			list.add(new AxisAlignedBB(0, 0, minZ, 1, 1, maxZ).offset(getPos().getX(), getPos().getY(), 	getPos().getZ()));
 			return list;
-		} else if (pos == 105) {
+		} else if (pos == 177) {
 			fl = fl.getOpposite();
 			float minX = fl == EnumFacing.WEST ? .6875f	: fl == EnumFacing.EAST ? .0625f : fw == EnumFacing.EAST ? .0625f : .6875f;
 			float maxX = fl == EnumFacing.EAST ? .3125f	: fl == EnumFacing.WEST ? .9375f : fw == EnumFacing.EAST ? .3125f : .9375f;
@@ -447,7 +447,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 			maxZ = fl == EnumFacing.NORTH ? .5f : fl == EnumFacing.SOUTH ? 1 : fw == EnumFacing.NORTH ? .5f : 1;
 			list.add(new AxisAlignedBB(0, 0, minZ, 1, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
-		} else if (pos == 107) {
+		} else if (pos == 179) {
 			fl = fl.getOpposite();
 			fw = fw.getOpposite();
 			float minX = fl == EnumFacing.WEST ? .6875f : fl == EnumFacing.EAST ? .0625f : fw == EnumFacing.EAST ? .0625f : .6875f;

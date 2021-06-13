@@ -153,8 +153,8 @@ public class Config {
 				public static int solarTower_progress_lossInTicks = 1;
 			}
 			public static class SolarReflector {
-				@Comment({"The minimum distance between the Solar Reflectors and the Solar Tower [Default=6]"})
-				public static int solarReflector_minRange = 6;
+				@Comment({"The minimum distance between the Solar Reflectors and the Solar Tower [Default=12]"})
+				public static int solarReflector_minRange = 12;
 				@Comment({"The maximum distance between the Solar Reflectors and the Solar Tower **WARNING** The tower's ability to produce steam will be severely hampered if this number is small!!! [Default=48]"})
 				public static int solarReflector_maxRange = 48;
 			}

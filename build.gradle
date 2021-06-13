@@ -53,7 +53,9 @@ dependencies {
 	compileOnly "curse.maven:${common.top_version}"
 	compileOnly "curse.maven:${common.hwya_version}"
 
-
+    compileOnly "curse.maven:${common.ar_version}"
+    compileOnly "curse.maven:${common.lv_version}"
+	
 	compileOnly "curse.maven:${common.crft_version}"
 	compileOnly "curse.maven:${common.opcm_version}"
 }

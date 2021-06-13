@@ -31,12 +31,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class MultiblockSolarTower implements IMultiblock {
 	public static MultiblockSolarTower instance = new MultiblockSolarTower();
 
-	static ItemStack[][][] structure = new ItemStack[13][3][3];
+	static ItemStack[][][] structure = new ItemStack[21][3][3];
 	static {
-		for(int h = 0 ; h < 13 ; h ++) {
+		for(int h = 0 ; h < 21 ; h ++) {
 			for(int l = 0 ; l < 3 ; l ++) {
 				for(int w = 0 ; w < 3 ; w ++) {
-					if (((h == 2 || h == 9) && w == 1 && (l != 1)) || ((h == 4 || h == 7) && l == 1 && w == 1) || ((h == 3 || h == 8) && (w == 1)) || (h == 11 && (w != l && (w == 1 || l == 1)))) continue;
+					if (((h == 2 || h == 17) && w == 1 && (l != 1)) || ((h == 4 || h == 7 || h == 12 || h == 15) && l == 1 && w == 1) || ((h == 3 || h == 8 || h == 9 || h == 10 || h == 11 || h == 16) && (w == 1)) || (h == 19 && (w != l && (w == 1 || l == 1)))) continue;
 					if (h == 0) {
 						structure[h][l][w] = new ItemStack(IEContent.blockStoneDecoration, 1, BlockTypes_StoneDecoration.CONCRETE.getMeta());
 					} else if(h == 1) {
@@ -49,16 +49,16 @@ public class MultiblockSolarTower implements IMultiblock {
 						} else {
 							structure[h][l][w] = new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
 						}
-					} else if (h < 10) {
+					} else if (h < 18) {
 						if (l == 1 & w == 1) {
 							if (h == 2) {
 								structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta());
-							} else if (h == 5 || h == 6) {
+							} else if (h == 5 || h == 6 || h == 13 || h == 14) {
 								structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
-							} else if (h == 9) {
+							} else if (h == 17) {
 								structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
 							}
-						} else if((w != 1 && l != 1) || ((h == 4 || h == 5 || h == 6 || h == 7) && w == 1)) {
+						} else if((w != 1 && l != 1) || ((h == 4 || h == 5 || h == 6 || h == 7 || h == 12 || h == 13 || h == 14 || h == 15) && w == 1)) {
 							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_FENCE.getMeta());
 						} else {
 							structure[h][l][w] = new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
@@ -69,7 +69,7 @@ public class MultiblockSolarTower implements IMultiblock {
 						} else if(((w == 1 && (l != 1)) || (w == 0 || w == 2))) {
 							structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.STEEL.getMeta());
 						} else {
-							if (h == 10 || h == 11) {
+							if (h == 18 || h == 19) {
 								structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RADIATOR.getMeta());
 							} else {
 								structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
@@ -108,10 +108,10 @@ public class MultiblockSolarTower implements IMultiblock {
 			ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
 			if(MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer).isCanceled()) return false;
 		}
-		for(int h = - 2 ; h <= 10 ; h ++) {
+		for(int h = - 2 ; h <= 18 ; h ++) {
 			for(int l = -1 ; l <= 1 ; l ++) {
 				for(int w = - 1 ; w <= 1 ; w ++) {
-					if (((h == 0 || h == 7) && w == 0 && (l != 0)) || ((h == 2 || h == 5) && l == 0 && w == 0) || ((h == 1 || h == 6) && (w == 0)) || (h == 9 && (w != l && (w == 0 || l == 0)))) continue;
+					if (((h == 0 || h == 15) && w == 0 && (l != 0)) || ((h == 2 || h == 5 || h == 10 || h == 13) && l == 0 && w == 0) || ((h == 1 || h == 6  || h == 7 || h == 8 || h == 9 || h == 14) && (w == 0)) || (h == 17 && (w != l && (w == 0 || l == 0)))) continue;
 					int ww = mirror ? - w : w;
 					BlockPos pos2 = pos.offset(side, l).offset(side.rotateY(), ww).add(0, h, 0);
 					int[] offset = new int[] {(side == EnumFacing.WEST ? - l : side == EnumFacing.EAST ? l : side == EnumFacing.NORTH ? ww : - ww), h, (side == EnumFacing.NORTH ? - l : side == EnumFacing.SOUTH ? l : side == EnumFacing.EAST ? ww : - ww)};
@@ -134,10 +134,10 @@ public class MultiblockSolarTower implements IMultiblock {
 	}
 
 	boolean structureCheck(World world, BlockPos startPos, EnumFacing dir, boolean mirror) {
-		for(int h = -2 ; h <= 10 ; h ++) {
+		for(int h = -2 ; h <= 18 ; h ++) {
 			for(int l = -1 ; l <= 1 ; l ++) {
 				for(int w = -1 ; w <= 1 ; w ++) {
-					if (((h == 0 || h == 7) && w == 0 && (l != 0)) || ((h == 2 || h == 5) && l == 0 && w == 0) || ((h == 1 || h == 6) && (w == 0)) || (h == 9 && (w != l && (w == 0 || l == 0)))) continue;
+					if (((h == 0 || h == 15) && w == 0 && (l != 0)) || ((h == 2 || h == 5 || h == 10 || h == 13) && l == 0 && w == 0) || ((h == 1 || h == 6  || h == 7 || h == 8 || h == 9 || h == 14) && (w == 0)) || (h == 17 && (w != l && (w == 0 || l == 0)))) continue;
 
 					int ww = mirror ? -w : w;
 					BlockPos pos = startPos.offset(dir, l).offset(dir.rotateY(), w).add(0, h, 0);
@@ -154,16 +154,16 @@ public class MultiblockSolarTower implements IMultiblock {
 						} else {
 							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())) return false;
 						}
-					} else if (h < 8) {
+					} else if (h < 16) {
 						if (l == 0 & ww == 0) {
 							if (h == 0) {
 								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta())) return false;
-							} else if (h == 3 || h == 4) {
+							} else if (h == 3 || h == 4 || h == 11 || h == 12) {
 								if(!Utils.isOreBlockAt(world, pos, "scaffoldingSteel")) return false;
-							} else if (h == 7) {
+							} else if (h == 15) {
 								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())) return false;
 							}
-						} else if(((ww != 0) && (l != 0)) || (( h == 2 || h == 3 || h == 4 || h == 5) && (l != 0))) {
+						} else if(((ww != 0) && (l != 0)) || (( h == 2 || h == 3 || h == 4 || h == 5 || h == 10 || h == 11 || h == 12 || h == 13) && (l != 0))) {
 							if(!Utils.isOreBlockAt(world, pos, "fenceSteel")) return false;
 						} else {
 							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDevice1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())) return false;
@@ -174,7 +174,7 @@ public class MultiblockSolarTower implements IMultiblock {
 						} else if(ww != l) {
 							if(!Utils.isOreBlockAt(world, pos, "blockSheetmetalSteel")) return false;
 						} else {
-							if (h == 8 || h == 9) {
+							if (h == 16 || h == 17) {
 								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.RADIATOR.getMeta())) return false;
 							} else {
 								if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())) return false;
@@ -193,15 +193,15 @@ public class MultiblockSolarTower implements IMultiblock {
 	}
 
 	static final IngredientStack[] materials = new IngredientStack[] {
-		new IngredientStack("scaffoldingSteel", 14),
-		new IngredientStack(new ItemStack(IEContent.blockMetalDevice1, 18, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())),
+		new IngredientStack("scaffoldingSteel", 16),
+		new IngredientStack(new ItemStack(IEContent.blockMetalDevice1, 34, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())),
 		new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta())), 
 		new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 2, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())),
 		new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 3, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta())),
 		new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 2, BlockTypes_MetalDecoration0.RADIATOR.getMeta())),
 		new IngredientStack(new ItemStack(IEContent.blockStoneDecoration, 9, BlockTypes_StoneDecoration.CONCRETE.getMeta())),
 		new IngredientStack(new ItemStack(IEContent.blockStoneDecoration, 4, BlockTypes_StoneDecoration.HEMPCRETE.getMeta())),
-		new IngredientStack("fenceSteel", 40),
+		new IngredientStack("fenceSteel", 80),
 		new IngredientStack("blockSheetmetalSteel", 8)
 	};
 
@@ -217,7 +217,7 @@ public class MultiblockSolarTower implements IMultiblock {
 
 	@Override
 	public float getManualScale() {
-		return 7;
+		return 5;
 	}
 
 	@Override

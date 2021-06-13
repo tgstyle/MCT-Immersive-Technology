@@ -88,21 +88,32 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 		double totalMirrorStrength = 0;
 		for (int x = -(solarMaxRange + 1); x <= (solarMaxRange + 1); x++) {
 			for (int z = -(solarMaxRange + 1); z <= (solarMaxRange + 1); z++) {
-				double distance = Math.sqrt(getPos().distanceSq(getPos().add(x, 0, z)));
-				if (distance > solarMinRange && distance < solarMaxRange && Utils.isBlockAt(world, getPos().add(x, 0, z), ITContent.blockMetalMultiblock, 2)) {
-					TileEntity tile = world.getTileEntity(getPos().add(x, 0, z));
-					if (tile instanceof TileEntitySolarReflectorMaster && ((TileEntitySolarReflectorMaster) tile).setTowerCollectorPosition(getPos())) {
+				double distance = Math.sqrt(this.getPos().distanceSq(this.getPos().add(x, 0, z)));
+				if (distance >= solarMinRange && distance <= solarMaxRange && Utils.isBlockAt(world, this.getPos().add(x, 0, z), ITContent.blockMetalMultiblock, 2)) {
+					TileEntity tile = world.getTileEntity(this.getPos().add(x, 0, z));
+					if (tile instanceof TileEntitySolarReflectorMaster && ((TileEntitySolarReflectorMaster) tile).setTowerCollectorPosition(this.getPos().add(0, 17, 0))) {
 						totalMirrorStrength += ((TileEntitySolarReflectorMaster) tile).getSolarCollectorStrength();
 					}
 				}
 			}
 		}
-		//Combines with light level adjustments to become 0.1x
+		//Factors that influence heat production
+		//Rain multiplier, Combines with light level adjustments to become 0.1x
 		totalMirrorStrength *= (world.isRaining() ? 0.4f : 1f);
-		if (ITCompatModule.isAdvancedRocketryLoaded)
-			totalMirrorStrength *= AdvancedRocketryHelper.getInsolation(world, getPos());
-		reflectorStrength = totalMirrorStrength;
 
+		//Insolation multiplier
+		if (ITCompatModule.isAdvancedRocketryLoaded)
+			totalMirrorStrength *= AdvancedRocketryHelper.getInsolation(world, this.getPos());
+
+		//Humidity multiplier
+		double humidityBonus = 0.05 * totalMirrorStrength * -((world.getBiome(this.getPos()).getRainfall() - 0.5)/0.5);
+		if (ITCompatModule.isAdvancedRocketryLoaded) {
+			humidityBonus *= AdvancedRocketryHelper.getWaterPartialPressureMultiplier(world, this.getPos());
+		}
+        totalMirrorStrength += humidityBonus;
+
+		//Final set
+		reflectorStrength = totalMirrorStrength;
 		return getSolarIncidenceAngleSection() != 0;
 	}
 
@@ -121,7 +132,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 		double heatLost = world.getBiomeProvider().getTemperatureAtHeight(world.getBiome(this.getPos()).getTemperature(this.getPos()), this.getPos().getY());
 		double conductionMultiplier = 1.0;
 		if(ITCompatModule.isAdvancedRocketryLoaded)
-			conductionMultiplier *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos().add(0, 11, 0));
+			conductionMultiplier *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, this.getPos().add(0, 19, 0));
 		heatLevel = Math.max((heatLevel - ((world.isRaining() ? 2 : 1 * (1/heatLost)) * heatLossMultiplier * conductionMultiplier)), 0);
 		return previousHeatLevel != heatLevel;
 	}
@@ -164,7 +175,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 	}
 
 	public void handleSounds() {
-		BlockPos center = getPos();
+		BlockPos center = this.getPos();
 		float level = (float) (heatLevel / workingHeatLevel);
 		if(level == 0) ITSoundHandler.StopSound(center);
 		else {
@@ -185,13 +196,13 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void onChunkUnload() {
-		if(!isDummy()) ITSoundHandler.StopSound(getPos());
+		if(!isDummy()) ITSoundHandler.StopSound(this.getPos());
 		super.onChunkUnload();
 	}
 
 	@Override
 	public void disassemble() {
-		BlockPos center = getPos();
+		BlockPos center = this.getPos();
 		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 		super.disassemble();
 	}
@@ -200,7 +211,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setDouble("heat", heatLevel);
 		tag.setInteger("solarIncidenceAngleSection", getSolarIncidenceAngleSection());
-		BlockPos center = getPos();
+		BlockPos center = this.getPos();
 		ImmersiveTechnology.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
 	}
 

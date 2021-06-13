@@ -13,7 +13,7 @@
 		"inventory,type=solar_tower": [{
 			"model": "immersivetech:metal_multiblock/solar_tower.obj",
 			"transform": {
-				"scale": 0.125,
+				"scale": 0.0625,
 				"rotation": [{
 					"x": 20
 				},

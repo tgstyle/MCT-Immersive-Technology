@@ -48,11 +48,22 @@ public class TileRenderSolarReflector extends TileEntitySpecialRenderer<TileEnti
 		} else {
 			GlStateManager.shadeModel(7424);
 		}
-		//GlStateManager.rotate(te.getAnimation().getAnimationRotation() + (te.getAnimation().getAnimationMomentum() * partialTicks), te.facing.getFrontOffsetX(), 0, te.facing.getFrontOffsetZ());
+		//Base rotation for both
+		GlStateManager.rotate(te.getAnimationRotations()[0], 0, 1, 0);
+		//Draw the support
 		worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 		worldRenderer.setTranslation(- .5 - blockPos.getX(), - .5 - blockPos.getY(), - .5 - blockPos.getZ());
 		worldRenderer.color(255, 255, 255, 255);
 		blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), supportModel, state, blockPos, worldRenderer, true);
+		worldRenderer.setTranslation(0.0D, 0.0D, 0.0D);
+		tessellator.draw();
+
+		//Rotation just for the mirror
+		GlStateManager.rotate(te.getAnimationRotations()[1], te.getFacing().getFrontOffsetZ(), 0, te.getFacing().getFrontOffsetX());
+		//Draw the mirror
+		worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+		worldRenderer.setTranslation(- .5 - blockPos.getX(), - .5 - blockPos.getY(), - .5 - blockPos.getZ());
+		worldRenderer.color(255, 255, 255, 255);
 		blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), mirrorModel, state1, blockPos, worldRenderer, true);
 		worldRenderer.setTranslation(0.0D, 0.0D, 0.0D);
 		tessellator.draw();
