@@ -106,7 +106,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 			totalMirrorStrength *= AdvancedRocketryHelper.getInsolation(world, this.getPos());
 
 		//Humidity multiplier
-		double humidityBonus = 0.05 * totalMirrorStrength * -((world.getBiome(this.getPos()).getRainfall() - 0.5)/0.5);
+		double humidityBonus = 0.075 * totalMirrorStrength * -((world.getBiome(this.getPos()).getRainfall() - 0.5)/0.5);
 		if (ITCompatModule.isAdvancedRocketryLoaded) {
 			humidityBonus *= AdvancedRocketryHelper.getWaterPartialPressureMultiplier(world, this.getPos());
 		}

@@ -5,19 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da67ccc4-c0d7-4fb8-8186-56945e128fdb" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/client/render/TileRenderSolarReflector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/client/render/TileRenderSolarReflector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/Config.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/multiblocks/MultiblockSolarTower.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/multiblocks/MultiblockSolarTower.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/tileentities/TileEntitySolarReflectorMaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/tileentities/TileEntitySolarReflectorMaster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/tileentities/TileEntitySolarTowerMaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/tileentities/TileEntitySolarTowerMaster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/tileentities/TileEntitySolarTowerSlave.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/tileentities/TileEntitySolarTowerSlave.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/util/compat/advancedrocketry/AdvancedRocketryHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/util/compat/advancedrocketry/AdvancedRocketryHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/blockstates/metal_multiblock_solar_tower.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/blockstates/metal_multiblock_solar_tower.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/blockstates/metal_multiblock_solar_tower_slave.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/blockstates/metal_multiblock_solar_tower_slave.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/models/block/metal_multiblock/solar_tower.obj" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/models/block/metal_multiblock/solar_tower.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/models/block/metal_multiblock/solar_tower_mirrored.obj" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/models/block/metal_multiblock/solar_tower_mirrored.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mct-immersive-technology.iws" beforeDir="false" afterPath="$PROJECT_DIR$/mct-immersive-technology.iws" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
