@@ -145,20 +145,18 @@ public class Config {
 				public static int solarTower_output_tankSize = 32000;
 				@Comment({"The heat speed multiplier applied to all Solar Tower recipes (with a single reflector) [Default=1]"})
 				public static float solarTower_speed_multiplier = 1;
-				@Comment({"The heat speed of the Solar Tower gets multiplied by this value, per Solar Reflector past the first one [Default=1.5]"})
-				public static float solarTower_solarReflector_speed_multiplier = 1.5f;
-				@Comment({"A Solar Tower can only start processing recipes once it reaches this heat level [Default=6000.0]"})
-				public static double solarTower_heat_workingLevel = 6000.0;
-				@Comment({"How fast the Solar Tower cools down per tick when turned off or at night [Default=1]"})
-				public static int solarTower_heat_lossPerTick = 1;
+				@Comment({"A Solar Tower can only start processing recipes once it reaches this heat level [Default=12000.0]"})
+				public static double solarTower_heat_workingLevel = 12000.0;
+				@Comment({"How fast the Solar Tower cools down per tick when turned off or at night [Default=1.0]"})
+				public static double solarTower_heat_loss_multiplier = 1.0;
 				@Comment({"How fast the the Solar Tower loses progress in ticks when the heat drops below processing heat level [Default=1]"})
 				public static int solarTower_progress_lossInTicks = 1;
 			}
 			public static class SolarReflector {
-				@Comment({"The minimum distance between the Solar Reflectors and the Solar Tower [Default=5]"})
-				public static int solarReflector_minRange = 5;
-				@Comment({"The maximum distance between the Solar Reflectors and the Solar Tower [Default=10]"})
-				public static int solarReflector_maxRange = 10;
+				@Comment({"The minimum distance between the Solar Reflectors and the Solar Tower [Default=6]"})
+				public static int solarReflector_minRange = 6;
+				@Comment({"The maximum distance between the Solar Reflectors and the Solar Tower **WARNING** The tower's ability to produce steam will be severely hampered if this number is small!!! [Default=48]"})
+				public static int solarReflector_maxRange = 48;
 			}
 			public static class SteamTurbine {
 				@Comment({"The capacity of the input tank for the Steam Turbine [Default=10000]"})

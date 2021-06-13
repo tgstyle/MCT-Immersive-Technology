@@ -47,9 +47,9 @@ public class SolarTowerDriver extends DriverSidedTileEntity {
 			super(world, pos, TileEntitySolarTowerMaster.class);
 		}
 
-		@Callback(doc = "function():number -- get the number of reflectors pointing at the tower")
+		@Callback(doc = "function():number -- get the total strength of the reflectors pointing at the tower, an increase by 1 is the strength of one fully uncovered reflector")
 		public Object[] getReflectors(Context context, Arguments args) {
-			return new Object[] {getTileEntity().reflectors};
+			return new Object[] {getTileEntity().reflectorStrength};
 		}
 
 		@Callback(doc = "function():table -- get information about the input tank")

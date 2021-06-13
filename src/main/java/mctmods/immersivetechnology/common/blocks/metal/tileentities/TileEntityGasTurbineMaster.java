@@ -15,6 +15,8 @@ import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockGas
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITFluxStorage;
 import mctmods.immersivetechnology.common.util.ITSounds;
+import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
+import mctmods.immersivetechnology.common.util.compat.advancedrocketry.AdvancedRocketryHelper;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
@@ -166,7 +168,10 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     public boolean canIgnite() {
-        return sparkplugConsumption <= sparkplugStorage.getEnergyStored();
+        boolean canFuelCombust = true;
+        if (ITCompatModule.isAdvancedRocketryLoaded)
+            canFuelCombust = AdvancedRocketryHelper.isAtmosphereSuitableForCombustion(world, ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, 0, -1, facing, mirrored));
+        return sparkplugConsumption <= sparkplugStorage.getEnergyStored() && canFuelCombust;
     }
 
     @Override

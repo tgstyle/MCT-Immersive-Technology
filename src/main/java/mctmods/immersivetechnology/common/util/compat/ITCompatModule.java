@@ -25,6 +25,8 @@ public abstract class ITCompatModule {
 	public static Consumer<Object> jeiAddFunc = o -> {};
 	public static Consumer<Object> jeiRemoveFunc = o -> {};
 
+	public static boolean isAdvancedRocketryLoaded = false;
+
 	static {
 		moduleClasses.put("crafttweaker", CraftTweakerHelper.class);
 		moduleClasses.put("theoneprobe", OneProbeHelper.class);
@@ -43,6 +45,7 @@ public abstract class ITCompatModule {
 				}
 			}
 		}
+		if(Loader.isModLoaded("advancedrocketry")) isAdvancedRocketryLoaded = true;
 	}
 
 	public static void doModulesInit() {

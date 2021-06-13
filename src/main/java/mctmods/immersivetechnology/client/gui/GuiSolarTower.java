@@ -33,8 +33,8 @@ public class GuiSolarTower extends GuiIEContainerBase {
 		if(mx >= guiLeft + 16 && mx < guiLeft + 58 && my >= guiTop + 9 && my < guiTop + 17) {
 			DecimalFormat df = new DecimalFormat("#.##");
 			double heatLevel = Double.parseDouble(df.format(tile.heatLevel));
-			tooltip.add("Heat Level");
-			tooltip.add(TextFormatting.RED + "" + heatLevel + "/" + workingHeatLevel);
+			tooltip.add("Temperature");
+			tooltip.add(TextFormatting.RED + "" + ((heatLevel/40) + 30) + "/" +  ((workingHeatLevel/40) + 30) + "C");
 		}
 		if(!tooltip.isEmpty()) {
 			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
@@ -52,16 +52,16 @@ public class GuiSolarTower extends GuiIEContainerBase {
 
 		this.drawTexturedModalRect(guiLeft + 16, guiTop + 9, 176, 0, heatBarSize, 9);
 
-		if(tile.reflectors[0] > 0) {
+		if(tile.solarIncidenceAngleSection > 0) {
 			this.drawTexturedModalRect(guiLeft + 32, guiTop + 24, 198, 31, 10, 10);
 		}
-		if(tile.reflectors[1] > 0) {
+		if(tile.solarIncidenceAngleSection > 1) {
 			this.drawTexturedModalRect(guiLeft + 16, guiTop + 40, 198, 31, 10, 10);
 		}
-		if(tile.reflectors[2] > 0) {
+		if(tile.solarIncidenceAngleSection > 3) {
 			this.drawTexturedModalRect(guiLeft + 32, guiTop + 56, 198, 31, 10, 10);
 		}
-		if(tile.reflectors[3] > 0) {
+		if(tile.solarIncidenceAngleSection > 2) {
 			this.drawTexturedModalRect(guiLeft + 48, guiTop + 40, 198, 31, 10, 10);
 		}
 		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 102, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_solar_tower.png", null);

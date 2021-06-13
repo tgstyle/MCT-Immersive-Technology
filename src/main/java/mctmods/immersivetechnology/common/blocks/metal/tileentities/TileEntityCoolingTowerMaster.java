@@ -12,6 +12,8 @@ import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockCoo
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ParticleSmokeCustomSize;
+import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
+import mctmods.immersivetechnology.common.util.compat.advancedrocketry.AdvancedRocketryHelper;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
@@ -145,6 +147,8 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
                     @SuppressWarnings("unchecked")
 					MultiblockProcessInMachine<CoolingTowerRecipe> process =
                             new MultiblockProcessInMachine<>(recipe).setInputTanks(new int[]{0, 1});
+                    if(ITCompatModule.isAdvancedRocketryLoaded)
+                        process.maxTicks *= 1/AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos());
                     if(this.addProcessToQueue(process, true)) {
                         this.addProcessToQueue(process, false);
                         update = true;

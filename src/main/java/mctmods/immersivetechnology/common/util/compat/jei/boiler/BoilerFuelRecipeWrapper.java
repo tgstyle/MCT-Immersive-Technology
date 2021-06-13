@@ -27,9 +27,9 @@ public class BoilerFuelRecipeWrapper extends MultiblockRecipeWrapper {
 		minecraft.fontRenderer.drawString(text, 80, 10, 0x8B8B8B, true);
 		text = TranslationKey.KEYWORD_GENERATE.text();
 		minecraft.fontRenderer.drawString(text, 66, 21, 0x8B8B8B, true);
-		text = TranslationKey.GUI_BOILER_HEAT_PER_TICK.format(((BoilerFuelRecipe) recipe).getHeat());
+		text = TranslationKey.GUI_BOILER_HEAT_PER_TICK.format(((BoilerFuelRecipe) recipe).getHeat()/40);
 		minecraft.fontRenderer.drawString(text, 66, 31, 0x8B8B8B, true);
-		text = TranslationKey.GUI_BOILER_TOTAL_HEAT.format(((BoilerFuelRecipe) recipe).getHeat() * recipe.getTotalProcessTime());
+		text = TranslationKey.GUI_BOILER_TOTAL_HEAT.format(((BoilerFuelRecipe) recipe).getHeat() * recipe.getTotalProcessTime()/40);
 		minecraft.fontRenderer.drawString(text, 66, 41, 0x8B8B8B, true);
 	}
 
