@@ -51,7 +51,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private static final int speedGainPerTick = GasTurbine.gasTurbine_speed_gainPerTick;
     private static final int speedLossPerTick = GasTurbine.gasTurbine_speed_lossPerTick;
     private static final int inputTankSize = GasTurbine.gasTurbine_input_tankSize;
-    private static final int outputTankSize = GasTurbine.gasTurbine_input_tankSize;
+    private static final int outputTankSize = GasTurbine.gasTurbine_output_tankSize;
     public static final int electricStarterConsumption = GasTurbine.gasTurbine_electric_starter_consumption;
     public static final int sparkplugConsumption = GasTurbine.gasTurbine_sparkplug_consumption;
     public static final int electricStarterSize = GasTurbine.gasTurbine_electric_starter_size;

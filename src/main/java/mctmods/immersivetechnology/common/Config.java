@@ -49,10 +49,10 @@ public class Config {
 				public static boolean enable_heatExchanger = true;
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the High Pressure Steam Turbine Multiblock structures be built ? [Default=false]"})
 				public static boolean enable_highPressureSteamTurbine = false;
-				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Electrolytic Crucible Battery Multiblock structures be built ? [Default=true]"})
-				public static boolean enable_electrolyticCrucibleBattery = true;
-				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Melting Crucible Multiblock structures be built ? [Default=true]"})
-				public static boolean enable_meltingCrucible = true;
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Electrolytic Crucible Battery Multiblock structures be built ? [Default=false]"})
+				public static boolean enable_electrolyticCrucibleBattery = false;
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Melting Crucible Multiblock structures be built ? [Default=false]"})
+				public static boolean enable_meltingCrucible = false;
 			}
 			public static class Recipes {
 				@Comment({"Should default Steam Turbine recipes be registered ? [Default=true]"})
@@ -69,12 +69,12 @@ public class Config {
 				public static boolean register_gas_turbine_recipes = true;
 				@Comment({"Should default Heat Exchanger recipes be registered ? [Default=true]"})
 				public static boolean register_heat_exchanger_recipes = true;
-				@Comment({"Should default High Pressure Steam Turbine recipes be registered ? [Default=true]"})
-				public static boolean register_highPressureSteamTurbine_recipes = true;
-				@Comment({"Should default Electrolytic Crucible Battery recipes be registered ? [Default=true]"})
-				public static boolean register_electrolyticCrucibleBattery_recipes = true;
-				@Comment({"Should default Melting Crucible recipes be registered ? [Default=true]"})
-				public static boolean register_meltingCrucible_recipes = true;
+				@Comment({"Should default High Pressure Steam Turbine recipes be registered ? [Default=false]"})
+				public static boolean register_highPressureSteamTurbine_recipes = false;
+				@Comment({"Should default Electrolytic Crucible Battery recipes be registered ? [Default=false]"})
+				public static boolean register_electrolyticCrucibleBattery_recipes = false;
+				@Comment({"Should default Melting Crucible recipes be registered ? [Default=false]"})
+				public static boolean register_meltingCrucible_recipes = false;
 			}
 			public static class AdvancedCokeOven {
 				@Comment({"The capacity of the tank for the Advanced Coke Oven [Default=24000]"})
