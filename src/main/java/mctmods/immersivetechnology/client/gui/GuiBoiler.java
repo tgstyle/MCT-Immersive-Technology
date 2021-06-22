@@ -32,7 +32,7 @@ public class GuiBoiler extends GuiIEContainerBase {
 		ClientUtils.handleGuiTank(tile.tanks[2], guiLeft + 123, guiTop + 20, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_boiler.png", tooltip);
 		if(mx >= guiLeft + 100 && mx < guiLeft + 141 && my >= guiTop + 5 && my < guiTop + 14) {
 			tooltip.add("Temperature");
-			tooltip.add(TextFormatting.RED + "" + ((tile.heatLevel/40) + 30) + "/" + ((workingHeatLevel/40) + 30) + "C");
+			tooltip.add(TextFormatting.RED + "" + ((tile.heatLevel/20) + 30) + "/" + ((workingHeatLevel/20) + 30) + "C");
 		}
 		if(!tooltip.isEmpty()) {
 			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, - 1);

@@ -272,11 +272,9 @@ public class ClientProxy extends CommonProxy {
 			ManualHelper.addEntry("gasTurbine", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "gasTurbine0", MultiblockGasTurbine.instance), new ManualPages.Text(ManualHelper.getManual(), "gasTurbine1"), new ManualPages.Text(ManualHelper.getManual(), "gasTurbine2"), new ManualPages.Text(ManualHelper.getManual(), "gasTurbine3"));
 		}
 
-		ManualHelper.addEntry("fluidValve", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "fluidValve0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.FLUID_VALVE.getMeta())));
-		ManualHelper.addEntry("loadController", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "loadController0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.LOAD_CONTROLLER.getMeta())));
+		ManualHelper.addEntry("controlBlocks", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "controlBlocks0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.STACK_LIMITER.getMeta())), new ManualPages.Crafting(ManualHelper.getManual(), "controlBlocks1", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.LOAD_CONTROLLER.getMeta())), new ManualPages.Crafting(ManualHelper.getManual(), "controlBlocks2", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.FLUID_VALVE.getMeta())));
 		ManualHelper.addEntry("redstone", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "redstone0", new ItemStack(ITContent.blockConnectors, 1, BlockType_Connectors.CONNECTORS_TIMER.getMeta())));
 		ManualHelper.addEntry("openBarrel", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "openBarrel0", new ItemStack(ITContent.blockMetalBarrel, 1, BlockType_MetalBarrel.BARREL_OPEN.getMeta())));
-		ManualHelper.addEntry("stackLimiter", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "stackLimiter0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.STACK_LIMITER.getMeta())));
 		ManualHelper.addEntry("steelBarrel", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "steelBarrel0", new ItemStack(ITContent.blockMetalBarrel, 2, BlockType_MetalBarrel.BARREL_STEEL.getMeta())));
 		ManualHelper.addEntry("steelTank", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "steelTank0", MultiblockSteelSheetmetalTank.instance), new ManualPages.Text(ManualHelper.getManual(), "steelTank1"));
 		if (Multiblock.enable_coolingTower)

@@ -91,6 +91,7 @@ public class ITContent {
 	public static BlockITFluid blockFluidExhaustSteam;
 	public static BlockITFluid blockFlueGas;
 	public static BlockITFluid blockFluidHighPressureSteam;
+	public static BlockITFluid blockFluidHotWater;
 
 	/*ITEMS*/
 	public static ArrayList<Item> registeredITItems = new ArrayList<Item>();
@@ -104,6 +105,7 @@ public class ITContent {
 	public static Fluid fluidExhaustSteam;
 	public static Fluid fluidFlueGas;
 	public static Fluid fluidHighPressureSteam;
+	public static Fluid fluidHotWater;
 
 	public static ArrayList<Fluid> normallyPressurized = new ArrayList<>();
 
@@ -131,11 +133,12 @@ public class ITContent {
 		blockWoodenCrate = new BlockWoodenCrate();
 
 		/*FLUIDS*/
-		fluidSteam = new FluidColored("steam", 0x3E444F, -100, 500, true);
-		fluidExhaustSteam = new FluidColored("exhauststeam", 0xC1C1C5, -100, 500, true);
+		fluidSteam = new FluidColored("steam", 0x3E444F, 1000, -100, 500, true);
+		fluidExhaustSteam = new FluidColored("exhauststeam", 0xC1C1C5, 500, -100, 500, true);
 		fluidDistWater = new FluidColored("distwater", 0x7079E0, 1000, 1000, false);
 		fluidFlueGas = new FluidColored("fluegas", 0xFFFFFF, -100, 500, true);
-		fluidHighPressureSteam = new FluidColored("highpressuresteam", 0x606978, -300, 500, true);
+		fluidHighPressureSteam = new FluidColored("highpressuresteam", 0x606978, 1500, -300, 500, true);
+		fluidHotWater = new FluidColored("hotspringwater", 0x0dffff, 350, 1000, 1000, false);
 
 		/*FLUID BLOCKS*/
 		blockFluidSteam = new BlockITFluid("fluidSteam", fluidSteam, Material.WATER);
@@ -143,6 +146,7 @@ public class ITContent {
 		blockFluidDistWater = new BlockITFluid("fluidDistWater", fluidDistWater, Material.WATER);
 		blockFlueGas = new BlockITFluid("fluidFlueGas", fluidFlueGas, Material.WATER);
 		blockFluidHighPressureSteam = new BlockITFluid("fluidHighPressureSteam", fluidHighPressureSteam, Material.WATER);
+		blockFluidHotWater = new BlockITFluid("fluidHotWater", fluidHotWater, Material.WATER);
 
 		/*ITEMS*/
 		itemMaterial = new ItemITBase("material", 64, "salt");
@@ -323,23 +327,23 @@ public class ITContent {
 			if(FluidRegistry.getFluid("kerosene") != null) GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("kerosene"), 150), 10);
 		}
 		if(Multiblock.enable_coolingTower && Recipes.register_cooling_tower_recipes) {
-			CoolingTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("water"), 750), new FluidStack(FluidRegistry.getFluid("water"), 750), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 900), new FluidStack(FluidRegistry.getFluid("water"), 1000), 3);
-			CoolingTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 700), new FluidStack(FluidRegistry.getFluid("distwater"), 700), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 900), new FluidStack(FluidRegistry.getFluid("distwater"), 1000), 3);
+			CoolingTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("hotspringwater"), 8100), new FluidStack(FluidRegistry.getFluid("water"), 900), 3);
 		}
 		if(Multiblock.enable_heatExchanger && Recipes.register_heat_exchanger_recipes) {
-			HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 450), null, new FluidStack(FluidRegistry.WATER, 250), new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), 64, 10);
-			HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), null, new FluidStack(FluidRegistry.getFluid("distwater"), 250), new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), 64, 10);
+			HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 450), null, new FluidStack(FluidRegistry.WATER, 250), new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), 640, 10);
+			HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), null, new FluidStack(FluidRegistry.getFluid("distwater"), 250), new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), 640, 10);
+			HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 250),  new FluidStack(FluidRegistry.getFluid("hotspringwater"), 4500), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 500), new FluidStack(FluidRegistry.getFluid("water"), 4500), 160, 5);
 		}
 		if(Multiblock.enable_highPressureSteamTurbine && Recipes.register_highPressureSteamTurbine_recipes) {
 			HighPressureSteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("steam"), 100), new FluidStack(FluidRegistry.getFluid("highpressuresteam"), 100), 1);
 		}
 		if(Multiblock.enable_electrolyticCrucibleBattery && Recipes.register_electrolyticCrucibleBattery_recipes) {
-			if(FluidRegistry.isFluidRegistered("hydrogen") && FluidRegistry.isFluidRegistered("oxygen")) ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("hydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("oxygen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 500), 2048, 250);
-			else if(FluidRegistry.isFluidRegistered("liquidhydrogen") && FluidRegistry.isFluidRegistered("liquidoxygen")) ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("liquidhydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("liquidoxgyen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 1000), 2048, 250);
-			else if(FluidRegistry.isFluidRegistered("fluidhydrogen") && FluidRegistry.isFluidRegistered("fluidoxygen")) ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("fluidhydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("fluidoxygen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 500), 2048, 250);
+			if(FluidRegistry.isFluidRegistered("hydrogen") && FluidRegistry.isFluidRegistered("oxygen")) ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("hydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("oxygen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 500), 512000, 250);
+			else if(FluidRegistry.isFluidRegistered("liquidhydrogen") && FluidRegistry.isFluidRegistered("liquidoxygen")) ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("liquidhydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("liquidoxgyen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 1000), 512000, 250);
+			else if(FluidRegistry.isFluidRegistered("fluidhydrogen") && FluidRegistry.isFluidRegistered("fluidoxygen")) ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("fluidhydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("fluidoxygen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 500), 512000, 250);
 		}
 		if(Multiblock.enable_meltingCrucible && Recipes.register_meltingCrucible_recipes) {
-			MeltingCrucibleRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("lava"), 1000), new OreIngredient("cobblestone"), 512, 80);
+			MeltingCrucibleRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("lava"), 1000), new OreIngredient("cobblestone"), 40960, 80);
 		}
 	}
 

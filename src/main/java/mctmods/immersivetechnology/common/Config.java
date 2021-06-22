@@ -87,10 +87,10 @@ public class Config {
 				public static float advancedCokeOven_preheater_speed_multiplier = 1;
 			}
 			public static class CoolingTower {
-				@Comment({"The capacity of the input tanks for the Cooling Tower [Default=10000]"})
-				public static int coolingTower_input_tankSize = 10000;
-				@Comment({"The capacity of the output tanks for the Cooling Tower [Default=10000]"})
-				public static int coolingTower_output_tankSize = 10000;
+				@Comment({"The capacity of the input tanks for the Cooling Tower [Default=20000]"})
+				public static int coolingTower_input_tankSize = 20000;
+				@Comment({"The capacity of the output tanks for the Cooling Tower [Default=20000]"})
+				public static int coolingTower_output_tankSize = 20000;
 			}
 			public static class HeatExchanger {
 				@Comment({"The capacity of the input tanks for the Heat Exchanger [Default=10000]"})

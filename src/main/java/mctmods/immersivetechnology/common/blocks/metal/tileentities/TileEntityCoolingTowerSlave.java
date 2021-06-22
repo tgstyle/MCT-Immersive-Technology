@@ -117,7 +117,7 @@ public class TileEntityCoolingTowerSlave extends TileEntityMultiblockNewSystem<T
 
     @Override
     public int[] getOutputTanks() {
-        return new int[] {2, 3};
+        return new int[] {2, 3, 4};
     }
 
     @Override

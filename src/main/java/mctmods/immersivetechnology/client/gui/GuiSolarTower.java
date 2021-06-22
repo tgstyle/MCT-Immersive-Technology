@@ -34,7 +34,7 @@ public class GuiSolarTower extends GuiIEContainerBase {
 			DecimalFormat df = new DecimalFormat("#.##");
 			double heatLevel = Double.parseDouble(df.format(tile.heatLevel));
 			tooltip.add("Temperature");
-			tooltip.add(TextFormatting.RED + "" + ((heatLevel/40) + 30) + "/" +  ((workingHeatLevel/40) + 30) + "C");
+			tooltip.add(TextFormatting.RED + "" + ((heatLevel/20) + 30) + "/" +  ((workingHeatLevel/20) + 30) + "C");
 		}
 		if(!tooltip.isEmpty()) {
 			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);

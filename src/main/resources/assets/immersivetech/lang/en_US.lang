@@ -22,6 +22,7 @@ fluid.steam=Steam
 fluid.exhauststeam=Exhaust Steam
 fluid.fluegas=Flue Gas
 fluid.highpressuresteam=High Pressure Steam
+fluid.hotspringwater=Hot Water
 
 
 #KEYWORDS
@@ -188,14 +189,6 @@ ie.manual.entry.distiller.subtext=Clearer than water
 ie.manual.entry.distiller0=The Distiller is a multiblock machine that turns Water in to Distilled Water and Salt.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron.
 ie.manual.entry.distiller1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>Water can be input into the Distiller via a hatch on the right that is marked with a blue dot. The hatch with the orange dot on the left is the fluid output and the other hatch on the back serves as a item output.<br>It needs energy to produce Distilled Water and Salt.<br>One bucket of Water produces 500 mB of Distilled Water.
 
-ie.manual.entry.fluidValve.name=Fluid Valve
-ie.manual.entry.fluidValve.subtext=I only need a drop
-ie.manual.entry.fluidValve0=The §6Fluid Valve§r can limit fluids moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
-
-ie.manual.entry.loadController.name=Load Controller
-ie.manual.entry.loadController.subtext=Energy Underload
-ie.manual.entry.loadController0=The §6Load Controller§r can limit energy moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
-
 ie.manual.entry.openBarrel.name=Open Metal Barrel
 ie.manual.entry.openBarrel.subtext=Open to the Sun or Clouds?
 ie.manual.entry.openBarrel0=The §6Open Metal Barrel§r is a single block tank like the Metal Barrel but with an open top. Fluid can be put in by hand. The Top is Input only and the Bottom is Output only. Leave it out in the Rain and watch it fill! In a Thunderstom Twice as fast! However, don't leave it out in warm environments, water just may evaporate.
@@ -207,9 +200,11 @@ ie.manual.entry.solarTower1=The Solar Tower can produce Steam from Water and <li
 ie.manual.entry.solarTower2=The Solar Reflector is a multiblock structure that reflects the light of the Sun to the center of the Solar Tower.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Silver Block. 
 ie.manual.entry.solarTower3=Reflector distance from the Solar Tower must be between <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> blocks. The reflector does not work at night or during thunderstorms, and has reduced efficiency during rainstorms. Efficiency is also reduced at dawn and dusk when the sunlight's angle of incidence is too low to be easily collected, and by high ambient humidity. Full reflector efficiency depends on full sky access. If §lAdvanced Rocketry§r exists, the reflector strength will vary with the amount of received sunlight per planet.
 
-ie.manual.entry.stackLimiter.name=Stack Limiter
-ie.manual.entry.stackLimiter.subtext=Only need a couple items
-ie.manual.entry.stackLimiter0=The §6Stack Limiter§r can limit items moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
+ie.manual.entry.controlBlocks.name=Limiter and Control Devices
+ie.manual.entry.controlBlocks.subtext=Throughput is overrated
+ie.manual.entry.controlBlocks0=The §6Stack Limiter§r can limit items moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
+ie.manual.entry.controlBlocks1=The §6Load Controller§r can limit energy moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
+ie.manual.entry.controlBlocks2=The §6Fluid Valve§r can limit fluids moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
 
 ie.manual.entry.steamTurbine.name=Steam Turbine
 ie.manual.entry.steamTurbine.subtext=Boiling breath
@@ -245,8 +240,8 @@ ie.manual.entry.redstone0=The §6Redstone Timer§r outputs a short redstone sign
 
 ie.manual.entry.coolingTower.name=Cooling Tower
 ie.manual.entry.coolingTower.subtext=Keep it cool, man!
-ie.manual.entry.coolingTower0=The Cooling Tower is a multiblock structure that converts exhaust steam back into water. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the Heavy Engineering block.
-ie.manual.entry.coolingTower1=Exhaust Steam goes into the block to the left of the Heavy Engineering block (side with red gauge indicator) while water or distilled water goes into the right one (side with blue gauge indicator).
+ie.manual.entry.coolingTower0=The Cooling Tower is a multiblock structure that converts exhaust steam back into water. The structure is built as shown above and formed by using the Engineer's Hammer on the Heavy Engineering block.
+ie.manual.entry.coolingTower1=Warm fluids go into the side with the red indicator, and cold fluids go into the side with the blue indicator. If §lAdvanced Rocketry§r exists, the cooling tower's processing time depends on the ability to vent heat to the atmosphere, dependent upon atmosphere pressure, and the cooling tower will shut off if in vacuum if it would vent fluid to the atmosphere only to lose it to instant vaporization or if it would vent into an artificial atmosphere.
 
 ie.manual.entry.heatExchanger.name=Heat Exchanger
 ie.manual.entry.heatExchanger.subtext=Entropy says hi

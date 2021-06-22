@@ -29,6 +29,11 @@
 			"custom": {
 				"fluid": "highpressuresteam"
 			}
+		}],
+		"hotspringwater": [{
+			"custom": {
+				"fluid": "hotspringwater"
+			}
 		}]
 	}
 }

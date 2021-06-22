@@ -40,6 +40,20 @@ public class FluidColored extends Fluid {
 		}
 	}
 
+	public FluidColored(String name, int color, int temp, int density, int viscosity, boolean gaseous) {
+		super(name, ICON_Still, ICON_Flowing);
+		if(FluidRegistry.isFluidRegistered(name) == false) {
+			this.color = color;
+			this.setTemperature(temp);
+			this.setDensity(density);
+			this.setViscosity(viscosity);
+			this.setGaseous(gaseous);
+			FluidRegistry.registerFluid(this);
+			FluidRegistry.addBucketForFluid(this);
+			ITLogger.info("Added fluid: " + ImmersiveTechnology.MODID + ":" + name);
+		}
+	}
+
 	@Override
 	public int getColor() {
 		return color|0xff000000;
