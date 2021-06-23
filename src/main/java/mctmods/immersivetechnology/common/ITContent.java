@@ -38,7 +38,6 @@ import mctmods.immersivetechnology.common.util.ITLogger;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -91,7 +90,7 @@ public class ITContent {
 	public static BlockITFluid blockFluidExhaustSteam;
 	public static BlockITFluid blockFlueGas;
 	public static BlockITFluid blockFluidHighPressureSteam;
-	public static BlockITFluid blockFluidHotWater;
+	public static BlockITFluid blockFluidHotSpringWater;
 
 	/*ITEMS*/
 	public static ArrayList<Item> registeredITItems = new ArrayList<Item>();
@@ -105,7 +104,7 @@ public class ITContent {
 	public static Fluid fluidExhaustSteam;
 	public static Fluid fluidFlueGas;
 	public static Fluid fluidHighPressureSteam;
-	public static Fluid fluidHotWater;
+	public static Fluid fluidHotSpringWater;
 
 	public static ArrayList<Fluid> normallyPressurized = new ArrayList<>();
 
@@ -138,7 +137,7 @@ public class ITContent {
 		fluidDistWater = new FluidColored("distwater", 0x7079E0, 1000, 1000, false);
 		fluidFlueGas = new FluidColored("fluegas", 0xFFFFFF, -100, 500, true);
 		fluidHighPressureSteam = new FluidColored("highpressuresteam", 0x606978, 1500, -300, 500, true);
-		fluidHotWater = new FluidColored("hot_spring_water", 0x0dffff, 350, 1000, 1000, false);
+		fluidHotSpringWater = new FluidColored("hot_spring_water", 0x0dffff, 350, 1000, 1000, false);
 
 		/*FLUID BLOCKS*/
 		blockFluidSteam = new BlockITFluid("fluidSteam", fluidSteam, Material.WATER);
@@ -146,7 +145,7 @@ public class ITContent {
 		blockFluidDistWater = new BlockITFluid("fluidDistWater", fluidDistWater, Material.WATER);
 		blockFlueGas = new BlockITFluid("fluidFlueGas", fluidFlueGas, Material.WATER);
 		blockFluidHighPressureSteam = new BlockITFluid("fluidHighPressureSteam", fluidHighPressureSteam, Material.WATER);
-		blockFluidHotWater = new BlockITFluid("fluidHotWater", fluidHotWater, Material.WATER);
+		blockFluidHotSpringWater = new BlockITFluid("fluidHotWater", fluidHotSpringWater, Material.WATER);
 
 		/*ITEMS*/
 		itemMaterial = new ItemITBase("material", 64, "salt");
