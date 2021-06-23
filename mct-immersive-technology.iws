@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da67ccc4-c0d7-4fb8-8186-56945e128fdb" name="Default Changelist" comment="" />
+    <list default="true" id="da67ccc4-c0d7-4fb8-8186-56945e128fdb" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/ITContent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/ITContent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/blockstates/fluid_block.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/blockstates/fluid_block.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/lang/en_US.lang" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/lang/en_US.lang" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
