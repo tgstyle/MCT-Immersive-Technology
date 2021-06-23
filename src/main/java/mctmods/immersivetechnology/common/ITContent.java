@@ -138,7 +138,7 @@ public class ITContent {
 		fluidDistWater = new FluidColored("distwater", 0x7079E0, 1000, 1000, false);
 		fluidFlueGas = new FluidColored("fluegas", 0xFFFFFF, -100, 500, true);
 		fluidHighPressureSteam = new FluidColored("highpressuresteam", 0x606978, 1500, -300, 500, true);
-		fluidHotWater = new FluidColored("hotspringwater", 0x0dffff, 350, 1000, 1000, false);
+		fluidHotWater = new FluidColored("hot_spring_water", 0x0dffff, 350, 1000, 1000, false);
 
 		/*FLUID BLOCKS*/
 		blockFluidSteam = new BlockITFluid("fluidSteam", fluidSteam, Material.WATER);
@@ -327,12 +327,12 @@ public class ITContent {
 			if(FluidRegistry.getFluid("kerosene") != null) GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("kerosene"), 150), 10);
 		}
 		if(Multiblock.enable_coolingTower && Recipes.register_cooling_tower_recipes) {
-			CoolingTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("hotspringwater"), 8100), new FluidStack(FluidRegistry.getFluid("water"), 900), 3);
+			CoolingTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("hot_spring_water"), 8100), new FluidStack(FluidRegistry.getFluid("water"), 900), 3);
 		}
 		if(Multiblock.enable_heatExchanger && Recipes.register_heat_exchanger_recipes) {
 			HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 450), null, new FluidStack(FluidRegistry.WATER, 250), new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), 640, 10);
 			HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), null, new FluidStack(FluidRegistry.getFluid("distwater"), 250), new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), 640, 10);
-			HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 250),  new FluidStack(FluidRegistry.getFluid("hotspringwater"), 4500), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 500), new FluidStack(FluidRegistry.getFluid("water"), 4500), 160, 5);
+			HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 250),  new FluidStack(FluidRegistry.getFluid("hot_spring_water"), 4500), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 500), new FluidStack(FluidRegistry.getFluid("water"), 4500), 160, 5);
 		}
 		if(Multiblock.enable_highPressureSteamTurbine && Recipes.register_highPressureSteamTurbine_recipes) {
 			HighPressureSteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("steam"), 100), new FluidStack(FluidRegistry.getFluid("highpressuresteam"), 100), 1);

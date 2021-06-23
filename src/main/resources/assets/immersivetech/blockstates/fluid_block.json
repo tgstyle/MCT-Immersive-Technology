@@ -30,9 +30,9 @@
 				"fluid": "highpressuresteam"
 			}
 		}],
-		"hotspringwater": [{
+		"hot_spring_water": [{
 			"custom": {
-				"fluid": "hotspringwater"
+				"fluid": "hot_spring_water"
 			}
 		}]
 	}
