@@ -56,7 +56,7 @@ public class CoolingTower {
     private static class Remove implements IAction {
         private final FluidStack inputFluid1;
         private final FluidStack inputFluid2;
-        ArrayList<CoolingTowerRecipe> removedRecipes = new ArrayList<CoolingTowerRecipe>();
+        ArrayList<CoolingTowerRecipe> removedRecipes = new ArrayList<>();
 
         public Remove(FluidStack inputFluid1, FluidStack inputFluid2) {
             this.inputFluid1 = inputFluid1;

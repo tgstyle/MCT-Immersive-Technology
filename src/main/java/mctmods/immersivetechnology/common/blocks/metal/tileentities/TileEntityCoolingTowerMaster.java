@@ -204,19 +204,32 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     private void InitializePoIs() {
         for(PoIJSONSchema poi : MultiblockCoolingTower.instance.pointsOfInterest) {
-            if(poi.name.equals("input0")) input0 = new PoICache(facing, poi, mirrored);
-            else if(poi.name.equals("input1")) input1 = new PoICache(facing, poi, mirrored);
-            else if(poi.name.equals("output0")) {
-                output0 = new PoICache(facing, poi, mirrored);
-                output0Front = getBlockPosForPos(output0.position).offset(output0.facing);
-            } else if(poi.name.equals("output1")) {
-                output1 = new PoICache(facing, poi, mirrored);
-                output1Front = getBlockPosForPos(output1.position).offset(output1.facing);
-            } else if(poi.name.equals("output2")) {
-                output2 = new PoICache(facing, poi, mirrored);
-                output2Front = getBlockPosForPos(output2.position).offset(output2.facing);
-            } else if(poi.name.equals("particle")) particleOrigin = getBlockPosForPos(poi.position);
-            else if(poi.name.equals("sound")) soundOrigin = getBlockPosForPos(poi.position);
+            switch (poi.name) {
+                case "input0":
+                    input0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "input1":
+                    input1 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "output0":
+                    output0 = new PoICache(facing, poi, mirrored);
+                    output0Front = getBlockPosForPos(output0.position).offset(output0.facing);
+                    break;
+                case "output1":
+                    output1 = new PoICache(facing, poi, mirrored);
+                    output1Front = getBlockPosForPos(output1.position).offset(output1.facing);
+                    break;
+                case "output2":
+                    output2 = new PoICache(facing, poi, mirrored);
+                    output2Front = getBlockPosForPos(output2.position).offset(output2.facing);
+                    break;
+                case "particle":
+                    particleOrigin = getBlockPosForPos(poi.position);
+                    break;
+                case "sound":
+                    soundOrigin = getBlockPosForPos(poi.position);
+                    break;
+            }
         }
     }
 

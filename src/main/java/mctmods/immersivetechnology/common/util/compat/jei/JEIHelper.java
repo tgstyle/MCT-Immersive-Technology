@@ -13,10 +13,10 @@ import mctmods.immersivetechnology.common.util.compat.jei.distiller.DistillerRec
 import mctmods.immersivetechnology.common.util.compat.jei.electrolyticcrucbilebattery.ElectrolyticCrucibleBatteryRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.gasturbine.GasTurbineRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.heatexchanger.HeatExchangerRecipeCategory;
+import mctmods.immersivetechnology.common.util.compat.jei.highpressuresteamturbine.HighPressureSteamTurbineRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.meltingcrucible.MeltingCrucibleRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.solartower.SolarTowerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.steamturbine.SteamTurbineRecipeCategory;
-import mctmods.immersivetechnology.common.util.compat.jei.highpressuresteamturbine.HighPressureSteamTurbineRecipeCategory;
 import mezz.jei.api.*;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.ITooltipCallback;
@@ -86,8 +86,6 @@ public class JEIHelper implements IModPlugin {
 			cat.addCatalysts(registryIn);
 			modRegistry.handleRecipes(cat.getRecipeClass(), cat, cat.getRecipeCategoryUid());
 		}
-
-		if(Multiblock.enable_advancedCokeOven) modRegistry.addRecipeCatalyst(GenericMultiblockIngredient.COKE_OVEN_ADVANCED, "ie.cokeoven");
 
 		if(Multiblock.enable_distiller) modRegistry.addRecipes(new ArrayList<Object>((DistillerRecipe.recipeList)), "it.distiller");
 		if(Multiblock.enable_boiler) {

@@ -43,7 +43,7 @@ public class GuiTimer extends GuiIEContainerBase {
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		float time = (float)tile.getTarget() / 20;
-		this.drawString(this.fontRenderer, String.valueOf(time).toString() + " Sec.", guiLeft + 68, guiTop + 40, 0xFFFFFF);
+		this.drawString(this.fontRenderer, String.valueOf(time) + " Sec.", guiLeft + 68, guiTop + 40, 0xFFFFFF);
 	}
 
 }

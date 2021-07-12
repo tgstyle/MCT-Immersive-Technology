@@ -149,7 +149,6 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
             if(!inventory.get(0).isEmpty()) {
                 recipe = MeltingCrucibleRecipe.findRecipe(inventory.get(0));
                 if(recipe != null && tanks[0].fill(recipe.fluidOutput, false) == recipe.fluidOutput.amount) {
-                    @SuppressWarnings("unchecked")
                     MultiblockProcessInMachine<MeltingCrucibleRecipe> process =
                             new MultiblockProcessInMachine<>(recipe,0);
                     if(this.addProcessToQueue(process, true)) {
@@ -220,13 +219,24 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
     private void InitializePoIs() {
         for(PoIJSONSchema poi : MultiblockMeltingCrucible.instance.pointsOfInterest) {
-            if (poi.name.equals("redstone")) redstonePos = poi.position;
-            else if (poi.name.equals("energy")) energyPos = poi.position;
-            else if(poi.name.equals("input0")) input0 = new PoICache(facing, poi, mirrored);
-            else if(poi.name.equals("output0")) {
-                output0 = new PoICache(facing, poi, mirrored);
-                output0Front = getBlockPosForPos(output0.position).offset(output0.facing);
-            } else if(poi.name.equals("sound")) soundOrigin = getBlockPosForPos(poi.position);
+            switch (poi.name) {
+                case "redstone":
+                    redstonePos = poi.position;
+                    break;
+                case "energy":
+                    energyPos = poi.position;
+                    break;
+                case "input0":
+                    input0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "output0":
+                    output0 = new PoICache(facing, poi, mirrored);
+                    output0Front = getBlockPosForPos(output0.position).offset(output0.facing);
+                    break;
+                case "sound":
+                    soundOrigin = getBlockPosForPos(poi.position);
+                    break;
+            }
         }
     }
 

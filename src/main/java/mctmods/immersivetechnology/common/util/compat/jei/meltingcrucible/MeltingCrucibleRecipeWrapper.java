@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.util.compat.jei.meltingcrucible;
 
 import blusunrize.immersiveengineering.common.util.compat.jei.MultiblockRecipeWrapper;
-import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.client.Minecraft;

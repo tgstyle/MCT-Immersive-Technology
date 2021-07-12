@@ -24,7 +24,7 @@ public class HighPressureSteamTurbineRecipe extends MultiblockRecipe {
 		this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
 	}
 
-	public static ArrayList<HighPressureSteamTurbineRecipe> recipeList = new ArrayList<HighPressureSteamTurbineRecipe>();
+	public static ArrayList<HighPressureSteamTurbineRecipe> recipeList = new ArrayList<>();
 
 	public static HighPressureSteamTurbineRecipe addFuel(FluidStack fluidOutput, FluidStack fluidInput, int time) {
 		HighPressureSteamTurbineRecipe recipe = new HighPressureSteamTurbineRecipe(fluidOutput, fluidInput, time);

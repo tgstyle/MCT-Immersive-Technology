@@ -71,20 +71,16 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		this.canHammerHarvest = new boolean[this.enumValues.length];
 		this.metaMobilityFlags = new EnumPushReaction[this.enumValues.length];
 
-		ArrayList<IProperty> propList = new ArrayList<IProperty>();
-		ArrayList<IUnlistedProperty> unlistedPropList = new ArrayList<IUnlistedProperty>();
+		ArrayList<IProperty> propList = new ArrayList<>();
+		ArrayList<IUnlistedProperty> unlistedPropList = new ArrayList<>();
 		for(Object o : additionalProperties) {
 			if(o instanceof IProperty) propList.add((IProperty) o);
 			if(o instanceof IProperty[]) {
-				for(IProperty p : ((IProperty[]) o)) {
-					propList.add(p);
-				}
+				propList.addAll(Arrays.asList(((IProperty[]) o)));
 			}
 			if(o instanceof IUnlistedProperty) unlistedPropList.add((IUnlistedProperty) o);
 			if(o instanceof IUnlistedProperty[]) {
-				for(IUnlistedProperty p : ((IUnlistedProperty[]) o)) {
-					unlistedPropList.add(p);
-				}
+				unlistedPropList.addAll(Arrays.asList(((IUnlistedProperty[]) o)));
 			}
 		}
 		this.additionalProperties = propList.toArray(new IProperty[propList.size()]);
@@ -150,21 +146,17 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	protected static Material setTempProperties(Material material, PropertyEnum<?> property, Object... additionalProperties) {
-		ArrayList<IProperty> propList = new ArrayList<IProperty>();
-		ArrayList<IUnlistedProperty> unlistedPropList = new ArrayList<IUnlistedProperty>();
+		ArrayList<IProperty> propList = new ArrayList<>();
+		ArrayList<IUnlistedProperty> unlistedPropList = new ArrayList<>();
 		propList.add(property);
 		for(Object o : additionalProperties) {
 			if(o instanceof IProperty) propList.add((IProperty) o);
 			if(o instanceof IProperty[]) {
-				for(IProperty p : ((IProperty[]) o)) {
-					propList.add(p);
-				}
+				propList.addAll(Arrays.asList(((IProperty[]) o)));
 			}
 			if(o instanceof IUnlistedProperty) unlistedPropList.add((IUnlistedProperty) o);
 			if(o instanceof IUnlistedProperty[]) {
-				for(IUnlistedProperty p : ((IUnlistedProperty[]) o)) {
-					unlistedPropList.add(p);
-				}
+				unlistedPropList.addAll(Arrays.asList(((IUnlistedProperty[]) o)));
 			}
 		}
 		tempProperties = propList.toArray(new IProperty[propList.size()]);

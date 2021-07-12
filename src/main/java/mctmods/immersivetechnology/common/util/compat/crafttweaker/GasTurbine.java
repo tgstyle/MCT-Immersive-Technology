@@ -50,7 +50,7 @@ public class GasTurbine {
 
     private static class Remove implements IAction {
         private final FluidStack inputFluid;
-        ArrayList<GasTurbineRecipe> removedRecipes = new ArrayList<GasTurbineRecipe>();
+        ArrayList<GasTurbineRecipe> removedRecipes = new ArrayList<>();
 
         public Remove(FluidStack inputFluid) {
             this.inputFluid = inputFluid;

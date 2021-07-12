@@ -17,7 +17,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
 
 public class TileEntityFluidPipeAlternative extends blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe implements IPipe {
 

@@ -283,21 +283,43 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     private void InitializePoIs() {
         for(PoIJSONSchema poi : MultiblockGasTurbine.instance.pointsOfInterest) {
-            if(poi.name.equals("input")) input = new PoICache(facing, poi, mirrored);
-            else if(poi.name.equals("output")) {
-                output = new PoICache(facing, poi, mirrored);
-                outputFront = getBlockPosForPos(output.position).offset(output.facing);
-            } else if(poi.name.equals("particle")) particleOrigin = getBlockPosForPos(poi.position);
-            else if(poi.name.equals("running_sound")) runningSoundOrigin = getBlockPosForPos(poi.position);
-            else if(poi.name.equals("arc_sound")) arcSoundOrigin = getBlockPosForPos(poi.position);
-            else if(poi.name.equals("ignition_sound")) ignitionSoundOrigin = getBlockPosForPos(poi.position);
-            else if(poi.name.equals("starter_sound")) starterSoundOrigin = getBlockPosForPos(poi.position);
-            else if(poi.name.equals("power0")) power0 = new PoICache(facing, poi, mirrored);
-            else if(poi.name.equals("power1")) power1 = new PoICache(facing, poi, mirrored);
-            else if(poi.name.equals("mechanical_output")) {
-                mechanicalOutput = new PoICache(facing, poi, mirrored);
-                mechanicalOutputFront = getBlockPosForPos(mechanicalOutput.position).offset(mechanicalOutput.facing);
-            } else if(poi.name.equals("redstone")) redstone = new PoICache(facing, poi, mirrored);
+            switch (poi.name) {
+                case "input":
+                    input = new PoICache(facing, poi, mirrored);
+                    break;
+                case "output":
+                    output = new PoICache(facing, poi, mirrored);
+                    outputFront = getBlockPosForPos(output.position).offset(output.facing);
+                    break;
+                case "particle":
+                    particleOrigin = getBlockPosForPos(poi.position);
+                    break;
+                case "running_sound":
+                    runningSoundOrigin = getBlockPosForPos(poi.position);
+                    break;
+                case "arc_sound":
+                    arcSoundOrigin = getBlockPosForPos(poi.position);
+                    break;
+                case "ignition_sound":
+                    ignitionSoundOrigin = getBlockPosForPos(poi.position);
+                    break;
+                case "starter_sound":
+                    starterSoundOrigin = getBlockPosForPos(poi.position);
+                    break;
+                case "power0":
+                    power0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "power1":
+                    power1 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "mechanical_output":
+                    mechanicalOutput = new PoICache(facing, poi, mirrored);
+                    mechanicalOutputFront = getBlockPosForPos(mechanicalOutput.position).offset(mechanicalOutput.facing);
+                    break;
+                case "redstone":
+                    redstone = new PoICache(facing, poi, mirrored);
+                    break;
+            }
         }
     }
 

@@ -82,7 +82,7 @@ public class Boiler {
 
 	private static class Remove implements IAction {
 		private final FluidStack inputFluid;
-		ArrayList<BoilerRecipe> removedRecipes = new ArrayList<BoilerRecipe>();
+		ArrayList<BoilerRecipe> removedRecipes = new ArrayList<>();
 
 		public Remove(FluidStack inputFluid) {
 			this.inputFluid = inputFluid;
@@ -108,7 +108,7 @@ public class Boiler {
 
 	private static class RemoveFuel implements IAction {
 		private final FluidStack inputFluid;
-		ArrayList<BoilerFuelRecipe> removedRecipes = new ArrayList<BoilerFuelRecipe>();
+		ArrayList<BoilerFuelRecipe> removedRecipes = new ArrayList<>();
 
 		public RemoveFuel(FluidStack inputFluid) {
 			this.inputFluid = inputFluid;

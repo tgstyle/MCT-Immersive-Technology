@@ -6,10 +6,8 @@ import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.ElectrolyticCrucibleBatteryRecipe;
-import mctmods.immersivetechnology.api.crafting.HeatExchangerRecipe;
 import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockElectrolyticCrucibleBattery;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockHeatExchanger;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
@@ -235,26 +233,43 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
 
     private void InitializePoIs() {
         for(PoIJSONSchema poi : MultiblockElectrolyticCrucibleBattery.instance.pointsOfInterest) {
-            if (poi.name.equals("redstone")) redstonePos = poi.position;
-            else if (poi.name.equals("energy0")) energyPos0 = poi.position;
-            else if (poi.name.equals("energy1")) energyPos1 = poi.position;
-            else if (poi.name.equals("energy2")) energyPos2 = poi.position;
-            else if(poi.name.equals("input0")) {
-                input0 = new PoICache(facing, poi, mirrored);
-                input0Front = getBlockPosForPos(input0.position).offset(input0.facing);
-            } else if(poi.name.equals("output0")) {
-                output0 = new PoICache(facing, poi, mirrored);
-                output0Front = getBlockPosForPos(output0.position).offset(output0.facing);
-            } else if(poi.name.equals("output1")) {
-                output1 = new PoICache(facing, poi, mirrored);
-                output1Front = getBlockPosForPos(output1.position).offset(output1.facing);
-            } else if(poi.name.equals("output2")) {
-                output2 = new PoICache(facing, poi, mirrored);
-                output2Front = getBlockPosForPos(output2.position).offset(output2.facing);
-            } else if(poi.name.equals("output3")) {
-                output3 = new PoICache(facing, poi, mirrored);
-                output3Front = getBlockPosForPos(output3.position).offset(output3.facing);
-            } else if(poi.name.equals("sound")) soundOrigin = getBlockPosForPos(poi.position);
+            switch (poi.name) {
+                case "redstone":
+                    redstonePos = poi.position;
+                    break;
+                case "energy0":
+                    energyPos0 = poi.position;
+                    break;
+                case "energy1":
+                    energyPos1 = poi.position;
+                    break;
+                case "energy2":
+                    energyPos2 = poi.position;
+                    break;
+                case "input0":
+                    input0 = new PoICache(facing, poi, mirrored);
+                    input0Front = getBlockPosForPos(input0.position).offset(input0.facing);
+                    break;
+                case "output0":
+                    output0 = new PoICache(facing, poi, mirrored);
+                    output0Front = getBlockPosForPos(output0.position).offset(output0.facing);
+                    break;
+                case "output1":
+                    output1 = new PoICache(facing, poi, mirrored);
+                    output1Front = getBlockPosForPos(output1.position).offset(output1.facing);
+                    break;
+                case "output2":
+                    output2 = new PoICache(facing, poi, mirrored);
+                    output2Front = getBlockPosForPos(output2.position).offset(output2.facing);
+                    break;
+                case "output3":
+                    output3 = new PoICache(facing, poi, mirrored);
+                    output3Front = getBlockPosForPos(output3.position).offset(output3.facing);
+                    break;
+                case "sound":
+                    soundOrigin = getBlockPosForPos(poi.position);
+                    break;
+            }
         }
     }
 

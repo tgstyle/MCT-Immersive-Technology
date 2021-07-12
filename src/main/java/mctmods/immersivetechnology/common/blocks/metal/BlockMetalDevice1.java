@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import blusunrize.immersiveengineering.common.blocks.metal.*;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
 import mctmods.immersivetechnology.common.util.IPipe;
 import net.minecraft.block.state.IBlockState;

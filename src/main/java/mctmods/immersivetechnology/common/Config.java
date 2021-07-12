@@ -16,8 +16,6 @@ public class Config {
 			public static Recipes recipes;
 			public static Alternator alternator;
 			public static Boiler boiler;
-			public static AdvancedCokeOven advancedcokeoven;
-			public static CokeOvenPreheater cokeovenpreheater;
 			public static Distiller distiller;
 			public static SolarReflector solarreflector;
 			public static SolarTower solartower;
@@ -31,8 +29,6 @@ public class Config {
 			public static MeltingCrucible meltingCrucible;
 
 			public static class Multiblock {
-				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Preheater be built ? [Default=true]"})
-				public static boolean enable_advancedCokeOven = true;
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Boiler Multiblock structure be built ? [Default=true]"})
 				public static boolean enable_boiler = true;
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Distiller Multiblock structure be built ? [Default=true]"})
@@ -76,16 +72,6 @@ public class Config {
 				@Comment({"Should default Melting Crucible recipes be registered ? [Default=false]"})
 				public static boolean register_meltingCrucible_recipes = false;
 			}
-			public static class AdvancedCokeOven {
-				@Comment({"The capacity of the tank for the Advanced Coke Oven [Default=24000]"})
-				public static int advancedCokeOven_tankSize = 24000;
-				@Comment({"How fast the Advanced Coke Oven (with no preheaters) is when compared to the basic Coke Oven. A value of 1 means same speed. [Default=1]"})
-				public static float advancedCokeOven_speed_base = 1;
-				@Comment({"This value gets added per preheater, to the speed of the Advanced Coke Oven [Default=1]"})
-				public static float advancedCokeOven_preheater_speed_increase = 1;
-				@Comment({"The speed of the Advanced Coke Oven gets multiplied by this value per preheater [Default=1]"})
-				public static float advancedCokeOven_preheater_speed_multiplier = 1;
-			}
 			public static class CoolingTower {
 				@Comment({"The capacity of the input tanks for the Cooling Tower [Default=20000]"})
 				public static int coolingTower_input_tankSize = 20000;
@@ -121,10 +107,6 @@ public class Config {
 				public static int boiler_heat_lossPerTick = 5;
 				@Comment({"How fast the Boiler loses progress in ticks when the heat drops below processing heat level [Default=1]"})
 				public static int boiler_progress_lossInTicks = 1;
-			}
-			public static class CokeOvenPreheater {
-				@Comment({"The energy per tick the Coke Oven Preheater consumes while processing [Default=32]"})
-				public static int cokeOvenPreheater_energy_consumption = 32;
 			}
 			public static class Distiller {
 				@Comment({"The capacity of the input tank for the Distiller [Default=24000]"})

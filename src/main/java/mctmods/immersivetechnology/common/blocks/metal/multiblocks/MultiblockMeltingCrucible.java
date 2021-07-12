@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.common.blocks.metal.multiblocks;
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHeatExchangerSlave;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityMeltingCrucibleSlave;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock1;
 import mctmods.immersivetechnology.common.util.multiblock.ITMultiblock;

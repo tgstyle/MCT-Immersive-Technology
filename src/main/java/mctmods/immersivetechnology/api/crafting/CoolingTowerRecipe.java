@@ -31,7 +31,7 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
         this.fluidOutputList = Lists.newArrayList(fluidOutput0, fluidOutput1, fluidOutput2);
     }
 
-    public static ArrayList<CoolingTowerRecipe> recipeList = new ArrayList<CoolingTowerRecipe>();
+    public static ArrayList<CoolingTowerRecipe> recipeList = new ArrayList<>();
 
     public static CoolingTowerRecipe addRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, FluidStack fluidInput0, FluidStack fluidInput1, int time) {
         CoolingTowerRecipe recipe = new CoolingTowerRecipe(fluidOutput0, fluidOutput1, fluidOutput2, fluidInput0, fluidInput1, time);

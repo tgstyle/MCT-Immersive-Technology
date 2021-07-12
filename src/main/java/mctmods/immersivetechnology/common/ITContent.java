@@ -20,11 +20,6 @@ import mctmods.immersivetechnology.common.blocks.metal.multiblocks.*;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.conversion.*;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneDecoration;
-import mctmods.immersivetechnology.common.blocks.stone.BlockStoneMultiblock;
-import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.conversion.TileEntityCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneDecoration;
 import mctmods.immersivetechnology.common.blocks.wooden.BlockWoodenCrate;
 import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityCrate;
@@ -38,7 +33,6 @@ import mctmods.immersivetechnology.common.util.ITLogger;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -60,18 +54,16 @@ import java.util.ArrayList;
 @EventBusSubscriber(modid= ImmersiveTechnology.MODID)
 public class ITContent {
 	/*BLOCKS*/
-	public static ArrayList<Block> registeredITBlocks = new ArrayList<Block>();
+	public static ArrayList<Block> registeredITBlocks = new ArrayList<>();
 
 	/*MULTIBLOCKS*/
 	public static BlockITBase<?> blockMetalMultiblock;
 	public static BlockITBase<?> blockMetalMultiblock1;
-	public static BlockITBase<?> blockStoneMultiblock;
 
 	/*CONNECTORS*/
 	public static BlockITBase<?> blockConnectors;
 
 	/*METAL*/
-	public static BlockITBase<?> blockMetalDevice;
 	public static BlockITBase<?> blockMetalTrash;
 	public static BlockITBase<?> blockMetalBarrel;
 	public static BlockITBase<?> blockValve;
@@ -94,7 +86,7 @@ public class ITContent {
 	public static BlockITFluid blockFluidHotWater;
 
 	/*ITEMS*/
-	public static ArrayList<Item> registeredITItems = new ArrayList<Item>();
+	public static ArrayList<Item> registeredITItems = new ArrayList<>();
 
 	/*MATERIALS*/
 	public static Item itemMaterial;
@@ -113,7 +105,6 @@ public class ITContent {
 		/*MULTIBLOCKS*/
 		blockMetalMultiblock = new BlockMetalMultiblock();
 		blockMetalMultiblock1 = new blockMetalMultiblock1();
-		blockStoneMultiblock = new BlockStoneMultiblock();
 
 		/*CONNECTORS*/
 		blockConnectors = new BlockConnectors();
@@ -123,11 +114,9 @@ public class ITContent {
 		blockMetalBarrel = new BlockMetalBarrel();
 		blockValve = new BlockValve();
 
-		if(Multiblock.enable_advancedCokeOven) blockMetalDevice = new BlockMetalDevice();
-
 		/*STONE*/
 		blockStoneDecoration = new BlockStoneDecoration();
-		blockStoneDecorationSlab = (BlockITBase<?>)new BlockITSlab<BlockType_StoneDecoration>("stone_decoration_slab", Material.ROCK, PropertyEnum.create("type", BlockType_StoneDecoration.class)).setMetaExplosionResistance(BlockType_StoneDecoration.COKEBRICK_REINFORCED.getMeta(), 180).setHardness(2.0F).setResistance(10.0F);
+		blockStoneDecorationSlab = (BlockITBase<?>) new BlockITSlab<>("stone_decoration_slab", Material.ROCK, PropertyEnum.create("type", BlockType_StoneDecoration.class)).setMetaExplosionResistance(BlockType_StoneDecoration.COKEBRICK_REINFORCED.getMeta(), 180).setHardness(2.0F).setResistance(10.0F);
 
 		/*WOODEN*/
 		blockWoodenCrate = new BlockWoodenCrate();
@@ -190,7 +179,6 @@ public class ITContent {
 		registerTile(TileEntityStackLimiter.class);
 
 		//MORE TEMPORARY STUFF
-		registerTile(TileEntityCokeOvenAdvanced.class);
 		registerTile(TileEntityAlternator.class);
 		registerTile(TileEntitySteamTurbine.class);
 		registerTile(TileEntityBoiler.class);
@@ -199,13 +187,6 @@ public class ITContent {
 		registerTile(TileEntitySolarReflector.class);
 		registerTile(TileEntityHighPressureSteamTurbine.class);
 
-		/*MULTIBLOCK TILE ENTITIES*/
-		if(Multiblock.enable_advancedCokeOven) {
-			registerTile(TileEntityCokeOvenAdvancedSlave.class);
-			registerTile(TileEntityCokeOvenAdvancedMaster.class);
-			MultiblockHandler.registerMultiblock(MultiblockCokeOvenAdvanced.instance);
-			registerTile(TileEntityCokeOvenPreheater.class);
-		}
 		if(Multiblock.enable_boiler) {
 			registerTile(TileEntityBoilerSlave.class);
 			registerTile(TileEntityBoilerMaster.class);
@@ -389,7 +370,6 @@ public class ITContent {
 		Config.manual_int.put("alternator_energyStorage", Alternator.alternator_energy_capacitorSize);
 		Config.manual_int.put("alternator_energyPerTick", Alternator.alternator_energy_perTick);
 		Config.manual_double.put("boiler_cooldownTime", ((Boiler.boiler_heat_workingLevel / Boiler.boiler_progress_lossInTicks) / 20));
-		Config.manual_int.put("cokeOvenPreheater_consumption", CokeOvenPreheater.cokeOvenPreheater_energy_consumption);		
 		Config.manual_int.put("solarTower_minRange", SolarReflector.solarReflector_minRange);
 		Config.manual_int.put("solarTower_maxRange", SolarReflector.solarReflector_maxRange);
 		Config.manual_int.put("steamTurbine_timeToMax", ((MechanicalEnergy.mechanicalEnergy_speed_max / SteamTurbine.steamTurbine_speed_gainPerTick) / 20));

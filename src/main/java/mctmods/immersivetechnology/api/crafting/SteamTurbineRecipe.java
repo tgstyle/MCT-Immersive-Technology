@@ -24,7 +24,7 @@ public class SteamTurbineRecipe extends MultiblockRecipe {
 		this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
 	}
 
-	public static ArrayList<SteamTurbineRecipe> recipeList = new ArrayList<SteamTurbineRecipe>();
+	public static ArrayList<SteamTurbineRecipe> recipeList = new ArrayList<>();
 
 	public static SteamTurbineRecipe addFuel(FluidStack fluidOutput, FluidStack fluidInput, int time) {
 		SteamTurbineRecipe recipe = new SteamTurbineRecipe(fluidOutput, fluidInput, time);

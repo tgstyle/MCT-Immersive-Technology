@@ -49,7 +49,7 @@ public class SolarTower {
 
 	private static class Remove implements IAction {
 		private final FluidStack inputFluid;
-		ArrayList<SolarTowerRecipe> removedRecipes = new ArrayList<SolarTowerRecipe>();
+		ArrayList<SolarTowerRecipe> removedRecipes = new ArrayList<>();
 
 		public Remove(FluidStack inputFluid) {
 			this.inputFluid = inputFluid;

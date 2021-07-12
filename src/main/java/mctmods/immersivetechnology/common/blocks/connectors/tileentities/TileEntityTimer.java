@@ -175,7 +175,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
 		if(!hammer)	return null;
 		float time = (float) this.target / 20;
-		return new String[] {I18n.format(Lib.DESC_INFO + "redstoneChannel.send", I18n.format("item.fireworksCharge." + EnumDyeColor.byMetadata(redstoneChannelsending).getUnlocalizedName())), I18n.format(String.valueOf(time).toString() + " Sec.")};
+		return new String[] {I18n.format(Lib.DESC_INFO + "redstoneChannel.send", I18n.format("item.fireworksCharge." + EnumDyeColor.byMetadata(redstoneChannelsending).getUnlocalizedName())), I18n.format(String.valueOf(time) + " Sec.")};
 	}
 
 	@Override

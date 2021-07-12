@@ -16,7 +16,7 @@ public class FluidColored extends Fluid {
 
 	public FluidColored(String name, int color, int temp, int density, int viscosity) {
 		super(name, ICON_MetalStill, ICON_MetalFlowing);
-		if(FluidRegistry.isFluidRegistered(name) == false) {
+		if(!FluidRegistry.isFluidRegistered(name)) {
 			this.color = color;
 			this.setTemperature(temp);
 			this.setDensity(density);
@@ -29,7 +29,7 @@ public class FluidColored extends Fluid {
 
 	public FluidColored(String name, int color, int density, int viscosity, boolean gaseous) {
 		super(name, ICON_Still, ICON_Flowing);
-		if(FluidRegistry.isFluidRegistered(name) == false) {
+		if(!FluidRegistry.isFluidRegistered(name)) {
 			this.color = color;
 			this.setDensity(density);
 			this.setViscosity(viscosity);
@@ -42,7 +42,7 @@ public class FluidColored extends Fluid {
 
 	public FluidColored(String name, int color, int temp, int density, int viscosity, boolean gaseous) {
 		super(name, ICON_Still, ICON_Flowing);
-		if(FluidRegistry.isFluidRegistered(name) == false) {
+		if(!FluidRegistry.isFluidRegistered(name)) {
 			this.color = color;
 			this.setTemperature(temp);
 			this.setDensity(density);
