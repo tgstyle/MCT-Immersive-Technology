@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da67ccc4-c0d7-4fb8-8186-56945e128fdb" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/ITContent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/ITContent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/blockstates/fluid_block.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/blockstates/fluid_block.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/lang/en_US.lang" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/lang/en_US.lang" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mct-immersive-technology.iws" beforeDir="false" afterPath="$PROJECT_DIR$/mct-immersive-technology.iws" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/models/block/metal_multiblock/electrolytic_crucible_battery.obj" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/models/block/metal_multiblock/electrolytic_crucible_battery.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/models/block/metal_multiblock/electrolytic_crucible_battery_mirrored.obj" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/models/block/metal_multiblock/electrolytic_crucible_battery_mirrored.obj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
