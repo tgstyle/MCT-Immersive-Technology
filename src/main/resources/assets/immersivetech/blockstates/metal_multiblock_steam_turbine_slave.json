@@ -73,10 +73,10 @@
     },
     "boolean0": {
       "false": {
-        "model": "immersivetech:metal_multiblock/steam_turbine.obj"
+        "model": "immersiveengineering:ie_empty"
       },
       "true": {
-        "model": "immersivetech:metal_multiblock/steam_turbine_mirrored.obj"
+        "model": "immersiveengineering:ie_empty"
       }
     }
   }
