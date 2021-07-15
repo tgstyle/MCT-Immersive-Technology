@@ -5,30 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da67ccc4-c0d7-4fb8-8186-56945e128fdb" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/api/crafting/RadiatorRecipe.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/multiblocks/MultiblockRadiator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/tileentities/TileEntityRadiatorMaster.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/tileentities/TileEntityRadiatorSlave.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/util/compat/jei/radiator/RadiatorRecipeCategory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/util/compat/jei/radiator/RadiatorRecipeWrapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/blockstates/metal_multiblock1_radiator.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/blockstates/metal_multiblock1_radiator_slave.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/models/block/metal_multiblock/radiator.mtl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/models/block/metal_multiblock/radiator_horizontal.obj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/models/block/metal_multiblock/radiator_vertical.obj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/textures/blocks/metal_multiblock_radiator.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/util/compat/crafttweaker/Radiator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mct-immersive-technology.iws" beforeDir="false" afterPath="$PROJECT_DIR$/mct-immersive-technology.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/client/ClientProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/client/ClientProxy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/Config.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/ITContent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/ITContent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/blockMetalMultiblock1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/blockMetalMultiblock1.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/types/BlockType_MetalMultiblock1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/blocks/metal/types/BlockType_MetalMultiblock1.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/util/compat/advancedrocketry/AdvancedRocketryHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/util/compat/advancedrocketry/AdvancedRocketryHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/util/compat/jei/GenericMultiblockIngredient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/util/compat/jei/GenericMultiblockIngredient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/util/compat/jei/JEIHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/util/compat/jei/JEIHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/lang/en_US.lang" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/lang/en_US.lang" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/recipes/metal_device/coke_oven_preheater.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/textures/gui/gui_cooling_tower.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/assets/immersivetech/textures/gui/gui_cooling_tower.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/util/compat/crafttweaker/CraftTweakerHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mctmods/immersivetechnology/common/util/compat/crafttweaker/CraftTweakerHelper.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,11 +139,11 @@
       <recent name="$PROJECT_DIR$/src/main/resources/assets/immersivetech/models/block/metal_multiblock" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="mctmods.immersivetechnology.common.util.compat.crafttweaker" />
       <recent name="mctmods.immersivetechnology.api.crafting" />
       <recent name="mctmods.immersivetechnology.common.blocks.metal.tileentities" />
       <recent name="mctmods.immersivetechnology.common.blocks.metal.multiblocks" />
       <recent name="mctmods.immersivetechnology.client.render" />
-      <recent name="mctmods.immersivetechnology.common.util.compat.crafttweaker" />
     </key>
   </component>
   <component name="RunManager" selected="Application.Minecraft Client">
