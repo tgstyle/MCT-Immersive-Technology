@@ -27,6 +27,7 @@ public class Config {
 			public static HighPressureSteamTurbine highPressureSteamturbine;
 			public static ElectrolyticCrucibleBattery electrolyticCrucibleBattery;
 			public static MeltingCrucible meltingCrucible;
+			public static Radiator radiator;
 
 			public static class Multiblock {
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Boiler Multiblock structure be built ? [Default=true]"})
@@ -49,6 +50,8 @@ public class Config {
 				public static boolean enable_electrolyticCrucibleBattery = false;
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Melting Crucible Multiblock structures be built ? [Default=false]"})
 				public static boolean enable_meltingCrucible = false;
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Radiator Multiblock structures be built ? [Default=true]"})
+				public static boolean enable_radiator = true;
 			}
 			public static class Recipes {
 				@Comment({"Should default Steam Turbine recipes be registered ? [Default=true]"})
@@ -71,6 +74,8 @@ public class Config {
 				public static boolean register_electrolyticCrucibleBattery_recipes = false;
 				@Comment({"Should default Melting Crucible recipes be registered ? [Default=false]"})
 				public static boolean register_meltingCrucible_recipes = false;
+				@Comment({"Should default Radiator recipes be registered ? [Default=true]"})
+				public static boolean register_radiator_recipes = true;
 			}
 			public static class CoolingTower {
 				@Comment({"The capacity of the input tanks for the Cooling Tower [Default=20000]"})
@@ -199,6 +204,14 @@ public class Config {
 				public static int meltingCrucible_output_tankSize = 10000;
 				@Comment({"The maximum energy a Heat Exchanger can store [Default=8000]"})
 				public static int meltingCrucible_energy_size = 8000;
+			}
+			public static class Radiator {
+				@Comment({"The capacity of the input tank for the Radiator [Default=8000]"})
+				public static int radiator_input_tankSize = 8000;
+				@Comment({"The capacity of the output tank for the Radiator [Default=8000]"})
+				public static int radiator_output_tankSize = 8000;
+				@Comment({"The heat speed multiplier applied to all Radiator recipes [Default=1]"})
+				public static float radiator_speed_multiplier = 1;
 			}
 			public static class SteelTank {
 				@Comment({"Steel Tank Size in mB [Default=2048000]"})

@@ -255,6 +255,11 @@ public class ITContent {
 			registerTile(TileEntityMeltingCrucibleMaster.class);
 			MultiblockHandler.registerMultiblock(MultiblockMeltingCrucible.instance);
 		}
+		if(Multiblock.enable_radiator) {
+			registerTile(TileEntityRadiatorSlave.class);
+			registerTile(TileEntityRadiatorMaster.class);
+			MultiblockHandler.registerMultiblock(MultiblockRadiator.instance);
+		}
 
 		registerTile(TileEntitySteelSheetmetalTank.class);
 		registerTile(TileEntitySteelSheetmetalTankSlave.class);
@@ -325,6 +330,9 @@ public class ITContent {
 		}
 		if(Multiblock.enable_meltingCrucible && Recipes.register_meltingCrucible_recipes) {
 			MeltingCrucibleRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("lava"), 1000), new OreIngredient("cobblestone"), 40960, 80);
+		}
+		if(Multiblock.enable_radiator && Recipes.register_radiator_recipes) {
+			RadiatorRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 250), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 500), 80);
 		}
 	}
 

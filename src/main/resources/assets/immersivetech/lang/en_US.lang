@@ -87,6 +87,8 @@ tile.immersivetech.metal_multiblock1.electrolytic_crucible_battery.name=Electrol
 tile.immersivetech.metal_multiblock1.electrolytic_crucible_battery_slave.name=Electrolytic Crucible Battery
 tile.immersivetech.metal_multiblock1.melting_crucible.name=Melting Crucible
 tile.immersivetech.metal_multiblock1.melting_crucible_slave.name=Melting Crucible
+tile.immersivetech.metal_multiblock1.radiator.name=Radiator
+tile.immersivetech.metal_multiblock1.radiator_slave.name=Radiator
 
 
 #OVERLAY
@@ -147,6 +149,7 @@ desc.immersiveengineering.info.multiblock.IT:HeatExchanger=Heat Exchanger
 desc.immersiveengineering.info.multiblock.IT:HighPressureSteamTurbine=High Pressure Steam Turbine
 desc.immersiveengineering.info.multiblock.IT:electrolyticCrucibleBattery=Electrolytic Crucible Battery
 desc.immersiveengineering.info.multiblock.IT:meltingCrucible=Melting Crucible
+desc.immersiveengineering.info.multiblock.IT:Radiator=Radiator
 
 
 #CONNECTORS
@@ -154,6 +157,7 @@ tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
 
 
 #MANUAL
+ie.manual.category.it_power.name=Turbine Power Systems
 ie.manual.category.it.name=Immersive Technology
 
 ie.manual.entry.alternator.name=Alternator
@@ -244,6 +248,10 @@ ie.manual.entry.meltingCrucible.subtext=Not a pulse jet. Not a furnace.
 ie.manual.entry.meltingCrucible0=The Melting Crucible is a multiblock that uses electricity to heat solids into liquids. It can be formed by hitting the block between the power input and redstone input with an Engineer's Hammer.
 ie.manual.entry.meltingCrucible1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. Items are input on the back, into the blue port, and liquids are output the bottom front from the orange port. The multiblock is most commonly used to provide molten salt for a <link;electrolyticCrucibleBattery;§n§oElectrolytic Crucible Battery§r>, to electrolyse into molten sodium for a <link;solarTower;§n§oSolar Tower§r>.
 
+ie.manual.entry.radiator.name=Radiator
+ie.manual.entry.radiator.subtext=Irradiative Phase Shift
+ie.manual.entry.radiator0=The Radiator is a multiblock that performs radiative cooling (and conductive cooling, if possible) to cool hot fluids and gasses down, similar to the cooling tower. It can be formed by hitting the light engineering block with an Engineer's Hammer. It can also be made horizontal.
+ie.manual.entry.radiator1=The amount of cooling depends on the temperature differential between the hot fluid and the environment, and will not heat fluid. Efficiency also varies based on number of obstructions close. If §lAdvanced Rocketry§r exists, processing amount depends on atmosphere pressure and blackbody equivalence temperature of the radiator. Radiators are extremely inefficient compared to the cooling tower, but can operate in vacuum unlike the cooling tower. The radiator will not function in an artificial atmosphere.
 
 ie.manual.entry.computer.steamTurbine.name=Steam Turbine ☎
 ie.manual.entry.computer.steamTurbine.subtext=Boiling breath

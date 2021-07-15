@@ -15,6 +15,7 @@ import mctmods.immersivetechnology.common.util.compat.jei.gasturbine.GasTurbineR
 import mctmods.immersivetechnology.common.util.compat.jei.heatexchanger.HeatExchangerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.highpressuresteamturbine.HighPressureSteamTurbineRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.meltingcrucible.MeltingCrucibleRecipeCategory;
+import mctmods.immersivetechnology.common.util.compat.jei.radiator.RadiatorRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.solartower.SolarTowerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.steamturbine.SteamTurbineRecipeCategory;
 import mezz.jei.api.*;
@@ -68,6 +69,7 @@ public class JEIHelper implements IModPlugin {
 		if(Multiblock.enable_highPressureSteamTurbine) categories.put(HighPressureSteamTurbineRecipe.class, new HighPressureSteamTurbineRecipeCategory(guiHelper));
 		if(Multiblock.enable_electrolyticCrucibleBattery) categories.put(ElectrolyticCrucibleBatteryRecipe.class, new ElectrolyticCrucibleBatteryRecipeCategory(guiHelper));
 		if(Multiblock.enable_meltingCrucible) categories.put(MeltingCrucibleRecipe.class, new MeltingCrucibleRecipeCategory(guiHelper));
+		if(Multiblock.enable_radiator) categories.put(RadiatorRecipe.class, new RadiatorRecipeCategory(guiHelper));
 			
 		registry.addRecipeCategories(categories.values().toArray(new IRecipeCategory[categories.size()]));
 	}
@@ -100,6 +102,7 @@ public class JEIHelper implements IModPlugin {
 		if(Multiblock.enable_highPressureSteamTurbine) modRegistry.addRecipes(new ArrayList<Object>((HighPressureSteamTurbineRecipe.recipeList)), "it.highPressureSteamTurbine");
 		if(Multiblock.enable_electrolyticCrucibleBattery) modRegistry.addRecipes(new ArrayList<Object>((ElectrolyticCrucibleBatteryRecipe.recipeList)), "it.electrolyticCrucibleBattery");
 		if(Multiblock.enable_meltingCrucible) modRegistry.addRecipes(new ArrayList<Object>((MeltingCrucibleRecipe.recipeList)), "it.meltingCrucible");
+		if(Multiblock.enable_radiator) modRegistry.addRecipes(new ArrayList<Object>((RadiatorRecipe.recipeList)), "it.radiator");
 	}
 
 	@SuppressWarnings("deprecation")

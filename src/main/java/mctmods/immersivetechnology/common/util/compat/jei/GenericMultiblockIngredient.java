@@ -17,13 +17,13 @@ public class GenericMultiblockIngredient {
     public static GenericMultiblockIngredient DISTILLER;
     public static GenericMultiblockIngredient SOLAR_TOWER;
     public static GenericMultiblockIngredient BOILER;
-    public static GenericMultiblockIngredient COKE_OVEN_ADVANCED;
     public static GenericMultiblockIngredient COOLING_TOWER;
     public static GenericMultiblockIngredient GAS_TURBINE;
     public static GenericMultiblockIngredient HEAT_EXCHANGER;
     public static GenericMultiblockIngredient HIGH_PRESSURE_STEAM_TURBINE;
     public static GenericMultiblockIngredient ELECTROLYTIC_CRUCIBLE_BATTERY;
     public static GenericMultiblockIngredient MELTING_CRUCIBLE;
+    public static GenericMultiblockIngredient RADIATOR;
 
     static {
         if(Multiblock.enable_steamTurbine) STEAM_TURBINE = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.STEAM_TURBINE.getMeta()));
@@ -36,6 +36,7 @@ public class GenericMultiblockIngredient {
         if(Multiblock.enable_highPressureSteamTurbine) HIGH_PRESSURE_STEAM_TURBINE = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.HIGH_PRESSURE_STEAM_TURBINE.getMeta()));
         if(Multiblock.enable_electrolyticCrucibleBattery) ELECTROLYTIC_CRUCIBLE_BATTERY = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.ELECTROLYTIC_CRUCIBLE_BATTERY.getMeta()));
         if(Multiblock.enable_meltingCrucible) MELTING_CRUCIBLE = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.MELTING_CRUCIBLE.getMeta()));
+        if(Multiblock.enable_radiator) RADIATOR = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.RADIATOR.getMeta()));
     }
 
     public ItemStack renderStack;

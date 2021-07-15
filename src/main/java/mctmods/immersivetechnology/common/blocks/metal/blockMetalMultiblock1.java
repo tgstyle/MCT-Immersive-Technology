@@ -60,6 +60,10 @@ public class blockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
                 return new TileEntityMeltingCrucibleMaster();
             case MELTING_CRUCIBLE_SLAVE:
                 return new TileEntityMeltingCrucibleSlave();
+            case RADIATOR:
+                return new TileEntityRadiatorMaster();
+            case RADIATOR_SLAVE:
+                return new TileEntityRadiatorSlave();
         }
         return null;
     }
