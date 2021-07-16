@@ -36,7 +36,7 @@ public class DistillerRecipe extends MultiblockRecipe {
 		this.outputList = ListUtils.fromItem(this.itemOutput);
 	}
 
-	public static ArrayList <DistillerRecipe> recipeList = new ArrayList<DistillerRecipe>();
+	public static ArrayList <DistillerRecipe> recipeList = new ArrayList<>();
 
 	public static DistillerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, ItemStack itemOutput, int energy, int time, float chance) {
 		DistillerRecipe r = new DistillerRecipe(fluidOutput, fluidInput, itemOutput, energy, time, chance);

@@ -6,18 +6,19 @@ import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SolarReflector;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SolarTower;
+import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
+import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
+import mctmods.immersivetechnology.common.util.compat.advancedrocketry.AdvancedRocketryHelper;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
@@ -36,10 +37,11 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 	private static int solarMaxRange = SolarReflector.solarReflector_maxRange;
 	private static int solarMinRange = SolarReflector.solarReflector_minRange;
 	private static int progressLossPerTick = SolarTower.solarTower_progress_lossInTicks;
-	private static int heatLossPerTick = SolarTower.solarTower_heat_lossPerTick;
+	private static double heatLossMultiplier = SolarTower.solarTower_heat_loss_multiplier;
 	private static float speedMult = SolarTower.solarTower_speed_multiplier;
-	private static float reflectorSpeedMult = SolarTower.solarTower_solarReflector_speed_multiplier;
 	private static double workingHeatLevel = SolarTower.solarTower_heat_workingLevel;
+	private static double maximumReflectorStrength = 227.5;
+
 	BlockPos fluidOutputPos;
 
 	public FluidTank[] tanks = new FluidTank[] {
@@ -52,7 +54,8 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 
 	public int recipeTimeRemaining = 0;
 	public double heatLevel = 0;
-	public int[] reflectors = new int[4];
+	public double reflectorStrength = 0;
+	public int solarIncidenceAngleSection = 0;
 	private int clientUpdateCooldown = 20;
 
 	private SolarTowerRecipe lastRecipe;
@@ -64,8 +67,8 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
 		heatLevel = nbt.getDouble("heatLevel");
 		recipeTimeRemaining = nbt.getInteger("recipeTimeRemaining");
-		reflectors = nbt.getIntArray("reflectors");
-		if(reflectors.length != 4) reflectors = new int[4];
+		reflectorStrength = nbt.getDouble("reflectorStrength");
+		solarIncidenceAngleSection = nbt.getInteger("solarIncidenceAngleSection");
 		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
 	}
 
@@ -76,97 +79,61 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
 		nbt.setDouble("heatLevel", heatLevel);
 		nbt.setInteger("recipeTimeRemaining", recipeTimeRemaining);
-		nbt.setIntArray("reflectors", reflectors);
+		nbt.setDouble("reflectorStrength", reflectorStrength);
+		nbt.setInteger("solarIncidenceAngleSection", getSolarIncidenceAngleSection());
 		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
 	}
 
-	protected boolean checkReflector() {
-		boolean update = false;
-		if(!world.isDaytime()) {
-			for(int cont = 0; cont < 4; cont++) {
-				reflectors[cont] = 0;
-			}
-			return update;
-		} else if(world.isRaining()) {
-			for(int cont = 0; cont < 4; cont++) {
-				reflectors[cont] = 0;
-			}
-			update = true;
-			return update;
-		}
-		EnumFacing fw;
-		EnumFacing fr;
-		BlockPos pos;
-		TileEntity tile;
-		int maxRange = solarMaxRange;
-		int minRange = solarMinRange;
-		for(int cont = 0; cont < 4; cont++) {
-			fw = facing;
-			if(cont == 1) {
-				fw = fw.rotateYCCW();
-			} else if(cont == 2) {
-				fw = fw.getOpposite();
-			} else if(cont == 3) {
-				fw = fw.rotateY();
-			}
-			reflectors[cont] = 0;
-			for(int i = minRange; i < maxRange + 2; i++) {
-				if(cont == 0) {
-					pos = this.getPos().offset(fw, i + 2).add(0, 2, 0);
-				} else if(cont % 2 != 0) {
-					pos = this.getPos().offset(facing, 1).offset(fw, i + 1).add(0, 2, 0);
-				} else {
-					pos = this.getPos().offset(fw, i).add(0, 2, 0);
-				}
-				if(!Utils.isBlockAt(world, pos, Blocks.AIR, 0)) {
-					tile = world.getTileEntity(pos);
-					if(tile instanceof TileEntitySolarReflectorMaster) {
-						fr = ((TileEntitySolarReflectorMaster) tile).facing;
-						if((cont % 2 == 0 && (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH)) || (cont % 2 != 0 && (facing == EnumFacing.EAST || facing == EnumFacing.WEST))) {
-							if(fr == EnumFacing.NORTH || fr == EnumFacing.SOUTH) {
-								if(((TileEntitySolarReflectorMaster) tile).canSeeSun()) {
-									update = true;
-									reflectors[cont] = 1;
-								}
-								break;
-							}
-						} else {
-							if(fr == EnumFacing.EAST || fr == EnumFacing.WEST) {
-								if(((TileEntitySolarReflectorMaster) tile).canSeeSun()) {
-									update = true;
-									reflectors[cont] = 1;
-								}
-								break;
-							}
-						}
-					} else {
-						break;
+	protected boolean checkReflectorPositions() {
+		double totalMirrorStrength = 0;
+		for (int x = -(solarMaxRange + 1); x <= (solarMaxRange + 1); x++) {
+			for (int z = -(solarMaxRange + 1); z <= (solarMaxRange + 1); z++) {
+				double distance = Math.sqrt(this.getPos().distanceSq(this.getPos().add(x, 0, z)));
+				if (distance >= solarMinRange && distance <= solarMaxRange && Utils.isBlockAt(world, this.getPos().add(x, 0, z), ITContent.blockMetalMultiblock, 2)) {
+					TileEntity tile = world.getTileEntity(this.getPos().add(x, 0, z));
+					if (tile instanceof TileEntitySolarReflectorMaster && ((TileEntitySolarReflectorMaster) tile).setTowerCollectorPosition(this.getPos().add(0, 17, 0))) {
+						totalMirrorStrength += ((TileEntitySolarReflectorMaster) tile).getSolarCollectorStrength();
 					}
 				}
 			}
 		}
-		return update;
+		//Factors that influence heat production
+		//Rain multiplier, Combines with light level adjustments to become 0.1x
+		totalMirrorStrength *= (world.isRaining() ? 0.4f : 1f);
+
+		//Insolation multiplier
+		if (ITCompatModule.isAdvancedRocketryLoaded)
+			totalMirrorStrength *= AdvancedRocketryHelper.getInsolation(world, this.getPos());
+
+		//Humidity multiplier
+		double humidityBonus = 0.075 * totalMirrorStrength * -((world.getBiome(this.getPos()).getRainfall() - 0.5)/0.5);
+		if (ITCompatModule.isAdvancedRocketryLoaded) {
+			humidityBonus *= AdvancedRocketryHelper.getWaterPartialPressureMultiplier(world, this.getPos());
+		}
+        totalMirrorStrength += humidityBonus;
+
+		//Final set
+		reflectorStrength = totalMirrorStrength;
+		return getSolarIncidenceAngleSection() != 0;
 	}
 
 	private boolean heatUp() {
 		double previousHeatLevel = heatLevel;
-		double temp = 0.1;
-		if(!world.isRaining()) temp = world.getBiomeProvider().getTemperatureAtHeight(world.getBiome(this.getPos()).getTemperature(this.getPos()), this.getPos().getY());
-		heatLevel = Math.min(getSpeed() + (heatLevel + temp), workingHeatLevel);
+		heatLevel = Math.min(getTemperatureIncrease() + heatLevel, workingHeatLevel);
 		return previousHeatLevel != heatLevel;
 	}
 
-	protected float getSpeed() {
-		int activeReflectors = 0;
-		for(int reflectorValue : reflectors) activeReflectors += reflectorValue;
-		if(activeReflectors == 0) return 0;
-		return speedMult * (1 + (activeReflectors - 1) * (reflectorSpeedMult - 1));
+	protected float getTemperatureIncrease() {
+		return speedMult * (1 + (getSolarIncidenceAngleSection() - 1)) * 10 * (float)(reflectorStrength/maximumReflectorStrength) * (world.isRaining() ? 0.1f : world.isThundering() ? 0.05f : 1f);
 	}
 
 	private boolean cooldown() {
 		double previousHeatLevel = heatLevel;
-		double temp = world.getBiomeProvider().getTemperatureAtHeight(world.getBiome(this.getPos()).getTemperature(this.getPos()), this.getPos().getY());
-		heatLevel = Math.max((heatLevel - temp) - heatLossPerTick, 0);
+		double heatLost = world.getBiomeProvider().getTemperatureAtHeight(world.getBiome(this.getPos()).getTemperature(this.getPos()), this.getPos().getY());
+		double conductionMultiplier = 1.0;
+		if(ITCompatModule.isAdvancedRocketryLoaded)
+			conductionMultiplier *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, this.getPos().add(0, 19, 0));
+		heatLevel = Math.max((heatLevel - ((world.isRaining() ? 2 : 1 * (1/heatLost)) * heatLossMultiplier * conductionMultiplier)), 0);
 		return previousHeatLevel != heatLevel;
 	}
 
@@ -187,8 +154,8 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 		}
 		recipeTimeRemaining--;
 		if(recipeTimeRemaining == 0) {
-			tanks[0].drain(lastRecipe.fluidInput.amount, true);
-			tanks[1].fillInternal(lastRecipe.fluidOutput, true);
+			tanks[0].drain((int)(lastRecipe.fluidInput.amount * reflectorStrength/maximumReflectorStrength), true);
+			tanks[1].fillInternal(new FluidStack(lastRecipe.fluidOutput.getFluid(), (int)(lastRecipe.fluidOutput.amount * reflectorStrength/maximumReflectorStrength)), true);
 			markContainingBlockForUpdate(null);
 			return true;
 		}
@@ -197,7 +164,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 
 	private void pumpOutputOut() {
 		if(tanks[1].getFluidAmount() == 0) return;
-		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, -1, 3, facing, mirrored);
+		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, -1, -2, facing);
 		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, facing.getOpposite());
 		if(output == null) return;
 		FluidStack out = tanks[1].getFluid();
@@ -208,7 +175,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 	}
 
 	public void handleSounds() {
-		BlockPos center = getPos();
+		BlockPos center = this.getPos();
 		float level = (float) (heatLevel / workingHeatLevel);
 		if(level == 0) ITSoundHandler.StopSound(center);
 		else {
@@ -218,16 +185,24 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 		}
 	}
 
+	public int getSolarIncidenceAngleSection() {
+		if (world.getSkylightSubtracted() == 3) return 1;
+		else if(world.getSkylightSubtracted() == 2) return 2;
+		else if(world.getSkylightSubtracted() == 1) return 3;
+		else if(world.getSkylightSubtracted() == 0) return 4;
+		return 0;
+	}
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void onChunkUnload() {
-		if(!isDummy()) ITSoundHandler.StopSound(getPos());
+		if(!isDummy()) ITSoundHandler.StopSound(this.getPos());
 		super.onChunkUnload();
 	}
 
 	@Override
 	public void disassemble() {
-		BlockPos center = getPos();
+		BlockPos center = this.getPos();
 		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 		super.disassemble();
 	}
@@ -235,13 +210,15 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 	public void notifyNearbyClients() {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setDouble("heat", heatLevel);
-		BlockPos center = getPos();
+		tag.setInteger("solarIncidenceAngleSection", getSolarIncidenceAngleSection());
+		BlockPos center = this.getPos();
 		ImmersiveTechnology.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
 	}
 
 	@Override
 	public void receiveMessageFromServer(NBTTagCompound message) {
 		heatLevel = message.getDouble("heat");
+		solarIncidenceAngleSection = message.getInteger("solarIncidenceAngleSection");
 	}
 
 	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
@@ -250,24 +227,22 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 
 	private boolean heatLogic() {
 		boolean update = false;
-		if(checkReflector()) {
-			if(!isRSDisabled()) {
-				if(heatUp()) update = true;
-			} else if(cooldown()) update = true;
+		if(getSolarIncidenceAngleSection() != 0) {
+			if(heatUp()) update = true;
 		} else if(cooldown()) update = true;
 		return update;
 	}
 
 	private boolean recipeLogic() {
 		boolean update = false;
-		if(heatLevel >= workingHeatLevel) {
+		if(heatLevel >= workingHeatLevel && !isRSDisabled()) {
 			if(recipeTimeRemaining > 0) {
 				if(gainProgress()) update = true;
 			} else if(tanks[0].getFluid() != null) {
 				SolarTowerRecipe recipe = (lastRecipe != null && tanks[0].getFluid().isFluidEqual(lastRecipe.fluidInput)) ?	lastRecipe : SolarTowerRecipe.findRecipe(tanks[0].getFluid());
 				if(recipe != null && recipe.fluidInput.amount <= tanks[0].getFluidAmount() && recipe.fluidOutput.amount == tanks[1].fillInternal(recipe.fluidOutput, false)) {
 					lastRecipe = recipe;
-					recipeTimeRemaining = recipe.getTotalProcessTime();
+					recipeTimeRemaining = (int)(recipe.getTotalProcessTime() / (speedMult * getSolarIncidenceAngleSection()));
 					gainProgress();
 					update = true;
 				}
@@ -316,9 +291,16 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 			handleSounds();
 			return;
 		}
+
 		boolean update = false;
-		if(heatLogic()) update = true;
-		if(recipeLogic()) update = true;
+		//Heat
+		if (world.getTotalWorldTime() % 600 == 0) checkReflectorPositions();
+		if (heatLogic()) update = true;
+		//Recipes
+		if (getSolarIncidenceAngleSection() != 0) {
+			if (recipeLogic()) update = true;
+		}
+		//Tank outputs & inputs
 		if(outputTankLogic()) update = true;
 		if(inputTankLogic()) update = true;
 		if(clientUpdateCooldown > 1) clientUpdateCooldown--;

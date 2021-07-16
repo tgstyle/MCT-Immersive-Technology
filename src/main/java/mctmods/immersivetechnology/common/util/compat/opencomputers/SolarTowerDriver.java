@@ -1,18 +1,13 @@
 package mctmods.immersivetechnology.common.util.compat.opencomputers;
 
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerSlave;
-
-// Largely based on BluSunrize's drivers for the IE machines
-
 import blusunrize.immersiveengineering.common.util.compat.opencomputers.ManagedEnvironmentIE;
-
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
-
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerSlave;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -47,9 +42,9 @@ public class SolarTowerDriver extends DriverSidedTileEntity {
 			super(world, pos, TileEntitySolarTowerMaster.class);
 		}
 
-		@Callback(doc = "function():number -- get the number of reflectors pointing at the tower")
+		@Callback(doc = "function():number -- get the total strength of the reflectors pointing at the tower, an increase by 1 is the strength of one fully uncovered reflector")
 		public Object[] getReflectors(Context context, Arguments args) {
-			return new Object[] {getTileEntity().reflectors};
+			return new Object[] {getTileEntity().reflectorStrength};
 		}
 
 		@Callback(doc = "function():table -- get information about the input tank")

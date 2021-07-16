@@ -39,9 +39,9 @@ public class TileEntityFluidPumpAlternative extends blusunrize.immersiveengineer
 	boolean checkingArea = false;
 	Fluid searchFluid = null;
 	boolean fillFirstMode = true;
-	ArrayList<BlockPos> openList = new ArrayList<BlockPos>();
-	ArrayList<BlockPos> closedList = new ArrayList<BlockPos>();
-	ArrayList<BlockPos> checked = new ArrayList<BlockPos>();
+	ArrayList<BlockPos> openList = new ArrayList<>();
+	ArrayList<BlockPos> closedList = new ArrayList<>();
+	ArrayList<BlockPos> checked = new ArrayList<>();
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {

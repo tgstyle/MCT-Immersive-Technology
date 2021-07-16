@@ -6,8 +6,8 @@ import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.item.IngredientStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.oredict.IOreDictEntry;
-import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Multiblock;
 import mctmods.immersivetechnology.common.Config.ITConfig.Experimental;
+import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Multiblock;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -28,6 +28,10 @@ public class CraftTweakerHelper extends ITCompatModule {
 		if(Multiblock.enable_coolingTower) CraftTweakerAPI.registerClass(CoolingTower.class);
 		if(Multiblock.enable_gasTurbine) CraftTweakerAPI.registerClass(GasTurbine.class);
 		if(Multiblock.enable_heatExchanger) CraftTweakerAPI.registerClass(HeatExchanger.class);
+		if(Multiblock.enable_highPressureSteamTurbine) CraftTweakerAPI.registerClass(HighPressureSteamTurbine.class);
+		if(Multiblock.enable_electrolyticCrucibleBattery) CraftTweakerAPI.registerClass(ElectrolyticCrucibleBattery.class);
+		if(Multiblock.enable_meltingCrucible) CraftTweakerAPI.registerClass(MeltingCrucible.class);
+		if(Multiblock.enable_radiator) CraftTweakerAPI.registerClass(Radiator.class);
 		if(Experimental.replace_IE_pipes) CraftTweakerAPI.registerClass(PressurizedFluid.class);
 	}
 

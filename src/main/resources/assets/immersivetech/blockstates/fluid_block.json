@@ -24,6 +24,16 @@
 			"custom": {
 				"fluid": "fluegas"
 			}
+		}],
+		"highpressuresteam": [{
+			"custom": {
+				"fluid": "highpressuresteam"
+			}
+		}],
+		"hot_spring_water": [{
+			"custom": {
+				"fluid": "hot_spring_water"
+			}
 		}]
 	}
 }

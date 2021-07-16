@@ -3,10 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal;
 import blusunrize.immersiveengineering.api.IEProperties;
 import mctmods.immersivetechnology.common.blocks.BlockITMultiblock;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityGasTurbineMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityGasTurbineSlave;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHeatExchangerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHeatExchangerSlave;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock1;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -51,6 +48,22 @@ public class blockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
                 return new TileEntityHeatExchangerMaster();
             case HEAT_EXCHANGER_SLAVE:
                 return new TileEntityHeatExchangerSlave();
+            case HIGH_PRESSURE_STEAM_TURBINE:
+                return new TileEntityHighPressureSteamTurbineMaster();
+            case HIGH_PRESSURE_STEAM_TURBINE_SLAVE:
+                return new TileEntityHighPressureSteamTurbineSlave();
+            case ELECTROLYTIC_CRUCIBLE_BATTERY:
+                return new TileEntityElectrolyticCrucibleBatteryMaster();
+            case ELECTROLYTIC_CRUCIBLE_BATTERY_SLAVE:
+                return new TileEntityElectrolyticCrucibleBatterySlave();
+            case MELTING_CRUCIBLE:
+                return new TileEntityMeltingCrucibleMaster();
+            case MELTING_CRUCIBLE_SLAVE:
+                return new TileEntityMeltingCrucibleSlave();
+            case RADIATOR:
+                return new TileEntityRadiatorMaster();
+            case RADIATOR_SLAVE:
+                return new TileEntityRadiatorSlave();
         }
         return null;
     }

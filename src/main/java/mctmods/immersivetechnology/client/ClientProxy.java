@@ -16,20 +16,9 @@ import blusunrize.lib.manual.ManualPages;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
-import mctmods.immersivetechnology.client.gui.GuiBoiler;
-import mctmods.immersivetechnology.client.gui.GuiCokeOvenAdvanced;
-import mctmods.immersivetechnology.client.gui.GuiDistiller;
-import mctmods.immersivetechnology.client.gui.GuiFluidValve;
-import mctmods.immersivetechnology.client.gui.GuiLoadController;
-import mctmods.immersivetechnology.client.gui.GuiSolarTower;
-import mctmods.immersivetechnology.client.gui.GuiStackLimiter;
-import mctmods.immersivetechnology.client.gui.GuiTimer;
-import mctmods.immersivetechnology.client.gui.GuiTrashItem;
+import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
-import mctmods.immersivetechnology.client.render.TileRenderBarrelOpen;
-import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
-import mctmods.immersivetechnology.client.render.TileRenderSteelSheetmetalTank;
-import mctmods.immersivetechnology.client.render.TileRendererGasTurbine;
+import mctmods.immersivetechnology.client.render.*;
 import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Multiblock;
 import mctmods.immersivetechnology.common.ITContent;
@@ -38,18 +27,8 @@ import mctmods.immersivetechnology.common.blocks.BlockValve.BlockType_Valve;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Connectors;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.*;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityGasTurbineMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalBarrel;
-import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
-import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
 import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
@@ -97,6 +76,7 @@ import java.util.Locale;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
+	public static final String CAT_POWER = "it_power";
 	public static final String CAT_IT = "it";
 
 	@Override
@@ -241,6 +221,8 @@ public class ClientProxy extends CommonProxy {
 	public void init() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGasTurbineMaster.class, new TileRendererGasTurbine());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySolarReflectorMaster.class, new TileRenderSolarReflector());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHighPressureSteamTurbineMaster.class, new TileRenderHighPressureSteamTurbine());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBarrelOpen.class, new TileRenderBarrelOpen());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTankMaster.class, new TileRenderSteelSheetmetalTank());
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
@@ -248,46 +230,43 @@ public class ClientProxy extends CommonProxy {
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
 		ImmersiveTechnology.packetHandler.registerMessage(MessageStopSound.HandlerClient.class, MessageStopSound.class, 1, Side.CLIENT);
 		ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerClient.class, MessageRequestUpdate.class, 2, Side.CLIENT);
-		ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerServer.class, MessageRequestUpdate.class, 2, Side.SERVER);
 		ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerClient.class, BinaryMessageTileSync.class, 3, Side.CLIENT);
 		ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerServer.class, BinaryMessageTileSync.class, 3, Side.SERVER);
 	}
 
 	@Override
 	public void postInit() {
-		if(Multiblock.enable_advancedCokeOven) {
-			ManualHelper.addEntry("advancedCokeOven", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "advancedCokeOven0", MultiblockCokeOvenAdvanced.instance), new ManualPages.Text(ManualHelper.getManual(), "advancedCokeOven1"), new ManualPages.Crafting(ManualHelper.getManual(), "advancedCokeOven2", new ItemStack(ITContent.blockMetalDevice, 1, BlockType_MetalDevice.COKE_OVEN_PREHEATER.getMeta())));
-		}
-		if(Multiblock.enable_boiler) {
-			ManualHelper.addEntry("boiler", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "boiler0", MultiblockBoiler.instance), new ManualPages.Text(ManualHelper.getManual(), "boiler1"), new ManualPages.Text(ManualHelper.getManual(), "boiler2"));
-		}
-		if(Multiblock.enable_distiller) {
-			ManualHelper.addEntry("distiller", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "distiller0", MultiblockDistiller.instance), new ManualPages.Text(ManualHelper.getManual(), "distiller1"));
-		}
-		if(Multiblock.enable_solarTower) {
-			ManualHelper.addEntry("solarTower", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "solarTower0", MultiblockSolarTower.instance), new ManualPages.Text(ManualHelper.getManual(), "solarTower1"), new ManualPageMultiblock(ManualHelper.getManual(), "solarTower2", MultiblockSolarReflector.instance), new ManualPages.Text(ManualHelper.getManual(), "solarTower3"));
-		}
-		if (Multiblock.enable_gasTurbine || Multiblock.enable_steamTurbine) {
-			ManualHelper.addEntry("alternator", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "alternator0", MultiblockAlternator.instance), new ManualPages.Text(ManualHelper.getManual(), "alternator1"), new ManualPages.Image(ManualHelper.getManual(), "alternator2", "immersivetech:textures/misc/alternator.png;0;0;110;50"));
-		}
-		if(Multiblock.enable_steamTurbine) {
-			ManualHelper.addEntry("steamTurbine", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", MultiblockSteamTurbine.instance), new ManualPages.Text(ManualHelper.getManual(), "steamTurbine1"), new ManualPages.Text(ManualHelper.getManual(), "steamTurbine2"));
-		}
-		if(Multiblock.enable_gasTurbine) {
-			ManualHelper.addEntry("gasTurbine", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "gasTurbine0", MultiblockGasTurbine.instance), new ManualPages.Text(ManualHelper.getManual(), "gasTurbine1"), new ManualPages.Text(ManualHelper.getManual(), "gasTurbine2"), new ManualPages.Text(ManualHelper.getManual(), "gasTurbine3"));
-		}
+		if(Multiblock.enable_boiler)
+			ManualHelper.addEntry("boiler", CAT_POWER, new ManualPageMultiblock(ManualHelper.getManual(), "boiler0", MultiblockBoiler.instance), new ManualPages.Text(ManualHelper.getManual(), "boiler1"), new ManualPages.Text(ManualHelper.getManual(), "boiler2"));
+		if(Multiblock.enable_solarTower)
+			ManualHelper.addEntry("solarTower", CAT_POWER, new ManualPageMultiblock(ManualHelper.getManual(), "solarTower0", MultiblockSolarTower.instance), new ManualPages.Text(ManualHelper.getManual(), "solarTower1"), new ManualPageMultiblock(ManualHelper.getManual(), "solarTower2", MultiblockSolarReflector.instance), new ManualPages.Text(ManualHelper.getManual(), "solarTower3"));
+		if (Multiblock.enable_heatExchanger)
+			ManualHelper.addEntry("heatExchanger", CAT_POWER, new ManualPageMultiblock(ManualHelper.getManual(), "heatExchanger0", MultiblockHeatExchanger.instance), new ManualPages.Text(ManualHelper.getManual(), "heatExchanger1"), new ManualPages.Text(ManualHelper.getManual(), "heatExchanger2"));
+		if (Multiblock.enable_gasTurbine || Multiblock.enable_steamTurbine)
+			ManualHelper.addEntry("alternator", CAT_POWER, new ManualPageMultiblock(ManualHelper.getManual(), "alternator0", MultiblockAlternator.instance), new ManualPages.Text(ManualHelper.getManual(), "alternator1"), new ManualPages.Image(ManualHelper.getManual(), "alternator2", "immersivetech:textures/misc/alternator.png;0;0;110;50"));
+		if(Multiblock.enable_steamTurbine)
+			ManualHelper.addEntry("steamTurbine", CAT_POWER, new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", MultiblockSteamTurbine.instance), new ManualPages.Text(ManualHelper.getManual(), "steamTurbine1"), new ManualPages.Text(ManualHelper.getManual(), "steamTurbine2"));
+		if(Multiblock.enable_highPressureSteamTurbine)
+			ManualHelper.addEntry("highPressureSteamTurbine", CAT_POWER, new ManualPageMultiblock(ManualHelper.getManual(), "highPressureSteamTurbine0", MultiblockHighPressureSteamTurbine.instance), new ManualPages.Text(ManualHelper.getManual(), "highPressureSteamTurbine1"), new ManualPages.Text(ManualHelper.getManual(), "highPressureSteamTurbine2"));
+		if(Multiblock.enable_gasTurbine)
+			ManualHelper.addEntry("gasTurbine", CAT_POWER, new ManualPageMultiblock(ManualHelper.getManual(), "gasTurbine0", MultiblockGasTurbine.instance), new ManualPages.Text(ManualHelper.getManual(), "gasTurbine1"), new ManualPages.Text(ManualHelper.getManual(), "gasTurbine2"), new ManualPages.Text(ManualHelper.getManual(), "gasTurbine3"));
+		if (Multiblock.enable_coolingTower)
+			ManualHelper.addEntry("coolingTower", CAT_POWER, new ManualPageMultiblock(ManualHelper.getManual(), "coolingTower0", MultiblockCoolingTower.instance), new ManualPages.Text(ManualHelper.getManual(), "coolingTower1"));
+		if (Multiblock.enable_radiator)
+			ManualHelper.addEntry("radiator", CAT_POWER, new ManualPageMultiblock(ManualHelper.getManual(), "radiator0", MultiblockRadiator.instance), new ManualPages.Text(ManualHelper.getManual(), "radiator1"));
 
-		ManualHelper.addEntry("fluidValve", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "fluidValve0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.FLUID_VALVE.getMeta())));
-		ManualHelper.addEntry("loadController", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "loadController0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.LOAD_CONTROLLER.getMeta())));
+		ManualHelper.addEntry("controlBlocks", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "controlBlocks0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.STACK_LIMITER.getMeta())), new ManualPages.Crafting(ManualHelper.getManual(), "controlBlocks1", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.LOAD_CONTROLLER.getMeta())), new ManualPages.Crafting(ManualHelper.getManual(), "controlBlocks2", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.FLUID_VALVE.getMeta())));
 		ManualHelper.addEntry("redstone", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "redstone0", new ItemStack(ITContent.blockConnectors, 1, BlockType_Connectors.CONNECTORS_TIMER.getMeta())));
 		ManualHelper.addEntry("openBarrel", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "openBarrel0", new ItemStack(ITContent.blockMetalBarrel, 1, BlockType_MetalBarrel.BARREL_OPEN.getMeta())));
-		ManualHelper.addEntry("stackLimiter", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "stackLimiter0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.STACK_LIMITER.getMeta())));
 		ManualHelper.addEntry("steelBarrel", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "steelBarrel0", new ItemStack(ITContent.blockMetalBarrel, 2, BlockType_MetalBarrel.BARREL_STEEL.getMeta())));
 		ManualHelper.addEntry("steelTank", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "steelTank0", MultiblockSteelSheetmetalTank.instance), new ManualPages.Text(ManualHelper.getManual(), "steelTank1"));
-		if (Multiblock.enable_coolingTower)
-			ManualHelper.addEntry("coolingTower", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "coolingTower0", MultiblockCoolingTower.instance), new ManualPages.Text(ManualHelper.getManual(), "coolingTower1"));
-		if (Multiblock.enable_heatExchanger)
-			ManualHelper.addEntry("heatExchanger", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "heatExchanger0", MultiblockHeatExchanger.instance), new ManualPages.Text(ManualHelper.getManual(), "heatExchanger1"), new ManualPages.Text(ManualHelper.getManual(), "heatExchanger2"));
+		if(Multiblock.enable_distiller)
+			ManualHelper.addEntry("distiller", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "distiller0", MultiblockDistiller.instance), new ManualPages.Text(ManualHelper.getManual(), "distiller1"));
+		if (Multiblock.enable_meltingCrucible)
+			ManualHelper.addEntry("meltingCrucible", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "meltingCrucible0", MultiblockMeltingCrucible.instance), new ManualPages.Text(ManualHelper.getManual(), "meltingCrucible1"));
+		if (Multiblock.enable_electrolyticCrucibleBattery)
+			ManualHelper.addEntry("electrolyticCrucibleBattery", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "electrolyticCrucibleBattery0", MultiblockElectrolyticCrucibleBattery.instance), new ManualPages.Text(ManualHelper.getManual(), "electrolyticCrucibleBattery1"), new ManualPages.Text(ManualHelper.getManual(), "electrolyticCrucibleBattery2"));
+
 	}
 
 	private static void mapFluidState(Block block, Fluid fluid)	{
@@ -335,7 +314,6 @@ public class ClientProxy extends CommonProxy {
 		if(tile instanceof IGuiTile) {
 			Object gui = null;
 			if(ID == ITLib.GUIID_Boiler && tile instanceof TileEntityBoilerMaster) gui = new GuiBoiler(player.inventory, (TileEntityBoilerMaster) tile);
-			if(ID == ITLib.GUIID_Coke_oven_advanced && tile instanceof TileEntityCokeOvenAdvancedMaster) gui = new GuiCokeOvenAdvanced(player.inventory, (TileEntityCokeOvenAdvancedMaster) tile);
 			if(ID == ITLib.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) gui = new GuiDistiller(player.inventory, (TileEntityDistillerMaster) tile);
 			if(ID == ITLib.GUIID_Solar_Tower && tile instanceof TileEntitySolarTowerMaster) gui = new GuiSolarTower(player.inventory, (TileEntitySolarTowerMaster) tile);
 			if(ID == ITLib.GUIID_Timer && tile instanceof TileEntityTimer) gui = new GuiTimer(player.inventory, (TileEntityTimer) tile);

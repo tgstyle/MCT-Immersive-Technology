@@ -25,7 +25,7 @@ public class BoilerRecipe extends MultiblockRecipe {
 		this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
 	}
 
-	public static ArrayList<BoilerRecipe> recipeList = new ArrayList<BoilerRecipe>();
+	public static ArrayList<BoilerRecipe> recipeList = new ArrayList<>();
 
 	public static BoilerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
 		BoilerRecipe recipe = new BoilerRecipe(fluidOutput, fluidInput, time);
@@ -70,7 +70,7 @@ public class BoilerRecipe extends MultiblockRecipe {
 		return this.totalProcessTime;
 	}
 
-	public static ArrayList<BoilerFuelRecipe> fuelList = new ArrayList<BoilerFuelRecipe>();
+	public static ArrayList<BoilerFuelRecipe> fuelList = new ArrayList<>();
 	
 	public static BoilerFuelRecipe addFuel(FluidStack fluidInput, int time, double heat) {
 		BoilerFuelRecipe recipe = new BoilerFuelRecipe(fluidInput, time, heat);

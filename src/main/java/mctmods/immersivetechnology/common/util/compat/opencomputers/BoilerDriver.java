@@ -1,18 +1,13 @@
 package mctmods.immersivetechnology.common.util.compat.opencomputers;
 
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerSlave;
-
-// Largely based on BluSunrize's drivers for the IE machines
-
 import blusunrize.immersiveengineering.common.util.compat.opencomputers.ManagedEnvironmentIE;
-
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
-
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerSlave;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;

@@ -16,15 +16,18 @@ tile.immersivetech.fluidDistWater.name=Distilled Water
 tile.immersivetech.fluidSteam.name=Steam
 tile.immersivetech.fluidExhaustSteam.name=Exhaust Steam
 tile.immersivetech.fluidFlueGas.name=Flue Gas
+tile.immersivetech.fluidHighPressureSteam.name=High Pressure Steam
 fluid.distwater=Distilled Water
 fluid.steam=Steam
 fluid.exhauststeam=Exhaust Steam
 fluid.fluegas=Flue Gas
+fluid.highpressuresteam=High Pressure Steam
+fluid.hot_spring_water=Hot Spring Water
 
 
 #KEYWORDS
 keyword.immersivetech.generate=Generates
-keyword.immersivetech.heat_level=Heat Level
+keyword.immersivetech.heat_level=Temperature
 keyword.immersivetech.rotations_per_minute=RPM
 keyword.immersivetech.speed=Speed
 
@@ -41,7 +44,6 @@ chat.immersivetech.fluid_pump.push_only_mode=Pump will only push out contents
 
 #TILE ENTITYS
 #METAL
-tile.immersivetech.metal_device.coke_oven_preheater.name=Coke Oven Preheater
 tile.immersivetech.metal_trash.trash_item.name=Trash Can
 tile.immersivetech.metal_trash.trash_fluid.name=Fluid Trash Can
 tile.immersivetech.metal_trash.trash_energy.name=Energy Trash Can
@@ -79,6 +81,14 @@ tile.immersivetech.metal_multiblock1.gas_turbine.name=Gas Turbine
 tile.immersivetech.metal_multiblock1.gas_turbine_slave.name=Gas Turbine
 tile.immersivetech.metal_multiblock1.heat_exchanger.name=Heat Exchanger
 tile.immersivetech.metal_multiblock1.heat_exchanger_slave.name=Heat Exchanger
+tile.immersivetech.metal_multiblock1.high_pressure_steam_turbine.name=High Pressure Steam Turbine
+tile.immersivetech.metal_multiblock1.high_pressure_steam_turbine_slave.name=High Pressure Steam Turbine
+tile.immersivetech.metal_multiblock1.electrolytic_crucible_battery.name=Electrolytic Crucible Battery
+tile.immersivetech.metal_multiblock1.electrolytic_crucible_battery_slave.name=Electrolytic Crucible Battery
+tile.immersivetech.metal_multiblock1.melting_crucible.name=Melting Crucible
+tile.immersivetech.metal_multiblock1.melting_crucible_slave.name=Melting Crucible
+tile.immersivetech.metal_multiblock1.radiator.name=Radiator
+tile.immersivetech.metal_multiblock1.radiator_slave.name=Radiator
 
 
 #OVERLAY
@@ -125,11 +135,6 @@ gui.immersivetech.stack_limiter.limitdestination=Items in output storage
 gui.immersivetech.generic_multiblock_jei_tooltip=Check Engineer's Manual to Build
 
 
-#STONE MULTIBLOCKS
-tile.immersivetech.stone_multiblock.coke_oven_advanced.name=Advanced Coke Oven
-tile.immersivetech.stone_multiblock.coke_oven_advanced_slave.name=Advanced Coke Oven
-
-
 #METAL MULTIBLOCKS
 desc.immersiveengineering.info.multiblock.IT:Distiller=Distiller
 desc.immersiveengineering.info.multiblock.IT:SolarTower=Solar Tower
@@ -141,10 +146,10 @@ desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank=Steel Fluid Tan
 desc.immersiveengineering.info.multiblock.IT:CoolingTower=Cooling Tower
 desc.immersiveengineering.info.multiblock.IT:GasTurbine=Gas Turbine
 desc.immersiveengineering.info.multiblock.IT:HeatExchanger=Heat Exchanger
-
-
-#STONE MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=Advanced Coke Oven
+desc.immersiveengineering.info.multiblock.IT:HighPressureSteamTurbine=High Pressure Steam Turbine
+desc.immersiveengineering.info.multiblock.IT:electrolyticCrucibleBattery=Electrolytic Crucible Battery
+desc.immersiveengineering.info.multiblock.IT:meltingCrucible=Melting Crucible
+desc.immersiveengineering.info.multiblock.IT:Radiator=Radiator
 
 
 #CONNECTORS
@@ -152,13 +157,8 @@ tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
 
 
 #MANUAL
+ie.manual.category.it_power.name=Turbine Power Systems
 ie.manual.category.it.name=Immersive Technology
-
-ie.manual.entry.advancedCokeOven.name=Advanced Coke Oven
-ie.manual.entry.advancedCokeOven.subtext=It's fast now
-ie.manual.entry.advancedCokeOven0=The Advanced Coke Oven is a multiblock structure that allows faster production of Coal Coke and Creosote Oil.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Reinforced Coke Brick Block.
-ie.manual.entry.advancedCokeOven1=It allows the automation of input and output of items, it can also be outfitted with preheaters to speed up the process by addition of hot air.<br>The furnace is made from reinforced bricks, so you'd be advised to spend your first batches of steel on this upgrade.<br>Similar to the Improved Blast Furnace, Coal Coke is output at the front and Creosote Oil at the back. Coal is fed in through the top.
-ie.manual.entry.advancedCokeOven2=Coke Oven Preheaters are used to speed up the refinement process of coal. Each oven can have up to two preheaters connected to the ports on each side, and each preheater requires <config;i;cokeOvenPreheater_consumption> Flux/t to operate.
 
 ie.manual.entry.alternator.name=Alternator
 ie.manual.entry.alternator.subtext=Let's transform
@@ -177,34 +177,34 @@ ie.manual.entry.distiller.subtext=Clearer than water
 ie.manual.entry.distiller0=The Distiller is a multiblock machine that turns Water in to Distilled Water and Salt.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron.
 ie.manual.entry.distiller1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>Water can be input into the Distiller via a hatch on the right that is marked with a blue dot. The hatch with the orange dot on the left is the fluid output and the other hatch on the back serves as a item output.<br>It needs energy to produce Distilled Water and Salt.<br>One bucket of Water produces 500 mB of Distilled Water.
 
-ie.manual.entry.fluidValve.name=Fluid Valve
-ie.manual.entry.fluidValve.subtext=I only need a drop
-ie.manual.entry.fluidValve0=The §6Fluid Valve§r can limit fluids moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
-
-ie.manual.entry.loadController.name=Load Controller
-ie.manual.entry.loadController.subtext=Energy Underload
-ie.manual.entry.loadController0=The §6Load Controller§r can limit energy moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
-
 ie.manual.entry.openBarrel.name=Open Metal Barrel
 ie.manual.entry.openBarrel.subtext=Open to the Sun or Clouds?
 ie.manual.entry.openBarrel0=The §6Open Metal Barrel§r is a single block tank like the Metal Barrel but with an open top. Fluid can be put in by hand. The Top is Input only and the Bottom is Output only. Leave it out in the Rain and watch it fill! In a Thunderstom Twice as fast! However, don't leave it out in warm environments, water just may evaporate.
 
 ie.manual.entry.solarTower.name=Solar Tower
-ie.manual.entry.solarTower.subtext=The power of the Sun
-ie.manual.entry.solarTower0=The Solar Tower is a multiblock structure that uses the light of the Sun to transform water in steam.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Redstone Engineering
-ie.manual.entry.solarTower1=Block.<br>The Solar Tower can produce Steam from Water and <link;distiller;§n§oDistilled Water§r>.<br>One Bucket of Distilled Water produces 3000 mB of Steam.<br>One Bucket of Water produces 2000 mB of Steam.<br>Water can be input into the Solar Tower via the two hatches on the left and the right that are marked with blue dots. The hatch with the orange dot on the back serves as a fluid output.<br>The Solar Tower needs at least one Solar Reflector to work.
+ie.manual.entry.solarTower.subtext=Automatic Bird Roaster 2056
+ie.manual.entry.solarTower0=The Solar Tower is a multiblock structure that uses the light of the Sun to heat water into steam. The structure is built as shown and formed by using the Engineer's Hammer on the central Light Engineering Block.
+ie.manual.entry.solarTower1=The Solar Tower can produce Steam from Water and <link;distiller;§n§oDistilled Water§r>. Water can be input into the Solar Tower via the hatch marked with the blue dot. The hatch with the orange dot serves as a fluid output. The Solar Tower needs at least one Solar Reflector to work, and many to reach full efficiency. The fraction of reflectors out of the maximum number of reflectors is the fraction of the recipe processed. In the overworld, about 230 reflectors are needed to reach full output.
 ie.manual.entry.solarTower2=The Solar Reflector is a multiblock structure that reflects the light of the Sun to the center of the Solar Tower.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Silver Block. 
-ie.manual.entry.solarTower3=To work, there must not be any blocks between it, the Solar Tower, and at the top of the reflector. The reflector's center silver block must align with the center of the Solar Tower. Also the distance between the reflector and the Solar Tower must be between <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> blocks. Obviously, it works only during the day.
+ie.manual.entry.solarTower3=Reflector distance from the Solar Tower must be between <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> blocks. The reflector does not work at night or during thunderstorms, and has reduced efficiency during rainstorms. Efficiency is also reduced at dawn and dusk when the sunlight's angle of incidence is too low to be easily collected, and by high ambient humidity. Full reflector efficiency depends on full sky access. If §lAdvanced Rocketry§r exists, the reflector strength will vary with the amount of received sunlight per planet.
 
-ie.manual.entry.stackLimiter.name=Stack Limiter
-ie.manual.entry.stackLimiter.subtext=Only need a couple items
-ie.manual.entry.stackLimiter0=The §6Stack Limiter§r can limit items moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
+ie.manual.entry.controlBlocks.name=Limiter and Control Devices
+ie.manual.entry.controlBlocks.subtext=Throughput is overrated
+ie.manual.entry.controlBlocks0=The §6Stack Limiter§r can limit items moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
+ie.manual.entry.controlBlocks1=The §6Load Controller§r can limit energy moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
+ie.manual.entry.controlBlocks2=The §6Fluid Valve§r can limit fluids moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
 
 ie.manual.entry.steamTurbine.name=Steam Turbine
 ie.manual.entry.steamTurbine.subtext=Boiling breath
 ie.manual.entry.steamTurbine0=The Steam Turbine is a multiblock structure that uses Steam to produce kinetic energy.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Steel Block (short side).
 ie.manual.entry.steamTurbine1=When supplied with steam, the Turbine will slowly speed up, reaching maximum speed after <config;i;steamTurbine_timeToMax> seconds, as long it's constantly fed. Turning it off or failing to provide enough steam slows the Turbine down and reduces its power output.<br>To work, it needs an <link;alternator;§o§nAlternator§r>.
 ie.manual.entry.steamTurbine2=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>The fluid pipe on front of the machine is the input. The kinetic energy output is in the rear of the machine (Steel Block). Optionally, fluids can be retrieved through the output pipe on the top of the machine.
+
+ie.manual.entry.highPressureSteamTurbine.name=High Pressure Steam Turbine
+ie.manual.entry.highPressureSteamTurbine.subtext=Double Rankine
+ie.manual.entry.highPressureSteamTurbine0=The High Pressure Steam Turbine is a multiblock structure that uses High Pressure Steam to produce kinetic energy. The structure is built as shown and formed by using the Engineer's Hammer on the central block (short side).
+ie.manual.entry.highPressureSteamTurbine1=When supplied with steam, the Turbine will slowly speed up, reaching maximum speed after <config;i;highPressureSteamTurbine_timeToMax> seconds, as long it's constantly fed. Turning it off or failing to provide enough steam slows the Turbine down and reduces its power output.<br>To work, it needs an <link;alternator;§o§nAlternator§r>.
+ie.manual.entry.highPressureSteamTurbine2=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>The fluid pipe on front of the machine is the input. The kinetic energy output is in the rear of the machine. Optionally, fluids can be retrieved through the output pipe on the top of the machine.
 
 ie.manual.entry.gasTurbine.name=Gas Turbine
 ie.manual.entry.gasTurbine.subtext=Not part of a 747
@@ -228,14 +228,30 @@ ie.manual.entry.redstone0=The §6Redstone Timer§r outputs a short redstone sign
 
 ie.manual.entry.coolingTower.name=Cooling Tower
 ie.manual.entry.coolingTower.subtext=Keep it cool, man!
-ie.manual.entry.coolingTower0=The Cooling Tower is a multiblock structure that converts exhaust steam back into water. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the Heavy Engineering block.
-ie.manual.entry.coolingTower1=Exhaust Steam goes into the block to the left of the Heavy Engineering block (side with red gauge indicator) while water or distilled water goes into the right one (side with blue gauge indicator).
+ie.manual.entry.coolingTower0=The Cooling Tower is a multiblock structure that converts exhaust steam back into water. The structure is built as shown above and formed by using the Engineer's Hammer on the Heavy Engineering block.
+ie.manual.entry.coolingTower1=Warm fluids go into the side with the red indicator, and cold fluids go into the side with the blue indicator. If §lAdvanced Rocketry§r exists, the cooling tower's processing time depends on the ability to vent heat to the atmosphere, dependent upon atmosphere pressure, and the cooling tower will shut off if in vacuum if it would vent fluid to the atmosphere only to lose it to instant vaporization or if it would vent into an artificial atmosphere.
 
 ie.manual.entry.heatExchanger.name=Heat Exchanger
 ie.manual.entry.heatExchanger.subtext=Entropy says hi
 ie.manual.entry.heatExchanger0=The Heat Exchanger is a multiblock structure that quickly moves heat from one fluid to another. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Iron Sheetmetal next to the Redstone Engineering Block.
 ie.manual.entry.heatExchanger1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. <br>Water and <link;distiller;§n§oDistilled Water§r> can be fed to the Heat Exchanger via a hatch on the top that is marked with a blue dot. The hatch with the orange dot at the top serves as the fluid output for steam.
 ie.manual.entry.heatExchanger2=<link;gasTurbine;§n§oFlue Gas§r> can be fed to the hatch marked with a blue dot on the bottom layer. The hatch marked with the orange dot at the bottom layer serves as the fluid output for previously hot fluids.
+
+ie.manual.entry.electrolyticCrucibleBattery.name=Electrolytic Crucible Battery
+ie.manual.entry.electrolyticCrucibleBattery.subtext=The power of electricity compels you!
+ie.manual.entry.electrolyticCrucibleBattery0=The Electrolytic Crucible Battery is a multiblock that uses a continuous electrical current to split fluids into their constituent parts and to plate metals from liquids.
+ie.manual.entry.electrolyticCrucibleBattery1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. The singular blue hatch is the fluid input, and the two separated fluids will be output from the top ports on the back, while the items and spent electrolyte will be output from the bottom
+ie.manual.entry.electrolyticCrucibleBattery2=The multiblock is most commonly used to provide molten sodium for a <link;solarTower;§n§oSolar Tower§r>, electrolysed from molten salt. It can be formed by hitting the block that is the item output with an Engineer's Hammer.
+
+ie.manual.entry.meltingCrucible.name=Melting Crucible
+ie.manual.entry.meltingCrucible.subtext=Not a pulse jet. Not a furnace.
+ie.manual.entry.meltingCrucible0=The Melting Crucible is a multiblock that uses electricity to heat solids into liquids. It can be formed by hitting the block between the power input and redstone input with an Engineer's Hammer.
+ie.manual.entry.meltingCrucible1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. Items are input on the back, into the blue port, and liquids are output the bottom front from the orange port. The multiblock is most commonly used to provide molten salt for a <link;electrolyticCrucibleBattery;§n§oElectrolytic Crucible Battery§r>, to electrolyse into molten sodium for a <link;solarTower;§n§oSolar Tower§r>.
+
+ie.manual.entry.radiator.name=Radiator
+ie.manual.entry.radiator.subtext=Irradiative Phase Shift
+ie.manual.entry.radiator0=The Radiator is a multiblock that performs radiative cooling (and conductive cooling, if possible) to cool hot fluids and gasses down, similar to the cooling tower. It can be formed by hitting the light engineering block with an Engineer's Hammer. It can also be made horizontal.
+ie.manual.entry.radiator1=The amount of cooling depends on the temperature differential between the hot fluid and the environment, and will not heat fluid. Efficiency also varies based on number of obstructions close. If §lAdvanced Rocketry§r exists, processing amount depends on atmosphere pressure and blackbody equivalence temperature of the radiator. Radiators are extremely inefficient compared to the cooling tower, but can operate in vacuum unlike the cooling tower. The radiator will not function in an artificial atmosphere.
 
 ie.manual.entry.computer.steamTurbine.name=Steam Turbine ☎
 ie.manual.entry.computer.steamTurbine.subtext=Boiling breath
@@ -249,6 +265,8 @@ ie.manual.entry.computer.gasTurbine.name=Gas Turbine ☎
 ie.manual.entry.computer.gasTurbine.subtext=Not part of a 747
 ie.manual.entry.computer.heatExchanger.name=Heat Exchanger ☎
 ie.manual.entry.computer.heatExchanger.subtext=Entropy says hi
+ie.manual.entry.computer.highPressureSteamTurbine.name=High Pressure Steam Turbine ☎
+ie.manual.entry.computer.highPressureSteamTurbine.subtext=Double Rankine
 
 ie.manual.entry.computer.steamTurbine0=§lgetSpeed()§r: returns the speed of the turbine in RPM.<br>§lgetTankInfo()§r: returns information about the turbine's steam tank.<br>§lgetOutputTankInfo()§r: returns information about the turbine's output tank.
 ie.manual.entry.computer.boiler0=§lgetHeat()§r: returns the boiler's heat level.<br>§lgetFuelTankInfo()§r: returns information about the boiler's fuel tank.<br>§lgetInputTankInfo()§r: returns information about the boiler's input tank.<br>§lgetOutputTankInfo()§r: returns information about the boiler's output tank.
@@ -260,5 +278,6 @@ ie.manual.entry.computer.solarTower1=§lgetFullCanisters()§r: returns a table w
 ie.manual.entry.computer.gasTurbine0=§lgetSpeed()§r: returns the speed of the turbine in RPM.<br>§lgetInputTankInfo()§r: returns information about the turbine's fuel tank.<br>§lgetOutputTankInfo()§r: returns information about the turbine's output tank.
 ie.manual.entry.computer.heatExchanger0=§lgetFirstInputTankInfo()§r: returns a table with information about the heat exchanger's first input tank (upper loop).<br>§lgetSecondInputTankInfo()§r: returns a table with information about the heat exchanger's second input tank (lower loop).
 ie.manual.entry.computer.heatExchanger1=§lgetFirstOutputTankInfo()§r: returns a table with information about the heat exchanger's first output tank (upper loop).<br>§lgetSecondOutputTankInfo()§r: returns a table with information about the heat exchanger's second output tank (lower loop).
+ie.manual.entry.computer.highPressureSteamTurbine0=§lgetSpeed()§r: returns the speed of the turbine in RPM.<br>§lgetTankInfo()§r: returns information about the turbine's steam tank.<br>§lgetOutputTankInfo()§r: returns information about the turbine's output tank.
 
 ie.manual.entry.fluidPipes3=In order for the pump to pick up fluid blocks, it will need a power input at the top and a redstone signal. Pumps can also be used to extract from tanks and other fluid containers that do not have an automatic output. This will also require a redstone signal, but won't consume power.<br><br>Pumps have a new mode! The operating mode of the Fluid Pump can be changed by right clicking it with an Engineer's Wire Cutter. Toggle the mode if it's not behaving as expected.

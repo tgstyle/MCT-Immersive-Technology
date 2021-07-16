@@ -15,15 +15,16 @@ import java.util.Iterator;
 public class CoolingTower {
 
     @ZenMethod
-    public static void addRecipe(ILiquidStack outputFluid1, ILiquidStack outputFluid2, ILiquidStack inputFluid1, ILiquidStack inputFluid2, int time) {
+    public static void addRecipe(ILiquidStack outputFluid1, ILiquidStack outputFluid2, ILiquidStack outputFluid3, ILiquidStack inputFluid1, ILiquidStack inputFluid2, int time) {
         FluidStack fluidOut1 = CraftTweakerHelper.toFluidStack(outputFluid1);
         FluidStack fluidOut2 = CraftTweakerHelper.toFluidStack(outputFluid2);
+        FluidStack fluidOut3 = CraftTweakerHelper.toFluidStack(outputFluid3);
         FluidStack fluidIn1 = CraftTweakerHelper.toFluidStack(inputFluid1);
         FluidStack fluidIn2 = CraftTweakerHelper.toFluidStack(inputFluid2);
 
         if(fluidIn1 == null || fluidOut1 == null) return;
 
-        CoolingTowerRecipe recipe = new CoolingTowerRecipe(fluidOut1, fluidOut2, fluidIn1, fluidIn2, time);
+        CoolingTowerRecipe recipe = new CoolingTowerRecipe(fluidOut1, fluidOut2, fluidOut3, fluidIn1, fluidIn2, time);
         CraftTweakerAPI.apply(new CoolingTower.Add(recipe));
     }
 
@@ -55,7 +56,7 @@ public class CoolingTower {
     private static class Remove implements IAction {
         private final FluidStack inputFluid1;
         private final FluidStack inputFluid2;
-        ArrayList<CoolingTowerRecipe> removedRecipes = new ArrayList<CoolingTowerRecipe>();
+        ArrayList<CoolingTowerRecipe> removedRecipes = new ArrayList<>();
 
         public Remove(FluidStack inputFluid1, FluidStack inputFluid2) {
             this.inputFluid1 = inputFluid1;

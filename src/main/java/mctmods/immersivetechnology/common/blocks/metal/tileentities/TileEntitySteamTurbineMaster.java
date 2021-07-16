@@ -29,7 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave implements ITFluidTank.TankListener {
 
 	private static int inputTankSize = SteamTurbine.steamTurbine_input_tankSize;
-	private static int outputTankSize = SteamTurbine.steamTurbine_input_tankSize;
+	private static int outputTankSize = SteamTurbine.steamTurbine_output_tankSize;
 	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
 	private static int speedGainPerTick = SteamTurbine.steamTurbine_speed_gainPerTick;
 	private static int speedLossPerTick = SteamTurbine.steamTurbine_speed_lossPerTick;

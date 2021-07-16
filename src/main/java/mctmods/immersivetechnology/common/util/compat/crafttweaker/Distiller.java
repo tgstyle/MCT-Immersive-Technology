@@ -75,7 +75,7 @@ public class Distiller {
 	private static class Remove implements IAction {
 		private final FluidStack inputFluid;
 		private final ItemStack outputItem;
-		ArrayList<DistillerRecipe> removedRecipes = new ArrayList<DistillerRecipe>();
+		ArrayList<DistillerRecipe> removedRecipes = new ArrayList<>();
 
 		public Remove(FluidStack inputFluid, ItemStack outputItem) {
 			this.inputFluid = inputFluid;

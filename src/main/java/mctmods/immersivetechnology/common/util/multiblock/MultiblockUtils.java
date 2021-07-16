@@ -36,7 +36,7 @@ public class MultiblockUtils {
     }
 
     public static IngredientStack[] GetMaterials(MultiblockJSONSchema data) {
-        ArrayList<IngredientStack> ingredients = new ArrayList<IngredientStack>();
+        ArrayList<IngredientStack> ingredients = new ArrayList<>();
         for(BlockJSONSchema blockData : data.palette) {
             long count = 0;
             for(String row : data.structure) {
@@ -58,7 +58,7 @@ public class MultiblockUtils {
     }
 
     public static HashMap<Character, IRefComparable> GetPalette(MultiblockJSONSchema data) {
-        HashMap<Character, IRefComparable> palette = new HashMap<Character, IRefComparable>();
+        HashMap<Character, IRefComparable> palette = new HashMap<>();
         for(BlockJSONSchema blockData : data.palette) {
 
             if(blockData.mod.equals("ore")) {

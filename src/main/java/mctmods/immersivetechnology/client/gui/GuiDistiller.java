@@ -22,7 +22,7 @@ public class GuiDistiller extends GuiIEContainerBase {
 	public void drawScreen(int mx, int my, float partial) {
 		super.drawScreen(mx, my, partial);
 	
-		ArrayList<String> tooltip = new ArrayList<String>();
+		ArrayList<String> tooltip = new ArrayList<>();
 		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 58, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_distiller.png", tooltip);
 		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft + 112, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_distiller.png", tooltip);
 		if(mx > guiLeft + 157 && mx < guiLeft + 164 && my > guiTop + 21 && my < guiTop + 67)

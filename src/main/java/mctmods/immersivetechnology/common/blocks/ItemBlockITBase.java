@@ -61,7 +61,7 @@ public class ItemBlockITBase extends ItemBlock {
 		if(((BlockITBase<?>) block).hasFlavour(stack)) {
 			String subName = ((BlockITBase<?>) this.block).getStateFromMeta(stack.getItemDamage()).getValue(((BlockITBase<?>) this.block).property).toString().toLowerCase(Locale.US);
 			String flavourKey = "desc." + ImmersiveTechnology.MODID + ".flavor." + ((BlockITBase<?>) this.block).name + "." + subName;
-			list.add(TextFormatting.GRAY.toString() + I18n.format(flavourKey));
+			list.add(TextFormatting.GRAY + I18n.format(flavourKey));
 		}
 		super.addInformation(stack, worldIn, list, advInfo);
 

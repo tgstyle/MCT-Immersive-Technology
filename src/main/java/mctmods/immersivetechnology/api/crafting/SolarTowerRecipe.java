@@ -24,7 +24,7 @@ public class SolarTowerRecipe extends MultiblockRecipe {
 		this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
 	}
 
-	public static ArrayList <SolarTowerRecipe> recipeList = new ArrayList<SolarTowerRecipe>();
+	public static ArrayList <SolarTowerRecipe> recipeList = new ArrayList<>();
 
 	public static SolarTowerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
 		SolarTowerRecipe recipe = new SolarTowerRecipe(fluidOutput, fluidInput, time);

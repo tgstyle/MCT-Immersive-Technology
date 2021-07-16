@@ -14,25 +14,27 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
 
     public final FluidStack fluidOutput0;
     public final FluidStack fluidOutput1;
+    public final FluidStack fluidOutput2;
     public final FluidStack fluidInput0;
     public final FluidStack fluidInput1;
 
     int totalProcessTime;
 
-    public CoolingTowerRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidInput0, FluidStack fluidInput1, int time) {
+    public CoolingTowerRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, FluidStack fluidInput0, FluidStack fluidInput1, int time) {
         this.fluidOutput0 = fluidOutput0;
         this.fluidOutput1 = fluidOutput1;
+        this.fluidOutput2 = fluidOutput2;
         this.fluidInput0 = fluidInput0;
         this.fluidInput1 = fluidInput1;
         this.totalProcessTime = (int)Math.floor(time * timeModifier);
         this.fluidInputList = Lists.newArrayList(fluidInput0, fluidInput1);
-        this.fluidOutputList = Lists.newArrayList(fluidOutput0, fluidOutput1);
+        this.fluidOutputList = Lists.newArrayList(fluidOutput0, fluidOutput1, fluidOutput2);
     }
 
-    public static ArrayList<CoolingTowerRecipe> recipeList = new ArrayList<CoolingTowerRecipe>();
+    public static ArrayList<CoolingTowerRecipe> recipeList = new ArrayList<>();
 
-    public static CoolingTowerRecipe addRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidInput0, FluidStack fluidInput1, int time) {
-        CoolingTowerRecipe recipe = new CoolingTowerRecipe(fluidOutput0, fluidOutput1, fluidInput0, fluidInput1, time);
+    public static CoolingTowerRecipe addRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, FluidStack fluidInput0, FluidStack fluidInput1, int time) {
+        CoolingTowerRecipe recipe = new CoolingTowerRecipe(fluidOutput0, fluidOutput1, fluidOutput2, fluidInput0, fluidInput1, time);
         recipeList.add(recipe);
         return recipe;
     }

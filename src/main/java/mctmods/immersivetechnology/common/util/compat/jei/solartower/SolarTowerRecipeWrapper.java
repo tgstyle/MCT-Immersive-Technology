@@ -15,7 +15,6 @@ public class SolarTowerRecipeWrapper extends MultiblockRecipeWrapper {
 	public ITickTimer timer;
 	private MultiblockRecipe recipe;
 	private static float speedMult = SolarTower.solarTower_speed_multiplier;
-	private static float reflectorSpeedMult = SolarTower.solarTower_solarReflector_speed_multiplier;
 	private static DecimalFormat format = new DecimalFormat("#.####");
 
 	public SolarTowerRecipeWrapper(MultiblockRecipe recipe) {
@@ -25,7 +24,7 @@ public class SolarTowerRecipeWrapper extends MultiblockRecipeWrapper {
 
 	@Override
 	public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-		float time = recipe.getTotalProcessTime() / (speedMult * (1 + timer.getValue() * (reflectorSpeedMult - 1)));
+		float time = recipe.getTotalProcessTime() / (speedMult * (timer.getValue() + 1));
 		String text = (GuiScreen.isShiftKeyDown())?
 				TranslationKey.GUI_TICKS.format(Math.round(time)) :
 				TranslationKey.GUI_SECONDS.format(format.format(time/20));

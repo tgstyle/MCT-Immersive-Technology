@@ -16,8 +16,6 @@ public class Config {
 			public static Recipes recipes;
 			public static Alternator alternator;
 			public static Boiler boiler;
-			public static AdvancedCokeOven advancedcokeoven;
-			public static CokeOvenPreheater cokeovenpreheater;
 			public static Distiller distiller;
 			public static SolarReflector solarreflector;
 			public static SolarTower solartower;
@@ -26,10 +24,12 @@ public class Config {
 			public static CoolingTower coolingTower;
 			public static GasTurbine gasTurbine;
 			public static HeatExchanger heatExchanger;
+			public static HighPressureSteamTurbine highPressureSteamturbine;
+			public static ElectrolyticCrucibleBattery electrolyticCrucibleBattery;
+			public static MeltingCrucible meltingCrucible;
+			public static Radiator radiator;
 
 			public static class Multiblock {
-				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Preheater be built ? [Default=true]"})
-				public static boolean enable_advancedCokeOven = true;
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Boiler Multiblock structure be built ? [Default=true]"})
 				public static boolean enable_boiler = true;
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Distiller Multiblock structure be built ? [Default=true]"})
@@ -38,12 +38,20 @@ public class Config {
 				public static boolean enable_solarTower = true;
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Steam Turbine / Alternator Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_steamTurbine = true;
-				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Cooling Tower Multiblock structures be built ? [Default=true]"})
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Cooling Tower Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_coolingTower = true;
-				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Gas Turbine Multiblock structures be built ? [Default=true]"})
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Gas Turbine Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_gasTurbine = true;
-				@Comment({"**WARING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Heat Exchanger Multiblock structures be built ? [Default=true]"})
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Heat Exchanger Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_heatExchanger = true;
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the High Pressure Steam Turbine Multiblock structures be built ? [Default=false]"})
+				public static boolean enable_highPressureSteamTurbine = false;
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Electrolytic Crucible Battery Multiblock structures be built ? [Default=false]"})
+				public static boolean enable_electrolyticCrucibleBattery = false;
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Melting Crucible Multiblock structures be built ? [Default=false]"})
+				public static boolean enable_meltingCrucible = false;
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Radiator Multiblock structures be built ? [Default=true]"})
+				public static boolean enable_radiator = true;
 			}
 			public static class Recipes {
 				@Comment({"Should default Steam Turbine recipes be registered ? [Default=true]"})
@@ -60,22 +68,20 @@ public class Config {
 				public static boolean register_gas_turbine_recipes = true;
 				@Comment({"Should default Heat Exchanger recipes be registered ? [Default=true]"})
 				public static boolean register_heat_exchanger_recipes = true;
-			}
-			public static class AdvancedCokeOven {
-				@Comment({"The capacity of the tank for the Advanced Coke Oven [Default=24000]"})
-				public static int advancedCokeOven_tankSize = 24000;
-				@Comment({"How fast the Advanced Coke Oven (with no preheaters) is when compared to the basic Coke Oven. A value of 1 means same speed. [Default=1]"})
-				public static float advancedCokeOven_speed_base = 1;
-				@Comment({"This value gets added per preheater, to the speed of the Advanced Coke Oven [Default=1]"})
-				public static float advancedCokeOven_preheater_speed_increase = 1;
-				@Comment({"The speed of the Advanced Coke Oven gets multiplied by this value per preheater [Default=1]"})
-				public static float advancedCokeOven_preheater_speed_multiplier = 1;
+				@Comment({"Should default High Pressure Steam Turbine recipes be registered ? [Default=false]"})
+				public static boolean register_highPressureSteamTurbine_recipes = false;
+				@Comment({"Should default Electrolytic Crucible Battery recipes be registered ? [Default=false]"})
+				public static boolean register_electrolyticCrucibleBattery_recipes = false;
+				@Comment({"Should default Melting Crucible recipes be registered ? [Default=false]"})
+				public static boolean register_meltingCrucible_recipes = false;
+				@Comment({"Should default Radiator recipes be registered ? [Default=true]"})
+				public static boolean register_radiator_recipes = true;
 			}
 			public static class CoolingTower {
-				@Comment({"The capacity of the input tanks for the Cooling Tower [Default=10000]"})
-				public static int coolingTower_input_tankSize = 10000;
-				@Comment({"The capacity of the output tanks for the Cooling Tower [Default=10000]"})
-				public static int coolingTower_output_tankSize = 10000;
+				@Comment({"The capacity of the input tanks for the Cooling Tower [Default=20000]"})
+				public static int coolingTower_input_tankSize = 20000;
+				@Comment({"The capacity of the output tanks for the Cooling Tower [Default=20000]"})
+				public static int coolingTower_output_tankSize = 20000;
 			}
 			public static class HeatExchanger {
 				@Comment({"The capacity of the input tanks for the Heat Exchanger [Default=10000]"})
@@ -107,10 +113,6 @@ public class Config {
 				@Comment({"How fast the Boiler loses progress in ticks when the heat drops below processing heat level [Default=1]"})
 				public static int boiler_progress_lossInTicks = 1;
 			}
-			public static class CokeOvenPreheater {
-				@Comment({"The energy per tick the Coke Oven Preheater consumes while processing [Default=32]"})
-				public static int cokeOvenPreheater_energy_consumption = 32;
-			}
 			public static class Distiller {
 				@Comment({"The capacity of the input tank for the Distiller [Default=24000]"})
 				public static int distiller_input_tankSize = 24000;
@@ -130,20 +132,18 @@ public class Config {
 				public static int solarTower_output_tankSize = 32000;
 				@Comment({"The heat speed multiplier applied to all Solar Tower recipes (with a single reflector) [Default=1]"})
 				public static float solarTower_speed_multiplier = 1;
-				@Comment({"The heat speed of the Solar Tower gets multiplied by this value, per Solar Reflector past the first one [Default=1.5]"})
-				public static float solarTower_solarReflector_speed_multiplier = 1.5f;
-				@Comment({"A Solar Tower can only start processing recipes once it reaches this heat level [Default=6000.0]"})
-				public static double solarTower_heat_workingLevel = 6000.0;
-				@Comment({"How fast the Solar Tower cools down per tick when turned off or at night [Default=1]"})
-				public static int solarTower_heat_lossPerTick = 1;
+				@Comment({"A Solar Tower can only start processing recipes once it reaches this heat level [Default=12000.0]"})
+				public static double solarTower_heat_workingLevel = 12000.0;
+				@Comment({"How fast the Solar Tower cools down per tick when turned off or at night [Default=1.0]"})
+				public static double solarTower_heat_loss_multiplier = 1.0;
 				@Comment({"How fast the the Solar Tower loses progress in ticks when the heat drops below processing heat level [Default=1]"})
 				public static int solarTower_progress_lossInTicks = 1;
 			}
 			public static class SolarReflector {
-				@Comment({"The minimum distance between the Solar Reflectors and the Solar Tower [Default=5]"})
-				public static int solarReflector_minRange = 5;
-				@Comment({"The maximum distance between the Solar Reflectors and the Solar Tower [Default=10]"})
-				public static int solarReflector_maxRange = 10;
+				@Comment({"The minimum distance between the Solar Reflectors and the Solar Tower [Default=12]"})
+				public static int solarReflector_minRange = 12;
+				@Comment({"The maximum distance between the Solar Reflectors and the Solar Tower **WARNING** The tower's ability to produce steam will be severely hampered if this number is small!!! [Default=48]"})
+				public static int solarReflector_maxRange = 48;
 			}
 			public static class SteamTurbine {
 				@Comment({"The capacity of the input tank for the Steam Turbine [Default=10000]"})
@@ -176,6 +176,42 @@ public class Config {
 				public static int gasTurbine_speed_lossPerTick = 6;
 				@Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
 				public static float gasTurbine_speed_maxRotation = 72;
+			}
+			public static class HighPressureSteamTurbine {
+				@Comment({"The capacity of the input tank for the Steam Turbine [Default=10000]"})
+				public static int highPressureSteamTurbine_input_tankSize = 10000;
+				@Comment({"The capacity of the output tank for the Steam Turbine [Default=10000]"})
+				public static int highPressureSteamTurbine_output_tankSize = 10000;
+				@Comment({"How fast the Steam Turbine increases in speed per tick [Default=3]"})
+				public static int highPressureSteamTurbine_speed_gainPerTick = 1;
+				@Comment({"How fast the Steam Turbine loses speed per tick when inactive [Default=6]"})
+				public static int highPressureSteamTurbine_speed_lossPerTick = 6;
+				@Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
+				public static float highPressureSteamTurbine_speed_maxRotation = 72;
+				@Comment({"Should the steam turbine use tungsten, if it exists? Otherwise the turbine will use nickel [Default=true]"})
+				public static boolean highPressureSteamTurbine_turbine_material = true;
+			}
+			public static class ElectrolyticCrucibleBattery {
+				@Comment({"The capacity of the input tanks for the Electrolytic Crucible Battery [Default=10000]"})
+				public static int electrolyticCrucibleBattery_input_tankSize = 10000;
+				@Comment({"The capacity of the output tanks for the Electrolytic Crucible Battery [Default=10000]"})
+				public static int electrolyticCrucibleBattery_output_tankSize = 10000;
+				@Comment({"The maximum energy an Electrolytic Crucible Battery can store [Default=16384]"})
+				public static int electrolyticCrucibleBattery_energy_size = 16384;
+			}
+			public static class MeltingCrucible {
+				@Comment({"The capacity of the output tanks for the Heat Exchanger [Default=10000]"})
+				public static int meltingCrucible_output_tankSize = 10000;
+				@Comment({"The maximum energy a Heat Exchanger can store [Default=8000]"})
+				public static int meltingCrucible_energy_size = 8000;
+			}
+			public static class Radiator {
+				@Comment({"The capacity of the input tank for the Radiator [Default=8000]"})
+				public static int radiator_input_tankSize = 8000;
+				@Comment({"The capacity of the output tank for the Radiator [Default=8000]"})
+				public static int radiator_output_tankSize = 8000;
+				@Comment({"The heat speed multiplier applied to all Radiator recipes [Default=1]"})
+				public static float radiator_speed_multiplier = 1;
 			}
 			public static class SteelTank {
 				@Comment({"Steel Tank Size in mB [Default=2048000]"})

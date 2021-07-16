@@ -15,6 +15,8 @@ import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockGas
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITFluxStorage;
 import mctmods.immersivetechnology.common.util.ITSounds;
+import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
+import mctmods.immersivetechnology.common.util.compat.advancedrocketry.AdvancedRocketryHelper;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
@@ -49,7 +51,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private static final int speedGainPerTick = GasTurbine.gasTurbine_speed_gainPerTick;
     private static final int speedLossPerTick = GasTurbine.gasTurbine_speed_lossPerTick;
     private static final int inputTankSize = GasTurbine.gasTurbine_input_tankSize;
-    private static final int outputTankSize = GasTurbine.gasTurbine_input_tankSize;
+    private static final int outputTankSize = GasTurbine.gasTurbine_output_tankSize;
     public static final int electricStarterConsumption = GasTurbine.gasTurbine_electric_starter_consumption;
     public static final int sparkplugConsumption = GasTurbine.gasTurbine_sparkplug_consumption;
     public static final int electricStarterSize = GasTurbine.gasTurbine_electric_starter_size;
@@ -166,7 +168,10 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     public boolean canIgnite() {
-        return sparkplugConsumption <= sparkplugStorage.getEnergyStored();
+        boolean canFuelCombust = true;
+        if (ITCompatModule.isAdvancedRocketryLoaded)
+            canFuelCombust = AdvancedRocketryHelper.isAtmosphereSuitableForCombustion(world, ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, 0, -1, facing, mirrored));
+        return sparkplugConsumption <= sparkplugStorage.getEnergyStored() && canFuelCombust;
     }
 
     @Override
@@ -278,21 +283,43 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     private void InitializePoIs() {
         for(PoIJSONSchema poi : MultiblockGasTurbine.instance.pointsOfInterest) {
-            if(poi.name.equals("input")) input = new PoICache(facing, poi, mirrored);
-            else if(poi.name.equals("output")) {
-                output = new PoICache(facing, poi, mirrored);
-                outputFront = getBlockPosForPos(output.position).offset(output.facing);
-            } else if(poi.name.equals("particle")) particleOrigin = getBlockPosForPos(poi.position);
-            else if(poi.name.equals("running_sound")) runningSoundOrigin = getBlockPosForPos(poi.position);
-            else if(poi.name.equals("arc_sound")) arcSoundOrigin = getBlockPosForPos(poi.position);
-            else if(poi.name.equals("ignition_sound")) ignitionSoundOrigin = getBlockPosForPos(poi.position);
-            else if(poi.name.equals("starter_sound")) starterSoundOrigin = getBlockPosForPos(poi.position);
-            else if(poi.name.equals("power0")) power0 = new PoICache(facing, poi, mirrored);
-            else if(poi.name.equals("power1")) power1 = new PoICache(facing, poi, mirrored);
-            else if(poi.name.equals("mechanical_output")) {
-                mechanicalOutput = new PoICache(facing, poi, mirrored);
-                mechanicalOutputFront = getBlockPosForPos(mechanicalOutput.position).offset(mechanicalOutput.facing);
-            } else if(poi.name.equals("redstone")) redstone = new PoICache(facing, poi, mirrored);
+            switch (poi.name) {
+                case "input":
+                    input = new PoICache(facing, poi, mirrored);
+                    break;
+                case "output":
+                    output = new PoICache(facing, poi, mirrored);
+                    outputFront = getBlockPosForPos(output.position).offset(output.facing);
+                    break;
+                case "particle":
+                    particleOrigin = getBlockPosForPos(poi.position);
+                    break;
+                case "running_sound":
+                    runningSoundOrigin = getBlockPosForPos(poi.position);
+                    break;
+                case "arc_sound":
+                    arcSoundOrigin = getBlockPosForPos(poi.position);
+                    break;
+                case "ignition_sound":
+                    ignitionSoundOrigin = getBlockPosForPos(poi.position);
+                    break;
+                case "starter_sound":
+                    starterSoundOrigin = getBlockPosForPos(poi.position);
+                    break;
+                case "power0":
+                    power0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "power1":
+                    power1 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "mechanical_output":
+                    mechanicalOutput = new PoICache(facing, poi, mirrored);
+                    mechanicalOutputFront = getBlockPosForPos(mechanicalOutput.position).offset(mechanicalOutput.facing);
+                    break;
+                case "redstone":
+                    redstone = new PoICache(facing, poi, mirrored);
+                    break;
+            }
         }
     }
 

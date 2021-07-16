@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.util.compat;
 
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.compat.crafttweaker.CraftTweakerHelper;
-import mctmods.immersivetechnology.common.util.compat.top.OneProbeHelper;
 import mctmods.immersivetechnology.common.util.compat.opencomputers.OCHelper;
+import mctmods.immersivetechnology.common.util.compat.top.OneProbeHelper;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -19,11 +19,13 @@ import java.util.function.Consumer;
 	*/
 public abstract class ITCompatModule {
 
-	public static HashMap<String, Class<? extends ITCompatModule>> moduleClasses = new HashMap<String, Class<? extends ITCompatModule>>();
-	public static Set<ITCompatModule> modules = new HashSet<ITCompatModule>();
+	public static HashMap<String, Class<? extends ITCompatModule>> moduleClasses = new HashMap<>();
+	public static Set<ITCompatModule> modules = new HashSet<>();
 
 	public static Consumer<Object> jeiAddFunc = o -> {};
 	public static Consumer<Object> jeiRemoveFunc = o -> {};
+
+	public static boolean isAdvancedRocketryLoaded = false;
 
 	static {
 		moduleClasses.put("crafttweaker", CraftTweakerHelper.class);
@@ -43,6 +45,7 @@ public abstract class ITCompatModule {
 				}
 			}
 		}
+		if(Loader.isModLoaded("advancedrocketry")) isAdvancedRocketryLoaded = true;
 	}
 
 	public static void doModulesInit() {

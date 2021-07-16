@@ -7,6 +7,8 @@ import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Boiler;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
+import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
+import mctmods.immersivetechnology.common.util.compat.advancedrocketry.AdvancedRocketryHelper;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
@@ -89,7 +91,11 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
 	private boolean cooldown() {
 		double previousHeatLevel = heatLevel;
-		heatLevel = Math.max(heatLevel - heatLossPerTick, 0);
+		double heatTransferMultiplier = 1.0;
+		if (ITCompatModule.isAdvancedRocketryLoaded) {
+			heatTransferMultiplier = AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos().add(0, 2, 0));
+		}
+		heatLevel = Math.max(heatLevel - heatLossPerTick * heatTransferMultiplier, 0);
 		return previousHeatLevel != heatLevel;
 	}
 
@@ -173,18 +179,24 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
 	private boolean heatLogic() {
 		boolean update = false;
-		if(burnRemaining > 0) {
-			burnRemaining--;
-			if(heatUp()) update = true;
-		} else if(!isRSDisabled() && tanks[0].getFluid() != null) {
-			BoilerRecipe.BoilerFuelRecipe fuel = (lastFuel != null && tanks[0].getFluid().isFluidEqual(lastFuel.fluidInput)) ? lastFuel : BoilerRecipe.findFuel(tanks[0].getFluid());
-			if(fuel != null && fuel.fluidInput.amount <= tanks[0].getFluidAmount()) {
-				lastFuel = fuel;
-				tanks[0].drain(fuel.fluidInput.amount, true);
-				burnRemaining = fuel.getTotalProcessTime() - 1;
-				markContainingBlockForUpdate(null);
-				if(heatUp()) update = true;
-			} else if(cooldown()) update = true;
+		boolean canFuelCombust = true;
+		if (ITCompatModule.isAdvancedRocketryLoaded) {
+			canFuelCombust = AdvancedRocketryHelper.isAtmosphereSuitableForCombustion(world, ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 3, 0, 1, facing, mirrored));
+		}
+		if (canFuelCombust) {
+			if (burnRemaining > 0) {
+				burnRemaining--;
+				if (heatUp()) update = true;
+			} else if (!isRSDisabled() && tanks[0].getFluid() != null) {
+				BoilerRecipe.BoilerFuelRecipe fuel = (lastFuel != null && tanks[0].getFluid().isFluidEqual(lastFuel.fluidInput)) ? lastFuel : BoilerRecipe.findFuel(tanks[0].getFluid());
+				if (fuel != null && fuel.fluidInput.amount <= tanks[0].getFluidAmount()) {
+					lastFuel = fuel;
+					tanks[0].drain(fuel.fluidInput.amount, true);
+					burnRemaining = fuel.getTotalProcessTime() - 1;
+					markContainingBlockForUpdate(null);
+					if (heatUp()) update = true;
+				} else if (cooldown()) update = true;
+			} else if (cooldown()) update = true;
 		} else if(cooldown()) update = true;
 		return update;
 	}

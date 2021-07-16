@@ -59,12 +59,20 @@ public class CoolingTowerRecipeCategory extends ITRecipeCategory<CoolingTowerRec
 
         if(!outputs.isEmpty()) {
             tankIndex++;
-            guiFluidStacks.init(tankIndex, false, 109, 11, 16, 47, tankSize, true, tankOverlay);
+            guiFluidStacks.init(tankIndex, false, 86, 11, 16, 47, tankSize, true, tankOverlay);
             guiFluidStacks.set(tankIndex, outputs.get(0));
             if(outputs.size() == 2) {
                 tankIndex++;
-                guiFluidStacks.init(tankIndex, false, 132, 11, 16, 47, tankSize, true, tankOverlay);
+                guiFluidStacks.init(tankIndex, false, 109, 11, 16, 47, tankSize, true, tankOverlay);
                 guiFluidStacks.set(tankIndex, outputs.get(1));
+            }
+            if(outputs.size() == 3) {
+                tankIndex++;
+                guiFluidStacks.init(tankIndex, false, 109, 11, 16, 47, tankSize, true, tankOverlay);
+                guiFluidStacks.set(tankIndex, outputs.get(1));
+                tankIndex++;
+                guiFluidStacks.init(tankIndex, false, 132, 11, 16, 47, tankSize, true, tankOverlay);
+                guiFluidStacks.set(tankIndex, outputs.get(2));
             }
         }
         guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
@@ -77,7 +85,7 @@ public class CoolingTowerRecipeCategory extends ITRecipeCategory<CoolingTowerRec
 
     @Override
     public void drawExtras(Minecraft minecraft) {
-        arrow.draw(minecraft, 65, 51);
-        drops.draw(minecraft, 68, 28);
+        arrow.draw(minecraft, 52, 51);
+        drops.draw(minecraft, 55, 32);
     }
 }

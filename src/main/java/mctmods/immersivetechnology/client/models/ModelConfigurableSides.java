@@ -1,20 +1,14 @@
 package mctmods.immersivetechnology.client.models;
 
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.function.Function;
-import mctmods.immersivetechnology.ImmersiveTechnology;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.IEEnums;
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -30,10 +24,17 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.lwjgl.util.vector.Vector3f;
 
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.function.Function;
+
 public class ModelConfigurableSides implements IBakedModel {
 	private static final String MODEL_PREFIX = "conf_sides_";
 	private static final String RESOURCE_LOCATION = "models/block/smartmodels/" + MODEL_PREFIX;
-	private static HashMap<String, ITextureNamer> TYPES = new HashMap<String, ITextureNamer>();
+	private static HashMap<String, ITextureNamer> TYPES = new HashMap<>();
 
 	static {
 		TYPES.put("all6_", new ITextureNamer() {

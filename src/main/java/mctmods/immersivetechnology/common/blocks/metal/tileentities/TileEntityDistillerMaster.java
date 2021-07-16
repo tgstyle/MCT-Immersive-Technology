@@ -124,7 +124,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 			if(tanks[0].getFluidAmount() > 0) {
 				DistillerRecipe recipe = DistillerRecipe.findRecipe(tanks[0].getFluid());
 				if(recipe != null) {
-					MultiblockProcessInMachine<DistillerRecipe> process = new MultiblockProcessInMachine<DistillerRecipe>(recipe).setInputTanks(new int[] {0});
+					MultiblockProcessInMachine<DistillerRecipe> process = new MultiblockProcessInMachine<>(recipe).setInputTanks(new int[] {0});
 					if(this.addProcessToQueue(process, false)) update = true;
 				}
 			}

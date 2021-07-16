@@ -24,7 +24,7 @@ public class GasTurbineRecipe extends MultiblockRecipe {
         this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
     }
 
-    public static ArrayList<GasTurbineRecipe> recipeList = new ArrayList<GasTurbineRecipe>();
+    public static ArrayList<GasTurbineRecipe> recipeList = new ArrayList<>();
 
     public static GasTurbineRecipe addFuel(FluidStack fluidOutput, FluidStack fluidInput, int time) {
         GasTurbineRecipe recipe = new GasTurbineRecipe(fluidOutput, fluidInput, time);

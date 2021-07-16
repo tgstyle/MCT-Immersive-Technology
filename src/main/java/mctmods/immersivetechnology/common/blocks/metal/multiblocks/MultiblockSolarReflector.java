@@ -9,7 +9,7 @@ import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsIE;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration0;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration1;
-import blusunrize.immersiveengineering.common.blocks.wooden.BlockTypes_WoodenDecoration;
+import blusunrize.immersiveengineering.common.blocks.stone.BlockTypes_StoneDecoration;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarReflectorSlave;
@@ -18,6 +18,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -29,24 +30,32 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class MultiblockSolarReflector implements IMultiblock {
 	public static MultiblockSolarReflector instance = new MultiblockSolarReflector();
 
-	static ItemStack[][][] structure = new ItemStack[5][1][3];
+	static ItemStack[][][] structure = new ItemStack[3][3][3];
 	static {
-		for(int h = 0 ; h < 5 ; h ++) {
-			for(int w = 0 ; w < 3 ; w ++) {
-				if((h == 0 || h == 1) && w == 1) continue;
-				if(h < 2) {
-					structure[h][0][w] = new ItemStack(IEContent.blockWoodenDecoration, 1, BlockTypes_WoodenDecoration.FENCE.getMeta());
-				} else if(h == 2 || h == 4) {
-					if(w == 1) {
-						structure[h][0][w] = new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta());
-					} else {
-						structure[h][0][w] = new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
-					}
-				} else if(h == 3) {
-					if(w == 1) {
-						structure[h][0][w] = new ItemStack(IEContent.blockStorage, 1, BlockTypes_MetalsIE.SILVER.getMeta());
-					} else {
-						structure[h][0][w] = new ItemStack(IEContent.blockWoodenDecoration, 1, BlockTypes_WoodenDecoration.FENCE.getMeta());
+		for(int h = 0 ; h < 3 ; h ++) {
+			for (int l = 0; l < 3; l++) {
+				for (int w = 0; w < 3; w++) {
+					if (h == 1 && w == 1 && (l == 0 || l == 2)) continue;
+					if (h == 0) {
+						if ((w == 0 || w == 2) && (l == 0 || l == 2)) {
+							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
+						} else if (w == 1 && l == 1) {
+							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta());
+						} else {
+							structure[h][l][w] = new ItemStack(IEContent.blockStoneDecoration, 1, BlockTypes_StoneDecoration.CONCRETE.getMeta());
+						}
+					} else if (h == 1) {
+						if (l == 0 || l == 2) {
+							structure[h][l][w] = new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
+						} else {
+							structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsIE.SILVER.getMeta());
+						}
+					} else if (h == 2) {
+						if(l == 1) {
+							structure[h][l][w] = new ItemStack(Blocks.GLASS);
+						} else {
+							structure[h][l][w] = new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsIE.SILVER.getMeta());
+						}
 					}
 				}
 			}
@@ -63,7 +72,7 @@ public class MultiblockSolarReflector implements IMultiblock {
 
 	@Override
 	public boolean isBlockTrigger(IBlockState state) {
-		return Utils.compareToOreName(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)), "blockSilver");
+		return Utils.compareToOreName(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)), "blockSheetmetalSilver");
 	}
 
 	@Override
@@ -76,21 +85,22 @@ public class MultiblockSolarReflector implements IMultiblock {
 			ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
 			if(MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer).isCanceled()) return false;
 		}
-		for(int h = - 3 ; h <= 1 ; h ++) {
-			for(int w = - 1 ; w <= 1 ; w ++) {
-				if(h < - 1 && w == 0) continue;
-				BlockPos pos2 = pos.offset(side.rotateY(), w).add(0, h, 0);
-				int[] offset = new int[] {(side == EnumFacing.NORTH ? w : side == EnumFacing.SOUTH ? - w : 0), h, (side == EnumFacing.EAST ? w : side == EnumFacing.WEST ? - w : 0)};
-				world.setBlockState(pos2, (offset[0]==0&&offset[1]==0&&offset[2]==0)? master : slave);
-				TileEntity curr = world.getTileEntity(pos2);
-				if(curr instanceof TileEntitySolarReflectorSlave) {
-					TileEntitySolarReflectorSlave tile = (TileEntitySolarReflectorSlave)curr;
-					tile.facing = side;
-					tile.formed = true;
-					tile.pos = (h + 3) * 3 + (w + 1);
-					tile.offset = offset;
-					tile.markDirty();
-					world.addBlockEvent(pos2, ITContent.blockMetalMultiblock, 255, 0);
+		for(int h = - 1 ; h <= 1 ; h ++) {
+			for(int l = - 1 ; l <= 1 ; l ++) {
+				for (int w = -1; w <= 1; w++) {
+					if (h == 0 && w == 0 && (l == -1 || l == 1)) continue;
+					BlockPos pos2 = pos.offset(side.rotateY(), w).offset(side, l).add(0, h, 0);
+					world.setBlockState(pos2, (h == 0 && l == 0 && w == 0) ? master : slave);
+					TileEntity curr = world.getTileEntity(pos2);
+					if (curr instanceof TileEntitySolarReflectorSlave) {
+						TileEntitySolarReflectorSlave tile = (TileEntitySolarReflectorSlave) curr;
+						tile.facing = side;
+						tile.formed = true;
+						tile.pos = (h+1)*9+(l+1)*3+(w+1);
+						tile.offset = new int[]{(side == EnumFacing.WEST ? -l : side == EnumFacing.EAST ? l: side == EnumFacing.NORTH ? w : -w), h, (side == EnumFacing.NORTH ? -l : side == EnumFacing.SOUTH ? l : side == EnumFacing.EAST ? w : -w)};
+						tile.markDirty();
+						world.addBlockEvent(pos2, ITContent.blockMetalMultiblock, 255, 0);
+					}
 				}
 			}
 		}
@@ -98,23 +108,32 @@ public class MultiblockSolarReflector implements IMultiblock {
 	}
 
 	boolean structureCheck(World world, BlockPos startPos, EnumFacing dir) {
-		for(int h = - 3 ; h <= 1 ; h ++) {
-			for(int w = - 1 ; w <= 1 ; w ++) {
-				if(h < - 1 && w == 0) continue;
-				BlockPos pos = startPos.offset(dir.rotateY(), w).add(0, h, 0);
-				if(h < - 1) {
-					if(!Utils.isOreBlockAt(world, pos, "fenceTreatedWood")) return false;
-				} else if(h == - 1 || h == 1) {
-					if(w == 0) {
-						if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta())) return false;
-					} else {
-						if(!Utils.isOreBlockAt(world, pos, "scaffoldingSteel")) return false;
-					}
-				} else if(h == 0) {
-					if(w == 0) {
-						if(!Utils.isOreBlockAt(world, pos, "blockSilver")) return false;
-					} else {
-						if(!Utils.isOreBlockAt(world, pos, "fenceTreatedWood")) return false;
+		for(int h = - 1 ; h <= 1 ; h ++) {
+			for(int l = - 1 ; l <= 1 ; l ++) {
+				for (int w = -1; w <= 1; w++) {
+					if (h == 0 && w == 0 && (l == -1 || l == 1)) continue;
+
+					BlockPos pos = startPos.offset(dir, l).offset(dir.rotateY(), w).add(0, h, 0);
+					if (h == -1) {
+						if ((w == -1 || w == 1) && (l == -1 || l == 1)) {
+							if(!Utils.isOreBlockAt(world, pos, "scaffoldingSteel")) return false;
+						} else if (w == 0 && l == 0) {
+							if(!Utils.isBlockAt(world, pos, IEContent.blockMetalDecoration0, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta())) return false;
+						} else {
+							if(!Utils.isBlockAt(world, pos, IEContent.blockStoneDecoration, BlockTypes_StoneDecoration.CONCRETE.getMeta())) return false;
+						}
+					} else if (h == 0) {
+						if (l == -1 || l == 1) {
+							if(!Utils.isOreBlockAt(world, pos, "scaffoldingSteel")) return false;
+						} else {
+							if(!Utils.isOreBlockAt(world, pos, "blockSheetmetalSilver")) return false;
+						}
+					} else if (h == 1) {
+						if(l == 0) {
+							if (!Utils.isOreBlockAt(world, pos, "blockGlassColorless")) return false;
+						} else {
+							if (!Utils.isOreBlockAt(world, pos, "blockSheetmetalSilver")) return false;
+						}
 					}
 				}
 			}
@@ -128,10 +147,11 @@ public class MultiblockSolarReflector implements IMultiblock {
 	}
 
 	static final IngredientStack[] materials = new IngredientStack[] {
-		new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 2, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta())), 
-		new IngredientStack("scaffoldingSteel", 4), 
-		new IngredientStack("blockSilver", 1), 
-		new IngredientStack("fenceTreatedWood", 6)
+		new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta())),
+		new IngredientStack(new ItemStack(IEContent.blockStoneDecoration, 4, BlockTypes_StoneDecoration.CONCRETE.getMeta())),
+		new IngredientStack("scaffoldingSteel", 8),
+		new IngredientStack("blockSheetmetalSilver", 9),
+			new IngredientStack("blockGlassColorless", 9)
 	};
 
 	@Override
