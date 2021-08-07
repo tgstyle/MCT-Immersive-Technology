@@ -10,10 +10,10 @@
 		}
 	},
 	"variants": {
-		"inventory,type=electrolytic_crucible_battery_slave": [{
-			"model": "immersivetech:metal_multiblock/electrolytic_crucible_battery.obj",
+		"inventory,type=solar_melter_slave": [{
+			"model": "immersivetech:metal_multiblock/solar_melter.obj",
 			"transform": {
-				"scale": 0.14,
+				"scale": 0.0625,
 				"rotation": [{
 					"x": 20
 				},
@@ -21,11 +21,15 @@
 						"y": -45
 					}
 				],
-				"translation": [ -0.25, -0.3, 0 ]
+				"translation": [
+					0,
+					-0.25,
+					0
+				]
 			}
 		}],
 		"type": {
-			"electrolytic_crucible_battery_slave": {
+			"solar_melter_slave": {
 				"model": "immersiveengineering:ie_empty"
 			}
 		},

@@ -17,12 +17,21 @@ tile.immersivetech.fluidSteam.name=Steam
 tile.immersivetech.fluidExhaustSteam.name=Exhaust Steam
 tile.immersivetech.fluidFlueGas.name=Flue Gas
 tile.immersivetech.fluidHighPressureSteam.name=High Pressure Steam
+tile.immersivetech.fluidHotWater.name=Hot Spring Water
+tile.immersivetech.fluidMoltenSalt.name=Molten Salt
+tile.immersivetech.fluidMoltenSodium.name=Molten Sodium
+tile.immersivetech.fluidSuperheatedMoltenSodium.name=Superheated Molten Sodium
+tile.immersivetech.fluidChlorine.name=Chlorine
 fluid.distwater=Distilled Water
 fluid.steam=Steam
 fluid.exhauststeam=Exhaust Steam
 fluid.fluegas=Flue Gas
 fluid.highpressuresteam=High Pressure Steam
 fluid.hot_spring_water=Hot Spring Water
+fluid.moltensalt=Molten Salt
+fluid.moltensodium=Molten Sodium
+fluid.superheatedmoltensodium=Superheated Molten Sodium
+fluid.chlorine=Chlorine
 
 
 #KEYWORDS
@@ -89,6 +98,8 @@ tile.immersivetech.metal_multiblock1.melting_crucible.name=Melting Crucible
 tile.immersivetech.metal_multiblock1.melting_crucible_slave.name=Melting Crucible
 tile.immersivetech.metal_multiblock1.radiator.name=Radiator
 tile.immersivetech.metal_multiblock1.radiator_slave.name=Radiator
+tile.immersivetech.metal_multiblock1.solar_melter.name=Solar Melting Crucible
+tile.immersivetech.metal_multiblock1.solar_melter_slave.name=Solar Melting Crucible
 
 
 #OVERLAY
@@ -150,6 +161,7 @@ desc.immersiveengineering.info.multiblock.IT:HighPressureSteamTurbine=High Press
 desc.immersiveengineering.info.multiblock.IT:electrolyticCrucibleBattery=Electrolytic Crucible Battery
 desc.immersiveengineering.info.multiblock.IT:meltingCrucible=Melting Crucible
 desc.immersiveengineering.info.multiblock.IT:Radiator=Radiator
+desc.immersiveengineering.info.multiblock.IT:SolarMelter=Solar Melting Crucible
 
 
 #CONNECTORS
@@ -247,6 +259,12 @@ ie.manual.entry.meltingCrucible.name=Melting Crucible
 ie.manual.entry.meltingCrucible.subtext=Not a pulse jet. Not a furnace.
 ie.manual.entry.meltingCrucible0=The Melting Crucible is a multiblock that uses electricity to heat solids into liquids. It can be formed by hitting the block between the power input and redstone input with an Engineer's Hammer.
 ie.manual.entry.meltingCrucible1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. Items are input on the back, into the blue port, and liquids are output the bottom front from the orange port. The multiblock is most commonly used to provide molten salt for a <link;electrolyticCrucibleBattery;§n§oElectrolytic Crucible Battery§r>, to electrolyse into molten sodium for a <link;solarTower;§n§oSolar Tower§r>.
+
+ie.manual.entry.solarMelter.name=Solar Melting Crucible
+ie.manual.entry.solarMelter.subtext=Cortas vs. Mackenzies
+ie.manual.entry.solarMelter0=The Solar Melting Crucible is a multiblock that uses solar energy to heat solids into liquids. The structure is built as shown and formed by using the Engineer's Hammer on the central silver sheetmetal block.
+ie.manual.entry.solarMelter1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. Items are input on the back, into the blue port, and liquids are output the bottom front from the orange port. The multiblock is most commonly used to provide molten salt for a <link;electrolyticCrucibleBattery;§n§oElectrolytic Crucible Battery§r>, to electrolyse into molten sodium for a <link;solarTower;§n§oSolar Tower§r>.
+
 
 ie.manual.entry.radiator.name=Radiator
 ie.manual.entry.radiator.subtext=Irradiative Phase Shift

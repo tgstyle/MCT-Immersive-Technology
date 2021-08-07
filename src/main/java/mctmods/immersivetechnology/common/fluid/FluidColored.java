@@ -7,8 +7,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
 public class FluidColored extends Fluid {
-	static final ResourceLocation ICON_MetalStill = new ResourceLocation("tconstruct:blocks/fluids/molten_metal");
-	static final ResourceLocation ICON_MetalFlowing = new ResourceLocation("tconstruct:blocks/fluids/molten_metal_flow");
+	static final ResourceLocation ICON_MetalStill = new ResourceLocation("immersivetech:blocks/fluids/molten_metal");
+	static final ResourceLocation ICON_MetalFlowing = new ResourceLocation("immersivetech:blocks/fluids/molten_metal_flow");
 	static final ResourceLocation ICON_Still = new ResourceLocation(ImmersiveTechnology.MODID + ":blocks/fluids/fluid_still");
 	static final ResourceLocation ICON_Flowing = new ResourceLocation(ImmersiveTechnology.MODID + ":blocks/fluids/fluid_flowing");
 

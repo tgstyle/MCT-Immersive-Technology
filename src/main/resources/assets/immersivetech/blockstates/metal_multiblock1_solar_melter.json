@@ -10,8 +10,8 @@
 		}
 	},
 	"variants": {
-		"inventory,type=solar_tower": [{
-			"model": "immersivetech:metal_multiblock/solar_tower.obj",
+		"inventory,type=solar_melter": [{
+			"model": "immersivetech:metal_multiblock/solar_melter.obj",
 			"transform": {
 				"scale": 0.0625,
 				"rotation": [{
@@ -29,7 +29,7 @@
 			}
 		}],
 		"type": {
-			"solar_tower": {}
+			"solar_melter": {}
 		},
 		"facing": {
 			"north": {
@@ -73,10 +73,10 @@
 		},
 		"boolean0": {
 			"false": {
-				"model": "immersivetech:metal_multiblock/solar_tower.obj"
+				"model": "immersivetech:metal_multiblock/solar_melter.obj"
 			},
 			"true": {
-				"model": "immersivetech:metal_multiblock/solar_tower_mirrored.obj"
+				"model": "immersivetech:metal_multiblock/solar_melter_mirrored.obj"
 			}
 		}
 	}

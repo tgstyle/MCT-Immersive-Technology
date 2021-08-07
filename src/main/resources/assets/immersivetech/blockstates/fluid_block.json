@@ -34,6 +34,26 @@
 			"custom": {
 				"fluid": "hot_spring_water"
 			}
+		}],
+		"moltensalt": [{
+			"custom": {
+				"fluid": "moltensalt"
+			}
+		}],
+		"moltensodium": [{
+			"custom": {
+				"fluid": "moltensodium"
+			}
+		}],
+		"superheatedmoltensodium": [{
+			"custom": {
+				"fluid": "superheatedmoltensodium"
+			}
+		}],
+		"chlorine": [{
+			"custom": {
+				"fluid": "chlorine"
+			}
 		}]
 	}
 }

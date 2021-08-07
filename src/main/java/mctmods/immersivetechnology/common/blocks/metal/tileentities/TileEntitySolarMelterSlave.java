@@ -3,11 +3,10 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.Lists;
-import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
-import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
+import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSystem;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarTower;
+import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarMelter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,16 +16,18 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<TileEntitySolarTowerSlave, SolarTowerRecipe, TileEntitySolarTowerMaster> implements IEBlockInterfaces.IGuiTile, IEBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IAdvancedCollisionBounds {
-	public TileEntitySolarTowerSlave() {
-		super(MultiblockSolarTower.instance, new int[] { 21, 3, 3 }, 0, true);
+public class TileEntitySolarMelterSlave extends TileEntityMultiblockNewSystem<TileEntitySolarMelterSlave, MeltingCrucibleRecipe, TileEntitySolarMelterMaster> implements IEBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IAdvancedCollisionBounds {
+	public TileEntitySolarMelterSlave() {
+		super(MultiblockSolarMelter.instance, new int[] { 21, 3, 3 }, 0, true);
 	}
 
 	@Override
@@ -50,19 +51,19 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 		return true;
 	}
 
-	TileEntitySolarTowerMaster master;
+	TileEntitySolarMelterMaster master;
 
-	public TileEntitySolarTowerMaster master() {
+	public TileEntitySolarMelterMaster master() {
 		if(master != null && !master.tileEntityInvalid) return master;
 		BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
 		TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-		master = te instanceof TileEntitySolarTowerMaster?(TileEntitySolarTowerMaster)te: null;
+		master = te instanceof TileEntitySolarMelterMaster?(TileEntitySolarMelterMaster)te: null;
 		return master;
 	}
 
 	@Override
 	public NonNullList<ItemStack> getInventory() {
-		return master() == null? NonNullList.withSize(4, ItemStack.EMPTY) : master.inventory;
+		return master() == null? NonNullList.withSize(1, ItemStack.EMPTY) : master.inventory;
 	}
 
 	@Override
@@ -87,12 +88,12 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	}
 
 	@Override
-	protected SolarTowerRecipe readRecipeFromNBT(NBTTagCompound tag) {
-		return SolarTowerRecipe.loadFromNBT(tag);
+	protected MeltingCrucibleRecipe readRecipeFromNBT(NBTTagCompound tag) {
+		return MeltingCrucibleRecipe.loadFromNBT(tag);
 	}
 
 	@Override
-	public SolarTowerRecipe findRecipeForInsertion(ItemStack inserting) {
+	public MeltingCrucibleRecipe findRecipeForInsertion(ItemStack inserting) {
 		return null;
 	}
 
@@ -113,11 +114,11 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 
 	@Override
 	public int[] getOutputTanks() {
-		return new int[] { 1 };
+		return new int[] { 0 };
 	}
 
 	@Override
-	public boolean additionalCanProcessCheck(MultiblockProcess<SolarTowerRecipe> process) {
+	public boolean additionalCanProcessCheck(MultiblockProcess<MeltingCrucibleRecipe> process) {
 		return true;
 	}
 
@@ -128,7 +129,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	public void doProcessFluidOutput(FluidStack output) { }
 
 	@Override
-	public void onProcessFinish(MultiblockProcess<SolarTowerRecipe> process) { }
+	public void onProcessFinish(MultiblockProcess<MeltingCrucibleRecipe> process) { }
 
 	@Override
 	public int getMaxProcessPerTick() {
@@ -141,7 +142,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	}
 
 	@Override
-	public float getMinProcessDistance(MultiblockProcess<SolarTowerRecipe> process) {
+	public float getMinProcessDistance(MultiblockProcess<MeltingCrucibleRecipe> process) {
 		return 0;
 	}
 
@@ -154,22 +155,13 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
 		if(master() != null) {
 			if (side == null) return master.tanks;
-			else if((pos == 16 ) && side == facing) return new FluidTank[] { master.tanks[0] };
-			else if(pos == 10 && side == facing.getOpposite()) return new FluidTank[] { master.tanks[1] };
+			if(pos == 10 && side == facing.getOpposite()) return new FluidTank[] { master.tanks[0] };
 		}
 		return new FluidTank[0];
 	}
 
 	@Override
-	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
-		if(master() == null) return false;
-		if((pos == 16) && side == facing) {
-			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
-			if(master.tanks[iTank].getFluid() == null) return SolarTowerRecipe.findRecipeByFluid(resource.getFluid()) != null;
-			else return resource.getFluid() == master.tanks[iTank].getFluid().getFluid();
-		}
-		return false;
-	}
+	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {return false;}
 
 	@Override
 	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
@@ -177,25 +169,10 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	}
 
 	@Override
-	public boolean canOpenGui() {
-		return formed;
-	}
-
-	@Override
-	public int getGuiID() {
-		return ITLib.GUIID_Solar_Tower;
-	}
-
-	@Override
-	public TileEntity getGuiMaster() {
-		return master();
-	}
-
-	@Override
-	public TileEntitySolarTowerSlave getTileForPos(int targetPos) {
+	public TileEntitySolarMelterSlave getTileForPos(int targetPos) {
 		BlockPos target = getBlockPosForPos(targetPos);
 		TileEntity tile = world.getTileEntity(target);
-		return tile instanceof TileEntitySolarTowerSlave ? (TileEntitySolarTowerSlave) tile : null;
+		return tile instanceof TileEntitySolarMelterSlave ? (TileEntitySolarMelterSlave) tile : null;
 	}
 
 	@Override
@@ -260,29 +237,15 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 
 			list.add(new AxisAlignedBB(minX, 0.0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 
-			minX = fl == EnumFacing.SOUTH ? 0.0f : fl == EnumFacing.NORTH ? 0.75f : 0.25f;
-			maxX = fl == EnumFacing.SOUTH ? 0.25f : fl == EnumFacing.NORTH ? 1.0f : 0.75f;
-			minZ = fw == EnumFacing.NORTH ? 0.25f : fw == EnumFacing.SOUTH ? 1.0f : 0.75f;
-			maxZ = fw == EnumFacing.NORTH ? 0.0f : fw == EnumFacing.SOUTH ? 0.75f : 0.25f;
-
-			list.add(new AxisAlignedBB(minX, 0.5, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-
 			return list;
 
 		} else if (pos == 13) {
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(0, 0, 0, 1, 0.5, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+			if (fl.getAxis() == EnumFacing.Axis.X)
+                list.add(new AxisAlignedBB(0, 0.5, 0.25, 1, 1, 0.75).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+			else
+				list.add(new AxisAlignedBB(0.25, 0.5, 0, 0.75, 1, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 
-			float minX = rotated ? 0f : 0.25f;
-			float maxX = rotated ? 0.25f : 0.75f;
-			float minZ = !rotated ? 0f : 0.25f;
-			float maxZ = !rotated ? 0.25f : 0.75f;
-			list.add(new AxisAlignedBB(minX, 0.5, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-
-			minX = rotated ? 0.75f : 0.25f;
-			maxX = rotated ? 1f : 0.75f;
-			minZ = !rotated ? 0.75f : 0.25f;
-			maxZ = !rotated ? 1f : 0.75f;
-			list.add(new AxisAlignedBB(minX, 0.5, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
 		} else if (pos == 14) {
 			float minX = fl == EnumFacing.SOUTH ? 0.5f : 0f;
@@ -291,13 +254,6 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 			float maxZ = fw == EnumFacing.NORTH ? 0.5f : 0f;
 
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 0.5, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-
-			minX = fl == EnumFacing.NORTH ? 0.0f : fl == EnumFacing.SOUTH ? 0.75f : 0.25f;
-			maxX = fl == EnumFacing.NORTH ? 0.25f : fl == EnumFacing.SOUTH ? 1.0f : 0.75f;
-			minZ = fw == EnumFacing.SOUTH ? 0.25f : fw == EnumFacing.NORTH ? 1.0f : 0.75f;
-			maxZ = fw == EnumFacing.SOUTH ? 0.0f : fw == EnumFacing.NORTH ? 0.75f : 0.25f;
-
-			list.add(new AxisAlignedBB(minX, 0.5, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 
 			return list;
 
@@ -322,31 +278,20 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 				list.add(new AxisAlignedBB(0, 0, 0.5, 0.5, 0.5, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			}
 			return list;
-		} else if ((h == 2 || h == 5 || h == 6 || h == 13 || h == 14 || h == 17) && pos % 9 == 4) {
-			float minX = rotated ? 0f : 0.25f;
-			float maxX = rotated ? 0.25f : 0.75f;
-			float minZ = !rotated ? 0f : 0.25f;
-			float maxZ = !rotated ? 0.25f : 0.75f;
-			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(minX, 0.0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-
-			minX = rotated ? 0.75f : 0.25f;
-			maxX = rotated ? 1f : 0.75f;
-			minZ = !rotated ? 0.75f : 0.25f;
-			maxZ = !rotated ? 1f : 0.75f;
-			list.add(new AxisAlignedBB(minX, 0.0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			return list;
+		}  else if (pos == 31) {
+			return Lists.newArrayList(new AxisAlignedBB(0, 0, 0, 1, 0.25, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 		} else if (h > 1 && h < 18 && (pos % 9 == 0 || pos % 9 == 2 || pos % 9 == 6 || pos % 9 == 8)) {
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(0.3125, 0, 0.3125, 0.6875, 1, 0.6875).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			if (h == 3 || h == 8 || h == 11 || h == 16) {
-				int pos2 = pos;
-				if (mirrored) {
-					if (pos % 9 == 8 || pos % 9 == 6) {
-						pos2 -= 6;
-					} else if (pos % 9 == 2 || pos % 9 == 0) {
-						pos2 += 6;
-					}
+			int pos2 = pos;
+			if (mirrored) {
+				if (pos % 9 == 8 || pos % 9 == 6) {
+					pos2 -= 6;
+				} else if (pos % 9 == 2 || pos % 9 == 0) {
+					pos2 += 6;
 				}
+			}
 
+			if (h == 3 || h == 8 || h == 11 || h == 16) {
 				if ((fl == EnumFacing.EAST && pos2 % 9 == 2) || (fl == EnumFacing.SOUTH && pos2 % 9 == 8) || (fl == EnumFacing.WEST && pos2 % 9 == 6) || (fl == EnumFacing.NORTH && pos2 % 9 == 0)) {
 					list.add(new AxisAlignedBB(0.6875, 0, 0.375, 1, 1, 0.625).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 					list.add(new AxisAlignedBB(0.375, 0, 0, 0.625, 1, 0.3125).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
@@ -361,26 +306,45 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 					list.add(new AxisAlignedBB(0.375, 0, 0.6875, 0.625, 1, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 				}
 			}
+			if (h == 2 || h == 3) {
+				float yTop = h == 2 ? 1 : 0.25f;
+				int pos3 = (pos2 % 9) + 9;
+
+				if ((fl == EnumFacing.EAST && pos3 == 11) || (fl == EnumFacing.SOUTH && pos3 == 17) || (fl == EnumFacing.WEST && pos3 == 15) || (fl == EnumFacing.NORTH && pos3 == 9)) {
+					list.add(new AxisAlignedBB(0.5, 0, 0, 1, yTop, 0.5).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+				} else if ((fl == EnumFacing.EAST && pos3 == 9) || (fl == EnumFacing.SOUTH && pos3 == 11) || (fl == EnumFacing.WEST && pos3 == 17) || (fl == EnumFacing.NORTH && pos3 == 15)) {
+					list.add(new AxisAlignedBB(0.5, 0, 0.5, 1, yTop, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+				} else if ((fl == EnumFacing.EAST && pos3 == 17) || (fl == EnumFacing.SOUTH && pos3 == 15) || (fl == EnumFacing.WEST && pos3 == 9) || (fl == EnumFacing.NORTH && pos3 == 11)) {
+					list.add(new AxisAlignedBB(0, 0, 0, 0.5, yTop, 0.5).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+				} else if ((fl == EnumFacing.EAST && pos3 == 15) || (fl == EnumFacing.SOUTH && pos3 == 9) || (fl == EnumFacing.WEST && pos3 == 11) || (fl == EnumFacing.NORTH && pos3 == 17)) {
+					list.add(new AxisAlignedBB(0, 0, 0.5, 0.5, yTop, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+				}
+			}
+			return list;
+		} else if (h == 2) {
+			List<AxisAlignedBB> list = Lists.newArrayList();
+
+			boolean toFix = !(offset[0] == 0 && offset[2] == 1) && !(offset[0] == 1 && offset[2] == 0);
+
+			if ((!rotated && (pos % 9 == 1 || pos % 9 == 7)) || (rotated && (pos % 9 == 3 || pos % 9 == 5))) {
+				list.add(new AxisAlignedBB(toFix ? 1 : 0, 0, 0, 0.5, 1, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+			} else if ((!rotated && (pos % 9 == 3 || pos % 9 == 5)) || (rotated && (pos % 9 == 1 || pos % 9 == 7))) {
+				list.add(new AxisAlignedBB(0, 0, toFix ? 1 : 0, 1, 1, 0.5).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+			}
+			return list;
+		} else if (h == 3) {
+			List<AxisAlignedBB> list = Lists.newArrayList();
+
+			boolean toFix = !(offset[0] == 0 && offset[2] == 1) && !(offset[0] == 1 && offset[2] == 0);
+
+			if ((!rotated && (pos % 9 == 1 || pos % 9 == 7)) || (rotated && (pos % 9 == 3 || pos % 9 == 5))) {
+				list.add(new AxisAlignedBB(toFix ? 1 : 0, 0, 0, 0.5, 0.25, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+			} else if ((!rotated && (pos % 9 == 3 || pos % 9 == 5)) || (rotated && (pos % 9 == 1 || pos % 9 == 7))) {
+				list.add(new AxisAlignedBB(0, 0, toFix ? 1 : 0, 1, 0.25, 0.5).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
+			}
 			return list;
 		} else if (h == 4 || h == 7 || h == 12 || h == 15 && (pos % 9 == 1 || pos % 9 == 3 || pos % 9 == 5 || pos % 9 == 7)) {
 			List<AxisAlignedBB> list = Lists.newArrayList();
-
-			if (pos % 9 == 3) {
-				float minX = fl == EnumFacing.SOUTH ? 0.0f : fl == EnumFacing.NORTH ? 0.75f : 0.25f;
-				float maxX = fl == EnumFacing.SOUTH ? 0.25f : fl == EnumFacing.NORTH ? 1.0f : 0.75f;
-				float minZ = fw == EnumFacing.NORTH ? 0.25f : fw == EnumFacing.SOUTH ? 1.0f : 0.75f;
-				float maxZ = fw == EnumFacing.NORTH ? 0.0f : fw == EnumFacing.SOUTH ? 0.75f : 0.25f;
-
-				list.add(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			} if (pos % 9 == 5) {
-				float minX = fl == EnumFacing.NORTH ? 0.0f : fl == EnumFacing.SOUTH ? 0.75f : 0.25f;
-				float maxX = fl == EnumFacing.NORTH ? 0.25f : fl == EnumFacing.SOUTH ? 1.0f : 0.75f;
-				float minZ = fw == EnumFacing.SOUTH ? 0.25f : fw == EnumFacing.NORTH ? 1.0f : 0.75f;
-				float maxZ = fw == EnumFacing.SOUTH ? 0.0f : fw == EnumFacing.NORTH ? 0.75f : 0.25f;
-
-				list.add(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			}
-
 			if ((!rotated && (pos % 9 == 1 || pos % 9 == 7)) || (rotated  && (pos % 9 == 3 || pos % 9 == 5))) {
 				list.add(new AxisAlignedBB(0.375, 0, 0, 0.625, 1, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			} else if ((!rotated && (pos % 9 == 3 || pos % 9 == 5)) || (rotated && (pos % 9 == 1 || pos % 9 == 7))) {
@@ -389,23 +353,6 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 			return list;
 		} else if (h == 5 || h == 6 || h == 13 || h == 14 && (pos % 9 == 1 || pos % 9 == 3 || pos % 9 == 5 || pos % 9 == 7)) {
 			List<AxisAlignedBB> list = Lists.newArrayList();
-
-			if (pos % 9 == 3) {
-				float minX = fl == EnumFacing.SOUTH ? 0.0f : fl == EnumFacing.NORTH ? 0.75f : 0.25f;
-				float maxX = fl == EnumFacing.SOUTH ? 0.25f : fl == EnumFacing.NORTH ? 1.0f : 0.75f;
-				float minZ = fw == EnumFacing.NORTH ? 0.25f : fw == EnumFacing.SOUTH ? 1.0f : 0.75f;
-				float maxZ = fw == EnumFacing.NORTH ? 0.0f : fw == EnumFacing.SOUTH ? 0.75f : 0.25f;
-
-				list.add(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			} if (pos % 9 == 5) {
-				float minX = fl == EnumFacing.NORTH ? 0.0f : fl == EnumFacing.SOUTH ? 0.75f : 0.25f;
-				float maxX = fl == EnumFacing.NORTH ? 0.25f : fl == EnumFacing.SOUTH ? 1.0f : 0.75f;
-				float minZ = fw == EnumFacing.SOUTH ? 0.25f : fw == EnumFacing.NORTH ? 1.0f : 0.75f;
-				float maxZ = fw == EnumFacing.SOUTH ? 0.0f : fw == EnumFacing.NORTH ? 0.75f : 0.25f;
-
-				list.add(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			}
-
 			if ( h == 6 || h == 14) {
 				if ((!rotated && (pos % 9 == 1 || pos % 9 == 7)) || (rotated && (pos % 9 == 3 || pos % 9 == 5))) {
 					list.add(new AxisAlignedBB(0.375, 0.5, 0.125, 0.625, 1, 0.875).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
@@ -424,23 +371,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 				}
 			}
 			return list;
-		} else if ((h == 2 || h == 3 || h == 8 || h == 9 || h == 10 || h == 11 || h == 16 || h == 17) && (pos % 9 == 3 || pos % 9 == 5)) {
-			if (pos % 9 == 3) {
-				float minX = fl == EnumFacing.SOUTH ? 0.0f : fl == EnumFacing.NORTH ? 0.75f : 0.25f;
-				float maxX = fl == EnumFacing.SOUTH ? 0.25f : fl == EnumFacing.NORTH ? 1.0f : 0.75f;
-				float minZ = fw == EnumFacing.NORTH ? 0.25f : fw == EnumFacing.SOUTH ? 1.0f : 0.75f;
-				float maxZ = fw == EnumFacing.NORTH ? 0.0f : fw == EnumFacing.SOUTH ? 0.75f : 0.25f;
-
-				return Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			} if (pos % 9 == 5) {
-				float minX = fl == EnumFacing.NORTH ? 0.0f : fl == EnumFacing.SOUTH ? 0.75f : 0.25f;
-				float maxX = fl == EnumFacing.NORTH ? 0.25f : fl == EnumFacing.SOUTH ? 1.0f : 0.75f;
-				float minZ = fw == EnumFacing.SOUTH ? 0.25f : fw == EnumFacing.NORTH ? 1.0f : 0.75f;
-				float maxZ = fw == EnumFacing.SOUTH ? 0.0f : fw == EnumFacing.NORTH ? 0.75f : 0.25f;
-
-				return Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			}
-		} else if (pos == 171) {
+		}  else if (pos == 171) {
 			float minX = fl == EnumFacing.WEST ? .6875f : fl == EnumFacing.EAST ? .0625f : fw == EnumFacing.EAST ? .0625f : .6875f;
 			float maxX = fl == EnumFacing.EAST ? .3125f : fl == EnumFacing.WEST ? .9375f : fw == EnumFacing.EAST ? .3125f : .9375f;
 			float minZ = fl == EnumFacing.NORTH ? .6875f : fl == EnumFacing.SOUTH ? .0625f : fw == EnumFacing.SOUTH ? .0625f : .6875f;
@@ -504,6 +435,24 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	@Override
 	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, ArrayList<AxisAlignedBB> list) {
 		return false;
+	}
+
+	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if((pos == 16) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+			return master() != null;
+		return super.hasCapability(capability, facing);
+	}
+
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if((pos == 16) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			TileEntitySolarMelterMaster master = master();
+			if(master == null)
+				return null;
+			return (T)master.insertionHandler;
+		}
+		return super.getCapability(capability, facing);
 	}
 
 }

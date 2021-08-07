@@ -264,6 +264,8 @@ public class ClientProxy extends CommonProxy {
 			ManualHelper.addEntry("distiller", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "distiller0", MultiblockDistiller.instance), new ManualPages.Text(ManualHelper.getManual(), "distiller1"));
 		if (Multiblock.enable_meltingCrucible)
 			ManualHelper.addEntry("meltingCrucible", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "meltingCrucible0", MultiblockMeltingCrucible.instance), new ManualPages.Text(ManualHelper.getManual(), "meltingCrucible1"));
+		if (Multiblock.enable_solarMelter)
+			ManualHelper.addEntry("solarMelter", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "solarMelter0", MultiblockSolarMelter.instance), new ManualPages.Text(ManualHelper.getManual(), "solarMelter1"));
 		if (Multiblock.enable_electrolyticCrucibleBattery)
 			ManualHelper.addEntry("electrolyticCrucibleBattery", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "electrolyticCrucibleBattery0", MultiblockElectrolyticCrucibleBattery.instance), new ManualPages.Text(ManualHelper.getManual(), "electrolyticCrucibleBattery1"), new ManualPages.Text(ManualHelper.getManual(), "electrolyticCrucibleBattery2"));
 
