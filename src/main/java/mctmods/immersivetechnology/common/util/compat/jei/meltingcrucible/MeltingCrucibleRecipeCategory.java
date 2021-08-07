@@ -28,6 +28,13 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 		this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
 	}
 
+	public MeltingCrucibleRecipeCategory(IGuiHelper helper, boolean solar) {
+		super("meltingCrucible", "tile.immersivetech.metal_multiblock1.solar_melter.name", helper.createDrawable(background, 0, 0, 176, 64), MeltingCrucibleRecipe.class, GenericMultiblockIngredient.SOLAR_MELTER);
+		tankOverlay = helper.createDrawable(background, 178, 2, 16, 47, -2, 2, -2, 2);
+		IDrawableStatic staticImage = helper.createDrawable(background, 196, 0, 32, 18);
+		this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
+	}
+
 	@Override
 	public void setRecipe(IRecipeLayout recipeLayout, MeltingCrucibleRecipeWrapper recipeWrapper, IIngredients ingredients) {
 		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);

@@ -64,6 +64,10 @@ public class blockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
                 return new TileEntityRadiatorMaster();
             case RADIATOR_SLAVE:
                 return new TileEntityRadiatorSlave();
+            case SOLAR_MELTER:
+                return new TileEntitySolarMelterMaster();
+            case SOLAR_MELTER_SLAVE:
+                return new TileEntitySolarMelterSlave();
         }
         return null;
     }

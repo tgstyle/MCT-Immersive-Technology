@@ -70,10 +70,10 @@
 		},
 		"boolean0": {
 			"false": {
-				"model": "immersivetech:metal_multiblock/melting_crucible.obj"
+				"model": "immersiveengineering:ie_empty"
 			},
 			"true": {
-				"model": "immersivetech:metal_multiblock/melting_crucible_mirrored.obj"
+				"model": "immersiveengineering:ie_empty"
 			}
 		}
 	}

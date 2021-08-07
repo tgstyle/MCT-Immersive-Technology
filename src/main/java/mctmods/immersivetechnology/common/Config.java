@@ -28,6 +28,7 @@ public class Config {
 			public static ElectrolyticCrucibleBattery electrolyticCrucibleBattery;
 			public static MeltingCrucible meltingCrucible;
 			public static Radiator radiator;
+			public static SolarMelter solarMelter;
 
 			public static class Multiblock {
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Boiler Multiblock structure be built ? [Default=true]"})
@@ -47,11 +48,13 @@ public class Config {
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the High Pressure Steam Turbine Multiblock structures be built ? [Default=false]"})
 				public static boolean enable_highPressureSteamTurbine = false;
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Electrolytic Crucible Battery Multiblock structures be built ? [Default=false]"})
-				public static boolean enable_electrolyticCrucibleBattery = false;
+				public static boolean enable_electrolyticCrucibleBattery = true;
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Melting Crucible Multiblock structures be built ? [Default=false]"})
-				public static boolean enable_meltingCrucible = false;
+				public static boolean enable_meltingCrucible = true;
 				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Radiator Multiblock structures be built ? [Default=true]"})
 				public static boolean enable_radiator = true;
+				@Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Solar Melter Multiblock structures be built ? [Default=false]"})
+				public static boolean enable_solarMelter = true;
 			}
 			public static class Recipes {
 				@Comment({"Should default Steam Turbine recipes be registered ? [Default=true]"})
@@ -71,9 +74,9 @@ public class Config {
 				@Comment({"Should default High Pressure Steam Turbine recipes be registered ? [Default=false]"})
 				public static boolean register_highPressureSteamTurbine_recipes = false;
 				@Comment({"Should default Electrolytic Crucible Battery recipes be registered ? [Default=false]"})
-				public static boolean register_electrolyticCrucibleBattery_recipes = false;
+				public static boolean register_electrolyticCrucibleBattery_recipes = true;
 				@Comment({"Should default Melting Crucible recipes be registered ? [Default=false]"})
-				public static boolean register_meltingCrucible_recipes = false;
+				public static boolean register_meltingCrucible_recipes = true;
 				@Comment({"Should default Radiator recipes be registered ? [Default=true]"})
 				public static boolean register_radiator_recipes = true;
 			}
@@ -138,6 +141,12 @@ public class Config {
 				public static double solarTower_heat_loss_multiplier = 1.0;
 				@Comment({"How fast the the Solar Tower loses progress in ticks when the heat drops below processing heat level [Default=1]"})
 				public static int solarTower_progress_lossInTicks = 1;
+			}
+			public static class SolarMelter {
+				@Comment({"The capacity of the output tank for the Solar Melter [Default=10000]"})
+				public static int solarMelter_output_tankSize = 10000;
+				@Comment({"Default amount of energy per tick the solar melter loses when not processing. Maximum energy input per tick by mirrors is ~30720  [Default=80]"})
+				public static int solarMelter_progress_lossEnergy = 80;
 			}
 			public static class SolarReflector {
 				@Comment({"The minimum distance between the Solar Reflectors and the Solar Tower [Default=12]"})
