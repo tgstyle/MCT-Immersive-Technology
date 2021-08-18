@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlave {
 
 	private boolean isMirrorTaken = false;
-	private BlockPos towerCollectorPosition = new BlockPos(this.getPos());
+	private BlockPos towerCollectorPosition = this.getPos();
 	private float[] animationRotations = new float[2];
 
 	@Override
@@ -53,6 +53,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
 	public void detachTower(BlockPos position) {
 		if (!towerCollectorPosition.equals(position)) return;
 		isMirrorTaken = false;
+		towerCollectorPosition = this.getPos();
 	}
 
 	public void notifyNearbyClients() {

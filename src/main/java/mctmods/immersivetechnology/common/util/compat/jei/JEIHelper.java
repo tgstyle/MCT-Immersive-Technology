@@ -16,6 +16,7 @@ import mctmods.immersivetechnology.common.util.compat.jei.heatexchanger.HeatExch
 import mctmods.immersivetechnology.common.util.compat.jei.highpressuresteamturbine.HighPressureSteamTurbineRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.meltingcrucible.MeltingCrucibleRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.radiator.RadiatorRecipeCategory;
+import mctmods.immersivetechnology.common.util.compat.jei.solarmeltingcrucible.meltingcrucible.SolarMeltingCrucibleRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.solartower.SolarTowerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.steamturbine.SteamTurbineRecipeCategory;
 import mezz.jei.api.*;
@@ -69,7 +70,7 @@ public class JEIHelper implements IModPlugin {
 		if(Multiblock.enable_highPressureSteamTurbine) categories.put(HighPressureSteamTurbineRecipe.class, new HighPressureSteamTurbineRecipeCategory(guiHelper));
 		if(Multiblock.enable_electrolyticCrucibleBattery) categories.put(ElectrolyticCrucibleBatteryRecipe.class, new ElectrolyticCrucibleBatteryRecipeCategory(guiHelper));
 		if(Multiblock.enable_meltingCrucible) categories.put(MeltingCrucibleRecipe.class, new MeltingCrucibleRecipeCategory(guiHelper));
-		if(Multiblock.enable_solarMelter) categories.put(MeltingCrucibleRecipe.class, new MeltingCrucibleRecipeCategory(guiHelper, true));
+		if(Multiblock.enable_solarMelter) categories.put(MeltingCrucibleRecipe.class, new SolarMeltingCrucibleRecipeCategory(guiHelper));
 		if(Multiblock.enable_radiator) categories.put(RadiatorRecipe.class, new RadiatorRecipeCategory(guiHelper));
 			
 		registry.addRecipeCategories(categories.values().toArray(new IRecipeCategory[categories.size()]));

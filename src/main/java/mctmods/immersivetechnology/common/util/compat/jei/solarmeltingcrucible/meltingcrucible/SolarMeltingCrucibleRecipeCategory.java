@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.util.compat.jei.meltingcrucible;
+package mctmods.immersivetechnology.common.util.compat.jei.solarmeltingcrucible.meltingcrucible;
 
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
@@ -15,21 +15,20 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;
 
-public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCrucibleRecipe, MeltingCrucibleRecipeWrapper> {
+public class SolarMeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCrucibleRecipe, SolarMeltingCrucibleRecipeWrapper> {
 	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_melting_crucible_jei.png");
 	private final IDrawable tankOverlay;
 	private final IDrawableAnimated arrow;
 
-	@SuppressWarnings("deprecation")
-	public MeltingCrucibleRecipeCategory(IGuiHelper helper) {
-		super("meltingCrucible", "tile.immersivetech.metal_multiblock1.melting_crucible.name", helper.createDrawable(background, 0, 0, 176, 64), MeltingCrucibleRecipe.class, GenericMultiblockIngredient.MELTING_CRUCIBLE);
+	public SolarMeltingCrucibleRecipeCategory(IGuiHelper helper) {
+		super("meltingCrucible", "tile.immersivetech.metal_multiblock1.solar_melter.name", helper.createDrawable(background, 0, 0, 176, 64), MeltingCrucibleRecipe.class, GenericMultiblockIngredient.SOLAR_MELTER);
 		tankOverlay = helper.createDrawable(background, 178, 2, 16, 47, -2, 2, -2, 2);
 		IDrawableStatic staticImage = helper.createDrawable(background, 196, 0, 32, 18);
 		this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, MeltingCrucibleRecipeWrapper recipeWrapper, IIngredients ingredients) {
+	public void setRecipe(IRecipeLayout recipeLayout, SolarMeltingCrucibleRecipeWrapper recipeWrapper, IIngredients ingredients) {
 		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
 		int tankSize = 0;
@@ -51,7 +50,7 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 	}
 	
 	@Override
-	public IRecipeWrapper getRecipeWrapper(MeltingCrucibleRecipe recipe) { return new MeltingCrucibleRecipeWrapper(recipe); }
+	public IRecipeWrapper getRecipeWrapper(MeltingCrucibleRecipe recipe) { return new SolarMeltingCrucibleRecipeWrapper(recipe); }
 
 	@Override
 	public void drawExtras(Minecraft minecraft) {
