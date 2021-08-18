@@ -17,7 +17,7 @@ LARGE amounts of Advanced Rocketry compat
     - Heat transfer now varies based on atmosphere heat conduction vs radiative heat radiation    (Silfryi)
     - Anything solar-related now varies based on AR insolation (sun brightness) values    (Silfryi)
 Temperatures are now normalized to sane values, not 12000 'temperature units', they're now normalized to ~600C, about the top of a standard turbine cycle today    (Silfryi)
-Advanced Coke Oven has beed removed, but the bricks stay to allow packs to use them for other things. BREAK MULTIBLOCK BEFORE UPDATING    (Silfryi)
+Advanced Coke Oven has been removed, but the bricks stay to allow packs to use them for other things. BREAK MULTIBLOCK BEFORE UPDATING    (Silfryi)
 Solar tower has been completely redone
     - Now an actual solar concentrator tower design    (Silfryi)
     - Mirrors AND tower will need to be disassembled before updating or things WILL crash!    (Silfryi)
