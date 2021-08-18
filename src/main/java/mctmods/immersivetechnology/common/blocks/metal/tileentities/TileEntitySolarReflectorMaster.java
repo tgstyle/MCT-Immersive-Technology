@@ -50,6 +50,11 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
 		return towerCollectorPosition.equals(position);
 	}
 
+	public void detachTower(BlockPos position) {
+		if (!towerCollectorPosition.equals(position)) return;
+		isMirrorTaken = false;
+	}
+
 	public void notifyNearbyClients() {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setBoolean("isMirrorTaken", isMirrorTaken);

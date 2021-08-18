@@ -117,6 +117,20 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 		return getSolarIncidenceAngleSection() != 0;
 	}
 
+	protected void detachMirrors() {
+		for (int x = -(solarMaxRange + 1); x <= (solarMaxRange + 1); x++) {
+			for (int z = -(solarMaxRange + 1); z <= (solarMaxRange + 1); z++) {
+				double distance = Math.sqrt(this.getPos().distanceSq(this.getPos().add(x, 0, z)));
+				if (distance >= solarMinRange && distance <= solarMaxRange && Utils.isBlockAt(world, this.getPos().add(x, 0, z), ITContent.blockMetalMultiblock, 2)) {
+					TileEntity tile = world.getTileEntity(this.getPos().add(x, 0, z));
+					if (tile instanceof TileEntitySolarReflectorMaster && ((TileEntitySolarReflectorMaster) tile).setTowerCollectorPosition(this.getPos().add(0, 17, 0))) {
+						((TileEntitySolarReflectorMaster) tile).detachTower(this.getPos());
+					}
+				}
+			}
+		}
+	}
+
 	private boolean heatUp() {
 		double previousHeatLevel = heatLevel;
 		heatLevel = Math.min(getTemperatureIncrease() + heatLevel, workingHeatLevel);
@@ -204,6 +218,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 	public void disassemble() {
 		BlockPos center = this.getPos();
 		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+		detachMirrors();
 		super.disassemble();
 	}
 
