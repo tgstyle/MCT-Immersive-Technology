@@ -191,7 +191,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 		if(master != null) {
 			if (side == null) return master.tanks;
 			else if(pos == 30 && side == facing.getOpposite()) return new FluidTank[] {master.tanks[0]};
-			else if(pos == 112 && side == facing) return new FluidTank[] {master.tanks[1]};
+			else if(pos == 25 && side == facing) return new FluidTank[] {master.tanks[1]};
 		}
 		return ITUtils.emptyIFluidTankList;
 	}
@@ -210,7 +210,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 
 	@Override
 	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
-		return pos == 112 && side == facing;
+		return pos == 25 && side == facing;
 	}
 
 	@Override
@@ -391,7 +391,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 			return list;
 		}
 		if(pos == 112) {
-			boundingArray = ITUtils.smartBoundingBox(0, 0, .125f, .125f, .125f, .875f, fl, fw);
+			boundingArray = ITUtils.smartBoundingBox(0.625f, 0f, .125f, .125f, .125f, .875f, fl, fw);
 			List <AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			boundingArray = ITUtils.smartBoundingBox(.75f, 0, .25f, .25f, 0, .125f, fl, fw);
 			list.add(new AxisAlignedBB(boundingArray[0], boundingArray[1], boundingArray[2], boundingArray[3], boundingArray[4], boundingArray[5]).offset(getPos().getX(), getPos().getY(), getPos().getZ()));

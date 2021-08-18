@@ -114,7 +114,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 			recipeEnergyRemaining = 0;
 			return true;
 		}
-		recipeEnergyRemaining = Math.min(recipeEnergyRemaining + energyLossPerTick, lastRecipe.getTotalProcessEnergy());
+		recipeEnergyRemaining = (int)Math.min(recipeEnergyRemaining + energyLossPerTick * (ITCompatModule.isAdvancedRocketryLoaded ? AdvancedRocketryHelper.getHeatTransferCoefficient(world, this.getPos()) : 1), lastRecipe.getTotalProcessEnergy());
 		return previousProgress != recipeEnergyRemaining;
 	}
 
