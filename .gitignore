@@ -24,7 +24,5 @@ build.bat
 .iml
 .ipr
 .iws
-build.gradle
 common-1.12.properties
-gradle/wrapper/gradle-wrapper.properties
 gradle/wrapper/gradle-wrapper.properties
