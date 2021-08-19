@@ -241,7 +241,7 @@ public class ClientProxy extends CommonProxy {
 		if(Multiblock.enable_solarTower)
 			ManualHelper.addEntry("solarTower", CAT_POWER, new ManualPageMultiblock(ManualHelper.getManual(), "solarTower0", MultiblockSolarTower.instance), new ManualPages.Text(ManualHelper.getManual(), "solarTower1"), new ManualPageMultiblock(ManualHelper.getManual(), "solarTower2", MultiblockSolarReflector.instance), new ManualPages.Text(ManualHelper.getManual(), "solarTower3"));
 		if (Multiblock.enable_heatExchanger)
-			ManualHelper.addEntry("heatExchanger", CAT_POWER, new ManualPageMultiblock(ManualHelper.getManual(), "heatExchanger0", MultiblockHeatExchanger.instance), new ManualPages.Text(ManualHelper.getManual(), "heatExchanger1"), new ManualPages.Text(ManualHelper.getManual(), "heatExchanger2"));
+			ManualHelper.addEntry("heatExchanger", CAT_POWER, new ManualPageMultiblock(ManualHelper.getManual(), "heatExchanger0", MultiblockHeatExchanger.instance), new ManualPages.Text(ManualHelper.getManual(), "heatExchanger1"));
 		if (Multiblock.enable_gasTurbine || Multiblock.enable_steamTurbine)
 			ManualHelper.addEntry("alternator", CAT_POWER, new ManualPageMultiblock(ManualHelper.getManual(), "alternator0", MultiblockAlternator.instance), new ManualPages.Text(ManualHelper.getManual(), "alternator1"), new ManualPages.Image(ManualHelper.getManual(), "alternator2", "immersivetech:textures/misc/alternator.png;0;0;110;50"));
 		if(Multiblock.enable_steamTurbine)

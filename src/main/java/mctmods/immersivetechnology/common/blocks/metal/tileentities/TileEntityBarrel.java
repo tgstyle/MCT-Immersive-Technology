@@ -209,7 +209,7 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 	@Override
 	public void receiveMessageFromServer(ByteBuf buf) {
 		lastAcceptedAmount = buf.readLong();
-		setFluid(FluidRegistry.getFluid(ByteBufUtils.readUTF8String(buf)));
+		if (infiniteFluid != null) setFluid(FluidRegistry.getFluid(ByteBufUtils.readUTF8String(buf)));
 	}
 
 	@Override

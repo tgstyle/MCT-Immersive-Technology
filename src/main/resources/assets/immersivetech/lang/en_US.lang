@@ -246,8 +246,7 @@ ie.manual.entry.coolingTower1=Warm fluids go into the side with the red indicato
 ie.manual.entry.heatExchanger.name=Heat Exchanger
 ie.manual.entry.heatExchanger.subtext=Entropy says hi
 ie.manual.entry.heatExchanger0=The Heat Exchanger is a multiblock structure that quickly moves heat from one fluid to another. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Iron Sheetmetal next to the Redstone Engineering Block.
-ie.manual.entry.heatExchanger1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. <br>Water and <link;distiller;§n§oDistilled Water§r> can be fed to the Heat Exchanger via a hatch on the top that is marked with a blue dot. The hatch with the orange dot at the top serves as the fluid output for steam.
-ie.manual.entry.heatExchanger2=<link;gasTurbine;§n§oFlue Gas§r> can be fed to the hatch marked with a blue dot on the bottom layer. The hatch marked with the orange dot at the bottom layer serves as the fluid output for previously hot fluids.
+ie.manual.entry.heatExchanger1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. The heat exchanger processes hot, energy-bearing fluids with colder fluids like §lWater§r or §lDistilled Water§r to heat them up into more useable forms. The heat exchanger is a countercurrent heat exchanger, meaning the hot fluid is output from the side the hot fluid is input and vice versa for cold fluid.
 
 ie.manual.entry.electrolyticCrucibleBattery.name=Electrolytic Crucible Battery
 ie.manual.entry.electrolyticCrucibleBattery.subtext=The power of electricity compels you!

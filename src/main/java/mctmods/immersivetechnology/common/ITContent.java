@@ -304,7 +304,6 @@ public class ITContent {
 			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 450), new FluidStack(FluidRegistry.WATER, 250), 10);
 			BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), new FluidStack(FluidRegistry.getFluid("distwater"), 250), 10);
 			BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("biodiesel"), 10), 1, 10);
-			BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 100), 1, 10);
 			if(FluidRegistry.getFluid("gasoline") != null) BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("gasoline"), 50), 1, 10);
 			if(FluidRegistry.getFluid("diesel") != null) BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("diesel"), 7), 1, 10);
 		}
