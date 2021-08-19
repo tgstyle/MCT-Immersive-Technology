@@ -21,7 +21,8 @@ build.bat
 /bin/
 /run/
 .idea
-build.gradle
+.iml
+.ipr
+.iws
 common-1.12.properties
-gradle/wrapper/gradle-wrapper.properties
 gradle/wrapper/gradle-wrapper.properties
