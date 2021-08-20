@@ -261,7 +261,7 @@ ie.manual.entry.meltingCrucible1=Applying a redstone signal to the control panel
 
 ie.manual.entry.solarMelter.name=Solar Melting Crucible
 ie.manual.entry.solarMelter.subtext=Cortas vs. Mackenzies
-ie.manual.entry.solarMelter0=The Solar Melting Crucible is a multiblock that uses solar energy to heat solids into liquids. The structure is built as shown and formed by using the Engineer's Hammer on the central silver sheetmetal block.
+ie.manual.entry.solarMelter0=The Solar Melting Crucible is a multiblock that uses solar energy to heat solids into liquids. The structure is built as shown and formed by using the Engineer's Hammer on the central light engineering block.
 ie.manual.entry.solarMelter1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. Items are input on the back, into the blue port, and liquids are output the bottom front from the orange port. The multiblock is most commonly used to provide molten salt for a <link;electrolyticCrucibleBattery;§n§oElectrolytic Crucible Battery§r>, to electrolyse into molten sodium for a <link;solarTower;§n§oSolar Tower§r>.
 
 
