@@ -1,3 +1,10 @@
+1.9.96
+Beta Release - Hopefully fewer bugs than last time!
+Fixed JEI clash between solar melter and melter for ownership of JEI tab    (Silfryi)
+Fix solar mirrors improperly disconnecting from the tower     (Silfryi)
+Fix error when looking at empty creative barrels     (Silfryi)
+Update Solar Melter manual page for formation from silver sheetmetal to light engineering block (Silfryi)
+
 1.9.95
 Beta Release - There may be bugs!
 
