@@ -13,6 +13,7 @@ BIG WARNINGS
 #2 The steam turbine cycle has CHANGED. Your turbines will NO LONGER return water in the usual way.
 #3 Combustion machines NO LONGER WORK IN VACUUM
 #4 Some other heat processing machines NO LONGER WORK IN VACUUM OR HAVE REDUCED EFFICIENCY
+#5 Delete configs so they will regenerate
 
 Added in high pressure steam & high pressure steam turbine - they produce 24576 IF/t and are disabled by default, there only if people want to enable them and tweak them for stuff like NC compat    (Silfryi)
 High pressure steam turbine takes either tungsten if it exists or nickel for anything tungsten that does not exist    (Silfryi)
