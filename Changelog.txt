@@ -1,3 +1,7 @@
+1.9.97
+Fix error with Mek fluid names and things being named `oxgyen` by mistake     (Silfryi)
+Unupdate Solar Melter manual page for formation from silver sheetmetal to light engineering block (Silfryi)
+
 1.9.96
 Beta Release - Hopefully fewer bugs than last time!
 Fixed JEI clash between solar melter and melter for ownership of JEI tab    (Silfryi)
