@@ -13,6 +13,7 @@ gradle-app.setting
 *.launch
 *.cmd
 build.bat
+gradlesetup.bat
 .classpath
 .gradle
 .project
