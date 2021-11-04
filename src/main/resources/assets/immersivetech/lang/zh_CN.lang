@@ -13,18 +13,18 @@ item.immersivetech.material.salt.name=盐
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=蒸馏水
 tile.immersivetech.fluidSteam.name=蒸汽
-tile.immersivetech.fluidExhaustSteam.name=余热蒸汽
-tile.immersivetech.fluidFlueGas.name=燃气
+tile.immersivetech.fluidExhaustSteam.name=高温低压蒸汽
+tile.immersivetech.fluidFlueGas.name=燃烧废气
 tile.immersivetech.fluidHighPressureSteam.name=高压蒸汽
-tile.immersivetech.fluidHotWater.name=温泉水
+tile.immersivetech.fluidHotWater.name=温水
 tile.immersivetech.fluidMoltenSalt.name=熔融盐
 tile.immersivetech.fluidMoltenSodium.name=熔融钠
 tile.immersivetech.fluidSuperheatedMoltenSodium.name=过热熔融钠
 tile.immersivetech.fluidChlorine.name=氯
 fluid.distwater=蒸馏水
 fluid.steam=蒸汽
-fluid.exhauststeam=余热蒸汽
-fluid.fluegas=燃气
+fluid.exhauststeam=高温低压蒸汽
+fluid.fluegas=燃烧废气
 fluid.highpressuresteam=高压蒸汽
 fluid.hot_spring_water=温泉水
 fluid.moltensalt=熔融盐
@@ -113,7 +113,7 @@ overlay.immersivetech.osd.load_controller.sneaking.secondline=在 %s 个分组�
 overlay.immersivetech.osd.stack_limiter.normal.firstline=允许通过 %s 个物品在最近一秒
 overlay.immersivetech.osd.stack_limiter.sneaking.firstline=平均通过 %s 物品/Tick
 overlay.immersivetech.osd.stack_limiter.sneaking.secondline=在 %s 个分组及最近一分钟内
-overlay.immersivetech.osd.barrel.normal.firstline=在最近一秒提供 %s %s mB
+overlay.immersivetech.osd.barrel.normal.firstline= %s %s mB
 overlay.immersivetech.osd.creative_crate.normal.firstline=在最近一秒提供 %s %s 个
 overlay.immersivetech.osd.trash_item.normal.firstline=销毁 %s 个物品在最近一秒
 overlay.immersivetech.osd.trash_fluid.normal.firstline=销毁 %s mB 在最近一秒
@@ -173,65 +173,65 @@ ie.manual.category.it_power.name=涡轮发电系统
 ie.manual.category.it.name=沉浸科技
 
 ie.manual.entry.alternator.name=交流发电机
-ie.manual.entry.alternator.subtext=让我们变换
+ie.manual.entry.alternator.subtext=让我们交流
 ie.manual.entry.alternator0=交流发电机是将蒸汽轮机的动能转换为电能的多方块结构<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击高压线圈那一侧的正中心的重型工程块完成搭建.
-ie.manual.entry.alternator1=它需要受<link;steamTurbine;§n§o蒸汽轮机§r>的动能轴端驱动来产生电能.将轮机动能轴连接到交流发电机的传动端（中间有钢块的那端），而电能输出端则在另一端的左右两边.发电机根据轮机所提供的动能速度来产生最高<config;i;alternator_energyPerTick>IF/t的能量.<br>而交流发电机本身可以存储<config;i;alternator_energyStorage>IF的能量，它能在每个端口输出<config;i;alternator_energyPerTickPerPort>IF/t的能量.红石比较器可以放置在其末端中央，依据发电机内部能量等级发出信号.
-ie.manual.entry.alternator2=蒸汽轮机和搭配的交流发电机
+ie.manual.entry.alternator1=交流发电机通过<link;steamTurbine;§n§o蒸汽轮机§r>的驱动来产生电能.因此需要将交流发电机的传动端与蒸汽轮机的动能轴相连.发电机产生的电能依蒸汽轮机转速而定，最高<config;i;alternator_energyPerTick>IF/t的电能.<br>交流发电机本身可以存储<config;i;alternator_energyStorage>IF的电能，但每个端口最大输出<config;i;alternator_energyPerTickPerPort>IF/t的电能.如果将红石比较器放置在其末端下方，比较器会依据发电机内部能量等级发出相应强度的信号.
+ie.manual.entry.alternator2=蒸汽轮机与交流发电机组合
 
 ie.manual.entry.boiler.name=蒸汽锅炉
 ie.manual.entry.boiler.subtext=柴油的用法
-ie.manual.entry.boiler0=锅炉是一种多方块结构，它使用液体燃料和水来生产蒸汽.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击红石工程块那一侧的正中心的铁板金属块完成搭建.
-ie.manual.entry.boiler1=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板来反转红石信号模式.<br>水可以从左侧（装饰有橙边方形端）的标有蓝点的舱口输入，而柴油则从机器右侧蓝点舱口输入.上方的橙点舱口用于流体输出.
-ie.manual.entry.boiler2=在将水沸腾成蒸汽前，锅炉需要预热，预热则需要燃料.如果将锅炉中途关闭或不能提供足够的燃料，则该锅炉会缓慢冷却.至少需要<config;d;boiler_cooldownTime>秒才能从工作温度完全冷却，默认使用沉浸原油的柴油作为燃料.
+ie.manual.entry.boiler0=锅炉是一种使用液体燃料和水来产生蒸汽的多方块结构.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击红石工程块那一侧的正中心的铁板金属块完成搭建.
+ie.manual.entry.boiler1=水的入口位于左侧（装饰有橙边方形端）带有蓝色标识，而柴油输入口则在机器右侧蓝色标识处.蒸汽输出口位于顶部且带有橙色标识.<br>锅炉需要预热并维持一定的温度，才可以将水沸腾成蒸汽.如果在运作过程中关闭锅炉或不能提供足够的燃料（默认使用沉浸原油的柴油作为燃料），都会导致锅炉缓慢的冷却(至少需要<config;d;boiler_cooldownTime>秒才能从工作温度完全冷却).
+ie.manual.entry.boiler2=Oops...
 
 ie.manual.entry.distiller.name=蒸馏器
 ie.manual.entry.distiller.subtext=比水更清澈
-ie.manual.entry.distiller0=蒸馏器是一种多方块结构机械，它可以将水蒸馏成蒸馏水和盐.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击正面中央的铁板金属块完成搭建.
-ie.manual.entry.distiller1=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板来反转红石信号模式.<br>水可以通过机器左侧标有蓝点的舱口输入到蒸馏器中.相对的另一侧带有橙点的舱口则用作液体输出，而另一个橙点舱口作为物品的输出口.<br>蒸馏器需要能源供应才能将水蒸馏成蒸馏水和盐.<br>它会将一桶水蒸馏成500mB的蒸馏水.
+ie.manual.entry.distiller0=蒸馏器是一种可以将水蒸馏成蒸馏水和盐多方块结构.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击正面中央的铁板金属块完成搭建.
+ie.manual.entry.distiller1=蒸馏器需要能源供应才能将水蒸馏成蒸馏水和盐.<br>水可以通过机器左侧标有蓝点的开口输入到蒸馏器中.另一侧带有橙点的开口则用作蒸馏水输出，而另一个橙点开口作为盐的输出口.
+ie.manual.entry.distiller2=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.
 
 ie.manual.entry.openBarrel.name=无盖金属桶
-ie.manual.entry.openBarrel.subtext=向太阳或白云开放？
-ie.manual.entry.openBarrel0=§6无盖金属桶§r是类似金属桶的单方块储罐，只不过其顶部没有被盖住，流体可以直接手持倒入，并且只能通过顶部输入，底部输出.同时放置在露天处下雨时将被慢慢装满，在雷雨天可以两倍速度装满.不过，如果将其放在温热环境，水可能会被蒸发...
+ie.manual.entry.openBarrel.subtext=向太阳或白云开放
+ie.manual.entry.openBarrel0=§6无盖金属桶§r是类似金属桶的单方块储罐，只不过顶部没有被盖住，因此流体可以直接手持倒入，并且也只能通过顶部输入，于底部输出. 当放置在露天处下雨时将被慢慢装满，在雷雨天可以两倍速度装满.不过，如果将其放在温热环境，水可能会被蒸发...
 
 ie.manual.entry.solarTower.name=太阳能集热塔
 ie.manual.entry.solarTower.subtext=高端烤鸟机  
-ie.manual.entry.solarTower0=太阳能集热塔是一种多方块结构机械，它可以利用阳光，将水转换成蒸汽.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击中间的轻型工程块完成搭建.
-ie.manual.entry.solarTower1=太阳能集热塔可将水或<link;distiller;§n§o蒸馏水§r> 转换成蒸汽.<br>水可以通过左侧和右侧的标有蓝点的两个舱口输入太阳能集热塔.背面带有橙点的舱口用作流体输出.<br>太阳能集热塔至少需要一个太阳能反射镜才能工作.集热塔的工作效率取决发射镜的数量比例（实际数量/230个反射镜）.在主世界，需要230个反射镜才可以使得集热塔效率达到最大，
-ie.manual.entry.solarTower2=太阳能反射镜<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击中间的红石工程块完成搭建.
-ie.manual.entry.solarTower3=反射镜的距离需要介于 <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> 个方格之间. 反射镜无法在沙尘暴时工作.显然，反射镜也不能在晚上工作.当处于以下的情况时：<br>*早晨和傍晚<br>*下雨<br>*潮湿的环境<br>*反射镜被遮挡<br>也会降低工作效率. 如果安装了 §lAdvanced Rocketry§r，反射镜的效率将会受所在星球的光照强度影响.
+ie.manual.entry.solarTower0=太阳能集热塔是一种可以利用阳光，将水转换成蒸汽的多方块结构.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击中间的轻型工程块完成搭建.
+ie.manual.entry.solarTower1=太阳能集热塔可将水或<link;distiller;§n§o蒸馏水§r> 转换成蒸汽.<br>水可以通过标有蓝点的开口输入,蒸汽从背面带有橙点的开口输出.<br>太阳能集热塔附近至少有一个太阳能反射镜才能工作.集热塔的工作效率取决发射镜的数量比例（实际数量/最大效率镜子数）.在主世界里，需要230个反射镜才可以使得集热塔效率达到最大，
+ie.manual.entry.solarTower2=太阳能反射镜的具体结构如上图所示，全部搭建完成后，使用工程师锤右击中间的红石工程块完成搭建.
+ie.manual.entry.solarTower3=反射镜的距离集热塔的距离需要介于 <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> 个方格之间. 反射镜遇到沙尘暴、夜晚等情况下无法工作.当处于以下的情况时,会降低工作效率：<br>*早晨和傍晚<br>*下雨<br>*潮湿的环境<br>*反射镜被遮挡<br>如果安装了 §lAdvancedRocketry§r模组，光照效率将会受所在星球的光照强度影响.
 
 ie.manual.entry.controlBlocks.name=限制器和控制装置
-ie.manual.entry.controlBlocks.subtext=怕你把握不住
+ie.manual.entry.controlBlocks.subtext=有备而来
 ie.manual.entry.controlBlocks0=§6物品限制器§r可以控制通过它的物品，你可以在GUI里设定参数，或通过红石信号强度控制（当红石信号强度是15时被关闭）. 可在潜行时使用工程师锤设置红石控制模式.
-ie.manual.entry.loadController0=§6载荷控制器§r可以控制通过它的IF，你可以在GUI里设定参数，或通过红石信号强度控制（当红石信号强度是15时被关闭）. 可在潜行时使用工程师锤设置红石控制模式.
-e.manual.entry.fluidValve0=§6流体控制阀§r可以控制通过它的流体，你可以在GUI里设定参数，或通过红石信号强度控制（当红石信号强度是15时被关闭）. 可在潜行时使用工程师锤设置红石控制模式.
+ie.manual.entry.controlBlocks1=§6载荷控制器§r可以控制通过它的IF，你可以在GUI里设定参数，或通过红石信号强度控制（当红石信号强度是15时被关闭）. 可在潜行时使用工程师锤设置红石控制模式.
+ie.manual.entry.controlBlocks2=§6流体控制阀§r可以控制通过它的流体，你可以在GUI里设定参数，或通过红石信号强度控制（当红石信号强度是15时被关闭）. 可在潜行时使用工程师锤设置红石控制模式.
 
 ie.manual.entry.steamTurbine.name=蒸汽轮机
 ie.manual.entry.steamTurbine.subtext=沸腾的气息
 ie.manual.entry.steamTurbine0=蒸汽轮机是使用蒸汽来产生动能的多方块结构机械.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击靠近红石工程块一端的正中心位置的钢块完成搭建.
-ie.manual.entry.steamTurbine1=保持提供足够的蒸汽，蒸汽轮机将会缓慢加速，并在 <config;i;steamTurbine_timeToMax> 秒后达到达到最大转速.关闭汽轮机，或无法提供足够的蒸汽将会导致汽轮机的转速不断降低，并减少动能输出.<br>需要在动能轴末端一台连接 <link;alternator;§o§n交流发电机§r> ，实现动能的转换.
-ie.manual.entry.steamTurbine2=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板来反转红石信号模式.<br>机器前方的流体管道口为蒸汽的输入口.动能输出口位于机器后部（钢传动轴处），传动轴右下方为余热蒸汽的输出口，若想进一步改进发电系统，可以将其循环利用.
+ie.manual.entry.steamTurbine1=通入足够的蒸汽，蒸汽轮机将会缓慢加速，并在<config;i;steamTurbine_timeToMax>秒后达到达到最大转速.<br>需要在动能轴末端一台连接 <link;alternator;§o§n交流发电机§r>，实现动能的转换.
+ie.manual.entry.steamTurbine2=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.<br>机器前方的流体管道口为蒸汽的输入口.动能通过钢质传动轴输出，传动轴右下方为高温低压蒸汽的输出口，若想进一步改善发电系统，可以将其循环利用.
 
 ie.manual.entry.highPressureSteamTurbine.name=高压蒸汽轮机
 ie.manual.entry.highPressureSteamTurbine.subtext=二级朗肯循环
-ie.manual.entry.steamTurbine0=高压蒸汽轮机是使用蒸汽来产生动能的多方块结构机械.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击靠近红石工程块一端的正中心位置的钢块完成搭建.
-ie.manual.entry.steamTurbine1=保持提供足够的蒸汽，高压蒸汽轮机将会缓慢加速，并在 <config;i;highPressureSteamTurbine_timeToMax> 秒后达到达到最大转速.关闭汽轮机，或无法提供足够的蒸汽将会导致汽轮机的转速不断降低，并减少动能输出.<br>需要在动能轴末端一台连接 <link;alternator;§o§n交流发电机§r> ，实现动能的转换.
-ie.manual.entry.steamTurbine2=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板来反转红石信号模式.<br>机器前方的流体管道口为蒸汽的输入口.动能输出口位于机器后部（钢传动轴处），传动轴右下方为余热蒸汽的输出口，若想进一步改进发电系统，可以将其循环利用.
+ie.manual.entry.highPressureSteamTurbine0=与蒸汽轮机一样，高压蒸汽轮机是使用蒸汽来产生动能的多方块结构机械.只不过其是为§lNuclearCraft§r而设计的，通入足够蒸汽后，<config;i;highPressureSteamTurbine_timeToMax>秒后可达到达到最大转速.
+ie.manual.entry.highPressureSteamTurbine1=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.<br>机器前方的流体管道口为蒸汽的输入口.动能通过钢质传动轴输出，传动轴右下方为蒸汽的输出口，若想进一步改善发电系统，可以将其循环利用.
 
 ie.manual.entry.gasTurbine.name=燃气轮机
 ie.manual.entry.gasTurbine.subtext=并非来自747
-ie.manual.entry.gasTurbine0=燃气轮机是使用可燃燃料产生动能的多方块结构机械.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击红石工程块那一侧的正中心的钢块完成搭建.<br>需要在动能轴末端一台连接 <link;alternator;§o§n交流发电机§r> ，实现动能的转换.
-ie.manual.entry.gasTurbine1=机器前方的流体管道口为燃料的输入口，两侧有用作不同目的的电源插口.高压插口提供4096IF/t用于驱动燃气轮机加速至1/4转速.中压插口（位于控制面板侧）提供1024IF/t 用于将蒸汽轮机在1/4转速时将为燃料点火.点燃后燃气轮机开始自行提速（此时需要断开高压插口供电，否则会导致无法提速）.
-ie.manual.entry.gasTurbine2=为燃气轮机提供足够的燃料，机器将缓慢加速.在启动约30秒后便可达到最大转速和效率.<br>对于一些燃烧热低的燃料可能需要通过加压输送来维持足够的供应量.<br>如果在正常运转状态将其关闭，燃气轮机的转速会缓慢降低，如果其转速降至1/4以下（或燃料缺乏超过3秒），会导致燃气轮机熄火，此时需要重新点火加速. 
-ie.manual.entry.gasTurbine3=与蒸汽轮机类似，燃气轮机从后部传动轴输出动能，燃气输出口则刚好位于传动轴下方（燃气可作为锅炉的燃料高效的产生蒸汽）.<br>尽管燃气轮机本身的效率会比柴油发电机要差，但是对于搭建更大的而且更复杂的电能输出系统而言，这才是燃气轮机的吸引人的地方.<br>即搭建联合循环发电系统 <link;gasTurbine;§n§oCCGT§r> （对于船而言是COGAS）.
+ie.manual.entry.gasTurbine0=燃气轮机是使用燃料产生动能，以及燃烧废气的多方块结构机械.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击红石工程块那一侧的正中心的钢块完成搭建.
+ie.manual.entry.gasTurbine1=机器前方的流体管道口为燃料的输入口，两侧有用作不同目的的电源插口.<br>高压插口：提供4096IF/t利用电磁驱动燃气轮机至1/4转速.<br>中压插口（位于控制面板侧）：提供1024IF/t用于将蒸汽轮机在1/4转速时为燃料点火. 点燃后燃气轮机开始自行提速,不再需要额外的电源（没有断开高压插口，会导致无法提速）.
+ie.manual.entry.gasTurbine2=为燃气轮机提供足够的燃料，机器将缓慢加速.在启动约30秒后便可达到最大转速和效率.<br>若是对于一些燃烧热低的燃料可能需要通过加压输送来维持足够的供应量.<br>如果在正常运作状态将其关闭，或无法提供足够的燃料，燃气轮机的转速会缓慢降低.如果其转速降至1/4以下，会导致燃气轮机熄火，此时需要重新通电点火加速. 
+ie.manual.entry.gasTurbine3=与蒸汽轮机类似，燃气轮机从后部传动轴输出动能（需要在动能轴末端一台连接<link;alternator;§o§n交流发电机§r>），实现动能的转换.燃烧废气输出口则刚好位于传动轴下方.<br>尽管燃气轮机本身的效率会比柴油发电机要差，但是对于搭建更大的而且更复杂的电能输出系统而言，这才是燃气轮机的价值所在.（即搭建联合循环发电系统 <link;gasTurbine;§n§oCCGT§r>）.<br>在这套系统中，可以将燃气轮机产出的大量的高温燃烧废气用于热交换器内产生蒸汽.
 
 ie.manual.entry.steelBarrel.name=钢制金属桶
 ie.manual.entry.steelBarrel.subtext=全力以赴！
-ie.manual.entry.steelBarrel0=§6钢制金属桶§r是拥有金属桶两倍容量的单方块储罐，流体可以直接手持倒入.他的顶部与底部均可通过工程师锤配置输入与输出.
+ie.manual.entry.steelBarrel0=§6钢制金属桶§r是拥有金属桶两倍容量的单方块储罐，流体可以直接手持倒入.其的顶部与底部均可通过工程师锤配置输入与输出.
 
 ie.manual.entry.steelTank.name=钢制流体储罐
 ie.manual.entry.steelTank.subtext=全力以赴！
-ie.manual.entry.steelTank0=钢制流体储罐是提供更大的流体容量的多方块结构.它可以存储 <config;i;steelTank_tankSize> mB的任意流体，它可用管道从顶部或底部输入，但是流体只能从底部输出.
+ie.manual.entry.steelTank0=钢制流体储罐是提供更大的流体容量的多方块结构.它可以存储<config;i;steelTank_tankSize>mB的任意流体，它可用管道从顶部或底部输入，但是流体只能从底部输出.
 ie.manual.entry.steelTank1=在底部提供红石信号可以让储罐自动输出，红石比较器可以依据内部容量发出信号.
 
 ie.manual.entry.redstone.name=红石计时器
@@ -240,35 +240,35 @@ ie.manual.entry.redstone0=§6红石计时器§r拥有输出红石脉冲的功能
 
 ie.manual.entry.coolingTower.name=冷却塔
 ie.manual.entry.coolingTower.subtext=保持冷静，朋友！
-ie.manual.entry.coolingTower0=冷却塔是可以将余热蒸汽冷却成水的多方块结构.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击重型工程块完成搭建.
-ie.manual.entry.coolingTower1=余热蒸汽输入口位于重型工程块的左边(红色标识)，水或蒸馏水输入口位于重型工程块的右边（蓝色标识）.冷却后的水或蒸馏水在背面输出.如果安装了§lAdvanced Rocketry§r模组，冷却塔的处理时间取决于将热量排放到大气中的能力(与大气压力有关)，冷却塔无法在真空工作.
+ie.manual.entry.coolingTower0=冷却塔是可以将高温低压蒸汽冷却成水的多方块结构.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击重型工程块完成搭建.
+ie.manual.entry.coolingTower1=高温低压蒸汽输入口位于重型工程块的左边(靠近红色标识)，冷却液输入口位于重型工程块的右边（靠近蓝色标识）.液化后的水或蒸馏水,以及变热的冷却液在背面输出.<br>如果安装了§lAdvancedRocketry§r模组，冷却塔的处理时间取决于将热量排放到大气中的能力(与大气压力有关).<br>显然,冷却塔无法在真空工作..？
 
 ie.manual.entry.heatExchanger.name=热交换器
 ie.manual.entry.heatExchanger.subtext=你好，克劳修斯！
-ie.manual.entry.heatExchanger0=热交换器是一种可以快速将某种流体的热度转移到另外一种流体的多方块结构. <br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击位于红石工程块一侧的正中央的铁板金属块完成搭建
-ie.manual.entry.heatExchanger1=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板来反转红石信号模式.热交换机利用效率更高的方式处理分子动能较大（更热）的流体（如燃气）与温度更低的流体（如§l水§r 或 §l蒸馏水§r ）.热交换器将较热的流体的温度交换至较冷流体上，使得热的流体变冷，冷的流体变热.
+ie.manual.entry.heatExchanger0=热交换器是一种可以将某种流体的热量快速转移到另外一种流体的多方块结构. <br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击位于红石工程块一侧的正中央的铁板金属块完成搭建
+ie.manual.entry.heatExchanger1=高温流体通过底部对流输入及输出（分别标有蓝色及橙色标识）,类似地，但低温流体循环则位于上方.<br>可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.
 
 ie.manual.entry.electrolyticCrucibleBattery.name=电解池
 ie.manual.entry.electrolyticCrucibleBattery.subtext=电流的力量!
-ie.manual.entry.electrolyticCrucibleBattery0=电解池是一种多方块结构，可以通入持续的电流对坩埚内的电解质溶液或熔融态物质进行电解，使其在阴极和阳极上引起氧化还原反应.
-ie.manual.entry.electrolyticCrucibleBattery1=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板来反转红石信号模式. 流体输入口带有蓝色标识，阴极阳极的流体流体输出口位于背面的上方，而物品和废电解液将从底部输出.
-ie.manual.entry.electrolyticCrucibleBattery2=电解池一般用来向 <link;solarTower;§n§o太阳能集热塔§r>提供熔融钠(由熔融盐电解).全部搭建完成后，使用工程师锤右击物品输出口可完成搭建.
+ie.manual.entry.electrolyticCrucibleBattery0=电解池是一种利用电流可以对电解质溶液或熔融态物质进行电解的多方块结构.全部搭建完成后，使用工程师锤右击物品输出口可完成搭建.
+ie.manual.entry.electrolyticCrucibleBattery1=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式. 流体输入口带有蓝色标识，阴极阳极的产物输出口位于背面的上方，而物品和废液将从底部输出.电解池一般用来将熔融盐（将盐熔炼后得到)电解成熔融钠，向提供给<link;solarTower;§n§o太阳能集热塔§r>.
+ie.manual.entry.electrolyticCrucibleBattery2=这页是用来凑页数的(●'◡'●)<br>去掉此页，你将会看到多出的英文内容(╯°□°）╯︵ ┻━┻
 
 ie.manual.entry.meltingCrucible.name=电熔炼埚
 ie.manual.entry.meltingCrucible.subtext=我不是熔炉！
-ie.manual.entry.meltingCrucible0=电熔炼埚是一个通过电流将固态物体熔炼成液态流体的多方块结构. 使用工程师锤右击位于电源插口和红石工程块间的方块完成搭建.可以在控制面板通过红石信号控制机器开关，使用工程师锤右击红石控制面板可以反转红石信号模式.
+ie.manual.entry.meltingCrucible0=电熔炼埚是一个通过电流将固态物体熔炼成流体的多方块结构. 使用工程师锤右击位于电源插口和红石工程块间的方块完成搭建.可以在控制面板通过红石信号控制机器开关，使用工程师锤右击红石控制面板可以反转红石信号模式.
 ie.manual.entry.meltingCrucible1=背面带蓝色标识的为物品输入口，前面底部带有橙色标识的为流体输出口.电熔炼锅一般用来向 <link;electrolyticCrucibleBattery;§n§o电解池§r>提供熔融盐.
 
 ie.manual.entry.solarMelter.name=太阳能熔炼塔
 ie.manual.entry.solarMelter.subtext=赫利俄斯 与 安培
-ie.manual.entry.solarMelter0=太阳能熔炼塔是一使用太阳能将固态物体熔炼成液态流体的多方块结构. 使用工程师锤右击位于他中间的银块完成搭建.可以在控制面板通过红石信号控制机器开关，使用工程师锤右击红石控制面板可以反转红石信号模式.
-ie.manual.entry.solarMelter1=背面带蓝色标识的为物品输入口，前面底部带有橙色标识的为流体输出口.太阳能熔炼塔一般用来向 <link;electrolyticCrucibleBattery;§n§o电解池§r>提供熔融盐.
+ie.manual.entry.solarMelter0=与电熔炼埚类似，但太阳能熔炼塔是一使用太阳能将固态物体熔炼成流体的多方块结构. 使用工程师锤右击位于其中间的银块顶面完成搭建.
+ie.manual.entry.solarMelter1=背面带蓝色标识的为物品输入口，前面底部带有橙色标识的为流体输出口.太阳能熔炼塔一般用来向 <link;electrolyticCrucibleBattery;§n§o电解池§r>提供熔融盐.可以在控制面板通过红石信号控制机器开关，使用工程师锤右击面板可以反转红石信号模式.
 
 
 ie.manual.entry.radiator.name=散热板
 ie.manual.entry.radiator.subtext=热辐射
-ie.manual.entry.radiator0=散热板用于辐射 (或热传导，当有介质的时)的方式冷却流体，功能与冷却塔相似. 使用工程师锤右击轻型工程块可完成搭建.它也可以水平摆放.
-ie.manual.entry.radiator1=冷却效率取决于流体温度环境温度的温差以及遮挡物的数量，如果安装了 §lAdvanced Rocketry§r，散热效率将取决于大气压强，及散热板的黑体等效温度. 与冷却塔相比，散热板效率极低，但是它可以在真空中工作，但散热板不会在人造大气中工作.
+ie.manual.entry.radiator0=散热板以辐射(或热传导，当有介质的时)的方式冷却流体，功能与冷却塔一样.使用工程师锤右击轻型工程块可完成搭建，它也可以水平摆放.
+ie.manual.entry.radiator1=冷却效率取决于流体温度环境温度的温差以及遮挡物的数量，如果安装了§lAdvancedRocketry§r模组，散热效率将取决于大气压强，及散热板的黑体等效温度. 与冷却塔相比，散热板效率极低，但是它可以在真空中工作，不过散热板不会在人造大气中工作.
 
 ie.manual.entry.computer.steamTurbine.name=蒸汽轮机 ☎
 ie.manual.entry.computer.steamTurbine.subtext=沸腾的气息
