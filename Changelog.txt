@@ -1,3 +1,6 @@
+1.1.98
+update zh_CN.lang (PilyziFox)
+
 1.9.97
 Fix error with Mek fluid names and things being named `oxgyen` by mistake     (Silfryi)
 Unupdate Solar Melter manual page for formation from silver sheetmetal to light engineering block (Silfryi)
