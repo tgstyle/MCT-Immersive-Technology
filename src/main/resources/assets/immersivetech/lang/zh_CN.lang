@@ -13,7 +13,7 @@ item.immersivetech.material.salt.name=盐
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=蒸馏水
 tile.immersivetech.fluidSteam.name=蒸汽
-tile.immersivetech.fluidExhaustSteam.name=高温低压蒸汽
+tile.immersivetech.fluidExhaustSteam.name=余热蒸汽
 tile.immersivetech.fluidFlueGas.name=燃烧废气
 tile.immersivetech.fluidHighPressureSteam.name=高压蒸汽
 tile.immersivetech.fluidHotWater.name=温水
@@ -23,7 +23,7 @@ tile.immersivetech.fluidSuperheatedMoltenSodium.name=过热熔融钠
 tile.immersivetech.fluidChlorine.name=氯
 fluid.distwater=蒸馏水
 fluid.steam=蒸汽
-fluid.exhauststeam=高温低压蒸汽
+fluid.exhauststeam=余热蒸汽
 fluid.fluegas=燃烧废气
 fluid.highpressuresteam=高压蒸汽
 fluid.hot_spring_water=温泉水
@@ -211,7 +211,7 @@ ie.manual.entry.steamTurbine.name=蒸汽轮机
 ie.manual.entry.steamTurbine.subtext=沸腾的气息
 ie.manual.entry.steamTurbine0=蒸汽轮机是使用蒸汽来产生动能的多方块结构机械.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击靠近红石工程块一端的正中心位置的钢块完成搭建.
 ie.manual.entry.steamTurbine1=通入足够的蒸汽，蒸汽轮机将会缓慢加速，并在<config;i;steamTurbine_timeToMax>秒后达到达到最大转速.<br>需要在动能轴末端一台连接 <link;alternator;§o§n交流发电机§r>，实现动能的转换.
-ie.manual.entry.steamTurbine2=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.<br>机器前方的流体管道口为蒸汽的输入口.动能通过钢质传动轴输出，传动轴右下方为高温低压蒸汽的输出口，若想进一步改善发电系统，可以将其循环利用.
+ie.manual.entry.steamTurbine2=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.<br>机器前方的流体管道口为蒸汽的输入口.动能通过钢质传动轴输出，传动轴右下方为余热蒸汽的输出口，若想进一步改善发电系统，可以将其循环利用.
 
 ie.manual.entry.highPressureSteamTurbine.name=高压蒸汽轮机
 ie.manual.entry.highPressureSteamTurbine.subtext=二级朗肯循环
@@ -223,7 +223,8 @@ ie.manual.entry.gasTurbine.subtext=并非来自747
 ie.manual.entry.gasTurbine0=燃气轮机是使用燃料产生动能，以及燃烧废气的多方块结构机械.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击红石工程块那一侧的正中心的钢块完成搭建.
 ie.manual.entry.gasTurbine1=机器前方的流体管道口为燃料的输入口，两侧有用作不同目的的电源插口.<br>高压插口：提供4096IF/t利用电磁驱动燃气轮机至1/4转速.<br>中压插口（位于控制面板侧）：提供1024IF/t用于将蒸汽轮机在1/4转速时为燃料点火. 点燃后燃气轮机开始自行提速,不再需要额外的电源（没有断开高压插口，会导致无法提速）.
 ie.manual.entry.gasTurbine2=为燃气轮机提供足够的燃料，机器将缓慢加速.在启动约30秒后便可达到最大转速和效率.<br>若是对于一些燃烧热低的燃料可能需要通过加压输送来维持足够的供应量.<br>如果在正常运作状态将其关闭，或无法提供足够的燃料，燃气轮机的转速会缓慢降低.如果其转速降至1/4以下，会导致燃气轮机熄火，此时需要重新通电点火加速. 
-ie.manual.entry.gasTurbine3=与蒸汽轮机类似，燃气轮机从后部传动轴输出动能（需要在动能轴末端一台连接<link;alternator;§o§n交流发电机§r>），实现动能的转换.燃烧废气输出口则刚好位于传动轴下方.<br>尽管燃气轮机本身的效率会比柴油发电机要差，但是对于搭建更大的而且更复杂的电能输出系统而言，这才是燃气轮机的价值所在.（即搭建联合循环发电系统 <link;gasTurbine;§n§oCCGT§r>）.<br>在这套系统中，可以将燃气轮机产出的大量的高温燃烧废气用于热交换器内产生蒸汽.
+ie.manual.entry.gasTurbine3=与蒸汽轮机类似，燃气轮机从后部传动轴输出动能（需要在动能轴末端一台连接<link;alternator;§o§n交流发电机§r>），实现动能的转换.燃烧废气输出口则刚好位于传动轴下方.<br>尽管燃气轮机本身的效率会比柴油发电机要差，但是对于搭建更大的而且更复杂的电能输出系统而言，这才是燃气轮机的价值所在.（即搭建联合循环发电系统 <link;gasTurbine;§n§oCCGT§r>）.<br>在这套系统中，可以将燃气轮机产出的大量的高温燃烧废气用于热交换器内
+产生蒸汽.
 
 ie.manual.entry.steelBarrel.name=钢制金属桶
 ie.manual.entry.steelBarrel.subtext=全力以赴！
@@ -240,8 +241,8 @@ ie.manual.entry.redstone0=§6红石计时器§r拥有输出红石脉冲的功能
 
 ie.manual.entry.coolingTower.name=冷却塔
 ie.manual.entry.coolingTower.subtext=保持冷静，朋友！
-ie.manual.entry.coolingTower0=冷却塔是可以将高温低压蒸汽冷却成水的多方块结构.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击重型工程块完成搭建.
-ie.manual.entry.coolingTower1=高温低压蒸汽输入口位于重型工程块的左边(靠近红色标识)，冷却液输入口位于重型工程块的右边（靠近蓝色标识）.液化后的水或蒸馏水,以及变热的冷却液在背面输出.<br>如果安装了§lAdvancedRocketry§r模组，冷却塔的处理时间取决于将热量排放到大气中的能力(与大气压力有关).<br>显然,冷却塔无法在真空工作..？
+ie.manual.entry.coolingTower0=冷却塔是可以将余热蒸汽冷却成水的多方块结构.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击重型工程块完成搭建.
+ie.manual.entry.coolingTower1=余热蒸汽输入口位于重型工程块的左边(靠近红色标识)，冷却液输入口位于重型工程块的右边（靠近蓝色标识）.液化后的温水从背面输出.<br>如果安装了§lAdvancedRocketry§r模组，冷却塔的处理时间取决于将热量排放到大气中的能力(与大气压力有关).<br>显然,冷却塔无法在真空工作..？
 
 ie.manual.entry.heatExchanger.name=热交换器
 ie.manual.entry.heatExchanger.subtext=你好，克劳修斯！
@@ -297,4 +298,4 @@ ie.manual.entry.computer.heatExchanger0=§lgetFirstInputTankInfo()§r: 返回一
 ie.manual.entry.computer.heatExchanger1=§lgetFirstOutputTankInfo()§r: 返回一张包含热交换器（顶部）输出储罐的信息的表.<br>§lgetSecondOutputTankInfo()§r: 返回一张包含热交换器(底部)输出储罐的信息的表.
 ie.manual.entry.computer.highPressureSteamTurbine0=§lgetSpeed()§r: 返回高压蒸汽轮机的转速.<br>§lgetTankInfo()§r:返回关高压蒸汽轮机蒸汽储罐的信息.<br>§lgetOutputTankInfo()§r:返回关于高压蒸汽轮机输出储罐的信息.
 
-ie.manual.entry.fluidPipes3=为了使泵能提取流体方块，它需要在顶部有能量输入和红石信号.泵也可以用来从储罐和其他没有自动输出的流体容器中抽取.这同样需要红石信号，但不会消耗功率，正如预期的那样.<br><br>泵有了新模式! 通过用工程剪线钳右键单击流体泵，可以改变其工作模式.如果运行模式不符合预期，可以切换模式.
+ie.manual.entry.fluidPipes3=为了使泵能提取流体方块，它需要在顶部有能量输入和红石信号.泵也可以用来从储罐和其他没有自动输出的流体容器中抽取.这同样需要红石信号，但不会消耗功率，正如预期的那样.<br>泵有了新模式! 通过用工程剪线钳右键单击流体泵，可以改变其工作模式.如果运行模式不符合预期，可以切换模式.
