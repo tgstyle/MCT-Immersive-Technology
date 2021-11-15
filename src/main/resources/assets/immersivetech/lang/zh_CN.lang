@@ -216,7 +216,7 @@ ie.manual.entry.steamTurbine2=可以在控制面板通过红石信号控制机�
 ie.manual.entry.highPressureSteamTurbine.name=高压蒸汽轮机
 ie.manual.entry.highPressureSteamTurbine.subtext=二级朗肯循环
 ie.manual.entry.highPressureSteamTurbine0=与蒸汽轮机一样，高压蒸汽轮机是使用蒸汽来产生动能的多方块结构机械.只不过其是为§lNuclearCraft§r而设计的，通入足够蒸汽后，<config;i;highPressureSteamTurbine_timeToMax>秒后可达到达到最大转速.
-ie.manual.entry.highPressureSteamTurbine1=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.<br>机器前方的流体管道口为蒸汽的输入口.动能通过钢质传动轴输出，传动轴右下方为蒸汽的输出口，若想进一步改善发电系统，可以将其循环利用.
+ie.manual.entry.highPressureSteamTurbine1=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.<br>机器前方的流体管道口为蒸汽的输入口.动能通过镍质传动轴输出，传动轴右下方为蒸汽的输出口，若想进一步改善发电系统，可以将其循环利用.
 
 ie.manual.entry.gasTurbine.name=燃气轮机
 ie.manual.entry.gasTurbine.subtext=并非来自747
