@@ -241,7 +241,7 @@ ie.manual.entry.redstone0=§6红石计时器§r拥有输出红石脉冲的功能
 ie.manual.entry.coolingTower.name=冷却塔
 ie.manual.entry.coolingTower.subtext=保持冷静，朋友！
 ie.manual.entry.coolingTower0=冷却塔是可以将余热蒸汽冷却成水的多方块结构.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击重型工程块完成搭建.
-ie.manual.entry.coolingTower1=余热蒸汽输入口位于重型工程块的左边(靠近红色标识)，冷却液输入口位于重型工程块的右边（靠近蓝色标识）.液化后的热水从背面输出.<br>如果安装了§lAdvancedRocketry§r模组，冷却塔的处理时间取决于将热量排放到大气中的能力(与大气压力有关).<br>显然,冷却塔无法在真空工作..？
+ie.manual.entry.coolingTower1=位于重型工程块左边(靠近红色标识)的输入口用于输入需要冷却的液体，而冷却液输入口位于重型工程块的右边（靠近蓝色标识）.冷却后的液体从背面输出.<br>如果安装了§lAdvancedRocketry§r模组，冷却塔的处理时间取决于将热量排放到大气中的能力(与大气压力有关).<br>显然,冷却塔无法在真空工作..？
 
 ie.manual.entry.heatExchanger.name=热交换器
 ie.manual.entry.heatExchanger.subtext=你好，克劳修斯！
