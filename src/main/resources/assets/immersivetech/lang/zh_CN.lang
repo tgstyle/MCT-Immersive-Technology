@@ -198,7 +198,7 @@ ie.manual.entry.solarTower.name=太阳能集热塔
 ie.manual.entry.solarTower.subtext=高端烤鸟机  
 ie.manual.entry.solarTower0=太阳能集热塔是一种可以利用阳光，将水转换成蒸汽的多方块结构.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击中间的轻型工程块完成搭建.
 ie.manual.entry.solarTower1=太阳能集热塔可将水或<link;distiller;§n§o蒸馏水§r> 转换成蒸汽.<br>水可以通过标有蓝点的开口输入,蒸汽从背面带有橙点的开口输出.<br>太阳能集热塔附近至少有一个太阳能反射镜才能工作.集热塔的工作效率取决发射镜的数量比例（实际数量/最大效率镜子数）.在主世界里，需要230个反射镜才可以使得集热塔效率达到最大.
-ie.manual.entry.solarTower2=太阳能反射镜的具体结构如上图所示，全部搭建完成后，使用工程师锤右击中间的红石工程块完成搭建.
+ie.manual.entry.solarTower2=太阳能反射镜的具体结构如上图所示，全部搭建完成后，使用工程师锤右击中间的银块完成搭建.
 ie.manual.entry.solarTower3=反射镜的距离集热塔的距离需要介于 <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> 个方格之间. 而且摆放位置需要与集热塔的输入口平齐（集热塔底部的混凝土充当地基，不算入第一层）反射镜遇到沙尘暴、夜晚等情况下无法工作.当处于以下的情况时,会降低工作效率：<br>*早晨和傍晚<br>*下雨<br>*潮湿的环境<br>*反射镜被遮挡<br>如果安装了 §lAdvancedRocketry§r模组，光照效率将会受所在星球的光照强度影响.
 
 ie.manual.entry.controlBlocks.name=限制器和控制装置
