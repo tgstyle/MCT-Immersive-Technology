@@ -13,20 +13,20 @@ item.immersivetech.material.salt.name=盐
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=蒸馏水
 tile.immersivetech.fluidSteam.name=蒸汽
-tile.immersivetech.fluidExhaustSteam.name=高温低压蒸汽
+tile.immersivetech.fluidExhaustSteam.name=余热蒸汽
 tile.immersivetech.fluidFlueGas.name=燃烧废气
 tile.immersivetech.fluidHighPressureSteam.name=高压蒸汽
-tile.immersivetech.fluidHotWater.name=温水
+tile.immersivetech.fluidHotWater.name=热水
 tile.immersivetech.fluidMoltenSalt.name=熔融盐
 tile.immersivetech.fluidMoltenSodium.name=熔融钠
 tile.immersivetech.fluidSuperheatedMoltenSodium.name=过热熔融钠
 tile.immersivetech.fluidChlorine.name=氯
 fluid.distwater=蒸馏水
 fluid.steam=蒸汽
-fluid.exhauststeam=高温低压蒸汽
+fluid.exhauststeam=余热蒸汽
 fluid.fluegas=燃烧废气
 fluid.highpressuresteam=高压蒸汽
-fluid.hot_spring_water=温泉水
+fluid.hot_spring_water=热水
 fluid.moltensalt=熔融盐
 fluid.moltensodium=熔融钠
 fluid.superheatedmoltensodium=过热熔融钠
@@ -106,13 +106,13 @@ tile.immersivetech.metal_multiblock1.solar_melter_slave.name=太阳能熔炼塔
 overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s mB
 overlay.immersivetech.osd.fluid_valve.normal.firstline=允许通过 %s mB 在最近一秒
 overlay.immersivetech.osd.fluid_valve.sneaking.firstline=平均通过 %s mB/Tick
-overlay.immersivetech.osd.fluid_valve.sneaking.secondline=在 %s 个分组及最近一分钟内
+overlay.immersivetech.osd.fluid_valve.sneaking.secondline=在最近一分钟的 %s 个分组内
 overlay.immersivetech.osd.load_controller.normal.firstline=允许通过 %s IF 在最近一秒
 overlay.immersivetech.osd.load_controller.sneaking.firstline=平均通过 %s IF/Tick
-overlay.immersivetech.osd.load_controller.sneaking.secondline=在 %s 个分组及最近一分钟内
+overlay.immersivetech.osd.load_controller.sneaking.secondline=在最近一分钟的 %s 个分组内
 overlay.immersivetech.osd.stack_limiter.normal.firstline=允许通过 %s 个物品在最近一秒
 overlay.immersivetech.osd.stack_limiter.sneaking.firstline=平均通过 %s 物品/Tick
-overlay.immersivetech.osd.stack_limiter.sneaking.secondline=在 %s 个分组及最近一分钟内
+overlay.immersivetech.osd.stack_limiter.sneaking.secondline=在最近一分钟的 %s 个分组内
 overlay.immersivetech.osd.barrel.normal.firstline= %s %s mB
 overlay.immersivetech.osd.creative_crate.normal.firstline=在最近一秒提供 %s %s 个
 overlay.immersivetech.osd.trash_item.normal.firstline=销毁 %s 个物品在最近一秒
@@ -197,9 +197,9 @@ ie.manual.entry.openBarrel0=§6无盖金属桶§r是类似金属桶的单方块�
 ie.manual.entry.solarTower.name=太阳能集热塔
 ie.manual.entry.solarTower.subtext=高端烤鸟机  
 ie.manual.entry.solarTower0=太阳能集热塔是一种可以利用阳光，将水转换成蒸汽的多方块结构.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击中间的轻型工程块完成搭建.
-ie.manual.entry.solarTower1=太阳能集热塔可将水或<link;distiller;§n§o蒸馏水§r> 转换成蒸汽.<br>水可以通过标有蓝点的开口输入,蒸汽从背面带有橙点的开口输出.<br>太阳能集热塔附近至少有一个太阳能反射镜才能工作.集热塔的工作效率取决发射镜的数量比例（实际数量/最大效率镜子数）.在主世界里，需要230个反射镜才可以使得集热塔效率达到最大，
-ie.manual.entry.solarTower2=太阳能反射镜的具体结构如上图所示，全部搭建完成后，使用工程师锤右击中间的红石工程块完成搭建.
-ie.manual.entry.solarTower3=反射镜的距离集热塔的距离需要介于 <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> 个方格之间. 反射镜遇到沙尘暴、夜晚等情况下无法工作.当处于以下的情况时,会降低工作效率：<br>*早晨和傍晚<br>*下雨<br>*潮湿的环境<br>*反射镜被遮挡<br>如果安装了 §lAdvancedRocketry§r模组，光照效率将会受所在星球的光照强度影响.
+ie.manual.entry.solarTower1=太阳能集热塔可将水或<link;distiller;§n§o蒸馏水§r> 转换成蒸汽.<br>水可以通过标有蓝点的开口输入,蒸汽从背面带有橙点的开口输出.<br>太阳能集热塔附近至少有一个太阳能反射镜才能工作.集热塔的工作效率取决发射镜的数量比例（实际数量/最大效率镜子数）.在主世界里，需要230个反射镜才可以使得集热塔效率达到最大.
+ie.manual.entry.solarTower2=太阳能反射镜的具体结构如上图所示，全部搭建完成后，使用工程师锤右击中间的银块完成搭建.
+ie.manual.entry.solarTower3=反射镜的距离集热塔的距离需要介于 <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> 个方格之间. 而且摆放位置需要与集热塔的输入口平齐（集热塔底部的混凝土充当地基，不算入第一层）反射镜遇到沙尘暴、夜晚等情况下无法工作.当处于以下的情况时,会降低工作效率：<br>*早晨和傍晚<br>*下雨<br>*潮湿的环境<br>*反射镜被遮挡<br>如果安装了 §lAdvancedRocketry§r模组，光照效率将会受所在星球的光照强度影响.
 
 ie.manual.entry.controlBlocks.name=限制器和控制装置
 ie.manual.entry.controlBlocks.subtext=有备而来
@@ -211,12 +211,12 @@ ie.manual.entry.steamTurbine.name=蒸汽轮机
 ie.manual.entry.steamTurbine.subtext=沸腾的气息
 ie.manual.entry.steamTurbine0=蒸汽轮机是使用蒸汽来产生动能的多方块结构机械.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击靠近红石工程块一端的正中心位置的钢块完成搭建.
 ie.manual.entry.steamTurbine1=通入足够的蒸汽，蒸汽轮机将会缓慢加速，并在<config;i;steamTurbine_timeToMax>秒后达到达到最大转速.<br>需要在动能轴末端一台连接 <link;alternator;§o§n交流发电机§r>，实现动能的转换.
-ie.manual.entry.steamTurbine2=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.<br>机器前方的流体管道口为蒸汽的输入口.动能通过钢质传动轴输出，传动轴右下方为高温低压蒸汽的输出口，若想进一步改善发电系统，可以将其循环利用.
+ie.manual.entry.steamTurbine2=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.<br>机器前方的流体管道口为蒸汽的输入口.动能通过钢质传动轴输出，传动轴右下方为余热蒸汽的输出口，若想进一步改善发电系统，可以将其循环利用.
 
 ie.manual.entry.highPressureSteamTurbine.name=高压蒸汽轮机
 ie.manual.entry.highPressureSteamTurbine.subtext=二级朗肯循环
 ie.manual.entry.highPressureSteamTurbine0=与蒸汽轮机一样，高压蒸汽轮机是使用蒸汽来产生动能的多方块结构机械.只不过其是为§lNuclearCraft§r而设计的，通入足够蒸汽后，<config;i;highPressureSteamTurbine_timeToMax>秒后可达到达到最大转速.
-ie.manual.entry.highPressureSteamTurbine1=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.<br>机器前方的流体管道口为蒸汽的输入口.动能通过钢质传动轴输出，传动轴右下方为蒸汽的输出口，若想进一步改善发电系统，可以将其循环利用.
+ie.manual.entry.highPressureSteamTurbine1=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.<br>机器前方的流体管道口为蒸汽的输入口.动能通过镍质传动轴输出，传动轴右下方为蒸汽的输出口，若想进一步改善发电系统，可以将其循环利用.
 
 ie.manual.entry.gasTurbine.name=燃气轮机
 ie.manual.entry.gasTurbine.subtext=并非来自747
@@ -240,8 +240,8 @@ ie.manual.entry.redstone0=§6红石计时器§r拥有输出红石脉冲的功能
 
 ie.manual.entry.coolingTower.name=冷却塔
 ie.manual.entry.coolingTower.subtext=保持冷静，朋友！
-ie.manual.entry.coolingTower0=冷却塔是可以将高温低压蒸汽冷却成水的多方块结构.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击重型工程块完成搭建.
-ie.manual.entry.coolingTower1=高温低压蒸汽输入口位于重型工程块的左边(靠近红色标识)，冷却液输入口位于重型工程块的右边（靠近蓝色标识）.液化后的水或蒸馏水,以及变热的冷却液在背面输出.<br>如果安装了§lAdvancedRocketry§r模组，冷却塔的处理时间取决于将热量排放到大气中的能力(与大气压力有关).<br>显然,冷却塔无法在真空工作..？
+ie.manual.entry.coolingTower0=冷却塔是可以将余热蒸汽冷却成水的多方块结构.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击重型工程块完成搭建.
+ie.manual.entry.coolingTower1=位于重型工程块左边(靠近红色标识)的输入口用于输入需要冷却的液体，而冷却液输入口位于重型工程块的右边（靠近蓝色标识）.冷却后的液体从背面输出.<br>如果安装了§lAdvancedRocketry§r模组，冷却塔的处理时间取决于将热量排放到大气中的能力(与大气压力有关).<br>显然,冷却塔无法在真空工作..？
 
 ie.manual.entry.heatExchanger.name=热交换器
 ie.manual.entry.heatExchanger.subtext=你好，克劳修斯！
@@ -252,7 +252,7 @@ ie.manual.entry.electrolyticCrucibleBattery.name=电解池
 ie.manual.entry.electrolyticCrucibleBattery.subtext=电流的力量!
 ie.manual.entry.electrolyticCrucibleBattery0=电解池是一种利用电流可以对电解质溶液或熔融态物质进行电解的多方块结构.全部搭建完成后，使用工程师锤右击物品输出口可完成搭建.
 ie.manual.entry.electrolyticCrucibleBattery1=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式. 流体输入口带有蓝色标识，阴极阳极的产物输出口位于背面的上方，而物品和废液将从底部输出.电解池一般用来将熔融盐（将盐熔炼后得到)电解成熔融钠，向提供给<link;solarTower;§n§o太阳能集热塔§r>.
-ie.manual.entry.electrolyticCrucibleBattery2=这页是用来凑页数的(●'◡'●)<br>去掉此页，你将会看到多出的英文内容(╯°□°）╯︵ ┻━┻
+ie.manual.entry.electrolyticCrucibleBattery2=这页是用来凑页数的(●'◡'●)<br>如果去掉此页，将会看到多出来的英文内容(╯°□°）╯︵ ┻━┻
 
 ie.manual.entry.meltingCrucible.name=电熔炼埚
 ie.manual.entry.meltingCrucible.subtext=我不是熔炉！
@@ -262,7 +262,7 @@ ie.manual.entry.meltingCrucible1=背面带蓝色标识的为物品输入口，�
 ie.manual.entry.solarMelter.name=太阳能熔炼塔
 ie.manual.entry.solarMelter.subtext=赫利俄斯 与 安培
 ie.manual.entry.solarMelter0=与电熔炼埚类似，但太阳能熔炼塔是一使用太阳能将固态物体熔炼成流体的多方块结构. 使用工程师锤右击位于其中间的银块顶面完成搭建.
-ie.manual.entry.solarMelter1=背面带蓝色标识的为物品输入口，前面底部带有橙色标识的为流体输出口.太阳能熔炼塔一般用来向 <link;electrolyticCrucibleBattery;§n§o电解池§r>提供熔融盐.可以在控制面板通过红石信号控制机器开关，使用工程师锤右击面板可以反转红石信号模式.
+ie.manual.entry.solarMelter1=背面带蓝色标识的为物品输入口，前面底部带有橙色标识的为流体输出口.太阳能熔炼塔一般用来向 <link;electrolyticCrucibleBattery;§n§o电解池§r>提供熔融盐.熔炼塔需要与太阳能集热塔一样的方式摆放反射镜.可以在控制面板通过红石信号控制机器开关，使用工程师锤右击面板可以反转红石信号模式.
 
 
 ie.manual.entry.radiator.name=散热板
@@ -297,4 +297,4 @@ ie.manual.entry.computer.heatExchanger0=§lgetFirstInputTankInfo()§r: 返回一
 ie.manual.entry.computer.heatExchanger1=§lgetFirstOutputTankInfo()§r: 返回一张包含热交换器（顶部）输出储罐的信息的表.<br>§lgetSecondOutputTankInfo()§r: 返回一张包含热交换器(底部)输出储罐的信息的表.
 ie.manual.entry.computer.highPressureSteamTurbine0=§lgetSpeed()§r: 返回高压蒸汽轮机的转速.<br>§lgetTankInfo()§r:返回关高压蒸汽轮机蒸汽储罐的信息.<br>§lgetOutputTankInfo()§r:返回关于高压蒸汽轮机输出储罐的信息.
 
-ie.manual.entry.fluidPipes3=为了使泵能提取流体方块，它需要在顶部有能量输入和红石信号.泵也可以用来从储罐和其他没有自动输出的流体容器中抽取.这同样需要红石信号，但不会消耗功率，正如预期的那样.<br><br>泵有了新模式! 通过用工程剪线钳右键单击流体泵，可以改变其工作模式.如果运行模式不符合预期，可以切换模式.
+ie.manual.entry.fluidPipes3=为了使泵能提取流体方块，它需要在顶部有能量输入和红石信号.泵也可以用来从储罐和其他没有自动输出的流体容器中抽取.这同样需要红石信号，但不会消耗功率，正如预期的那样.<br>泵有了新模式! 通过用工程剪线钳右键单击流体泵，可以改变其工作模式.如果运行模式不符合预期，可以切换模式.
