@@ -7,6 +7,7 @@ public class Config {
 	@net.minecraftforge.common.config.Config(modid=ImmersiveTechnology.MODID, name="mctimmersivetechnology")
 	public static class ITConfig {
 		public static Machines machines;
+		public static Steam steam;
 		public static MechanicalEnergy mechanicalenergy;
 		public static Barrels barrels;
 		public static Experimental experimental;
@@ -232,6 +233,12 @@ public class Config {
 		public static class MechanicalEnergy {
 			@Comment({"The maximum speed that machines can tolerate in RPM [Default=1800]"})
 			public static int mechanicalEnergy_speed_max = 1800;
+		}
+		public static class Steam{
+			@Comment({"The water to steam multiplier [Default=1.8]"})
+			public static double steam_mulitplier_water = 1.8;
+			@Comment({"The distilled water to steam multiplier [Default=2.0]"})
+			public static double steam_mulitplier_distWater = 2.0;
 		}
 		public static class Barrels {
 			@Comment({"The capacity of the tank for the Open Barrel [Default=12000]"})
