@@ -29,7 +29,9 @@ public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements I
 	}
 
 	public void addCatalysts(IModRegistry registry) {
-		for(GenericMultiblockIngredient stack : displayStacks) registry.addRecipeCatalyst(stack, getUid());
+		for(GenericMultiblockIngredient stack : displayStacks) {
+			if(stack!=null) registry.addRecipeCatalyst(stack, getUid());
+		}
 	}
 
 	@Nullable
