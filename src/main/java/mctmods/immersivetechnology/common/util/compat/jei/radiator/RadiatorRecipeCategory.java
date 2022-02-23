@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.util.compat.jei.radiator;
 
 import mctmods.immersivetechnology.api.crafting.RadiatorRecipe;
-import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
