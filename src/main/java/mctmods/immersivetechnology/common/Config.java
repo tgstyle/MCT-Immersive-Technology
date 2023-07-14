@@ -101,6 +101,10 @@ public class Config {
 				public static int alternator_energy_perTick = 12288;
 				@Comment({"Alternator sound based RPM or Capacity [Default=true]"})
 				public static boolean alternator_sound_RPM = true;
+				@Comment({"Alternator generation exponent [Default=2.0]"})
+				public static double alternator_exponent = 2.0;
+				@Comment({"Alternator generation threshold (fraction of speed below which it will not produce power, to emulate grid syncing) [Default=0.0]"})
+				public static double alternator_threshold = 0.0;
 			}
 			public static class Boiler {
 				@Comment({"The capacity of the input tank for the Boiler [Default=20000]"})
@@ -165,6 +169,8 @@ public class Config {
 				public static int steamTurbine_speed_lossPerTick = 6;
 				@Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
 				public static float steamTurbine_speed_maxRotation = 72;
+				@Comment({"How much of the maximum alternator output power should the Steam Turbine generate [Default=1.0]"})
+				public static float steamTurbine_torque = 1.0f;
 			}
 			public static class GasTurbine {
 				@Comment({"The power consumption of the electric starter for the Gas Turbine [Default=3072]"})
@@ -185,6 +191,8 @@ public class Config {
 				public static int gasTurbine_speed_lossPerTick = 6;
 				@Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
 				public static float gasTurbine_speed_maxRotation = 72;
+				@Comment({"How much of the maximum alternator output power should the Gas Turbine generate [Default=0.5]"})
+				public static float gasTurbine_torque = 0.5f;
 			}
 			public static class HighPressureSteamTurbine {
 				@Comment({"The capacity of the input tank for the Steam Turbine [Default=10000]"})

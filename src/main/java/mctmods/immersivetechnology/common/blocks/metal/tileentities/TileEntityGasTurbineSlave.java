@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
+import mctmods.immersivetechnology.common.Config.ITConfig.Machines.GasTurbine;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSystem;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockGasTurbine;
@@ -28,6 +29,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 public class TileEntityGasTurbineSlave extends TileEntityMultiblockNewSystem<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IMultiblockAdvAABB, ITBlockInterfaces.IMechanicalEnergy {
+
+    private static float outputtorque = GasTurbine.gasTurbine_torque;
 
     public TileEntityGasTurbineSlave() {
         super(MultiblockGasTurbine.instance, 0, true);
@@ -91,7 +94,7 @@ public class TileEntityGasTurbineSlave extends TileEntityMultiblockNewSystem<Til
 
     @Override
     public float getTorqueMultiplier() {
-        return 0.5f;
+        return outputtorque;
     }
 
     public MechanicalEnergyAnimation getAnimation() {
