@@ -3,9 +3,7 @@ package mctmods.immersivetechnology.common.util.compat.jei.radiator;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.common.util.compat.jei.MultiblockRecipeWrapper;
 import mctmods.immersivetechnology.common.Config;
-import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SolarTower;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import mezz.jei.api.gui.ITickTimer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 

@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
+import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SteamTurbine;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSystem;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<TileEntitySteamTurbineSlave, SteamTurbineRecipe, TileEntitySteamTurbineMaster> implements IAdvancedSelectionBounds, IAdvancedCollisionBounds, IMechanicalEnergy {
+
+	private static float outputtorque = SteamTurbine.steamTurbine_torque;
 
 	public TileEntitySteamTurbineSlave() {
 		super(MultiblockSteamTurbine.instance, new int[] { 4, 10, 3 }, 0, true);
@@ -85,7 +88,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 
 	@Override
 	public float getTorqueMultiplier() {
-		return 1;
+		return outputtorque;
 	}
 
 	public MechanicalEnergyAnimation getAnimation() {

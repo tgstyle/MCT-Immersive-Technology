@@ -1,3 +1,6 @@
+1.9.100
+Fix #258 (h2steffes)
+
 1.9.99
 update zh_CN.lang (PilyziFox)
 

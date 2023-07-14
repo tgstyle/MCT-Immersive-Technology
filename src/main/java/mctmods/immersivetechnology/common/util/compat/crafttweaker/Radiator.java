@@ -4,7 +4,6 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.IAction;
 import crafttweaker.api.liquid.ILiquidStack;
 import mctmods.immersivetechnology.api.crafting.RadiatorRecipe;
-import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import net.minecraftforge.fluids.FluidStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;

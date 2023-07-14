@@ -33,6 +33,8 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
 	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
 	private static int rfPerTick = Alternator.alternator_energy_perTick;
+	private static double rfExponent = Alternator.alternator_exponent;
+	private static double rfThreshold = Alternator.alternator_threshold;
 	private static int rfPerTickPerPort = rfPerTick / 6;
 	private static int speedLossPerTick = SteamTurbine.steamTurbine_speed_lossPerTick;
 	private static boolean soundRPM = Alternator.alternator_sound_RPM;
@@ -66,7 +68,8 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 	}
 
 	public int energyGenerated() {
-		return Math.round(((float)speed / maxSpeed) * torqueMult * rfPerTick);
+		if ((double)speed / (double)maxSpeed > rfThreshold) return (int)Math.round(Math.pow((double)speed / (double)maxSpeed, rfExponent)  * torqueMult * rfPerTick);
+		return 0;
 	}
 
 	public void handleSounds() {

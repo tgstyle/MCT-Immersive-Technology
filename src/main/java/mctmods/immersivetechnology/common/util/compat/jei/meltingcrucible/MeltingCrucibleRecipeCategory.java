@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei.meltingcrucible;
 
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
+import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Multiblock;
 import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
@@ -22,7 +23,7 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 
 	@SuppressWarnings("deprecation")
 	public MeltingCrucibleRecipeCategory(IGuiHelper helper) {
-		super("meltingCrucible", "tile.immersivetech.metal_multiblock1.melting_crucible.name", helper.createDrawable(background, 0, 0, 176, 64), MeltingCrucibleRecipe.class, GenericMultiblockIngredient.MELTING_CRUCIBLE, GenericMultiblockIngredient.SOLAR_MELTER);
+		super("meltingCrucible", "tile.immersivetech.metal_multiblock1.melting_crucible.name", helper.createDrawable(background, 0, 0, 176, 64), MeltingCrucibleRecipe.class, Multiblock.enable_meltingCrucible ? GenericMultiblockIngredient.MELTING_CRUCIBLE :  null, Multiblock.enable_solarMelter ? GenericMultiblockIngredient.SOLAR_MELTER : null);
 		tankOverlay = helper.createDrawable(background, 178, 2, 16, 47, -2, 2, -2, 2);
 		IDrawableStatic staticImage = helper.createDrawable(background, 196, 0, 32, 18);
 		this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
