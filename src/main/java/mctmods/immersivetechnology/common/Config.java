@@ -154,6 +154,9 @@ public class Config {
 				public static int solarMelter_output_tankSize = 10000;
 				@Comment({"Default amount of energy per tick the solar melter loses when not processing. Maximum energy input per tick by mirrors is ~30720  [Default=80]"})
 				public static int solarMelter_progress_lossEnergy = 80;
+
+				@Comment({"The maximum strength of the reflectors. Decreasing this reduces the amount of reflectors needed to achieve max processing speed. [Default=227.5]"})
+				public static double solarMelter_maximum_reflector_strength = 227.5;
 			}
 			public static class SolarReflector {
 				@Comment({"The minimum distance between the Solar Reflectors and the Solar Tower [Default=12]"})
