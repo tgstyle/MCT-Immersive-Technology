@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
+import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SolarReflector;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SolarMelter;
 import mctmods.immersivetechnology.common.ITContent;
@@ -35,7 +36,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 	private static int solarMaxRange = SolarReflector.solarReflector_maxRange;
 	private static int solarMinRange = SolarReflector.solarReflector_minRange;
 	private static int energyLossPerTick = SolarMelter.solarMelter_progress_lossEnergy;
-	private static double maximumReflectorStrength = 227.5;
+	private static double maximumReflectorStrength = SolarMelter.solarMelter_maximum_reflector_strength;
 
 	BlockPos fluidOutputPos;
 
