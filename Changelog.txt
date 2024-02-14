@@ -1,3 +1,15 @@
+1.9.102 (MasterEnderman)
+changed the maximumReflectorStrength into a config option
+same treatment for solarmelter
+
+1.9.101 (ThePiGuy24)
+Various changes to Steam and Gas Turbines, and Alternator, as well as the build file.
+
+Changed CurseForge Maven URL to https://cursemaven.com from https://www.cursemaven.com since Gradle doesn't seem to like redirects
+Added a (configurable) exponent to the amount of power the Alternator produces (as a fraction of maximum RPM), default of 2.0
+Added a (configurable) speed threshold below which the Alternator does not produce power (as a fraction of maximum RPM), so as to emulate grid syncing, default of 0.0
+Allowed the amount of "torque" that Steam and Gas Turbines produce to be configurable (defaults remain as is)
+
 1.9.100
 Fix #258 (h2steffes)
 
