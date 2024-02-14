@@ -40,7 +40,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 	private static double heatLossMultiplier = SolarTower.solarTower_heat_loss_multiplier;
 	private static float speedMult = SolarTower.solarTower_speed_multiplier;
 	private static double workingHeatLevel = SolarTower.solarTower_heat_workingLevel;
-	private static double maximumReflectorStrength = 227.5;
+	private static double maximumReflectorStrength = SolarTower.solarTower_maximum_reflector_strength;
 
 	BlockPos fluidOutputPos;
 
