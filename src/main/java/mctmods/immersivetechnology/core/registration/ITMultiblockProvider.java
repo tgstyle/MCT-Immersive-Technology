@@ -132,6 +132,7 @@ public class ITMultiblockProvider {
 
     public static void init() {
         registerMB("boiler", ITBoiler.INSTANCE, BOILER);
+        registerMB("distiller", ITDistiller.INSTANCE, DISTILLER);
         registerMB("alternator", ITAlternator.INSTANCE, ALTERNATOR);
         registerMB("steam_turbine", ITSteamTurbine.INSTANCE, STEAM_TURBINE);
         registerMB("gas_turbine", ITGasTurbine.INSTANCE, GAS_TURBINE);

@@ -36,11 +36,13 @@ public class ITBlockTags extends BlockTagsProvider
         registerMineable(tag, ITMultiblockProvider.ALTERNATOR);
         registerMineable(tag, ITMultiblockProvider.STEAM_TURBINE);
         registerMineable(tag, ITMultiblockProvider.GAS_TURBINE);
-        registerMineable(tag2, ITMultiblockProvider.ADV_COKE_OVEN);
         registerMineable(tag2, ITMultiblockProvider.BOILER);
+        registerMineable(tag2, ITMultiblockProvider.DISTILLER);
         registerMineable(tag2, ITMultiblockProvider.ALTERNATOR);
         registerMineable(tag2, ITMultiblockProvider.STEAM_TURBINE);
         registerMineable(tag2, ITMultiblockProvider.GAS_TURBINE);
+        registerMineable(tag2, ITMultiblockProvider.SOLAR_TOWER);
+        registerMineable(tag2, ITMultiblockProvider.ADV_COKE_OVEN);
         registerMineable(tag, ITBlocks.MetalDevices.COKE_OVEN_PREHEATER);
     }
 

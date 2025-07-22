@@ -17,7 +17,7 @@ public class ITDistiller extends ITTemplateMultiblock
 
     public ITDistiller()
     {
-        super(new ResourceLocation(ITLib.MODID, "multiblocks/solar_tower"), new BlockPos(0,0,0), new BlockPos(1,2,1), new BlockPos(3,21,3), ITMultiblockProvider.SOLAR_TOWER);
+        super(new ResourceLocation(ITLib.MODID, "multiblocks/distiller"), new BlockPos(0,0,0), new BlockPos(1,1,1), new BlockPos(3,3,3), ITMultiblockProvider.DISTILLER);
     }
 
     @Override
