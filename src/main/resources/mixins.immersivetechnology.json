@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "mctmods.immersivetechnology.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "refmap": "mctmods.immersivetechnology.refmap.json",
+  "client": [
+  ],
+  "mixins": [
+    "MixinFluidProtection"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

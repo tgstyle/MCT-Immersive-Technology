@@ -1,0 +1,5 @@
+{
+  "flip_v": true,
+  "loader": "forge:obj",
+  "model": "immersivetechnology:models/block/multiblock/obj/gas_turbine/gas_turbine_rotor.obj"
+}

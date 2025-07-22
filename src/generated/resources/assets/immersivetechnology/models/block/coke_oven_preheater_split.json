@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:block/block",
+  "dynamic": false,
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "automatic_culling": false,
+    "flip_v": true,
+    "loader": "forge:obj",
+    "model": "immersivetechnology:models/block/coke_oven_preheater.obj",
+    "textures": {
+      "particle": "immersivetechnology:block/metal_device_coke_oven_preheater"
+    }
+  },
+  "loader": "immersiveengineering:basic_split",
+  "split_parts": [
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1
+    ]
+  ],
+  "textures": {
+    "particle": "immersivetechnology:block/metal_device_coke_oven_preheater"
+  }
+}

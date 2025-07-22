@@ -1,0 +1,33 @@
+{
+  "language": "English",
+  "language.code": "en_us",
+  "language.region": "United States",
+
+  "itemGroup.immersivetechnology": "Immersive Technology",
+
+  "manual.immersivetechnology.main": "Immersive Technology",
+  "manual.immersivetechnology.it_multiblocks": "Multiblocks",
+
+  "block.immersivetechnology.creative_barrel": "Creative Fluid Barrel",
+  "block.immersivetechnology.coke_oven_preheater": "Coke Oven Preheater",
+  "block.immersivetechnology.reinforced_coke_brick": "Reinforced Coke Brick",
+
+  "block.immersivetechnology.coke_oven_advanced": "Advanced Coke Oven",
+  "block.immersivetechnology.boiler": "Boiler",
+  "block.immersivetechnology.alternator": "Alternator",
+  "block.immersivetechnology.steam_turbine": "Steam Turbine",
+  "block.immersivetechnology.gas_turbine": "Gas Turbine",
+
+  "fluid_type.immersivetechnology.steam": "Low Pressure Steam",
+  "fluid_type.immersivetechnology.steam_exhaust": "Exhaust Steam",
+  "fluid_type.immersivetechnology.flue_gas": "Flue Gas",
+
+  "item.immersivetechnology.it_formation_tool": "Formation Tool",
+
+  "item.immersivetechnology.steam_bucket": "Steam Bucket",
+  "item.immersivetechnology.steam_exhaust_bucket": "Exhaust Steam Bucket",
+  "item.immersivetechnology.flue_gas_bucket": "Flue Gas Bucket",
+
+  "desc.immersiveengineering.info.multiblock.IE:AdvancedCokeOven": "Advanced Coke Oven",
+  "desc.immersiveengineering.info.multiblock.IE:Boiler": "Boiler"
+}

@@ -1,0 +1,86 @@
+{
+	"turbine": {
+		"category": "block",
+		"sounds": [
+			"immersivetechnology:turbine"
+		],
+		"subtitle": "subtitle.immersivetechnology.turbine"
+	},
+	"alternator": {
+		"category": "block",
+		"sounds": [
+			"immersivetechnology:alternator"
+		],
+		"subtitle": "subtitle.immersivetechnology.alternator"
+	},
+	"boiler": {
+		"category": "block",
+		"sounds": [
+			"immersivetechnology:boiler"
+		],
+		"subtitle": "subtitle.immersivetechnology.boiler"
+	},
+	"distiller": {
+		"category": "block",
+		"sounds": [
+			"immersivetechnology:distiller"
+		],
+		"subtitle": "subtitle.immersivetechnology.distiller"
+	},
+	"adv_coke_oven": {
+		"category": "block",
+		"sounds": [
+			"immersivetechnology:adv_coke_oven"
+		],
+		"subtitle": "subtitle.immersivetechnology.advCokeOven"
+	},
+	"solar_tower": {
+		"category": "block",
+		"sounds": [
+			"immersivetechnology:solar_tower"
+		],
+		"subtitle": "subtitle.immersivetechnology.solarTower"
+	},
+	"cooling_tower": {
+		"category": "block",
+		"sounds": [
+			"immersivetechnology:cooling_tower"
+		],
+		"subtitle": "subtitle.immersivetechnology.coolingTower"
+	},
+	"gas_running": {
+		"category": "block",
+		"sounds": [
+			"immersivetechnology:gas_running"
+		],
+		"subtitle": "subtitle.immersivetechnology.gasTurbineRunning"
+	},
+	"gas_starter": {
+		"category": "block",
+		"sounds": [
+			"immersivetechnology:gas_starter"
+		],
+		"subtitle": "subtitle.immersivetechnology.gasTurbineStarter"
+	},
+	"gas_arc": {
+		"category": "block",
+		"sounds": [
+			"immersivetechnology:gas_arc"
+		],
+		"subtitle": "subtitle.immersivetechnology.gasTurbineArc"
+	},
+	"gas_spark": {
+		"category": "block",
+		"sounds": [
+			"immersivetechnology:gas_spark"
+		],
+		"subtitle": "subtitle.immersivetechnology.gasTurbineSpark"
+	},
+	"heat_exchanger": {
+		"category": "block",
+		"sounds": [
+			"immersivetechnology:heat_exchanger"
+		],
+		"subtitle": "subtitle.immersivetechnology.heatExchanger"
+	}
+}

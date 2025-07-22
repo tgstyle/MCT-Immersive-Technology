@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "immersivetechnology:block/reinforced_coke_brick"
+  }
+}

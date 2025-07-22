@@ -1,0 +1,12 @@
+{
+  "type": "immersivetechnology:gas_turbine",
+  "input": {
+    "amount": 160,
+    "tag": "forge:biodiesel"
+  },
+  "output": {
+    "amount": 1000,
+    "fluid": "immersivetechnology:flue_gas"
+  },
+  "time": 10
+}

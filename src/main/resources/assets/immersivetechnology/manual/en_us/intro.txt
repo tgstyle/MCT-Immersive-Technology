@@ -1,0 +1,8 @@
+Immersive Technology
+Power Generation with style!
+
+Immersive Technology is a mod originally developed on version 1.12.2 and is now being ported to 1.20.1 and other versions by user MagneticPrism!
+This mod will receive a huge model overhaul made possible by user Peter! (Cordyceps22)
+
+Credits: tgstyle, MagneticPrism, Cordyceps22 (Peter).
+Special Thanks to: MuddyKat, Crimson Twilight, MC7 (MelodicCougar7).

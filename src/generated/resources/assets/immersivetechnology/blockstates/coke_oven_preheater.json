@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "immersivetechnology:block/coke_oven_preheater_split",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "immersivetechnology:block/coke_oven_preheater_split",
+      "uvlock": true
+    },
+    "facing=south": {
+      "model": "immersivetechnology:block/coke_oven_preheater_split",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=west": {
+      "model": "immersivetechnology:block/coke_oven_preheater_split",
+      "uvlock": true,
+      "y": 270
+    }
+  }
+}

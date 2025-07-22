@@ -1,0 +1,54 @@
+# @file mods.toml
+# @spec TOML v0.5.0 (https://github.com/toml-lang/toml)
+#
+modLoader="javafml"
+loaderVersion="[25,)"
+license="LGPL-3.0"
+
+[[mods]]
+modId = "immersivetechnology"
+version = "${version}"
+displayName = "Immersive Technology"
+description = "An in development version of Immersive Technology for 1.20.1."
+authors = "tgstyle, MagneticPrism"
+displayURL = "https://minecraft.curseforge.com/projects/immersive-geology/"
+logoFile = "logo.png"
+credits = "tgstyle, Engineer Peter, MagneticPrism (DotPrism/Prism)"
+
+[[dependencies.immersivetechnology]]
+modId="forge"
+mandatory=true
+versionRange="[47.1.106,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.immersivetechnology]]
+modId="minecraft"
+mandatory=true
+versionRange="[${mc_version}]"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.immersivetechnology]]
+modId="immersiveengineering"
+mandatory=true
+versionRange="[${version_ie},]"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.immersivetechnology]]
+modId="immersivegeology"
+mandatory=true
+versionRange="[${version_ig},]"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.immersivetechnology]]
+modId="jei"
+mandatory=false
+versionRange="[${jei_version},)"
+ordering="NONE"
+side="BOTH"
+
+[[mixins]]
+config="mixins.immersivetechnology.json"

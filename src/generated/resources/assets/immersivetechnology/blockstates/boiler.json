@@ -1,0 +1,42 @@
+{
+  "variants": {
+    "facing=east,mirrored=false": {
+      "model": "immersivetechnology:block/multiblock/obj/boiler/boiler_split",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=east,mirrored=true": {
+      "model": "immersivetechnology:block/multiblock/obj/boiler/boiler_mirrored_split",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=north,mirrored=false": {
+      "model": "immersivetechnology:block/multiblock/obj/boiler/boiler_split",
+      "uvlock": true
+    },
+    "facing=north,mirrored=true": {
+      "model": "immersivetechnology:block/multiblock/obj/boiler/boiler_mirrored_split",
+      "uvlock": true
+    },
+    "facing=south,mirrored=false": {
+      "model": "immersivetechnology:block/multiblock/obj/boiler/boiler_split",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=south,mirrored=true": {
+      "model": "immersivetechnology:block/multiblock/obj/boiler/boiler_mirrored_split",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=west,mirrored=false": {
+      "model": "immersivetechnology:block/multiblock/obj/boiler/boiler_split",
+      "uvlock": true,
+      "y": 270
+    },
+    "facing=west,mirrored=true": {
+      "model": "immersivetechnology:block/multiblock/obj/boiler/boiler_mirrored_split",
+      "uvlock": true,
+      "y": 270
+    }
+  }
+}

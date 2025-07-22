@@ -1,6 +1,0 @@
-{
-	"parent":"immersivetech:item/it_item_base",
-	"textures": {
-		"layer0":"immersivetech:items/material_salt"
-	}
-}

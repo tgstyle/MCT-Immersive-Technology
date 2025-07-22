@@ -1,93 +1,96 @@
 package mctmods.immersivetechnology;
 
-import blusunrize.immersiveengineering.common.Config;
-import mctmods.immersivetechnology.common.CommonProxy;
-import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.util.ITLogger;
-import mctmods.immersivetechnology.common.util.ITSounds;
-import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidRegistry;
+import mctmods.immersivetechnology.client.ITClientRenderHandler;
+import mctmods.immersivetechnology.common.network.ITPacketHandler;
+import mctmods.immersivetechnology.core.ITClientConfig;
+import mctmods.immersivetechnology.core.ITCommonConfig;
+import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.proxy.ClientProxy;
+import mctmods.immersivetechnology.core.proxy.CommonProxy;
+import mctmods.immersivetechnology.core.registration.ITContent;
+import mctmods.immersivetechnology.core.registration.ITFluids;
+import mctmods.immersivetechnology.core.registration.ITRecipeSerializers;
+import mctmods.immersivetechnology.core.registration.ITRegistrationHolder;
+import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLLoader;
+import org.spongepowered.asm.launch.MixinBootstrap;
+import org.spongepowered.asm.mixin.Mixins;
 
-@Mod(
-	modid = ImmersiveTechnology.MODID,
-	name = ImmersiveTechnology.NAME,
-	version = ImmersiveTechnology.VERSION,
-	acceptedMinecraftVersions = "[1.12.2,1.13)",	
-	dependencies = 
-			"required-after:immersiveengineering@[0.12-92,);" +
-			"required-after:forge@[14.23.3.2655,);")
+import static mctmods.immersivetechnology.common.fluids.ITFluid.BUCKET_DISPENSE_BEHAVIOR;
+import static mctmods.immersivetechnology.core.lib.ITLib.MODID;
 
+// The value here should match an entry in the META-INF/mods.toml file
+@Mod(MODID)
 public class ImmersiveTechnology {
+    public static CommonProxy proxy = Util.make(() -> {
+        if (FMLLoader.getDist().isClient()) return new ClientProxy();
+        return new CommonProxy();
+    });
 
-	public static final String MODID = "immersivetech";
-	public static final String NAME = "Immersive Technology";
-	public static final String VERSION = "${version}";
+    public ImmersiveTechnology() {
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ITLib.IT_LOGGER.info("IT Starting");
+        modEventBus.addListener(this::commonSetup);
+        ITRecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
 
-	@SidedProxy(clientSide = "mctmods.immersivetechnology.client.ClientProxy" , serverSide = "mctmods.immersivetechnology.common.CommonProxy")
-	public static CommonProxy proxy;
-	public static final SimpleNetworkWrapper packetHandler = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
+        ITLib.IT_LOGGER.info("Adding ITRegistrationHolder Registries");
+        ITRegistrationHolder.addRegistersToEventBus(modEventBus);
 
-	@Instance(MODID)
-	public static ImmersiveTechnology instance;
+        ITLib.IT_LOGGER.info("Starting Proxy Mod Construction");
+        CommonProxy.modConstruction(modEventBus);
 
-	static {
-		FluidRegistry.enableUniversalBucket();
-	}
+        ITLib.IT_LOGGER.info("Initialzing Packet Handler");
+        ITPacketHandler.initialize();
 
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		ITLogger.logger = event.getModLog();
-		Config.preInit(event);
-		ITContent.preInit();
-		proxy.preInit();
-		ITCompatModule.doModulesPreInit();
-	}
+        ITLib.IT_LOGGER.info("Initialzing Mixins and adding Mixin Configuration");
+        MixinBootstrap.init();
+        Mixins.addConfiguration("mixins.immersivetechnology.json");
 
-	@EventHandler
-	public void init(FMLInitializationEvent event) {
-		ITContent.init();
-		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
-		proxy.preInitEnd();
-		proxy.init();
-		ITSounds.init();
-		ITCompatModule.doModulesInit();
-		proxy.initEnd();
-	}
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ITCommonConfig.SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ITServerConfig.SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ITClientConfig.SPEC);
+    }
 
-	@EventHandler
-	public void postInit(FMLPostInitializationEvent event) {
-		proxy.postInit();
-		ITCompatModule.doModulesPostInit();
-		proxy.postInitEnd();
-	}
+    private void commonSetup(final FMLCommonSetupEvent event) {
+        // Some common setup code
+        ITLib.IT_LOGGER.info("HELLO FROM COMMON SETUP");
 
-	@EventHandler
-	public void loadComplete(FMLLoadCompleteEvent event) {
-		ITCompatModule.doModulesLoadComplete();
-	}
+        for (ITFluids.FluidEntry entry : ITFluids.ALL_ENTRIES)
+            DispenserBlock.registerBehavior(entry.getBucket(), BUCKET_DISPENSE_BEHAVIOR);
+    }
 
-	@EventHandler
-	public void serverStarted(FMLServerStartedEvent event) {
-	}
+    // You can use SubscribeEvent and let the Event Bus discover methods to call
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event) {
+        // Do something when the server starts
+        ITLib.IT_LOGGER.info("HELLO from server starting");
+    }
 
-	public static CreativeTabs creativeTab = new CreativeTabs(MODID) {
-		@Override
-		public ItemStack getTabIconItem() {
-			return ItemStack.EMPTY;
-		}
-		@Override
-		public ItemStack getIconItemStack() {
-			return new ItemStack(ITContent.blockValve, 1, 0);
-		}
-	};
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ClientModEvents {
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event) {
+            // Some client setup code
+            ITLib.IT_LOGGER.info("HELLO FROM CLIENT SETUP");
+            ITLib.IT_LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
 
+            ITClientRenderHandler.register();
+            ITClientRenderHandler.init(event);
+            ITContent.initializeManualEntries();
+            ITContent.registerContainersAndScreens();
+        }
+    }
 }

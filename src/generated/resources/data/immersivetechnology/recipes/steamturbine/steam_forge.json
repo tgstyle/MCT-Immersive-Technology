@@ -1,0 +1,12 @@
+{
+  "type": "immersivetechnology:steam_turbine",
+  "input": {
+    "amount": 100,
+    "tag": "forge:steam"
+  },
+  "output": {
+    "amount": 100,
+    "fluid": "immersivetechnology:steam_exhaust"
+  },
+  "time": 1
+}
