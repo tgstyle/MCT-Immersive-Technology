@@ -22,7 +22,7 @@ public class ITSolarTower extends ITTemplateMultiblock
 
     @Override
     public float getManualScale() {
-        return 16;
+        return 4;
     }
 
     @Override

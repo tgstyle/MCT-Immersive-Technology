@@ -125,8 +125,8 @@ public class ITMultiblockProvider {
                     .structure(() -> getMBTemplate.apply("coke_oven_advanced"))
                     .gui(ITMenuTypes.ADVANCED_COKE_OVEN_MENU)
                     .build();
-    public static final MultiblockRegistration<ITAdvancedCokeOvenLogic.State> DISTILLER =
-            stone(new ITAdvancedCokeOvenLogic(), "distiller", false)
+    public static final MultiblockRegistration<ITDistillerLogic.State> DISTILLER =
+            stone(new ITDistillerLogic(), "distiller", false)
                     .structure(() -> getMBTemplate.apply("distiller"))
                     .build();
 
@@ -138,6 +138,7 @@ public class ITMultiblockProvider {
         registerMB("gas_turbine", ITGasTurbine.INSTANCE, GAS_TURBINE);
         registerMB("coke_oven_advanced", ITAdvancedCokeOven.INSTANCE, ADV_COKE_OVEN);
         registerMB("solar_tower", ITSolarTower.INSTANCE, SOLAR_TOWER);
+        registerMB("distiller", ITDistiller.INSTANCE, DISTILLER);
     }
 
     public static void forceClassLoad() {

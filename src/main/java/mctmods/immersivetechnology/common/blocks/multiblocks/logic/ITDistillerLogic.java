@@ -45,11 +45,6 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
     }
 
     @Override
-    public InteractionResult click(IMultiblockContext ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
-        return IMultiblockLogic.super.click(ctx, posInMultiblock, player, hand, absoluteHit, isClient);
-    }
-
-    @Override
     public void tickClient(IMultiblockContext<State> iMultiblockContext) {
 
     }
@@ -59,8 +54,9 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
 
     }
 
-    public static class State implements IMultiblockState, ProcessContext.ProcessContextInWorld<SolarTowerRecipe>
+    public static class State implements IMultiblockState
     {
+         AveragingEnergyStorage energy = new AveragingEnergyStorage(32000);
         public State(IInitialMultiblockContext ctx) {
         }
 
@@ -71,7 +67,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
 
         @Override
         public void writeSyncNBT(CompoundTag nbt) {
-            IMultiblockState.super.writeSyncNBT(nbt);
+
         }
 
         @Override
@@ -81,23 +77,12 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
 
         @Override
         public void readSyncNBT(CompoundTag nbt) {
-            IMultiblockState.super.readSyncNBT(nbt);
+
         }
 
-        @Override
-        @Nullable
-        public AveragingEnergyStorage getEnergy() {
-            return null;
-        }
-
-        @Override
-        public IFluidTank[] getInternalTanks() {
-            return ProcessContextInWorld.super.getInternalTanks();
-        }
-
-        @Override
-        public void doProcessFluidOutput(FluidStack output) {
-            ProcessContextInWorld.super.doProcessFluidOutput(output);
-        }
+        //@Override
+        //public AveragingEnergyStorage getEnergy() {
+        //    return energy;
+        //}
     }
 }
