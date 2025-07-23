@@ -5,6 +5,10 @@ import mctmods.immersivetechnology.common.blocks.metal.CokeOvenPreheaterBlock;
 import mctmods.immersivetechnology.common.blocks.metal.CokeOvenPreheaterBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlock;
 import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.OpenBarrelBlock;
+import mctmods.immersivetechnology.common.blocks.metal.OpenBarrelBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.SteelBarrelBlock;
+import mctmods.immersivetechnology.common.blocks.metal.SteelBarrelBlockEntity;
 import mctmods.immersivetechnology.common.blocks.stone.ReinforcedCokeBrick;
 import mctmods.immersivetechnology.common.items.helper.BlockItemIT;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -22,9 +26,9 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static blusunrize.immersiveengineering.common.register.IEBlocks.METAL_PROPERTIES_NO_OCCLUSION;
@@ -38,6 +42,8 @@ public class ITBlocks {
     public static final class MetalDevices {
         public static BlockEntry<CokeOvenPreheaterBlock> COKE_OVEN_PREHEATER;
         public static BlockEntry<CreativeBarrelBlock> CREATIVE_BARREL;
+        public static BlockEntry<SteelBarrelBlock> STEEL_BARREL;
+        public static BlockEntry<OpenBarrelBlock> OPEN_BARREL;
 
         private static void init() {
             COKE_OVEN_PREHEATER = new BlockEntry<>(
@@ -50,6 +56,18 @@ public class ITBlocks {
                     "creative_barrel",
                     () -> BlockBehaviour.Properties.copy(IEBlocks.MetalDevices.BARREL.get()),
                     p -> new CreativeBarrelBlock(CreativeBarrelBlockEntity::new, p)
+            );
+
+            STEEL_BARREL = new BlockEntry<>(
+                    "steel_barrel",
+                    () -> BlockBehaviour.Properties.copy(IEBlocks.MetalDevices.BARREL.get()),
+                    p -> new SteelBarrelBlock(SteelBarrelBlockEntity::new, p)
+            );
+
+            OPEN_BARREL = new BlockEntry<>(
+                    "open_barrel",
+                    () -> BlockBehaviour.Properties.copy(IEBlocks.MetalDevices.BARREL.get()).noOcclusion(),
+                    p -> new OpenBarrelBlock(OpenBarrelBlockEntity::new, p)
             );
         }
     }
@@ -81,7 +99,7 @@ public class ITBlocks {
             toItem = BlockItemIT::new;
             Function<Block, BlockItemIT> finalToItem = toItem;
             ITItems.REGISTER.register(entry.getId().getPath(), () -> finalToItem.apply(entry.get()));
-            BLOCK_REGISTRY_MAP.put(entry.getId().getPath(), (RegistryObject<Block>)entry.getRegObject());
+            BLOCK_REGISTRY_MAP.put(entry.getId().getPath(), entry.getRegObject());
         }
     }
 

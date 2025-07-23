@@ -21,6 +21,8 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
     protected void generate() {
         // Regular blocks: drop themselves
         dropSelf(ITBlocks.MetalDevices.CREATIVE_BARREL.get());
+        dropSelf(ITBlocks.MetalDevices.OPEN_BARREL.get());
+        dropSelf(ITBlocks.MetalDevices.STEEL_BARREL.get());
         dropSelf(ITBlocks.MetalDevices.COKE_OVEN_PREHEATER.get());
         dropSelf(ITBlocks.Stone.REINFORCED_COKE_BRICK.get());
 
@@ -31,7 +33,7 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
         add(ITMultiblockProvider.GAS_TURBINE.block().get(), noDrop());
         add(ITMultiblockProvider.ALTERNATOR.block().get(), noDrop());
         add(ITMultiblockProvider.ADV_COKE_OVEN.block().get(), noDrop());
-        add(ITMultiblockProvider.SOLAR_TOWER.block().get(), noDrop()); // Added to handle solar_tower
+        add(ITMultiblockProvider.SOLAR_TOWER.block().get(), noDrop());
 
         // Fluid blocks: no drops
         ITFluids.ALL_ENTRIES.forEach(entry -> add(entry.getBlock(), noDrop()));

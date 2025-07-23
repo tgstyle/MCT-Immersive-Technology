@@ -7,19 +7,17 @@ import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public class ITFluidTags extends FluidTagsProvider
-{
-    public ITFluidTags(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper)
-    {
+public class ITFluidTags extends FluidTagsProvider {
+    public ITFluidTags(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
         super(output, lookupProvider, ITLib.MODID, existingFileHelper);
     }
 
     @Override
-    protected void addTags(Provider provider)
-    {
+    protected void addTags(@NotNull Provider provider) {
         tag(ITTags.fluidSteam).add(ITFluids.STEAM.getStill());
         tag(ITTags.fluidSteamForge).add(ITFluids.STEAM.getStill());
     }

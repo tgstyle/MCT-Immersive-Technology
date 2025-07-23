@@ -6,9 +6,9 @@
     "automatic_culling": false,
     "flip_v": true,
     "loader": "forge:obj",
-    "model": "immersivetechnology:models/block/coke_oven_preheater.obj",
+    "model": "immersivetechnology:models/block/metal/coke_oven_preheater.obj",
     "textures": {
-      "particle": "immersivetechnology:block/metal_device_coke_oven_preheater"
+      "particle": "immersivetechnology:block/metal/coke_oven_preheater"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -30,6 +30,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/metal_device_coke_oven_preheater"
+    "particle": "immersivetechnology:block/metal/coke_oven_preheater"
   }
 }

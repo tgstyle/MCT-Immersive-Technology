@@ -12,6 +12,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -24,7 +25,7 @@ public class ITBlockTags extends BlockTagsProvider
     }
 
     @Override
-    protected void addTags(Provider provider)
+    protected void addTags(@NotNull Provider provider)
     {
         ITLib.IT_LOGGER.info("IT Block Tags");
 
@@ -47,11 +48,10 @@ public class ITBlockTags extends BlockTagsProvider
     }
 
     private void registerMineable(IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag, MultiblockRegistration<?>... entries) {
-        MultiblockRegistration[] var3 = entries;
         int var4 = entries.length;
 
         for(int var5 = 0; var5 < var4; ++var5) {
-            MultiblockRegistration<?> entry = var3[var5];
+            MultiblockRegistration<?> entry = ((MultiblockRegistration[]) entries)[var5];
             tag.add((Block)entry.block().get());
         }
     }

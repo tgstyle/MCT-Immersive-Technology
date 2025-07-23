@@ -18,17 +18,15 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ITParticleProvider implements DataProvider {
-    private PackOutput.PathProvider particlesPath;
-    private Map<ResourceLocation, List<String>> descriptions = new HashMap<>();
+    private final PackOutput.PathProvider particlesPath;
+    private final Map<ResourceLocation, List<String>> descriptions = new HashMap<>();
 
     public ITParticleProvider(PackOutput output, ExistingFileHelper helper) {
         this.particlesPath = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "particles");
     }
 
     protected void addDescriptions() {
-        List<String> bigSmokeTextures = IntStream.range(0, 12)
-                .mapToObj(i -> "minecraft:big_smoke_" + i)
-                .collect(Collectors.toList());
+        List<String> bigSmokeTextures = IntStream.range(0, 12).mapToObj(i -> "minecraft:big_smoke_" + i).collect(Collectors.toList());
         descriptions.put(ITParticles.COLORED_SMOKE.getId(), bigSmokeTextures);
     }
 

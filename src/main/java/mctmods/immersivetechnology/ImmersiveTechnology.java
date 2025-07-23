@@ -19,7 +19,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -32,7 +31,6 @@ import org.spongepowered.asm.mixin.Mixins;
 import static mctmods.immersivetechnology.common.fluids.ITFluid.BUCKET_DISPENSE_BEHAVIOR;
 import static mctmods.immersivetechnology.core.lib.ITLib.MODID;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(MODID)
 public class ImmersiveTechnology {
     public static CommonProxy proxy = Util.make(() -> {
@@ -40,8 +38,8 @@ public class ImmersiveTechnology {
         return new CommonProxy();
     });
 
-    public ImmersiveTechnology() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public ImmersiveTechnology(FMLJavaModLoadingContext context) {
+        IEventBus modEventBus = context.getModEventBus();
         ITLib.IT_LOGGER.info("IT Starting");
         modEventBus.addListener(this::commonSetup);
         ITRecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
@@ -59,23 +57,19 @@ public class ImmersiveTechnology {
         MixinBootstrap.init();
         Mixins.addConfiguration("mixins.immersivetechnology.json");
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ITCommonConfig.SPEC);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ITServerConfig.SPEC);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ITClientConfig.SPEC);
+        context.registerConfig(ModConfig.Type.COMMON, ITCommonConfig.SPEC);
+        context.registerConfig(ModConfig.Type.SERVER, ITServerConfig.SPEC);
+        context.registerConfig(ModConfig.Type.CLIENT, ITClientConfig.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        // Some common setup code
         ITLib.IT_LOGGER.info("HELLO FROM COMMON SETUP");
 
-        for (ITFluids.FluidEntry entry : ITFluids.ALL_ENTRIES)
-            DispenserBlock.registerBehavior(entry.getBucket(), BUCKET_DISPENSE_BEHAVIOR);
+        for (ITFluids.FluidEntry entry : ITFluids.ALL_ENTRIES) { DispenserBlock.registerBehavior(entry.getBucket(), BUCKET_DISPENSE_BEHAVIOR); }
     }
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        // Do something when the server starts
         ITLib.IT_LOGGER.info("HELLO from server starting");
     }
 
@@ -83,11 +77,9 @@ public class ImmersiveTechnology {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            // Some client setup code
             ITLib.IT_LOGGER.info("HELLO FROM CLIENT SETUP");
             ITLib.IT_LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
 
-            ITClientRenderHandler.register();
             ITClientRenderHandler.init(event);
             ITContent.initializeManualEntries();
             ITContent.registerContainersAndScreens();

@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.data;
 
-import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.common.data.generators.*;
+import mctmods.immersivetechnology.core.lib.ITLib;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
@@ -13,7 +14,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -22,15 +22,13 @@ public class ITDataProvider {
     public static Logger log = LogManager.getLogger(ITLib.MODID + "/DataGenerator");
 
     @SubscribeEvent
-    public static void generate(GatherDataEvent event){
+    public static void generate(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         ExistingFileHelper helper = event.getExistingFileHelper();
         PackOutput out = generator.getPackOutput();
         final var lookup = event.getLookupProvider();
-
         log.info("-===== Starting Data Generation for Immersive Technoloogy =====-");
-
-        if(event.includeServer()){
+        if (event.includeServer()) {
             ITBlockStateProvider blockStateProvider = new ITBlockStateProvider(generator, helper);
             generator.addProvider(true, blockStateProvider);
             generator.addProvider(true, new ITItemModelProvider(generator, helper));

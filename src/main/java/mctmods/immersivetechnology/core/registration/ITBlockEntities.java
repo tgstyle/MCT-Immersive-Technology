@@ -2,6 +2,8 @@ package mctmods.immersivetechnology.core.registration;
 
 import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.CokeOvenPreheaterBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.OpenBarrelBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.SteelBarrelBlockEntity;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -21,6 +23,16 @@ public class ITBlockEntities {
     public static final RegistryObject<BlockEntityType<CreativeBarrelBlockEntity>> CREATIVE_BARREL = REGISTER.register(
             "creative_barrel",
             () -> BlockEntityType.Builder.of(CreativeBarrelBlockEntity::new, new Block[]{ITBlocks.MetalDevices.CREATIVE_BARREL.get()}).build(null)
+    );
+
+    public static final RegistryObject<BlockEntityType<SteelBarrelBlockEntity>> STEEL_BARREL = REGISTER.register(
+            "steel_barrel",
+            () -> BlockEntityType.Builder.of(SteelBarrelBlockEntity::new, new Block[]{ITBlocks.MetalDevices.STEEL_BARREL.get()}).build(null)
+    );
+
+    public static final RegistryObject<BlockEntityType<OpenBarrelBlockEntity>> OPEN_BARREL = REGISTER.register(
+            "open_barrel",
+            () -> BlockEntityType.Builder.of(OpenBarrelBlockEntity::new, new Block[]{ITBlocks.MetalDevices.OPEN_BARREL.get()}).build(null)
     );
 
     public static void init(IEventBus event) {

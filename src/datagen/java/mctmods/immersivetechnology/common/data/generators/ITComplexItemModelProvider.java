@@ -21,15 +21,12 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> {
-    public ITComplexItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper)  { super(output, ITLib.MODID, ITEM_FOLDER, TRSRModelBuilder::new, existingFileHelper); }
+    public ITComplexItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {super(output, ITLib.MODID, ITEM_FOLDER, TRSRModelBuilder::new, existingFileHelper);}
 
     @Override
-    public @NotNull String getName()
-    {
-        return getClass().getSimpleName();
-    }
+    public @NotNull String getName() { return getClass().getSimpleName(); }
 
-    static final ResourceLocation ITEM_GENERATED = new ResourceLocation("minecraft", "item/generated");
+    static final ResourceLocation ITEM_GENERATED = ResourceLocation.fromNamespaceAndPath("minecraft", "item/generated");
 
     @Override
     protected void registerModels() {
@@ -43,22 +40,24 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
         generateBlockModel(ITBlocks.MetalDevices.COKE_OVEN_PREHEATER);
     }
 
-    private void doTransform(ModelBuilder<?>.TransformsBuilder transform, ItemDisplayContext type, @Nullable Vector3f translation, @Nullable Vector3f rotationAngle, float scale){
+    private void doTransform(ModelBuilder<?>.TransformsBuilder transform, ItemDisplayContext type, @Nullable Vector3f translation, @Nullable Vector3f rotationAngle, float scale) {
         ModelBuilder<?>.TransformsBuilder.TransformVecBuilder trans = transform.transform(type);
-        if(translation != null) { trans.translation(translation.x(), translation.y(), translation.z()); }
-        if(rotationAngle != null) { trans.rotation(rotationAngle.x(), rotationAngle.y(), rotationAngle.z()); }
+        if (translation != null) {trans.translation(translation.x(), translation.y(), translation.z());}
+        if (rotationAngle != null) {trans.rotation(rotationAngle.x(), rotationAngle.y(), rotationAngle.z());}
         trans.scale(scale);
         trans.end();
     }
 
-    private TRSRModelBuilder obj(Supplier<? extends ItemLike> item, String model){ return obj(item.get(), model); }
+    private TRSRModelBuilder obj(Supplier<? extends ItemLike> item, String model) {return obj(item.get(), model);}
 
-    private TRSRModelBuilder obj(ItemLike item, String model){ return getBuilder(name(item)).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + model)).flipV(true).end(); }
+    private TRSRModelBuilder obj(ItemLike item, String model) {
+        return getBuilder(name(item)).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + model)).flipV(true).end();
+    }
 
-    private String name(ItemLike item){ return Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item.asItem())).getPath(); }
+    private String name(ItemLike item) {return Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item.asItem())).getPath();}
 
     private void generateMultiblockModel(String id, Supplier<? extends ItemLike> block) {
-        TRSRModelBuilder model = obj(block, "block/multiblock/obj/"+ id + "/" + id + ".obj");
+        TRSRModelBuilder model = obj(block, "block/multiblock/obj/" + id + "/" + id + ".obj");
 
         ModelBuilder<?>.TransformsBuilder trans = model.transforms();
         doTransform(trans, ItemDisplayContext.FIRST_PERSON_LEFT_HAND, new Vector3f(-1.75F, 2.5F, 1.25F), new Vector3f(0, 225, 0), 0.03125F);
@@ -72,7 +71,7 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
     }
 
     private void generateBlockModel(Supplier<? extends ItemLike> block) {
-        TRSRModelBuilder model = obj(block, "block/" + "coke_oven_preheater" + ".obj");
+        TRSRModelBuilder model = obj(block, "block/metal/coke_oven_preheater.obj");
 
         ModelBuilder<?>.TransformsBuilder trans = model.transforms();
         doTransform(trans, ItemDisplayContext.FIRST_PERSON_LEFT_HAND, new Vector3f(-1.75F, 2.5F, 1.25F), new Vector3f(0, 225, 0), 0.03125F);

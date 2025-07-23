@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "immersivetechnology:block/reinforced_coke_brick"
+      "model": "immersivetechnology:block/stone/reinforced_coke_brick"
     }
   }
 }

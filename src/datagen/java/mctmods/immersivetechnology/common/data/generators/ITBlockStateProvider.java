@@ -75,9 +75,63 @@ public class ITBlockStateProvider extends BlockStateProvider {
         genericmultiblock("coke_oven_advanced");
         genericmultiblock("solar_tower");
 
-        createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("reinforced_coke_brick", modLoc("block/reinforced_coke_brick")));
-        createSimpleBlock(ITBlocks.getBlock.apply("creative_barrel"), models().cubeAll("creative_barrel", modLoc("block/creative_barrel")));
-        createMultiblock(ITBlocks.MetalDevices.COKE_OVEN_PREHEATER, split(innerObj("block/coke_oven_preheater.obj"), COLUMN_THREE));
+        createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("block/stone/reinforced_coke_brick", modLoc("block/stone/reinforced_coke_brick")));
+        createSimpleBlock(ITBlocks.getBlock.apply("creative_barrel"), models().cubeAll("block/metal/creative_barrel", modLoc("block/metal/creative_barrel")));
+        createSimpleBlock(ITBlocks.getBlock.apply("steel_barrel"), models().cubeBottomTop("block/metal/steel_barrel", modLoc("block/metal/steel_barrel_side"), modLoc("block/metal/steel_barrel_top"), modLoc("block/metal/steel_barrel_bottom")));
+
+        BlockModelBuilder openModel = models().getBuilder("block/metal/open_barrel")
+                .texture("up", modLoc("block/metal/open_barrel_top"))
+                .texture("down", modLoc("block/metal/open_barrel_down"))
+                .texture("side", modLoc("block/metal/open_barrel_side"))
+                .texture("particle", modLoc("block/metal/open_barrel_side"));
+
+        openModel.element().from(0, 0, 0).to(16, 1, 16)
+                .face(Direction.UP).texture("#up").uvs(0, 0, 16, 16).end()
+                .face(Direction.DOWN).texture("#down").uvs(0, 0, 16, 16).end();
+
+        openModel.element().from(0, 0, 0).to(16, 16, 0)
+                .face(Direction.NORTH).texture("#side").uvs(0, 0, 16, 16).end();
+
+        openModel.element().from(0, 0, 16).to(16, 16, 16)
+                .face(Direction.SOUTH).texture("#side").uvs(0, 0, 16, 16).end();
+
+        openModel.element().from(16, 0, 0).to(16, 16, 16)
+                .face(Direction.EAST).texture("#side").uvs(0, 0, 16, 16).end();
+
+        openModel.element().from(0, 0, 0).to(0, 16, 16)
+                .face(Direction.WEST).texture("#side").uvs(0, 0, 16, 16).end();
+
+        openModel.element().from(0, 16, 0).to(1, 16, 1)
+                .face(Direction.UP).texture("#up").uvs(0, 0, 1, 1).end();
+
+        openModel.element().from(15, 16, 0).to(16, 16, 1)
+                .face(Direction.UP).texture("#up").uvs(0, 0, 1, 1).end();
+
+        openModel.element().from(0, 16, 15).to(1, 16, 16)
+                .face(Direction.UP).texture("#up").uvs(0, 0, 1, 1).end();
+
+        openModel.element().from(15, 16, 15).to(16, 16, 16)
+                .face(Direction.UP).texture("#up").uvs(0, 0, 1, 1).end();
+
+        openModel.element().from(1, 1, 0).to(15, 16, 1)
+                .face(Direction.SOUTH).texture("#side").uvs(0, 0, 14, 15).end()
+                .face(Direction.UP).texture("#up").uvs(0, 0, 14, 1).end();
+
+        openModel.element().from(1, 1, 15).to(15, 16, 16)
+                .face(Direction.NORTH).texture("#side").uvs(0, 0, 14, 15).end()
+                .face(Direction.UP).texture("#up").uvs(0, 0, 14, 1).end();
+
+        openModel.element().from(15, 1, 1).to(16, 16, 15)
+                .face(Direction.WEST).texture("#side").uvs(0, 0, 14, 15).end()
+                .face(Direction.UP).texture("#up").uvs(0, 0, 1, 14).end();
+
+        openModel.element().from(0, 1, 1).to(1, 16, 15)
+                .face(Direction.EAST).texture("#side").uvs(0, 0, 14, 15).end()
+                .face(Direction.UP).texture("#up").uvs(0, 0, 1, 14).end();
+
+        createSimpleBlock(ITBlocks.getBlock.apply("open_barrel"), openModel);
+
+        createMultiblock(ITBlocks.MetalDevices.COKE_OVEN_PREHEATER, split(innerObj("block/metal/coke_oven_preheater.obj"), COLUMN_THREE));
 
         ModelFile emptyModel = models().withExistingParent("empty", mcLoc("block/block"))
                 .renderType("cutout")

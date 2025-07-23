@@ -124,5 +124,5 @@
   },
   "flip_v": true,
   "loader": "forge:obj",
-  "model": "immersivetechnology:models/block/coke_oven_preheater.obj"
+  "model": "immersivetechnology:models/block/metal/coke_oven_preheater.obj"
 }
