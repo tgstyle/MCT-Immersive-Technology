@@ -36,7 +36,7 @@ public class OpenBarrelRenderer implements BlockEntityRenderer<OpenBarrelBlockEn
         int a = (color >> 24 & 255);
         if (a == 0) { a = 255; }
         ResourceLocation still = extensions.getStillTexture(fluidStack);
-        ResourceLocation blockAtlas = new ResourceLocation("textures/atlas/blocks.png");
+        ResourceLocation blockAtlas = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/atlas/blocks.png");
         TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(blockAtlas).apply(still);
         if (sprite == null) return;
         float minU = sprite.getU0();
@@ -76,4 +76,3 @@ public class OpenBarrelRenderer implements BlockEntityRenderer<OpenBarrelBlockEn
         builder.vertex(pose, startPos, fluidHeight, endPos).color(r, g, b, a).uv(minU, maxV).overlayCoords(combinedOverlay).uv2(combinedLight).normal(normalMatrix, nx, ny, nz).endVertex();
     }
 }
-

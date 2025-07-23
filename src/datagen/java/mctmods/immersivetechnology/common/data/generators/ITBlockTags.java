@@ -17,16 +17,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class ITBlockTags extends BlockTagsProvider
-{
-    public ITBlockTags(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper)
-    {
+public class ITBlockTags extends BlockTagsProvider {
+    public ITBlockTags(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
         super(output, lookupProvider, ITLib.MODID, existingFileHelper);
     }
 
     @Override
-    protected void addTags(@NotNull Provider provider)
-    {
+    protected void addTags(@NotNull Provider provider) {
         ITLib.IT_LOGGER.info("IT Block Tags");
 
         IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag = this.tag(BlockTags.MINEABLE_WITH_PICKAXE);
@@ -48,39 +45,25 @@ public class ITBlockTags extends BlockTagsProvider
     }
 
     private void registerMineable(IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag, MultiblockRegistration<?>... entries) {
-        int var4 = entries.length;
-
-        for(int var5 = 0; var5 < var4; ++var5) {
-            MultiblockRegistration<?> entry = ((MultiblockRegistration[]) entries)[var5];
-            tag.add((Block)entry.block().get());
-        }
+        for (MultiblockRegistration<?> entry : entries) { tag.add(entry.block().get()); }
     }
 
-    private <T extends Block> void registerMineable(IntrinsicTagAppender<Block> tag, Map<?, ITBlocks.BlockEntry<T>> entries)
-    {
-        registerMineable(tag, new ArrayList<>(entries.values()));
-    }
+    private <T extends Block> void registerMineable(IntrinsicTagAppender<Block> tag, Map<?, ITBlocks.BlockEntry<T>> entries) { registerMineable(tag, new ArrayList<>(entries.values())); }
 
-    private void registerMineable(IntrinsicTagAppender<Block> tag, ITBlocks.BlockEntry<?>... entries)
-    {
+    private void registerMineable(IntrinsicTagAppender<Block> tag, ITBlocks.BlockEntry<?>... entries) {
         registerMineable(tag, Arrays.asList(entries));
     }
 
-    private void registerMineable(IntrinsicTagAppender<Block> tag, List<ITBlocks.BlockEntry<?>> entries)
-    {
+    private void registerMineable(IntrinsicTagAppender<Block> tag, List<ITBlocks.BlockEntry<?>> entries) {
         entries.sort(Comparator.comparing(ITBlocks.BlockEntry::getId));
-        for(ITBlocks.BlockEntry<?> entry : entries)
-        {
+        for (ITBlocks.BlockEntry<?> entry : entries) {
             tag.add(entry.get());
             IEBlocks.BlockEntry<?> slab = IEBlocks.TO_SLAB.get(entry.getId());
-            if(slab!=null)
-                tag.add(slab.get());
+            if (slab != null) tag.add(slab.get());
             IEBlocks.BlockEntry<?> stairs = IEBlocks.TO_STAIRS.get(entry.getId());
-            if(stairs!=null)
-                tag.add(stairs.get());
+            if (stairs != null) tag.add(stairs.get());
             IEBlocks.BlockEntry<?> wall = IEBlocks.TO_WALL.get(entry.getId());
-            if(wall!=null)
-                tag.add(wall.get());
+            if (wall != null) tag.add(wall.get());
         }
     }
 }

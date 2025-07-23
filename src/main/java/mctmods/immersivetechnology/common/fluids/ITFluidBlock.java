@@ -19,8 +19,7 @@ import net.minecraft.world.level.material.FluidState;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ITFluidBlock extends LiquidBlock
-{
+public class ITFluidBlock extends LiquidBlock {
     private static ITFluids.FluidEntry entryStatic;
     private final ITFluids.FluidEntry entry;
     @Nullable
@@ -28,51 +27,40 @@ public class ITFluidBlock extends LiquidBlock
     private int duration;
     private int level;
 
-    public ITFluidBlock(ITFluids.FluidEntry entry, Properties props)
-    {
+    public ITFluidBlock(ITFluids.FluidEntry entry, Properties props) {
         super(entry.getStillGetter(), Util.make(props, $ -> entryStatic = entry));
         this.entry = entry;
         entryStatic = null;
     }
 
     @Override
-    protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder)
-    {
+    protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        for(Property<?> p : (entry==null?entryStatic: entry).properties())
-            builder.add(p);
+        for (Property<?> p : (entry == null ? entryStatic : entry).properties()) { builder.add(p); }
     }
 
     @Nonnull
     @Override
-    public FluidState getFluidState(@Nonnull BlockState state)
-    {
+    public FluidState getFluidState(@Nonnull BlockState state) {
         FluidState baseState = super.getFluidState(state);
-        for(Property<?> prop : baseState.getProperties())
-            if(state.hasProperty(prop))
-                baseState = withCopiedValue(prop, baseState, state);
+        for (Property<?> prop : baseState.getProperties()) { if (state.hasProperty(prop)) baseState = withCopiedValue(prop, baseState, state); }
         return baseState;
     }
 
-    public static <T extends StateHolder<?, T>, S extends Comparable<S>>
-    T withCopiedValue(Property<S> prop, T oldState, StateHolder<?, ?> copyFrom)
-    {
+    public static <T extends StateHolder<?, T>, S extends Comparable<S>> T withCopiedValue(Property<S> prop, T oldState, StateHolder<?, ?> copyFrom) {
         return oldState.setValue(prop, copyFrom.getValue(prop));
     }
 
-    public void setEffect(@Nonnull MobEffect effect, int duration, int level)
-    {
+    public void setEffect(@Nonnull MobEffect effect, int duration, int level) {
         this.effect = effect;
         this.duration = duration;
         this.level = level;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public void entityInside(@Nonnull BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn)
-    {
+    public void entityInside(@Nonnull BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn) {
         super.entityInside(state, worldIn, pos, entityIn);
-        if(effect!=null&&entityIn instanceof LivingEntity)
-            ((LivingEntity)entityIn).addEffect(new MobEffectInstance(effect, duration, level));
+        if (effect != null && entityIn instanceof LivingEntity) { ((LivingEntity) entityIn).addEffect(new MobEffectInstance(effect, duration, level)); }
     }
 }
-

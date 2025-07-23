@@ -129,31 +129,26 @@ public class ITFluids {
 
         public BucketItem getBucket() { return bucket.get(); }
 
-        private static BucketItem makeBucket(RegistryObject<ITFluid> still, int burnTime) { return new BucketItem(still, new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET)) {
-            @Override
-            public @NotNull ICapabilityProvider initCapabilities(@NotNull ItemStack stack, @Nullable CompoundTag nbt) { return new FluidBucketWrapper(stack); }
+        private static BucketItem makeBucket(RegistryObject<ITFluid> still, int burnTime) {
+            return new BucketItem(still, new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET)) {
+                @Override
+                public @NotNull ICapabilityProvider initCapabilities(@NotNull ItemStack stack, @Nullable CompoundTag nbt) {return new FluidBucketWrapper(stack);}
 
-            @Override
-            public int getBurnTime(ItemStack itemStack, RecipeType<?> type) { return burnTime; }
+                @Override
+                public int getBurnTime(ItemStack itemStack, RecipeType<?> type) {return burnTime;}
 
-            public boolean emptyContents(@Nullable Player player, Level level, BlockPos pos, @Nullable HitResult target) {
-                boolean result;
-                if (target == null) {
-                    result = super.emptyContents(player, level, pos, null);
-                } else if (target instanceof BlockHitResult blockHitResult) {
-                    result = super.emptyContents(player, level, pos, blockHitResult);
-                } else {
-                    return false;
-                }
-                if (result) {
-                    FluidState placedState = level.getFluidState(pos);
-                    if (placedState.getType().getFluidType().getDensity() < 0) {
-                        level.scheduleTick(pos, placedState.getType(), 100);  // Schedule dissipation after 5 seconds for gaseous sources
+                public boolean emptyContents(@Nullable Player player, Level level, BlockPos pos, @Nullable HitResult target) {
+                    boolean result;
+                    if (target == null) { result = super.emptyContents(player, level, pos, null, null); }
+                    else if (target instanceof BlockHitResult blockHitResult) { result = super.emptyContents(player, level, pos, blockHitResult, null); }
+                    else { return false; }
+                    if (result) {
+                        FluidState placedState = level.getFluidState(pos);
+                        if (placedState.getType().getFluidType().getDensity() < 0) { level.scheduleTick(pos, placedState.getType(), 100); }
                     }
+                    return result;
                 }
-                return result;
-            }
-        };
+            };
         }
 
         public RegistryObject<ITFluid> getStillGetter() { return still; }

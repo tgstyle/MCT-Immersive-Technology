@@ -17,47 +17,39 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("all")
 @Mod.EventBusSubscriber(modid = ITLib.MODID, bus = Bus.MOD, value = Dist.CLIENT)
-public class ITDynamicModel
-{
+public class ITDynamicModel {
     private static final List<ResourceLocation> MODELS = new ArrayList<>();
     public static final RandomSource RANDOM_SOURCE = RandomSource.createNewThreadLocalInstance();
 
     @SubscribeEvent
-    public static void registerModels(ModelEvent.RegisterAdditional ev)
-    {
-        for(ResourceLocation model : MODELS)
+    public static void registerModels(ModelEvent.RegisterAdditional ev) {
+        for (ResourceLocation model : MODELS)
             ev.register(model);
     }
 
     private final ResourceLocation name;
 
-    public ITDynamicModel(String desc)
-    {
+    public ITDynamicModel(String desc) {
         // References a generated json file
-        this.name = new ResourceLocation(ITLib.MODID, "dynamic/"+desc);
+        this.name = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "dynamic/" + desc);
         MODELS.add(this.name);
     }
 
-    public BakedModel get()
-    {
+    public BakedModel get() {
         final BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
         return blockRenderer.getBlockModelShaper().getModelManager().getModel(name);
     }
 
-    public List<BakedQuad> getNullQuads()
-    {
+    public List<BakedQuad> getNullQuads() {
         return getNullQuads(ModelData.EMPTY);
     }
 
-    public List<BakedQuad> getNullQuads(ModelData data)
-    {
+    public List<BakedQuad> getNullQuads(ModelData data) {
         return get().getQuads(null, null, RANDOM_SOURCE, data, null);
     }
 
-    public ResourceLocation getName()
-    {
+    public ResourceLocation getName() {
         return name;
     }
 }

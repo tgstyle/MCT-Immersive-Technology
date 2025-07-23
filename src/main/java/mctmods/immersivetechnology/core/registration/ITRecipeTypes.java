@@ -8,13 +8,13 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ITRecipeTypes {
-    public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create( ForgeRegistries.RECIPE_SERIALIZERS, ITLib.MODID );
+    public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ITLib.MODID);
     private static final DeferredRegister<RecipeType<?>> REGISTER = DeferredRegister.create(Registries.RECIPE_TYPE, ITLib.MODID);
 
     public static final TypeWithClass<AdvancedCokeOvenRecipe> ADVANCED_COKE_OVEN = register("coke_oven_advanced", AdvancedCokeOvenRecipe.class);
@@ -34,13 +34,7 @@ public class ITRecipeTypes {
         GasTurbineRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("gas_turbine", GasTurbineRecipeSerializer::new);
     }
 
-    private static <T extends Recipe<?>> TypeWithClass<T> register(String name, Class<T> type) {
-        RegistryObject<RecipeType<T>> regObj = REGISTER.register(name, () -> new RecipeType<>() { });
-        return new TypeWithClass<>(regObj, type);
-    }
+    private static <T extends Recipe<?>> TypeWithClass<T> register(String name, Class<T> type) { return new TypeWithClass<>(REGISTER.register(name, () -> new RecipeType<>() {}), type); }
 
-    public static void init() {
-        REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
-    }
+    public static void init(IEventBus modEventBus) { REGISTER.register(modEventBus); RECIPE_SERIALIZERS.register(modEventBus); }
 }

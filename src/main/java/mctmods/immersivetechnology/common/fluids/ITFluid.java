@@ -36,7 +36,9 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.fluids.FluidStack;
@@ -53,7 +55,7 @@ public class ITFluid extends FlowingFluid {
 
     private static final int CACHE_SIZE = 200;
     private static final ThreadLocal<Object2ByteLinkedOpenHashMap<Block.BlockStatePairKey>> OCCLUSION_CACHE = ThreadLocal.withInitial(() -> {
-        Object2ByteLinkedOpenHashMap<Block.BlockStatePairKey> object2bytelinkedopenhashmap = new Object2ByteLinkedOpenHashMap<Block.BlockStatePairKey>(CACHE_SIZE) {
+        Object2ByteLinkedOpenHashMap<Block.BlockStatePairKey> object2bytelinkedopenhashmap = new Object2ByteLinkedOpenHashMap<>(CACHE_SIZE) {
             protected void rehash(int p_76102_) {
             }
         };
@@ -181,13 +183,12 @@ public class ITFluid extends FlowingFluid {
 
     // Copied and modified from FlowingFluid.getNewLiquid
     @Override
-    protected FluidState getNewLiquid(Level pLevel, BlockPos pPos, BlockState pBlockState) {
+    protected @NotNull FluidState getNewLiquid(@NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pBlockState) {
         boolean isGaseous = isGaseous();
         Direction gravityDir = isGaseous ? Direction.UP : Direction.DOWN;
         Direction antiGravityDir = isGaseous ? Direction.DOWN : Direction.UP;
         int i = 0;
         int j = 0;
-
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockPos blockpos = pPos.relative(direction);
             BlockState blockstate = pLevel.getBlockState(blockpos);
@@ -197,14 +198,14 @@ public class ITFluid extends FlowingFluid {
                 i = Math.max(i, fluidstate.getAmount());
             }
         }
-
         if (j >= 2) {
             BlockPos floorPos = pPos.relative(gravityDir);
             BlockState blockstate1 = pLevel.getBlockState(floorPos);
             FluidState fluidstate1 = blockstate1.getFluidState();
-            if (blockstate1.isSolid() || this.myIsSourceBlockOfThisType(fluidstate1)) { return this.getSource(false); }
+            VoxelShape shape = blockstate1.getCollisionShape(pLevel, floorPos, CollisionContext.empty());
+            boolean isSolid = !shape.isEmpty() && (shape.bounds().getSize() >= 0.7291666666666666D || shape.bounds().getYsize() >= 1.0D);
+            if (isSolid || this.myIsSourceBlockOfThisType(fluidstate1)) { return this.getSource(false); }
         }
-
         BlockPos blockpos1 = pPos.relative(antiGravityDir);
         BlockState blockstate2 = pLevel.getBlockState(blockpos1);
         FluidState fluidstate2 = blockstate2.getFluidState();
@@ -229,7 +230,10 @@ public class ITFluid extends FlowingFluid {
                 float f = fluidstate.getOwnHeight();
                 float f1 = 0.0F;
                 if (f == 0.0F) {
-                    if (!pBlockReader.getBlockState(mutable).blocksMotion()) {
+                    BlockState state = pBlockReader.getBlockState(mutable);
+                    VoxelShape shape = state.getCollisionShape(pBlockReader, mutable, CollisionContext.empty());
+                    boolean passable = shape.isEmpty() || ((shape.bounds().getXsize() + shape.bounds().getYsize() + shape.bounds().getZsize()) / 3 < 0.7291666666666666D && shape.bounds().getYsize() < 1.0D);
+                    if (state.getBlock() == Blocks.COBWEB || state.getBlock() == Blocks.BAMBOO_SAPLING || passable) {
                         BlockPos blockpos = mutable.below();
                         FluidState fluidstate1 = pBlockReader.getFluidState(blockpos);
                         if (this.myAffectsFlow(fluidstate1)) {
@@ -238,10 +242,9 @@ public class ITFluid extends FlowingFluid {
                         }
                     }
                 } else if (f > 0.0F) { f1 = pFluidState.getOwnHeight() - f; }
-
                 if (f1 != 0.0F) {
-                    d0 += (double) ((float) direction.getStepX() * f1);
-                    d1 += (double) ((float) direction.getStepZ() * f1);
+                    d0 += (float) direction.getStepX() * f1;
+                    d1 += (float) direction.getStepZ() * f1;
                 }
             }
         }
@@ -288,11 +291,17 @@ public class ITFluid extends FlowingFluid {
     // Copied from FlowingFluid.canHoldFluid
     private boolean myCanHoldFluid(BlockGetter pLevel, BlockPos pPos, BlockState pState, Fluid pFluid) {
         Block block = pState.getBlock();
-        if (block instanceof LiquidBlockContainer) {
-            return ((LiquidBlockContainer) block).canPlaceLiquid(pLevel, pPos, pState, pFluid);
-        } else if (!(block instanceof net.minecraft.world.level.block.DoorBlock) && !pState.is(net.minecraft.tags.BlockTags.SIGNS) && !pState.is(Blocks.LADDER) && !pState.is(Blocks.SUGAR_CANE) && !pState.is(Blocks.BUBBLE_COLUMN)) {
+        if (block instanceof LiquidBlockContainer) { return ((LiquidBlockContainer) block).canPlaceLiquid(pLevel, pPos, pState, pFluid); }
+        else if (!(block instanceof net.minecraft.world.level.block.DoorBlock) && !pState.is(net.minecraft.tags.BlockTags.SIGNS) && !pState.is(Blocks.LADDER) && !pState.is(Blocks.SUGAR_CANE) && !pState.is(Blocks.BUBBLE_COLUMN)) {
             if (!pState.is(Blocks.NETHER_PORTAL) && !pState.is(Blocks.END_PORTAL) && !pState.is(Blocks.END_GATEWAY) && !pState.is(Blocks.STRUCTURE_VOID)) {
-                return !pState.blocksMotion();
+                VoxelShape shape = pState.getCollisionShape(pLevel, pPos, CollisionContext.empty());
+                boolean isSolid;
+                if (shape.isEmpty()) { isSolid = false; }
+                else {
+                    AABB aabb = shape.bounds();
+                    isSolid = aabb.getSize() >= 0.7291666666666666D || aabb.getYsize() >= 1.0D;
+                }
+                return pState.is(Blocks.COBWEB) || pState.is(Blocks.BAMBOO_SAPLING) || !isSolid;
             } else { return false; }
         } else { return false; }
     }
@@ -340,7 +349,7 @@ public class ITFluid extends FlowingFluid {
 
     // Override getSpread to use myGetSlopeDistance
     @Override
-    protected Map<Direction, FluidState> getSpread(Level pLevel, BlockPos pPos, BlockState pState) {
+    protected @NotNull Map<Direction, FluidState> getSpread(@NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pState) {
         int i = 1000;
         Map<Direction, FluidState> map = Maps.newEnumMap(Direction.class);
         Short2ObjectMap<Pair<BlockState, FluidState>> short2objectmap = new Short2ObjectOpenHashMap<>();
@@ -442,10 +451,10 @@ public class ITFluid extends FlowingFluid {
             BucketItem bucketitem = (BucketItem) stack.getItem();
             BlockPos blockpos = source.getPos().relative(source.getBlockState().getValue(DispenserBlock.FACING));
             Level world = source.getLevel();
-            if (bucketitem.emptyContents(null, world, blockpos, null)) {
+            if (bucketitem.emptyContents(null, world, blockpos, null, stack)) {
                 bucketitem.checkExtraContent(null, world, stack, blockpos);
                 FluidState placedState = world.getFluidState(blockpos);
-                if (placedState.getType().getFluidType().getDensity() < 0) { world.scheduleTick(blockpos, placedState.getType(), 100); }  // Schedule dissipation after 5 seconds for gaseous sources
+                if (placedState.getType().getFluidType().getDensity() < 0) { world.scheduleTick(blockpos, placedState.getType(), 100); } // Schedule dissipation after 5 seconds for gaseous sources
                 return new ItemStack(Items.BUCKET);
             }
             else { return this.defaultBehavior.dispense(source, stack); }

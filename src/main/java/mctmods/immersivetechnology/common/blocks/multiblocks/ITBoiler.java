@@ -11,30 +11,17 @@ import net.minecraft.world.level.Level;
 
 import java.util.function.Consumer;
 
-public class ITBoiler extends ITTemplateMultiblock
-{
+public class ITBoiler extends ITTemplateMultiblock {
     public static final ITBoiler INSTANCE = new ITBoiler();
 
-    public ITBoiler()
-    {
-        super(new ResourceLocation(ITLib.MODID, "multiblocks/boiler"), new BlockPos(0,0,0), new BlockPos(2,1,2), new BlockPos(5,3,3), ITMultiblockProvider.BOILER);
-    }
+    public ITBoiler() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/boiler"), new BlockPos(0,0,0), new BlockPos(2,1,2), new BlockPos(5,3,3), ITMultiblockProvider.BOILER); }
 
     @Override
-    public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation)
-    {
-        super.disassemble(world, origin, mirrored, clickDirectionAtCreation);
-    }
+    public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override
-    public float getManualScale()
-    {
-        return 16;
-    }
+    public float getManualScale() { return 16; }
 
     @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer)
-    {
-        consumer.accept(new ITClientMultiblockProperties(this, 0, 0, 0));
-    }
+    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, 0, 0, 0)); }
 }

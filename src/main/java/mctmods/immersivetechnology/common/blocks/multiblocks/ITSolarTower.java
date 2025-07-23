@@ -11,29 +11,17 @@ import net.minecraft.world.level.Level;
 
 import java.util.function.Consumer;
 
-public class ITSolarTower extends ITTemplateMultiblock
-{
+public class ITSolarTower extends ITTemplateMultiblock {
     public static final ITSolarTower INSTANCE = new ITSolarTower();
 
-    public ITSolarTower()
-    {
-        super(new ResourceLocation(ITLib.MODID, "multiblocks/solar_tower"), new BlockPos(0,0,0), new BlockPos(1,2,1), new BlockPos(3,21,3), ITMultiblockProvider.SOLAR_TOWER);
-    }
+    public ITSolarTower() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/solar_tower"), new BlockPos(0,0,0), new BlockPos(1,2,1), new BlockPos(3,21,3), ITMultiblockProvider.SOLAR_TOWER); }
 
     @Override
-    public float getManualScale() {
-        return 4;
-    }
+    public float getManualScale() { return 4; }
 
     @Override
-    public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation)
-    {
-        super.disassemble(world, origin, mirrored, clickDirectionAtCreation);
-    }
+    public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer)
-    {
-        consumer.accept(new ITClientMultiblockProperties(this, 0, 0, 0));
-    }
+    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, 0, 0, 0)); }
 }

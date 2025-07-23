@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.common.data;
 
 import mctmods.immersivetechnology.common.data.generators.*;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
