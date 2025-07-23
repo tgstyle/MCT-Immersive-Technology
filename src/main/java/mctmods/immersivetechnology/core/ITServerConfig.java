@@ -9,28 +9,23 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 @Mod.EventBusSubscriber(modid = ITLib.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ITServerConfig
-{
+public class ITServerConfig {
     public static final ForgeConfigSpec SPEC;
 
-    static
-    {
+    static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         SPEC = builder.build();
     }
 
     private static Config rawConfig;
 
-    public static Config getRawConfig()
-    {
+    public static Config getRawConfig() {
         return Preconditions.checkNotNull(rawConfig);
     }
 
     @SubscribeEvent
-    public static void onConfigReload(ModConfigEvent ev)
-    {
-        if(SPEC==ev.getConfig().getSpec())
-        {
+    public static void onConfigReload(ModConfigEvent ev) {
+        if (SPEC == ev.getConfig().getSpec()) {
             rawConfig = ev.getConfig().getConfigData();
         }
     }

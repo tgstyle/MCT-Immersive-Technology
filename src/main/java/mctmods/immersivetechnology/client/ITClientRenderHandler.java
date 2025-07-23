@@ -38,9 +38,7 @@ public class ITClientRenderHandler implements net.minecraft.client.color.item.It
 
     @net.minecraftforge.api.distmarker.OnlyIn(Dist.CLIENT)
     public static void init(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-            BlockEntityRenderers.register(ITBlockEntities.OPEN_BARREL.get(), OpenBarrelRenderer::new);
-        });
+        event.enqueueWork(() -> BlockEntityRenderers.register(ITBlockEntities.OPEN_BARREL.get(), OpenBarrelRenderer::new));
     }
 
     @SubscribeEvent
@@ -103,6 +101,6 @@ public class ITClientRenderHandler implements net.minecraft.client.color.item.It
         SOLID,
         CUTOUT,
         CUTOUT_MIPPED,
-        TRANSLUCENT;
+        TRANSLUCENT
     }
 }

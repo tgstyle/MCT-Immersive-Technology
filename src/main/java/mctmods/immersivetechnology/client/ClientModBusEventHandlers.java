@@ -13,33 +13,20 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(modid = ITLib.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ClientModBusEventHandlers
-{
+public class ClientModBusEventHandlers {
     @SubscribeEvent
-    public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders event)
-    {
-
-    }
+    public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders event) { }
 
     @SubscribeEvent
-    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event)
-    {
+    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         registerBlockEntityRenderers(event);
     }
 
-    public static void registerBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event)
-    {
-    }
+    public static void registerBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) { }
 
-    private static <T extends BlockEntity>
-    void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, Supplier<BlockEntityRenderer<T>> render)
-    {
-        ClientModBusEventHandlers.registerBERenderNoContext(event, type.get(), render);
-    }
+    private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, Supplier<BlockEntityRenderer<T>> render) { ClientModBusEventHandlers.registerBERenderNoContext(event, type.get(), render); }
 
-    private static <T extends BlockEntity>
-    void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render)
-    {
+    private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render) {
         event.registerBlockEntityRenderer(type, $ -> render.get());
     }
 }

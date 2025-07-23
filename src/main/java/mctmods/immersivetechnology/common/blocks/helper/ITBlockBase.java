@@ -5,7 +5,6 @@ import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.common.blocks.IEBaseBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -34,8 +33,10 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.ticks.ScheduledTick;
-
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class ITBlockBase extends Block implements ITBlock, SimpleWaterloggedBlock {
     boolean isHidden;
@@ -44,9 +45,7 @@ public class ITBlockBase extends Block implements ITBlock, SimpleWaterloggedBloc
     protected final boolean notNormalBlock;
     private final boolean fitsIntoContainer;
 
-    public ITBlockBase(BlockBehaviour.Properties blockProps) {
-        this(blockProps, true);
-    }
+    public ITBlockBase(BlockBehaviour.Properties blockProps) { this(blockProps, true); }
 
     public ITBlockBase(BlockBehaviour.Properties blockProps, boolean fitsIntoContainer) {
         super(blockProps);
@@ -56,89 +55,63 @@ public class ITBlockBase extends Block implements ITBlock, SimpleWaterloggedBloc
         this.lightOpacity = -1;
     }
 
-    public ITBlockBase setHidden(boolean shouldHide) {
-        this.isHidden = shouldHide;
-        return this;
+    public ITBlockBase setHidden(boolean shouldHide) { this.isHidden = shouldHide; return this; }
+
+    public boolean isHidden() { return this.isHidden; }
+
+    public ITBlockBase setHasFlavour(boolean shouldHave) { this.hasFlavour = shouldHave; return this; }
+
+    public String getNameForFlavour() { return Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(this)).getPath(); }
+
+    public boolean hasFlavour() { return this.hasFlavour; }
+
+    public ITBlockBase setLightOpacity(int opacity) { this.lightOpacity = opacity; return this; }
+
+    @Override
+    public int getLightBlock(@NotNull BlockState state, @NotNull BlockGetter worldIn, @NotNull BlockPos pos) {
+        if (this.lightOpacity != -1) { return this.lightOpacity; }
+        else { return this.notNormalBlock ? 0 : super.getLightBlock(state, worldIn, pos); }
     }
 
-    public boolean isHidden() {
-        return this.isHidden;
-    }
-
-    public ITBlockBase setHasFlavour(boolean shouldHave) {
-        this.hasFlavour = shouldHave;
-        return this;
-    }
-
-    public String getNameForFlavour() {
-        return BuiltInRegistries.BLOCK.getKey(this).getPath();
-    }
-
-    public boolean hasFlavour() {
-        return this.hasFlavour;
-    }
-
-    public ITBlockBase setLightOpacity(int opacity) {
-        this.lightOpacity = opacity;
-        return this;
-    }
-
-    public int getLightBlock(BlockState state, BlockGetter worldIn, BlockPos pos) {
-        if (this.lightOpacity != -1) {
-            return this.lightOpacity;
-        } else {
-            return this.notNormalBlock ? 0 : super.getLightBlock(state, worldIn, pos);
-        }
-    }
-
-    public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
+    @Override
+    public float getShadeBrightness(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos) {
         return this.notNormalBlock ? 1.0F : super.getShadeBrightness(state, world, pos);
     }
 
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {
+    @Override
+    public boolean propagatesSkylightDown(@NotNull BlockState state, @NotNull BlockGetter reader, @NotNull BlockPos pos) {
         return this.notNormalBlock || super.propagatesSkylightDown(state, reader, pos);
     }
 
     protected BlockState getInitDefaultState() {
-        BlockState state = (BlockState) this.stateDefinition.any();
-        if (state.hasProperty(BlockStateProperties.WATERLOGGED)) {
-            state = (BlockState) state.setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE);
-        }
-
+        BlockState state = this.stateDefinition.any();
+        if (state.hasProperty(BlockStateProperties.WATERLOGGED)) { state = state.setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE); }
         return state;
     }
 
-    public void onIEBlockPlacedBy(BlockPlaceContext context, BlockState state) {
-    }
+    public void onIEBlockPlacedBy(BlockPlaceContext context, BlockState state) {}
 
-    public boolean canIEBlockBePlaced(BlockState newState, BlockPlaceContext context) {
-        return true;
-    }
+    public boolean canIEBlockBePlaced(BlockState newState, BlockPlaceContext context) { return true; }
 
-    public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+    @Override
+    public void setPlacedBy(@NotNull Level worldIn, @NotNull BlockPos pos, @NotNull BlockState state, LivingEntity placer, @NotNull ItemStack stack) {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
     }
 
-    public void fillCreativeTab(CreativeModeTab.Output out) {
-        out.accept(this);
+    public void fillCreativeTab(CreativeModeTab.Output out) { out.accept(this); }
+
+    @Override
+    public boolean triggerEvent(@NotNull BlockState state, Level worldIn, @NotNull BlockPos pos, int eventID, int eventParam) {
+        if (worldIn.isClientSide && eventID == 255) { worldIn.sendBlockUpdated(pos, state, state, 3); return true; }
+        else { return super.triggerEvent(state, worldIn, pos, eventID, eventParam); }
     }
 
-    public boolean triggerEvent(BlockState state, Level worldIn, BlockPos pos, int eventID, int eventParam) {
-        if (worldIn.isClientSide && eventID == 255) {
-            worldIn.sendBlockUpdated(pos, state, state, 3);
-            return true;
-        } else {
-            return super.triggerEvent(state, worldIn, pos, eventID, eventParam);
-        }
-    }
-
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    @Override
+    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         ItemStack activeStack = player.getItemInHand(hand);
-        if (activeStack.is(IETags.hammers)) {
-            return this.hammerUseSide(hit.getDirection(), player, hand, world, pos, hit);
-        } else {
-            return activeStack.is(IETags.screwdrivers) ? this.screwdriverUseSide(hit.getDirection(), player, hand, world, pos, hit) : super.use(state, world, pos, player, hand, hit);
-        }
+        if (activeStack.is(IETags.hammers)) { return this.hammerUseSide(hit.getDirection(), player, hand, world, pos, hit); }
+        else if (activeStack.is(IETags.screwdrivers)) { return this.screwdriverUseSide(hit.getDirection(), player, hand, world, pos, hit); }
+        else { return super.use(state, world, pos, player, hand, hit); }
     }
 
     public InteractionResult hammerUseSide(Direction side, Player player, InteractionHand hand, Level w, BlockPos pos, BlockHitResult hit) {
@@ -149,81 +122,87 @@ public class ITBlockBase extends Block implements ITBlock, SimpleWaterloggedBloc
         return InteractionResult.PASS;
     }
 
-    public boolean isPathfindable(BlockState state, BlockGetter worldIn, BlockPos pos, PathComputationType type) {
+    @Override
+    public boolean isPathfindable(@NotNull BlockState state, @NotNull BlockGetter worldIn, @NotNull BlockPos pos, @NotNull PathComputationType type) {
         return false;
     }
 
     public static BlockState applyLocationalWaterlogging(BlockState state, Level world, BlockPos pos) {
-        return state.hasProperty(BlockStateProperties.WATERLOGGED) ? (BlockState) state.setValue(BlockStateProperties.WATERLOGGED, world.getFluidState(pos).getType() == Fluids.WATER) : state;
+        if (state.hasProperty(BlockStateProperties.WATERLOGGED)) {
+            state = state.setValue(BlockStateProperties.WATERLOGGED, world.getFluidState(pos).getType() == Fluids.WATER);
+        }
+        return state;
     }
 
+    @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState state = this.defaultBlockState();
         state = applyLocationalWaterlogging(state, context.getLevel(), context.getClickedPos());
         return state;
     }
 
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
+    @Override
+    public @NotNull BlockState updateShape(BlockState stateIn, @NotNull Direction facing, @NotNull BlockState facingState, @NotNull LevelAccessor worldIn, @NotNull BlockPos currentPos, @NotNull BlockPos facingPos) {
         if (stateIn.hasProperty(BlockStateProperties.WATERLOGGED) && (Boolean) stateIn.getValue(BlockStateProperties.WATERLOGGED)) {
-            worldIn.getFluidTicks().schedule(new ScheduledTick(Fluids.WATER, currentPos, (long) Fluids.WATER.getTickDelay(worldIn), 0L));
+            worldIn.getFluidTicks().schedule(new ScheduledTick<>(Fluids.WATER, currentPos, (long) Fluids.WATER.getTickDelay(worldIn), 0L));
         }
-
         return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
-    public FluidState getFluidState(BlockState state) {
-        return state.hasProperty(BlockStateProperties.WATERLOGGED) && (Boolean) state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+    @Override
+    public @NotNull FluidState getFluidState(BlockState state) {
+        return state.hasProperty(BlockStateProperties.WATERLOGGED) && (Boolean) state.getValue(BlockStateProperties.WATERLOGGED) ?
+                Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
-    public boolean canPlaceLiquid(BlockGetter worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
+    @Override
+    public boolean canPlaceLiquid(@NotNull BlockGetter worldIn, @NotNull BlockPos pos, BlockState state, @NotNull Fluid fluidIn) {
         return state.hasProperty(BlockStateProperties.WATERLOGGED) && SimpleWaterloggedBlock.super.canPlaceLiquid(worldIn, pos, state, fluidIn);
     }
 
-    public boolean placeLiquid(LevelAccessor worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
+    @Override
+    public boolean placeLiquid(@NotNull LevelAccessor worldIn, @NotNull BlockPos pos, BlockState state, @NotNull FluidState fluidStateIn) {
         return state.hasProperty(BlockStateProperties.WATERLOGGED) && SimpleWaterloggedBlock.super.placeLiquid(worldIn, pos, state, fluidStateIn);
     }
 
-    public ItemStack pickupBlock(LevelAccessor level, BlockPos pos, BlockState state) {
+    @Override
+    public @NotNull ItemStack pickupBlock(@NotNull LevelAccessor level, @NotNull BlockPos pos, BlockState state) {
         return state.hasProperty(BlockStateProperties.WATERLOGGED) ? SimpleWaterloggedBlock.super.pickupBlock(level, pos, state) : ItemStack.EMPTY;
     }
 
-    public boolean fitsIntoContainer() {
-        return this.fitsIntoContainer;
-    }
+    public boolean fitsIntoContainer() { return this.fitsIntoContainer; }
 
-    public BlockState rotate(BlockState state, Rotation rot) {
+    @Override
+    public @NotNull BlockState rotate(@NotNull BlockState state, @NotNull Rotation rot) {
         Property<Direction> facingProp = this.findFacingProperty(state);
         if (facingProp != null && this.canRotate()) {
-            Direction currentDirection = (Direction) state.getValue(facingProp);
+            Direction currentDirection = state.getValue(facingProp);
             Direction newDirection = rot.rotate(currentDirection);
-            return (BlockState) state.setValue(facingProp, newDirection);
-        } else {
-            return super.rotate(state, rot);
+            return state.setValue(facingProp, newDirection);
         }
+        else { return super.rotate(state, rot); }
     }
 
-    public BlockState mirror(BlockState state, Mirror mirrorIn) {
+    @Override
+    public @NotNull BlockState mirror(BlockState state, @NotNull Mirror mirrorIn) {
         if (state.hasProperty(IEProperties.MIRRORED) && this.canRotate() && mirrorIn == Mirror.LEFT_RIGHT) {
-            return (BlockState) state.setValue(IEProperties.MIRRORED, !(Boolean) state.getValue(IEProperties.MIRRORED));
-        } else {
+            return state.setValue(IEProperties.MIRRORED, !state.getValue(IEProperties.MIRRORED));
+        }
+        else {
             Property<Direction> facingProp = this.findFacingProperty(state);
             if (facingProp != null && this.canRotate()) {
-                Direction currentDirection = (Direction) state.getValue(facingProp);
+                Direction currentDirection = state.getValue(facingProp);
                 Direction newDirection = mirrorIn.mirror(currentDirection);
-                return (BlockState) state.setValue(facingProp, newDirection);
-            } else {
-                return super.mirror(state, mirrorIn);
+                return state.setValue(facingProp, newDirection);
             }
+            else { return super.mirror(state, mirrorIn); }
         }
     }
 
     @Nullable
     private Property<Direction> findFacingProperty(BlockState state) {
-        if (state.hasProperty(IEProperties.FACING_ALL)) {
-            return IEProperties.FACING_ALL;
-        } else {
-            return state.hasProperty(IEProperties.FACING_HORIZONTAL) ? IEProperties.FACING_HORIZONTAL : null;
-        }
+        if (state.hasProperty(IEProperties.FACING_ALL)) { return IEProperties.FACING_ALL; }
+        else { return state.hasProperty(IEProperties.FACING_HORIZONTAL) ? IEProperties.FACING_HORIZONTAL : null; }
     }
 
     protected boolean canRotate() {
@@ -231,37 +210,36 @@ public class ITBlockBase extends Block implements ITBlock, SimpleWaterloggedBloc
     }
 
     public abstract static class IELadderBlock extends IEBaseBlock {
-        public IELadderBlock(BlockBehaviour.Properties material) {
-            super(material);
-        }
+        public IELadderBlock(BlockBehaviour.Properties material) { super(material); }
 
         public boolean isLadder(BlockState state, LevelReader world, BlockPos pos, @Nullable LivingEntity entity) {
             return true;
         }
 
-        public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
+        @Override
+        public void entityInside(@NotNull BlockState state, @NotNull Level worldIn, @NotNull BlockPos pos, @NotNull Entity entityIn) {
             super.entityInside(state, worldIn, pos, entityIn);
             if (entityIn instanceof LivingEntity && this.isLadder(state, worldIn, pos, (LivingEntity) entityIn)) {
                 applyLadderLogic(entityIn);
             }
-
         }
 
         public static void applyLadderLogic(Entity entityIn) {
             if (entityIn instanceof LivingEntity && !((LivingEntity) entityIn).onClimbable()) {
                 Vec3 motion = entityIn.getDeltaMovement();
                 float maxMotion = 0.15F;
-                motion = new Vec3(Mth.clamp(motion.x, (double) (-maxMotion), (double) maxMotion), Math.max(motion.y, (double) (-maxMotion)), Mth.clamp(motion.z, (double) (-maxMotion), (double) maxMotion));
+                motion = new Vec3(
+                        Mth.clamp(motion.x, -maxMotion, maxMotion),
+                        Math.max(motion.y, -maxMotion),
+                        Mth.clamp(motion.z, -maxMotion, maxMotion)
+                );
                 entityIn.fallDistance = 0.0F;
                 if (motion.y < 0.0 && entityIn instanceof Player && entityIn.isShiftKeyDown()) {
                     motion = new Vec3(motion.x, 0.0, motion.z);
-                } else if (entityIn.horizontalCollision) {
-                    motion = new Vec3(motion.x, 0.2, motion.z);
                 }
-
+                else if (entityIn.horizontalCollision) { motion = new Vec3(motion.x, 0.2, motion.z); }
                 entityIn.setDeltaMovement(motion);
             }
-
         }
     }
 }

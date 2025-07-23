@@ -7,9 +7,7 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -21,11 +19,12 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
-
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class ITRecipeBuilder<R extends ITRecipeBuilder<R>> implements FinishedRecipe {
@@ -64,33 +63,21 @@ public class ITRecipeBuilder<R extends ITRecipeBuilder<R>> implements FinishedRe
     public ITRecipeBuilder<R> addCondition(ICondition condition) {
         if (this.conditions == null) {
             this.conditions = new JsonArray();
-            this.addWriter((jsonObject) -> {
-                jsonObject.add("conditions", this.conditions);
-            });
+            this.addWriter((jsonObject) -> jsonObject.add("conditions", this.conditions));
         }
 
         this.conditions.add(CraftingHelper.serialize(condition));
         return this;
     }
 
-    public ITRecipeBuilder<R> setTime(int time) {
-        return this.addWriter((jsonObject) -> {
-            jsonObject.addProperty("time", time);
-        });
-    }
+    public ITRecipeBuilder<R> setTime(int time) { return this.addWriter((jsonObject) -> jsonObject.addProperty("time", time)); }
 
-    public ITRecipeBuilder<R> setEnergy(int energy) {
-        return this.addWriter((jsonObject) -> {
-            jsonObject.addProperty("energy", energy);
-        });
-    }
+    public ITRecipeBuilder<R> setEnergy(int energy) { return this.addWriter((jsonObject) -> jsonObject.addProperty("energy", energy)); }
 
     public ITRecipeBuilder<R> setMultipleResults(int maxResultCount) {
         this.resultArray = new JsonArray();
         this.maxResultCount = maxResultCount;
-        return this.addWriter((jsonObject) -> {
-            jsonObject.add("results", this.resultArray);
-        });
+        return this.addWriter((jsonObject) -> jsonObject.add("results", this.resultArray));
     }
 
     public ITRecipeBuilder<R> addMultiResult(JsonElement obj) {
@@ -109,24 +96,14 @@ public class ITRecipeBuilder<R extends ITRecipeBuilder<R>> implements FinishedRe
         return this.resultArray != null ? this.addMultiResult(this.serializeItemStack(itemStack)) : this.addItem("result", itemStack);
     }
 
-    public ITRecipeBuilder<R> addResult(Ingredient ingredient) {
-        return this.resultArray != null ? this.addMultiResult(ingredient.toJson()) : this.addWriter((jsonObject) -> {
-            jsonObject.add("result", ingredient.toJson());
-        });
-    }
+    public ITRecipeBuilder<R> addResult(Ingredient ingredient) { return this.resultArray != null ? this.addMultiResult(ingredient.toJson()) : this.addWriter((jsonObject) -> jsonObject.add("result", ingredient.toJson())); }
 
-    public ITRecipeBuilder<R> addResult(IngredientWithSize ingredientWithSize) {
-        return this.resultArray != null ? this.addMultiResult(ingredientWithSize.serialize()) : this.addWriter((jsonObject) -> {
-            jsonObject.add("result", ingredientWithSize.serialize());
-        });
-    }
+    public ITRecipeBuilder<R> addResult(IngredientWithSize ingredientWithSize) { return this.resultArray != null ? this.addMultiResult(ingredientWithSize.serialize()) : this.addWriter((jsonObject) -> jsonObject.add("result", ingredientWithSize.serialize())); }
 
     public ITRecipeBuilder<R> setUseInputArray(int maxInputCount, String key) {
         this.inputArray = new JsonArray();
         this.maxInputCount = maxInputCount;
-        return this.addWriter((jsonObject) -> {
-            jsonObject.add(key, this.inputArray);
-        });
+        return this.addWriter((jsonObject) -> jsonObject.add(key, this.inputArray));
     }
 
     public ITRecipeBuilder<R> setUseInputArray(int maxInputCount) {
@@ -178,23 +155,20 @@ public class ITRecipeBuilder<R extends ITRecipeBuilder<R>> implements FinishedRe
 
     public JsonObject serializeItemStack(ItemStack stack) {
         JsonObject obj = new JsonObject();
-        obj.addProperty("item", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
+        obj.addProperty("item", Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(stack.getItem())).toString());
         if (stack.getCount() > 1) {
             obj.addProperty("count", stack.getCount());
         }
 
         if (stack.hasTag()) {
+            assert stack.getTag() != null;
             obj.addProperty("nbt", stack.getTag().toString());
         }
 
         return obj;
     }
 
-    protected ITRecipeBuilder<R> addSimpleItem(String key, ItemLike item) {
-        return this.addWriter((json) -> {
-            json.addProperty(key, BuiltInRegistries.ITEM.getKey(item.asItem()).toString());
-        });
-    }
+    protected ITRecipeBuilder<R> addSimpleItem(String key, ItemLike item) { return this.addWriter((json) -> json.addProperty(key, Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item.asItem())).toString())); }
 
     public ITRecipeBuilder<R> addItem(String key, ItemLike item) {
         return this.addItem(key, new ItemStack(item));
@@ -202,9 +176,7 @@ public class ITRecipeBuilder<R extends ITRecipeBuilder<R>> implements FinishedRe
 
     public ITRecipeBuilder<R> addItem(String key, ItemStack stack) {
         Preconditions.checkArgument(!stack.isEmpty(), "May not add empty ItemStack to recipe");
-        return this.addWriter((jsonObject) -> {
-            jsonObject.add(key, this.serializeItemStack(stack));
-        });
+        return this.addWriter((jsonObject) -> jsonObject.add(key, this.serializeItemStack(stack)));
     }
 
     public ITRecipeBuilder<R> addIngredient(String key, ItemLike... itemProviders) {
@@ -219,23 +191,11 @@ public class ITRecipeBuilder<R extends ITRecipeBuilder<R>> implements FinishedRe
         return this.addIngredient(key, Ingredient.of(tag));
     }
 
-    public ITRecipeBuilder<R> addIngredient(String key, Ingredient ingredient) {
-        return this.addWriter((jsonObject) -> {
-            jsonObject.add(key, ingredient.toJson());
-        });
-    }
+    public ITRecipeBuilder<R> addIngredient(String key, Ingredient ingredient) { return this.addWriter((jsonObject) -> jsonObject.add(key, ingredient.toJson())); }
 
-    public ITRecipeBuilder<R> addIngredient(String key, IngredientWithSize ingredient) {
-        return this.addWriter((jsonObject) -> {
-            jsonObject.add(key, ingredient.serialize());
-        });
-    }
+    public ITRecipeBuilder<R> addIngredient(String key, IngredientWithSize ingredient) { return this.addWriter((jsonObject) -> jsonObject.add(key, ingredient.serialize())); }
 
-    public ITRecipeBuilder<R> addFluid(String key, FluidStack fluidStack) {
-        return this.addWriter((jsonObject) -> {
-            jsonObject.add(key, ApiUtils.jsonSerializeFluidStack(fluidStack));
-        });
-    }
+    public ITRecipeBuilder<R> addFluid(String key, FluidStack fluidStack) { return this.addWriter((jsonObject) -> jsonObject.add(key, ApiUtils.jsonSerializeFluidStack(fluidStack))); }
 
     public ITRecipeBuilder<R> addFluid(FluidStack fluidStack) {
         return this.addFluid("fluid", fluidStack);
@@ -245,35 +205,19 @@ public class ITRecipeBuilder<R extends ITRecipeBuilder<R>> implements FinishedRe
         return this.addFluid("fluid", new FluidStack(fluid, amount));
     }
 
-    public ITRecipeBuilder<R> addFluidTag(String key, FluidTagInput fluidTag) {
-        return this.addWriter((jsonObject) -> {
-            jsonObject.add(key, fluidTag.serialize());
-        });
-    }
+    public ITRecipeBuilder<R> addFluidTag(String key, FluidTagInput fluidTag) { return this.addWriter((jsonObject) -> jsonObject.add(key, fluidTag.serialize())); }
 
-    public ITRecipeBuilder<R> addFluidTag(String key, TagKey<Fluid> fluidTag, int amount) {
-        return this.addFluidTag(key, new FluidTagInput(fluidTag, amount, (CompoundTag)null));
-    }
+    public ITRecipeBuilder<R> addFluidTag(String key, TagKey<Fluid> fluidTag, int amount) { return this.addFluidTag(key, new FluidTagInput(fluidTag, amount, null)); }
 
-    public ITRecipeBuilder<R> addFluidTag(TagKey<Fluid> fluidTag, int amount) {
-        return this.addFluidTag("fluid", new FluidTagInput(fluidTag, amount, (CompoundTag)null));
-    }
+    public ITRecipeBuilder<R> addFluidTag(TagKey<Fluid> fluidTag, int amount) { return this.addFluidTag("fluid", new FluidTagInput(fluidTag, amount, null)); }
 
-    public void serializeRecipeData(JsonObject jsonObject) {
-        Iterator var2 = this.writerFunctions.iterator();
+    public void serializeRecipeData(@NotNull JsonObject jsonObject) { for (Consumer<JsonObject> writerFunction : this.writerFunctions) { writerFunction.accept(jsonObject); } }
 
-        while(var2.hasNext()) {
-            Consumer<JsonObject> writer = (Consumer)var2.next();
-            writer.accept(jsonObject);
-        }
-
-    }
-
-    public ResourceLocation getId() {
+    public @NotNull ResourceLocation getId() {
         return this.id;
     }
 
-    public RecipeSerializer<?> getType() {
+    public @NotNull RecipeSerializer<?> getType() {
         return this.serializer;
     }
 
@@ -293,17 +237,9 @@ public class ITRecipeBuilder<R extends ITRecipeBuilder<R>> implements FinishedRe
         jsonObject.add("output", ingredient.serialize());
         if (conditions.length > 0) {
             JsonArray conditionArray = new JsonArray();
-            ICondition[] var5 = conditions;
-            int var6 = conditions.length;
-
-            for(int var7 = 0; var7 < var6; ++var7) {
-                ICondition condition = var5[var7];
-                conditionArray.add(CraftingHelper.serialize(condition));
-            }
-
+            for (ICondition condition : conditions) { conditionArray.add(CraftingHelper.serialize(condition)); }
             jsonObject.add("conditions", conditionArray);
         }
-
         return jsonObject;
     }
 }
