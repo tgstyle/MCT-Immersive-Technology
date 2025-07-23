@@ -52,22 +52,22 @@ public class ITFluids {
 
     public static final ITFluids.FluidEntry STEAM = FluidEntry.make(
             "steam", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
-            props -> { props.density(-1000).viscosity(200); }, 0xFF3E444F
+            props -> props.density(-1000).viscosity(200), 0xFF3E444F
     );
 
     public static final ITFluids.FluidEntry STEAM_EXHAUST = FluidEntry.make(
             "steam_exhaust", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
-            props -> { props.density(-1000).viscosity(200); }, 0xFFFFFFFF
+            props -> props.density(-1000).viscosity(200), 0xFFFFFFFF
     );
 
     public static final ITFluids.FluidEntry FLUE_GAS = FluidEntry.make(
             "flue_gas", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
-            props -> { props.density(-1000).viscosity(200); }, 0xFF808080
+            props -> props.density(-1000).viscosity(200), 0xFF808080
     );
 
     public static final ITFluids.FluidEntry DISTILLED_WATER = FluidEntry.make(
             "distilled_water", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
-            props -> { props.density(1000).viscosity(1000); }, 0xFF7079E0
+            props -> props.density(1000).viscosity(1000), 0xFF7079E0
     );
 
     static {
