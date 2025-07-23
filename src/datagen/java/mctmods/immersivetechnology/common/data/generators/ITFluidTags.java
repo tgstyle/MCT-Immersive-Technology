@@ -20,5 +20,8 @@ public class ITFluidTags extends FluidTagsProvider {
     protected void addTags(@NotNull Provider provider) {
         tag(ITTags.fluidSteam).add(ITFluids.STEAM.getStill());
         tag(ITTags.fluidSteamForge).add(ITFluids.STEAM.getStill());
+        tag(ITTags.fluidDistilledWater).add(ITFluids.DISTILLED_WATER.getStill());
+        tag(ITTags.fluidDistilledWaterForge).add(ITFluids.DISTILLED_WATER.getStill());
+        tag(ITTags.fluidFlueGas).add(ITFluids.FLUE_GAS.getStill());
     }
 }
