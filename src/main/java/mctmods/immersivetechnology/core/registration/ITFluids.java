@@ -66,7 +66,7 @@ public class ITFluids {
     );
 
     public static final ITFluids.FluidEntry DISTILLED_WATER = FluidEntry.make(
-            "distilled_water", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            "distilled_water", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
             props -> { props.density(1000).viscosity(2000); }, 0xFFFFFFCC
     );
 
