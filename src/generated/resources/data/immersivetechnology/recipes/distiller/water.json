@@ -2,11 +2,11 @@
   "type": "immersivetechnology:distiller",
   "energy": 512,
   "input": {
-    "amount": 250,
+    "amount": 100,
     "tag": "minecraft:water"
   },
   "result": {
-    "amount": 250,
+    "amount": 100,
     "fluid": "immersivetechnology:distilled_water"
   },
   "time": 20

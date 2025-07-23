@@ -128,6 +128,7 @@ public class ITMultiblockProvider {
     public static final MultiblockRegistration<ITDistillerLogic.State> DISTILLER =
             stone(new ITDistillerLogic(), "distiller", false)
                     .structure(() -> getMBTemplate.apply("distiller"))
+                    .redstone(s -> s.rsState, ITDistillerLogic.REDSTONE_POS)
                     .build();
 
     public static void init() {

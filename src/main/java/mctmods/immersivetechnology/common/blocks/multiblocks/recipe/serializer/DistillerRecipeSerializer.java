@@ -25,10 +25,10 @@ public class DistillerRecipeSerializer extends IERecipeSerializer<DistillerRecip
     @Override
     public DistillerRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext)
     {
-        FluidStack output = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result"));
-        int time = GsonHelper.getAsInt(json, "time");
         int energy = GsonHelper.getAsInt(json, "energy");
         FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
+        FluidStack output = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result"));
+        int time = GsonHelper.getAsInt(json, "time");
         DistillerRecipe recipe = new DistillerRecipe(recipeID, input, output, time, energy);
         return recipe;
     }
@@ -36,20 +36,19 @@ public class DistillerRecipeSerializer extends IERecipeSerializer<DistillerRecip
     @Override
     public @Nullable DistillerRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer)
     {
-        FluidStack output = buffer.readFluidStack();
-        FluidTagInput input = FluidTagInput.read(buffer);
-        int time = buffer.readInt();
         int energy = buffer.readInt();
+        FluidTagInput input = FluidTagInput.read(buffer);
+        FluidStack output = buffer.readFluidStack();
+        int time = buffer.readInt();
         return new DistillerRecipe(recipeId, input, output, time, energy);
     }
 
     @Override
     public void toNetwork(FriendlyByteBuf buffer, DistillerRecipe recipe)
     {
+        buffer.writeInt(recipe.getTotalProcessEnergy());
         buffer.writeFluidStack(recipe.fluidOutput);
         recipe.water.write(buffer);
-
         buffer.writeInt(recipe.getTotalProcessTime());
-        buffer.writeInt(recipe.getTotalProcessEnergy());
     }
 }

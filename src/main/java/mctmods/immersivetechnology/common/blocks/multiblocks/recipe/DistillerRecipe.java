@@ -5,6 +5,8 @@ import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
+import com.igteam.immersivegeology.common.block.multiblocks.recipe.CentrifugeRecipe;
+import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -35,7 +37,7 @@ public class DistillerRecipe extends MultiblockRecipe
     Lazy<Integer> totalProcessEnergy;
 
     public <T extends Recipe<?>> DistillerRecipe(ResourceLocation id, FluidTagInput water, @Nullable FluidStack fluidOutput, int time, int energy) {
-        super(LAZY_EMPTY, ITRecipeTypes.SOLAR_TOWER, id);
+        super(LAZY_EMPTY, ITRecipeTypes.DISTILLER, id);
         this.water = water;
         this.fluidOutput = fluidOutput;
         this.time = time;
@@ -47,21 +49,17 @@ public class DistillerRecipe extends MultiblockRecipe
         this.fluidInputList = Lists.newArrayList(this.water);
         if(this.water!=null)
             this.fluidInputList.add(this.water);
-        this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
+        if(this.fluidOutput != null) {
+            ITLib.IT_LOGGER.info("ITFluid not null.");
+            this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
+        }
     }
 
-    public static DistillerRecipe findRecipe(Level level, @Nonnull FluidStack input)
+    public static DistillerRecipe findRecipe(Level level, FluidStack input)
     {
         for(DistillerRecipe recipe : RECIPES.getRecipes(level))
-        {
-            if(!input.isEmpty())
-            {
-                if(recipe.water!=null&&recipe.water.test(input))
-                    return recipe;
-                if(recipe.water==null)
-                    return recipe;
-            }
-        }
+            if(recipe.water.test(input))
+                return recipe;
         return null;
     }
 

@@ -74,6 +74,7 @@ public class ITFluids {
         FLUID_REGISTRY_MAP.put("steam", STEAM.getStillGetter());
         FLUID_REGISTRY_MAP.put("steam_exhaust", STEAM_EXHAUST.getStillGetter());
         FLUID_REGISTRY_MAP.put("flue_gas", FLUE_GAS.getStillGetter());
+        FLUID_REGISTRY_MAP.put("distilled_water", DISTILLED_WATER.getStillGetter());
     }
 
     public static List<? extends Fluid> getITFluids() { return REGISTER.getEntries().stream().map(RegistryObject::get).collect(Collectors.toList()); }

@@ -1,0 +1,17 @@
+{
+  "type": "immersivetechnology:boiler",
+  "heatPerTick": 3,
+  "input0": {
+    "amount": 50,
+    "tag": "forge:creosote"
+  },
+  "input1": {
+    "amount": 95,
+    "tag": "immersivetechnology:distilled_water"
+  },
+  "result": {
+    "amount": 150,
+    "fluid": "immersivetechnology:steam"
+  },
+  "time": 25
+}

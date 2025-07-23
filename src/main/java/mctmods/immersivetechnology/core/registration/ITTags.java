@@ -10,6 +10,7 @@ public class ITTags
     public static final TagKey<Fluid> fluidSteamForge = TagUtils.createFluidWrapper(forgeLoc("steam"));
     public static final TagKey<Fluid> fluidSteam = TagUtils.createFluidWrapper(modLoc("steam"));
     public static final TagKey<Fluid> fluidFlueGas = TagUtils.createFluidWrapper(modLoc("flue_gas"));
+    public static final TagKey<Fluid> fluidDistilledWater = TagUtils.createFluidWrapper(modLoc("distilled_water"));
 
     private static ResourceLocation forgeLoc(String path) {
         return new ResourceLocation("forge", path);

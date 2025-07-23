@@ -46,6 +46,8 @@ public class ITRecipes extends RecipeProvider {
     }
 
     private void recipesBoiler(@Nonnull Consumer<FinishedRecipe> out) {
+        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 150).addInput(new FluidTagInput(ITTags.fluidDistilledWater, 95), "input1").addInput(new FluidTagInput(IETags.fluidBiodiesel, 50), "input0").setTime(25).setHeatPerTick(3).build(out, toRL("boiler/biodiesel_distilled_water"));
+        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 150).addInput(new FluidTagInput(ITTags.fluidDistilledWater, 95), "input1").addInput(new FluidTagInput(IETags.fluidCreosote, 50), "input0").setTime(25).setHeatPerTick(3).build(out, toRL("boiler/creosote2_distilled_water"));
         BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 100).addInput(new FluidTagInput(FluidTags.WATER, 95), "input1").addInput(new FluidTagInput(IETags.fluidBiodiesel, 50), "input0").setTime(75).setHeatPerTick(3).build(out, toRL("boiler/biodiesel"));
         BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 100).addInput(new FluidTagInput(FluidTags.WATER, 95), "input1").addInput(new FluidTagInput(IETags.fluidCreosote, 50), "input0").setTime(25).setHeatPerTick(3).build(out, toRL("boiler/creosote"));
     }
@@ -62,7 +64,10 @@ public class ITRecipes extends RecipeProvider {
         AdvancedCokeOvenRecipeBuilder.builder(Items.CHARCOAL).addInput(ItemTags.LOGS).setOil(FluidType.BUCKET_VOLUME / 4).setTime(600).build(out, toRL("cokeovenadv/charcoal"));
     }
 
-    private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) { DistillerRecipeBuilder.builder(new FluidStack(ITFluids.DISTILLED_WATER.getFlowing().getSource(), 250)).addInput(FluidTags.WATER, 250).setTime(20).setEnergy(512).build(out, toRL("distiller/water")); }
+    private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out)
+    {
+        DistillerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 100), 512, 20, new FluidStack(ITFluids.DISTILLED_WATER.getStill().getSource(), 100)).build(out, toRL("distiller/water"));
+    }
 
     private ResourceLocation toRL(String s) {
         if (!s.contains("/")) s = "crafting/" + s;
