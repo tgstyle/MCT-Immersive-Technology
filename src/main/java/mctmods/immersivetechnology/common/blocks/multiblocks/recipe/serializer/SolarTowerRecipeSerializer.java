@@ -14,21 +14,24 @@ public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRec
 {
     @Override
     public ItemStack getIcon() {
-        return ITMultiblockProvider.BOILER.iconStack();
+        return ITMultiblockProvider.SOLAR_TOWER.iconStack();
     }
 
     @Override
-    public SolarTowerRecipe readFromJson(ResourceLocation resourceLocation, JsonObject jsonObject, ICondition.IContext iContext) {
+    public SolarTowerRecipe readFromJson(ResourceLocation resourceLocation, JsonObject jsonObject, ICondition.IContext iContext)
+    {
         return null;
     }
 
     @Override
-    public @Nullable SolarTowerRecipe fromNetwork(ResourceLocation resourceLocation, FriendlyByteBuf friendlyByteBuf) {
+    public @Nullable SolarTowerRecipe fromNetwork(ResourceLocation resourceLocation, FriendlyByteBuf friendlyByteBuf)
+    {
         return null;
     }
 
     @Override
-    public void toNetwork(FriendlyByteBuf friendlyByteBuf, SolarTowerRecipe solarTowerRecipe) {
+    public void toNetwork(FriendlyByteBuf friendlyByteBuf, SolarTowerRecipe solarTowerRecipe)
+    {
 
     }
 }
