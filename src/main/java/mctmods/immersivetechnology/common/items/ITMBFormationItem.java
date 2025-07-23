@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.items;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
-import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.immersiveengineering.common.util.advancements.IEAdvancements;
 import mctmods.immersivetechnology.common.blocks.multiblocks.ITTemplateMultiblock;
