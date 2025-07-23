@@ -28,6 +28,7 @@ public class ITItems {
     public static HashMap<String, RegistryObject<? extends Item>> getItemRegistryMap() { return ITEM_REGISTRY_MAP; }
 
     public static final ItemRegObject<ITMBFormationItem> IT_FORMATION_TOOL = register("it_formation_tool", ITMBFormationItem::new);
+    public static final ItemRegObject<ITBaseItem> SALT = simple();
 
     public static void initItems() { }
 
@@ -37,13 +38,14 @@ public class ITItems {
         initItems();
         REGISTER.register(event);
         ITEM_REGISTRY_MAP.put("it_formation_tool", IT_FORMATION_TOOL.regObject);
+        ITEM_REGISTRY_MAP.put("salt", SALT.regObject);
     }
 
     private static <T> Consumer<T> nothing() { return $ -> { }; }
 
-    private static ITItems.ItemRegObject<ITBaseItem> simpleWithStackSize(String name, int maxSize) { return simple(name, p -> p.stacksTo(maxSize), i -> { }); }
+    private static ITItems.ItemRegObject<ITBaseItem> simple() { return simple("salt", $ -> { }, $ -> { }); }
 
-    private static ITItems.ItemRegObject<ITBaseItem> simple(String name) { return simple(name, $ -> { }, $ -> { }); }
+    private static ITItems.ItemRegObject<ITBaseItem> simpleWithStackSize(String name, int maxSize) { return simple(name, p -> p.stacksTo(maxSize), i -> { }); }
 
     private static ITItems.ItemRegObject<ITBaseItem> simple(String name, Consumer<Item.Properties> makeProps, Consumer<ITBaseItem> processItem) { return register(name, () -> Util.make(new ITBaseItem(Util.make(new Item.Properties(), makeProps)), processItem)); }
 
