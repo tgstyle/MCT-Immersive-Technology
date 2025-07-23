@@ -23,11 +23,9 @@ ext.version_buildnumber = versionProps.getProperty('build_number')?.toInteger() 
 println "-> build.gradle applying version: $version (build ${version_buildnumber})"
 
 gradle.taskGraph.whenReady { graph ->
-    // Only bump build number when doing a full build
     if (graph.hasTask(':build')) {
         ext.version_buildnumber = gradle.ext.nextBuildNumber
     } else {
-        // preserve existing build number for non-build tasks
         ext.version_buildnumber = project.findProperty('version_buildnumber') ?: 0
     }
 }
@@ -39,7 +37,6 @@ archivesBaseName = 'immersivetechnology'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 jar.enabled = true
 tasks.withType(Jar) {
-    // Enable ZIP64 for regular Jar task
     zip64 true
 }
 
@@ -105,7 +102,6 @@ processResources {
         expand version_replaces
     }
     exclude ".cache"
-    //Minify json resources
     doLast {
         fileTree(dir: getOutputs().getFiles().getAsPath(), includes: jsonPatterns).each {
             File file -> file.setText(JsonOutput.toJson(new JsonSlurper().parse(file, 'UTF-8')))
@@ -113,8 +109,6 @@ processResources {
     }
 }
 
-// When using "Run using IntelliJ" (the only option with well-working hotswapping) the used "resources" directory is
-// different from the one used by gradle/the processResources task
 task copyModsTomlForIntelliJ(type: Copy) {
     from processResources.destinationDir
     into "$projectDir/out/production/resources"
@@ -131,9 +125,10 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN'
+            property 'forge.logging.markers', ''
+            property 'forge.logging.console.level', 'error'
+            property 'org.apache.logging.log4j.level', 'ERROR'
             property 'forge.enabledGameTestNamespaces', 'immersiveenergy'
-            property 'forge.logging.console.level', 'debug'
             jvmArgs = [
                     '--add-opens=java.base/java.lang=ALL-UNNAMED',
                     '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED',
@@ -158,7 +153,8 @@ minecraft {
         server {
             workingDirectory project.file('run')
             property 'forge.logging.markers', ''
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', 'error'
+            property 'org.apache.logging.log4j.level', 'ERROR'
             property 'forge.enabledGameTestNamespaces', 'immersivetechnology'
             arg '-nogui'
             jvmArgs = [
@@ -184,7 +180,8 @@ minecraft {
         data {
             workingDirectory project.file('run')
             property 'forge.logging.markers', ''
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', 'error'
+            property 'org.apache.logging.log4j.level', 'ERROR'
             property 'fml.earlyprogresswindow', 'false'
             args '--mod', 'immersivetechnology', '--all', '--output', file('src/generated/resources/'), '--validate',
                     '--existing', sourceSets.main.resources.srcDirs[0]
@@ -215,7 +212,8 @@ minecraft {
         gameTestServer {
             workingDirectory project.file('run')
             property 'forge.logging.markers', ''
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', 'error'
+            property 'org.apache.logging.log4j.level', 'ERROR'
             property 'forge.enabledGameTestNamespaces', 'immersivetechnology'
             jvmArgs = [
                     '--add-opens=java.base/java.lang=ALL-UNNAMED',
@@ -246,24 +244,23 @@ minecraft {
 
 repositories {
     maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
-    maven { // JEI & BlockModelSplitter
+    maven {
         name 'Jared maven'
         url 'https://maven.blamejared.com/'
     }
     maven {
-        // tfc
         url = 'https://www.cursemaven.com'
         content {
             includeGroup "curse.maven"
         }
     }
-    maven {//Curse maven, in case some other maven goes offline and for mods that don't have a maven
+    maven {
         url "https://cfa2.cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
     }
-    maven { // CC-Tweaked
+    maven {
         url 'https://squiddev.cc/maven/'
         content {
             includeGroup("cc.tweaked")
@@ -313,7 +310,7 @@ dependencies {
 //    implementation fg.deobf("curse.maven:biomes-o-plenty-220318:4617259")
     // TFC
 //    implementation fg.deobf("vazkii.patchouli:Patchouli:$version_minecraft-$version_patchouli-FORGE")
-//    implementation fg.deobf("curse.maven:terrafirmacraft-302973:5943050")
+//    implementation fg.deobf("curse.maven:terrafirmacraft-302973:5943050")	
 }
 
 def customGradle = rootProject.file('custom.gradle');
@@ -358,8 +355,6 @@ artifacts {
     archives datagenJar
 }
 
-//Minimize/optimize all png files, requires optipng on the PATH
-// Credits: BrainStone
 void minimizePNGFile(File file) {
     long size = file.length()
     exec {
@@ -376,26 +371,33 @@ void minimizePNGFile(File file) {
 task optimizePng {
     def pngPatterns = ["**/*.png"]
     doLast {
-        //Ensure the logo is minimized (we add this file to each jar)
-        //Minimize any PNGs in the source sets
         for (dir in sourceSets.main.resources.srcDirs) {
             fileTree(dir: dir, includes: pngPatterns).each { minimizePNGFile(it) }
         }
     }
 }
 
-// Running this is equivalent to running genIntellijRuns, but it exists before afterEvaluate
 task genIntellijRunsDummy {}
 
 task speedUpPreRun {
     doLast {
         for (String s : new String[]{"Client", "Server", "Data"}) {
-            ant.replace(
-                    file: ".idea/runConfigurations/run"+s+".xml",
-                    // prepareRunX is prepareRuns + compile, but compiling is already handled by IntelliJ
-                    token: "prepareRun"+s,
-                    value: "prepareRuns"
-            )
+            def runConfigFile = file(".idea/runConfigurations/run${s}.xml")
+            if (runConfigFile.exists()) {
+                ant.replace(
+                        file: runConfigFile,
+                        token: "prepareRun${s}",
+                        value: "prepareRuns"
+                )
+                def content = runConfigFile.text
+                if (!content.contains('-Dorg.gradle.logging.level=warn')) {
+                    ant.replace(
+                            file: runConfigFile,
+                            token: '<option name="VM_PARAMETERS" value="',
+                            value: '<option name="VM_PARAMETERS" value="-Dorg.gradle.logging.level=warn '
+                    )
+                }
+            }
         }
     }
 }
