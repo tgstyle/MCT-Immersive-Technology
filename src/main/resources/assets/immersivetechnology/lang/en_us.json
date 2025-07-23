@@ -9,21 +9,28 @@
   "manual.immersivetechnology.it_multiblocks": "Multiblocks",
 
   "block.immersivetechnology.creative_barrel": "Creative Fluid Barrel",
+  "block.immersivetechnology.open_barrel": "Open Metal Barrel",
+  "block.immersivetechnology.steel_barrel": "Steel Metal Barrel",
   "block.immersivetechnology.coke_oven_preheater": "Coke Oven Preheater",
   "block.immersivetechnology.reinforced_coke_brick": "Reinforced Coke Brick",
 
-  "block.immersivetechnology.coke_oven_advanced": "Advanced Coke Oven",
   "block.immersivetechnology.boiler": "Boiler",
+  "block.immersivetechnology.distiller": "Distiller",
   "block.immersivetechnology.alternator": "Alternator",
   "block.immersivetechnology.steam_turbine": "Steam Turbine",
   "block.immersivetechnology.gas_turbine": "Gas Turbine",
+  "block.immersivetechnology.coke_oven_advanced": "Advanced Coke Oven",
+  "block.immersivetechnology.solar_tower": "Solar Tower",
 
+  "fluid_type.immersivetechnology.distilled_water": "Distilled Water",
   "fluid_type.immersivetechnology.steam": "Low Pressure Steam",
   "fluid_type.immersivetechnology.steam_exhaust": "Exhaust Steam",
   "fluid_type.immersivetechnology.flue_gas": "Flue Gas",
 
   "item.immersivetechnology.it_formation_tool": "Formation Tool",
+  "item.immersivetechnology.salt": "Salt",
 
+  "item.immersivetechnology.distilled_water_bucket": "Distilled Water Bucket",
   "item.immersivetechnology.steam_bucket": "Steam Bucket",
   "item.immersivetechnology.steam_exhaust_bucket": "Exhaust Steam Bucket",
   "item.immersivetechnology.flue_gas_bucket": "Flue Gas Bucket",
