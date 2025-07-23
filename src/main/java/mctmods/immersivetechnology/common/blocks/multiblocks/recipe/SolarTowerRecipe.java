@@ -17,7 +17,7 @@ public class SolarTowerRecipe extends MultiblockRecipe
 {
     public static RegistryObject<IERecipeSerializer<SolarTowerRecipe>> SERIALIZER;
 
-    public static CachedRecipeList<SolarTowerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.SOLAR_TOWER);
+    public static CachedRecipeList<DistillerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.DISTILLER);
 
     public TagKey<Fluid> inputTag;
     public int inputAmount;

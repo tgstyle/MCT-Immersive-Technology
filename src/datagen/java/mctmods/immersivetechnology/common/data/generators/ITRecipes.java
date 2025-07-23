@@ -2,10 +2,7 @@ package mctmods.immersivetechnology.common.data.generators;
 
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.builder.AdvancedCokeOvenRecipeBuilder;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.builder.BoilerRecipeBuilder;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.builder.GasTurbineRecipeBuilder;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.builder.SteamTurbineRecipeBuilder;
+import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.builder.*;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import mctmods.immersivetechnology.core.registration.ITTags;
@@ -17,6 +14,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,6 +39,7 @@ public class ITRecipes extends RecipeProvider
         recipesCoke(consumer);
         recipesBoiler(consumer);
         recipesTurbine(consumer);
+        recipesDistiller(consumer);
     }
 
     private void itemRecipes(Consumer<FinishedRecipe> consumer)
@@ -105,6 +104,15 @@ public class ITRecipes extends RecipeProvider
                 .setOil(FluidType.BUCKET_VOLUME/4)
                 .setTime(600)
                 .build(out, toRL("cokeovenadv/charcoal"));
+    }
+
+    private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out)
+    {
+        DistillerRecipeBuilder.builder(new FluidStack(ITFluids.DISTILLED_WATER.getFlowing().getSource(), 250))
+                .addInput(FluidTags.WATER, 250)
+                .setTime(20)
+                .setEnergy(512)
+                .build(out, toRL("distiller/water"));
     }
 
     private ResourceLocation toRL(String s)

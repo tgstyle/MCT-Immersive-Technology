@@ -65,6 +65,11 @@ public class ITFluids {
             props -> { props.density(-1000).viscosity(200); }, 0xFF808080
     );
 
+    public static final ITFluids.FluidEntry DISTILLED_WATER = FluidEntry.make(
+            "distilled_water", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            props -> { props.density(1000).viscosity(2000); }, 0xFFFFFFCC
+    );
+
     static {
         FLUID_REGISTRY_MAP.put("steam", STEAM.getStillGetter());
         FLUID_REGISTRY_MAP.put("steam_exhaust", STEAM_EXHAUST.getStillGetter());
