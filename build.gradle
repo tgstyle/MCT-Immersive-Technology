@@ -6,7 +6,7 @@ import org.gradle.work.Incremental
 plugins {
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle' version '6.0.+'
+    id 'net.minecraftforge.gradle' version '6.0.+'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
@@ -33,7 +33,7 @@ gradle.taskGraph.whenReady { graph ->
 }
 
 version = '0.1.0-a' + version_buildnumber
-group = 'mctmods.immersivetechnology' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = 'mctmods.immersivetechnology'
 archivesBaseName = 'immersivetechnology'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -68,6 +68,20 @@ sourceSets {
     }
 }
 
+ext {
+    modid = 'immersivetechnology'
+    version_minecraft = versionProps['mc_version']
+    version_forge = versionProps['forge_version']
+    version_jei = versionProps['jei_version']
+    version_parchment = versionProps['version_parchment']
+    version_ie = versionProps['version_ie']
+    version_ig = versionProps['version_ig']
+    mod_license = versionProps['mod_license']
+    mod_name = versionProps['mod_name']
+    mod_authors = versionProps['mod_authors']
+    mod_description = versionProps['mod_description']
+}
+
 def version_replaces = [
         'version'      : project.version,
         'build_number' : version_buildnumber,
@@ -75,11 +89,11 @@ def version_replaces = [
         'forge_version': version_forge,
         'jei_version'  : version_jei,
         'mod_license'  : mod_license,
-        'mod_name'  : mod_name,
-        'mod_authors' : mod_authors,
+        'mod_name'     : mod_name,
+        'mod_authors'  : mod_authors,
         'mod_description': mod_description,
-        'version_ie': version_ie,
-        'version_ig': version_ig
+        'version_ie'   : version_ie,
+        'version_ig'   : version_ig
 ]
 
 def jsonPatterns = ["**/*.json", "**/*.mcmeta"]
@@ -108,10 +122,6 @@ task copyModsTomlForIntelliJ(type: Copy) {
 }
 
 copyModsTomlForIntelliJ.dependsOn processResources
-afterEvaluate {
-    // prepareRuns doesn't exist before afterEvaluate
-    prepareRuns.dependsOn copyModsTomlForIntelliJ
-}
 
 minecraft {
     mappings channel: 'parchment', version: "$version_parchment-$version_minecraft"
@@ -220,6 +230,10 @@ repositories {
             includeModule("org.squiddev", "Cobalt")
         }
     }
+    maven {
+        name 'ParchmentMC'
+        url 'https://ldtteam.jfrog.io/artifactory/parchmentmc-public/'
+    }
 }
 
 mixin {
@@ -230,7 +244,7 @@ mixin {
 project.ext.lwjglVersion = "3.3.6"
 project.ext.lwjglNatives = "natives-linux"
 dependencies {
-    minecraft "net.neoforged:forge:${version_minecraft}-${version_forge}"
+    minecraft "net.minecraftforge:forge:${version_minecraft}-${version_forge}"
 
     compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:${version_jei}")
     compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:${version_jei}")
@@ -285,10 +299,6 @@ task signJar(type: SignJar) {
 }
 
 build.dependsOn signJar
-
-afterEvaluate {
-    reobfJar.enabled = true
-}
 
 task datagenJar(type: Jar, dependsOn: datagenClasses) {
     archiveClassifier = 'datagen'

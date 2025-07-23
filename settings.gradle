@@ -1,38 +1,37 @@
 pluginManagement {
     repositories {
-        maven { url 'https://maven.neoforged.net' }
+        maven { url 'https://maven.minecraftforge.net' }
         mavenCentral()
-        maven {url 'https://repo.spongepowered.org/repository/maven-public/'}
+        maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
         maven { url 'https://maven.parchmentmc.org' }
     }
     resolutionStrategy {
         eachPlugin {
             if (requested.id.toString() == 'org.spongepowered.mixin') {
                 useModule("org.spongepowered:mixingradle:${requested.version}")
-            } else if (requested.id.toString() == 'org.moddingx.modgradle.mapping') {
-                useModule("org.moddingx:ModGradle:${requested.version}")
             }
         }
     }
 }
 
-// 1. Load version.properties
+// Load version.properties
 def propsFile = file('version.properties')
-def props     = new Properties()
+def props = new Properties()
 props.load(new FileInputStream(propsFile))
 
-// 2. Bump the build_number
-def baseVersion  = props['version']
+// Bump the build_number
+def baseVersion = props['version']
 def currentBuild = props['build_number'].toInteger()
-def nextBuild    = currentBuild + 1
+def nextBuild = currentBuild + 1
 
 props['build_number'] = nextBuild.toString()
 props.store(new FileOutputStream(propsFile), null)
 
-// 3. Publish the full new version via gradle.ext
-gradle.ext.nextVersion        = "${baseVersion}-b${nextBuild}"
-gradle.ext.nextBuildNumber   = nextBuild
+// Publish the full new version via gradle.ext
+gradle.ext.nextVersion = "${baseVersion}-b${nextBuild}"
+gradle.ext.nextBuildNumber = nextBuild
 
-println "⤷ settings.gradle bumped to ${gradle.ext.nextVersion}"
+println "Ran settings.gradle bumped to ${gradle.ext.nextVersion}"
 
+def version_minecraft = props['mc_version']
 rootProject.name = "ImmersiveTechnology-${version_minecraft}-${baseVersion}"
