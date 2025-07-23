@@ -126,25 +126,7 @@ minecraft {
         client {
             workingDirectory project.file('run')
             property 'forge.logging.markers', ''
-            property 'forge.logging.console.level', 'error'
-            property 'org.apache.logging.log4j.level', 'ERROR'
             property 'forge.enabledGameTestNamespaces', 'immersiveenergy'
-            jvmArgs = [
-                    '--add-opens=java.base/java.lang=ALL-UNNAMED',
-                    '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED',
-                    '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED',
-                    '--add-opens=java.base/java.io=ALL-UNNAMED',
-                    '--add-opens=java.base/java.net=ALL-UNNAMED',
-                    '--add-opens=java.base/java.nio=ALL-UNNAMED',
-                    '--add-opens=java.base/java.util=ALL-UNNAMED',
-                    '--add-opens=java.base/java.util.concurrent=ALL-UNNAMED',
-                    '--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.nio.ch=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.nio.cs=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.security.action=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.util.calendar=ALL-UNNAMED',
-                    '--add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED'
-            ]
             ideaModule project.name + ".main"
             mods {
                 immersivetechnology { source sourceSets.main }
@@ -153,26 +135,8 @@ minecraft {
         server {
             workingDirectory project.file('run')
             property 'forge.logging.markers', ''
-            property 'forge.logging.console.level', 'error'
-            property 'org.apache.logging.log4j.level', 'ERROR'
             property 'forge.enabledGameTestNamespaces', 'immersivetechnology'
             arg '-nogui'
-            jvmArgs = [
-                    '--add-opens=java.base/java.lang=ALL-UNNAMED',
-                    '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED',
-                    '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED',
-                    '--add-opens=java.base/java.io=ALL-UNNAMED',
-                    '--add-opens=java.base/java.net=ALL-UNNAMED',
-                    '--add-opens=java.base/java.nio=ALL-UNNAMED',
-                    '--add-opens=java.base/java.util=ALL-UNNAMED',
-                    '--add-opens=java.base/java.util.concurrent=ALL-UNNAMED',
-                    '--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.nio.ch=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.nio.cs=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.security.action=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.util.calendar=ALL-UNNAMED',
-                    '--add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED'
-            ]
             mods {
                 immersivetechnology { source sourceSets.main }
             }
@@ -180,27 +144,9 @@ minecraft {
         data {
             workingDirectory project.file('run')
             property 'forge.logging.markers', ''
-            property 'forge.logging.console.level', 'error'
-            property 'org.apache.logging.log4j.level', 'ERROR'
             property 'fml.earlyprogresswindow', 'false'
             args '--mod', 'immersivetechnology', '--all', '--output', file('src/generated/resources/'), '--validate',
                     '--existing', sourceSets.main.resources.srcDirs[0]
-            jvmArgs = [
-                    '--add-opens=java.base/java.lang=ALL-UNNAMED',
-                    '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED',
-                    '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED',
-                    '--add-opens=java.base/java.io=ALL-UNNAMED',
-                    '--add-opens=java.base/java.net=ALL-UNNAMED',
-                    '--add-opens=java.base/java.nio=ALL-UNNAMED',
-                    '--add-opens=java.base/java.util=ALL-UNNAMED',
-                    '--add-opens=java.base/java.util.concurrent=ALL-UNNAMED',
-                    '--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.nio.ch=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.nio.cs=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.security.action=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.util.calendar=ALL-UNNAMED',
-                    '--add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED'
-            ]
             ideaModule project.name + ".datagen"
             mods {
                 immersivetechnology {
@@ -212,25 +158,7 @@ minecraft {
         gameTestServer {
             workingDirectory project.file('run')
             property 'forge.logging.markers', ''
-            property 'forge.logging.console.level', 'error'
-            property 'org.apache.logging.log4j.level', 'ERROR'
             property 'forge.enabledGameTestNamespaces', 'immersivetechnology'
-            jvmArgs = [
-                    '--add-opens=java.base/java.lang=ALL-UNNAMED',
-                    '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED',
-                    '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED',
-                    '--add-opens=java.base/java.io=ALL-UNNAMED',
-                    '--add-opens=java.base/java.net=ALL-UNNAMED',
-                    '--add-opens=java.base/java.nio=ALL-UNNAMED',
-                    '--add-opens=java.base/java.util=ALL-UNNAMED',
-                    '--add-opens=java.base/java.util.concurrent=ALL-UNNAMED',
-                    '--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.nio.ch=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.nio.cs=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.security.action=ALL-UNNAMED',
-                    '--add-opens=java.base/sun.util.calendar=ALL-UNNAMED',
-                    '--add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED'
-            ]
             ideaModule project.name + ".gametest"
             mods {
                 immersivetechnology {
