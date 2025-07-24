@@ -8,8 +8,10 @@ import blusunrize.immersiveengineering.common.register.IEMenuTypes;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.AdvancedCokeOvenMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.BoilerMenu;
+import mctmods.immersivetechnology.common.blocks.multiblocks.gui.DistillerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITAdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITBoilerLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITDistillerLogic;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -36,6 +38,7 @@ public class ITMenuTypes {
     public static final MultiblockContainer<ITAdvancedCokeOvenLogic.State, AdvancedCokeOvenMenu> ADVANCED_COKE_OVEN_MENU = registerMultiblock(ITLib.GUIID_AdvCokeOven, AdvancedCokeOvenMenu::makeServer, AdvancedCokeOvenMenu::makeClient);
 
     public static final MultiblockContainer<ITBoilerLogic.State, BoilerMenu> BOILER_MENU = registerMultiblock(ITLib.GUIID_Boiler, BoilerMenu::makeServer, BoilerMenu::makeClient);
+    public static final MultiblockContainer<ITDistillerLogic.State, DistillerMenu> DISTILLER_MENU = registerMultiblock(ITLib.GUIID_Distiller, DistillerMenu::makeServer, DistillerMenu::makeClient);
 
     public static <M extends AbstractContainerMenu> RegistryObject<MenuType<M>> registerSimple(String name, IEMenuTypes.SimpleContainerConstructor<M> factory) {
         return REGISTER.register(name, () -> {

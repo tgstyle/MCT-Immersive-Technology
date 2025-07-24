@@ -17,10 +17,10 @@ public class DistillerMenu extends IEContainerMenu {
     protected DistillerMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, ITDistillerLogic.DistillerTank tanks) {
         super(ctx);
         this.tanks = tanks;
-        this.addSlot(new IESlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_WATER_IN, 56, 15, IESlot.NewFluidContainer.Filter.ANY));
-        this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.SLOT_WATER_EMPTY_OUT, 56, 54));
-        this.addSlot(new IESlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_WATER_EMPTY_IN, 120, 15, IESlot.NewFluidContainer.Filter.ANY));
-        this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.SLOT_WATER_OUT, 120, 54));
+        this.addSlot(new IESlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_WATER_IN, 26, 17, IESlot.NewFluidContainer.Filter.ANY));
+        this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.SLOT_WATER_EMPTY_OUT, 26, 53));
+        this.addSlot(new IESlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_WATER_EMPTY_IN, 134, 17, IESlot.NewFluidContainer.Filter.ANY));
+        this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.SLOT_WATER_OUT, 134, 53));
         for(int i = 0; i < 3; i++) for(int j = 0; j < 9; j++) addSlot(new Slot(inventoryPlayer, j+i*9+9, 8+j*18, 84+i*18));
         for(int i = 0; i < 9; i++) addSlot(new Slot(inventoryPlayer, i, 8+i*18, 142));
         addGenericData(GenericContainerData.fluid(tanks.waterInput()));

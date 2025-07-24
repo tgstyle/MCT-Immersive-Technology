@@ -19,5 +19,11 @@ public class DistillerScreen extends IEContainerScreen<DistillerMenu> {
 
     @Nonnull
     @Override
-    protected List<InfoArea> makeInfoAreas() { return ImmutableList.of(new FluidInfoArea(menu.tanks.waterInput(), new Rect2i(leftPos + 56, topPos + 20, 16, 47), 177, 31, 20, 51, TEXTURE), new FluidInfoArea(menu.tanks.output(), new Rect2i(leftPos + 120, topPos + 20, 16, 47), 177, 31, 20, 51, TEXTURE)); }
+    protected List<InfoArea> makeInfoAreas() {
+        return ImmutableList.of(
+            new FluidInfoArea(menu.tanks.waterInput(),
+            new Rect2i(leftPos + 58, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE),
+            new FluidInfoArea(menu.tanks.output(),
+            new Rect2i(leftPos + 112, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE));
+    }
 }

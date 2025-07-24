@@ -6,6 +6,7 @@ import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.Tree.InnerNode;
 import mctmods.immersivetechnology.client.menu.multiblock.AdvCokeOvenScreen;
 import mctmods.immersivetechnology.client.menu.multiblock.BoilerScreen;
+import mctmods.immersivetechnology.client.menu.multiblock.DistillerScreen;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.resources.ResourceLocation;
@@ -30,7 +31,11 @@ public class ITContent {
 
     private static void multiblockEntry(ManualInstance instance, InnerNode<ResourceLocation, ManualEntry> category, String id) { ManualEntry.ManualEntryBuilder multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual()); multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, id)); instance.addEntry(category, multiblock.create()); }
 
-    public static void registerContainersAndScreens() { MenuScreens.register(ITMenuTypes.ADVANCED_COKE_OVEN_MENU.getType(), AdvCokeOvenScreen::new); MenuScreens.register(ITMenuTypes.BOILER_MENU.getType(), BoilerScreen::new); }
+    public static void registerContainersAndScreens() {
+        MenuScreens.register(ITMenuTypes.ADVANCED_COKE_OVEN_MENU.getType(), AdvCokeOvenScreen::new);
+        MenuScreens.register(ITMenuTypes.BOILER_MENU.getType(), BoilerScreen::new);
+        MenuScreens.register(ITMenuTypes.DISTILLER_MENU.getType(), DistillerScreen::new);
+    }
 
     public static void initialize(IEventBus event) { ITMultiblockProvider.forceClassLoad(); ITRegistrationHolder.initialize(event); ITRecipeTypes.init(event); ITSounds.init(event); ITParticles.REGISTER.register(event); }
 }

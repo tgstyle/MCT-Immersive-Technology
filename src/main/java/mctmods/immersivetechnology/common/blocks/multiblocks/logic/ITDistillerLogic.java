@@ -18,6 +18,11 @@ import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.DistillerProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
+import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
+import mctmods.immersivetechnology.core.registration.ITSounds;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -27,6 +32,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -42,14 +48,15 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.ItemHandlerHelper;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State>, IServerTickableComponent<ITDistillerLogic.State>, IClientTickableComponent<ITDistillerLogic.State> {
     public static final BlockPos REDSTONE_POS = new BlockPos(2, 1, 0);
 
-    private static final CapabilityPosition FLUID_OUTPUT_CAP = new CapabilityPosition(2, 0, 1, RelativeBlockFace.RIGHT);
-    private static final Set<CapabilityPosition> FLUID_INPUT_CAPS = Set.of( new CapabilityPosition(0, 0, 1, RelativeBlockFace.LEFT) );
+    private static final CapabilityPosition FLUID_OUTPUT_CAP = new CapabilityPosition(2, 0, 1, RelativeBlockFace.LEFT);
+    private static final Set<CapabilityPosition> FLUID_INPUT_CAPS = Set.of( new CapabilityPosition(0, 0, 1, RelativeBlockFace.RIGHT) );
     private static final Set<BlockPos> FLUID_INPUTS = FLUID_INPUT_CAPS.stream().map(CapabilityPosition::posInMultiblock).collect(Collectors.toSet());
     private static final Set<CapabilityPosition> ENERGY_INPUTS = Set.of(new CapabilityPosition(2,1, 2, RelativeBlockFace.UP));
 
@@ -78,7 +85,23 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
     }
 
     @Override
-    public void tickClient(IMultiblockContext<State> iMultiblockContext) {}
+    public void tickClient(IMultiblockContext<State> ctx) {
+        final State state = ctx.getState();
+
+        if(!state.isSoundPlaying.getAsBoolean())
+        {
+            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(1, 1, 1));
+            state.isSoundPlaying = ITMultiblockSound.startSound(
+                    () -> state.active, ctx.isValid(), soundPos, ITSounds.distiller, () -> {
+                        LocalPlayer player = Minecraft.getInstance().player;
+                        if (player == null) { return 0f; }
+                        float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
+                        return attenuation;
+                    },
+                    () -> 1f
+            );
+        }
+    }
 
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
@@ -131,6 +154,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
 
     public static class State implements IMultiblockState, ProcessContext.ProcessContextInMachine<DistillerRecipe> {
         public boolean active;
+        public BooleanSupplier isSoundPlaying = () -> false;
         private final StoredCapability<IEnergyStorage> energyCap;
         private final StoredCapability<IFluidHandler> inputCap;
         private final StoredCapability<IFluidHandler> outputCapSteam;

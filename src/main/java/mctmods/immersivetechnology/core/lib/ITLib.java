@@ -13,6 +13,7 @@ public class ITLib {
     public static final String DESC_FLAVOUR = DESC + "flavour.";
     public static final String GUIID_AdvCokeOven = "coke_oven_advanced";
     public static final String GUIID_Boiler = "gui_boiler";
+    public static final String GUIID_Distiller = "gui_distiller";
 
     public static Logger getNewLogger() { return LogUtils.getLogger(); }
 

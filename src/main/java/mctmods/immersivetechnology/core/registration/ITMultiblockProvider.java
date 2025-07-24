@@ -126,9 +126,10 @@ public class ITMultiblockProvider {
                     .gui(ITMenuTypes.ADVANCED_COKE_OVEN_MENU)
                     .build();
     public static final MultiblockRegistration<ITDistillerLogic.State> DISTILLER =
-            stone(new ITDistillerLogic(), "distiller", false)
+            metal(new ITDistillerLogic(), "distiller")
                     .structure(() -> getMBTemplate.apply("distiller"))
                     .redstone(s -> s.rsState, ITDistillerLogic.REDSTONE_POS)
+                    .gui(ITMenuTypes.DISTILLER_MENU)
                     .build();
 
     public static void init() {
