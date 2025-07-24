@@ -1,6 +1,8 @@
 package mctmods.immersivetechnology.client.menu.multiblock;
 
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
+import blusunrize.immersiveengineering.client.gui.MixerScreen;
+import blusunrize.immersiveengineering.client.gui.info.EnergyInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.InfoArea;
 import com.google.common.collect.ImmutableList;
@@ -20,7 +22,9 @@ public class DistillerScreen extends IEContainerScreen<DistillerMenu> {
     @Nonnull
     @Override
     protected List<InfoArea> makeInfoAreas() {
+
         return ImmutableList.of(
+            new EnergyInfoArea(this.leftPos + 158, this.topPos + 22, menu.energy),
             new FluidInfoArea(menu.tanks.waterInput(),
             new Rect2i(leftPos + 58, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE),
             new FluidInfoArea(menu.tanks.output(),

@@ -107,7 +107,6 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
     public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         final boolean wasActive = state.active;
-        state.energy.receiveEnergy(1, false);
         state.active = state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
         DistillerRecipe recipe = DistillerRecipe.findRecipe(ctx.getLevel().getRawLevel(), state.tanks.waterInput.getFluid());
 
@@ -165,7 +164,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         private final IFluidTank[] tankArray = {tanks.waterInput, tanks.output};
         private final MultiblockProcessor.InMachineProcessor<DistillerRecipe> processor;
 
-        AveragingEnergyStorage energy = new AveragingEnergyStorage(32000);
+        public AveragingEnergyStorage energy = new AveragingEnergyStorage(32000);
 
         public State(IInitialMultiblockContext<ITDistillerLogic.State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
