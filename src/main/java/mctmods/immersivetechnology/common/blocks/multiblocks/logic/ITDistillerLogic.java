@@ -11,6 +11,8 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockL
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.mixer.MixingProcess;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import blusunrize.immersiveengineering.common.fluids.ArrayFluidHandler;
@@ -18,6 +20,10 @@ import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.DistillerProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
+import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
+import mctmods.immersivetechnology.core.registration.ITSounds;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -27,6 +33,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -42,6 +49,7 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.ItemHandlerHelper;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -78,7 +86,22 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
     }
 
     @Override
-    public void tickClient(IMultiblockContext<State> iMultiblockContext) {}
+    public void tickClient(IMultiblockContext<State> ctx) {
+        final State state = ctx.getState();
+        if(!state.isSoundPlaying.getAsBoolean())
+        {
+            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(2.5, 1.5, 1.5));
+            state.isSoundPlaying = ITMultiblockSound.startSound(
+                    () -> state.active, ctx.isValid(), soundPos, ITSounds.distiller, () -> {
+                        LocalPlayer player = Minecraft.getInstance().player;
+                        if (player == null) { return 0f; }
+                        float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
+                        return attenuation;
+                    },
+                    () -> 1f
+            );
+        }
+    }
 
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
@@ -124,7 +147,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         final FluidStack leftInput = state.tanks.waterInput.getFluid();
         if (leftInput.isEmpty()) { return; }
         if (recipe==null) { return; }
-        DistillerProcess process = new DistillerProcess(recipe);
+        MultiblockProcessInMachine<DistillerRecipe> process = new MultiblockProcessInMachine<>(recipe);
         if (!leftInput.isEmpty()) { process.setInputTanks(0); }
         state.processor.addProcessToQueue(process, level, false);
     }
@@ -140,7 +163,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         private final DistillerTank tanks = new DistillerTank();
         private final IFluidTank[] tankArray = {tanks.waterInput, tanks.output};
         private final MultiblockProcessor.InMachineProcessor<DistillerRecipe> processor;
-
+        private BooleanSupplier isSoundPlaying = () -> false;
         AveragingEnergyStorage energy = new AveragingEnergyStorage(32000);
 
         public State(IInitialMultiblockContext<ITDistillerLogic.State> ctx) {
@@ -148,7 +171,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
             this.inputCap = new StoredCapability<>(new ArrayFluidHandler(false, true, markDirty, this.tanks.waterInput));
             this.outputCapSteam = new StoredCapability<>(new ArrayFluidHandler(true, false, markDirty, this.tanks.output));
             this.energyCap = new StoredCapability<>(this.energy);
-            this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0, 1, markDirty, DistillerRecipe.RECIPES::getById, DistillerProcess::new);
+            this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0, 1, markDirty, DistillerRecipe.RECIPES::getById);
 
             inventory = new SlotwiseItemHandler(
                     List.of(
@@ -176,7 +199,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         public void readSaveNBT(CompoundTag nbt) {
             energy.deserializeNBT(nbt.get("energy"));
             this.tanks.readNBT(nbt.getCompound("tanks"));
-            this.processor.fromNBT(nbt.get("processor", DistillerProcess::new);
+            this.processor.fromNBT(nbt.get("processor"), MultiblockProcessInMachine::new);
             this.inventory.deserializeNBT(nbt.getCompound("inventory"));
         }
 

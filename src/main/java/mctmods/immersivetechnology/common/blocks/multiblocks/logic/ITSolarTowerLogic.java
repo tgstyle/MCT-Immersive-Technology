@@ -30,8 +30,8 @@ import java.util.function.Function;
 public class ITSolarTowerLogic implements  IMultiblockLogic<ITSolarTowerLogic.State>, IServerTickableComponent<ITSolarTowerLogic.State>, IClientTickableComponent<ITSolarTowerLogic.State>
 {
     @Override
-    public State createInitialState(IInitialMultiblockContext iInitialMultiblockContext) {
-        return null;
+    public State createInitialState(IInitialMultiblockContext ctx) {
+        return new State(ctx);
     }
 
     @Override
@@ -62,6 +62,10 @@ public class ITSolarTowerLogic implements  IMultiblockLogic<ITSolarTowerLogic.St
 
     public static class State implements IMultiblockState, ProcessContext.ProcessContextInWorld<SolarTowerRecipe>
     {
+        public State(IInitialMultiblockContext<State> ctx)
+        {
+
+        }
         @Override
         public void writeSaveNBT(CompoundTag compoundTag) {
 
