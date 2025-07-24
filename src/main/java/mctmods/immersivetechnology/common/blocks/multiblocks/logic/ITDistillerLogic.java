@@ -18,10 +18,6 @@ import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.DistillerProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
-import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
-import mctmods.immersivetechnology.core.registration.ITSounds;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -31,7 +27,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -47,7 +42,6 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.ItemHandlerHelper;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -84,22 +78,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
     }
 
     @Override
-    public void tickClient(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
-        if(!state.isSoundPlaying.getAsBoolean())
-        {
-            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(2.5, 1.5, 1.5));
-            state.isSoundPlaying = ITMultiblockSound.startSound(
-                    () -> state.active, ctx.isValid(), soundPos, ITSounds.distiller, () -> {
-                        LocalPlayer player = Minecraft.getInstance().player;
-                        if (player == null) { return 0f; }
-                        float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
-                        return attenuation;
-                    },
-                    () -> 1f
-            );
-        }
-    }
+    public void tickClient(IMultiblockContext<State> iMultiblockContext) {}
 
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
@@ -152,7 +131,6 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
 
     public static class State implements IMultiblockState, ProcessContext.ProcessContextInMachine<DistillerRecipe> {
         public boolean active;
-        private BooleanSupplier isSoundPlaying = () -> false;
         private final StoredCapability<IEnergyStorage> energyCap;
         private final StoredCapability<IFluidHandler> inputCap;
         private final StoredCapability<IFluidHandler> outputCapSteam;
@@ -170,7 +148,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
             this.inputCap = new StoredCapability<>(new ArrayFluidHandler(false, true, markDirty, this.tanks.waterInput));
             this.outputCapSteam = new StoredCapability<>(new ArrayFluidHandler(true, false, markDirty, this.tanks.output));
             this.energyCap = new StoredCapability<>(this.energy);
-            this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0, 1, markDirty, DistillerRecipe.RECIPES::getById, DistillerProcess::new);
+            this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, DistillerRecipe.RECIPES::getById);
 
             inventory = new SlotwiseItemHandler(
                     List.of(
@@ -198,7 +176,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         public void readSaveNBT(CompoundTag nbt) {
             energy.deserializeNBT(nbt.get("energy"));
             this.tanks.readNBT(nbt.getCompound("tanks"));
-            this.processor.fromNBT(nbt.get("processor", DistillerProcess::new));
+            this.processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), DistillerProcess::new);
             this.inventory.deserializeNBT(nbt.getCompound("inventory"));
         }
 

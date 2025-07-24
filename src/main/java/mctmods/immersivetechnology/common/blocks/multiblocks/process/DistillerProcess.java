@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandler;
-
 import java.util.function.BiFunction;
 
 public class DistillerProcess extends MultiblockProcessInMachine<DistillerRecipe> {

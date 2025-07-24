@@ -7,11 +7,11 @@
   },
   "input1": {
     "amount": 95,
-    "tag": "immersivetechnology:distilled_water"
+    "tag": "minecraft:water"
   },
   "result": {
-    "amount": 150,
+    "amount": 100,
     "fluid": "immersivetechnology:steam"
   },
-  "time": 25
+  "time": 75
 }
