@@ -13,11 +13,9 @@ import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
 
-public class SolarTowerRecipe extends MultiblockRecipe
-{
+public class SolarTowerRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<SolarTowerRecipe>> SERIALIZER;
-
-    public static CachedRecipeList<DistillerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.DISTILLER);
+    public static final CachedRecipeList<DistillerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.DISTILLER);
 
     public TagKey<Fluid> inputTag;
     public int inputAmount;
@@ -34,8 +32,7 @@ public class SolarTowerRecipe extends MultiblockRecipe
     }
 
     @Override
-    protected IERecipeSerializer<?> getIESerializer()
-    {
+    protected IERecipeSerializer<?> getIESerializer() {
         return SERIALIZER.get();
     }
 
@@ -44,8 +41,7 @@ public class SolarTowerRecipe extends MultiblockRecipe
     }
 
     @Override
-    public int getMultipleProcessTicks()
-    {
+    public int getMultipleProcessTicks() {
         return 0;
     }
 }

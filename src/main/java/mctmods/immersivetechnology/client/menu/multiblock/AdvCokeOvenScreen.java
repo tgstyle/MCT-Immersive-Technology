@@ -18,14 +18,11 @@ import java.util.List;
 
 public class AdvCokeOvenScreen extends IEContainerScreen<AdvancedCokeOvenMenu> {
     private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("coke_oven_advanced");
-
     public AdvCokeOvenScreen(AdvancedCokeOvenMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
     @Nonnull
     @Override
-    protected List<InfoArea> makeInfoAreas() {
-        return ImmutableList.of(new FluidInfoArea(menu.tank, new Rect2i(leftPos + 129, topPos + 20, 16, 47), 176, 31, 20, 51, TEXTURE));
-    }
+    protected List<InfoArea> makeInfoAreas() { return ImmutableList.of(new FluidInfoArea(menu.tank, new Rect2i(leftPos + 129, topPos + 20, 16, 47), 176, 31, 20, 51, TEXTURE)); }
 
     @Override
     protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float f, int mx, int my) {

@@ -18,14 +18,13 @@ import javax.annotation.Nullable;
 
 public class SteamTurbineRecipe extends IESerializableRecipe {
     public static RegistryObject<IERecipeSerializer<SteamTurbineRecipe>> SERIALIZER;
-
-    public static CachedRecipeList<SteamTurbineRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.STEAM_TURBINE);
+    public static final CachedRecipeList<SteamTurbineRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.STEAM_TURBINE);
 
     public TagKey<Fluid> inputTag;
     public int inputAmount;
     @Nullable
     public FluidStack fluidOutput;
-    private int time;
+    private final int time;
 
     public SteamTurbineRecipe(ResourceLocation id, TagKey<Fluid> inputTag, int inputAmount, @Nullable FluidStack fluidOutput, int time) {
         super(LAZY_EMPTY, ITRecipeTypes.STEAM_TURBINE, id);
@@ -50,14 +49,8 @@ public class SteamTurbineRecipe extends IESerializableRecipe {
     }
 
     public static SteamTurbineRecipe findFuel(Level level, FluidStack fluid, @Nullable SteamTurbineRecipe hint) {
-        if (hint != null && hint.matches(fluid)) {
-            return hint;
-        }
-        for (SteamTurbineRecipe recipe : RECIPES.getRecipes(level)) {
-            if (recipe.matches(fluid)) {
-                return recipe;
-            }
-        }
+        if (hint != null && hint.matches(fluid)) { return hint; }
+        for (SteamTurbineRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.matches(fluid)) { return recipe; } }
         return null;
     }
 
