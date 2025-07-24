@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.builder.*;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITFluids;
+import mctmods.immersivetechnology.core.registration.ITItems;
 import mctmods.immersivetechnology.core.registration.ITTags;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -12,6 +13,7 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.fluids.FluidStack;
@@ -64,9 +66,9 @@ public class ITRecipes extends RecipeProvider {
         AdvancedCokeOvenRecipeBuilder.builder(Items.CHARCOAL).addInput(ItemTags.LOGS).setOil(FluidType.BUCKET_VOLUME / 4).setTime(600).build(out, toRL("cokeovenadv/charcoal"));
     }
 
-    private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out)
-    {
-        DistillerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 100), 512, 20, new FluidStack(ITFluids.DISTILLED_WATER.getStill().getSource(), 100)).build(out, toRL("distiller/water"));
+    private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) {
+        ItemStack salt = new ItemStack(ITItems.SALT.get(), 1);
+        DistillerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 1000), 10000, 20, new FluidStack(ITFluids.DISTILLED_WATER.getStill().getSource(), 500)).addItemOutput(salt, 0.5f).build(out, toRL("distiller/water"));
     }
 
     private ResourceLocation toRL(String s) {
