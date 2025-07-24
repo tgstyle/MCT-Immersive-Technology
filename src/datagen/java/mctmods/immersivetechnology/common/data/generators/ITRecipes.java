@@ -46,10 +46,10 @@ public class ITRecipes extends RecipeProvider {
     }
 
     private void recipesBoiler(@Nonnull Consumer<FinishedRecipe> out) {
-        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 150).addInput(new FluidTagInput(ITTags.fluidDistilledWater, 95), "input1").addInput(new FluidTagInput(IETags.fluidBiodiesel, 50), "input0").setTime(25).setHeatPerTick(3).build(out, toRL("boiler/biodiesel_distilled_water"));
-        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 150).addInput(new FluidTagInput(ITTags.fluidDistilledWater, 95), "input1").addInput(new FluidTagInput(IETags.fluidCreosote, 50), "input0").setTime(25).setHeatPerTick(3).build(out, toRL("boiler/creosote2_distilled_water"));
-        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 100).addInput(new FluidTagInput(FluidTags.WATER, 95), "input1").addInput(new FluidTagInput(IETags.fluidBiodiesel, 50), "input0").setTime(75).setHeatPerTick(3).build(out, toRL("boiler/biodiesel"));
-        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 100).addInput(new FluidTagInput(FluidTags.WATER, 95), "input1").addInput(new FluidTagInput(IETags.fluidCreosote, 50), "input0").setTime(25).setHeatPerTick(3).build(out, toRL("boiler/creosote"));
+        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 150).addInput(new FluidTagInput(ITTags.fluidDistilledWater, 95), "input1").addInput(new FluidTagInput(IETags.fluidBiodiesel, 50), "input0").setTime(75).setHeatPerTick(3).build(out, toRL("boiler/biodiesel_distilled_water"));
+        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 150).addInput(new FluidTagInput(ITTags.fluidDistilledWater, 95), "input1").addInput(new FluidTagInput(IETags.fluidCreosote, 50), "input0").setTime(75).setHeatPerTick(1).build(out, toRL("boiler/creosote2_distilled_water"));
+        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 100).addInput(new FluidTagInput(FluidTags.WATER, 95), "input1").addInput(new FluidTagInput(IETags.fluidBiodiesel, 50), "input0").setTime(75).setHeatPerTick(3).build(out, toRL("boiler/biodiesel_water"));
+        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 100).addInput(new FluidTagInput(FluidTags.WATER, 95), "input1").addInput(new FluidTagInput(IETags.fluidCreosote, 50), "input0").setTime(75).setHeatPerTick(1).build(out, toRL("boiler/creosote_water"));
     }
 
     private void recipesTurbine(@Nonnull Consumer<FinishedRecipe> out) {

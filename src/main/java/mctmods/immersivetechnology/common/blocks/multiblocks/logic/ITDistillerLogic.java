@@ -17,15 +17,21 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.process.Multibl
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import blusunrize.immersiveengineering.common.fluids.ArrayFluidHandler;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.sound.MultiblockSound;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
 import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
+import mctmods.immersivetechnology.core.registration.ITSounds;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -38,6 +44,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -85,8 +92,21 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
     }
 
     @Override
-    public void tickClient(IMultiblockContext<State> iMultiblockContext) {
-
+    public void tickClient(IMultiblockContext<State> ctx) {
+        final State state = ctx.getState();
+        if(!state.isSoundPlaying.getAsBoolean())
+        {
+            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(2.5, 1.5, 1.5));
+            state.isSoundPlaying = ITMultiblockSound.startSound(
+                    () -> state.active, ctx.isValid(), soundPos, ITSounds.distiller, () -> {
+                        LocalPlayer player = Minecraft.getInstance().player;
+                        if (player == null) { return 0f; }
+                        float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
+                        return attenuation;
+                    },
+                    () -> 1f
+            );
+        }
     }
 
     @Override
@@ -154,6 +174,8 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
     public static class State implements IMultiblockState, ProcessContext.ProcessContextInMachine<DistillerRecipe>
     {
         public boolean active;
+
+        private BooleanSupplier isSoundPlaying = () -> false;
 
         private final StoredCapability<IEnergyStorage> energyCap;
         private final StoredCapability<IFluidHandler> inputCap;

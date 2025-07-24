@@ -19,11 +19,17 @@ import blusunrize.immersiveengineering.common.register.IEFluids;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler;
 import blusunrize.immersiveengineering.common.util.sound.MultiblockSound;
+import mctmods.immersivetechnology.client.particles.ColoredSmokeData;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
+import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import mctmods.immersivetechnology.core.registration.ITSounds;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.InteractionHand;
@@ -31,10 +37,12 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -108,10 +116,50 @@ public class ITBoilerLogic implements IMultiblockLogic<ITBoilerLogic.State>, ISe
         if(!state.isSoundPlaying.getAsBoolean())
         {
             final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(2.5, 1.5, 1.5));
-            state.isSoundPlaying = MultiblockSound.startSound(
-                    () -> state.heat > 0, ctx.isValid(), soundPos, ITSounds.boiler, 0.5f
+            state.isSoundPlaying = ITMultiblockSound.startSound(
+                    () -> state.active, ctx.isValid(), soundPos, ITSounds.boiler, () -> {
+                        LocalPlayer player = Minecraft.getInstance().player;
+                        if (player == null) { return 0f; }
+                        float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
+                        return attenuation;
+                    },
+                    () -> 1f
             );
         }
+//        if (state.active && ctx.getLevel().shouldTickModulo(2)) {
+//            Direction facing = ctx.getLevel().getOrientation().front();
+//            BlockPos outputRel = new BlockPos(0, 2, 1);
+//            BlockPos outputAbs = ctx.getLevel().toAbsolute(outputRel);
+//            BlockPos adjacentAbs = outputAbs.relative(facing);
+//            Level level2 = ctx.getLevel().getRawLevel();
+//            BlockEntity te = level2.getBlockEntity(adjacentAbs);
+//            boolean connected = false;
+//            if (te != null) {
+//                LazyOptional<IFluidHandler> handlerOpt = te.getCapability(ForgeCapabilities.FLUID_HANDLER, facing.getOpposite());
+//                if (handlerOpt.isPresent()) connected = true;
+//            }
+//            if (!connected) {
+//                Vec3 smokePos = new Vec3(adjacentAbs.getX() + 0.5, adjacentAbs.getY() + 0.5, adjacentAbs.getZ() + 0.5);
+//                double velX = facing.getStepX() * 0;
+//                double velY = facing.getStepY() * 0.1 + 0.0625;
+//                double velZ = facing.getStepZ() * 0;
+//
+//                FluidStack outFluid = state.tanks.output.getFluid();
+//                float r = 0.5F, g = 0.5F, b = 0.5F;
+//                if (!outFluid.isEmpty()) {
+//                    int tint = IClientFluidTypeExtensions.of(outFluid.getFluid()).getTintColor(outFluid);
+//                    r = ((tint >> 16) & 0xFF) / 255f;
+//                    g = ((tint >> 8) & 0xFF) / 255f;
+//                    b = (tint & 0xFF) / 255f;
+//                }
+//
+//                level2.addAlwaysVisibleParticle(
+//                        new ColoredSmokeData(r, g, b),
+//                        smokePos.x, smokePos.y, smokePos.z,
+//                        velX, velY, velZ
+//                );
+//            }
+//        }
     }
 
     @Override

@@ -30,8 +30,11 @@ import blusunrize.immersiveengineering.common.util.CachedRecipe;
 import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler;
 import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler.IOConstraint;
 import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mctmods.immersivetechnology.core.registration.ITSounds;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -213,8 +216,14 @@ public class ITAdvancedCokeOvenLogic implements IMultiblockLogic<ITAdvancedCokeO
 
         if (!state.isSoundPlaying.getAsBoolean()) {
             final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(1.5, 1.5, 1.5));
-            state.isSoundPlaying = MultiblockSound.startSound(
-                    () -> isActive(level), ctx.isValid(), soundPos, ITSounds.advCokeOven, 1f
+            state.isSoundPlaying = ITMultiblockSound.startSound(
+                    () -> isActive(ctx.getLevel()), ctx.isValid(), soundPos, ITSounds.advCokeOven, () -> {
+                        LocalPlayer player = Minecraft.getInstance().player;
+                        if (player == null) { return 0f; }
+                        float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
+                        return attenuation;
+                    },
+                    () -> 1f
             );
         }
     }
