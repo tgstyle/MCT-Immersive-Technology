@@ -5,41 +5,38 @@ import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
-import com.igteam.immersivegeology.common.block.multiblocks.recipe.CentrifugeRecipe;
-import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DistillerRecipe extends MultiblockRecipe
-{
+public class DistillerRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<DistillerRecipe>> SERIALIZER;
-
-    public static CachedRecipeList<DistillerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.DISTILLER);
+    public static final CachedRecipeList<DistillerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.DISTILLER);
 
     public FluidTagInput water;
-    @Nullable
-    public FluidStack fluidOutput;
-    private int time;
-    private int energy;
+    @Nullable public FluidStack fluidOutput;
+    public ItemStack itemOutput;
+    public float chance;
+    private final int time;
+    private final int energy;
     Lazy<Integer> totalProcessTime;
     Lazy<Integer> totalProcessEnergy;
 
-    public <T extends Recipe<?>> DistillerRecipe(ResourceLocation id, FluidTagInput water, @Nullable FluidStack fluidOutput, int time, int energy) {
-        super(LAZY_EMPTY, ITRecipeTypes.DISTILLER, id);
+    public DistillerRecipe(ResourceLocation id, FluidTagInput water, @Nullable FluidStack fluidOutput, ItemStack itemOutput, float chance, int time, int energy) {
+        super(Lazy.of(() -> itemOutput.isEmpty() ? ItemStack.EMPTY : itemOutput), ITRecipeTypes.DISTILLER, id);
         this.water = water;
         this.fluidOutput = fluidOutput;
+        this.itemOutput = itemOutput;
+        this.chance = chance;
         this.time = time;
         this.energy = energy;
 
@@ -47,49 +44,31 @@ public class DistillerRecipe extends MultiblockRecipe
         totalProcessEnergy = Lazy.of(() -> this.energy);
 
         this.fluidInputList = Lists.newArrayList(this.water);
-        if(this.water!=null)
-            this.fluidInputList.add(this.water);
-        if(this.fluidOutput != null) {
-            ITLib.IT_LOGGER.info("ITFluid not null.");
-            this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
-        }
+        if (this.fluidOutput != null) this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
+        this.outputList = Lazy.of(() -> {
+            NonNullList<ItemStack> list = NonNullList.create();
+            if (!this.itemOutput.isEmpty()) list.add(this.itemOutput);
+            return list;
+        });
     }
 
-    public static DistillerRecipe findRecipe(Level level, FluidStack input)
-    {
-        for(DistillerRecipe recipe : RECIPES.getRecipes(level))
-            if(recipe.water.test(input))
-                return recipe;
+    public static DistillerRecipe findRecipe(Level level, FluidStack input) {
+        for (DistillerRecipe recipe : RECIPES.getRecipes(level)) if (recipe.water.test(input)) return recipe;
         return null;
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess registryAccess)
-    {
-        return ItemStack.EMPTY;
-    }
+    public @NotNull ItemStack getResultItem(RegistryAccess registryAccess) { return itemOutput; }
 
     @Override
-    protected IERecipeSerializer<?> getIESerializer()
-    {
-        return SERIALIZER.get();
-    }
+    protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 
     @Override
-    public int getTotalProcessTime()
-    {
-        return totalProcessTime.get();
-    }
+    public int getTotalProcessTime() { return totalProcessTime.get(); }
 
     @Override
-    public int getTotalProcessEnergy()
-    {
-        return totalProcessEnergy.get();
-    }
+    public int getTotalProcessEnergy() { return totalProcessEnergy.get(); }
 
     @Override
-    public int getMultipleProcessTicks()
-    {
-        return 0;
-    }
+    public int getMultipleProcessTicks() { return 0; }
 }

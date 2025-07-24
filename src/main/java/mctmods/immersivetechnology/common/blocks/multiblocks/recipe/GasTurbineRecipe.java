@@ -18,14 +18,13 @@ import javax.annotation.Nullable;
 
 public class GasTurbineRecipe extends IESerializableRecipe {
     public static RegistryObject<IERecipeSerializer<GasTurbineRecipe>> SERIALIZER;
-
-    public static CachedRecipeList<GasTurbineRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.GAS_TURBINE);
+    public static final CachedRecipeList<GasTurbineRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.GAS_TURBINE);
 
     public TagKey<Fluid> inputTag;
     public int inputAmount;
     @Nullable
     public FluidStack fluidOutput;
-    private int time;
+    private final int time;
 
     public GasTurbineRecipe(ResourceLocation id, TagKey<Fluid> inputTag, int inputAmount, @Nullable FluidStack fluidOutput, int time) {
         super(LAZY_EMPTY, ITRecipeTypes.GAS_TURBINE, id);

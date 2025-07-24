@@ -23,7 +23,7 @@ public class ITItemModelProvider extends ItemModelProvider {
         getBuilder(item_name).parent(parentModel);
     }
 
-    private void generateGeneratedItem() { withExistingParent("it_formation_tool", mcLoc("item/generated")).texture("layer0", modLoc("item/" + "it_formation_tool")); }
+    private void generateGeneratedItem(String name) { withExistingParent(name, mcLoc("item/generated")).texture("layer0", modLoc("item/" + name)); }
 
     private void createBucket(ITFluids.FluidEntry entry) {
         boolean isGas = entry.type().get().getDensity() < 0;
@@ -36,7 +36,10 @@ public class ITItemModelProvider extends ItemModelProvider {
         generateBlockItem("creative_barrel", "metal/creative_barrel");
         generateBlockItem("steel_barrel", "metal/steel_barrel");
         generateBlockItem("open_barrel", "metal/open_barrel");
-        generateGeneratedItem();
+
+        generateGeneratedItem("it_formation_tool");
+        generateGeneratedItem("salt");
+
         ITFluids.ALL_ENTRIES.forEach(this::createBucket);
     }
 

@@ -15,7 +15,7 @@ public enum TranslationKey {
     OVERLAY_OSD_FLUID_VALVE_SNEAKING_SECOND_LINE("overlay.immersivetechnology.osd.fluid_valve.sneaking.secondline"),
     OVERLAY_OSD_CREATIVE_CRATE_NORMAL_FIRST_LINE("overlay.immersivetechnology.osd.creative_crate.normal.firstline"),
     OVERLAY_STEEL_TANK_NORMAL_FIRST_LINE("overlay.immersivetechnology.multiblock.steel_tank.normal.firstline"),
-    TILE_TRASH_ITEM_NAME("tile.immersivetechnology.metal_trash.trash_item.name"),
+    BLOCK_TRASH_ITEM_NAME("block.immersivetechnology.metal_trash.trash_item.name"),
     GUI_EMPTY("gui.immersivetechnology.empty"),
     GUI_BOILER_HEAT_PER_TICK("gui.immersivetechnology.boiler.heat_per_tick"),
     GUI_BOILER_TOTAL_HEAT("gui.immersivetechnology.boiler.total_heat"),

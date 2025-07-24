@@ -21,9 +21,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-
+import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public abstract class ITTemplateMultiblock extends TemplateMultiblock {
@@ -74,7 +73,8 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { }
 
     @Nonnull
-    public TemplateMultiblock.TemplateData getTemplate(@Nonnull Level world) {
+    public TemplateMultiblock.TemplateData getTemplate(@Nullable Level world) {
+        assert world != null;
         TemplateMultiblock.TemplateData result = super.getTemplate(world);
         Vec3i resultSize = result.template().getSize();
         Preconditions.checkState(resultSize.equals(this.size), "Wrong template size for multiblock %s, template size: %s", this.getTemplateLocation(), resultSize);

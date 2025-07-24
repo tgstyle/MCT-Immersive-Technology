@@ -37,6 +37,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -163,7 +164,7 @@ public class ITEntityBlock <T extends BlockEntity> extends ITBlockBase implement
 
 
     @Override
-    public boolean triggerEvent(BlockState state, Level worldIn, BlockPos pos, int eventID, int eventParam)
+    public boolean triggerEvent(@NotNull BlockState state, Level worldIn, @NotNull BlockPos pos, int eventID, int eventParam)
     {
         super.triggerEvent(state, worldIn, pos, eventID, eventParam);
         BlockEntity tileentity = worldIn.getBlockEntity(pos);
@@ -229,7 +230,7 @@ public class ITEntityBlock <T extends BlockEntity> extends ITBlockBase implement
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit)
+    public InteractionResult use(@NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit)
     {
         InteractionResult superResult = super.use(state, world, pos, player, hand, hit);
         if(superResult.consumesAction())

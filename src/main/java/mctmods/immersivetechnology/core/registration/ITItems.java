@@ -1,12 +1,9 @@
 package mctmods.immersivetechnology.core.registration;
 
-import mctmods.immersivetechnology.common.blocks.multiblocks.ITGasTurbine;
-import mctmods.immersivetechnology.common.blocks.multiblocks.ITSteamTurbine;
 import mctmods.immersivetechnology.common.items.helper.ITBaseItem;
 import mctmods.immersivetechnology.common.items.ITMBFormationItem;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.Util;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
@@ -31,6 +28,7 @@ public class ITItems {
     public static HashMap<String, RegistryObject<? extends Item>> getItemRegistryMap() { return ITEM_REGISTRY_MAP; }
 
     public static final ItemRegObject<ITMBFormationItem> IT_FORMATION_TOOL = register("it_formation_tool", ITMBFormationItem::new);
+    public static final ItemRegObject<ITBaseItem> SALT = simple();
 
     public static void initItems() { }
 
@@ -40,13 +38,14 @@ public class ITItems {
         initItems();
         REGISTER.register(event);
         ITEM_REGISTRY_MAP.put("it_formation_tool", IT_FORMATION_TOOL.regObject);
+        ITEM_REGISTRY_MAP.put("salt", SALT.regObject);
     }
 
     private static <T> Consumer<T> nothing() { return $ -> { }; }
 
-    private static ITItems.ItemRegObject<ITBaseItem> simpleWithStackSize(String name, int maxSize) { return simple(name, p -> p.stacksTo(maxSize), i -> { }); }
+    private static ITItems.ItemRegObject<ITBaseItem> simple() { return simple("salt", $ -> { }, $ -> { }); }
 
-    private static ITItems.ItemRegObject<ITBaseItem> simple(String name) { return simple(name, $ -> { }, $ -> { }); }
+    private static ITItems.ItemRegObject<ITBaseItem> simpleWithStackSize(String name, int maxSize) { return simple(name, p -> p.stacksTo(maxSize), i -> { }); }
 
     private static ITItems.ItemRegObject<ITBaseItem> simple(String name, Consumer<Item.Properties> makeProps, Consumer<ITBaseItem> processItem) { return register(name, () -> Util.make(new ITBaseItem(Util.make(new Item.Properties(), makeProps)), processItem)); }
 
@@ -54,7 +53,7 @@ public class ITItems {
 
     static <T extends Item> ITItems.ItemRegObject<T> register(String name, Supplier<? extends T> make) { return new ITItems.ItemRegObject<>(REGISTER.register(name, make)); }
 
-    private static <T extends Item> ITItems.ItemRegObject<T> of(T existing) { return new ITItems.ItemRegObject<>(RegistryObject.create(BuiltInRegistries.ITEM.getKey(existing), ForgeRegistries.ITEMS)); }
+    private static <T extends Item> ITItems.ItemRegObject<T> of(T existing) { return new ITItems.ItemRegObject<>(RegistryObject.create(ForgeRegistries.ITEMS.getKey(existing), ForgeRegistries.ITEMS)); }
 
     public record ItemRegObject<T extends Item>(RegistryObject<T> regObject) implements Supplier<T>, ItemLike {
         @Override

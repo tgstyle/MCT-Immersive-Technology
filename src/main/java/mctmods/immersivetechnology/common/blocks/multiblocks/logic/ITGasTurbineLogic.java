@@ -164,7 +164,7 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
         }
 
         if (state.ignited && !state.lastIgnited && state.speed < state.maxSpeed / 2) {
-            state.lastIgnited = state.ignited;
+            state.lastIgnited = true;
             float ignitionAtt = (float) Math.max(player.distanceToSqr(ignitionPos) / 64, 1);
             level.playLocalSound(ignitionPos.x, ignitionPos.y, ignitionPos.z, ITSounds.gasSpark.get(), SoundSource.BLOCKS, 1 / ignitionAtt, 1, false);
         } else {

@@ -31,54 +31,39 @@ import org.apache.commons.lang3.mutable.MutableObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ITMenuTypes
-{
+public class ITMenuTypes {
     public static final DeferredRegister<MenuType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.MENU_TYPES, ITLib.MODID);
-    public static final MultiblockContainer<ITAdvancedCokeOvenLogic.State, AdvancedCokeOvenMenu> ADVANCED_COKE_OVEN_MENU =
-            registerMultiblock(ITLib.GUIID_AdvCokeOven, AdvancedCokeOvenMenu::makeServer, AdvancedCokeOvenMenu::makeClient);
+    public static final MultiblockContainer<ITAdvancedCokeOvenLogic.State, AdvancedCokeOvenMenu> ADVANCED_COKE_OVEN_MENU = registerMultiblock(ITLib.GUIID_AdvCokeOven, AdvancedCokeOvenMenu::makeServer, AdvancedCokeOvenMenu::makeClient);
 
-    public static final MultiblockContainer<ITBoilerLogic.State, BoilerMenu> BOILER_MENU =
-            registerMultiblock(ITLib.GUIID_Boiler, BoilerMenu::makeServer, BoilerMenu::makeClient);
+    public static final MultiblockContainer<ITBoilerLogic.State, BoilerMenu> BOILER_MENU = registerMultiblock(ITLib.GUIID_Boiler, BoilerMenu::makeServer, BoilerMenu::makeClient);
 
-    public static <M extends AbstractContainerMenu>
-    RegistryObject<MenuType<M>> registerSimple(String name, IEMenuTypes.SimpleContainerConstructor<M> factory)
-    {
-        return REGISTER.register(
-                name, () -> {
-                    Mutable<MenuType<M>> typeBox = new MutableObject<>();
-                    MenuType<M> type = new MenuType<>((id, inv) -> factory.construct(typeBox.getValue(), id, inv), FeatureFlagSet.of());
-                    typeBox.setValue(type);
-                    return type;
-                }
-        );
+    public static <M extends AbstractContainerMenu> RegistryObject<MenuType<M>> registerSimple(String name, IEMenuTypes.SimpleContainerConstructor<M> factory) {
+        return REGISTER.register(name, () -> {
+            Mutable<MenuType<M>> typeBox = new MutableObject<>();
+            MenuType<M> type = new MenuType<>((id, inv) -> factory.construct(typeBox.getValue(), id, inv), FeatureFlagSet.of());
+            typeBox.setValue(type);
+            return type;
+        });
     }
 
-    public static <T, C extends IEContainerMenu>
-    ITMenuTypes.ArgContainer<T, C> registerArg(
-            String name, IEMenuTypes.ArgContainerConstructor<T, C> container, IEMenuTypes.ClientContainerConstructor<C> client
-    )
-    {
+    public static <T, C extends IEContainerMenu> ITMenuTypes.ArgContainer<T, C> registerArg(String name, IEMenuTypes.ArgContainerConstructor<T, C> container, IEMenuTypes.ClientContainerConstructor<C> client) {
         RegistryObject<MenuType<C>> typeRef = registerType(name, client);
         return new ITMenuTypes.ArgContainer<>(typeRef, container);
     }
 
 
-    public static <T extends BlockEntity, C extends IEBaseContainerOld<? super T>>
-    ITMenuTypes.ArgContainer<T, C> register(String name, IEMenuTypes.ArgContainerConstructor<T, C> container)
-    {
-        RegistryObject<MenuType<C>> typeRef = REGISTER.register(
-                name, () -> {
-                    Mutable<MenuType<C>> typeBox = new MutableObject<>();
-                    MenuType<C> type = new MenuType<>((IContainerFactory<C>)(windowId, inv, data) -> {
-                        Level world = ImmersiveTechnology.proxy.getClientWorld();
-                        BlockPos pos = data.readBlockPos();
-                        BlockEntity te = world.getBlockEntity(pos);
-                        return container.construct(typeBox.getValue(), windowId, inv, (T)te);
-                    }, FeatureFlagSet.of());
-                    typeBox.setValue(type);
-                    return type;
-                }
-        );
+    public static <T extends BlockEntity, C extends IEBaseContainerOld<? super T>> ITMenuTypes.ArgContainer<T, C> register(String name, IEMenuTypes.ArgContainerConstructor<T, C> container) {
+        RegistryObject<MenuType<C>> typeRef = REGISTER.register(name, () -> {
+            Mutable<MenuType<C>> typeBox = new MutableObject<>();
+            MenuType<C> type = new MenuType<>((IContainerFactory<C>) (windowId, inv, data) -> {
+                Level world = ImmersiveTechnology.proxy.getClientWorld();
+                BlockPos pos = data.readBlockPos();
+                BlockEntity te = world.getBlockEntity(pos);
+                return container.construct(typeBox.getValue(), windowId, inv, (T) te);
+            }, FeatureFlagSet.of());
+            typeBox.setValue(type);
+            return type;
+        });
         return new ITMenuTypes.ArgContainer<>(typeRef, container);
     }
 
@@ -87,8 +72,7 @@ public class ITMenuTypes
         return new ITMenuTypes.MultiblockContainer<>(typeRef, container);
     }
 
-    public static class MultiblockContainer<S extends IMultiblockState, C extends IEContainerMenu> extends ITMenuTypes.ArgContainer<IEContainerMenu.MultiblockMenuContext<S>, C>
-    {
+    public static class MultiblockContainer<S extends IMultiblockState, C extends IEContainerMenu> extends ITMenuTypes.ArgContainer<IEContainerMenu.MultiblockMenuContext<S>, C> {
         private MultiblockContainer(RegistryObject<MenuType<C>> type, IEMenuTypes.ArgContainerConstructor<IEContainerMenu.MultiblockMenuContext<S>, C> factory) {
             super(type, factory);
         }
@@ -133,9 +117,7 @@ public class ITMenuTypes
     private static <C extends IEContainerMenu> RegistryObject<MenuType<C>> registerType(String name, IEMenuTypes.ClientContainerConstructor<C> client) {
         return REGISTER.register(name, () -> {
             Mutable<MenuType<C>> typeBox = new MutableObject<>();
-            MenuType<C> type = new MenuType<>((id, inv) -> {
-                return client.construct(typeBox.getValue(), id, inv);
-            }, FeatureFlagSet.of());
+            MenuType<C> type = new MenuType<>((id, inv) -> client.construct(typeBox.getValue(), id, inv), FeatureFlagSet.of());
             typeBox.setValue(type);
             return type;
         });

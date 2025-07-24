@@ -7,30 +7,24 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public class AdvancedCokeOvenRecipeBuilder extends IEFinishedRecipe<AdvancedCokeOvenRecipeBuilder>
-{
-    private AdvancedCokeOvenRecipeBuilder()
-    {
+public class AdvancedCokeOvenRecipeBuilder extends IEFinishedRecipe<AdvancedCokeOvenRecipeBuilder> {
+    private AdvancedCokeOvenRecipeBuilder() {
         super(AdvancedCokeOvenRecipe.SERIALIZER.get());
     }
 
-    public static AdvancedCokeOvenRecipeBuilder builder(Item result)
-    {
+    public static AdvancedCokeOvenRecipeBuilder builder(Item result) {
         return new AdvancedCokeOvenRecipeBuilder().addResult(result);
     }
 
-    public static AdvancedCokeOvenRecipeBuilder builder(ItemStack result)
-    {
+    public static AdvancedCokeOvenRecipeBuilder builder(ItemStack result) {
         return new AdvancedCokeOvenRecipeBuilder().addResult(result);
     }
 
-    public static AdvancedCokeOvenRecipeBuilder builder(TagKey<Item> result, int count)
-    {
+    public static AdvancedCokeOvenRecipeBuilder builder(TagKey<Item> result, int count) {
         return new AdvancedCokeOvenRecipeBuilder().addResult(new IngredientWithSize(result, count));
     }
 
-    public AdvancedCokeOvenRecipeBuilder setOil(int amount)
-    {
+    public AdvancedCokeOvenRecipeBuilder setOil(int amount) {
         return addWriter(jsonObject -> jsonObject.addProperty("creosote", amount));
     }
 }
