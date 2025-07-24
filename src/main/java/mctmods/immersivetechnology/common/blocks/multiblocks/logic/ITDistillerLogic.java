@@ -11,11 +11,11 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockL
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import blusunrize.immersiveengineering.common.fluids.ArrayFluidHandler;
 import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler;
+import mctmods.immersivetechnology.common.blocks.multiblocks.process.DistillerProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
 import net.minecraft.core.BlockPos;
@@ -26,8 +26,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
@@ -126,7 +124,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         final FluidStack leftInput = state.tanks.waterInput.getFluid();
         if (leftInput.isEmpty()) { return; }
         if (recipe==null) { return; }
-        MultiblockProcessInMachine<DistillerRecipe> process = new MultiblockProcessInMachine<>(recipe);
+        DistillerProcess process = new DistillerProcess(recipe);
         if (!leftInput.isEmpty()) { process.setInputTanks(0); }
         state.processor.addProcessToQueue(process, level, false);
     }
@@ -150,7 +148,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
             this.inputCap = new StoredCapability<>(new ArrayFluidHandler(false, true, markDirty, this.tanks.waterInput));
             this.outputCapSteam = new StoredCapability<>(new ArrayFluidHandler(true, false, markDirty, this.tanks.output));
             this.energyCap = new StoredCapability<>(this.energy);
-            this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0, 1, markDirty, DistillerRecipe.RECIPES::getById);
+            this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0, 1, markDirty, DistillerRecipe.RECIPES::getById, DistillerProcess::new);
 
             inventory = new SlotwiseItemHandler(
                     List.of(
@@ -162,8 +160,6 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
                     ctx.getMarkDirtyRunnable()
             );
             this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, new MultiblockFace(FLUID_OUTPUT_CAP.side(), FLUID_OUTPUT_CAP.posInMultiblock().west()));
-            Set<Fluid> allowedInput = Set.of(Fluids.WATER);
-            this.tanks.waterInput.setValidator(f -> allowedInput.contains(f.getFluid()));
         }
 
         public DistillerTank getTanks() { return tanks; }
@@ -180,7 +176,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         public void readSaveNBT(CompoundTag nbt) {
             energy.deserializeNBT(nbt.get("energy"));
             this.tanks.readNBT(nbt.getCompound("tanks"));
-            this.processor.fromNBT(nbt.get("processor"), MultiblockProcessInMachine::new);
+            this.processor.fromNBT(nbt.get("processor", DistillerProcess::new);
             this.inventory.deserializeNBT(nbt.getCompound("inventory"));
         }
 
