@@ -1,7 +1,6 @@
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import net.minecraftforge.gradle.common.tasks.SignJar
-import org.gradle.work.Incremental
 
 plugins {
     id 'idea'
@@ -14,8 +13,17 @@ plugins {
     id 'eclipse'
 }
 
+configurations.configureEach {
+    resolutionStrategy {
+        force 'com.google.guava:guava:32.1.3-jre'
+    }
+}
+
 def versionProps = new Properties()
 file('version.properties').withInputStream { versionProps.load(it) }
+
+def gradleProps = new Properties()
+file('gradle.properties').withInputStream { gradleProps.load(it) }
 
 version = versionProps.getProperty('version')
 ext.version_buildnumber = versionProps.getProperty('build_number')?.toInteger() ?: 0
@@ -25,18 +33,16 @@ println "-> build.gradle applying version: $version (build ${version_buildnumber
 gradle.taskGraph.whenReady { graph ->
     if (graph.hasTask(':build')) {
         ext.version_buildnumber = gradle.ext.nextBuildNumber
-    } else {
-        ext.version_buildnumber = project.findProperty('version_buildnumber') ?: 0
     }
 }
 
-version = '0.1.0-a' + version_buildnumber
 group = 'mctmods.immersivetechnology'
 archivesBaseName = 'immersivetechnology'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
 jar.enabled = true
-tasks.withType(Jar) {
+tasks.withType(Jar).configureEach {
     zip64 true
 }
 
@@ -66,17 +72,17 @@ sourceSets {
 }
 
 ext {
-    modid = 'immersivetechnology'
+    mod_id = gradleProps['mod_id']
     version_minecraft = versionProps['mc_version']
     version_forge = versionProps['forge_version']
     version_jei = versionProps['jei_version']
     version_parchment = versionProps['version_parchment']
     version_ie = versionProps['version_ie']
     version_ig = versionProps['version_ig']
-    mod_license = versionProps['mod_license']
-    mod_name = versionProps['mod_name']
-    mod_authors = versionProps['mod_authors']
-    mod_description = versionProps['mod_description']
+    mod_license = gradleProps['mod_license']
+    mod_name = gradleProps['mod_name']
+    mod_authors = gradleProps['mod_authors']
+    mod_description = gradleProps['mod_description']
 }
 
 def version_replaces = [
@@ -109,61 +115,64 @@ processResources {
     }
 }
 
-task copyModsTomlForIntelliJ(type: Copy) {
+tasks.register('copyModsTomlForIntelliJ', Copy) {
     from processResources.destinationDir
     into "$projectDir/out/production/resources"
     include "META-INF/mods.toml"
+    dependsOn processResources
 }
 
-copyModsTomlForIntelliJ.dependsOn processResources
-
 minecraft {
-    mappings channel: 'parchment', version: "$version_parchment-$version_minecraft"
+    mappings channel: 'parchment', version: version_parchment + '-' + version_minecraft
     accessTransformers {
         file('src/main/resources/META-INF/accesstransformer.cfg')
     }
     runs {
         client {
-            workingDirectory project.file('run')
+            workingDirectory = project.file('run')
             property 'forge.logging.markers', ''
-            property 'forge.enabledGameTestNamespaces', 'immersiveenergy'
+            property 'forge.enabledGameTestNamespaces', mod_id
             ideaModule project.name + ".main"
             mods {
-                immersivetechnology { source sourceSets.main }
+                immersivetechnology {
+                    source(sourceSets.main)
+                }
             }
         }
         server {
-            workingDirectory project.file('run')
+            workingDirectory = project.file('run')
             property 'forge.logging.markers', ''
-            property 'forge.enabledGameTestNamespaces', 'immersivetechnology'
+            property 'forge.enabledGameTestNamespaces', mod_id
             arg '-nogui'
             mods {
-                immersivetechnology { source sourceSets.main }
+                immersivetechnology {
+                    source(sourceSets.main)
+                }
             }
         }
         data {
-            workingDirectory project.file('run')
+            workingDirectory = project.file('run')
             property 'forge.logging.markers', ''
             property 'fml.earlyprogresswindow', 'false'
-            args '--mod', 'immersivetechnology', '--all', '--output', file('src/generated/resources/'), '--validate',
-                    '--existing', sourceSets.main.resources.srcDirs[0]
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--validate',
+                    '--existing', sourceSets.main.resources.srcDirs.first()
             ideaModule project.name + ".datagen"
             mods {
                 immersivetechnology {
-                    source sourceSets.main
-                    source sourceSets.datagen
+                    source(sourceSets.main)
+                    source(sourceSets.datagen)
                 }
             }
         }
         gameTestServer {
-            workingDirectory project.file('run')
+            workingDirectory = project.file('run')
             property 'forge.logging.markers', ''
-            property 'forge.enabledGameTestNamespaces', 'immersivetechnology'
+            property 'forge.enabledGameTestNamespaces', mod_id
             ideaModule project.name + ".gametest"
             mods {
                 immersivetechnology {
-                    source sourceSets.main
-                    source sourceSets.gametest
+                    source(sourceSets.main)
+                    source(sourceSets.gametest)
                 }
             }
         }
@@ -202,8 +211,8 @@ repositories {
 }
 
 mixin {
-    add sourceSets.main, "${modid}.refmap.json"
-    config "mixins.${modid}.json"
+    add sourceSets.main, "${mod_id}.refmap.json"
+    config "mixins.${mod_id}.json"
 }
 
 project.ext.lwjglVersion = "3.3.6"
@@ -220,8 +229,6 @@ dependencies {
     implementation fg.deobf("curse.maven:immersive-geology-370614:6411647")
 
     implementation fg.deobf("curse.maven:jade-324717:6271651")
-
-    implementation fg.deobf("curse.maven:engineered-schematics-1207780:6560826")
 
     datagenImplementation("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
 
@@ -240,15 +247,15 @@ dependencies {
 //    implementation fg.deobf("curse.maven:biomes-o-plenty-220318:4617259")
     // TFC
 //    implementation fg.deobf("vazkii.patchouli:Patchouli:$version_minecraft-$version_patchouli-FORGE")
-//    implementation fg.deobf("curse.maven:terrafirmacraft-302973:5943050")	
+//    implementation fg.deobf("curse.maven:terrafirmacraft-302973:5943050")
 }
 
-def customGradle = rootProject.file('custom.gradle');
+def customGradle = rootProject.file('custom.gradle')
 if (customGradle.exists()) {
-    apply from: customGradle;
+    apply from: customGradle
 }
 
-task signJar(type: SignJar) {
+tasks.register('signJar', SignJar) {
     onlyIf {
         project.hasProperty('keyStore')
     }
@@ -266,7 +273,8 @@ task signJar(type: SignJar) {
 
 build.dependsOn signJar
 
-task datagenJar(type: Jar, dependsOn: datagenClasses) {
+tasks.register('datagenJar', Jar) {
+    dependsOn datagenClasses
     archiveClassifier = 'datagen'
     from sourceSets.datagen.output
     manifest {
@@ -274,7 +282,8 @@ task datagenJar(type: Jar, dependsOn: datagenClasses) {
     }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+tasks.register('sourcesJar', Jar) {
+    dependsOn classes
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
     from sourceSets.datagen.allSource
@@ -298,7 +307,7 @@ void minimizePNGFile(File file) {
     }
 }
 
-task optimizePng {
+tasks.register('optimizePng') {
     def pngPatterns = ["**/*.png"]
     doLast {
         for (dir in sourceSets.main.resources.srcDirs) {
@@ -307,9 +316,9 @@ task optimizePng {
     }
 }
 
-task genIntellijRunsDummy {}
+tasks.register('genIntellijRunsDummy')
 
-task speedUpPreRun {
+tasks.register('speedUpPreRun') {
     doLast {
         for (String s : new String[]{"Client", "Server", "Data"}) {
             def runConfigFile = file(".idea/runConfigurations/run${s}.xml")
@@ -332,7 +341,7 @@ task speedUpPreRun {
     }
 }
 
-tasks.withType(Task) {
+tasks.withType(Task).configureEach {
     if (it.name == "genIntellijRuns") {
         it.finalizedBy speedUpPreRun
         genIntellijRunsDummy.dependsOn it
