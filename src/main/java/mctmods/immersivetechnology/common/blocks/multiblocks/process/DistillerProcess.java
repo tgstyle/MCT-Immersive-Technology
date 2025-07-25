@@ -23,8 +23,7 @@ public class DistillerProcess extends MultiblockProcessInMachine<DistillerRecipe
         if (recipe != null && !recipe.itemOutput.isEmpty() && level.getRawLevel().random.nextFloat() < recipe.chance) {
             IItemHandler inv = context.getInventory();
             ItemStack salt = recipe.itemOutput.copy();
-            if (inv.insertItem(ITDistillerLogic.SLOT_WATER_OUT, salt, false).isEmpty()) return;
-            if (inv.insertItem(ITDistillerLogic.SLOT_WATER_EMPTY_OUT, salt, false).isEmpty()) return;
+            if (inv.insertItem(ITDistillerLogic.OUTPUT_SLOT, salt, false).isEmpty()) return;
         }
     }
 }

@@ -14,12 +14,17 @@ import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import blusunrize.immersiveengineering.common.fluids.ArrayFluidHandler;
+import blusunrize.immersiveengineering.common.util.CachedRecipe;
+import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler;
+import blusunrize.immersiveengineering.common.util.inventory.WrappingItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.DistillerProcess;
+import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
+import mctmods.immersivetechnology.core.registration.ITItems;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -45,10 +50,15 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -56,16 +66,18 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
     public static final BlockPos REDSTONE_POS = new BlockPos(2, 1, 0);
 
     private static final CapabilityPosition FLUID_OUTPUT_CAP = new CapabilityPosition(2, 0, 1, RelativeBlockFace.LEFT);
+    private static final CapabilityPosition ITEM_OUTPUT_CAP = new CapabilityPosition(1, 0, 0, RelativeBlockFace.FRONT);
     private static final Set<CapabilityPosition> FLUID_INPUT_CAPS = Set.of( new CapabilityPosition(0, 0, 1, RelativeBlockFace.RIGHT) );
     private static final Set<BlockPos> FLUID_INPUTS = FLUID_INPUT_CAPS.stream().map(CapabilityPosition::posInMultiblock).collect(Collectors.toSet());
     private static final Set<CapabilityPosition> ENERGY_INPUTS = Set.of(new CapabilityPosition(2,1, 2, RelativeBlockFace.UP));
-
+    private static final MultiblockFace OUTPUT_POS = new MultiblockFace(1,0,0, RelativeBlockFace.FRONT);
     public static final int TANK_CAPACITY = 24* FluidType.BUCKET_VOLUME;
 
     public static final int SLOT_WATER_EMPTY_IN = 0;
     public static final int SLOT_WATER_OUT = 1;
     public static final int SLOT_WATER_EMPTY_OUT = 2;
     public static final int SLOT_WATER_IN = 3;
+    public static final int OUTPUT_SLOT = 4;
 
     @Override
     public State createInitialState(IInitialMultiblockContext<ITDistillerLogic.State> iInitialMultiblockContext) { return new State(iInitialMultiblockContext); }
@@ -80,6 +92,13 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             if (FLUID_OUTPUT_CAP.equals(position)) { return state.outputCapSteam.cast(ctx); }
             else if (FLUID_INPUT_CAPS.contains(position)) { return state.inputCap.cast(ctx); }
+        }
+        if (cap == ForgeCapabilities.ITEM_HANDLER)
+        {
+            if (ITEM_OUTPUT_CAP.equals(position))
+            {
+                return state.itemOutputCap.cast(ctx);
+            }
         }
         return LazyOptional.empty();
     }
@@ -121,8 +140,16 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
                 else if (ItemHandlerHelper.canItemStacksStack(state.inventory.getStackInSlot(SLOT_WATER_EMPTY_OUT), emptyContainer)) { state.inventory.getStackInSlot(SLOT_WATER_EMPTY_OUT).grow(emptyContainer.getCount()); }
                 state.inventory.getStackInSlot(SLOT_WATER_IN).shrink(1);
                 if (state.inventory.getStackInSlot(SLOT_WATER_IN).isEmpty()) { state.inventory.setStackInSlot(SLOT_WATER_IN, ItemStack.EMPTY); }
+                final ItemStack outputStack = state.inventory.getStackInSlot(OUTPUT_SLOT);
+                if (!outputStack.isEmpty()) { outputStack.grow(recipe.itemOutput.copy().getCount()); }
                 update = true;
             }
+        }
+        final IItemHandlerModifiable inventory = state.getInventory();
+        ItemStack stack = inventory.getStackInSlot(1);
+        if (!stack.isEmpty()) {
+            stack = Utils.insertStackIntoInventory(state.outputRef, stack, false);
+            inventory.setStackInSlot(1, stack);
         }
         if (update) { ctx.markMasterDirty(); }
     }
@@ -139,6 +166,11 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
             ctx.markMasterDirty();
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void dropExtraItems(State state, Consumer<ItemStack> drop) {
+        MBInventoryUtils.dropItems(state.getInventory(), drop);
     }
 
     private void tryEnqueueProcess(State state, Level level, DistillerRecipe recipe) {
@@ -158,6 +190,8 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         private final StoredCapability<IFluidHandler> inputCap;
         private final StoredCapability<IFluidHandler> outputCapSteam;
         private final CapabilityReference<IFluidHandler> fluidOutput;
+        private final CapabilityReference<IItemHandler> outputRef;
+        private final StoredCapability<IItemHandler> itemOutputCap;
         private final SlotwiseItemHandler inventory;
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         private final DistillerTank tanks = new DistillerTank();
@@ -172,7 +206,6 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
             this.outputCapSteam = new StoredCapability<>(new ArrayFluidHandler(true, false, markDirty, this.tanks.output));
             this.energyCap = new StoredCapability<>(this.energy);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, DistillerRecipe.RECIPES::getById);
-
             inventory = new SlotwiseItemHandler(
                     List.of(
                             SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
@@ -183,6 +216,11 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
                     ctx.getMarkDirtyRunnable()
             );
             this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, new MultiblockFace(FLUID_OUTPUT_CAP.side(), FLUID_OUTPUT_CAP.posInMultiblock().west()));
+
+            this.itemOutputCap = new StoredCapability<>(new WrappingItemHandler(
+                    getInventory(), false, true, new WrappingItemHandler.IntRange(2, 3)
+            ));
+            this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, OUTPUT_POS);
         }
 
         public DistillerTank getTanks() { return tanks; }

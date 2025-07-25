@@ -34,6 +34,7 @@ public class DistillerMenu extends IEContainerMenu {
         this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.SLOT_WATER_EMPTY_OUT, 26, 53));
         this.addSlot(new IESlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_WATER_EMPTY_IN, 134, 17, IESlot.NewFluidContainer.Filter.ANY));
         this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.SLOT_WATER_OUT, 134, 53));
+        this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.OUTPUT_SLOT, 80, 35));
         for(int i = 0; i < 3; i++) for(int j = 0; j < 9; j++) addSlot(new Slot(inventoryPlayer, j+i*9+9, 8+j*18, 84+i*18));
         for(int i = 0; i < 9; i++) addSlot(new Slot(inventoryPlayer, i, 8+i*18, 142));
         addGenericData(GenericContainerData.energy(energy));
