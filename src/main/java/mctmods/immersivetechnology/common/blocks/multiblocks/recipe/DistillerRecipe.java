@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
+import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +34,7 @@ public class DistillerRecipe extends MultiblockRecipe {
     Lazy<Integer> totalProcessEnergy;
 
     public DistillerRecipe(ResourceLocation id, FluidTagInput water, @Nullable FluidStack fluidOutput, ItemStack itemOutput, float chance, int time, int energy) {
-        super(Lazy.of(() -> itemOutput.isEmpty() ? ItemStack.EMPTY : itemOutput), ITRecipeTypes.DISTILLER, id);
+        super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.DISTILLER, id);
         this.water = water;
         this.fluidOutput = fluidOutput;
         this.itemOutput = itemOutput;
@@ -45,20 +47,18 @@ public class DistillerRecipe extends MultiblockRecipe {
 
         this.fluidInputList = Lists.newArrayList(this.water);
         if (this.fluidOutput != null) this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
-        this.outputList = Lazy.of(() -> {
-            NonNullList<ItemStack> list = NonNullList.create();
-            if (!this.itemOutput.isEmpty()) list.add(this.itemOutput);
-            return list;
-        });
+        this.outputList = Lazy.of(NonNullList::create);
     }
 
     public static DistillerRecipe findRecipe(Level level, FluidStack input) {
-        for (DistillerRecipe recipe : RECIPES.getRecipes(level)) if (recipe.water.test(input)) return recipe;
+        for (DistillerRecipe recipe : RECIPES.getRecipes(level)) {
+            if (recipe.water.test(input)) { return recipe; }
+        }
         return null;
     }
 
     @Override
-    public @NotNull ItemStack getResultItem(RegistryAccess registryAccess) { return itemOutput; }
+    public @NotNull ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
 
     @Override
     protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }

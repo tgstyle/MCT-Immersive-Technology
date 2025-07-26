@@ -13,17 +13,23 @@ import net.minecraftforge.items.IItemHandler;
 import java.util.function.BiFunction;
 
 public class DistillerProcess extends MultiblockProcessInMachine<DistillerRecipe> {
-    public DistillerProcess(DistillerRecipe recipe) { super(recipe); }
-    public DistillerProcess(BiFunction<Level, ResourceLocation, DistillerRecipe> getRecipe, CompoundTag data) { super(getRecipe, data); }
+    public DistillerProcess(DistillerRecipe recipe) {
+        super(recipe, new int[0]);
+        this.setInputTanks(0);
+    }
+    public DistillerProcess(BiFunction<Level, ResourceLocation, DistillerRecipe> getRecipe, CompoundTag data) {
+        super(getRecipe, data);
+        this.setInputTanks(0);
+    }
 
     @Override
     protected void processFinish(ProcessContext.ProcessContextInMachine<DistillerRecipe> context, IMultiblockLevel level) {
         super.processFinish(context, level);
-        DistillerRecipe recipe = getLevelData(level.getRawLevel()).recipe();
+        DistillerRecipe recipe = getRecipe(level.getRawLevel());
         if (recipe != null && !recipe.itemOutput.isEmpty() && level.getRawLevel().random.nextFloat() < recipe.chance) {
             IItemHandler inv = context.getInventory();
             ItemStack salt = recipe.itemOutput.copy();
-            if (inv.insertItem(ITDistillerLogic.OUTPUT_SLOT, salt, false).isEmpty()) return;
+            inv.insertItem(ITDistillerLogic.OUTPUT_SLOT, salt, false);
         }
     }
 }

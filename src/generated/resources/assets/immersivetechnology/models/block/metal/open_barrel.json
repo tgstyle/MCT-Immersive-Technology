@@ -307,6 +307,6 @@
     "down": "immersivetechnology:block/metal/open_barrel_down",
     "particle": "immersivetechnology:block/metal/open_barrel_side",
     "side": "immersivetechnology:block/metal/open_barrel_side",
-    "up": "immersivetechnology:block/metal/open_barrel_top"
+    "up": "immersivetechnology:block/metal/open_barrel_up"
   }
 }

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,7 +33,6 @@ public class ITClientRenderHandler implements net.minecraft.client.color.item.It
     private static Map<RenderTypeSkeleton, RenderType> renderTypes;
 
     private static final Map<Block, RenderTypeSkeleton> mapping = new HashMap<>();
-    private static final Map<Block, Block> inheritances = new HashMap<>();
 
     public static ITClientRenderHandler INSTANCE = new ITClientRenderHandler();
 
@@ -72,7 +72,7 @@ public class ITClientRenderHandler implements net.minecraft.client.color.item.It
     }
 
     @Override
-    public int getColor(net.minecraft.world.item.ItemStack stack, int tintIndex) {
+    public int getColor(ItemStack stack, int tintIndex) {
         if (stack.getItem() instanceof ITFlagItem type) { return type.getColor(tintIndex); }
         return 0xffffff;
     }
@@ -81,10 +81,7 @@ public class ITClientRenderHandler implements net.minecraft.client.color.item.It
     public static void setRenderType(Block block, RenderTypeSkeleton skeleton) { setRenderTypeClient(block, skeleton); }
 
     @OnlyIn(Dist.CLIENT)
-    private static void setRenderTypeClient(Block block, RenderTypeSkeleton skeleton) {
-        resolveRenderTypes();
-        mapping.put(block, skeleton);
-    }
+    private static void setRenderTypeClient(Block block, RenderTypeSkeleton skeleton) { resolveRenderTypes(); mapping.put(block, skeleton); }
 
     @OnlyIn(Dist.CLIENT)
     private static void resolveRenderTypes() {

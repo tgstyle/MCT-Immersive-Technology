@@ -14,31 +14,37 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class DistillerMenu extends IEContainerMenu {
-    public static DistillerMenu makeServer(MenuType<?> type, int id, Inventory invPlayer, MultiblockMenuContext<ITDistillerLogic.State> ctx)
-    {
+    public static DistillerMenu makeServer(MenuType<?> type, int id, Inventory invPlayer, MultiblockMenuContext<ITDistillerLogic.State> ctx) {
         final ITDistillerLogic.State state = ctx.mbContext().getState();
         return new DistillerMenu(multiblockCtx(type, id, ctx), invPlayer, state.getInventory(), state.getTanks(), state.getEnergy());
     }
 
-    public static DistillerMenu makeClient(MenuType<?> type, int id, Inventory invPlayer)
-    {
-        return new DistillerMenu(clientCtx(type, id), invPlayer, new ItemStackHandler(4), new ITDistillerLogic.DistillerTank(), new MutableEnergyStorage(32000));
+    public static DistillerMenu makeClient(MenuType<?> type, int id, Inventory invPlayer) {
+        return new DistillerMenu(clientCtx(type, id), invPlayer, new ItemStackHandler(5), new ITDistillerLogic.DistillerTank(), new MutableEnergyStorage(32000));
     }
+
     public final ITDistillerLogic.DistillerTank tanks;
     public final IEnergyStorage energy;
+
     protected DistillerMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, ITDistillerLogic.DistillerTank tanks, IMutableEnergyStorage energy) {
         super(ctx);
         this.tanks = tanks;
         this.energy = energy;
-        this.addSlot(new IESlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_WATER_IN, 26, 17, IESlot.NewFluidContainer.Filter.ANY));
-        this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.SLOT_WATER_EMPTY_OUT, 26, 53));
-        this.addSlot(new IESlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_WATER_EMPTY_IN, 134, 17, IESlot.NewFluidContainer.Filter.ANY));
-        this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.SLOT_WATER_OUT, 134, 53));
+        this.addSlot(new IESlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_INPUT_FILLED, 26, 17, IESlot.NewFluidContainer.Filter.ANY));
+        this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.SLOT_INPUT_EMPTY, 26, 53));
+        this.addSlot(new IESlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_OUTPUT_EMPTY, 134, 17, IESlot.NewFluidContainer.Filter.ANY));
+        this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.SLOT_OUTPUT_FILLED, 134, 53));
         this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.OUTPUT_SLOT, 80, 35));
-        for(int i = 0; i < 3; i++) for(int j = 0; j < 9; j++) addSlot(new Slot(inventoryPlayer, j+i*9+9, 8+j*18, 84+i*18));
-        for(int i = 0; i < 9; i++) addSlot(new Slot(inventoryPlayer, i, 8+i*18, 142));
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 9; j++) {
+                addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+            }
+        }
+        for (int i = 0; i < 9; i++) {
+            addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142));
+        }
         addGenericData(GenericContainerData.energy(energy));
-        addGenericData(GenericContainerData.fluid(tanks.waterInput()));
+        addGenericData(GenericContainerData.fluid(tanks.input()));
         addGenericData(GenericContainerData.fluid(tanks.output()));
     }
 }

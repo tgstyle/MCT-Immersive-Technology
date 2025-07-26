@@ -1,13 +1,16 @@
 package mctmods.immersivetechnology.common.data.generators;
 
+import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
+import blusunrize.immersiveengineering.client.models.ModelConfigurableSides;
 import blusunrize.immersiveengineering.data.DataGenUtils;
 import blusunrize.immersiveengineering.data.models.*;
 import blusunrize.immersiveengineering.data.models.NongeneratedModels.NongeneratedModel;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import mctmods.immersivetechnology.common.blocks.metal.SteelBarrelBlock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.ITTemplateMultiblock;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
@@ -71,12 +74,20 @@ public class ITBlockStateProvider extends BlockStateProvider {
         genericmultiblock("alternator");
         genericmultiblock("coke_oven_advanced");
         genericmultiblock("solar_tower");
+
         createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("block/stone/reinforced_coke_brick", modLoc("block/stone/reinforced_coke_brick")));
         createSimpleBlock(ITBlocks.getBlock.apply("creative_barrel"), models().cubeAll("block/metal/creative_barrel", modLoc("block/metal/creative_barrel")));
-        createSimpleBlock(ITBlocks.getBlock.apply("steel_barrel"), models().cubeBottomTop("block/metal/steel_barrel", modLoc("block/metal/steel_barrel_side"), modLoc("block/metal/steel_barrel_top"), modLoc("block/metal/steel_barrel_bottom")));
+
+        VariantBlockStateBuilder steelBuilder = getVariantBuilder(ITBlocks.MetalDevices.STEEL_BARREL.get());
+        BlockModelBuilder steelModel = models().getBuilder("block/metal/steel_barrel")
+                .customLoader(SideConfigBuilder::begin)
+                .type(ModelConfigurableSides.Type.VERTICAL)
+                .baseName(modLoc("block/metal/steel_barrel"))
+                .end();
+        steelBuilder.partialState().setModels(new ConfiguredModel(steelModel));
 
         BlockModelBuilder openModel = models().getBuilder("block/metal/open_barrel")
-                .texture("up", modLoc("block/metal/open_barrel_top"))
+                .texture("up", modLoc("block/metal/open_barrel_up"))
                 .texture("down", modLoc("block/metal/open_barrel_down"))
                 .texture("side", modLoc("block/metal/open_barrel_side"))
                 .texture("particle", modLoc("block/metal/open_barrel_side"));
@@ -112,7 +123,9 @@ public class ITBlockStateProvider extends BlockStateProvider {
                 .face(Direction.EAST).texture("#side").uvs(0, 0, 14, 15).end()
                 .face(Direction.UP).texture("#up").uvs(0, 0, 1, 14).end();
         createSimpleBlock(ITBlocks.getBlock.apply("open_barrel"), openModel);
+
         createMultiblock(ITBlocks.MetalDevices.COKE_OVEN_PREHEATER, split(innerObj("block/metal/coke_oven_preheater.obj", RenderType.cutout())));
+
         ModelFile emptyModel = models().withExistingParent("empty", mcLoc("block/block"))
                 .renderType("cutout")
                 .texture("particle", "#missingno");
@@ -131,20 +144,11 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private void createSimpleBlock(Block block, ModelFile model) { getVariantBuilder(block).partialState().setModels(new ConfiguredModel(model)); }
 
-    private void genericmultiblock(String registry_name) {
-        ITLib.IT_LOGGER.info("Generating [" + registry_name + "] Multiblock Model Data");
-        createMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name));
-    }
+    private void genericmultiblock(String registry_name) { ITLib.IT_LOGGER.info("Generating [" + registry_name + "] Multiblock Model Data"); createMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name)); }
 
-    private void genericmultiblock(String registry_name, boolean dynamic) {
-        ITLib.IT_LOGGER.info("Generating [" + registry_name + "] Multiblock Model Data");
-        createMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name), dynamic);
-    }
+    private void genericmultiblock(String registry_name, boolean dynamic) { ITLib.IT_LOGGER.info("Generating [" + registry_name + "] Multiblock Model Data"); createMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name), dynamic); }
 
-    private void genericmultiblockMirror(String registry_name) {
-        ITLib.IT_LOGGER.info("Generating [" + registry_name + "] with Custom Mirror Multiblock Model Data");
-        testCreateMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + ".obj"), innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + "_mirrored.obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name));
-    }
+    private void genericmultiblockMirror(String registry_name) { ITLib.IT_LOGGER.info("Generating [" + registry_name + "] with Custom Mirror Multiblock Model Data"); testCreateMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + ".obj"), innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + "_mirrored.obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name)); }
 
     private void createMultiblock(NongeneratedModel unsplitModel, TemplateMultiblock multiblock) { createMultiblock(unsplitModel, (ITTemplateMultiblock) multiblock, false); }
 
@@ -284,7 +288,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         return splitModel(baseModel.getLocation().getPath() + "_split", baseModel, parts, dynamic);
     }
 
-    protected ModelFile split(NongeneratedModel baseModel) { return split(baseModel, ITBlockStateProvider.COLUMN_THREE, false); }
+    protected ModelFile split(NongeneratedModel baseModel) { return split(baseModel, COLUMN_THREE, false); }
 
     protected ModelFile splitDynamic(NongeneratedModel baseModel, List<Vec3i> parts) { return split(baseModel, parts, true); }
 
@@ -335,9 +339,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     protected int getAngle(Direction dir, int offset) { return (int) ((dir.toYRot() + offset) % 360); }
 
-    protected void createHorizontalRotatedBlock(Supplier<? extends Block> block, ModelFile model) {
-        createHorizontalRotatedBlock(block, $ -> model, List.of());
-    }
+    protected void createHorizontalRotatedBlock(Supplier<? extends Block> block, ModelFile model) { createHorizontalRotatedBlock(block, $ -> model, List.of()); }
 
     protected void createHorizontalRotatedBlock(Supplier<? extends Block> block, ModelFile model, int offsetRotY) {
         createRotatedBlock(block, $ -> model, IEProperties.FACING_HORIZONTAL, List.of(), 0, offsetRotY);

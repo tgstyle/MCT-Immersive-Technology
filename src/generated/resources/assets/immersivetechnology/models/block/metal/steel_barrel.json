@@ -1,8 +1,5 @@
 {
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "bottom": "immersivetechnology:block/metal/steel_barrel_top",
-    "side": "immersivetechnology:block/metal/steel_barrel_side",
-    "top": "immersivetechnology:block/metal/steel_barrel_bottom"
-  }
+  "type": "vertical",
+  "base_name": "immersivetechnology:block/metal/steel_barrel",
+  "loader": "immersiveengineering:conf_sides"
 }

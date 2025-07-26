@@ -1,12 +1,15 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
+import blusunrize.immersiveengineering.api.utils.CapabilityReference;
+import blusunrize.immersiveengineering.common.blocks.IEBaseBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.blocks.metal.MetalBarrelBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.ticking.IEServerTickableBE;
 import blusunrize.immersiveengineering.common.util.Utils;
+import com.google.common.collect.ImmutableMap;
 import mctmods.immersivetechnology.common.fluids.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -14,7 +17,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -24,92 +29,87 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
-public class SteelBarrelBlockEntity extends MetalBarrelBlockEntity implements IEBlockInterfaces.IConfigurableSides, IEBlockInterfaces.IComparatorOverride, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction, IEServerTickableBE {
+public class SteelBarrelBlockEntity extends IEBaseBlockEntity implements IEServerTickableBE, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IConfigurableSides, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.IComparatorOverride, IEBlockInterfaces.IPlacementInteraction {
     private static final int tankSize = 24000;
     private static final int transferSpeed = 500;
 
-    public int[] sideConfig = {1, 0};
-
+    public final ITMarkableFluidTank tank = new ITMarkableFluidTank(tankSize, v -> setChanged());
+    public EnumMap<Direction, IOSideConfig> sideConfig = new EnumMap<>(ImmutableMap.of(Direction.DOWN, IOSideConfig.OUTPUT, Direction.UP, IOSideConfig.INPUT));
     protected int sleep = 0;
 
-    private final LazyOptional<IFluidHandler> topHandler = LazyOptional.of(() -> new SidedFluidHandler(this, Direction.UP));
-    protected final LazyOptional<IFluidHandler> bottomHandler = LazyOptional.of(() -> new SidedFluidHandler(this, Direction.DOWN));
-    private final LazyOptional<IFluidHandler> nullHandler = LazyOptional.of(() -> new SidedFluidHandler(this, null));
+    private final Map<Direction, CapabilityReference<IFluidHandler>> neighbors = ImmutableMap.of(
+            Direction.DOWN, CapabilityReference.forNeighbor(this, ForgeCapabilities.FLUID_HANDLER, Direction.DOWN),
+            Direction.UP, CapabilityReference.forNeighbor(this, ForgeCapabilities.FLUID_HANDLER, Direction.UP)
+    );
 
-    public SteelBarrelBlockEntity(BlockPos pos, BlockState state) {
-        super(pos, state);
-        this.tank = new ITMarkableFluidTank(tankSize, v -> this.setChanged());
-    }
+    public SteelBarrelBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.STEEL_BARREL.get(), pos, state); }
 
     @Override
     public void tickServer() {
-        boolean out = !isRSPowered();
-        if (out) super.tickServer();
-
-        if (level == null || level.isClientSide) return;
-
-        for (int index = 0; index < 2; index++) {
-            if (tank.getFluidAmount() > 0 && sideConfig[index] == 1) {
-                Direction face = index == 0 ? Direction.DOWN : Direction.UP;
-                FluidUtil.getFluidHandler(level, worldPosition.relative(face), face.getOpposite()).ifPresent(output -> {
-                    if (sleep == 0) {
-                        FluidStack simulatedDrain = tank.drain(Math.min(transferSpeed, tank.getFluidAmount()), IFluidHandler.FluidAction.SIMULATE);
-                        if (simulatedDrain.getAmount() > 0) {
-                            int accepted = output.fill(simulatedDrain, IFluidHandler.FluidAction.SIMULATE);
-                            if (accepted > 0) {
-                                FluidStack drained = tank.drain(accepted, IFluidHandler.FluidAction.EXECUTE);
-                                output.fill(drained, IFluidHandler.FluidAction.EXECUTE);
-                                sleep = 0;
-                            } else {
-                                sleep = 20;
-                            }
-                        } else {
-                            sleep = 20;
-                        }
-                    } else {
-                        sleep--;
-                    }
-                });
+        if (isRSPowered()) return;
+        boolean update = false;
+        for (Direction side : neighbors.keySet()) {
+            if (tank.getFluidAmount() > 0 && sideConfig.get(side) == IOSideConfig.OUTPUT) {
+                IFluidHandler handler = neighbors.get(side).getNullable();
+                if (handler != null && sleep == 0) {
+                    int out = Math.min(transferSpeed, tank.getFluidAmount());
+                    FluidStack simulatedDrain = tank.drain(out, IFluidHandler.FluidAction.SIMULATE);
+                    if (!simulatedDrain.isEmpty()) {
+                        int accepted = handler.fill(simulatedDrain, IFluidHandler.FluidAction.SIMULATE);
+                        if (accepted > 0) {
+                            FluidStack drained = tank.drain(accepted, IFluidHandler.FluidAction.EXECUTE);
+                            handler.fill(drained, IFluidHandler.FluidAction.EXECUTE);
+                            update = true; sleep = 0;
+                        } else { sleep = 20; }
+                    } else { sleep = 20; }
+                } else if (sleep > 0) { sleep--; }
             }
         }
+        if (update) { setChanged(); markContainingBlockForUpdate(null); }
     }
 
     @Override
     public void readCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
-        super.readCustomNBT(nbt, descPacket);
-        sideConfig = nbt.getIntArray("sideConfig");
-        if (sideConfig.length < 2) sideConfig = new int[]{1, 0};
+        sideConfig.clear();
+        int[] sideCfgArray = nbt.getIntArray("sideConfig");
+        if (sideCfgArray.length >= 2) {
+            sideConfig.put(Direction.DOWN, IOSideConfig.VALUES[sideCfgArray[0]]);
+            sideConfig.put(Direction.UP, IOSideConfig.VALUES[sideCfgArray[1]]);
+        } else {
+            sideConfig.put(Direction.DOWN, IOSideConfig.OUTPUT);
+            sideConfig.put(Direction.UP, IOSideConfig.INPUT);
+        }
+        tank.readFromNBT(nbt.getCompound("tank"));
+        if (!descPacket) { updateBlockState(); }
     }
 
     @Override
     public void writeCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
-        super.writeCustomNBT(nbt, descPacket);
-        nbt.putIntArray("sideConfig", sideConfig);
+        int[] sideCfgArray = new int[2];
+        sideCfgArray[0] = sideConfig.getOrDefault(Direction.DOWN, IOSideConfig.OUTPUT).ordinal();
+        sideCfgArray[1] = sideConfig.getOrDefault(Direction.UP, IOSideConfig.INPUT).ordinal();
+        nbt.putIntArray("sideConfig", sideCfgArray);
+        nbt.put("tank", tank.writeToNBT(new CompoundTag()));
     }
 
-    @Override
     public boolean isFluidValid(@NotNull FluidStack fluid) { return !fluid.isEmpty(); }
 
     @Override
-    public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (side == null) return nullHandler.cast();
-            if (side.getAxis() == Direction.Axis.Y) return (side == Direction.UP ? topHandler : bottomHandler).cast();
+    public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing) {
+        if (capability == ForgeCapabilities.FLUID_HANDLER) {
+            if (facing == null) return LazyOptional.of(() -> new SidedFluidHandler(this, null)).cast();
+            if (facing.getAxis() == Direction.Axis.Y) return LazyOptional.of(() -> new SidedFluidHandler(this, facing)).cast();
         }
-        return super.getCapability(cap, side);
+        return super.getCapability(capability, facing);
     }
 
     @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        topHandler.invalidate();
-        bottomHandler.invalidate();
-        nullHandler.invalidate();
-    }
-
-    @Override
-    public Component @NotNull [] getOverlayText(@NotNull Player player, @NotNull HitResult rtr, boolean hammer) {
+    public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult rtr, boolean hammer) {
+        if (rtr.getType() == HitResult.Type.MISS) return null;
         if (Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) {
             FluidStack fs = tank.getFluid();
             if (fs.isEmpty()) return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.text())};
@@ -119,35 +119,62 @@ public class SteelBarrelBlockEntity extends MetalBarrelBlockEntity implements IE
     }
 
     @Override
+    public boolean useNixieFont(@NotNull Player player, @NotNull HitResult mop) { return false; }
+
+    @Override
     public int getComparatorInputOverride() { return (15 * tank.getFluidAmount()) / tank.getCapacity(); }
 
-    public IOSideConfig getSideConfig(int side) {
-        if (side < 0 || side > 1) return IOSideConfig.NONE;
-        return IOSideConfig.VALUES[sideConfig[side] + 1];
-    }
+    @Override
+    public @NotNull IOSideConfig getSideConfig(@NotNull Direction side) { return sideConfig.getOrDefault(side, IOSideConfig.NONE); }
 
-    public boolean toggleSide(int side, Player player) {
-        if (side < 0 || side > 1) return false;
-        sideConfig[side] = (sideConfig[side] + 1) % 3 - 1;
+    @Override
+    public boolean toggleSide(Direction side, @NotNull Player p) {
+        if (side.getAxis() != Direction.Axis.Y) return false;
+        IOSideConfig next = IOSideConfig.next(sideConfig.getOrDefault(side, IOSideConfig.NONE));
+        sideConfig.put(side, next);
         setChanged();
-        if (level != null) {
-            level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-            level.blockEvent(worldPosition, getBlockState().getBlock(), 0, 0);
-        }
-        return true;
+        assert level != null;
+        level.blockEvent(getBlockPos(), getBlockState().getBlock(), 0, 0);
+        BlockState newState = getBlockState();
+        if (side == Direction.UP) newState = newState.setValue(SteelBarrelBlock.TOP_CONFIG, next);
+        else if (side == Direction.DOWN) newState = newState.setValue(SteelBarrelBlock.BOTTOM_CONFIG, next);
+        level.setBlock(worldPosition, newState, 3); return true;
     }
 
     @Override
-    public boolean interact(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull ItemStack heldItem, float hitX, float hitY, float hitZ) { return FluidUtil.interactWithFluidHandler(player, hand, tank); }
+    public boolean interact(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull ItemStack heldItem, float hitX, float hitY, float hitZ) {
+        if (FluidUtil.interactWithFluidHandler(player, hand, tank)) { setChanged(); markContainingBlockForUpdate(null); return true; }
+        return false;
+    }
+
+    @Override
+    public void getBlockEntityDrop(@NotNull LootContext context, @NotNull Consumer<ItemStack> drop) {
+        ItemStack stack = new ItemStack(getBlockState().getBlock(), 1);
+        CompoundTag tag = new CompoundTag();
+        writeTank(tag, true);
+        if (!tag.isEmpty()) stack.setTag(tag);
+        drop.accept(stack);
+    }
+
+    @Override
+    public void onBEPlaced(BlockPlaceContext ctx) { if (ctx.getItemInHand().hasTag()) readTank(ctx.getItemInHand().getOrCreateTag()); }
+
+    public void writeTank(CompoundTag nbt, boolean toItem) {
+        boolean write = tank.getFluidAmount() > 0;
+        CompoundTag tankTag = tank.writeToNBT(new CompoundTag());
+        if (!toItem || write) nbt.put("tank", tankTag);
+    }
+
+    public void readTank(CompoundTag nbt) { tank.readFromNBT(nbt.getCompound("tank")); }
+
+    @Override
+    public boolean triggerEvent(int id, int arg) { if (id == 0) { markContainingBlockForUpdate(null); return true; } return false; }
 
     public static class SidedFluidHandler implements IFluidHandler {
         SteelBarrelBlockEntity barrel;
-        Direction facing;
+        @Nullable Direction facing;
 
-        public SidedFluidHandler(SteelBarrelBlockEntity barrel, Direction facing) {
-            this.barrel = barrel;
-            this.facing = facing;
-        }
+        public SidedFluidHandler(SteelBarrelBlockEntity barrel, @Nullable Direction facing) { this.barrel = barrel; this.facing = facing; }
 
         @Override
         public int getTanks() { return barrel.tank.getTanks(); }
@@ -162,21 +189,18 @@ public class SteelBarrelBlockEntity extends MetalBarrelBlockEntity implements IE
         public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return barrel.isFluidValid(stack); }
 
         @Override
-        public int fill(FluidStack resource, FluidAction action) {
-            if (resource.isEmpty() || (facing != null && barrel.sideConfig[facing == Direction.UP ? 1 : 0] != 0)) return 0;
-            return barrel.tank.fill(resource, action);
-        }
+        public int fill(FluidStack resource, FluidAction action) { if (resource.isEmpty() || (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.INPUT)) return 0; return barrel.tank.fill(resource, action); }
 
         @Override
-        public @NotNull FluidStack drain(FluidStack resource, FluidAction action) {
-            if (resource.isEmpty() || (facing != null && barrel.sideConfig[facing == Direction.UP ? 1 : 0] != 1)) return FluidStack.EMPTY;
-            return barrel.tank.drain(resource, action);
-        }
+        public @NotNull FluidStack drain(FluidStack resource, FluidAction action) { if (resource.isEmpty() || (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.OUTPUT)) return FluidStack.EMPTY; return barrel.tank.drain(resource, action); }
 
         @Override
-        public @NotNull FluidStack drain(int maxDrain, FluidAction action) {
-            if (facing != null && barrel.sideConfig[facing == Direction.UP ? 1 : 0] != 1) return FluidStack.EMPTY;
-            return barrel.tank.drain(maxDrain, action);
-        }
+        public @NotNull FluidStack drain(int maxDrain, FluidAction action) { if (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.OUTPUT) return FluidStack.EMPTY; return barrel.tank.drain(maxDrain, action); }
+    }
+
+    private void updateBlockState() {
+        BlockState state = getBlockState();
+        assert level != null;
+        level.setBlock(worldPosition, state.setValue(SteelBarrelBlock.TOP_CONFIG, sideConfig.getOrDefault(Direction.UP, IOSideConfig.INPUT)).setValue(SteelBarrelBlock.BOTTOM_CONFIG, sideConfig.getOrDefault(Direction.DOWN, IOSideConfig.OUTPUT)), 3);
     }
 }
