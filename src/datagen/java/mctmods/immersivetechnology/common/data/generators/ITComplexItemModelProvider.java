@@ -71,7 +71,7 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
     }
 
     private void generateBlockModel(Supplier<? extends ItemLike> block) {
-        TRSRModelBuilder model = obj(block, "block/metal/coke_oven_preheater.obj");
+        TRSRModelBuilder model = obj(block, "block/metal/obj/coke_oven_preheater.obj");
 
         ModelBuilder<?>.TransformsBuilder trans = model.transforms();
         doTransform(trans, ItemDisplayContext.FIRST_PERSON_LEFT_HAND, new Vector3f(-1.75F, 2.5F, 1.25F), new Vector3f(0, 225, 0), 0.03125F);

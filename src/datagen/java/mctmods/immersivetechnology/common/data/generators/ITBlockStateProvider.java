@@ -124,7 +124,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
                 .face(Direction.UP).texture("#up").uvs(0, 0, 1, 14).end();
         createSimpleBlock(ITBlocks.getBlock.apply("open_barrel"), openModel);
 
-        createMultiblock(ITBlocks.MetalDevices.COKE_OVEN_PREHEATER, split(innerObj("block/metal/coke_oven_preheater.obj", RenderType.cutout())));
+        createMultiblock(ITBlocks.MetalDevices.COKE_OVEN_PREHEATER, split(innerObj("block/metal/obj/coke_oven_preheater.obj", RenderType.cutout())));
 
         ModelFile emptyModel = models().withExistingParent("empty", mcLoc("block/block"))
                 .renderType("cutout")
