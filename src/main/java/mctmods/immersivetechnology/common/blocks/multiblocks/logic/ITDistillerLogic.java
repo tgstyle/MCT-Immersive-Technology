@@ -121,7 +121,6 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         }
         final IItemHandlerModifiable inventory = state.inventory;
         ItemStack drainedContainer = inventory.getStackInSlot(SLOT_INPUT_EMPTY);
-        System.out.println("Output ref present: " + state.outputRef.isPresent());
         if (!drainedContainer.isEmpty()) {
             int origCount = drainedContainer.getCount();
             drainedContainer = Utils.insertStackIntoInventory(state.outputRef, drainedContainer, false);
