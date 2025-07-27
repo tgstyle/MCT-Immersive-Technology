@@ -5,34 +5,51 @@ import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
 import blusunrize.immersiveengineering.common.gui.IEContainerMenu;
 import blusunrize.immersiveengineering.common.gui.IESlot;
 import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
+import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITDistillerLogic;
+import mctmods.immersivetechnology.common.fluids.ITMarkableFluidTank;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
+
+import java.util.List;
 
 public class DistillerMenu extends IEContainerMenu {
+    public final ITDistillerLogic.DistillerTank tanks;
+    public final IMutableEnergyStorage energy;
+
     public static DistillerMenu makeServer(MenuType<?> type, int id, Inventory invPlayer, MultiblockMenuContext<ITDistillerLogic.State> ctx) {
         final ITDistillerLogic.State state = ctx.mbContext().getState();
         return new DistillerMenu(multiblockCtx(type, id, ctx), invPlayer, state.getInventory(), state.getTanks(), state.getEnergy());
     }
 
     public static DistillerMenu makeClient(MenuType<?> type, int id, Inventory invPlayer) {
-        return new DistillerMenu(clientCtx(type, id), invPlayer, new ItemStackHandler(5), new ITDistillerLogic.DistillerTank(), new MutableEnergyStorage(32000));
+        return new DistillerMenu(
+                clientCtx(type, id),
+                invPlayer,
+                new SlotwiseItemHandler(
+                        List.of(
+                                SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                                SlotwiseItemHandler.IOConstraint.OUTPUT,
+                                SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                                SlotwiseItemHandler.IOConstraint.OUTPUT,
+                                SlotwiseItemHandler.IOConstraint.OUTPUT
+                        ),
+                        () -> {}
+                ),
+                new ITDistillerLogic.DistillerTank(new ITMarkableFluidTank(ITDistillerLogic.TANK_CAPACITY, (v) -> {}), new ITMarkableFluidTank(ITDistillerLogic.TANK_CAPACITY, (v) -> {})),
+                new MutableEnergyStorage(32000)
+        );
     }
-
-    public final ITDistillerLogic.DistillerTank tanks;
-    public final IEnergyStorage energy;
 
     protected DistillerMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, ITDistillerLogic.DistillerTank tanks, IMutableEnergyStorage energy) {
         super(ctx);
         this.tanks = tanks;
         this.energy = energy;
-        this.addSlot(new IESlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_INPUT_FILLED, 26, 17, IESlot.NewFluidContainer.Filter.ANY));
+        this.addSlot(new IESlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_INPUT_FILLED, 26, 17, IESlot.NewFluidContainer.Filter.FULL));
         this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.SLOT_INPUT_EMPTY, 26, 53));
-        this.addSlot(new IESlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_OUTPUT_EMPTY, 134, 17, IESlot.NewFluidContainer.Filter.ANY));
+        this.addSlot(new IESlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_OUTPUT_EMPTY, 134, 17, IESlot.NewFluidContainer.Filter.EMPTY));
         this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.SLOT_OUTPUT_FILLED, 134, 53));
         this.addSlot(new IESlot.NewOutput(inv, ITDistillerLogic.OUTPUT_SLOT, 80, 35));
         for (int i = 0; i < 3; i++) {

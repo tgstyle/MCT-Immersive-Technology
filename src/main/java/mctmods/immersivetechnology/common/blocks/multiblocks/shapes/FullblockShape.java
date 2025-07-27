@@ -1,21 +1,15 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.shapes;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.AABB;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import java.util.function.Function;
 
-import java.util.ArrayList;
-import java.util.List;
+public class FullblockShape implements Function<BlockPos, VoxelShape> {
+    public static final FullblockShape GETTER = new FullblockShape();
 
-public class FullblockShape extends GenericShape {
-
-    public static FullblockShape GETTER = new FullblockShape();
-
-    @NotNull
     @Override
-    protected List<AABB> getShape(BlockPos posInMultiblock) {
-        List<AABB> main = new ArrayList<>();
-        main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
-        return main;
+    public VoxelShape apply(BlockPos posInMultiblock) {
+        return Shapes.block();
     }
 }
