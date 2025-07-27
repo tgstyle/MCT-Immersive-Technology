@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public class ITDistiller extends ITTemplateMultiblock {
     public static final ITDistiller INSTANCE = new ITDistiller();
 
-    public ITDistiller() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/distiller"), new BlockPos(0,0,0), new BlockPos(1,1,1), new BlockPos(3,3,3), ITMultiblockProvider.DISTILLER); }
+    public ITDistiller() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/distiller"), new BlockPos(1,1,1), new BlockPos(1,1,1), new BlockPos(3,3,3), ITMultiblockProvider.DISTILLER); }
 
     @Override
     public float getManualScale() { return 16; }
@@ -23,5 +23,5 @@ public class ITDistiller extends ITTemplateMultiblock {
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, 0, 0, 0)); }
+    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, 1, 1, 1)); }
 }
