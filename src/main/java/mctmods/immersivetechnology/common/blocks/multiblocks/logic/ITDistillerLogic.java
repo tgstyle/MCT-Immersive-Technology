@@ -50,21 +50,13 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State>, IServerTickableComponent<ITDistillerLogic.State>, IClientTickableComponent<ITDistillerLogic.State> {
     public static final BlockPos REDSTONE_POS = new BlockPos(2, 1, 2);
-    private static final CapabilityPosition FLUID_INPUT_EXTERNAL = new CapabilityPosition(0, 0, 1, RelativeBlockFace.LEFT);
-    private static final CapabilityPosition FLUID_INPUT_INTERNAL = new CapabilityPosition(0, 0, 1, RelativeBlockFace.RIGHT);
-    private static final CapabilityPosition FLUID_MIDDLE_LEFT = new CapabilityPosition(1, 0, 1, RelativeBlockFace.LEFT);
-    private static final CapabilityPosition FLUID_MIDDLE_RIGHT = new CapabilityPosition(1, 0, 1, RelativeBlockFace.RIGHT);
-    private static final CapabilityPosition FLUID_OUTPUT_INTERNAL = new CapabilityPosition(2, 0, 1, RelativeBlockFace.LEFT);
-    private static final CapabilityPosition FLUID_OUTPUT_EXTERNAL = new CapabilityPosition(2, 0, 1, RelativeBlockFace.RIGHT);
-    private static final Set<CapabilityPosition> FLUID_INPUT_CAPS = Set.of(FLUID_INPUT_EXTERNAL);
-    private static final Set<BlockPos> FLUID_INPUTS = FLUID_INPUT_CAPS.stream().map(CapabilityPosition::posInMultiblock).collect(Collectors.toSet());
-    private static final Set<CapabilityPosition> ENERGY_INPUTS = Set.of(new CapabilityPosition(0, 1, 2, RelativeBlockFace.UP));
-    private static final MultiblockFace ITEM_OUTPUT_POS = new MultiblockFace(1, 0, 0, RelativeBlockFace.BACK);
-    private static final MultiblockFace ITEM_INPUT_POS = new MultiblockFace(0, 1, 1, RelativeBlockFace.UP);
+    private static final CapabilityPosition FLUID_POS1 = new CapabilityPosition(0, 0, 1, RelativeBlockFace.RIGHT);
+    private static final CapabilityPosition FLUID_POS2 = new CapabilityPosition(2, 0, 1, RelativeBlockFace.LEFT);
+    private static final Set<CapabilityPosition> ENERGY_POS = Set.of(new CapabilityPosition(0, 1, 2, RelativeBlockFace.UP));
+    private static final MultiblockFace ITEM_OUTPUT_POS = new MultiblockFace(1, 0, -1, RelativeBlockFace.BACK);
     public static final int TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
@@ -129,6 +121,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         }
         final IItemHandlerModifiable inventory = state.inventory;
         ItemStack drainedContainer = inventory.getStackInSlot(SLOT_INPUT_EMPTY);
+        System.out.println("Output ref present: " + state.outputRef.isPresent());
         if (!drainedContainer.isEmpty()) {
             int origCount = drainedContainer.getCount();
             drainedContainer = Utils.insertStackIntoInventory(state.outputRef, drainedContainer, false);
@@ -174,50 +167,31 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
 
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
-        final State state = ctx.getState();
-        if (cap == ForgeCapabilities.ENERGY) {
-            if (position.side() == null || ENERGY_INPUTS.contains(position)) return state.energyCap.cast(ctx);
-        }
+        final State state = ctx.getState(); if (cap == ForgeCapabilities.ENERGY) {
+            if (position.side() == null || ENERGY_POS.contains(position)) return state.energyCap.cast(ctx); }
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (FLUID_INPUT_EXTERNAL.equals(position) || FLUID_INPUT_INTERNAL.equals(position) || FLUID_MIDDLE_RIGHT.equals(position)) return state.inputCap.cast(ctx);
-            else if (FLUID_MIDDLE_LEFT.equals(position) || FLUID_OUTPUT_INTERNAL.equals(position) || FLUID_OUTPUT_EXTERNAL.equals(position)) return state.outputCapSteam.cast(ctx);
+            if (FLUID_POS1.equals(position)) { return state.inputCap.cast(ctx); }
+            else if (FLUID_POS2.equals(position)) { return state.outputCapSteam.cast(ctx); }
         }
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            if (ITEM_OUTPUT_POS.posInMultiblock().equals(position.posInMultiblock())) return state.itemOutputCap.cast(ctx);
-            if (ITEM_INPUT_POS.posInMultiblock().equals(position.posInMultiblock())) return state.itemInputCap.cast(ctx);
-        }
-        return LazyOptional.empty();
-    }
+        if (cap == ForgeCapabilities.ITEM_HANDLER) { if (ITEM_OUTPUT_POS.posInMultiblock().equals(position.posInMultiblock())) return state.itemOutputCap.cast(ctx); }
+        return LazyOptional.empty(); }
 
     @Override
-    public State createInitialState(IInitialMultiblockContext<State> ctx) {
-        return new State(ctx);
-    }
+    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) {
-        return FullblockShape.GETTER;
-    }
+    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return FullblockShape.GETTER; }
 
     @Override
     public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
-        if (isClient) return InteractionResult.SUCCESS;
-        final State state = ctx.getState();
-        IFluidHandler tank = null;
-        if (FLUID_INPUTS.contains(posInMultiblock)) tank = state.tanks.input;
-        else if (FLUID_OUTPUT_EXTERNAL.posInMultiblock().equals(posInMultiblock)) tank = state.tanks.output;
-        if (tank != null) {
-            FluidUtil.interactWithFluidHandler(player, hand, tank);
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
-        return InteractionResult.SUCCESS;
-    }
+        if (isClient) return InteractionResult.SUCCESS; final State state = ctx.getState(); IFluidHandler tank = null;
+        if (FLUID_POS1.posInMultiblock().equals(posInMultiblock)) tank = state.tanks.input;
+        else if (FLUID_POS2.posInMultiblock().equals(posInMultiblock)) tank = state.tanks.output;
+        if (tank != null) { FluidUtil.interactWithFluidHandler(player, hand, tank); ctx.markMasterDirty(); ctx.requestMasterBESync(); }
+        return InteractionResult.SUCCESS; }
 
     @Override
-    public void dropExtraItems(State state, Consumer<ItemStack> drop) {
-        MBInventoryUtils.dropItems(state.inventory, drop);
-    }
+    public void dropExtraItems(State state, Consumer<ItemStack> drop) { MBInventoryUtils.dropItems(state.inventory, drop); }
 
     public static class State implements IMultiblockState, ProcessContext.ProcessContextInMachine<DistillerRecipe> {
         public boolean active;
@@ -227,7 +201,6 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         private final StoredCapability<IFluidHandler> outputCapSteam;
         private final CapabilityReference<IFluidHandler> fluidOutput;
         private final StoredCapability<IItemHandler> itemOutputCap;
-        private final StoredCapability<IItemHandler> itemInputCap;
         private final CapabilityReference<IItemHandler> outputRef;
         private final ITSlotwiseItemHandler inventory;
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
@@ -255,7 +228,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
                     ),
                     onChanged
             );
-            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, new MultiblockFace(FLUID_OUTPUT_EXTERNAL.side(), FLUID_OUTPUT_EXTERNAL.posInMultiblock()));
+            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, new MultiblockFace(FLUID_POS2.side(), FLUID_POS2.posInMultiblock()));
             this.itemOutputCap = new StoredCapability<>(new ITWrappingItemHandler(
                     inventory, false, true,
                     List.of(
@@ -264,23 +237,12 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
                             new ITWrappingItemHandler.IntRange(OUTPUT_SLOT, OUTPUT_SLOT + 1)
                     )
             ));
-            this.itemInputCap = new StoredCapability<>(new ITWrappingItemHandler(
-                    inventory, true, false,
-                    List.of(
-                            new ITWrappingItemHandler.IntRange(SLOT_INPUT_FILLED, SLOT_INPUT_FILLED + 1),
-                            new ITWrappingItemHandler.IntRange(SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_EMPTY + 1)
-                    )
-            ));
             this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, ITEM_OUTPUT_POS);
         }
 
-        public ITSlotwiseItemHandler getInventory() {
-            return inventory;
-        }
+        public ITSlotwiseItemHandler getInventory() { return inventory; }
 
-        public DistillerTank getTanks() {
-            return tanks;
-        }
+        public DistillerTank getTanks() { return tanks; }
 
         @Override
         public void writeSaveNBT(CompoundTag nbt) {
@@ -311,24 +273,16 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         }
 
         @Override
-        public AveragingEnergyStorage getEnergy() {
-            return energy;
-        }
+        public AveragingEnergyStorage getEnergy() { return energy; }
 
         @Override
-        public IFluidTank[] getInternalTanks() {
-            return tankArray;
-        }
+        public IFluidTank[] getInternalTanks() { return tankArray; }
 
         @Override
-        public int[] getOutputTanks() {
-            return new int[]{1};
-        }
+        public int[] getOutputTanks() { return new int[]{1}; }
 
         @Override
-        public int[] getOutputSlots() {
-            return new int[]{OUTPUT_SLOT};
-        }
+        public int[] getOutputSlots() { return new int[]{OUTPUT_SLOT}; }
     }
 
     public record DistillerTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
@@ -344,8 +298,6 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
             this.output.readFromNBT(tag.getCompound("out"));
         }
 
-        public int getCapacity() {
-            return TANK_CAPACITY;
-        }
+        public int getCapacity() { return TANK_CAPACITY; }
     }
 }
