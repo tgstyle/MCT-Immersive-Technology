@@ -43,34 +43,24 @@ public record ITArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boo
         if (this.allowFill && !resource.isEmpty()) {
             FluidStack remaining = resource.copy();
             IFluidTank existing = null;
-
             for(IFluidTank tank : this.internal) {
                 if (tank.getFluid().isFluidEqual(remaining)) {
                     existing = tank;
                     break;
                 }
             }
-
             if (existing != null) {
                 remaining.shrink(existing.fill(remaining, action));
             } else {
                 for(IFluidTank tank : this.internal) {
                     int filledHere = tank.fill(remaining, action);
                     remaining.shrink(filledHere);
-                    if (filledHere > 0) {
-                        break;
-                    }
+                    if (filledHere > 0) { break; }
                 }
             }
 
-            if (resource.getAmount() != remaining.getAmount()) {
-                this.afterTransfer.run();
-            }
-
             return resource.getAmount() - remaining.getAmount();
-        } else {
-            return 0;
-        }
+        } else { return 0; }
     }
 
     @Nonnull
@@ -80,12 +70,8 @@ public record ITArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boo
         } else {
             for(IFluidTank tank : this.internal) {
                 FluidStack drainedHere = tank.drain(resource, action);
-                if (!drainedHere.isEmpty()) {
-                    this.afterTransfer.run();
-                    return drainedHere;
-                }
+                if (!drainedHere.isEmpty()) { return drainedHere; }
             }
-
             return FluidStack.EMPTY;
         }
     }
@@ -97,14 +83,9 @@ public record ITArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boo
         } else {
             for(IFluidTank tank : this.internal) {
                 FluidStack drainedHere = tank.drain(maxDrain, action);
-                if (!drainedHere.isEmpty()) {
-                    this.afterTransfer.run();
-                    return drainedHere;
-                }
+                if (!drainedHere.isEmpty()) { return drainedHere; }
             }
-
             return FluidStack.EMPTY;
         }
     }
 }
-

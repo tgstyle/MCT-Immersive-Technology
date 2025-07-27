@@ -17,6 +17,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.client.particles.ColoredSmokeData;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SteamTurbineShape;
+import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
@@ -250,10 +251,12 @@ public class ITSteamTurbineLogic implements IMultiblockLogic<ITSteamTurbineLogic
 
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
-            Consumer<Void> markDirtyConsumer = v -> markDirty.run();
-            this.tanks = new SteamTurbineTank(markDirtyConsumer);
-            this.fluidCap = new StoredCapability<>(tanks.input_tank);
-            this.fluidCapExhaust = new StoredCapability<>(tanks.output_tank);
+            final Runnable sync = ctx.getSyncRunnable();
+            final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
+            Consumer<Void> tankCallback = v -> onChanged.run();
+            this.tanks = new SteamTurbineTank(tankCallback);
+            this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input_tank, false, true, onChanged));
+            this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output_tank, true, false, onChanged));
             this.recipeGetter = CachedRecipe.cached(SteamTurbineRecipe::findFuel);
         }
 

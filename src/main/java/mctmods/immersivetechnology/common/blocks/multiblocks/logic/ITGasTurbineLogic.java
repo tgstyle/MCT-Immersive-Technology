@@ -18,6 +18,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.client.particles.ColoredSmokeData;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.GasTurbineShape;
+import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
@@ -423,14 +424,16 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
 
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
-            Consumer<Void> markDirtyConsumer = v -> markDirty.run();
+            final Runnable sync = ctx.getSyncRunnable();
+            final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
+            Consumer<Void> tankCallback = v -> onChanged.run();
             this.energyStorageHV = new AveragingEnergyStorage(ENERGY_CAPACITY);
             this.energyStorageMV = new AveragingEnergyStorage(ENERGY_CAPACITY_MV);
             this.energyCapHV = new StoredCapability<>(energyStorageHV);
             this.energyCapMV = new StoredCapability<>(energyStorageMV);
-            this.tanks = new GasTurbineTank(markDirtyConsumer);
-            this.fluidCap = new StoredCapability<>(tanks.input_tank);
-            this.fluidCapExhaust = new StoredCapability<>(tanks.output_tank);
+            this.tanks = new GasTurbineTank(tankCallback);
+            this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input_tank, false, true, onChanged));
+            this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output_tank, true, false, onChanged));
             this.recipeGetter = CachedRecipe.cached(GasTurbineRecipe::findFuel);
         }
 
