@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.fluids;
+package mctmods.immersivetechnology.common.fluids.helper;
 
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 

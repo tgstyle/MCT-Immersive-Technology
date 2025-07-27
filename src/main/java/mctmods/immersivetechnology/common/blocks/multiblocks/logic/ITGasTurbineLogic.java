@@ -21,7 +21,7 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.GasTurbineSh
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.common.fluids.ITMarkableFluidTank;
+import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;

@@ -7,7 +7,7 @@ import blusunrize.immersiveengineering.common.gui.IESlot;
 import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
 import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITDistillerLogic;
-import mctmods.immersivetechnology.common.fluids.ITMarkableFluidTank;
+import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;

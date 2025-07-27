@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.fluids;
+package mctmods.immersivetechnology.common.fluids.helper;
 
 import javax.annotation.Nonnull;
 import net.minecraftforge.fluids.FluidStack;

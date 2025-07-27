@@ -18,8 +18,8 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingIt
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.DistillerProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
-import mctmods.immersivetechnology.common.fluids.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.ITMarkableFluidTank;
+import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
@@ -53,10 +53,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State>, IServerTickableComponent<ITDistillerLogic.State>, IClientTickableComponent<ITDistillerLogic.State> {
-    public static final BlockPos REDSTONE_POS = new BlockPos(2, 1, 0);
-    private static final CapabilityPosition FLUID_INPUT_CAP = new CapabilityPosition(2, 0, 1, RelativeBlockFace.LEFT);
-    private static final CapabilityPosition FLUID_OUTPUT_CAP = new CapabilityPosition(0, 0, 1, RelativeBlockFace.RIGHT);
-    private static final Set<CapabilityPosition> FLUID_INPUT_CAPS = Set.of(FLUID_INPUT_CAP);
+    public static final BlockPos REDSTONE_POS = new BlockPos(2, 1, 2);
+    private static final CapabilityPosition FLUID_INPUT_EXTERNAL = new CapabilityPosition(0, 0, 1, RelativeBlockFace.LEFT);
+    private static final CapabilityPosition FLUID_INPUT_INTERNAL = new CapabilityPosition(0, 0, 1, RelativeBlockFace.RIGHT);
+    private static final CapabilityPosition FLUID_MIDDLE_LEFT = new CapabilityPosition(1, 0, 1, RelativeBlockFace.LEFT);
+    private static final CapabilityPosition FLUID_MIDDLE_RIGHT = new CapabilityPosition(1, 0, 1, RelativeBlockFace.RIGHT);
+    private static final CapabilityPosition FLUID_OUTPUT_INTERNAL = new CapabilityPosition(2, 0, 1, RelativeBlockFace.LEFT);
+    private static final CapabilityPosition FLUID_OUTPUT_EXTERNAL = new CapabilityPosition(2, 0, 1, RelativeBlockFace.RIGHT);
+    private static final Set<CapabilityPosition> FLUID_INPUT_CAPS = Set.of(FLUID_INPUT_EXTERNAL);
     private static final Set<BlockPos> FLUID_INPUTS = FLUID_INPUT_CAPS.stream().map(CapabilityPosition::posInMultiblock).collect(Collectors.toSet());
     private static final Set<CapabilityPosition> ENERGY_INPUTS = Set.of(new CapabilityPosition(0, 1, 2, RelativeBlockFace.UP));
     private static final MultiblockFace ITEM_OUTPUT_POS = new MultiblockFace(1, 0, 0, RelativeBlockFace.BACK);
@@ -69,17 +73,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
     public static final int OUTPUT_SLOT = 4;
 
     @Override
-    public void tickClient(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
-        if (!state.isSoundPlaying.getAsBoolean()) {
-            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(1, 1, 1));
-            state.isSoundPlaying = ITMultiblockSound.startSound(() -> state.active, ctx.isValid(), soundPos, ITSounds.distiller, () -> {
-                LocalPlayer player = Minecraft.getInstance().player;
-                if (player == null) return 0f;
-                return (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
-            }, () -> 1f);
-        }
-    }
+    public void tickClient(IMultiblockContext<State> ctx) { final State state = ctx.getState(); if (!state.isSoundPlaying.getAsBoolean()) { final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(1, 1, 1)); state.isSoundPlaying = ITMultiblockSound.startSound(() -> state.active, ctx.isValid(), soundPos, ITSounds.distiller, () -> { LocalPlayer player = Minecraft.getInstance().player; if (player == null) return 0f; return (float) Math.max(player.distanceToSqr(soundPos) / 8, 1); }, () -> 1f); } }
 
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
@@ -100,12 +94,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
                     FluidUtil.tryEmptyContainer(inputFilled, state.tanks.input, FluidType.BUCKET_VOLUME, null, true);
                     inputFilled.shrink(1);
                     state.inventory.setStackInSlot(SLOT_INPUT_FILLED, inputFilled);
-                    if (inputEmpty.isEmpty()) {
-                        state.inventory.setStackInSlot(SLOT_INPUT_EMPTY, emptyContainer);
-                    } else {
-                        inputEmpty.grow(1);
-                        state.inventory.setStackInSlot(SLOT_INPUT_EMPTY, inputEmpty);
-                    }
+                    if (inputEmpty.isEmpty()) { state.inventory.setStackInSlot(SLOT_INPUT_EMPTY, emptyContainer); } else { inputEmpty.grow(1); state.inventory.setStackInSlot(SLOT_INPUT_EMPTY, inputEmpty); }
                     update = true;
                 }
             }
@@ -120,12 +109,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
                     FluidUtil.tryFillContainer(outputEmpty, state.tanks.output, FluidType.BUCKET_VOLUME, null, true);
                     outputEmpty.shrink(1);
                     state.inventory.setStackInSlot(SLOT_OUTPUT_EMPTY, outputEmpty);
-                    if (outputFilled.isEmpty()) {
-                        state.inventory.setStackInSlot(SLOT_OUTPUT_FILLED, filledContainer);
-                    } else {
-                        outputFilled.grow(1);
-                        state.inventory.setStackInSlot(SLOT_OUTPUT_FILLED, outputFilled);
-                    }
+                    if (outputFilled.isEmpty()) { state.inventory.setStackInSlot(SLOT_OUTPUT_FILLED, filledContainer); } else { outputFilled.grow(1); state.inventory.setStackInSlot(SLOT_OUTPUT_FILLED, outputFilled); }
                     update = true;
                 }
             }
@@ -137,22 +121,33 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
                 fs = fs.copy();
                 int accepted = outputHandler.fill(fs, FluidAction.SIMULATE);
                 if (accepted > 0) {
-                    int drained = outputHandler.fill(fs.copy(), FluidAction.EXECUTE);
+                    int drained = outputHandler.fill(Utils.copyFluidStackWithAmount(fs, accepted, false), FluidAction.EXECUTE);
                     state.tanks.output.drain(drained, FluidAction.EXECUTE);
                     update = true;
                 }
             }
         }
         final IItemHandlerModifiable inventory = state.inventory;
-        ItemStack stack = inventory.getStackInSlot(SLOT_OUTPUT_FILLED);
-        if (!stack.isEmpty()) {
-            stack = Utils.insertStackIntoInventory(state.outputRef, stack, false);
-            inventory.setStackInSlot(SLOT_OUTPUT_FILLED, stack);
+        ItemStack drainedContainer = inventory.getStackInSlot(SLOT_INPUT_EMPTY);
+        if (!drainedContainer.isEmpty()) {
+            int origCount = drainedContainer.getCount();
+            drainedContainer = Utils.insertStackIntoInventory(state.outputRef, drainedContainer, false);
+            if (drainedContainer.getCount() < origCount) update = true;
+            inventory.setStackInSlot(SLOT_INPUT_EMPTY, drainedContainer);
         }
-        ItemStack itemStack = inventory.getStackInSlot(OUTPUT_SLOT);
-        if (!itemStack.isEmpty()) {
-            itemStack = Utils.insertStackIntoInventory(state.outputRef, itemStack, false);
-            inventory.setStackInSlot(OUTPUT_SLOT, itemStack);
+        ItemStack filledContainer = inventory.getStackInSlot(SLOT_OUTPUT_FILLED);
+        if (!filledContainer.isEmpty()) {
+            int origCount = filledContainer.getCount();
+            filledContainer = Utils.insertStackIntoInventory(state.outputRef, filledContainer, false);
+            if (filledContainer.getCount() < origCount) update = true;
+            inventory.setStackInSlot(SLOT_OUTPUT_FILLED, filledContainer);
+        }
+        ItemStack itemOutput = inventory.getStackInSlot(OUTPUT_SLOT);
+        if (!itemOutput.isEmpty()) {
+            int origCount = itemOutput.getCount();
+            itemOutput = Utils.insertStackIntoInventory(state.outputRef, itemOutput, false);
+            if (itemOutput.getCount() < origCount) update = true;
+            inventory.setStackInSlot(OUTPUT_SLOT, itemOutput);
         }
         if (update) {
             ctx.markMasterDirty();
@@ -164,7 +159,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         if (state.processor.getQueueSize() >= state.processor.getMaxQueueSize()) return;
         if (recipe == null) return;
         FluidStack inputFluid = state.tanks.input.getFluid();
-        if (inputFluid.isEmpty() || inputFluid.getAmount() < recipe.water.getAmount()) return;
+        if (inputFluid.getAmount() < recipe.water.getAmount()) return;
         FluidStack outputFluid = recipe.fluidOutput;
         if (outputFluid != null && !outputFluid.isEmpty() && state.tanks.output.getFluidAmount() + outputFluid.getAmount() > state.tanks.output.getCapacity()) return;
         ItemStack itemOutput = recipe.itemOutput;
@@ -184,8 +179,8 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
             if (position.side() == null || ENERGY_INPUTS.contains(position)) return state.energyCap.cast(ctx);
         }
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (FLUID_INPUT_CAP.equals(position)) return state.inputCap.cast(ctx);
-            else if (FLUID_OUTPUT_CAP.equals(position)) return state.outputCapSteam.cast(ctx);
+            if (FLUID_INPUT_EXTERNAL.equals(position) || FLUID_INPUT_INTERNAL.equals(position) || FLUID_MIDDLE_RIGHT.equals(position)) return state.inputCap.cast(ctx);
+            else if (FLUID_MIDDLE_LEFT.equals(position) || FLUID_OUTPUT_INTERNAL.equals(position) || FLUID_OUTPUT_EXTERNAL.equals(position)) return state.outputCapSteam.cast(ctx);
         }
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
             if (ITEM_OUTPUT_POS.posInMultiblock().equals(position.posInMultiblock())) return state.itemOutputCap.cast(ctx);
@@ -210,7 +205,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         final State state = ctx.getState();
         IFluidHandler tank = null;
         if (FLUID_INPUTS.contains(posInMultiblock)) tank = state.tanks.input;
-        else if (FLUID_OUTPUT_CAP.posInMultiblock().equals(posInMultiblock)) tank = state.tanks.output;
+        else if (FLUID_OUTPUT_EXTERNAL.posInMultiblock().equals(posInMultiblock)) tank = state.tanks.output;
         if (tank != null) {
             FluidUtil.interactWithFluidHandler(player, hand, tank);
             ctx.markMasterDirty();
@@ -260,7 +255,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
                     ),
                     onChanged
             );
-            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, new MultiblockFace(FLUID_OUTPUT_CAP.side(), FLUID_OUTPUT_CAP.posInMultiblock()));
+            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, new MultiblockFace(FLUID_OUTPUT_EXTERNAL.side(), FLUID_OUTPUT_EXTERNAL.posInMultiblock()));
             this.itemOutputCap = new StoredCapability<>(new ITWrappingItemHandler(
                     inventory, false, true,
                     List.of(
