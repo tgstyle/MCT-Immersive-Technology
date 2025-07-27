@@ -12,6 +12,9 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemHandlerHelper;
+
 import java.util.function.BiFunction;
 
 public class DistillerProcess extends MultiblockProcessInMachine<DistillerRecipe> {
@@ -67,9 +70,15 @@ public class DistillerProcess extends MultiblockProcessInMachine<DistillerRecipe
                 ((ITDistillerLogic.State) context).getTanks().output().fill(recipe.fluidOutput.copy(), FluidAction.EXECUTE);
             }
             if (!recipe.itemOutput.isEmpty() && level.getRawLevel().random.nextFloat() < recipe.chance) {
-                IItemHandler inv = context.getInventory();
+                IItemHandlerModifiable inv = context.getInventory();
                 ItemStack salt = recipe.itemOutput.copy();
-                inv.insertItem(ITDistillerLogic.OUTPUT_SLOT, salt, false);
+                ItemStack current = inv.getStackInSlot(ITDistillerLogic.OUTPUT_SLOT);
+                if (current.isEmpty()) {
+                    inv.setStackInSlot(ITDistillerLogic.OUTPUT_SLOT, salt);
+                } else if (ItemHandlerHelper.canItemStacksStack(current, salt) && current.getCount() + salt.getCount() <= current.getMaxStackSize()) {
+                    current.grow(salt.getCount());
+                    inv.setStackInSlot(ITDistillerLogic.OUTPUT_SLOT, current);
+                }
             }
         }
     }

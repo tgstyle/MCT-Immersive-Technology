@@ -23,8 +23,8 @@ public class DistillerRecipeBuilder extends IEFinishedRecipe<DistillerRecipeBuil
             com.google.gson.JsonObject itemJson = new com.google.gson.JsonObject();
             itemJson.addProperty("item", Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item.getItem())).toString());
             if (item.getCount() > 1) itemJson.addProperty("count", item.getCount());
+            itemJson.addProperty("chance", chance);
             jsonObject.add("item_output", itemJson);
-            jsonObject.addProperty("chance", chance);
         });
     }
 }

@@ -1,12 +1,12 @@
 {
   "type": "immersivetechnology:distiller",
-  "chance": 0.5,
   "energy": 10000,
   "input": {
     "amount": 1000,
     "tag": "minecraft:water"
   },
   "item_output": {
+    "chance": 0.5,
     "item": "immersivetechnology:salt"
   },
   "result": {

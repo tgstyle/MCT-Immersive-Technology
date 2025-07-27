@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +30,9 @@ public class DistillerRecipeSerializer extends IERecipeSerializer<DistillerRecip
         ItemStack itemOutput = ItemStack.EMPTY;
         float chance = 0.0f;
         if (json.has("item_output")) {
-            itemOutput = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "item_output"));
-            chance = GsonHelper.getAsFloat(json, "chance", 0.0f);
+            JsonObject itemJson = GsonHelper.getAsJsonObject(json, "item_output");
+            itemOutput = ShapedRecipe.itemStackFromJson(itemJson);
+            if (itemJson.has("chance")) chance = GsonHelper.getAsFloat(itemJson, "chance", 0.0f);
         }
         return new DistillerRecipe(recipeID, input, output, itemOutput, chance, time, energy);
     }
