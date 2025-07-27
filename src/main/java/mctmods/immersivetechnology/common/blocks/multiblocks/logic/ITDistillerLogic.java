@@ -61,7 +61,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
     private static final CapabilityPosition FLUID_OUTPUT_CAP = new CapabilityPosition(2, 0, 1, RelativeBlockFace.LEFT);
     private static final Set<CapabilityPosition> FLUID_INPUT_CAPS = Set.of(FLUID_INPUT_CAP);
     private static final Set<BlockPos> FLUID_INPUTS = FLUID_INPUT_CAPS.stream().map(CapabilityPosition::posInMultiblock).collect(Collectors.toSet());
-    private static final Set<CapabilityPosition> ENERGY_INPUTS = Set.of(new CapabilityPosition(2, 1, 2, RelativeBlockFace.UP));
+    private static final Set<CapabilityPosition> ENERGY_INPUTS = Set.of(new CapabilityPosition(0, 1, 2, RelativeBlockFace.UP));
     private static final MultiblockFace ITEM_OUTPUT_POS = new MultiblockFace(1, 0, 0, RelativeBlockFace.BACK);
     public static final int TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
     public static final int SLOT_INPUT_FILLED = 0;
