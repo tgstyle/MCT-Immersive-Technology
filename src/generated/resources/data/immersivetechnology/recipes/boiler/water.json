@@ -1,0 +1,12 @@
+{
+  "type": "immersivetechnology:boiler",
+  "input": {
+    "amount": 250,
+    "tag": "minecraft:water"
+  },
+  "result": {
+    "amount": 450,
+    "fluid": "immersivetechnology:steam"
+  },
+  "time": 10
+}

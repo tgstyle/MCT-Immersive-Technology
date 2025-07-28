@@ -8,20 +8,18 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class SteamTurbineRecipeBuilder extends IEFinishedRecipe<SteamTurbineRecipeBuilder>
-{
-    public SteamTurbineRecipeBuilder()
-    {
+import java.util.Objects;
+
+public class SteamTurbineRecipeBuilder extends IEFinishedRecipe<SteamTurbineRecipeBuilder> {
+    public SteamTurbineRecipeBuilder() {
         super(SteamTurbineRecipe.SERIALIZER.get());
     }
 
-    public static SteamTurbineRecipeBuilder builder()
-    {
+    public static SteamTurbineRecipeBuilder builder() {
         return new SteamTurbineRecipeBuilder();
     }
 
-    public SteamTurbineRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount)
-    {
+    public SteamTurbineRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount) {
         return this.addWriter((jsonObject) -> {
             JsonObject obj = new JsonObject();
             obj.addProperty("tag", fluidTag.location().toString());
@@ -30,25 +28,18 @@ public class SteamTurbineRecipeBuilder extends IEFinishedRecipe<SteamTurbineReci
         });
     }
 
-    public SteamTurbineRecipeBuilder addOutput(FluidStack fluidStack)
-    {
+    public SteamTurbineRecipeBuilder addOutput(FluidStack fluidStack) {
         return this.addWriter((jsonObject) -> {
             JsonObject obj = new JsonObject();
-            obj.addProperty("fluid", ForgeRegistries.FLUIDS.getKey(fluidStack.getFluid()).toString());
+            obj.addProperty("fluid", Objects.requireNonNull(ForgeRegistries.FLUIDS.getKey(fluidStack.getFluid())).toString());
             obj.addProperty("amount", fluidStack.getAmount());
             jsonObject.add("output", obj);
         });
     }
 
-    public SteamTurbineRecipeBuilder addOutput(Fluid fluid, int amount)
-    {
+    public SteamTurbineRecipeBuilder addOutput(Fluid fluid, int amount) {
         return addOutput(new FluidStack(fluid, amount));
     }
 
-    public SteamTurbineRecipeBuilder setTime(int time)
-    {
-        return this.addWriter((jsonObject) -> {
-            jsonObject.addProperty("time", time);
-        });
-    }
+    public SteamTurbineRecipeBuilder setTime(int time) { return this.addWriter((jsonObject) -> jsonObject.addProperty("time", time)); }
 }

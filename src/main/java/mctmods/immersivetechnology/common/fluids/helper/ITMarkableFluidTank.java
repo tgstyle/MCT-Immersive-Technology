@@ -16,4 +16,8 @@ public class ITMarkableFluidTank extends FluidTank {
     protected void onContentsChanged() {
         markDirty.accept(null);
     }
+
+    public static ITMarkableFluidTank makeClient(int capacity, Consumer<Void> markDirty) {
+        return new ITMarkableFluidTank(capacity, markDirty);
+    }
 }

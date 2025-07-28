@@ -8,20 +8,18 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class GasTurbineRecipeBuilder extends IEFinishedRecipe<GasTurbineRecipeBuilder>
-{
-    public GasTurbineRecipeBuilder()
-    {
+import java.util.Objects;
+
+public class GasTurbineRecipeBuilder extends IEFinishedRecipe<GasTurbineRecipeBuilder> {
+    public GasTurbineRecipeBuilder() {
         super(GasTurbineRecipe.SERIALIZER.get());
     }
 
-    public static GasTurbineRecipeBuilder builder()
-    {
+    public static GasTurbineRecipeBuilder builder() {
         return new GasTurbineRecipeBuilder();
     }
 
-    public GasTurbineRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount)
-    {
+    public GasTurbineRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount) {
         return this.addWriter((jsonObject) -> {
             JsonObject obj = new JsonObject();
             obj.addProperty("tag", fluidTag.location().toString());
@@ -30,25 +28,18 @@ public class GasTurbineRecipeBuilder extends IEFinishedRecipe<GasTurbineRecipeBu
         });
     }
 
-    public GasTurbineRecipeBuilder addOutput(FluidStack fluidStack)
-    {
+    public GasTurbineRecipeBuilder addOutput(FluidStack fluidStack) {
         return this.addWriter((jsonObject) -> {
             JsonObject obj = new JsonObject();
-            obj.addProperty("fluid", ForgeRegistries.FLUIDS.getKey(fluidStack.getFluid()).toString());
+            obj.addProperty("fluid", Objects.requireNonNull(ForgeRegistries.FLUIDS.getKey(fluidStack.getFluid())).toString());
             obj.addProperty("amount", fluidStack.getAmount());
             jsonObject.add("output", obj);
         });
     }
 
-    public GasTurbineRecipeBuilder addOutput(Fluid fluid, int amount)
-    {
+    public GasTurbineRecipeBuilder addOutput(Fluid fluid, int amount) {
         return addOutput(new FluidStack(fluid, amount));
     }
 
-    public GasTurbineRecipeBuilder setTime(int time)
-    {
-        return this.addWriter((jsonObject) -> {
-            jsonObject.addProperty("time", time);
-        });
-    }
+    public GasTurbineRecipeBuilder setTime(int time) { return this.addWriter((jsonObject) -> jsonObject.addProperty("time", time)); }
 }

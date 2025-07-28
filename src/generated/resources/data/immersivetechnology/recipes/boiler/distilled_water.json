@@ -1,17 +1,12 @@
 {
   "type": "immersivetechnology:boiler",
-  "heatPerTick": 3,
-  "input0": {
-    "amount": 50,
-    "tag": "forge:biodiesel"
-  },
-  "input1": {
-    "amount": 95,
+  "input": {
+    "amount": 250,
     "tag": "immersivetechnology:distilled_water"
   },
   "result": {
-    "amount": 150,
+    "amount": 500,
     "fluid": "immersivetechnology:steam"
   },
-  "time": 25
+  "time": 10
 }

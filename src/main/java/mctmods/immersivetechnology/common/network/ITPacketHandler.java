@@ -22,7 +22,7 @@ public class ITPacketHandler {
 
     private static int id = 0;
 
-    public static <T extends INetMessage> void registerMessage(Class<T> type, Function<FriendlyByteBuf, T> decoder) { INSTANCE.registerMessage(id++, type, INetMessage::toBytes, decoder, (t, ctx) -> { t.process(ctx); ctx.get().setPacketHandled(true); }); }
+    public static <T extends ITINetMessage> void registerMessage(Class<T> type, Function<FriendlyByteBuf, T> decoder) { INSTANCE.registerMessage(id++, type, ITINetMessage::toBytes, decoder, (t, ctx) -> { t.process(ctx); ctx.get().setPacketHandled(true); }); }
 
     public static <MSG> void sendToPlayer(Player player, @Nonnull MSG message) { if (player instanceof ServerPlayer serverPlayer) INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), message); }
 

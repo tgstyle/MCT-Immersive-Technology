@@ -5,8 +5,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public interface INetMessage
-{
+public interface ITINetMessage {
     void toBytes(FriendlyByteBuf buf);
     void process(Supplier<NetworkEvent.Context> context);
 }

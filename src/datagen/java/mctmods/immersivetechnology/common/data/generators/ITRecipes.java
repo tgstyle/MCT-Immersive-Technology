@@ -37,21 +37,22 @@ public class ITRecipes extends RecipeProvider {
         itemRecipes(consumer);
         recipesCoke(consumer);
         recipesBoiler(consumer);
+        recipesBoilerFuel(consumer);
         recipesTurbine(consumer);
         recipesDistiller(consumer);
     }
 
     private void itemRecipes(Consumer<FinishedRecipe> consumer) { }
 
-    private void multiblockRecipes(Consumer<FinishedRecipe> consumer) {
-        ITLib.IT_LOGGER.info("Starting Multiblock Recipe Registration");
-    }
+    private void multiblockRecipes(Consumer<FinishedRecipe> consumer) { ITLib.IT_LOGGER.info("Starting Multiblock Recipe Registration"); }
 
     private void recipesBoiler(@Nonnull Consumer<FinishedRecipe> out) {
-        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 150).addInput(new FluidTagInput(ITTags.fluidDistilledWater, 95), "input1").addInput(new FluidTagInput(IETags.fluidBiodiesel, 50), "input0").setTime(25).setHeatPerTick(3).build(out, toRL("boiler/biodiesel_distilled_water"));
-        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 150).addInput(new FluidTagInput(ITTags.fluidDistilledWater, 95), "input1").addInput(new FluidTagInput(IETags.fluidCreosote, 50), "input0").setTime(25).setHeatPerTick(3).build(out, toRL("boiler/creosote2_distilled_water"));
-        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 100).addInput(new FluidTagInput(FluidTags.WATER, 95), "input1").addInput(new FluidTagInput(IETags.fluidBiodiesel, 50), "input0").setTime(75).setHeatPerTick(3).build(out, toRL("boiler/biodiesel"));
-        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 100).addInput(new FluidTagInput(FluidTags.WATER, 95), "input1").addInput(new FluidTagInput(IETags.fluidCreosote, 50), "input0").setTime(25).setHeatPerTick(3).build(out, toRL("boiler/creosote"));
+        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 450).addInput(FluidTags.WATER, 250).setTime(10).build(out, toRL("boiler/water"));
+        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 500).addInput(ITTags.fluidDistilledWater, 250).setTime(10).build(out, toRL("boiler/distilled_water"));
+    }
+
+    private void recipesBoilerFuel(@Nonnull Consumer<FinishedRecipe> out) {
+        BoilerFuelRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 10).setTime(10).setHeatPerTick(1).build(out, toRL("boiler_fuel/biodiesel"));
     }
 
     private void recipesTurbine(@Nonnull Consumer<FinishedRecipe> out) {
@@ -61,9 +62,9 @@ public class ITRecipes extends RecipeProvider {
     }
 
     private void recipesCoke(@Nonnull Consumer<FinishedRecipe> out) {
-        AdvancedCokeOvenRecipeBuilder.builder(IETags.coalCoke, 1).addInput(Items.COAL).setOil(FluidType.BUCKET_VOLUME / 2).setTime(600).build(out, toRL("cokeovenadv/coke"));
-        AdvancedCokeOvenRecipeBuilder.builder(IETags.getItemTag(IETags.coalCokeBlock), 1).addInput(Blocks.COAL_BLOCK).setOil(FluidType.BUCKET_VOLUME * 5).setTime(9 * 600).build(out, toRL("cokeovenadv/coke_block"));
-        AdvancedCokeOvenRecipeBuilder.builder(Items.CHARCOAL).addInput(ItemTags.LOGS).setOil(FluidType.BUCKET_VOLUME / 4).setTime(600).build(out, toRL("cokeovenadv/charcoal"));
+        AdvancedCokeOvenRecipeBuilder.builder(IETags.coalCoke, 1).addInput(Items.COAL).setOil(FluidType.BUCKET_VOLUME / 2).setTime(600).build(out, toRL("advcokeoven/coke"));
+        AdvancedCokeOvenRecipeBuilder.builder(IETags.getItemTag(IETags.coalCokeBlock), 1).addInput(Blocks.COAL_BLOCK).setOil(FluidType.BUCKET_VOLUME * 5).setTime(9 * 600).build(out, toRL("advcokeoven/coke_block"));
+        AdvancedCokeOvenRecipeBuilder.builder(Items.CHARCOAL).addInput(ItemTags.LOGS).setOil(FluidType.BUCKET_VOLUME / 4).setTime(600).build(out, toRL("advcokeoven/charcoal"));
     }
 
     private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) {

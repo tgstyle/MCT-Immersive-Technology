@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.integration.jei;
 
-import mctmods.immersivetechnology.client.menu.multiblock.AdvCokeOvenScreen;
-import mctmods.immersivetechnology.client.menu.multiblock.DistillerScreen;
+import mctmods.immersivetechnology.client.gui.AdvCokeOvenScreen;
+import mctmods.immersivetechnology.client.gui.DistillerScreen;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.core.lib.ITLib;

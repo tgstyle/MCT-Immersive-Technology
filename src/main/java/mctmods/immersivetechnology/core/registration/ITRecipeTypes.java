@@ -18,6 +18,7 @@ public class ITRecipeTypes {
 
     public static final TypeWithClass<AdvancedCokeOvenRecipe> ADVANCED_COKE_OVEN = register("coke_oven_advanced", AdvancedCokeOvenRecipe.class);
     public static final TypeWithClass<BoilerRecipe> BOILER = register("boiler", BoilerRecipe.class);
+    public static final TypeWithClass<BoilerFuelRecipe> BOILER_FUEL = register("boiler_fuel", BoilerFuelRecipe.class);
     public static final TypeWithClass<SteamTurbineRecipe> STEAM_TURBINE = register("steam_turbine", SteamTurbineRecipe.class);
     public static final TypeWithClass<GasTurbineRecipe> GAS_TURBINE = register("gas_turbine", GasTurbineRecipe.class);
     public static final TypeWithClass<SolarTowerRecipe> SOLAR_TOWER = register("solar_tower", SolarTowerRecipe.class);
@@ -27,6 +28,7 @@ public class ITRecipeTypes {
     static {
         AdvancedCokeOvenRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("coke_oven_advanced", AdvancedCokeOvenRecipeSerializer::new);
         BoilerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("boiler", BoilerRecipeSerializer::new);
+        BoilerFuelRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("boiler_fuel", BoilerFuelRecipeSerializer::new);
         SolarTowerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("solar_tower", SolarTowerRecipeSerializer::new);
         DistillerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("distiller", DistillerRecipeSerializer::new);
         SteamTurbineRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("steam_turbine", SteamTurbineRecipeSerializer::new);

@@ -1,6 +1,8 @@
 package mctmods.immersivetechnology;
 
 import mctmods.immersivetechnology.client.ITClientRenderHandler;
+import mctmods.immersivetechnology.common.network.ITMessageContainerData;
+import mctmods.immersivetechnology.common.network.ITMessageContainerUpdate;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.ITCommonConfig;
@@ -14,6 +16,7 @@ import mctmods.immersivetechnology.core.registration.ITRecipeSerializers;
 import mctmods.immersivetechnology.core.registration.ITRegistrationHolder;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -66,12 +69,17 @@ public class ImmersiveTechnology {
         ITLib.IT_LOGGER.info("HELLO FROM COMMON SETUP");
 
         for (ITFluids.FluidEntry entry : ITFluids.ALL_ENTRIES) { DispenserBlock.registerBehavior(entry.getBucket(), BUCKET_DISPENSE_BEHAVIOR); }
+
+        ITPacketHandler.registerMessage(ITMessageContainerUpdate.class, ITMessageContainerUpdate::new);
+        ITPacketHandler.registerMessage(ITMessageContainerData.class, ITMessageContainerData::new);
     }
 
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        ITLib.IT_LOGGER.info("HELLO from server starting");
-    }
+    public void onServerStarting(ServerStartingEvent event) { ITLib.IT_LOGGER.info("HELLO from server starting"); }
+
+    public static ResourceLocation rl(String path) { return ResourceLocation.fromNamespaceAndPath(MODID, path); }
+
+    public static ResourceLocation makeTextureLocation(String name) { return rl("textures/gui/" + name + ".png"); }
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {

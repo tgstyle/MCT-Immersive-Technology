@@ -76,6 +76,13 @@
 		],
 		"subtitle": "subtitle.immersivetechnology.gasTurbineSpark"
 	},
+	"gas_ignite": {
+		"category": "block",
+		"sounds": [
+			"immersivetechnology:gas_ignite"
+		],
+		"subtitle": "subtitle.immersivetechnology.gasIgnition"
+	},
 	"heat_exchanger": {
 		"category": "block",
 		"sounds": [

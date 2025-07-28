@@ -13,7 +13,7 @@ public class BoilerRecipeBuilder extends IEFinishedRecipe<BoilerRecipeBuilder> {
 
     public BoilerRecipeBuilder() {
         super(BoilerRecipe.SERIALIZER.get());
-        this.maxInputCount = 2;
+        this.maxInputCount = 1;
     }
 
     private BoilerRecipeBuilder(TagKey<Fluid> fluid) {
@@ -27,45 +27,23 @@ public class BoilerRecipeBuilder extends IEFinishedRecipe<BoilerRecipeBuilder> {
         addWriter(obj -> obj.addProperty(AMOUNT_TAG_KEY, amount));
     }
 
-    public BoilerRecipeBuilder setHeatPerTick(int heatPerTick) {
-        return this.addWriter((jsonObject) -> {
-            jsonObject.addProperty("heatPerTick", heatPerTick);
-        });
-    }
+    public BoilerRecipeBuilder setTime(int time) { return this.addWriter((jsonObject) -> jsonObject.addProperty("time", time)); }
 
-    public static BoilerRecipeBuilder builder(Fluid fluid, int amount) {
-        return builder(new FluidStack(fluid, amount));
-    }
+    public static BoilerRecipeBuilder builder(Fluid fluid, int amount) { return builder(new FluidStack(fluid, amount)); }
 
-    public static BoilerRecipeBuilder builder() {
-        return new BoilerRecipeBuilder();
-    }
+    public static BoilerRecipeBuilder builder() { return new BoilerRecipeBuilder(); }
 
-    public static BoilerRecipeBuilder builder(TagKey<Fluid> fluid) {
-        return new BoilerRecipeBuilder(fluid);
-    }
+    public static BoilerRecipeBuilder builder(TagKey<Fluid> fluid) { return new BoilerRecipeBuilder(fluid); }
 
-    public static BoilerRecipeBuilder builder(TagKey<Fluid> fluid, int amount) {
-        return new BoilerRecipeBuilder(fluid, amount);
-    }
+    public static BoilerRecipeBuilder builder(TagKey<Fluid> fluid, int amount) { return new BoilerRecipeBuilder(fluid, amount); }
 
-    public static BoilerRecipeBuilder builder(FluidStack fluidStack) {
-        return new BoilerRecipeBuilder().addFluid("result", fluidStack);
-    }
+    public static BoilerRecipeBuilder builder(FluidStack fluidStack) { return new BoilerRecipeBuilder().addFluid("result", fluidStack); }
 
-    public BoilerRecipeBuilder addInput(FluidTagInput fluidTag) {
-        return addFluidTag(generateSafeInputKey(), fluidTag);
-    }
+    public BoilerRecipeBuilder addInput(FluidTagInput fluidTag) { return addFluidTag(generateSafeInputKey(), fluidTag); }
 
-    public BoilerRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount) {
-        return addFluidTag(generateSafeInputKey(), fluidTag, amount);
-    }
+    public BoilerRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount) { return addFluidTag(generateSafeInputKey(), fluidTag, amount); }
 
-    public BoilerRecipeBuilder addInput(FluidTagInput fluidTag, String key) {
-        return addFluidTag(key, fluidTag);
-    }
+    public BoilerRecipeBuilder addInput(FluidTagInput fluidTag, String key) { return addFluidTag(key, fluidTag); }
 
-    public BoilerRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount, String key) {
-        return addFluidTag(key, fluidTag, amount);
-    }
+    public BoilerRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount, String key) { return addFluidTag(key, fluidTag, amount); }
 }

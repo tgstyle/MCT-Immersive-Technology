@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "immersivetechnology:block/multiblock/obj/advanced_coke_oven/advanced_coke_oven_split",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "immersivetechnology:block/multiblock/obj/advanced_coke_oven/advanced_coke_oven_split",
+      "uvlock": true
+    },
+    "facing=south": {
+      "model": "immersivetechnology:block/multiblock/obj/advanced_coke_oven/advanced_coke_oven_split",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=west": {
+      "model": "immersivetechnology:block/multiblock/obj/advanced_coke_oven/advanced_coke_oven_split",
+      "uvlock": true,
+      "y": 270
+    }
+  }
+}

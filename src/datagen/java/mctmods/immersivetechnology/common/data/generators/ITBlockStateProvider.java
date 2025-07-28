@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.client.models.ModelConfigurableSides;
@@ -10,7 +9,6 @@ import blusunrize.immersiveengineering.data.models.NongeneratedModels.Nongenerat
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import mctmods.immersivetechnology.common.blocks.metal.SteelBarrelBlock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.ITTemplateMultiblock;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
@@ -38,6 +36,7 @@ import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.Parti
 import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.slf4j.Logger;
+
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -72,7 +71,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         genericmultiblockMirror("steam_turbine");
         genericmultiblockMirror("gas_turbine");
         genericmultiblock("alternator");
-        genericmultiblock("coke_oven_advanced");
+        genericmultiblock("advanced_coke_oven");
         genericmultiblock("solar_tower");
 
         createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("block/stone/reinforced_coke_brick", modLoc("block/stone/reinforced_coke_brick")));
@@ -144,7 +143,11 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private void createSimpleBlock(Block block, ModelFile model) { getVariantBuilder(block).partialState().setModels(new ConfiguredModel(model)); }
 
-    private void genericmultiblock(String registry_name) { ITLib.IT_LOGGER.info("Generating [" + registry_name + "] Multiblock Model Data"); createMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name)); }
+    private void genericmultiblock(String registry_name) {
+        String model_name = "advanced_coke_oven".equals(registry_name) ? "advanced_coke_oven" : registry_name;
+        ITLib.IT_LOGGER.info("Generating [" + registry_name + "] Multiblock Model Data");
+        createMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + model_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name));
+    }
 
     private void genericmultiblock(String registry_name, boolean dynamic) { ITLib.IT_LOGGER.info("Generating [" + registry_name + "] Multiblock Model Data"); createMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name), dynamic); }
 
@@ -156,18 +159,14 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private void createMultiblock(NongeneratedModel unsplitModel, ITTemplateMultiblock multiblock, boolean dynamic) {
         final ModelFile mainModel = split(unsplitModel, multiblock, false, dynamic);
-        if (multiblock.getBlock().getStateDefinition().getProperties().contains(IEProperties.MIRRORED)) {
-            createMultiblock(multiblock::getBlock, mainModel, split(mirror(unsplitModel, innerModels), multiblock, true, dynamic), IEProperties.MIRRORED);
-        }
+        if (multiblock.getBlock().getStateDefinition().getProperties().contains(IEProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, split(mirror(unsplitModel, innerModels), multiblock, true, dynamic), IEProperties.MIRRORED); }
         else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
     }
 
     private void testCreateMultiblock(NongeneratedModel unsplitModel, NongeneratedModel mirror_model, ITTemplateMultiblock multiblock) {
         final ModelFile mainModel = split(unsplitModel, multiblock, false, false);
         final ModelFile mirrorModel = split(mirror_model, multiblock, true, false);
-        if (multiblock.getBlock().getStateDefinition().getProperties().contains(IEProperties.MIRRORED)) {
-            createMultiblock(multiblock::getBlock, mainModel, mirrorModel, IEProperties.MIRRORED);
-        }
+        if (multiblock.getBlock().getStateDefinition().getProperties().contains(IEProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, mirrorModel, IEProperties.MIRRORED); }
         else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
     }
 
@@ -199,25 +198,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
         }
     }
 
-    private ModelFile split(NongeneratedModel loc, ITTemplateMultiblock mb) { return split(loc, mb, false, false); }
-
-    private ModelFile split(NongeneratedModel loc, ITTemplateMultiblock mb, boolean mirror, boolean dynamic) {
-        UnaryOperator<BlockPos> transform = UnaryOperator.identity();
-        if (mirror) {
-            loadTemplateFor(mb);
-            Vec3i size = mb.getSize(null);
-            transform = p -> new BlockPos(size.getX() - p.getX() - 1, p.getY(), p.getZ());
-        }
-        return split(loc, mb, transform, dynamic);
-    }
-
-    private ModelFile split(NongeneratedModel name, ITTemplateMultiblock multiblock, UnaryOperator<BlockPos> transform, boolean dynamic) {
-        loadTemplateFor(multiblock);
-        final Vec3i offset = multiblock.getMasterFromOriginOffset();
-        Stream<Vec3i> partsStream = multiblock.getTemplate(null).blocksWithoutAir().stream().map(StructureTemplate.StructureBlockInfo::pos).map(transform).map(p -> p.subtract(offset));
-        return split(name, partsStream.collect(Collectors.toList()), dynamic);
-    }
-
     private void loadTemplateFor(TemplateMultiblock multiblock) {
         final ResourceLocation name = multiblock.getUniqueName();
         if (TemplateMultiblock.SYNCED_CLIENT_TEMPLATES.containsKey(name)) { return; }
@@ -235,6 +215,25 @@ public class ITBlockStateProvider extends BlockStateProvider {
             }
         }
         catch (IOException e) { throw new RuntimeException("Failed on " + name, e); }
+    }
+
+    private ModelFile split(NongeneratedModel loc, ITTemplateMultiblock mb) { return split(loc, mb, false, false); }
+
+    private ModelFile split(NongeneratedModel loc, ITTemplateMultiblock mb, boolean mirror, boolean dynamic) {
+        UnaryOperator<BlockPos> transform = UnaryOperator.identity();
+        if (mirror) {
+            loadTemplateFor(mb);
+            Vec3i size = mb.getSize(null);
+            transform = p -> new BlockPos(size.getX() - p.getX() - 1, p.getY(), p.getZ());
+        }
+        return split(loc, mb, transform, dynamic);
+    }
+
+    private ModelFile split(NongeneratedModel name, ITTemplateMultiblock multiblock, UnaryOperator<BlockPos> transform, boolean dynamic) {
+        loadTemplateFor(multiblock);
+        final Vec3i offset = multiblock.getMasterFromOriginOffset();
+        Stream<Vec3i> partsStream = multiblock.getTemplate(null).blocksWithoutAir().stream().map(StructureTemplate.StructureBlockInfo::pos).map(transform).map(p -> p.subtract(offset));
+        return split(name, partsStream.collect(Collectors.toList()), dynamic);
     }
 
     protected NongeneratedModel innerObj(String loc, @Nullable RenderType layer) {
@@ -259,13 +258,9 @@ public class ITBlockStateProvider extends BlockStateProvider {
         return obj(loc.substring(0, loc.length() - 4), modLoc(loc), modelProvider);
     }
 
-    protected <T extends ModelBuilder<T>> T obj(String name, ResourceLocation model, ModelProvider<T> provider) {
-        return obj(name, model, ImmutableMap.of(), provider);
-    }
+    protected <T extends ModelBuilder<T>> T obj(String name, ResourceLocation model, ModelProvider<T> provider) { return obj(name, model, ImmutableMap.of(), provider); }
 
-    protected <T extends ModelBuilder<T>> T obj(String name, ResourceLocation model, Map<String, ResourceLocation> textures, ModelProvider<T> provider) {
-        return obj(provider.withExistingParent(name, mcLoc("block")), model, textures);
-    }
+    protected <T extends ModelBuilder<T>> T obj(String name, ResourceLocation model, Map<String, ResourceLocation> textures, ModelProvider<T> provider) { return obj(provider.withExistingParent(name, mcLoc("block")), model, textures); }
 
     protected <T extends ModelBuilder<T>> T obj(T base, ResourceLocation model, Map<String, ResourceLocation> textures) {
         assertModelExists(model);
@@ -341,25 +336,15 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     protected void createHorizontalRotatedBlock(Supplier<? extends Block> block, ModelFile model) { createHorizontalRotatedBlock(block, $ -> model, List.of()); }
 
-    protected void createHorizontalRotatedBlock(Supplier<? extends Block> block, ModelFile model, int offsetRotY) {
-        createRotatedBlock(block, $ -> model, IEProperties.FACING_HORIZONTAL, List.of(), 0, offsetRotY);
-    }
+    protected void createHorizontalRotatedBlock(Supplier<? extends Block> block, ModelFile model, int offsetRotY) { createRotatedBlock(block, $ -> model, IEProperties.FACING_HORIZONTAL, List.of(), 0, offsetRotY); }
 
-    protected void createHorizontalRotatedBlock(Supplier<? extends Block> block, Function<PartialBlockstate, ModelFile> model, List<Property<?>> additionalProps) {
-        createRotatedBlock(block, model, IEProperties.FACING_HORIZONTAL, additionalProps, 0, 180);
-    }
+    protected void createHorizontalRotatedBlock(Supplier<? extends Block> block, Function<PartialBlockstate, ModelFile> model, List<Property<?>> additionalProps) { createRotatedBlock(block, model, IEProperties.FACING_HORIZONTAL, additionalProps, 0, 180); }
 
-    protected void createAllRotatedBlock(Supplier<? extends Block> block, ModelFile model) {
-        createAllRotatedBlock(block, $ -> model, List.of());
-    }
+    protected void createAllRotatedBlock(Supplier<? extends Block> block, ModelFile model) { createAllRotatedBlock(block, $ -> model, List.of()); }
 
-    protected void createAllRotatedBlock(Supplier<? extends Block> block, Function<PartialBlockstate, ModelFile> model, List<Property<?>> additionalProps) {
-        createRotatedBlock(block, model, IEProperties.FACING_ALL, additionalProps, 90, 0);
-    }
+    protected void createAllRotatedBlock(Supplier<? extends Block> block, Function<PartialBlockstate, ModelFile> model, List<Property<?>> additionalProps) { createRotatedBlock(block, model, IEProperties.FACING_ALL, additionalProps, 90, 0); }
 
-    protected void createRotatedBlock(Supplier<? extends Block> block, ModelFile model, Property<Direction> facing, List<Property<?>> additionalProps, int offsetRotX, int offsetRotY) {
-        createRotatedBlock(block, $ -> model, facing, additionalProps, offsetRotX, offsetRotY);
-    }
+    protected void createRotatedBlock(Supplier<? extends Block> block, ModelFile model, Property<Direction> facing, List<Property<?>> additionalProps, int offsetRotX, int offsetRotY) { createRotatedBlock(block, $ -> model, facing, additionalProps, offsetRotX, offsetRotY); }
 
     protected void createRotatedBlock(Supplier<? extends Block> block, Function<PartialBlockstate, ModelFile> model, Property<Direction> facing, List<Property<?>> additionalProps, int offsetRotX, int offsetRotY) {
         VariantBlockStateBuilder stateBuilder = getVariantBuilder(block.get());
@@ -416,9 +401,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         else { out.accept(base); }
     }
 
-    protected ResourceLocation addModelsPrefix(ResourceLocation in) {
-        return ResourceLocation.fromNamespaceAndPath(in.getNamespace(), "models/" + in.getPath());
-    }
+    protected ResourceLocation addModelsPrefix(ResourceLocation in) { return ResourceLocation.fromNamespaceAndPath(in.getNamespace(), "models/" + in.getPath()); }
 
     protected void setRenderType(@Nullable RenderType type, ModelBuilder<?>... builders) {
         if (type != null) {

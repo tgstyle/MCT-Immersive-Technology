@@ -18,6 +18,7 @@ public class ITSounds {
     public static final RegistryObject<SoundEvent> gasStarter = registerSound("gas_starter");
     public static final RegistryObject<SoundEvent> gasArc = registerSound("gas_arc");
     public static final RegistryObject<SoundEvent> gasSpark = registerSound("gas_spark");
+    public static final RegistryObject<SoundEvent> gasIgnite = registerSound("gas_ignite");
     public static final RegistryObject<SoundEvent> distiller = registerSound("distiller");
 
     public static void init(IEventBus event) {

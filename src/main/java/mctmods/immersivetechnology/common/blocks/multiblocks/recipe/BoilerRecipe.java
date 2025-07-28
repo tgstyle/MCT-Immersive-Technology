@@ -13,30 +13,21 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-
 public class BoilerRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<BoilerRecipe>> SERIALIZER;
     public static final CachedRecipeList<BoilerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.BOILER);
 
     public final FluidStack output;
     public final FluidTagInput water;
-    public final FluidTagInput fuel;
-    private int heatPerTick;
     Lazy<Integer> totalProcessTime;
-    Lazy<Integer> totalProcessEnergy;
 
-    public BoilerRecipe(ResourceLocation id, FluidStack output, FluidTagInput water, FluidTagInput fuel, int heatPerTick) {
+    public BoilerRecipe(ResourceLocation id, FluidStack output, FluidTagInput water, int time) {
         super(LAZY_EMPTY, ITRecipeTypes.BOILER, id);
         this.output = output;
         this.water = water;
-        this.fuel = fuel;
-        this.heatPerTick = heatPerTick;
-        totalProcessTime = Lazy.of(() -> 1);
-        totalProcessEnergy = Lazy.of(() -> 1);
+        totalProcessTime = Lazy.of(() -> time);
 
-        this.fluidInputList = Lists.newArrayList(this.fuel);
-        if (this.water != null) this.fluidInputList.add(this.water);
+        this.fluidInputList = Lists.newArrayList(this.water);
         this.fluidOutputList = Lists.newArrayList(this.output);
     }
 
@@ -50,26 +41,11 @@ public class BoilerRecipe extends MultiblockRecipe {
         return ItemStack.EMPTY;
     }
 
-    public static BoilerRecipe findRecipe(Level level, FluidStack input0, @Nonnull FluidStack input1) {
+    public static BoilerRecipe findRecipe(Level level, FluidStack input0) {
         for (BoilerRecipe recipe : RECIPES.getRecipes(level)) {
-            if (!input0.isEmpty()) {
-                if (recipe.water != null && recipe.water.test(input0)) {
-                    if ((recipe.fuel == null && input1.isEmpty()) || (recipe.fuel != null && recipe.fuel.test(input1))) return recipe;
-                }
-
-                if (recipe.fuel != null && recipe.fuel.test(input0)) {
-                    if ((recipe.water == null && input1.isEmpty()) || (recipe.water != null && recipe.water.test(input1))) return recipe;
-                }
-            } else if (!input1.isEmpty()) {
-                if (recipe.water != null && recipe.water.test(input1) && recipe.fuel == null) return recipe;
-                if (recipe.fuel != null && recipe.fuel.test(input1) && recipe.water == null) return recipe;
-            }
+            if (recipe.water.test(input0)) return recipe;
         }
         return null;
-    }
-
-    public int getHeatPerTick() {
-        return heatPerTick;
     }
 
     @Override
@@ -79,7 +55,7 @@ public class BoilerRecipe extends MultiblockRecipe {
 
     @Override
     public int getTotalProcessEnergy() {
-        return totalProcessEnergy.get();
+        return 0;
     }
 
     @Override
