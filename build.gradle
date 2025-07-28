@@ -227,6 +227,7 @@ dependencies {
 
     implementation fg.deobf("curse.maven:immersive-engineering-231951:6206989")
     implementation fg.deobf("curse.maven:immersive-geology-370614:6411647")
+    implementation fg.deobf("curse.maven:engineered-schematics-1207780:6560826")
 
     implementation fg.deobf("curse.maven:jade-324717:6271651")
 
