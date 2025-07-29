@@ -53,7 +53,7 @@ public class ITBoilerLogic implements IMultiblockLogic<ITBoilerLogic.State>, ISe
     private static final CapabilityPosition FLUID_POS2 = new CapabilityPosition(0, 0, 1, RelativeBlockFace.RIGHT);
     private static final CapabilityPosition FLUID_POS3 = new CapabilityPosition(0, 2, 1, RelativeBlockFace.UP);
 
-    public static final BlockPos REDSTONE_POS = new BlockPos(4, 1, 0);
+    public static final BlockPos REDSTONE_POS = new BlockPos(4, 1, 2);
 
     private static final int TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
     private static final double HEAT_LOSS_PER_TICK = 0.2;
