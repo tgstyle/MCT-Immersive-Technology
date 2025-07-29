@@ -33,16 +33,16 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public class BlockItemIT extends BlockItem
+public class ITBlockItem extends BlockItem
 {
     private int burnTime;
 
-    public BlockItemIT(Block b, Item.Properties props)
+    public ITBlockItem(Block b, Item.Properties props)
     {
         super(b, props);
     }
 
-    public BlockItemIT(Block b)
+    public ITBlockItem(Block b)
     {
         this(b, new Item.Properties());
     }
@@ -76,7 +76,7 @@ public class BlockItemIT extends BlockItem
         }
     }
 
-    public BlockItemIT setBurnTime(int burnTime)
+    public ITBlockItem setBurnTime(int burnTime)
     {
         this.burnTime = burnTime;
         return this;

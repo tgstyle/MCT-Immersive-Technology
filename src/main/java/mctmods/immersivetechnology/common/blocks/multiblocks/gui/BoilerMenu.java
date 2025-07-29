@@ -46,8 +46,8 @@ public class BoilerMenu extends ITContainerMenu {
         this.tanks = tanks;
         this.addSlot(new ITSlot.NewFluidContainer(inv, ITBoilerLogic.INPUT_FUEL_SLOT_FILLED, 37, 15, ITSlot.NewFluidContainer.Filter.FULL));
         this.addSlot(new ITSlot.NewOutput(inv, ITBoilerLogic.INPUT_FUEL_SLOT_EMPTY, 37, 54));
-        this.addSlot(new ITSlot.NewFluidContainer(inv, ITBoilerLogic.INPUT_WATER_SLOT_FILLED, 76, 15, ITSlot.NewFluidContainer.Filter.FULL));
-        this.addSlot(new ITSlot.NewOutput(inv, ITBoilerLogic.INPUT_WATER_SLOT_EMPTY, 76, 54));
+        this.addSlot(new ITSlot.NewFluidContainer(inv, ITBoilerLogic.INPUT_SLOT_FILLED, 76, 15, ITSlot.NewFluidContainer.Filter.FULL));
+        this.addSlot(new ITSlot.NewOutput(inv, ITBoilerLogic.INPUT_SLOT_EMPTY, 76, 54));
         this.addSlot(new ITSlot.NewFluidContainer(inv, ITBoilerLogic.OUTPUT_SLOT_EMPTY, 149, 15, ITSlot.NewFluidContainer.Filter.EMPTY));
         this.addSlot(new ITSlot.NewOutput(inv, ITBoilerLogic.OUTPUT_SLOT_FILLED, 149, 54));
         for(int i = 0; i < 3; i++) { for(int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j+i*9+9, 8+j*18, 84+i*18)); } }

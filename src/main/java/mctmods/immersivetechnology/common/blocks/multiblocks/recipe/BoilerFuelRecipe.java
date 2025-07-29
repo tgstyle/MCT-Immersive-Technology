@@ -21,10 +21,10 @@ public class BoilerFuelRecipe extends MultiblockRecipe {
 
     public FluidTagInput fuel;
     private final int time;
-    private final int heatPerTick;
+    private final double heatPerTick;
     Lazy<Integer> totalProcessTime;
 
-    public BoilerFuelRecipe(ResourceLocation id, FluidTagInput fuel, int time, int heatPerTick) {
+    public BoilerFuelRecipe(ResourceLocation id, FluidTagInput fuel, int time, double heatPerTick) {
         super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.BOILER_FUEL, id);
         this.fuel = fuel;
         this.time = time;
@@ -53,5 +53,5 @@ public class BoilerFuelRecipe extends MultiblockRecipe {
     @Override
     public int getMultipleProcessTicks() { return 0; }
 
-    public int getHeatPerTick() { return heatPerTick; }
+    public double getHeatPerTick() { return heatPerTick; }
 }

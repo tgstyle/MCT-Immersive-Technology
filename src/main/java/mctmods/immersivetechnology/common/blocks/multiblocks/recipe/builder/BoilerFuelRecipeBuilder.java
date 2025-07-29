@@ -16,7 +16,7 @@ public class BoilerFuelRecipeBuilder extends IEFinishedRecipe<BoilerFuelRecipeBu
 
     public BoilerFuelRecipeBuilder setTime(int time) { return this.addWriter((jsonObject) -> jsonObject.addProperty("time", time)); }
 
-    public BoilerFuelRecipeBuilder setHeatPerTick(int heatPerTick) { return this.addWriter((jsonObject) -> jsonObject.addProperty("heatPerTick", heatPerTick)); }
+    public BoilerFuelRecipeBuilder setHeatPerTick(double heatPerTick) { return this.addWriter((jsonObject) -> jsonObject.addProperty("heatPerTick", heatPerTick)); }
 
     public BoilerFuelRecipeBuilder addInput(FluidTagInput fluidTag) { return addFluidTag("fuel", fluidTag); }
 

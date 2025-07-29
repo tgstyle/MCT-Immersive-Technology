@@ -4,6 +4,6 @@
     "amount": 10,
     "tag": "forge:biodiesel"
   },
-  "heatPerTick": 1,
+  "heatPerTick": 0.1,
   "time": 10
 }

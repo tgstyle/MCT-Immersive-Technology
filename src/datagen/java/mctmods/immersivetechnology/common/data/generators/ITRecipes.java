@@ -52,7 +52,7 @@ public class ITRecipes extends RecipeProvider {
     }
 
     private void recipesBoilerFuel(@Nonnull Consumer<FinishedRecipe> out) {
-        BoilerFuelRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 10).setTime(10).setHeatPerTick(1).build(out, toRL("boiler_fuel/biodiesel"));
+        BoilerFuelRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 10).setTime(10).setHeatPerTick(0.1).build(out, toRL("boiler_fuel/biodiesel"));
     }
 
     private void recipesTurbine(@Nonnull Consumer<FinishedRecipe> out) {

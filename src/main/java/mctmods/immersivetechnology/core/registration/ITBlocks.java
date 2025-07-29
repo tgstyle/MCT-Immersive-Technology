@@ -10,7 +10,7 @@ import mctmods.immersivetechnology.common.blocks.metal.OpenBarrelBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.SteelBarrelBlock;
 import mctmods.immersivetechnology.common.blocks.metal.SteelBarrelBlockEntity;
 import mctmods.immersivetechnology.common.blocks.stone.ReinforcedCokeBrick;
-import mctmods.immersivetechnology.common.items.helper.BlockItemIT;
+import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -95,9 +95,9 @@ public class ITBlocks {
         initBlocks();
         REGISTER.register(event);
         for(BlockEntry<?> entry : BlockEntry.ALL_ENTRIES) {
-            Function<Block, BlockItemIT> toItem;
-            toItem = BlockItemIT::new;
-            Function<Block, BlockItemIT> finalToItem = toItem;
+            Function<Block, ITBlockItem> toItem;
+            toItem = ITBlockItem::new;
+            Function<Block, ITBlockItem> finalToItem = toItem;
             ITItems.REGISTER.register(entry.getId().getPath(), () -> finalToItem.apply(entry.get()));
             BLOCK_REGISTRY_MAP.put(entry.getId().getPath(), entry.getRegObject());
         }
