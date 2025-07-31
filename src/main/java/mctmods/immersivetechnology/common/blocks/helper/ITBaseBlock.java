@@ -38,16 +38,16 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-public class ITBlockBase extends Block implements ITBlock, SimpleWaterloggedBlock {
+public class ITBaseBlock extends Block implements ITBlock, SimpleWaterloggedBlock {
     boolean isHidden;
     boolean hasFlavour;
     protected int lightOpacity;
     protected final boolean notNormalBlock;
     private final boolean fitsIntoContainer;
 
-    public ITBlockBase(BlockBehaviour.Properties blockProps) { this(blockProps, true); }
+    public ITBaseBlock(BlockBehaviour.Properties blockProps) { this(blockProps, true); }
 
-    public ITBlockBase(BlockBehaviour.Properties blockProps, boolean fitsIntoContainer) {
+    public ITBaseBlock(BlockBehaviour.Properties blockProps, boolean fitsIntoContainer) {
         super(blockProps);
         this.fitsIntoContainer = fitsIntoContainer;
         this.notNormalBlock = !this.defaultBlockState().canOcclude();
@@ -55,17 +55,17 @@ public class ITBlockBase extends Block implements ITBlock, SimpleWaterloggedBloc
         this.lightOpacity = -1;
     }
 
-    public ITBlockBase setHidden(boolean shouldHide) { this.isHidden = shouldHide; return this; }
+    public ITBaseBlock setHidden(boolean shouldHide) { this.isHidden = shouldHide; return this; }
 
     public boolean isHidden() { return this.isHidden; }
 
-    public ITBlockBase setHasFlavour(boolean shouldHave) { this.hasFlavour = shouldHave; return this; }
+    public ITBaseBlock setHasFlavour(boolean shouldHave) { this.hasFlavour = shouldHave; return this; }
 
     public String getNameForFlavour() { return Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(this)).getPath(); }
 
     public boolean hasFlavour() { return this.hasFlavour; }
 
-    public ITBlockBase setLightOpacity(int opacity) { this.lightOpacity = opacity; return this; }
+    public ITBaseBlock setLightOpacity(int opacity) { this.lightOpacity = opacity; return this; }
 
     @Override
     public int getLightBlock(@NotNull BlockState state, @NotNull BlockGetter worldIn, @NotNull BlockPos pos) {

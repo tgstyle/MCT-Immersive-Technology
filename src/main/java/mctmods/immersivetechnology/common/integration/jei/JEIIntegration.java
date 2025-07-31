@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.integration.jei;
 
-import mctmods.immersivetechnology.client.gui.AdvCokeOvenScreen;
+import mctmods.immersivetechnology.client.gui.AdvancedCokeOvenScreen;
 import mctmods.immersivetechnology.client.gui.DistillerScreen;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
@@ -34,19 +34,19 @@ public class JEIIntegration implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(JEIRecipeTypes.ADV_COKE_OVEN, getRecipes());
+        registration.addRecipes(JEIRecipeTypes.ADVANCED_COKE_OVEN, getRecipes());
         registration.addRecipes(JEIRecipeTypes.DISTILLER, getDistillerRecipes());
     }
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(ITMultiblockProvider.ADV_COKE_OVEN.iconStack(), JEIRecipeTypes.ADV_COKE_OVEN);
+        registration.addRecipeCatalyst(ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack(), JEIRecipeTypes.ADVANCED_COKE_OVEN);
         registration.addRecipeCatalyst(ITMultiblockProvider.DISTILLER.iconStack(), JEIRecipeTypes.DISTILLER);
     }
 
     @Override
     public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registration) {
-        registration.addRecipeClickArea(AdvCokeOvenScreen.class, 56, 36, 14, 14, JEIRecipeTypes.ADV_COKE_OVEN);
+        registration.addRecipeClickArea(AdvancedCokeOvenScreen.class, 56, 36, 14, 14, JEIRecipeTypes.ADVANCED_COKE_OVEN);
         registration.addRecipeClickArea(DistillerScreen.class, 76, 37, 24, 17, JEIRecipeTypes.DISTILLER);
     }
 

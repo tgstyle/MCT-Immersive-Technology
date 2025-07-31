@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.network;
 
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,11 +12,6 @@ import java.util.function.Supplier;
 public class ITMessageContainerUpdate implements ITINetMessage {
     private final int windowId;
     private final CompoundTag nbt;
-
-    public ITMessageContainerUpdate(int windowId, CompoundTag nbt) {
-        this.windowId = windowId;
-        this.nbt = nbt;
-    }
 
     public ITMessageContainerUpdate(FriendlyByteBuf buf) {
         this.windowId = buf.readByte();

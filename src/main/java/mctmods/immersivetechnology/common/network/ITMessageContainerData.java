@@ -7,7 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent.Context;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;

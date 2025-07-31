@@ -28,10 +28,10 @@ public class ITAdvancedCokeOvenCategory extends ITRecipeCategory<AdvancedCokeOve
     private final IDrawableAnimated flame;
 
     public ITAdvancedCokeOvenCategory(IGuiHelper helper) {
-        super(helper, JEIRecipeTypes.ADV_COKE_OVEN, "block.immersivetechnology.coke_oven_advanced");
+        super(helper, JEIRecipeTypes.ADVANCED_COKE_OVEN, "block.immersivetechnology.coke_oven_advanced");
         ResourceLocation background = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "textures/gui/coke_oven_advanced.png");
         setBackground(helper.createDrawable(background, 26, 16, 123, 55));
-        setIcon(ITMultiblockProvider.ADV_COKE_OVEN.iconStack());
+        setIcon(ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack());
         tankOverlay = helper.createDrawable(background, 178, 33, 16, 47);
         flame = helper.drawableBuilder(background, 177, 0, 14, 14).buildAnimated(500, IDrawableAnimated.StartDirection.TOP, true);
     }

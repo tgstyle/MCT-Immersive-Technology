@@ -13,6 +13,7 @@ public class ITClientConfig {
     public static final ForgeConfigSpec.BooleanValue doSpecialRenderGasTurbine;
     public static final ForgeConfigSpec.BooleanValue doSpecialRenderSteamTurbine;
     public static final ForgeConfigSpec.BooleanValue doSpecialRenderCokeOvenPreheater;
+    public static ForgeConfigSpec.BooleanValue perTickTrashCans;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -21,6 +22,10 @@ public class ITClientConfig {
         doSpecialRenderGasTurbine = builder.comment("This controls if the animations and special client rendering applies to the Gas Turbine").define("gas_turbine_renderer", true);
         doSpecialRenderSteamTurbine = builder.comment("This controls if the animations and special client rendering applies to the Steam Turbine").define("steam_turbine_renderer", true);
         doSpecialRenderCokeOvenPreheater = builder.comment("This controls if the animations and special client rendering applies to the Coke Oven Preheaters").define("coke_oven_preheater_renderer", true);
+
+        builder.comment("Experimental options").push("experimental");
+        perTickTrashCans = builder.comment("Display trash can OSD as per tick average instead of per second").define("per_tick_trash_cans", false);
+        builder.pop();
 
         SPEC = builder.build();
     }

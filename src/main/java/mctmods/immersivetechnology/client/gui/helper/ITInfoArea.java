@@ -13,10 +13,7 @@ public abstract class ITInfoArea {
     }
 
     public final void fillTooltip(int mouseX, int mouseY, List<Component> tooltip) {
-        if (this.area.contains(mouseX, mouseY)) {
-            this.fillTooltipOverArea(mouseX, mouseY, tooltip);
-        }
-
+        if (this.area.contains(mouseX, mouseY)) { this.fillTooltipOverArea(mouseX, mouseY, tooltip); }
     }
 
     protected abstract void fillTooltipOverArea(int var1, int var2, List<Component> var3);

@@ -15,9 +15,9 @@ import net.minecraft.world.entity.player.Inventory;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class AdvCokeOvenScreen extends ITContainerScreen<AdvancedCokeOvenMenu> {
+public class AdvancedCokeOvenScreen extends ITContainerScreen<AdvancedCokeOvenMenu> {
     private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("coke_oven_advanced");
-    public AdvCokeOvenScreen(AdvancedCokeOvenMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
+    public AdvancedCokeOvenScreen(AdvancedCokeOvenMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
     @Nonnull
     @Override

@@ -10,15 +10,11 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.conditions.ICondition;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class AdvancedCokeOvenFuelSerializer extends IERecipeSerializer<AdvancedCokeOvenFuel>
-{
-    public AdvancedCokeOvenFuelSerializer()
-    {
-
-    }
+public class AdvancedCokeOvenFuelSerializer extends IERecipeSerializer<AdvancedCokeOvenFuel> {
 
     public ItemStack getIcon() {
         return new ItemStack(IEItems.Ingredients.COAL_COKE);
@@ -31,16 +27,15 @@ public class AdvancedCokeOvenFuelSerializer extends IERecipeSerializer<AdvancedC
     }
 
     @Nullable
-    public AdvancedCokeOvenFuel fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+    public AdvancedCokeOvenFuel fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
         Ingredient input = Ingredient.fromNetwork(buffer);
         int time = buffer.readInt();
         return new AdvancedCokeOvenFuel(recipeId, input, time);
     }
 
     @Override
-    public void toNetwork(FriendlyByteBuf buffer, AdvancedCokeOvenFuel recipe) {
+    public void toNetwork(@NotNull FriendlyByteBuf buffer, AdvancedCokeOvenFuel recipe) {
         recipe.input.toNetwork(buffer);
         buffer.writeInt(recipe.burnTime);
     }
-
 }

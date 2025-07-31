@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "immersivetechnology:block/metal/trash_item",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "immersivetechnology:block/metal/trash_item"
+    },
+    "facing=south": {
+      "model": "immersivetechnology:block/metal/trash_item",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "immersivetechnology:block/metal/trash_item",
+      "y": 270
+    }
+  }
+}

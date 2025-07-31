@@ -23,15 +23,11 @@ public class ITDynamicModel {
     public static final RandomSource RANDOM_SOURCE = RandomSource.createNewThreadLocalInstance();
 
     @SubscribeEvent
-    public static void registerModels(ModelEvent.RegisterAdditional ev) {
-        for (ResourceLocation model : MODELS)
-            ev.register(model);
-    }
+    public static void registerModels(ModelEvent.RegisterAdditional ev) { for (ResourceLocation model : MODELS) { ev.register(model); } }
 
     private final ResourceLocation name;
 
     public ITDynamicModel(String desc) {
-        // References a generated json file
         this.name = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "dynamic/" + desc);
         MODELS.add(this.name);
     }
@@ -41,15 +37,9 @@ public class ITDynamicModel {
         return blockRenderer.getBlockModelShaper().getModelManager().getModel(name);
     }
 
-    public List<BakedQuad> getNullQuads() {
-        return getNullQuads(ModelData.EMPTY);
-    }
+    public List<BakedQuad> getNullQuads() { return getNullQuads(ModelData.EMPTY); }
 
-    public List<BakedQuad> getNullQuads(ModelData data) {
-        return get().getQuads(null, null, RANDOM_SOURCE, data, null);
-    }
+    public List<BakedQuad> getNullQuads(ModelData data) { return get().getQuads(null, null, RANDOM_SOURCE, data, null); }
 
-    public ResourceLocation getName() {
-        return name;
-    }
+    public ResourceLocation getName() { return name; }
 }

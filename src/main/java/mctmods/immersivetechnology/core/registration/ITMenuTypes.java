@@ -5,10 +5,12 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.AdvancedCokeOvenMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.BoilerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.DistillerMenu;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITAdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITBoilerLogic;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITDistillerLogic;
+import mctmods.immersivetechnology.common.blocks.metal.TrashItemBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.gui.TrashItemMenu;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -23,7 +25,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -33,15 +34,7 @@ public class ITMenuTypes {
     public static final MultiblockContainer<ITAdvancedCokeOvenLogic.State, AdvancedCokeOvenMenu> ADVANCED_COKE_OVEN_MENU = registerMultiblock(ITLib.GUIID_AdvCokeOven, AdvancedCokeOvenMenu::makeServer, AdvancedCokeOvenMenu::makeClient);
     public static final MultiblockContainer<ITBoilerLogic.State, BoilerMenu> BOILER_MENU = registerMultiblock(ITLib.GUIID_Boiler, BoilerMenu::makeServer, BoilerMenu::makeClient);
     public static final MultiblockContainer<ITDistillerLogic.State, DistillerMenu> DISTILLER_MENU = registerMultiblock(ITLib.GUIID_Distiller, DistillerMenu::makeServer, DistillerMenu::makeClient);
-
-    public static <M extends AbstractContainerMenu> RegistryObject<MenuType<M>> registerSimple(String name, SimpleContainerConstructor<M> factory) {
-        return REGISTER.register(name, () -> {
-            Mutable<MenuType<M>> typeBox = new MutableObject<>();
-            MenuType<M> type = new MenuType<>((id, inv) -> factory.construct(typeBox.getValue(), id, inv), FeatureFlagSet.of());
-            typeBox.setValue(type);
-            return type;
-        });
-    }
+    public static final ArgContainer<TrashItemBlockEntity, TrashItemMenu> TRASH_ITEM = registerArg("trash_item", TrashItemMenu::makeServer, TrashItemMenu::makeClient);
 
     public static <T, C extends ITContainerMenu> ArgContainer<T, C> registerArg(String name, ArgContainerConstructor<T, C> container, ClientContainerConstructor<C> client) {
         RegistryObject<MenuType<C>> typeRef = registerType(name, client);
@@ -92,9 +85,6 @@ public class ITMenuTypes {
                 }
         );
     }
-
-    @FunctionalInterface
-    public interface SimpleContainerConstructor<M extends AbstractContainerMenu> { M construct(MenuType<M> type, int windowId, Inventory invPlayer); }
 
     @FunctionalInterface
     public interface ArgContainerConstructor<T, C extends ITContainerMenu> { C construct(MenuType<C> type, int windowId, Inventory invPlayer, T arg); }

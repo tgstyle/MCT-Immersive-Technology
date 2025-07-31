@@ -6,7 +6,7 @@ import blusunrize.immersiveengineering.common.blocks.BlockItemIE;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITBlockBase;
+import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlock;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -92,7 +92,7 @@ public class ITBlockItem extends BlockItem
     protected boolean placeBlock(BlockPlaceContext context, BlockState newState)
     {
         Block b = newState.getBlock();
-        if(b instanceof ITBlockBase ieBlock)
+        if(b instanceof ITBaseBlock ieBlock)
         {
             if(!ieBlock.canIEBlockBePlaced(newState, context))
                 return false;
@@ -141,7 +141,7 @@ public class ITBlockItem extends BlockItem
     @Override
     public boolean canFitInsideContainerItems()
     {
-        return !(getBlock() instanceof ITBlockBase ieBlock)||ieBlock.fitsIntoContainer();
+        return !(getBlock() instanceof ITBaseBlock ieBlock)||ieBlock.fitsIntoContainer();
     }
 
     public static class BlockItemIENoInventory extends BlockItemIE

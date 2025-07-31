@@ -13,6 +13,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class ITDataProvider {
             generator.addProvider(true, new ITDynamicModelProvider(blockStateProvider, out, helper));
             generator.addProvider(true, new ITRecipes(out));
             generator.addProvider(true, new LootTableProvider(out, Collections.emptySet(), List.of(new LootTableProvider.SubProviderEntry(ITBlockLootProvider::new, LootContextParamSets.BLOCK))));
-            generator.addProvider(true, new ITParticleProvider(out, helper));
+            generator.addProvider(true, new ITParticleProvider(out));
         }
     }
 }

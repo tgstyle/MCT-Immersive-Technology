@@ -15,13 +15,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.DefaultedRegistry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ITFluidInfoArea extends ITInfoArea {
     private final IFluidTank tank;
@@ -51,7 +50,7 @@ public class ITFluidInfoArea extends ITInfoArea {
     }
 
     public static void fillTooltip(FluidStack fluid, int tankCapacity, Consumer<Component> tooltip) {
-        if (!fluid.isEmpty()) { tooltip.accept(TextUtils.applyFormat(fluid.getDisplayName(), new ChatFormatting[]{fluid.getFluid().getFluidType().getRarity(fluid).color})); }
+        if (!fluid.isEmpty()) { tooltip.accept(fluid.getDisplayName().copy().withStyle(fluid.getFluid().getFluidType().getRarity(fluid).getStyleModifier())); }
         else { tooltip.accept(Component.translatable("gui.immersiveengineering.empty")); }
 
         Fluid var4 = fluid.getFluid();
@@ -60,20 +59,19 @@ public class ITFluidInfoArea extends ITInfoArea {
         if (ClientUtils.mc().options.advancedItemTooltips && !fluid.isEmpty()) {
             if (!Screen.hasShiftDown()) { tooltip.accept(Component.translatable("desc.immersiveengineering.info.holdShiftForInfo")); }
             else {
-                DefaultedRegistry<Fluid> var10001 = BuiltInRegistries.FLUID;
-                tooltip.accept(TextUtils.applyFormat(Component.literal("Fluid Registry: " + var10001.getKey(fluid.getFluid())), new ChatFormatting[]{ChatFormatting.DARK_GRAY}));
-                tooltip.accept(TextUtils.applyFormat(Component.literal("Density: " + fluid.getFluid().getFluidType().getDensity(fluid)), new ChatFormatting[]{ChatFormatting.DARK_GRAY}));
-                tooltip.accept(TextUtils.applyFormat(Component.literal("Temperature: " + fluid.getFluid().getFluidType().getTemperature(fluid)), new ChatFormatting[]{ChatFormatting.DARK_GRAY}));
-                tooltip.accept(TextUtils.applyFormat(Component.literal("Viscosity: " + fluid.getFluid().getFluidType().getViscosity(fluid)), new ChatFormatting[]{ChatFormatting.DARK_GRAY}));
-                tooltip.accept(TextUtils.applyFormat(Component.literal("NBT Data: " + fluid.getTag()), new ChatFormatting[]{ChatFormatting.DARK_GRAY}));
+                tooltip.accept(TextUtils.applyFormat(Component.literal("Fluid Registry: " + ForgeRegistries.FLUIDS.getKey(fluid.getFluid())), ChatFormatting.DARK_GRAY));
+                tooltip.accept(TextUtils.applyFormat(Component.literal("Density: " + fluid.getFluid().getFluidType().getDensity(fluid)), ChatFormatting.DARK_GRAY));
+                tooltip.accept(TextUtils.applyFormat(Component.literal("Temperature: " + fluid.getFluid().getFluidType().getTemperature(fluid)), ChatFormatting.DARK_GRAY));
+                tooltip.accept(TextUtils.applyFormat(Component.literal("Viscosity: " + fluid.getFluid().getFluidType().getViscosity(fluid)), ChatFormatting.DARK_GRAY));
+                tooltip.accept(TextUtils.applyFormat(Component.literal("NBT Data: " + fluid.getTag()), ChatFormatting.DARK_GRAY));
             }
         }
 
         if (tankCapacity > 0) {
             int var5 = fluid.getAmount();
-            tooltip.accept(TextUtils.applyFormat(Component.literal(var5 + "/" + tankCapacity + "mB"), new ChatFormatting[]{ChatFormatting.GRAY}));
+            tooltip.accept(TextUtils.applyFormat(Component.literal(var5 + "/" + tankCapacity + "mB"), ChatFormatting.GRAY));
         }
-        else if (tankCapacity == 0) { tooltip.accept(TextUtils.applyFormat(Component.literal(fluid.getAmount() + "mB"), new ChatFormatting[]{ChatFormatting.GRAY})); }
+        else if (tankCapacity == 0) { tooltip.accept(TextUtils.applyFormat(Component.literal(fluid.getAmount() + "mB"), ChatFormatting.GRAY)); }
     }
 
     public void draw(GuiGraphics graphics) {

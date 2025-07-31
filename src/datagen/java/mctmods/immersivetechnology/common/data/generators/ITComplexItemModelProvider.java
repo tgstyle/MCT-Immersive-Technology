@@ -5,7 +5,6 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.client.model.generators.ModelBuilder;
@@ -26,18 +25,16 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
     @Override
     public @NotNull String getName() { return getClass().getSimpleName(); }
 
-    static final ResourceLocation ITEM_GENERATED = ResourceLocation.fromNamespaceAndPath("minecraft", "item/generated");
-
     @Override
     protected void registerModels() {
         generateMultiblockModel("boiler", ITMultiblockProvider.BOILER.block());
         generateMultiblockModel("distiller", ITMultiblockProvider.DISTILLER.block());
         generateMultiblockModel("alternator", ITMultiblockProvider.ALTERNATOR.block());
-        generateMultiblockModel("advanced_coke_oven", ITMultiblockProvider.ADV_COKE_OVEN.block());
+        generateMultiblockModel("advanced_coke_oven", ITMultiblockProvider.ADVANCED_COKE_OVEN.block());
         generateMultiblockModel("steam_turbine", ITMultiblockProvider.STEAM_TURBINE.block());
         generateMultiblockModel("gas_turbine", ITMultiblockProvider.GAS_TURBINE.block());
         generateMultiblockModel("solar_tower", ITMultiblockProvider.SOLAR_TOWER.block());
-        generateBlockModel(ITBlocks.MetalDevices.COKE_OVEN_PREHEATER);
+        generateBlockModel(ITBlocks.MetalDevices.COKE_OVEN_HEATER);
     }
 
     private void doTransform(ModelBuilder<?>.TransformsBuilder transform, ItemDisplayContext type, @Nullable Vector3f translation, @Nullable Vector3f rotationAngle, float scale) {
@@ -71,7 +68,7 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
     }
 
     private void generateBlockModel(Supplier<? extends ItemLike> block) {
-        TRSRModelBuilder model = obj(block, "block/metal/obj/coke_oven_preheater.obj");
+        TRSRModelBuilder model = obj(block, "block/metal/obj/coke_oven_heater.obj");
 
         ModelBuilder<?>.TransformsBuilder trans = model.transforms();
         doTransform(trans, ItemDisplayContext.FIRST_PERSON_LEFT_HAND, new Vector3f(-1.75F, 2.5F, 1.25F), new Vector3f(0, 225, 0), 0.03125F);

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import mctmods.immersivetechnology.client.renderer.CokeOvenPreheaterRenderer;
+import mctmods.immersivetechnology.client.renderer.CokeOvenHeaterRenderer;
 import mctmods.immersivetechnology.client.renderer.GasTurbineRenderer;
 import mctmods.immersivetechnology.client.renderer.SteamTurbineRenderer;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -29,34 +29,27 @@ public class ITDynamicModelProvider extends ModelProvider<ITDynamicModelProvider
     @Override
     protected void registerModels() {
         for(Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet()) { withExistingParent(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(multiblock.getKey())).getPath(), multiblock.getValue().getLocation()); }
-        SimpleModelBuilder cokeOvenPreheater = getBuilder(CokeOvenPreheaterRenderer.NAME)
+        getBuilder(CokeOvenHeaterRenderer.NAME)
                 .customLoader(ObjModelBuilder::begin)
-                .modelLocation(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "models/block/metal/obj/coke_oven_preheater.obj"))
-                .flipV(true)
-                .end();
-        SimpleModelBuilder steamTurbine = getBuilder(SteamTurbineRenderer.NAME)
+                .modelLocation(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "models/block/metal/obj/coke_oven_heater.obj"))
+                .flipV(true);
+        getBuilder(SteamTurbineRenderer.NAME)
                 .customLoader(ObjModelBuilder::begin)
                 .modelLocation(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "models/block/multiblock/obj/steam_turbine/steam_turbine_rotor.obj"))
-                .flipV(true)
-                .end();
-        SimpleModelBuilder steamTurbineEastWest = getBuilder(SteamTurbineRenderer.NAME_EAST_WEST)
+                .flipV(true);
+        getBuilder(SteamTurbineRenderer.NAME_EAST_WEST)
                 .customLoader(ObjModelBuilder::begin)
                 .modelLocation(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "models/block/multiblock/obj/steam_turbine/steam_turbine_rotor_west_east.obj"))
-                .flipV(true)
-                .end();
-        SimpleModelBuilder gasTurbine = getBuilder(GasTurbineRenderer.NAME)
+                .flipV(true);
+        getBuilder(GasTurbineRenderer.NAME)
                 .customLoader(ObjModelBuilder::begin)
                 .modelLocation(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "models/block/multiblock/obj/gas_turbine/gas_turbine_rotor.obj"))
-                .flipV(true)
-                .end();
-        SimpleModelBuilder gasTurbineEastWest = getBuilder(GasTurbineRenderer.NAME_EAST_WEST)
+                .flipV(true);
+        getBuilder(GasTurbineRenderer.NAME_EAST_WEST)
                 .customLoader(ObjModelBuilder::begin)
                 .modelLocation(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "models/block/multiblock/obj/gas_turbine/gas_turbine_rotor_east_west.obj"))
-                .flipV(true)
-                .end();
+                .flipV(true);
     }
-
-    public static ResourceLocation rl(String path) { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, path); }
 
     @Nonnull
     @Override

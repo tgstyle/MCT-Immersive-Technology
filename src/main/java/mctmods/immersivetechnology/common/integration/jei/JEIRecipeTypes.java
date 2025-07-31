@@ -11,7 +11,7 @@ import net.minecraft.world.item.crafting.Recipe;
 public class JEIRecipeTypes {
     public static final RecipeType<BoilerRecipe> BOILER = create(ITRecipeTypes.BOILER);
     public static final RecipeType<DistillerRecipe> DISTILLER = create(ITRecipeTypes.DISTILLER);
-    public static final RecipeType<AdvancedCokeOvenRecipe> ADV_COKE_OVEN = create(ITRecipeTypes.ADVANCED_COKE_OVEN);
+    public static final RecipeType<AdvancedCokeOvenRecipe> ADVANCED_COKE_OVEN = create(ITRecipeTypes.ADVANCED_COKE_OVEN);
 
     private static <T extends Recipe<?>> RecipeType<T> create(IERecipeTypes.TypeWithClass<T> type) {
         assert type.type().getId() != null;

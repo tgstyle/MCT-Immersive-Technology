@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.energy.IMutableEnergyStorage;
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
 import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
 import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITSlot;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITDistillerLogic;
 import net.minecraft.world.entity.player.Inventory;

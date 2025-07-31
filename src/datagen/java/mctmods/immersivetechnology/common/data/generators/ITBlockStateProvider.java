@@ -14,7 +14,6 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,12 +34,10 @@ import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
 import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -55,7 +52,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
     protected static final Map<ResourceLocation, String> generatedParticleTextures = new HashMap<>();
     protected final ExistingFileHelper existingFileHelper;
     protected final NongeneratedModels innerModels;
-    protected Logger logger = ITLib.getNewLogger();
 
     public ITBlockStateProvider(DataGenerator generator, ExistingFileHelper helper) {
         super(generator.getPackOutput(), ITLib.MODID, helper);
@@ -63,8 +59,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         this.innerModels = new NongeneratedModels(generator.getPackOutput(), existingFileHelper);
     }
 
-    @Override
-    protected void registerStatesAndModels() {
+    @Override protected void registerStatesAndModels() {
         ITLib.IT_LOGGER.info("Generating Multiblock Splits");
         genericmultiblockMirror("boiler");
         genericmultiblockMirror("distiller");
@@ -123,7 +118,82 @@ public class ITBlockStateProvider extends BlockStateProvider {
                 .face(Direction.UP).texture("#up").uvs(0, 0, 1, 14).end();
         createSimpleBlock(ITBlocks.getBlock.apply("open_barrel"), openModel);
 
-        createMultiblock(ITBlocks.MetalDevices.COKE_OVEN_PREHEATER, split(innerObj("block/metal/obj/coke_oven_preheater.obj", RenderType.cutout())));
+        BlockModelBuilder trashItemModel = models().getBuilder("block/metal/trash_item")
+                .texture("particle", modLoc("block/metal/trash_item_side"))
+                .texture("side", modLoc("block/metal/trash_item_side"))
+                .texture("bottom", modLoc("block/metal/trash_item_bottom"))
+                .texture("top_side", modLoc("block/metal/trash_item_top_side"))
+                .texture("top", modLoc("block/metal/trash_item_top")); {
+            trashItemModel.element()
+                    .from(2, 0, 2).to(14, 13, 14)
+                    .face(Direction.NORTH).texture("#side").uvs(2, 3, 14, 16).end()
+                    .face(Direction.EAST).texture("#side").uvs(2, 3, 14, 16).end()
+                    .face(Direction.SOUTH).texture("#side").uvs(2, 3, 14, 16).end()
+                    .face(Direction.WEST).texture("#side").uvs(2, 3, 14, 16).end()
+                    .face(Direction.UP).texture("#bottom").uvs(2, 2, 14, 14).end()
+                    .face(Direction.DOWN).texture("#bottom").uvs(2, 2, 14, 14).end();
+            trashItemModel.element()
+                    .from(0.5F, 13, 0.5F).to(15.5F, 16, 15.5F)
+                    .face(Direction.NORTH).texture("#top_side").uvs(0, 0, 15, 3).end()
+                    .face(Direction.EAST).texture("#top_side").uvs(0, 0, 15, 3).end()
+                    .face(Direction.SOUTH).texture("#top_side").uvs(0, 0, 15, 3).end()
+                    .face(Direction.WEST).texture("#top_side").uvs(0, 0, 15, 3).end()
+                    .face(Direction.UP).texture("#top").uvs(0, 0, 15, 15).end()
+                    .face(Direction.DOWN).texture("#top").uvs(0, 0, 15, 15).end();
+        }
+        createRotatedBlock(ITBlocks.MetalDevices.TRASH_ITEM, state -> trashItemModel, List.of());
+
+        BlockModelBuilder trashFluidModel = models().getBuilder("block/metal/trash_fluid")
+                .texture("particle", modLoc("block/metal/trash_fluid_side"))
+                .texture("side", modLoc("block/metal/trash_fluid_side"))
+                .texture("bottom", modLoc("block/metal/trash_fluid_bottom"))
+                .texture("top_side", modLoc("block/metal/trash_fluid_top_side"))
+                .texture("top", modLoc("block/metal/trash_fluid_top")); {
+            trashFluidModel.element()
+                    .from(2, 0, 2).to(14, 13, 14)
+                    .face(Direction.NORTH).texture("#side").uvs(2, 3, 14, 16).end()
+                    .face(Direction.EAST).texture("#side").uvs(2, 3, 14, 16).end()
+                    .face(Direction.SOUTH).texture("#side").uvs(2, 3, 14, 16).end()
+                    .face(Direction.WEST).texture("#side").uvs(2, 3, 14, 16).end()
+                    .face(Direction.UP).texture("#bottom").uvs(2, 2, 14, 14).end()
+                    .face(Direction.DOWN).texture("#bottom").uvs(2, 2, 14, 14).end();
+            trashFluidModel.element()
+                    .from(0.5F, 13, 0.5F).to(15.5F, 16, 15.5F)
+                    .face(Direction.NORTH).texture("#top_side").uvs(0, 0, 15, 3).end()
+                    .face(Direction.EAST).texture("#top_side").uvs(0, 0, 15, 3).end()
+                    .face(Direction.SOUTH).texture("#top_side").uvs(0, 0, 15, 3).end()
+                    .face(Direction.WEST).texture("#top_side").uvs(0, 0, 15, 3).end()
+                    .face(Direction.UP).texture("#top").uvs(0, 0, 15, 15).end()
+                    .face(Direction.DOWN).texture("#top").uvs(0, 0, 15, 15).end();
+        }
+        createRotatedBlock(ITBlocks.MetalDevices.TRASH_FLUID, state -> trashFluidModel, List.of());
+
+        BlockModelBuilder trashEnergyModel = models().getBuilder("block/metal/trash_energy")
+                .texture("particle", modLoc("block/metal/trash_energy_side"))
+                .texture("side", modLoc("block/metal/trash_energy_side"))
+                .texture("bottom", modLoc("block/metal/trash_energy_bottom"))
+                .texture("top_side", modLoc("block/metal/trash_energy_top_side"))
+                .texture("top", modLoc("block/metal/trash_energy_top")); {
+            trashEnergyModel.element()
+                    .from(2, 0, 2).to(14, 13, 14)
+                    .face(Direction.NORTH).texture("#side").uvs(2, 3, 14, 16).end()
+                    .face(Direction.EAST).texture("#side").uvs(2, 3, 14, 16).end()
+                    .face(Direction.SOUTH).texture("#side").uvs(2, 3, 14, 16).end()
+                    .face(Direction.WEST).texture("#side").uvs(2, 3, 14, 16).end()
+                    .face(Direction.UP).texture("#bottom").uvs(2, 2, 14, 14).end()
+                    .face(Direction.DOWN).texture("#bottom").uvs(2, 2, 14, 14).end();
+            trashEnergyModel.element()
+                    .from(0.5F, 13, 0.5F).to(15.5F, 16, 15.5F)
+                    .face(Direction.NORTH).texture("#top_side").uvs(0, 0, 15, 3).end()
+                    .face(Direction.EAST).texture("#top_side").uvs(0, 0, 15, 3).end()
+                    .face(Direction.SOUTH).texture("#top_side").uvs(0, 0, 15, 3).end()
+                    .face(Direction.WEST).texture("#top_side").uvs(0, 0, 15, 3).end()
+                    .face(Direction.UP).texture("#top").uvs(0, 0, 15, 15).end()
+                    .face(Direction.DOWN).texture("#top").uvs(0, 0, 15, 15).end();
+        }
+        createRotatedBlock(ITBlocks.MetalDevices.TRASH_ENERGY, state -> trashEnergyModel, List.of());
+
+        createMultiblock(ITBlocks.MetalDevices.COKE_OVEN_HEATER, split(innerObj("block/metal/obj/coke_oven_heater.obj", RenderType.cutout())));
 
         ModelFile emptyModel = models().withExistingParent("empty", mcLoc("block/block"))
                 .renderType("cutout")
@@ -145,27 +215,23 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private void genericmultiblock(String registry_name) {
         String model_name = "advanced_coke_oven".equals(registry_name) ? "advanced_coke_oven" : registry_name;
-        ITLib.IT_LOGGER.info("Generating [" + registry_name + "] Multiblock Model Data");
+        ITLib.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
         createMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + model_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name));
     }
 
-    private void genericmultiblock(String registry_name, boolean dynamic) { ITLib.IT_LOGGER.info("Generating [" + registry_name + "] Multiblock Model Data"); createMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name), dynamic); }
+    private void genericmultiblockMirror(String registry_name) { ITLib.IT_LOGGER.info("Generating [{}] with Custom Mirror Multiblock Model Data", registry_name); testCreateMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + ".obj"), innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + "_mirrored.obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name)); }
 
-    private void genericmultiblockMirror(String registry_name) { ITLib.IT_LOGGER.info("Generating [" + registry_name + "] with Custom Mirror Multiblock Model Data"); testCreateMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + ".obj"), innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + "_mirrored.obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name)); }
+    private void createMultiblock(NongeneratedModel unsplitModel, TemplateMultiblock multiblock) { createMultiblock(unsplitModel, (ITTemplateMultiblock) multiblock); }
 
-    private void createMultiblock(NongeneratedModel unsplitModel, TemplateMultiblock multiblock) { createMultiblock(unsplitModel, (ITTemplateMultiblock) multiblock, false); }
-
-    private void createMultiblock(NongeneratedModel unsplitModel, TemplateMultiblock multiblock, boolean dynamic) { createMultiblock(unsplitModel, (ITTemplateMultiblock) multiblock, dynamic); }
-
-    private void createMultiblock(NongeneratedModel unsplitModel, ITTemplateMultiblock multiblock, boolean dynamic) {
-        final ModelFile mainModel = split(unsplitModel, multiblock, false, dynamic);
-        if (multiblock.getBlock().getStateDefinition().getProperties().contains(IEProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, split(mirror(unsplitModel, innerModels), multiblock, true, dynamic), IEProperties.MIRRORED); }
+    private void createMultiblock(NongeneratedModel unsplitModel, ITTemplateMultiblock multiblock) {
+        final ModelFile mainModel = split(unsplitModel, multiblock, false);
+        if (multiblock.getBlock().getStateDefinition().getProperties().contains(IEProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, split(mirror(unsplitModel, innerModels), multiblock, true), IEProperties.MIRRORED); }
         else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
     }
 
     private void testCreateMultiblock(NongeneratedModel unsplitModel, NongeneratedModel mirror_model, ITTemplateMultiblock multiblock) {
-        final ModelFile mainModel = split(unsplitModel, multiblock, false, false);
-        final ModelFile mirrorModel = split(mirror_model, multiblock, true, false);
+        final ModelFile mainModel = split(unsplitModel, multiblock, false);
+        final ModelFile mirrorModel = split(mirror_model, multiblock, true);
         if (multiblock.getBlock().getStateDefinition().getProperties().contains(IEProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, mirrorModel, IEProperties.MIRRORED); }
         else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
     }
@@ -184,10 +250,10 @@ public class ITBlockStateProvider extends BlockStateProvider {
                 final int angleX;
                 if (facing.getPossibleValues().contains(Direction.UP)) {
                     angleX = -90 * dir.getStepY();
-                    angleY = dir.getAxis() != Direction.Axis.Y ? getAngle(dir, 180) : 0;
+                    angleY = dir.getAxis() != Direction.Axis.Y ? getAngle(dir) : 0;
                 }
                 else {
-                    angleY = getAngle(dir, 180);
+                    angleY = getAngle(dir);
                     angleX = 0;
                 }
                 ModelFile model = mirrored ? mirroredModel : masterModel;
@@ -217,23 +283,21 @@ public class ITBlockStateProvider extends BlockStateProvider {
         catch (IOException e) { throw new RuntimeException("Failed on " + name, e); }
     }
 
-    private ModelFile split(NongeneratedModel loc, ITTemplateMultiblock mb) { return split(loc, mb, false, false); }
-
-    private ModelFile split(NongeneratedModel loc, ITTemplateMultiblock mb, boolean mirror, boolean dynamic) {
+    private ModelFile split(NongeneratedModel loc, ITTemplateMultiblock mb, boolean mirror) {
         UnaryOperator<BlockPos> transform = UnaryOperator.identity();
         if (mirror) {
             loadTemplateFor(mb);
             Vec3i size = mb.getSize(null);
             transform = p -> new BlockPos(size.getX() - p.getX() - 1, p.getY(), p.getZ());
         }
-        return split(loc, mb, transform, dynamic);
+        return split(loc, mb, transform);
     }
 
-    private ModelFile split(NongeneratedModel name, ITTemplateMultiblock multiblock, UnaryOperator<BlockPos> transform, boolean dynamic) {
+    private ModelFile split(NongeneratedModel name, ITTemplateMultiblock multiblock, UnaryOperator<BlockPos> transform) {
         loadTemplateFor(multiblock);
         final Vec3i offset = multiblock.getMasterFromOriginOffset();
         Stream<Vec3i> partsStream = multiblock.getTemplate(null).blocksWithoutAir().stream().map(StructureTemplate.StructureBlockInfo::pos).map(transform).map(p -> p.subtract(offset));
-        return split(name, partsStream.collect(Collectors.toList()), dynamic);
+        return split(name, partsStream.collect(Collectors.toList()));
     }
 
     protected NongeneratedModel innerObj(String loc, @Nullable RenderType layer) {
@@ -244,19 +308,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
     }
 
     protected NongeneratedModel innerObj(String loc) { return innerObj(loc, null); }
-
-    protected BlockModelBuilder obj(String loc) { return obj(loc, (RenderType) null); }
-
-    protected BlockModelBuilder obj(String loc, @Nullable RenderType layer) {
-        final var model = obj(loc, models());
-        setRenderType(layer, model);
-        return model;
-    }
-
-    protected <T extends ModelBuilder<T>> T obj(String loc, ModelProvider<T> modelProvider) {
-        Preconditions.checkArgument(loc.endsWith(".obj"));
-        return obj(loc.substring(0, loc.length() - 4), modLoc(loc), modelProvider);
-    }
 
     protected <T extends ModelBuilder<T>> T obj(String name, ResourceLocation model, ModelProvider<T> provider) { return obj(name, model, ImmutableMap.of(), provider); }
 
@@ -273,19 +324,17 @@ public class ITBlockStateProvider extends BlockStateProvider {
         return ret;
     }
 
-    protected BlockModelBuilder splitModel(String name, NongeneratedModel model, List<Vec3i> parts, boolean dynamic) {
-        BlockModelBuilder result = models().withExistingParent(name, mcLoc("block")).customLoader(SplitModelBuilder::begin).innerModel(model).parts(parts).dynamic(dynamic).end();
+    protected BlockModelBuilder splitModel(String name, NongeneratedModel model, List<Vec3i> parts) {
+        BlockModelBuilder result = models().withExistingParent(name, mcLoc("block")).customLoader(SplitModelBuilder::begin).innerModel(model).parts(parts).dynamic(false).end();
         addParticleTextureFrom(result, model);
         return result;
     }
 
-    protected ModelFile split(NongeneratedModel baseModel, List<Vec3i> parts, boolean dynamic) {
-        return splitModel(baseModel.getLocation().getPath() + "_split", baseModel, parts, dynamic);
+    protected ModelFile split(NongeneratedModel baseModel, List<Vec3i> parts) {
+        return splitModel(baseModel.getLocation().getPath() + "_split", baseModel, parts);
     }
 
-    protected ModelFile split(NongeneratedModel baseModel) { return split(baseModel, COLUMN_THREE, false); }
-
-    protected ModelFile splitDynamic(NongeneratedModel baseModel, List<Vec3i> parts) { return split(baseModel, parts, true); }
+    protected ModelFile split(NongeneratedModel baseModel) { return split(baseModel, COLUMN_THREE); }
 
     protected void addParticleTextureFrom(BlockModelBuilder result, ModelFile model) {
         String particles = generatedParticleTextures.get(model.getLocation());
@@ -295,36 +344,9 @@ public class ITBlockStateProvider extends BlockStateProvider {
         }
     }
 
-    protected ConfiguredModel emptyWithParticles(String name, String particleTexture) {
-        ModelFile model = models().withExistingParent(name, modLoc("block/ie_empty")).texture("particle", particleTexture);
-        generatedParticleTextures.put(modLoc(name), particleTexture);
-        return new ConfiguredModel(model);
-    }
-
     public void assertModelExists(ResourceLocation name) {
         String suffix = name.getPath().contains(".") ? "" : ".json";
         Preconditions.checkState(existingFileHelper.exists(name, PackType.CLIENT_RESOURCES, suffix, "models"), "Model \"" + name + "\" does not exist");
-    }
-
-    protected IEOBJBuilder<BlockModelBuilder> ieObjBuilder(String loc) { return ieObjBuilder(getAutoNameIEOBJ(loc), modLoc(loc)); }
-
-    protected IEOBJBuilder<BlockModelBuilder> ieObjBuilder(String name, ResourceLocation model) {
-        return ieObjBuilder(name, model, models());
-    }
-
-    protected <T extends ModelBuilder<T>> IEOBJBuilder<T> ieObjBuilder(String loc, ModelProvider<T> modelProvider) {
-        return ieObjBuilder(getAutoNameIEOBJ(loc), modLoc(loc), modelProvider);
-    }
-
-    private static String getAutoNameIEOBJ(String loc) {
-        Preconditions.checkArgument(loc.endsWith(".obj.ie"));
-        return loc.substring(0, loc.length() - 7);
-    }
-
-    protected <T extends ModelBuilder<T>> IEOBJBuilder<T> ieObjBuilder(String name, ResourceLocation model, ModelProvider<T> modelProvider) {
-        final String particle = DataGenUtils.getTextureFromObj(model, existingFileHelper);
-        generatedParticleTextures.put(modLoc(name), particle);
-        return modelProvider.withExistingParent(name, mcLoc("block")).texture("particle", particle).customLoader(IEOBJBuilder::begin).modelLocation(addModelsPrefix(model));
     }
 
     protected <T extends ModelBuilder<T>> T mirror(NongeneratedModel inner, ModelProvider<T> provider) {
@@ -332,25 +354,13 @@ public class ITBlockStateProvider extends BlockStateProvider {
         return provider.getBuilder(path).customLoader(MirroredModelBuilder::begin).inner(inner).end();
     }
 
-    protected int getAngle(Direction dir, int offset) { return (int) ((dir.toYRot() + offset) % 360); }
+    protected int getAngle(Direction dir) { return (int) ((dir.toYRot() + 180) % 360); }
 
-    protected void createHorizontalRotatedBlock(Supplier<? extends Block> block, ModelFile model) { createHorizontalRotatedBlock(block, $ -> model, List.of()); }
-
-    protected void createHorizontalRotatedBlock(Supplier<? extends Block> block, ModelFile model, int offsetRotY) { createRotatedBlock(block, $ -> model, IEProperties.FACING_HORIZONTAL, List.of(), 0, offsetRotY); }
-
-    protected void createHorizontalRotatedBlock(Supplier<? extends Block> block, Function<PartialBlockstate, ModelFile> model, List<Property<?>> additionalProps) { createRotatedBlock(block, model, IEProperties.FACING_HORIZONTAL, additionalProps, 0, 180); }
-
-    protected void createAllRotatedBlock(Supplier<? extends Block> block, ModelFile model) { createAllRotatedBlock(block, $ -> model, List.of()); }
-
-    protected void createAllRotatedBlock(Supplier<? extends Block> block, Function<PartialBlockstate, ModelFile> model, List<Property<?>> additionalProps) { createRotatedBlock(block, model, IEProperties.FACING_ALL, additionalProps, 90, 0); }
-
-    protected void createRotatedBlock(Supplier<? extends Block> block, ModelFile model, Property<Direction> facing, List<Property<?>> additionalProps, int offsetRotX, int offsetRotY) { createRotatedBlock(block, $ -> model, facing, additionalProps, offsetRotX, offsetRotY); }
-
-    protected void createRotatedBlock(Supplier<? extends Block> block, Function<PartialBlockstate, ModelFile> model, Property<Direction> facing, List<Property<?>> additionalProps, int offsetRotX, int offsetRotY) {
+    protected void createRotatedBlock(Supplier<? extends Block> block, Function<PartialBlockstate, ModelFile> model, List<Property<?>> additionalProps) {
         VariantBlockStateBuilder stateBuilder = getVariantBuilder(block.get());
         forEachState(stateBuilder.partialState(), additionalProps, state -> {
             ModelFile modelLoc = model.apply(state);
-            for (Direction d : facing.getPossibleValues()) {
+            for (Direction d : IEProperties.FACING_HORIZONTAL.getPossibleValues()) {
                 int x;
                 int y;
                 switch (d) {
@@ -365,22 +375,13 @@ public class ITBlockStateProvider extends BlockStateProvider {
                         break;
                     }
                     default: {
-                        y = getAngle(d, offsetRotY);
+                        y = getAngle(d);
                         x = 0;
                     }
                 }
-                state.with(facing, d).setModels(new ConfiguredModel(modelLoc, x + offsetRotX, y, false));
+                state.with(IEProperties.FACING_HORIZONTAL, d).setModels(new ConfiguredModel(modelLoc, x, y, false));
             }
         });
-    }
-
-    protected static String getName(RenderStateShard state) {
-        try {
-            Field f = RenderStateShard.class.getDeclaredField("name");
-            f.setAccessible(true);
-            return (String) f.get(state);
-        }
-        catch (Exception e) { throw new RuntimeException(e); }
     }
 
     public static <T extends Comparable<T>> void forEach(PartialBlockstate base, Property<T> prop, List<Property<?>> remaining, Consumer<PartialBlockstate> out) {

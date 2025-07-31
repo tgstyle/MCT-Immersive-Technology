@@ -29,7 +29,7 @@ public class ITBlockTags extends BlockTagsProvider {
         IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag = this.tag(BlockTags.MINEABLE_WITH_PICKAXE);
         IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag2 = this.tag(BlockTags.NEEDS_IRON_TOOL);
 
-        registerMineable(tag, ITMultiblockProvider.ADV_COKE_OVEN);
+        registerMineable(tag, ITMultiblockProvider.ADVANCED_COKE_OVEN);
         registerMineable(tag, ITMultiblockProvider.BOILER);
         registerMineable(tag, ITMultiblockProvider.ALTERNATOR);
         registerMineable(tag, ITMultiblockProvider.STEAM_TURBINE);
@@ -40,15 +40,13 @@ public class ITBlockTags extends BlockTagsProvider {
         registerMineable(tag2, ITMultiblockProvider.STEAM_TURBINE);
         registerMineable(tag2, ITMultiblockProvider.GAS_TURBINE);
         registerMineable(tag2, ITMultiblockProvider.SOLAR_TOWER);
-        registerMineable(tag2, ITMultiblockProvider.ADV_COKE_OVEN);
-        registerMineable(tag, ITBlocks.MetalDevices.COKE_OVEN_PREHEATER);
+        registerMineable(tag2, ITMultiblockProvider.ADVANCED_COKE_OVEN);
+        registerMineable(tag, ITBlocks.MetalDevices.COKE_OVEN_HEATER);
     }
 
     private void registerMineable(IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag, MultiblockRegistration<?>... entries) {
         for (MultiblockRegistration<?> entry : entries) { tag.add(entry.block().get()); }
     }
-
-    private <T extends Block> void registerMineable(IntrinsicTagAppender<Block> tag, Map<?, ITBlocks.BlockEntry<T>> entries) { registerMineable(tag, new ArrayList<>(entries.values())); }
 
     private void registerMineable(IntrinsicTagAppender<Block> tag, ITBlocks.BlockEntry<?>... entries) {
         registerMineable(tag, Arrays.asList(entries));

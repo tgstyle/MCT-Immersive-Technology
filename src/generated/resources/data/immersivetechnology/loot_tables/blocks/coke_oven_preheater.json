@@ -10,8 +10,7 @@
       ],
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "immersivetechnology:coke_oven_preheater"
+          "type": "immersiveengineering:tile_drop"
         }
       ],
       "rolls": 1.0

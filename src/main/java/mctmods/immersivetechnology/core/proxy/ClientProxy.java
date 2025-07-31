@@ -2,7 +2,8 @@ package mctmods.immersivetechnology.core.proxy;
 
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import mctmods.immersivetechnology.client.models.ITDynamicModel;
-import mctmods.immersivetechnology.client.renderer.CokeOvenPreheaterRenderer;
+import mctmods.immersivetechnology.client.renderer.AdvancedCokeOvenRenderer;
+import mctmods.immersivetechnology.client.renderer.CokeOvenHeaterRenderer;
 import mctmods.immersivetechnology.client.renderer.GasTurbineRenderer;
 import mctmods.immersivetechnology.client.renderer.SteamTurbineRenderer;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -39,11 +40,12 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
-        CokeOvenPreheaterRenderer.MODEL = new ITDynamicModel(CokeOvenPreheaterRenderer.NAME);
-        SteamTurbineRenderer.MODEL = new ITDynamicModel(SteamTurbineRenderer.NAME);
-        SteamTurbineRenderer.MODEL_EAST_WEST = new ITDynamicModel(SteamTurbineRenderer.NAME_EAST_WEST);
+        AdvancedCokeOvenRenderer.MODEL = new ITDynamicModel(AdvancedCokeOvenRenderer.NAME);
+        CokeOvenHeaterRenderer.MODEL = new ITDynamicModel(CokeOvenHeaterRenderer.NAME);
         GasTurbineRenderer.MODEL = new ITDynamicModel(GasTurbineRenderer.NAME);
         GasTurbineRenderer.MODEL_EAST_WEST = new ITDynamicModel(GasTurbineRenderer.NAME_EAST_WEST);
+        SteamTurbineRenderer.MODEL = new ITDynamicModel(SteamTurbineRenderer.NAME);
+        SteamTurbineRenderer.MODEL_EAST_WEST = new ITDynamicModel(SteamTurbineRenderer.NAME_EAST_WEST);
     }
 
     @SubscribeEvent
@@ -64,7 +66,8 @@ public class ClientProxy extends CommonProxy {
     }
 
     public static void registerBERenders(EntityRenderersEvent.RegisterRenderers event) {
-        registerBERenderNoContext(event, ITBlockEntities.COKE_OVEN_PREHEATER.get(), CokeOvenPreheaterRenderer::new);
+        registerBERenderNoContext(event, ITBlockEntities.COKE_OVEN_HEATER.get(), CokeOvenHeaterRenderer::new);
+        registerBERenderNoContext(event, ITMultiblockProvider.ADVANCED_COKE_OVEN.masterBE(), AdvancedCokeOvenRenderer::new);
         registerBERenderNoContext(event, ITMultiblockProvider.STEAM_TURBINE.masterBE(), SteamTurbineRenderer::new);
         registerBERenderNoContext(event, ITMultiblockProvider.GAS_TURBINE.masterBE(), GasTurbineRenderer::new);
     }

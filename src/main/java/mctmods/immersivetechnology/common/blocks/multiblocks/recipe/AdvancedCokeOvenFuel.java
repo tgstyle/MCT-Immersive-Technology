@@ -1,9 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.recipe;
 
-import blusunrize.immersiveengineering.api.crafting.*;
+import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
+import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import com.igteam.immersivegeology.common.block.multiblocks.recipe.BloomeryFuel;
-import com.igteam.immersivegeology.core.registration.IGRecipeTypes;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +16,8 @@ import java.util.Iterator;
 
 public class AdvancedCokeOvenFuel extends IESerializableRecipe {
     public static RegistryObject<IERecipeSerializer<AdvancedCokeOvenFuel>> SERIALIZER;
-    public static final CachedRecipeList<BloomeryFuel> RECIPES;
+    public static final CachedRecipeList<AdvancedCokeOvenFuel> RECIPES = new CachedRecipeList<>(ITRecipeTypes.ADV_COKE_OVEN_FUEL);
+
     public final Ingredient input;
     public final int burnTime;
 
@@ -28,8 +28,8 @@ public class AdvancedCokeOvenFuel extends IESerializableRecipe {
     }
 
     public static int getAdvCokeOvenFuelTime(Level level, ItemStack stack) {
-        Iterator<BloomeryFuel> var2 = RECIPES.getRecipes(level).iterator();
-        BloomeryFuel e;
+        Iterator<AdvancedCokeOvenFuel> var2 = RECIPES.getRecipes(level).iterator();
+        AdvancedCokeOvenFuel e;
         do {
             if (!var2.hasNext()) { return 0; }
             e = var2.next();
@@ -37,17 +37,11 @@ public class AdvancedCokeOvenFuel extends IESerializableRecipe {
         return e.burnTime;
     }
 
-    public static boolean isValidAdvCokeOvenFuel(Level level, ItemStack stack) {
-        return getAdvCokeOvenFuelTime(level, stack) > 0;
-    }
-
     protected IERecipeSerializer<AdvancedCokeOvenFuel> getIESerializer() {
-        return (IERecipeSerializer) SERIALIZER.get();
+        return SERIALIZER.get();
     }
 
     public @NotNull ItemStack getResultItem(@NotNull RegistryAccess access) {
         return ItemStack.EMPTY;
     }
-
-    static { RECIPES = new CachedRecipeList(IGRecipeTypes.BLOOMERY_FUEL); }
 }

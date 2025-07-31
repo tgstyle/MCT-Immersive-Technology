@@ -19,19 +19,15 @@ import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import java.util.logging.Logger;
 
-public class OpenBarrelRenderer implements BlockEntityRenderer<OpenBarrelBlockEntity> {
+public class OpenBarrelRenderer extends ITBlockEntityRenderer<OpenBarrelBlockEntity> {
     private static final Logger LOGGER = Logger.getLogger("ImmersiveTechnology");
-
-    public OpenBarrelRenderer(BlockEntityRendererProvider.Context context) {}
 
     @Override
     public void render(OpenBarrelBlockEntity te, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         FluidStack fluidStack = te.tank.getFluid();
-        if (fluidStack == null || fluidStack.isEmpty()) {
+        if (fluidStack.isEmpty()) {
             LOGGER.info("No fluid in open barrel at " + te.getBlockPos());
             return;
         }
@@ -92,22 +88,17 @@ public class OpenBarrelRenderer implements BlockEntityRenderer<OpenBarrelBlockEn
         float startPos = 0.0625f;
         float endPos = 1 - startPos;
 
-        // Try translucent first, fallback to solid for debug
         VertexConsumer builder = buffer.getBuffer(RenderType.translucent());
         matrixStack.pushPose();
-        // Slight Y offset to avoid Z-fighting
         matrixStack.translate(0, 0.001f, 0);
         Matrix4f pose = matrixStack.last().pose();
         Matrix3f normalMatrix = matrixStack.last().normal();
         float nx = 0, ny = 1, nz = 0;
 
-        // Counter-clockwise for UP face (SW -> SE -> NE -> NW)
         builder.vertex(pose, startPos, fluidHeight, startPos).color(r, g, b, a).uv(minU, minV).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(normalMatrix, nx, ny, nz).endVertex();
         builder.vertex(pose, startPos, fluidHeight, endPos).color(r, g, b, a).uv(minU, maxV).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(normalMatrix, nx, ny, nz).endVertex();
         builder.vertex(pose, endPos, fluidHeight, endPos).color(r, g, b, a).uv(maxU, maxV).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(normalMatrix, nx, ny, nz).endVertex();
         builder.vertex(pose, endPos, fluidHeight, startPos).color(r, g, b, a).uv(maxU, minV).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(normalMatrix, nx, ny, nz).endVertex();
-
-        // Debug: Try solid render to test visibility
         builder = buffer.getBuffer(RenderType.solid());
         builder.vertex(pose, startPos, fluidHeight + 0.002f, startPos).color(r, g, b, a).uv(minU, minV).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(normalMatrix, nx, ny, nz).endVertex();
         builder.vertex(pose, startPos, fluidHeight + 0.002f, endPos).color(r, g, b, a).uv(minU, maxV).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(normalMatrix, nx, ny, nz).endVertex();

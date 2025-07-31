@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public class ITAdvancedCokeOven extends ITTemplateMultiblock {
     public static final ITAdvancedCokeOven INSTANCE = new ITAdvancedCokeOven();
 
-    public ITAdvancedCokeOven() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/coke_oven_advanced"), new BlockPos(0,0,0), new BlockPos(1,1,2), new BlockPos(3,4,3), ITMultiblockProvider.ADV_COKE_OVEN); }
+    public ITAdvancedCokeOven() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/advanced_coke_oven"), new BlockPos(0,0,0), new BlockPos(1,1,2), new BlockPos(3,4,3), ITMultiblockProvider.ADVANCED_COKE_OVEN); }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }

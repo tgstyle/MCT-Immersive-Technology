@@ -1,46 +1,74 @@
 package mctmods.immersivetechnology.common.data.generators;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
+import blusunrize.immersiveengineering.common.util.loot.BEDropLootEntry;
+import blusunrize.immersiveengineering.common.util.loot.DropInventoryLootEntry;
+import blusunrize.immersiveengineering.data.loot.LootUtils;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ITBlockLootProvider extends BlockLootSubProvider {
-    public ITBlockLootProvider() {
-        super(Set.of(), FeatureFlags.REGISTRY.allFlags());
-    }
+    public ITBlockLootProvider() { super(Set.of(), FeatureFlags.REGISTRY.allFlags()); }
 
     @Override
     protected void generate() {
-        // Regular blocks: drop themselves
-        dropSelf(ITBlocks.MetalDevices.CREATIVE_BARREL.get());
-        dropSelf(ITBlocks.MetalDevices.OPEN_BARREL.get());
-        dropSelf(ITBlocks.MetalDevices.STEEL_BARREL.get());
-        dropSelf(ITBlocks.MetalDevices.COKE_OVEN_PREHEATER.get());
+        registerTileDrop(ITBlocks.MetalDevices.CREATIVE_BARREL.get());
+        registerTileDrop(ITBlocks.MetalDevices.OPEN_BARREL.get());
+        registerTileDrop(ITBlocks.MetalDevices.STEEL_BARREL.get());
+        registerTileDrop(ITBlocks.MetalDevices.COKE_OVEN_HEATER.get());
         dropSelf(ITBlocks.Stone.REINFORCED_COKE_BRICK.get());
+        registerTileDrop(ITBlocks.MetalDevices.TRASH_ENERGY.get());
+        registerTileDrop(ITBlocks.MetalDevices.TRASH_FLUID.get());
+        registerTileDrop(ITBlocks.MetalDevices.TRASH_ITEM.get());
 
-        // Multiblocks: no drops
-        add(ITMultiblockProvider.BOILER.block().get(), noDrop());
-        add(ITMultiblockProvider.DISTILLER.block().get(), noDrop());
-        add(ITMultiblockProvider.STEAM_TURBINE.block().get(), noDrop());
-        add(ITMultiblockProvider.GAS_TURBINE.block().get(), noDrop());
-        add(ITMultiblockProvider.ALTERNATOR.block().get(), noDrop());
-        add(ITMultiblockProvider.ADV_COKE_OVEN.block().get(), noDrop());
-        add(ITMultiblockProvider.SOLAR_TOWER.block().get(), noDrop());
+        registerMultiblocks();
 
-        // Fluid blocks: no drops
         ITFluids.ALL_ENTRIES.forEach(entry -> add(entry.getBlock(), noDrop()));
     }
 
-    @Override
-    protected @NotNull Iterable<Block> getKnownBlocks() {
-        return ITBlocks.REGISTER.getEntries().stream().map(RegistryObject::get).collect(Collectors.toList());
+    private void registerMultiblocks() {
+        registerMultiblock(ITMultiblockProvider.BOILER);
+        registerMultiblock(ITMultiblockProvider.DISTILLER);
+        registerMultiblock(ITMultiblockProvider.STEAM_TURBINE);
+        registerMultiblock(ITMultiblockProvider.GAS_TURBINE);
+        registerMultiblock(ITMultiblockProvider.ALTERNATOR);
+        registerMultiblock(ITMultiblockProvider.ADVANCED_COKE_OVEN);
+        registerMultiblock(ITMultiblockProvider.SOLAR_TOWER);
     }
+
+    private void registerMultiblock(MultiblockRegistration<?> registration) { registerMultiblock(registration.block()); }
+
+    private void registerMultiblock(Supplier<? extends Block> b) { register(b, dropInv(), dropOriginalBlock()); }
+
+    private void register(Supplier<? extends Block> b, LootPool.Builder... pools) {
+        LootTable.Builder builder = LootTable.lootTable();
+        for (LootPool.Builder pool : pools) { builder.withPool(pool); }
+        add(b.get(), builder);
+    }
+
+    private LootPool.Builder dropInv() { return createPoolBuilder().add(DropInventoryLootEntry.builder()); }
+
+    private LootPool.Builder dropOriginalBlock() { return createPoolBuilder().add(LootUtils.getMultiblockDropBuilder()); }
+
+    private void registerTileDrop(Block b) { add(b, LootTable.lootTable().withPool(tileDrop())); }
+
+    private LootPool.Builder tileDrop() { return createPoolBuilder().add(BEDropLootEntry.builder()); }
+
+    private LootPool.Builder createPoolBuilder() { return LootPool.lootPool().when(ExplosionCondition.survivesExplosion()); }
+
+    @Override
+    protected @NotNull Set<Block> getKnownBlocks() { return ITBlocks.REGISTER.getEntries().stream().map(RegistryObject::get).collect(Collectors.toSet()); }
 }

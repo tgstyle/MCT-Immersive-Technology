@@ -20,14 +20,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class AdvancedCokeOvenRenderer extends ITBlockEntityRenderer<MultiblockBlockEntityMaster<ITAdvancedCokeOvenLogic.State>>
-{
+public class AdvancedCokeOvenRenderer extends ITBlockEntityRenderer<MultiblockBlockEntityMaster<ITAdvancedCokeOvenLogic.State>> {
 
+    public static final String NAME = "advanced_coke_oven";
     public static ITDynamicModel MODEL;
 
     @Override
-    public void render(MultiblockBlockEntityMaster<ITAdvancedCokeOvenLogic.State> tile, float pPartialTick, PoseStack poseStack, @NotNull MultiBufferSource buffer, int pPackedLight, int pPackedOverlay)
-    {
+    public void render(MultiblockBlockEntityMaster<ITAdvancedCokeOvenLogic.State> tile, float pPartialTick, PoseStack poseStack, @NotNull MultiBufferSource buffer, int pPackedLight, int pPackedOverlay) {
         IMultiblockBEHelperMaster<ITAdvancedCokeOvenLogic.State> helper = tile.getHelper();
         IMultiblockContext<ITAdvancedCokeOvenLogic.State> context = helper.getContext();
 
@@ -38,19 +37,17 @@ public class AdvancedCokeOvenRenderer extends ITBlockEntityRenderer<MultiblockBl
         poseStack.pushPose();
         {
             rotateForFacing(poseStack, dir);
-            poseStack.pushPose();
-            {
-                renderDynamicModel(MODEL, poseStack, buffer, dir, level, pos, pPackedLight, pPackedOverlay);
-            }
-            poseStack.popPose();
+            renderDynamicModel(MODEL, poseStack, buffer, level, pos, pPackedLight);
         }
         poseStack.popPose();
     }
 
-    private void renderDynamicModel(ITDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Direction facing, Level level, BlockPos pos, int light, int overlay) {
+    private void renderDynamicModel(ITDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
         matrix.pushPose();
-        List<BakedQuad> quads = model.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
-        RenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.cutout()), matrix, level, pos, false, 0xffffff, light);
+        {
+            List<BakedQuad> quads = model.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
+            RenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.cutout()), matrix, level, pos, false, 0xffffff, light);
+        }
         matrix.popPose();
     }
 }

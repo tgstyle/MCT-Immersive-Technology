@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultibl
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
+import blusunrize.immersiveengineering.common.util.inventory.IDropInventory;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,8 +17,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
-public class ITMultiblockBlockEntityMaster<State extends IMultiblockState> extends MultiblockBlockEntityMaster<State> implements ITBlockInterfaces.IPlayerInteraction {
+public class ITMultiblockBlockEntityMaster<State extends IMultiblockState> extends MultiblockBlockEntityMaster<State> implements ITBlockInterfaces.IPlayerInteraction, IDropInventory {
     public ITMultiblockBlockEntityMaster(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState, MultiblockRegistration<State> multiblock) { super(type, worldPosition, blockState, multiblock); }
 
     @Override
@@ -36,5 +40,12 @@ public class ITMultiblockBlockEntityMaster<State extends IMultiblockState> exten
             if (componentResult.consumesAction()) { result = componentResult; }
         }
         return result.consumesAction();
+    }
+
+    @Override
+    public Stream<ItemStack> getDroppedItems() {
+        List<ItemStack> drops = new ArrayList<>();
+        getHelper().getMultiblock().logic().dropExtraItems(getHelper().getState(), drops::add);
+        return drops.stream();
     }
 }

@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.blocks.multiblocks.gui;
 import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
 import blusunrize.immersiveengineering.common.gui.sync.GenericDataSerializers;
 import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITSlot;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITBoilerLogic;
 import net.minecraft.world.entity.player.Inventory;

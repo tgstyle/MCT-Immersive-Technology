@@ -11,20 +11,18 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.util.Lazy;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<AdvancedCokeOvenRecipe>
-{
+public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<AdvancedCokeOvenRecipe> {
     @Override
-    public ItemStack getIcon()
-    {
-        return ITMultiblockProvider.ADV_COKE_OVEN.iconStack();
+    public ItemStack getIcon() {
+        return ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack();
     }
 
     @Override
-    public AdvancedCokeOvenRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context)
-    {
+    public AdvancedCokeOvenRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {
         Lazy<ItemStack> output = readOutput(json.get("result"));
         IngredientWithSize input = IngredientWithSize.deserialize(json.get("input"));
         int time = GsonHelper.getAsInt(json, "time");
@@ -34,8 +32,7 @@ public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<Advance
 
     @Nullable
     @Override
-    public AdvancedCokeOvenRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer)
-    {
+    public AdvancedCokeOvenRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
         Lazy<ItemStack> output = readLazyStack(buffer);
         IngredientWithSize input = IngredientWithSize.read(buffer);
         int time = buffer.readInt();
@@ -44,8 +41,7 @@ public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<Advance
     }
 
     @Override
-    public void toNetwork(FriendlyByteBuf buffer, AdvancedCokeOvenRecipe recipe)
-    {
+    public void toNetwork(@NotNull FriendlyByteBuf buffer, AdvancedCokeOvenRecipe recipe) {
         writeLazyStack(buffer, recipe.output);
         recipe.input.write(buffer);
         buffer.writeInt(recipe.time);

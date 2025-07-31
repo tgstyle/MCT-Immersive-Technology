@@ -4,14 +4,10 @@ import blusunrize.immersiveengineering.api.client.TextUtils;
 import blusunrize.immersiveengineering.api.utils.ResettableLazy;
 import blusunrize.immersiveengineering.client.gui.elements.ITooltipWidget;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.common.network.ITPacketHandler;
-import mctmods.immersivetechnology.common.network.ITMessageContainerUpdate;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -65,15 +61,6 @@ public abstract class ITContainerScreen<C extends AbstractContainerMenu> extends
         else { this.renderTooltip(graphics, mouseX, mouseY); }
     }
 
-    protected boolean isMouseIn(int mouseX, int mouseY, int x, int y, int w, int h) {
-        return mouseX >= this.leftPos + x && mouseY >= this.topPos + y && mouseX < this.leftPos + x + w && mouseY < this.topPos + y + h;
-    }
-
-    public void fullInit() {
-        assert this.minecraft != null;
-        super.init(this.minecraft, this.width, this.height);
-    }
-
     @Override
     protected final void renderBg(@Nonnull GuiGraphics graphics, float partialTicks, int x, int y) {
         this.drawBackgroundTexture(graphics);
@@ -85,9 +72,7 @@ public abstract class ITContainerScreen<C extends AbstractContainerMenu> extends
 
     protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float partialTicks, int x, int y) {}
 
+    @SuppressWarnings("unused")
     protected void gatherAdditionalTooltips(int mouseX, int mouseY, Consumer<Component> addLine, Consumer<Component> addGray) {}
 
-    public static ResourceLocation makeTextureLocation(String name) { return ImmersiveTechnology.makeTextureLocation(name); }
-
-    protected void sendUpdateToServer(CompoundTag message) { ITPacketHandler.INSTANCE.sendToServer(new ITMessageContainerUpdate(this.menu.containerId, message)); }
 }

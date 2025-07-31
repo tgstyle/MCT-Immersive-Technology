@@ -101,7 +101,7 @@ public class ITMultiblockProvider {
                     .structure(() -> getMBTemplate.apply("gas_turbine"))
                     .redstone(s -> s.rsState, ITGasTurbineLogic.REDSTONE_POS)
                     .build();
-    public static final MultiblockRegistration<ITAdvancedCokeOvenLogic.State> ADV_COKE_OVEN =
+    public static final MultiblockRegistration<ITAdvancedCokeOvenLogic.State> ADVANCED_COKE_OVEN =
             stone(new ITAdvancedCokeOvenLogic(), "advanced_coke_oven", false)
                     .structure(() -> getMBTemplate.apply("advanced_coke_oven"))
                     .gui(ITMenuTypes.ADVANCED_COKE_OVEN_MENU)
@@ -118,7 +118,7 @@ public class ITMultiblockProvider {
         registerMB("alternator", ITAlternator.INSTANCE, ALTERNATOR);
         registerMB("steam_turbine", ITSteamTurbine.INSTANCE, STEAM_TURBINE);
         registerMB("gas_turbine", ITGasTurbine.INSTANCE, GAS_TURBINE);
-        registerMB("advanced_coke_oven", ITAdvancedCokeOven.INSTANCE, ADV_COKE_OVEN);
+        registerMB("advanced_coke_oven", ITAdvancedCokeOven.INSTANCE, ADVANCED_COKE_OVEN);
         registerMB("solar_tower", ITSolarTower.INSTANCE, SOLAR_TOWER);
         registerMB("distiller", ITDistiller.INSTANCE, DISTILLER);
     }

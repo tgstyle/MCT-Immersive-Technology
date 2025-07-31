@@ -200,6 +200,9 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
     }
 
     @Override
+    public void dropExtraItems(State state, Consumer<ItemStack> drop) { for (ItemStack stack : state.inventory) { drop.accept(stack); } }
+
+    @Override
     public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override
@@ -215,9 +218,6 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         if (tank != null) { FluidUtil.interactWithFluidHandler(player, hand, tank); ctx.markMasterDirty(); ctx.requestMasterBESync(); }
         return InteractionResult.SUCCESS;
     }
-
-    @Override
-    public void dropExtraItems(State state, Consumer<ItemStack> drop) { MBInventoryUtils.dropItems(state.inventory, drop); }
 
     public static class State implements IMultiblockState, ProcessContext.ProcessContextInMachine<DistillerRecipe> {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();

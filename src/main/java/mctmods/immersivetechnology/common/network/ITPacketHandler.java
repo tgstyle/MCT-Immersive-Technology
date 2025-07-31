@@ -18,7 +18,12 @@ public class ITPacketHandler {
     public static final String NET_VERSION = "1";
     public static final SimpleChannel INSTANCE = NetworkRegistry.ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "main")).networkProtocolVersion(() -> NET_VERSION).serverAcceptedVersions(NET_VERSION::equals).clientAcceptedVersions(NET_VERSION::equals).simpleChannel();
 
-    public static void initialize() {}
+    public static void initialize() {
+        registerMessage(ITMessageContainerUpdate.class, ITMessageContainerUpdate::new);
+        registerMessage(ITMessageContainerData.class, ITMessageContainerData::new);
+        registerMessage(ITOSDRequestMessage.class, ITOSDRequestMessage::new);
+        registerMessage(ITOSDSyncMessage.class, ITOSDSyncMessage::new);
+    }
 
     private static int id = 0;
 

@@ -33,8 +33,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public abstract class ITBlockEntity extends BlockEntity implements ITBlockInterfaces.BlockstateProvider
-{
+public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockInterfaces.BlockstateProvider {
     /**
      * Set by and for those instances of IGeneralMultiblock that need to drop their inventory
      */
@@ -45,14 +44,12 @@ public abstract class ITBlockEntity extends BlockEntity implements ITBlockInterf
 
     private final EnumMap<Direction, Integer> redstoneBySide = new EnumMap<>(Direction.class);
 
-    public ITBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state)
-    {
+    public ITBaseBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
     @Override
-    public void load(CompoundTag nbtIn)
-    {
+    public void load(@NotNull CompoundTag nbtIn) {
         super.load(nbtIn);
         this.readCustomNBT(nbtIn, false);
     }
@@ -60,8 +57,7 @@ public abstract class ITBlockEntity extends BlockEntity implements ITBlockInterf
     public abstract void readCustomNBT(CompoundTag nbt, boolean descPacket);
 
     @Override
-    protected void saveAdditional(CompoundTag nbt)
-    {
+    protected void saveAdditional(@NotNull CompoundTag nbt) {
         super.saveAdditional(nbt);
         this.writeCustomNBT(nbt, false);
     }
@@ -69,8 +65,7 @@ public abstract class ITBlockEntity extends BlockEntity implements ITBlockInterf
     public abstract void writeCustomNBT(CompoundTag nbt, boolean descPacket);
 
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket()
-    {
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this, be -> {
             CompoundTag nbttagcompound = new CompoundTag();
             this.writeCustomNBT(nbttagcompound, true);
@@ -79,48 +74,36 @@ public abstract class ITBlockEntity extends BlockEntity implements ITBlockInterf
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt)
-    {
-        CompoundTag nonNullTag = pkt.getTag()!=null?pkt.getTag(): new CompoundTag();
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        CompoundTag nonNullTag = pkt.getTag() != null ? pkt.getTag() : new CompoundTag();
         this.readCustomNBT(nonNullTag, true);
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag)
-    {
+    public void handleUpdateTag(CompoundTag tag) {
         this.readCustomNBT(tag, true);
     }
 
     @Override
-    public CompoundTag getUpdateTag()
-    {
+    public @NotNull CompoundTag getUpdateTag() {
         CompoundTag nbt = super.getUpdateTag();
         writeCustomNBT(nbt, true);
         return nbt;
     }
 
-    public void receiveMessageFromClient(CompoundTag message)
-    {
-    }
+    public void receiveMessageFromClient(CompoundTag message) { }
 
-    public void receiveMessageFromServer(CompoundTag message)
-    {
-    }
+    public void receiveMessageFromServer(CompoundTag message) { }
 
-    public void onEntityCollision(Level world, Entity entity)
-    {
-    }
+    public void onEntityCollision(Level world, Entity entity) { }
 
     @Override
-    public boolean triggerEvent(int id, int type)
-    {
-        if(id==0||id==255)
-        {
+    public boolean triggerEvent(int id, int type) {
+        if (id == 0 || id == 255) {
             markContainingBlockForUpdate(null);
             return true;
-        }
-        else if(id==254)
-        {
+        } else if (id == 254) {
+            assert level != null;
             BlockState state = level.getBlockState(worldPosition);
             level.sendBlockUpdated(worldPosition, state, state, 3);
             return true;
@@ -128,17 +111,14 @@ public abstract class ITBlockEntity extends BlockEntity implements ITBlockInterf
         return super.triggerEvent(id, type);
     }
 
-    public void markContainingBlockForUpdate(@Nullable BlockState newState)
-    {
-        if(this.level!=null)
-            markBlockForUpdate(getBlockPos(), newState);
+    public void markContainingBlockForUpdate(@Nullable BlockState newState) {
+        if (this.level != null) markBlockForUpdate(getBlockPos(), newState);
     }
 
-    public void markBlockForUpdate(BlockPos pos, @Nullable BlockState newState)
-    {
+    public void markBlockForUpdate(BlockPos pos, @Nullable BlockState newState) {
+        assert level != null;
         BlockState state = level.getBlockState(pos);
-        if(newState==null)
-            newState = state;
+        if (newState == null) newState = state;
         level.sendBlockUpdated(pos, state, newState, 3);
         level.updateNeighborsAt(pos, newState.getBlock());
     }
@@ -146,68 +126,55 @@ public abstract class ITBlockEntity extends BlockEntity implements ITBlockInterf
     private final List<ResettableCapability<?>> caps = new ArrayList<>();
     private final List<Runnable> onCapInvalidate = new ArrayList<>();
 
-    protected <T> ResettableCapability<T> registerCapability(T val)
-    {
+    protected <T> ResettableCapability<T> registerCapability(T val) {
         ResettableCapability<T> cap = new ResettableCapability<>(val);
         caps.add(cap);
         return cap;
     }
 
-    public void addCapInvalidateHook(Runnable hook)
-    {
+    public void addCapInvalidateHook(Runnable hook) {
         onCapInvalidate.add(hook);
     }
 
-    protected ResettableCapability<IEnergyStorage> registerEnergyInput(IEnergyStorage directStorage)
-    {
+    protected ResettableCapability<IEnergyStorage> registerEnergyInput(IEnergyStorage directStorage) {
         return registerCapability(new WrappingEnergyStorage(directStorage, true, false, this::setChanged));
     }
 
-    protected ResettableCapability<IEnergyStorage> registerEnergyOutput(IEnergyStorage directStorage)
-    {
+    protected ResettableCapability<IEnergyStorage> registerEnergyOutput(IEnergyStorage directStorage) {
         return registerCapability(new WrappingEnergyStorage(directStorage, false, true, this::setChanged));
     }
 
-    private ResettableCapability<IFluidHandler> registerFluidHandler(IFluidTank[] tanks, boolean allowDrain, boolean allowFill)
-    {
+    private ResettableCapability<IFluidHandler> registerFluidHandler(IFluidTank[] tanks, boolean allowDrain, boolean allowFill) {
         return registerCapability(new ArrayFluidHandler(
                 // TODO the global forced update is a hack and should be replaced by updates on the machines that render
                 //  the fluid in world and screen sync for those that do not
-                tanks, allowDrain, allowFill, () -> markContainingBlockForUpdate(null)
-        ));
+                tanks, allowDrain, allowFill, () -> markContainingBlockForUpdate(null)));
     }
 
-    protected final ResettableCapability<IFluidHandler> registerFluidHandler(IFluidTank... tanks)
-    {
+    protected final ResettableCapability<IFluidHandler> registerFluidHandler(IFluidTank... tanks) {
         return registerFluidHandler(tanks, true, true);
     }
 
-    protected final ResettableCapability<IFluidHandler> registerFluidInput(IFluidTank... tanks)
-    {
+    protected final ResettableCapability<IFluidHandler> registerFluidInput(IFluidTank... tanks) {
         return registerFluidHandler(tanks, false, true);
     }
 
-    protected final ResettableCapability<IFluidHandler> registerFluidOutput(IFluidTank... tanks)
-    {
+    protected final ResettableCapability<IFluidHandler> registerFluidOutput(IFluidTank... tanks) {
         return registerFluidHandler(tanks, true, false);
     }
 
-    protected final ResettableCapability<IFluidHandler> registerFluidView(IFluidTank... tanks)
-    {
+    protected final ResettableCapability<IFluidHandler> registerFluidView(IFluidTank... tanks) {
         return registerFluidHandler(tanks, false, false);
     }
 
     @Override
-    public final void setRemoved()
-    {
-        if(!isUnloaded)
-            setRemovedIE();
+    public final void setRemoved() {
+        if (!isUnloaded) setRemovedIE();
         super.setRemoved();
     }
 
     @Override
-    public void invalidateCaps()
-    {
+    public void invalidateCaps() {
         super.invalidateCaps();
         resetAllCaps();
         caps.clear();
@@ -215,88 +182,66 @@ public abstract class ITBlockEntity extends BlockEntity implements ITBlockInterf
         onCapInvalidate.clear();
     }
 
-    protected void resetAllCaps()
-    {
+    protected void resetAllCaps() {
         caps.forEach(ResettableCapability::reset);
     }
 
     private boolean isUnloaded = false;
 
     @Override
-    public void onLoad()
-    {
+    public void onLoad() {
         super.onLoad();
         isUnloaded = false;
     }
 
     @Override
-    public void onChunkUnloaded()
-    {
+    public void onChunkUnloaded() {
         super.onChunkUnloaded();
         isUnloaded = true;
     }
 
-    public void setRemovedIE()
-    {
-    }
+    public void setRemovedIE() { }
 
     @Nonnull
-    public Level getLevelNonnull()
-    {
+    public Level getLevelNonnull() {
         return Objects.requireNonNull(super.getLevel());
     }
 
-    protected void checkLight()
-    {
+    protected void checkLight() {
         checkLight(worldPosition);
     }
 
-    protected void checkLight(BlockPos pos)
-    {
-        getLevelNonnull().getBlockTicks().schedule(new ScheduledTick<Block>(
-                getBlockState().getBlock(), pos, 4, 0
-        ));
-    }
+    protected void checkLight(BlockPos pos) { getLevelNonnull().getBlockTicks().schedule(new ScheduledTick<Block>(getBlockState().getBlock(), pos, 4, 0)); }
 
-    public void setOverrideState(@Nullable BlockState state)
-    {
+    public void setOverrideState(@Nullable BlockState state) {
         overrideBlockState = state;
     }
 
     @Override
-    public BlockState getBlockState()
-    {
-        if(overrideBlockState!=null)
-            return overrideBlockState;
-        else
-            return super.getBlockState();
+    public @NotNull BlockState getBlockState() {
+        if (overrideBlockState != null) return overrideBlockState;
+        else return super.getBlockState();
     }
 
     @Override
     @Deprecated
-    public void setBlockState(BlockState newState)
-    {
+    public void setBlockState(@NotNull BlockState newState) {
         BlockState old = getBlockState();
         super.setBlockState(newState);
-        if(getType().isValid(old)&&!getType().isValid(newState))
-            setOverrideState(old);
-        else if(getType().isValid(newState))
-            setOverrideState(null);
+        if (getType().isValid(old) && !getType().isValid(newState)) setOverrideState(old);
+        else if (getType().isValid(newState)) setOverrideState(null);
         // Reset caps after e.g. rotating a block, so users get the cap for the logical side of the block now facing
         // them
         resetAllCaps();
     }
 
     @Override
-    public void setState(BlockState state)
-    {
-        if(getLevelNonnull().getBlockState(worldPosition)==getState())
-            getLevelNonnull().setBlockAndUpdate(worldPosition, state);
+    public void setState(BlockState state) {
+        if (getLevelNonnull().getBlockState(worldPosition) == getState()) getLevelNonnull().setBlockAndUpdate(worldPosition, state);
     }
 
     @Override
-    public BlockState getState()
-    {
+    public BlockState getState() {
         return getBlockState();
     }
 
@@ -304,90 +249,69 @@ public abstract class ITBlockEntity extends BlockEntity implements ITBlockInterf
      * Most calls to {@link BlockEntity#setChanged} should be replaced by this. The vanilla mD also updates comparator
      * states and re-caches the block state, while in most cases we just want to say "this needs to be saved to disk"
      */
-    protected void markChunkDirty()
-    {
-        if(this.level!=null&&this.level.hasChunkAt(this.worldPosition))
-            this.level.getChunkAt(this.worldPosition).setUnsaved(true);
+    protected void markChunkDirty() {
+        if (this.level != null && this.level.hasChunkAt(this.worldPosition)) this.level.getChunkAt(this.worldPosition).setUnsaved(true);
     }
 
     @Override
-    public void setLevel(Level world)
-    {
+    public void setLevel(@NotNull Level world) {
         super.setLevel(world);
         this.redstoneBySide.clear();
     }
 
     @Override
-    public @NotNull ModelData getModelData()
-    {
+    public @NotNull ModelData getModelData() {
         BlockPos offset = null;
         BlockState state = getState();
 
-        if(this instanceof IModelOffsetProvider offsetProvider)
-            offset = offsetProvider.getModelOffset(state, Vec3i.ZERO);
-        else if(state.getBlock() instanceof IModelOffsetProvider offsetProvider)
-            offset = offsetProvider.getModelOffset(state, Vec3i.ZERO);
-        if(offset!=null)
-            return ModelData.builder()
-                    .with(IEProperties.Model.SUBMODEL_OFFSET, offset)
-                    .build();
+        if (this instanceof IModelOffsetProvider offsetProvider) offset = offsetProvider.getModelOffset(state, Vec3i.ZERO);
+        else if (state.getBlock() instanceof IModelOffsetProvider offsetProvider) offset = offsetProvider.getModelOffset(state, Vec3i.ZERO);
+        if (offset != null) return ModelData.builder().with(IEProperties.Model.SUBMODEL_OFFSET, offset).build();
         return ModelData.EMPTY;
     }
 
     // Based on the super version, but works around a Forge patch to World#markChunkDirty causing duplicate comparator
     // updates and only performs comparator updates if this TE actually has comparator behavior
     @Override
-    public void setChanged()
-    {
-        if(this.level!=null)
-        {
+    public void setChanged() {
+        if (this.level != null) {
             markChunkDirty();
             BlockState state = getBlockState();
-            if(state.hasAnalogOutputSignal())
-                this.level.updateNeighbourForOutputSignal(this.worldPosition, state.getBlock());
+            if (state.hasAnalogOutputSignal()) this.level.updateNeighbourForOutputSignal(this.worldPosition, state.getBlock());
         }
     }
 
-    protected void onNeighborBlockChange(BlockPos otherPos)
-    {
+    protected void onNeighborBlockChange(BlockPos otherPos) {
         BlockPos delta = otherPos.subtract(worldPosition);
         Direction side = Direction.getNearest(delta.getX(), delta.getY(), delta.getZ());
         Preconditions.checkNotNull(side);
         updateRSForSide(side);
     }
 
-    private void updateRSForSide(Direction side)
-    {
+    private void updateRSForSide(Direction side) {
         int rsStrength = getLevelNonnull().getSignal(worldPosition.relative(side), side);
-        if(rsStrength==0&&this instanceof ITBlockInterfaces.IRedstoneOutput &&((ITBlockInterfaces.IRedstoneOutput)this).canConnectRedstone(side))
-        {
+        if (rsStrength == 0 && this instanceof ITBlockInterfaces.IRedstoneOutput && ((ITBlockInterfaces.IRedstoneOutput) this).canConnectRedstone(side)) {
+            assert level != null;
             BlockState state = SafeChunkUtils.getBlockState(level, worldPosition.relative(side));
-            if(state.getBlock()==Blocks.REDSTONE_WIRE&&state.getValue(RedStoneWireBlock.POWER) > rsStrength)
-                rsStrength = state.getValue(RedStoneWireBlock.POWER);
+            if (state.getBlock() == Blocks.REDSTONE_WIRE && state.getValue(RedStoneWireBlock.POWER) > rsStrength) rsStrength = state.getValue(RedStoneWireBlock.POWER);
         }
         redstoneBySide.put(side, rsStrength);
     }
 
-    protected int getRSInput(Direction from)
-    {
-        if(level.isClientSide||!redstoneBySide.containsKey(from))
-            updateRSForSide(from);
+    protected int getRSInput(Direction from) {
+        assert level != null;
+        if (level.isClientSide || !redstoneBySide.containsKey(from)) updateRSForSide(from);
         return redstoneBySide.get(from);
     }
 
-    protected int getMaxRSInput()
-    {
+    protected int getMaxRSInput() {
         int ret = 0;
-        for(Direction d : DirectionUtils.VALUES)
-            ret = Math.max(ret, getRSInput(d));
+        for (Direction d : DirectionUtils.VALUES) { ret = Math.max(ret, getRSInput(d)); }
         return ret;
     }
 
-    protected boolean isRSPowered()
-    {
-        for(Direction d : DirectionUtils.VALUES)
-            if(getRSInput(d) > 0)
-                return true;
+    protected boolean isRSPowered() {
+        for (Direction d : DirectionUtils.VALUES) { if (getRSInput(d) > 0) return true; }
         return false;
     }
 }

@@ -2,16 +2,20 @@ package mctmods.immersivetechnology.common.blocks.multiblocks.recipe;
 
 import blusunrize.immersiveengineering.api.crafting.*;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import blusunrize.immersiveengineering.common.register.IEFluids;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<AdvancedCokeOvenRecipe>> SERIALIZER;
@@ -28,25 +32,26 @@ public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
         this.input = input;
         this.time = time;
         this.creosoteOutput = creosoteOutput;
-    }
-
-    public boolean matches(ItemStack stack) {
-        return input.test(stack);
-    }
-
-    @Override
-    protected IERecipeSerializer getIESerializer() {
-        return SERIALIZER.get();
+        setInputListWithSizes(List.of(input));
+        this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, output.get()));
+        this.fluidOutputList = List.of(new FluidStack(IEFluids.CREOSOTE.getStill(), creosoteOutput));
     }
 
     @Override
-    public @NotNull ItemStack getResultItem(RegistryAccess access) {
-        return this.output.get();
-    }
+    public int getTotalProcessTime() { return time; }
 
-    public static AdvancedCokeOvenRecipe findRecipe(Level level, ItemStack input) {
-        return findRecipe(level, input, null);
-    }
+    @Override
+    public int getTotalProcessEnergy() { return 0; }
+
+    public boolean matches(ItemStack stack) { return input.test(stack); }
+
+    @Override
+    protected IERecipeSerializer<AdvancedCokeOvenRecipe> getIESerializer() { return SERIALIZER.get(); }
+
+    @Override
+    public @NotNull ItemStack getResultItem(RegistryAccess access) { return this.output.get(); }
+
+    public static AdvancedCokeOvenRecipe findRecipe(Level level, ItemStack input) { return findRecipe(level, input, null); }
 
     public static AdvancedCokeOvenRecipe findRecipe(Level level, ItemStack input, @Nullable AdvancedCokeOvenRecipe hint) {
         if (input.isEmpty()) return null;
@@ -57,7 +62,5 @@ public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
     }
 
     @Override
-    public int getMultipleProcessTicks() {
-        return 0;
-    }
+    public int getMultipleProcessTicks() { return 0; }
 }

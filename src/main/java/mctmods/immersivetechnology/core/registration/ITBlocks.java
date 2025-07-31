@@ -1,14 +1,20 @@
 package mctmods.immersivetechnology.core.registration;
 
 import blusunrize.immersiveengineering.common.register.IEBlocks;
-import mctmods.immersivetechnology.common.blocks.metal.CokeOvenPreheaterBlock;
-import mctmods.immersivetechnology.common.blocks.metal.CokeOvenPreheaterBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.CokeOvenHeaterBlock;
+import mctmods.immersivetechnology.common.blocks.metal.CokeOvenHeaterBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlock;
 import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.OpenBarrelBlock;
 import mctmods.immersivetechnology.common.blocks.metal.OpenBarrelBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.SteelBarrelBlock;
 import mctmods.immersivetechnology.common.blocks.metal.SteelBarrelBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.TrashEnergyBlock;
+import mctmods.immersivetechnology.common.blocks.metal.TrashEnergyBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.TrashFluidBlock;
+import mctmods.immersivetechnology.common.blocks.metal.TrashFluidBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.TrashItemBlock;
+import mctmods.immersivetechnology.common.blocks.metal.TrashItemBlockEntity;
 import mctmods.immersivetechnology.common.blocks.stone.ReinforcedCokeBrick;
 import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -34,22 +40,25 @@ import java.util.stream.Collectors;
 import static blusunrize.immersiveengineering.common.register.IEBlocks.METAL_PROPERTIES_NO_OCCLUSION;
 
 public class ITBlocks {
-    public static final DeferredRegister<Block> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCKS, ITLib.MODID);;
+    public static final DeferredRegister<Block> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCKS, ITLib.MODID);
 
     private static final HashMap<String, RegistryObject<? extends Block>> BLOCK_REGISTRY_MAP = new HashMap<>();
     public static Function<String, Block> getBlock = (key) -> BLOCK_REGISTRY_MAP.get(key).get();
 
     public static final class MetalDevices {
-        public static BlockEntry<CokeOvenPreheaterBlock> COKE_OVEN_PREHEATER;
+        public static BlockEntry<CokeOvenHeaterBlock> COKE_OVEN_HEATER;
         public static BlockEntry<CreativeBarrelBlock> CREATIVE_BARREL;
         public static BlockEntry<SteelBarrelBlock> STEEL_BARREL;
         public static BlockEntry<OpenBarrelBlock> OPEN_BARREL;
+        public static BlockEntry<TrashEnergyBlock> TRASH_ENERGY;
+        public static BlockEntry<TrashFluidBlock> TRASH_FLUID;
+        public static BlockEntry<TrashItemBlock> TRASH_ITEM;
 
         private static void init() {
-            COKE_OVEN_PREHEATER = new BlockEntry<>(
+            COKE_OVEN_HEATER = new BlockEntry<>(
                     "coke_oven_preheater",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new CokeOvenPreheaterBlock(CokeOvenPreheaterBlockEntity::new, p)
+                    p -> new CokeOvenHeaterBlock(CokeOvenHeaterBlockEntity::new, p)
             );
 
             CREATIVE_BARREL = new BlockEntry<>(
@@ -68,6 +77,24 @@ public class ITBlocks {
                     "open_barrel",
                     () -> BlockBehaviour.Properties.copy(IEBlocks.MetalDevices.BARREL.get()).noOcclusion(),
                     p -> new OpenBarrelBlock(OpenBarrelBlockEntity::new, p)
+            );
+
+            TRASH_ENERGY = new BlockEntry<>(
+                    "trash_energy",
+                    () -> BlockBehaviour.Properties.copy(IEBlocks.MetalDevices.BARREL.get()).noOcclusion(),
+                    p -> new TrashEnergyBlock(TrashEnergyBlockEntity::new, p)
+            );
+
+            TRASH_FLUID = new BlockEntry<>(
+                    "trash_fluid",
+                    () -> BlockBehaviour.Properties.copy(IEBlocks.MetalDevices.BARREL.get()).noOcclusion(),
+                    p -> new TrashFluidBlock(TrashFluidBlockEntity::new, p)
+            );
+
+            TRASH_ITEM = new BlockEntry<>(
+                    "trash_item",
+                    () -> BlockBehaviour.Properties.copy(IEBlocks.MetalDevices.BARREL.get()).noOcclusion(),
+                    p -> new TrashItemBlock(TrashItemBlockEntity::new, p)
             );
         }
     }
@@ -95,9 +122,7 @@ public class ITBlocks {
         initBlocks();
         REGISTER.register(event);
         for(BlockEntry<?> entry : BlockEntry.ALL_ENTRIES) {
-            Function<Block, ITBlockItem> toItem;
-            toItem = ITBlockItem::new;
-            Function<Block, ITBlockItem> finalToItem = toItem;
+            Function<Block, ITBlockItem> finalToItem = ITBlockItem::new;
             ITItems.REGISTER.register(entry.getId().getPath(), () -> finalToItem.apply(entry.get()));
             BLOCK_REGISTRY_MAP.put(entry.getId().getPath(), entry.getRegObject());
         }
@@ -115,17 +140,10 @@ public class ITBlocks {
             ALL_ENTRIES.add(this);
         }
 
-        @Override
-        public T get() { return regObject.get(); }
-
+        @Override public T get() { return regObject.get(); }
         public ResourceLocation getId() { return regObject.getId(); }
-
         public BlockBehaviour.Properties getProperties() { return properties.get(); }
-
-        @Nonnull
-        @Override
-        public Item asItem() { return get().asItem(); }
-
+        @Nonnull @Override public Item asItem() { return get().asItem(); }
         public RegistryObject<? extends Block> getRegObject() { return regObject; }
     }
 }

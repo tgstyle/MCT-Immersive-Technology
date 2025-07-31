@@ -1,10 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.gui;
 
-import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.CokeOvenLogic;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.FurnaceHandler;
 import blusunrize.immersiveengineering.common.gui.IESlot;
 import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITAdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCokeOvenRecipe;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,6 +15,7 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+
 import javax.annotation.Nonnull;
 
 public class AdvancedCokeOvenMenu extends ITContainerMenu {
@@ -25,11 +24,11 @@ public class AdvancedCokeOvenMenu extends ITContainerMenu {
 
     public static AdvancedCokeOvenMenu makeServer(MenuType<?> type, int id, Inventory invPlayer, MultiblockMenuContext<ITAdvancedCokeOvenLogic.State> ctx) {
         final ITAdvancedCokeOvenLogic.State state = ctx.mbContext().getState();
-        return new AdvancedCokeOvenMenu(multiblockCtx(type, id, ctx), invPlayer, state.getInventory().getRawHandler(), state, state.getTank());
+        return new AdvancedCokeOvenMenu(multiblockCtx(type, id, ctx), invPlayer, state.getInventory().getRawHandler(), state, state.getTanks().output());
     }
 
     public static AdvancedCokeOvenMenu makeClient(MenuType<?> type, int id, Inventory invPlayer) {
-        return new AdvancedCokeOvenMenu(clientCtx(type, id), invPlayer, new ItemStackHandler(CokeOvenLogic.NUM_SLOTS), new SimpleContainerData(FurnaceHandler.StateView.NUM_SLOTS), new FluidTank(CokeOvenLogic.TANK_CAPACITY));
+        return new AdvancedCokeOvenMenu(clientCtx(type, id), invPlayer, new ItemStackHandler(4), new SimpleContainerData(2), new FluidTank(ITAdvancedCokeOvenLogic.TANK_CAPACITY));
     }
 
     private AdvancedCokeOvenMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, ContainerData data, FluidTank tank) {

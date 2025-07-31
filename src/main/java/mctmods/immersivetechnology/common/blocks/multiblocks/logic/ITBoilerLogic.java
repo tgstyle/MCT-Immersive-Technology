@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.logic;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
@@ -92,7 +91,7 @@ public class ITBoilerLogic implements IMultiblockLogic<ITBoilerLogic.State>, ISe
         final Level level = ctx.getLevel().getRawLevel();
         if (state.pilotLit) {
             BlockPos exhaustAbs = ctx.getLevel().toAbsolute(EXHAUST_REL);
-            Vec3 flamePos = new Vec3(exhaustAbs.getX() + 1.1, exhaustAbs.getY() - 0.300, exhaustAbs.getZ() + 0.5);
+            Vec3 flamePos = new Vec3(exhaustAbs.getX() + 0.5, exhaustAbs.getY() + 0.1, exhaustAbs.getZ() + 0.5);
             double velX = (level.random.nextFloat() * 0.0625 - 0.03125);
             double velY = 0.0625;
             double velZ = (level.random.nextFloat() * 0.0625 - 0.03125);
@@ -100,7 +99,7 @@ public class ITBoilerLogic implements IMultiblockLogic<ITBoilerLogic.State>, ISe
         }
         if (state.pilotLit && state.heatLevel > PILOT_HEAT && state.rsState.isEnabled(ctx) && state.tanks.input2.getFluidAmount() > 0) {
             BlockPos exhaustAbs = ctx.getLevel().toAbsolute(EXHAUST_REL);
-            Vec3 smokePos = new Vec3(exhaustAbs.getX() + 1.1, exhaustAbs.getY() + 0.5, exhaustAbs.getZ() + 0.5);
+            Vec3 smokePos = new Vec3(exhaustAbs.getX() + 0.5, exhaustAbs.getY() + 1.25, exhaustAbs.getZ() + 0.5);
             double velX = 0;
             double velY = 0.125;
             double velZ = 0;
@@ -160,12 +159,13 @@ public class ITBoilerLogic implements IMultiblockLogic<ITBoilerLogic.State>, ISe
     }
 
     @Override
+    public void dropExtraItems(State state, Consumer<ItemStack> drop) { for (ItemStack stack : state.inventory) { drop.accept(stack); } }
+
+    @Override
     public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return FullblockShape.GETTER; }
-
-    private static double particleXZSpeed() { return ApiUtils.RANDOM.nextDouble(-0.015625, 0.015625); }
 
     public static class State implements IMultiblockState {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();

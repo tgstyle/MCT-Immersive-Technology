@@ -7,8 +7,8 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
+
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -21,9 +21,7 @@ public class ITParticleProvider implements DataProvider {
     private final PackOutput.PathProvider particlesPath;
     private final Map<ResourceLocation, List<String>> descriptions = new HashMap<>();
 
-    public ITParticleProvider(PackOutput output, ExistingFileHelper helper) {
-        this.particlesPath = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "particles");
-    }
+    public ITParticleProvider(PackOutput output) { this.particlesPath = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "particles"); }
 
     protected void addDescriptions() {
         List<String> bigSmokeTextures = IntStream.range(0, 12).mapToObj(i -> "minecraft:big_smoke_" + i).collect(Collectors.toList());
@@ -33,7 +31,6 @@ public class ITParticleProvider implements DataProvider {
     @Override
     public @NotNull CompletableFuture<?> run(@NotNull CachedOutput cache) {
         addDescriptions();
-
         return CompletableFuture.allOf(descriptions.entrySet().stream().map(entry -> {
             JsonArray textures = new JsonArray();
             entry.getValue().forEach(textures::add);
@@ -45,7 +42,5 @@ public class ITParticleProvider implements DataProvider {
     }
 
     @Override
-    public @NotNull String getName() {
-        return "Particle Descriptions";
-    }
+    public @NotNull String getName() { return "Particle Descriptions"; }
 }

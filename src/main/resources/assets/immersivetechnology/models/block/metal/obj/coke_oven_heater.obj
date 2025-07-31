@@ -1,5 +1,5 @@
 # Made in Blockbench 4.12.4
-mtllib coke_oven_preheater.mtl
+mtllib coke_oven_heater.mtl
 
 o fan
 v 0.7182900000000001 0.25046 1.821653

@@ -1,6 +1,13 @@
 package mctmods.immersivetechnology.client;
 
+import mctmods.immersivetechnology.client.renderer.AdvancedCokeOvenRenderer;
+import mctmods.immersivetechnology.client.renderer.CokeOvenHeaterRenderer;
+import mctmods.immersivetechnology.client.renderer.GasTurbineRenderer;
+import mctmods.immersivetechnology.client.renderer.OpenBarrelRenderer;
+import mctmods.immersivetechnology.client.renderer.SteamTurbineRenderer;
 import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.registration.ITBlockEntities;
+import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -22,11 +29,13 @@ public class ClientModBusEventHandlers {
         registerBlockEntityRenderers(event);
     }
 
-    public static void registerBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) { }
-
-    private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, Supplier<BlockEntityRenderer<T>> render) { ClientModBusEventHandlers.registerBERenderNoContext(event, type.get(), render); }
-
-    private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render) {
-        event.registerBlockEntityRenderer(type, $ -> render.get());
+    public static void registerBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        registerBERenderNoContext(event, ITBlockEntities.OPEN_BARREL::get, OpenBarrelRenderer::new);
+        registerBERenderNoContext(event, ITBlockEntities.COKE_OVEN_HEATER::get, CokeOvenHeaterRenderer::new);
+        registerBERenderNoContext(event, () -> ITMultiblockProvider.ADVANCED_COKE_OVEN.masterBE().get(), AdvancedCokeOvenRenderer::new);
+        registerBERenderNoContext(event, () -> ITMultiblockProvider.GAS_TURBINE.masterBE().get(), GasTurbineRenderer::new);
+        registerBERenderNoContext(event, () -> ITMultiblockProvider.STEAM_TURBINE.masterBE().get(), SteamTurbineRenderer::new);
     }
+
+    private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, Supplier<BlockEntityRenderer<T>> render) { event.registerBlockEntityRenderer(type.get(), ctx -> render.get()); }
 }

@@ -15,6 +15,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
@@ -27,33 +28,30 @@ import java.util.function.Consumer;
 public class ITRecipes extends RecipeProvider {
     private final HashMap<String, Integer> PATH_COUNT = new HashMap<>();
 
-    public ITRecipes(PackOutput pOutput) {
-        super(pOutput);
-    }
+    public ITRecipes(PackOutput pOutput) { super(pOutput); }
 
     @Override
     protected void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
-        multiblockRecipes(consumer);
-        itemRecipes(consumer);
+        multiblockRecipes();
+        itemRecipes();
         recipesCoke(consumer);
+        recipesAdvCokeFuel(consumer);
         recipesBoiler(consumer);
         recipesBoilerFuel(consumer);
         recipesTurbine(consumer);
         recipesDistiller(consumer);
     }
 
-    private void itemRecipes(Consumer<FinishedRecipe> consumer) { }
+    private void itemRecipes() {}
 
-    private void multiblockRecipes(Consumer<FinishedRecipe> consumer) { ITLib.IT_LOGGER.info("Starting Multiblock Recipe Registration"); }
+    private void multiblockRecipes() { ITLib.IT_LOGGER.info("Starting Multiblock Recipe Registration"); }
 
     private void recipesBoiler(@Nonnull Consumer<FinishedRecipe> out) {
         BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 450).addInput(FluidTags.WATER, 250).setTime(10).build(out, toRL("boiler/water"));
         BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 500).addInput(ITTags.fluidDistilledWater, 250).setTime(10).build(out, toRL("boiler/distilled_water"));
     }
 
-    private void recipesBoilerFuel(@Nonnull Consumer<FinishedRecipe> out) {
-        BoilerFuelRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 10).setTime(10).setHeatPerTick(0.1).build(out, toRL("boiler_fuel/biodiesel"));
-    }
+    private void recipesBoilerFuel(@Nonnull Consumer<FinishedRecipe> out) { BoilerFuelRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 10).setTime(10).setHeatPerTick(0.1).build(out, toRL("boiler_fuel/biodiesel")); }
 
     private void recipesTurbine(@Nonnull Consumer<FinishedRecipe> out) {
         SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteam, 100).addOutput(ITFluids.STEAM_EXHAUST.getStill(), 100).setTime(1).build(out, toRL("steamturbine/steam"));
@@ -67,13 +65,18 @@ public class ITRecipes extends RecipeProvider {
         AdvancedCokeOvenRecipeBuilder.builder(Items.CHARCOAL).addInput(ItemTags.LOGS).setOil(FluidType.BUCKET_VOLUME / 4).setTime(600).build(out, toRL("advcokeoven/charcoal"));
     }
 
+    private void recipesAdvCokeFuel(@Nonnull Consumer<FinishedRecipe> out) {
+        AdvancedCokeOvenFuelBuilder.builder(Ingredient.of(IETags.coalCoke)).setTime(1200).build(out, toRL("advcokeoven_fuel/coal_coke"));
+        AdvancedCokeOvenFuelBuilder.builder(Ingredient.of(Items.CHARCOAL)).setTime(600).build(out, toRL("advcokeoven_fuel/charcoal"));
+    }
+
     private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) {
         ItemStack salt = new ItemStack(ITItems.SALT.get(), 1);
         DistillerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 1000), 10000, 20, new FluidStack(ITFluids.DISTILLED_WATER.getStill().getSource(), 500)).addItemOutput(salt, 0.5f).build(out, toRL("distiller/water"));
     }
 
     private ResourceLocation toRL(String s) {
-        if (!s.contains("/")) s = "crafting/" + s;
+        if (!s.contains("/")) { s = "crafting/" + s; }
         if (PATH_COUNT.containsKey(s)) {
             int count = PATH_COUNT.get(s) + 1;
             PATH_COUNT.put(s, count);
