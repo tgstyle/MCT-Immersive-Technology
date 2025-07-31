@@ -34,7 +34,6 @@ import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -219,7 +218,7 @@ public class ITAdvancedCokeOvenLogic implements IMultiblockLogic<ITAdvancedCokeO
             this.tankArray = new IFluidTank[]{tanks.output()};
             this.inventory = new ITSlotwiseItemHandler(
                     List.of(
-                            ITSlotwiseItemHandler.IOConstraint.input(i -> CokeOvenRecipe.findRecipe(ctx.levelSupplier().get(), i) != null),
+                            ITSlotwiseItemHandler.IOConstraint.input(i -> AdvancedCokeOvenRecipe.findRecipe(ctx.levelSupplier().get(), i) != null),
                             ITSlotwiseItemHandler.IOConstraint.OUTPUT,
                             ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
                             ITSlotwiseItemHandler.IOConstraint.OUTPUT
@@ -334,8 +333,8 @@ public class ITAdvancedCokeOvenLogic implements IMultiblockLogic<ITAdvancedCokeO
 
         @Nullable
         public CokeOvenHeaterBlockEntity getPreheater(IMultiblockLevel level, BlockPos pos) {
-            BlockEntity be = level.getBlockEntity(pos);
-            return be instanceof CokeOvenHeaterBlockEntity heater ? heater : null;
+            BlockEntity te = level.getBlockEntity(pos);
+            return te instanceof CokeOvenHeaterBlockEntity heater ? heater : null;
         }
 
         @SuppressWarnings("unused")
