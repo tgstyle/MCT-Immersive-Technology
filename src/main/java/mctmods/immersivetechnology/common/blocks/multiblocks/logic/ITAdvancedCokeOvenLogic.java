@@ -147,7 +147,7 @@ public class ITAdvancedCokeOvenLogic implements IMultiblockLogic<ITAdvancedCokeO
             stack = Utils.insertStackIntoInventory(state.outputRef, stack, false);
             inventory.setStackInSlot(1, stack);
         }
-        if (activeBeforeTick!=active) { NonMirrorableWithActiveBlock.setActive(context.getLevel(), ITMultiblockProvider.getMBTemplate.apply("advanced_coke_oven"), active); }
+        if (activeBeforeTick!=active) { NonMirrorableWithActiveBlock.setActive(context.getLevel(), ITMultiblockProvider.getMBTemplate.apply("coke_oven_advanced"), active); }
     }
 
     @Nullable
