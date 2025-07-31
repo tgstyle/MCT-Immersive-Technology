@@ -73,7 +73,7 @@ import java.util.function.Function;
 public class ITAdvancedCokeOvenLogic implements IMultiblockLogic<ITAdvancedCokeOvenLogic.State>, IServerTickableComponent<ITAdvancedCokeOvenLogic.State>, IClientTickableComponent<ITAdvancedCokeOvenLogic.State> {
     public static final MultiblockFace OUTPUT_TANK_OFFSET = new MultiblockFace(1, 0, 0, RelativeBlockFace.BACK);
     private static final MultiblockFace OUTPUT_POS = new MultiblockFace(1, 0, 3, RelativeBlockFace.FRONT);
-    private static final BlockPos[] HEATER_OFFSETS = { new BlockPos(-1, 0, 1), new BlockPos(3, 0, 1) };
+    public static final BlockPos[] HEATER_OFFSETS = { new BlockPos(-1, 0, 1), new BlockPos(3, 0, 1) };
     public static final int SLOT_INPUT = 0;
     public static final int SLOT_OUTPUT = 1;
     public static final int SLOT_EMPTY_CONTAINER = 2;
@@ -314,13 +314,13 @@ public class ITAdvancedCokeOvenLogic implements IMultiblockLogic<ITAdvancedCokeO
         public int getBurnTimeOf(Level level, ItemStack fuel) { return AdvancedCokeOvenFuel.getAdvCokeOvenFuelTime(level, fuel); }
 
         @Override
-        public int getProcessSpeed(IMultiblockLevel level) {
-            int speed = 1;
+        public double getProcessSpeed(IMultiblockLevel level) {
+            int numActive = 0;
             for (BlockPos offset : HEATER_OFFSETS) {
                 CokeOvenHeaterBlockEntity preheater = getPreheater(level, offset);
-                if (preheater != null) { speed += preheater.doSpeedup(); }
+                if (preheater != null) numActive += preheater.doSpeedup();
             }
-            return speed;
+            return 1.0 + numActive * 0.25;
         }
 
         @Override

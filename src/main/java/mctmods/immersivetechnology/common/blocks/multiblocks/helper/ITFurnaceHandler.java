@@ -18,11 +18,12 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
+@SuppressWarnings("unused")
 public class ITFurnaceHandler<R extends IESerializableRecipe> {
-    private int process = 0;
-    private int processMax = 0;
-    private int burnTime = 0;
-    private int lastBurnTime = 0;
+    private double process = 0;
+    private double processMax = 0;
+    private double burnTime = 0;
+    private double lastBurnTime = 0;
     public final ITFurnaceStateView stateView = new ITFurnaceStateView();
     private final int fuelSlot;
     private final List<InputSlot<R>> inputs;
@@ -37,8 +38,7 @@ public class ITFurnaceHandler<R extends IESerializableRecipe> {
         final IFurnaceEnvironment<R> env = ctx.getState();
         final Level level = ctx.getLevel().getRawLevel();
         if (burnTime > 0) {
-            int processSpeed = 1;
-            if (process > 0) processSpeed = env.getProcessSpeed(ctx.getLevel());
+            double processSpeed = env.getProcessSpeed(ctx.getLevel());
             burnTime -= processSpeed;
             if (process > 0) {
                 if (isAnyInputEmpty(env.getInventory())) { process = 0; processMax = 0; }
@@ -52,7 +52,7 @@ public class ITFurnaceHandler<R extends IESerializableRecipe> {
             if (process <= 0) {
                 if (processMax > 0) { doRecipeIO(env, level); processMax = 0; burnTime -= process; }
                 R recipe = getRecipe(env, level);
-                if (recipe != null) { final int time = getProcessTime(recipe); this.process = time - processSpeed; this.processMax = time; active = true; }
+                if (recipe != null) { final double time = getProcessTime(recipe); this.process = time - processSpeed; this.processMax = time; active = true; }
             }
         }
         if (burnTime <= 0 && getRecipe(env, level) != null) {
@@ -73,19 +73,19 @@ public class ITFurnaceHandler<R extends IESerializableRecipe> {
 
     public Tag toNBT() {
         final CompoundTag result = new CompoundTag();
-        result.putInt("process", process);
-        result.putInt("processMax", processMax);
-        result.putInt("burnTime", burnTime);
-        result.putInt("lastBurnTime", lastBurnTime);
+        result.putDouble("process", process);
+        result.putDouble("processMax", processMax);
+        result.putDouble("burnTime", burnTime);
+        result.putDouble("lastBurnTime", lastBurnTime);
         return result;
     }
 
     public void readNBT(Tag nbt) {
         if (!(nbt instanceof CompoundTag compound)) return;
-        process = compound.getInt("process");
-        processMax = compound.getInt("processMax");
-        burnTime = compound.getInt("burnTime");
-        lastBurnTime = compound.getInt("lastBurnTime");
+        process = compound.getDouble("process");
+        processMax = compound.getDouble("processMax");
+        burnTime = compound.getDouble("burnTime");
+        lastBurnTime = compound.getDouble("lastBurnTime");
     }
 
     private boolean isAnyInputEmpty(IItemHandler inv) {
@@ -136,7 +136,7 @@ public class ITFurnaceHandler<R extends IESerializableRecipe> {
 
         int getBurnTimeOf(Level level, ItemStack fuel);
 
-        int getProcessSpeed(IMultiblockLevel level);
+        double getProcessSpeed(IMultiblockLevel level);
 
         void turnOff(IMultiblockLevel level);
     }
@@ -159,10 +159,10 @@ public class ITFurnaceHandler<R extends IESerializableRecipe> {
         @Override
         public int get(int index) {
             return switch (index) {
-                case LAST_BURN_TIME -> lastBurnTime;
-                case BURN_TIME -> burnTime;
-                case PROCESS_MAX -> processMax;
-                case CURRENT_PROCESS -> process;
+                case LAST_BURN_TIME -> (int)lastBurnTime;
+                case BURN_TIME -> (int)burnTime;
+                case PROCESS_MAX -> (int)processMax;
+                case CURRENT_PROCESS -> (int)process;
                 default -> throw new IllegalArgumentException("Unknown index " + index);
             };
         }

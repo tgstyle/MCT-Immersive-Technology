@@ -18,22 +18,23 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import java.util.function.BiFunction;
 
 public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<AdvancedCokeOvenRecipe> {
+    private float processTick;
     private final int maxProcessTime;
 
     public AdvancedCokeOvenProcess(AdvancedCokeOvenRecipe recipe) { super(recipe, 0); this.maxProcessTime = recipe.getTotalProcessTime(); }
 
-    public AdvancedCokeOvenProcess(BiFunction<Level, ResourceLocation, AdvancedCokeOvenRecipe> getRecipe, CompoundTag data) { super(getRecipe, data); this.maxProcessTime = data.getInt("maxProcessTime"); }
+    public AdvancedCokeOvenProcess(BiFunction<Level, ResourceLocation, AdvancedCokeOvenRecipe> getRecipe, CompoundTag data) { super(getRecipe, data); this.processTick = data.getFloat("processTick"); this.maxProcessTime = data.getInt("maxProcessTime"); }
 
     @Override
-    public void writeExtraDataToNBT(CompoundTag nbt) { super.writeExtraDataToNBT(nbt); nbt.putInt("maxProcessTime", maxProcessTime); }
+    public void writeExtraDataToNBT(CompoundTag nbt) { super.writeExtraDataToNBT(nbt); nbt.putFloat("processTick", processTick); nbt.putInt("maxProcessTime", maxProcessTime); }
 
     @Override
     public void doProcessTick(ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe> context, IMultiblockLevel level) {
         if (getRecipe(level.getRawLevel()) == null) { this.clearProcess = true; return; }
         @SuppressWarnings("unchecked")
         ITFurnaceHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe> env = (ITFurnaceHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>) context;
-        int speed = env.getProcessSpeed(level);
-        this.processTick += speed;
+        double speed = env.getProcessSpeed(level);
+        this.processTick += (float)speed;
         if (this.processTick >= this.maxProcessTime) { processFinish(context, level); this.clearProcess = true; }
     }
 
@@ -55,7 +56,7 @@ public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<Advanced
         }
     }
 
-    public int getCurrentProcessTime() { return processTick; }
+    public int getCurrentProcessTime() { return (int)processTick; }
 
     public int getMaxProcessTime() { return maxProcessTime; }
 }
