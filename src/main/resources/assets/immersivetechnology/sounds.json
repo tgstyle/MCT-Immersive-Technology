@@ -27,10 +27,10 @@
 		],
 		"subtitle": "subtitle.immersivetechnology.distiller"
 	},
-	"adv_coke_oven": {
+	"advanced_coke_oven": {
 		"category": "block",
 		"sounds": [
-			"immersivetechnology:adv_coke_oven"
+			"immersivetechnology:advanced_coke_oven"
 		],
 		"subtitle": "subtitle.immersivetechnology.advCokeOven"
 	},

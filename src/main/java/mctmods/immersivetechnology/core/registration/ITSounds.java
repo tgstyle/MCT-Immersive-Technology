@@ -11,7 +11,7 @@ public class ITSounds {
     private static final DeferredRegister<SoundEvent> REGISTER = DeferredRegister.create(Registries.SOUND_EVENT, ITLib.MODID);
 
     public static final RegistryObject<SoundEvent> alternator = registerSound("alternator");
-    public static final RegistryObject<SoundEvent> advCokeOven = registerSound("adv_coke_oven");
+    public static final RegistryObject<SoundEvent> advancedCokeOven = registerSound("advanced_coke_oven");
     public static final RegistryObject<SoundEvent> steamTurbine = registerSound("turbine");
     public static final RegistryObject<SoundEvent> boiler = registerSound("boiler");
     public static final RegistryObject<SoundEvent> gasRunning = registerSound("gas_running");

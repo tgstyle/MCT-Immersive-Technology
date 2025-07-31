@@ -56,7 +56,7 @@ public class ITBlocks {
 
         private static void init() {
             COKE_OVEN_HEATER = new BlockEntry<>(
-                    "coke_oven_preheater",
+                    "coke_oven_heater",
                     METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new CokeOvenHeaterBlock(CokeOvenHeaterBlockEntity::new, p)
             );

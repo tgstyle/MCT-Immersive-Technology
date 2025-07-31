@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 
 public class CokeOvenHeaterRenderer extends ITBlockEntityRenderer<CokeOvenHeaterBlockEntity>
 {
-    public static final String NAME = "coke_oven_preheater_fan";
+    public static final String NAME = "coke_oven_heater_fan";
     public static ITDynamicModel MODEL;
     @Override
     public void render(

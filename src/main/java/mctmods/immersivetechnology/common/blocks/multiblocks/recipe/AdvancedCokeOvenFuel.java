@@ -16,13 +16,13 @@ import java.util.Iterator;
 
 public class AdvancedCokeOvenFuel extends IESerializableRecipe {
     public static RegistryObject<IERecipeSerializer<AdvancedCokeOvenFuel>> SERIALIZER;
-    public static final CachedRecipeList<AdvancedCokeOvenFuel> RECIPES = new CachedRecipeList<>(ITRecipeTypes.ADV_COKE_OVEN_FUEL);
+    public static final CachedRecipeList<AdvancedCokeOvenFuel> RECIPES = new CachedRecipeList<>(ITRecipeTypes.ADVANCED_COKE_OVEN_FUEL);
 
     public final Ingredient input;
     public final int burnTime;
 
     public AdvancedCokeOvenFuel(ResourceLocation id, Ingredient input, int burnTime) {
-        super(LAZY_EMPTY, ITRecipeTypes.ADV_COKE_OVEN_FUEL, id);
+        super(LAZY_EMPTY, ITRecipeTypes.ADVANCED_COKE_OVEN_FUEL, id);
         this.input = input;
         this.burnTime = burnTime;
     }

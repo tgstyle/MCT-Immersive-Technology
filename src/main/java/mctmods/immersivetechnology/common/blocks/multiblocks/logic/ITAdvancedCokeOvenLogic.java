@@ -98,7 +98,7 @@ public class ITAdvancedCokeOvenLogic implements IMultiblockLogic<ITAdvancedCokeO
         if (!state.isSoundPlaying.getAsBoolean()) {
             final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(1, 1, 1));
             state.isSoundPlaying = ITMultiblockSound.startSound(
-                    () -> state.active, ctx.isValid(), soundPos, ITSounds.advCokeOven, () -> {
+                    () -> state.active, ctx.isValid(), soundPos, ITSounds.advancedCokeOven, () -> {
                         LocalPlayer player = Minecraft.getInstance().player;
                         if (player == null) { return 0f; }
                         return (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
@@ -317,8 +317,8 @@ public class ITAdvancedCokeOvenLogic implements IMultiblockLogic<ITAdvancedCokeO
         public double getProcessSpeed(IMultiblockLevel level) {
             int numActive = 0;
             for (BlockPos offset : HEATER_OFFSETS) {
-                CokeOvenHeaterBlockEntity preheater = getPreheater(level, offset);
-                if (preheater != null) numActive += preheater.doSpeedup();
+                CokeOvenHeaterBlockEntity heater = getHeater(level, offset);
+                if (heater != null) numActive += heater.doSpeedup();
             }
             return 1.0 + numActive * 0.25;
         }
@@ -326,13 +326,13 @@ public class ITAdvancedCokeOvenLogic implements IMultiblockLogic<ITAdvancedCokeO
         @Override
         public void turnOff(IMultiblockLevel level) {
             for (BlockPos offset : HEATER_OFFSETS) {
-                CokeOvenHeaterBlockEntity preheater = getPreheater(level, offset);
-                if (preheater != null) { preheater.turnOff(); }
+                CokeOvenHeaterBlockEntity heater = getHeater(level, offset);
+                if (heater != null) { heater.turnOff(); }
             }
         }
 
         @Nullable
-        public CokeOvenHeaterBlockEntity getPreheater(IMultiblockLevel level, BlockPos pos) {
+        public CokeOvenHeaterBlockEntity getHeater(IMultiblockLevel level, BlockPos pos) {
             BlockEntity te = level.getBlockEntity(pos);
             return te instanceof CokeOvenHeaterBlockEntity heater ? heater : null;
         }
@@ -340,7 +340,7 @@ public class ITAdvancedCokeOvenLogic implements IMultiblockLogic<ITAdvancedCokeO
         @SuppressWarnings("unused")
         public GetterAndSetter<Boolean> preheaterActive(IMultiblockLevel level, int index) {
             return GetterAndSetter.getterOnly(() -> {
-                CokeOvenHeaterBlockEntity heater = getPreheater(level, HEATER_OFFSETS[index]);
+                CokeOvenHeaterBlockEntity heater = getHeater(level, HEATER_OFFSETS[index]);
                 return heater != null && heater.active;
             });
         }
