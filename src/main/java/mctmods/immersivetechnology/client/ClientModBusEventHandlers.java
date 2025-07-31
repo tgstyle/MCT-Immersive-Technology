@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.client;
 
-import mctmods.immersivetechnology.client.renderer.AdvancedCokeOvenRenderer;
 import mctmods.immersivetechnology.client.renderer.CokeOvenHeaterRenderer;
 import mctmods.immersivetechnology.client.renderer.GasTurbineRenderer;
 import mctmods.immersivetechnology.client.renderer.OpenBarrelRenderer;
@@ -32,7 +31,6 @@ public class ClientModBusEventHandlers {
     public static void registerBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         registerBERenderNoContext(event, ITBlockEntities.OPEN_BARREL::get, OpenBarrelRenderer::new);
         registerBERenderNoContext(event, ITBlockEntities.COKE_OVEN_HEATER::get, CokeOvenHeaterRenderer::new);
-        registerBERenderNoContext(event, () -> ITMultiblockProvider.ADVANCED_COKE_OVEN.masterBE().get(), AdvancedCokeOvenRenderer::new);
         registerBERenderNoContext(event, () -> ITMultiblockProvider.GAS_TURBINE.masterBE().get(), GasTurbineRenderer::new);
         registerBERenderNoContext(event, () -> ITMultiblockProvider.STEAM_TURBINE.masterBE().get(), SteamTurbineRenderer::new);
     }

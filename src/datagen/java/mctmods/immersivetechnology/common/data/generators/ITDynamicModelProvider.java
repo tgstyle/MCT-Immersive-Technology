@@ -31,7 +31,7 @@ public class ITDynamicModelProvider extends ModelProvider<ITDynamicModelProvider
         for(Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet()) { withExistingParent(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(multiblock.getKey())).getPath(), multiblock.getValue().getLocation()); }
         getBuilder(CokeOvenHeaterRenderer.NAME)
                 .customLoader(ObjModelBuilder::begin)
-                .modelLocation(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "models/block/metal/obj/coke_oven_heater.obj"))
+                .modelLocation(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "models/block/metal/obj/coke_oven_heater_fan.obj"))
                 .flipV(true);
         getBuilder(SteamTurbineRenderer.NAME)
                 .customLoader(ObjModelBuilder::begin)
