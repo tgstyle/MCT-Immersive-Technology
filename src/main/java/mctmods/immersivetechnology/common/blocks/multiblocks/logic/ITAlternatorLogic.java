@@ -6,9 +6,9 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerT
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPosition;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
@@ -16,7 +16,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapabil
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AlternatorShape;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
@@ -49,7 +49,6 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
-
         if (!state.isSoundPlaying.getAsBoolean()) {
             final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(1.5, 1.5, 1.5));
             state.isSoundPlaying = ITMultiblockSound.startSound(
@@ -59,7 +58,7 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
                     ITSounds.alternator,
                     () -> {
                         LocalPlayer player = Minecraft.getInstance().player;
-                        if (player == null) { return 0f; }
+                        if (player == null) return 0f;
                         float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
                         float percentage = (float) state.speed / state.maxSpeed;
                         return (5 * percentage) / attenuation;
@@ -106,7 +105,7 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
 
         if (hasTurbine) {
             state.speed = turbineSpeed;
-            state.torqueMult = turbineTorque;
+            state.torqueMultiplier = turbineTorque;
         }
         else if (state.speed > 0) {
             state.speed = Math.max(state.speed - 6, 0);
@@ -159,7 +158,7 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
         if (state.speed < 900) return;
         double ratio = (double) state.speed / state.maxSpeed;
         if (ratio > 0.0) {
-            int generated = (int) Math.round(Math.pow(ratio, 2.0) * state.torqueMult * 12288);
+            int generated = (int) Math.round(Math.pow(ratio, 2.0) * state.torqueMultiplier * 12288);
             int current = state.energy.getEnergyStored();
             int newEnergy = Math.min(state.energy.getMaxEnergyStored(), current + generated);
             state.energy.setStoredEnergy(newEnergy);
@@ -177,7 +176,7 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
                 .toList());
 
         if (!presentOutputs.isEmpty()) {
-            int output = (int) (12288 * state.torqueMult);
+            int output = (int) (12288 * state.torqueMultiplier);
             int toDistribute = Math.min(output, state.energy.getEnergyStored());
             int remaining = 0;
             int perPort = 4096;
@@ -192,14 +191,10 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
     }
 
     @Override
-    public State createInitialState(IInitialMultiblockContext<State> context) {
-        return new ITAlternatorLogic.State(context);
-    }
+    public State createInitialState(IInitialMultiblockContext<State> context) { return new State(context); }
 
     @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) {
-        return FullblockShape.GETTER;
-    }
+    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AlternatorShape.GETTER; }
 
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
@@ -221,7 +216,7 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
 
         public boolean active = false;
         public int speed = 0;
-        public float torqueMult = 1f;
+        public float torqueMultiplier = 1f;
         public int maxSpeed = 1800;
         public BooleanSupplier isSoundPlaying = () -> false;
 
@@ -246,7 +241,7 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
             EnergyHelper.serializeTo(energy, nbt);
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
-            nbt.putFloat("torqueMult", torqueMult);
+            nbt.putFloat("torqueMultiplier", torqueMultiplier);
         }
 
         @Override
@@ -254,7 +249,7 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
             EnergyHelper.deserializeFrom(energy, nbt);
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
-            torqueMult = nbt.getFloat("torqueMult");
+            torqueMultiplier = nbt.getFloat("torqueMultiplier");
             energy.setStoredEnergy(Math.max(0, energy.getEnergyStored()));
         }
 
@@ -262,14 +257,14 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
         public void writeSyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
-            nbt.putFloat("torqueMult", torqueMult);
+            nbt.putFloat("torqueMultiplier", torqueMultiplier);
         }
 
         @Override
         public void readSyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
-            torqueMult = nbt.getFloat("torqueMult");
+            torqueMultiplier = nbt.getFloat("torqueMultiplier");
         }
     }
 }

@@ -14,7 +14,7 @@ import mctmods.immersivetechnology.client.particles.ColoredSmokeData;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerFuelRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.BoilerShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
@@ -165,7 +165,7 @@ public class ITBoilerLogic implements IMultiblockLogic<ITBoilerLogic.State>, ISe
     public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return FullblockShape.GETTER; }
+    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerShape.GETTER; }
 
     public static class State implements IMultiblockState {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();

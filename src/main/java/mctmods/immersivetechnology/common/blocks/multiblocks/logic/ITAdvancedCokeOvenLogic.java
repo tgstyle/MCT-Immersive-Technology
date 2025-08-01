@@ -26,7 +26,7 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseIt
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.AdvancedCokeOvenProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCokeOvenFuel;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCokeOvenRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AdvCokeOvenShape;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AdvancedCokeOvenShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler;
@@ -181,7 +181,7 @@ public class ITAdvancedCokeOvenLogic implements IMultiblockLogic<ITAdvancedCokeO
     public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AdvCokeOvenShape.GETTER; }
+    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AdvancedCokeOvenShape.GETTER; }
 
     @Override
     public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {

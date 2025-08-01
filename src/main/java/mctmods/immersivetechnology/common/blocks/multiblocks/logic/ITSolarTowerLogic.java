@@ -11,7 +11,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPos
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarTowerRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarTowerShape;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
@@ -27,8 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
-public class ITSolarTowerLogic implements  IMultiblockLogic<ITSolarTowerLogic.State>, IServerTickableComponent<ITSolarTowerLogic.State>, IClientTickableComponent<ITSolarTowerLogic.State>
-{
+public class ITSolarTowerLogic implements IMultiblockLogic<ITSolarTowerLogic.State>, IServerTickableComponent<ITSolarTowerLogic.State>, IClientTickableComponent<ITSolarTowerLogic.State> {
     @Override
     public State createInitialState(IInitialMultiblockContext iInitialMultiblockContext) {
         return null;
@@ -36,12 +35,11 @@ public class ITSolarTowerLogic implements  IMultiblockLogic<ITSolarTowerLogic.St
 
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) {
-        return FullblockShape.GETTER;
+        return SolarTowerShape.GETTER;
     }
 
     @Override
-    public LazyOptional getCapability(IMultiblockContext ctx, CapabilityPosition position, Capability cap)
-    {
+    public LazyOptional getCapability(IMultiblockContext ctx, CapabilityPosition position, Capability cap) {
         return IMultiblockLogic.super.getCapability(ctx, position, cap);
     }
 
@@ -60,8 +58,7 @@ public class ITSolarTowerLogic implements  IMultiblockLogic<ITSolarTowerLogic.St
 
     }
 
-    public static class State implements IMultiblockState, ProcessContext.ProcessContextInWorld<SolarTowerRecipe>
-    {
+    public static class State implements IMultiblockState, ProcessContext.ProcessContextInWorld<SolarTowerRecipe> {
         @Override
         public void writeSaveNBT(CompoundTag compoundTag) {
 
