@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 public class ITParticles {
     public static final DeferredRegister<ParticleType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, ITLib.MODID);
 
-    public static final RegistryObject<ParticleType<ColoredSmokeData>> COLORED_SMOKE = REGISTER.register("colored_smoke", () -> new ParticleType<ColoredSmokeData>(false, ColoredSmokeData.DESERIALIZER) {
+    public static final RegistryObject<ParticleType<ColoredSmokeData>> COLORED_SMOKE = REGISTER.register("colored_smoke", () -> new ParticleType<>(false, ColoredSmokeData.DESERIALIZER) {
         @Override
-        public @NotNull Codec<ColoredSmokeData> codec() { return ColoredSmokeData.CODEC; }
+        public @NotNull Codec<ColoredSmokeData> codec() {return ColoredSmokeData.CODEC;}
     });
 }

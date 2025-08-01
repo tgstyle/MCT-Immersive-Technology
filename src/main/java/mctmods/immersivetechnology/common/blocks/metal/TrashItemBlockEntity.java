@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.metal.helper.ITTrashCanBounds;
+import mctmods.immersivetechnology.common.blocks.metal.shape.TrashCanShape;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TrashItemBlockEntity extends TrashCommonBlockEntity implements IItemHandlerModifiable, ITBlockInterfaces.IInteractionObjectIE<TrashItemBlockEntity>, ITTrashCanBounds, Container {
+public class TrashItemBlockEntity extends TrashCommonBlockEntity implements IItemHandlerModifiable, ITBlockInterfaces.IInteractionObjectIE<TrashItemBlockEntity>, TrashCanShape, Container {
     public TrashItemBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.TRASH_ITEM.get(), pos, state); }
 
     @SuppressWarnings("unchecked")

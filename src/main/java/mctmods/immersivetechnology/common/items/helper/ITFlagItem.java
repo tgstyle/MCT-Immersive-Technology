@@ -1,9 +1,6 @@
 package mctmods.immersivetechnology.common.items.helper;
 
 
-
-public interface ITFlagItem
-{
+public interface ITFlagItem {
     int getColor(int index);
-
 }

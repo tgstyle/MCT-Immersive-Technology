@@ -23,8 +23,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import mctmods.immersivetechnology.core.lib.ITLib; // Add this import for MODID
-
 public class ITMBFormationItem extends Item {
     public ITMBFormationItem() {
         super(new Item.Properties());

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.metal.helper.ITTrashCanBounds;
+import mctmods.immersivetechnology.common.blocks.metal.shape.TrashCanShape;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
-public class TrashEnergyBlockEntity extends TrashCommonBlockEntity implements IEnergyStorage, ITTrashCanBounds {
+public class TrashEnergyBlockEntity extends TrashCommonBlockEntity implements IEnergyStorage, TrashCanShape {
     public TrashEnergyBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.TRASH_ENERGY.get(), pos, state); }
 
     @SuppressWarnings("unchecked")

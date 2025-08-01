@@ -15,7 +15,6 @@ import blusunrize.immersiveengineering.common.register.IEBlocks;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.helper.ITMultiblockBuilder;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -25,13 +24,16 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.ForgeRegistries;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public class ITRegistrationHolder {
-    private static final List<Consumer<IEventBus>> MOD_BUS_CALLBACKS = new ArrayList<>();
+    private static final List<Consumer<IEventBus>> MOD_BUS_CALLBACKS = new ArrayList<>(); // For future mod bus callbacks
 
     public static void initialize(IEventBus modEventBus) { ITMultiblockProvider.init(); ITMenuTypes.REGISTER.register(modEventBus); }
 
@@ -62,5 +64,5 @@ public class ITRegistrationHolder {
         protected MultiblockBuilder<S> self() { return this; }
     }
 
-    public static ResourceLocation getRegistryNameOf(Block block) { return BuiltInRegistries.BLOCK.getKey(block); }
+    public static ResourceLocation getRegistryNameOf(Block block) { return ForgeRegistries.BLOCKS.getKey(block); }
 }

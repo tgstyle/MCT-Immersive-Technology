@@ -14,6 +14,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import javax.annotation.Nonnull;
 import java.util.function.Function;
 
+@SuppressWarnings("unused")
 public class ITPacketHandler {
     public static final String NET_VERSION = "1";
     public static final SimpleChannel INSTANCE = NetworkRegistry.ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "main")).networkProtocolVersion(() -> NET_VERSION).serverAcceptedVersions(NET_VERSION::equals).clientAcceptedVersions(NET_VERSION::equals).simpleChannel();

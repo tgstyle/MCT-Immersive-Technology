@@ -80,14 +80,18 @@ public class ITFluids {
     public static List<? extends Fluid> getITFluids() { return REGISTER.getEntries().stream().map(RegistryObject::get).collect(Collectors.toList()); }
 
     public record FluidEntry(RegistryObject<ITFluid> flowing, RegistryObject<ITFluid> still, ITBlocks.BlockEntry<ITFluidBlock> block, RegistryObject<BucketItem> bucket, RegistryObject<FluidType> type, List<Property<?>> properties, int tintColor) {
+        @SuppressWarnings("unused")
         private static ITFluids.FluidEntry make(String name, ResourceLocation stillTex, ResourceLocation flowingTex) { return make(name, 0, stillTex, flowingTex, null, -1); }
 
+        @SuppressWarnings("unused")
         private static ITFluids.FluidEntry make(String name, ResourceLocation stillTex, ResourceLocation flowingTex, Consumer<FluidType.Properties> buildAttributes) { return make(name, 0, stillTex, flowingTex, buildAttributes, -1); }
 
+        @SuppressWarnings("unused")
         private static ITFluids.FluidEntry make(String name, int burnTime, ResourceLocation stillTex, ResourceLocation flowingTex) { return make(name, burnTime, stillTex, flowingTex, null, -1); }
 
         private static ITFluids.FluidEntry make(String name, int burnTime, ResourceLocation stillTex, ResourceLocation flowingTex, @Nullable Consumer<FluidType.Properties> buildAttributes, int tintColor) {return make(name, burnTime, stillTex, flowingTex, ITFluid::new, ITFluid.Flowing::new, buildAttributes, ImmutableList.of(), tintColor); }
 
+        @SuppressWarnings("unused")
         private static ITFluids.FluidEntry make(String name, ResourceLocation stillTex, ResourceLocation flowingTex, Function<ITFluids.FluidEntry, ? extends ITFluid> makeStill, Function<ITFluids.FluidEntry, ? extends ITFluid> makeFlowing, @Nullable Consumer<FluidType.Properties> buildAttributes, ImmutableList<Property<?>> properties, int tintColor) { return make(name, 0, stillTex, flowingTex, makeStill, makeFlowing, buildAttributes, properties, tintColor); }
 
         private static ITFluids.FluidEntry make(String name, int burnTime, ResourceLocation stillTex, ResourceLocation flowingTex, Function<ITFluids.FluidEntry, ? extends ITFluid> makeStill, Function<ITFluids.FluidEntry, ? extends ITFluid> makeFlowing, @Nullable Consumer<FluidType.Properties> buildAttributes, List<Property<?>> properties, int tintColor) { FluidType.Properties builder = FluidType.Properties.create().sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL).sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY);
@@ -137,6 +141,7 @@ public class ITFluids {
                 @Override
                 public int getBurnTime(ItemStack itemStack, RecipeType<?> type) {return burnTime;}
 
+                @SuppressWarnings("unused")
                 public boolean emptyContents(@Nullable Player player, Level level, BlockPos pos, @Nullable HitResult target) {
                     boolean result;
                     if (target == null) { result = super.emptyContents(player, level, pos, null, null); }

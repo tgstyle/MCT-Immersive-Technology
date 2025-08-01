@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.blocks.metal.helper;
+package mctmods.immersivetechnology.common.blocks.metal.shape;
 
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public interface ITTrashCanBounds extends ITBlockInterfaces.IBlockBounds {
+public interface TrashCanShape extends ITBlockInterfaces.IBlockBounds {
     @Override
     default @NotNull VoxelShape getBlockBounds(@Nullable CollisionContext ctx) { return Shapes.box(0.125, 0, 0.125, 0.875, 1, 0.875); }
 }

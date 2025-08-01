@@ -13,21 +13,15 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.logic.helper.ITMult
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblockPartBlockWithMirrorState;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITNonMirrorableWithActiveBlock;
 import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.material.PushReaction;
 import java.util.HashMap;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 public class ITMultiblockProvider {
     public static HashMap<String, MultiblockRegistration<?>> MB_REGISTRY_MAP = new HashMap<>();
     public static final HashMap<String, TemplateMultiblock> MB_TEMPLATE_MAP = new HashMap<>();
-    public static Function<String, MultiblockRegistration<?>> getMB = MB_REGISTRY_MAP::get;
     public static Function<String, TemplateMultiblock> getMBTemplate = MB_TEMPLATE_MAP::get;
 
     private static <T extends MultiblockHandler.IMultiblock> T registerMultiblock(T multiblock) { MultiblockHandler.registerMultiblock(multiblock); return multiblock; }
@@ -35,28 +29,6 @@ public class ITMultiblockProvider {
     private static void registerMB(String registry_name, ITTemplateMultiblock block, MultiblockRegistration<?> registration) { registerMultiblockTemplate(registry_name, block); MB_REGISTRY_MAP.put(registry_name, registration); }
 
     public static void registerMultiblockTemplate(String registry_name, TemplateMultiblock template) { MB_TEMPLATE_MAP.put(registry_name, registerMultiblock(template)); }
-
-    public static <S extends IMultiblockState> MultiblockRegistration<S> registerMetalMultiblock(String name, IMultiblockLogic<S> logic, Supplier<TemplateMultiblock> structure) { return registerMetalMultiblock(name, logic, structure, null); }
-
-    public static <S extends IMultiblockState> MultiblockRegistration<S> registerMetalMultiblock(String name, IMultiblockLogic<S> logic, Supplier<TemplateMultiblock> structure, @Nullable Consumer<ITMultiblockBuilder<S>> extras) {
-        BlockBehaviour.Properties prop = BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
-                .strength(3, 15)
-                .requiresCorrectToolForDrops()
-                .isViewBlocking((state, blockReader, pos) -> false)
-                .noOcclusion()
-                .dynamicShape()
-                .pushReaction(PushReaction.BLOCK);
-        return registerMultiblock(name, logic, structure, extras, prop);
-    }
-
-    public static <S extends IMultiblockState> MultiblockRegistration<S> registerMultiblock(String name, IMultiblockLogic<S> logic, Supplier<TemplateMultiblock> structure, @Nullable Consumer<ITMultiblockBuilder<S>> extras, BlockBehaviour.Properties prop) {
-        ITMultiblockBuilder<S> builder = new ITMultiblockBuilder<>(logic, name)
-                .structure(structure)
-                .defaultBlock(ITBlocks.REGISTER, ITItems.REGISTER, prop)
-                .customBEs(ITBlockEntities.REGISTER);
-        if (extras != null) { extras.accept(builder); }
-        return builder.build();
-    }
 
     public static <S extends IMultiblockState> ITMultiblockBuilder<S> stone(IMultiblockLogic<S> logic, String name, boolean solid) {
         BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
@@ -67,13 +39,13 @@ public class ITMultiblockProvider {
         return new ITMultiblockBuilder<>(logic, name)
                 .notMirrored()
                 .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITNonMirrorableWithActiveBlock<>(properties, r), ITBlockItem::new)
-                .customBEs(ITBlockEntities.REGISTER);
+                .defaultBEs(ITBlockEntities.REGISTER);
     }
 
     public static <S extends IMultiblockState> ITMultiblockBuilder<S> metal(IMultiblockLogic<S> logic, String name) {
         return new ITMultiblockBuilder<>(logic, name)
                 .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockWithMirrorState<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
-                .customBEs(ITBlockEntities.REGISTER);
+                .defaultBEs(ITBlockEntities.REGISTER);
     }
 
     public static final MultiblockRegistration<ITBoilerLogic.State> BOILER =

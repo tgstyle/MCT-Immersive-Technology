@@ -7,7 +7,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
-@SuppressWarnings("all")
+@SuppressWarnings("unused")
 public class ITCreativeTabs {
     public static final DeferredRegister<CreativeModeTab> REGISTER = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ITLib.MODID);
 
@@ -21,8 +21,6 @@ public class ITCreativeTabs {
     );
 
     private static void fillITTab(CreativeModeTab.ItemDisplayParameters parms, CreativeModeTab.Output out) {
-        ITItems.getITItems().forEach(item -> {
-            out.accept(item.getDefaultInstance());
-        });
+        ITItems.getITItems().forEach(item -> out.accept(item.getDefaultInstance()));
     }
 }

@@ -41,19 +41,11 @@ public class ITItems {
         ITEM_REGISTRY_MAP.put("salt", SALT.regObject);
     }
 
-    private static <T> Consumer<T> nothing() { return $ -> { }; }
+    private static ITItems.ItemRegObject<ITBaseItem> simple() { return simple($ -> { }, $ -> { }); }
 
-    private static ITItems.ItemRegObject<ITBaseItem> simple() { return simple("salt", $ -> { }, $ -> { }); }
-
-    private static ITItems.ItemRegObject<ITBaseItem> simpleWithStackSize(String name, int maxSize) { return simple(name, p -> p.stacksTo(maxSize), i -> { }); }
-
-    private static ITItems.ItemRegObject<ITBaseItem> simple(String name, Consumer<Item.Properties> makeProps, Consumer<ITBaseItem> processItem) { return register(name, () -> Util.make(new ITBaseItem(Util.make(new Item.Properties(), makeProps)), processItem)); }
-
-    private static <T extends Item> ITItems.ItemRegObject<T> simple(Supplier<T> make) { return register("it_formation_tool", make); }
+    private static ITItems.ItemRegObject<ITBaseItem> simple(Consumer<Item.Properties> makeProps, Consumer<ITBaseItem> processItem) { return register("salt", () -> Util.make(new ITBaseItem(Util.make(new Item.Properties(), makeProps)), processItem)); }
 
     static <T extends Item> ITItems.ItemRegObject<T> register(String name, Supplier<? extends T> make) { return new ITItems.ItemRegObject<>(REGISTER.register(name, make)); }
-
-    private static <T extends Item> ITItems.ItemRegObject<T> of(T existing) { return new ITItems.ItemRegObject<>(RegistryObject.create(ForgeRegistries.ITEMS.getKey(existing), ForgeRegistries.ITEMS)); }
 
     public record ItemRegObject<T extends Item>(RegistryObject<T> regObject) implements Supplier<T>, ItemLike {
         @Override

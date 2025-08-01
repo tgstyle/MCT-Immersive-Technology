@@ -49,6 +49,16 @@ public class SteelBarrelBlockEntity extends IEBaseBlockEntity implements IEServe
     public SteelBarrelBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.STEEL_BARREL.get(), pos, state); }
 
     @Override
+    public void onLoad() {
+        super.onLoad();
+        assert level != null;
+        if (!level.isClientSide) {
+            updateBlockState();
+            level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+        }
+    }
+
+    @Override
     public void tickServer() {
         if (isRSPowered()) return;
         boolean update = false;
@@ -84,7 +94,8 @@ public class SteelBarrelBlockEntity extends IEBaseBlockEntity implements IEServe
             sideConfig.put(Direction.UP, IOSideConfig.INPUT);
         }
         tank.readFromNBT(nbt.getCompound("tank"));
-        if (!descPacket) { updateBlockState(); }
+        if (descPacket) markContainingBlockForUpdate(null);
+        else updateBlockState();
     }
 
     @Override

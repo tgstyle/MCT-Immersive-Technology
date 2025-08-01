@@ -49,10 +49,6 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) {
         registerBERenders(event);
-        registerEntityRenders(event);
-    }
-
-    private static void registerEntityRenders(EntityRenderersEvent.RegisterRenderers event) {
     }
 
     private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, Supplier<BlockEntityRenderer<T>> render) {

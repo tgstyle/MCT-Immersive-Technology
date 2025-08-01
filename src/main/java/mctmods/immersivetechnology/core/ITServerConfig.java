@@ -19,14 +19,10 @@ public class ITServerConfig {
 
     private static Config rawConfig;
 
-    public static Config getRawConfig() {
-        return Preconditions.checkNotNull(rawConfig);
-    }
+    public static Config getRawConfig() { return Preconditions.checkNotNull(rawConfig); }
 
     @SubscribeEvent
     public static void onConfigReload(ModConfigEvent ev) {
-        if (SPEC == ev.getConfig().getSpec()) {
-            rawConfig = ev.getConfig().getConfigData();
-        }
+        if (SPEC == ev.getConfig().getSpec()) { rawConfig = ev.getConfig().getConfigData(); }
     }
 }
