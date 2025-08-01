@@ -19,251 +19,675 @@ public class SteamTurbineShape extends GenericShape {
 
         List<AABB> main = new ArrayList<>();
 
-        if (bY == 0) {
-            if (bX == 0 && bZ == 1) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 1 && bZ == 1) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 1) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 0 && bZ == 2) {
-                main.add(new AABB(0, 0, 0, 1, 1, 0.5));
-                main.add(new AABB(0.5, 0, 0.5, 1, 1, 1));
-            }
-            if (bX == 1 && bZ == 2) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 2) {
-                main.add(new AABB(0, 0, 0, 1, 1, 0.5));
-                main.add(new AABB(0, 0, 0.5, 0.5, 1, 1));
-            }
-            if (bX == 0 && bZ == 3) {
-                main.add(new AABB(0.5, 0, 0, 1, 1, 0.5));
-                main.add(new AABB(0, 0, 0.5, 1, 1, 1));
-            }
-            if (bX == 1 && bZ == 3) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 3) {
-                main.add(new AABB(0, 0, 0.5, 1, 1, 1));
-                main.add(new AABB(0, 0, 0, 0.5, 1, 1));
-            }
-            if (bX == 0 && bZ == 4) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 1 && bZ == 4) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 4) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 0 && bZ == 6) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 1 && bZ == 6) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 6) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 0 && bZ == 7) {
-                main.add(new AABB(0, 0, 0, 1, 1, 0.5));
-                main.add(new AABB(0.5, 0, 0.5, 1, 1, 1));
-            }
-            if (bX == 1 && bZ == 7) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 7) {
-                main.add(new AABB(0, 0, 0, 1, 1, 0.5));
-                main.add(new AABB(0, 0, 0.5, 0.5, 1, 1));
-            }
-            if (bX == 0 && bZ == 8) {
-                main.add(new AABB(0.5, 0, 0, 1, 1, 1));
-            }
-            if (bX == 1 && bZ == 8) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 8) {
-                main.add(new AABB(0, 0, 0, 0.5, 1, 1));
-            }
-            if (bX == 0 && bZ == 9) {
-                main.add(new AABB(0, 0, 0, 1, 0.5, 1));
-            }
-            if (bX == 1 && bZ == 9) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 9) {
-                main.add(new AABB(0, 0, 0, 1, 0.5, 1));
-            }
+        if (bX == 0 && bY == 0 && bZ == 0) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.1250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.1250D, 0.1250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.8750D, 0.1250D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 0 && bY == 0 && bZ == 1) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.0000D, 0.1250D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.3750D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.1250D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.3750D, 0.0000D, 0.6250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.1250D, 0.6250D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.8750D, 0.6250D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 0 && bY == 0 && bZ == 2) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.3750D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.6250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.6250D, 0.1250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.8750D, 0.6250D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.1250D, 0.0000D, 0.6250D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.6250D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 0 && bY == 0 && bZ == 3) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.0000D, 0.1250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 0 && bY == 0 && bZ == 4) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 0 && bY == 0 && bZ == 5) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.1250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.1250D, 0.1250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.8750D, 0.1250D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 0 && bY == 0 && bZ == 6) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.0000D, 0.1250D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.3750D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.1250D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.3750D, 0.0000D, 0.6250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.1250D, 0.6250D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.8750D, 0.6250D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 0 && bY == 0 && bZ == 7) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 1.0000D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.1250D, 0.0000D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.6250D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 0 && bY == 0 && bZ == 8) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.1250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.1250D, 0.1250D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.3750D, 0.1250D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.6250D, 0.6250D, 0.5000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.3750D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.8750D, 1.0000D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.3750D, 0.1250D, 1.0000D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.6250D, 0.1250D, 0.5000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.5000D, 0.8750D, 0.1250D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.6250D, 0.1250D, 1.0000D, 1.0000D, 0.3750D));
+        }
+        if (bX == 0 && bY == 1 && bZ == 0) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.1250D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.3750D, 0.1250D, 1.0000D, 0.7500D, 0.3750D));
+            main.add(new AABB(0.2500D, 0.3750D, 0.3750D, 0.3750D, 0.7500D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.5000D, 0.3750D, 0.5000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.7500D, 0.1250D, 1.0000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.5000D, 0.8750D, 0.3750D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.0000D, 1.0000D, 1.0000D, 0.3750D));
+        }
+        if (bX == 0 && bY == 1 && bZ == 1) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.6250D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.0000D, 1.0000D, 0.3750D, 0.3750D));
+            main.add(new AABB(0.2500D, 0.3750D, 0.0000D, 0.3750D, 0.7500D, 0.3750D));
+            main.add(new AABB(0.3750D, 0.0000D, 0.6250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.3750D, 0.1250D, 1.0000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.3750D, 0.5000D, 0.0000D, 0.5000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.5000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.3750D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.7500D, 0.3750D, 0.3750D, 1.0000D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.6250D, 0.3750D, 1.0000D, 0.8750D, 1.0000D));
+        }
+        if (bX == 0 && bY == 1 && bZ == 2) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.3750D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.6250D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.3750D, 0.6250D, 1.0000D, 0.7500D, 0.8750D));
+            main.add(new AABB(0.2500D, 0.3750D, 0.8750D, 0.3750D, 0.7500D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.5000D, 0.8750D, 0.5000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.7500D, 0.6250D, 1.0000D, 1.0000D, 0.8750D));
+            main.add(new AABB(0.5000D, 0.8750D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.0000D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.7500D, 0.3750D, 0.0000D, 1.0000D, 0.6250D, 0.8750D));
+            main.add(new AABB(0.8750D, 0.6250D, 0.0000D, 1.0000D, 0.8750D, 0.8750D));
+        }
+        if (bX == 0 && bY == 1 && bZ == 3) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.0000D, 1.0000D, 0.3750D, 0.8750D));
+            main.add(new AABB(0.2500D, 0.3750D, 0.0000D, 0.3750D, 0.7500D, 0.8750D));
+            main.add(new AABB(0.3750D, 0.3750D, 0.6250D, 1.0000D, 1.0000D, 0.8750D));
+            main.add(new AABB(0.3750D, 0.5000D, 0.0000D, 0.5000D, 1.0000D, 0.8750D));
+            main.add(new AABB(0.5000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 0.8750D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 0 && bY == 1 && bZ == 4) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.0000D, 1.0000D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 0 && bY == 1 && bZ == 5) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.1250D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.3750D, 0.1250D, 1.0000D, 0.7500D, 0.3750D));
+            main.add(new AABB(0.2500D, 0.3750D, 0.3750D, 0.3750D, 0.7500D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.5000D, 0.3750D, 0.5000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.7500D, 0.1250D, 1.0000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.5000D, 0.8750D, 0.3750D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.0000D, 1.0000D, 1.0000D, 0.3750D));
+        }
+        if (bX == 0 && bY == 1 && bZ == 6) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.6250D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.0000D, 1.0000D, 0.3750D, 0.3750D));
+            main.add(new AABB(0.2500D, 0.3750D, 0.0000D, 0.3750D, 0.7500D, 0.3750D));
+            main.add(new AABB(0.3750D, 0.0000D, 0.6250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.3750D, 0.1250D, 1.0000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.3750D, 0.5000D, 0.0000D, 0.5000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.5000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.3750D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.7500D, 0.3750D, 0.3750D, 1.0000D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.6250D, 0.3750D, 1.0000D, 0.8750D, 1.0000D));
+        }
+        if (bX == 0 && bY == 1 && bZ == 7) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.8750D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.0000D, 1.0000D, 0.3750D, 0.8750D));
+            main.add(new AABB(0.7500D, 0.3750D, 0.0000D, 1.0000D, 0.6250D, 0.8750D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.8750D, 1.0000D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.6250D, 0.0000D, 1.0000D, 0.8750D, 0.8750D));
+        }
+        if (bX == 0 && bY == 1 && bZ == 8) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.1250D, 0.6250D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.0000D, 0.6250D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.1250D, 0.1250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.8750D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.8750D, 0.1250D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.1250D, 0.1250D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.0000D, 0.1250D, 1.0000D, 0.6250D, 0.3750D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.0000D, 1.0000D, 0.6250D, 0.3750D));
+        }
+        if (bX == 0 && bY == 2 && bZ == 0) {
+            main.add(new AABB(0.3750D, 0.0000D, 0.1250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.1250D, 1.0000D, 0.2500D, 0.3750D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.3750D, 0.8750D, 0.2500D, 1.0000D));
+            main.add(new AABB(0.7500D, 0.2500D, 0.1250D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.3750D, 0.1250D, 1.0000D, 0.5000D, 1.0000D));
+        }
+        if (bX == 0 && bY == 2 && bZ == 1) {
+            main.add(new AABB(0.3750D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.3750D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.0000D, 0.8750D, 0.2500D, 0.3750D));
+            main.add(new AABB(0.7500D, 0.2500D, 0.0000D, 1.0000D, 0.3750D, 0.3750D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.1250D, 1.0000D, 0.5000D, 0.3750D));
+            main.add(new AABB(0.8750D, 0.3750D, 0.0000D, 1.0000D, 0.5000D, 0.3750D));
+        }
+        if (bX == 0 && bY == 2 && bZ == 2) {
+            main.add(new AABB(0.3750D, 0.0000D, 0.6250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.6250D, 1.0000D, 0.2500D, 0.8750D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.8750D, 0.8750D, 0.2500D, 1.0000D));
+            main.add(new AABB(0.7500D, 0.2500D, 0.6250D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.3750D, 0.6250D, 1.0000D, 0.5000D, 1.0000D));
+        }
+        if (bX == 0 && bY == 2 && bZ == 3) {
+            main.add(new AABB(0.3750D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.8750D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.0000D, 0.8750D, 0.2500D, 0.8750D));
+            main.add(new AABB(0.7500D, 0.2500D, 0.0000D, 1.0000D, 0.3750D, 0.8750D));
+            main.add(new AABB(0.8750D, 0.0000D, 0.8750D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.6250D, 1.0000D, 0.5000D, 0.8750D));
+            main.add(new AABB(0.8750D, 0.3750D, 0.0000D, 1.0000D, 0.5000D, 0.8750D));
+        }
+        if (bX == 0 && bY == 2 && bZ == 4) {
+            main.add(new AABB(0.8750D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.1250D));
+            main.add(new AABB(0.8750D, 0.0000D, 0.8750D, 1.0000D, 0.1250D, 1.0000D));
+        }
+        if (bX == 0 && bY == 2 && bZ == 5) {
+            main.add(new AABB(0.3750D, 0.0000D, 0.1250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.1250D, 1.0000D, 0.2500D, 0.3750D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.3750D, 0.8750D, 0.2500D, 1.0000D));
+            main.add(new AABB(0.7500D, 0.2500D, 0.1250D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.3750D, 0.1250D, 1.0000D, 0.5000D, 1.0000D));
+        }
+        if (bX == 0 && bY == 2 && bZ == 6) {
+            main.add(new AABB(0.3750D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.3750D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.0000D, 0.8750D, 0.2500D, 0.3750D));
+            main.add(new AABB(0.7500D, 0.2500D, 0.0000D, 1.0000D, 0.3750D, 0.3750D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.1250D, 1.0000D, 0.5000D, 0.3750D));
+            main.add(new AABB(0.8750D, 0.3750D, 0.0000D, 1.0000D, 0.5000D, 0.3750D));
+        }
+        if (bX == 0 && bY == 2 && bZ == 7) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 0.6250D, 0.1250D, 1.0000D));
+        }
+        if (bX == 0 && bY == 2 && bZ == 8) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.6250D, 0.1250D, 1.0000D));
+        }
+        if (bX == 1 && bY == 0 && bZ == 0) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.1250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.1250D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 0 && bZ == 1) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.3750D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 0 && bZ == 2) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.3750D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 0 && bZ == 3) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 0 && bZ == 4) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 0 && bZ == 5) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.1250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.1250D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 0 && bZ == 6) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.3750D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 0 && bZ == 7) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 0 && bZ == 8) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.1250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.1250D, 1.0000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.3750D, 1.0000D, 0.7500D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.7500D, 0.3750D, 0.2500D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.7500D, 0.7500D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.7500D, 0.7500D, 0.3750D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 1 && bZ == 0) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.3750D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.3750D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 1 && bZ == 1) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.1250D, 1.0000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.6250D, 0.3750D, 1.0000D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.1250D, 0.8750D, 0.3750D, 0.8750D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 1 && bZ == 2) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.6250D, 1.0000D, 1.0000D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.6250D, 0.0000D, 1.0000D, 0.8750D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.8750D, 0.0000D, 0.8750D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 1 && bZ == 3) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.6250D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 1 && bZ == 4) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 1 && bZ == 5) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.3750D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.3750D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 1 && bZ == 6) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.1250D, 1.0000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.6250D, 0.3750D, 1.0000D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.1250D, 0.8750D, 0.3750D, 0.8750D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.3750D, 0.6250D, 1.0000D, 0.8750D, 1.0000D));
+        }
+        if (bX == 1 && bY == 1 && bZ == 7) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.6250D, 1.0000D, 0.8750D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.8750D, 1.0000D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.6250D, 0.0000D, 1.0000D, 0.8750D, 0.8750D));
+            main.add(new AABB(0.1250D, 0.8750D, 0.0000D, 0.8750D, 1.0000D, 0.8750D));
+            main.add(new AABB(0.8750D, 0.3750D, 0.0000D, 1.0000D, 0.8750D, 0.3750D));
+        }
+        if (bX == 1 && bY == 1 && bZ == 8) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.3750D, 0.2500D, 0.5000D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.0000D, 0.1250D, 0.6250D, 0.3750D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.1250D, 1.0000D, 0.6250D, 0.3750D));
+            main.add(new AABB(0.1250D, 0.3750D, 0.0000D, 1.0000D, 0.6250D, 0.3750D));
+            main.add(new AABB(0.2500D, 0.0000D, 0.7500D, 1.0000D, 0.5000D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.2500D, 0.3750D, 1.0000D, 0.5000D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.5000D, 0.3750D, 0.7500D, 1.0000D, 0.7500D));
+            main.add(new AABB(0.2500D, 0.5000D, 0.7500D, 0.7500D, 0.6250D, 0.8750D));
+            main.add(new AABB(0.7500D, 0.0000D, 0.3750D, 1.0000D, 0.5000D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.0000D, 1.0000D, 0.6250D, 0.3750D));
+        }
+        if (bX == 1 && bY == 2 && bZ == 0) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.1250D, 1.0000D, 0.6250D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.3750D, 1.0000D, 0.6250D, 1.0000D));
+        }
+        if (bX == 1 && bY == 2 && bZ == 1) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.1250D, 1.0000D, 0.6250D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.0000D, 1.0000D, 0.6250D, 0.3750D));
+            main.add(new AABB(0.1250D, 0.0000D, 0.6250D, 0.8750D, 1.0000D, 0.8750D));
+            main.add(new AABB(0.1250D, 0.0000D, 0.8750D, 0.8750D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.8750D, 0.3750D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.0000D, 0.3750D, 0.7500D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.8750D, 0.8750D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 2 && bZ == 2) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.6250D, 1.0000D, 0.6250D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.8750D, 1.0000D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.0000D, 0.0000D, 0.8750D, 0.1250D, 0.3750D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.0000D, 0.3750D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.2500D, 0.0000D, 0.3750D, 0.7500D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.1250D, 0.1250D, 0.8750D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.0000D, 0.8750D, 1.0000D, 0.3750D));
+        }
+        if (bX == 1 && bY == 2 && bZ == 3) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.6250D, 1.0000D, 0.6250D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.0000D, 1.0000D, 0.6250D, 0.8750D));
+        }
+        if (bX == 1 && bY == 2 && bZ == 4) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 1.0000D, 0.1250D, 1.0000D));
+        }
+        if (bX == 1 && bY == 2 && bZ == 5) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.1250D, 1.0000D, 0.6250D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.3750D, 1.0000D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.6250D, 0.3750D, 0.8750D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.1250D, 0.6250D, 0.6250D, 0.3750D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.6250D, 0.8750D, 0.8750D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.6250D, 0.6250D, 0.8750D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 2 && bZ == 6) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.1250D, 1.0000D, 0.6250D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.0000D, 1.0000D, 0.6250D, 0.3750D));
+            main.add(new AABB(0.1250D, 0.6250D, 0.0000D, 0.8750D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.2500D, 0.0000D, 0.3750D, 0.7500D, 0.1250D, 1.0000D));
+        }
+        if (bX == 1 && bY == 2 && bZ == 7) {
+            main.add(new AABB(0.2500D, 0.0000D, 0.0000D, 0.7500D, 0.1250D, 0.8750D));
+        }
+        if (bX == 1 && bY == 2 && bZ == 8) {
+            main.add(new AABB(0.2500D, 0.0000D, 0.2500D, 0.7500D, 0.6250D, 0.5000D));
+            main.add(new AABB(0.2500D, 0.0000D, 0.5000D, 0.7500D, 0.2500D, 0.8750D));
+            main.add(new AABB(0.2500D, 0.2500D, 0.5000D, 0.3750D, 0.6250D, 0.8750D));
+            main.add(new AABB(0.3750D, 0.2500D, 0.6250D, 1.0000D, 0.5000D, 0.7500D));
+            main.add(new AABB(0.3750D, 0.2500D, 0.7500D, 0.7500D, 0.6250D, 0.8750D));
+            main.add(new AABB(0.3750D, 0.3750D, 0.5000D, 1.0000D, 0.5000D, 0.7500D));
+            main.add(new AABB(0.3750D, 0.5000D, 0.5000D, 0.7500D, 0.6250D, 0.8750D));
+            main.add(new AABB(0.6250D, 0.2500D, 0.5000D, 0.7500D, 0.6250D, 0.8750D));
+            main.add(new AABB(0.7500D, 0.1250D, 0.3750D, 1.0000D, 0.5000D, 0.5000D));
+            main.add(new AABB(0.7500D, 0.1250D, 0.5000D, 1.0000D, 0.2500D, 0.7500D));
+        }
+        if (bX == 1 && bY == 3 && bZ == 1) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.5000D, 1.0000D, 1.0000D, 0.7500D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.7500D, 1.0000D, 0.2500D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.2500D, 0.7500D, 0.2500D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.7500D, 0.7500D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.7500D, 0.2500D, 0.7500D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 3 && bZ == 2) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.2500D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.2500D, 0.0000D, 0.2500D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.7500D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.7500D, 0.2500D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 3 && bZ == 3) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.2500D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.2500D, 0.0000D, 0.2500D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.7500D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.7500D, 0.2500D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 3 && bZ == 4) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.2500D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.2500D, 0.0000D, 0.2500D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.7500D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.7500D, 0.2500D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 1 && bY == 3 && bZ == 5) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.2500D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.2500D, 0.0000D, 0.2500D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.1250D, 0.0000D, 0.6250D, 0.3750D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.2500D, 0.3750D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.2500D, 0.7500D, 0.0000D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.3750D, 0.0000D, 0.8750D, 0.8750D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.6250D, 0.6250D, 0.8750D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.0000D, 0.6250D, 0.8750D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.7500D, 0.2500D, 0.0000D, 1.0000D, 1.0000D, 0.6250D));
+        }
+        if (bX == 1 && bY == 3 && bZ == 6) {
+            main.add(new AABB(0.1250D, 0.0000D, 0.0000D, 0.8750D, 0.8750D, 0.1250D));
+        }
+        if (bX == 2 && bY == 0 && bZ == 0) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.1250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.1250D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.1250D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 2 && bY == 0 && bZ == 1) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.6250D, 0.6250D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.3750D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.6250D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.1250D, 0.6250D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.0000D, 1.0000D, 1.0000D, 0.6250D));
+        }
+        if (bX == 2 && bY == 0 && bZ == 2) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.6250D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.3750D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.1250D, 0.0000D, 0.6250D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.6250D, 0.0000D, 0.3750D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.6250D, 0.0000D, 0.6250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.8750D, 0.6250D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.6250D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 2 && bY == 0 && bZ == 3) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 2 && bY == 0 && bZ == 4) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 2 && bY == 0 && bZ == 5) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.1250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.1250D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.1250D, 1.0000D, 1.0000D, 1.0000D));
+        }
+        if (bX == 2 && bY == 0 && bZ == 6) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.6250D, 0.6250D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.3750D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 1.0000D, 1.0000D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.6250D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.1250D, 0.6250D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.0000D, 1.0000D, 1.0000D, 0.6250D));
+        }
+        if (bX == 2 && bY == 0 && bZ == 7) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.6250D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.8750D, 1.0000D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.6250D, 0.8750D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.3750D, 0.1250D, 0.0000D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.0000D, 0.8750D, 1.0000D, 0.6250D, 1.0000D));
+        }
+        if (bX == 2 && bY == 0 && bZ == 8) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.6250D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.1250D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.8750D, 1.0000D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.1250D, 1.0000D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.6250D, 0.0000D, 0.6250D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.6250D, 0.1250D, 0.1250D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.8750D, 0.1250D, 0.1250D, 1.0000D, 0.6250D, 1.0000D));
+        }
+        if (bX == 2 && bY == 1 && bZ == 0) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.0000D, 0.1250D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.3750D, 0.8750D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.3750D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.1250D, 0.8750D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.3750D, 0.1250D, 0.7500D, 0.7500D, 0.3750D));
+            main.add(new AABB(0.1250D, 0.7500D, 0.1250D, 0.6250D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.5000D, 0.5000D, 0.3750D, 0.7500D, 0.7500D, 1.0000D));
+            main.add(new AABB(0.5000D, 0.7500D, 0.3750D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.3750D, 0.3750D, 0.7500D, 0.7500D, 1.0000D));
+        }
+        if (bX == 2 && bY == 1 && bZ == 1) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.6250D, 0.6250D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.0000D, 0.8750D, 0.3750D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.3750D, 0.3750D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.1250D, 0.7500D, 0.7500D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.3750D, 0.2500D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.6250D, 0.3750D, 0.1250D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.7500D, 0.1250D, 0.6250D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 0.6250D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.5000D, 0.5000D, 0.0000D, 0.7500D, 0.7500D, 0.3750D));
+            main.add(new AABB(0.5000D, 0.7500D, 0.0000D, 0.6250D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.6250D, 0.3750D, 0.0000D, 0.7500D, 0.7500D, 0.3750D));
+        }
+        if (bX == 2 && bY == 1 && bZ == 2) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.6250D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.0000D, 0.3750D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.0000D, 0.2500D, 0.6250D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.6250D, 0.0000D, 0.1250D, 0.8750D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.6250D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.6250D, 0.6250D, 0.7500D, 0.7500D, 0.8750D));
+            main.add(new AABB(0.1250D, 0.7500D, 0.6250D, 0.6250D, 1.0000D, 0.8750D));
+            main.add(new AABB(0.2500D, 0.3750D, 0.6250D, 0.7500D, 0.7500D, 0.8750D));
+            main.add(new AABB(0.3750D, 0.1250D, 0.6250D, 0.8750D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.5000D, 0.5000D, 0.8750D, 0.7500D, 0.7500D, 1.0000D));
+            main.add(new AABB(0.5000D, 0.7500D, 0.8750D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.0000D, 0.3750D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.3750D, 0.8750D, 0.7500D, 0.7500D, 1.0000D));
+        }
+        if (bX == 2 && bY == 1 && bZ == 3) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.0000D, 0.8750D, 0.3750D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.8750D, 0.1250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.6250D, 0.7500D, 0.7500D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.7500D, 0.6250D, 0.6250D, 1.0000D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 0.6250D, 1.0000D, 0.8750D));
+            main.add(new AABB(0.5000D, 0.5000D, 0.0000D, 0.7500D, 0.7500D, 0.8750D));
+            main.add(new AABB(0.5000D, 0.7500D, 0.0000D, 0.6250D, 1.0000D, 0.8750D));
+            main.add(new AABB(0.6250D, 0.3750D, 0.0000D, 0.7500D, 0.7500D, 0.8750D));
+        }
+        if (bX == 2 && bY == 1 && bZ == 4) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.0000D, 0.1250D, 1.0000D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.8750D, 0.1250D, 1.0000D, 1.0000D));
+        }
+        if (bX == 2 && bY == 1 && bZ == 5) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.0000D, 0.1250D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.3750D, 0.8750D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.3750D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.1250D, 0.8750D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.3750D, 0.1250D, 0.7500D, 0.7500D, 0.3750D));
+            main.add(new AABB(0.1250D, 0.7500D, 0.1250D, 0.6250D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.5000D, 0.5000D, 0.3750D, 0.7500D, 0.7500D, 1.0000D));
+            main.add(new AABB(0.5000D, 0.7500D, 0.3750D, 0.6250D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.3750D, 0.3750D, 0.7500D, 0.7500D, 1.0000D));
+        }
+        if (bX == 2 && bY == 1 && bZ == 6) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.1250D, 0.6250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.6250D, 0.6250D, 0.8750D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 0.6250D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.0000D, 0.8750D, 0.3750D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.3750D, 0.3750D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.1250D, 0.7500D, 0.7500D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.3750D, 0.2500D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.6250D, 0.3750D, 0.1250D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.7500D, 0.1250D, 0.6250D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.8750D, 0.0000D, 0.6250D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.1250D, 0.6250D, 0.8750D, 0.8750D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.5000D, 0.5000D, 0.0000D, 0.7500D, 0.7500D, 0.3750D));
+            main.add(new AABB(0.5000D, 0.7500D, 0.0000D, 0.6250D, 1.0000D, 0.3750D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.6250D, 0.8750D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.3750D, 0.0000D, 0.7500D, 0.7500D, 0.3750D));
+        }
+        if (bX == 2 && bY == 1 && bZ == 7) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.6250D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.0000D, 0.2500D, 0.8750D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.8750D, 0.3750D, 0.6250D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.6250D, 0.8750D, 0.8750D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.3750D, 0.1250D, 0.8750D, 0.8750D, 0.3750D));
+            main.add(new AABB(0.2500D, 0.3750D, 0.3750D, 0.3750D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.6250D, 0.0000D, 0.8750D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.0000D, 0.8750D, 0.8750D, 1.0000D));
+        }
+        if (bX == 2 && bY == 1 && bZ == 8) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.6250D, 0.3750D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.1250D, 0.1250D, 0.6250D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.7500D, 1.0000D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.0000D, 0.3750D, 0.6250D, 0.3750D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.1250D, 0.8750D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.3750D, 0.3750D, 0.3750D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.6250D, 0.0000D, 0.8750D, 0.8750D, 1.0000D));
+            main.add(new AABB(0.2500D, 0.8750D, 0.2500D, 0.7500D, 1.0000D, 1.0000D));
+            main.add(new AABB(0.6250D, 0.1250D, 0.0000D, 0.8750D, 0.8750D, 1.0000D));
+        }
+        if (bX == 2 && bY == 2 && bZ == 0) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.1250D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.1250D, 0.3750D, 0.2500D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.2500D, 0.1250D, 0.2500D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.1250D, 0.1250D, 0.5000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.0000D, 0.1250D, 0.6250D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.3750D, 0.3750D, 0.2500D, 1.0000D));
+        }
+        if (bX == 2 && bY == 2 && bZ == 1) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.6250D, 0.1250D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.1250D, 0.3750D, 0.2500D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.2500D, 0.0000D, 0.2500D, 0.3750D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.0000D, 0.1250D, 0.5000D, 0.3750D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.0000D, 0.3750D, 0.2500D, 0.3750D));
+        }
+        if (bX == 2 && bY == 2 && bZ == 2) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.6250D, 0.6250D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.6250D, 0.3750D, 0.2500D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.2500D, 0.6250D, 0.2500D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.6250D, 0.1250D, 0.5000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.8750D, 0.3750D, 0.2500D, 1.0000D));
+        }
+        if (bX == 2 && bY == 2 && bZ == 3) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.6250D, 0.1250D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 0.1250D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.6250D, 0.3750D, 0.2500D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.2500D, 0.0000D, 0.2500D, 0.3750D, 0.8750D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.0000D, 0.1250D, 0.5000D, 0.8750D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.0000D, 0.3750D, 0.2500D, 0.8750D));
+        }
+        if (bX == 2 && bY == 2 && bZ == 4) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.1250D, 0.1250D, 0.1250D));
+            main.add(new AABB(0.0000D, 0.0000D, 0.8750D, 0.1250D, 0.1250D, 1.0000D));
+        }
+        if (bX == 2 && bY == 2 && bZ == 5) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.1250D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.1250D, 0.3750D, 0.2500D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.2500D, 0.1250D, 0.2500D, 0.3750D, 1.0000D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.1250D, 0.1250D, 0.5000D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.0000D, 0.1250D, 0.6250D, 0.1250D, 1.0000D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.3750D, 0.3750D, 0.2500D, 1.0000D));
+        }
+        if (bX == 2 && bY == 2 && bZ == 6) {
+            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.6250D, 0.1250D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.1250D, 0.3750D, 0.2500D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.2500D, 0.0000D, 0.2500D, 0.3750D, 0.3750D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.0000D, 0.1250D, 0.5000D, 0.3750D));
+            main.add(new AABB(0.1250D, 0.1250D, 0.0000D, 0.3750D, 0.2500D, 0.3750D));
+        }
+        if (bX == 2 && bY == 2 && bZ == 8) {
+            main.add(new AABB(0.0000D, 0.1250D, 0.3750D, 0.7500D, 0.5000D, 0.5000D));
+            main.add(new AABB(0.0000D, 0.1250D, 0.5000D, 0.7500D, 0.2500D, 0.7500D));
+            main.add(new AABB(0.0000D, 0.2500D, 0.6250D, 0.7500D, 0.5000D, 0.7500D));
+            main.add(new AABB(0.0000D, 0.3750D, 0.5000D, 0.7500D, 0.5000D, 0.7500D));
+            main.add(new AABB(0.2500D, 0.0000D, 0.2500D, 0.7500D, 0.6250D, 0.5000D));
+            main.add(new AABB(0.2500D, 0.0000D, 0.5000D, 0.7500D, 0.2500D, 0.8750D));
+            main.add(new AABB(0.2500D, 0.2500D, 0.5000D, 0.3750D, 0.6250D, 0.8750D));
+            main.add(new AABB(0.3750D, 0.2500D, 0.7500D, 0.7500D, 0.6250D, 0.8750D));
+            main.add(new AABB(0.3750D, 0.5000D, 0.5000D, 0.7500D, 0.6250D, 0.8750D));
+            main.add(new AABB(0.6250D, 0.2500D, 0.5000D, 0.7500D, 0.6250D, 0.8750D));
         }
 
-        if (bY == 1) {
-            if (bX == 1 && bZ == 0) {
-                main.add(new AABB(0.125, 0.125, 0, 0.875, 0.875, 1));
-            }
-            if (bX == 0 && bZ == 1) {
-                main.add(new AABB(0.25, 0, 0.25, 1, 1, 1));
-            }
-            if (bX == 1 && bZ == 1) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 1) {
-                main.add(new AABB(0, 0, 0.25, 0.75, 1, 1));
-            }
-            if (bX == 0 && bZ == 2) {
-                main.add(new AABB(0.5, 0, 0, 1, 1, 1));
-            }
-            if (bX == 1 && bZ == 2) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 2) {
-                main.add(new AABB(0, 0, 0, 0.5, 1, 1));
-            }
-            if (bX == 0 && bZ == 3) {
-                main.add(new AABB(0.5, 0, 0, 1, 1, 1));
-            }
-            if (bX == 1 && bZ == 3) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 3) {
-                main.add(new AABB(0, 0, 0, 0.5, 1, 1));
-            }
-            if (bX == 0 && bZ == 4) {
-                main.add(new AABB(0.25, 0, 0, 1, 1, 0.75));
-            }
-            if (bX == 1 && bZ == 4) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 4) {
-                main.add(new AABB(0, 0, 0, 0.75, 1, 0.75));
-            }
-            if (bX == 1 && bZ == 5) {
-                main.add(new AABB(0.125, 0.125, 0, 0.875, 0.875, 1));
-            }
-            if (bX == 0 && bZ == 6) {
-                main.add(new AABB(0.25, 0, 0.25, 1, 1, 1));
-            }
-            if (bX == 1 && bZ == 6) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 6) {
-                main.add(new AABB(0, 0, 0.25, 0.75, 1, 1));
-            }
-            if (bX == 0 && bZ == 7) {
-                main.add(new AABB(0.5, 0, 0, 1, 1, 1));
-            }
-            if (bX == 1 && bZ == 7) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 7) {
-                main.add(new AABB(0, 0, 0, 0.75, 1, 1));
-            }
-            if (bX == 0 && bZ == 8) {
-                main.add(new AABB(0.5, 0, 0, 1, 1, 1));
-            }
-            if (bX == 1 && bZ == 8) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 8) {
-                main.add(new AABB(0, 0, 0, 0.75, 1, 1));
-            }
-            if (bX == 0 && bZ == 9) {
-                main.add(new AABB(0, 0, 0, 0.5, 1, 1));
-            }
-            if (bX == 1 && bZ == 9) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 9) {
-                main.add(new AABB(0, 0, 0, 1, 1, 1));
-            }
-        }
-
-        if (bY == 2) {
-            if (bX == 0 && bZ == 1) {
-                main.add(new AABB(0.5, 0, 0.25, 1, 0.5, 1));
-            }
-            if (bX == 1 && bZ == 1) {
-                main.add(new AABB(0, 0, 0, 1, 0.5, 1));
-            }
-            if (bX == 2 && bZ == 1) {
-                main.add(new AABB(0, 0, 0.25, 0.5, 0.5, 1));
-            }
-            if (bX == 0 && bZ == 2) {
-                main.add(new AABB(0.5, 0, 0, 1, 0.5, 0.25));
-            }
-            if (bX == 1 && bZ == 2) {
-                main.add(new AABB(0, 0, 0, 1, 0.5, 1));
-                main.add(new AABB(0, 0, 0.5, 1, 1, 1));
-            }
-            if (bX == 2 && bZ == 2) {
-                main.add(new AABB(0, 0, 0, 0.5, 0.5, 0.25));
-            }
-            if (bX == 0 && bZ == 3) {
-                main.add(new AABB(0.5, 0, 0.75, 1, 0.5, 1));
-            }
-            if (bX == 1 && bZ == 3) {
-                main.add(new AABB(0, 0, 0, 1, 0.5, 1));
-                main.add(new AABB(0, 0, 0, 1, 1, 0.5));
-            }
-            if (bX == 2 && bZ == 3) {
-                main.add(new AABB(0, 0, 0.75, 0.5, 0.5, 1));
-            }
-            if (bX == 0 && bZ == 4) {
-                main.add(new AABB(0.5, 0, 0, 1, 0.5, 0.75));
-            }
-            if (bX == 1 && bZ == 4) {
-                main.add(new AABB(0, 0, 0, 1, 0.5, 0.75));
-            }
-            if (bX == 2 && bZ == 4) {
-                main.add(new AABB(0, 0, 0, 0.5, 0.5, 0.75));
-            }
-            if (bX == 0 && bZ == 6) {
-                main.add(new AABB(0.5, 0, 0.25, 1, 0.5, 1));
-            }
-            if (bX == 1 && bZ == 6) {
-                main.add(new AABB(0, 0, 0.25, 1, 0.5, 1));
-            }
-            if (bX == 2 && bZ == 6) {
-                main.add(new AABB(0, 0, 0.25, 0.5, 0.5, 1));
-            }
-            if (bX == 0 && bZ == 7) {
-                main.add(new AABB(0.5, 0, 0, 1, 0.5, 0.25));
-            }
-            if (bX == 1 && bZ == 7) {
-                main.add(new AABB(0, 0, 0, 1, 0.5, 0.25));
-            }
-            if (bX == 2 && bZ == 7) {
-                main.add(new AABB(0, 0, 0, 0.5, 0.5, 0.25));
-            }
-
-            if (bX == 1 && bZ == 9) {
-                main.add(new AABB(0, 0, 0, 1, 0.5, 1));
-            }
-            if (bX == 2 && bZ == 9) {
-                main.add(new AABB(0, 0, 0, 1, 0.5, 1));
-            }
-        }
-
-        if (bY == 3) {
-            if (bX == 1 && bZ == 2) {
-                main.add(new AABB(0.125, 0.125, 0.625, 0.875, 0.875, 1));
-            }
-            if (bX == 1 && bZ == 3) {
-                main.add(new AABB(0.125, 0.125, 0, 0.875, 0.875, 1));
-            }
-            if (bX == 1 && bZ == 4) {
-                main.add(new AABB(0.125, 0.125, 0, 0.875, 0.875, 1));
-            }
-            if (bX == 1 && bZ == 5) {
-                main.add(new AABB(0.125, 0.125, 0, 0.875, 0.875, 1));
-            }
-            if (bX == 1 && bZ == 6) {
-                main.add(new AABB(0.125, 0.125, 0, 0.875, 0.875, 1));
-            }
-        }
         return main;
     }
 }
