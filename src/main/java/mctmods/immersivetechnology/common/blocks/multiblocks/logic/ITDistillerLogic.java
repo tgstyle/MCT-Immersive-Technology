@@ -17,7 +17,7 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseIt
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.DistillerProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.DistillerShape;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
@@ -206,7 +206,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
     public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return DistillerShape.GETTER; }
+    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return FullblockShape.GETTER; }
 
     @Override
     public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {

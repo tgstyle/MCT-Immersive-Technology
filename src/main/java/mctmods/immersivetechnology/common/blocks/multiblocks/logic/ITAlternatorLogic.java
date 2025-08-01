@@ -17,6 +17,7 @@ import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AlternatorShape;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
@@ -194,7 +195,7 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
     public State createInitialState(IInitialMultiblockContext<State> context) { return new State(context); }
 
     @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AlternatorShape.GETTER; }
+    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return FullblockShape.GETTER; }
 
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
