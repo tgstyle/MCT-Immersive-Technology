@@ -21,7 +21,7 @@ public class SolarTowerRecipe extends MultiblockRecipe {
     public int inputAmount;
     @Nullable
     public FluidStack fluidOutput;
-    private int time;
+    private final int time;
 
     protected <T extends Recipe<?>> SolarTowerRecipe(ResourceLocation id, TagKey<Fluid> inputTag, int inputAmount, @Nullable FluidStack fluidOutput, int time) {
         super(LAZY_EMPTY, ITRecipeTypes.SOLAR_TOWER, id);

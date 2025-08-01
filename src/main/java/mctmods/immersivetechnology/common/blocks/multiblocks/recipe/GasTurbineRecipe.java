@@ -44,19 +44,11 @@ public class GasTurbineRecipe extends IESerializableRecipe {
         return ItemStack.EMPTY;
     }
 
-    public boolean matches(FluidStack fluid) {
-        return fluid.getFluid().is(inputTag) && fluid.getAmount() >= inputAmount;
-    }
+    public boolean matches(FluidStack fluid) { return fluid.getFluid().is(inputTag) && fluid.getAmount() >= inputAmount; }
 
     public static GasTurbineRecipe findFuel(Level level, FluidStack fluid, @Nullable GasTurbineRecipe hint) {
-        if (hint != null && hint.matches(fluid)) {
-            return hint;
-        }
-        for (GasTurbineRecipe recipe : RECIPES.getRecipes(level)) {
-            if (recipe.matches(fluid)) {
-                return recipe;
-            }
-        }
+        if (hint != null && hint.matches(fluid)) { return hint; }
+        for (GasTurbineRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.matches(fluid)) { return recipe; } }
         return null;
     }
 
