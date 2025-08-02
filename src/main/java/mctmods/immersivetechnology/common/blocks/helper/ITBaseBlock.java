@@ -38,14 +38,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+@SuppressWarnings({"unused","deprecation"})
 public class ITBaseBlock extends Block implements ITBlock, SimpleWaterloggedBlock {
     boolean isHidden;
     boolean hasFlavour;
     protected int lightOpacity;
     protected final boolean notNormalBlock;
     private final boolean fitsIntoContainer;
-
-    public ITBaseBlock(BlockBehaviour.Properties blockProps) { this(blockProps, true); }
 
     public ITBaseBlock(BlockBehaviour.Properties blockProps, boolean fitsIntoContainer) {
         super(blockProps);
@@ -143,15 +142,15 @@ public class ITBaseBlock extends Block implements ITBlock, SimpleWaterloggedBloc
 
     @Override
     public @NotNull BlockState updateShape(BlockState stateIn, @NotNull Direction facing, @NotNull BlockState facingState, @NotNull LevelAccessor worldIn, @NotNull BlockPos currentPos, @NotNull BlockPos facingPos) {
-        if (stateIn.hasProperty(BlockStateProperties.WATERLOGGED) && (Boolean) stateIn.getValue(BlockStateProperties.WATERLOGGED)) {
-            worldIn.getFluidTicks().schedule(new ScheduledTick<>(Fluids.WATER, currentPos, (long) Fluids.WATER.getTickDelay(worldIn), 0L));
+        if (stateIn.hasProperty(BlockStateProperties.WATERLOGGED) && stateIn.getValue(BlockStateProperties.WATERLOGGED)) {
+            worldIn.getFluidTicks().schedule(new ScheduledTick<>(Fluids.WATER, currentPos, Fluids.WATER.getTickDelay(worldIn), 0L));
         }
         return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
     @Override
     public @NotNull FluidState getFluidState(BlockState state) {
-        return state.hasProperty(BlockStateProperties.WATERLOGGED) && (Boolean) state.getValue(BlockStateProperties.WATERLOGGED) ?
+        return state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED) ?
                 Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
