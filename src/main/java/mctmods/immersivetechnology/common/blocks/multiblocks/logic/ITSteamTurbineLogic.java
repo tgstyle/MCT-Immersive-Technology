@@ -136,6 +136,7 @@ public class ITSteamTurbineLogic implements IMultiblockLogic<ITSteamTurbineLogic
         }
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
@@ -290,6 +291,7 @@ public class ITSteamTurbineLogic implements IMultiblockLogic<ITSteamTurbineLogic
         public boolean isActive() { return active; }
     }
 
+    @SuppressWarnings("unused")
     public record SteamTurbineTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
         public SteamTurbineTank(Consumer<Void> markDirty) {
             this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty));

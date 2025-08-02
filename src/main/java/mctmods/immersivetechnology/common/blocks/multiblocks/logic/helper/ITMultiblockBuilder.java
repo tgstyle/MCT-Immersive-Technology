@@ -27,6 +27,7 @@ import java.lang.reflect.Field;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public class ITMultiblockBuilder<S extends IMultiblockState> extends MultiblockRegistrationBuilder<S, ITMultiblockBuilder<S>> {
     private Supplier<MultiblockRegistration<S>> regSupplier = () -> { throw new IllegalStateException("Accessed multiblock registration too early"); };
 
@@ -40,6 +41,7 @@ public class ITMultiblockBuilder<S extends IMultiblockState> extends MultiblockR
 
     public ITMultiblockBuilder<S> comparator(ComparatorManager<S> comparator) { withComparator(); return super.selfWrappingComponent(comparator); }
 
+    @SuppressWarnings("ConstantConditions")
     public ITMultiblockBuilder<S> customBEs(DeferredRegister<BlockEntityType<?>> register) {
         try {
             Field nameField = MultiblockRegistrationBuilder.class.getDeclaredField("name");

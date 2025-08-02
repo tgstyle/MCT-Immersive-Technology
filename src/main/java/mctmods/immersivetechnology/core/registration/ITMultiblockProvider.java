@@ -39,13 +39,13 @@ public class ITMultiblockProvider {
         return new ITMultiblockBuilder<>(logic, name)
                 .notMirrored()
                 .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITNonMirrorableWithActiveBlock<>(properties, r), ITBlockItem::new)
-                .defaultBEs(ITBlockEntities.REGISTER);
+                .customBEs(ITBlockEntities.REGISTER);
     }
 
     public static <S extends IMultiblockState> ITMultiblockBuilder<S> metal(IMultiblockLogic<S> logic, String name) {
         return new ITMultiblockBuilder<>(logic, name)
                 .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockWithMirrorState<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
-                .defaultBEs(ITBlockEntities.REGISTER);
+                .customBEs(ITBlockEntities.REGISTER);
     }
 
     public static final MultiblockRegistration<ITBoilerLogic.State> BOILER =

@@ -80,8 +80,6 @@ public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBl
         setChanged();
     }
 
-    public FluidStack getSelectedFluid() { return selectedFluid; }
-
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);

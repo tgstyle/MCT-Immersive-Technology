@@ -316,6 +316,7 @@ public class ITDistillerLogic implements IMultiblockLogic<ITDistillerLogic.State
         public int[] getOutputSlots() { return new int[]{OUTPUT_SLOT}; }
     }
 
+    @SuppressWarnings("unused")
     public record DistillerTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
         public DistillerTank(Consumer<Void> markDirty) {
             this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty));

@@ -3,9 +3,9 @@ package mctmods.immersivetechnology.common.blocks.multiblocks.gui;
 import blusunrize.immersiveengineering.api.energy.IMutableEnergyStorage;
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
 import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
-import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITSlot;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITDistillerLogic;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
@@ -27,13 +27,13 @@ public class DistillerMenu extends ITContainerMenu {
         return new DistillerMenu(
                 clientCtx(type, id),
                 invPlayer,
-                new SlotwiseItemHandler(
+                new ITSlotwiseItemHandler(
                         List.of(
-                                SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                                SlotwiseItemHandler.IOConstraint.OUTPUT,
-                                SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                                SlotwiseItemHandler.IOConstraint.OUTPUT,
-                                SlotwiseItemHandler.IOConstraint.OUTPUT
+                                ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                                ITSlotwiseItemHandler.IOConstraint.OUTPUT,
+                                ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                                ITSlotwiseItemHandler.IOConstraint.OUTPUT,
+                                ITSlotwiseItemHandler.IOConstraint.OUTPUT
                         ),
                         () -> {}
                 ),
@@ -46,11 +46,11 @@ public class DistillerMenu extends ITContainerMenu {
         super(ctx);
         this.tanks = tanks;
         this.energy = energy;
-        this.addSlot(new ITSlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_INPUT_FILLED, 26, 17, ITSlot.NewFluidContainer.Filter.FULL));
-        this.addSlot(new ITSlot.NewOutput(inv, ITDistillerLogic.SLOT_INPUT_EMPTY, 26, 53));
-        this.addSlot(new ITSlot.NewFluidContainer(inv, ITDistillerLogic.SLOT_OUTPUT_EMPTY, 134, 17, ITSlot.NewFluidContainer.Filter.EMPTY));
-        this.addSlot(new ITSlot.NewOutput(inv, ITDistillerLogic.SLOT_OUTPUT_FILLED, 134, 53));
-        this.addSlot(new ITSlot.NewOutput(inv, ITDistillerLogic.OUTPUT_SLOT, 80, 35));
+        this.addSlot(new ITSlot.FluidContainer(inv, ITDistillerLogic.SLOT_INPUT_FILLED, 26, 17, 2));
+        this.addSlot(new ITSlot.Output(inv, ITDistillerLogic.SLOT_INPUT_EMPTY, 26, 53));
+        this.addSlot(new ITSlot.FluidContainer(inv, ITDistillerLogic.SLOT_OUTPUT_EMPTY, 134, 17, 1));
+        this.addSlot(new ITSlot.Output(inv, ITDistillerLogic.SLOT_OUTPUT_FILLED, 134, 53));
+        this.addSlot(new ITSlot.Output(inv, ITDistillerLogic.OUTPUT_SLOT, 80, 35));
         for (int i = 0; i < 3; i++) { for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); } }
         for (int i = 0; i < 9; i++) { addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142)); }
         addGenericData(GenericContainerData.energy(energy));

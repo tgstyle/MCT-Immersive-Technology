@@ -137,8 +137,6 @@ public class OpenBarrelBlockEntity extends IEBaseBlockEntity implements IEServer
     @Override
     public int getComparatorInputOverride() { return (15 * tank.getFluidAmount()) / tank.getCapacity(); }
 
-    public boolean toggleSide(Direction side, Player p) { return false; }
-
     @Override
     public boolean interact(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         FluidStack contained = FluidUtil.getFluidContained(heldItem).orElse(FluidStack.EMPTY);

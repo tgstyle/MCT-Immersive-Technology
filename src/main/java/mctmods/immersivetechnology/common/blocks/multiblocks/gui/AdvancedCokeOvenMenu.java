@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.gui;
 
-import blusunrize.immersiveengineering.common.gui.IESlot;
 import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
 import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITSlot;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITAdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCokeOvenRecipe;
 import net.minecraft.world.entity.player.Inventory;
@@ -37,9 +37,9 @@ public class AdvancedCokeOvenMenu extends ITContainerMenu {
             @Override
             public boolean mayPlace(@Nonnull ItemStack itemStack) { return AdvancedCokeOvenRecipe.findRecipe(inventoryPlayer.player.level(), itemStack) != null; }
         });
-        this.addSlot(new IESlot.NewOutput(inv, 1, 85, 35));
-        this.addSlot(new IESlot.NewFluidContainer(inv, 2, 152, 17, IESlot.NewFluidContainer.Filter.ANY));
-        this.addSlot(new IESlot.NewOutput(inv, 3, 152, 53));
+        this.addSlot(new ITSlot.Output(inv, 1, 85, 35));
+        this.addSlot(new ITSlot.FluidContainer(inv, 2, 152, 17, 0));
+        this.addSlot(new ITSlot.Output(inv, 3, 152, 53));
         ownSlotCount = 4;
 
         for (int i = 0; i < 3; i++) { for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); } }

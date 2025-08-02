@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class TrashCommonBlockEntity extends ITBaseBlockEntity implements IEServerTickableBE, IEClientTickableBE, ITBlockInterfaces.IBlockOverlayText {
     public long acceptedAmount = 0;
@@ -44,7 +45,7 @@ public abstract class TrashCommonBlockEntity extends ITBaseBlockEntity implement
     abstract public TranslationKey text();
 
     @Override
-    public Component[] getOverlayText(Player player, HitResult mop, boolean hammer) {
+    public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
         assert level != null;
         if (level.isClientSide && requestCooldown == 0) {
             ITPacketHandler.sendToServer(new ITOSDRequestMessage(worldPosition));
@@ -55,5 +56,5 @@ public abstract class TrashCommonBlockEntity extends ITBaseBlockEntity implement
     }
 
     @Override
-    public boolean useNixieFont(Player player, HitResult mop) { return false; }
+    public boolean useNixieFont(@NotNull Player player, @NotNull HitResult mop) { return false; }
 }

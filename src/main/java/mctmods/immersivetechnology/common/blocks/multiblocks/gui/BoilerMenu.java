@@ -2,9 +2,9 @@ package mctmods.immersivetechnology.common.blocks.multiblocks.gui;
 
 import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
 import blusunrize.immersiveengineering.common.gui.sync.GenericDataSerializers;
-import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITSlot;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITBoilerLogic;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
@@ -25,14 +25,14 @@ public class BoilerMenu extends ITContainerMenu {
         return new BoilerMenu(
                 ITContainerMenu.clientCtx(type, id),
                 invPlayer,
-                new SlotwiseItemHandler(
+                new ITSlotwiseItemHandler(
                         List.of(
-                                SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                                SlotwiseItemHandler.IOConstraint.OUTPUT,
-                                SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                                SlotwiseItemHandler.IOConstraint.OUTPUT,
-                                SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                                SlotwiseItemHandler.IOConstraint.OUTPUT
+                                ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                                ITSlotwiseItemHandler.IOConstraint.OUTPUT,
+                                ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                                ITSlotwiseItemHandler.IOConstraint.OUTPUT,
+                                ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                                ITSlotwiseItemHandler.IOConstraint.OUTPUT
                         ),
                         () -> {}
                 ),
@@ -44,12 +44,12 @@ public class BoilerMenu extends ITContainerMenu {
     protected BoilerMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, ITBoilerLogic.BoilerTank tanks, ITBoilerLogic.State state) {
         super(ctx);
         this.tanks = tanks;
-        this.addSlot(new ITSlot.NewFluidContainer(inv, ITBoilerLogic.INPUT_FUEL_SLOT_FILLED, 37, 15, ITSlot.NewFluidContainer.Filter.FULL));
-        this.addSlot(new ITSlot.NewOutput(inv, ITBoilerLogic.INPUT_FUEL_SLOT_EMPTY, 37, 54));
-        this.addSlot(new ITSlot.NewFluidContainer(inv, ITBoilerLogic.INPUT_SLOT_FILLED, 76, 15, ITSlot.NewFluidContainer.Filter.FULL));
-        this.addSlot(new ITSlot.NewOutput(inv, ITBoilerLogic.INPUT_SLOT_EMPTY, 76, 54));
-        this.addSlot(new ITSlot.NewFluidContainer(inv, ITBoilerLogic.OUTPUT_SLOT_EMPTY, 149, 15, ITSlot.NewFluidContainer.Filter.EMPTY));
-        this.addSlot(new ITSlot.NewOutput(inv, ITBoilerLogic.OUTPUT_SLOT_FILLED, 149, 54));
+        this.addSlot(new ITSlot.FluidContainer(inv, ITBoilerLogic.INPUT_FUEL_SLOT_FILLED, 37, 15, 2));
+        this.addSlot(new ITSlot.Output(inv, ITBoilerLogic.INPUT_FUEL_SLOT_EMPTY, 37, 54));
+        this.addSlot(new ITSlot.FluidContainer(inv, ITBoilerLogic.INPUT_SLOT_FILLED, 76, 15, 2));
+        this.addSlot(new ITSlot.Output(inv, ITBoilerLogic.INPUT_SLOT_EMPTY, 76, 54));
+        this.addSlot(new ITSlot.FluidContainer(inv, ITBoilerLogic.OUTPUT_SLOT_EMPTY, 149, 15, 1));
+        this.addSlot(new ITSlot.Output(inv, ITBoilerLogic.OUTPUT_SLOT_FILLED, 149, 54));
         for(int i = 0; i < 3; i++) { for(int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j+i*9+9, 8+j*18, 84+i*18)); } }
         for(int i = 0; i < 9; i++) { addSlot(new Slot(inventoryPlayer, i, 8+i*18, 142)); }
         addGenericData(GenericContainerData.fluid(tanks.input1()));

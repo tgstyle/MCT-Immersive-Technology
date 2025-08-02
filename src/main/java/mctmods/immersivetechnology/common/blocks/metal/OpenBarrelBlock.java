@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 
 public class OpenBarrelBlock extends ITEntityBlock<OpenBarrelBlockEntity> {
+    @SuppressWarnings("unused")
     public OpenBarrelBlock(BiFunction<BlockPos, BlockState, OpenBarrelBlockEntity> makeEntity, BlockBehaviour.Properties blockProps) {
         super(makeEntity, Properties.of().mapColor(MapColor.METAL).instrument(NoteBlockInstrument.IRON_XYLOPHONE).strength(3.0F, 20.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion());
     }

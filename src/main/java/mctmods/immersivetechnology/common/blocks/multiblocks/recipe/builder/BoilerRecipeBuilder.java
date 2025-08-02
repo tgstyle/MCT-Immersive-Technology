@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.recipe.builder;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerRecipe;
 import net.minecraft.tags.TagKey;
@@ -39,11 +38,5 @@ public class BoilerRecipeBuilder extends IEFinishedRecipe<BoilerRecipeBuilder> {
 
     public static BoilerRecipeBuilder builder(FluidStack fluidStack) { return new BoilerRecipeBuilder().addFluid("result", fluidStack); }
 
-    public BoilerRecipeBuilder addInput(FluidTagInput fluidTag) { return addFluidTag(generateSafeInputKey(), fluidTag); }
-
     public BoilerRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount) { return addFluidTag(generateSafeInputKey(), fluidTag, amount); }
-
-    public BoilerRecipeBuilder addInput(FluidTagInput fluidTag, String key) { return addFluidTag(key, fluidTag); }
-
-    public BoilerRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount, String key) { return addFluidTag(key, fluidTag, amount); }
 }

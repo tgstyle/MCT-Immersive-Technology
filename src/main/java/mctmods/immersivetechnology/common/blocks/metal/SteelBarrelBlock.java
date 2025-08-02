@@ -18,6 +18,7 @@ public class SteelBarrelBlock extends ITEntityBlock<SteelBarrelBlockEntity> {
     public static final EnumProperty<IOSideConfig> TOP_CONFIG = EnumProperty.create("top_config", IOSideConfig.class);
     public static final EnumProperty<IOSideConfig> BOTTOM_CONFIG = EnumProperty.create("bottom_config", IOSideConfig.class);
 
+    @SuppressWarnings("unused")
     public SteelBarrelBlock(BiFunction<BlockPos, BlockState, SteelBarrelBlockEntity> makeEntity, BlockBehaviour.Properties blockProps) {
         super(makeEntity, Properties.of().mapColor(MapColor.METAL).strength(3.0F, 20.0F).sound(SoundType.METAL).requiresCorrectToolForDrops());
         registerDefaultState(stateDefinition.any().setValue(TOP_CONFIG, IOSideConfig.INPUT).setValue(BOTTOM_CONFIG, IOSideConfig.OUTPUT));

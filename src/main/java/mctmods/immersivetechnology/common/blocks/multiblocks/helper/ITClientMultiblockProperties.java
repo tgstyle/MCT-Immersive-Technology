@@ -19,8 +19,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-public class ITClientMultiblockProperties implements ClientMultiblocks.MultiblockManualData
-{
+public class ITClientMultiblockProperties implements ClientMultiblocks.MultiblockManualData {
     private final ITTemplateMultiblock multiblock;
     @Nullable
     private NonNullList<ItemStack> materials;
@@ -28,68 +27,52 @@ public class ITClientMultiblockProperties implements ClientMultiblocks.Multibloc
     @Nullable
     private final Vec3 renderOffset;
 
-    public ITClientMultiblockProperties(ITTemplateMultiblock multiblock){
-        this(multiblock, null);
-    }
+    public ITClientMultiblockProperties(ITTemplateMultiblock multiblock, double offX, double offY, double offZ) { this(multiblock, new Vec3(offX, offY, offZ)); }
 
-    public ITClientMultiblockProperties(ITTemplateMultiblock multiblock, double offX, double offY, double offZ){
-        this(multiblock, new Vec3(offX, offY, offZ));
-    }
-
-    private ITClientMultiblockProperties(ITTemplateMultiblock multiblock, @Nullable Vec3 renderOffset){
+    private ITClientMultiblockProperties(ITTemplateMultiblock multiblock, @Nullable Vec3 renderOffset) {
         this.multiblock = multiblock;
         this.renderStack = new ItemStack(multiblock.getBlock());
         this.renderOffset = renderOffset;
     }
 
-    /** Skipping normal rendering behaviour */
-    protected boolean usingCustomRendering(){
-        return false;
-    }
+    protected boolean usingCustomRendering() { return false; }
 
     @Override
-    public NonNullList<ItemStack> getTotalMaterials(){
-        if(this.materials == null){
+    public NonNullList<ItemStack> getTotalMaterials() {
+        if (this.materials == null) {
+            assert Minecraft.getInstance().level != null;
             List<StructureTemplate.StructureBlockInfo> structure = this.multiblock.getStructure(Minecraft.getInstance().level);
             this.materials = NonNullList.create();
-            for(StructureTemplate.StructureBlockInfo info:structure){
-                // Skip dummy blocks in total
-                if(info.state().hasProperty(IEProperties.MULTIBLOCKSLAVE) && info.state().getValue(IEProperties.MULTIBLOCKSLAVE))
-                    continue;
-
+            for (StructureTemplate.StructureBlockInfo info : structure) {
+                if (info.state().hasProperty(IEProperties.MULTIBLOCKSLAVE) && info.state().getValue(IEProperties.MULTIBLOCKSLAVE)) continue;
                 ItemStack picked = Utils.getPickBlock(info.state());
                 boolean added = false;
-                for(ItemStack existing:this.materials)
-                    if(ItemStack.isSameItem(existing, picked)){
+                for (ItemStack existing : this.materials)
+                    if (ItemStack.isSameItem(existing, picked)) {
                         existing.grow(1);
                         added = true;
                         break;
                     }
-                if(!added)
-                    this.materials.add(picked.copy());
+                if (!added) this.materials.add(picked.copy());
             }
         }
         return this.materials;
     }
 
     @Override
-    public boolean canRenderFormedStructure(){
-        return this.renderOffset != null;
-    }
+    public boolean canRenderFormedStructure() { return this.renderOffset != null; }
 
-    /** Allowing custom accessories to be rendered. Unused if {@link #usingCustomRendering()} returns true */
-    public void renderExtras(PoseStack matrix, MultiBufferSource buffer){
-    }
+    @SuppressWarnings("unused")
+    public void renderExtras(PoseStack matrix, MultiBufferSource buffer) {}
 
-    /** Only used when {@link #usingCustomRendering()} returns true */
-    public void renderCustomFormedStructure(PoseStack matrix, MultiBufferSource buffer){
-    }
+    @SuppressWarnings("unused")
+    public void renderCustomFormedStructure(PoseStack matrix, MultiBufferSource buffer) {}
 
     @Override
-    public final void renderFormedStructure(PoseStack matrix, MultiBufferSource buffer){
+    public final void renderFormedStructure(PoseStack matrix, MultiBufferSource buffer) {
         Objects.requireNonNull(this.renderOffset);
 
-        if(usingCustomRendering()){
+        if (usingCustomRendering()) {
             renderCustomFormedStructure(matrix, buffer);
             return;
         }

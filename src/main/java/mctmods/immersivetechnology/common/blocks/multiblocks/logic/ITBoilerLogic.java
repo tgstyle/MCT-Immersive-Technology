@@ -224,6 +224,7 @@ public class ITBoilerLogic implements IMultiblockLogic<ITBoilerLogic.State>, ISe
         public void readSyncNBT(CompoundTag nbt) { heatLevel = nbt.getDouble("heatLevel"); pilotLit = nbt.getBoolean("pilotLit"); tanks.readNBT(nbt.getCompound("tanks")); }
     }
 
+    @SuppressWarnings("unused")
     public record BoilerTank(ITMarkableFluidTank input1, ITMarkableFluidTank input2, ITMarkableFluidTank output) {
         public BoilerTank(Consumer<Void> markDirty) { this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty)); }
 

@@ -8,55 +8,36 @@ import java.util.List;
 
 public record ITWrappingItemHandler(IItemHandler wrapped, boolean allowInsert, boolean allowExtract, List<mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler.IntRange> allowedRanges) implements IItemHandler {
 
-    public ITWrappingItemHandler(IItemHandler wrapped, boolean allowInsert, boolean allowExtract, mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler.IntRange allowed) {
-        this(wrapped, allowInsert, allowExtract, List.of(allowed));
-    }
-
-    public ITWrappingItemHandler(IItemHandler wrapped, boolean allowInsert, boolean allowExtract) {
-        this(wrapped, allowInsert, allowExtract, new mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler.IntRange(0, wrapped.getSlots()));
-    }
+    @Override
+    public int getSlots() { return wrapped.getSlots(); }
 
     @Override
-    public int getSlots() {
-        return wrapped.getSlots();
-    }
-
-    @Override
-    public @NotNull ItemStack getStackInSlot(int slot) {
-        return wrapped.getStackInSlot(slot);
-    }
+    public @NotNull ItemStack getStackInSlot(int slot) { return wrapped.getStackInSlot(slot); }
 
     @Override
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        if (!allowInsert || !isAcessible(slot)) return stack;
+        if (!allowInsert || !isAccessible(slot)) return stack;
         return wrapped.insertItem(slot, stack, simulate);
     }
 
     @Override
     public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if (!allowExtract || !isAcessible(slot)) return ItemStack.EMPTY;
+        if (!allowExtract || !isAccessible(slot)) return ItemStack.EMPTY;
         return wrapped.extractItem(slot, amount, simulate);
     }
 
     @Override
-    public int getSlotLimit(int slot) {
-        return wrapped.getSlotLimit(slot);
-    }
+    public int getSlotLimit(int slot) { return wrapped.getSlotLimit(slot); }
 
     @Override
-    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-        return isAcessible(slot) && wrapped.isItemValid(slot, stack);
-    }
+    public boolean isItemValid(int slot, @NotNull ItemStack stack) { return isAccessible(slot) && wrapped.isItemValid(slot, stack); }
 
-    private boolean isAcessible(int slot) {
-        for (final mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler.IntRange range : allowedRanges)
-            if (range.contains(slot)) return true;
+    private boolean isAccessible(int slot) {
+        for (final mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler.IntRange range : allowedRanges) if (range.contains(slot)) return true;
         return false;
     }
 
     public record IntRange(int first, int firstAfter) {
-        private boolean contains(int slotId) {
-            return slotId >= first && slotId < firstAfter;
-        }
+        private boolean contains(int slotId) { return slotId >= first && slotId < firstAfter; }
     }
 }

@@ -215,6 +215,7 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
         }
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
@@ -474,6 +475,7 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
         public boolean isActive() { return active; }
     }
 
+    @SuppressWarnings("unused")
     public record GasTurbineTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
         public GasTurbineTank(Consumer<Void> markDirty) {
             this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty));

@@ -346,6 +346,7 @@ public class ITAdvancedCokeOvenLogic implements IMultiblockLogic<ITAdvancedCokeO
         }
     }
 
+    @SuppressWarnings("unused")
     public record AdvCokeOvenTank(ITMarkableFluidTank output) {
         public AdvCokeOvenTank(Consumer<Void> markDirty) { this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty)); }
 
