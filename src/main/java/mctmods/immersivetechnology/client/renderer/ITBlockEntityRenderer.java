@@ -13,6 +13,7 @@ import org.joml.Quaternionf;
 import java.util.EnumMap;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public abstract class ITBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
     private static final Map<Direction, Quaternionf> ROTATE_FOR_FACING = Util.make(new EnumMap<>(Direction.class), m -> {
         for (Direction facing : DirectionUtils.BY_HORIZONTAL_INDEX)

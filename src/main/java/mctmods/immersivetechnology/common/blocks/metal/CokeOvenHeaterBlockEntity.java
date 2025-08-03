@@ -4,15 +4,14 @@ import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.client.IModelOffsetProvider;
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
-import blusunrize.immersiveengineering.common.blocks.IEBaseBlockEntity;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.IESounds;
 import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.Utils;
+import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.helper.ITClientTickableBE;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
+import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -20,6 +19,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraftforge.common.capabilities.Capability;
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class CokeOvenHeaterBlockEntity extends IEBaseBlockEntity implements IEBlockInterfaces.IStateBasedDirectional, IEBlockInterfaces.IHasDummyBlocks, IModelOffsetProvider, ITClientTickableBE, IEBlockInterfaces.ISoundBE {
+public class CokeOvenHeaterBlockEntity extends ITBaseBlockEntity implements ITBlockInterfaces.IStateBasedDirectional, ITBlockInterfaces.IHasDummyBlocks, IModelOffsetProvider, ITClientTickableBE, ITBlockInterfaces.ISoundBE, ITBlockInterfaces.IGeneralMultiblock {
     public static final float ANGLE_PER_TICK = (float)Math.toRadians(20);
     public boolean active;
     public int dummy = 0;
@@ -40,20 +40,12 @@ public class CokeOvenHeaterBlockEntity extends IEBaseBlockEntity implements IEBl
     public float angle = 0;
     private final MultiblockCapability<IEnergyStorage> energyCap = MultiblockCapability.make(this, be -> be.energyCap, CokeOvenHeaterBlockEntity::master, registerEnergyInput(energyStorage));
 
-    public CokeOvenHeaterBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.COKE_OVEN_HEATER.get(), pos, state); }
+    public CokeOvenHeaterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) { super(type, pos, state); }
 
     public int doSpeedup() {
         int consumed = 32;
-        if (this.energyStorage.extractEnergy(consumed, true)==consumed) {
-            if (!active) {
-                active = true;
-                this.markContainingBlockForUpdate(null);
-            }
-            this.energyStorage.extractEnergy(consumed, false);
-            return 1;
-        } else {
-            turnOff();
-        }
+        if (this.energyStorage.extractEnergy(consumed, true)==consumed) { if (!active) { active = true; this.markContainingBlockForUpdate(null); } this.energyStorage.extractEnergy(consumed, false); return 1; }
+        else { turnOff(); }
         return 0;
     }
 
@@ -63,12 +55,7 @@ public class CokeOvenHeaterBlockEntity extends IEBaseBlockEntity implements IEBl
         ImmersiveEngineering.proxy.handleTileSound(IESounds.preheater, this, active, 0.5f, 1f);
     }
 
-    public void turnOff() {
-        if (active) {
-            active = false;
-            this.markContainingBlockForUpdate(null);
-        }
-    }
+    public void turnOff() { if (active) { active = false; this.markContainingBlockForUpdate(null); } }
 
     @Override
     public boolean isDummy() { return dummy == 1; }
@@ -78,23 +65,25 @@ public class CokeOvenHeaterBlockEntity extends IEBaseBlockEntity implements IEBl
     public CokeOvenHeaterBlockEntity master() {
         BlockPos masterPos = getBlockPos().north(dummy);
         BlockEntity te = Utils.getExistingTileEntity(level, masterPos);
-        return te instanceof CokeOvenHeaterBlockEntity heater?heater: null;
+        return te instanceof CokeOvenHeaterBlockEntity heater ? heater : null;
     }
 
     @Override
     public void placeDummies(@NotNull BlockPlaceContext ctx, @NotNull BlockState state) {
+        if (isDummy()) return;
         state = state.setValue(IEProperties.MULTIBLOCKSLAVE, true);
         assert level != null;
         level.setBlockAndUpdate(worldPosition.offset(0, 0, 1), state);
-        ((CokeOvenHeaterBlockEntity) Objects.requireNonNull(level.getBlockEntity(worldPosition.offset(0, 0, 1)))).dummy = 1;
-        ((CokeOvenHeaterBlockEntity) Objects.requireNonNull(level.getBlockEntity(worldPosition.offset(0, 0, 1)))).setFacing(this.getFacing());
-
+        CokeOvenHeaterBlockEntity dummy = (CokeOvenHeaterBlockEntity) Objects.requireNonNull(level.getBlockEntity(worldPosition.offset(0, 0, 1)));
+        dummy.dummy = 1;
+        dummy.setFacing(this.getFacing());
     }
 
     @Override
     public void breakDummies(@NotNull BlockPos pos, @NotNull BlockState state) {
+        if (isDummy()) { Objects.requireNonNull(master()).breakDummies(pos, state); return; }
         assert level != null;
-        if (level.getBlockEntity(getBlockPos().offset(0, -dummy, 0).offset(0, 1, 0)) instanceof CokeOvenHeaterBlockEntity) { level.removeBlock(getBlockPos().offset(0, -dummy, 0).offset(0, 1, 0), false); }
+        if (level.getBlockEntity(getBlockPos().offset(0, 0, 1)) instanceof CokeOvenHeaterBlockEntity) { level.removeBlock(getBlockPos().offset(0, 0, 1), false); }
     }
 
     @Override
@@ -127,7 +116,7 @@ public class CokeOvenHeaterBlockEntity extends IEBaseBlockEntity implements IEBl
 
     @Override
     public void afterRotation(@NotNull Direction oldDir, @NotNull Direction newDir) {
-        for (int i = 0; i <= 2; i++) {
+        for (int i = 0; i <= 1; i++) {
             assert level != null;
             BlockEntity te = level.getBlockEntity(getBlockPos().offset(0, -dummy+i, 0));
             if (te instanceof CokeOvenHeaterBlockEntity heater) {

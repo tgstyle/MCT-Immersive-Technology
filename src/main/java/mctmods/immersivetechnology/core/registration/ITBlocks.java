@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.core.registration;
 
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import mctmods.immersivetechnology.common.blocks.metal.CokeOvenHeaterBlock;
-import mctmods.immersivetechnology.common.blocks.metal.CokeOvenHeaterBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlock;
 import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.OpenBarrelBlock;
@@ -58,7 +57,7 @@ public class ITBlocks {
             COKE_OVEN_HEATER = new BlockEntry<>(
                     "coke_oven_heater",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new CokeOvenHeaterBlock(CokeOvenHeaterBlockEntity::new, p)
+                    p -> new CokeOvenHeaterBlock(ITBlockEntities.COKE_OVEN_HEATER, p)
             );
 
             CREATIVE_BARREL = new BlockEntry<>(
@@ -129,7 +128,7 @@ public class ITBlocks {
     }
 
     public static final class BlockEntry<T extends Block> implements Supplier<T>, ItemLike {
-        public static final Collection<BlockEntry<?>> ALL_ENTRIES = new ArrayList<>();
+        public static final Collection<BlockEntry<?> > ALL_ENTRIES = new ArrayList<>();
 
         private final RegistryObject<T> regObject;
         private final Supplier<BlockBehaviour.Properties> properties;

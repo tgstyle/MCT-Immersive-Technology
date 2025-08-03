@@ -3,10 +3,10 @@ package mctmods.immersivetechnology.common.blocks.metal;
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.IEBaseBlockEntity;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.ticking.IEServerTickableBE;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableMap;
+import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
@@ -35,7 +35,7 @@ import java.util.EnumMap;
 import java.util.Random;
 import java.util.function.Consumer;
 
-public class OpenBarrelBlockEntity extends IEBaseBlockEntity implements IEServerTickableBE, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.IComparatorOverride, IEBlockInterfaces.IPlacementInteraction {
+public class OpenBarrelBlockEntity extends IEBaseBlockEntity implements IEServerTickableBE, ITBlockInterfaces.IBlockOverlayText, ITBlockInterfaces.IPlayerInteraction, ITBlockInterfaces.IBlockEntityDrop, ITBlockInterfaces.IComparatorOverride, ITBlockInterfaces.IPlacementInteraction {
     private static final int tankSize = 12000;
     private static final int transferSpeed = 40;
 

@@ -33,7 +33,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,6 +42,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+@SuppressWarnings({"unused"})
 public class ITBlockInterfaces {
     public ITBlockInterfaces() { }
 
@@ -56,30 +56,31 @@ public class ITBlockInterfaces {
         T getGuiMaster();
 
         ITMenuTypes.ArgContainer<? super T, ?> getContainerType();
+
         boolean canUseGui(Player var1);
-        default boolean isValid() {
-            return this.getGuiMaster() != null;
-        }
+
+        default boolean isValid() { return getGuiMaster() != null; }
 
         @Nonnull
         default AbstractContainerMenu createMenu(int id, @NotNull Inventory playerInventory, @NotNull Player playerEntity) {
-            T master = this.getGuiMaster();
+            T master = getGuiMaster();
             Preconditions.checkNotNull(master);
-            ITMenuTypes.ArgContainer<? super T, ?> type = this.getContainerType();
+            ITMenuTypes.ArgContainer<? super T, ?> type = getContainerType();
             return type.create(id, playerInventory, master);
         }
-        default @NotNull Component getDisplayName() {
-            return Component.literal("");
-        }
+
+        @Nonnull
+        default Component getDisplayName() { return Component.literal(""); }
     }
 
     public interface IGeneralMultiblock extends ITBlockInterfaces.BlockstateProvider {
         @Nullable
-        ITBlockInterfaces.IGeneralMultiblock master();
+        IGeneralMultiblock master();
+
         default boolean isDummy() {
             BlockState state = getState();
-            if (state.hasProperty(IEProperties.MULTIBLOCKSLAVE)) return state.getValue(IEProperties.MULTIBLOCKSLAVE);
-            else return true;
+            if (state.hasProperty(IEProperties.MULTIBLOCKSLAVE)) { return state.getValue(IEProperties.MULTIBLOCKSLAVE); }
+            else { return true; }
         }
     }
 
@@ -98,44 +99,42 @@ public class ITBlockInterfaces {
         VoxelShape getSelectionShape(@Nullable CollisionContext var1);
     }
 
-    public interface IBlockBounds extends ITBlockInterfaces.ISelectionBounds, ITBlockInterfaces.ICollisionBounds {
+    public interface IBlockBounds extends ISelectionBounds, ICollisionBounds {
         @Nonnull
         VoxelShape getBlockBounds(@Nullable CollisionContext var1);
 
         @Nonnull
-        default VoxelShape getCollisionShape(CollisionContext ctx) {
-            return this.getBlockBounds(ctx);
-        }
+        default VoxelShape getCollisionShape(CollisionContext ctx) { return getBlockBounds(ctx); }
 
         @Nonnull
-        default VoxelShape getSelectionShape(@Nullable CollisionContext ctx) {
-            return this.getBlockBounds(ctx);
-        }
+        default VoxelShape getSelectionShape(@Nullable CollisionContext ctx) { return getBlockBounds(ctx); }
     }
 
-    public interface IMirrorAble extends ITBlockInterfaces.BlockstateProvider {
+    public interface IMirrorAble extends BlockstateProvider {
         default boolean getIsMirrored() {
-            BlockState state = this.getState();
-            return state.hasProperty(IEProperties.MIRRORED) ? (Boolean) state.getValue(IEProperties.MIRRORED) : false;
+            BlockState state = getState();
+            if (state.hasProperty(IEProperties.MIRRORED)) { return state.getValue(IEProperties.MIRRORED); }
+            else { return false; }
         }
 
         default void setMirrored(boolean mirrored) {
-            BlockState state = this.getState();
-            BlockState newState = (BlockState) state.setValue(IEProperties.MIRRORED, mirrored);
-            this.setState(newState);
+            BlockState state = getState();
+            BlockState newState = state.setValue(IEProperties.MIRRORED, mirrored);
+            setState(newState);
         }
     }
 
-    public interface IActiveState extends ITBlockInterfaces.BlockstateProvider {
+    public interface IActiveState extends BlockstateProvider {
         default boolean getIsActive() {
-            BlockState state = this.getState();
-            return state.hasProperty(IEProperties.ACTIVE) ? (Boolean) state.getValue(IEProperties.ACTIVE) : false;
+            BlockState state = getState();
+            if (state.hasProperty(IEProperties.ACTIVE)) { return state.getValue(IEProperties.ACTIVE); }
+            else { return false; }
         }
 
         default void setActive(boolean active) {
-            BlockState state = this.getState();
-            BlockState newState = (BlockState) state.setValue(IEProperties.ACTIVE, active);
-            this.setState(newState);
+            BlockState state = getState();
+            BlockState newState = state.setValue(IEProperties.ACTIVE, active);
+            setState(newState);
         }
     }
 
@@ -163,20 +162,24 @@ public class ITBlockInterfaces {
         Collection<ItemStack> getExtraDrops(Player var1, BlockState var2);
     }
 
-    public interface IBlockEntityDrop extends ITBlockInterfaces.IPlacementInteraction {
+    public interface IBlockEntityDrop extends IPlacementInteraction {
         void getBlockEntityDrop(LootContext var1, Consumer<ItemStack> var2);
 
         default ItemStack getPickBlock(@Nullable Player player, BlockState state, HitResult rayRes) {
             BlockEntity tile = (BlockEntity) this;
-            Mutable<ItemStack> drop = new MutableObject(new ItemStack(state.getBlock()));
+            MutableObject<ItemStack> drop = new MutableObject<>(new ItemStack(state.getBlock()));
             Level var7 = tile.getLevel();
             if (var7 instanceof ServerLevel world) {
-                LootParams parms = (new LootParams.Builder(world)).withOptionalParameter(LootContextParams.TOOL, ItemStack.EMPTY).withOptionalParameter(LootContextParams.BLOCK_STATE, world.getBlockState(tile.getBlockPos())).withOptionalParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(tile.getBlockPos())).create(LootContextParamSets.BLOCK);
+                LootParams parms = (new LootParams.Builder(world))
+                        .withOptionalParameter(LootContextParams.TOOL, ItemStack.EMPTY)
+                        .withOptionalParameter(LootContextParams.BLOCK_STATE, world.getBlockState(tile.getBlockPos()))
+                        .withOptionalParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(tile.getBlockPos()))
+                        .create(LootContextParamSets.BLOCK);
                 LootContext var10001 = (new LootContext.Builder(parms)).create(IEApi.ieLoc("pick_block"));
                 Objects.requireNonNull(drop);
-                this.getBlockEntityDrop(var10001, drop::setValue);
+                getBlockEntityDrop(var10001, drop::setValue);
             }
-            return (ItemStack) drop.getValue();
+            return drop.getValue();
         }
     }
 
@@ -185,22 +188,23 @@ public class ITBlockInterfaces {
         boolean toggleSide(Direction var1, Player var2);
     }
 
-    public interface IAdvancedDirectionalBE extends ITBlockInterfaces.IDirectionalBE {
+    public interface IAdvancedDirectionalBE extends IDirectionalBE {
         void onDirectionalPlacement(Direction var1, float var2, float var3, float var4, LivingEntity var5);
     }
 
-    public interface IStateBasedDirectional extends ITBlockInterfaces.IDirectionalBE, ITBlockInterfaces.BlockstateProvider {
+    public interface IStateBasedDirectional extends IDirectionalBE, BlockstateProvider {
         Property<Direction> getFacingProperty();
 
         default Direction getFacing() {
-            BlockState state = this.getState();
-            return state.hasProperty(this.getFacingProperty()) ? (Direction) state.getValue(this.getFacingProperty()) : Direction.NORTH;
+            BlockState state = getState();
+            if (state.hasProperty(getFacingProperty())) { return state.getValue(getFacingProperty()); }
+            else { return Direction.NORTH; }
         }
 
         default void setFacing(Direction facing) {
-            BlockState oldState = this.getState();
-            BlockState newState = (BlockState) oldState.setValue(this.getFacingProperty(), facing);
-            this.setState(newState);
+            BlockState oldState = getState();
+            BlockState newState = oldState.setValue(getFacingProperty(), facing);
+            setState(newState);
         }
     }
 
@@ -213,19 +217,18 @@ public class ITBlockInterfaces {
         Direction getFacing();
         void setFacing(Direction var1);
         PlacementLimitation getFacingLimitation();
+
         default Direction getFacingForPlacement(BlockPlaceContext ctx) {
-            Direction f = this.getFacingLimitation().getDirectionForPlacement(ctx);
-            return this.mirrorFacingOnPlacement(ctx.getPlayer()) ? f.getOpposite() : f;
+            Direction f = getFacingLimitation().getDirectionForPlacement(ctx);
+            if (mirrorFacingOnPlacement(ctx.getPlayer())) { return f.getOpposite(); }
+            else { return f; }
         }
 
-        default boolean mirrorFacingOnPlacement(LivingEntity placer) {
-            return false;
-        }
-        default boolean canHammerRotate(Direction side, Vec3 hit, LivingEntity entity) {
-            return true;
-        }
-        default void afterRotation(Direction oldDir, Direction newDir) {
-        }
+        default boolean mirrorFacingOnPlacement(LivingEntity placer) { return false; }
+
+        default boolean canHammerRotate(Direction side, Vec3 hit, LivingEntity entity) { return true; }
+
+        default void afterRotation(Direction oldDir, Direction newDir) { }
     }
 
     public interface IColouredBE {
@@ -238,9 +241,7 @@ public class ITBlockInterfaces {
     }
 
     public interface IRedstoneOutput {
-        default int getWeakRSOutput(Direction side) {
-            return this.getStrongRSOutput(side);
-        }
+        default int getWeakRSOutput(Direction side) { return getStrongRSOutput(side); }
         int getStrongRSOutput(Direction var1);
         boolean canConnectRedstone(Direction var1);
     }
@@ -255,9 +256,7 @@ public class ITBlockInterfaces {
 
     public interface ISoundBE {
         boolean shouldPlaySound(String var1);
-        default float getSoundRadiusSq() {
-            return 256.0F;
-        }
+        default float getSoundRadiusSq() { return 256.0F; }
     }
 
     public interface IBlockOverlayText extends blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText { }

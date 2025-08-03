@@ -28,7 +28,7 @@ public class CokeOvenHeaterRenderer extends ITBlockEntityRenderer<CokeOvenHeater
         transform.pushPose();
         transform.translate(0.5, 0.5, 0.5);
         rotateForFacingNoCentering(transform, bEntity.getFacing());
-        final float angle = bEntity.angle+CokeOvenHeaterBlockEntity.ANGLE_PER_TICK*(bEntity.active?partial: 0);
+        final float angle = bEntity.angle+ CokeOvenHeaterBlockEntity.ANGLE_PER_TICK*(bEntity.active?partial: 0);
         Vector3f axis = new Vector3f(0, 0, 1);
         transform.mulPose(new Quaternionf().rotateAxis(angle, axis));
         transform.translate(-0.5, -0.5, -0.5);

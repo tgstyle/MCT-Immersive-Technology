@@ -14,6 +14,7 @@ import org.joml.Vector3f;
 import java.util.Locale;
 import java.util.Objects;
 
+@SuppressWarnings("deprecation")
 public class ColoredSmokeData implements ParticleOptions {
     public static final Codec<ColoredSmokeData> CODEC = RecordCodecBuilder.create(inst -> inst.group(
             Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.x()),
@@ -21,7 +22,7 @@ public class ColoredSmokeData implements ParticleOptions {
             Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.z())
     ).apply(inst, ColoredSmokeData::new));
 
-    public static final Deserializer<ColoredSmokeData> DESERIALIZER = new Deserializer<ColoredSmokeData>() {
+    public static final Deserializer<ColoredSmokeData> DESERIALIZER = new Deserializer<>() {
         public @NotNull ColoredSmokeData fromCommand(@NotNull ParticleType<ColoredSmokeData> type, StringReader reader) throws CommandSyntaxException {
             reader.expect(' ');
             float r = reader.readFloat();
@@ -31,23 +32,18 @@ public class ColoredSmokeData implements ParticleOptions {
             float b = reader.readFloat();
             return new ColoredSmokeData(r, g, b);
         }
-        public @NotNull ColoredSmokeData fromNetwork(@NotNull ParticleType<ColoredSmokeData> type, FriendlyByteBuf buf) { return new ColoredSmokeData(buf.readFloat(), buf.readFloat(), buf.readFloat()); }
+
+        public @NotNull ColoredSmokeData fromNetwork(@NotNull ParticleType<ColoredSmokeData> type, FriendlyByteBuf buf) {
+            return new ColoredSmokeData(buf.readFloat(), buf.readFloat(), buf.readFloat());
+        }
     };
 
     public final Vector3f color;
 
-    public ColoredSmokeData(float r, float g, float b) {
-        this.color = new Vector3f(r, g, b);
-    }
-
-    public ColoredSmokeData(Vector3f color) {
-        this.color = color;
-    }
+    public ColoredSmokeData(float r, float g, float b) { this.color = new Vector3f(r, g, b); }
 
     @Override
-    public @NotNull ParticleType<?> getType() {
-        return ITParticles.COLORED_SMOKE.get();
-    }
+    public @NotNull ParticleType<?> getType() { return ITParticles.COLORED_SMOKE.get(); }
 
     @Override
     public void writeToNetwork(FriendlyByteBuf buf) {

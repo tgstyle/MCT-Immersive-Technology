@@ -30,7 +30,7 @@ public class ClientModBusEventHandlers {
 
     public static void registerBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         registerBERenderNoContext(event, ITBlockEntities.OPEN_BARREL::get, OpenBarrelRenderer::new);
-        registerBERenderNoContext(event, ITBlockEntities.COKE_OVEN_HEATER::get, CokeOvenHeaterRenderer::new);
+        registerBERenderNoContext(event, ITBlockEntities.COKE_OVEN_HEATER::master, CokeOvenHeaterRenderer::new);
         registerBERenderNoContext(event, () -> ITMultiblockProvider.GAS_TURBINE.masterBE().get(), GasTurbineRenderer::new);
         registerBERenderNoContext(event, () -> ITMultiblockProvider.STEAM_TURBINE.masterBE().get(), SteamTurbineRenderer::new);
     }

@@ -60,7 +60,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     public static void registerBERenders(EntityRenderersEvent.RegisterRenderers event) {
-        registerBERenderNoContext(event, ITBlockEntities.COKE_OVEN_HEATER.get(), CokeOvenHeaterRenderer::new);
+        registerBERenderNoContext(event, ITBlockEntities.COKE_OVEN_HEATER.master(), CokeOvenHeaterRenderer::new);
         registerBERenderNoContext(event, ITMultiblockProvider.STEAM_TURBINE.masterBE(), SteamTurbineRenderer::new);
         registerBERenderNoContext(event, ITMultiblockProvider.GAS_TURBINE.masterBE(), GasTurbineRenderer::new);
     }

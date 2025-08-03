@@ -34,5 +34,8 @@ public class CokeOvenHeaterBlock extends ITEntityBlock<CokeOvenHeaterBlockEntity
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(@NotNull Level pLevel, @NotNull BlockState pState, @NotNull BlockEntityType<T> pBlockEntityType) { return pBlockEntityType == ITBlockEntities.COKE_OVEN_HEATER.get() && pLevel.isClientSide ? ITClientTickableBE.makeTicker() : null; }
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) { return defaultBlockState().setValue(IEProperties.FACING_HORIZONTAL, ctx.getHorizontalDirection().getOpposite()); }
+
+    @Override
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(@NotNull Level pLevel, @NotNull BlockState pState, @NotNull BlockEntityType<T> pBlockEntityType) { return pBlockEntityType == ITBlockEntities.COKE_OVEN_HEATER.master() && pLevel.isClientSide ? ITClientTickableBE.makeTicker() : null; }
 }
