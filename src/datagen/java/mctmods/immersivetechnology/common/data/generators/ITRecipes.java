@@ -2,12 +2,6 @@ package mctmods.immersivetechnology.common.data.generators;
 
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.builders.CokeOvenRecipeBuilder;
-import com.igteam.immersivegeology.common.item.IGGenericItem;
-import com.igteam.immersivegeology.core.lib.IGLib;
-import com.igteam.immersivegeology.core.material.data.enums.MineralEnum;
-import com.igteam.immersivegeology.core.material.helper.flags.BlockCategoryFlags;
-import com.igteam.immersivegeology.core.material.helper.flags.ItemCategoryFlags;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.builder.*;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITFluids;
@@ -46,7 +40,6 @@ public class ITRecipes extends RecipeProvider {
         recipesBoilerFuel(consumer);
         recipesTurbine(consumer);
         recipesDistiller(consumer);
-        registerCokingRecipes(consumer, MineralEnum.Bituminous);
     }
 
     private void itemRecipes() {}
@@ -68,7 +61,6 @@ public class ITRecipes extends RecipeProvider {
 
     private void recipesCoke(@Nonnull Consumer<FinishedRecipe> out) {
         AdvancedCokeOvenRecipeBuilder.builder(IETags.coalCoke, 1).addInput(Items.COAL).setOil(FluidType.BUCKET_VOLUME / 2).setTime(600).build(out, toRL("advcokeoven/coke"));
-        AdvancedCokeOvenRecipeBuilder.builder(IETags.coalCoke, 1).addInput(MineralEnum.Lignite.getItem(ItemCategoryFlags.INGOT)).setOil(FluidType.BUCKET_VOLUME / 2).setTime(600).build(out, toRL("advcokeoven/coke_lignite"));
         AdvancedCokeOvenRecipeBuilder.builder(IETags.getItemTag(IETags.coalCokeBlock), 1).addInput(Blocks.COAL_BLOCK).setOil(FluidType.BUCKET_VOLUME * 5).setTime(9 * 600).build(out, toRL("advcokeoven/coke_block"));
         AdvancedCokeOvenRecipeBuilder.builder(Items.CHARCOAL).addInput(ItemTags.LOGS).setOil(FluidType.BUCKET_VOLUME / 4).setTime(600).build(out, toRL("advcokeoven/charcoal"));
     }
@@ -81,21 +73,6 @@ public class ITRecipes extends RecipeProvider {
     private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) {
         ItemStack salt = new ItemStack(ITItems.SALT.get(), 1);
         DistillerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 1000), 10000, 20, new FluidStack(ITFluids.DISTILLED_WATER.getStill().getSource(), 500)).addItemOutput(salt, 0.5f).build(out, toRL("distiller/water"));
-    }
-
-    private void registerCokingRecipes(Consumer<FinishedRecipe> consumer, MineralEnum mineral) {
-        String mineralName = mineral.getName();
-        AdvancedCokeOvenRecipeBuilder.builder(IETags.coalCoke, 1)
-                .addInput(mineral.getItem(ItemCategoryFlags.NORMAL_ORE))
-                .setOil(FluidType.BUCKET_VOLUME / 2)
-                .setTime(1800)
-                .build(consumer, toRL( "coking/normal_" + mineralName + "_to_coke"));
-
-        AdvancedCokeOvenRecipeBuilder.builder(IETags.coalCoke, 1)
-                .addInput(mineral.getBlock(BlockCategoryFlags.STORAGE_BLOCK))
-                .setOil(FluidType.BUCKET_VOLUME * 5)
-                .setTime(16200)
-                .build(consumer, toRL( "coking/normal_block_" + mineralName + "_to_coke"));
     }
 
     private ResourceLocation toRL(String s) {

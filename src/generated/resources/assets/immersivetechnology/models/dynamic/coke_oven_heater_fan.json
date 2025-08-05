@@ -1,5 +1,9 @@
 {
   "flip_v": true,
-  "loader": "forge:obj",
-  "model": "immersivetechnology:models/block/metal/obj/coke_oven_heater_fan.obj"
+  "loader": "immersivetechnology:obj",
+  "model": "immersivetechnology:models/block/metal/obj/coke_oven_heater.obj",
+  "visibility": {
+    "body": false,
+    "fan": true
+  }
 }

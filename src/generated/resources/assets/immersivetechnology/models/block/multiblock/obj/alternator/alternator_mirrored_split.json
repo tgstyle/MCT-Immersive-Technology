@@ -9,7 +9,7 @@
       "loader": "forge:obj",
       "model": "immersivetechnology:models/block/multiblock/obj/alternator/alternator.obj",
       "textures": {
-        "particle": "immersivetechnology:block/multiblocks/metal_multiblock_alternator"
+        "particle": "immersivetechnology:block/multiblocks/metal/alternator"
       }
     },
     "loader": "immersiveengineering:mirror"

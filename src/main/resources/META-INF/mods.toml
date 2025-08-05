@@ -37,13 +37,6 @@ ordering="NONE"
 side="BOTH"
 
 [[dependencies.immersivetechnology]]
-modId="immersivegeology"
-mandatory=true
-versionRange="[${version_ig},]"
-ordering="NONE"
-side="BOTH"
-
-[[dependencies.immersivetechnology]]
 modId="jei"
 mandatory=false
 versionRange="[${jei_version},)"

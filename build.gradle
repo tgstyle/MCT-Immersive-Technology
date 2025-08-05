@@ -78,7 +78,6 @@ ext {
     version_jei = versionProps['jei_version']
     version_parchment = versionProps['version_parchment']
     version_ie = versionProps['version_ie']
-    version_ig = versionProps['version_ig']
     mod_license = gradleProps['mod_license']
     mod_name = gradleProps['mod_name']
     mod_authors = gradleProps['mod_authors']
@@ -96,7 +95,6 @@ def version_replaces = [
         'mod_authors'  : mod_authors,
         'mod_description': mod_description,
         'version_ie'   : version_ie,
-        'version_ig'   : version_ig
 ]
 
 def jsonPatterns = ["**/*.json", "**/*.mcmeta"]
@@ -138,6 +136,7 @@ minecraft {
                     source(sourceSets.main)
                 }
             }
+			args '--username', 'Dev', '--uuid', '00000000-0000-0000-0000-000000000000'
         }
         server {
             workingDirectory = project.file('run')
@@ -226,7 +225,6 @@ dependencies {
     implementation fg.deobf("mezz.jei:jei-1.20.1-forge:${version_jei}")
 
     implementation fg.deobf("curse.maven:immersive-engineering-231951:6206989")
-    implementation fg.deobf("curse.maven:immersive-geology-370614:6411647")
     implementation fg.deobf("curse.maven:engineered-schematics-1207780:6560826")
 
     implementation fg.deobf("curse.maven:jade-324717:6271651")

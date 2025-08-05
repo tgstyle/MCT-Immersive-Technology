@@ -33,7 +33,7 @@ import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class CokeOvenHeaterBlockEntity extends ITBaseBlockEntity implements ITBlockInterfaces.IStateBasedDirectional, ITBlockInterfaces.IHasDummyBlocks, IModelOffsetProvider, ITClientTickableBE, ITBlockInterfaces.ISoundBE, ITBlockInterfaces.IGeneralMultiblock {
-    public static final float ANGLE_PER_TICK = (float)Math.toRadians(20);
+    public static final float ANGLE_PER_TICK = (float) Math.toRadians(20);
     public boolean active;
     public int dummy = 0;
     public final MutableEnergyStorage energyStorage = new MutableEnergyStorage(8000);
@@ -42,28 +42,21 @@ public class CokeOvenHeaterBlockEntity extends ITBaseBlockEntity implements ITBl
 
     public CokeOvenHeaterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) { super(type, pos, state); }
 
-    public int doSpeedup() {
-        int consumed = 32;
-        if (this.energyStorage.extractEnergy(consumed, true)==consumed) { if (!active) { active = true; this.markContainingBlockForUpdate(null); } this.energyStorage.extractEnergy(consumed, false); return 1; }
-        else { turnOff(); }
-        return 0;
-    }
+    public int doSpeedup() { int consumed = 32; if (this.energyStorage.extractEnergy(consumed, true) == consumed) { if (!active) { active = true; this.markContainingBlockForUpdate(null); } this.energyStorage.extractEnergy(consumed, false); return 1; } else { turnOff(); } return 0; }
 
     @Override
-    public void tickClient() {
-        if (active) { angle = (angle+ANGLE_PER_TICK)%Mth.PI; }
-        ImmersiveEngineering.proxy.handleTileSound(IESounds.preheater, this, active, 0.5f, 1f);
-    }
+    public void tickClient() { if (active) { angle = (angle + ANGLE_PER_TICK) % (2 * Mth.PI); } }
 
     public void turnOff() { if (active) { active = false; this.markContainingBlockForUpdate(null); } }
 
     @Override
-    public boolean isDummy() { return dummy == 1; }
+    public boolean isDummy() { return dummy > 0; }
 
     @Nullable
     @Override
     public CokeOvenHeaterBlockEntity master() {
-        BlockPos masterPos = getBlockPos().north(dummy);
+        if (dummy == 0) return this;
+        BlockPos masterPos = getBlockPos().offset(0, 0, -dummy);
         BlockEntity te = Utils.getExistingTileEntity(level, masterPos);
         return te instanceof CokeOvenHeaterBlockEntity heater ? heater : null;
     }
@@ -73,25 +66,28 @@ public class CokeOvenHeaterBlockEntity extends ITBaseBlockEntity implements ITBl
         if (isDummy()) return;
         state = state.setValue(IEProperties.MULTIBLOCKSLAVE, true);
         assert level != null;
-        level.setBlockAndUpdate(worldPosition.offset(0, 0, 1), state);
-        CokeOvenHeaterBlockEntity dummy = (CokeOvenHeaterBlockEntity) Objects.requireNonNull(level.getBlockEntity(worldPosition.offset(0, 0, 1)));
-        dummy.dummy = 1;
-        dummy.setFacing(this.getFacing());
+        for (int i = 1; i <= 2; i++) {
+            level.setBlockAndUpdate(worldPosition.offset(0, 0, i), state);
+            CokeOvenHeaterBlockEntity dummyBE = (CokeOvenHeaterBlockEntity) Objects.requireNonNull(level.getBlockEntity(worldPosition.offset(0, 0, i)));
+            dummyBE.dummy = i;
+            dummyBE.setFacing(this.getFacing());
+        }
     }
 
     @Override
     public void breakDummies(@NotNull BlockPos pos, @NotNull BlockState state) {
         if (isDummy()) { Objects.requireNonNull(master()).breakDummies(pos, state); return; }
         assert level != null;
-        if (level.getBlockEntity(getBlockPos().offset(0, 0, 1)) instanceof CokeOvenHeaterBlockEntity) { level.removeBlock(getBlockPos().offset(0, 0, 1), false); }
+        for (int i = 1; i <= 2; i++) {
+            if (level.getBlockEntity(getBlockPos().offset(0, 0, i)) instanceof CokeOvenHeaterBlockEntity) { level.removeBlock(getBlockPos().offset(0, 0, i), false); }
+        }
     }
 
     @Override
     public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
         dummy = nbt.getInt("dummy");
         active = nbt.getBoolean("active");
-        if (descPacket) { this.markContainingBlockForUpdate(null); }
-        else { EnergyHelper.deserializeFrom(energyStorage, nbt); }
+        if (descPacket) { this.markContainingBlockForUpdate(null); } else { EnergyHelper.deserializeFrom(energyStorage, nbt); }
     }
 
     @Override
@@ -103,10 +99,7 @@ public class CokeOvenHeaterBlockEntity extends ITBaseBlockEntity implements ITBl
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap==ForgeCapabilities.ENERGY&&(side==null||(dummy==0&&side==Direction.UP))) { return energyCap.get().cast(); }
-        return super.getCapability(cap, side);
-    }
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) { if (cap == ForgeCapabilities.ENERGY && (side == null || (dummy == 0 && side == Direction.UP))) { return energyCap.get().cast(); } return super.getCapability(cap, side); }
 
     @Override
     public @NotNull Property<Direction> getFacingProperty() { return IEProperties.FACING_HORIZONTAL; }
@@ -116,9 +109,9 @@ public class CokeOvenHeaterBlockEntity extends ITBaseBlockEntity implements ITBl
 
     @Override
     public void afterRotation(@NotNull Direction oldDir, @NotNull Direction newDir) {
-        for (int i = 0; i <= 1; i++) {
+        for (int i = 0; i <= 2; i++) {
             assert level != null;
-            BlockEntity te = level.getBlockEntity(getBlockPos().offset(0, -dummy+i, 0));
+            BlockEntity te = level.getBlockEntity(getBlockPos().offset(0, 0, i - dummy));
             if (te instanceof CokeOvenHeaterBlockEntity heater) {
                 heater.setFacing(newDir);
                 heater.setChanged();
@@ -128,7 +121,7 @@ public class CokeOvenHeaterBlockEntity extends ITBaseBlockEntity implements ITBl
     }
 
     @Override
-    public BlockPos getModelOffset(BlockState state, @Nullable Vec3i size) { return new BlockPos(0, dummy, 0); }
+    public BlockPos getModelOffset(BlockState state, @Nullable Vec3i size) { return new BlockPos(0, 0, dummy); }
 
     @Override
     public boolean shouldPlaySound(@NotNull String sound) { return active; }

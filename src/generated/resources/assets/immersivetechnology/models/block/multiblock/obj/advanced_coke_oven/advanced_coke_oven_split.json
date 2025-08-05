@@ -8,7 +8,7 @@
     "loader": "forge:obj",
     "model": "immersivetechnology:models/block/multiblock/obj/advanced_coke_oven/advanced_coke_oven.obj",
     "textures": {
-      "particle": "immersivetechnology:block/multiblocks/stone_advanced_coke_oven"
+      "particle": "immersivetechnology:block/multiblocks/stone/advanced_coke_oven"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -155,6 +155,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblocks/stone_advanced_coke_oven"
+    "particle": "immersivetechnology:block/multiblocks/stone/advanced_coke_oven"
   }
 }

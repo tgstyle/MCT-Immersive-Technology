@@ -8,7 +8,7 @@
     "loader": "forge:obj",
     "model": "immersivetechnology:models/block/multiblock/obj/boiler/boiler.obj",
     "textures": {
-      "particle": "immersivetechnology:block/multiblocks/metal_multiblock_boiler"
+      "particle": "immersivetechnology:block/multiblocks/metal/boiler"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -235,6 +235,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblocks/metal_multiblock_boiler"
+    "particle": "immersivetechnology:block/multiblocks/metal/boiler"
   }
 }

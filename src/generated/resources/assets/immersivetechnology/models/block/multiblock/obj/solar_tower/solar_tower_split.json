@@ -8,7 +8,7 @@
     "loader": "forge:obj",
     "model": "immersivetechnology:models/block/multiblock/obj/solar_tower/solar_tower.obj",
     "textures": {
-      "particle": "immersivetechnology:block/multiblocks/metal_multiblock_solar_tower"
+      "particle": "immersivetechnology:block/multiblocks/metal/solar_tower"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -810,6 +810,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblocks/metal_multiblock_solar_tower"
+    "particle": "immersivetechnology:block/multiblocks/metal/solar_tower"
   }
 }

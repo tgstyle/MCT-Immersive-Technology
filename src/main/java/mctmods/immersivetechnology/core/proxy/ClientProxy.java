@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.core.proxy;
 
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import mctmods.immersivetechnology.client.models.ITDynamicModel;
+import mctmods.immersivetechnology.client.models.ITObjLoader;
 import mctmods.immersivetechnology.client.renderer.CokeOvenHeaterRenderer;
 import mctmods.immersivetechnology.client.renderer.GasTurbineRenderer;
 import mctmods.immersivetechnology.client.renderer.SteamTurbineRenderer;
@@ -39,6 +40,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
+        ev.register("obj", ITObjLoader.INSTANCE);
         CokeOvenHeaterRenderer.MODEL = new ITDynamicModel(CokeOvenHeaterRenderer.NAME);
         GasTurbineRenderer.MODEL = new ITDynamicModel(GasTurbineRenderer.NAME);
         GasTurbineRenderer.MODEL_EAST_WEST = new ITDynamicModel(GasTurbineRenderer.NAME_EAST_WEST);

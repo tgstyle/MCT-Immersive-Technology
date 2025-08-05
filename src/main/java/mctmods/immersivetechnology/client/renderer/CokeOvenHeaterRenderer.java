@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 public class CokeOvenHeaterRenderer extends ITBlockEntityRenderer<CokeOvenHeaterBlockEntity>
 {
     public static final String NAME = "coke_oven_heater_fan";
-    public static ITDynamicModel MODEL;
+    public static ITDynamicModel MODEL = new ITDynamicModel(NAME);
     @Override
     public void render(
             @Nonnull CokeOvenHeaterBlockEntity bEntity,
@@ -28,7 +28,7 @@ public class CokeOvenHeaterRenderer extends ITBlockEntityRenderer<CokeOvenHeater
         transform.pushPose();
         transform.translate(0.5, 0.5, 0.5);
         rotateForFacingNoCentering(transform, bEntity.getFacing());
-        final float angle = bEntity.angle+ CokeOvenHeaterBlockEntity.ANGLE_PER_TICK*(bEntity.active?partial: 0);
+        final float angle = bEntity.angle + CokeOvenHeaterBlockEntity.ANGLE_PER_TICK * partial;
         Vector3f axis = new Vector3f(0, 0, 1);
         transform.mulPose(new Quaternionf().rotateAxis(angle, axis));
         transform.translate(-0.5, -0.5, -0.5);

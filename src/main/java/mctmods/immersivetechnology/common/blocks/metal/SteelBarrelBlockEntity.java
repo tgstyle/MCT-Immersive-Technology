@@ -95,7 +95,6 @@ public class SteelBarrelBlockEntity extends IEBaseBlockEntity implements IEServe
         }
         tank.readFromNBT(nbt.getCompound("tank"));
         if (descPacket) markContainingBlockForUpdate(null);
-        else updateBlockState();
     }
 
     @Override

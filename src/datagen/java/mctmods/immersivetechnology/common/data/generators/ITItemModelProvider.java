@@ -48,6 +48,7 @@ public class ITItemModelProvider extends ItemModelProvider {
         generateBlockItem("trash_item", "metal/trash_item");
         generateBlockItem("trash_fluid", "metal/trash_fluid");
         generateBlockItem("trash_energy", "metal/trash_energy");
+        generateBlockItem("coke_oven_heater", "metal/obj/coke_oven_heater");
 
         generateGeneratedItem("it_formation_tool");
         generateGeneratedItem("salt");

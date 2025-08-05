@@ -1,61 +1,52 @@
 {
+  "parent": "immersivetechnology:block/metal/obj/coke_oven_heater",
   "display": {
     "firstperson_lefthand": {
       "rotation": [
         0,
-        225,
+        135,
         0
       ],
       "scale": [
-        0.03125,
-        0.03125,
-        0.03125
-      ],
-      "translation": [
-        -1.75,
-        2.5,
-        1.25
+        0.4,
+        0.4,
+        0.4
       ]
     },
     "firstperson_righthand": {
       "rotation": [
         0,
-        225,
+        315,
         0
       ],
       "scale": [
-        0.03125,
-        0.03125,
-        0.03125
-      ],
-      "translation": [
-        -1.75,
-        2.5,
-        1.75
+        0.4,
+        0.4,
+        0.4
       ]
     },
     "fixed": {
-      "scale": [
-        0.0625,
-        0.0625,
-        0.0625
+      "rotation": [
+        0,
+        180,
+        0
       ],
-      "translation": [
-        -1,
-        -8,
-        -2
+      "scale": [
+        0.5,
+        0.5,
+        0.5
       ]
     },
     "ground": {
       "scale": [
-        0.0625,
-        0.0625,
-        0.0625
+        0.25,
+        0.25,
+        0.25
       ],
       "translation": [
-        -1.5,
+        0,
         3,
-        -1.5
+        0
       ]
     },
     "gui": {
@@ -65,64 +56,51 @@
         0
       ],
       "scale": [
-        0.1875,
-        0.1875,
-        0.1875
-      ],
-      "translation": [
-        6,
-        -6,
-        0
+        0.625,
+        0.625,
+        0.625
       ]
     },
     "head": {
-      "scale": [
-        0.2,
-        0.2,
-        0.2
-      ],
-      "translation": [
+      "rotation": [
         0,
-        8,
-        -8
+        180,
+        0
       ]
     },
     "thirdperson_lefthand": {
       "rotation": [
-        0,
-        90,
+        75,
+        45,
         0
       ],
       "scale": [
-        0.03125,
-        0.03125,
-        0.03125
+        0.375,
+        0.375,
+        0.375
       ],
       "translation": [
-        -0.75,
         0,
-        -1.25
+        2.5,
+        0
       ]
     },
     "thirdperson_righthand": {
       "rotation": [
-        0,
-        270,
+        75,
+        45,
         0
       ],
       "scale": [
-        0.03125,
-        0.03125,
-        0.03125
+        0.375,
+        0.375,
+        0.375
       ],
       "translation": [
-        1,
         0,
-        -1.75
+        2.5,
+        0
       ]
     }
-  },
-  "flip_v": true,
-  "loader": "forge:obj",
-  "model": "immersivetechnology:models/block/metal/obj/coke_oven_heater.obj"
+  }
 }

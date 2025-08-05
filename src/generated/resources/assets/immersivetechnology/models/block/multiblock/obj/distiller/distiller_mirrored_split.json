@@ -8,7 +8,7 @@
     "loader": "forge:obj",
     "model": "immersivetechnology:models/block/multiblock/obj/distiller/distiller_mirrored.obj",
     "textures": {
-      "particle": "immersivetechnology:block/multiblocks/metal_multiblock_distiller2"
+      "particle": "immersivetechnology:block/multiblocks/metal/distiller"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -130,6 +130,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblocks/metal_multiblock_distiller2"
+    "particle": "immersivetechnology:block/multiblocks/metal/distiller"
   }
 }

@@ -54,13 +54,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.State>, IServerTickableComponent<ITGasTurbineLogic.State>, IClientTickableComponent<ITGasTurbineLogic.State> {
-    private static final List<BlockPos> FLUID_POS1 = List.of(new BlockPos(2, 1, 7));
+    private static final List<BlockPos> FLUID_POS1 = List.of(new BlockPos(0, 1, 7));
     private static final List<BlockPos> FLUID_POS2 = List.of(new BlockPos(1, 0, 1));
 
-    private static final Set<CapabilityPosition> ENERGY_INPUTS_HV = Set.of(new CapabilityPosition(2, 0, 5, RelativeBlockFace.LEFT));
-    private static final Set<CapabilityPosition> ENERGY_INPUTS_MV = Set.of(new CapabilityPosition(0, 0, 5, RelativeBlockFace.RIGHT));
+    private static final Set<CapabilityPosition> ENERGY_INPUTS_HV = Set.of(new CapabilityPosition(0, 0, 5, RelativeBlockFace.RIGHT));
+    private static final Set<CapabilityPosition> ENERGY_INPUTS_MV = Set.of(new CapabilityPosition(2, 0, 5, RelativeBlockFace.LEFT));
 
-    public static final BlockPos REDSTONE_POS = new BlockPos(0, 1, 7);
+    public static final BlockPos REDSTONE_POS = new BlockPos(2, 1, 7);
 
     public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
     private static final int ENERGY_CAPACITY = 8192;

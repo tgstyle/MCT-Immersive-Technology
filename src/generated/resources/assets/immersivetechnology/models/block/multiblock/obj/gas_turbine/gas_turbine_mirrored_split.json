@@ -8,7 +8,7 @@
     "loader": "forge:obj",
     "model": "immersivetechnology:models/block/multiblock/obj/gas_turbine/gas_turbine_mirrored.obj",
     "textures": {
-      "particle": "immersivetechnology:block/multiblocks/metal_multiblock_gas_turbine"
+      "particle": "immersivetechnology:block/multiblocks/metal/gas_turbine"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -320,6 +320,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblocks/metal_multiblock_gas_turbine"
+    "particle": "immersivetechnology:block/multiblocks/metal/gas_turbine"
   }
 }

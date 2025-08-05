@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
 import blusunrize.immersiveengineering.common.blocks.IEBaseBlockEntity;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.ticking.IEServerTickableBE;
 import blusunrize.immersiveengineering.common.util.Utils;
-import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements ITBlockInterfaces.IBlockEntityDrop, ITBlockInterfaces.IPlayerInteraction, ITBlockInterfaces.IBlockOverlayText, IEServerTickableBE {
+public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEServerTickableBE {
     private FluidStack selectedFluid = FluidStack.EMPTY;
     private int lastOutputAmount = 0;
 
@@ -154,7 +154,7 @@ public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements ITBl
             setOutputFluid(contained);
             if (level != null && !level.isClientSide) {
                 SoundEvent sound = contained.getFluid().getFluidType().getSound(player, level, worldPosition, SoundActions.BUCKET_EMPTY);
-                if (sound == null) { sound = contained.getFluid().is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY; }
+                if (sound == null) { sound = ForgeRegistries.FLUIDS.getHolder(contained.getFluid()).map(holder -> holder.is(FluidTags.LAVA)).orElse(false) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY; }
                 level.playSound(null, worldPosition, sound, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return true;
