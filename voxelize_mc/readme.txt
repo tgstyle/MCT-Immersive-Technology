@@ -8,11 +8,11 @@ If it doesn't work right check that your obj is built correctly!
 
 Current output is pastable to a shapes class (txt file).
 
-Install python and and the addons needed then enjoy!
+Install python and the addons needed then enjoy!
 	https://www.python.org/downloads/windows/
 	or Python from the MS Store
 	
-Addons (only needed once) (type commands in powershell) -
+Addons (only needed once) (type commands in powershell/bash) -
 	All -
 	pip install numpy
 
@@ -25,7 +25,7 @@ cpu single-threaded (recommended res 8-16) -
 cpu multi-threaded (recommended res 16-32) -
 	python voxelize_obj_par.py path\file.obj(s)
 
-gpu (recommended res 32+) (windows only, directml "should work" on any GPU) -
+gpu (recommended res 32+) (currently windows only, directml "should work" on any GPU) -
 	python voxelize_obj_gpu.py path\file.obj(s)
 
 argument('filename', type=str, help='OBJ filename')
