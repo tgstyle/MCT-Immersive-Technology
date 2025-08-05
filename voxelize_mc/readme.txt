@@ -8,7 +8,7 @@ If it doesn't work right check that your obj is built correctly!
 
 Current output is pastable to a shapes class (txt file).
 
-Install python and the addons needed then enjoy!
+Install python and the addons needed, then enjoy!
 	https://www.python.org/downloads/windows/
 	or Python from the MS Store
 	
