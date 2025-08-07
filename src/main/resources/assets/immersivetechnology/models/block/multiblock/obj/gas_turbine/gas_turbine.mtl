@@ -1,6 +1,4 @@
 # Made in Blockbench 4.12.5
-newmtl m_3f5f01fe-ea94-9c6e-75e6-3b8f9919239a
-map_Kd immersivetechnology:block/multiblocks/metal_multiblock_gas_turbine
-newmtl m_7ef6106d-6a81-1702-0c2d-6dfbd9fb43af
+newmtl m_6627e7c0-fce9-a4b4-acbc-a1af7c40be9f
 map_Kd immersivetechnology:block/multiblocks/metal/gas_turbine
 newmtl none
