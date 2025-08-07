@@ -28,49 +28,50 @@ cpu multi-threaded (recommended res 16-32) -
 gpu (recommended res 32+) (currently windows only, directml "should work" on any GPU) -
 	python voxelize_obj_gpu.py path\file.obj(s)
 
-argument('filename', type=str, help='OBJ filename')
-argument('--res', type=int, default=8, help='Voxel resolution')
-argument('--size_x', type=int, default=None, help='X size (auto if None)')
-argument('--size_y', type=int, default=None, help='Y size (auto if None)')
-argument('--size_z', type=int, default=None, help='Z size (auto if None)')
-argument('--offset_x', type=float, default=None, help='X offset (auto if None)')
-argument('--offset_y', type=float, default=None, help='Y offset (auto if None)')
-argument('--offset_z', type=float, default=None, help='Z offset (auto if None)')
+parser = argparse.ArgumentParser(description='Voxelize OBJ for AABB collision with multi-threading')
+    parser.add_argument('filename', type=str, help='OBJ filename or directory')
+    parser.add_argument('--res', type=int, default=8, help='Voxel resolution')
+    parser.add_argument('--size_x', type=int, default=None, help='X size (auto if None)')
+    parser.add_argument('--size_y', type=int, default=None, help='Y size (auto if None)')
+    parser.add_argument('--size_z', type=int, default=None, help='Z size (auto if None)')
+    parser.add_argument('--offset_x', type=float, default=None, help='X offset (auto if None)')
+    parser.add_argument('--offset_y', type=float, default=None, help='Y offset (auto if None)')
+    parser.add_argument('--offset_z', type=float, default=None, help='Z offset (auto if None)')
+    parser.add_argument('--fill_interior', type=bool, default=True, help='Fill interior spaces (default: True)')
+    parser.add_argument('--min_vox', type=int, default=1, help='Minimum voxel count per AABB and component (default: 1)')
 
 
 Adapted for MC multiblocks from https://github.com/leanderthiele/voxelize/blob/master/voxelize/voxelize.py
 
-Example in powershell (all needed obj files are in the path) -
+Example in powershell (if all needed obj files are in the path) -
 
 python .\voxelize_obj_gpu.py .\SteamTurbine\steam_turbine.obj --res 32
+Selected main file: gas_turbine.obj
 Detected OBJ files:
-0: steam_turbine.obj
-1: steam_turbine_mirrored.obj
-2: steam_turbine_rotor.obj
-3: steam_turbine_rotor_west_east.obj
-Select main OBJ index: 0
-Selected main file: steam_turbine.obj
-Select mirrored OBJ index (-1 for none): 1
+0: steam_turbine_mirrored.obj
+1: steam_turbine_rotor.obj
+2: steam_turbine_rotor_west_east.obj
+Select mirrored OBJ index (-1 for none): 0
 Add animation/additional OBJ? y/n: y
-Select OBJ index: 2
+Select OBJ index: 1
 bX position: 1
 bY position: 1
 bZ position: 0
 Is mirrored (y/n): n
 Add animation/additional OBJ? y/n: y
-Select OBJ index: 3
+Select OBJ index: 2
 bX position: 1
 bY position: 1
 bZ position: 0
 Is mirrored (y/n): y
 Add animation/additional OBJ? y/n: y
-Select OBJ index: 2
+Select OBJ index: 1
 bX position: 1
 bY position: 1
 bZ position: 5
 Is mirrored (y/n): n
 Add animation/additional OBJ? y/n: y
-Select OBJ index: 3
+Select OBJ index: 2
 bX position: 1
 bY position: 1
 bZ position: 5
