@@ -4,9 +4,7 @@ import multiprocessing as mp
 import os
 from collections import deque
 import ctypes
-
 EPSILON = 1e-5
-
 def intersects_box(triangle, box_center, box_extents):
     X, Y, Z = 0, 1, 2
     v0 = triangle[0] - box_center
@@ -78,49 +76,74 @@ def intersects_box(triangle, box_center, box_extents):
     r = box_extents[X] * np.abs(f2[Y]) + box_extents[Y] * np.abs(f2[X])
     if max(-max([p0, p1, p2]), min([p0, p1, p2])) > r:
         return False
-    if max([v0[X], v1[X], v2[X]]) < -box_extents[X] or min([v0[X], v1[X], v2[X]]) > box_extents[X]:
+    if max([v0[X], v1[X], v2[X]]) < -box_extents[X] - EPSILON or min([v0[X], v1[X], v2[X]]) > box_extents[X] + EPSILON:
         return False
-    if max([v0[Y], v1[Y], v2[Y]]) < -box_extents[Y] or min([v0[Y], v1[Y], v2[Y]]) > box_extents[Y]:
+    if max([v0[Y], v1[Y], v2[Y]]) < -box_extents[Y] - EPSILON or min([v0[Y], v1[Y], v2[Y]]) > box_extents[Y] + EPSILON:
         return False
-    if max([v0[Z], v1[Z], v2[Z]]) < -box_extents[Z] or min([v0[Z], v1[Z], v2[Z]]) > box_extents[Z]:
+    if max([v0[Z], v1[Z], v2[Z]]) < -box_extents[Z] - EPSILON or min([v0[Z], v1[Z], v2[Z]]) > box_extents[Z] + EPSILON:
         return False
     plane_normal = np.cross(f0, f1)
     plane_distance = np.dot(plane_normal, v0)
     r = box_extents[X] * np.abs(plane_normal[X]) + box_extents[Y] * np.abs(plane_normal[Y]) + box_extents[Z] * np.abs(plane_normal[Z])
-    if abs(plane_distance) > r:
+    if abs(plane_distance) > r + EPSILON:
         return False
     return True
-
-def merge_voxels(filled, res):
+def merge_voxels(filled, res, is_mirrored=False, min_vox=1):
     aabbs = []
     visited = np.zeros_like(filled, dtype=bool)
+    axis_perms = [(0,1,2), (0,2,1), (1,0,2), (1,2,0), (2,0,1), (2,1,0)]
     for x in range(res):
         for y in range(res):
             for z in range(res):
                 if filled[x, y, z] and not visited[x, y, z]:
-                    x_min, y_min, z_min = x, y, z
-                    x_max, y_max, z_max = x, y, z
-                    while x_max + 1 < res and np.all(filled[x_max + 1, y_min:y_max + 1, z_min:z_max + 1]):
-                        x_max += 1
-                    while y_max + 1 < res and np.all(filled[x_min:x_max + 1, y_max + 1, z_min:z_max + 1]):
-                        y_max += 1
-                    while z_max + 1 < res and np.all(filled[x_min:x_max + 1, y_min:y_max + 1, z_max + 1]):
-                        z_max += 1
-                    visited[x_min:x_max + 1, y_min:y_max + 1, z_min:z_max + 1] = True
-                    min_aabb = (x_min / res, y_min / res, z_min / res)
-                    max_aabb = ((x_max + 1) / res, (y_max + 1) / res, (z_max + 1) / res)
+                    seed = (x, y, z)
+                    best_volume = 0
+                    best_mins = None
+                    best_maxs = None
+                    for perm in axis_perms:
+                        mins = list(seed)
+                        maxs = list(seed)
+                        for ax in perm:
+                            while maxs[ax] + 1 < res:
+                                new_max = maxs[ax] + 1
+                                slic = [slice(mins[0], maxs[0] + 1), slice(mins[1], maxs[1] + 1), slice(mins[2], maxs[2] + 1)]
+                                slic[ax] = new_max
+                                if np.all(filled[tuple(slic)]):
+                                    maxs[ax] = new_max
+                                else:
+                                    break
+                            while mins[ax] - 1 >= 0:
+                                new_min = mins[ax] - 1
+                                slic = [slice(mins[0], maxs[0] + 1), slice(mins[1], maxs[1] + 1), slice(mins[2], maxs[2] + 1)]
+                                slic[ax] = new_min
+                                if np.all(filled[tuple(slic)]):
+                                    mins[ax] = new_min
+                                else:
+                                    break
+                        volume = (maxs[0] - mins[0] + 1) * (maxs[1] - mins[1] + 1) * (maxs[2] - mins[2] + 1)
+                        if volume > best_volume:
+                            best_volume = volume
+                            best_mins = tuple(mins)
+                            best_maxs = tuple(maxs)
+                    if best_volume < min_vox: continue
+                    visited[best_mins[0]:best_maxs[0] + 1, best_mins[1]:best_maxs[1] + 1, best_mins[2]:best_maxs[2] + 1] = True
+                    min_aabb = (best_mins[0] / res, best_mins[1] / res, best_mins[2] / res)
+                    max_aabb = ((best_maxs[0] + 1) / res, (best_maxs[1] + 1) / res, (best_maxs[2] + 1) / res)
+                    if is_mirrored:
+                        temp = min_aabb[2]
+                        min_aabb = (min_aabb[0], min_aabb[1], 1 - max_aabb[2])
+                        max_aabb = (max_aabb[0], max_aabb[1], 1 - temp)
                     aabbs.append(min_aabb + max_aabb)
     return aabbs
-
 def mark_block(block_args):
-    bx, by, bz, triangles, res, offset, extents_base, voxel_size, is_mirrored = block_args
-    filled = np.zeros((res, res, res), dtype=bool)
-    model_min = np.array([bx, by, bz]) + offset
+    bx, by, bz, triangles, res, extents_base, voxel_size, is_mirrored, size_x, size_y, size_z = block_args
+    model_min = np.array([bx, by, bz])
     block_center = model_min + 0.5
     block_extents = np.array([0.5, 0.5, 0.5])
     block_intersect = any(intersects_box(tri, block_center, block_extents) for tri in triangles)
     if not block_intersect:
         return []
+    filled = np.zeros((res, res, res), dtype=bool)
     for ix in range(res):
         for iy in range(res):
             for iz in range(res):
@@ -141,30 +164,28 @@ def mark_block(block_args):
         gx = bx * res + ix
         gy = by * res + iy
         gz = bz * res + iz
-        global_positions.append((gx, gy, gz))
+        if 0 <= gx < size_x * res and 0 <= gy < size_y * res and 0 <= gz < size_z * res:
+            global_positions.append((gx, gy, gz))
     return global_positions
-
 def init_pool(shared_arr_, global_shape_):
     global shared_arr, global_shape
     shared_arr = shared_arr_
     global_shape = global_shape_
-
 def process_block(block_args):
-    bx, by, bz, _, res, _, _, _, _ = block_args
+    bx, by, bz, res, min_vox = block_args
     global_filled = np.ctypeslib.as_array(shared_arr).reshape(global_shape)
     local_filled = global_filled[bx * res:(bx + 1) * res, by * res:(by + 1) * res, bz * res:(bz + 1) * res]
-    aabbs = merge_voxels(local_filled, res)
+    aabbs = merge_voxels(local_filled, res, min_vox=min_vox)
     if aabbs:
         lines = [f'if (bX == {bx} && bY == {by} && bZ == {bz}) {{']
         for minx, miny, minz, maxx, maxy, maxz in aabbs:
-            lines.append(f'    main.add(new AABB({minx:.4f}D, {miny:.4f}D, {minz:.4f}D, {maxx:.4f}D, {maxy:.4f}D, {maxz:.4f}D));')
+            lines.append(f' main.add(new AABB({minx:.4f}D, {miny:.4f}D, {minz:.4f}D, {maxx:.4f}D, {maxy:.4f}D, {maxz:.4f}D));')
         lines.append('}')
         return '\n'.join(lines)
     return None
-
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Voxelize OBJ for AABB collision')
-    parser.add_argument('filename', type=str, help='OBJ filename')
+    parser = argparse.ArgumentParser(description='Voxelize OBJ for AABB collision with multi-threading')
+    parser.add_argument('filename', type=str, help='OBJ filename or directory')
     parser.add_argument('--res', type=int, default=8, help='Voxel resolution')
     parser.add_argument('--size_x', type=int, default=None, help='X size (auto if None)')
     parser.add_argument('--size_y', type=int, default=None, help='Y size (auto if None)')
@@ -172,38 +193,58 @@ if __name__ == '__main__':
     parser.add_argument('--offset_x', type=float, default=None, help='X offset (auto if None)')
     parser.add_argument('--offset_y', type=float, default=None, help='Y offset (auto if None)')
     parser.add_argument('--offset_z', type=float, default=None, help='Z offset (auto if None)')
+    parser.add_argument('--fill_interior', type=bool, default=True, help='Fill interior spaces (default: True)')
+    parser.add_argument('--min_vox', type=int, default=1, help='Minimum voxel count per AABB and component (default: 1)')
     args = parser.parse_args()
-
-    dir_path = os.path.dirname(os.path.abspath(args.filename))
-    obj_files = [f for f in os.listdir(dir_path) if f.endswith('.obj')]
-    print("Detected OBJ files:")
-    for i, f in enumerate(obj_files):
-        print(f"{i}: {f}")
-
-    main_index = int(input("Select main OBJ index: "))
-    main_file = obj_files[main_index]
-    print(f"Selected main file: {main_file}")
-
-    mirrored_index = int(input("Select mirrored OBJ index (-1 for none): "))
-    mirrored_file = obj_files[mirrored_index] if mirrored_index >= 0 else None
-
+    if os.path.isdir(args.filename):
+        dir_path = os.path.abspath(args.filename)
+        obj_files = [f for f in os.listdir(dir_path) if f.lower().endswith('.obj')]
+        if not obj_files:
+            raise ValueError("No OBJ files found in the directory.")
+        print("Detected OBJ files:")
+        for i, f in enumerate(obj_files):
+            print(f"{i}: {f}")
+        main_index = int(input("Select main OBJ index: "))
+        main_file = obj_files[main_index]
+        print(f"Selected main file: {main_file}")
+    elif os.path.isfile(args.filename) and args.filename.lower().endswith('.obj'):
+        dir_path = os.path.dirname(os.path.abspath(args.filename))
+        main_file = os.path.basename(args.filename)
+        obj_files = [f for f in os.listdir(dir_path) if f.lower().endswith('.obj')]
+        if main_file not in obj_files:
+            raise ValueError("Specified file not found in directory.")
+        print(f"Selected main file: {main_file}")
+    else:
+        raise ValueError("Invalid input: must be an OBJ file or a directory containing OBJ files.")
+    other_objs = [f for f in obj_files if f != main_file]
+    mirrored_file = None
+    if other_objs:
+        print("Detected other OBJ files:")
+        for i, f in enumerate(other_objs):
+            print(f"{i}: {f}")
+        mirrored_index = int(input("Select mirrored OBJ index (-1 for none): "))
+        if mirrored_index >= 0:
+            mirrored_file = other_objs[mirrored_index]
+            other_objs = [f for f in other_objs if f != mirrored_file]
     additional_objs = []
-    while input("Add animation/additional OBJ? y/n: ") == 'y':
-        index = int(input("Select OBJ index: "))
-        bX = int(input("bX position: "))
-        bY = int(input("bY position: "))
-        bZ = int(input("bZ position: "))
-        is_mirrored = input("Is mirrored (y/n): ") == 'y'
-        additional_objs.append((obj_files[index], bX, bY, bZ, is_mirrored))
-
+    if other_objs:
+        while input("Add animation/additional OBJ? y/n: ") == 'y':
+            print("Remaining OBJ files:")
+            for i, f in enumerate(other_objs):
+                print(f"{i}: {f}")
+            index = int(input("Select OBJ index: "))
+            selected_file = other_objs[index]
+            bX = int(input("bX position: "))
+            bY = int(input("bY position: "))
+            bZ = int(input("bZ position: "))
+            is_mirrored = input("Is mirrored (y/n): ") == 'y'
+            additional_objs.append((selected_file, bX, bY, bZ, is_mirrored))
+            other_objs = [f for f in other_objs if f != selected_file]
     output_file = main_file.replace(".obj", ".txt")
     output_lines = []
-
-    # Load main
     print(f"Processing main file: {main_file}")
     with open(os.path.join(dir_path, main_file), 'r') as f:
         lines = f.readlines()
-
     verts = []
     faces = []
     for line in lines:
@@ -214,8 +255,8 @@ if __name__ == '__main__':
             parts = line.split()[1:]
             face = [int(p.split('/')[0]) - 1 for p in parts]
             faces.append(face)
-
     verts_np = np.array(verts)
+    verts_np = np.round(verts_np * 16.0) / 16.0
     bb_min = np.min(verts_np, axis=0)
     bb_max = np.max(verts_np, axis=0)
     bb_size = bb_max - bb_min
@@ -227,17 +268,29 @@ if __name__ == '__main__':
         args.offset_y if args.offset_y is not None else np.floor(bb_min[1]),
         args.offset_z if args.offset_z is not None else np.floor(bb_min[2])
     ])
-
     triangles = []
     for face in faces:
         if len(face) == 4:
-            triangles.append([verts[face[0]], verts[face[1]], verts[face[2]]])
-            triangles.append([verts[face[0]], verts[face[2]], verts[face[3]]])
+            tri1 = [verts_np[face[0]], verts_np[face[1]], verts_np[face[2]]]
+            v0, v1, v2 = tri1
+            cross = np.cross(v1 - v0, v2 - v0)
+            area = np.linalg.norm(cross) / 2
+            if area > 0.01:
+                triangles.append(tri1)
+            tri2 = [verts_np[face[0]], verts_np[face[2]], verts_np[face[3]]]
+            v0, v1, v2 = tri2
+            cross = np.cross(v1 - v0, v2 - v0)
+            area = np.linalg.norm(cross) / 2
+            if area > 0.01:
+                triangles.append(tri2)
         elif len(face) == 3:
-            triangles.append([verts[face[0]], verts[face[1]], verts[face[2]]])
-    triangles = np.array(triangles) - offset
-
-    # Load mirrored if selected
+            tri = [verts_np[face[0]], verts_np[face[1]], verts_np[face[2]]]
+            v0, v1, v2 = tri
+            cross = np.cross(v1 - v0, v2 - v0)
+            area = np.linalg.norm(cross) / 2
+            if area > 0.01:
+                triangles.append(tri)
+    triangles = [np.array(t) - offset for t in triangles]
     mirrored_triangles = None
     if mirrored_file:
         print(f"Processing mirrored file: {mirrored_file}")
@@ -254,6 +307,7 @@ if __name__ == '__main__':
                 face = [int(p.split('/')[0]) - 1 for p in parts]
                 mirrored_faces.append(face)
         mirrored_verts_np = np.array(mirrored_verts)
+        mirrored_verts_np = np.round(mirrored_verts_np * 16.0) / 16.0
         mirrored_bb_min = np.min(mirrored_verts_np, axis=0)
         mirrored_bb_max = np.max(mirrored_verts_np, axis=0)
         for vert in mirrored_verts_np:
@@ -261,13 +315,26 @@ if __name__ == '__main__':
         mirrored_triangles = []
         for face in mirrored_faces:
             if len(face) == 4:
-                mirrored_triangles.append([mirrored_verts_np[face[0]], mirrored_verts_np[face[1]], mirrored_verts_np[face[2]]])
-                mirrored_triangles.append([mirrored_verts_np[face[0]], mirrored_verts_np[face[2]], mirrored_verts_np[face[3]]])
+                tri1 = [mirrored_verts_np[face[0]], mirrored_verts_np[face[1]], mirrored_verts_np[face[2]]]
+                v0, v1, v2 = tri1
+                cross = np.cross(v1 - v0, v2 - v0)
+                area = np.linalg.norm(cross) / 2
+                if area > 0.01:
+                    mirrored_triangles.append(tri1)
+                tri2 = [mirrored_verts_np[face[0]], mirrored_verts_np[face[2]], mirrored_verts_np[face[3]]]
+                v0, v1, v2 = tri2
+                cross = np.cross(v1 - v0, v2 - v0)
+                area = np.linalg.norm(cross) / 2
+                if area > 0.01:
+                    mirrored_triangles.append(tri2)
             elif len(face) == 3:
-                mirrored_triangles.append([mirrored_verts_np[face[0]], mirrored_verts_np[face[1]], mirrored_verts_np[face[2]]])
-        mirrored_triangles = np.array(mirrored_triangles) - offset
-
-    # Load additional OBJs
+                tri = [mirrored_verts_np[face[0]], mirrored_verts_np[face[1]], mirrored_verts_np[face[2]]]
+                v0, v1, v2 = tri
+                cross = np.cross(v1 - v0, v2 - v0)
+                area = np.linalg.norm(cross) / 2
+                if area > 0.01:
+                    mirrored_triangles.append(tri)
+        mirrored_triangles = [np.array(t) - offset for t in mirrored_triangles]
     additional_triangles = []
     for additional_file, bX, bY, bZ, is_mirrored in additional_objs:
         print(f"Processing additional file: {additional_file} at bX={bX}, bY={bY}, bZ={bZ}, is_mirrored={is_mirrored}")
@@ -284,93 +351,122 @@ if __name__ == '__main__':
                 face = [int(p.split('/')[0]) - 1 for p in parts]
                 faces.append(face)
         verts_np = np.array(verts)
+        verts_np = np.round(verts_np * 16.0) / 16.0
         add_bb_min = np.min(verts_np, axis=0)
         add_bb_max = np.max(verts_np, axis=0)
         add_offset = np.floor(add_bb_min)
         if is_mirrored:
             for vert in verts_np:
                 vert[2] = add_bb_min[2] + add_bb_max[2] - vert[2]
-        verts_np -= add_offset  # Normalize to start from 0
-        verts_np += np.array([bX, bY, bZ])  # Place at block position
+        verts_np -= add_offset
+        verts_np += np.array([bX, bY, bZ])
         triangles_add = []
         for face in faces:
             if len(face) == 4:
-                triangles_add.append([verts_np[face[0]], verts_np[face[1]], verts_np[face[2]]])
-                triangles_add.append([verts_np[face[0]], verts_np[face[2]], verts_np[face[3]]])
+                tri1 = [verts_np[face[0]], verts_np[face[1]], verts_np[face[2]]]
+                v0, v1, v2 = tri1
+                cross = np.cross(v1 - v0, v2 - v0)
+                area = np.linalg.norm(cross) / 2
+                if area > 0.01:
+                    triangles_add.append(tri1)
+                tri2 = [verts_np[face[0]], verts_np[face[2]], verts_np[face[3]]]
+                v0, v1, v2 = tri2
+                cross = np.cross(v1 - v0, v2 - v0)
+                area = np.linalg.norm(cross) / 2
+                if area > 0.01:
+                    triangles_add.append(tri2)
             elif len(face) == 3:
-                triangles_add.append([verts_np[face[0]], verts_np[face[1]], verts_np[face[2]]])
-        triangles_add = np.array(triangles_add)
-        additional_triangles.append((bX, bY, bZ, triangles_add, is_mirrored))
-
+                tri = [verts_np[face[0]], verts_np[face[1]], verts_np[face[2]]]
+                v0, v1, v2 = tri
+                cross = np.cross(v1 - v0, v2 - v0)
+                area = np.linalg.norm(cross) / 2
+                if area > 0.01:
+                    triangles_add.append(tri)
+        additional_triangles.append((bX, bY, bZ, [np.array(t) for t in triangles_add], is_mirrored))
     res = args.res
     voxel_size = 1.0 / res
     extents_base = np.array([0.5 / res] * 3)
-
-    # Prepare marking tasks
-    marking_tasks = [(bx, by, bz, triangles, res, np.array([0,0,0]), extents_base, voxel_size, False) for bx in range(size_x) for by in range(size_y) for bz in range(size_z)]
+    global_shape = (size_x * res, size_y * res, size_z * res)
+    marking_tasks = []
+    for bx in range(size_x):
+        for by in range(size_y):
+            for bz in range(size_z):
+                marking_tasks.append((bx, by, bz, triangles, res, extents_base, voxel_size, False, size_x, size_y, size_z))
     if mirrored_triangles is not None:
-        mirrored_tasks = [(bx, by, size_z - 1 - bz, mirrored_triangles, res, np.array([0,0,0]), extents_base, voxel_size, True) for bx in range(size_x) for by in range(size_y) for bz in range(size_z)]
-        marking_tasks += mirrored_tasks
+        for bx in range(size_x):
+            for by in range(size_y):
+                for bz in range(size_z):
+                    flipped_bz = size_z - 1 - bz
+                    marking_tasks.append((bx, by, flipped_bz, mirrored_triangles, res, extents_base, voxel_size, True, size_x, size_y, size_z))
     for bX, bY, bZ, add_triangles, is_mirrored in additional_triangles:
-        marking_tasks.append((bX, bY, bZ, add_triangles, res, np.array([0,0,0]), extents_base, voxel_size, is_mirrored))
-
-    # Mark surface in parallel
+        marking_tasks.append((bX, bY, bZ, add_triangles, res, extents_base, voxel_size, is_mirrored, size_x, size_y, size_z))
     with mp.Pool() as pool:
         mark_results = pool.map(mark_block, marking_tasks)
-
-    # Global filled for surface
-    global_shape = (size_x * res, size_y * res, size_z * res)
     global_filled = np.zeros(global_shape, dtype=bool)
     for positions in mark_results:
         for gx, gy, gz in positions:
             global_filled[gx, gy, gz] = True
-
-    # Flood fill to mark exterior air
-    visited = np.zeros(global_shape, dtype=bool)
-    air_queue = deque()
-    directions = [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)]
-    # Seed queue with boundary voxels if air
-    for dim in range(3):
-        low = 0
-        high = global_shape[dim] - 1
-        for i in range(global_shape[(dim + 1) % 3]):
-            for j in range(global_shape[(dim + 2) % 3]):
-                for val in [low, high]:
-                    pos = [0, 0, 0]
-                    pos[dim] = val
-                    pos[(dim + 1) % 3] = i
-                    pos[(dim + 2) % 3] = j
-                    pos_tuple = tuple(pos)
-                    if not global_filled[pos_tuple]:
-                        air_queue.append(pos_tuple)
-                        visited[pos_tuple] = True
-    while air_queue:
-        pos = air_queue.popleft()
-        for d in directions:
-            npos = tuple(np.array(pos) + np.array(d))
-            if all(0 <= npos[k] < global_shape[k] for k in range(3)) and not visited[npos] and not global_filled[npos]:
-                visited[npos] = True
-                air_queue.append(npos)
-
-    # Fill interior (unvisited air) as solid
-    for gx in range(global_shape[0]):
-        for gy in range(global_shape[1]):
-            for gz in range(global_shape[2]):
-                if not visited[gx, gy, gz] and not global_filled[gx, gy, gz]:
-                    global_filled[gx, gy, gz] = True
-
-    # Create shared array for read-only access
+    if args.fill_interior:
+        visited = np.zeros(global_shape, dtype=bool)
+        air_queue = deque()
+        directions = []
+        for dx in [-1, 0, 1]:
+            for dy in [-1, 0, 1]:
+                for dz in [-1, 0, 1]:
+                    if (dx, dy, dz) != (0, 0, 0):
+                        directions.append((dx, dy, dz))
+        for dim in range(3):
+            low = 0
+            high = global_shape[dim] - 1
+            for i in range(global_shape[(dim + 1) % 3]):
+                for j in range(global_shape[(dim + 2) % 3]):
+                    for val in [low, high]:
+                        pos = [0, 0, 0]
+                        pos[dim] = val
+                        pos[(dim + 1) % 3] = i
+                        pos[(dim + 2) % 3] = j
+                        pos_tuple = tuple(pos)
+                        if not global_filled[pos_tuple]:
+                            air_queue.append(pos_tuple)
+                            visited[pos_tuple] = True
+        while air_queue:
+            pos = air_queue.popleft()
+            for d in directions:
+                npos = tuple(np.array(pos) + np.array(d))
+                if all(0 <= npos[k] < global_shape[k] for k in range(3)) and not visited[npos] and not global_filled[npos]:
+                    visited[npos] = True
+                    air_queue.append(npos)
+        for gx in range(global_shape[0]):
+            for gy in range(global_shape[1]):
+                for gz in range(global_shape[2]):
+                    if not visited[gx, gy, gz] and not global_filled[gx, gy, gz]:
+                        global_filled[gx, gy, gz] = True
+    if args.min_vox > 1:
+        visited = np.zeros(global_shape, dtype=bool)
+        directions_comp = [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)]
+        for gx in range(global_shape[0]):
+            for gy in range(global_shape[1]):
+                for gz in range(global_shape[2]):
+                    if global_filled[gx, gy, gz] and not visited[gx, gy, gz]:
+                        component = []
+                        queue = deque([(gx, gy, gz)])
+                        visited[gx, gy, gz] = True
+                        while queue:
+                            pos = queue.popleft()
+                            component.append(pos)
+                            for d in directions_comp:
+                                npos = tuple(np.array(pos) + d)
+                                if all(0 <= npos[k] < global_shape[k] for k in range(3)) and global_filled[npos] and not visited[npos]:
+                                    visited[npos] = True
+                                    queue.append(npos)
+                        if len(component) < args.min_vox:
+                            for pos in component:
+                                global_filled[pos] = False
     shared_arr = mp.Array(ctypes.c_bool, global_filled.flatten(), lock=False)
-
-    # Prepare process tasks for AABB generation
-    process_tasks = [(bx, by, bz, None, res, None, None, None, None) for bx in range(size_x) for by in range(size_y) for bz in range(size_z)]
-
-    # Generate AABBs in parallel
+    process_tasks = [(bx, by, bz, res, args.min_vox) for bx in range(size_x) for by in range(size_y) for bz in range(size_z)]
     with mp.Pool(initializer=init_pool, initargs=(shared_arr, global_shape)) as pool:
         results = pool.map(process_block, process_tasks)
-
     output_lines = [r for r in results if r]
-
     with open(output_file, 'w') as f:
         f.write('\n'.join(output_lines))
     print(f"Output written to {output_file}")
