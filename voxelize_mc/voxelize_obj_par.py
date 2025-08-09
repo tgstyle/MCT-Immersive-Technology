@@ -1,9 +1,8 @@
 import numpy as np
 import argparse
-import multiprocessing as mp
 import os
 from collections import deque
-import ctypes
+import concurrent.futures
 EPSILON = 1e-5
 def intersects_box(triangle, box_center, box_extents):
     X, Y, Z = 0, 1, 2
@@ -88,7 +87,7 @@ def intersects_box(triangle, box_center, box_extents):
     if abs(plane_distance) > r + EPSILON:
         return False
     return True
-def merge_voxels(filled, res, is_mirrored=False, min_vox=1):
+def merge_voxels(filled, res, min_vox=1):
     aabbs = []
     visited = np.zeros_like(filled, dtype=bool)
     axis_perms = [(0,1,2), (0,2,1), (1,0,2), (1,2,0), (2,0,1), (2,1,0)]
@@ -129,14 +128,10 @@ def merge_voxels(filled, res, is_mirrored=False, min_vox=1):
                     visited[best_mins[0]:best_maxs[0] + 1, best_mins[1]:best_maxs[1] + 1, best_mins[2]:best_maxs[2] + 1] = True
                     min_aabb = (best_mins[0] / res, best_mins[1] / res, best_mins[2] / res)
                     max_aabb = ((best_maxs[0] + 1) / res, (best_maxs[1] + 1) / res, (best_maxs[2] + 1) / res)
-                    if is_mirrored:
-                        temp = min_aabb[2]
-                        min_aabb = (min_aabb[0], min_aabb[1], 1 - max_aabb[2])
-                        max_aabb = (max_aabb[0], max_aabb[1], 1 - temp)
                     aabbs.append(min_aabb + max_aabb)
     return aabbs
 def mark_block(block_args):
-    bx, by, bz, triangles, res, extents_base, voxel_size, is_mirrored, size_x, size_y, size_z = block_args
+    bx, by, bz, triangles, res, extents_base, voxel_size, flip_axis, mid_value, size_x, size_y, size_z = block_args
     model_min = np.array([bx, by, bz])
     block_center = model_min + 0.5
     block_extents = np.array([0.5, 0.5, 0.5])
@@ -144,17 +139,21 @@ def mark_block(block_args):
     if not block_intersect:
         return []
     filled = np.zeros((res, res, res), dtype=bool)
-    for ix in range(res):
-        for iy in range(res):
-            for iz in range(res):
-                local_center = np.array([(ix + 0.5) * voxel_size, (iy + 0.5) * voxel_size, (iz + 0.5) * voxel_size])
-                voxel_center = model_min + local_center
-                for tri in triangles:
-                    if intersects_box(tri, voxel_center, extents_base):
-                        filled[ix, iy, iz] = True
-                        break
-    if is_mirrored:
-        filled = filled[:, :, ::-1]
+    ix, iy, iz = np.meshgrid(np.arange(res), np.arange(res), np.arange(res), indexing='ij')
+    local_centers = np.stack([ix, iy, iz], axis=-1).astype(np.float64) + 0.5
+    local_centers *= voxel_size
+    voxel_centers_flat = local_centers.reshape(-1, 3) + model_min
+    if flip_axis is not None:
+        voxel_centers_flat[:, flip_axis] = 2 * mid_value - voxel_centers_flat[:, flip_axis]
+    for k in range(voxel_centers_flat.shape[0]):
+        voxel_center = voxel_centers_flat[k]
+        for tri in triangles:
+            if intersects_box(tri, voxel_center, extents_base):
+                ix = k // (res * res)
+                iy = (k // res) % res
+                iz = k % res
+                filled[ix, iy, iz] = True
+                break
     local_positions = np.where(filled)
     global_positions = []
     for i in range(len(local_positions[0])):
@@ -167,13 +166,8 @@ def mark_block(block_args):
         if 0 <= gx < size_x * res and 0 <= gy < size_y * res and 0 <= gz < size_z * res:
             global_positions.append((gx, gy, gz))
     return global_positions
-def init_pool(shared_arr_, global_shape_):
-    global shared_arr, global_shape
-    shared_arr = shared_arr_
-    global_shape = global_shape_
-def process_block(block_args):
+def process_block(block_args, global_filled):
     bx, by, bz, res, min_vox = block_args
-    global_filled = np.ctypeslib.as_array(shared_arr).reshape(global_shape)
     local_filled = global_filled[bx * res:(bx + 1) * res, by * res:(by + 1) * res, bz * res:(bz + 1) * res]
     aabbs = merge_voxels(local_filled, res, min_vox=min_vox)
     if aabbs:
@@ -195,6 +189,9 @@ if __name__ == '__main__':
     parser.add_argument('--offset_z', type=float, default=None, help='Z offset (auto if None)')
     parser.add_argument('--fill_interior', type=bool, default=True, help='Fill interior spaces (default: True)')
     parser.add_argument('--min_vox', type=int, default=1, help='Minimum voxel count per AABB and component (default: 1)')
+    parser.add_argument('--fill_method', type=str, default='flood', choices=['flood', 'ray'], help='Fill method: flood or ray (default: flood)')
+    parser.add_argument('--ray_logic', type=str, default='or', choices=['or', 'majority'], help='Ray logic for interior: or or majority (default: or)')
+    parser.add_argument('--ray_directions', type=str, default='positive', choices=['positive', 'both'], help='Ray directions: positive or both (default: positive)')
     args = parser.parse_args()
     if os.path.isdir(args.filename):
         dir_path = os.path.abspath(args.filename)
@@ -237,8 +234,7 @@ if __name__ == '__main__':
             bX = int(input("bX position: "))
             bY = int(input("bY position: "))
             bZ = int(input("bZ position: "))
-            is_mirrored = input("Is mirrored (y/n): ") == 'y'
-            additional_objs.append((selected_file, bX, bY, bZ, is_mirrored))
+            additional_objs.append((selected_file, bX, bY, bZ))
             other_objs = [f for f in other_objs if f != selected_file]
     output_file = main_file.replace(".obj", ".txt")
     output_lines = []
@@ -291,7 +287,10 @@ if __name__ == '__main__':
             if area > 0.01:
                 triangles.append(tri)
     triangles = [np.array(t) - offset for t in triangles]
+    main_centroid = np.mean(verts_np, axis=0)
     mirrored_triangles = None
+    mirrored_flip_axis = None
+    mirrored_mid_value = None
     if mirrored_file:
         print(f"Processing mirrored file: {mirrored_file}")
         with open(os.path.join(dir_path, mirrored_file), 'r') as f:
@@ -310,34 +309,28 @@ if __name__ == '__main__':
         mirrored_verts_np = np.round(mirrored_verts_np * 16.0) / 16.0
         mirrored_bb_min = np.min(mirrored_verts_np, axis=0)
         mirrored_bb_max = np.max(mirrored_verts_np, axis=0)
-        for vert in mirrored_verts_np:
-            vert[2] = mirrored_bb_min[2] + mirrored_bb_max[2] - vert[2]
-        mirrored_triangles = []
-        for face in mirrored_faces:
-            if len(face) == 4:
-                tri1 = [mirrored_verts_np[face[0]], mirrored_verts_np[face[1]], mirrored_verts_np[face[2]]]
-                v0, v1, v2 = tri1
-                cross = np.cross(v1 - v0, v2 - v0)
-                area = np.linalg.norm(cross) / 2
-                if area > 0.01:
-                    mirrored_triangles.append(tri1)
-                tri2 = [mirrored_verts_np[face[0]], mirrored_verts_np[face[2]], mirrored_verts_np[face[3]]]
-                v0, v1, v2 = tri2
-                cross = np.cross(v1 - v0, v2 - v0)
-                area = np.linalg.norm(cross) / 2
-                if area > 0.01:
-                    mirrored_triangles.append(tri2)
-            elif len(face) == 3:
-                tri = [mirrored_verts_np[face[0]], mirrored_verts_np[face[1]], mirrored_verts_np[face[2]]]
-                v0, v1, v2 = tri
-                cross = np.cross(v1 - v0, v2 - v0)
-                area = np.linalg.norm(cross) / 2
-                if area > 0.01:
-                    mirrored_triangles.append(tri)
-        mirrored_triangles = [np.array(t) - offset for t in mirrored_triangles]
+        mid = (mirrored_bb_min + mirrored_bb_max) / 2
+        mirror_centroid = np.mean(mirrored_verts_np, axis=0)
+        dist_no_flip = np.linalg.norm(mirror_centroid - main_centroid)
+        best_dist = dist_no_flip
+        best_axis = None
+        for axis in range(3):
+            flipped_centroid = mirror_centroid.copy()
+            flipped_centroid[axis] = 2 * mid[axis] - mirror_centroid[axis]
+            dist = np.linalg.norm(flipped_centroid - main_centroid)
+            if dist < best_dist - EPSILON:
+                best_dist = dist
+                best_axis = axis
+        if best_axis is not None:
+            axis_name = ['X', 'Y', 'Z'][best_axis]
+            print(f"Detected mirror flip on {axis_name} axis for mirrored file")
+            mirrored_flip_axis = best_axis
+            mirrored_mid_value = mid[best_axis] - offset[best_axis]
+        else:
+            print("No mirror flip detected for mirrored file")
     additional_triangles = []
-    for additional_file, bX, bY, bZ, is_mirrored in additional_objs:
-        print(f"Processing additional file: {additional_file} at bX={bX}, bY={bY}, bZ={bZ}, is_mirrored={is_mirrored}")
+    for additional_file, bX, bY, bZ in additional_objs:
+        print(f"Processing additional file: {additional_file} at bX={bX}, bY={bY}, bZ={bZ}")
         with open(os.path.join(dir_path, additional_file), 'r') as f:
             lines = f.readlines()
         verts = []
@@ -354,10 +347,30 @@ if __name__ == '__main__':
         verts_np = np.round(verts_np * 16.0) / 16.0
         add_bb_min = np.min(verts_np, axis=0)
         add_bb_max = np.max(verts_np, axis=0)
+        add_mid = (add_bb_min + add_bb_max) / 2
+        add_centroid = np.mean(verts_np, axis=0)
+        dist_no_flip = np.linalg.norm(add_centroid - main_centroid)
+        best_dist = dist_no_flip
+        best_axis = None
+        for axis in range(3):
+            flipped_centroid = add_centroid.copy()
+            flipped_centroid[axis] = 2 * add_mid[axis] - add_centroid[axis]
+            dist = np.linalg.norm(flipped_centroid - main_centroid)
+            if dist < best_dist - EPSILON:
+                best_dist = dist
+                best_axis = axis
+        flip_axis = None
+        mid_value = None
+        if best_axis is not None:
+            axis_name = ['X', 'Y', 'Z'][best_axis]
+            print(f"Detected mirror flip on {axis_name} axis for additional file {additional_file}")
+            flip_axis = best_axis
+            add_offset_axis = np.floor(add_bb_min[best_axis])
+            shift = [bX, bY, bZ][best_axis]
+            mid_value = add_mid[best_axis] - add_offset_axis + shift
+        else:
+            print(f"No mirror flip detected for additional file {additional_file}")
         add_offset = np.floor(add_bb_min)
-        if is_mirrored:
-            for vert in verts_np:
-                vert[2] = add_bb_min[2] + add_bb_max[2] - vert[2]
         verts_np -= add_offset
         verts_np += np.array([bX, bY, bZ])
         triangles_add = []
@@ -382,91 +395,89 @@ if __name__ == '__main__':
                 area = np.linalg.norm(cross) / 2
                 if area > 0.01:
                     triangles_add.append(tri)
-        additional_triangles.append((bX, bY, bZ, [np.array(t) for t in triangles_add], is_mirrored))
-    res = args.res
-    voxel_size = 1.0 / res
-    extents_base = np.array([0.5 / res] * 3)
-    global_shape = (size_x * res, size_y * res, size_z * res)
-    marking_tasks = []
-    for bx in range(size_x):
-        for by in range(size_y):
-            for bz in range(size_z):
-                marking_tasks.append((bx, by, bz, triangles, res, extents_base, voxel_size, False, size_x, size_y, size_z))
-    if mirrored_triangles is not None:
-        for bx in range(size_x):
-            for by in range(size_y):
-                for bz in range(size_z):
-                    flipped_bz = size_z - 1 - bz
-                    marking_tasks.append((bx, by, flipped_bz, mirrored_triangles, res, extents_base, voxel_size, True, size_x, size_y, size_z))
-    for bX, bY, bZ, add_triangles, is_mirrored in additional_triangles:
-        marking_tasks.append((bX, bY, bZ, add_triangles, res, extents_base, voxel_size, is_mirrored, size_x, size_y, size_z))
-    with mp.Pool() as pool:
-        mark_results = pool.map(mark_block, marking_tasks)
-    global_filled = np.zeros(global_shape, dtype=bool)
-    for positions in mark_results:
-        for gx, gy, gz in positions:
-            global_filled[gx, gy, gz] = True
-    if args.fill_interior:
-        visited = np.zeros(global_shape, dtype=bool)
-        air_queue = deque()
-        directions = []
-        for dx in [-1, 0, 1]:
-            for dy in [-1, 0, 1]:
-                for dz in [-1, 0, 1]:
-                    if (dx, dy, dz) != (0, 0, 0):
-                        directions.append((dx, dy, dz))
-        for dim in range(3):
-            low = 0
-            high = global_shape[dim] - 1
-            for i in range(global_shape[(dim + 1) % 3]):
-                for j in range(global_shape[(dim + 2) % 3]):
-                    for val in [low, high]:
-                        pos = [0, 0, 0]
-                        pos[dim] = val
-                        pos[(dim + 1) % 3] = i
-                        pos[(dim + 2) % 3] = j
-                        pos_tuple = tuple(pos)
-                        if not global_filled[pos_tuple]:
-                            air_queue.append(pos_tuple)
-                            visited[pos_tuple] = True
-        while air_queue:
-            pos = air_queue.popleft()
-            for d in directions:
-                npos = tuple(np.array(pos) + np.array(d))
-                if all(0 <= npos[k] < global_shape[k] for k in range(3)) and not visited[npos] and not global_filled[npos]:
-                    visited[npos] = True
-                    air_queue.append(npos)
-        for gx in range(global_shape[0]):
-            for gy in range(global_shape[1]):
-                for gz in range(global_shape[2]):
-                    if not visited[gx, gy, gz] and not global_filled[gx, gy, gz]:
-                        global_filled[gx, gy, gz] = True
-    if args.min_vox > 1:
-        visited = np.zeros(global_shape, dtype=bool)
-        directions_comp = [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)]
-        for gx in range(global_shape[0]):
-            for gy in range(global_shape[1]):
-                for gz in range(global_shape[2]):
-                    if global_filled[gx, gy, gz] and not visited[gx, gy, gz]:
-                        component = []
-                        queue = deque([(gx, gy, gz)])
-                        visited[gx, gy, gz] = True
-                        while queue:
-                            pos = queue.popleft()
-                            component.append(pos)
-                            for d in directions_comp:
-                                npos = tuple(np.array(pos) + d)
-                                if all(0 <= npos[k] < global_shape[k] for k in range(3)) and global_filled[npos] and not visited[npos]:
-                                    visited[npos] = True
-                                    queue.append(npos)
-                        if len(component) < args.min_vox:
-                            for pos in component:
-                                global_filled[pos] = False
-    shared_arr = mp.Array(ctypes.c_bool, global_filled.flatten(), lock=False)
-    process_tasks = [(bx, by, bz, res, args.min_vox) for bx in range(size_x) for by in range(size_y) for bz in range(size_z)]
-    with mp.Pool(initializer=init_pool, initargs=(shared_arr, global_shape)) as pool:
-        results = pool.map(process_block, process_tasks)
-    output_lines = [r for r in results if r]
-    with open(output_file, 'w') as f:
-        f.write('\n'.join(output_lines))
-    print(f"Output written to {output_file}")
+        additional_triangles.append((bX, bY, bZ, triangles_add, flip_axis, mid_value))
+res = args.res
+voxel_size = 1.0 / res
+extents_base = np.array([0.5 / res] * 3)
+global_shape = (size_x * res, size_y * res, size_z * res)
+global_filled = np.zeros(global_shape, dtype=bool)
+marking_tasks = [(bx, by, bz, triangles, res, extents_base, voxel_size, None, None, size_x, size_y, size_z) for bx in range(size_x) for by in range(size_y) for bz in range(size_z)]
+for bX, bY, bZ, add_triangles, flip_axis, mid_value in additional_triangles:
+    marking_tasks.append((bX, bY, bZ, add_triangles, res, extents_base, voxel_size, flip_axis, mid_value, size_x, size_y, size_z))
+with concurrent.futures.ThreadPoolExecutor() as executor:
+    mark_results = list(executor.map(mark_block, marking_tasks))
+for positions in mark_results:
+    for gx, gy, gz in positions:
+        global_filled[gx, gy, gz] = True
+print("Surface voxels marked:", np.sum(global_filled))
+if args.fill_interior:
+    visited = np.zeros(global_shape, dtype=bool)
+    air_queue = deque()
+    directions = []
+    for dx in range(-1, 2):
+        for dy in range(-1, 2):
+            for dz in range(-1, 2):
+                if (dx, dy, dz) != (0, 0, 0):
+                    directions.append((dx, dy, dz))
+    for dim in range(3):
+        low = 0
+        high = global_shape[dim] - 1
+        for i in range(global_shape[(dim + 1) % 3]):
+            for j in range(global_shape[(dim + 2) % 3]):
+                for val in [low, high]:
+                    pos = [0, 0, 0]
+                    pos[dim] = val
+                    pos[(dim + 1) % 3] = i
+                    pos[(dim + 2) % 3] = j
+                    pos_tuple = tuple(pos)
+                    if not global_filled[pos_tuple]:
+                        air_queue.append(pos_tuple)
+                        visited[pos_tuple] = True
+    while air_queue:
+        pos = air_queue.popleft()
+        for d in directions:
+            npos = tuple(np.array(pos) + np.array(d))
+            if all(0 <= npos[k] < global_shape[k] for k in range(3)) and not visited[npos] and not global_filled[npos]:
+                visited[npos] = True
+                air_queue.append(npos)
+    for gx in range(global_shape[0]):
+        for gy in range(global_shape[1]):
+            for gz in range(global_shape[2]):
+                if not visited[gx, gy, gz] and not global_filled[gx, gy, gz]:
+                    global_filled[gx, gy, gz] = True
+print("Total voxels filled after interior:", np.sum(global_filled))
+if args.min_vox > 1:
+    visited = np.zeros(global_shape, dtype=bool)
+    directions = [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)] # 6-neighbor
+    for gx in range(global_shape[0]):
+        for gy in range(global_shape[1]):
+            for gz in range(global_shape[2]):
+                if global_filled[gx, gy, gz] and not visited[gx, gy, gz]:
+                    component = []
+                    queue = deque([(gx, gy, gz)])
+                    visited[gx, gy, gz] = True
+                    while queue:
+                        pos = queue.popleft()
+                        component.append(pos)
+                        for d in directions:
+                            npos = tuple(np.array(pos) + d)
+                            if all(0 <= npos[k] < global_shape[k] for k in range(3)) and global_filled[npos] and not visited[npos]:
+                                visited[npos] = True
+                                queue.append(npos)
+                    if len(component) < args.min_vox:
+                        for pos in component:
+                            global_filled[pos] = False
+for bx in range(size_x):
+    for by in range(size_y):
+        for bz in range(size_z):
+            local_filled = global_filled[bx * res:(bx + 1) * res, by * res:(by + 1) * res, bz * res:(bz + 1) * res]
+            aabbs = merge_voxels(local_filled, res, min_vox=args.min_vox)
+            if aabbs:
+                lines = [f'if (bX == {bx} && bY == {by} && bZ == {bz}) {{']
+                for minx, miny, minz, maxx, maxy, maxz in aabbs:
+                    lines.append(f' main.add(new AABB({minx:.4f}D, {miny:.4f}D, {minz:.4f}D, {maxx:.4f}D, {maxy:.4f}D, {maxz:.4f}D));')
+                lines.append('}')
+                output_lines.append('\n'.join(lines))
+with open(output_file, 'w') as f:
+    f.write('\n'.join(output_lines))
+print(f"Output written to {output_file}")
