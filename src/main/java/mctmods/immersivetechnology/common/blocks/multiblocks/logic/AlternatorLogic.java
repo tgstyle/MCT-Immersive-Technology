@@ -1,12 +1,16 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.logic;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPosition;
@@ -16,6 +20,9 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapabil
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import com.google.common.collect.ImmutableList;
+import mctmods.immersivetechnology.api.ITCapabilities;
+import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
+import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AlternatorShape;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
@@ -30,27 +37,26 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.BooleanSupplier;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
-public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.State>, IServerTickableComponent<ITAlternatorLogic.State>, IClientTickableComponent<ITAlternatorLogic.State> {
-    private static final List<BlockPos> ENERGY_OUTPUTS_RIGHT = List.of(new BlockPos(2, 0, 3), new BlockPos(2, 1, 3), new BlockPos(2, 2, 3));
-    private static final List<BlockPos> ENERGY_OUTPUTS_LEFT = List.of(new BlockPos(0, 0, 3), new BlockPos(0, 1, 3), new BlockPos(0, 2, 3));
-
+public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>, IServerTickableComponent<AlternatorLogic.State>, IClientTickableComponent<AlternatorLogic.State> {
     public static final int ENERGY_CAPACITY = 1200000;
-    public static final BlockPos ROTATIONAL_INPUT_OFFSET = new BlockPos(1,1,-1);
+
+    public static final BlockPos RUNNING_SOUND_POS = new BlockPos(1, 1, 1);
+
+    private static final List<BlockPos> ENERGY_OUTPUT_POS_RIGHT = List.of(new BlockPos(2, 0, 3), new BlockPos(2, 1, 3), new BlockPos(2, 2, 3));
+    private static final List<BlockPos> ENERGY_OUTPUT_POS_LEFT = List.of(new BlockPos(0, 0, 3), new BlockPos(0, 1, 3), new BlockPos(0, 2, 3));
+
+    public static final BlockPos ROTATIONAL_INPUT = new BlockPos(1, 1, 0);
+    public static final double MASS = 2;
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         if (!state.isSoundPlaying.getAsBoolean()) {
-            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(1.5, 1.5, 1.5));
+            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POS.getX() + 0.5, RUNNING_SOUND_POS.getY() + 0.5, RUNNING_SOUND_POS.getZ() + 0.5));
             state.isSoundPlaying = ITMultiblockSound.startSound(
                     () -> state.active,
                     ctx.isValid(),
@@ -71,39 +77,32 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
-        IMultiblockLevel multiblockLevel = ctx.getLevel();
-        Level level = multiblockLevel.getRawLevel();
 
-        BlockPos turbineAbsolutePos = multiblockLevel.toAbsolute(ROTATIONAL_INPUT_OFFSET);
+        Level level = ctx.getLevel().getRawLevel();
 
-        BlockEntity entity = level.getBlockEntity(turbineAbsolutePos);
+        Direction  inputFacing = ctx.getLevel().getOrientation().front();
+        BlockPos inputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_INPUT);
+        assert  inputFacing != null;
+        BlockPos providerAbsolutePos = inputPortAbs.relative( inputFacing);
+        BlockEntity entity = level.getBlockEntity(providerAbsolutePos);
 
         int turbineSpeed = 0;
         float turbineTorque = 1f;
-        boolean hasTurbine = false;
+        boolean hasProvider = false;
         state.active = false;
 
-        if (entity instanceof IMultiblockBE<?> mbBE) {
-            BlockPos posInMB = mbBE.getHelper().getPositionInMB();
-            BlockPos masterPosInMB = mbBE.getHelper().getMultiblock().masterPosInMB();
-            BlockPos masterAbsPos = entity.getBlockPos().subtract(posInMB).offset(masterPosInMB.getX(), masterPosInMB.getY(), masterPosInMB.getZ());
-            BlockEntity masterBE = level.getBlockEntity(masterAbsPos);
-            if (masterBE instanceof IMultiblockBE<?> masterMbBE) {
-                IMultiblockState turbineState = masterMbBE.getHelper().getState();
-                if (turbineState instanceof ITSteamTurbineLogic.State steamState) {
-                    turbineSpeed = steamState.speed;
-                    hasTurbine = true;
-                    if (turbineSpeed > 0) { state.active = true; }
-                }
-                else if (turbineState instanceof ITGasTurbineLogic.State gasState) {
-                    turbineSpeed = gasState.speed;
-                    hasTurbine = true;
-                    if (turbineSpeed > 0) { state.active = true; }
-                }
+        if (entity != null) {
+            LazyOptional<IMechanicalEnergyProvider> providerCap = entity.getCapability(ITCapabilities.MECHANICAL_PROVIDER_CAPABILITY, inputFacing.getOpposite());
+            if (providerCap.isPresent()) {
+                IMechanicalEnergyProvider provider = providerCap.orElseThrow(RuntimeException::new);
+                turbineSpeed = provider.getSpeed();
+                turbineTorque = provider.getTorque();
+                hasProvider = true;
+                if (turbineSpeed > 0) { state.active = true; }
             }
         }
 
-        if (hasTurbine) {
+        if (hasProvider) {
             state.speed = turbineSpeed;
             state.torqueMultiplier = turbineTorque;
         }
@@ -114,41 +113,6 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
 
         generateEnergy(state);
         outputEnergy(state);
-
-        for (BlockPos pos : ENERGY_OUTPUTS_LEFT) {
-            BlockPos absolutePos = ctx.getLevel().toAbsolute(pos);
-            Direction side = ctx.getLevel().toAbsolute(RelativeBlockFace.RIGHT);
-            assert side != null;
-            BlockEntity adjacent = level.getBlockEntity(absolutePos.relative(side));
-            if (adjacent != null) {
-                LazyOptional<IEnergyStorage> handlerOpt = adjacent.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
-                if (handlerOpt.isPresent()) {
-                    IEnergyStorage handler = handlerOpt.orElseThrow(RuntimeException::new);
-                    int maxPush = Math.min(4096, state.energy.getEnergyStored());
-                    int pushed = handler.receiveEnergy(maxPush, false);
-                    if (pushed > 0) {
-                        state.energy.setStoredEnergy(state.energy.getEnergyStored() - pushed);
-                    }
-                }
-            }
-        }
-        for (BlockPos pos : ENERGY_OUTPUTS_RIGHT) {
-            BlockPos absolutePos = ctx.getLevel().toAbsolute(pos);
-            Direction side = ctx.getLevel().toAbsolute(RelativeBlockFace.LEFT);
-            assert side != null;
-            BlockEntity adjacent = level.getBlockEntity(absolutePos.relative(side));
-            if (adjacent != null) {
-                LazyOptional<IEnergyStorage> handlerOpt = adjacent.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
-                if (handlerOpt.isPresent()) {
-                    IEnergyStorage handler = handlerOpt.orElseThrow(RuntimeException::new);
-                    int maxPush = Math.min(4096, state.energy.getEnergyStored());
-                    int pushed = handler.receiveEnergy(maxPush, false);
-                    if (pushed > 0) {
-                        state.energy.setStoredEnergy(state.energy.getEnergyStored() - pushed);
-                    }
-                }
-            }
-        }
 
         if (state.active) { ctx.markMasterDirty(); }
         ctx.requestMasterBESync();
@@ -199,14 +163,21 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         if (cap == ForgeCapabilities.ENERGY) {
-            if (position.side() == null || (position.side() == RelativeBlockFace.RIGHT && ENERGY_OUTPUTS_RIGHT.contains(position.posInMultiblock()))) {
-                return ctx.getState().energyCap.cast(ctx);
-            }
-            if (position.side() == RelativeBlockFace.LEFT && ENERGY_OUTPUTS_LEFT.contains(position.posInMultiblock())) {
-                return ctx.getState().energyCap.cast(ctx);
+            if (position.side() == null || (position.side() == RelativeBlockFace.RIGHT && ENERGY_OUTPUT_POS_RIGHT.contains(position.posInMultiblock()))) { return ctx.getState().energyCap.cast(ctx); }
+            if (position.side() == RelativeBlockFace.LEFT && ENERGY_OUTPUT_POS_LEFT.contains(position.posInMultiblock())) { return ctx.getState().energyCap.cast(ctx); }
+        }
+        if (cap == ITCapabilities.MECHANICAL_CONSUMER_CAPABILITY) {
+            if (position.posInMultiblock().equals(BlockPos.ZERO)) { position = new CapabilityPosition(ROTATIONAL_INPUT, position.side()); }
+            if (position.posInMultiblock().equals(ROTATIONAL_INPUT) && (position.side() == null || position.side() == RelativeBlockFace.FRONT || position.side() == RelativeBlockFace.BACK)) {
+                return LazyOptional.of(MechanicalEnergyConsumer::new).cast();
             }
         }
         return LazyOptional.empty();
+    }
+
+    private static class MechanicalEnergyConsumer implements IMechanicalEnergyConsumer {
+        @Override
+        public double getMass() { return MASS; }
     }
 
     public static class State implements IMultiblockState {
@@ -226,11 +197,11 @@ public class ITAlternatorLogic implements IMultiblockLogic<ITAlternatorLogic.Sta
             this.energyCap = new StoredCapability<>(energy);
             ImmutableList.Builder<CapabilityReference<IEnergyStorage>> outputs1 = ImmutableList.builder();
             ImmutableList.Builder<CapabilityReference<IEnergyStorage>> outputs2 = ImmutableList.builder();
-            for (BlockPos pos : ENERGY_OUTPUTS_LEFT) {
-                outputs1.add(ctx.getCapabilityAt(ForgeCapabilities.ENERGY, pos, RelativeBlockFace.RIGHT));
+            for (BlockPos pos : ENERGY_OUTPUT_POS_LEFT) {
+                outputs1.add(ctx.getCapabilityAt(ForgeCapabilities.ENERGY, pos, RelativeBlockFace.LEFT));
             }
-            for (BlockPos pos : ENERGY_OUTPUTS_RIGHT) {
-                outputs2.add(ctx.getCapabilityAt(ForgeCapabilities.ENERGY, pos, RelativeBlockFace.LEFT));
+            for (BlockPos pos : ENERGY_OUTPUT_POS_RIGHT) {
+                outputs2.add(ctx.getCapabilityAt(ForgeCapabilities.ENERGY, pos, RelativeBlockFace.RIGHT));
             }
             this.energyOutputs1 = outputs1.build();
             this.energyOutputs2 = outputs2.build();

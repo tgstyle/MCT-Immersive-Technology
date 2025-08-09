@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.blocks.multiblocks.gui;
 import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
 import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITSlot;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITAdvancedCokeOvenLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.AdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCokeOvenRecipe;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
@@ -22,13 +22,13 @@ public class AdvancedCokeOvenMenu extends ITContainerMenu {
     public final ContainerData state;
     public final FluidTank tank;
 
-    public static AdvancedCokeOvenMenu makeServer(MenuType<?> type, int id, Inventory invPlayer, MultiblockMenuContext<ITAdvancedCokeOvenLogic.State> ctx) {
-        final ITAdvancedCokeOvenLogic.State state = ctx.mbContext().getState();
+    public static AdvancedCokeOvenMenu makeServer(MenuType<?> type, int id, Inventory invPlayer, MultiblockMenuContext<AdvancedCokeOvenLogic.State> ctx) {
+        final AdvancedCokeOvenLogic.State state = ctx.mbContext().getState();
         return new AdvancedCokeOvenMenu(multiblockCtx(type, id, ctx), invPlayer, state.getInventory().getRawHandler(), state, state.getTanks().output());
     }
 
     public static AdvancedCokeOvenMenu makeClient(MenuType<?> type, int id, Inventory invPlayer) {
-        return new AdvancedCokeOvenMenu(clientCtx(type, id), invPlayer, new ItemStackHandler(4), new SimpleContainerData(2), new FluidTank(ITAdvancedCokeOvenLogic.TANK_CAPACITY));
+        return new AdvancedCokeOvenMenu(clientCtx(type, id), invPlayer, new ItemStackHandler(4), new SimpleContainerData(2), new FluidTank(AdvancedCokeOvenLogic.TANK_CAPACITY));
     }
 
     private AdvancedCokeOvenMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, ContainerData data, FluidTank tank) {

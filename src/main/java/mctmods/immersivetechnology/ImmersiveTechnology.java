@@ -1,5 +1,8 @@
 package mctmods.immersivetechnology;
 
+import mctmods.immersivetechnology.api.ITCapabilities;
+import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
+import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.client.ITClientRenderHandler;
 import mctmods.immersivetechnology.common.network.ITMessageContainerData;
 import mctmods.immersivetechnology.common.network.ITMessageContainerUpdate;
@@ -19,6 +22,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -27,6 +34,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
@@ -45,6 +53,7 @@ public class ImmersiveTechnology {
         IEventBus modEventBus = context.getModEventBus();
         ITLib.IT_LOGGER.info("IT Starting");
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(this::registerCapabilities);
         ITRecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
 
         ITLib.IT_LOGGER.info("Adding ITRegistrationHolder Registries");
@@ -72,6 +81,16 @@ public class ImmersiveTechnology {
 
         ITPacketHandler.registerMessage(ITMessageContainerUpdate.class, ITMessageContainerUpdate::new);
         ITPacketHandler.registerMessage(ITMessageContainerData.class, ITMessageContainerData::new);
+    }
+
+    private static final CapabilityToken<IMechanicalEnergyProvider> PROVIDER_TOKEN = new CapabilityToken<>() {};
+    private static final CapabilityToken<IMechanicalEnergyConsumer> CONSUMER_TOKEN = new CapabilityToken<>() {};
+
+    private void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.register(IMechanicalEnergyProvider.class);
+        event.register(IMechanicalEnergyConsumer.class);
+        ITCapabilities.MECHANICAL_PROVIDER_CAPABILITY = CapabilityManager.get(PROVIDER_TOKEN);
+        ITCapabilities.MECHANICAL_CONSUMER_CAPABILITY = CapabilityManager.get(CONSUMER_TOKEN);
     }
 
     @SubscribeEvent

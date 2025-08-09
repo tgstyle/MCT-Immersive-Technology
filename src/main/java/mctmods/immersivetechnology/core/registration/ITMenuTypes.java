@@ -6,9 +6,9 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.gui.AdvancedCokeOve
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.BoilerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.DistillerMenu;
 import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITAdvancedCokeOvenLogic;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITBoilerLogic;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITDistillerLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.AdvancedCokeOvenLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.BoilerLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.DistillerLogic;
 import mctmods.immersivetechnology.common.blocks.metal.TrashItemBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.gui.TrashItemMenu;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -31,9 +31,9 @@ import javax.annotation.Nullable;
 public class ITMenuTypes {
     public static final DeferredRegister<MenuType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.MENU_TYPES, ITLib.MODID);
 
-    public static final MultiblockContainer<ITAdvancedCokeOvenLogic.State, AdvancedCokeOvenMenu> ADVANCED_COKE_OVEN_MENU = registerMultiblock(ITLib.GUIID_AdvCokeOven, AdvancedCokeOvenMenu::makeServer, AdvancedCokeOvenMenu::makeClient);
-    public static final MultiblockContainer<ITBoilerLogic.State, BoilerMenu> BOILER_MENU = registerMultiblock(ITLib.GUIID_Boiler, BoilerMenu::makeServer, BoilerMenu::makeClient);
-    public static final MultiblockContainer<ITDistillerLogic.State, DistillerMenu> DISTILLER_MENU = registerMultiblock(ITLib.GUIID_Distiller, DistillerMenu::makeServer, DistillerMenu::makeClient);
+    public static final MultiblockContainer<AdvancedCokeOvenLogic.State, AdvancedCokeOvenMenu> ADVANCED_COKE_OVEN_MENU = registerMultiblock(ITLib.GUIID_AdvCokeOven, AdvancedCokeOvenMenu::makeServer, AdvancedCokeOvenMenu::makeClient);
+    public static final MultiblockContainer<BoilerLogic.State, BoilerMenu> BOILER_MENU = registerMultiblock(ITLib.GUIID_Boiler, BoilerMenu::makeServer, BoilerMenu::makeClient);
+    public static final MultiblockContainer<DistillerLogic.State, DistillerMenu> DISTILLER_MENU = registerMultiblock(ITLib.GUIID_Distiller, DistillerMenu::makeServer, DistillerMenu::makeClient);
     public static final ArgContainer<TrashItemBlockEntity, TrashItemMenu> TRASH_ITEM = registerArg("trash_item", TrashItemMenu::makeServer, TrashItemMenu::makeClient);
 
     public static <T, C extends ITContainerMenu> ArgContainer<T, C> registerArg(String name, ArgContainerConstructor<T, C> container, ClientContainerConstructor<C> client) {

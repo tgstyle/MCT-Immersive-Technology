@@ -8,7 +8,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOri
 import blusunrize.immersiveengineering.client.utils.RenderUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mctmods.immersivetechnology.client.models.ITDynamicModel;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITSteamTurbineLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SteamTurbineLogic;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -24,19 +24,19 @@ import org.joml.Quaternionf;
 
 import java.util.List;
 
-public class SteamTurbineRenderer extends ITBlockEntityRenderer<MultiblockBlockEntityMaster<ITSteamTurbineLogic.State>> {
+public class SteamTurbineRenderer extends ITBlockEntityRenderer<MultiblockBlockEntityMaster<SteamTurbineLogic.State>> {
     public static ITDynamicModel MODEL;
     public static ITDynamicModel MODEL_EAST_WEST;
     public static final String NAME = "steam_turbine_rotor";
     public static final String NAME_EAST_WEST = "steam_turbine_rotor_west_east";
 
     @Override
-    public void render(@NotNull MultiblockBlockEntityMaster<ITSteamTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int pPackedLight, int pPackedOverlay) {
+    public void render(@NotNull MultiblockBlockEntityMaster<SteamTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int pPackedLight, int pPackedOverlay) {
         if (!ITClientConfig.doSpecialRenderSteamTurbine.get()) return;
 
-        IMultiblockBEHelperMaster<ITSteamTurbineLogic.State> helper = tile.getHelper();
-        IMultiblockContext<ITSteamTurbineLogic.State> context = helper.getContext();
-        ITSteamTurbineLogic.State state = context.getState();
+        IMultiblockBEHelperMaster<SteamTurbineLogic.State> helper = tile.getHelper();
+        IMultiblockContext<SteamTurbineLogic.State> context = helper.getContext();
+        SteamTurbineLogic.State state = context.getState();
 
         final MultiblockOrientation orientation = context.getLevel().getOrientation();
         BlockPos pos = tile.getBlockPos();

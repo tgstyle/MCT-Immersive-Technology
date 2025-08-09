@@ -8,7 +8,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOri
 import blusunrize.immersiveengineering.client.utils.RenderUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mctmods.immersivetechnology.client.models.ITDynamicModel;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITGasTurbineLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.GasTurbineLogic;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -24,19 +24,19 @@ import org.joml.Quaternionf;
 
 import java.util.List;
 
-public class GasTurbineRenderer extends ITBlockEntityRenderer<MultiblockBlockEntityMaster<ITGasTurbineLogic.State>> {
+public class GasTurbineRenderer extends ITBlockEntityRenderer<MultiblockBlockEntityMaster<GasTurbineLogic.State>> {
     public static ITDynamicModel MODEL;
     public static ITDynamicModel MODEL_EAST_WEST;
     public static final String NAME = "gas_turbine_rotor";
     public static final String NAME_EAST_WEST = "gas_turbine_rotor_east_west";
 
     @Override
-    public void render(@NotNull MultiblockBlockEntityMaster<ITGasTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int pPackedLight, int pPackedOverlay) {
+    public void render(@NotNull MultiblockBlockEntityMaster<GasTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int pPackedLight, int pPackedOverlay) {
         if (!ITClientConfig.doSpecialRenderGasTurbine.get()) return;
 
-        IMultiblockBEHelperMaster<ITGasTurbineLogic.State> helper = tile.getHelper();
-        IMultiblockContext<ITGasTurbineLogic.State> context = helper.getContext();
-        ITGasTurbineLogic.State state = context.getState();
+        IMultiblockBEHelperMaster<GasTurbineLogic.State> helper = tile.getHelper();
+        IMultiblockContext<GasTurbineLogic.State> context = helper.getContext();
+        GasTurbineLogic.State state = context.getState();
 
         final MultiblockOrientation orientation = context.getLevel().getOrientation();
         BlockPos pos = tile.getBlockPos();

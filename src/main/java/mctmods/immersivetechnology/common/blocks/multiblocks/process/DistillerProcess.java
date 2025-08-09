@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.blocks.multiblocks.process;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITDistillerLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.DistillerLogic;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -66,17 +66,17 @@ public class DistillerProcess extends MultiblockProcessInMachine<DistillerRecipe
         DistillerRecipe recipe = getRecipe(level.getRawLevel());
         if (recipe != null) {
             if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) {
-                ((ITDistillerLogic.State) context).getTanks().output().fill(recipe.fluidOutput.copy(), FluidAction.EXECUTE);
+                ((DistillerLogic.State) context).getTanks().output().fill(recipe.fluidOutput.copy(), FluidAction.EXECUTE);
             }
             if (!recipe.itemOutput.isEmpty() && level.getRawLevel().random.nextFloat() < recipe.chance) {
                 IItemHandlerModifiable inv = context.getInventory();
                 ItemStack salt = recipe.itemOutput.copy();
-                ItemStack current = inv.getStackInSlot(ITDistillerLogic.OUTPUT_SLOT);
+                ItemStack current = inv.getStackInSlot(DistillerLogic.OUTPUT_SLOT);
                 if (current.isEmpty()) {
-                    inv.setStackInSlot(ITDistillerLogic.OUTPUT_SLOT, salt);
+                    inv.setStackInSlot(DistillerLogic.OUTPUT_SLOT, salt);
                 } else if (ItemHandlerHelper.canItemStacksStack(current, salt) && current.getCount() + salt.getCount() <= current.getMaxStackSize()) {
                     current.grow(salt.getCount());
-                    inv.setStackInSlot(ITDistillerLogic.OUTPUT_SLOT, current);
+                    inv.setStackInSlot(DistillerLogic.OUTPUT_SLOT, current);
                 }
             }
         }

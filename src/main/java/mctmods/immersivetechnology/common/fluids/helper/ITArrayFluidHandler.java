@@ -5,6 +5,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+@SuppressWarnings("unused")
 public record ITArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boolean allowFill, Runnable afterTransfer) implements IFluidHandler {
     public ITArrayFluidHandler(IFluidTank internal, boolean allowDrain, boolean allowFill, Runnable afterTransfer) {
         this(new IFluidTank[]{internal}, allowDrain, allowFill, afterTransfer);
@@ -65,27 +66,23 @@ public record ITArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boo
 
     @Nonnull
     public FluidStack drain(FluidStack resource, IFluidHandler.FluidAction action) {
-        if (!this.allowDrain) {
-            return FluidStack.EMPTY;
-        } else {
-            for(IFluidTank tank : this.internal) {
+        if (this.allowDrain) {
+            for (IFluidTank tank : this.internal) {
                 FluidStack drainedHere = tank.drain(resource, action);
                 if (!drainedHere.isEmpty()) { return drainedHere; }
             }
-            return FluidStack.EMPTY;
         }
+        return FluidStack.EMPTY;
     }
 
     @Nonnull
     public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
-        if (!this.allowDrain) {
-            return FluidStack.EMPTY;
-        } else {
-            for(IFluidTank tank : this.internal) {
+        if (this.allowDrain) {
+            for (IFluidTank tank : this.internal) {
                 FluidStack drainedHere = tank.drain(maxDrain, action);
                 if (!drainedHere.isEmpty()) { return drainedHere; }
             }
-            return FluidStack.EMPTY;
         }
+        return FluidStack.EMPTY;
     }
 }

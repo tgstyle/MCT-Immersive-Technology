@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.items;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.immersiveengineering.common.util.advancements.IEAdvancements;
-import mctmods.immersivetechnology.common.blocks.multiblocks.ITTemplateMultiblock;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.ListTag;

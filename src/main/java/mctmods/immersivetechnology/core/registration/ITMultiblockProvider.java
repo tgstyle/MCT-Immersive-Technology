@@ -7,6 +7,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockL
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import mctmods.immersivetechnology.common.blocks.multiblocks.*;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.*;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.BoilerProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.helper.ITMultiblockBuilder;
@@ -48,51 +49,51 @@ public class ITMultiblockProvider {
                 .customBEs(ITBlockEntities.REGISTER);
     }
 
-    public static final MultiblockRegistration<ITBoilerLogic.State> BOILER =
-            metal(new ITBoilerLogic(), "boiler")
+    public static final MultiblockRegistration<BoilerLogic.State> BOILER =
+            metal(new BoilerLogic(), "boiler")
                     .structure(() -> getMBTemplate.apply("boiler"))
                     .gui(ITMenuTypes.BOILER_MENU)
-                    .redstone(s -> s.rsState, ITBoilerLogic.REDSTONE_POS)
+                    .redstone(s -> s.rsState, BoilerLogic.REDSTONE_POS)
                     .component(new BoilerProcess())
                     .build();
-    public static final MultiblockRegistration<ITSolarTowerLogic.State> SOLAR_TOWER =
-            metal(new ITSolarTowerLogic(), "solar_tower")
+    public static final MultiblockRegistration<SolarTowerLogic.State> SOLAR_TOWER =
+            metal(new SolarTowerLogic(), "solar_tower")
                     .structure(() -> getMBTemplate.apply("solar_tower"))
                     .build();
-    public static final MultiblockRegistration<ITAlternatorLogic.State> ALTERNATOR =
-            metal(new ITAlternatorLogic(), "alternator")
+    public static final MultiblockRegistration<AlternatorLogic.State> ALTERNATOR =
+            metal(new AlternatorLogic(), "alternator")
                     .structure(() -> getMBTemplate.apply("alternator"))
                     .build();
-    public static final MultiblockRegistration<ITSteamTurbineLogic.State> STEAM_TURBINE =
-            metal(new ITSteamTurbineLogic(), "steam_turbine")
+    public static final MultiblockRegistration<SteamTurbineLogic.State> STEAM_TURBINE =
+            metal(new SteamTurbineLogic(), "steam_turbine")
                     .structure(() -> getMBTemplate.apply("steam_turbine"))
-                    .redstone(s -> s.rsState, ITSteamTurbineLogic.REDSTONE_POS)
+                    .redstone(s -> s.rsState, SteamTurbineLogic.REDSTONE_POS)
                     .build();
-    public static final MultiblockRegistration<ITGasTurbineLogic.State> GAS_TURBINE =
-            metal(new ITGasTurbineLogic(), "gas_turbine")
+    public static final MultiblockRegistration<GasTurbineLogic.State> GAS_TURBINE =
+            metal(new GasTurbineLogic(), "gas_turbine")
                     .structure(() -> getMBTemplate.apply("gas_turbine"))
-                    .redstone(s -> s.rsState, ITGasTurbineLogic.REDSTONE_POS)
+                    .redstone(s -> s.rsState, GasTurbineLogic.REDSTONE_POS)
                     .build();
-    public static final MultiblockRegistration<ITAdvancedCokeOvenLogic.State> ADVANCED_COKE_OVEN =
-            stone(new ITAdvancedCokeOvenLogic(), "advanced_coke_oven", false)
+    public static final MultiblockRegistration<AdvancedCokeOvenLogic.State> ADVANCED_COKE_OVEN =
+            stone(new AdvancedCokeOvenLogic(), "advanced_coke_oven", false)
                     .structure(() -> getMBTemplate.apply("advanced_coke_oven"))
                     .gui(ITMenuTypes.ADVANCED_COKE_OVEN_MENU)
                     .build();
-    public static final MultiblockRegistration<ITDistillerLogic.State> DISTILLER =
-            metal(new ITDistillerLogic(), "distiller")
+    public static final MultiblockRegistration<DistillerLogic.State> DISTILLER =
+            metal(new DistillerLogic(), "distiller")
                     .structure(() -> getMBTemplate.apply("distiller"))
-                    .redstone(s -> s.rsState, ITDistillerLogic.REDSTONE_POS)
+                    .redstone(s -> s.rsState, DistillerLogic.REDSTONE_POS)
                     .gui(ITMenuTypes.DISTILLER_MENU)
                     .build();
 
     public static void init() {
-        registerMB("boiler", ITBoiler.INSTANCE, BOILER);
-        registerMB("alternator", ITAlternator.INSTANCE, ALTERNATOR);
-        registerMB("steam_turbine", ITSteamTurbine.INSTANCE, STEAM_TURBINE);
-        registerMB("gas_turbine", ITGasTurbine.INSTANCE, GAS_TURBINE);
-        registerMB("advanced_coke_oven", ITAdvancedCokeOven.INSTANCE, ADVANCED_COKE_OVEN);
-        registerMB("solar_tower", ITSolarTower.INSTANCE, SOLAR_TOWER);
-        registerMB("distiller", ITDistiller.INSTANCE, DISTILLER);
+        registerMB("boiler", Boiler.INSTANCE, BOILER);
+        registerMB("alternator", Alternator.INSTANCE, ALTERNATOR);
+        registerMB("steam_turbine", SteamTurbine.INSTANCE, STEAM_TURBINE);
+        registerMB("gas_turbine", GasTurbine.INSTANCE, GAS_TURBINE);
+        registerMB("advanced_coke_oven", AdvancedCokeOven.INSTANCE, ADVANCED_COKE_OVEN);
+        registerMB("solar_tower", SolarTower.INSTANCE, SOLAR_TOWER);
+        registerMB("distiller", Distiller.INSTANCE, DISTILLER);
     }
 
     public static void forceClassLoad() { init(); }

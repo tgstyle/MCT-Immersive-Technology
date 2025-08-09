@@ -1,5 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.logic;
 
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
@@ -17,10 +23,13 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapabil
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.CachedRecipe;
 import blusunrize.immersiveengineering.common.util.Utils;
+import mctmods.immersivetechnology.api.ITCapabilities;
+import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
+import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmokeData;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.GasTurbineShape;
+import mctmods.immersivetechnology.common.blocks.multiblocks.process.RotationInertiaProcess;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -35,40 +44,46 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import java.util.List;
-import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
-public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.State>, IServerTickableComponent<ITGasTurbineLogic.State>, IClientTickableComponent<ITGasTurbineLogic.State> {
-    private static final List<BlockPos> FLUID_POS1 = List.of(new BlockPos(0, 1, 7));
-    private static final List<BlockPos> FLUID_POS2 = List.of(new BlockPos(1, 0, 1));
-
-    private static final Set<CapabilityPosition> ENERGY_INPUTS_HV = Set.of(new CapabilityPosition(0, 0, 5, RelativeBlockFace.RIGHT));
-    private static final Set<CapabilityPosition> ENERGY_INPUTS_MV = Set.of(new CapabilityPosition(2, 0, 5, RelativeBlockFace.LEFT));
-
-    public static final BlockPos REDSTONE_POS = new BlockPos(2, 1, 7);
-
+public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>, IServerTickableComponent<GasTurbineLogic.State>, IClientTickableComponent<GasTurbineLogic.State> {
     public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
     private static final int ENERGY_CAPACITY = 8192;
     private static final int ENERGY_CAPACITY_MV = 2048;
     private static final int ELECTRIC_STARTER_CONSUMPTION = 4096;
     private static final int SPARKPLUG_CONSUMPTION = 1024;
 
-    private static final CapabilityPosition FLUID_OUTPUT_POS = new CapabilityPosition(1, 0, 1, RelativeBlockFace.FRONT);
+    public static final CapabilityPosition INPUT_FLUID_POS = new CapabilityPosition(2,1,0, RelativeBlockFace.FRONT);
+    public static final CapabilityPosition OUTPUT_FLUID_POS = new CapabilityPosition(1,0,6, RelativeBlockFace.BACK);
+
+    private static final Set<CapabilityPosition> ENERGY_INPUTS_HV = Set.of(new CapabilityPosition(2,0,2, RelativeBlockFace.LEFT));
+    private static final Set<CapabilityPosition> ENERGY_INPUTS_MV = Set.of(new CapabilityPosition(0,0,2, RelativeBlockFace.RIGHT));
+
+    public static final BlockPos REDSTONE_POS = new BlockPos(0,1,0);
+
+
+    public static final BlockPos SMOKE_POS1 = new BlockPos(1, 1, 2);
+    public static final BlockPos SMOKE_POS2 = new BlockPos(1, 0, 7);
+
+    public static final BlockPos RUNNING_SOUND_POS = new BlockPos(1, 1, 4);
+    public static final BlockPos STARTER_SOUND_POS = new BlockPos(1, 0, 1);
+    public static final BlockPos ARC_SOUND_POS = new BlockPos(0, 1, 0);
+    public static final BlockPos SPARK_SOUND_POS = new BlockPos(1, 1, 2);
+    public static final BlockPos IGNITE_SOUND_POS = new BlockPos(1, 0, 1);
+
+    public static final BlockPos ROTATIONAL_OUTPUT = new BlockPos(1, 1, 7);
+    public static final double MASS = 8;
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
@@ -100,10 +115,11 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
             state.animation_fanRotation += step;
             state.animation_fanRotation %= 360;
         }
-        Vec3 runningPos = ctx.getLevel().toAbsolute(new Vec3(1.5, 1.5, 3.5));
-        Vec3 starterPos = ctx.getLevel().toAbsolute(new Vec3(1.5, 0.5, 1.5));
-        Vec3 arcPos = ctx.getLevel().toAbsolute(new Vec3(0.5, 1.5, 1.5));
-        Vec3 ignitionPos = ctx.getLevel().toAbsolute(new Vec3(1.5, 1.5, 1.5));
+        Vec3 runningPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POS.getX() + 0.5, RUNNING_SOUND_POS.getY() + 0.5, RUNNING_SOUND_POS.getZ() + 0.5));
+        Vec3 starterPos = ctx.getLevel().toAbsolute(new Vec3(STARTER_SOUND_POS.getX() + 0.5, STARTER_SOUND_POS.getY() + 0.5, STARTER_SOUND_POS.getZ() + 0.5));
+        Vec3 arcPos = ctx.getLevel().toAbsolute(new Vec3(ARC_SOUND_POS.getX() + 0.5, ARC_SOUND_POS.getY() + 0.5, ARC_SOUND_POS.getZ() + 0.5));
+        Vec3 sparkPos = ctx.getLevel().toAbsolute(new Vec3(SPARK_SOUND_POS.getX() + 0.5, SPARK_SOUND_POS.getY() + 0.5, SPARK_SOUND_POS.getZ() + 0.5));
+        Vec3 ignitePos = ctx.getLevel().toAbsolute(new Vec3(IGNITE_SOUND_POS.getX() + 0.5, IGNITE_SOUND_POS.getY() + 0.5, IGNITE_SOUND_POS.getZ() + 0.5));
         if (state.speed >= (state.maxSpeed / 4)) {
             if (!state.runningSoundPlaying.getAsBoolean()) {
                 state.runningSoundId++;
@@ -163,21 +179,21 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
         }
         if (state.ignited && !state.lastIgnited && state.speed < state.maxSpeed / 2) {
             state.lastIgnited = true;
-            float ignitionAtt = (float) Math.max(player.distanceToSqr(ignitionPos) / 64, 1);
-            level.playLocalSound(ignitionPos.x, ignitionPos.y, ignitionPos.z, ITSounds.gasSpark.get(), SoundSource.BLOCKS, 1 / ignitionAtt, 1, false);
+            float ignitionAtt = (float) Math.max(player.distanceToSqr(sparkPos) / 64, 1);
+            level.playLocalSound(sparkPos.x, sparkPos.y, sparkPos.z, ITSounds.gasSpark.get(), SoundSource.BLOCKS, 1 / ignitionAtt, 1, false);
             state.igniteDelay = 3;
         }
         else { state.lastIgnited = state.ignited; }
         if (state.igniteDelay > 0) {
             state.igniteDelay--;
             if (state.igniteDelay == 0 && state.starterRunning) {
-                float ignitionAtt = (float) Math.max(player.distanceToSqr(starterPos) / 64, 1);
-                level.playLocalSound(starterPos.x, starterPos.y, starterPos.z, ITSounds.gasIgnite.get(), SoundSource.BLOCKS, 1 / ignitionAtt, 1, false);
+                float ignitionAtt = (float) Math.max(player.distanceToSqr(ignitePos) / 64, 1);
+                level.playLocalSound(ignitePos.x, ignitePos.y, ignitePos.z, ITSounds.gasIgnite.get(), SoundSource.BLOCKS, 1 / ignitionAtt, 1, false);
             }
         }
         if (state.starterRunning && state.speed >= state.maxSpeed / 4) {
             if (level.random.nextInt(40) == 0) return;
-            Vec3 particlePos = ctx.getLevel().toAbsolute(new Vec3(1.5, 0.5, 1.5));
+            Vec3 particlePos = ctx.getLevel().toAbsolute(new Vec3(SMOKE_POS1.getX() + 0.5, SMOKE_POS1.getY()- 0.5, SMOKE_POS1.getZ() + 0.5));
             double distSq = player.distanceToSqr(particlePos);
             if (distSq > 64 * 64) return;
             double px = particlePos.x + 2 - level.random.nextFloat() * 3;
@@ -187,15 +203,13 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
         }
         if (state.active && ctx.getLevel().shouldTickModulo(2)) {
             Direction facing = ctx.getLevel().getOrientation().front();
-            BlockPos outputRel = new BlockPos(1, 0, 1);
-            BlockPos outputAbs = ctx.getLevel().toAbsolute(outputRel);
-            BlockPos adjacentAbs = outputAbs.relative(facing);
+            BlockPos outputAbs = ctx.getLevel().toAbsolute(SMOKE_POS2);
             boolean connected = state.fluidOutput.isPresent();
             if (!connected) {
-                Vec3 smokePos = new Vec3(adjacentAbs.getX() + 0.5, adjacentAbs.getY() + 0.5, adjacentAbs.getZ() + 0.5);
-                double velX = facing.getStepX() * 0.125 + particleXZSpeed();
-                double velY = facing.getStepY() * 0.1 + 0.0625;
-                double velZ = facing.getStepZ() * 0.125 + particleXZSpeed();
+                Vec3 smokePos = new Vec3(outputAbs.getX() + 0.5, outputAbs.getY() + 0.5, outputAbs.getZ() + 0.5);
+                double velX = -facing.getStepX() * 0.125 + particleXZSpeed();
+                double velY = -facing.getStepY() * 0.1 + 0.0625;
+                double velZ = -facing.getStepZ() * 0.125 + particleXZSpeed();
                 FluidStack outFluid = state.tanks.output.getFluid();
                 float r = 0.5F, g = 0.5F, b = 0.5F;
                 if (!outFluid.isEmpty()) {
@@ -215,13 +229,34 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         boolean wasActive = state.active;
         boolean wasStall = state.stall;
         state.active = false;
+
+        Level level = ctx.getLevel().getRawLevel();
+
+        Direction outputFacing = ctx.getLevel().getOrientation().front().getOpposite();
+        BlockPos outputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_OUTPUT);
+        BlockPos consumerAbsPos = outputPortAbs.relative(outputFacing);
+        BlockEntity entity = level.getBlockEntity(consumerAbsPos);
+
+        boolean hasConsumer = false;
+        double additionalMass = 0.0;
+        if (entity != null) {
+            LazyOptional<IMechanicalEnergyConsumer> consumerCap = entity.getCapability(ITCapabilities.MECHANICAL_CONSUMER_CAPABILITY, outputFacing.getOpposite());
+            if (consumerCap.isPresent()) {
+                hasConsumer = true;
+                additionalMass = consumerCap.orElseThrow(RuntimeException::new).getMass();
+            }
+        }
+
+        if (additionalMass != state.connectedMass) {
+            state.connectedMass = additionalMass;
+            state.inertia = new RotationInertiaProcess(MASS + state.connectedMass, state.torque, state.friction);
+        }
 
         boolean isRSEnabled = state.rsState.isEnabled(ctx);
         state.ignited = state.ignitionGracePeriod > 0;
@@ -238,7 +273,7 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
             state.stall = false;
         }
 
-        if (!isRSEnabled) {
+        if (!isRSEnabled || !hasConsumer) {
             state.isShutdown = true;
             state.ignitionGracePeriod = 0;
             state.burnRemaining = 0;
@@ -248,16 +283,16 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
         if (state.speed < state.maxSpeed / 4) {
             if (isRSEnabled && !state.isShutdown) {
                 if (state.ignitionGracePeriod > 0) { state.ignitionGracePeriod--; }
-                if (state.starterRunning) { speedUp(state); }
-                else { speedDown(state); }
+                if (state.starterRunning) { state.speed = Math.min(state.maxSpeed, state.speed + state.inertia.getSpeedUpRate()); state.active = true; }
+                else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
             }
-            else { speedDown(state); }
+            else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
         }
         else {
-            if (state.isShutdown) { speedDown(state); }
+            if (state.isShutdown) { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
             else {
                 if (state.starterRunning) {
-                    if (canIgnite(state)) {
+                    if (canIgnite(state) ) {
                         state.stall = true;
                         if (!wasStall) { ignite(state, ctx); }
                         else { state.ignitionGracePeriod = 60; }
@@ -267,15 +302,16 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
                     }
                     else {
                         state.stall = false;
-                        speedDown(state);
+                        state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate());
                     }
                 }
                 else {
                     state.stall = false;
                     if (state.burnRemaining > 0 && (state.ignited || canIgnite(state))) {
                         state.burnRemaining--;
-                        if (!state.ignited) { ignite(state, ctx); }
-                        speedUp(state);
+                        if (!state.ignited) ignite(state, ctx);
+                        state.speed = Math.min(state.maxSpeed, state.speed + state.inertia.getSpeedUpRate());
+                        state.active = true;
                     }
                     else if (state.ignited || canIgnite(state)) {
                         FluidStack fluid = state.tanks.input.getFluid();
@@ -290,12 +326,13 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
                             }
                             state.burnRemaining = recipe.getTotalProcessTime() - 1;
                             if (!state.ignited) ignite(state, ctx);
-                            speedUp(state);
+                            state.speed = Math.min(state.maxSpeed, state.speed + state.inertia.getSpeedUpRate());
+                            state.active = true;
                             ctx.markMasterDirty();
                         }
-                        else { speedDown(state); }
+                        else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
                     }
-                    else { speedDown(state); }
+                    else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
                 }
             }
         }
@@ -321,40 +358,6 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
         }
     }
 
-    @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
-        final State state = ctx.getState();
-        if (cap == ForgeCapabilities.ENERGY) {
-            if (ENERGY_INPUTS_HV.contains(position)) { return state.energyCapHV.cast(ctx); }
-            if (ENERGY_INPUTS_MV.contains(position)) { return state.energyCapMV.cast(ctx); }
-        }
-        if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (position.side() == null || (position.side() == RelativeBlockFace.BACK && FLUID_POS1.contains(position.posInMultiblock()))) { return state.fluidCap.cast(ctx); }
-            else if (position.side() == RelativeBlockFace.FRONT && FLUID_POS2.contains(position.posInMultiblock())) { return state.fluidCapExhaust.cast(ctx); }
-        }
-        return LazyOptional.empty();
-    }
-
-    @Override
-    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
-
-    @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return GasTurbineShape.GETTER; }
-
-    public ITSlotwiseItemHandler getInventory() { return null; }
-
-    public GasTurbineTank getTanks() { return null; }
-
-    private void speedUp(State state) {
-        state.speed = Math.min(state.maxSpeed, state.speed + state.speedGainPerTick);
-        state.active = true;
-    }
-
-    private void speedDown(State state) {
-        if (state.ignitionGracePeriod > 0) { state.ignitionGracePeriod--; }
-        state.speed = Math.max(0, state.speed - state.speedLossPerTick);
-    }
-
     private boolean canIgnite(State state) { return SPARKPLUG_CONSUMPTION <= state.energyStorageMV.getEnergyStored(); }
 
     private void ignite(State state, IMultiblockContext<State> ctx) {
@@ -366,16 +369,49 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
 
     private static double particleXZSpeed() { return ApiUtils.RANDOM.nextDouble(-0.015625, 0.015625); }
 
+    @Override
+    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
+        final State state = ctx.getState();
+        if (cap == ForgeCapabilities.ENERGY) {
+            if (ENERGY_INPUTS_HV.contains(position)) { return state.energyCapHV.cast(ctx); }
+            if (ENERGY_INPUTS_MV.contains(position)) { return state.energyCapMV.cast(ctx); }
+        }
+        if (cap == ForgeCapabilities.FLUID_HANDLER) {
+            if (position.posInMultiblock().equals(INPUT_FLUID_POS.posInMultiblock()) && (position.side() == null || position.side() == INPUT_FLUID_POS.side())) { return state.fluidCap.cast(ctx); }
+            if (position.posInMultiblock().equals(OUTPUT_FLUID_POS.posInMultiblock()) && (position.side() == null || position.side() == OUTPUT_FLUID_POS.side())) { return state.fluidCapExhaust.cast(ctx); }
+        }
+        if (cap == ITCapabilities.MECHANICAL_PROVIDER_CAPABILITY) {
+            if (position.posInMultiblock().equals(ROTATIONAL_OUTPUT) && (position.side() == null || position.side() == RelativeBlockFace.BACK)) {
+                return LazyOptional.of(() -> new MechanicalEnergyProvider(state)).cast();
+            }
+        }
+        return LazyOptional.empty();
+    }
+
+    @Override
+    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
+
+    @Override
+    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return GasTurbineShape.GETTER; }
+
+    private record MechanicalEnergyProvider(State state) implements IMechanicalEnergyProvider {
+        @Override
+        public int getSpeed() { return state.speed; }
+
+        @Override
+        public float getTorque() { return 1f; }
+    }
+
     public static class State implements IMultiblockState {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final GasTurbineTank tanks;
         public final StoredCapability<IFluidHandler> fluidCap;
         public final StoredCapability<IFluidHandler> fluidCapExhaust;
-        public final StoredCapability<IEnergyStorage> energyCapHV;
-        public final StoredCapability<IEnergyStorage> energyCapMV;
-        public final AveragingEnergyStorage energyStorageHV;
-        public final AveragingEnergyStorage energyStorageMV;
-        public final CapabilityReference<IFluidHandler> fluidOutput;
+        public StoredCapability<IEnergyStorage> energyCapHV;
+        public StoredCapability<IEnergyStorage> energyCapMV;
+        public AveragingEnergyStorage energyStorageHV;
+        public AveragingEnergyStorage energyStorageMV;
+        public CapabilityReference<IFluidHandler> fluidOutput;
         private final BiFunction<Level, FluidStack, GasTurbineRecipe> recipeGetter;
         public int maxSpeed = 1800;
         public int speed = 0;
@@ -401,8 +437,10 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
         private transient int arcSoundId = 0;
         private boolean lastIgnited = false;
         private transient int igniteDelay = 0;
-        private final int speedGainPerTick = 3;
-        private final int speedLossPerTick = 6;
+        private double connectedMass = 0;
+        private RotationInertiaProcess inertia;
+        private final double torque = 30;
+        private final double friction = 60;
 
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -416,8 +454,11 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
             this.energyCapHV = new StoredCapability<>(energyStorageHV);
             this.energyCapMV = new StoredCapability<>(energyStorageMV);
             this.recipeGetter = CachedRecipe.cached(GasTurbineRecipe::findFuel);
-            CapabilityPosition opposingPos = CapabilityPosition.opposing(new MultiblockFace(FLUID_OUTPUT_POS.side(), FLUID_OUTPUT_POS.posInMultiblock()));
-            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, new MultiblockFace(opposingPos.side(), opposingPos.posInMultiblock()));
+            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POS.side(), OUTPUT_FLUID_POS.posInMultiblock());
+            CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
+            MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
+            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
+            this.inertia = new RotationInertiaProcess(MASS, torque, friction);
         }
 
         @Override
@@ -471,11 +512,8 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
                 animation_fanFadeOutMax = animation_fanFadeOut;
             }
         }
-
-        public boolean isActive() { return active; }
     }
 
-    @SuppressWarnings("unused")
     public record GasTurbineTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
         public GasTurbineTank(Consumer<Void> markDirty) {
             this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty));
@@ -495,6 +533,7 @@ public class ITGasTurbineLogic implements IMultiblockLogic<ITGasTurbineLogic.Sta
             this.output.readFromNBT(tag.getCompound("output"));
         }
 
+        @SuppressWarnings("unused")
         public int getCapacity() { return TANK_CAPACITY; }
     }
 }

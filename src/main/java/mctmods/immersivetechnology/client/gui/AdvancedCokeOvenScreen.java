@@ -5,7 +5,7 @@ import mctmods.immersivetechnology.client.gui.helper.ITContainerScreen;
 import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.client.gui.helper.ITInfoArea;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.AdvancedCokeOvenMenu;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITAdvancedCokeOvenLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.AdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -25,8 +25,8 @@ public class AdvancedCokeOvenScreen extends ITContainerScreen<AdvancedCokeOvenMe
 
     @Override
     protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float f, int mx, int my) {
-        int processMax = menu.state.get(ITAdvancedCokeOvenLogic.State.MAX_BURN_TIME);
-        int process = menu.state.get(ITAdvancedCokeOvenLogic.State.BURN_TIME);
+        int processMax = menu.state.get(AdvancedCokeOvenLogic.State.MAX_BURN_TIME);
+        int process = menu.state.get(AdvancedCokeOvenLogic.State.BURN_TIME);
         if (processMax > 0 && process > 0) {
             int h = (int) (12 * (process / (float) processMax));
             graphics.blit(TEXTURE, leftPos + 59, topPos + 37 + 12 - h, 179, 1 + 12 - h, 9, h);

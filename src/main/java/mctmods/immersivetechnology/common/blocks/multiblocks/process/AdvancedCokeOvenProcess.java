@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.process.Multibl
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import blusunrize.immersiveengineering.common.register.IEFluids;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITFurnaceHandler;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.ITAdvancedCokeOvenLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.AdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCokeOvenRecipe;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -48,8 +48,8 @@ public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<Advanced
             ItemStack input = context.getInventory().getStackInSlot(inputSlots[0]);
             input.shrink(recipe.input.getCount());
             ItemStack out = recipe.output.get().copy();
-            ItemStack current = context.getInventory().getStackInSlot(ITAdvancedCokeOvenLogic.SLOT_OUTPUT);
-            if (current.isEmpty()) { context.getInventory().setStackInSlot(ITAdvancedCokeOvenLogic.SLOT_OUTPUT, out); }
+            ItemStack current = context.getInventory().getStackInSlot(AdvancedCokeOvenLogic.SLOT_OUTPUT);
+            if (current.isEmpty()) { context.getInventory().setStackInSlot(AdvancedCokeOvenLogic.SLOT_OUTPUT, out); }
             else if (ItemHandlerHelper.canItemStacksStack(current, out) && current.getCount() + out.getCount() <= current.getMaxStackSize()) { current.grow(out.getCount()); }
             FluidStack fluidOut = new FluidStack(IEFluids.CREOSOTE.getStill(), recipe.creosoteOutput);
             context.getInternalTanks()[0].fill(fluidOut.copy(), FluidAction.EXECUTE);

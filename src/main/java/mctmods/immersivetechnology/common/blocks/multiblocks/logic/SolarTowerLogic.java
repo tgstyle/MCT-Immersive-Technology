@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
-public class ITSolarTowerLogic implements IMultiblockLogic<ITSolarTowerLogic.State>, IServerTickableComponent<ITSolarTowerLogic.State>, IClientTickableComponent<ITSolarTowerLogic.State> {
+public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>, IServerTickableComponent<SolarTowerLogic.State>, IClientTickableComponent<SolarTowerLogic.State> {
     @Override
     public State createInitialState(IInitialMultiblockContext iInitialMultiblockContext) {
         return null;

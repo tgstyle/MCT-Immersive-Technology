@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.blocks.multiblocks;
 
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITClientMultiblockProperties;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
@@ -11,17 +12,17 @@ import net.minecraft.world.level.Level;
 
 import java.util.function.Consumer;
 
-public class ITSteamTurbine extends ITTemplateMultiblock {
-    public static final ITSteamTurbine INSTANCE = new ITSteamTurbine();
+public class Boiler extends ITTemplateMultiblock {
+    public static final Boiler INSTANCE = new Boiler();
 
-    public ITSteamTurbine() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/steam_turbine"), new BlockPos(1, 1, 0), new BlockPos(1, 1, 9), new BlockPos(3, 4, 10), ITMultiblockProvider.STEAM_TURBINE); }
+    public Boiler() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/boiler"), new BlockPos(2,1,2), new BlockPos(2,1,2), new BlockPos(5,3,3), ITMultiblockProvider.BOILER); }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override
-    public float getManualScale() { return 10; }
+    public float getManualScale() { return 16; }
 
     @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, 1, 1, 0)); }
+    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, 2, 1, 2)); }
 }

@@ -1,5 +1,10 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.logic;
 
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -16,15 +21,18 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapabil
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.CachedRecipe;
 import blusunrize.immersiveengineering.common.util.Utils;
+import mctmods.immersivetechnology.api.ITCapabilities;
+import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
+import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmokeData;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SteamTurbineShape;
+import mctmods.immersivetechnology.common.blocks.multiblocks.process.RotationInertiaProcess;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -32,31 +40,31 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
-public class ITSteamTurbineLogic implements IMultiblockLogic<ITSteamTurbineLogic.State>, IServerTickableComponent<ITSteamTurbineLogic.State>, IClientTickableComponent<ITSteamTurbineLogic.State> {
-    private static final List<BlockPos> FLUID_POS1 = List.of(new BlockPos(2, 1, 9), new BlockPos(1, 1, 0));
-    private static final List<BlockPos> FLUID_POS2 = List.of(new BlockPos(1, 0, 1));
-
-    public static final BlockPos REDSTONE_POS = new BlockPos(0, 1, 9);
-
+public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.State>, IServerTickableComponent<SteamTurbineLogic.State>, IClientTickableComponent<SteamTurbineLogic.State> {
     public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
 
-    private static final CapabilityPosition FLUID_OUTPUT_POS = new CapabilityPosition(1, 0, 1, RelativeBlockFace.FRONT);
+    public static final CapabilityPosition INPUT_FLUID_POS = new CapabilityPosition(0, 1, 9, RelativeBlockFace.BACK);
+    public static final CapabilityPosition OUTPUT_FLUID_POS = new CapabilityPosition(1, 0, 1, RelativeBlockFace.FRONT);
+
+    public static final BlockPos REDSTONE_POS = new BlockPos(2, 1, 9);
+
+    public static final BlockPos RUNNING_SOUND_POS = new BlockPos(1, 1, 6);
+    public static final BlockPos SMOKE_POS = new BlockPos(1, 0, 0);
+
+    public static final BlockPos ROTATIONAL_OUTPUT = new BlockPos(1, 1, 0);
+    public static final double MASS = 10;
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
@@ -88,7 +96,7 @@ public class ITSteamTurbineLogic implements IMultiblockLogic<ITSteamTurbineLogic
         }
 
         if (!state.isSoundPlaying.getAsBoolean()) {
-            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(2.5, 1.5, 1.5));
+            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POS.getX() + 0.5, RUNNING_SOUND_POS.getY() + 0.5, RUNNING_SOUND_POS.getZ() + 0.5));
             state.soundId++;
             int thisId = state.soundId;
             state.isSoundPlaying = ITMultiblockSound.startSound(
@@ -107,12 +115,10 @@ public class ITSteamTurbineLogic implements IMultiblockLogic<ITSteamTurbineLogic
         }
         if (state.active && ctx.getLevel().shouldTickModulo(2)) {
             Direction facing = ctx.getLevel().getOrientation().front();
-            BlockPos outputRel = new BlockPos(1, 0, 1);
-            BlockPos outputAbs = ctx.getLevel().toAbsolute(outputRel);
-            BlockPos adjacentAbs = outputAbs.relative(facing);
+            BlockPos outputAbs = ctx.getLevel().toAbsolute(SMOKE_POS);
             boolean connected = state.fluidOutput.isPresent();
             if (!connected) {
-                Vec3 smokePos = new Vec3(adjacentAbs.getX() + 0.5, adjacentAbs.getY() + 0.5, adjacentAbs.getZ() + 0.5);
+                Vec3 smokePos = new Vec3(outputAbs.getX() + 0.5, outputAbs.getY() + 0.5, outputAbs.getZ() + 0.5);
                 double velX = facing.getStepX() * 0.125 + particleXZSpeed();
                 double velY = facing.getStepY() * 0.1 + 0.0625;
                 double velZ = facing.getStepZ() * 0.125 + particleXZSpeed();
@@ -136,37 +142,63 @@ public class ITSteamTurbineLogic implements IMultiblockLogic<ITSteamTurbineLogic
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         boolean previouslyActive = state.active;
         state.active = false;
 
-        if (state.burnRemaining > 0) {
-            state.burnRemaining--;
-            speedUp(state);
+        Level level = ctx.getLevel().getRawLevel();
+
+        Direction outputFacing = ctx.getLevel().getOrientation().front();
+        BlockPos outputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_OUTPUT);
+        assert outputFacing != null;
+        BlockPos consumerAbsPos = outputPortAbs.relative(outputFacing);
+        BlockEntity entity = level.getBlockEntity(consumerAbsPos);
+
+        boolean hasConsumer = false;
+        double additionalMass = 0.0;
+        if (entity != null) {
+            LazyOptional<IMechanicalEnergyConsumer> consumerCap = entity.getCapability(ITCapabilities.MECHANICAL_CONSUMER_CAPABILITY, outputFacing.getOpposite());
+            if (consumerCap.isPresent()) {
+                hasConsumer = true;
+                additionalMass = consumerCap.orElseThrow(RuntimeException::new).getMass();
+            }
         }
-        else if (state.rsState.isEnabled(ctx)) {
-            FluidStack fluid = state.tanks.input.getFluid();
-            SteamTurbineRecipe recipe = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fluid);
-            if (recipe != null && fluid.getAmount() >= recipe.inputAmount) {
-                state.tanks.input.drain(recipe.inputAmount, FluidAction.EXECUTE);
-                if (recipe.fluidOutput != null) {
-                    int filled = state.tanks.output.fill(recipe.fluidOutput, FluidAction.EXECUTE);
-                    if (filled < recipe.fluidOutput.getAmount()) {
-                        // Excess discarded, operation continues
+
+        if (additionalMass != state.connectedMass) {
+            state.connectedMass = additionalMass;
+            state.inertia = new RotationInertiaProcess(MASS + state.connectedMass, state.torque, state.friction);
+        }
+
+        boolean canRun = state.rsState.isEnabled(ctx) && hasConsumer;
+
+        if (!canRun) {
+            state.burnRemaining = 0;
+            state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate());
+        } else {
+            if (state.burnRemaining > 0) {
+                state.burnRemaining--;
+                state.speed = Math.min(state.maxSpeed, state.speed + state.inertia.getSpeedUpRate());
+                state.active = true;
+            } else {
+                FluidStack fluid = state.tanks.input.getFluid();
+                SteamTurbineRecipe recipe = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fluid);
+                if (recipe != null && fluid.getAmount() >= recipe.inputAmount) {
+                    state.tanks.input.drain(recipe.inputAmount, FluidAction.EXECUTE);
+                    if (recipe.fluidOutput != null) {
+                        int filled = state.tanks.output.fill(recipe.fluidOutput, FluidAction.EXECUTE);
+                        if (filled < recipe.fluidOutput.getAmount()) {
+                            // Excess discarded, operation continues
+                        }
                     }
+                    state.burnRemaining = recipe.getTotalProcessTime() - 1;
+                    state.speed = Math.min(state.maxSpeed, state.speed + state.inertia.getSpeedUpRate());
+                    state.active = true;
+                } else {
+                    state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate());
                 }
-                state.burnRemaining = recipe.getTotalProcessTime() - 1;
-                speedUp(state);
             }
-            else {
-                speedDown(state);
-            }
-        }
-        else {
-            speedDown(state);
         }
 
         boolean changed = false;
@@ -194,10 +226,23 @@ public class ITSteamTurbineLogic implements IMultiblockLogic<ITSteamTurbineLogic
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         final State state = ctx.getState();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (position.side() == null || (position.side() == RelativeBlockFace.BACK && FLUID_POS1.contains(position.posInMultiblock()))) { return state.fluidCap.cast(ctx); }
-            else if (position.side() == RelativeBlockFace.FRONT && FLUID_POS2.contains(position.posInMultiblock())) { return state.fluidCapExhaust.cast(ctx); }
+            if ((position.side() == null || position.side() == RelativeBlockFace.BACK) && position.posInMultiblock().equals(INPUT_FLUID_POS.posInMultiblock())) { return state.fluidCap.cast(ctx); }
+            if (OUTPUT_FLUID_POS.equals(position)) { return state.fluidCapExhaust.cast(ctx); }
+        }
+        if (cap == ITCapabilities.MECHANICAL_PROVIDER_CAPABILITY) {
+            if (position.posInMultiblock().equals(ROTATIONAL_OUTPUT) && (position.side() == null || position.side() == RelativeBlockFace.FRONT)) {
+                return LazyOptional.of(() -> new MechanicalEnergyProvider(state)).cast();
+            }
         }
         return LazyOptional.empty();
+    }
+
+    private record MechanicalEnergyProvider(State state) implements IMechanicalEnergyProvider {
+        @Override
+        public int getSpeed() { return state.speed; }
+
+        @Override
+        public float getTorque() { return 1f; }
     }
 
     @Override
@@ -205,19 +250,6 @@ public class ITSteamTurbineLogic implements IMultiblockLogic<ITSteamTurbineLogic
 
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SteamTurbineShape.GETTER; }
-
-    public ITSlotwiseItemHandler getInventory() { return null; }
-
-    public SteamTurbineTank getTanks() { return null; }
-
-    private void speedUp(State state) {
-        state.speed = Math.min(state.maxSpeed, state.speed + state.speedUpRate);
-        state.active = true;
-    }
-
-    private void speedDown(State state) {
-        state.speed = Math.max(0, state.speed - state.slowDownRate);
-    }
 
     private static double particleXZSpeed() { return ApiUtils.RANDOM.nextDouble(-0.015625, 0.015625); }
 
@@ -240,8 +272,10 @@ public class ITSteamTurbineLogic implements IMultiblockLogic<ITSteamTurbineLogic
         private transient int animation_fanFadeOut = 0;
         private transient float currentLevel = 0f;
         private transient float currentPitch = 0f;
-        private final int slowDownRate = 6;
-        private final int speedUpRate = 3;
+        private double connectedMass = 0;
+        private RotationInertiaProcess inertia;
+        private final double torque = 30;
+        private final double friction = 60;
 
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -251,8 +285,11 @@ public class ITSteamTurbineLogic implements IMultiblockLogic<ITSteamTurbineLogic
             this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
             this.recipeGetter = CachedRecipe.cached(SteamTurbineRecipe::findFuel);
-            CapabilityPosition opposingPos = CapabilityPosition.opposing(new MultiblockFace(FLUID_OUTPUT_POS.side(), FLUID_OUTPUT_POS.posInMultiblock()));
-            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, new MultiblockFace(opposingPos.side(), opposingPos.posInMultiblock()));
+            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POS.side(), OUTPUT_FLUID_POS.posInMultiblock());
+            CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
+            MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
+            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
+            this.inertia = new RotationInertiaProcess(MASS, torque, friction);
         }
 
         @Override
@@ -287,11 +324,8 @@ public class ITSteamTurbineLogic implements IMultiblockLogic<ITSteamTurbineLogic
             if (active && !oldActive) { animation_fanFadeIn = 80; }
             else if (!active && oldActive) { animation_fanFadeOut = 80; }
         }
-
-        public boolean isActive() { return active; }
     }
 
-    @SuppressWarnings("unused")
     public record SteamTurbineTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
         public SteamTurbineTank(Consumer<Void> markDirty) {
             this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty));
@@ -311,6 +345,7 @@ public class ITSteamTurbineLogic implements IMultiblockLogic<ITSteamTurbineLogic
             this.output.readFromNBT(tag.getCompound("output"));
         }
 
+        @SuppressWarnings("unused")
         public int getCapacity() { return TANK_CAPACITY; }
     }
 }

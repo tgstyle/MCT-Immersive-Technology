@@ -27,7 +27,7 @@ public class AdvancedCokeOvenFuel extends IESerializableRecipe {
         this.burnTime = burnTime;
     }
 
-    public static int getAdvCokeOvenFuelTime(Level level, ItemStack stack) {
+    public static int getAdvancedCokeOvenFuelTime(Level level, ItemStack stack) {
         Iterator<AdvancedCokeOvenFuel> var2 = RECIPES.getRecipes(level).iterator();
         AdvancedCokeOvenFuel e;
         do {

@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.blocks.multiblocks;
 
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITClientMultiblockProperties;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
@@ -11,17 +12,17 @@ import net.minecraft.world.level.Level;
 
 import java.util.function.Consumer;
 
-public class ITDistiller extends ITTemplateMultiblock {
-    public static final ITDistiller INSTANCE = new ITDistiller();
+public class SolarTower extends ITTemplateMultiblock {
+    public static final SolarTower INSTANCE = new SolarTower();
 
-    public ITDistiller() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/distiller"), new BlockPos(1,1,1), new BlockPos(1,1,1), new BlockPos(3,3,3), ITMultiblockProvider.DISTILLER); }
+    public SolarTower() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/solar_tower"), new BlockPos(0,0,0), new BlockPos(1,2,1), new BlockPos(3,21,3), ITMultiblockProvider.SOLAR_TOWER); }
 
     @Override
-    public float getManualScale() { return 16; }
+    public float getManualScale() { return 4; }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, 1, 1, 1)); }
+    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, 0, 0, 0)); }
 }

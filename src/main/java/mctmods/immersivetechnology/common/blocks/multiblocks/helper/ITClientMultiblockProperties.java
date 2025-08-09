@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.helper;
 
-import mctmods.immersivetechnology.common.blocks.multiblocks.ITTemplateMultiblock;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import blusunrize.immersiveengineering.common.util.Utils;
