@@ -6,18 +6,25 @@ import torch
 from typing import Tuple
 import concurrent.futures
 EPSILON = 1e-5
-try:
-    import torch_directml
-    device = torch_directml.device()
-except ImportError:
-    device = torch.device('cpu')
+
+# Device selection: Prefer CUDA/ROCm if available, then DirectML, then CPU
+if torch.cuda.is_available():
+    device = torch.device('cuda')  # Supports NVIDIA CUDA and AMD ROCm
+else:
+    try:
+        import torch_directml
+        device = torch_directml.device()
+    except ImportError:
+        device = torch.device('cpu')
 print(f"Using device: {device}")
+
 def custom_cross(a, b):
     return torch.stack([
         a[..., 1] * b[..., 2] - a[..., 2] * b[..., 1],
         a[..., 2] * b[..., 0] - a[..., 0] * b[..., 2],
         a[..., 0] * b[..., 1] - a[..., 1] * b[..., 0]
     ], dim=-1)
+
 def intersects_box(triangle, box_center, box_extents):
     X, Y, Z = 0, 1, 2
     v0 = triangle[0] - box_center
@@ -88,6 +95,7 @@ def intersects_box(triangle, box_center, box_extents):
     r = box_extents[X] * np.abs(plane_normal[X]) + box_extents[Y] * np.abs(plane_normal[Y]) + box_extents[Z] * np.abs(plane_normal[Z])
     if abs(plane_distance) > r + EPSILON: return False
     return True
+
 def intersects_box_vec(triangles, voxel_centers, box_extents):
     N_vox = voxel_centers.shape[0]
     N_tri = triangles.shape[0]
@@ -170,17 +178,20 @@ def intersects_box_vec(triangles, voxel_centers, box_extents):
     intersects_per_pair = ~all_sep
     intersects_per_vox = intersects_per_pair.any(dim=1)
     return intersects_per_vox
+
 def moller_trumbore(ray_o: torch.Tensor, ray_d: torch.Tensor, tris: torch.Tensor, eps=1e-6, batch_size=512) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    ray_o = ray_o.float().to(device)
-    ray_d = ray_d.float().to(device)
-    tris = tris.float().to(device)
+    ray_o = ray_o.float()
+    ray_d = ray_d.float()
+    tris = tris.float()
     n_rays = ray_o.shape[0]
     n_faces = tris.shape[0]
+    print(f"Number of rays: {n_rays}, Number of faces: {n_faces}")
     u_all, v_all, t_all = [], [], []
     current_batch_size = batch_size
     while current_batch_size > 0:
         try:
             for i in range(0, n_rays, current_batch_size):
+                print(f"Processing batch starting at {i} with size {current_batch_size}")
                 batch_o = ray_o[i:i+current_batch_size]
                 batch_d = ray_d[i:i+current_batch_size]
                 E1 = tris[:, 1] - tris[:, 0]
@@ -195,13 +206,14 @@ def moller_trumbore(ray_o: torch.Tensor, ray_d: torch.Tensor, tris: torch.Tensor
                 u = torch.einsum('mnd,nd->mn', DA0, E2) * invdet
                 v = -torch.einsum('mnd,nd->mn', DA0, E1) * invdet
                 t = torch.einsum('mnd,nd->mn', A0, N) * invdet
-                u_all.append(u.cpu())
-                v_all.append(v.cpu())
-                t_all.append(t.cpu())
+                u_all.append(u)
+                v_all.append(v)
+                t_all.append(t)
                 del A0, DA0, det, invdet, mask
             break
         except RuntimeError as e:
             if "allocate" in str(e) or "memory" in str(e):
+                print(f"OOM with batch_size={current_batch_size}. Halving to {current_batch_size // 2}")
                 current_batch_size //= 2
                 u_all, v_all, t_all = [], [], []
             else:
@@ -209,6 +221,7 @@ def moller_trumbore(ray_o: torch.Tensor, ray_d: torch.Tensor, tris: torch.Tensor
     if current_batch_size == 0:
         raise RuntimeError("Failed to process with minimum batch size.")
     return torch.cat(u_all, dim=0), torch.cat(v_all, dim=0), torch.cat(t_all, dim=0)
+
 def merge_voxels(filled, res, min_vox=1):
     aabbs = []
     visited = np.zeros_like(filled, dtype=bool)
@@ -252,9 +265,11 @@ def merge_voxels(filled, res, min_vox=1):
                     max_aabb = ((best_maxs[0] + 1) / res, (best_maxs[1] + 1) / res, (best_maxs[2] + 1) / res)
                     aabbs.append(min_aabb + max_aabb)
     return aabbs
+
 def mark_surface_wrapper(args):
     bx, by, bz, triangles, res, extents_base, voxel_size, global_filled, size_x, size_y, size_z, flip_axis, mid_value = args
     mark_surface(bx, by, bz, triangles, res, extents_base, voxel_size, global_filled, size_x, size_y, size_z, flip_axis, mid_value)
+
 def mark_surface(bx, by, bz, triangles, res, extents_base, voxel_size, global_filled, size_x, size_y, size_z, flip_axis=None, mid_value=None):
     model_min = np.array([bx, by, bz], dtype=np.float32)
     block_center = model_min + 0.5
@@ -283,6 +298,7 @@ def mark_surface(bx, by, bz, triangles, res, extents_base, voxel_size, global_fi
         gz = bz * res + iz
         if 0 <= gx < size_x * res and 0 <= gy < size_y * res and 0 <= gz < size_z * res:
             global_filled[gx, gy, gz] = True
+
 parser = argparse.ArgumentParser(description='Voxelize OBJ for AABB collision with optional ray-based interior fill')
 parser.add_argument('filename', type=str, help='OBJ filename or directory')
 parser.add_argument('--res', type=int, default=8, help='Voxel resolution')
@@ -298,6 +314,7 @@ parser.add_argument('--fill_method', type=str, default='flood', choices=['flood'
 parser.add_argument('--ray_logic', type=str, default='or', choices=['or', 'majority'], help='Ray logic for interior: or or majority (default: or)')
 parser.add_argument('--ray_directions', type=str, default='positive', choices=['positive', 'both'], help='Ray directions: positive or both (default: positive)')
 args = parser.parse_args()
+
 if os.path.isdir(args.filename):
     dir_path = os.path.abspath(args.filename)
     obj_files = [f for f in os.listdir(dir_path) if f.lower().endswith('.obj')]
@@ -318,6 +335,7 @@ elif os.path.isfile(args.filename) and args.filename.lower().endswith('.obj'):
     print(f"Selected main file: {main_file}")
 else:
     raise ValueError("Invalid input: must be an OBJ file or a directory containing OBJ files.")
+
 other_objs = [f for f in obj_files if f != main_file]
 mirrored_file = None
 if other_objs:
@@ -341,8 +359,10 @@ if other_objs:
         bZ = int(input("bZ position: "))
         additional_objs.append((selected_file, bX, bY, bZ))
         other_objs = [f for f in other_objs if f != selected_file]
+
 output_file = main_file.replace(".obj", ".txt")
 output_lines = []
+
 print(f"Processing main file: {main_file}")
 with open(os.path.join(dir_path, main_file), 'r') as f:
     lines = f.readlines()
