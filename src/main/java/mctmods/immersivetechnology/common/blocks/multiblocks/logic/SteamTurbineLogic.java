@@ -21,7 +21,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapabil
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.CachedRecipe;
 import blusunrize.immersiveengineering.common.util.Utils;
-import mctmods.immersivetechnology.api.ITCapabilities;
+import mctmods.immersivetechnology.api.MechanicalCapabilities;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmokeData;
@@ -159,7 +159,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         boolean hasConsumer = false;
         double additionalMass = 0.0;
         if (entity != null) {
-            LazyOptional<IMechanicalEnergyConsumer> consumerCap = entity.getCapability(ITCapabilities.MECHANICAL_CONSUMER_CAPABILITY, outputFacing.getOpposite());
+            LazyOptional<IMechanicalEnergyConsumer> consumerCap = entity.getCapability(MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY, outputFacing.getOpposite());
             if (consumerCap.isPresent()) {
                 hasConsumer = true;
                 additionalMass = consumerCap.orElseThrow(RuntimeException::new).getMass();
@@ -229,7 +229,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             if ((position.side() == null || position.side() == RelativeBlockFace.BACK) && position.posInMultiblock().equals(INPUT_FLUID_POS.posInMultiblock())) { return state.fluidCap.cast(ctx); }
             if (OUTPUT_FLUID_POS.equals(position)) { return state.fluidCapExhaust.cast(ctx); }
         }
-        if (cap == ITCapabilities.MECHANICAL_PROVIDER_CAPABILITY) {
+        if (cap == MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY) {
             if (position.posInMultiblock().equals(ROTATIONAL_OUTPUT) && (position.side() == null || position.side() == RelativeBlockFace.FRONT)) {
                 return LazyOptional.of(() -> new MechanicalEnergyProvider(state)).cast();
             }

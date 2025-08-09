@@ -20,7 +20,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapabil
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.api.ITCapabilities;
+import mctmods.immersivetechnology.api.MechanicalCapabilities;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AlternatorShape;
@@ -92,7 +92,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         state.active = false;
 
         if (entity != null) {
-            LazyOptional<IMechanicalEnergyProvider> providerCap = entity.getCapability(ITCapabilities.MECHANICAL_PROVIDER_CAPABILITY, inputFacing.getOpposite());
+            LazyOptional<IMechanicalEnergyProvider> providerCap = entity.getCapability(MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY, inputFacing.getOpposite());
             if (providerCap.isPresent()) {
                 IMechanicalEnergyProvider provider = providerCap.orElseThrow(RuntimeException::new);
                 turbineSpeed = provider.getSpeed();
@@ -166,7 +166,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             if (position.side() == null || (position.side() == RelativeBlockFace.RIGHT && ENERGY_OUTPUT_POS_RIGHT.contains(position.posInMultiblock()))) { return ctx.getState().energyCap.cast(ctx); }
             if (position.side() == RelativeBlockFace.LEFT && ENERGY_OUTPUT_POS_LEFT.contains(position.posInMultiblock())) { return ctx.getState().energyCap.cast(ctx); }
         }
-        if (cap == ITCapabilities.MECHANICAL_CONSUMER_CAPABILITY) {
+        if (cap == MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY) {
             if (position.posInMultiblock().equals(BlockPos.ZERO)) { position = new CapabilityPosition(ROTATIONAL_INPUT, position.side()); }
             if (position.posInMultiblock().equals(ROTATIONAL_INPUT) && (position.side() == null || position.side() == RelativeBlockFace.FRONT || position.side() == RelativeBlockFace.BACK)) {
                 return LazyOptional.of(MechanicalEnergyConsumer::new).cast();
