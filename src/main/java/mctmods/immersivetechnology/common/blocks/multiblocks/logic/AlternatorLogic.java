@@ -49,7 +49,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     private static final List<BlockPos> ENERGY_OUTPUT_POS_RIGHT = List.of(new BlockPos(2, 0, 3), new BlockPos(2, 1, 3), new BlockPos(2, 2, 3));
     private static final List<BlockPos> ENERGY_OUTPUT_POS_LEFT = List.of(new BlockPos(0, 0, 3), new BlockPos(0, 1, 3), new BlockPos(0, 2, 3));
 
-    public static final BlockPos ROTATIONAL_INPUT = new BlockPos(1, 1, 0);
+    public static final BlockPos ROTATIONAL_INPUT_POS = new BlockPos(1, 1, 0);
     public static final double MASS = 2;
 
     @Override
@@ -81,7 +81,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         Level level = ctx.getLevel().getRawLevel();
 
         Direction  inputFacing = ctx.getLevel().getOrientation().front();
-        BlockPos inputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_INPUT);
+        BlockPos inputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_INPUT_POS);
         assert  inputFacing != null;
         BlockPos providerAbsolutePos = inputPortAbs.relative( inputFacing);
         BlockEntity entity = level.getBlockEntity(providerAbsolutePos);
@@ -113,6 +113,41 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
         generateEnergy(state);
         outputEnergy(state);
+
+        for (BlockPos pos : ENERGY_OUTPUT_POS_LEFT) {
+            BlockPos absolutePos = ctx.getLevel().toAbsolute(pos);
+            Direction side = ctx.getLevel().toAbsolute(RelativeBlockFace.RIGHT);
+            assert side != null;
+            BlockEntity adjacent = level.getBlockEntity(absolutePos.relative(side));
+            if (adjacent != null) {
+                LazyOptional<IEnergyStorage> handlerOpt = adjacent.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
+                if (handlerOpt.isPresent()) {
+                    IEnergyStorage handler = handlerOpt.orElseThrow(RuntimeException::new);
+                    int maxPush = Math.min(2048, state.energy.getEnergyStored());
+                    int pushed = handler.receiveEnergy(maxPush, false);
+                    if (pushed > 0) {
+                        state.energy.setStoredEnergy(state.energy.getEnergyStored() - pushed);
+                    }
+                }
+            }
+        }
+        for (BlockPos pos : ENERGY_OUTPUT_POS_RIGHT) {
+            BlockPos absolutePos = ctx.getLevel().toAbsolute(pos);
+            Direction side = ctx.getLevel().toAbsolute(RelativeBlockFace.LEFT);
+            assert side != null;
+            BlockEntity adjacent = level.getBlockEntity(absolutePos.relative(side));
+            if (adjacent != null) {
+                LazyOptional<IEnergyStorage> handlerOpt = adjacent.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
+                if (handlerOpt.isPresent()) {
+                    IEnergyStorage handler = handlerOpt.orElseThrow(RuntimeException::new);
+                    int maxPush = Math.min(2048, state.energy.getEnergyStored());
+                    int pushed = handler.receiveEnergy(maxPush, false);
+                    if (pushed > 0) {
+                        state.energy.setStoredEnergy(state.energy.getEnergyStored() - pushed);
+                    }
+                }
+            }
+        }
 
         if (state.active) { ctx.markMasterDirty(); }
         ctx.requestMasterBESync();
@@ -167,8 +202,8 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             if (position.side() == RelativeBlockFace.LEFT && ENERGY_OUTPUT_POS_LEFT.contains(position.posInMultiblock())) { return ctx.getState().energyCap.cast(ctx); }
         }
         if (cap == MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY) {
-            if (position.posInMultiblock().equals(BlockPos.ZERO)) { position = new CapabilityPosition(ROTATIONAL_INPUT, position.side()); }
-            if (position.posInMultiblock().equals(ROTATIONAL_INPUT) && (position.side() == null || position.side() == RelativeBlockFace.FRONT || position.side() == RelativeBlockFace.BACK)) {
+            if (position.posInMultiblock().equals(BlockPos.ZERO)) { position = new CapabilityPosition(ROTATIONAL_INPUT_POS, position.side()); }
+            if (position.posInMultiblock().equals(ROTATIONAL_INPUT_POS) && (position.side() == null || position.side() == RelativeBlockFace.FRONT || position.side() == RelativeBlockFace.BACK)) {
                 return LazyOptional.of(MechanicalEnergyConsumer::new).cast();
             }
         }
@@ -198,10 +233,10 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             ImmutableList.Builder<CapabilityReference<IEnergyStorage>> outputs1 = ImmutableList.builder();
             ImmutableList.Builder<CapabilityReference<IEnergyStorage>> outputs2 = ImmutableList.builder();
             for (BlockPos pos : ENERGY_OUTPUT_POS_LEFT) {
-                outputs1.add(ctx.getCapabilityAt(ForgeCapabilities.ENERGY, pos, RelativeBlockFace.LEFT));
+                outputs1.add(ctx.getCapabilityAt(ForgeCapabilities.ENERGY, pos, RelativeBlockFace.RIGHT));
             }
             for (BlockPos pos : ENERGY_OUTPUT_POS_RIGHT) {
-                outputs2.add(ctx.getCapabilityAt(ForgeCapabilities.ENERGY, pos, RelativeBlockFace.RIGHT));
+                outputs2.add(ctx.getCapabilityAt(ForgeCapabilities.ENERGY, pos, RelativeBlockFace.LEFT));
             }
             this.energyOutputs1 = outputs1.build();
             this.energyOutputs2 = outputs2.build();

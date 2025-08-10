@@ -63,7 +63,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     public static final BlockPos RUNNING_SOUND_POS = new BlockPos(1, 1, 6);
     public static final BlockPos SMOKE_POS = new BlockPos(1, 0, 0);
 
-    public static final BlockPos ROTATIONAL_OUTPUT = new BlockPos(1, 1, 0);
+    public static final BlockPos ROTATIONAL_OUTPUT_POS = new BlockPos(1, 1, 0);
     public static final double MASS = 10;
 
     @Override
@@ -151,7 +151,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         Level level = ctx.getLevel().getRawLevel();
 
         Direction outputFacing = ctx.getLevel().getOrientation().front();
-        BlockPos outputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_OUTPUT);
+        BlockPos outputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_OUTPUT_POS);
         assert outputFacing != null;
         BlockPos consumerAbsPos = outputPortAbs.relative(outputFacing);
         BlockEntity entity = level.getBlockEntity(consumerAbsPos);
@@ -230,7 +230,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             if (OUTPUT_FLUID_POS.equals(position)) { return state.fluidCapExhaust.cast(ctx); }
         }
         if (cap == MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY) {
-            if (position.posInMultiblock().equals(ROTATIONAL_OUTPUT) && (position.side() == null || position.side() == RelativeBlockFace.FRONT)) {
+            if (position.posInMultiblock().equals(ROTATIONAL_OUTPUT_POS) && (position.side() == null || position.side() == RelativeBlockFace.FRONT)) {
                 return LazyOptional.of(() -> new MechanicalEnergyProvider(state)).cast();
             }
         }

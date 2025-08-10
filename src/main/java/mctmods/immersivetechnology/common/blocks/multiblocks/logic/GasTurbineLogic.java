@@ -82,7 +82,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     public static final BlockPos SPARK_SOUND_POS = new BlockPos(1, 1, 2);
     public static final BlockPos IGNITE_SOUND_POS = new BlockPos(1, 0, 1);
 
-    public static final BlockPos ROTATIONAL_OUTPUT = new BlockPos(1, 1, 7);
+    public static final BlockPos ROTATIONAL_OUTPUT_POS = new BlockPos(1, 1, 7);
     public static final double MASS = 8;
 
     @Override
@@ -239,7 +239,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         Level level = ctx.getLevel().getRawLevel();
 
         Direction outputFacing = ctx.getLevel().getOrientation().front().getOpposite();
-        BlockPos outputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_OUTPUT);
+        BlockPos outputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_OUTPUT_POS);
         BlockPos consumerAbsPos = outputPortAbs.relative(outputFacing);
         BlockEntity entity = level.getBlockEntity(consumerAbsPos);
 
@@ -381,7 +381,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             if (position.posInMultiblock().equals(OUTPUT_FLUID_POS.posInMultiblock()) && (position.side() == null || position.side() == OUTPUT_FLUID_POS.side())) { return state.fluidCapExhaust.cast(ctx); }
         }
         if (cap == MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY) {
-            if (position.posInMultiblock().equals(ROTATIONAL_OUTPUT) && (position.side() == null || position.side() == RelativeBlockFace.BACK)) {
+            if (position.posInMultiblock().equals(ROTATIONAL_OUTPUT_POS) && (position.side() == null || position.side() == RelativeBlockFace.BACK)) {
                 return LazyOptional.of(() -> new MechanicalEnergyProvider(state)).cast();
             }
         }
