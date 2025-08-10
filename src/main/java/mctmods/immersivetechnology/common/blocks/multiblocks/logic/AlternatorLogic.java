@@ -50,7 +50,9 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     private static final List<BlockPos> ENERGY_OUTPUT_POS_LEFT = List.of(new BlockPos(0, 0, 3), new BlockPos(0, 1, 3), new BlockPos(0, 2, 3));
 
     public static final BlockPos ROTATIONAL_INPUT_POS = new BlockPos(1, 1, 0);
-    public static final double MASS = 2;
+    private static final double BASE_MASS = 2;
+    private static final double FRICTION = 12;
+    private static final int MAX_SPEED = 1800;
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
@@ -80,14 +82,15 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
         Level level = ctx.getLevel().getRawLevel();
 
-        Direction  inputFacing = ctx.getLevel().getOrientation().front();
+        Direction inputFacing = ctx.getLevel().getOrientation().front();
         BlockPos inputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_INPUT_POS);
-        assert  inputFacing != null;
-        BlockPos providerAbsolutePos = inputPortAbs.relative( inputFacing);
+        assert inputFacing != null;
+        BlockPos providerAbsolutePos = inputPortAbs.relative(inputFacing);
         BlockEntity entity = level.getBlockEntity(providerAbsolutePos);
 
         int turbineSpeed = 0;
         float turbineTorque = 1f;
+        int turbineMaxSpeed = MAX_SPEED;
         boolean hasProvider = false;
         state.active = false;
 
@@ -97,6 +100,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
                 IMechanicalEnergyProvider provider = providerCap.orElseThrow(RuntimeException::new);
                 turbineSpeed = provider.getSpeed();
                 turbineTorque = provider.getTorque();
+                turbineMaxSpeed = provider.getMaxSpeed();
                 hasProvider = true;
                 if (turbineSpeed > 0) { state.active = true; }
             }
@@ -105,9 +109,11 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         if (hasProvider) {
             state.speed = turbineSpeed;
             state.torqueMultiplier = turbineTorque;
+            state.maxSpeed = turbineMaxSpeed;
         }
         else if (state.speed > 0) {
-            state.speed = Math.max(state.speed - 6, 0);
+            int speedDownRate = (int) Math.round(FRICTION / BASE_MASS);
+            state.speed = Math.max(state.speed - speedDownRate, 0);
             if (state.speed > 0) { state.active = true; }
         }
 
@@ -154,7 +160,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     }
 
     private void generateEnergy(State state) {
-        if (state.speed < 900) return;
+        if (state.speed < state.maxSpeed / 2) return;
         double ratio = (double) state.speed / state.maxSpeed;
         if (ratio > 0.0) {
             int generated = (int) Math.round(Math.pow(ratio, 2.0) * state.torqueMultiplier * 12288);
@@ -212,7 +218,10 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
     private static class MechanicalEnergyConsumer implements IMechanicalEnergyConsumer {
         @Override
-        public double getMass() { return MASS; }
+        public double getMass() { return BASE_MASS; }
+
+        @Override
+        public double getFriction() { return FRICTION; }
     }
 
     public static class State implements IMultiblockState {
@@ -223,7 +232,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         public boolean active = false;
         public int speed = 0;
         public float torqueMultiplier = 1f;
-        public int maxSpeed = 1800;
+        public int maxSpeed = MAX_SPEED;
         public BooleanSupplier isSoundPlaying = () -> false;
 
         private final StoredCapability<IEnergyStorage> energyCap;

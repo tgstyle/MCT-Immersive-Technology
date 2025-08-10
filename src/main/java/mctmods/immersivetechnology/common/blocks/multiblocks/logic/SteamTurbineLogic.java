@@ -64,23 +64,26 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     public static final BlockPos SMOKE_POS = new BlockPos(1, 0, 0);
 
     public static final BlockPos ROTATIONAL_OUTPUT_POS = new BlockPos(1, 1, 0);
-    public static final double MASS = 10;
+    private static final int MAX_SPEED = 1800;
+    private static final double BASE_MASS = 10;
+    private static final double DRIVE_TORQUE = 30;
+    private static final double FRICTION = 60;
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
-        float targetLevel = ITLib.remapRange(0, state.maxSpeed, 0.55f, 1.0f, state.speed);
+        float targetLevel = ITLib.remapRange(0, MAX_SPEED, 0.55f, 1.0f, state.speed);
         if (state.currentLevel == 0f) { state.currentLevel = targetLevel; }
         else state.currentLevel = state.currentLevel * 0.9f + targetLevel * 0.1f;
         float smoothedLevel = state.currentLevel;
 
-        float targetPitch = ITLib.remapRange(0, state.maxSpeed, 0.5f, 1.5f, state.speed);
+        float targetPitch = ITLib.remapRange(0, MAX_SPEED, 0.5f, 1.5f, state.speed);
         if (state.currentPitch == 0f) { state.currentPitch = targetPitch; }
         else state.currentPitch = state.currentPitch * 0.95f + targetPitch * 0.05f;
         if (state.currentPitch < 0.5f) { state.currentPitch = 0.5f; }
 
         if (state.active || state.animation_fanFadeIn > 0 || state.animation_fanFadeOut > 0) {
-            float base = (state.speed / (float)state.maxSpeed) * 72f;
+            float base = (state.speed / (float)MAX_SPEED) * 72f;
             float step = state.active ? base : 0;
             if (state.animation_fanFadeIn > 0) {
                 step -= (state.animation_fanFadeIn / 80f) * base;
@@ -168,7 +171,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
         if (additionalMass != state.connectedMass) {
             state.connectedMass = additionalMass;
-            state.inertia = new RotationInertiaProcess(MASS + state.connectedMass, state.torque, state.friction);
+            state.inertia = new RotationInertiaProcess(BASE_MASS + state.connectedMass, DRIVE_TORQUE, FRICTION);
         }
 
         boolean canRun = state.rsState.isEnabled(ctx) && hasConsumer;
@@ -179,7 +182,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         } else {
             if (state.burnRemaining > 0) {
                 state.burnRemaining--;
-                state.speed = Math.min(state.maxSpeed, state.speed + state.inertia.getSpeedUpRate());
+                state.speed = Math.min(MAX_SPEED, state.speed + state.inertia.getSpeedUpRate());
                 state.active = true;
             } else {
                 FluidStack fluid = state.tanks.input.getFluid();
@@ -193,7 +196,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
                         }
                     }
                     state.burnRemaining = recipe.getTotalProcessTime() - 1;
-                    state.speed = Math.min(state.maxSpeed, state.speed + state.inertia.getSpeedUpRate());
+                    state.speed = Math.min(MAX_SPEED, state.speed + state.inertia.getSpeedUpRate());
                     state.active = true;
                 } else {
                     state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate());
@@ -243,6 +246,18 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
         @Override
         public float getTorque() { return 1f; }
+
+        @Override
+        public int getMaxSpeed() { return MAX_SPEED; }
+
+        @Override
+        public double getBaseMass() { return BASE_MASS; }
+
+        @Override
+        public double getDriveTorque() { return DRIVE_TORQUE; }
+
+        @Override
+        public double getFriction() { return FRICTION; }
     }
 
     @Override
@@ -260,7 +275,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         public final StoredCapability<IFluidHandler> fluidCapExhaust;
         public final CapabilityReference<IFluidHandler> fluidOutput;
         private final BiFunction<Level, FluidStack, SteamTurbineRecipe> recipeGetter;
-        public int maxSpeed = 1800;
         public int speed = 0;
         public boolean active = false;
         private int burnRemaining = 0;
@@ -274,8 +288,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         private transient float currentPitch = 0f;
         private double connectedMass = 0;
         private RotationInertiaProcess inertia;
-        private final double torque = 30;
-        private final double friction = 60;
 
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -289,7 +301,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
             MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
             this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
-            this.inertia = new RotationInertiaProcess(MASS, torque, friction);
+            this.inertia = new RotationInertiaProcess(BASE_MASS, DRIVE_TORQUE, FRICTION);
         }
 
         @Override
