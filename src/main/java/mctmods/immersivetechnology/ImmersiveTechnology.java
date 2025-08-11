@@ -13,7 +13,6 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.proxy.ClientProxy;
 import mctmods.immersivetechnology.core.proxy.CommonProxy;
 import mctmods.immersivetechnology.core.registration.ITFluids;
-import mctmods.immersivetechnology.core.registration.ITRecipeSerializers;
 import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -47,7 +46,6 @@ public class ImmersiveTechnology {
         ITLib.IT_LOGGER.info("IT Starting");
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerCapabilities);
-        ITRecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
         ITLib.IT_LOGGER.info("Starting Proxy Mod Construction");
         CommonProxy.modConstruction(modEventBus);
         ITLib.IT_LOGGER.info("Initializing Packet Handler");

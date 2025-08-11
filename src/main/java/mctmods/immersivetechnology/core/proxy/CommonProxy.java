@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.core.proxy;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
-import mctmods.immersivetechnology.core.registration.ITCreativeTabs;
+import mctmods.immersivetechnology.core.registration.ITCreativeTab;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import mctmods.immersivetechnology.core.registration.ITItems;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
@@ -30,7 +30,7 @@ public class CommonProxy {
         ITItems.init(event);
         ITFluids.REGISTER.register(event);
         ITFluids.TYPE_REGISTER.register(event);
-        ITCreativeTabs.REGISTER.register(event);
+        ITCreativeTab.REGISTER.register(event);
     }
 
     public void reinitializeGUI() {}

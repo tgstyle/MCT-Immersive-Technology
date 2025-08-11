@@ -8,7 +8,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
 @SuppressWarnings("unused")
-public class ITCreativeTabs {
+public class ITCreativeTab {
     public static final DeferredRegister<CreativeModeTab> REGISTER = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ITLib.MODID);
 
     public static RegistryObject<CreativeModeTab> MAIN = REGISTER.register(
@@ -16,7 +16,7 @@ public class ITCreativeTabs {
             () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 0)
                     .icon(() -> ITItems.IT_FORMATION_TOOL.get().getDefaultInstance())
                     .title(Component.translatable("itemGroup.immersivetechnology"))
-                    .displayItems(ITCreativeTabs::fillITTab)
+                    .displayItems(ITCreativeTab::fillITTab)
                     .build()
     );
 
