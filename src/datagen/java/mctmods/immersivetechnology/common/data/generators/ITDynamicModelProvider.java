@@ -26,22 +26,16 @@ public class ITDynamicModelProvider extends ModelProvider<ITDynamicModelProvider
     @Override
     protected void registerModels() {
         for(Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet()) { withExistingParent(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(multiblock.getKey())).getPath(), multiblock.getValue().getLocation()); }
-        getBuilder(SteamTurbineRenderer.NAME)
+        getBuilder("dynamic/rotor")
                 .customLoader(ITObjModelBuilder::begin)
-                .model(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "models/block/multiblock/obj/steam_turbine/steam_turbine_rotor.obj"))
-                .flipV(true);
-        getBuilder(SteamTurbineRenderer.NAME_EAST_WEST)
+                .model(modLoc("models/block/multiblock/obj/rotor/rotor.obj"))
+                .flipV(true)
+                .automaticCulling(false);
+        getBuilder("dynamic/rotor_east_west")
                 .customLoader(ITObjModelBuilder::begin)
-                .model(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "models/block/multiblock/obj/steam_turbine/steam_turbine_rotor_west_east.obj"))
-                .flipV(true);
-        getBuilder(GasTurbineRenderer.NAME)
-                .customLoader(ITObjModelBuilder::begin)
-                .model(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "models/block/multiblock/obj/gas_turbine/gas_turbine_rotor.obj"))
-                .flipV(true);
-        getBuilder(GasTurbineRenderer.NAME_EAST_WEST)
-                .customLoader(ITObjModelBuilder::begin)
-                .model(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "models/block/multiblock/obj/gas_turbine/gas_turbine_rotor_east_west.obj"))
-                .flipV(true);
+                .model(modLoc("models/block/multiblock/obj/rotor/rotor_east_west.obj"))
+                .flipV(true)
+                .automaticCulling(false);
         getBuilder("coke_oven_heater_fan")
                 .customLoader(ITObjModelBuilder::begin)
                 .model(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "models/block/metal/obj/coke_oven_heater.obj"))

@@ -3,8 +3,10 @@ package mctmods.immersivetechnology.core.proxy;
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import mctmods.immersivetechnology.client.models.ITDynamicModel;
 import mctmods.immersivetechnology.client.models.ITObjLoader;
+import mctmods.immersivetechnology.client.models.RotorModels;
 import mctmods.immersivetechnology.client.renderer.CokeOvenHeaterRenderer;
 import mctmods.immersivetechnology.client.renderer.GasTurbineRenderer;
+import mctmods.immersivetechnology.client.renderer.OpenBarrelRenderer;
 import mctmods.immersivetechnology.client.renderer.SteamTurbineRenderer;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
@@ -42,10 +44,8 @@ public class ClientProxy extends CommonProxy {
     public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
         ev.register("obj", ITObjLoader.INSTANCE);
         CokeOvenHeaterRenderer.MODEL = new ITDynamicModel(CokeOvenHeaterRenderer.NAME);
-        GasTurbineRenderer.MODEL = new ITDynamicModel(GasTurbineRenderer.NAME);
-        GasTurbineRenderer.MODEL_EAST_WEST = new ITDynamicModel(GasTurbineRenderer.NAME_EAST_WEST);
-        SteamTurbineRenderer.MODEL = new ITDynamicModel(SteamTurbineRenderer.NAME);
-        SteamTurbineRenderer.MODEL_EAST_WEST = new ITDynamicModel(SteamTurbineRenderer.NAME_EAST_WEST);
+        RotorModels.ROTOR = new ITDynamicModel("rotor");
+        RotorModels.ROTOR_EAST_WEST = new ITDynamicModel("rotor_east_west");
     }
 
     @SubscribeEvent
@@ -54,7 +54,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, Supplier<BlockEntityRenderer<T>> render) {
-        registerBERenderNoContext(event, type.get(), render);
+        event.registerBlockEntityRenderer(type.get(), $ -> render.get());
     }
 
     private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render) {
@@ -62,6 +62,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     public static void registerBERenders(EntityRenderersEvent.RegisterRenderers event) {
+        registerBERenderNoContext(event, ITBlockEntities.OPEN_BARREL::get, OpenBarrelRenderer::new);
         registerBERenderNoContext(event, ITBlockEntities.COKE_OVEN_HEATER.master(), CokeOvenHeaterRenderer::new);
         registerBERenderNoContext(event, ITMultiblockProvider.STEAM_TURBINE.masterBE(), SteamTurbineRenderer::new);
         registerBERenderNoContext(event, ITMultiblockProvider.GAS_TURBINE.masterBE(), GasTurbineRenderer::new);

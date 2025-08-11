@@ -1,0 +1,6 @@
+{
+  "automatic_culling": false,
+  "flip_v": true,
+  "loader": "immersivetechnology:obj",
+  "model": "immersivetechnology:models/block/multiblock/obj/rotor/rotor_east_west.obj"
+}
