@@ -3,7 +3,6 @@ package mctmods.immersivetechnology;
 import mctmods.immersivetechnology.api.MechanicalCapabilities;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
-import mctmods.immersivetechnology.client.ITClientRenderHandler;
 import mctmods.immersivetechnology.common.network.ITMessageContainerData;
 import mctmods.immersivetechnology.common.network.ITMessageContainerUpdate;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
@@ -40,6 +39,7 @@ import org.spongepowered.asm.mixin.Mixins;
 import static mctmods.immersivetechnology.common.fluids.ITFluid.BUCKET_DISPENSE_BEHAVIOR;
 import static mctmods.immersivetechnology.core.lib.ITLib.MODID;
 
+@SuppressWarnings("unused")
 @Mod(MODID)
 public class ImmersiveTechnology {
     public static CommonProxy proxy = Util.make(() -> {
@@ -60,10 +60,10 @@ public class ImmersiveTechnology {
         ITLib.IT_LOGGER.info("Starting Proxy Mod Construction");
         CommonProxy.modConstruction(modEventBus);
 
-        ITLib.IT_LOGGER.info("Initialzing Packet Handler");
+        ITLib.IT_LOGGER.info("Initializing Packet Handler");
         ITPacketHandler.initialize();
 
-        ITLib.IT_LOGGER.info("Initialzing Mixins and adding Mixin Configuration");
+        ITLib.IT_LOGGER.info("Initializing Mixins and adding Mixin Configuration");
         MixinBootstrap.init();
         Mixins.addConfiguration("mixins.immersivetechnology.json");
 
@@ -105,7 +105,6 @@ public class ImmersiveTechnology {
             ITLib.IT_LOGGER.info("HELLO FROM CLIENT SETUP");
             ITLib.IT_LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
 
-            ITClientRenderHandler.init(event);
             ITContent.initializeManualEntries();
             ITContent.registerContainersAndScreens();
         }
