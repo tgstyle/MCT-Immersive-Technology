@@ -12,15 +12,11 @@ import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.proxy.ClientProxy;
 import mctmods.immersivetechnology.core.proxy.CommonProxy;
-import mctmods.immersivetechnology.core.registration.ITContent;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import mctmods.immersivetechnology.core.registration.ITRecipeSerializers;
-import mctmods.immersivetechnology.core.registration.ITRegistrationHolder;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.DispenserBlock;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -29,7 +25,6 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -53,20 +48,13 @@ public class ImmersiveTechnology {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerCapabilities);
         ITRecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
-
-        ITLib.IT_LOGGER.info("Adding ITRegistrationHolder Registries");
-        ITRegistrationHolder.addRegistersToEventBus(modEventBus);
-
         ITLib.IT_LOGGER.info("Starting Proxy Mod Construction");
         CommonProxy.modConstruction(modEventBus);
-
         ITLib.IT_LOGGER.info("Initializing Packet Handler");
         ITPacketHandler.initialize();
-
         ITLib.IT_LOGGER.info("Initializing Mixins and adding Mixin Configuration");
         MixinBootstrap.init();
         Mixins.addConfiguration("mixins.immersivetechnology.json");
-
         context.registerConfig(ModConfig.Type.COMMON, ITCommonConfig.SPEC);
         context.registerConfig(ModConfig.Type.SERVER, ITServerConfig.SPEC);
         context.registerConfig(ModConfig.Type.CLIENT, ITClientConfig.SPEC);
@@ -74,9 +62,7 @@ public class ImmersiveTechnology {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         ITLib.IT_LOGGER.info("HELLO FROM COMMON SETUP");
-
         for (ITFluids.FluidEntry entry : ITFluids.ALL_ENTRIES) { DispenserBlock.registerBehavior(entry.getBucket(), BUCKET_DISPENSE_BEHAVIOR); }
-
         ITPacketHandler.registerMessage(ITMessageContainerUpdate.class, ITMessageContainerUpdate::new);
         ITPacketHandler.registerMessage(ITMessageContainerData.class, ITMessageContainerData::new);
     }
@@ -97,16 +83,4 @@ public class ImmersiveTechnology {
     public static ResourceLocation rl(String path) { return ResourceLocation.fromNamespaceAndPath(MODID, path); }
 
     public static ResourceLocation makeTextureLocation(String name) { return rl("textures/gui/" + name + ".png"); }
-
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents {
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
-            ITLib.IT_LOGGER.info("HELLO FROM CLIENT SETUP");
-            ITLib.IT_LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-
-            ITContent.initializeManualEntries();
-            ITContent.registerContainersAndScreens();
-        }
-    }
 }

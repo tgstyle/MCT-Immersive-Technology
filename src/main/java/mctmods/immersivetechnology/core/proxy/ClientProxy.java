@@ -2,10 +2,19 @@ package mctmods.immersivetechnology.core.proxy;
 
 import java.util.function.Supplier;
 
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import org.jetbrains.annotations.Nullable;
 
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
+import blusunrize.immersiveengineering.api.ManualHelper;
+import blusunrize.lib.manual.ManualEntry;
+import blusunrize.lib.manual.ManualInstance;
+import blusunrize.lib.manual.Tree.InnerNode;
 
+import mctmods.immersivetechnology.client.gui.AdvancedCokeOvenScreen;
+import mctmods.immersivetechnology.client.gui.BoilerScreen;
+import mctmods.immersivetechnology.client.gui.DistillerScreen;
+import mctmods.immersivetechnology.client.gui.TrashItemScreen;
 import mctmods.immersivetechnology.client.models.ITDynamicModel;
 import mctmods.immersivetechnology.client.models.ITObjLoader;
 import mctmods.immersivetechnology.client.models.RotorModels;
@@ -20,17 +29,20 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import mctmods.immersivetechnology.core.registration.ITItems;
+import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mctmods.immersivetechnology.core.registration.ITParticles;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.item.ItemColor;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -61,6 +73,38 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
                 ItemBlockRenderTypes.setRenderLayer(entry.getStill(), RenderType.translucent());
                 ItemBlockRenderTypes.setRenderLayer(entry.getFlowing(), RenderType.translucent());
             }
+            BlockEntityRenderers.register(ITBlockEntities.OPEN_BARREL.get(), context -> new OpenBarrelRenderer());
+            MenuScreens.register(ITMenuTypes.ADVANCED_COKE_OVEN_MENU.getType(), AdvancedCokeOvenScreen::new);
+            MenuScreens.register(ITMenuTypes.BOILER_MENU.getType(), BoilerScreen::new);
+            MenuScreens.register(ITMenuTypes.DISTILLER_MENU.getType(), DistillerScreen::new);
+            MenuScreens.register(ITMenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
+            ManualInstance instance = ManualHelper.getManual();
+            InnerNode<ResourceLocation, ManualEntry> parent_category = instance.getRoot().getOrCreateSubnode(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "main"), 99);
+            ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            builder.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "intro"));
+            instance.addEntry(parent_category, builder.create());
+            InnerNode<ResourceLocation, ManualEntry> multiblock_category = parent_category.getOrCreateSubnode(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "it_multiblocks"), 0);
+            ManualEntry.ManualEntryBuilder multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "distiller"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "alternator"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "coke_oven_advanced"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "steam_turbine"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "gas_turbine"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "solar_tower"));
+            instance.addEntry(multiblock_category, multiblock.create());
         });
     }
 
