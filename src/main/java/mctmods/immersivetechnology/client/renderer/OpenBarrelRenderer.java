@@ -21,7 +21,7 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import java.util.logging.Logger;
 
-public class OpenBarrelRenderer extends ITBlockEntityRenderer<OpenBarrelBlockEntity> {
+public class OpenBarrelRenderer extends ITBaseBlockEntityRenderer<OpenBarrelBlockEntity> {
     private static final Logger LOGGER = Logger.getLogger("ImmersiveTechnology");
 
     @Override

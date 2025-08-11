@@ -12,7 +12,7 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 
-public class CokeOvenHeaterRenderer extends ITBlockEntityRenderer<CokeOvenHeaterBlockEntity>
+public class CokeOvenHeaterRenderer extends ITBaseBlockEntityRenderer<CokeOvenHeaterBlockEntity>
 {
     public static final String NAME = "coke_oven_heater_fan";
     public static ITDynamicModel MODEL = new ITDynamicModel(NAME);
