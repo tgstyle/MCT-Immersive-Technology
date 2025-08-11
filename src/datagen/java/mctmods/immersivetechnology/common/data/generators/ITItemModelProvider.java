@@ -50,7 +50,7 @@ public class ITItemModelProvider extends ItemModelProvider {
         generateBlockItem("trash_energy", "metal/trash_energy");
         generateBlockItem("coke_oven_heater", "metal/obj/coke_oven_heater");
 
-        generateGeneratedItem("it_formation_tool");
+        generateGeneratedItem("formation_tool");
         generateGeneratedItem("salt");
 
         ITFluids.ALL_ENTRIES.forEach(this::createBucket);

@@ -23,8 +23,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ITMBFormationItem extends Item {
-    public ITMBFormationItem() {
+public class FormationTool extends Item {
+    public FormationTool() {
         super(new Item.Properties());
     }
 

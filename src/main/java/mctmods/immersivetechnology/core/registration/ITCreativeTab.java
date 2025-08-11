@@ -14,7 +14,7 @@ public class ITCreativeTab {
     public static RegistryObject<CreativeModeTab> MAIN = REGISTER.register(
             "main",
             () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 0)
-                    .icon(() -> ITItems.IT_FORMATION_TOOL.get().getDefaultInstance())
+                    .icon(() -> ITItems.FORMATION_TOOL.get().getDefaultInstance())
                     .title(Component.translatable("itemGroup.immersivetechnology"))
                     .displayItems(ITCreativeTab::fillITTab)
                     .build()

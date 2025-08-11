@@ -16,8 +16,8 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 
-public class ITMultiblockPartBlockWithMirrorState<S extends IMultiblockState> extends MultiblockPartBlock.WithMirrorState<S> {
-    public ITMultiblockPartBlockWithMirrorState(Properties properties, MultiblockRegistration<S> multiblock) { super(properties, multiblock); }
+public class ITMultiblockPartBlockWithMirror<S extends IMultiblockState> extends MultiblockPartBlock.WithMirrorState<S> {
+    public ITMultiblockPartBlockWithMirror(Properties properties, MultiblockRegistration<S> multiblock) { super(properties, multiblock); }
 
     @Nonnull
     @Override

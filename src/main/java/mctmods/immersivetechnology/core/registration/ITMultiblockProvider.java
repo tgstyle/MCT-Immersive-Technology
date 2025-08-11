@@ -11,7 +11,7 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMu
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.*;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.BoilerProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.helper.ITMultiblockBuilder;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblockPartBlockWithMirrorState;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblockPartBlockWithMirror;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITNonMirrorableWithActiveBlock;
 import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -45,7 +45,7 @@ public class ITMultiblockProvider {
 
     public static <S extends IMultiblockState> ITMultiblockBuilder<S> metal(IMultiblockLogic<S> logic, String name) {
         return new ITMultiblockBuilder<>(logic, name)
-                .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockWithMirrorState<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
+                .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockWithMirror<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
                 .customBEs(ITBlockEntities.REGISTER);
     }
 
