@@ -23,7 +23,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -34,6 +33,8 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -75,26 +76,42 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         Mirror mirror = mirrored ? Mirror.FRONT_BACK : Mirror.NONE;
         Rotation rot = DirectionUtils.getRotationBetweenFacings(Direction.NORTH, clickDirectionAtCreation);
         Preconditions.checkNotNull(rot);
-        Consumer<ItemStack> dropIt = stack -> { if (!stack.isEmpty()) { Utils.dropStackAtPos(world, origin, stack); } };
+        List<ItemStack> allDrops = new ArrayList<>();
+        Consumer<ItemStack> addToDrops = stack -> { if (!stack.isEmpty()) { allDrops.add(stack); } };
         for (StructureBlockInfo block : getStructure(world)) { prepareBlockForDisassembly(world, withSettingsAndOffset(origin, block.pos(), mirror, rot)); }
         if (world instanceof ServerLevel serverLevel) {
             BlockPos masterPos = withSettingsAndOffset(origin, masterFromOrigin, mirror, rot);
             IMultiblockBEHelperMaster<?> masterHelper = null;
             BlockEntity masterBE = world.getBlockEntity(masterPos);
             if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof IMultiblockBEHelperMaster<?> h) { masterHelper = h; }
-            for (StructureTemplate.StructureBlockInfo info : getStructure(world)) {
+            List<StructureTemplate.StructureBlockInfo> structure = new ArrayList<>(getStructure(world));
+            structure.sort(Comparator.comparingInt(a -> -a.pos().getY()));
+            for (StructureTemplate.StructureBlockInfo info : structure) {
                 BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
-                BlockState state = info.state().mirror(mirror);
-                if (state.hasProperty(IEProperties.FACING_HORIZONTAL)) {
-                    Direction facing = state.getValue(IEProperties.FACING_HORIZONTAL);
-                    Direction newFacing = rot.rotate(facing);
-                    state = state.setValue(IEProperties.FACING_HORIZONTAL, newFacing);
-                }
-                List<ItemStack> drops = Block.getDrops(state, serverLevel, actualPos, null);
-                world.setBlockAndUpdate(actualPos, Blocks.AIR.defaultBlockState());
-                for (ItemStack s : drops) { dropIt.accept(s); }
+                BlockState templateState = info.state().mirror(mirror).rotate(serverLevel, actualPos, rot);
+                world.setBlockAndUpdate(actualPos, templateState);
+                List<ItemStack> drops = Block.getDrops(templateState, serverLevel, actualPos, null);
+                world.destroyBlock(actualPos, false);
+                for (ItemStack s : drops) { addToDrops.accept(s); }
             }
-            if (masterHelper != null) { dropInventory(masterHelper, dropIt); }
+            if (masterHelper != null) { dropInventory(masterHelper, addToDrops); }
+            BlockPos dropPos = origin;
+            Player breakingPlayer = serverLevel.getNearestPlayer(masterPos.getX() + 0.5, masterPos.getY() + 0.5, masterPos.getZ() + 0.5, -1.0, e -> true);
+            if (breakingPlayer != null) {
+                BlockPos playerPos = breakingPlayer.blockPosition();
+                double minDist = Double.MAX_VALUE;
+                BlockPos closest = null;
+                for (StructureTemplate.StructureBlockInfo info : structure) {
+                    BlockPos actual = withSettingsAndOffset(origin, info.pos(), mirror, rot);
+                    double dist = actual.distSqr(playerPos);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closest = actual;
+                    }
+                }
+                if (closest != null) { dropPos = closest; }
+            }
+            for (ItemStack s : allDrops) { Utils.dropStackAtPos(world, dropPos, s); }
         }
     }
 
