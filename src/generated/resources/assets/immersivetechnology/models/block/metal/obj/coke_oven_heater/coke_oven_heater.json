@@ -1,0 +1,15 @@
+{
+  "parent": "minecraft:block/block",
+  "automatic_culling": false,
+  "flip_v": true,
+  "loader": "immersivetechnology:obj",
+  "model": "immersivetechnology:models/block/metal/obj/coke_oven_heater/coke_oven_heater.obj",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "immersivetechnology:block/metal/coke_oven_heater"
+  },
+  "visibility": {
+    "body": true,
+    "fan": false
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "variants": {
+    "facing=east,mirrored=false,multiblockslave=false": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_split",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=east,mirrored=false,multiblockslave=true": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_split",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=east,mirrored=true,multiblockslave=false": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_mirrored_split",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=east,mirrored=true,multiblockslave=true": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_mirrored_split",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=north,mirrored=false,multiblockslave=false": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_split",
+      "uvlock": true
+    },
+    "facing=north,mirrored=false,multiblockslave=true": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_split",
+      "uvlock": true
+    },
+    "facing=north,mirrored=true,multiblockslave=false": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_mirrored_split",
+      "uvlock": true
+    },
+    "facing=north,mirrored=true,multiblockslave=true": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_mirrored_split",
+      "uvlock": true
+    },
+    "facing=south,mirrored=false,multiblockslave=false": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_split",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=south,mirrored=false,multiblockslave=true": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_split",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=south,mirrored=true,multiblockslave=false": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_mirrored_split",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=south,mirrored=true,multiblockslave=true": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_mirrored_split",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=west,mirrored=false,multiblockslave=false": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_split",
+      "uvlock": true,
+      "y": 270
+    },
+    "facing=west,mirrored=false,multiblockslave=true": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_split",
+      "uvlock": true,
+      "y": 270
+    },
+    "facing=west,mirrored=true,multiblockslave=false": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_mirrored_split",
+      "uvlock": true,
+      "y": 270
+    },
+    "facing=west,mirrored=true,multiblockslave=true": {
+      "model": "immersivetechnology:block/multiblock/metal/obj/solar_melter/solar_melter_mirrored_split",
+      "uvlock": true,
+      "y": 270
+    }
+  }
+}

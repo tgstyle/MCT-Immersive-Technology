@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
 import mctmods.immersivetechnology.common.blocks.metal.OpenBarrelBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 
 public class SolarTowerRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<SolarTowerRecipe>> SERIALIZER;
-    public static final CachedRecipeList<DistillerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.DISTILLER);
+    public static final CachedRecipeList<SolarTowerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.SOLAR_TOWER);
 
     public TagKey<Fluid> inputTag;
     public int inputAmount;

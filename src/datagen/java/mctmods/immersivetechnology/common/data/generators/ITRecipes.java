@@ -34,55 +34,61 @@ public class ITRecipes extends RecipeProvider {
     protected void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
         multiblockRecipes();
         itemRecipes();
-        recipesCoke(consumer);
-        recipesAdvCokeFuel(consumer);
+        recipesAdvancedCoke(consumer);
+        recipesAdvancedCokeFuel(consumer);
         recipesBoiler(consumer);
         recipesBoilerFuel(consumer);
-        recipesTurbine(consumer);
         recipesDistiller(consumer);
+        recipesTurbine(consumer);
+        recipesSolarMelter(consumer);
+        recipesSolarTower(consumer);
     }
 
     private void itemRecipes() {}
 
     private void multiblockRecipes() { ITLib.IT_LOGGER.info("Starting Multiblock Recipe Registration"); }
 
+    private void recipesAdvancedCoke(@Nonnull Consumer<FinishedRecipe> out) {
+        AdvancedCokeOvenRecipeBuilder.builder(IETags.coalCoke, 1).addInput(Items.COAL).setOil(FluidType.BUCKET_VOLUME / 2).setTime(600).build(out, toResourceLocation("advcokeoven/coke"));
+        AdvancedCokeOvenRecipeBuilder.builder(IETags.getItemTag(IETags.coalCokeBlock), 1).addInput(Blocks.COAL_BLOCK).setOil(FluidType.BUCKET_VOLUME * 5).setTime(9 * 600).build(out, toResourceLocation("advcokeoven/coke_block"));
+        AdvancedCokeOvenRecipeBuilder.builder(Items.CHARCOAL).addInput(ItemTags.LOGS).setOil(FluidType.BUCKET_VOLUME / 4).setTime(600).build(out, toResourceLocation("advcokeoven/charcoal"));
+    }
+
+    private void recipesAdvancedCokeFuel(@Nonnull Consumer<FinishedRecipe> out) {
+        AdvancedCokeOvenFuelBuilder.builder(Ingredient.of(IETags.coalCoke)).setTime(1200).build(out, toResourceLocation("advcokeoven_fuel/coal_coke"));
+        AdvancedCokeOvenFuelBuilder.builder(Ingredient.of(Items.CHARCOAL)).setTime(600).build(out, toResourceLocation("advcokeoven_fuel/charcoal"));
+    }
+
     private void recipesBoiler(@Nonnull Consumer<FinishedRecipe> out) {
-        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 450).addInput(FluidTags.WATER, 250).setTime(10).build(out, toRL("boiler/water"));
-        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 500).addInput(ITTags.fluidDistilledWater, 250).setTime(10).build(out, toRL("boiler/distilled_water"));
+        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 450).addInput(FluidTags.WATER, 250).setTime(10).build(out, toResourceLocation("boiler/water"));
+        BoilerRecipeBuilder.builder(ITFluids.STEAM.getStill(), 500).addInput(ITTags.fluidDistilledWater, 250).setTime(10).build(out, toResourceLocation("boiler/distilled_water"));
     }
 
-    private void recipesBoilerFuel(@Nonnull Consumer<FinishedRecipe> out) { BoilerFuelRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 10).setTime(10).setHeatPerTick(0.1).build(out, toRL("boiler_fuel/biodiesel")); }
-
-    private void recipesTurbine(@Nonnull Consumer<FinishedRecipe> out) {
-        SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteam, 100).addOutput(ITFluids.STEAM_EXHAUST.getStill(), 100).setTime(1).build(out, toRL("steamturbine/steam"));
-        SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteamForge, 100).addOutput(ITFluids.STEAM_EXHAUST.getStill(), 100).setTime(1).build(out, toRL("steamturbine/steam_forge"));
-        GasTurbineRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 160).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toRL("gas_turbine/biodiesel"));
-    }
-
-    private void recipesCoke(@Nonnull Consumer<FinishedRecipe> out) {
-        AdvancedCokeOvenRecipeBuilder.builder(IETags.coalCoke, 1).addInput(Items.COAL).setOil(FluidType.BUCKET_VOLUME / 2).setTime(600).build(out, toRL("advcokeoven/coke"));
-        AdvancedCokeOvenRecipeBuilder.builder(IETags.getItemTag(IETags.coalCokeBlock), 1).addInput(Blocks.COAL_BLOCK).setOil(FluidType.BUCKET_VOLUME * 5).setTime(9 * 600).build(out, toRL("advcokeoven/coke_block"));
-        AdvancedCokeOvenRecipeBuilder.builder(Items.CHARCOAL).addInput(ItemTags.LOGS).setOil(FluidType.BUCKET_VOLUME / 4).setTime(600).build(out, toRL("advcokeoven/charcoal"));
-    }
-
-    private void recipesAdvCokeFuel(@Nonnull Consumer<FinishedRecipe> out) {
-        AdvancedCokeOvenFuelBuilder.builder(Ingredient.of(IETags.coalCoke)).setTime(1200).build(out, toRL("advcokeoven_fuel/coal_coke"));
-        AdvancedCokeOvenFuelBuilder.builder(Ingredient.of(Items.CHARCOAL)).setTime(600).build(out, toRL("advcokeoven_fuel/charcoal"));
-    }
+    private void recipesBoilerFuel(@Nonnull Consumer<FinishedRecipe> out) { BoilerFuelRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 10).setTime(10).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_fuel/biodiesel")); }
 
     private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) {
         ItemStack salt = new ItemStack(ITItems.SALT.get(), 1);
-        DistillerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 1000), 10000, 20, new FluidStack(ITFluids.DISTILLED_WATER.getStill().getSource(), 500)).addItemOutput(salt, 0.5f).build(out, toRL("distiller/water"));
+        DistillerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 1000), 10000, 20, new FluidStack(ITFluids.DISTILLED_WATER.getStill().getSource(), 500)).addItemOutput(salt, 0.5f).build(out, toResourceLocation("distiller/water"));
     }
 
-    private ResourceLocation toRL(String s) {
-        if (!s.contains("/")) { s = "crafting/" + s; }
-        if (PATH_COUNT.containsKey(s)) {
-            int count = PATH_COUNT.get(s) + 1;
-            PATH_COUNT.put(s, count);
-            return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, s + count);
+    private void recipesTurbine(@Nonnull Consumer<FinishedRecipe> out) {
+        SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteam, 100).addOutput(ITFluids.STEAM_EXHAUST.getStill(), 100).setTime(1).build(out, toResourceLocation("steamturbine/steam"));
+        SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteamForge, 100).addOutput(ITFluids.STEAM_EXHAUST.getStill(), 100).setTime(1).build(out, toResourceLocation("steamturbine/steam_forge"));
+        GasTurbineRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 160).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toResourceLocation("gas_turbine/biodiesel"));
+    }
+
+    private void recipesSolarMelter(@Nonnull Consumer<FinishedRecipe> out) { }
+
+    private void recipesSolarTower(@Nonnull Consumer<FinishedRecipe> out) { }
+
+    private ResourceLocation toResourceLocation(String resourceLocation) {
+        if (!resourceLocation.contains("/")) { resourceLocation = "crafting/" + resourceLocation; }
+        if (PATH_COUNT.containsKey(resourceLocation)) {
+            int count = PATH_COUNT.get(resourceLocation) + 1;
+            PATH_COUNT.put(resourceLocation, count);
+            return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, resourceLocation + count);
         }
-        PATH_COUNT.put(s, 1);
-        return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, s);
+        PATH_COUNT.put(resourceLocation, 1);
+        return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, resourceLocation);
     }
 }

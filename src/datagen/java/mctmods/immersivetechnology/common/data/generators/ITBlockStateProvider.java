@@ -49,7 +49,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ITBlockStateProvider extends BlockStateProvider {
-    //protected static final List<Vec3i> COLUMN_THREE = ImmutableList.of(BlockPos.ZERO.north(1), BlockPos.ZERO, BlockPos.ZERO.south(1));
     protected static final List<Vec3i> HEATER_THREE = ImmutableList.of(BlockPos.ZERO, BlockPos.ZERO.south(1), BlockPos.ZERO.south(2));
     public final Map<Block, ModelFile> unsplitModels = new HashMap<>();
     protected static final Map<ResourceLocation, String> generatedParticleTextures = new HashMap<>();
@@ -64,13 +63,17 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     @Override protected void registerStatesAndModels() {
         ITLib.IT_LOGGER.info("Generating Multiblock Splits");
-        genericmultiblockMirror("boiler");
-        genericmultiblockMirror("distiller");
-        genericmultiblockMirror("steam_turbine");
-        genericmultiblockMirror("gas_turbine");
-        genericmultiblock("alternator");
-        genericmultiblock("advanced_coke_oven");
-        genericmultiblock("solar_tower");
+
+        genericmultiblock("alternator", "metal");
+        genericmultiblock("advanced_coke_oven", "stone");
+        genericmultiblock("solar_reflector", "metal");
+
+        genericmultiblockMirror("boiler", "metal");
+        genericmultiblockMirror("distiller", "metal");
+        genericmultiblockMirror("gas_turbine", "metal");
+        genericmultiblockMirror("solar_melter", "metal");
+        genericmultiblockMirror("solar_tower", "metal");
+        genericmultiblockMirror("steam_turbine", "metal");
 
         createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("block/stone/reinforced_coke_brick", modLoc("block/stone/reinforced_coke_brick")));
         createSimpleBlock(ITBlocks.getBlock.apply("creative_barrel"), models().cubeAll("block/metal/creative_barrel", modLoc("block/metal/creative_barrel")));
@@ -216,7 +219,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private void createHeater() {
         Block block = ITBlocks.getBlock.apply("coke_oven_heater");
-        BlockModelBuilder baseModel = innerItObj();
+        BlockModelBuilder baseModel = innerItObj("coke_oven_heater", "metal");
         ModelFile split = split(baseModel, HEATER_THREE);
         VariantBlockStateBuilder builder = getVariantBuilder(block);
         for (Direction f : IEProperties.FACING_HORIZONTAL.getPossibleValues()) {
@@ -228,13 +231,24 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private void createSimpleBlock(Block block, ModelFile model) { getVariantBuilder(block).partialState().setModels(new ConfiguredModel(model)); }
 
-    private void genericmultiblock(String registry_name) {
-        String model_name = "advanced_coke_oven".equals(registry_name) ? "advanced_coke_oven" : registry_name;
+
+    private void genericmultiblock(String registry_name, String block_type) {
         ITLib.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
-        createMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + model_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name));
+        createMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name));
     }
 
-    private void genericmultiblockMirror(String registry_name) { ITLib.IT_LOGGER.info("Generating [{}] with Custom Mirror Multiblock Model Data", registry_name); testCreateMultiblock(innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + ".obj"), innerObj("block/multiblock/obj/" + registry_name + "/" + registry_name + "_mirrored.obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name)); }
+    @SuppressWarnings("SameParameterValue")
+    private void genericmultiblockMirror(String registry_name, String block_type) {
+        ITLib.IT_LOGGER.info("Generating [{}] with Custom Mirror Multiblock Model Data", registry_name);
+        createMirroredMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), innerObj("block/multiblock/" + block_type + "/obj/" + registry_name +  "/" + registry_name + "_mirrored.obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name));
+    }
+
+    private void createMirroredMultiblock(NongeneratedModel unsplitModel, NongeneratedModel mirror_model, ITTemplateMultiblock multiblock) {
+        final ModelFile mainModel = split(unsplitModel, multiblock, false);
+        final ModelFile mirrorModel = split(mirror_model, multiblock, true);
+        if (multiblock.getBlock().getStateDefinition().getProperties().contains(IEProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, mirrorModel, IEProperties.MIRRORED); }
+        else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
+    }
 
     private void createMultiblock(NongeneratedModel unsplitModel, TemplateMultiblock multiblock) { createMultiblock(unsplitModel, (ITTemplateMultiblock) multiblock); }
 
@@ -244,39 +258,23 @@ public class ITBlockStateProvider extends BlockStateProvider {
         else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
     }
 
-    private void testCreateMultiblock(NongeneratedModel unsplitModel, NongeneratedModel mirror_model, ITTemplateMultiblock multiblock) {
-        final ModelFile mainModel = split(unsplitModel, multiblock, false);
-        final ModelFile mirrorModel = split(mirror_model, multiblock, true);
-        if (multiblock.getBlock().getStateDefinition().getProperties().contains(IEProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, mirrorModel, IEProperties.MIRRORED); }
-        else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
-    }
-
-    //private void createMultiblock(Supplier<? extends Block> b, ModelFile masterModel) { createMultiblock(b, masterModel, null, null); }
-
     private void createMultiblock(Supplier<? extends Block> b, ModelFile masterModel, @Nullable ModelFile mirroredModel, @Nullable Property<Boolean> mirroredState) {
         unsplitModels.put(b.get(), masterModel);
         Preconditions.checkArgument((mirroredModel == null) == (mirroredState == null));
         VariantBlockStateBuilder builder = getVariantBuilder(b.get());
-        boolean[] possibleMirrorStates = mirroredState != null ? new boolean[]{false, true} : new boolean[1];
         EnumProperty<Direction> facing = IEProperties.FACING_HORIZONTAL;
-        for (boolean mirrored : possibleMirrorStates) {
-            for (Direction dir : facing.getPossibleValues()) {
-                final int angleY;
-                final int angleX;
-                if (facing.getPossibleValues().contains(Direction.UP)) {
-                    angleX = -90 * dir.getStepY();
-                    angleY = dir.getAxis() != Direction.Axis.Y ? getAngle(dir) : 0;
-                }
-                else {
-                    angleY = getAngle(dir);
-                    angleX = 0;
-                }
-                ModelFile model = mirrored ? mirroredModel : masterModel;
-                PartialBlockstate partialState = builder.partialState().with(facing, dir);
-                if (mirroredState != null) { partialState = partialState.with(mirroredState, mirrored); }
-                partialState.setModels(new ConfiguredModel(model, angleX, angleY, true));
+        builder.forAllStates(state -> {
+            Direction dir = state.getValue(facing);
+            int angleY = getAngle(dir);
+            int angleX = 0;
+            if (facing.getPossibleValues().contains(Direction.UP)) {
+                angleX = -90 * dir.getStepY();
+                angleY = dir.getAxis() != Direction.Axis.Y ? getAngle(dir) : 0;
             }
-        }
+            boolean mirrored = (mirroredState != null) ? state.getValue(mirroredState) : false;
+            ModelFile model = mirrored ? mirroredModel : masterModel;
+            return new ConfiguredModel[]{new ConfiguredModel(model, angleX, angleY, true)};
+        });
     }
 
     private void loadTemplateFor(TemplateMultiblock multiblock) {
@@ -320,8 +318,9 @@ public class ITBlockStateProvider extends BlockStateProvider {
         return obj(loc.substring(0, loc.length() - 4), modLoc(loc), innerModels);
     }
 
-    protected BlockModelBuilder innerItObj() {
-        String loc = "block/metal/obj/coke_oven_heater.obj";
+    @SuppressWarnings("SameParameterValue")
+    protected BlockModelBuilder innerItObj(String id, String type) {
+        String loc = "block/" + type + "/obj/" + id + "/" + id + ".obj";
         Preconditions.checkArgument(true);
         final var result = itObj(loc.substring(0, loc.length() - 4), modLoc(loc), models());
         setRenderType(RenderType.cutout(), result);

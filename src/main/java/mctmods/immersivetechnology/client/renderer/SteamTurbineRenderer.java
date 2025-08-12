@@ -7,8 +7,9 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.Multibloc
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
 import blusunrize.immersiveengineering.client.utils.RenderUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mctmods.immersivetechnology.client.models.ITDynamicModel;
+import mctmods.immersivetechnology.client.models.helper.ITDynamicModel;
 import mctmods.immersivetechnology.client.models.RotorModels;
+import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SteamTurbineLogic;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import net.minecraft.client.renderer.MultiBufferSource;

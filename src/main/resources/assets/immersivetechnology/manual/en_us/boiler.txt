@@ -1,9 +1,10 @@
 Boiler
 Getting steamy in here!
-<&multiblock>The Industrial Ball Mill is a multiblock machine used to §lgrind ores and grits§r into finer materials, aiding in the §lextraction of valuable minerals§r and improving processing efficiency.
+<&multiblock>The Boiler is a multiblock machine used to §lboil water§r into steam.
 
 §lOperation§r
-    - §lItems§r are inserted into the machine from the left §lside§r.
-    - §lOutputs§r are collected from the §lfront§r of the multiblock.
+    - §lFuel§r is inserted into the machine near the §lright side§r.
+	- §lWater§r is inserted near the tank on the §lleft side§r.
+    - §lSteam§r is collected from the §ltop§r of the multiblock.
 
-§lTip:§r The Ball Mill can process bulk quantities at once, making it ideal for large-scale ore refinement setups.
+§lTip:§r The Boiler can process a decent amount of water.

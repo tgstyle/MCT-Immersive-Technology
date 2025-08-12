@@ -124,5 +124,5 @@
   },
   "flip_v": true,
   "loader": "forge:obj",
-  "model": "immersivetechnology:models/block/multiblock/obj/distiller/distiller.obj"
+  "model": "immersivetechnology:models/block/multiblock/metal/obj/distiller/distiller.obj"
 }

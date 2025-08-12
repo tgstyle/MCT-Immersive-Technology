@@ -25,6 +25,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -34,6 +35,7 @@ public class ITMenuTypes {
     public static final MultiblockContainer<AdvancedCokeOvenLogic.State, AdvancedCokeOvenMenu> ADVANCED_COKE_OVEN_MENU = registerMultiblock(ITLib.GUIID_AdvCokeOven, AdvancedCokeOvenMenu::makeServer, AdvancedCokeOvenMenu::makeClient);
     public static final MultiblockContainer<BoilerLogic.State, BoilerMenu> BOILER_MENU = registerMultiblock(ITLib.GUIID_Boiler, BoilerMenu::makeServer, BoilerMenu::makeClient);
     public static final MultiblockContainer<DistillerLogic.State, DistillerMenu> DISTILLER_MENU = registerMultiblock(ITLib.GUIID_Distiller, DistillerMenu::makeServer, DistillerMenu::makeClient);
+
     public static final ArgContainer<TrashItemBlockEntity, TrashItemMenu> TRASH_ITEM = registerArg("trash_item", TrashItemMenu::makeServer, TrashItemMenu::makeClient);
 
     public static <T, C extends ITContainerMenu> ArgContainer<T, C> registerArg(String name, ArgContainerConstructor<T, C> container, ClientContainerConstructor<C> client) {

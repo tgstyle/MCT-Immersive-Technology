@@ -1,5 +1,5 @@
 {
-  "type": "immersivetechnology:coke_oven_advanced_fuel",
+  "type": "immersivetechnology:advanced_coke_oven_fuel",
   "input": {
     "item": "minecraft:charcoal"
   },

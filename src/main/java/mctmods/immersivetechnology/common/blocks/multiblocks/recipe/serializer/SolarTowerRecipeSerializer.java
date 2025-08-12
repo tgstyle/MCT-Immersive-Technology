@@ -8,10 +8,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRecipe>
-{
+public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRecipe> {
     @Override
     public ItemStack getIcon() {
         return ITMultiblockProvider.SOLAR_TOWER.iconStack();
@@ -24,14 +24,11 @@ public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRec
     }
 
     @Override
-    public @Nullable SolarTowerRecipe fromNetwork(ResourceLocation resourceLocation, FriendlyByteBuf friendlyByteBuf)
+    public @Nullable SolarTowerRecipe fromNetwork(@NotNull ResourceLocation resourceLocation, @NotNull FriendlyByteBuf friendlyByteBuf)
     {
         return null;
     }
 
     @Override
-    public void toNetwork(FriendlyByteBuf friendlyByteBuf, SolarTowerRecipe solarTowerRecipe)
-    {
-
-    }
+    public void toNetwork(@NotNull FriendlyByteBuf friendlyByteBuf, @NotNull SolarTowerRecipe solarTowerRecipe) { }
 }

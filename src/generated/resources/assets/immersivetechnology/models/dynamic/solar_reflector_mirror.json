@@ -1,0 +1,6 @@
+{
+  "automatic_culling": false,
+  "flip_v": true,
+  "loader": "immersivetechnology:obj",
+  "model": "immersivetechnology:models/block/multiblock/metal/obj/solar_reflector/solar_reflector_mirror.obj"
+}

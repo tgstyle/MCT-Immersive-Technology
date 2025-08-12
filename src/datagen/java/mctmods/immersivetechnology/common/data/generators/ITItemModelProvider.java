@@ -32,7 +32,10 @@ public class ITItemModelProvider extends ItemModelProvider {
                 .end();
     }
 
-    private void generateGeneratedItem(String name) { withExistingParent(name, mcLoc("item/generated")).texture("layer0", modLoc("item/" + name)); }
+    private void generateGeneratedItem() {
+        withExistingParent("formation_tool", mcLoc("item/generated")).texture("layer0", modLoc("item/" + "formation_tool"));
+        withExistingParent("salt", mcLoc("item/generated")).texture("layer0", modLoc("item/" + "salt"));
+    }
 
     private void createBucket(ITFluids.FluidEntry entry) {
         boolean isGas = entry.type().get().getDensity() < 0;
@@ -41,17 +44,16 @@ public class ITItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        generateBlockItem("reinforced_coke_brick", "stone/reinforced_coke_brick");
-        generateBlockItem("creative_barrel", "metal/creative_barrel");
-        generateBlockItem("steel_barrel", "metal/steel_barrel");
-        generateBlockItem("open_barrel", "metal/open_barrel");
-        generateBlockItem("trash_item", "metal/trash_item");
-        generateBlockItem("trash_fluid", "metal/trash_fluid");
-        generateBlockItem("trash_energy", "metal/trash_energy");
         generateBlockItem("coke_oven_heater", "metal/obj/coke_oven_heater");
+        generateBlockItem("creative_barrel", "metal/creative_barrel");
+        generateBlockItem("open_barrel", "metal/open_barrel");
+        generateBlockItem("reinforced_coke_brick", "stone/reinforced_coke_brick");
+        generateBlockItem("steel_barrel", "metal/steel_barrel");
+        generateBlockItem("trash_energy", "metal/trash_energy");
+        generateBlockItem("trash_fluid", "metal/trash_fluid");
+        generateBlockItem("trash_item", "metal/trash_item");
 
-        generateGeneratedItem("formation_tool");
-        generateGeneratedItem("salt");
+        generateGeneratedItem();
 
         ITFluids.ALL_ENTRIES.forEach(this::createBucket);
     }

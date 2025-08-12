@@ -124,5 +124,5 @@
   },
   "flip_v": true,
   "loader": "forge:obj",
-  "model": "immersivetechnology:models/block/multiblock/obj/boiler/boiler.obj"
+  "model": "immersivetechnology:models/block/multiblock/metal/obj/boiler/boiler.obj"
 }

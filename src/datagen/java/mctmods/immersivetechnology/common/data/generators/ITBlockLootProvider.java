@@ -26,13 +26,14 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
     @Override
     protected void generate() {
         registerTileDrop(ITBlocks.MetalDevices.CREATIVE_BARREL.get());
+        registerTileDrop(ITBlocks.MetalDevices.COKE_OVEN_HEATER.get());
         registerTileDrop(ITBlocks.MetalDevices.OPEN_BARREL.get());
         registerTileDrop(ITBlocks.MetalDevices.STEEL_BARREL.get());
-        registerTileDrop(ITBlocks.MetalDevices.COKE_OVEN_HEATER.get());
-        dropSelf(ITBlocks.Stone.REINFORCED_COKE_BRICK.get());
         registerTileDrop(ITBlocks.MetalDevices.TRASH_ENERGY.get());
         registerTileDrop(ITBlocks.MetalDevices.TRASH_FLUID.get());
         registerTileDrop(ITBlocks.MetalDevices.TRASH_ITEM.get());
+
+        dropSelf(ITBlocks.Stone.REINFORCED_COKE_BRICK.get());
 
         registerMultiblocks();
 
@@ -40,13 +41,15 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
     }
 
     private void registerMultiblocks() {
+        registerMultiblock(ITMultiblockProvider.ADVANCED_COKE_OVEN);
+        registerMultiblock(ITMultiblockProvider.ALTERNATOR);
         registerMultiblock(ITMultiblockProvider.BOILER);
         registerMultiblock(ITMultiblockProvider.DISTILLER);
-        registerMultiblock(ITMultiblockProvider.STEAM_TURBINE);
         registerMultiblock(ITMultiblockProvider.GAS_TURBINE);
-        registerMultiblock(ITMultiblockProvider.ALTERNATOR);
-        registerMultiblock(ITMultiblockProvider.ADVANCED_COKE_OVEN);
+        registerMultiblock(ITMultiblockProvider.SOLAR_MELTER);
+        registerMultiblock(ITMultiblockProvider.SOLAR_REFLECTOR);
         registerMultiblock(ITMultiblockProvider.SOLAR_TOWER);
+        registerMultiblock(ITMultiblockProvider.STEAM_TURBINE);
     }
 
     private void registerMultiblock(MultiblockRegistration<?> registration) { registerMultiblock(registration.block()); }

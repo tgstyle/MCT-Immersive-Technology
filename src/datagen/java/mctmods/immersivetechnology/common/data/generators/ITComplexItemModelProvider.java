@@ -27,14 +27,17 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
 
     @Override
     protected void registerModels() {
-        generateMultiblockModel("boiler", ITMultiblockProvider.BOILER.block());
-        generateMultiblockModel("distiller", ITMultiblockProvider.DISTILLER.block());
-        generateMultiblockModel("alternator", ITMultiblockProvider.ALTERNATOR.block());
-        generateMultiblockModel("advanced_coke_oven", ITMultiblockProvider.ADVANCED_COKE_OVEN.block());
-        generateMultiblockModel("steam_turbine", ITMultiblockProvider.STEAM_TURBINE.block());
-        generateMultiblockModel("gas_turbine", ITMultiblockProvider.GAS_TURBINE.block());
-        generateMultiblockModel("solar_tower", ITMultiblockProvider.SOLAR_TOWER.block());
-        generateBlockModel(ITBlocks.MetalDevices.COKE_OVEN_HEATER);
+        generateBlockModel("coke_oven_heater", "metal", ITBlocks.MetalDevices.COKE_OVEN_HEATER);
+
+        generateMultiblockModel("advanced_coke_oven", "stone", ITMultiblockProvider.ADVANCED_COKE_OVEN.block());
+        generateMultiblockModel("alternator", "metal", ITMultiblockProvider.ALTERNATOR.block());
+        generateMultiblockModel("boiler", "metal", ITMultiblockProvider.BOILER.block());
+        generateMultiblockModel("distiller", "metal", ITMultiblockProvider.DISTILLER.block());
+        generateMultiblockModel("gas_turbine", "metal", ITMultiblockProvider.GAS_TURBINE.block());
+        generateMultiblockModel("solar_melter", "metal", ITMultiblockProvider.SOLAR_MELTER.block());
+        generateMultiblockModel("solar_reflector", "metal", ITMultiblockProvider.SOLAR_REFLECTOR.block());
+        generateMultiblockModel("solar_tower", "metal", ITMultiblockProvider.SOLAR_TOWER.block());
+        generateMultiblockModel("steam_turbine", "metal", ITMultiblockProvider.STEAM_TURBINE.block());
     }
 
     private void doTransform(ModelBuilder<?>.TransformsBuilder transform, ItemDisplayContext type, @Nullable Vector3f translation, @Nullable Vector3f rotationAngle, float scale) {
@@ -53,8 +56,8 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
 
     private String name(ItemLike item) {return Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item.asItem())).getPath();}
 
-    private void generateMultiblockModel(String id, Supplier<? extends ItemLike> block) {
-        TRSRModelBuilder model = obj(block, "block/multiblock/obj/" + id + "/" + id + ".obj");
+    private void generateMultiblockModel(String id, String type, Supplier<? extends ItemLike> block) {
+        TRSRModelBuilder model = obj(block, "block/multiblock/" + type + "/obj/" + id + "/" + id + ".obj");
 
         ModelBuilder<?>.TransformsBuilder trans = model.transforms();
         doTransform(trans, ItemDisplayContext.FIRST_PERSON_LEFT_HAND, new Vector3f(-1.75F, 2.5F, 1.25F), new Vector3f(0, 225, 0), 0.03125F);
@@ -67,8 +70,9 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
         doTransform(trans, ItemDisplayContext.FIXED, new Vector3f(-1, -8, -2), null, 0.0625F);
     }
 
-    private void generateBlockModel(Supplier<? extends ItemLike> block) {
-        TRSRModelBuilder model = obj(block, "block/metal/obj/coke_oven_heater.obj");
+    @SuppressWarnings("SameParameterValue")
+    private void generateBlockModel(String id, String type, Supplier<? extends ItemLike> block) {
+        TRSRModelBuilder model = obj(block, "block/" + type + "/obj/" + id + "/" + id + ".obj");
 
         ModelBuilder<?>.TransformsBuilder trans = model.transforms();
         doTransform(trans, ItemDisplayContext.FIRST_PERSON_LEFT_HAND, new Vector3f(-1.75F, 2.5F, 1.25F), new Vector3f(0, 225, 0), 0.03125F);

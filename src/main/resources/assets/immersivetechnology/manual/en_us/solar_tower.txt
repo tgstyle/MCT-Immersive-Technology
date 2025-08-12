@@ -1,3 +1,3 @@
 Solar Tower
-Spinny Spin!
+Sunny Boiler!
 <&multiblock> TODO: Write something better here.
