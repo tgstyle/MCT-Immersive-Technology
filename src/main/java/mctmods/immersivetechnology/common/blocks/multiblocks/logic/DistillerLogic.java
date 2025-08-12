@@ -26,6 +26,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.DistillerProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.DistillerShape;
@@ -197,7 +198,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     }
 
     @Override
-    public void dropExtraItems(State state, Consumer<ItemStack> drop) { for (ItemStack stack : state.inventory) { drop.accept(stack); } }
+    public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
 
     @Override
     public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }

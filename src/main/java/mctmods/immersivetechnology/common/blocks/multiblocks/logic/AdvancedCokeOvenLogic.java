@@ -30,6 +30,7 @@ import mctmods.immersivetechnology.common.blocks.metal.CokeOvenHeaterBlockEntity
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITFurnaceHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.AdvancedCokeOvenProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCokeOvenFuel;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCokeOvenRecipe;
@@ -174,7 +175,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     }
 
     @Override
-    public void dropExtraItems(State state, Consumer<ItemStack> drop) { for (ItemStack stack : state.inventory) { drop.accept(stack); } }
+    public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
 
     @Override
     public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }

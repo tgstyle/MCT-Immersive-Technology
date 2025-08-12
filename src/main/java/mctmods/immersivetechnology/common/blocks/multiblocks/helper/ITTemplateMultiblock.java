@@ -47,10 +47,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     }
 
     @Override
-    public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {
-        player.getMainHandItem().getItem();
-        return super.createStructure(world, pos, side, player);
-    }
+    public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) { return super.createStructure(world, pos, side, player); }
 
     @Override
     public float getManualScale() { return 0; }
@@ -78,25 +75,26 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         Preconditions.checkNotNull(rot);
         List<ItemStack> allDrops = new ArrayList<>();
         Consumer<ItemStack> addToDrops = stack -> { if (!stack.isEmpty()) { allDrops.add(stack); } };
-        for (StructureBlockInfo block : getStructure(world)) { prepareBlockForDisassembly(world, withSettingsAndOffset(origin, block.pos(), mirror, rot)); }
         if (world instanceof ServerLevel serverLevel) {
             BlockPos masterPos = withSettingsAndOffset(origin, masterFromOrigin, mirror, rot);
             IMultiblockBEHelperMaster<?> masterHelper = null;
             BlockEntity masterBE = world.getBlockEntity(masterPos);
             if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof IMultiblockBEHelperMaster<?> h) { masterHelper = h; }
+            if (masterHelper != null) { dropInventory(masterHelper, addToDrops); }
+            Player breakingPlayer = serverLevel.getNearestPlayer(masterPos.getX() + 0.5, masterPos.getY() + 0.5, masterPos.getZ() + 0.5, -1.0, e -> true);
             List<StructureTemplate.StructureBlockInfo> structure = new ArrayList<>(getStructure(world));
             structure.sort(Comparator.comparingInt(a -> -a.pos().getY()));
             for (StructureTemplate.StructureBlockInfo info : structure) {
                 BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
                 BlockState templateState = info.state().mirror(mirror).rotate(serverLevel, actualPos, rot);
                 world.setBlockAndUpdate(actualPos, templateState);
-                List<ItemStack> drops = Block.getDrops(templateState, serverLevel, actualPos, null);
+                List<ItemStack> drops;
+                if (breakingPlayer != null) { drops = Block.getDrops(templateState, serverLevel, actualPos, null, breakingPlayer, breakingPlayer.getMainHandItem()); }
+                else { drops = Block.getDrops(templateState, serverLevel, actualPos, null); }
                 world.destroyBlock(actualPos, false);
                 for (ItemStack s : drops) { addToDrops.accept(s); }
             }
-            if (masterHelper != null) { dropInventory(masterHelper, addToDrops); }
             BlockPos dropPos = origin;
-            Player breakingPlayer = serverLevel.getNearestPlayer(masterPos.getX() + 0.5, masterPos.getY() + 0.5, masterPos.getZ() + 0.5, -1.0, e -> true);
             if (breakingPlayer != null) {
                 BlockPos playerPos = breakingPlayer.blockPosition();
                 double minDist = Double.MAX_VALUE;
@@ -113,6 +111,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             }
             for (ItemStack s : allDrops) { Utils.dropStackAtPos(world, dropPos, s); }
         }
+        for (StructureBlockInfo block : getStructure(world)) { prepareBlockForDisassembly(world, withSettingsAndOffset(origin, block.pos(), mirror, rot)); }
     }
 
     private <S extends IMultiblockState> void dropInventory(IMultiblockBEHelperMaster<S> helper, Consumer<ItemStack> dropIt) {
