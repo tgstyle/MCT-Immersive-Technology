@@ -77,16 +77,18 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         Consumer<ItemStack> addToDrops = stack -> { if (!stack.isEmpty()) { allDrops.add(stack); } };
         if (world instanceof ServerLevel serverLevel) {
             BlockPos masterPos = withSettingsAndOffset(origin, masterFromOrigin, mirror, rot);
+            Player breakingPlayer = serverLevel.getNearestPlayer(masterPos.getX() + 0.5, masterPos.getY() + 0.5, masterPos.getZ() + 0.5, -1.0, e -> true);
             IMultiblockBEHelperMaster<?> masterHelper = null;
             BlockEntity masterBE = world.getBlockEntity(masterPos);
             if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof IMultiblockBEHelperMaster<?> h) { masterHelper = h; }
             if (masterHelper != null) { dropInventory(masterHelper, addToDrops); }
-            Player breakingPlayer = serverLevel.getNearestPlayer(masterPos.getX() + 0.5, masterPos.getY() + 0.5, masterPos.getZ() + 0.5, -1.0, e -> true);
+            for (StructureBlockInfo block : getStructure(world)) { prepareBlockForDisassembly(world, withSettingsAndOffset(origin, block.pos(), mirror, rot)); }
             List<StructureTemplate.StructureBlockInfo> structure = new ArrayList<>(getStructure(world));
             structure.sort(Comparator.comparingInt(a -> -a.pos().getY()));
             for (StructureTemplate.StructureBlockInfo info : structure) {
                 BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
-                BlockState templateState = info.state().mirror(mirror).rotate(serverLevel, actualPos, rot);
+                BlockState stateAfterMirror = info.state().mirror(mirror);
+                BlockState templateState = stateAfterMirror.rotate(serverLevel, actualPos, rot);
                 world.setBlockAndUpdate(actualPos, templateState);
                 List<ItemStack> drops;
                 if (breakingPlayer != null) { drops = Block.getDrops(templateState, serverLevel, actualPos, null, breakingPlayer, breakingPlayer.getMainHandItem()); }
@@ -111,7 +113,6 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             }
             for (ItemStack s : allDrops) { Utils.dropStackAtPos(world, dropPos, s); }
         }
-        for (StructureBlockInfo block : getStructure(world)) { prepareBlockForDisassembly(world, withSettingsAndOffset(origin, block.pos(), mirror, rot)); }
     }
 
     private <S extends IMultiblockState> void dropInventory(IMultiblockBEHelperMaster<S> helper, Consumer<ItemStack> dropIt) {
