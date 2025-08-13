@@ -50,19 +50,14 @@ public class ITFluids {
     private static final HashMap<String, RegistryObject<? extends Fluid>> FLUID_REGISTRY_MAP = new HashMap<>();
     public static Function<String, Fluid> getFluid = (key) -> FLUID_REGISTRY_MAP.get(key).get();
 
-    public static final ITFluids.FluidEntry STEAM = FluidEntry.make(
-            "steam", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
-            props -> props.density(-1000).viscosity(200), 0xFF3E444F
+    public static final ITFluids.FluidEntry CHLORINE = FluidEntry.make(
+            "chlorine", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            props -> props.density(-100).viscosity(1000), 0xFFC0E67B
     );
 
-    public static final ITFluids.FluidEntry STEAM_EXHAUST = FluidEntry.make(
-            "steam_exhaust", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
-            props -> props.density(-1000).viscosity(200), 0xFFFFFFFF
-    );
-
-    public static final ITFluids.FluidEntry FLUE_GAS = FluidEntry.make(
-            "flue_gas", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
-            props -> props.density(-1000).viscosity(200), 0xFF808080
+    public static final ITFluids.FluidEntry EXHAUST_STEAM = FluidEntry.make(
+            "exhaust_steam", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            props -> props.density(-100).viscosity(500).temperature(500), 0xFFC1C1C5
     );
 
     public static final ITFluids.FluidEntry DISTILLED_WATER = FluidEntry.make(
@@ -70,11 +65,54 @@ public class ITFluids {
             props -> props.density(1000).viscosity(1000), 0xFF7079E0
     );
 
+    public static final ITFluids.FluidEntry FLUE_GAS = FluidEntry.make(
+            "flue_gas", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            props -> props.density(-100).viscosity(500), 0xFFFFFFFF
+    );
+
+    public static final ITFluids.FluidEntry HIGH_PRESSURE_STEAM = FluidEntry.make(
+            "high_pressure_steam", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            props -> props.density(-300).viscosity(500).temperature(1500), 0xFF606978
+    );
+
+    public static final ITFluids.FluidEntry HOT_SPRING_WATER = FluidEntry.make(
+            "hot_spring_water", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            props -> props.density(1000).viscosity(1000).temperature(350), 0xFF0DFFFF
+    );
+
+    public static final ITFluids.FluidEntry MOLTEN_SALT = FluidEntry.make(
+            "molten_salt", 0, rl("block/fluid/molten_metal"), rl("block/fluid/molten_metal_flow"),
+            props -> props.density(2170).viscosity(10000).temperature(1100), 0xFFC4C6C7
+    );
+
+    public static final ITFluids.FluidEntry MOLTEN_SODIUM = FluidEntry.make(
+            "molten_sodium", 0, rl("block/fluid/molten_metal"), rl("block/fluid/molten_metal_flow"),
+            props -> props.density(927).viscosity(10000).temperature(400), 0xFFC2C2C2
+    );
+
+    public static final ITFluids.FluidEntry STEAM = FluidEntry.make(
+            "steam", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            props -> props.density(-100).viscosity(500).temperature(1000), 0xFF3E444F
+    );
+
+    public static final ITFluids.FluidEntry SUPERHEATED_MOLTEN_SODIUM = FluidEntry.make(
+            "superheated_molten_sodium", 0, rl("block/fluid/molten_metal"), rl("block/fluid/molten_metal_flow"),
+            props -> props.density(1000).viscosity(10000).temperature(927), 0xFFAEA0A2
+    );
+
+
+
     static {
-        FLUID_REGISTRY_MAP.put("steam", STEAM.getStillGetter());
-        FLUID_REGISTRY_MAP.put("steam_exhaust", STEAM_EXHAUST.getStillGetter());
-        FLUID_REGISTRY_MAP.put("flue_gas", FLUE_GAS.getStillGetter());
+        FLUID_REGISTRY_MAP.put("chlorine", CHLORINE.getStillGetter());
         FLUID_REGISTRY_MAP.put("distilled_water", DISTILLED_WATER.getStillGetter());
+        FLUID_REGISTRY_MAP.put("exhaust_steam", EXHAUST_STEAM.getStillGetter());
+        FLUID_REGISTRY_MAP.put("flue_gas", FLUE_GAS.getStillGetter());
+        FLUID_REGISTRY_MAP.put("high_pressure_steam", HIGH_PRESSURE_STEAM.getStillGetter());
+        FLUID_REGISTRY_MAP.put("hot_spring_water", HOT_SPRING_WATER.getStillGetter());
+        FLUID_REGISTRY_MAP.put("molten_salt", MOLTEN_SALT.getStillGetter());
+        FLUID_REGISTRY_MAP.put("molten_sodium", MOLTEN_SODIUM.getStillGetter());
+        FLUID_REGISTRY_MAP.put("steam", STEAM.getStillGetter());
+        FLUID_REGISTRY_MAP.put("superheated_molten_sodium", SUPERHEATED_MOLTEN_SODIUM.getStillGetter());
     }
 
     public static List<? extends Fluid> getITFluids() { return REGISTER.getEntries().stream().map(RegistryObject::get).collect(Collectors.toList()); }

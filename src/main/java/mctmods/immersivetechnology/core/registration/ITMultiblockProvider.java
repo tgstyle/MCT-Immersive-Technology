@@ -88,6 +88,8 @@ public class ITMultiblockProvider {
     public static final MultiblockRegistration<SolarTowerLogic.State> SOLAR_TOWER =
             metal(new SolarTowerLogic(), "solar_tower")
                     .structure(() -> getMBTemplate.apply("solar_tower"))
+                    .redstone(s -> s.rsState, SolarTowerLogic.REDSTONE_POS)
+                    .gui(ITMenuTypes.SOLAR_TOWER_MENU)
                     .build();
     public static final MultiblockRegistration<SteamTurbineLogic.State> STEAM_TURBINE =
             metal(new SteamTurbineLogic(), "steam_turbine")

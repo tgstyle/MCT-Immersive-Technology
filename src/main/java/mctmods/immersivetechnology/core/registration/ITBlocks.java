@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.core.registration;
 
 import blusunrize.immersiveengineering.common.register.IEBlocks;
-import mctmods.immersivetechnology.common.blocks.metal.CokeOvenHeaterBlock;
 import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlock;
 import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.OpenBarrelBlock;
@@ -45,7 +44,6 @@ public class ITBlocks {
     public static Function<String, Block> getBlock = (key) -> BLOCK_REGISTRY_MAP.get(key).get();
 
     public static final class MetalDevices {
-        public static BlockEntry<CokeOvenHeaterBlock> COKE_OVEN_HEATER;
         public static BlockEntry<CreativeBarrelBlock> CREATIVE_BARREL;
         public static BlockEntry<SteelBarrelBlock> STEEL_BARREL;
         public static BlockEntry<OpenBarrelBlock> OPEN_BARREL;
@@ -54,12 +52,6 @@ public class ITBlocks {
         public static BlockEntry<TrashItemBlock> TRASH_ITEM;
 
         private static void init() {
-            COKE_OVEN_HEATER = new BlockEntry<>(
-                    "coke_oven_heater",
-                    METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new CokeOvenHeaterBlock(ITBlockEntities.COKE_OVEN_HEATER, p)
-            );
-
             CREATIVE_BARREL = new BlockEntry<>(
                     "creative_barrel",
                     () -> BlockBehaviour.Properties.copy(IEBlocks.MetalDevices.BARREL.get()),

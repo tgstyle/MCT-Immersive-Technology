@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.core.registration;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import mctmods.immersivetechnology.common.blocks.helper.ITMultiblockBEType;
-import mctmods.immersivetechnology.common.blocks.metal.CokeOvenHeaterBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.OpenBarrelBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.SteelBarrelBlockEntity;
@@ -19,13 +18,6 @@ import net.minecraftforge.registries.RegistryObject;
 @SuppressWarnings("ConstantConditions")
 public class ITBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, ITLib.MODID);
-
-    public static final ITMultiblockBEType<CokeOvenHeaterBlockEntity> COKE_OVEN_HEATER = new ITMultiblockBEType<>(
-            "coke_oven_heater",
-            REGISTER, CokeOvenHeaterBlockEntity::new,
-            () -> ITBlocks.MetalDevices.COKE_OVEN_HEATER.get(),
-            state -> !state.getValue(IEProperties.MULTIBLOCKSLAVE)
-    );
 
     public static final RegistryObject<BlockEntityType<CreativeBarrelBlockEntity>> CREATIVE_BARREL = REGISTER.register(
             "creative_barrel",
