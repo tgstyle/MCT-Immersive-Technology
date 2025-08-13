@@ -187,8 +187,8 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             } else {
                 FluidStack fluid = state.tanks.input.getFluid();
                 SteamTurbineRecipe recipe = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fluid);
-                if (recipe != null && fluid.getAmount() >= recipe.inputAmount) {
-                    state.tanks.input.drain(recipe.inputAmount, FluidAction.EXECUTE);
+                if (recipe != null && fluid.getAmount() >= recipe.input.getAmount()) {
+                    state.tanks.input.drain(recipe.input.getAmount(), FluidAction.EXECUTE);
                     if (recipe.fluidOutput != null) {
                         int filled = state.tanks.output.fill(recipe.fluidOutput, FluidAction.EXECUTE);
                         if (filled < recipe.fluidOutput.getAmount()) {
@@ -296,7 +296,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             this.tanks = new SteamTurbineTank(v -> onChanged.run());
             this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
-            this.recipeGetter = CachedRecipe.cached(SteamTurbineRecipe::findFuel);
+            this.recipeGetter = CachedRecipe.cached(SteamTurbineRecipe::findRecipe);
             MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POS.side(), OUTPUT_FLUID_POS.posInMultiblock());
             CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
             MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());

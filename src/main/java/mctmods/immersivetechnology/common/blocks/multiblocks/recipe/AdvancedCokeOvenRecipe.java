@@ -22,18 +22,18 @@ public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
     public static final CachedRecipeList<AdvancedCokeOvenRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.ADVANCED_COKE_OVEN);
 
     public final IngredientWithSize input;
-    public final Lazy<ItemStack> output;
+    public final Lazy<ItemStack> itemOutput;
     public final int time;
     public final int creosoteOutput;
 
-    public AdvancedCokeOvenRecipe(ResourceLocation id, Lazy<ItemStack> output, IngredientWithSize input, int time, int creosoteOutput) {
-        super(output, ITRecipeTypes.ADVANCED_COKE_OVEN, id);
-        this.output = output;
+    public AdvancedCokeOvenRecipe(ResourceLocation id, IngredientWithSize input, Lazy<ItemStack> itemOutput, int time, int creosoteOutput) {
+        super(itemOutput, ITRecipeTypes.ADVANCED_COKE_OVEN, id);
         this.input = input;
+        this.itemOutput = itemOutput;
         this.time = time;
         this.creosoteOutput = creosoteOutput;
         setInputListWithSizes(List.of(input));
-        this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, output.get()));
+        this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, itemOutput.get()));
         this.fluidOutputList = List.of(new FluidStack(IEFluids.CREOSOTE.getStill(), creosoteOutput));
     }
 
@@ -49,15 +49,12 @@ public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
     protected IERecipeSerializer<AdvancedCokeOvenRecipe> getIESerializer() { return SERIALIZER.get(); }
 
     @Override
-    public @NotNull ItemStack getResultItem(RegistryAccess access) { return this.output.get(); }
-
-    public static AdvancedCokeOvenRecipe findRecipe(Level level, ItemStack input) { return findRecipe(level, input, null); }
+    public @NotNull ItemStack getResultItem(RegistryAccess access) { return this.itemOutput.get(); }
 
     public static AdvancedCokeOvenRecipe findRecipe(Level level, ItemStack input, @Nullable AdvancedCokeOvenRecipe hint) {
         if (input.isEmpty()) return null;
         if (hint != null && hint.matches(input)) return hint;
-        for (AdvancedCokeOvenRecipe recipe : RECIPES.getRecipes(level))
-            if (recipe.matches(input)) return recipe;
+        for (AdvancedCokeOvenRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.matches(input)) return recipe; }
         return null;
     }
 

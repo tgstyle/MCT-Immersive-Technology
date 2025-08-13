@@ -123,28 +123,112 @@ public class BoilerLogic implements IMultiblockLogic<BoilerLogic.State>, IServer
         double previousHeatLevel = state.heatLevel;
         if (state.tanks.input1.getFluidAmount() <= 0) { state.pilotLit = false; }
         double delta = HEAT_LOSS_PER_TICK * heatTransferMultiplier;
-        if (!state.pilotLit) { state.heatLevel = Math.max(state.heatLevel - delta, 0); state.burnRemaining = 0; if (previousHeatLevel != state.heatLevel) { update = true; } }
-        else {
-            if (state.burnRemaining > 0) { state.burnRemaining--; if (state.lastFuel != null) { if (state.rsState.isEnabled(ctx) && state.tanks.input2.getFluidAmount() > 0) { state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), WORKING_HEAT_LEVEL); } else { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); } if (previousHeatLevel != state.heatLevel) { update = true; } } else { state.burnRemaining = 0; } }
-            else {
-                state.lastFuel = BoilerFuelRecipe.findFuel(level, state.tanks.input1.getFluid());
+        if (!state.pilotLit) {
+            state.heatLevel = Math.max(state.heatLevel - delta, 0);
+            state.burnRemaining = 0;
+            if (previousHeatLevel != state.heatLevel) { update = true; }
+        } else {
+            if (state.burnRemaining > 0) {
+                state.burnRemaining--;
+                if (state.lastFuel != null) {
+                    if (state.rsState.isEnabled(ctx) && state.tanks.input2.getFluidAmount() > 0) { state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), WORKING_HEAT_LEVEL); }
+                    else { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
+                    if (previousHeatLevel != state.heatLevel) { update = true; }
+                } else { state.burnRemaining = 0; }
+            } else {
+                state.lastFuel = BoilerFuelRecipe.findRecipe(level, state.tanks.input1.getFluid());
                 if (state.lastFuel != null) {
                     boolean fullMode = state.rsState.isEnabled(ctx) && state.tanks.input2.getFluidAmount() > 0;
                     FluidStack drained;
-                    if (fullMode) { int drainAmount = state.lastFuel.fuel.getAmount(); drained = state.tanks.input1.drain(drainAmount, FluidAction.EXECUTE); if (drained.getAmount() == drainAmount) { state.burnRemaining = state.lastFuel.getTotalProcessTime() - 1; state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), WORKING_HEAT_LEVEL); } else { drained = state.tanks.input1.drain(1, FluidAction.EXECUTE); if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); } else { state.pilotLit = false; state.heatLevel = Math.max(state.heatLevel - delta, 0); } } } else { drained = state.tanks.input1.drain(1, FluidAction.EXECUTE); if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); } else { state.pilotLit = false; state.heatLevel = Math.max(state.heatLevel - delta, 0); } } } else { state.pilotLit = false; state.heatLevel = Math.max(state.heatLevel - delta, 0); } if (previousHeatLevel != state.heatLevel) { update = true; } }
+                    if (fullMode) {
+                        int drainAmount = state.lastFuel.input.getAmount();
+                        drained = state.tanks.input1.drain(drainAmount, FluidAction.EXECUTE);
+                        if (drained.getAmount() == drainAmount) {
+                            state.burnRemaining = state.lastFuel.getTotalProcessTime() - 1;
+                            state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), WORKING_HEAT_LEVEL);
+                        } else {
+                            drained = state.tanks.input1.drain(1, FluidAction.EXECUTE);
+                            if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
+                            else {
+                                state.pilotLit = false;
+                                state.heatLevel = Math.max(state.heatLevel - delta, 0);
+                            }
+                        }
+                    } else {
+                        drained = state.tanks.input1.drain(1, FluidAction.EXECUTE);
+                        if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
+                        else {
+                            state.pilotLit = false;
+                            state.heatLevel = Math.max(state.heatLevel - delta, 0);
+                        }
+                    }
+                } else {
+                    state.pilotLit = false;
+                    state.heatLevel = Math.max(state.heatLevel - delta, 0);
+                }
+                if (previousHeatLevel != state.heatLevel) { update = true; }
+            }
         }
         if (state.heatLevel >= WORKING_HEAT_LEVEL) {
-            if (state.recipeTimeRemaining > 0) { if (state.lastRecipe == null) { state.recipeTimeRemaining = 0; update = true; } else { state.recipeTimeRemaining--; if (state.recipeTimeRemaining == 0) { state.tanks.input2.drain(state.lastRecipe.water.getAmount(), FluidAction.EXECUTE); state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE); update = true; } } }
-            else if (state.tanks.input2.getFluidAmount() > 0) { state.lastRecipe = BoilerRecipe.findRecipe(level, state.tanks.input2.getFluid()); if (state.lastRecipe != null && state.lastRecipe.water.getAmount() <= state.tanks.input2.getFluidAmount() && state.lastRecipe.output.getAmount() <= state.tanks.output.getCapacity() - state.tanks.output.getFluidAmount()) { state.recipeTimeRemaining = state.lastRecipe.getTotalProcessTime(); state.recipeTimeRemaining--; if (state.recipeTimeRemaining == 0) { state.tanks.input2.drain(state.lastRecipe.water.getAmount(), FluidAction.EXECUTE); state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE); } update = true; } }
+            if (state.recipeTimeRemaining > 0) {
+                if (state.lastRecipe == null) {
+                    state.recipeTimeRemaining = 0;
+                    update = true;
+                } else {
+                    state.recipeTimeRemaining--;
+                    if (state.recipeTimeRemaining == 0) {
+                        state.tanks.input2.drain(state.lastRecipe.input.getAmount(), FluidAction.EXECUTE);
+                        state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE);
+                        update = true;
+                    }
+                }
+            } else if (state.tanks.input2.getFluidAmount() > 0) {
+                state.lastRecipe = BoilerRecipe.findRecipe(level, state.tanks.input2.getFluid());
+                if (state.lastRecipe != null && state.lastRecipe.input.getAmount() <= state.tanks.input2.getFluidAmount() && state.lastRecipe.output.getAmount() <= state.tanks.output.getCapacity() - state.tanks.output.getFluidAmount()) {
+                    state.recipeTimeRemaining = state.lastRecipe.getTotalProcessTime();
+                    state.recipeTimeRemaining--;
+                    if (state.recipeTimeRemaining == 0) {
+                        state.tanks.input2.drain(state.lastRecipe.input.getAmount(), FluidAction.EXECUTE);
+                        state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE);
+                    }
+                    update = true;
+                }
+            }
+        } else if (state.recipeTimeRemaining > 0) {
+            int previousProgress = state.recipeTimeRemaining;
+            if (state.lastRecipe == null) {
+                state.recipeTimeRemaining = 0;
+                update = true;
+            } else {
+                state.recipeTimeRemaining = Math.min(state.recipeTimeRemaining + PROGRESS_LOSS_PER_TICK, state.lastRecipe.getTotalProcessTime());
+                if (previousProgress != state.recipeTimeRemaining) { update = true; }
+            }
         }
-        else if (state.recipeTimeRemaining > 0) { int previousProgress = state.recipeTimeRemaining; if (state.lastRecipe == null) { state.recipeTimeRemaining = 0; update = true; } else { state.recipeTimeRemaining = Math.min(state.recipeTimeRemaining + PROGRESS_LOSS_PER_TICK, state.lastRecipe.getTotalProcessTime()); if (previousProgress != state.recipeTimeRemaining) { update = true; } } }
         if (state.tanks.output.getFluidAmount() > 0) {
             if (FluidUtils.fillFluidContainer(state.tanks.output, OUTPUT_SLOT_EMPTY, OUTPUT_SLOT_FILLED, state.inventory)) { update = true; }
-            if (state.fluidOutput.isPresent()) { IFluidHandler outputHandler = state.fluidOutput.get(); FluidStack fs = state.tanks.output.getFluid(); if (fs.getAmount() > 0) { fs = fs.copy(); int accepted = outputHandler.fill(fs, FluidAction.SIMULATE); if (accepted > 0) { int drained = outputHandler.fill(Utils.copyFluidStackWithAmount(fs, accepted, false), FluidAction.EXECUTE); state.tanks.output.drain(drained, FluidAction.EXECUTE); update = true; } } }
+            if (state.fluidOutput.isPresent()) {
+                IFluidHandler outputHandler = state.fluidOutput.get();
+                FluidStack fs = state.tanks.output.getFluid();
+                if (fs.getAmount() > 0) {
+                    fs = fs.copy();
+                    int accepted = outputHandler.fill(fs, FluidAction.SIMULATE);
+                    if (accepted > 0) {
+                        int drained = outputHandler.fill(Utils.copyFluidStackWithAmount(fs, accepted, false), FluidAction.EXECUTE);
+                        state.tanks.output.drain(drained, FluidAction.EXECUTE);
+                        update = true;
+                    }
+                }
+            }
         }
         if (tryEmptyContainer(state.tanks.input1, INPUT_FUEL_SLOT_FILLED, INPUT_FUEL_SLOT_EMPTY, state.inventory)) { update = true; }
         if (tryEmptyContainer(state.tanks.input2, INPUT_SLOT_FILLED, INPUT_SLOT_EMPTY, state.inventory)) { update = true; }
-        if (update) { ctx.markMasterDirty(); if (state.clientUpdateCooldown == 1) { ctx.requestMasterBESync(); state.clientUpdateCooldown = 20; } else { state.clientUpdateCooldown--; } }
+        if (update) {
+            ctx.markMasterDirty();
+            if (state.clientUpdateCooldown == 1) {
+                ctx.requestMasterBESync();
+                state.clientUpdateCooldown = 20;
+            } else { state.clientUpdateCooldown--; }
+        }
     }
 
     private boolean tryEmptyContainer(IFluidHandler tank, int slotFilled, int slotEmpty, IItemHandlerModifiable inv) {

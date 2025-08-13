@@ -19,23 +19,23 @@ public class BoilerFuelRecipeSerializer extends IERecipeSerializer<BoilerFuelRec
 
     @Override
     public BoilerFuelRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {
-        FluidTagInput fuel = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "fuel"));
+        FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         int time = GsonHelper.getAsInt(json, "time");
         double heatPerTick = GsonHelper.getAsDouble(json, "heatPerTick");
-        return new BoilerFuelRecipe(recipeId, fuel, time, heatPerTick);
+        return new BoilerFuelRecipe(recipeId, input, time, heatPerTick);
     }
 
     @Override
     public @Nullable BoilerFuelRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
-        FluidTagInput fuel = FluidTagInput.read(buffer);
+        FluidTagInput input = FluidTagInput.read(buffer);
         int time = buffer.readInt();
         double heatPerTick = buffer.readDouble();
-        return new BoilerFuelRecipe(recipeId, fuel, time, heatPerTick);
+        return new BoilerFuelRecipe(recipeId, input, time, heatPerTick);
     }
 
     @Override
     public void toNetwork(@NotNull FriendlyByteBuf buffer, BoilerFuelRecipe recipe) {
-        recipe.fuel.write(buffer);
+        recipe.input.write(buffer);
         buffer.writeInt(recipe.getTotalProcessTime());
         buffer.writeDouble(recipe.getHeatPerTick());
     }

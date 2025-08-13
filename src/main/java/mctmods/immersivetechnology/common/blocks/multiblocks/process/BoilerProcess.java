@@ -26,7 +26,7 @@ public class BoilerProcess implements IMultiblockComponent<BoilerLogic.State> {
         BoilerLogic.State state = ctx.getState();
         if (state.pilotLit) return InteractionResult.PASS;
         Level level = ctx.getLevel().getRawLevel();
-        if (state.tanks.input1().getFluidAmount() <= 0 || BoilerFuelRecipe.findFuel(level, state.tanks.input1().getFluid()) == null) return InteractionResult.PASS;
+        if (state.tanks.input1().getFluidAmount() <= 0 || BoilerFuelRecipe.findRecipe(level, state.tanks.input1().getFluid()) == null) return InteractionResult.PASS;
         state.pilotLit = true;
         state.heatLevel = BoilerLogic.PILOT_HEAT;
         level.playSound(null, ctx.getLevel().toAbsolute(IGNITION_POS), ITSounds.gasIgnite.get(), SoundSource.BLOCKS, 0.5f, 1.0f);

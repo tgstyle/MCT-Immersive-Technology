@@ -22,18 +22,18 @@ public class DistillerRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<DistillerRecipe>> SERIALIZER;
     public static final CachedRecipeList<DistillerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.DISTILLER);
 
-    public FluidTagInput water;
-    @Nullable public FluidStack fluidOutput;
-    public ItemStack itemOutput;
-    public float chance;
+    public final FluidTagInput input;
+    @Nullable public final FluidStack fluidOutput;
+    public final ItemStack itemOutput;
+    public final float chance;
     private final int time;
     private final int energy;
     Lazy<Integer> totalProcessTime;
     Lazy<Integer> totalProcessEnergy;
 
-    public DistillerRecipe(ResourceLocation id, FluidTagInput water, @Nullable FluidStack fluidOutput, ItemStack itemOutput, float chance, int time, int energy) {
+    public DistillerRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, ItemStack itemOutput, float chance, int time, int energy) {
         super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.DISTILLER, id);
-        this.water = water;
+        this.input = input;
         this.fluidOutput = fluidOutput;
         this.itemOutput = itemOutput;
         this.chance = chance;
@@ -43,15 +43,13 @@ public class DistillerRecipe extends MultiblockRecipe {
         totalProcessTime = Lazy.of(() -> this.time);
         totalProcessEnergy = Lazy.of(() -> this.energy);
 
-        this.fluidInputList = Lists.newArrayList(this.water);
+        this.fluidInputList = Lists.newArrayList(this.input);
         if (this.fluidOutput != null) this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
         this.outputList = Lazy.of(NonNullList::create);
     }
 
-    public static DistillerRecipe findRecipe(Level level, FluidStack input) {
-        for (DistillerRecipe recipe : RECIPES.getRecipes(level)) {
-            if (recipe.water.test(input)) { return recipe; }
-        }
+    public static DistillerRecipe findRecipe(Level level, FluidStack inputFluid) {
+        for (DistillerRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.input.test(inputFluid)) return recipe; }
         return null;
     }
 

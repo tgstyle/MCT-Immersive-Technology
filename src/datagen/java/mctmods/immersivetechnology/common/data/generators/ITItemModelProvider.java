@@ -44,7 +44,6 @@ public class ITItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        generateBlockItem("coke_oven_heater", "metal/obj/coke_oven_heater");
         generateBlockItem("creative_barrel", "metal/creative_barrel");
         generateBlockItem("open_barrel", "metal/open_barrel");
         generateBlockItem("reinforced_coke_brick", "stone/reinforced_coke_brick");

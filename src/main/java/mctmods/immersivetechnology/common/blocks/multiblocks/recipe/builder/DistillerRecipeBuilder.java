@@ -14,8 +14,8 @@ public class DistillerRecipeBuilder extends IEFinishedRecipe<DistillerRecipeBuil
         this.maxInputCount = 2;
     }
 
-    public static DistillerRecipeBuilder builder(FluidTagInput fluidIn, int energy, int time, FluidStack primaryFluidOutput) {
-        return new DistillerRecipeBuilder().addFluidTag("input", fluidIn).setEnergy(energy).setTime(time).addFluid("result", primaryFluidOutput);
+    public static DistillerRecipeBuilder builder(FluidTagInput fluidIn, FluidStack primaryFluidOutput, int time, int energy) {
+        return new DistillerRecipeBuilder().addFluidTag("input", fluidIn).addFluid("result", primaryFluidOutput).setTime(time).setEnergy(energy);
     }
 
     public DistillerRecipeBuilder addItemOutput(ItemStack item, float chance) {

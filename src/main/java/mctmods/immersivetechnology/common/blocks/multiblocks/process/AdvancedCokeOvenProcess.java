@@ -47,7 +47,7 @@ public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<Advanced
         if (recipe != null) {
             ItemStack input = context.getInventory().getStackInSlot(inputSlots[0]);
             input.shrink(recipe.input.getCount());
-            ItemStack out = recipe.output.get().copy();
+            ItemStack out = recipe.itemOutput.get().copy();
             ItemStack current = context.getInventory().getStackInSlot(AdvancedCokeOvenLogic.SLOT_OUTPUT);
             if (current.isEmpty()) { context.getInventory().setStackInSlot(AdvancedCokeOvenLogic.SLOT_OUTPUT, out); }
             else if (ItemHandlerHelper.canItemStacksStack(current, out) && current.getCount() + out.getCount() <= current.getMaxStackSize()) { current.grow(out.getCount()); }

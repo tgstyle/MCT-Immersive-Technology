@@ -37,7 +37,7 @@ import java.util.function.Predicate;
 @EventBusSubscriber(modid=ITLib.MODID,bus=Bus.FORGE)
 public abstract class ITContainerMenu extends AbstractContainerMenu {
     protected final List<GenericContainerData<?>> genericData=new ArrayList<>();
-    private final List<ServerPlayer> usingPlayers=new ArrayList<>();
+    protected final List<ServerPlayer> usingPlayers=new ArrayList<>();
     private final Runnable setChanged;
     private final Predicate<Player> isValid;
     public int ownSlotCount;

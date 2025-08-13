@@ -8,7 +8,6 @@
   "manual.immersivetechnology.main": "Immersive Technology",
   "manual.immersivetechnology.it_multiblocks": "Multiblocks",
 
-  "block.immersivetechnology.coke_oven_heater": "Coke Oven Heater",
   "block.immersivetechnology.creative_barrel": "Creative Fluid Barrel",
   "block.immersivetechnology.open_barrel": "Open Metal Barrel",
   "block.immersivetechnology.reinforced_coke_brick": "Reinforced Coke Brick",
@@ -27,10 +26,16 @@
   "block.immersivetechnology.solar_tower": "Solar Tower",
   "block.immersivetechnology.steam_turbine": "Steam Turbine",
 
+  "fluid_type.immersivetechnology.chlorine": "Chlorine",
   "fluid_type.immersivetechnology.distilled_water": "Distilled Water",
-  "fluid_type.immersivetechnology.steam_exhaust": "Exhaust Steam",
+  "fluid_type.immersivetechnology.exhaust_steam": "Exhaust Steam",
   "fluid_type.immersivetechnology.flue_gas": "Flue Gas",
+  "fluid_type.immersivetechnology.hot_spring_water": "Hot Spring Water",
+  "fluid_type.immersivetechnology.high_pressure_steam": "High Pressure Steam",
   "fluid_type.immersivetechnology.steam": "Low Pressure Steam",
+  "fluid_type.immersivetechnology.molten_salt": "Molten Salt",
+  "fluid_type.immersivetechnology.molten_sodium": "Molten Sodium",
+  "fluid_type.immersivetechnology.superheated_molten_sodium": "Superheated Molten Sodium",
 
   "item.immersivetechnology.formation_tool": "Formation Tool",
   "item.immersivetechnology.salt": "Salt",

@@ -7,7 +7,6 @@ import blusunrize.immersiveengineering.data.DataGenUtils;
 import blusunrize.immersiveengineering.data.models.*;
 import blusunrize.immersiveengineering.data.models.NongeneratedModels.NongeneratedModel;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.data.loaders.ITObjModelBuilder;
@@ -49,7 +48,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ITBlockStateProvider extends BlockStateProvider {
-    protected static final List<Vec3i> HEATER_THREE = ImmutableList.of(BlockPos.ZERO, BlockPos.ZERO.south(1), BlockPos.ZERO.south(2));
     public final Map<Block, ModelFile> unsplitModels = new HashMap<>();
     protected static final Map<ResourceLocation, String> generatedParticleTextures = new HashMap<>();
     protected final ExistingFileHelper existingFileHelper;
@@ -199,8 +197,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
         }
         createRotatedBlock(ITBlocks.MetalDevices.TRASH_ENERGY, state -> trashEnergyModel, List.of());
 
-        createHeater();
-
         ModelFile emptyModel = models().withExistingParent("empty", mcLoc("block/block"))
                 .renderType("cutout")
                 .texture("particle", "#missingno");
@@ -214,18 +210,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
                         .modelFile(emptyModel)
                         .addModel();
             }
-        }
-    }
-
-    private void createHeater() {
-        Block block = ITBlocks.getBlock.apply("coke_oven_heater");
-        BlockModelBuilder baseModel = innerItObj("coke_oven_heater", "metal");
-        ModelFile split = split(baseModel, HEATER_THREE);
-        VariantBlockStateBuilder builder = getVariantBuilder(block);
-        for (Direction f : IEProperties.FACING_HORIZONTAL.getPossibleValues()) {
-            int angle = (int)f.toYRot();
-            builder.partialState().with(IEProperties.FACING_HORIZONTAL, f)
-                    .setModels(new ConfiguredModel(split, 0, angle, true));
         }
     }
 
@@ -318,7 +302,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         return obj(loc.substring(0, loc.length() - 4), modLoc(loc), innerModels);
     }
 
-    @SuppressWarnings("SameParameterValue")
+    @SuppressWarnings("unused")
     protected BlockModelBuilder innerItObj(String id, String type) {
         String loc = "block/" + type + "/obj/" + id + "/" + id + ".obj";
         Preconditions.checkArgument(true);

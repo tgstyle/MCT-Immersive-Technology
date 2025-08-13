@@ -36,11 +36,11 @@ public class DistillerProcess extends MultiblockProcessInMachine<DistillerRecipe
         int processPre = this.processTick;
         super.doProcessTick(context, level);
         final IFluidTank inputTank = context.getInternalTanks()[0];
-        int timerStep = Math.max(levelData.maxTicks() / levelData.recipe().water.getAmount(), 1);
+        int timerStep = Math.max(levelData.maxTicks() / levelData.recipe().input.getAmount(), 1);
         while (processPre < this.processTick) {
             if (processPre % timerStep == 0) {
-                int amount = levelData.recipe().water.getAmount() / levelData.maxTicks();
-                int leftover = levelData.recipe().water.getAmount() % levelData.maxTicks();
+                int amount = levelData.recipe().input.getAmount() / levelData.maxTicks();
+                int leftover = levelData.recipe().input.getAmount() % levelData.maxTicks();
                 if (leftover > 0) {
                     double distBetweenExtra = levelData.maxTicks() / (double) leftover;
                     if (Math.floor(processTick / distBetweenExtra) != Math.floor((processTick - 1) / distBetweenExtra)) amount++;

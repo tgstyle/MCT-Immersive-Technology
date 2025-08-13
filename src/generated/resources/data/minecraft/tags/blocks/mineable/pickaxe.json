@@ -1,10 +1,20 @@
 {
   "values": [
     "immersivetechnology:advanced_coke_oven",
-    "immersivetechnology:boiler",
     "immersivetechnology:alternator",
-    "immersivetechnology:steam_turbine",
+    "immersivetechnology:boiler",
+    "immersivetechnology:distiller",
     "immersivetechnology:gas_turbine",
-    "immersivetechnology:coke_oven_heater"
+    "immersivetechnology:solar_melter",
+    "immersivetechnology:solar_reflector",
+    "immersivetechnology:solar_tower",
+    "immersivetechnology:steam_turbine",
+    "immersivetechnology:creative_barrel",
+    "immersivetechnology:open_barrel",
+    "immersivetechnology:reinforced_coke_brick",
+    "immersivetechnology:steel_barrel",
+    "immersivetechnology:trash_energy",
+    "immersivetechnology:trash_fluid",
+    "immersivetechnology:trash_item"
   ]
 }

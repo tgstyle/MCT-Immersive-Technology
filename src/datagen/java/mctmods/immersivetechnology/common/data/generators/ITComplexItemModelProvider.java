@@ -27,8 +27,6 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
 
     @Override
     protected void registerModels() {
-        generateBlockModel("coke_oven_heater", "metal", ITBlocks.MetalDevices.COKE_OVEN_HEATER);
-
         generateMultiblockModel("advanced_coke_oven", "stone", ITMultiblockProvider.ADVANCED_COKE_OVEN.block());
         generateMultiblockModel("alternator", "metal", ITMultiblockProvider.ALTERNATOR.block());
         generateMultiblockModel("boiler", "metal", ITMultiblockProvider.BOILER.block());

@@ -1,15 +1,12 @@
 package mctmods.immersivetechnology.core.proxy;
 
+import mctmods.immersivetechnology.client.gui.*;
 import org.jetbrains.annotations.Nullable;
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.lib.manual.ManualEntry;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.Tree.InnerNode;
-import mctmods.immersivetechnology.client.gui.AdvancedCokeOvenScreen;
-import mctmods.immersivetechnology.client.gui.BoilerScreen;
-import mctmods.immersivetechnology.client.gui.DistillerScreen;
-import mctmods.immersivetechnology.client.gui.TrashItemScreen;
 import mctmods.immersivetechnology.client.models.helper.ITDynamicModel;
 import mctmods.immersivetechnology.client.models.helper.ITObjLoader;
 import mctmods.immersivetechnology.client.models.RotorModels;
@@ -76,6 +73,7 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
             MenuScreens.register(ITMenuTypes.BOILER_MENU.getType(), BoilerScreen::new);
             MenuScreens.register(ITMenuTypes.DISTILLER_MENU.getType(), DistillerScreen::new);
             MenuScreens.register(ITMenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
+            MenuScreens.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarTowerScreen::new);
             ManualInstance instance = ManualHelper.getManual();
             InnerNode<ResourceLocation, ManualEntry> parent_category = instance.getRoot().getOrCreateSubnode(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "main"), 99);
             ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());

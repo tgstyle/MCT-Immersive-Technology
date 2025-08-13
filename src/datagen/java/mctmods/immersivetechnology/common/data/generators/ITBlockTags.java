@@ -26,31 +26,19 @@ public class ITBlockTags extends BlockTagsProvider {
     protected void addTags(@NotNull Provider provider) {
         ITLib.IT_LOGGER.info("IT Block Tags");
 
-        IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag = this.tag(BlockTags.MINEABLE_WITH_PICKAXE);
+        IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag1 = this.tag(BlockTags.MINEABLE_WITH_PICKAXE);
         IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag2 = this.tag(BlockTags.NEEDS_IRON_TOOL);
 
-        registerMineable(tag, ITMultiblockProvider.ADVANCED_COKE_OVEN);
-        registerMineable(tag, ITMultiblockProvider.BOILER);
-        registerMineable(tag, ITMultiblockProvider.ALTERNATOR);
-        registerMineable(tag, ITMultiblockProvider.STEAM_TURBINE);
-        registerMineable(tag, ITMultiblockProvider.GAS_TURBINE);
-        registerMineable(tag2, ITMultiblockProvider.BOILER);
-        registerMineable(tag2, ITMultiblockProvider.DISTILLER);
-        registerMineable(tag2, ITMultiblockProvider.ALTERNATOR);
-        registerMineable(tag2, ITMultiblockProvider.STEAM_TURBINE);
-        registerMineable(tag2, ITMultiblockProvider.GAS_TURBINE);
-        registerMineable(tag2, ITMultiblockProvider.SOLAR_TOWER);
-        registerMineable(tag2, ITMultiblockProvider.ADVANCED_COKE_OVEN);
-        registerMineable(tag, ITBlocks.MetalDevices.COKE_OVEN_HEATER);
+        registerMineable(tag1, ITMultiblockProvider.ADVANCED_COKE_OVEN, ITMultiblockProvider.ALTERNATOR, ITMultiblockProvider.BOILER, ITMultiblockProvider.DISTILLER, ITMultiblockProvider.GAS_TURBINE, ITMultiblockProvider.SOLAR_MELTER, ITMultiblockProvider.SOLAR_REFLECTOR, ITMultiblockProvider.SOLAR_TOWER, ITMultiblockProvider.STEAM_TURBINE);
+        registerMineable(tag2, ITMultiblockProvider.ADVANCED_COKE_OVEN, ITMultiblockProvider.ALTERNATOR, ITMultiblockProvider.BOILER, ITMultiblockProvider.DISTILLER, ITMultiblockProvider.GAS_TURBINE, ITMultiblockProvider.SOLAR_MELTER, ITMultiblockProvider.SOLAR_REFLECTOR, ITMultiblockProvider.SOLAR_TOWER, ITMultiblockProvider.STEAM_TURBINE);
+
+        registerMineable(tag1, ITBlocks.MetalDevices.CREATIVE_BARREL, ITBlocks.MetalDevices.STEEL_BARREL, ITBlocks.MetalDevices.OPEN_BARREL, ITBlocks.MetalDevices.TRASH_ENERGY, ITBlocks.MetalDevices.TRASH_FLUID, ITBlocks.MetalDevices.TRASH_ITEM, ITBlocks.Stone.REINFORCED_COKE_BRICK);
+        registerMineable(tag2, ITBlocks.MetalDevices.CREATIVE_BARREL, ITBlocks.MetalDevices.STEEL_BARREL, ITBlocks.MetalDevices.OPEN_BARREL, ITBlocks.MetalDevices.TRASH_ENERGY, ITBlocks.MetalDevices.TRASH_FLUID, ITBlocks.MetalDevices.TRASH_ITEM, ITBlocks.Stone.REINFORCED_COKE_BRICK);
     }
 
-    private void registerMineable(IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag, MultiblockRegistration<?>... entries) {
-        for (MultiblockRegistration<?> entry : entries) { tag.add(entry.block().get()); }
-    }
+    private void registerMineable(IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag, MultiblockRegistration<?>... entries) { for (MultiblockRegistration<?> entry : entries) { tag.add(entry.block().get()); } }
 
-    private void registerMineable(IntrinsicTagAppender<Block> tag, ITBlocks.BlockEntry<?>... entries) {
-        registerMineable(tag, Arrays.asList(entries));
-    }
+    private void registerMineable(IntrinsicTagAppender<Block> tag, ITBlocks.BlockEntry<?>... entries) { registerMineable(tag, Arrays.asList(entries)); }
 
     private void registerMineable(IntrinsicTagAppender<Block> tag, List<ITBlocks.BlockEntry<?>> entries) {
         entries.sort(Comparator.comparing(ITBlocks.BlockEntry::getId));

@@ -6,7 +6,7 @@
   },
   "output": {
     "amount": 100,
-    "fluid": "immersivetechnology:steam_exhaust"
+    "fluid": "immersivetechnology:exhaust_steam"
   },
   "time": 1
 }

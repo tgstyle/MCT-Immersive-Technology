@@ -319,8 +319,8 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                     else if (state.ignited || canIgnite(state)) {
                         FluidStack fluid = state.tanks.input.getFluid();
                         GasTurbineRecipe recipe = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fluid);
-                        if (recipe != null && fluid.getAmount() >= recipe.inputAmount) {
-                            state.tanks.input.drain(recipe.inputAmount, FluidAction.EXECUTE);
+                        if (recipe != null && fluid.getAmount() >= recipe.input.getAmount()) {
+                            state.tanks.input.drain(recipe.input.getAmount(), FluidAction.EXECUTE);
                             if (recipe.fluidOutput != null) {
                                 int filled = state.tanks.output.fill(recipe.fluidOutput, FluidAction.EXECUTE);
                                 if (filled < recipe.fluidOutput.getAmount()) {
@@ -465,7 +465,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             this.energyStorageMV = new AveragingEnergyStorage(ENERGY_CAPACITY_MV);
             this.energyCapHV = new StoredCapability<>(energyStorageHV);
             this.energyCapMV = new StoredCapability<>(energyStorageMV);
-            this.recipeGetter = CachedRecipe.cached(GasTurbineRecipe::findFuel);
+            this.recipeGetter = CachedRecipe.cached(GasTurbineRecipe::findRecipe);
             MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POS.side(), OUTPUT_FLUID_POS.posInMultiblock());
             CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
             MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());

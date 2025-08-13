@@ -16,9 +16,7 @@ import javax.annotation.Nullable;
 
 public class AdvancedCokeOvenFuelSerializer extends IERecipeSerializer<AdvancedCokeOvenFuel> {
 
-    public ItemStack getIcon() {
-        return new ItemStack(IEItems.Ingredients.COAL_COKE);
-    }
+    public ItemStack getIcon() { return new ItemStack(IEItems.Ingredients.COAL_COKE); }
 
     public AdvancedCokeOvenFuel readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {
         Ingredient input = Ingredient.fromJson(json.getAsJsonObject("input"));
@@ -36,6 +34,6 @@ public class AdvancedCokeOvenFuelSerializer extends IERecipeSerializer<AdvancedC
     @Override
     public void toNetwork(@NotNull FriendlyByteBuf buffer, AdvancedCokeOvenFuel recipe) {
         recipe.input.toNetwork(buffer);
-        buffer.writeInt(recipe.burnTime);
+        buffer.writeInt(recipe.time);
     }
 }

@@ -11,13 +11,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.Objects;
 
 public class GasTurbineRecipeBuilder extends IEFinishedRecipe<GasTurbineRecipeBuilder> {
-    public GasTurbineRecipeBuilder() {
-        super(GasTurbineRecipe.SERIALIZER.get());
-    }
+    public GasTurbineRecipeBuilder() { super(GasTurbineRecipe.SERIALIZER.get()); }
 
-    public static GasTurbineRecipeBuilder builder() {
-        return new GasTurbineRecipeBuilder();
-    }
+    public static GasTurbineRecipeBuilder builder() { return new GasTurbineRecipeBuilder(); }
 
     public GasTurbineRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount) {
         return this.addWriter((jsonObject) -> {
@@ -37,9 +33,7 @@ public class GasTurbineRecipeBuilder extends IEFinishedRecipe<GasTurbineRecipeBu
         });
     }
 
-    public GasTurbineRecipeBuilder addOutput(Fluid fluid, int amount) {
-        return addOutput(new FluidStack(fluid, amount));
-    }
+    public GasTurbineRecipeBuilder addOutput(Fluid fluid, int amount) { return addOutput(new FluidStack(fluid, amount)); }
 
     public GasTurbineRecipeBuilder setTime(int time) { return this.addWriter((jsonObject) -> jsonObject.addProperty("time", time)); }
 }

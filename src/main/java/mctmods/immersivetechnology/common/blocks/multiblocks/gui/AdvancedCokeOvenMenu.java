@@ -35,7 +35,7 @@ public class AdvancedCokeOvenMenu extends ITContainerMenu {
         super(ctx);
         this.addSlot(new SlotItemHandler(inv, 0, 30, 35) {
             @Override
-            public boolean mayPlace(@Nonnull ItemStack itemStack) { return AdvancedCokeOvenRecipe.findRecipe(inventoryPlayer.player.level(), itemStack) != null; }
+            public boolean mayPlace(@Nonnull ItemStack itemStack) { return AdvancedCokeOvenRecipe.findRecipe(inventoryPlayer.player.level(), itemStack, null) != null; }
         });
         this.addSlot(new ITSlot.Output(inv, 1, 85, 35));
         this.addSlot(new ITSlot.FluidContainer(inv, 2, 152, 17, 0));

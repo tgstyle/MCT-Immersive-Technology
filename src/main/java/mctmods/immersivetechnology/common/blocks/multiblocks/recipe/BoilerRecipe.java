@@ -17,17 +17,17 @@ public class BoilerRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<BoilerRecipe>> SERIALIZER;
     public static final CachedRecipeList<BoilerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.BOILER);
 
+    public final FluidTagInput input;
     public final FluidStack output;
-    public final FluidTagInput water;
     Lazy<Integer> totalProcessTime;
 
-    public BoilerRecipe(ResourceLocation id, FluidStack output, FluidTagInput water, int time) {
+    public BoilerRecipe(ResourceLocation id, FluidTagInput input, FluidStack output, int time) {
         super(LAZY_EMPTY, ITRecipeTypes.BOILER, id);
+        this.input = input;
         this.output = output;
-        this.water = water;
         totalProcessTime = Lazy.of(() -> time);
 
-        this.fluidInputList = Lists.newArrayList(this.water);
+        this.fluidInputList = Lists.newArrayList(this.input);
         this.fluidOutputList = Lists.newArrayList(this.output);
     }
 
@@ -41,10 +41,8 @@ public class BoilerRecipe extends MultiblockRecipe {
         return ItemStack.EMPTY;
     }
 
-    public static BoilerRecipe findRecipe(Level level, FluidStack input0) {
-        for (BoilerRecipe recipe : RECIPES.getRecipes(level)) {
-            if (recipe.water.test(input0)) return recipe;
-        }
+    public static BoilerRecipe findRecipe(Level level, FluidStack input) {
+        for (BoilerRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.input.test(input)) return recipe; }
         return null;
     }
 

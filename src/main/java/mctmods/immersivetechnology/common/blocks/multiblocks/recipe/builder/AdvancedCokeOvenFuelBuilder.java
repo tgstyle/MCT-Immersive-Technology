@@ -9,7 +9,5 @@ public class AdvancedCokeOvenFuelBuilder extends IEFinishedRecipe<AdvancedCokeOv
 
     public static AdvancedCokeOvenFuelBuilder builder(Ingredient input) { return new AdvancedCokeOvenFuelBuilder().addIngredient("input", input); }
 
-    public AdvancedCokeOvenFuelBuilder setTime(int time) {
-        return this.addWriter(jsonObject -> jsonObject.addProperty("time", time));
-    }
+    public AdvancedCokeOvenFuelBuilder setTime(int time) { return this.addWriter(jsonObject -> jsonObject.addProperty("time", time)); }
 }

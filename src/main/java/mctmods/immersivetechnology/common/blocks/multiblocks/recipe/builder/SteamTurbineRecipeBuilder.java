@@ -11,13 +11,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.Objects;
 
 public class SteamTurbineRecipeBuilder extends IEFinishedRecipe<SteamTurbineRecipeBuilder> {
-    public SteamTurbineRecipeBuilder() {
-        super(SteamTurbineRecipe.SERIALIZER.get());
-    }
+    public SteamTurbineRecipeBuilder() { super(SteamTurbineRecipe.SERIALIZER.get()); }
 
-    public static SteamTurbineRecipeBuilder builder() {
-        return new SteamTurbineRecipeBuilder();
-    }
+    public static SteamTurbineRecipeBuilder builder() { return new SteamTurbineRecipeBuilder(); }
 
     public SteamTurbineRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount) {
         return this.addWriter((jsonObject) -> {
@@ -37,9 +33,7 @@ public class SteamTurbineRecipeBuilder extends IEFinishedRecipe<SteamTurbineReci
         });
     }
 
-    public SteamTurbineRecipeBuilder addOutput(Fluid fluid, int amount) {
-        return addOutput(new FluidStack(fluid, amount));
-    }
+    public SteamTurbineRecipeBuilder addOutput(Fluid fluid, int amount) { return addOutput(new FluidStack(fluid, amount)); }
 
     public SteamTurbineRecipeBuilder setTime(int time) { return this.addWriter((jsonObject) -> jsonObject.addProperty("time", time)); }
 }

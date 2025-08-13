@@ -12,36 +12,25 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Iterator;
-
 public class AdvancedCokeOvenFuel extends IESerializableRecipe {
     public static RegistryObject<IERecipeSerializer<AdvancedCokeOvenFuel>> SERIALIZER;
     public static final CachedRecipeList<AdvancedCokeOvenFuel> RECIPES = new CachedRecipeList<>(ITRecipeTypes.ADVANCED_COKE_OVEN_FUEL);
 
     public final Ingredient input;
-    public final int burnTime;
+    public final int time;
 
-    public AdvancedCokeOvenFuel(ResourceLocation id, Ingredient input, int burnTime) {
+    public AdvancedCokeOvenFuel(ResourceLocation id, Ingredient input, int time) {
         super(LAZY_EMPTY, ITRecipeTypes.ADVANCED_COKE_OVEN_FUEL, id);
         this.input = input;
-        this.burnTime = burnTime;
+        this.time = time;
     }
 
-    public static int getAdvancedCokeOvenFuelTime(Level level, ItemStack stack) {
-        Iterator<AdvancedCokeOvenFuel> var2 = RECIPES.getRecipes(level).iterator();
-        AdvancedCokeOvenFuel e;
-        do {
-            if (!var2.hasNext()) { return 0; }
-            e = var2.next();
-        } while (!e.input.test(stack));
-        return e.burnTime;
+    public static int getBurnTime(Level level, ItemStack stack) {
+        for (AdvancedCokeOvenFuel recipe : RECIPES.getRecipes(level)) { if (recipe.input.test(stack)) return recipe.time; }
+        return 0;
     }
 
-    protected IERecipeSerializer<AdvancedCokeOvenFuel> getIESerializer() {
-        return SERIALIZER.get();
-    }
+    protected IERecipeSerializer<AdvancedCokeOvenFuel> getIESerializer() { return SERIALIZER.get(); }
 
-    public @NotNull ItemStack getResultItem(@NotNull RegistryAccess access) {
-        return ItemStack.EMPTY;
-    }
+    public @NotNull ItemStack getResultItem(@NotNull RegistryAccess access) { return ItemStack.EMPTY; }
 }

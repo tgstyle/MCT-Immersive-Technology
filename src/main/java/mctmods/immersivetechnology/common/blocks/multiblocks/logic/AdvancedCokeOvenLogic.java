@@ -1,10 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.logic;
 
-import java.util.List;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -22,11 +17,9 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapabil
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
-import blusunrize.immersiveengineering.common.gui.sync.GetterAndSetter;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
-import mctmods.immersivetechnology.common.blocks.metal.CokeOvenHeaterBlockEntity;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITFurnaceHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler;
@@ -51,7 +44,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -68,6 +60,11 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenLogic.State>, IServerTickableComponent<AdvancedCokeOvenLogic.State>, IClientTickableComponent<AdvancedCokeOvenLogic.State> {
     public static final int SLOT_INPUT = 0;
     public static final int SLOT_OUTPUT = 1;
@@ -75,7 +72,6 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     public static final int SLOT_FILLED_CONTAINER = 3;
 
     public static final MultiblockFace ITEM_OUTPUT_REF_POS = new MultiblockFace(1, 0, 3, RelativeBlockFace.FRONT);
-    public static final BlockPos[] HEATER_OFFSETS = { new BlockPos(-1, 0, 1), new BlockPos(3, 0, 1) };
 
     public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
 
@@ -115,7 +111,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         final boolean wasActive = state.active;
         state.active = state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
         boolean update = wasActive != state.active;
-        AdvancedCokeOvenRecipe recipe = AdvancedCokeOvenRecipe.findRecipe(ctx.getLevel().getRawLevel(), state.inventory.getStackInSlot(SLOT_INPUT));
+        AdvancedCokeOvenRecipe recipe = AdvancedCokeOvenRecipe.findRecipe(ctx.getLevel().getRawLevel(), state.inventory.getStackInSlot(SLOT_INPUT), null);
         if (wasActive != state.active || recipe != null) { ctx.requestMasterBESync(); }
         tryEnqueueProcess(state, ctx.getLevel().getRawLevel(), recipe);
         if (state.tanks.output.getFluidAmount() > 0 && FluidUtils.fillFluidContainer(state.tanks.output, SLOT_EMPTY_CONTAINER, SLOT_FILLED_CONTAINER, state.inventory)) { update = true; }
@@ -155,7 +151,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         ItemStack inputStack = state.inventory.getStackInSlot(SLOT_INPUT);
         if (inputStack.getCount() < recipe.input.getCount()) { return; }
         ItemStack currentOutputStack = state.inventory.getStackInSlot(SLOT_OUTPUT);
-        boolean canOutputItem = currentOutputStack.isEmpty() || (ItemHandlerHelper.canItemStacksStack(currentOutputStack, recipe.output.get()) && currentOutputStack.getCount() + recipe.output.get().getCount() <= currentOutputStack.getMaxStackSize());
+        boolean canOutputItem = currentOutputStack.isEmpty() || (ItemHandlerHelper.canItemStacksStack(currentOutputStack, recipe.itemOutput.get()) && currentOutputStack.getCount() + recipe.itemOutput.get().getCount() <= currentOutputStack.getMaxStackSize());
         if (!canOutputItem) { return; }
         if (state.tanks.output.getFluidAmount() + recipe.creosoteOutput > state.tanks.output.getCapacity()) { return; }
         AdvancedCokeOvenProcess process = new AdvancedCokeOvenProcess(recipe);
@@ -214,7 +210,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
             this.tankArray = new IFluidTank[]{tanks.output};
             this.inventory = new ITSlotwiseItemHandler(
                     List.of(
-                            ITSlotwiseItemHandler.IOConstraint.input(i -> AdvancedCokeOvenRecipe.findRecipe(ctx.levelSupplier().get(), i) != null),
+                            ITSlotwiseItemHandler.IOConstraint.input(i -> AdvancedCokeOvenRecipe.findRecipe(ctx.levelSupplier().get(), i, null) != null),
                             ITSlotwiseItemHandler.IOConstraint.OUTPUT,
                             ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
                             ITSlotwiseItemHandler.IOConstraint.OUTPUT
@@ -307,42 +303,16 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
         @Nullable
         @Override
-        public AdvancedCokeOvenRecipe getRecipeForInput(Level level) { return AdvancedCokeOvenRecipe.findRecipe(level, inventory.getStackInSlot(SLOT_INPUT)); }
+        public AdvancedCokeOvenRecipe getRecipeForInput(Level level) { return AdvancedCokeOvenRecipe.findRecipe(level, inventory.getStackInSlot(SLOT_INPUT), null); }
 
         @Override
-        public int getBurnTimeOf(Level level, ItemStack fuel) { return AdvancedCokeOvenFuel.getAdvancedCokeOvenFuelTime(level, fuel); }
+        public int getBurnTimeOf(Level level, ItemStack fuel) { return AdvancedCokeOvenFuel.getBurnTime(level, fuel); }
 
         @Override
-        public double getProcessSpeed(IMultiblockLevel level) {
-            int numActive = 0;
-            for (BlockPos offset : HEATER_OFFSETS) {
-                CokeOvenHeaterBlockEntity heater = getHeater(level, offset);
-                if (heater != null) numActive += heater.doSpeedup();
-            }
-            return 1.0 + numActive * 0.25;
-        }
+        public double getProcessSpeed(IMultiblockLevel level) { return 1.0; }
 
         @Override
-        public void turnOff(IMultiblockLevel level) {
-            for (BlockPos offset : HEATER_OFFSETS) {
-                CokeOvenHeaterBlockEntity heater = getHeater(level, offset);
-                if (heater != null) { heater.turnOff(); }
-            }
-        }
-
-        @Nullable
-        public CokeOvenHeaterBlockEntity getHeater(IMultiblockLevel level, BlockPos pos) {
-            BlockEntity te = level.getBlockEntity(pos);
-            return te instanceof CokeOvenHeaterBlockEntity heater ? heater : null;
-        }
-
-        @SuppressWarnings("unused")
-        public GetterAndSetter<Boolean> preheaterActive(IMultiblockLevel level, int index) {
-            return GetterAndSetter.getterOnly(() -> {
-                CokeOvenHeaterBlockEntity heater = getHeater(level, HEATER_OFFSETS[index]);
-                return heater != null && heater.active;
-            });
-        }
+        public void turnOff(IMultiblockLevel level) { }
     }
 
     public record AdvancedCokeOvenTank(ITMarkableFluidTank output) {

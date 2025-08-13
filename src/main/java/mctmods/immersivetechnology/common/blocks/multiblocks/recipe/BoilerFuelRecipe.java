@@ -17,24 +17,24 @@ import org.jetbrains.annotations.NotNull;
 
 public class BoilerFuelRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<BoilerFuelRecipe>> SERIALIZER;
-    public static final CachedRecipeList<BoilerFuelRecipe> FUEL_RECIPES = new CachedRecipeList<>(ITRecipeTypes.BOILER_FUEL);
+    public static final CachedRecipeList<BoilerFuelRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.BOILER_FUEL);
 
-    public FluidTagInput fuel;
+    public final FluidTagInput input;
     private final int time;
     private final double heatPerTick;
     Lazy<Integer> totalProcessTime;
 
-    public BoilerFuelRecipe(ResourceLocation id, FluidTagInput fuel, int time, double heatPerTick) {
+    public BoilerFuelRecipe(ResourceLocation id, FluidTagInput input, int time, double heatPerTick) {
         super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.BOILER_FUEL, id);
-        this.fuel = fuel;
+        this.input = input;
         this.time = time;
         this.heatPerTick = heatPerTick;
         totalProcessTime = Lazy.of(() -> this.time);
-        this.fluidInputList = Lists.newArrayList(this.fuel);
+        this.fluidInputList = Lists.newArrayList(this.input);
     }
 
-    public static BoilerFuelRecipe findFuel(Level level, FluidStack fuel) {
-        for (BoilerFuelRecipe recipe : FUEL_RECIPES.getRecipes(level)) { if (recipe.fuel.test(fuel)) return recipe; }
+    public static BoilerFuelRecipe findRecipe(Level level, FluidStack input) {
+        for (BoilerFuelRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.input.test(input)) return recipe; }
         return null;
     }
 

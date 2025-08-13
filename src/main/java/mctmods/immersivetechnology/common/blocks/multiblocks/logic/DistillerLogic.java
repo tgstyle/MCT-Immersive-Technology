@@ -167,7 +167,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         if (state.processor.getQueueSize() >= state.processor.getMaxQueueSize()) return;
         if (recipe == null) return;
         FluidStack inputFluid = state.tanks.input.getFluid();
-        if (inputFluid.getAmount() < recipe.water.getAmount()) return;
+        if (inputFluid.getAmount() < recipe.input.getAmount()) return;
         FluidStack outputFluid = recipe.fluidOutput;
         if (outputFluid != null && !outputFluid.isEmpty() && state.tanks.output.getFluidAmount() + outputFluid.getAmount() > state.tanks.output.getCapacity()) return;
         ItemStack itemOutput = recipe.itemOutput;

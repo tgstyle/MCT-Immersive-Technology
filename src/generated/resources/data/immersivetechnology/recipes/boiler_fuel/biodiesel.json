@@ -1,9 +1,9 @@
 {
   "type": "immersivetechnology:boiler_fuel",
-  "fuel": {
+  "heatPerTick": 0.1,
+  "input": {
     "amount": 10,
     "tag": "forge:biodiesel"
   },
-  "heatPerTick": 0.1,
   "time": 10
 }

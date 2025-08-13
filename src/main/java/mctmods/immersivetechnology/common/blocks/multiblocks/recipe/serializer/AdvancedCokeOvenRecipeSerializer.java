@@ -17,33 +17,31 @@ import javax.annotation.Nullable;
 
 public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<AdvancedCokeOvenRecipe> {
     @Override
-    public ItemStack getIcon() {
-        return ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack();
-    }
+    public ItemStack getIcon() { return ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack(); }
 
     @Override
     public AdvancedCokeOvenRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {
-        Lazy<ItemStack> output = readOutput(json.get("result"));
         IngredientWithSize input = IngredientWithSize.deserialize(json.get("input"));
+        Lazy<ItemStack> itemOutput = readOutput(json.get("result"));
         int time = GsonHelper.getAsInt(json, "time");
-        int oil = GsonHelper.getAsInt(json, "creosote");
-        return new AdvancedCokeOvenRecipe(recipeId, output, input, time, oil);
+        int creosoteOutput = GsonHelper.getAsInt(json, "creosote");
+        return new AdvancedCokeOvenRecipe(recipeId, input, itemOutput, time, creosoteOutput);
     }
 
     @Nullable
     @Override
     public AdvancedCokeOvenRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
-        Lazy<ItemStack> output = readLazyStack(buffer);
         IngredientWithSize input = IngredientWithSize.read(buffer);
+        Lazy<ItemStack> itemOutput = readLazyStack(buffer);
         int time = buffer.readInt();
-        int oil = buffer.readInt();
-        return new AdvancedCokeOvenRecipe(recipeId, output, input, time, oil);
+        int creosoteOutput = buffer.readInt();
+        return new AdvancedCokeOvenRecipe(recipeId, input, itemOutput, time, creosoteOutput);
     }
 
     @Override
     public void toNetwork(@NotNull FriendlyByteBuf buffer, AdvancedCokeOvenRecipe recipe) {
-        writeLazyStack(buffer, recipe.output);
         recipe.input.write(buffer);
+        writeLazyStack(buffer, recipe.itemOutput);
         buffer.writeInt(recipe.time);
         buffer.writeInt(recipe.creosoteOutput);
     }

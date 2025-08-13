@@ -14,9 +14,9 @@ public class BoilerFuelRecipeBuilder extends IEFinishedRecipe<BoilerFuelRecipeBu
 
     public static BoilerFuelRecipeBuilder builder() { return new BoilerFuelRecipeBuilder(); }
 
+    public BoilerFuelRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount) { return addFluidTag("input", fluidTag, amount); }
+
     public BoilerFuelRecipeBuilder setTime(int time) { return this.addWriter((jsonObject) -> jsonObject.addProperty("time", time)); }
 
     public BoilerFuelRecipeBuilder setHeatPerTick(double heatPerTick) { return this.addWriter((jsonObject) -> jsonObject.addProperty("heatPerTick", heatPerTick)); }
-
-    public BoilerFuelRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount) { return addFluidTag("fuel", fluidTag, amount); }
 }
