@@ -25,21 +25,13 @@ cpu single-threaded (recommended res 8-16) -
 cpu multi-threaded (recommended res 16-32) -
 	python voxelize_obj_par.py path\file.obj(s)
 
-gpu (recommended res 32+) (currently windows only, directml "should work" on any GPU) -
+gpu (recommended res 32+) (currently windows only, tries CUDA, and fails back to directml, this "should work" on any GPU) -
 	python voxelize_obj_gpu.py path\file.obj(s)
 
 parser = argparse.ArgumentParser(description='Voxelize OBJ for AABB collision with multi-threading')
     parser.add_argument('filename', type=str, help='OBJ filename or directory')
-    parser.add_argument('--res', type=int, default=8, help='Voxel resolution')
-    parser.add_argument('--size_x', type=int, default=None, help='X size (auto if None)')
-    parser.add_argument('--size_y', type=int, default=None, help='Y size (auto if None)')
-    parser.add_argument('--size_z', type=int, default=None, help='Z size (auto if None)')
-    parser.add_argument('--offset_x', type=float, default=None, help='X offset (auto if None)')
-    parser.add_argument('--offset_y', type=float, default=None, help='Y offset (auto if None)')
-    parser.add_argument('--offset_z', type=float, default=None, help='Z offset (auto if None)')
-    parser.add_argument('--fill_interior', type=bool, default=True, help='Fill interior spaces (default: True)')
-    parser.add_argument('--min_vox', type=int, default=1, help='Minimum voxel count per AABB and component (default: 1)')
-
+    parser.add_argument('--res', type=int, default=16, help='Voxel resolution')
+    parser.add_argument('--min-voxel', type=int, default=1, help='Min voxels for AABB and component')
 
 Adapted for MC multiblocks from https://github.com/leanderthiele/voxelize/blob/master/voxelize/voxelize.py
 
