@@ -82,9 +82,8 @@ public class ITRecipes extends RecipeProvider {
     private void recipesSolarMelter(@Nonnull Consumer<FinishedRecipe> out) { }
 
     private void recipesSolarTower(@Nonnull Consumer<FinishedRecipe> out) {
-        SolarTowerRecipeBuilder.builder().addInput(FluidTags.WATER, 250).addOutput(ITFluids.STEAM.getStill(), 450).setTime(20).build(out, toResourceLocation("solartower/water"));
-        SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidDistilledWater, 250).addOutput(ITFluids.STEAM.getStill(), 500).setTime(20).build(out, toResourceLocation("solartower/distilled_water"));
-        SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidMoltenSodium, 80).addOutput(ITFluids.SUPERHEATED_MOLTEN_SODIUM.getStill(), 80).setTime(20).build(out, toResourceLocation("solartower/molten_sodium"));
+        SolarTowerRecipeBuilder.builder().addInput(FluidTags.WATER, 250).addOutput(ITFluids.STEAM.getStill(), 450).setTime(20).setRequiredTemp(100.0).build(out, toResourceLocation("solartower/water"));
+        SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidDistilledWater, 250).addOutput(ITFluids.STEAM.getStill(), 500).setTime(20).setRequiredTemp(100.0).build(out, toResourceLocation("solartower/distilled_water"));
     }
 
     private ResourceLocation toResourceLocation(String resourceLocation) {

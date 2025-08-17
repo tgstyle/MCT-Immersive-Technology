@@ -58,6 +58,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -70,35 +71,40 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     public static final int SLOT_OUTPUT = 1;
     public static final int SLOT_EMPTY_CONTAINER = 2;
     public static final int SLOT_FILLED_CONTAINER = 3;
-
-    public static final MultiblockFace ITEM_OUTPUT_REF_POS = new MultiblockFace(1, 0, 3, RelativeBlockFace.FRONT);
-
+    public static final MultiblockFace ITEM_OUTPUT_REF_POI = new MultiblockFace(1, 0, 3, RelativeBlockFace.FRONT);
     public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
-
-    public static final CapabilityPosition OUTPUT_FLUID_POS = new CapabilityPosition(1, 0, 0, RelativeBlockFace.FRONT);
-    public static final CapabilityPosition ITEM_OUTPUT_POS = new CapabilityPosition(1, 0, 2, RelativeBlockFace.BACK);
-
-    private static final Vec3 SMOKE_POS = new Vec3(1.5, 3.9, 1.5);
+    public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(1, 0, 0, RelativeBlockFace.FRONT);
+    public static final CapabilityPosition ITEM_OUTPUT_POI = new CapabilityPosition(1, 0, 2, RelativeBlockFace.BACK);
+    private static final Vec3 SMOKE_POI = new Vec3(1.5, 3.9, 1.5);
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         final IMultiblockLevel level = ctx.getLevel();
         if (state.active) {
-            final Vec3 particlePos = level.toAbsolute(SMOKE_POS);
+            final Vec3 particlePos = level.toAbsolute(SMOKE_POI);
             level.getRawLevel().addAlwaysVisibleParticle(
                     ParticleTypes.CAMPFIRE_COSY_SMOKE,
-                    particlePos.x, particlePos.y, particlePos.z,
-                    ApiUtils.RANDOM.nextDouble(-0.00625, 0.00625), 0.05, ApiUtils.RANDOM.nextDouble(-0.00625, 0.00625)
+                    particlePos.x,
+                    particlePos.y,
+                    particlePos.z,
+                    ApiUtils.RANDOM.nextDouble(-0.00625, 0.00625),
+                    0.05,
+                    ApiUtils.RANDOM.nextDouble(-0.00625, 0.00625)
             );
         }
         if (!state.isSoundPlaying.getAsBoolean()) {
             final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(1, 1, 1));
             state.isSoundPlaying = ITMultiblockSound.startSound(
-                    () -> state.active, ctx.isValid(), soundPos, ITSounds.advancedCokeOven, () -> {
+                    () -> state.active,
+                    ctx.isValid(),
+                    soundPos,
+                    ITSounds.advancedCokeOven,
+                    () -> {
                         LocalPlayer player = Minecraft.getInstance().player;
                         if (player == null) { return 0f; }
-                        return (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
+                        float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
+                        return 1f / attenuation;
                     },
                     () -> 1f
             );
@@ -142,7 +148,10 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
             if (filledContainer.getCount() < origCount) { update = true; }
             inventory.setStackInSlot(SLOT_FILLED_CONTAINER, filledContainer);
         }
-        if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
+        if (update) {
+            ctx.markMasterDirty();
+            ctx.requestMasterBESync();
+        }
     }
 
     private void tryEnqueueProcess(State state, Level level, @Nullable AdvancedCokeOvenRecipe recipe) {
@@ -162,10 +171,11 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         final State state = ctx.getState();
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            if (ITEM_OUTPUT_POS.equals(position)) { return state.itemOutputCap.cast(ctx); }
+            if (ITEM_OUTPUT_POI.equals(position)) { return state.itemOutputCap.cast(ctx); }
             return state.invCap.cast(ctx);
-        } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (position.posInMultiblock().equals(OUTPUT_FLUID_POS.posInMultiblock()) && (position.side() == null || position.side() == OUTPUT_FLUID_POS.side())) { return state.fluidCap.cast(ctx); }
+        }
+        else if (cap == ForgeCapabilities.FLUID_HANDLER) {
+            if (position.posInMultiblock().equals(OUTPUT_FLUID_POI.posInMultiblock()) && (position.side() == null || position.side() == OUTPUT_FLUID_POI.side())) { return state.fluidCap.cast(ctx); }
         }
         return LazyOptional.empty();
     }
@@ -180,15 +190,12 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AdvancedCokeOvenShape.GETTER; }
 
     @Override
-    public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
-        return InteractionResult.SUCCESS;
-    }
+    public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) { return InteractionResult.SUCCESS; }
 
     public static class State implements IMultiblockState, ContainerData, ITFurnaceHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>, ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe> {
         public static final int MAX_BURN_TIME = 0;
         public static final int BURN_TIME = 1;
         public static final int NUM_SLOTS = 2;
-
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public boolean active;
         public final AdvancedCokeOvenTank tanks;
@@ -205,7 +212,10 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
-            final Runnable onChanged = () -> { markDirty.run(); ctx.getSyncRunnable().run(); };
+            final Runnable onChanged = () -> {
+                markDirty.run();
+                ctx.getSyncRunnable().run();
+            };
             this.tanks = new AdvancedCokeOvenTank(v -> onChanged.run());
             this.tankArray = new IFluidTank[]{tanks.output};
             this.inventory = new ITSlotwiseItemHandler(
@@ -229,11 +239,11 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
                             new ITWrappingItemHandler.IntRange(SLOT_FILLED_CONTAINER, SLOT_FILLED_CONTAINER + 1)
                     )
             ));
-            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POS.side(), OUTPUT_FLUID_POS.posInMultiblock());
+            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POI.side(), OUTPUT_FLUID_POI.posInMultiblock());
             CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
             MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
             this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
-            this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, ITEM_OUTPUT_REF_POS);
+            this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, ITEM_OUTPUT_REF_POI);
         }
 
         public ITSlotwiseItemHandler getInventory() { return inventory; }
@@ -316,7 +326,9 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     }
 
     public record AdvancedCokeOvenTank(ITMarkableFluidTank output) {
-        public AdvancedCokeOvenTank(Consumer<Void> markDirty) { this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty)); }
+        public AdvancedCokeOvenTank(Consumer<Void> markDirty) {
+            this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty));
+        }
 
         public static AdvancedCokeOvenTank makeClient() { return new AdvancedCokeOvenTank(v -> {}); }
 

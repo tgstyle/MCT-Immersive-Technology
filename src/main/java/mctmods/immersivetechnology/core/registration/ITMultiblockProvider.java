@@ -10,7 +10,7 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.*;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.*;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.BoilerProcess;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.helper.ITMultiblockBuilder;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblockBuilder;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblockPartBlockWithMirror;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITNonMirrorableWithActiveBlock;
 import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
@@ -63,19 +63,19 @@ public class ITMultiblockProvider {
             metal(new BoilerLogic(), "boiler")
                     .structure(() -> getMBTemplate.apply("boiler"))
                     .gui(ITMenuTypes.BOILER_MENU)
-                    .redstone(s -> s.rsState, BoilerLogic.REDSTONE_POS)
+                    .redstone(s -> s.rsState, BoilerLogic.REDSTONE_POI)
                     .component(new BoilerProcess())
                     .build();
     public static final MultiblockRegistration<DistillerLogic.State> DISTILLER =
             metal(new DistillerLogic(), "distiller")
                     .structure(() -> getMBTemplate.apply("distiller"))
-                    .redstone(s -> s.rsState, DistillerLogic.REDSTONE_POS)
+                    .redstone(s -> s.rsState, DistillerLogic.REDSTONE_POI)
                     .gui(ITMenuTypes.DISTILLER_MENU)
                     .build();
     public static final MultiblockRegistration<GasTurbineLogic.State> GAS_TURBINE =
             metal(new GasTurbineLogic(), "gas_turbine")
                     .structure(() -> getMBTemplate.apply("gas_turbine"))
-                    .redstone(s -> s.rsState, GasTurbineLogic.REDSTONE_POS)
+                    .redstone(s -> s.rsState, GasTurbineLogic.REDSTONE_POI)
                     .build();
     public static final MultiblockRegistration<SolarReflectorLogic.State> SOLAR_REFLECTOR =
             metal(new SolarReflectorLogic(), "solar_reflector")
@@ -88,13 +88,13 @@ public class ITMultiblockProvider {
     public static final MultiblockRegistration<SolarTowerLogic.State> SOLAR_TOWER =
             metal(new SolarTowerLogic(), "solar_tower")
                     .structure(() -> getMBTemplate.apply("solar_tower"))
-                    .redstone(s -> s.rsState, SolarTowerLogic.REDSTONE_POS)
+                    .redstone(s -> s.rsState, SolarTowerLogic.REDSTONE_POI)
                     .gui(ITMenuTypes.SOLAR_TOWER_MENU)
                     .build();
     public static final MultiblockRegistration<SteamTurbineLogic.State> STEAM_TURBINE =
             metal(new SteamTurbineLogic(), "steam_turbine")
                     .structure(() -> getMBTemplate.apply("steam_turbine"))
-                    .redstone(s -> s.rsState, SteamTurbineLogic.REDSTONE_POS)
+                    .redstone(s -> s.rsState, SteamTurbineLogic.REDSTONE_POI)
                     .build();
 
     public static void init() {

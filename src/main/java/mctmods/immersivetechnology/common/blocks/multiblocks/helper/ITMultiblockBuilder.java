@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.blocks.multiblocks.logic.helper;
+package mctmods.immersivetechnology.common.blocks.multiblocks.helper;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistrationBuilder;
@@ -10,8 +10,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockPartBlock;
 import com.google.common.base.Preconditions;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITMultiblockGui;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblockBlockEntityDummy;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblockBlockEntityMaster;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.core.BlockPos;

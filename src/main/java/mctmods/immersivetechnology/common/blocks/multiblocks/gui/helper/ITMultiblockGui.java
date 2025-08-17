@@ -13,7 +13,8 @@ import net.minecraft.world.phys.BlockHitResult;
 public record ITMultiblockGui<S extends IMultiblockState>(ITMenuTypes.MultiblockContainer<S, ?> menu) implements IMultiblockComponent<S> {
 
     public InteractionResult click(IMultiblockContext<S> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
-        if (!isClient) { player.openMenu(this.menu.provide(ctx, posInMultiblock)); }
+        if (isClient || ctx == null) return InteractionResult.PASS;
+        player.openMenu(this.menu.provide(ctx, posInMultiblock));
         return InteractionResult.SUCCESS;
     }
 }

@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public class SolarTowerMenu extends ITContainerMenu {
     public final SimpleContainerData state;
     public final FluidTank inputTank;
-    public final FluidTank outputTank;
+    public FluidTank outputTank;
     private final Supplier<SolarTowerLogic.State> mbStateSupplier;
 
     public static SolarTowerMenu makeServer(MenuType<?> type, int id, Inventory invPlayer, MultiblockMenuContext<SolarTowerLogic.State> ctx) {
@@ -40,7 +40,7 @@ public class SolarTowerMenu extends ITContainerMenu {
         this.inputTank = input;
         this.outputTank = output;
         this.mbStateSupplier = mbStateSupplier;
-        this.state = new SimpleContainerData(2);
+        this.state = new SimpleContainerData(7);
         this.addSlot(new ITSlot.FluidContainer(inv, 0, 80, 17, 1) {
             @Override
             public boolean mayPlace(@Nonnull ItemStack itemStack) {
@@ -71,6 +71,11 @@ public class SolarTowerMenu extends ITContainerMenu {
             SolarTowerLogic.State s = mbStateSupplier.get();
             state.set(0, (int) s.heatLevel);
             if (!this.usingPlayers.isEmpty()) { state.set(1, SolarTowerLogic.getSolarIncidenceAngleSection(this.usingPlayers.get(0).level())); }
+            state.set(2, s.dirCounts[0]);
+            state.set(3, s.dirCounts[1]);
+            state.set(4, s.dirCounts[2]);
+            state.set(5, s.dirCounts[3]);
+            state.set(6, s.processProgress);
         }
         super.broadcastChanges();
     }

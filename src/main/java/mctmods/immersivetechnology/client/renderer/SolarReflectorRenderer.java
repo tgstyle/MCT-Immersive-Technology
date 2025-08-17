@@ -22,7 +22,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
-
+import org.joml.Vector3f;
 import java.util.List;
 
 public class SolarReflectorRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarReflectorLogic.State>> {
@@ -35,28 +35,34 @@ public class SolarReflectorRenderer extends ITBaseBlockEntityRenderer<Multiblock
         BlockPos pos = tile.getBlockPos();
         Level level = tile.getLevel();
         Direction dir = orientation.front();
-        Vec3 axisVec = new Vec3(dir.getStepZ(), 0, dir.getStepX());
-        double supportAngle = state.animation_supportRotation + state.animation_supportRotationStep * partialTicks;
-        double mirrorAngle = state.animation_mirrorTilt + state.animation_mirrorTiltStep * partialTicks;
+        double supportAngle = state.animation_supportRotation;
+        double mirrorAngle = state.animation_mirrorTilt;
         ITDynamicModel supportModel = SolarReflectorModels.SUPPORT;
         ITDynamicModel mirrorModel = SolarReflectorModels.MIRROR;
-        Vec3 supportStart = Vec3.atLowerCornerOf(context.getLevel().toAbsolute(new BlockPos(1, 1, 1)).subtract(pos));
-        Vec3 mirrorStart = Vec3.atLowerCornerOf(context.getLevel().toAbsolute(new BlockPos(1, 2, 1)).subtract(pos));
+        Vec3 start = Vec3.atLowerCornerOf(context.getLevel().toAbsolute(new BlockPos(1, 0, 1)).subtract(pos));
+        boolean isEW = dir.getStepX() != 0;
+        Quaternionf orientRot = isEW ? new Quaternionf().rotateY((float) Math.toRadians(90)) : new Quaternionf();
+        Quaternionf rotY = new Quaternionf().rotateY((float)(supportAngle * Mth.DEG_TO_RAD));
+        Vector3f axis = new Vector3f(dir.getStepZ(), 0, dir.getStepX());
+        orientRot.transform(axis);
         // Render support
         poseStack.pushPose();
-        poseStack.translate(supportStart.x + 0.5, supportStart.y - 0.25, supportStart.z + 0.5);
-        poseStack.mulPose(new Quaternionf().rotateY((float)(supportAngle * Mth.DEG_TO_RAD)));
+        poseStack.translate(start.x + 0.5, start.y, start.z + 0.5);
+        poseStack.mulPose(orientRot);
+        poseStack.mulPose(rotY);
         renderDynamicModel(supportModel, poseStack, buffer, level, pos, packedLight);
         poseStack.popPose();
         // Render mirror
         poseStack.pushPose();
-        poseStack.translate(mirrorStart.x + 0.5, mirrorStart.y - 0.25, mirrorStart.z + 0.5);
-        poseStack.mulPose(new Quaternionf().rotateY((float)(supportAngle * Mth.DEG_TO_RAD)));
-        poseStack.mulPose(new Quaternionf().rotateAxis((float)(mirrorAngle * Mth.DEG_TO_RAD), axisVec.toVector3f()));
+        poseStack.translate(start.x + 0.5, start.y, start.z + 0.5);
+        poseStack.mulPose(orientRot);
+        poseStack.mulPose(rotY);
+        poseStack.translate(0, 2, 0);
+        poseStack.mulPose(new Quaternionf().rotateAxis((float)(-mirrorAngle * Mth.DEG_TO_RAD), axis));
+        poseStack.translate(0, -2, 0);
         renderDynamicModel(mirrorModel, poseStack, buffer, level, pos, packedLight);
         poseStack.popPose();
     }
-
     private void renderDynamicModel(ITDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
         matrix.pushPose();
         List<BakedQuad> quads = model.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);

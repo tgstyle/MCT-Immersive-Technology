@@ -27,20 +27,21 @@ public class ITDataProvider {
         ExistingFileHelper helper = event.getExistingFileHelper();
         PackOutput out = generator.getPackOutput();
         final var lookup = event.getLookupProvider();
-        log.info("-===== Starting Data Generation for Immersive Technoloogy =====-");
+        log.info("-===== Starting Data Generation for Immersive Technology =====-");
         if (event.includeServer()) {
             ITBlockStateProvider blockStateProvider = new ITBlockStateProvider(generator, helper);
-            generator.addProvider(true, blockStateProvider);
-            generator.addProvider(true, new ITItemModelProvider(generator, helper));
-            generator.addProvider(true, new ITComplexItemModelProvider(out, helper));
             BlockTagsProvider blockTags = new ITBlockTags(out, lookup, helper);
+            generator.addProvider(event.includeClient(), new ITSoundProvider(out, helper));
+            generator.addProvider(true, blockStateProvider);
             generator.addProvider(true, blockTags);
-            generator.addProvider(true, new ITFluidTags(out, lookup, helper));
-            generator.addProvider(true, new ITItemTags(out, lookup, blockTags.contentsGetter(), helper));
+            generator.addProvider(true, new ITComplexItemModelProvider(out, helper));
             generator.addProvider(true, new ITDynamicModelProvider(blockStateProvider, out, helper));
+            generator.addProvider(true, new ITFluidTags(out, lookup, helper));
+            generator.addProvider(true, new ITItemModelProvider(generator, helper));
+            generator.addProvider(true, new ITItemTags(out, lookup, blockTags.contentsGetter(), helper));
+            generator.addProvider(true, new ITParticleProvider(out));
             generator.addProvider(true, new ITRecipes(out));
             generator.addProvider(true, new LootTableProvider(out, Collections.emptySet(), List.of(new LootTableProvider.SubProviderEntry(ITBlockLootProvider::new, LootContextParamSets.BLOCK))));
-            generator.addProvider(true, new ITParticleProvider(out));
         }
     }
 }

@@ -14,8 +14,6 @@ import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -41,11 +39,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.annotation.Nonnull;
 
@@ -62,7 +58,6 @@ public class ITFluid extends FlowingFluid {
         object2bytelinkedopenhashmap.defaultReturnValue((byte)127);
         return object2bytelinkedopenhashmap;
     });
-    private final Map<FluidState, VoxelShape> shapes = Maps.newIdentityHashMap();
 
     public static ITFluid makeFluid(Function<ITFluids.FluidEntry, ? extends ITFluid> make, ITFluids.FluidEntry entry) {
         entryStatic = entry;
@@ -419,8 +414,6 @@ public class ITFluid extends FlowingFluid {
         return (short) ((i + 128 & 255) << 8 | j + 128 & 255);
     }
 
-    public static Consumer<FluidType.Properties> createBuilder(int density, int viscosity) { return builder -> builder.viscosity(viscosity).density(density); }
-
     public static class Flowing extends ITFluid {
         public Flowing(ITFluids.FluidEntry entry) { super(entry); }
 
@@ -429,19 +422,6 @@ public class ITFluid extends FlowingFluid {
             super.createFluidStateDefinition(builder);
             builder.add(LEVEL);
         }
-    }
-
-    public static class EntityFluidSerializer implements EntityDataSerializer<FluidStack> {
-        @Override
-        public void write(FriendlyByteBuf buf, @Nonnull FluidStack value) { buf.writeFluidStack(value); }
-
-        @Nonnull
-        @Override
-        public FluidStack read(FriendlyByteBuf buf) { return buf.readFluidStack(); }
-
-        @Nonnull
-        @Override
-        public FluidStack copy(FluidStack value) { return value.copy(); }
     }
 
     public static final DispenseItemBehavior BUCKET_DISPENSE_BEHAVIOR = new DefaultDispenseItemBehavior() {

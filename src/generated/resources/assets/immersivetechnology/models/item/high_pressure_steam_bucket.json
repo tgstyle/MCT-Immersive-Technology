@@ -1,6 +1,0 @@
-{
-  "parent": "forge:item/bucket",
-  "flip_gas": true,
-  "fluid": "immersivetechnology:high_pressure_steam",
-  "loader": "forge:fluid_container"
-}

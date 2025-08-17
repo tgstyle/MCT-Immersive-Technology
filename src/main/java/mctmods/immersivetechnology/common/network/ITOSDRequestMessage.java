@@ -11,7 +11,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ITOSDRequestMessage implements ITINetMessage {
+public class ITOSDRequestMessage implements ITMessage {
     private final BlockPos pos;
 
     public ITOSDRequestMessage(BlockPos pos) { this.pos = pos; }

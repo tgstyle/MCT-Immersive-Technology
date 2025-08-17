@@ -6,13 +6,16 @@ import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.client.gui.helper.ITInfoArea;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.SolarTowerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarTowerLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -35,23 +38,69 @@ public class SolarTowerScreen extends ITContainerScreen<SolarTowerMenu> {
 
     @Override
     protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float f, int mx, int my) {
-        int heatLevel = menu.state.get(0);
-        int heatBarSize = (int) Math.round(42 * (heatLevel / WORKING_HEAT_LEVEL));
+        double heatLevel = menu.state.get(0);
+        double max = getMaxHeat();
+        int heatBarSize = (int) Math.round(42 * Math.min(1, heatLevel / max));
         graphics.blit(TEXTURE, leftPos + 16, topPos + 9, 176, 0, heatBarSize, 9);
-        int section = menu.state.get(1);
-        if (section > 0) { graphics.blit(TEXTURE, leftPos + 32, topPos + 24, 198, 31, 10, 10); }
-        if (section > 1) { graphics.blit(TEXTURE, leftPos + 16, topPos + 40, 198, 31, 10, 10); }
-        if (section > 3) { graphics.blit(TEXTURE, leftPos + 32, topPos + 56, 198, 31, 10, 10); }
-        if (section > 2) { graphics.blit(TEXTURE, leftPos + 48, topPos + 40, 198, 31, 10, 10); }
+        int[] counts = {menu.state.get(2), menu.state.get(3), menu.state.get(4), menu.state.get(5)};
+        assert minecraft != null;
+        assert minecraft.player != null;
+        Direction front = Direction.fromYRot(minecraft.player.getYRot());
+        Direction right = front.getClockWise();
+        Direction back = front.getOpposite();
+        Direction left = front.getCounterClockWise();
+        int bit_front = getBitForDir(front);
+        int bit_right = getBitForDir(right);
+        int bit_back = getBitForDir(back);
+        int bit_left = getBitForDir(left);
+        int[][] blitCoordinates = {{32, 24}, {48, 40}, {32, 56}, {16, 40}};
+        String[] labels = {"N", "E", "S", "W"};
+        for (int pos = 0; pos < 4; pos++) {
+            int bit = switch (pos) {
+                case 0 -> bit_front;
+                case 1 -> bit_right;
+                case 2 -> bit_back;
+                case 3 -> bit_left;
+                default -> -1;
+            };
+            if (bit >= 0 && counts[bit] > 0) {
+                float brightness = Math.min(5, counts[bit]) / 5f;
+                graphics.setColor(brightness, brightness, brightness, 1f);
+                int x = leftPos + blitCoordinates[pos][0];
+                int y = topPos + blitCoordinates[pos][1];
+                graphics.blit(TEXTURE, x, y, 198, 31, 10, 10);
+                graphics.setColor(1f, 1f, 1f, 1f);
+                graphics.drawString(font, labels[bit], x + 3, y + 2, 0x606060, false);
+            }
+        }
+    }
+
+    private static int getBitForDir(Direction d) {
+        return switch (d) {
+            case NORTH -> 0;
+            case EAST -> 1;
+            case SOUTH -> 2;
+            case WEST -> 3;
+            default -> -1;
+        };
+    }
+
+    private double getMaxHeat() {
+        FluidStack fs = menu.inputTank.getFluid();
+        if (fs.getAmount() <= 0) { return WORKING_HEAT_LEVEL; }
+        assert minecraft != null;
+        SolarTowerRecipe recipe = SolarTowerRecipe.findRecipe(minecraft.level, fs);
+        if (recipe == null) { return WORKING_HEAT_LEVEL; }
+        return recipe.requiredTemp;
     }
 
     @Override
     protected void gatherAdditionalTooltips(int mouseX, int mouseY, Consumer<Component> addLine, Consumer<Component> addGray) {
         if (mouseX >= leftPos + 16 && mouseX < leftPos + 58 && mouseY >= topPos + 9 && mouseY < topPos + 17) {
-            double heat = menu.state.get(0) / 20.0 + 30;
-            double maxHeat = WORKING_HEAT_LEVEL / 20.0 + 30;
+            double heat = menu.state.get(0);
+            double maxHeat = getMaxHeat();
             addLine.accept(Component.literal("Temperature"));
-            addLine.accept(Component.literal(String.format("%.2f/%.2fC", heat, maxHeat)).withStyle(ChatFormatting.RED));
+            addLine.accept(Component.literal(String.format("%.2f/%.2f°C", heat, maxHeat)).withStyle(ChatFormatting.RED));
         }
     }
 }

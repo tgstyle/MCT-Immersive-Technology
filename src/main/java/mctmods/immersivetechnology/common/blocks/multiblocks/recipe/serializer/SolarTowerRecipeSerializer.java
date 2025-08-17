@@ -24,7 +24,8 @@ public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRec
         FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         FluidStack fluidOutput = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output"));
         int time = GsonHelper.getAsInt(json, "time");
-        return new SolarTowerRecipe(recipeID, input, fluidOutput, time);
+        double requiredTemp = GsonHelper.getAsDouble(json, "requiredTemp");
+        return new SolarTowerRecipe(recipeID, input, fluidOutput, time, requiredTemp);
     }
 
     @Override
@@ -32,7 +33,8 @@ public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRec
         FluidTagInput input = FluidTagInput.read(buffer);
         FluidStack fluidOutput = buffer.readFluidStack();
         int time = buffer.readInt();
-        return new SolarTowerRecipe(recipeId, input, fluidOutput, time);
+        double requiredTemp = buffer.readDouble();
+        return new SolarTowerRecipe(recipeId, input, fluidOutput, time, requiredTemp);
     }
 
     @Override
@@ -40,5 +42,6 @@ public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRec
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.fluidOutput);
         buffer.writeInt(recipe.getTotalProcessTime());
+        buffer.writeDouble(recipe.requiredTemp);
     }
 }

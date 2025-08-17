@@ -51,6 +51,7 @@ public class ITFluidBlock extends LiquidBlock {
         return oldState.setValue(prop, copyFrom.getValue(prop));
     }
 
+    @SuppressWarnings("unused")
     public void setEffect(@Nonnull MobEffect effect, int duration, int level) {
         this.effect = effect;
         this.duration = duration;

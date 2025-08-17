@@ -9,7 +9,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ITMessageContainerUpdate implements ITINetMessage {
+public class ITMessageContainerUpdate implements ITMessage {
     private final int windowId;
     private final CompoundTag nbt;
 

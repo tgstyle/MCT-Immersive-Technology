@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ITMessageContainerData implements ITINetMessage {
+public class ITMessageContainerData implements ITMessage {
     private final List<Pair<Integer, DataPair<?>>> synced;
 
     public ITMessageContainerData(List<Pair<Integer, DataPair<?>>> synced) { this.synced = synced; }

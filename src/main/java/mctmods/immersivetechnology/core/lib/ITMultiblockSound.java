@@ -21,6 +21,7 @@ public class ITMultiblockSound extends AbstractTickableSoundInstance {
     private final Supplier<Float> volumeSupplier;
     private final Supplier<Float> pitchSupplier;
     private long subtitleMillis;
+    private int inactiveTicks;
 
     public ITMultiblockSound(
             BooleanSupplier active,
@@ -43,6 +44,7 @@ public class ITMultiblockSound extends AbstractTickableSoundInstance {
         this.pitchSupplier = pitchSupplier;
         this.pitch = pitchSupplier.get();
         this.subtitleMillis = Util.getMillis();
+        this.inactiveTicks = 0;
     }
 
     public static BooleanSupplier startSound(
@@ -52,9 +54,7 @@ public class ITMultiblockSound extends AbstractTickableSoundInstance {
             RegistryObject<SoundEvent> sound,
             Supplier<Float> volumeSupplier,
             Supplier<Float> pitchSupplier
-    ) {
-        return startSound(active, valid, pos, sound, true, volumeSupplier, pitchSupplier);
-    }
+    ) { return startSound(active, valid, pos, sound, true, volumeSupplier, pitchSupplier); }
 
     public static BooleanSupplier startSound(
             BooleanSupplier active,
@@ -71,14 +71,11 @@ public class ITMultiblockSound extends AbstractTickableSoundInstance {
         return () -> soundManager.isActive(instance);
     }
 
-    public boolean canStartSilent() {
-        return true;
-    }
+    public boolean canStartSilent() { return true; }
 
     public void tick() {
-        if (!this.valid.getAsBoolean()) {
-            this.stop();
-        } else {
+        if (!this.valid.getAsBoolean()) { this.stop(); }
+        else {
             long currentMillis = Util.getMillis();
             if (currentMillis - this.subtitleMillis > 1000L) {
                 SoundManager soundManager = Minecraft.getInstance().getSoundManager();
@@ -86,12 +83,15 @@ public class ITMultiblockSound extends AbstractTickableSoundInstance {
                 ((GuiSubtitleOverlayAccess) Minecraft.getInstance().gui).getSubtitleOverlay().onPlaySound(this, weighedsoundevents);
                 this.subtitleMillis = currentMillis;
             }
-
             if (this.active.getAsBoolean()) {
                 this.volume = this.volumeSupplier.get();
                 this.pitch = this.pitchSupplier.get();
-            } else {
+                this.inactiveTicks = 0;
+            }
+            else {
                 this.volume = 0.0F;
+                this.inactiveTicks++;
+                if (this.inactiveTicks > 20) { this.stop(); }
             }
         }
     }

@@ -24,11 +24,12 @@ public class ITPacketHandler {
         registerMessage(ITMessageContainerData.class, ITMessageContainerData::new);
         registerMessage(ITOSDRequestMessage.class, ITOSDRequestMessage::new);
         registerMessage(ITOSDSyncMessage.class, ITOSDSyncMessage::new);
+        registerMessage(ITOSDSyncBlock.class, ITOSDSyncBlock::new);
     }
 
     private static int id = 0;
 
-    public static <T extends ITINetMessage> void registerMessage(Class<T> type, Function<FriendlyByteBuf, T> decoder) { INSTANCE.registerMessage(id++, type, ITINetMessage::toBytes, decoder, (t, ctx) -> { t.process(ctx); ctx.get().setPacketHandled(true); }); }
+    public static <T extends ITMessage> void registerMessage(Class<T> type, Function<FriendlyByteBuf, T> decoder) { INSTANCE.registerMessage(id++, type, ITMessage::toBytes, decoder, (t, ctx) -> { t.process(ctx); ctx.get().setPacketHandled(true); }); }
 
     public static <MSG> void sendToPlayer(Player player, @Nonnull MSG message) { if (player instanceof ServerPlayer serverPlayer) INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), message); }
 

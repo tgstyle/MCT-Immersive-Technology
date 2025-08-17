@@ -10,7 +10,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ITOSDSyncMessage implements ITINetMessage {
+public class ITOSDSyncMessage implements ITMessage {
     private final BlockPos pos;
     private final long amount;
 

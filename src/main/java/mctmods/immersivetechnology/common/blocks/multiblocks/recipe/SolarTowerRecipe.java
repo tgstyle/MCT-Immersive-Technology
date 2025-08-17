@@ -23,14 +23,14 @@ public class SolarTowerRecipe extends MultiblockRecipe {
     @Nullable
     public final FluidStack fluidOutput;
     private final int time;
-    Lazy<Integer> totalProcessTime;
+    public final double requiredTemp;
 
-    public SolarTowerRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time) {
+    public SolarTowerRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time, double requiredTemp) {
         super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.SOLAR_TOWER, id);
         this.input = input;
         this.fluidOutput = fluidOutput;
         this.time = time;
-        totalProcessTime = Lazy.of(() -> this.time);
+        this.requiredTemp = requiredTemp;
         this.fluidInputList = Lists.newArrayList(this.input);
         this.fluidOutputList = fluidOutput == null ? Lists.newArrayList() : Lists.newArrayList(fluidOutput);
     }
@@ -47,8 +47,11 @@ public class SolarTowerRecipe extends MultiblockRecipe {
     protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 
     @Override
-    public int getTotalProcessTime() { return totalProcessTime.get(); }
+    public int getMultipleProcessTicks() { return 0; }
 
     @Override
-    public int getMultipleProcessTicks() { return 0; }
+    public int getTotalProcessTime() { return time; }
+
+    @Override
+    public int getTotalProcessEnergy() { return 0; }
 }
