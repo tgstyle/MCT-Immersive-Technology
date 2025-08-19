@@ -30,12 +30,6 @@ ext.version_buildnumber = versionProps.getProperty('build_number')?.toInteger() 
 
 println "-> build.gradle applying version: $version (build ${version_buildnumber})"
 
-gradle.taskGraph.whenReady { graph ->
-    if (graph.hasTask(':build')) {
-        ext.version_buildnumber = gradle.ext.nextBuildNumber
-    }
-}
-
 group = 'mctmods.immersivetechnology'
 archivesBaseName = 'immersivetechnology'
 
@@ -45,8 +39,6 @@ jar.enabled = true
 tasks.withType(Jar).configureEach {
     zip64 true
 }
-
-version = gradle.ext.nextVersion
 
 sourceSets {
     main {
@@ -122,22 +114,22 @@ tasks.register('copyModsTomlForIntelliJ', Copy) {
 
 minecraft {
     mappings channel: 'parchment', version: version_parchment + '-' + version_minecraft
-    accessTransformers {
-        file('src/main/resources/META-INF/accesstransformer.cfg')
-    }
+    accessTransformers { file('src/main/resources/META-INF/accesstransformer.cfg') }
     runs {
-        client {
-            workingDirectory = project.file('run')
-            property 'forge.logging.markers', ''
-            property 'forge.enabledGameTestNamespaces', mod_id
-            ideaModule project.name + ".main"
-            mods {
-                immersivetechnology {
-                    source(sourceSets.main)
-                }
-            }
-			args '--username', 'Dev', '--uuid', '00000000-0000-0000-0000-000000000000'
-        }
+		client {
+			workingDirectory = project.file('run')
+			property 'forge.logging.markers', ''
+			property 'forge.enabledGameTestNamespaces', mod_id
+			ideaModule project.name + ".main"
+			mods {
+				immersivetechnology {
+					source(sourceSets.main)
+				}
+			}
+			args '--username', 'tgstyle'
+			args '--width', '1920'
+			args '--height', '1080'
+		}
         server {
             workingDirectory = project.file('run')
             property 'forge.logging.markers', ''
@@ -241,7 +233,7 @@ dependencies {
 //    implementation fg.deobf("curse.maven:zeta-968868:5597406")
 //    implementation fg.deobf("curse.maven:quark-243121:5594847")
 //
-    // BoP
+//    // BoP
 //    implementation fg.deobf("curse.maven:terrablender-563928:5068218")
 //    implementation fg.deobf("curse.maven:biomes-o-plenty-220318:4617259")
     // TFC
@@ -252,6 +244,19 @@ dependencies {
 def customGradle = rootProject.file('custom.gradle')
 if (customGradle.exists()) {
     apply from: customGradle
+}
+
+tasks.register('bumpVersion') {
+    doLast {
+        def props = new Properties()
+        file('version.properties').withInputStream { props.load(it) }
+        def currentBuild = props['build_number'].toInteger()
+        def nextBuild = currentBuild + 1
+        props['build_number'] = nextBuild.toString()
+        file('version.properties').withOutputStream { props.store(it, null) }
+        ext.version_buildnumber = nextBuild
+        version = "${props['version']}-b${nextBuild}"
+    }
 }
 
 tasks.register('signJar', SignJar) {
@@ -270,7 +275,7 @@ tasks.register('signJar', SignJar) {
     }
 }
 
-build.dependsOn signJar
+build.dependsOn bumpVersion, signJar
 
 tasks.register('datagenJar', Jar) {
     dependsOn datagenClasses
