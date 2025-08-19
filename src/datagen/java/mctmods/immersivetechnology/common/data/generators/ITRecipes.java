@@ -2,6 +2,8 @@ package mctmods.immersivetechnology.common.data.generators;
 
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
+import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
+import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.builder.*;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITFluids;
@@ -39,6 +41,7 @@ public class ITRecipes extends RecipeProvider {
         recipesBoiler(consumer);
         recipesBoilerFuel(consumer);
         recipesDistiller(consumer);
+        recipesMixer(consumer);
         recipesTurbine(consumer);
         recipesSolarMelter(consumer);
         recipesSolarTower(consumer);
@@ -73,17 +76,25 @@ public class ITRecipes extends RecipeProvider {
         DistillerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 1000), new FluidStack(ITFluids.DISTILLED_WATER.getStill(), 500), 20, 10000).addItemOutput(salt, 0.5f).build(out, toResourceLocation("distiller/water"));
     }
 
+    private void recipesMixer(@Nonnull Consumer<FinishedRecipe> out) {
+        MixerRecipeBuilder.builder(ITFluids.SALT_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(new IngredientWithSize(ITTags.salt, 4)).setEnergy(3200).build(out, toResourceLocation("mixer/salt_slurry"));
+        MixerRecipeBuilder.builder(ITFluids.SALT_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(new IngredientWithSize(ITTags.saltForge, 4)).setEnergy(3200).build(out, toResourceLocation("mixer/salt_slurry"));
+    }
+
     private void recipesTurbine(@Nonnull Consumer<FinishedRecipe> out) {
         SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteam, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).build(out, toResourceLocation("steamturbine/steam"));
         SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteamForge, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).build(out, toResourceLocation("steamturbine/steam_forge"));
         GasTurbineRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 160).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toResourceLocation("gas_turbine/biodiesel"));
     }
 
-    private void recipesSolarMelter(@Nonnull Consumer<FinishedRecipe> out) { }
+    private void recipesSolarMelter(@Nonnull Consumer<FinishedRecipe> out) {
+        SolarMelterRecipeBuilder.builder().addInput(ITTags.fluidHeatedSaltSlurry, 1000).addOutput(ITFluids.MOLTEN_SALT.getStill(), 500).setTime(20).setRequiredTemp(1000.0).build(out, toResourceLocation("solarmelter/heated_salt"));
+    }
 
     private void recipesSolarTower(@Nonnull Consumer<FinishedRecipe> out) {
         SolarTowerRecipeBuilder.builder().addInput(FluidTags.WATER, 250).addOutput(ITFluids.STEAM.getStill(), 450).setTime(20).setRequiredTemp(100.0).build(out, toResourceLocation("solartower/water"));
         SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidDistilledWater, 250).addOutput(ITFluids.STEAM.getStill(), 500).setTime(20).setRequiredTemp(100.0).build(out, toResourceLocation("solartower/distilled_water"));
+        SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidSaltSlurry, 1000).addOutput(ITFluids.HEATED_SALT.getStill(), 500).setTime(20).setRequiredTemp(400.0).build(out, toResourceLocation("solartower/salt_slurry"));
     }
 
     private ResourceLocation toResourceLocation(String resourceLocation) {

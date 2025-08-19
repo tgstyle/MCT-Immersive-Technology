@@ -15,7 +15,7 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-public class ITMultiblockSound extends AbstractTickableSoundInstance {
+public class ITSound extends AbstractTickableSoundInstance {
     private final BooleanSupplier active;
     private final BooleanSupplier valid;
     private final Supplier<Float> volumeSupplier;
@@ -23,7 +23,7 @@ public class ITMultiblockSound extends AbstractTickableSoundInstance {
     private long subtitleMillis;
     private int inactiveTicks;
 
-    public ITMultiblockSound(
+    public ITSound(
             BooleanSupplier active,
             BooleanSupplier valid,
             Vec3 pos,
@@ -65,7 +65,7 @@ public class ITMultiblockSound extends AbstractTickableSoundInstance {
             Supplier<Float> volumeSupplier,
             Supplier<Float> pitchSupplier
     ) {
-        ITMultiblockSound instance = new ITMultiblockSound(active, valid, pos, sound.get(), loop, volumeSupplier, pitchSupplier);
+        ITSound instance = new ITSound(active, valid, pos, sound.get(), loop, volumeSupplier, pitchSupplier);
         SoundManager soundManager = Minecraft.getInstance().getSoundManager();
         soundManager.play(instance);
         return () -> soundManager.isActive(instance);

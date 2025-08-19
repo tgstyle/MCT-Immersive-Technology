@@ -20,7 +20,6 @@ public class SolarTowerRecipe extends MultiblockRecipe {
     public static final CachedRecipeList<SolarTowerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.SOLAR_TOWER);
 
     public final FluidTagInput input;
-    @Nullable
     public final FluidStack fluidOutput;
     private final int time;
     public final double requiredTemp;

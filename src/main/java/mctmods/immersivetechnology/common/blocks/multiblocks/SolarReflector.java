@@ -18,7 +18,7 @@ public class SolarReflector extends ITTemplateMultiblock {
     public SolarReflector() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/solar_reflector"), new BlockPos(0,0,0), new BlockPos(1,1,1), new BlockPos(3,3,3), ITMultiblockProvider.SOLAR_REFLECTOR); }
 
     @Override
-    public float getManualScale() { return 4; }
+    public float getManualScale() { return 16; }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }

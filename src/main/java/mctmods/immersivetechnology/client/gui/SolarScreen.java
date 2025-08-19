@@ -4,10 +4,13 @@ import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.client.gui.helper.ITContainerScreen;
 import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.client.gui.helper.ITInfoArea;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.SolarTowerMenu;
+import mctmods.immersivetechnology.common.blocks.multiblocks.gui.SolarMenu;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarTowerLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarMelterRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -21,20 +24,18 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SolarTowerScreen extends ITContainerScreen<SolarTowerMenu> {
-    private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("solar_tower");
-    private static final double WORKING_HEAT_LEVEL = SolarTowerLogic.WORKING_HEAT_LEVEL;
+public class SolarScreen extends ITContainerScreen<SolarMenu> {
+    private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("solar");
+    private final boolean isMelter;
 
-    public SolarTowerScreen(SolarTowerMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
+    public SolarScreen(SolarMenu container, Inventory inventoryPlayer, Component title) {
+        super(container, inventoryPlayer, title, TEXTURE);
+        this.isMelter = menu.getType() == ITMenuTypes.SOLAR_MELTER_MENU.getType();
+    }
 
     @Nonnull
     @Override
-    protected List<ITInfoArea> makeInfoAreas() {
-        return ImmutableList.of(
-                new ITFluidInfoArea(menu.inputTank, new Rect2i(leftPos + 102, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE),
-                new ITFluidInfoArea(menu.outputTank, new Rect2i(leftPos + 126, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE)
-        );
-    }
+    protected List<ITInfoArea> makeInfoAreas() { return ImmutableList.of(new ITFluidInfoArea(menu.inputTank, new Rect2i(leftPos + 102, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE), new ITFluidInfoArea(menu.outputTank, new Rect2i(leftPos + 126, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE)); }
 
     @Override
     protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float f, int mx, int my) {
@@ -55,6 +56,7 @@ public class SolarTowerScreen extends ITContainerScreen<SolarTowerMenu> {
         int bit_left = getBitForDir(left);
         int[][] blitCoordinates = {{32, 24}, {48, 40}, {32, 56}, {16, 40}};
         String[] labels = {"N", "E", "S", "W"};
+        boolean canHeat = menu.state.get(1) > 0 && minecraft.level != null && !minecraft.level.isRaining() && menu.state.get(7) == 1;
         for (int pos = 0; pos < 4; pos++) {
             int bit = switch (pos) {
                 case 0 -> bit_front;
@@ -64,12 +66,14 @@ public class SolarTowerScreen extends ITContainerScreen<SolarTowerMenu> {
                 default -> -1;
             };
             if (bit >= 0 && counts[bit] > 0) {
-                float brightness = Math.min(5, counts[bit]) / 5f;
-                graphics.setColor(brightness, brightness, brightness, 1f);
                 int x = leftPos + blitCoordinates[pos][0];
                 int y = topPos + blitCoordinates[pos][1];
-                graphics.blit(TEXTURE, x, y, 198, 31, 10, 10);
-                graphics.setColor(1f, 1f, 1f, 1f);
+                if (canHeat) {
+                    float brightness = Math.min(5, counts[bit]) / 5f;
+                    graphics.setColor(brightness, brightness, brightness, 1f);
+                    graphics.blit(TEXTURE, x, y, 198, 31, 10, 10);
+                    graphics.setColor(1f, 1f, 1f, 1f);
+                }
                 graphics.drawString(font, labels[bit], x + 3, y + 2, 0x606060, false);
             }
         }
@@ -86,12 +90,20 @@ public class SolarTowerScreen extends ITContainerScreen<SolarTowerMenu> {
     }
 
     private double getMaxHeat() {
+        double workingHeat = isMelter ? SolarMelterLogic.WORKING_HEAT_LEVEL : SolarTowerLogic.WORKING_HEAT_LEVEL;
         FluidStack fs = menu.inputTank.getFluid();
-        if (fs.getAmount() <= 0) { return WORKING_HEAT_LEVEL; }
+        if (fs.getAmount() <= 0) { return workingHeat; }
         assert minecraft != null;
-        SolarTowerRecipe recipe = SolarTowerRecipe.findRecipe(minecraft.level, fs);
-        if (recipe == null) { return WORKING_HEAT_LEVEL; }
-        return recipe.requiredTemp;
+        if (isMelter) {
+            SolarMelterRecipe recipe = SolarMelterRecipe.findRecipe(minecraft.level, fs);
+            if (recipe == null) { return workingHeat; }
+            return recipe.requiredTemp;
+        }
+        else {
+            SolarTowerRecipe recipe = SolarTowerRecipe.findRecipe(minecraft.level, fs);
+            if (recipe == null) { return workingHeat; }
+            return recipe.requiredTemp;
+        }
     }
 
     @Override

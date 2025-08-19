@@ -34,7 +34,7 @@ public class SolarTower extends ITTemplateMultiblock {
         BlockPos base = origin.offset(orientation.getAbsoluteOffset(SolarTowerLogic.LINK_POI));
         SolarRegistry.RegisterResult result = SolarRegistry.registerTower(world, base);
         if (!result.success) {
-            TranslationKey key = result.vertical ? TranslationKey.SOLAR_TOWER_VERTICAL_STACK : TranslationKey.SOLAR_TOWER_TOO_CLOSE;
+            TranslationKey key = result.vertical ? TranslationKey.SOLAR_VERTICAL_STACK : TranslationKey.SOLAR_TOO_CLOSE;
             int dist = result.vertical ? -1 : result.requiredMove;
             ITPacketHandler.sendToPlayer(player, new ITOSDSyncBlock(key.name(), dist));
             return false;
@@ -46,6 +46,9 @@ public class SolarTower extends ITTemplateMultiblock {
 
     @Override
     public float getManualScale() { return 4; }
+
+    @Override
+    public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override
     public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, 0, 0, 0)); }

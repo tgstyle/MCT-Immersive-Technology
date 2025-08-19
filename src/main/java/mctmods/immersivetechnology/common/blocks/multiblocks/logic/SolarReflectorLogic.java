@@ -13,12 +13,13 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.Initi
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
 import mctmods.immersivetechnology.common.util.SolarRegistry;
 import mctmods.immersivetechnology.core.ITClientConfig;
-import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
+import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -41,58 +42,9 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
     public static final BlockPos DANCE_SOUND_POI = new BlockPos(1, 2, 1);
     public static final BlockPos LINK_POI = new BlockPos(1, 0, 1);
     private static final BlockPos SUN_POI = new BlockPos(1, 2, 1);
+    public static final BlockPos BEAM_POI = new BlockPos(1, 2, 1);
     private static final float BASE_FREQ = 2.09f;
     public static final float DANCE_DURATION = 63f;
-
-    @Override
-    public State createInitialState(IInitialMultiblockContext<State> context) { return new State(context); }
-
-    @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return FullblockShape.GETTER; }
-
-    @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) { return LazyOptional.empty(); }
-
-    @Override
-    public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) { return InteractionResult.PASS; }
-
-    @Override
-    public void tickServer(IMultiblockContext<State> ctx) {
-        State state = ctx.getState();
-        Level level = ctx.getLevel().getRawLevel();
-        if (!state.initialized && !level.isClientSide) {
-            state.initialized = true;
-            SolarRegistry.registerReflector(level, state.poiPos);
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
-        long oldDanceStartTick = state.danceStartTick;
-        int oldGlobalAnimationPhase = state.globalAnimationPhase;
-        if (!state.isMirrorTaken) {
-            BlockPos root = SolarRegistry.findRoot(level, state.poiPos);
-            if (root != null) {
-                SolarRegistry.GroupData gd = SolarRegistry.getGroupData(level, root);
-                if (gd != null) {
-                    state.danceStartTick = gd.danceStartTick;
-                    state.globalAnimationPhase = gd.animationPhase;
-                }
-                else {
-                    state.danceStartTick = -1;
-                    state.globalAnimationPhase = -4;
-                }
-            }
-        }
-        else {
-            state.danceStartTick = -1;
-            state.globalAnimationPhase = -4;
-        }
-        boolean changed = state.danceStartTick != oldDanceStartTick || state.globalAnimationPhase != oldGlobalAnimationPhase;
-        if (changed) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
-        if (!state.isMirrorTaken) { SolarRegistry.updateDance(level); }
-    }
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
@@ -230,7 +182,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                     final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(DANCE_SOUND_POI.getX() + 0.5, DANCE_SOUND_POI.getY() + 0.5, DANCE_SOUND_POI.getZ() + 0.5));
                     state.danceSoundId++;
                     int thisId = state.danceSoundId;
-                    state.isDanceSoundPlaying = ITMultiblockSound.startSound(
+                    state.isDanceSoundPlaying = ITSound.startSound(
                             () -> (state.animationPhase == -2 || state.animationPhase == -3) && state.danceSoundId == thisId,
                             ctx.isValid(),
                             soundPos,
@@ -268,7 +220,75 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             state.animation_supportRotation = state.baseRotation;
             state.animation_mirrorTilt = 0;
         }
+        if (state.isMirrorTaken && state.animationPhase == 2 && state.getSolarCollectorStrength() > 0) {
+            Level level = ctx.getLevel().getRawLevel();
+            if (level.random.nextFloat() < 0.04f) {
+                Vec3 start = ctx.getLevel().toAbsolute(Vec3.atCenterOf(BEAM_POI));
+                Vec3 end = Vec3.atCenterOf(state.getTowerCollectorPosition());
+                Vec3 diff = end.subtract(start);
+                double dist = diff.length();
+                Vec3 dir = diff.normalize();
+                double rdist = level.random.nextDouble() * dist * 0.9;
+                Vec3 pos = start.add(dir.scale(rdist));
+                double speed = 0.08 + level.random.nextDouble() * 0.05;
+                Vec3 vel = dir.scale(speed);
+                Vec3 perp1 = dir.cross(new Vec3(0, 1, 0)).normalize().scale(level.random.nextGaussian() * 0.005);
+                Vec3 perp2 = dir.cross(perp1).normalize().scale(level.random.nextGaussian() * 0.005);
+                vel = vel.add(perp1).add(perp2);
+                level.addParticle(ParticleTypes.END_ROD, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z);
+            }
+        }
     }
+
+    @Override
+    public void tickServer(IMultiblockContext<State> ctx) {
+        State state = ctx.getState();
+        Level level = ctx.getLevel().getRawLevel();
+        if (!state.initialized && !level.isClientSide) {
+            state.initialized = true;
+            SolarRegistry.registerReflector(level, state.poiPos);
+            ctx.markMasterDirty();
+            ctx.requestMasterBESync();
+        }
+        long oldDanceStartTick = state.danceStartTick;
+        int oldGlobalAnimationPhase = state.globalAnimationPhase;
+        if (!state.isMirrorTaken) {
+            BlockPos root = SolarRegistry.findRoot(level, state.poiPos);
+            if (root != null) {
+                SolarRegistry.GroupData gd = SolarRegistry.getGroupData(level, root);
+                if (gd != null) {
+                    state.danceStartTick = gd.danceStartTick;
+                    state.globalAnimationPhase = gd.animationPhase;
+                }
+                else {
+                    state.danceStartTick = -1;
+                    state.globalAnimationPhase = -4;
+                }
+            }
+        }
+        else {
+            state.danceStartTick = -1;
+            state.globalAnimationPhase = -4;
+        }
+        boolean changed = state.danceStartTick != oldDanceStartTick || state.globalAnimationPhase != oldGlobalAnimationPhase;
+        if (changed) {
+            ctx.markMasterDirty();
+            ctx.requestMasterBESync();
+        }
+        if (!state.isMirrorTaken) { SolarRegistry.updateDance(level); }
+    }
+
+    @Override
+    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) { return LazyOptional.empty(); }
+
+    @Override
+    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return FullblockShape.GETTER; }
+
+    @Override
+    public State createInitialState(IInitialMultiblockContext<State> context) { return new State(context); }
+
+    @Override
+    public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) { return InteractionResult.PASS; }
 
     @Override
     public void dropExtraItems(State state, Consumer<ItemStack> drop) {

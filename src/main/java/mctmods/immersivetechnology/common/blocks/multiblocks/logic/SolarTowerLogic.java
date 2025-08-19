@@ -9,7 +9,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
@@ -18,21 +17,21 @@ import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.helper.ITSolarTank;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.interfaces.ITISolarMultiblockState;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarTowerShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.network.ITOSDSyncBlock;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
 import mctmods.immersivetechnology.common.util.SolarRegistry;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
+import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -48,7 +47,6 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
@@ -71,15 +69,13 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
     public static final int SLOT_OUTPUT_FILLED = 3;
-    public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
     public static final double WORKING_HEAT_LEVEL = 400.0;
     public static final double DAY_MIN_HEAT_LOSS = 0.0;
     public static final double LOSS_PER_SECTION_DROP = 0.035;
     public static final double TEMP_DEPENDENT_LOSS_FACTOR = 0.0006;
-    public static final double HEAT_INCREASE_FACTOR = 0.00375;
+    public static final double HEAT_INCREASE_FACTOR = 0.00300;
     public static final double TEMP_TO_MIN_REFLECTORS_DIVISOR = 25.0;
     public static final double REFLECTOR_TIER_OFFSET = 4.0;
-    public static final int PROGRESS_LOSS_PER_TICK = 1;
     public static final int PROGRESS_LOSS_OFF_TEMP = 2;
     public static final float SPEED_MULTIPLIER = 1.0f;
     public static final CapabilityPosition INPUT_FLUID_POI = new CapabilityPosition(1, 1, 2, RelativeBlockFace.BACK);
@@ -88,9 +84,57 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
     public static final BlockPos REDSTONE_POI = new BlockPos(2, 1, 1);
     public static final BlockPos RUNNING_SOUND_POI = new BlockPos(1, 18, 1);
     public static final BlockPos LINK_POI = new BlockPos(1, 1, 1);
-    private static final BlockPos REFLECTOR_POI = new BlockPos(1, 20, 1);
+    private static final BlockPos REFLECTOR_POI = new BlockPos(1, 21, 1);
     private static final BlockPos SUN_POI = new BlockPos(1, 21, 1);
     private final RedstoneControl<State> rsControl = new RedstoneControl<>(state -> state.rsState, REDSTONE_POI);
+
+    @Override
+    public void tickClient(IMultiblockContext<State> ctx) {
+        final State state = ctx.getState();
+        final IMultiblockLevel mbLevel = ctx.getLevel();
+        BlockPos soundPos = mbLevel.toAbsolute(RUNNING_SOUND_POI);
+        Vec3 soundVec = new Vec3(soundPos.getX() + 0.5, soundPos.getY() + 0.5, soundPos.getZ() + 0.5);
+        if (!state.isSoundPlaying.getAsBoolean()) {
+            FluidStack fs = state.tanks.input().getFluid();
+            double maxHeat = WORKING_HEAT_LEVEL;
+            if (fs.getAmount() > 0) {
+                SolarTowerRecipe recipe = SolarTowerRecipe.findRecipe(Minecraft.getInstance().level, fs);
+                if (recipe != null) { maxHeat = recipe.requiredTemp; }
+            }
+            boolean shouldPlay = state.heatLevel >= maxHeat && state.sunVisible && state.reflectorStrength > 0;
+            if (shouldPlay) {
+                state.soundId++;
+                int thisId = state.soundId;
+                state.isSoundPlaying = ITSound.startSound(
+                        () -> {
+                            FluidStack fsActive = state.tanks.input().getFluid();
+                            double maxHeatActive = WORKING_HEAT_LEVEL;
+                            if (fsActive.getAmount() > 0) {
+                                SolarTowerRecipe recipeActive = SolarTowerRecipe.findRecipe(Minecraft.getInstance().level, fsActive);
+                                if (recipeActive != null) { maxHeatActive = recipeActive.requiredTemp; }
+                            }
+                            return state.heatLevel >= maxHeatActive && state.sunVisible && state.reflectorStrength > 0 && state.soundId == thisId;
+                        },
+                        ctx.isValid(), soundVec, ITSounds.solarTower,
+                        () -> {
+                            LocalPlayer player = Minecraft.getInstance().player;
+                            if (player == null) { return 0f; }
+                            float attenuation = (float) Math.max(player.distanceToSqr(soundVec) / 32, 1);
+                            float baseVol = 1.0f / attenuation;
+                            FluidStack fsVol = state.tanks.input().getFluid();
+                            double maxHeatVol = WORKING_HEAT_LEVEL;
+                            if (fsVol.getAmount() > 0) {
+                                SolarTowerRecipe recipe = SolarTowerRecipe.findRecipe(Minecraft.getInstance().level, fsVol);
+                                if (recipe != null) { maxHeatVol = recipe.requiredTemp; }
+                            }
+                            float heatFactor = (float) (state.heatLevel / maxHeatVol);
+                            return baseVol * heatFactor;
+                        },
+                        () -> 1.0f
+                );
+            }
+        }
+    }
 
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
@@ -98,106 +142,59 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
         final Level level = ctx.getLevel().getRawLevel();
         final IMultiblockLevel mbLevel = ctx.getLevel();
         boolean update = false;
-        if (!state.isLoaded && !level.isClientSide) {
-            state.isLoaded = true;
-            updatePortNeighbors(mbLevel);
-            SolarRegistry.RegisterResult result = SolarRegistry.registerTower(level, state.basePos);
-            state.registered = result.success;
-            state.failVertical = result.vertical;
-            state.requiredMove = result.requiredMove;
-            if (state.registered) { state.reflectorStrength = checkReflectorPositions(mbLevel, state); }
-            update = true;
-        }
+        if (!state.isLoaded && !level.isClientSide) { state.isLoaded = true; updatePortNeighbors(mbLevel); SolarRegistry.RegisterResult result = SolarRegistry.registerTower(level, state.basePos); state.registered = result.success; state.failVertical = result.vertical; state.requiredMove = result.requiredMove; if (state.registered) { state.reflectorStrength = checkReflectorPositions(mbLevel, state); } update = true; }
         if (!state.registered) { return; }
+        boolean oldVisible = state.sunVisible;
+        state.sunVisible = level.canSeeSky(state.sunPos);
+        if (oldVisible != state.sunVisible) { update = true; }
         long time = level.getGameTime();
         boolean enabled = state.rsState.isEnabled(ctx);
-        if (!enabled && state.reflectorStrength > 0) {
-            detachReflectorPositions(state);
-            state.reflectorStrength = 0;
-            update = true;
-        }
+        if (!enabled && state.reflectorStrength > 0) { detachReflectorPositions(state); state.reflectorStrength = 0; update = true; }
         if (enabled && (time % 60 == 0 || state.reflectorStrength == 0)) { state.reflectorStrength = checkReflectorPositions(mbLevel, state); }
         update |= heatLogic(state, level, enabled);
         update |= recipeLogic(state, level, enabled);
         ItemStack inputFilled = state.inventory.getStackInSlot(SLOT_INPUT_FILLED);
         if (!inputFilled.isEmpty()) {
-            FluidActionResult res = FluidUtil.tryEmptyContainer(inputFilled, state.tanks.input, Integer.MAX_VALUE, null, false);
+            FluidActionResult res = FluidUtil.tryEmptyContainer(inputFilled, state.tanks.input(), Integer.MAX_VALUE, null, false);
             if (res.isSuccess()) {
                 ItemStack resultItem = res.getResult();
                 ItemStack inputEmpty = state.inventory.getStackInSlot(SLOT_INPUT_EMPTY);
                 if (inputEmpty.isEmpty() || (ItemHandlerHelper.canItemStacksStack(resultItem, inputEmpty) && inputEmpty.getCount() + resultItem.getCount() <= inputEmpty.getMaxStackSize())) {
-                    res = FluidUtil.tryEmptyContainer(inputFilled, state.tanks.input, Integer.MAX_VALUE, null, true);
-                    if (res.isSuccess()) {
-                        resultItem = res.getResult();
-                        inputFilled.shrink(1);
-                        if (inputFilled.isEmpty()) { state.inventory.setStackInSlot(SLOT_INPUT_FILLED, ItemStack.EMPTY); }
-                        if (inputEmpty.isEmpty()) { state.inventory.setStackInSlot(SLOT_INPUT_EMPTY, resultItem); }
-                        else { inputEmpty.grow(resultItem.getCount()); }
-                        update = true;
-                    }
+                    res = FluidUtil.tryEmptyContainer(inputFilled, state.tanks.input(), Integer.MAX_VALUE, null, true);
+                    if (res.isSuccess()) { resultItem = res.getResult(); inputFilled.shrink(1); if (inputFilled.isEmpty()) { state.inventory.setStackInSlot(SLOT_INPUT_FILLED, ItemStack.EMPTY); } if (inputEmpty.isEmpty()) { state.inventory.setStackInSlot(SLOT_INPUT_EMPTY, resultItem); } else { inputEmpty.grow(resultItem.getCount()); } update = true; }
                 }
             }
         }
         ItemStack outputEmpty = state.inventory.getStackInSlot(SLOT_OUTPUT_EMPTY);
         if (!outputEmpty.isEmpty()) {
-            FluidActionResult res = FluidUtil.tryFillContainer(outputEmpty, state.tanks.output, Integer.MAX_VALUE, null, false);
+            FluidActionResult res = FluidUtil.tryFillContainer(outputEmpty, state.tanks.output(), Integer.MAX_VALUE, null, false);
             if (res.isSuccess()) {
                 ItemStack resultItem = res.getResult();
                 ItemStack outputFilled = state.inventory.getStackInSlot(SLOT_OUTPUT_FILLED);
                 if (outputFilled.isEmpty() || (ItemHandlerHelper.canItemStacksStack(resultItem, outputFilled) && outputFilled.getCount() + resultItem.getCount() <= outputFilled.getMaxStackSize())) {
-                    res = FluidUtil.tryFillContainer(outputEmpty, state.tanks.output, Integer.MAX_VALUE, null, true);
-                    if (res.isSuccess()) {
-                        resultItem = res.getResult();
-                        outputEmpty.shrink(1);
-                        if (outputEmpty.isEmpty()) { state.inventory.setStackInSlot(SLOT_OUTPUT_EMPTY, ItemStack.EMPTY); }
-                        if (outputFilled.isEmpty()) { state.inventory.setStackInSlot(SLOT_OUTPUT_FILLED, resultItem); }
-                        else { outputFilled.grow(resultItem.getCount()); }
-                        update = true;
-                    }
+                    res = FluidUtil.tryFillContainer(outputEmpty, state.tanks.output(), Integer.MAX_VALUE, null, true);
+                    if (res.isSuccess()) { resultItem = res.getResult(); outputEmpty.shrink(1); if (outputEmpty.isEmpty()) { state.inventory.setStackInSlot(SLOT_OUTPUT_EMPTY, ItemStack.EMPTY); } if (outputFilled.isEmpty()) { state.inventory.setStackInSlot(SLOT_OUTPUT_FILLED, resultItem); } else { outputFilled.grow(resultItem.getCount()); } update = true; }
                 }
             }
         }
         if (state.fluidOutput.isPresent()) {
             IFluidHandler outputHandler = state.fluidOutput.get();
-            FluidStack fs = state.tanks.output.getFluid();
+            FluidStack fs = state.tanks.output().getFluid();
             if (fs.getAmount() > 0) {
                 fs = fs.copy();
                 int accepted = outputHandler.fill(fs, FluidAction.SIMULATE);
-                if (accepted > 0) {
-                    int drained = outputHandler.fill(Utils.copyFluidStackWithAmount(fs, accepted, false), FluidAction.EXECUTE);
-                    state.tanks.output.drain(drained, FluidAction.EXECUTE);
-                    update = true;
-                }
+                if (accepted > 0) { int drained = outputHandler.fill(Utils.copyFluidStackWithAmount(fs, accepted, false), FluidAction.EXECUTE); state.tanks.output().drain(drained, FluidAction.EXECUTE); update = true; }
             }
         }
         final IItemHandlerModifiable inventory = state.inventory;
         ItemStack drainedContainer = inventory.getStackInSlot(SLOT_INPUT_EMPTY);
-        if (!drainedContainer.isEmpty()) {
-            int origCount = drainedContainer.getCount();
-            drainedContainer = Utils.insertStackIntoInventory(state.outputRef, drainedContainer, false);
-            if (drainedContainer.getCount() < origCount) { update = true; }
-            inventory.setStackInSlot(SLOT_INPUT_EMPTY, drainedContainer);
-        }
+        if (!drainedContainer.isEmpty()) { int origCount = drainedContainer.getCount(); drainedContainer = Utils.insertStackIntoInventory(state.outputRef, drainedContainer, false); if (drainedContainer.getCount() < origCount) { update = true; } inventory.setStackInSlot(SLOT_INPUT_EMPTY, drainedContainer); }
         ItemStack filledContainer = inventory.getStackInSlot(SLOT_OUTPUT_FILLED);
-        if (!filledContainer.isEmpty()) {
-            int origCount = filledContainer.getCount();
-            filledContainer = Utils.insertStackIntoInventory(state.outputRef, filledContainer, false);
-            if (filledContainer.getCount() < origCount) { update = true; }
-            inventory.setStackInSlot(SLOT_OUTPUT_FILLED, filledContainer);
-        }
-        if (update) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        if (!filledContainer.isEmpty()) { int origCount = filledContainer.getCount(); filledContainer = Utils.insertStackIntoInventory(state.outputRef, filledContainer, false); if (filledContainer.getCount() < origCount) { update = true; } inventory.setStackInSlot(SLOT_OUTPUT_FILLED, filledContainer); }
+        if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
-    private void updatePortNeighbors(IMultiblockLevel mbLevel) {
-        Level level = mbLevel.getRawLevel();
-        BlockPos inputPos = mbLevel.toAbsolute(INPUT_FLUID_POI.posInMultiblock());
-        level.updateNeighborsAt(inputPos, level.getBlockState(inputPos).getBlock());
-        BlockPos outputPos = mbLevel.toAbsolute(OUTPUT_FLUID_POI.posInMultiblock());
-        level.updateNeighborsAt(outputPos, level.getBlockState(outputPos).getBlock());
-    }
+    private void updatePortNeighbors(IMultiblockLevel mbLevel) { Level level = mbLevel.getRawLevel(); BlockPos inputPos = mbLevel.toAbsolute(INPUT_FLUID_POI.posInMultiblock()); level.updateNeighborsAt(inputPos, level.getBlockState(inputPos).getBlock()); BlockPos outputPos = mbLevel.toAbsolute(OUTPUT_FLUID_POI.posInMultiblock()); level.updateNeighborsAt(outputPos, level.getBlockState(outputPos).getBlock()); }
 
     private double checkReflectorPositions(IMultiblockLevel mbLevel, State state) {
         double totalMirrorStrength = 0;
@@ -214,14 +211,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
                 IMultiblockBEHelper<?> helper = mbe.getHelper();
                 if (helper != null && helper.getState() instanceof SolarReflectorLogic.State reflectorState) {
                     BlockPos currentTower = reflectorState.getTowerCollectorPosition();
-                    if (currentTower.equals(collectorPos)) {
-                        if (reflectorState.setTowerCollectorPosition(collectorPos)) {
-                            totalMirrorStrength += reflectorState.getSolarCollectorStrength();
-                            int dir = getReflectorDir(poiPos.getX() - basePos.getX(), poiPos.getZ() - basePos.getZ());
-                            dirCountsTemp[dir]++;
-                            count++;
-                        }
-                    }
+                    if (currentTower.equals(collectorPos)) { if (reflectorState.setTowerCollectorPosition(collectorPos)) { totalMirrorStrength += reflectorState.getSolarCollectorStrength(); int dir = getReflectorDir(poiPos.getX() - basePos.getX(), poiPos.getZ() - basePos.getZ()); dirCountsTemp[dir]++; count++; } }
                     else { unattached.add(poiPos); }
                 }
             }
@@ -232,14 +222,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             if (be instanceof IMultiblockBE<?> mbe) {
                 IMultiblockBEHelper<?> helper = mbe.getHelper();
                 if (helper != null && helper.getState() instanceof SolarReflectorLogic.State reflectorState) {
-                    if (!reflectorState.isMirrorTaken) {
-                        if (reflectorState.setTowerCollectorPosition(collectorPos)) {
-                            totalMirrorStrength += reflectorState.getSolarCollectorStrength();
-                            int dir = getReflectorDir(poiPos.getX() - basePos.getX(), poiPos.getZ() - basePos.getZ());
-                            dirCountsTemp[dir]++;
-                            count++;
-                        }
-                    }
+                    if (!reflectorState.isMirrorTaken) { if (reflectorState.setTowerCollectorPosition(collectorPos)) { totalMirrorStrength += reflectorState.getSolarCollectorStrength(); int dir = getReflectorDir(poiPos.getX() - basePos.getX(), poiPos.getZ() - basePos.getZ()); dirCountsTemp[dir]++; count++; } }
                 }
             }
         }
@@ -247,16 +230,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
         return totalMirrorStrength;
     }
 
-    private int getReflectorDir(int dx, int dz) {
-        if (Math.abs(dx) > Math.abs(dz)) {
-            if (dx > 0) { return 1; }
-            else { return 3; }
-        }
-        else {
-            if (dz > 0) { return 2; }
-            else { return 0; }
-        }
-    }
+    private int getReflectorDir(int dx, int dz) { if (Math.abs(dx) > Math.abs(dz)) { if (dx > 0) { return 1; } else { return 3; } } else { if (dz > 0) { return 2; } else { return 0; } } }
 
     private boolean heatLogic(State state, Level level, boolean enabled) {
         double inc = enabled ? getTemperatureIncrease(state, level) : 0;
@@ -270,7 +244,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
 
     private double getTemperatureIncrease(State state, Level level) {
         double inc = 0;
-        if (state.registered && state.reflectorStrength > 0 && level.isDay() && !level.isRaining() && level.canSeeSky(state.sunPos)) {
+        if (state.registered && state.reflectorStrength > 0 && level.isDay() && !level.isRaining() && state.sunVisible) {
             double effectiveStrength = state.reflectorStrength;
             if (state.activeRecipe != null) {
                 double minReflectors = state.activeRecipe.requiredTemp / TEMP_TO_MIN_REFLECTORS_DIVISOR;
@@ -291,48 +265,29 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
     }
 
     private boolean recipeLogic(State state, Level level, boolean enabled) {
-        FluidStack fs = state.tanks.input.getFluid();
-        if (fs.getAmount() <= 0) {
-            state.activeRecipe = null;
-            state.processProgress = 0;
-            return false;
-        }
-        if (state.activeRecipe == null && state.activeRecipeId != null) {
-            state.activeRecipe = SolarTowerRecipe.RECIPES.getById(level, state.activeRecipeId);
-            state.activeRecipeId = null;
-        }
-        if (state.activeRecipe == null || !state.activeRecipe.input.testIgnoringAmount(fs)) {
-            state.activeRecipe = SolarTowerRecipe.findRecipe(level, fs);
-            state.processProgress = 0;
-            if (state.activeRecipe == null) { return false; }
-        }
-        if (state.activeRecipe == null) {
-            state.processProgress = 0;
-            return false;
-        }
-        if (enabled && state.heatLevel >= state.activeRecipe.requiredTemp) {state.processProgress += (int) SPEED_MULTIPLIER; }
-        else { state.processProgress = Math.max(0, state.processProgress - PROGRESS_LOSS_OFF_TEMP); }
+        FluidStack fs = state.tanks.input().getFluid();
+        if (fs.getAmount() <= 0) { state.activeRecipe = null; state.processProgress = 0; return false; }
+        if (state.activeRecipe == null && state.activeRecipeId != null) { state.activeRecipe = SolarTowerRecipe.RECIPES.getById(level, state.activeRecipeId); state.activeRecipeId = null; }
+        if (state.activeRecipe == null || !state.activeRecipe.input.testIgnoringAmount(fs)) { state.activeRecipe = SolarTowerRecipe.findRecipe(level, fs); state.processProgress = 0; if (state.activeRecipe == null) { return false; } }
+        if (state.activeRecipe == null) { state.processProgress = 0; return false; }
+        if (enabled && state.heatLevel >= state.activeRecipe.requiredTemp) { state.processProgress += (int) SPEED_MULTIPLIER; } else { state.processProgress = Math.max(0, state.processProgress - PROGRESS_LOSS_OFF_TEMP); }
         if (state.processProgress >= state.activeRecipe.getTotalProcessTime()) {
             assert state.activeRecipe.fluidOutput != null;
             FluidStack out = state.activeRecipe.fluidOutput.copy();
-            if (state.tanks.output.fill(out, FluidAction.SIMULATE) == out.getAmount()) {
-                state.tanks.input.drain(state.activeRecipe.input.getAmount(), FluidAction.EXECUTE);
-                state.tanks.output.fill(out, FluidAction.EXECUTE);
-                state.processProgress = 0;
-                return true;
-            }
+            if (state.tanks.output().fill(out, FluidAction.SIMULATE) == out.getAmount()) { state.tanks.input().drain(state.activeRecipe.input.getAmount(), FluidAction.EXECUTE); state.tanks.output().fill(out, FluidAction.EXECUTE); state.processProgress = 0; return true; }
         }
         return false;
     }
 
-    public static int getSolarIncidenceAngleSection(Level level) {
-        int skyDarken = level.getSkyDarken();
-        if (skyDarken == 3) { return 1; }
-        else if (skyDarken == 2) { return 2; }
-        else if (skyDarken == 1) { return 3; }
-        else if (skyDarken == 0) { return 4; }
-        return 0;
+    private void detachReflectorPositions(State state) {
+        Level level = state.levelSupplier.get();
+        if (level == null || level.isClientSide) { return; }
+        BlockPos collectorPos = state.collectorPos;
+        Set<BlockPos> reflectors = SolarRegistry.getReflectorsInRange(level, state.basePos, SOLAR_MIN_RANGE, SOLAR_MAX_RANGE);
+        for (BlockPos poiPos : reflectors) { BlockEntity be = level.getBlockEntity(poiPos); if (be instanceof IMultiblockBE<?> mbe) { IMultiblockBEHelper<?> helper = mbe.getHelper(); if (helper != null && helper.getState() instanceof SolarReflectorLogic.State reflectorState) { reflectorState.detachTower(collectorPos); } } }
     }
+
+    public static int getSolarIncidenceAngleSection(Level level) { int skyDarken = level.getSkyDarken(); if (skyDarken == 3) { return 1; } else if (skyDarken == 2) { return 2; } else if (skyDarken == 1) { return 3; } else if (skyDarken == 0) { return 4; } return 0; }
 
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
@@ -341,95 +296,33 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             if (position.posInMultiblock().equals(INPUT_FLUID_POI.posInMultiblock()) && (position.side() == null || position.side() == INPUT_FLUID_POI.side())) { return state.inputCap.cast(ctx); }
             if (position.posInMultiblock().equals(OUTPUT_FLUID_POI.posInMultiblock()) && (position.side() == null || position.side() == OUTPUT_FLUID_POI.side())) { return state.outputCap.cast(ctx); }
         }
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            if (ITEM_OUTPUT_REF_POI.posInMultiblock().equals(position.posInMultiblock())) { return state.itemOutputCap.cast(ctx); }
-            return state.invCap.cast(ctx);
-        }
+        if (cap == ForgeCapabilities.ITEM_HANDLER) { if (ITEM_OUTPUT_REF_POI.posInMultiblock().equals(position.posInMultiblock())) { return state.itemOutputCap.cast(ctx); } return state.invCap.cast(ctx); }
         return LazyOptional.empty();
-    }
-
-    @Override
-    public void dropExtraItems(SolarTowerLogic.State state, Consumer<ItemStack> drop) {
-        Level level = state.levelSupplier.get();
-        if (level != null && !level.isClientSide) {
-            detachReflectorPositions(state);
-            SolarRegistry.unregisterTower(level, state.basePos);
-        }
-        ITMultiBlockInventoryUtils.dropItems(state.inventory, drop);
-    }
-
-    private void detachReflectorPositions(State state) {
-        Level level = state.levelSupplier.get();
-        if (level == null || level.isClientSide) { return; }
-        BlockPos collectorPos = state.collectorPos;
-        Set<BlockPos> reflectors = SolarRegistry.getReflectorsInRange(level, state.basePos, SOLAR_MIN_RANGE, SOLAR_MAX_RANGE);
-        for (BlockPos poiPos : reflectors) {
-            BlockEntity be = level.getBlockEntity(poiPos);
-            if (be instanceof IMultiblockBE<?> mbe) {
-                IMultiblockBEHelper<?> helper = mbe.getHelper();
-                if (helper != null && helper.getState() instanceof SolarReflectorLogic.State reflectorState) { reflectorState.detachTower(collectorPos); }
-            }
-        }
-    }
-
-    @Override
-    public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
-        if (isClient) { return InteractionResult.PASS; }
-        State state = ctx.getState();
-        if (state.registered) { return InteractionResult.PASS; }
-        TranslationKey key = state.failVertical ? TranslationKey.SOLAR_TOWER_VERTICAL_STACK : TranslationKey.SOLAR_TOWER_TOO_CLOSE;
-        int dist = state.failVertical ? -1 : state.requiredMove;
-        ITPacketHandler.sendToPlayer(player, new ITOSDSyncBlock(key.location, dist));
-        return InteractionResult.SUCCESS;
-    }
-
-    @Override
-    public State createInitialState(IInitialMultiblockContext<State> ctx) {
-        State state = new State(ctx);
-        rsControl.wrapState(state);
-        return state;
     }
 
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SolarTowerShape.GETTER; }
 
     @Override
-    public void tickClient(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
-        final IMultiblockLevel mbLevel = ctx.getLevel();
-        BlockPos soundPos = mbLevel.toAbsolute(RUNNING_SOUND_POI);
-        Vec3 soundVec = new Vec3(soundPos.getX() + 0.5, soundPos.getY() + 0.5, soundPos.getZ() + 0.5);
-        boolean isActive = state.reflectorStrength > 0 && state.heatLevel > 0;
-        if (!state.isSoundPlaying.getAsBoolean()) {
-            state.soundId++;
-            int thisId = state.soundId;
-            state.isSoundPlaying = ITMultiblockSound.startSound(
-                    () -> isActive && state.soundId == thisId,
-                    ctx.isValid(),
-                    soundVec,
-                    ITSounds.solarTower,
-                    () -> {
-                        LocalPlayer player = Minecraft.getInstance().player;
-                        if (player == null) { return 0f; }
-                        float attenuation = (float) Math.max(player.distanceToSqr(soundVec) / 32, 1);
-                        float baseVol = 1.0f / attenuation;
-                        FluidStack fs = state.tanks.input.getFluid();
-                        double maxHeat = WORKING_HEAT_LEVEL;
-                        if (fs.getAmount() > 0) {
-                            SolarTowerRecipe recipe = SolarTowerRecipe.findRecipe(Minecraft.getInstance().level, fs);
-                            if (recipe != null) { maxHeat = recipe.requiredTemp; }
-                        }
-                        float heatFactor = (float) (state.heatLevel / maxHeat);
-                        return baseVol * heatFactor;
-                    },
-                    () -> 1.0f
-            );
-        }
+    public State createInitialState(IInitialMultiblockContext<State> ctx) { State state = new State(ctx); rsControl.wrapState(state); return state; }
+
+    @Override
+    public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
+        if (isClient) { return InteractionResult.PASS; }
+        State state = ctx.getState();
+        if (state.registered) { return InteractionResult.PASS; }
+        TranslationKey key = state.failVertical ? TranslationKey.SOLAR_VERTICAL_STACK : TranslationKey.SOLAR_TOO_CLOSE;
+        int dist = state.failVertical ? -1 : state.requiredMove;
+        ITPacketHandler.sendToPlayer(player, new ITOSDSyncBlock(key.location, dist));
+        return InteractionResult.SUCCESS;
     }
 
-    public static class State implements IMultiblockState {
+    @Override
+    public void dropExtraItems(SolarTowerLogic.State state, Consumer<ItemStack> drop) { Level level = state.levelSupplier.get(); if (level != null && !level.isClientSide) { detachReflectorPositions(state); SolarRegistry.unregisterTower(level, state.basePos); } ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
+
+    public static class State implements ITISolarMultiblockState {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
-        public final SolarTowerTank tanks;
+        public final ITSolarTank tanks;
         public final StoredCapability<IFluidHandler> inputCap;
         public final StoredCapability<IFluidHandler> outputCap;
         public final StoredCapability<IItemHandler> invCap;
@@ -453,42 +346,22 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
         public int requiredMove = 0;
         public BooleanSupplier isSoundPlaying = () -> false;
         private transient int soundId = 0;
+        public boolean sunVisible = true;
 
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
             final Runnable sync = ctx.getSyncRunnable();
-            final Runnable onChanged = () -> {
-                markDirty.run();
-                sync.run();
-            };
-            this.tanks = new SolarTowerTank(v -> onChanged.run());
-            inventory = new ITSlotwiseItemHandler(
-                    Lists.newArrayList(
-                            ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            ITSlotwiseItemHandler.IOConstraint.OUTPUT,
-                            ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            ITSlotwiseItemHandler.IOConstraint.OUTPUT
-                    ),
-                    onChanged
-            );
-            this.inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
-            this.outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
+            final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
+            this.tanks = new ITSolarTank(v -> onChanged.run());
+            inventory = new ITSlotwiseItemHandler(Lists.newArrayList(ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT, ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT), onChanged);
+            this.inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input(), false, true, onChanged));
+            this.outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output(), true, false, onChanged));
             this.invCap = new StoredCapability<>(inventory);
             MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POI.side(), OUTPUT_FLUID_POI.posInMultiblock());
             CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
             MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
             this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
-            this.itemOutputCap = new StoredCapability<>(
-                    new ITWrappingItemHandler(
-                            inventory,
-                            false,
-                            true,
-                            Lists.newArrayList(
-                                    new ITWrappingItemHandler.IntRange(SLOT_INPUT_EMPTY, SLOT_INPUT_EMPTY + 1),
-                                    new ITWrappingItemHandler.IntRange(SLOT_OUTPUT_FILLED, SLOT_OUTPUT_FILLED + 1)
-                            )
-                    )
-            );
+            this.itemOutputCap = new StoredCapability<>(new ITWrappingItemHandler(inventory, false, true, Lists.newArrayList(new ITWrappingItemHandler.IntRange(SLOT_INPUT_EMPTY, SLOT_INPUT_EMPTY + 1), new ITWrappingItemHandler.IntRange(SLOT_OUTPUT_FILLED, SLOT_OUTPUT_FILLED + 1))));
             this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, ITEM_OUTPUT_REF_POI);
             InitialMultiblockContext<State> initialContext = (InitialMultiblockContext<State>) ctx;
             MultiblockOrientation orientation = initialContext.orientation();
@@ -501,18 +374,26 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             this.levelSupplier = ctx.levelSupplier();
             Level level = levelSupplier.get();
             SolarRegistry.RegisterResult result;
-            if (level != null && !level.isClientSide) { result = SolarRegistry.registerTower(level, basePos); }
-            else { result = new SolarRegistry.RegisterResult(); }
+            if (level != null && !level.isClientSide) { result = SolarRegistry.registerTower(level, basePos); } else { result = new SolarRegistry.RegisterResult(); }
             this.registered = result.success;
-            if (!this.registered) {
-                this.failVertical = result.vertical;
-                this.requiredMove = result.requiredMove;
-            }
+            if (!this.registered) { this.failVertical = result.vertical; this.requiredMove = result.requiredMove; }
         }
 
         public ITSlotwiseItemHandler getInventory() { return inventory; }
 
-        public SolarTowerTank getTanks() { return tanks; }
+        public ITSolarTank getTanks() { return tanks; }
+
+        @Override
+        public double getHeatLevel() { return heatLevel; }
+
+        @Override
+        public byte[] getDirCounts() { return dirCounts; }
+
+        @Override
+        public int getProcessProgress() { return processProgress; }
+
+        @Override
+        public boolean isSunVisible() { return sunVisible; }
 
         @Override
         public void writeSaveNBT(CompoundTag nbt) {
@@ -566,6 +447,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             nbt.putDouble("heatLevel", heatLevel);
             nbt.putDouble("reflectorStrength", reflectorStrength);
             nbt.putByteArray("dirCounts", dirCounts);
+            nbt.putBoolean("sunVisible", sunVisible);
         }
 
         @Override
@@ -574,26 +456,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             heatLevel = nbt.getDouble("heatLevel");
             reflectorStrength = nbt.getDouble("reflectorStrength");
             dirCounts = nbt.getByteArray("dirCounts");
+            sunVisible = nbt.getBoolean("sunVisible");
         }
-    }
-
-    public record SolarTowerTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
-        public SolarTowerTank(Consumer<Void> markDirty) { this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty)); }
-
-        public static SolarTowerTank makeClient() { return new SolarTowerTank(v -> {}); }
-
-        public Tag toNBT() {
-            CompoundTag tag = new CompoundTag();
-            tag.put("input", this.input.writeToNBT(new CompoundTag()));
-            tag.put("output", this.output.writeToNBT(new CompoundTag()));
-            return tag;
-        }
-
-        public void readNBT(CompoundTag tag) {
-            this.input.readFromNBT(tag.getCompound("input"));
-            this.output.readFromNBT(tag.getCompound("output"));
-        }
-
-        public int getCapacity() { return TANK_CAPACITY; }
     }
 }

@@ -16,15 +16,17 @@ public class ITSounds {
     public static final RegistryObject<SoundEvent> coolingTower = registerSound("cooling_tower");
     public static final RegistryObject<SoundEvent> dance = registerSound("dance");
     public static final RegistryObject<SoundEvent> distiller = registerSound("distiller");
+    public static final RegistryObject<SoundEvent> electrolyticCrucibleBattery = registerSound("electrolytic_crucible_battery");
     public static final RegistryObject<SoundEvent> gasArc = registerSound("gas_arc");
     public static final RegistryObject<SoundEvent> gasIgnite = registerSound("gas_ignite");
     public static final RegistryObject<SoundEvent> gasRunning = registerSound("gas_running");
     public static final RegistryObject<SoundEvent> gasSpark = registerSound("gas_spark");
     public static final RegistryObject<SoundEvent> gasStarter = registerSound("gas_starter");
     public static final RegistryObject<SoundEvent> heatExchanger = registerSound("heat_exchanger");
+    public static final RegistryObject<SoundEvent> meltingCrucible = registerSound("melting_crucible");
     public static final RegistryObject<SoundEvent> steamTurbine = registerSound("steam_turbine");
+    public static final RegistryObject<SoundEvent> solarMelter = registerSound("solar_melter");
     public static final RegistryObject<SoundEvent> solarTower = registerSound("solar_tower");
-
 
     public static void init(IEventBus event) {
         REGISTER.register(event);

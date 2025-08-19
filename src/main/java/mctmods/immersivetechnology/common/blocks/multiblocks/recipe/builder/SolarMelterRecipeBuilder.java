@@ -7,15 +7,17 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 public class SolarMelterRecipeBuilder extends IEFinishedRecipe<SolarMelterRecipeBuilder> {
-    public SolarMelterRecipeBuilder() { super(SolarMelterRecipe.SERIALIZER.get()); }
+    private SolarMelterRecipeBuilder() { super(SolarMelterRecipe.SERIALIZER.get()); }
 
     public static SolarMelterRecipeBuilder builder() { return new SolarMelterRecipeBuilder(); }
 
-    public SolarMelterRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount) { return addFluidTag("input", fluidTag, amount); }
+    public SolarMelterRecipeBuilder addInput(TagKey<Fluid> tag, int amount) { return addFluidTag("input", tag, amount); }
 
-    public SolarMelterRecipeBuilder addOutput(FluidStack fluidStack) { return addFluid("output", fluidStack); }
+    public SolarMelterRecipeBuilder addOutput(FluidStack output) { return addFluid("output", output); }
 
     public SolarMelterRecipeBuilder addOutput(Fluid fluid, int amount) { return addOutput(new FluidStack(fluid, amount)); }
 
-    public SolarMelterRecipeBuilder setTime(int time) { return this.addWriter((jsonObject) -> jsonObject.addProperty("time", time)); }
+    public SolarMelterRecipeBuilder setTime(int time) { return super.setTime(time); }
+
+    public SolarMelterRecipeBuilder setRequiredTemp(double temp) { return addWriter(json -> json.addProperty("requiredTemp", temp)); }
 }

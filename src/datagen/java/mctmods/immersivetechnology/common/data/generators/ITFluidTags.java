@@ -18,10 +18,15 @@ public class ITFluidTags extends FluidTagsProvider {
 
     @Override
     protected void addTags(@NotNull Provider provider) {
-        tag(ITTags.fluidSteam).add(ITFluids.STEAM.getStill());
-        tag(ITTags.fluidSteamForge).add(ITFluids.STEAM.getStill());
+        tag(ITTags.fluidChlorine).add(ITFluids.CHLORINE.getStill());
         tag(ITTags.fluidDistilledWater).add(ITFluids.DISTILLED_WATER.getStill());
         tag(ITTags.fluidDistilledWaterForge).add(ITFluids.DISTILLED_WATER.getStill());
+        tag(ITTags.fluidExhaustSteam).add(ITFluids.EXHAUST_STEAM.getStill());
         tag(ITTags.fluidFlueGas).add(ITFluids.FLUE_GAS.getStill());
+        tag(ITTags.fluidHeatedSaltSlurry).add(ITFluids.HEATED_SALT.getStill());
+        tag(ITTags.fluidMoltenSalt).add(ITFluids.MOLTEN_SALT.getStill());
+        tag(ITTags.fluidSaltSlurry).add(ITFluids.SALT_SLURRY.getStill());
+        tag(ITTags.fluidSteam).add(ITFluids.STEAM.getStill());
+        tag(ITTags.fluidSteamForge).add(ITFluids.STEAM.getStill());
     }
 }

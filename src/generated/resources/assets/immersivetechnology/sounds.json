@@ -35,6 +35,12 @@
     ],
     "subtitle": "subtitles.immersivetechnology.distiller"
   },
+  "electrolytic_crucible_battery": {
+    "sounds": [
+      "immersivetechnology:electrolytic_crucible_battery"
+    ],
+    "subtitle": "subtitles.immersivetechnology.electrolytic_crucible_battery"
+  },
   "gas_arc": {
     "sounds": [
       "immersivetechnology:gas_arc"
@@ -71,9 +77,27 @@
     ],
     "subtitle": "subtitles.immersivetechnology.heat_exchanger"
   },
+  "melting_crucible": {
+    "sounds": [
+      "immersivetechnology:melting_crucible"
+    ],
+    "subtitle": "subtitles.immersivetechnology.melting_crucible"
+  },
+  "solar_melter": {
+    "sounds": [
+      {
+        "attenuation_distance": 64,
+        "name": "immersivetechnology:solar_melter"
+      }
+    ],
+    "subtitle": "subtitles.immersivetechnology.solar_melter"
+  },
   "solar_tower": {
     "sounds": [
-      "immersivetechnology:solar_tower"
+      {
+        "attenuation_distance": 64,
+        "name": "immersivetechnology:solar_tower"
+      }
     ],
     "subtitle": "subtitles.immersivetechnology.solar_tower"
   },

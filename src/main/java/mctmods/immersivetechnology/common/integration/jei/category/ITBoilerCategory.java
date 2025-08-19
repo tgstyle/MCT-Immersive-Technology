@@ -1,6 +1,7 @@
-package mctmods.immersivetechnology.common.integration.jei;
+package mctmods.immersivetechnology.common.integration.jei.category;
 
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerRecipe;
+import mctmods.immersivetechnology.common.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;

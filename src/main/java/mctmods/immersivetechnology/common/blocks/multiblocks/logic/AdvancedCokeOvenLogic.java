@@ -30,7 +30,7 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCoke
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AdvancedCokeOvenShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
+import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -95,7 +95,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         }
         if (!state.isSoundPlaying.getAsBoolean()) {
             final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(1, 1, 1));
-            state.isSoundPlaying = ITMultiblockSound.startSound(
+            state.isSoundPlaying = ITSound.startSound(
                     () -> state.active,
                     ctx.isValid(),
                     soundPos,

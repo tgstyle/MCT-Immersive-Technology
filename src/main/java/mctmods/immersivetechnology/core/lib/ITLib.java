@@ -14,6 +14,7 @@ public class ITLib {
     public static final String GUIID_AdvCokeOven = "coke_oven_advanced";
     public static final String GUIID_Boiler = "gui_boiler";
     public static final String GUIID_Distiller = "gui_distiller";
+    public static final String GUIID_SolarMelter = "gui_solar_melter";
     public static final String GUIID_SolarTower = "gui_solar_tower";
     public static final Logger IT_LOGGER = LogUtils.getLogger();
 

@@ -20,14 +20,14 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.MechanicalCapabilities;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
-import mctmods.immersivetechnology.client.particles.ColoredSmokeData;
+import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.GasTurbineShape;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.RotationInertiaProcess;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
+import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -120,7 +120,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             if (!state.runningSoundPlaying.getAsBoolean()) {
                 state.runningSoundId++;
                 int thisId = state.runningSoundId;
-                state.runningSoundPlaying = ITMultiblockSound.startSound(
+                state.runningSoundPlaying = ITSound.startSound(
                         () -> state.speed >= (MAX_SPEED / 4) && state.runningSoundId == thisId,
                         ctx.isValid(),
                         runningPos,
@@ -139,7 +139,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             if (!state.starterSoundPlaying.getAsBoolean()) {
                 state.starterSoundId++;
                 int thisId = state.starterSoundId;
-                state.starterSoundPlaying = ITMultiblockSound.startSound(
+                state.starterSoundPlaying = ITSound.startSound(
                         () -> state.starterRunning && state.starterSoundId == thisId,
                         ctx.isValid(),
                         starterPos,
@@ -157,7 +157,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 if (!state.arcSoundPlaying.getAsBoolean()) {
                     state.arcSoundId++;
                     int thisId = state.arcSoundId;
-                    state.arcSoundPlaying = ITMultiblockSound.startSound(
+                    state.arcSoundPlaying = ITSound.startSound(
                             () -> state.starterRunning && state.speed >= MAX_SPEED / 4 && state.arcSoundId == thisId,
                             ctx.isValid(),
                             arcPos,
@@ -218,7 +218,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 }
                 Level level2 = ctx.getLevel().getRawLevel();
                 level2.addAlwaysVisibleParticle(
-                        new ColoredSmokeData(r, g, b),
+                        new ColoredSmoke(r, g, b),
                         smokePos.x,
                         smokePos.y,
                         smokePos.z,

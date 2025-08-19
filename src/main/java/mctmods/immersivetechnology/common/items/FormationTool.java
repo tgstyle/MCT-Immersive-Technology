@@ -24,9 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FormationTool extends Item {
-    public FormationTool() {
-        super(new Item.Properties());
-    }
+    public FormationTool() { super(new Properties()); }
 
     @Override
     public int getMaxStackSize(ItemStack stack) { return 1; }
@@ -64,7 +62,8 @@ public class FormationTool extends Item {
                     else { isAllowed = true; }
                     if (!isAllowed) { continue; }
                     if (MultiblockHandler.postMultiblockFormationEvent(player, mb, pos, stack).isCanceled()) { continue; }
-                    if (mb.createStructure(world, pos, multiblockSide, player)) {
+                    boolean formed = mb.createStructure(world, pos, multiblockSide, player);
+                    if (formed) {
                         if (player instanceof ServerPlayer sPlayer) { IEAdvancements.TRIGGER_MULTIBLOCK.trigger(sPlayer, mb, stack); }
                         assert player != null;
                         stack.hurtAndBreak(1, player, (p) -> { });

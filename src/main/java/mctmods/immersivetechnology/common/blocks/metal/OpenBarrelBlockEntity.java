@@ -109,8 +109,6 @@ public class OpenBarrelBlockEntity extends IEBaseBlockEntity implements IEServer
         nbt.put("tank", tank.writeToNBT(new CompoundTag()));
     }
 
-    public boolean isFluidValid(@NotNull FluidStack fluid) { return !fluid.isEmpty() && fluid.getFluid().getFluidType().getDensity(fluid) >= 0; }
-
     @Override
     public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing) {
         if (capability == ForgeCapabilities.FLUID_HANDLER) {
@@ -118,6 +116,14 @@ public class OpenBarrelBlockEntity extends IEBaseBlockEntity implements IEServer
             if (facing.getAxis() == Direction.Axis.Y) return LazyOptional.of(() -> new SidedFluidHandler(this, facing)).cast();
         }
         return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public boolean interact(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull ItemStack heldItem, float hitX, float hitY, float hitZ) {
+        FluidStack contained = FluidUtil.getFluidContained(heldItem).orElse(FluidStack.EMPTY);
+        if (!isFluidValid(contained)) { player.displayClientMessage(Component.translatable(TranslationKey.NO_GAS_ALLOWED.text()), false); return true; }
+        if (FluidUtil.interactWithFluidHandler(player, hand, tank)) { setChanged(); markContainingBlockForUpdate(null); return true; }
+        return false;
     }
 
     @Override
@@ -138,14 +144,6 @@ public class OpenBarrelBlockEntity extends IEBaseBlockEntity implements IEServer
     public int getComparatorInputOverride() { return (15 * tank.getFluidAmount()) / tank.getCapacity(); }
 
     @Override
-    public boolean interact(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull ItemStack heldItem, float hitX, float hitY, float hitZ) {
-        FluidStack contained = FluidUtil.getFluidContained(heldItem).orElse(FluidStack.EMPTY);
-        if (!isFluidValid(contained)) { player.displayClientMessage(Component.translatable(TranslationKey.NO_GAS_ALLOWED.text()), false); return true; }
-        if (FluidUtil.interactWithFluidHandler(player, hand, tank)) { setChanged(); markContainingBlockForUpdate(null); return true; }
-        return false;
-    }
-
-    @Override
     public void getBlockEntityDrop(@NotNull LootContext context, @NotNull Consumer<ItemStack> drop) {
         ItemStack stack = new ItemStack(getBlockState().getBlock(), 1);
         CompoundTag tag = new CompoundTag();
@@ -156,6 +154,8 @@ public class OpenBarrelBlockEntity extends IEBaseBlockEntity implements IEServer
 
     @Override
     public void onBEPlaced(BlockPlaceContext ctx) { if (ctx.getItemInHand().hasTag()) readTank(ctx.getItemInHand().getOrCreateTag()); }
+
+    public boolean isFluidValid(@NotNull FluidStack fluid) { return !fluid.isEmpty() && fluid.getFluid().getFluidType().getDensity(fluid) >= 0; }
 
     public void writeTank(CompoundTag nbt, boolean toItem) {
         boolean write = tank.getFluidAmount() > 0;

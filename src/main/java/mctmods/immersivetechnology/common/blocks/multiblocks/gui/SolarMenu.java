@@ -5,6 +5,8 @@ import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.helper.ITSlot;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarTowerLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.helper.ITSolarTank;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.interfaces.ITISolarMultiblockState;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.SimpleContainerData;
@@ -20,27 +22,27 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class SolarTowerMenu extends ITContainerMenu {
+public class SolarMenu extends ITContainerMenu {
     public final SimpleContainerData state;
     public final FluidTank inputTank;
     public FluidTank outputTank;
-    private final Supplier<SolarTowerLogic.State> mbStateSupplier;
+    private final Supplier<ITISolarMultiblockState> mbStateSupplier;
 
-    public static SolarTowerMenu makeServer(MenuType<?> type, int id, Inventory invPlayer, MultiblockMenuContext<SolarTowerLogic.State> ctx) {
-        final SolarTowerLogic.State state = ctx.mbContext().getState();
-        return new SolarTowerMenu(multiblockCtx(type, id, ctx), invPlayer, state.getInventory(), state.getTanks().input(), state.getTanks().output(), () -> state);
+    public static SolarMenu makeServer(MenuType<?> type, int id, Inventory invPlayer, MultiblockMenuContext<? extends ITISolarMultiblockState> ctx) {
+        final ITISolarMultiblockState state = ctx.mbContext().getState();
+        return new SolarMenu(multiblockCtx(type, id, ctx), invPlayer, state.getInventory(), state.getTanks().input(), state.getTanks().output(), () -> state);
     }
 
-    public static SolarTowerMenu makeClient(MenuType<?> type, int id, Inventory invPlayer) {
-        return new SolarTowerMenu(clientCtx(type, id), invPlayer, new ITSlotwiseItemHandler(List.of(ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT, ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT), () -> {}), new FluidTank(SolarTowerLogic.TANK_CAPACITY), new FluidTank(SolarTowerLogic.TANK_CAPACITY), () -> null);
+    public static SolarMenu makeClient(MenuType<?> type, int id, Inventory invPlayer) {
+        return new SolarMenu(clientCtx(type, id), invPlayer, new ITSlotwiseItemHandler(List.of(ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT, ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT), () -> {}), new FluidTank(ITSolarTank.TANK_CAPACITY), new FluidTank(ITSolarTank.TANK_CAPACITY), () -> null);
     }
 
-    private SolarTowerMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, FluidTank input, FluidTank output, Supplier<SolarTowerLogic.State> mbStateSupplier) {
+    private SolarMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, FluidTank input, FluidTank output, Supplier<ITISolarMultiblockState> mbStateSupplier) {
         super(ctx);
         this.inputTank = input;
         this.outputTank = output;
         this.mbStateSupplier = mbStateSupplier;
-        this.state = new SimpleContainerData(7);
+        this.state = new SimpleContainerData(8);
         this.addSlot(new ITSlot.FluidContainer(inv, 0, 80, 17, 1) {
             @Override
             public boolean mayPlace(@Nonnull ItemStack itemStack) {
@@ -68,14 +70,15 @@ public class SolarTowerMenu extends ITContainerMenu {
     @Override
     public void broadcastChanges() {
         if (mbStateSupplier != null) {
-            SolarTowerLogic.State s = mbStateSupplier.get();
-            state.set(0, (int) s.heatLevel);
+            ITISolarMultiblockState s = mbStateSupplier.get();
+            state.set(0, (int) s.getHeatLevel());
             if (!this.usingPlayers.isEmpty()) { state.set(1, SolarTowerLogic.getSolarIncidenceAngleSection(this.usingPlayers.get(0).level())); }
-            state.set(2, s.dirCounts[0]);
-            state.set(3, s.dirCounts[1]);
-            state.set(4, s.dirCounts[2]);
-            state.set(5, s.dirCounts[3]);
-            state.set(6, s.processProgress);
+            state.set(2, s.getDirCounts()[0]);
+            state.set(3, s.getDirCounts()[1]);
+            state.set(4, s.getDirCounts()[2]);
+            state.set(5, s.getDirCounts()[3]);
+            state.set(6, s.getProcessProgress());
+            state.set(7, s.isSunVisible() ? 1 : 0);
         }
         super.broadcastChanges();
     }

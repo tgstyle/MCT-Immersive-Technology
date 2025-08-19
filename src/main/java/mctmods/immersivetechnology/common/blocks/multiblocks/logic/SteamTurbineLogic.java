@@ -19,14 +19,14 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.MechanicalCapabilities;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
-import mctmods.immersivetechnology.client.particles.ColoredSmokeData;
+import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SteamTurbineShape;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.RotationInertiaProcess;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
+import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -95,7 +95,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
             state.soundId++;
             int thisId = state.soundId;
-            state.isSoundPlaying = ITMultiblockSound.startSound(
+            state.isSoundPlaying = ITSound.startSound(
                     () -> (state.active || state.animation_fanFadeOut > 0) && state.soundId == thisId,
                     ctx.isValid(),
                     soundPos,
@@ -128,7 +128,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
                 }
                 Level level2 = ctx.getLevel().getRawLevel();
                 level2.addAlwaysVisibleParticle(
-                        new ColoredSmokeData(r, g, b),
+                        new ColoredSmoke(r, g, b),
                         smokePos.x,
                         smokePos.y,
                         smokePos.z,

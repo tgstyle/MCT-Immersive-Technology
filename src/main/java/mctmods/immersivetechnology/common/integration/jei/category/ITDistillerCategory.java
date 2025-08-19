@@ -1,6 +1,7 @@
-package mctmods.immersivetechnology.common.integration.jei;
+package mctmods.immersivetechnology.common.integration.jei.category;
 
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
+import mctmods.immersivetechnology.common.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mezz.jei.api.forge.ForgeTypes;
@@ -32,7 +33,7 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, DistillerRecipe recipe, @NotNull IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, 56, 43).addIngredient(ForgeTypes.FLUID_STACK, recipe.water.getMatchingFluidStacks().get(0)).setFluidRenderer(recipe.water.getAmount(), false, 16, 47).setOverlay(tankOverlay, 0, 0);
+        builder.addSlot(RecipeIngredientRole.INPUT, 56, 43).addIngredient(ForgeTypes.FLUID_STACK, recipe.input.getMatchingFluidStacks().get(0)).setFluidRenderer(recipe.input.getAmount(), false, 16, 47).setOverlay(tankOverlay, 0, 0);
         if (recipe.fluidOutput != null) { builder.addSlot(RecipeIngredientRole.OUTPUT, 112, 43).addIngredient(ForgeTypes.FLUID_STACK, recipe.fluidOutput).setFluidRenderer(recipe.fluidOutput.getAmount(), false, 16, 47).setOverlay(tankOverlay, 0, 0); }
         if (!recipe.itemOutput.isEmpty()) {
             builder.addSlot(RecipeIngredientRole.OUTPUT, 130, 47).addItemStack(recipe.itemOutput).addRichTooltipCallback((slot, tooltip) -> tooltip.add(Component.translatable("category.immersivetechnology.metal_multiblock.distillerChance", String.format("%.2f", recipe.chance * 100)).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)))));

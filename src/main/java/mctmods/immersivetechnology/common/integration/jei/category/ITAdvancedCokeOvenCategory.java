@@ -1,7 +1,8 @@
-package mctmods.immersivetechnology.common.integration.jei;
+package mctmods.immersivetechnology.common.integration.jei.category;
 
 import blusunrize.immersiveengineering.common.register.IEFluids;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCokeOvenRecipe;
+import mctmods.immersivetechnology.common.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mezz.jei.api.forge.ForgeTypes;
@@ -40,16 +41,14 @@ public class ITAdvancedCokeOvenCategory extends ITRecipeCategory<AdvancedCokeOve
     public void setRecipe(IRecipeLayoutBuilder builder, AdvancedCokeOvenRecipe recipe, @NotNull IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 4, 19).addItemStacks(Arrays.asList(recipe.input.getMatchingStacks()));
         IRecipeSlotBuilder outputSlotBuilder = builder.addSlot(RecipeIngredientRole.OUTPUT, 59, 19);
-        if (!recipe.output.get().isEmpty()) outputSlotBuilder.addItemStack(recipe.output.get());
+        if (!recipe.itemOutput.get().isEmpty()) outputSlotBuilder.addItemStack(recipe.itemOutput.get());
         if (recipe.creosoteOutput > 0) {
             int tankSize = Math.max(FluidType.BUCKET_VOLUME, recipe.creosoteOutput);
             IRecipeSlotBuilder fluidSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 103, 4).setFluidRenderer(tankSize, false, 16, 47).setOverlay(tankOverlay, 0, 0).addIngredient(ForgeTypes.FLUID_STACK, new FluidStack(IEFluids.CREOSOTE.getStill(), recipe.creosoteOutput));
-            IRecipeSlotRichTooltipCallback fluidCallback = (slot, tooltip) -> {
-                slot.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs -> {
-                    tooltip.add(Component.translatable(fs.getFluid().getFluidType().getDescriptionId(fs)).withStyle(style -> style.withColor(TextColor.fromRgb(0x555555))));
-                    tooltip.add(Component.literal(fs.getAmount() + " mB").withStyle(style -> style.withColor(TextColor.fromRgb(0x555555))));
-                });
-            };
+            IRecipeSlotRichTooltipCallback fluidCallback = (slot, tooltip) -> slot.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs -> {
+                tooltip.add(Component.translatable(fs.getFluid().getFluidType().getDescriptionId(fs)).withStyle(style -> style.withColor(TextColor.fromRgb(0x555555))));
+                tooltip.add(Component.literal(fs.getAmount() + " mB").withStyle(style -> style.withColor(TextColor.fromRgb(0x555555))));
+            });
             fluidSlot.addRichTooltipCallback(fluidCallback);
         }
     }

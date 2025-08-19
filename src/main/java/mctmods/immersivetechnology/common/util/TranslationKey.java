@@ -47,8 +47,8 @@ public enum TranslationKey {
     OVERLAY_REDSTONE_NORMAL("overlay.immersivetechnology.redstone_normal"),
     OVERLAY_REDSTONE_OFF("overlay.immersivetechnology.redstone_off"),
     OVERLAY_STEEL_TANK_NORMAL_FIRST_LINE("overlay.immersivetechnology.multiblock.steel_tank.normal.firstline"),
-    SOLAR_TOWER_TOO_CLOSE("block.immersivetechnology.solartower.osd.too_close"),
-    SOLAR_TOWER_VERTICAL_STACK("block.immersivetechnology.solartower.osd.vertical_stack"),
+    SOLAR_TOO_CLOSE("block.immersivetechnology.solartower.osd.too_close"),
+    SOLAR_VERTICAL_STACK("block.immersivetechnology.solartower.osd.vertical_stack"),
     OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE("overlay.immersivetechnology.osd.trash_item.normal.firstline");
 
     public final String location;

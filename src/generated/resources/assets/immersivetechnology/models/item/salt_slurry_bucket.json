@@ -1,6 +1,6 @@
 {
   "parent": "forge:item/bucket",
   "flip_gas": false,
-  "fluid": "immersivetechnology:molten_sodium",
+  "fluid": "immersivetechnology:salt_slurry",
   "loader": "forge:fluid_container"
 }

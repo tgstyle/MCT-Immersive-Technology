@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.integration.jei;
+package mctmods.immersivetechnology.common.integration.jei.category;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.drawable.IDrawable;

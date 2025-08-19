@@ -11,9 +11,10 @@ import mctmods.immersivetechnology.client.models.helper.ITDynamicModel;
 import mctmods.immersivetechnology.client.models.helper.ITObjLoader;
 import mctmods.immersivetechnology.client.models.RotorModels;
 import mctmods.immersivetechnology.client.models.SolarReflectorModels;
-import mctmods.immersivetechnology.client.particles.ColoredSmokeParticleProvider;
+import mctmods.immersivetechnology.client.particles.helper.ITColoredSmokeProvider;
 import mctmods.immersivetechnology.client.renderer.GasTurbineRenderer;
 import mctmods.immersivetechnology.client.renderer.OpenBarrelRenderer;
+import mctmods.immersivetechnology.client.renderer.SolarMelterRenderer;
 import mctmods.immersivetechnology.client.renderer.SolarReflectorRenderer;
 import mctmods.immersivetechnology.client.renderer.SteamTurbineRenderer;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockType;
@@ -73,7 +74,8 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
             MenuScreens.register(ITMenuTypes.BOILER_MENU.getType(), BoilerScreen::new);
             MenuScreens.register(ITMenuTypes.DISTILLER_MENU.getType(), DistillerScreen::new);
             MenuScreens.register(ITMenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
-            MenuScreens.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarTowerScreen::new);
+            MenuScreens.register(ITMenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
+            MenuScreens.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
             ManualInstance instance = ManualHelper.getManual();
             InnerNode<ResourceLocation, ManualEntry> parent_category = instance.getRoot().getOrCreateSubnode(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "main"), 99);
             ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
@@ -82,37 +84,37 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
             InnerNode<ResourceLocation, ManualEntry> multiblock_category = parent_category.getOrCreateSubnode(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "it_multiblocks"), 0);
             ManualEntry.ManualEntryBuilder
                     multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-                    multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "advanced_coke_oven"));
-                    instance.addEntry(multiblock_category, multiblock.create());
-                    multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-                    multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "alternator"));
-                    instance.addEntry(multiblock_category, multiblock.create());
-                    multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-                    multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler"));
-                    instance.addEntry(multiblock_category, multiblock.create());
-                    multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-                    multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "distiller"));
-                    instance.addEntry(multiblock_category, multiblock.create());
-                    multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-                    multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "gas_turbine"));
-                    instance.addEntry(multiblock_category, multiblock.create());
-                    multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-                    multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "solar_melter"));
-                    instance.addEntry(multiblock_category, multiblock.create());
-                    multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-                    multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "solar_reflector"));
-                    instance.addEntry(multiblock_category, multiblock.create());
-                    multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-                    multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "solar_tower"));
-                    instance.addEntry(multiblock_category, multiblock.create());
-                    multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-                    multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "steam_turbine"));
-                    instance.addEntry(multiblock_category, multiblock.create());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "advanced_coke_oven"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "alternator"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "distiller"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "gas_turbine"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "solar_melter"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "solar_reflector"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "solar_tower"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "steam_turbine"));
+            instance.addEntry(multiblock_category, multiblock.create());
         });
     }
 
     @SubscribeEvent
-    public static void registerParticleProviders(RegisterParticleProvidersEvent event) { event.registerSpriteSet(ITParticles.COLORED_SMOKE.get(), ColoredSmokeParticleProvider::new); }
+    public static void registerParticleProviders(RegisterParticleProvidersEvent event) { event.registerSpriteSet(ITParticles.COLORED_SMOKE.get(), ITColoredSmokeProvider::new); }
 
     @SubscribeEvent
     public static void onItemColor(RegisterColorHandlersEvent.Item event) {
@@ -179,5 +181,6 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
         registerBERenderNoContext(event, ITMultiblockProvider.STEAM_TURBINE.masterBE(), SteamTurbineRenderer::new);
         registerBERenderNoContext(event, ITMultiblockProvider.GAS_TURBINE.masterBE(), GasTurbineRenderer::new);
         registerBERenderNoContext(event, ITMultiblockProvider.SOLAR_REFLECTOR.masterBE(), SolarReflectorRenderer::new);
+        registerBERenderNoContext(event, ITMultiblockProvider.SOLAR_MELTER.masterBE(), SolarMelterRenderer::new);
     }
 }

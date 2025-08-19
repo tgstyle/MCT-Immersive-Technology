@@ -3,9 +3,13 @@ package mctmods.immersivetechnology.common.blocks.metal;
 import blusunrize.immersiveengineering.common.blocks.IEBaseBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
+import blusunrize.immersiveengineering.common.blocks.ticking.IEClientTickableBE;
 import blusunrize.immersiveengineering.common.blocks.ticking.IEServerTickableBE;
 import blusunrize.immersiveengineering.common.util.Utils;
+import mctmods.immersivetechnology.common.network.ITOSDRequestMessage;
+import mctmods.immersivetechnology.common.network.ITPacketHandler;
 import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,9 +41,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEServerTickableBE {
+public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEServerTickableBE, IEClientTickableBE {
     private FluidStack selectedFluid = FluidStack.EMPTY;
-    private int lastOutputAmount = 0;
+    private long outputAmount = 0;
+    public long lastOutputAmount = 0;
+    private int secondCounter = 0;
+    private int requestCooldown = 0;
 
     private final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> new IFluidHandler() {
         @Override
@@ -75,27 +82,40 @@ public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBl
 
     public CreativeBarrelBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.CREATIVE_BARREL.get(), pos, state); }
 
-    public void setOutputFluid(FluidStack fluidStack) {
-        this.selectedFluid = fluidStack.isEmpty() ? FluidStack.EMPTY : new FluidStack(fluidStack.getFluid(), 1);
-        setChanged();
-    }
-
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
-        super.saveAdditional(tag);
-        if (!selectedFluid.isEmpty()) { tag.putString("SelectedFluid", Objects.requireNonNull(ForgeRegistries.FLUIDS.getKey(selectedFluid.getFluid())).toString()); }
-        tag.putInt("lastOutputAmount", lastOutputAmount);
-    }
-
-    @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
-        if (tag.contains("SelectedFluid")) {
-            ResourceLocation fluidId = ResourceLocation.parse(tag.getString("SelectedFluid"));
-            if (ForgeRegistries.FLUIDS.containsKey(fluidId)) { this.selectedFluid = new FluidStack(Objects.requireNonNull(ForgeRegistries.FLUIDS.getValue(fluidId)), 1); }
+    public void tickServer() {
+        if (!selectedFluid.isEmpty()) {
+            long[] thisTickOutput = {0};
+            for (Direction dir : Direction.values()) {
+                BlockPos neighborPos = worldPosition.relative(dir);
+                Object neighbor = Utils.getExistingTileEntity(level, neighborPos);
+                boolean isPipe = neighbor instanceof FluidPipeBlockEntity;
+                FluidStack toPush = new FluidStack(selectedFluid.getFluid(), Integer.MAX_VALUE);
+                if (isPipe) {
+                    CompoundTag tag = new CompoundTag();
+                    tag.putBoolean("pressurized", true);
+                    toPush.setTag(tag);
+                }
+                FluidUtil.getFluidHandler(level, neighborPos, dir.getOpposite()).ifPresent(handler -> {
+                    int accepted = handler.fill(toPush, FluidAction.SIMULATE);
+                    if (accepted > 0) {
+                        int filled = handler.fill(new FluidStack(selectedFluid.getFluid(), accepted, toPush.getTag()), FluidAction.EXECUTE);
+                        thisTickOutput[0] += filled;
+                    }
+                });
+            }
+            outputAmount += thisTickOutput[0];
         }
-        lastOutputAmount = tag.getInt("lastOutputAmount");
+        if (++secondCounter >= 20) {
+            lastOutputAmount = outputAmount;
+            outputAmount = 0;
+            secondCounter = 0;
+            setChanged();
+        }
     }
+
+    @Override
+    public void tickClient() { if (requestCooldown > 0) requestCooldown--; }
 
     @Override
     public void readCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
@@ -103,48 +123,17 @@ public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBl
             ResourceLocation fluidId = ResourceLocation.parse(nbt.getString("SelectedFluid"));
             if (ForgeRegistries.FLUIDS.containsKey(fluidId)) { this.selectedFluid = new FluidStack(Objects.requireNonNull(ForgeRegistries.FLUIDS.getValue(fluidId)), 1); }
         }
-        lastOutputAmount = nbt.getInt("lastOutputAmount");
     }
 
     @Override
     public void writeCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
         if (!selectedFluid.isEmpty()) { nbt.putString("SelectedFluid", Objects.requireNonNull(ForgeRegistries.FLUIDS.getKey(selectedFluid.getFluid())).toString()); }
-        nbt.putInt("lastOutputAmount", lastOutputAmount);
     }
 
     @Override
     public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.FLUID_HANDLER) { return fluidHandler.cast(); }
         return super.getCapability(cap, side);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        fluidHandler.invalidate();
-    }
-
-    @Override
-    public void getBlockEntityDrop(@NotNull LootContext context, @NotNull Consumer<ItemStack> drop) {
-        ItemStack stack = new ItemStack(getBlockState().getBlock(), 1);
-        CompoundTag tag = new CompoundTag();
-        saveAdditional(tag);
-        if (!tag.isEmpty()) { stack.setTag(tag); }
-        drop.accept(stack);
-    }
-
-    @Override
-    public void onBEPlaced(BlockPlaceContext ctx) { onBEPlaced(ctx.getItemInHand()); }
-
-    public void onBEPlaced(ItemStack stack) {
-        if (stack.hasTag()) {
-            CompoundTag tag = stack.getTag();
-            assert tag != null;
-            if (tag.contains("SelectedFluid")) {
-                ResourceLocation fluidId = ResourceLocation.parse(tag.getString("SelectedFluid"));
-                if (ForgeRegistries.FLUIDS.containsKey(fluidId)) { this.selectedFluid = new FluidStack(Objects.requireNonNull(ForgeRegistries.FLUIDS.getValue(fluidId)), 1); }
-            }
-        }
     }
 
     @Override
@@ -166,42 +155,68 @@ public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBl
     }
 
     @Override
-    public void tickServer() {
-        if (!selectedFluid.isEmpty()) {
-            int[] outputThisTick = {0}; // Use array to allow modification in lambda
-            for (Direction dir : Direction.values()) {
-                BlockPos neighborPos = worldPosition.relative(dir);
-                Object neighbor = Utils.getExistingTileEntity(level, neighborPos);
-                boolean isPipe = neighbor instanceof FluidPipeBlockEntity;
-                FluidStack toPush = new FluidStack(selectedFluid.getFluid(), Integer.MAX_VALUE);
-                if (isPipe) {
-                    CompoundTag tag = new CompoundTag();
-                    tag.putBoolean("pressurized", true);
-                    toPush.setTag(tag);
-                }
-                FluidUtil.getFluidHandler(level, neighborPos, dir.getOpposite()).ifPresent(handler -> {
-                    int accepted = handler.fill(toPush, FluidAction.SIMULATE);
-                    if (accepted > 0) {
-                        int filled = handler.fill(new FluidStack(selectedFluid.getFluid(), accepted, toPush.getTag()), FluidAction.EXECUTE);
-                        outputThisTick[0] += filled;
-                    }
-                });
-            }
-            if (outputThisTick[0] != lastOutputAmount) {
-                lastOutputAmount = outputThisTick[0];
-                setChanged();
+    public Component[] getOverlayText(@NotNull Player player, HitResult rtr, boolean hammer) {
+        if (rtr.getType() == HitResult.Type.MISS) { return null; }
+        assert level != null;
+        if (level.isClientSide && requestCooldown == 0) {
+            ITPacketHandler.sendToServer(new ITOSDRequestMessage(worldPosition));
+            requestCooldown = 20;
+        }
+        if (selectedFluid.isEmpty()) { return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.text())}; }
+        Component fluidName = new FluidStack(selectedFluid.getFluid(), 1).getDisplayName();
+        float value = ITClientConfig.perTickTrashCans.get() ? (float)lastOutputAmount / 20 : lastOutputAmount;
+        return new Component[]{Component.translatable(TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE.text(), fluidName, value)};
+    }
+
+    @Override
+    public boolean useNixieFont(@NotNull Player player, @NotNull HitResult mop) { return false; }
+
+    @Override
+    public void getBlockEntityDrop(@NotNull LootContext context, @NotNull Consumer<ItemStack> drop) {
+        ItemStack stack = new ItemStack(getBlockState().getBlock(), 1);
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag);
+        if (!tag.isEmpty()) { stack.setTag(tag); }
+        drop.accept(stack);
+    }
+
+    @Override
+    public void onBEPlaced(BlockPlaceContext ctx) { onBEPlaced(ctx.getItemInHand()); }
+
+    public void setOutputFluid(FluidStack fluidStack) {
+        this.selectedFluid = fluidStack.isEmpty() ? FluidStack.EMPTY : new FluidStack(fluidStack.getFluid(), 1);
+        setChanged();
+    }
+
+    @Override
+    protected void saveAdditional(@NotNull CompoundTag tag) {
+        super.saveAdditional(tag);
+        if (!selectedFluid.isEmpty()) { tag.putString("SelectedFluid", Objects.requireNonNull(ForgeRegistries.FLUIDS.getKey(selectedFluid.getFluid())).toString()); }
+    }
+
+    @Override
+    public void load(@NotNull CompoundTag tag) {
+        super.load(tag);
+        if (tag.contains("SelectedFluid")) {
+            ResourceLocation fluidId = ResourceLocation.parse(tag.getString("SelectedFluid"));
+            if (ForgeRegistries.FLUIDS.containsKey(fluidId)) { this.selectedFluid = new FluidStack(Objects.requireNonNull(ForgeRegistries.FLUIDS.getValue(fluidId)), 1); }
+        }
+    }
+
+    public void onBEPlaced(ItemStack stack) {
+        if (stack.hasTag()) {
+            CompoundTag tag = stack.getTag();
+            assert tag != null;
+            if (tag.contains("SelectedFluid")) {
+                ResourceLocation fluidId = ResourceLocation.parse(tag.getString("SelectedFluid"));
+                if (ForgeRegistries.FLUIDS.containsKey(fluidId)) { this.selectedFluid = new FluidStack(Objects.requireNonNull(ForgeRegistries.FLUIDS.getValue(fluidId)), 1); }
             }
         }
     }
 
     @Override
-    public Component[] getOverlayText(@NotNull Player player, HitResult rtr, boolean hammer) {
-        if (rtr.getType() == HitResult.Type.MISS) { return null; }
-        if (selectedFluid.isEmpty()) { return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.location)}; }
-        Component fluidName = new FluidStack(selectedFluid.getFluid(), 1).getDisplayName();
-        return new Component[]{Component.translatable(TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE.location, fluidName, lastOutputAmount)};
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        fluidHandler.invalidate();
     }
-
-    @Override
-    public boolean useNixieFont(@NotNull Player player, @NotNull HitResult mop) { return false; }
 }

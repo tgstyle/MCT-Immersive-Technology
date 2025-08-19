@@ -6,11 +6,8 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.gui.AdvancedCokeOve
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.BoilerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.DistillerMenu;
 import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.SolarTowerMenu;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.AdvancedCokeOvenLogic;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.BoilerLogic;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.DistillerLogic;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarTowerLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.gui.SolarMenu;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.*;
 import mctmods.immersivetechnology.common.blocks.metal.TrashItemBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.gui.TrashItemMenu;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -37,7 +34,8 @@ public class ITMenuTypes {
     public static final MultiblockContainer<AdvancedCokeOvenLogic.State, AdvancedCokeOvenMenu> ADVANCED_COKE_OVEN_MENU = registerMultiblock(ITLib.GUIID_AdvCokeOven, AdvancedCokeOvenMenu::makeServer, AdvancedCokeOvenMenu::makeClient);
     public static final MultiblockContainer<BoilerLogic.State, BoilerMenu> BOILER_MENU = registerMultiblock(ITLib.GUIID_Boiler, BoilerMenu::makeServer, BoilerMenu::makeClient);
     public static final MultiblockContainer<DistillerLogic.State, DistillerMenu> DISTILLER_MENU = registerMultiblock(ITLib.GUIID_Distiller, DistillerMenu::makeServer, DistillerMenu::makeClient);
-    public static final MultiblockContainer<SolarTowerLogic.State, SolarTowerMenu> SOLAR_TOWER_MENU = registerMultiblock(ITLib.GUIID_SolarTower, SolarTowerMenu::makeServer, SolarTowerMenu::makeClient);
+    public static final MultiblockContainer<SolarMelterLogic.State, SolarMenu> SOLAR_MELTER_MENU = registerMultiblock(ITLib.GUIID_SolarMelter, SolarMenu::makeServer, SolarMenu::makeClient);
+    public static final MultiblockContainer<SolarTowerLogic.State, SolarMenu> SOLAR_TOWER_MENU = registerMultiblock(ITLib.GUIID_SolarTower, SolarMenu::makeServer, SolarMenu::makeClient);
 
     public static final ArgContainer<TrashItemBlockEntity, TrashItemMenu> TRASH_ITEM = registerArg("trash_item", TrashItemMenu::makeServer, TrashItemMenu::makeClient);
 

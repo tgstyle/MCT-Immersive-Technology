@@ -20,36 +20,37 @@ public class SolarMelterRecipe extends MultiblockRecipe {
     public static final CachedRecipeList<SolarMelterRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.SOLAR_MELTER);
 
     public final FluidTagInput input;
-    @Nullable
     public final FluidStack fluidOutput;
     private final int time;
-    Lazy<Integer> totalProcessTime;
+    public final double requiredTemp;
 
-    public SolarMelterRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time) {
+    public SolarMelterRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time, double requiredTemp) {
         super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.SOLAR_MELTER, id);
         this.input = input;
         this.fluidOutput = fluidOutput;
         this.time = time;
-        totalProcessTime = Lazy.of(() -> this.time);
+        this.requiredTemp = requiredTemp;
         this.fluidInputList = Lists.newArrayList(this.input);
         this.fluidOutputList = fluidOutput == null ? Lists.newArrayList() : Lists.newArrayList(fluidOutput);
+    }
+
+    public static @Nullable SolarMelterRecipe findRecipe(Level level, FluidStack fluid) {
+        if (fluid == null || fluid.isEmpty()) return null;
+        for (SolarMelterRecipe recipe : RECIPES.getRecipes(level)) {
+            if (recipe.input.testIgnoringAmount(fluid) && fluid.getAmount() >= recipe.input.getAmount()) return recipe;
+        }
+        return null;
     }
 
     @Override
     protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 
-    public boolean matches(FluidStack fluid) { return input.test(fluid); }
-
-    public static SolarMelterRecipe findRecipe(Level level, FluidStack fluid, @Nullable SolarMelterRecipe hint) {
-        if (fluid.isEmpty()) return null;
-        if (hint != null && hint.matches(fluid)) return hint;
-        for (SolarMelterRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.matches(fluid)) return recipe; }
-        return null;
-    }
-
-    @Override
-    public int getTotalProcessTime() { return totalProcessTime.get(); }
-
     @Override
     public int getMultipleProcessTicks() { return 0; }
+
+    @Override
+    public int getTotalProcessTime() { return time; }
+
+    @Override
+    public int getTotalProcessEnergy() { return 0; }
 }

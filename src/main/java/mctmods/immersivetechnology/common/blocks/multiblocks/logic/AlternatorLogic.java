@@ -19,7 +19,7 @@ import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AlternatorShape;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
+import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -56,7 +56,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         final State state = ctx.getState();
         if (!state.isSoundPlaying.getAsBoolean()) {
             final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
-            state.isSoundPlaying = ITMultiblockSound.startSound(
+            state.isSoundPlaying = ITSound.startSound(
                     () -> state.active,
                     ctx.isValid(),
                     soundPos,

@@ -22,27 +22,26 @@ public class SolarMelterRecipeSerializer extends IERecipeSerializer<SolarMelterR
     @Override
     public SolarMelterRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext iContext) {
         FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
-        FluidStack fluidOutput = null;
-        if (json.has("output")) fluidOutput = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output"));
+        FluidStack fluidOutput = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output"));
         int time = GsonHelper.getAsInt(json, "time");
-        return new SolarMelterRecipe(recipeId, input, fluidOutput, time);
+        double requiredTemp = GsonHelper.getAsDouble(json, "requiredTemp");
+        return new SolarMelterRecipe(recipeId, input, fluidOutput, time, requiredTemp);
     }
 
     @Override
     public @Nullable SolarMelterRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
-        boolean hasOutput = buffer.readBoolean();
-        FluidStack fluidOutput = hasOutput ? buffer.readFluidStack() : null;
+        FluidStack fluidOutput = buffer.readFluidStack();
         int time = buffer.readInt();
-        return new SolarMelterRecipe(recipeId, input, fluidOutput, time);
+        double requiredTemp = buffer.readDouble();
+        return new SolarMelterRecipe(recipeId, input, fluidOutput, time, requiredTemp);
     }
 
     @Override
     public void toNetwork(@NotNull FriendlyByteBuf buffer, @NotNull SolarMelterRecipe recipe) {
         recipe.input.write(buffer);
-        boolean hasOutput = recipe.fluidOutput != null;
-        buffer.writeBoolean(hasOutput);
-        if (hasOutput) buffer.writeFluidStack(recipe.fluidOutput);
+        buffer.writeFluidStack(recipe.fluidOutput);
         buffer.writeInt(recipe.getTotalProcessTime());
+        buffer.writeDouble(recipe.requiredTemp);
     }
 }

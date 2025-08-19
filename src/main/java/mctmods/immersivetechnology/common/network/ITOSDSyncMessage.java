@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.network;
 
+import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.TrashCommonBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -29,6 +30,7 @@ public class ITOSDSyncMessage implements ITMessage {
                 if (Minecraft.getInstance().level != null) {
                     BlockEntity te = Minecraft.getInstance().level.getBlockEntity(pos);
                     if (te instanceof TrashCommonBlockEntity trash) { trash.lastAcceptedAmount = amount; }
+                    if (te instanceof CreativeBarrelBlockEntity barrel) { barrel.lastOutputAmount = amount; }
                 }
             }
         });

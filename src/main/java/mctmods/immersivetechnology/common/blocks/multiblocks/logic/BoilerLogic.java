@@ -11,7 +11,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
-import mctmods.immersivetechnology.client.particles.ColoredSmokeData;
+import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerFuelRecipe;
@@ -19,7 +19,7 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerRecipe
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.BoilerShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.core.lib.ITMultiblockSound;
+import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -75,7 +75,7 @@ public class BoilerLogic implements IMultiblockLogic<BoilerLogic.State>, IServer
         else {
             Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(2.5, 1.5, 1.5));
             if (!state.isSoundPlaying.getAsBoolean()) {
-                state.isSoundPlaying = ITMultiblockSound.startSound(
+                state.isSoundPlaying = ITSound.startSound(
                         () -> state.heatLevel > 0,
                         ctx.isValid(),
                         soundPos,
@@ -109,7 +109,7 @@ public class BoilerLogic implements IMultiblockLogic<BoilerLogic.State>, IServer
             double velY = 0.125;
             double velZ = 0;
             float r = 0.2F, g = 0.2F, b = 0.2F;
-            level.addAlwaysVisibleParticle(new ColoredSmokeData(r, g, b), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ);
+            level.addAlwaysVisibleParticle(new ColoredSmoke(r, g, b), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ);
         }
     }
 

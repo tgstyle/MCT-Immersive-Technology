@@ -16,6 +16,7 @@ public class ITSoundProvider extends SoundDefinitionsProvider {
         add(ITSounds.boiler.get(), definition().subtitle("subtitles." + ITLib.MODID + ".boiler").with(sound(ITLib.MODID + ":boiler").volume(1.0f)));
         add(ITSounds.coolingTower.get(), definition().subtitle("subtitles." + ITLib.MODID + ".cooling_tower").with(sound(ITLib.MODID + ":cooling_tower").volume(1.0f)));
         add(ITSounds.dance.get(), definition().subtitle("subtitles." + ITLib.MODID + ".dance").with(sound(ITLib.MODID + ":dance").volume(1.0f)));
+        add(ITSounds.electrolyticCrucibleBattery.get(), definition().subtitle("subtitles." + ITLib.MODID + ".electrolytic_crucible_battery").with(sound(ITLib.MODID + ":electrolytic_crucible_battery").volume(1.0f)));
         add(ITSounds.distiller.get(), definition().subtitle("subtitles." + ITLib.MODID + ".distiller").with(sound(ITLib.MODID + ":distiller").volume(1.0f)));
         add(ITSounds.gasArc.get(), definition().subtitle("subtitles." + ITLib.MODID + ".gas_arc").with(sound(ITLib.MODID + ":gas_arc").volume(1.0f)));
         add(ITSounds.gasIgnite.get(), definition().subtitle("subtitles." + ITLib.MODID + ".gas_ignite").with(sound(ITLib.MODID + ":gas_ignite").volume(1.0f)));
@@ -23,7 +24,9 @@ public class ITSoundProvider extends SoundDefinitionsProvider {
         add(ITSounds.gasSpark.get(), definition().subtitle("subtitles." + ITLib.MODID + ".gas_spark").with(sound(ITLib.MODID + ":gas_spark").volume(1.0f)));
         add(ITSounds.gasStarter.get(), definition().subtitle("subtitles." + ITLib.MODID + ".gas_starter").with(sound(ITLib.MODID + ":gas_starter").volume(1.0f)));
         add(ITSounds.heatExchanger.get(), definition().subtitle("subtitles." + ITLib.MODID + ".heat_exchanger").with(sound(ITLib.MODID + ":heat_exchanger").volume(1.0f)));
+        add(ITSounds.meltingCrucible.get(), definition().subtitle("subtitles." + ITLib.MODID + ".melting_crucible").with(sound(ITLib.MODID + ":melting_crucible").volume(1.0f)));
         add(ITSounds.steamTurbine.get(), definition().subtitle("subtitles." + ITLib.MODID + ".steam_turbine").with(sound(ITLib.MODID + ":steam_turbine").volume(1.0f)));
+        add(ITSounds.solarMelter.get(), definition().subtitle("subtitles." + ITLib.MODID + ".solar_melter").with(sound(ITLib.MODID + ":solar_melter").attenuationDistance(64).volume(1.0f)));
         add(ITSounds.solarTower.get(), definition().subtitle("subtitles." + ITLib.MODID + ".solar_tower").with(sound(ITLib.MODID + ":solar_tower").attenuationDistance(64).volume(1.0f)));
     }
 }
