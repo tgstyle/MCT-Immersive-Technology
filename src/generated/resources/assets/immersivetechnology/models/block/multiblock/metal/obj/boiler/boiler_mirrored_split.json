@@ -3,6 +3,7 @@
   "dynamic": false,
   "inner_model": {
     "parent": "minecraft:block/block",
+    "ambientocclusion": false,
     "automatic_culling": false,
     "flip_v": true,
     "loader": "forge:obj",

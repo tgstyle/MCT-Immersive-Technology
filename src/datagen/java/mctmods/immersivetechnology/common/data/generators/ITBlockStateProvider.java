@@ -215,7 +215,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private void createSimpleBlock(Block block, ModelFile model) { getVariantBuilder(block).partialState().setModels(new ConfiguredModel(model)); }
 
-
     private void genericmultiblock(String registry_name, String block_type) {
         ITLib.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
         createMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name));
@@ -317,7 +316,12 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     protected <T extends ModelBuilder<T>> T obj(T base, ResourceLocation model, Map<String, ResourceLocation> textures) {
         assertModelExists(model);
-        T ret = base.customLoader(ObjModelBuilder::begin).automaticCulling(false).modelLocation(addModelsPrefix(model)).flipV(true).end();
+        ObjModelBuilder<T> loader = base.customLoader(ObjModelBuilder::begin);
+        loader.automaticCulling(false);
+        loader.modelLocation(addModelsPrefix(model));
+        loader.flipV(true);
+        T ret = loader.end();
+        ret.ao(false);
         String particleTex = DataGenUtils.getTextureFromObj(model, existingFileHelper);
         if (particleTex.charAt(0) == '#') { particleTex = textures.get(particleTex.substring(1)).toString(); }
         ret.texture("particle", particleTex);
