@@ -27,3 +27,4 @@ gradlesetup.bat
 .iws
 common-1.12.properties
 gradle/wrapper/gradle-wrapper.properties
+src/directory.txt

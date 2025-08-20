@@ -1,76 +1,98 @@
 buildscript {
-	repositories {
-		jcenter()
-		maven { url = "http://files.minecraftforge.net/maven" }
-	}
-	dependencies {
-		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-	}
-}
-
-ext.configFile = file "../common/common-1.12.properties"
-configFile.withReader {
-	def prop = new Properties()
-	prop.load(it)
-	ext.common = new ConfigSlurper().parse prop
-}
-
-apply plugin: 'net.minecraftforge.gradle.forge'
-
-repositories {
-    maven {
-        name = "CurseForge"
-        url = "https://cursemaven.com"
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        mavenCentral()
+    	gradlePluginPortal()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1+', changing: true
+        classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.2"
     }
 }
 
-version = common.mcversion + "-" + modversion+ "." + modsubversion
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'java'
+
+ext.configFile = file "../common/common-1.12.properties"
+configFile.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    ext.common = new ConfigSlurper().parse prop
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+compileJava {
+	sourceCompatibility = "8"
+	targetCompatibility = "8"
+}
+
+repositories {
+    maven { url = 'https://www.cursemaven.com' }
+    maven { url = 'https://jitpack.io' }
+}
+
+version = common.mcversion + "-" + modversion + "." + modsubversion
 group = modgroup
 archivesBaseName = modarchivename
 
-sourceCompatibility = targetCompatibility = "1.8"
-compileJava {
-	sourceCompatibility = targetCompatibility = "1.8"
+dependencies {
+    minecraft "net.minecraftforge:forge:${common.mcversion}-${common.forgeversion}"
+
+    implementation fg.deobf("curse.maven:${common.jei_version}")
+    implementation fg.deobf("curse.maven:${common.imme_version}")
+
+    compileOnly fg.deobf("curse.maven:${common.top_version}")
+    compileOnly fg.deobf("curse.maven:${common.hwya_version}")
+
+    compileOnly fg.deobf("curse.maven:${common.ar_version}")
+    compileOnly fg.deobf("curse.maven:${common.lv_version}")
+    
+    implementation fg.deobf("curse.maven:${common.crft_version}")
+    compileOnly fg.deobf("curse.maven:${common.opcm_version}")
 }
 
 minecraft {
-	version = common.mcversion + "-" + common.forgeversion
-	mappings = common.mcp_mappings
-	runDir = "run"
-	replace '${version}', modversion+ "." + modsubversion
-}
+    mappings channel: 'snapshot', version: "${common.mcp_mappings}"
 
-dependencies {
-	compile "curse.maven:${common.jei_version}"
-	deobfCompile "curse.maven:${common.imme_version}"
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                "${archivesBaseName}" {
+                    source sourceSets.main
+                }
+            }
+        }
 
-
-
-
-
-
-
-	compileOnly "curse.maven:${common.top_version}"
-	compileOnly "curse.maven:${common.hwya_version}"
-
-    compileOnly "curse.maven:${common.ar_version}"
-    compileOnly "curse.maven:${common.lv_version}"
-	
-	compileOnly "curse.maven:${common.crft_version}"
-	compileOnly "curse.maven:${common.opcm_version}"
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                "${archivesBaseName}" {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
 processResources {
-	inputs.property "version", project.modversion + "." + project.modsubversion
-	inputs.property "mcversion", project.minecraft.version
+    inputs.property "version", modversion + "." + modsubversion
+    inputs.property "mcversion", common.mcversion  // Changed to use common.mcversion directly
 
-	from(sourceSets.main.resources.srcDirs) {
-		include "mcmod.info"
+    from(sourceSets.main.resources.srcDirs) {
+        include "mcmod.info"
 
-		expand "version":project.modversion + "." + project.modsubversion, "mcversion":project.minecraft.version
-	}
+        expand "version": modversion + "." + modsubversion, "mcversion": common.mcversion
+    }
 
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "mcmod.info"
-	}
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "mcmod.info"
+    }
 }
+
+sourceSets.all { it.output.resourcesDir = it.output.classesDirs.getFiles().iterator().next() }
