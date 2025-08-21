@@ -26,14 +26,17 @@ public class ITMultiblockBlockEntityDummy<State extends IMultiblockState> extend
         BlockPos posInMultiblock = getHelper().getPositionInMB();
         Vec3 hitVec = new Vec3(hitX, hitY, hitZ);
         BlockHitResult absoluteHit = new BlockHitResult(hitVec, side, getBlockPos(), false);
-        assert level != null;
-        boolean isClient = level.isClientSide;
+        assert this.level != null;
+        boolean isClient = this.level.isClientSide;
         InteractionResult result = InteractionResult.PASS;
         for (MultiblockRegistration.ExtraComponent<State, ?> extra : getHelper().getMultiblock().extraComponents()) {
             @SuppressWarnings("unchecked")
             IMultiblockComponent<State> component = (IMultiblockComponent<State>) extra.component();
             InteractionResult componentResult = component.click(ctx, posInMultiblock, player, hand, absoluteHit, isClient);
-            if (componentResult.consumesAction()) { result = componentResult; }
+            if (componentResult.consumesAction()) {
+                result = componentResult;
+                break;
+            }
         }
         return result.consumesAction();
     }

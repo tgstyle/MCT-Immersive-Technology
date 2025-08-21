@@ -13,7 +13,7 @@ description = "An in development version of Immersive Technology for 1.20.1."
 authors = "tgstyle, MagneticPrism"
 displayURL = "https://minecraft.curseforge.com/projects/immersive-geology/"
 logoFile = "logo.png"
-credits = "tgstyle (author), Engineer Peter (new models), MagneticPrism (started the port), Khaz (new sounds), and the Immersive Engineering Team (code dependencies)"
+credits = "tgstyle (author), Peter (new models), MagneticPrism (started the port), KHAZ (new sounds), and the Immersive Engineering Team (code dependencies)"
 
 [[dependencies.immersivetechnology]]
 modId="forge"

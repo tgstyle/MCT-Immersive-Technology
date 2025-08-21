@@ -62,9 +62,9 @@ public class ITMultiblockProvider {
     public static final MultiblockRegistration<BoilerLogic.State> BOILER =
             metal(new BoilerLogic(), "boiler")
                     .structure(() -> getMBTemplate.apply("boiler"))
-                    .gui(ITMenuTypes.BOILER_MENU)
                     .redstone(s -> s.rsState, BoilerLogic.REDSTONE_POI)
                     .component(new BoilerProcess())
+                    .gui(ITMenuTypes.BOILER_MENU)
                     .build();
     public static final MultiblockRegistration<DistillerLogic.State> DISTILLER =
             metal(new DistillerLogic(), "distiller")

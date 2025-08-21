@@ -80,10 +80,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         if (!state.isSoundPlaying.getAsBoolean()) {
             final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(1, 1, 1));
             state.isSoundPlaying = ITSound.startSound(
-                    () -> state.active,
-                    ctx.isValid(),
-                    soundPos,
-                    ITSounds.distiller,
+                    () -> state.active, ctx.isValid(), soundPos, ITSounds.distiller,
                     () -> {
                         LocalPlayer player = Minecraft.getInstance().player;
                         if (player == null) { return 0f; }

@@ -183,11 +183,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                     state.danceSoundId++;
                     int thisId = state.danceSoundId;
                     state.isDanceSoundPlaying = ITSound.startSound(
-                            () -> (state.animationPhase == -2 || state.animationPhase == -3) && state.danceSoundId == thisId,
-                            ctx.isValid(),
-                            soundPos,
-                            ITSounds.dance,
-                            isLoop,
+                            () -> (state.animationPhase == -2 || state.animationPhase == -3) && state.danceSoundId == thisId, ctx.isValid(), soundPos, ITSounds.dance, isLoop,
                             () -> {
                                 LocalPlayer player = Minecraft.getInstance().player;
                                 if (player == null) { return 0f; }
@@ -196,16 +192,11 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                                 if (Minecraft.getInstance().level != null) gt = Minecraft.getInstance().level.getGameTime();
                                 float cdp = (gt - state.danceStartTick) * 0.05f;
                                 if (cdp < 0) { return 0f; }
-                                if (isLoop) {
-                                    cdp = ((cdp % DANCE_DURATION) + DANCE_DURATION) % DANCE_DURATION;
-                                } else {
-                                    if (cdp > DANCE_DURATION + 1f) { return 0f; }
-                                }
+                                if (isLoop) { cdp = ((cdp % DANCE_DURATION) + DANCE_DURATION) % DANCE_DURATION; }
+                                else { if (cdp > DANCE_DURATION + 1f) { return 0f; } }
                                 float f = Mth.clamp(cdp / 3f, 0, 1);
                                 float baseVol = 0.05f + f * 0.45f;
-                                if (!isLoop && state.animationPhase == -3) {
-                                    baseVol *= Mth.clamp(1 - (cdp - DANCE_DURATION), 0, 1);
-                                }
+                                if (!isLoop && state.animationPhase == -3) { baseVol *= Mth.clamp(1 - (cdp - DANCE_DURATION), 0, 1); }
                                 return baseVol / attenuation;
                             },
                             () -> 1f

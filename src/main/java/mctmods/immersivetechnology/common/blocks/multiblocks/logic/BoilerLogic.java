@@ -59,6 +59,7 @@ public class BoilerLogic implements IMultiblockLogic<BoilerLogic.State>, IServer
     public static final CapabilityPosition INPUT_FLUID_POI1 = new CapabilityPosition(4, 0, 1, RelativeBlockFace.LEFT);
     public static final CapabilityPosition INPUT_FLUID_POI2 = new CapabilityPosition(0, 0, 1, RelativeBlockFace.RIGHT);
     public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(0, 2, 1, RelativeBlockFace.UP);
+    public static final CapabilityPosition IGNITION_POI = new CapabilityPosition(4, 1, 1, RelativeBlockFace.LEFT);
     public static final BlockPos REDSTONE_POI = new BlockPos(4, 1, 2);
     private static final double HEAT_LOSS_PER_TICK = 0.2;
     private static final int PROGRESS_LOSS_PER_TICK = 1;
@@ -98,9 +99,7 @@ public class BoilerLogic implements IMultiblockLogic<BoilerLogic.State>, IServer
             double velX = (level.random.nextFloat() * 0.0625 - 0.03125);
             double velY = 0.0625;
             double velZ = (level.random.nextFloat() * 0.0625 - 0.03125);
-            if (level.isClientSide) {
-                level.addParticle(ParticleTypes.FLAME, flamePos.x, flamePos.y, flamePos.z, velX, velY, velZ);
-            }
+            if (level.isClientSide) { level.addParticle(ParticleTypes.FLAME, flamePos.x, flamePos.y, flamePos.z, velX, velY, velZ); }
         }
         if (state.pilotLit && state.heatLevel > PILOT_HEAT && state.rsState.isEnabled(ctx) && state.tanks.input2.getFluidAmount() > 0) {
             BlockPos exhaustAbs = ctx.getLevel().toAbsolute(SMOKE_POI);
@@ -120,9 +119,7 @@ public class BoilerLogic implements IMultiblockLogic<BoilerLogic.State>, IServer
         boolean update = false;
         double heatTransferMultiplier = 1.0;
         double previousHeatLevel = state.heatLevel;
-        if (state.tanks.input1.getFluidAmount() <= 0) {
-            state.pilotLit = false;
-        }
+        if (state.tanks.input1.getFluidAmount() <= 0) { state.pilotLit = false; }
         double delta = HEAT_LOSS_PER_TICK * heatTransferMultiplier;
         if (!state.pilotLit) {
             state.heatLevel = Math.max(state.heatLevel - delta, 0);
@@ -133,17 +130,11 @@ public class BoilerLogic implements IMultiblockLogic<BoilerLogic.State>, IServer
             if (state.burnRemaining > 0) {
                 state.burnRemaining--;
                 if (state.lastFuel != null) {
-                    if (state.rsState.isEnabled(ctx) && state.tanks.input2.getFluidAmount() > 0) {
-                        state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), WORKING_HEAT_LEVEL);
-                    }
-                    else {
-                        state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT);
-                    }
+                    if (state.rsState.isEnabled(ctx) && state.tanks.input2.getFluidAmount() > 0) { state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), WORKING_HEAT_LEVEL); }
+                    else { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
                     if (previousHeatLevel != state.heatLevel) { update = true; }
                 }
-                else {
-                    state.burnRemaining = 0;
-                }
+                else { state.burnRemaining = 0; }
             }
             else {
                 state.lastFuel = BoilerFuelRecipe.findRecipe(level, state.tanks.input1.getFluid());
@@ -159,24 +150,14 @@ public class BoilerLogic implements IMultiblockLogic<BoilerLogic.State>, IServer
                         }
                         else {
                             drained = state.tanks.input1.drain(1, FluidAction.EXECUTE);
-                            if (drained.getAmount() >= 1) {
-                                state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT);
-                            }
-                            else {
-                                state.pilotLit = false;
-                                state.heatLevel = Math.max(state.heatLevel - delta, 0);
-                            }
+                            if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
+                            else { state.pilotLit = false; state.heatLevel = Math.max(state.heatLevel - delta, 0); }
                         }
                     }
                     else {
                         drained = state.tanks.input1.drain(1, FluidAction.EXECUTE);
-                        if (drained.getAmount() >= 1) {
-                            state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT);
-                        }
-                        else {
-                            state.pilotLit = false;
-                            state.heatLevel = Math.max(state.heatLevel - delta, 0);
-                        }
+                        if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
+                        else { state.pilotLit = false; state.heatLevel = Math.max(state.heatLevel - delta, 0); }
                     }
                 }
                 else {
@@ -188,10 +169,7 @@ public class BoilerLogic implements IMultiblockLogic<BoilerLogic.State>, IServer
         }
         if (state.heatLevel >= WORKING_HEAT_LEVEL) {
             if (state.recipeTimeRemaining > 0) {
-                if (state.lastRecipe == null) {
-                    state.recipeTimeRemaining = 0;
-                    update = true;
-                }
+                if (state.lastRecipe == null) { state.recipeTimeRemaining = 0; update = true; }
                 else {
                     state.recipeTimeRemaining--;
                     if (state.recipeTimeRemaining == 0) {
@@ -216,10 +194,7 @@ public class BoilerLogic implements IMultiblockLogic<BoilerLogic.State>, IServer
         }
         else if (state.recipeTimeRemaining > 0) {
             int previousProgress = state.recipeTimeRemaining;
-            if (state.lastRecipe == null) {
-                state.recipeTimeRemaining = 0;
-                update = true;
-            }
+            if (state.lastRecipe == null) { state.recipeTimeRemaining = 0; update = true; }
             else {
                 state.recipeTimeRemaining = Math.min(state.recipeTimeRemaining + PROGRESS_LOSS_PER_TICK, state.lastRecipe.getTotalProcessTime());
                 if (previousProgress != state.recipeTimeRemaining) { update = true; }
@@ -249,9 +224,7 @@ public class BoilerLogic implements IMultiblockLogic<BoilerLogic.State>, IServer
                 ctx.requestMasterBESync();
                 state.clientUpdateCooldown = 20;
             }
-            else {
-                state.clientUpdateCooldown--;
-            }
+            else { state.clientUpdateCooldown--; }
         }
     }
 
@@ -275,9 +248,7 @@ public class BoilerLogic implements IMultiblockLogic<BoilerLogic.State>, IServer
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         final State state = ctx.getState();
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return state.invCap.cast(ctx);
-        }
+        if (cap == ForgeCapabilities.ITEM_HANDLER) { return state.invCap.cast(ctx); }
         else if (cap == ForgeCapabilities.FLUID_HANDLER) {
             if (position.posInMultiblock().equals(INPUT_FLUID_POI1.posInMultiblock()) && (position.side() == null || position.side() == INPUT_FLUID_POI1.side())) { return state.inputFuelCap.cast(ctx); }
             if (position.posInMultiblock().equals(INPUT_FLUID_POI2.posInMultiblock()) && (position.side() == null || position.side() == INPUT_FLUID_POI2.side())) { return state.inputWaterCap.cast(ctx); }

@@ -96,10 +96,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             state.soundId++;
             int thisId = state.soundId;
             state.isSoundPlaying = ITSound.startSound(
-                    () -> (state.active || state.animation_fanFadeOut > 0) && state.soundId == thisId,
-                    ctx.isValid(),
-                    soundPos,
-                    ITSounds.steamTurbine,
+                    () -> (state.active || state.animation_fanFadeOut > 0) && state.soundId == thisId, ctx.isValid(), soundPos, ITSounds.steamTurbine,
                     () -> {
                         LocalPlayer player = Minecraft.getInstance().player;
                         if (player == null) { return 0f; }

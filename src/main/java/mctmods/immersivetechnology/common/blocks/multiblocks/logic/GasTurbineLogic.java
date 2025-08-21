@@ -140,10 +140,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 state.starterSoundId++;
                 int thisId = state.starterSoundId;
                 state.starterSoundPlaying = ITSound.startSound(
-                        () -> state.starterRunning && state.starterSoundId == thisId,
-                        ctx.isValid(),
-                        starterPos,
-                        ITSounds.gasStarter,
+                        () -> state.starterRunning && state.starterSoundId == thisId, ctx.isValid(), starterPos, ITSounds.gasStarter,
                         () -> {
                             LocalPlayer p = Minecraft.getInstance().player;
                             if (p == null) { return 0f; }
@@ -158,10 +155,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                     state.arcSoundId++;
                     int thisId = state.arcSoundId;
                     state.arcSoundPlaying = ITSound.startSound(
-                            () -> state.starterRunning && state.speed >= MAX_SPEED / 4 && state.arcSoundId == thisId,
-                            ctx.isValid(),
-                            arcPos,
-                            ITSounds.gasArc,
+                            () -> state.starterRunning && state.speed >= MAX_SPEED / 4 && state.arcSoundId == thisId, ctx.isValid(), arcPos, ITSounds.gasArc,
                             () -> {
                                 LocalPlayer p = Minecraft.getInstance().player;
                                 if (p == null) { return 0f; }
