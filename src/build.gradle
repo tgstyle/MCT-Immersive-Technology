@@ -1,0 +1,359 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import net.minecraftforge.gradle.common.tasks.SignJar
+
+plugins {
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '6.0.+'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'org.spongepowered.mixin' version '0.7.+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.6'
+    id 'eclipse'
+}
+
+configurations.configureEach {
+    resolutionStrategy {
+        force 'com.google.guava:guava:32.1.3-jre'
+    }
+}
+
+def versionProps = new Properties()
+file('version.properties').withInputStream { versionProps.load(it) }
+
+def gradleProps = new Properties()
+file('gradle.properties').withInputStream { gradleProps.load(it) }
+
+version = versionProps.getProperty('version')
+ext.version_buildnumber = versionProps.getProperty('build_number')?.toInteger() ?: 0
+
+println "-> build.gradle applying version: $version (build ${version_buildnumber})"
+
+group = 'mctmods.immersivetechnology'
+archivesBaseName = 'immersivetechnology'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+jar.enabled = true
+tasks.withType(Jar).configureEach {
+    zip64 true
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = [
+                    "$rootDir/src/main/resources",
+                    "$rootDir/src/generated/resources",
+            ]
+        }
+    }
+    datagen {
+        compileClasspath += main.compileClasspath
+        runtimeClasspath += main.runtimeClasspath
+        compileClasspath += main.output
+        runtimeClasspath += main.output
+    }
+    gametest {
+        compileClasspath += main.compileClasspath
+        runtimeClasspath += main.runtimeClasspath
+        compileClasspath += main.output
+        runtimeClasspath += main.output
+    }
+}
+
+ext {
+    mod_id = gradleProps['mod_id']
+    version_minecraft = versionProps['mc_version']
+    version_forge = versionProps['forge_version']
+    version_jei = versionProps['jei_version']
+    version_parchment = versionProps['version_parchment']
+    version_ie = versionProps['version_ie']
+    mod_license = gradleProps['mod_license']
+    mod_name = gradleProps['mod_name']
+    mod_authors = gradleProps['mod_authors']
+    mod_description = gradleProps['mod_description']
+}
+
+def version_replaces = [
+        'version'      : project.version,
+        'build_number' : version_buildnumber,
+        'mc_version'   : version_minecraft,
+        'forge_version': version_forge,
+        'jei_version'  : version_jei,
+        'mod_license'  : mod_license,
+        'mod_name'     : mod_name,
+        'mod_authors'  : mod_authors,
+        'mod_description': mod_description,
+        'version_ie'   : version_ie,
+]
+
+def jsonPatterns = ["**/*.json", "**/*.mcmeta"]
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+    inputs.properties(version_replaces)
+    filesMatching("META-INF/mods.toml") {
+        expand version_replaces
+    }
+    exclude ".cache"
+    doLast {
+        fileTree(dir: getOutputs().getFiles().getAsPath(), includes: jsonPatterns).each {
+            File file -> file.setText(JsonOutput.toJson(new JsonSlurper().parse(file, 'UTF-8')))
+        }
+    }
+}
+
+tasks.register('copyModsTomlForIntelliJ', Copy) {
+    from processResources.destinationDir
+    into "$projectDir/out/production/resources"
+    include "META-INF/mods.toml"
+    dependsOn processResources
+}
+
+minecraft {
+    mappings channel: 'parchment', version: version_parchment + '-' + version_minecraft
+    accessTransformers { file('src/main/resources/META-INF/accesstransformer.cfg') }
+    runs {
+		client {
+			workingDirectory = project.file('run')
+			property 'forge.logging.markers', ''
+			property 'forge.enabledGameTestNamespaces', mod_id
+			ideaModule project.name + ".main"
+			mods {
+				immersivetechnology {
+					source(sourceSets.main)
+				}
+			}
+			args '--username', 'tgstyle'
+			args '--width', '1920'
+			args '--height', '1080'
+		}
+        server {
+            workingDirectory = project.file('run')
+            property 'forge.logging.markers', ''
+            property 'forge.enabledGameTestNamespaces', mod_id
+            arg '-nogui'
+            mods {
+                immersivetechnology {
+                    source(sourceSets.main)
+                }
+            }
+        }
+        data {
+            workingDirectory = project.file('run')
+            property 'forge.logging.markers', ''
+            property 'fml.earlyprogresswindow', 'false'
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--validate',
+                    '--existing', sourceSets.main.resources.srcDirs.first()
+            ideaModule project.name + ".datagen"
+            mods {
+                immersivetechnology {
+                    source(sourceSets.main)
+                    source(sourceSets.datagen)
+                }
+            }
+        }
+        gameTestServer {
+            workingDirectory = project.file('run')
+            property 'forge.logging.markers', ''
+            property 'forge.enabledGameTestNamespaces', mod_id
+            ideaModule project.name + ".gametest"
+            mods {
+                immersivetechnology {
+                    source(sourceSets.main)
+                    source(sourceSets.gametest)
+                }
+            }
+        }
+    }
+}
+
+repositories {
+    maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
+    maven {
+        name 'Jared maven'
+        url 'https://maven.blamejared.com/'
+    }
+    maven {
+        url = 'https://www.cursemaven.com'
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    maven {
+        url "https://cfa2.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    maven {
+        url 'https://squiddev.cc/maven/'
+        content {
+            includeGroup("cc.tweaked")
+            includeModule("org.squiddev", "Cobalt")
+        }
+    }
+    maven {
+        name 'ParchmentMC'
+        url 'https://ldtteam.jfrog.io/artifactory/parchmentmc-public/'
+    }
+}
+
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+    config "mixins.${mod_id}.json"
+}
+
+project.ext.lwjglVersion = "3.3.6"
+project.ext.lwjglNatives = "natives-linux"
+dependencies {
+    minecraft "net.minecraftforge:forge:${version_minecraft}-${version_forge}"
+
+    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:${version_jei}")
+    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:${version_jei}")
+
+    implementation fg.deobf("mezz.jei:jei-1.20.1-forge:${version_jei}")
+
+    implementation fg.deobf("curse.maven:immersive-engineering-231951:6206989")
+    implementation fg.deobf("curse.maven:engineered-schematics-1207780:6560826")
+
+    implementation fg.deobf("curse.maven:jade-324717:6271651")
+
+    datagenImplementation("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    // Ad Astra
+//    implementation fg.deobf("curse.maven:resourceful-config-714059:5020441")
+//    implementation fg.deobf("curse.maven:botarium-704113:5486070")
+//    implementation fg.deobf("curse.maven:resourceful-lib-570073:5568216")
+//    implementation fg.deobf("curse.maven:ad-astra-635042:4894852")
+    // Quark
+//    implementation fg.deobf("curse.maven:zeta-968868:5597406")
+//    implementation fg.deobf("curse.maven:quark-243121:5594847")
+//
+//    // BoP
+//    implementation fg.deobf("curse.maven:terrablender-563928:5068218")
+//    implementation fg.deobf("curse.maven:biomes-o-plenty-220318:4617259")
+    // TFC
+//    implementation fg.deobf("vazkii.patchouli:Patchouli:$version_minecraft-$version_patchouli-FORGE")
+//    implementation fg.deobf("curse.maven:terrafirmacraft-302973:5943050")
+}
+
+def customGradle = rootProject.file('custom.gradle')
+if (customGradle.exists()) {
+    apply from: customGradle
+}
+
+tasks.register('bumpVersion') {
+    doLast {
+        def props = new Properties()
+        file('version.properties').withInputStream { props.load(it) }
+        def currentBuild = props['build_number'].toInteger()
+        def nextBuild = currentBuild + 1
+        props['build_number'] = nextBuild.toString()
+        file('version.properties').withOutputStream { props.store(it, null) }
+        ext.version_buildnumber = nextBuild
+        version = "${props['version']}-b${nextBuild}"
+    }
+}
+
+tasks.register('signJar', SignJar) {
+    onlyIf {
+        project.hasProperty('keyStore')
+    }
+    if (project.hasProperty('keyStore')) {
+        keyStore = project.keyStore
+        alias = project.storeAlias
+        storePass = project.storePass
+        keyPass = project.storePass
+        inputFile = shadowJar.archiveFile
+        outputFile = shadowJar.archiveFile
+    } else {
+        logger.warn("No key store found, not signing the output jar\n")
+    }
+}
+
+build.dependsOn bumpVersion, signJar
+
+tasks.register('datagenJar', Jar) {
+    dependsOn datagenClasses
+    archiveClassifier = 'datagen'
+    from sourceSets.datagen.output
+    manifest {
+        attributes "FMLModType": "GAMELIBRARY"
+    }
+}
+
+tasks.register('sourcesJar', Jar) {
+    dependsOn classes
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+    from sourceSets.datagen.allSource
+}
+
+artifacts {
+    archives sourcesJar
+    archives datagenJar
+}
+
+void minimizePNGFile(File file) {
+    long size = file.length()
+    exec {
+        executable "optipng"
+        args "-q", "-o7", "-zm1-9", "-strip", "all", file
+    }
+    long newSize = file.length()
+    if (newSize < size) {
+        System.out.format("Reduced File size of %s from %d bytes to %d bytes (reduced by %.2f%%)\n",
+                file, size, newSize, ((double) (size - newSize)) / ((double) size) * 100.0)
+    }
+}
+
+tasks.register('optimizePng') {
+    def pngPatterns = ["**/*.png"]
+    doLast {
+        for (dir in sourceSets.main.resources.srcDirs) {
+            fileTree(dir: dir, includes: pngPatterns).each { minimizePNGFile(it) }
+        }
+    }
+}
+
+tasks.register('genIntellijRunsDummy')
+
+tasks.register('speedUpPreRun') {
+    doLast {
+        for (String s : new String[]{"Client", "Server", "Data"}) {
+            def runConfigFile = file(".idea/runConfigurations/run${s}.xml")
+            if (runConfigFile.exists()) {
+                ant.replace(
+                        file: runConfigFile,
+                        token: "prepareRun${s}",
+                        value: "prepareRuns"
+                )
+                def content = runConfigFile.text
+                if (!content.contains('-Dorg.gradle.logging.level=warn')) {
+                    ant.replace(
+                            file: runConfigFile,
+                            token: '<option name="VM_PARAMETERS" value="',
+                            value: '<option name="VM_PARAMETERS" value="-Dorg.gradle.logging.level=warn '
+                    )
+                }
+            }
+        }
+    }
+}
+
+tasks.withType(Task).configureEach {
+    if (it.name == "genIntellijRuns") {
+        it.finalizedBy speedUpPreRun
+        genIntellijRunsDummy.dependsOn it
+    } else if (it.name == "runServer") {
+        it.standardInput = System.in
+    }
+}
+
+idea.project.settings.taskTriggers {
+    afterSync genIntellijRunsDummy
+}
