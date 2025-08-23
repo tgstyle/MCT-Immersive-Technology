@@ -1,20 +1,32 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://maven.neoforged.net/releases' }
         mavenCentral()
-    	gradlePluginPortal()
+        gradlePluginPortal()
+        maven { url = 'https://maven.gofancy.wtf/releases' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1+', changing: true
-        classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.2"
+        classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.72'
+        classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
+        classpath 'wtf.gofancy.fancygradle:wtf.gofancy.fancygradle.gradle.plugin:1.1.3-0'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    }
+    configurations.classpath {
+        resolutionStrategy {
+            force 'org.jline:jline:3.25.1'
+        }
     }
 }
 
-
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'java'
+apply plugin: 'wtf.gofancy.fancygradle'
+apply plugin: 'org.spongepowered.mixin'
 
-ext.configFile = file "../common/common-1.12.properties"
+ext.configFile = file '../common/common-1.12.properties'
+
 configFile.withReader {
     def prop = new Properties()
     prop.load(it)
@@ -22,43 +34,71 @@ configFile.withReader {
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
 compileJava {
-	sourceCompatibility = "8"
-	targetCompatibility = "8"
+    sourceCompatibility = '8'
+    targetCompatibility = '8'
 }
 
 repositories {
     maven { url = 'https://www.cursemaven.com' }
     maven { url = 'https://jitpack.io' }
+    maven { url = 'https://maven.blamejared.com' }
+    maven { url = 'https://repo.spongepowered.org/maven' }
 }
 
-version = common.mcversion + "-" + modversion + "." + modsubversion
+version = "${common.mcversion}-${modversion}.${modsubversion}"
+
 group = modgroup
+
 archivesBaseName = modarchivename
+
+if (gradle.startParameter.taskNames.any { it == 'jar' || it == 'build' }) {
+    def propsFile = file('gradle.properties')
+    def props = new Properties()
+    propsFile.withInputStream { props.load(it) }
+    def currentSub = Integer.parseInt(props['modsubversion'])
+    def newSub = currentSub + 1
+    modsubversion = newSub
+    version = "${common.mcversion}-${modversion}.${modsubversion}"
+    jar.doLast {
+        props['modsubversion'] = newSub.toString()
+        propsFile.withWriter { writer ->
+            props.store(writer, null)
+        }
+    }
+}
 
 dependencies {
     minecraft "net.minecraftforge:forge:${common.mcversion}-${common.forgeversion}"
 
-    implementation fg.deobf("curse.maven:${common.jei_version}")
     implementation fg.deobf("curse.maven:${common.imme_version}")
+
+    implementation fg.deobf("${common.jei_version}")
 
     compileOnly fg.deobf("curse.maven:${common.top_version}")
     compileOnly fg.deobf("curse.maven:${common.hwya_version}")
-
-    compileOnly fg.deobf("curse.maven:${common.ar_version}")
-    compileOnly fg.deobf("curse.maven:${common.lv_version}")
-    
-    implementation fg.deobf("curse.maven:${common.crft_version}")
+    compileOnly fg.deobf("curse.maven:${common.advr_version}")
+    compileOnly fg.deobf("curse.maven:${common.libv_version}")
     compileOnly fg.deobf("curse.maven:${common.opcm_version}")
+
+    compileOnly fg.deobf("${common.crft_version}")
+    compileOnly fg.deobf("${common.zens_version}")
+
+    compileOnly 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
+    runtimeOnly 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
+    annotationProcessor 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: "${common.mcp_mappings}"
-
+    accessTransformers { file('src/main/resources/META-INF/it_at.cfg') }
+    mappings channel: 'stable', version: "${common.mcp_mappings}"
     runs {
         client {
             workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
+            args '--version', common.mcversion
+            args '--tweakClass', 'org.spongepowered.asm.launch.MixinTweaker'
+            args '--mixin', 'mixins.immersivetechnology.json'
             property 'forge.logging.console.level', 'debug'
             mods {
                 "${archivesBaseName}" {
@@ -66,10 +106,11 @@ minecraft {
                 }
             }
         }
-
         server {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
+            workingDirectory project.file('run/server')
+            args '--version', common.mcversion
+            args '--tweakClass', 'org.spongepowered.asm.launch.MixinTweaker'
+            args '--mixin', 'mixins.immersivetechnology.json'
             property 'forge.logging.console.level', 'debug'
             mods {
                 "${archivesBaseName}" {
@@ -77,22 +118,56 @@ minecraft {
                 }
             }
         }
+    }
+}
+
+tasks.withType(JavaExec).configureEach { task ->
+    if (task.name in ['runClient', 'runServer']) {
+        doFirst {
+            def modJar = project.file("build/libs/${archivesBaseName}-${version}.jar")
+            if (modJar.exists()) {
+                println "Removing JAR from classpath: ${modJar}"
+                def newClasspath = classpath.minus(modJar).plus(sourceSets.main.output)
+                classpath.setFrom(newClasspath)
+            }
+            println "Classpath files: ${classpath.files.collect { it.absolutePath }.join(', ')}"
+        }
+    }
+}
+
+compileJava.doLast {
+    def refmapSrc = file('build/tmp/compileJava/compileJava-refmap.json')
+    if (refmapSrc.exists()) {
+        new File(sourceSets.main.output.resourcesDir, 'mixins.immersivetechnology.refmap.json').bytes = refmapSrc.bytes
     }
 }
 
 processResources {
-    inputs.property "version", modversion + "." + modsubversion
-    inputs.property "mcversion", common.mcversion  // Changed to use common.mcversion directly
-
-    from(sourceSets.main.resources.srcDirs) {
-        include "mcmod.info"
-
-        expand "version": modversion + "." + modsubversion, "mcversion": common.mcversion
+    inputs.property 'version', "${modversion}.${modsubversion}"
+    inputs.property 'mcversion', common.mcversion
+    filesMatching('mcmod.info') {
+        expand 'version': "${modversion}.${modsubversion}", 'mcversion': common.mcversion
     }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
 
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "mcmod.info"
+mixin {
+    config 'mixins.immersivetechnology.json'
+    add sourceSets.main, 'mixins.immersivetechnology.refmap.json'
+}
+
+fancyGradle {
+    patches {
+        resources
+        asm
     }
 }
 
-sourceSets.all { it.output.resourcesDir = it.output.classesDirs.getFiles().iterator().next() }
+jar {
+    exclude 'mctmods/immersivetechnology/mixin/**'
+    exclude 'mixins.*.json'
+    exclude 'mixins.*.refmap.json'
+    exclude 'META-INF/it_at.cfg'
+}
+
+sourceSets.configureEach { it.output.resourcesDir = it.output.classesDirs.getFiles().iterator().next() }

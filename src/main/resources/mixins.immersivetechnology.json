@@ -1,0 +1,10 @@
+{
+  "required": true,
+  "minVersion": "0.7",
+  "package": "mctmods.immersivetechnology.mixin",
+  "refmap": "mixins.immersivetechnology.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinNetworkRegistry"
+  ]
+}
