@@ -44,8 +44,8 @@ import java.util.stream.Collectors;
 public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>, IServerTickableComponent<AlternatorLogic.State>, IClientTickableComponent<AlternatorLogic.State> {
     public static final int ENERGY_CAPACITY = 1200000;
     public static final BlockPos RUNNING_SOUND_POI = new BlockPos(1, 1, 1);
-    private static final List<BlockPos> ENERGY_OUTPUT_POI_RIGHT = List.of(new BlockPos(2, 0, 3), new BlockPos(2, 1, 3), new BlockPos(2, 2, 3));
-    private static final List<BlockPos> ENERGY_OUTPUT_POI_LEFT = List.of(new BlockPos(0, 0, 3), new BlockPos(0, 1, 3), new BlockPos(0, 2, 3));
+    private static final List<BlockPos> ENERGY_RIGHT_POI = List.of(new BlockPos(2, 0, 3), new BlockPos(2, 1, 3), new BlockPos(2, 2, 3));
+    private static final List<BlockPos> ENERGY_LEFT_POI = List.of(new BlockPos(0, 0, 3), new BlockPos(0, 1, 3), new BlockPos(0, 2, 3));
     public static final BlockPos ROTATIONAL_INPUT_POI = new BlockPos(1, 1, 0);
     private static final double BASE_MASS = 2;
     private static final double FRICTION = 12;
@@ -110,7 +110,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         }
         generateEnergy(state);
         outputEnergy(state);
-        for (BlockPos pos : ENERGY_OUTPUT_POI_LEFT) {
+        for (BlockPos pos : ENERGY_LEFT_POI) {
             BlockPos absolutePos = ctx.getLevel().toAbsolute(pos);
             Direction side = ctx.getLevel().toAbsolute(RelativeBlockFace.RIGHT);
             assert side != null;
@@ -125,7 +125,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
                 }
             }
         }
-        for (BlockPos pos : ENERGY_OUTPUT_POI_RIGHT) {
+        for (BlockPos pos : ENERGY_RIGHT_POI) {
             BlockPos absolutePos = ctx.getLevel().toAbsolute(pos);
             Direction side = ctx.getLevel().toAbsolute(RelativeBlockFace.LEFT);
             assert side != null;
@@ -188,8 +188,8 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         if (cap == ForgeCapabilities.ENERGY) {
-            if (position.side() == null || (position.side() == RelativeBlockFace.RIGHT && ENERGY_OUTPUT_POI_RIGHT.contains(position.posInMultiblock()))) { return ctx.getState().energyCap.cast(ctx); }
-            if (position.side() == RelativeBlockFace.LEFT && ENERGY_OUTPUT_POI_LEFT.contains(position.posInMultiblock())) { return ctx.getState().energyCap.cast(ctx); }
+            if (position.side() == null || (position.side() == RelativeBlockFace.RIGHT && ENERGY_RIGHT_POI.contains(position.posInMultiblock()))) { return ctx.getState().energyCap.cast(ctx); }
+            if (position.side() == RelativeBlockFace.LEFT && ENERGY_LEFT_POI.contains(position.posInMultiblock())) { return ctx.getState().energyCap.cast(ctx); }
         }
         if (cap == MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY) {
             if (position.posInMultiblock().equals(BlockPos.ZERO)) { position = new CapabilityPosition(ROTATIONAL_INPUT_POI, position.side()); }
@@ -221,10 +221,10 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             this.energyCap = new StoredCapability<>(energy);
             ImmutableList.Builder<CapabilityReference<IEnergyStorage>> outputs1 = ImmutableList.builder();
             ImmutableList.Builder<CapabilityReference<IEnergyStorage>> outputs2 = ImmutableList.builder();
-            for (BlockPos pos : ENERGY_OUTPUT_POI_LEFT) {
+            for (BlockPos pos : ENERGY_LEFT_POI) {
                 outputs1.add(ctx.getCapabilityAt(ForgeCapabilities.ENERGY, pos, RelativeBlockFace.RIGHT));
             }
-            for (BlockPos pos : ENERGY_OUTPUT_POI_RIGHT) {
+            for (BlockPos pos : ENERGY_RIGHT_POI) {
                 outputs2.add(ctx.getCapabilityAt(ForgeCapabilities.ENERGY, pos, RelativeBlockFace.LEFT));
             }
             this.energyOutputs1 = outputs1.build();
