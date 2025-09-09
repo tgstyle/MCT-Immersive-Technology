@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.util;
+package mctmods.immersivetechnology.common.util.solarregistry;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

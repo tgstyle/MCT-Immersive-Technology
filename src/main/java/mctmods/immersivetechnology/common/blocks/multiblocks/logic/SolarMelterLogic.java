@@ -25,7 +25,7 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarMelterS
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.network.ITOSDSyncBlock;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
-import mctmods.immersivetechnology.common.util.SolarRegistry;
+import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
@@ -63,8 +63,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static mctmods.immersivetechnology.common.util.SolarRegistry.SOLAR_MAX_RANGE;
-import static mctmods.immersivetechnology.common.util.SolarRegistry.SOLAR_MIN_RANGE;
+import static mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry.SOLAR_MAX_RANGE;
+import static mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
 
 public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State>, IServerTickableComponent<SolarMelterLogic.State>, IClientTickableComponent<SolarMelterLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;

@@ -11,7 +11,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOri
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
-import mctmods.immersivetechnology.common.util.SolarRegistry;
+import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;

@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.util;
+package mctmods.immersivetechnology.common.util.solarregistry;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

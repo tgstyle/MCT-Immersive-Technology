@@ -7,7 +7,7 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMu
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarTowerLogic;
 import mctmods.immersivetechnology.common.network.ITOSDSyncBlock;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
-import mctmods.immersivetechnology.common.util.SolarRegistry;
+import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
