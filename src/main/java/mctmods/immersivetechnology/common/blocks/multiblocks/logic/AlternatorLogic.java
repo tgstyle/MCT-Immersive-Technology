@@ -14,10 +14,14 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapabil
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import mctmods.immersivetechnology.api.MechanicalCapabilities;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AlternatorShape;
+import mctmods.immersivetechnology.common.util.multiblock.MultiblockData;
+import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
@@ -34,42 +38,65 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-
-import java.util.List;
-import java.util.Objects;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>, IServerTickableComponent<AlternatorLogic.State>, IClientTickableComponent<AlternatorLogic.State> {
     public static final int ENERGY_CAPACITY = 1200000;
-    public static final BlockPos RUNNING_SOUND_POI = new BlockPos(1, 1, 1);
-    private static final List<BlockPos> ENERGY_RIGHT_POI = List.of(new BlockPos(2, 0, 3), new BlockPos(2, 1, 3), new BlockPos(2, 2, 3));
-    private static final List<BlockPos> ENERGY_LEFT_POI = List.of(new BlockPos(0, 0, 3), new BlockPos(0, 1, 3), new BlockPos(0, 2, 3));
-    public static final BlockPos ROTATIONAL_INPUT_POI = new BlockPos(1, 1, 0);
     private static final double BASE_MASS = 2;
     private static final double FRICTION = 12;
     private static final int MAX_SPEED = 1800;
+    private static final int WIDTH = 3;
+    private static final int LENGTH = 4;
+    private static final List<PoIJSONSchema> RAW_POIS;
+
+    static {
+        RAW_POIS = new ArrayList<>();
+        try {
+            InputStream is = AlternatorLogic.class.getResourceAsStream("/assets/immersivetechnology/multiblocks/alternator.json");
+            if (is != null) {
+                JsonReader reader = new JsonReader(new InputStreamReader(is));
+                Gson gson = new Gson();
+                MultiblockData schema = gson.fromJson(reader, MultiblockData.class);
+                reader.close();
+                for (PoIJSONSchema poi : schema.pointsOfInterest) {
+                    if (poi.facingString != null) { poi.relativeFace = RelativeBlockFace.valueOf(poi.facingString.toUpperCase()); }
+                    else { poi.relativeFace = null; }
+                }
+                RAW_POIS.addAll(Arrays.asList(schema.pointsOfInterest));
+            } else {
+                ITLib.IT_LOGGER.error("Alternator JSON resource not found at /assets/immersivetechnology/multiblocks/alternator.json");
+            }
+        } catch (Exception e) { ITLib.IT_LOGGER.error("Error loading Alternator POI from JSON", e); }
+    }
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         if (!state.isSoundPlaying.getAsBoolean()) {
-            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
-            state.isSoundPlaying = ITSound.startSound(
-                    () -> state.active,
-                    ctx.isValid(),
-                    soundPos,
-                    ITSounds.alternator,
-                    () -> {
-                        LocalPlayer player = Minecraft.getInstance().player;
-                        if (player == null) { return 0f; }
-                        float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
-                        float percentage = (float) state.speed / state.maxSpeed;
-                        return (5 * percentage) / attenuation;
-                    },
-                    () -> ITLib.remapRange(0f, 1f, 0.5f, 1.0f, (float) state.speed / state.maxSpeed)
-            );
+            List<PoICache> soundPois = state.poiMap.get("running_sound");
+            if (soundPois != null && !soundPois.isEmpty()) {
+                PoICache soundPoi = soundPois.get(0);
+                final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(soundPoi.pos.getX() + 0.5, soundPoi.pos.getY() + 0.5, soundPoi.pos.getZ() + 0.5));
+                state.isSoundPlaying = ITSound.startSound(
+                        () -> state.active,
+                        ctx.isValid(),
+                        soundPos,
+                        ITSounds.alternator,
+                        () -> {
+                            LocalPlayer player = Minecraft.getInstance().player;
+                            if (player == null) { return 0f; }
+                            float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
+                            float percentage = (float) state.speed / state.maxSpeed;
+                            return (5 * percentage) / attenuation;
+                        },
+                        () -> ITLib.remapRange(0f, 1f, 0.5f, 1.0f, (float) state.speed / state.maxSpeed)
+                );
+            }
         }
     }
 
@@ -77,66 +104,60 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         Level level = ctx.getLevel().getRawLevel();
-        Direction inputFacing = ctx.getLevel().getOrientation().front();
-        BlockPos inputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_INPUT_POI);
-        assert inputFacing != null;
-        BlockPos providerAbsolutePos = inputPortAbs.relative(inputFacing);
-        BlockEntity entity = level.getBlockEntity(providerAbsolutePos);
+        state.active = false;
         int turbineSpeed = 0;
         float turbineTorque = 1f;
         int turbineMaxSpeed = MAX_SPEED;
         boolean hasProvider = false;
-        state.active = false;
-        if (entity != null) {
-            LazyOptional<IMechanicalEnergyProvider> providerCap = entity.getCapability(MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY, inputFacing.getOpposite());
-            if (providerCap.isPresent()) {
-                IMechanicalEnergyProvider provider = providerCap.orElseThrow(RuntimeException::new);
-                turbineSpeed = provider.getSpeed();
-                turbineTorque = provider.getTorque();
-                turbineMaxSpeed = provider.getMaxSpeed();
-                hasProvider = true;
-                if (turbineSpeed > 0) { state.active = true; }
+        List<PoICache> inputPois = state.poiMap.get("rotational_input");
+        if (inputPois != null && !inputPois.isEmpty()) {
+            PoICache inputPoi = inputPois.get(0);
+            Direction inputFacing = ctx.getLevel().toAbsolute(inputPoi.facing);
+            BlockPos inputPortAbs = ctx.getLevel().toAbsolute(inputPoi.pos);
+            if (inputFacing != null) {
+                BlockPos providerAbsolutePos = inputPortAbs.relative(inputFacing);
+                BlockEntity entity = level.getBlockEntity(providerAbsolutePos);
+                if (entity != null) {
+                    LazyOptional<IMechanicalEnergyProvider> providerCap = entity.getCapability(MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY, inputFacing.getOpposite());
+                    if (providerCap.isPresent()) {
+                        IMechanicalEnergyProvider provider = providerCap.orElseThrow(RuntimeException::new);
+                        turbineSpeed = provider.getSpeed();
+                        turbineTorque = provider.getTorque();
+                        turbineMaxSpeed = provider.getMaxSpeed();
+                        hasProvider = true;
+                        if (turbineSpeed > 0) { state.active = true; }
+                    }
+                }
             }
         }
         if (hasProvider) {
             state.speed = turbineSpeed;
             state.torqueMultiplier = turbineTorque;
             state.maxSpeed = turbineMaxSpeed;
-        }
-        else if (state.speed > 0) {
+        } else if (state.speed > 0) {
             int speedDownRate = (int) Math.round(FRICTION / BASE_MASS);
             state.speed = Math.max(state.speed - speedDownRate, 0);
             if (state.speed > 0) { state.active = true; }
         }
         generateEnergy(state);
         outputEnergy(state);
-        for (BlockPos pos : ENERGY_LEFT_POI) {
-            BlockPos absolutePos = ctx.getLevel().toAbsolute(pos);
-            Direction side = ctx.getLevel().toAbsolute(RelativeBlockFace.RIGHT);
-            assert side != null;
-            BlockEntity adjacent = level.getBlockEntity(absolutePos.relative(side));
-            if (adjacent != null) {
-                LazyOptional<IEnergyStorage> handlerOpt = adjacent.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
-                if (handlerOpt.isPresent()) {
-                    IEnergyStorage handler = handlerOpt.orElseThrow(RuntimeException::new);
-                    int maxPush = Math.min(2048, state.energy.getEnergyStored());
-                    int pushed = handler.receiveEnergy(maxPush, false);
-                    if (pushed > 0) { state.energy.setStoredEnergy(state.energy.getEnergyStored() - pushed); }
-                }
-            }
-        }
-        for (BlockPos pos : ENERGY_RIGHT_POI) {
-            BlockPos absolutePos = ctx.getLevel().toAbsolute(pos);
-            Direction side = ctx.getLevel().toAbsolute(RelativeBlockFace.LEFT);
-            assert side != null;
-            BlockEntity adjacent = level.getBlockEntity(absolutePos.relative(side));
-            if (adjacent != null) {
-                LazyOptional<IEnergyStorage> handlerOpt = adjacent.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
-                if (handlerOpt.isPresent()) {
-                    IEnergyStorage handler = handlerOpt.orElseThrow(RuntimeException::new);
-                    int maxPush = Math.min(2048, state.energy.getEnergyStored());
-                    int pushed = handler.receiveEnergy(maxPush, false);
-                    if (pushed > 0) { state.energy.setStoredEnergy(state.energy.getEnergyStored() - pushed); }
+        for (String name : state.poiMap.keySet()) {
+            if (name.startsWith("energy_")) {
+                for (PoICache p : state.poiMap.get(name)) {
+                    BlockPos absolutePos = ctx.getLevel().toAbsolute(p.pos);
+                    Direction side = ctx.getLevel().toAbsolute(p.facing);
+                    if (side != null) {
+                        BlockEntity adjacent = level.getBlockEntity(absolutePos.relative(side));
+                        if (adjacent != null) {
+                            LazyOptional<IEnergyStorage> handlerOpt = adjacent.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
+                            if (handlerOpt.isPresent()) {
+                                IEnergyStorage handler = handlerOpt.orElseThrow(RuntimeException::new);
+                                int maxPush = Math.min(2048, state.energy.getEnergyStored());
+                                int pushed = handler.receiveEnergy(maxPush, false);
+                                if (pushed > 0) { state.energy.setStoredEnergy(state.energy.getEnergyStored() - pushed); }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -156,14 +177,10 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     }
 
     private void outputEnergy(State state) {
-        List<IEnergyStorage> presentOutputs = state.energyOutputs1.stream()
+        List<IEnergyStorage> presentOutputs = state.energyOutputs.stream()
                 .map(CapabilityReference::getNullable)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        presentOutputs.addAll(state.energyOutputs2.stream()
-                .map(CapabilityReference::getNullable)
-                .filter(Objects::nonNull)
-                .toList());
+                .toList();
         if (!presentOutputs.isEmpty()) {
             int output = (int) (12288 * state.torqueMultiplier);
             int toDistribute = Math.min(output, state.energy.getEnergyStored());
@@ -187,13 +204,27 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
+        State state = ctx.getState();
         if (cap == ForgeCapabilities.ENERGY) {
-            if (position.side() == null || (position.side() == RelativeBlockFace.RIGHT && ENERGY_RIGHT_POI.contains(position.posInMultiblock()))) { return ctx.getState().energyCap.cast(ctx); }
-            if (position.side() == RelativeBlockFace.LEFT && ENERGY_LEFT_POI.contains(position.posInMultiblock())) { return ctx.getState().energyCap.cast(ctx); }
+            for (String name : state.poiMap.keySet()) {
+                if (name.startsWith("energy_")) {
+                    for (PoICache p : state.poiMap.get(name)) {
+                        if (p.facing != null && (position.side() == null || (position.side() == p.facing && p.pos.equals(position.posInMultiblock())))) { return state.energyCap.cast(ctx); }
+                    }
+                }
+            }
         }
         if (cap == MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY) {
-            if (position.posInMultiblock().equals(BlockPos.ZERO)) { position = new CapabilityPosition(ROTATIONAL_INPUT_POI, position.side()); }
-            if (position.posInMultiblock().equals(ROTATIONAL_INPUT_POI) && (position.side() == null || position.side() == RelativeBlockFace.FRONT || position.side() == RelativeBlockFace.BACK)) { return LazyOptional.of(MechanicalEnergyConsumer::new).cast(); }
+            List<PoICache> inputPois = state.poiMap.get("rotational_input");
+            if (inputPois != null && !inputPois.isEmpty()) {
+                PoICache inputP = inputPois.get(0);
+                if (inputP.facing != null) {
+                    RelativeBlockFace relInput = inputP.facing;
+                    RelativeBlockFace relBack = relInput.getOpposite();
+                    if (position.posInMultiblock().equals(BlockPos.ZERO)) { position = new CapabilityPosition(inputP.pos, position.side()); }
+                    if (position.posInMultiblock().equals(inputP.pos) && (position.side() == null || position.side() == relInput || position.side() == relBack)) { return LazyOptional.of(MechanicalEnergyConsumer::new).cast(); }
+                }
+            }
         }
         return LazyOptional.empty();
     }
@@ -206,10 +237,18 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         public double getFriction() { return FRICTION; }
     }
 
+    private static BlockPos unflatten(int index) {
+        int y = index / (WIDTH * LENGTH);
+        int temp = index % (WIDTH * LENGTH);
+        int z = temp / WIDTH;
+        int x = temp % WIDTH;
+        return new BlockPos(x, y, z);
+    }
+
     public static class State implements IMultiblockState {
         public final MutableEnergyStorage energy = new MutableEnergyStorage(ENERGY_CAPACITY, 0, 12288);
-        private final List<CapabilityReference<IEnergyStorage>> energyOutputs1;
-        private final List<CapabilityReference<IEnergyStorage>> energyOutputs2;
+        private final List<CapabilityReference<IEnergyStorage>> energyOutputs;
+        public final Map<String, List<PoICache>> poiMap;
         public boolean active = false;
         public int speed = 0;
         public float torqueMultiplier = 1f;
@@ -219,16 +258,18 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
         public State(IInitialMultiblockContext<State> ctx) {
             this.energyCap = new StoredCapability<>(energy);
-            ImmutableList.Builder<CapabilityReference<IEnergyStorage>> outputs1 = ImmutableList.builder();
-            ImmutableList.Builder<CapabilityReference<IEnergyStorage>> outputs2 = ImmutableList.builder();
-            for (BlockPos pos : ENERGY_LEFT_POI) {
-                outputs1.add(ctx.getCapabilityAt(ForgeCapabilities.ENERGY, pos, RelativeBlockFace.RIGHT));
+            List<PoICache> temp = new ArrayList<>();
+            for (PoIJSONSchema raw : RAW_POIS) { temp.add(new PoICache(raw.name, raw.position, raw.relativeFace)); }
+            this.poiMap = temp.stream().collect(Collectors.groupingBy(p -> p.name));
+            ImmutableList.Builder<CapabilityReference<IEnergyStorage>> outputs = ImmutableList.builder();
+            for (String name : poiMap.keySet()) {
+                if (name.startsWith("energy_")) {
+                    for (PoICache p : poiMap.get(name)) {
+                        if (p.facing != null) { outputs.add(ctx.getCapabilityAt(ForgeCapabilities.ENERGY, p.pos, p.facing)); }
+                    }
+                }
             }
-            for (BlockPos pos : ENERGY_RIGHT_POI) {
-                outputs2.add(ctx.getCapabilityAt(ForgeCapabilities.ENERGY, pos, RelativeBlockFace.LEFT));
-            }
-            this.energyOutputs1 = outputs1.build();
-            this.energyOutputs2 = outputs2.build();
+            this.energyOutputs = outputs.build();
         }
 
         @Override
@@ -260,6 +301,12 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             torqueMultiplier = nbt.getFloat("torqueMultiplier");
+        }
+    }
+
+    public record PoICache(String name, BlockPos pos, RelativeBlockFace facing) {
+        public PoICache(String name, int flatPosition, RelativeBlockFace localFacing) {
+            this(name, unflatten(flatPosition), localFacing);
         }
     }
 }

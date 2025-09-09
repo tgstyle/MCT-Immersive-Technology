@@ -1,38 +1,33 @@
-package mctmods.immersivetechnology.common.blocks.multiblocks.shapes;
+package mctmods.immersivetechnology.common.blocks.multiblocks.shapes.helper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Function;
 
 public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
     private static VoxelShape toVoxelShape(AABB aabb) {
-        return Shapes.box(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ);
+        if (aabb == null) return Shapes.empty();
+        return Shapes.create(aabb);
     }
 
     @Override
     public VoxelShape apply(BlockPos posInMultiblock) {
         List<AABB> list = getShape(posInMultiblock);
-
-        VoxelShape shape;
-        if (list.size() > 1) {
-            VoxelShape base = toVoxelShape(list.remove(0));
-            shape = list.stream().map(GenericShape::toVoxelShape).reduce(base, Shapes::or);
-        } else {
-            if (!list.isEmpty()) {
-                shape = toVoxelShape(list.remove(0));
-            } else {
-                shape = Shapes.empty();
-            }
+        if (list.isEmpty()) {
+            return Shapes.empty();
         }
-
-        return shape;
+        VoxelShape base = toVoxelShape(list.get(0));
+        if (list.size() > 1) {
+            return list.subList(1, list.size()).stream()
+                    .map(GenericShape::toVoxelShape)
+                    .reduce(base, Shapes::or);
+        }
+        return base;
     }
 
-    @Nonnull
     protected abstract List<AABB> getShape(BlockPos posInMultiblock);
 }
