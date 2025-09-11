@@ -508,7 +508,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('path', nargs='?', help='Path to bbmodel or directory')
     parser.add_argument('--output', choices=['java', 'json'], help='Output type: java or json')
-    parser.add_argument('--y-threshold', type=int, default=8, help='Threshold for vertical filling (y axis); 0 for unlimited, -1 to disable')
+    parser.add_argument('--y-threshold', type=int, default=4, help='Threshold for vertical filling (y axis); 0 for unlimited, -1 to disable')
     parser.add_argument('--x-threshold', type=int, default=2, help='Threshold for filling along x axis; 0 for unlimited, -1 to disable')
     parser.add_argument('--z-threshold', type=int, default=2, help='Threshold for filling along z axis; 0 for unlimited, -1 to disable')
     parser.add_argument('--gap-passes', type=int, default=3, help='Number of passes for gap filling per axis')
