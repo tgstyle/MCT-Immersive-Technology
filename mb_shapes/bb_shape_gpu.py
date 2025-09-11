@@ -8,6 +8,7 @@ from tqdm import tqdm
 import argparse
 import time
 import torch
+import threading
 try:
     import torch_directml
 except ImportError:
@@ -293,7 +294,7 @@ def process_block(args):
         v0_b = v0[None, :, :] # (1, T, 3)
         edge1_b = edge1[None, :, :]
         edge2_b = edge2[None, :, :]
-        target_elements = 1e8
+        target_elements = 40000000
         batch_size = max(1, int(target_elements // T))
         counts = torch.zeros(num_rays, dtype=torch.int32, device=device)
         for start in range(0, num_rays, batch_size):
@@ -462,11 +463,21 @@ def parse_bbmodel(file_path, x_threshold, y_threshold, z_threshold, no_postproce
         for by in range(num_by):
             for bz in range(num_bz):
                 args_list.append((bx, by, bz, minx, miny, minz, verts, triangles, edges, res, x_threshold, y_threshold, z_threshold, is_watertight, has_thin_features, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, global_postprocess))
+    def refresher(pbar, stop_event):
+        while not stop_event.wait(1):
+            pbar.refresh()
     results = []
-    for args in tqdm(args_list, desc=os.path.basename(file_path)):
-        result = process_block(args)
-        if result is not None:
-            results.append(result)
+    stop_event = threading.Event()
+    with tqdm(total=len(args_list), desc=os.path.basename(file_path)) as pbar:
+        thread = threading.Thread(target=refresher, args=(pbar, stop_event))
+        thread.start()
+        for args in args_list:
+            result = process_block(args)
+            if result is not None:
+                results.append(result)
+            pbar.update(1)
+        stop_event.set()
+        thread.join()
     aabbs = results
     if global_postprocess:
         full_occupied = np.zeros((num_bx * res, num_by * res, num_bz * res), dtype=bool)
@@ -721,4 +732,4 @@ def main():
     print(f"Finished: {time.ctime(end_time)}")
     print(f"Duration: {duration:.2f} seconds")
 if __name__ == "__main__":
-    main()
+    main() 
