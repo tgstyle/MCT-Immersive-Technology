@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ITFluidInfoArea extends ITInfoArea {
@@ -43,6 +44,7 @@ public class ITFluidInfoArea extends ITInfoArea {
     }
 
     public void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
+        if (ModList.get().isLoaded("jei")) { return; }
         FluidStack var10000 = this.tank.getFluid();
         int var10001 = this.tank.getCapacity();
         Objects.requireNonNull(tooltip);

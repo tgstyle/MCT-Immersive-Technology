@@ -32,7 +32,7 @@ public class BoilerLiquidScreen extends ITContainerScreen<BoilerLiquidMenu> {
     @Override
     protected List<ITInfoArea> makeInfoAreas() {
         return ImmutableList.of(
-                new ITFluidInfoArea(menu.tanks.input1(), new Rect2i(leftPos + 68, topPos + 20, 16, 47), 177, 31, 20, 51, TEXTURE),
+                new ITFluidInfoArea(menu.tanks.input1(), new Rect2i(leftPos + 80, topPos + 20, 16, 47), 177, 31, 20, 51, TEXTURE),
                 new ITInfoArea(new Rect2i(leftPos + 119, topPos + 38, 41, 9)) {
                     @Override
                     protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
@@ -42,9 +42,7 @@ public class BoilerLiquidScreen extends ITContainerScreen<BoilerLiquidMenu> {
                     }
 
                     @Override
-                    public void draw(GuiGraphics graphics) {
-                        // No drawing needed, as the bar is drawn in drawContainerBackgroundPre
-                    }
+                    public void draw(GuiGraphics graphics) {}
                 }
         );
     }

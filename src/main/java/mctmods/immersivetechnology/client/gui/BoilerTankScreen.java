@@ -13,6 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import com.google.common.collect.ImmutableList;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nonnull;
 import java.util.List;
 
@@ -43,10 +45,14 @@ public class BoilerTankScreen extends ITContainerScreen<BoilerTankMenu> {
                     }
 
                     @Override
-                    public void draw(GuiGraphics graphics) {
-                        // No drawing needed, as the bar is drawn in drawContainerBackgroundPre
-                    }
+                    public void draw(GuiGraphics graphics) { }
                 }
         );
     }
+
+    public int getLeftPos() { return leftPos; }
+
+    public int getTopPos() { return topPos; }
+
+    public @NotNull BoilerTankMenu getMenu() { return menu; }
 }

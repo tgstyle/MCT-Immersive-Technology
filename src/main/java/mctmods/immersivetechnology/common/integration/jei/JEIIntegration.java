@@ -13,21 +13,42 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.gui.handlers.IGuiClickableArea;
+import mezz.jei.api.gui.handlers.IGuiContainerHandler;
+import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
+import mezz.jei.api.runtime.IIngredientManager;
+import mezz.jei.api.recipe.IFocusFactory;
+import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.runtime.IClickableIngredient;
+import mezz.jei.api.runtime.IRecipesGui;
+import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidTank;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
-@SuppressWarnings("unused")
+import static mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea.fillTooltip;
+
+@SuppressWarnings({"unused"})
 @JeiPlugin
 public class JEIIntegration implements IModPlugin {
     private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "main");
+    private static IIngredientManager ingredientManager;
 
     @Override
     public @NotNull ResourceLocation getPluginUid() { return ID; }
@@ -56,9 +77,67 @@ public class JEIIntegration implements IModPlugin {
     @Override
     public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registration) {
         registration.addRecipeClickArea(AdvancedCokeOvenScreen.class, 56, 36, 14, 14, JEIRecipeTypes.ADVANCED_COKE_OVEN);
-        registration.addRecipeClickArea(BoilerTankScreen.class, 76, 37, 24, 17, JEIRecipeTypes.BOILER_TANK);
         registration.addRecipeClickArea(DistillerScreen.class, 76, 37, 24, 17, JEIRecipeTypes.DISTILLER);
+
+        registration.addGuiContainerHandler(BoilerTankScreen.class, new IGuiContainerHandler<BoilerTankScreen>() {
+            @Override
+            public @NotNull Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerTankScreen gui, double mouseX, double mouseY) {
+                int relX = (int) (mouseX - gui.getLeftPos());
+                int relY = (int) (mouseY - gui.getTopPos());
+                FluidStack fs = null;
+                Rect2i area = null;
+                if (relX >= 65 && relX < 85 && relY >= 18 && relY < 69) {
+                    fs = gui.getMenu().tanks.input().getFluid();
+                    area = new Rect2i(gui.getLeftPos() + 65, gui.getTopPos() + 18, 20, 51);
+                } else if (relX >= 90 && relX < 110 && relY >= 18 && relY < 69) {
+                    fs = gui.getMenu().tanks.output().getFluid();
+                    area = new Rect2i(gui.getLeftPos() + 90, gui.getTopPos() + 18, 20, 51);
+                }
+                if (fs != null && fs.getAmount() > 0) {
+                    Rect2i finalArea = area;
+                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typedIngredient -> new IClickableIngredient<FluidStack>() {
+                        @Override
+                        public ITypedIngredient<FluidStack> getTypedIngredient() {return typedIngredient;}
+
+                        @Override
+                        public @NotNull Rect2i getArea() {return finalArea;}
+                    });
+                }
+                return Optional.empty();
+            }
+
+            @Override
+            public Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull BoilerTankScreen gui, double guiMouseX, double guiMouseY) {
+                List<IGuiClickableArea> areas = new ArrayList<>();
+                areas.add(createBoilerClickableArea(65, 18, 20, 51, gui.getMenu().tanks.input()));
+                areas.add(createBoilerClickableArea(90, 18, 20, 51, gui.getMenu().tanks.output()));
+                return areas;
+            }
+        });
     }
+
+    private static IGuiClickableArea createBoilerClickableArea(int x, int y, int width, int height, IFluidTank tank) {
+        Rect2i area = new Rect2i(x, y, width, height);
+        return new IGuiClickableArea() {
+            @Override
+            public Rect2i getArea() { return area; }
+
+            @Override
+            public void getTooltip(@NotNull ITooltipBuilder tooltip) {
+                FluidStack fs = tank.getFluid();
+                fillTooltip(fs != null ? fs : FluidStack.EMPTY, tank.getCapacity(), tooltip::add);
+                tooltip.add(Component.translatable("jei.tooltip.show.recipes"));
+            }
+
+            @Override
+            public void onClick(IFocusFactory focusFactory, IRecipesGui recipesGui) {
+                recipesGui.showTypes(List.of(JEIRecipeTypes.BOILER_TANK));
+            }
+        };
+    }
+
+    @Override
+    public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) { ingredientManager = jeiRuntime.getIngredientManager(); }
 
     private List<AdvancedCokeOvenRecipe> getAdvancedCokeOvenRecipes() { return getFiltered($ -> true); }
 
@@ -69,9 +148,11 @@ public class JEIIntegration implements IModPlugin {
 
     private List<BoilerTankRecipe> getBoilerRecipes() {
         assert Minecraft.getInstance().level != null;
-        return new ArrayList<>(BoilerTankRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+        return new ArrayList<>(BoilerTankRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
+    }
 
     private List<DistillerRecipe> getDistillerRecipes() {
         assert Minecraft.getInstance().level != null;
-        return new ArrayList<>(DistillerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+        return new ArrayList<>(DistillerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
+    }
 }
