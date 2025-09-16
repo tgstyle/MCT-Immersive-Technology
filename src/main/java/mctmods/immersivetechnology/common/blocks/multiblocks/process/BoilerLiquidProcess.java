@@ -19,7 +19,7 @@ import net.minecraft.world.phys.BlockHitResult;
 public class BoilerLiquidProcess implements IMultiblockComponent<BoilerLiquidLogic.State> {
     @Override
     public InteractionResult click(IMultiblockContext<BoilerLiquidLogic.State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
-        if (!BoilerLiquidLogic.IGNITION_POI.get(0).equals(posInMultiblock)) { return InteractionResult.PASS; }
+        if (!BoilerLiquidLogic.IGNITION_POI.contains(posInMultiblock)) { return InteractionResult.PASS; }
         Direction hitDir = absoluteHit.getDirection();
         Direction poiSide = ctx.getLevel().toAbsolute(BoilerLiquidLogic.IGNITION_FACING);
         if (hitDir != poiSide) { return InteractionResult.PASS; }

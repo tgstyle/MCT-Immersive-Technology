@@ -28,18 +28,11 @@ import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
@@ -152,33 +145,33 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         final State state = ctx.getState();
         final Level level = ctx.getLevel().getRawLevel();
         boolean update = false;
-        double heatTransferMultiplier = 1.0;
         double previousHeatLevel = state.heatLevel;
         if (state.tanks.input1.getFluidAmount() <= 0) { state.pilotLit = false; }
-        double delta = HEAT_LOSS_PER_TICK * heatTransferMultiplier;
+        double delta = HEAT_LOSS_PER_TICK;
+        boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
+        boolean fullMode = state.rsState.isEnabled(ctx) && hasWater;
         if (!state.pilotLit) {
             state.heatLevel = Math.max(state.heatLevel - delta, 0);
             state.burnRemaining = 0;
-            if (previousHeatLevel != state.heatLevel) { update = true; }
         } else {
-            boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
             if (state.burnRemaining > 0) {
                 state.burnRemaining--;
                 if (state.lastFuel != null) {
-                    if (state.rsState.isEnabled(ctx) && hasWater) { state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), WORKING_HEAT_LEVEL); }
-                    else { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
-                    if (previousHeatLevel != state.heatLevel) { update = true; }
+                    if (!fullMode) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
                 } else { state.burnRemaining = 0; }
             } else {
-                state.lastFuel = BoilerLiquidRecipe.findRecipe(level, state.tanks.input1.getFluid());
+                state.lastFuel = null;
+                if (state.tanks.input1.getFluidAmount() > 0) {
+                    FluidStack dummy = state.tanks.input1.getFluid().copy();
+                    dummy = new FluidStack(dummy, Integer.MAX_VALUE);
+                    state.lastFuel = BoilerLiquidRecipe.findRecipe(level, dummy);
+                }
                 if (state.lastFuel != null) {
-                    boolean fullMode = state.rsState.isEnabled(ctx) && hasWater;
                     FluidStack drained;
                     if (fullMode) {
                         int drainAmount = state.lastFuel.input.getAmount();
                         drained = state.tanks.input1.drain(drainAmount, FluidAction.EXECUTE);
                         if (drained.getAmount() == drainAmount) {
-                            state.burnRemaining = state.lastFuel.getTotalProcessTime() - 1;
                             state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), WORKING_HEAT_LEVEL);
                         } else {
                             drained = state.tanks.input1.drain(1, FluidAction.EXECUTE);
@@ -190,13 +183,14 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                         if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
                         else { state.pilotLit = false; state.heatLevel = Math.max(state.heatLevel - delta, 0); }
                     }
+                    state.pilotLit = true;
                 } else {
                     state.pilotLit = false;
                     state.heatLevel = Math.max(state.heatLevel - delta, 0);
                 }
-                if (previousHeatLevel != state.heatLevel) { update = true; }
             }
         }
+        if (previousHeatLevel != state.heatLevel) { update = true; }
         if (tryEmptyContainer(state.tanks.input1, state.inventory)) { update = true; }
         if (update) {
             ctx.markMasterDirty();
@@ -222,28 +216,6 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         if (outputStack.isEmpty()) { inv.setStackInSlot(BoilerLiquidLogic.INPUT_FUEL_SLOT_EMPTY, execResult.getResult()); }
         else { outputStack.grow(execResult.getResult().getCount()); }
         return true;
-    }
-
-    @Override
-    public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
-        if (!IGNITION_POI.contains(posInMultiblock)) { return InteractionResult.PASS; }
-        final State state = ctx.getState();
-        Direction hitDir = absoluteHit.getDirection();
-        Direction poiSide = ctx.getLevel().toAbsolute(IGNITION_FACING);
-        if (hitDir != poiSide) { return InteractionResult.PASS; }
-        ItemStack held = player.getItemInHand(hand);
-        if (!held.is(Items.TORCH)) { return InteractionResult.PASS; }
-        if (state.pilotLit) { return InteractionResult.PASS; }
-        Level level = ctx.getLevel().getRawLevel();
-        if (state.tanks.input1.getFluidAmount() <= 0 || BoilerLiquidRecipe.findRecipe(level, state.tanks.input1.getFluid()) == null) { return InteractionResult.PASS; }
-        if (isClient) { return InteractionResult.SUCCESS; }
-        state.pilotLit = true;
-        state.heatLevel = PILOT_HEAT;
-        level.playSound(null, ctx.getLevel().toAbsolute(IGNITION_POI.get(0)), ITSounds.gasIgnite.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
-        ctx.markMasterDirty();
-        ctx.requestMasterBESync();
-        state.clientUpdateCooldown = 1;
-        return InteractionResult.SUCCESS;
     }
 
     @Override
