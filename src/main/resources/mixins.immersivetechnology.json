@@ -5,6 +5,7 @@
   "minVersion": "0.8",
   "refmap": "immersivetechnology.refmap.json",
   "mixins": [
+    "MixinInitializationTracker",
     "MixinFluidProtection"
   ],
   "injectors": {
