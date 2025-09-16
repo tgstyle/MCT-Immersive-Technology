@@ -69,13 +69,17 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
                 ItemBlockRenderTypes.setRenderLayer(entry.getStill(), RenderType.translucent());
                 ItemBlockRenderTypes.setRenderLayer(entry.getFlowing(), RenderType.translucent());
             }
+
             BlockEntityRenderers.register(ITBlockEntities.OPEN_BARREL.get(), context -> new OpenBarrelRenderer());
+
             MenuScreens.register(ITMenuTypes.ADVANCED_COKE_OVEN_MENU.getType(), AdvancedCokeOvenScreen::new);
-            MenuScreens.register(ITMenuTypes.BOILER_MENU.getType(), BoilerScreen::new);
+            MenuScreens.register(ITMenuTypes.BOILER_LIQUID_MENU.getType(), BoilerLiquidScreen::new);
+            MenuScreens.register(ITMenuTypes.BOILER_TANK_MENU.getType(), BoilerTankScreen::new);
             MenuScreens.register(ITMenuTypes.DISTILLER_MENU.getType(), DistillerScreen::new);
             MenuScreens.register(ITMenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
             MenuScreens.register(ITMenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
             MenuScreens.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
+
             ManualInstance instance = ManualHelper.getManual();
             InnerNode<ResourceLocation, ManualEntry> parent_category = instance.getRoot().getOrCreateSubnode(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "main"), 99);
             ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
@@ -83,14 +87,17 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
             instance.addEntry(parent_category, builder.create());
             InnerNode<ResourceLocation, ManualEntry> multiblock_category = parent_category.getOrCreateSubnode(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "it_multiblocks"), 0);
             ManualEntry.ManualEntryBuilder
-                    multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "advanced_coke_oven"));
             instance.addEntry(multiblock_category, multiblock.create());
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "alternator"));
             instance.addEntry(multiblock_category, multiblock.create());
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler"));
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler_liquid"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler_tank"));
             instance.addEntry(multiblock_category, multiblock.create());
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "distiller"));

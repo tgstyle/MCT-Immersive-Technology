@@ -59,19 +59,21 @@ public class ITBlockStateProvider extends BlockStateProvider {
         this.innerModels = new NongeneratedModels(generator.getPackOutput(), existingFileHelper);
     }
 
-    @Override protected void registerStatesAndModels() {
+    @Override
+    protected void registerStatesAndModels() {
         ITLib.IT_LOGGER.info("Generating Multiblock Splits");
 
-        genericmultiblock("alternator", "metal");
-        genericmultiblock("advanced_coke_oven", "stone");
-        genericmultiblock("solar_reflector", "metal");
+        genericMultiblock("alternator", "metal");
+        genericMultiblock("advanced_coke_oven", "stone");
+        genericMultiblock("solar_reflector", "metal");
 
-        genericmultiblockMirror("boiler", "metal");
-        genericmultiblockMirror("distiller", "metal");
-        genericmultiblockMirror("gas_turbine", "metal");
-        genericmultiblockMirror("solar_melter", "metal");
-        genericmultiblockMirror("solar_tower", "metal");
-        genericmultiblockMirror("steam_turbine", "metal");
+        genericMultiblockMirror("boiler_liquid", "metal");
+        genericMultiblockMirror("boiler_tank", "metal");
+        genericMultiblockMirror("distiller", "metal");
+        genericMultiblockMirror("gas_turbine", "metal");
+        genericMultiblockMirror("solar_melter", "metal");
+        genericMultiblockMirror("solar_tower", "metal");
+        genericMultiblockMirror("steam_turbine", "metal");
 
         createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("block/stone/reinforced_coke_brick", modLoc("block/stone/reinforced_coke_brick")));
         createSimpleBlock(ITBlocks.getBlock.apply("creative_barrel"), models().cubeAll("block/metal/creative_barrel", modLoc("block/metal/creative_barrel")));
@@ -215,13 +217,13 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private void createSimpleBlock(Block block, ModelFile model) { getVariantBuilder(block).partialState().setModels(new ConfiguredModel(model)); }
 
-    private void genericmultiblock(String registry_name, String block_type) {
+    private void genericMultiblock(String registry_name, String block_type) {
         ITLib.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
         createMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name));
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void genericmultiblockMirror(String registry_name, String block_type) {
+    private void genericMultiblockMirror(String registry_name, String block_type) {
         ITLib.IT_LOGGER.info("Generating [{}] with Custom Mirror Multiblock Model Data", registry_name);
         createMirroredMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), innerObj("block/multiblock/" + block_type + "/obj/" + registry_name +  "/" + registry_name + "_mirrored.obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name));
     }

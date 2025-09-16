@@ -1,6 +1,9 @@
 package mctmods.immersivetechnology;
 
+import mctmods.immersivetechnology.api.HeatCapabilities;
 import mctmods.immersivetechnology.api.MechanicalCapabilities;
+import mctmods.immersivetechnology.api.capability.IHeatConsumer;
+import mctmods.immersivetechnology.api.capability.IHeatProvider;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.network.ITMessageContainerData;
@@ -65,14 +68,20 @@ public class ImmersiveTechnology {
         ITPacketHandler.registerMessage(ITMessageContainerData.class, ITMessageContainerData::new);
     }
 
-    private static final CapabilityToken<IMechanicalEnergyProvider> PROVIDER_TOKEN = new CapabilityToken<>() {};
-    private static final CapabilityToken<IMechanicalEnergyConsumer> CONSUMER_TOKEN = new CapabilityToken<>() {};
+    private static final CapabilityToken<IHeatProvider> HEAT_PROVIDER_TOKEN = new CapabilityToken<>() {};
+    private static final CapabilityToken<IHeatConsumer> HEAT_CONSUMER_TOKEN = new CapabilityToken<>() {};
+    private static final CapabilityToken<IMechanicalEnergyProvider> MECHANICAL_PROVIDER_TOKEN = new CapabilityToken<>() {};
+    private static final CapabilityToken<IMechanicalEnergyConsumer> MECHANICAL_CONSUMER_TOKEN = new CapabilityToken<>() {};
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.register(IHeatProvider.class);
+        event.register(IHeatConsumer.class);
         event.register(IMechanicalEnergyProvider.class);
         event.register(IMechanicalEnergyConsumer.class);
-        MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY = CapabilityManager.get(PROVIDER_TOKEN);
-        MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY = CapabilityManager.get(CONSUMER_TOKEN);
+        HeatCapabilities.HEAT_PROVIDER_CAPABILITY = CapabilityManager.get(HEAT_PROVIDER_TOKEN);
+        HeatCapabilities.HEAT_CONSUMER_CAPABILITY = CapabilityManager.get(HEAT_CONSUMER_TOKEN);
+        MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY = CapabilityManager.get(MECHANICAL_PROVIDER_TOKEN);
+        MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY = CapabilityManager.get(MECHANICAL_CONSUMER_TOKEN);
     }
 
     @SubscribeEvent

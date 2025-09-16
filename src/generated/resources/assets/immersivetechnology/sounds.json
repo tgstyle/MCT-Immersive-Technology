@@ -11,11 +11,11 @@
     ],
     "subtitle": "subtitles.immersivetechnology.alternator"
   },
-  "boiler": {
+  "boiler_liquid": {
     "sounds": [
-      "immersivetechnology:boiler"
+      "immersivetechnology:boiler_liquid"
     ],
-    "subtitle": "subtitles.immersivetechnology.boiler"
+    "subtitle": "subtitles.immersivetechnology.boiler_liquid"
   },
   "cooling_tower": {
     "sounds": [

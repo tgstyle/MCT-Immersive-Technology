@@ -12,7 +12,7 @@ public class ITSounds {
 
     public static final RegistryObject<SoundEvent> advancedCokeOven = registerSound("advanced_coke_oven");
     public static final RegistryObject<SoundEvent> alternator = registerSound("alternator");
-    public static final RegistryObject<SoundEvent> boiler = registerSound("boiler");
+    public static final RegistryObject<SoundEvent> boiler_liquid = registerSound("boiler_liquid");
     public static final RegistryObject<SoundEvent> coolingTower = registerSound("cooling_tower");
     public static final RegistryObject<SoundEvent> dance = registerSound("dance");
     public static final RegistryObject<SoundEvent> distiller = registerSound("distiller");

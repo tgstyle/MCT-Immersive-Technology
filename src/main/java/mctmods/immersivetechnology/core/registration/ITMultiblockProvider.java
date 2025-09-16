@@ -9,9 +9,10 @@ import blusunrize.immersiveengineering.common.register.IEBlocks;
 import mctmods.immersivetechnology.common.blocks.multiblocks.*;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.*;
-import mctmods.immersivetechnology.common.blocks.multiblocks.process.BoilerProcess;
+import mctmods.immersivetechnology.common.blocks.multiblocks.process.BoilerLiquidProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblockBuilder;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblockPartBlockWithMirror;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblockPartBlockNonMirror;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITNonMirrorableWithActiveBlock;
 import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -26,7 +27,10 @@ public class ITMultiblockProvider {
     public static final HashMap<String, TemplateMultiblock> MB_TEMPLATE_MAP = new HashMap<>();
     public static Function<String, TemplateMultiblock> getMBTemplate = MB_TEMPLATE_MAP::get;
 
-    private static <T extends MultiblockHandler.IMultiblock> T registerMultiblock(T multiblock) { MultiblockHandler.registerMultiblock(multiblock); return multiblock; }
+    private static <T extends MultiblockHandler.IMultiblock> T registerMultiblock(T multiblock) {
+        MultiblockHandler.registerMultiblock(multiblock);
+        return multiblock;
+    }
 
     private static void registerMB(String registry_name, ITTemplateMultiblock block, MultiblockRegistration<?> registration) { registerMultiblockTemplate(registry_name, block); MB_REGISTRY_MAP.put(registry_name, registration); }
 
@@ -37,7 +41,7 @@ public class ITMultiblockProvider {
                 .mapColor(MapColor.STONE)
                 .instrument(NoteBlockInstrument.BASEDRUM)
                 .strength(2, 20);
-        if (!solid) properties.noOcclusion();
+        if (!solid) { properties.noOcclusion(); }
         return new ITMultiblockBuilder<>(logic, name)
                 .notMirrored()
                 .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITNonMirrorableWithActiveBlock<>(properties, r), ITBlockItem::new)
@@ -50,21 +54,33 @@ public class ITMultiblockProvider {
                 .customBEs(ITBlockEntities.REGISTER);
     }
 
+    public static <S extends IMultiblockState> ITMultiblockBuilder<S> metalNoMirror(IMultiblockLogic<S> logic, String name) {
+        return new ITMultiblockBuilder<>(logic, name)
+                .notMirrored()
+                .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockNonMirror<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
+                .customBEs(ITBlockEntities.REGISTER);
+    }
+
     public static final MultiblockRegistration<AdvancedCokeOvenLogic.State> ADVANCED_COKE_OVEN =
             stone(new AdvancedCokeOvenLogic(), "advanced_coke_oven", false)
                     .structure(() -> getMBTemplate.apply("advanced_coke_oven"))
                     .gui(ITMenuTypes.ADVANCED_COKE_OVEN_MENU)
                     .build();
     public static final MultiblockRegistration<AlternatorLogic.State> ALTERNATOR =
-            metal(new AlternatorLogic(), "alternator")
+            metalNoMirror(new AlternatorLogic(), "alternator")
                     .structure(() -> getMBTemplate.apply("alternator"))
                     .build();
-    public static final MultiblockRegistration<BoilerLogic.State> BOILER =
-            metal(new BoilerLogic(), "boiler")
-                    .structure(() -> getMBTemplate.apply("boiler"))
-                    .redstone(s -> s.rsState, BoilerLogic.REDSTONE_POI)
-                    .component(new BoilerProcess())
-                    .gui(ITMenuTypes.BOILER_MENU)
+    public static final MultiblockRegistration<BoilerLiquidLogic.State> BOILER_LIQUID =
+            metal(new BoilerLiquidLogic(), "boiler_liquid")
+                    .structure(() -> getMBTemplate.apply("boiler_liquid"))
+                    .redstone(s -> s.rsState, BoilerLiquidLogic.REDSTONE_POI)
+                    .component(new BoilerLiquidProcess())
+                    .gui(ITMenuTypes.BOILER_LIQUID_MENU)
+                    .build();
+    public static final MultiblockRegistration<BoilerTankLogic.State> BOILER_TANK =
+            metal(new BoilerTankLogic(), "boiler_tank")
+                    .structure(() -> getMBTemplate.apply("boiler_tank"))
+                    .gui(ITMenuTypes.BOILER_TANK_MENU)
                     .build();
     public static final MultiblockRegistration<DistillerLogic.State> DISTILLER =
             metal(new DistillerLogic(), "distiller")
@@ -78,7 +94,7 @@ public class ITMultiblockProvider {
                     .redstone(s -> s.rsState, GasTurbineLogic.REDSTONE_POI)
                     .build();
     public static final MultiblockRegistration<SolarReflectorLogic.State> SOLAR_REFLECTOR =
-            metal(new SolarReflectorLogic(), "solar_reflector")
+            metalNoMirror(new SolarReflectorLogic(), "solar_reflector")
                     .structure(() -> getMBTemplate.apply("solar_reflector"))
                     .build();
     public static final MultiblockRegistration<SolarMelterLogic.State> SOLAR_MELTER =
@@ -102,7 +118,8 @@ public class ITMultiblockProvider {
     public static void init() {
         registerMB("advanced_coke_oven", AdvancedCokeOven.INSTANCE, ADVANCED_COKE_OVEN);
         registerMB("alternator", Alternator.INSTANCE, ALTERNATOR);
-        registerMB("boiler", Boiler.INSTANCE, BOILER);
+        registerMB("boiler_liquid", BoilerLiquid.INSTANCE, BOILER_LIQUID);
+        registerMB("boiler_tank", BoilerTank.INSTANCE, BOILER_TANK);
         registerMB("distiller", Distiller.INSTANCE, DISTILLER);
         registerMB("gas_turbine", GasTurbine.INSTANCE, GAS_TURBINE);
         registerMB("solar_melter", SolarMelter.INSTANCE, SOLAR_MELTER);
