@@ -23,7 +23,6 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.api.recipe.IFocusFactory;
-import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.runtime.IClickableIngredient;
 import mezz.jei.api.runtime.IRecipesGui;
 import mezz.jei.api.forge.ForgeTypes;
@@ -79,7 +78,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipeClickArea(AdvancedCokeOvenScreen.class, 56, 36, 14, 14, JEIRecipeTypes.ADVANCED_COKE_OVEN);
         registration.addRecipeClickArea(DistillerScreen.class, 76, 37, 24, 17, JEIRecipeTypes.DISTILLER);
 
-        registration.addGuiContainerHandler(BoilerTankScreen.class, new IGuiContainerHandler<BoilerTankScreen>() {
+        registration.addGuiContainerHandler(BoilerTankScreen.class, new IGuiContainerHandler<>() {
             @Override
             public @NotNull Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerTankScreen gui, double mouseX, double mouseY) {
                 int relX = (int) (mouseX - gui.getLeftPos());
@@ -96,41 +95,42 @@ public class JEIIntegration implements IModPlugin {
                 if (fs != null && fs.getAmount() > 0) {
                     Rect2i finalArea = area;
                     return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typedIngredient -> new IClickableIngredient<FluidStack>() {
+                        @SuppressWarnings("removal")
                         @Override
-                        public ITypedIngredient<FluidStack> getTypedIngredient() {return typedIngredient;}
+                        public @NotNull ITypedIngredient<FluidStack> getTypedIngredient() { return typedIngredient; }
 
                         @Override
-                        public @NotNull Rect2i getArea() {return finalArea;}
+                        public @NotNull Rect2i getArea() { return finalArea; }
                     });
                 }
                 return Optional.empty();
             }
 
             @Override
-            public Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull BoilerTankScreen gui, double guiMouseX, double guiMouseY) {
+            public @NotNull Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull BoilerTankScreen gui, double guiMouseX, double guiMouseY) {
                 List<IGuiClickableArea> areas = new ArrayList<>();
-                areas.add(createBoilerClickableArea(65, 18, 20, 51, gui.getMenu().tanks.input()));
-                areas.add(createBoilerClickableArea(90, 18, 20, 51, gui.getMenu().tanks.output()));
+                areas.add(createBoilerClickableArea(65, gui.getMenu().tanks.input()));
+                areas.add(createBoilerClickableArea(90, gui.getMenu().tanks.output()));
                 return areas;
             }
         });
     }
 
-    private static IGuiClickableArea createBoilerClickableArea(int x, int y, int width, int height, IFluidTank tank) {
-        Rect2i area = new Rect2i(x, y, width, height);
+    private static IGuiClickableArea createBoilerClickableArea(int x, IFluidTank tank) {
+        Rect2i area = new Rect2i(x, 18, 20, 51);
         return new IGuiClickableArea() {
             @Override
-            public Rect2i getArea() { return area; }
+            public @NotNull Rect2i getArea() { return area; }
 
             @Override
             public void getTooltip(@NotNull ITooltipBuilder tooltip) {
                 FluidStack fs = tank.getFluid();
-                fillTooltip(fs != null ? fs : FluidStack.EMPTY, tank.getCapacity(), tooltip::add);
+                fillTooltip(fs, tank.getCapacity(), tooltip::add);
                 tooltip.add(Component.translatable("jei.tooltip.show.recipes"));
             }
 
             @Override
-            public void onClick(IFocusFactory focusFactory, IRecipesGui recipesGui) {
+            public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) {
                 recipesGui.showTypes(List.of(JEIRecipeTypes.BOILER_TANK));
             }
         };

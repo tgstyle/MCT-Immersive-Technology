@@ -26,16 +26,16 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
 
     @Override
     protected void registerModels() {
-        generateMultiblockModel("advanced_coke_oven", "stone", ITMultiblockProvider.ADVANCED_COKE_OVEN.block());
-        generateMultiblockModel("alternator", "metal", ITMultiblockProvider.ALTERNATOR.block());
-        generateMultiblockModel("boiler_liquid", "metal", ITMultiblockProvider.BOILER_LIQUID.block());
-        generateMultiblockModel("boiler_tank", "metal", ITMultiblockProvider.BOILER_TANK.block());
-        generateMultiblockModel("distiller", "metal", ITMultiblockProvider.DISTILLER.block());
-        generateMultiblockModel("gas_turbine", "metal", ITMultiblockProvider.GAS_TURBINE.block());
-        generateMultiblockModel("solar_melter", "metal", ITMultiblockProvider.SOLAR_MELTER.block());
-        generateMultiblockModel("solar_reflector", "metal", ITMultiblockProvider.SOLAR_REFLECTOR.block());
-        generateMultiblockModel("solar_tower", "metal", ITMultiblockProvider.SOLAR_TOWER.block());
-        generateMultiblockModel("steam_turbine", "metal", ITMultiblockProvider.STEAM_TURBINE.block());
+        generateMultiblockModel("advanced_coke_oven", "stone", ITMultiblockProvider.ADVANCED_COKE_OVEN.block(), new Vector3f(3.0f, -3.05f, -1.5f));
+        generateMultiblockModel("alternator", "metal", ITMultiblockProvider.ALTERNATOR.block(), new Vector3f(5.5f, -3.5f, -2.0f));
+        generateMultiblockModel("boiler_liquid", "metal", ITMultiblockProvider.BOILER_LIQUID.block(), new Vector3f(-2.0f, -0.525f, 0.5f));
+        generateMultiblockModel("boiler_tank", "metal", ITMultiblockProvider.BOILER_TANK.block(), new Vector3f(-3.2f, 0.5f, 0.5f));
+        generateMultiblockModel("distiller", "metal", ITMultiblockProvider.DISTILLER.block(), new Vector3f(0.5f, -0.5f, -0.5f));
+        generateMultiblockModel("gas_turbine", "metal", ITMultiblockProvider.GAS_TURBINE.block(), new Vector3f(6.0f, -1.3125f, -3.5f));
+        generateMultiblockModel("solar_melter", "metal", ITMultiblockProvider.SOLAR_MELTER.block(), new Vector3f(4.5f, -11.0f, -1.5f));
+        generateMultiblockModel("solar_reflector", "metal", ITMultiblockProvider.SOLAR_REFLECTOR.block(), new Vector3f(4.5f, -1.8f, -1.5f));
+        generateMultiblockModel("solar_tower", "metal", ITMultiblockProvider.SOLAR_TOWER.block(), new Vector3f(4.5f, -11.0f, -1.5f));
+        generateMultiblockModel("steam_turbine", "metal", ITMultiblockProvider.STEAM_TURBINE.block(), new Vector3f(10.0f, -2.4375f, -5.5f));
     }
 
     private void doTransform(ModelBuilder<?>.TransformsBuilder transform, ItemDisplayContext type, @Nullable Vector3f translation, @Nullable Vector3f rotationAngle, float scale) {
@@ -54,7 +54,7 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
 
     private String name(ItemLike item) { return Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item.asItem())).getPath(); }
 
-    private void generateMultiblockModel(String id, String type, Supplier<? extends ItemLike> block) {
+    private void generateMultiblockModel(String id, String type, Supplier<? extends ItemLike> block, Vector3f guiTranslation) {
         TRSRModelBuilder model = obj(block, "block/multiblock/" + type + "/obj/" + id + "/" + id + ".obj");
 
         ModelBuilder<?>.TransformsBuilder trans = model.transforms();
@@ -63,7 +63,7 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
         doTransform(trans, ItemDisplayContext.THIRD_PERSON_LEFT_HAND, new Vector3f(-0.75F, 0, -1.25F), new Vector3f(0, 90, 0), 0.03125F);
         doTransform(trans, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, new Vector3f(1.0F, 0, -1.75F), new Vector3f(0, 270, 0), 0.03125F);
         doTransform(trans, ItemDisplayContext.HEAD, new Vector3f(0, 8, -8), null, 0.2F);
-        doTransform(trans, ItemDisplayContext.GUI, new Vector3f(6, -6, 0), new Vector3f(30, 225, 0), 0.1875F);
+        doTransform(trans, ItemDisplayContext.GUI, guiTranslation, new Vector3f(30, 225, 0), 0.1875F);
         doTransform(trans, ItemDisplayContext.GROUND, new Vector3f(-1.5F, 3, -1.5F), null, 0.0625F);
         doTransform(trans, ItemDisplayContext.FIXED, new Vector3f(-1, -8, -2), null, 0.0625F);
     }
