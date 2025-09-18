@@ -172,18 +172,16 @@ def fill_gaps_along_axis(occupied_np, axis, threshold):
                     if front is not None and back is not None and (back - front - 1) <= threshold:
                         occupied_np[x, y, front + 1:back] = True
     return occupied_np
-# === Alternator, Boiler, Solar Tower Detection ===
-# This section processes block-level geometry for Alternator, Boiler, and Solar Tower models.
-# It voxelizes the model, detecting intersections with vertices and edges, and determines occupancy using ray-casting.
-# For Alternator: Successfully generates accurate AABBs, correctly capturing all surfaces.
-# For Boiler: Detects most surfaces but struggles with corner detection, leading to missing AABBs on one side despite symmetry.
-# For Solar Tower: Detects some faces but misses many open to the outside inside faces and outside faces, indicating insufficient directional sampling.
-# Updates: Added corner offsets (now 27 total for thin features) to better capture corner details in models like Boiler.
-# Increased intersection count for non-watertight meshes to 4 (from 3) to reduce artifacts in open internal spaces for models like Solar Tower by making inside detection more strict.
-# Change: Added solid_set param to force specific blocks full before ray-casting/postprocess, skipping detection.
+# === Voxelization and AABB Generation ===
+# Processes block-level geometry for .bbmodel files (e.g., Alternator, Boiler, Solar Tower).
+# Voxelizes models using ray-casting to detect occupancy, generating AABBs.
+# Uses 27 offset points for thin features to improve corner detection.
+# For non-watertight meshes, requires 4 ray intersections for inside detection to handle open internal spaces.
+# Supports forcing specific blocks as solid via solid_set before processing.
+# Applies post-processing (hole filling, gap filling, small void/occupied cluster removal) unless disabled.
 def process_block(args):
     bx, by, bz, minx, miny, minz, verts, triangles, edges, res, x_threshold, y_threshold, z_threshold, is_watertight, has_thin_features, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, device, use_fp16, solid_set = args
-    # Force solid blocks before any detection/postprocess
+    # Force solid blocks before any detection or post-processing
     if solid_set and (bx, by, bz) in solid_set:
         if global_postprocess:
             occupied_np = np.ones((res, res, res), dtype=bool)
@@ -380,12 +378,12 @@ def process_block(args):
     block_aabbs = merge_aabbs(block_aabbs)
     if block_aabbs: return (bx, by, bz, block_aabbs)
     return None
-# === Alternator, Boiler, Solar Tower Parsing ===
-# This section parses .bbmodel files for Alternator, Boiler, and Solar Tower, extracting vertices, triangles, and edges.
-# For Alternator: Correctly parses geometry, leading to accurate AABB generation.
-# For Boiler: Parses geometry but results in missing corner AABBs on one side, despite symmetry being detected correctly on the mirror side.
-# For Solar Tower: Parses geometry but fails to capture many inside and outside faces, suggesting issues with directional detection in process_block.
-# Change: Added solid_set param, appended to each block's args tuple for process_block.
+# === BBModel Parsing ===
+# Parses .bbmodel files, extracting vertices, triangles, and edges for voxelization.
+# Validates vertices are aligned to 1/16 grid, exiting with error if not.
+# Determines if model is watertight and checks for thin features based on vertex fractions or small edge lengths.
+# Processes main and supplementary models, applying offsets to supplementary models.
+# Outputs AABBs for each block, centered for single-block models.
 def parse_bbmodel(file_path, x_threshold, y_threshold, z_threshold, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_x=False, per_block_gap_y=False, per_block_gap_z=False, device=None, use_fp16=False, single_thread=False, solid_set=set()):
     with open(file_path, 'r') as f:
         data = json.load(f)
