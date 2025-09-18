@@ -235,11 +235,17 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
     public void tickServer(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         Level level = ctx.getLevel().getRawLevel();
+        boolean update = false;
         if (!state.initialized && !level.isClientSide) {
             state.initialized = true;
             SolarRegistry.registerReflector(level, state.poiPos);
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
+        }
+        boolean isActive = state.isMirrorTaken && state.getSolarCollectorStrength() > 0;
+        if (state.active != isActive) {
+            state.active = isActive;
+            update = true;
         }
         long oldDanceStartTick = state.danceStartTick;
         int oldGlobalAnimationPhase = state.globalAnimationPhase;
@@ -262,7 +268,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             state.globalAnimationPhase = -4;
         }
         boolean changed = state.danceStartTick != oldDanceStartTick || state.globalAnimationPhase != oldGlobalAnimationPhase;
-        if (changed) {
+        if (changed || update) {
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
         }
@@ -302,6 +308,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
         private final Runnable markDirty;
         private final Runnable sync;
         public boolean initialized = false;
+        public boolean active = false;
         public BooleanSupplier isDanceSoundPlaying = () -> false;
         private transient int danceSoundId = 0;
         public transient int formedTicks = 0;
@@ -411,6 +418,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             nbt.putBoolean("isMirrorTaken", isMirrorTaken);
             nbt.putLong("towerCollectorPosition", towerCollectorPosition.asLong());
             nbt.putBoolean("initialized", initialized);
+            nbt.putBoolean("active", active);
         }
 
         @Override
@@ -418,6 +426,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             isMirrorTaken = nbt.getBoolean("isMirrorTaken");
             towerCollectorPosition = BlockPos.of(nbt.getLong("towerCollectorPosition"));
             initialized = nbt.getBoolean("initialized");
+            active = nbt.getBoolean("active");
             Level level = levelSupplier.get();
             if (level != null && !level.isClientSide) { SolarRegistry.registerReflector(level, poiPos); }
         }

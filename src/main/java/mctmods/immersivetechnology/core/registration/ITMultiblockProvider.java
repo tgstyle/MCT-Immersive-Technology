@@ -14,6 +14,8 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblock
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblockPartBlockWithMirror;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblockPartBlockNonMirror;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITNonMirrorableWithActiveBlock;
+import mctmods.immersivetechnology.common.blocks.multiblocks.process.BoilerSolidProcess;
+import mctmods.immersivetechnology.common.blocks.multiblocks.sub.BoilerSolidBlock;
 import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
@@ -77,6 +79,15 @@ public class ITMultiblockProvider {
                     .component(new BoilerLiquidProcess())
                     .gui(ITMenuTypes.BOILER_LIQUID_MENU)
                     .build();
+    public static final MultiblockRegistration<BoilerSolidLogic.State> BOILER_SOLID =
+            new ITMultiblockBuilder<>(new BoilerSolidLogic(), "boiler_solid")
+                    .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, BoilerSolidBlock::new, ITBlockItem::new)
+                    .customBEs(ITBlockEntities.REGISTER)
+                    .structure(() -> getMBTemplate.apply("boiler_solid"))
+                    .redstone(s -> s.rsState, BoilerSolidLogic.REDSTONE_POI)
+                    .component(new BoilerSolidProcess())
+                    .gui(ITMenuTypes.BOILER_SOLID_MENU)
+                    .build();
     public static final MultiblockRegistration<BoilerTankLogic.State> BOILER_TANK =
             metal(new BoilerTankLogic(), "boiler_tank")
                     .structure(() -> getMBTemplate.apply("boiler_tank"))
@@ -119,6 +130,7 @@ public class ITMultiblockProvider {
         registerMB("advanced_coke_oven", AdvancedCokeOven.INSTANCE, ADVANCED_COKE_OVEN);
         registerMB("alternator", Alternator.INSTANCE, ALTERNATOR);
         registerMB("boiler_liquid", BoilerLiquid.INSTANCE, BOILER_LIQUID);
+        registerMB("boiler_solid", BoilerSolid.INSTANCE, BOILER_SOLID);
         registerMB("boiler_tank", BoilerTank.INSTANCE, BOILER_TANK);
         registerMB("distiller", Distiller.INSTANCE, DISTILLER);
         registerMB("gas_turbine", GasTurbine.INSTANCE, GAS_TURBINE);

@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.blocks.metal.gui;
 
 import blusunrize.immersiveengineering.common.gui.sync.GenericDataSerializers;
 import com.mojang.datafixers.util.Pair;
-import mctmods.immersivetechnology.common.blocks.metal.TrashItemBlockEntity;
 import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.blocks.metal.TrashItemBlockEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
@@ -20,7 +20,7 @@ public class TrashItemMenu extends ITContainerMenu {
     private final TrashItemBlockEntity tile;
 
     public TrashItemMenu(MenuType<TrashItemMenu> type, int id, Inventory inv, TrashItemBlockEntity tile) {
-        super(blockCtx(type, id, tile));
+        super(ITContainerMenu.blockCtx(type, id, tile));
         this.handler = tile;
         this.tile = tile;
         addOwnSlots();
@@ -28,7 +28,7 @@ public class TrashItemMenu extends ITContainerMenu {
     }
 
     public TrashItemMenu(MenuType<TrashItemMenu> type, int id, Inventory inv) {
-        super(clientCtx(type, id));
+        super(ITContainerMenu.clientCtx(type, id));
         this.handler = new DummyHandler();
         this.tile = null;
         addOwnSlots();
@@ -39,7 +39,7 @@ public class TrashItemMenu extends ITContainerMenu {
 
     public static TrashItemMenu makeClient(MenuType<TrashItemMenu> type, int id, Inventory inv) { return new TrashItemMenu(type, id, inv); }
 
-    private void addOwnSlots() { addSlot(new SlotItemHandler(handler, 0, 80, 34)); }
+    private void addOwnSlots() { addSlot(new SlotItemHandler(handler, 0, 80, 34)); ownSlotCount=1; }
 
     private void addPlayerSlots(Inventory inv) {
         for (int y = 0; y < 3; y++) for (int x = 0; x < 9; x++) addSlot(new Slot(inv, x + y * 9 + 9, 8 + x * 18, 84 + y * 18));

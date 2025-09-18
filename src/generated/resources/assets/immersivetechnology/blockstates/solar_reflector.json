@@ -1,40 +1,40 @@
 {
   "variants": {
     "facing=east,multiblockslave=false": {
-      "model": "immersivetechnology:block/multiblock/metal/obj/solar_reflector/solar_reflector_split",
+      "model": "immersivetechnology:metal/split/solar_reflector_split",
       "uvlock": true,
       "y": 90
     },
     "facing=east,multiblockslave=true": {
-      "model": "immersivetechnology:block/multiblock/metal/obj/solar_reflector/solar_reflector_split",
+      "model": "immersivetechnology:metal/split/solar_reflector_split",
       "uvlock": true,
       "y": 90
     },
     "facing=north,multiblockslave=false": {
-      "model": "immersivetechnology:block/multiblock/metal/obj/solar_reflector/solar_reflector_split",
+      "model": "immersivetechnology:metal/split/solar_reflector_split",
       "uvlock": true
     },
     "facing=north,multiblockslave=true": {
-      "model": "immersivetechnology:block/multiblock/metal/obj/solar_reflector/solar_reflector_split",
+      "model": "immersivetechnology:metal/split/solar_reflector_split",
       "uvlock": true
     },
     "facing=south,multiblockslave=false": {
-      "model": "immersivetechnology:block/multiblock/metal/obj/solar_reflector/solar_reflector_split",
+      "model": "immersivetechnology:metal/split/solar_reflector_split",
       "uvlock": true,
       "y": 180
     },
     "facing=south,multiblockslave=true": {
-      "model": "immersivetechnology:block/multiblock/metal/obj/solar_reflector/solar_reflector_split",
+      "model": "immersivetechnology:metal/split/solar_reflector_split",
       "uvlock": true,
       "y": 180
     },
     "facing=west,multiblockslave=false": {
-      "model": "immersivetechnology:block/multiblock/metal/obj/solar_reflector/solar_reflector_split",
+      "model": "immersivetechnology:metal/split/solar_reflector_split",
       "uvlock": true,
       "y": 270
     },
     "facing=west,multiblockslave=true": {
-      "model": "immersivetechnology:block/multiblock/metal/obj/solar_reflector/solar_reflector_split",
+      "model": "immersivetechnology:metal/split/solar_reflector_split",
       "uvlock": true,
       "y": 270
     }

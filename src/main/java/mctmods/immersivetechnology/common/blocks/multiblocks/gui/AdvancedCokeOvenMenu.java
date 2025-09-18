@@ -22,16 +22,16 @@ public class AdvancedCokeOvenMenu extends ITContainerMenu {
     public final ContainerData state;
     public final FluidTank tank;
 
-    public static AdvancedCokeOvenMenu makeServer(MenuType<?> type, int id, Inventory invPlayer, MultiblockMenuContext<AdvancedCokeOvenLogic.State> ctx) {
+    public static AdvancedCokeOvenMenu makeServer(MenuType<AdvancedCokeOvenMenu> type, int id, Inventory invPlayer, ITContainerMenu.MultiblockMenuContext<AdvancedCokeOvenLogic.State> ctx) {
         final AdvancedCokeOvenLogic.State state = ctx.mbContext().getState();
-        return new AdvancedCokeOvenMenu(multiblockCtx(type, id, ctx), invPlayer, state.getInventory().getRawHandler(), state, state.getTanks().output());
+        return new AdvancedCokeOvenMenu(ITContainerMenu.multiblockCtx(type, id, ctx), invPlayer, state.getInventory().getRawHandler(), state, state.getTanks().output());
     }
 
-    public static AdvancedCokeOvenMenu makeClient(MenuType<?> type, int id, Inventory invPlayer) {
-        return new AdvancedCokeOvenMenu(clientCtx(type, id), invPlayer, new ItemStackHandler(4), new SimpleContainerData(2), new FluidTank(AdvancedCokeOvenLogic.TANK_CAPACITY));
+    public static AdvancedCokeOvenMenu makeClient(MenuType<AdvancedCokeOvenMenu> type, int id, Inventory invPlayer) {
+        return new AdvancedCokeOvenMenu(ITContainerMenu.clientCtx(type, id), invPlayer, new ItemStackHandler(4), new SimpleContainerData(2), new FluidTank(AdvancedCokeOvenLogic.TANK_CAPACITY));
     }
 
-    private AdvancedCokeOvenMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, ContainerData data, FluidTank tank) {
+    private AdvancedCokeOvenMenu(ITContainerMenu.MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, ContainerData data, FluidTank tank) {
         super(ctx);
         this.addSlot(new SlotItemHandler(inv, 0, 30, 35) {
             @Override
@@ -42,7 +42,7 @@ public class AdvancedCokeOvenMenu extends ITContainerMenu {
         this.addSlot(new ITSlot.Output(inv, 3, 152, 53));
         ownSlotCount = 4;
 
-        for (int i = 0; i < 3; i++) { for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); } }
+        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); }
         for (int i = 0; i < 9; i++) { addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142)); }
         this.state = data;
         this.tank = tank;

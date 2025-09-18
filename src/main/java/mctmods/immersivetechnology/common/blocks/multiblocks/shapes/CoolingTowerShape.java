@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.shapes;
 
-import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.helper.GenericShape;
+import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;

@@ -1,12 +1,10 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks;
 
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
-
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITClientMultiblockProperties;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;

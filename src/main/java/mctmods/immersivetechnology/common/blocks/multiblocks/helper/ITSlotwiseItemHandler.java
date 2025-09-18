@@ -14,9 +14,9 @@ import java.util.function.Predicate;
 
 public class ITSlotwiseItemHandler implements IItemHandlerModifiable, Iterable<ItemStack> {
     private final ItemStackHandler rawHandler;
-    private final List<mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler.IOConstraint> slotConstraints;
+    private final List<IOConstraint> slotConstraints;
 
-    public ITSlotwiseItemHandler(List<mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler.IOConstraint> slotConstraints, Runnable onChanged) {
+    public ITSlotwiseItemHandler(List<IOConstraint> slotConstraints, Runnable onChanged) {
         this.rawHandler = new ItemStackHandler(slotConstraints.size()) {
             @Override
             protected void onContentsChanged(int slot) {
@@ -36,8 +36,23 @@ public class ITSlotwiseItemHandler implements IItemHandlerModifiable, Iterable<I
     @Override
     @NotNull
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        if (slot >= this.slotConstraints.size() || !this.slotConstraints.get(slot).allowInsert.test(stack)) return stack;
-        return rawHandler.insertItem(slot, stack, simulate);
+        if (slot >= this.slotConstraints.size()) return stack;
+        boolean allowInsert = this.slotConstraints.get(slot).allowInsert.test(stack);
+        if (!allowInsert) return stack;
+        ItemStack current = getStackInSlot(slot);
+        if (!current.isEmpty()) {
+            boolean canMerge = ItemStack.matches(current, stack);
+            if (!canMerge) return stack;
+        }
+        ItemStack result = rawHandler.insertItem(slot, stack, simulate);
+        if (!simulate) {
+            ItemStack after = getStackInSlot(slot);
+            if (after.getCount() > getSlotLimit(slot)) {
+                after.setCount(getSlotLimit(slot));
+                rawHandler.setStackInSlot(slot, after);
+            }
+        }
+        return result;
     }
 
     @Override
@@ -51,10 +66,16 @@ public class ITSlotwiseItemHandler implements IItemHandlerModifiable, Iterable<I
     public int getSlotLimit(int slot) { return rawHandler.getSlotLimit(slot); }
 
     @Override
-    public boolean isItemValid(int slot, @NotNull ItemStack stack) { return rawHandler.isItemValid(slot, stack); }
+    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+        if (slot >= this.slotConstraints.size()) return false;
+        return this.slotConstraints.get(slot).allowInsert.test(stack);
+    }
 
-    @Override
-    public void setStackInSlot(int slot, @NotNull ItemStack stack) { rawHandler.setStackInSlot(slot, stack); }
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+        ItemStack toSet = stack.copy();
+        toSet.setCount(Math.min(toSet.getCount(), getSlotLimit(slot)));
+        rawHandler.setStackInSlot(slot, toSet);
+    }
 
     public Tag serializeNBT() { return rawHandler.serializeNBT(); }
 
@@ -81,9 +102,12 @@ public class ITSlotwiseItemHandler implements IItemHandlerModifiable, Iterable<I
     }
 
     public record IOConstraint(boolean allowExtract, Predicate<ItemStack> allowInsert) {
-        public static final mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler.IOConstraint OUTPUT = new mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler.IOConstraint(true, $ -> false);
-        public static final mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler.IOConstraint FLUID_INPUT = mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler.IOConstraint.input(Utils::isFluidRelatedItemStack);
+        public static final IOConstraint INPUT = input($ -> true);
+        public static final IOConstraint OUTPUT = new IOConstraint(true, $ -> false);
+        public static final IOConstraint FLUID_INPUT = IOConstraint.input(Utils::isFluidRelatedItemStack);
 
-        public static mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler.IOConstraint input(Predicate<ItemStack> allow) { return new mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler.IOConstraint(false, allow); }
+        public static IOConstraint input(Predicate<ItemStack> allow) { return new IOConstraint(true, allow); }
+
+        public boolean allowExtract() { return allowExtract; }
     }
 }

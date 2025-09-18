@@ -13,7 +13,7 @@ import net.minecraftforge.items.IItemHandler;
 import java.util.List;
 
 public class BoilerTankMenu extends ITContainerMenu {
-    public final BoilerTankLogic.BoilerTank tanks;
+    public final BoilerTankLogic.BoilerTanks tanks;
     public float heatLevel = 0.0f;
 
     public static BoilerTankMenu makeServer(MenuType<BoilerTankMenu> type, int id, Inventory invPlayer, ITContainerMenu.MultiblockMenuContext<BoilerTankLogic.State> ctx) {
@@ -34,12 +34,12 @@ public class BoilerTankMenu extends ITContainerMenu {
                         ),
                         () -> {}
                 ),
-                BoilerTankLogic.BoilerTank.makeClient(),
+                BoilerTankLogic.BoilerTanks.makeClient(),
                 null
         );
     }
 
-    protected BoilerTankMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, BoilerTankLogic.BoilerTank tanks, BoilerTankLogic.State state) {
+    protected BoilerTankMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, BoilerTankLogic.BoilerTanks tanks, BoilerTankLogic.State state) {
         super(ctx);
         this.tanks = tanks;
         this.addSlot(new ITSlot.FluidContainer(inv, BoilerTankLogic.INPUT_SLOT_FILLED, 43, 15, 2));

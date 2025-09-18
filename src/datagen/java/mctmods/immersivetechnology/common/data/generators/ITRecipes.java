@@ -40,6 +40,7 @@ public class ITRecipes extends RecipeProvider {
         recipesAdvancedCokeOvenFuel(consumer);
         recipesBoilerTank(consumer);
         recipesBoilerLiquid(consumer);
+        recipesBoilerSolid(consumer);
         recipesDistiller(consumer);
         recipesMixer(consumer);
         recipesTurbine(consumer);
@@ -69,6 +70,11 @@ public class ITRecipes extends RecipeProvider {
 
     private void recipesBoilerLiquid(@Nonnull Consumer<FinishedRecipe> out) {
         BoilerLiquidRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 10).setTime(10).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_liquid/biodiesel"));
+    }
+
+    private void recipesBoilerSolid(@Nonnull Consumer<FinishedRecipe> out) {
+        BoilerSolidRecipeBuilder.builder().addInput(ItemTags.COALS, 1).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_solid/coal"));
+        BoilerSolidRecipeBuilder.builder().addInput(IETags.coalCoke, 1).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_solid/coal_coke"));
     }
 
     private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) {

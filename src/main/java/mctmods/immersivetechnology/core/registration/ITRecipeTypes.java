@@ -19,6 +19,7 @@ public class ITRecipeTypes {
     public static final TypeWithClass<AdvancedCokeOvenRecipe> ADVANCED_COKE_OVEN = register("advanced_coke_oven", AdvancedCokeOvenRecipe.class);
     public static final TypeWithClass<AdvancedCokeOvenFuel> ADVANCED_COKE_OVEN_FUEL = register("advanced_coke_oven_fuel", AdvancedCokeOvenFuel.class);
     public static final TypeWithClass<BoilerLiquidRecipe> BOILER_LIQUID = register("boiler_liquid", BoilerLiquidRecipe.class);
+    public static final TypeWithClass<BoilerSolidRecipe> BOILER_SOLID = register("boiler_solid", BoilerSolidRecipe.class);
     public static final TypeWithClass<BoilerTankRecipe> BOILER_TANK = register("boiler_tank", BoilerTankRecipe.class);
     public static final TypeWithClass<DistillerRecipe> DISTILLER = register("distiller", DistillerRecipe.class);
     public static final TypeWithClass<GasTurbineRecipe> GAS_TURBINE = register("gas_turbine", GasTurbineRecipe.class);
@@ -29,8 +30,9 @@ public class ITRecipeTypes {
     static {
         AdvancedCokeOvenRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("advanced_coke_oven", AdvancedCokeOvenRecipeSerializer::new);
         AdvancedCokeOvenFuel.SERIALIZER = RECIPE_SERIALIZERS.register("advanced_coke_oven_fuel", AdvancedCokeOvenFuelSerializer::new);
-        BoilerTankRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("boiler", BoilerRecipeSerializer::new);
-        BoilerLiquidRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("boiler_fuel", BoilerFuelRecipeSerializer::new);
+        BoilerLiquidRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("boiler_liquid", BoilerLiquidRecipeSerializer::new);
+        BoilerSolidRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("boiler_solid", BoilerSolidRecipeSerializer::new);
+        BoilerTankRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("boiler", BoilerTankRecipeSerializer::new);
         GasTurbineRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("gas_turbine", GasTurbineRecipeSerializer::new);
         DistillerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("distiller", DistillerRecipeSerializer::new);
         SolarMelterRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("solar_melter", SolarMelterRecipeSerializer::new);

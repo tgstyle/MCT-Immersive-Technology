@@ -13,7 +13,7 @@ import net.minecraftforge.common.crafting.conditions.ICondition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BoilerFuelRecipeSerializer extends IERecipeSerializer<BoilerLiquidRecipe> {
+public class BoilerLiquidRecipeSerializer extends IERecipeSerializer<BoilerLiquidRecipe> {
     @Override
     public ItemStack getIcon() { return ITMultiblockProvider.BOILER_LIQUID.iconStack(); }
 

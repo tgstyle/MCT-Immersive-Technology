@@ -20,7 +20,7 @@ import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BoilerRecipeSerializer extends IERecipeSerializer<BoilerTankRecipe> {
+public class BoilerTankRecipeSerializer extends IERecipeSerializer<BoilerTankRecipe> {
     @Override
     public ItemStack getIcon() { return ITMultiblockProvider.BOILER_TANK.iconStack(); }
 

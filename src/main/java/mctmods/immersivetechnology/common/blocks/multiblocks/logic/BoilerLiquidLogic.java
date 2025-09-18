@@ -150,6 +150,11 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         double delta = HEAT_LOSS_PER_TICK;
         boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
         boolean fullMode = state.rsState.isEnabled(ctx) && hasWater;
+        boolean isActive = state.pilotLit && fullMode && state.heatLevel >= WORKING_HEAT_LEVEL;
+        if (state.active != isActive) {
+            state.active = isActive;
+            update = true;
+        }
         if (!state.pilotLit) {
             state.heatLevel = Math.max(state.heatLevel - delta, 0);
             state.burnRemaining = 0;
@@ -250,6 +255,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         public int burnRemaining = 0;
         public BoilerLiquidRecipe lastFuel;
         public boolean pilotLit = false;
+        public boolean active = false;
         public BooleanSupplier isSoundPlaying = () -> false;
         public int clientUpdateCooldown = 20;
 
@@ -298,6 +304,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         public void writeSyncNBT(CompoundTag nbt) {
             nbt.putDouble("heatLevel", heatLevel);
             nbt.putBoolean("pilotLit", pilotLit);
+            nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT());
         }
 
@@ -305,6 +312,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         public void readSyncNBT(CompoundTag nbt) {
             heatLevel = nbt.getDouble("heatLevel");
             pilotLit = nbt.getBoolean("pilotLit");
+            active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
         }
     }

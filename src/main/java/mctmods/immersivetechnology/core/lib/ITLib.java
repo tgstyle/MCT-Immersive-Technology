@@ -13,6 +13,7 @@ public class ITLib {
     public static final String DESC_FLAVOUR = DESC + "flavour.";
     public static final String GUIID_Advanced_Coke_Oven = "gui_advanced_coke_oven";
     public static final String GUIID_Boiler_Liquid = "gui_boiler";
+    public static final String GUIID_Boiler_Solid = "gui_solid";
     public static final String GUIID_Boiler_Tank = "gui_boiler_tank";
     public static final String GUIID_Distiller = "gui_distiller";
     public static final String GUIID_SolarMelter = "gui_solar_melter";

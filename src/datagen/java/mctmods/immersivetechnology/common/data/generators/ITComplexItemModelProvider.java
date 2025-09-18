@@ -29,6 +29,7 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
         generateMultiblockModel("advanced_coke_oven", "stone", ITMultiblockProvider.ADVANCED_COKE_OVEN.block(), new Vector3f(3.0f, -3.05f, -1.5f));
         generateMultiblockModel("alternator", "metal", ITMultiblockProvider.ALTERNATOR.block(), new Vector3f(5.5f, -3.5f, -2.0f));
         generateMultiblockModel("boiler_liquid", "metal", ITMultiblockProvider.BOILER_LIQUID.block(), new Vector3f(-2.0f, -0.525f, 0.5f));
+        generateMultiblockModel("boiler_solid", "metal", ITMultiblockProvider.BOILER_SOLID.block(), new Vector3f(-2.0f, -0.525f, 0.5f));
         generateMultiblockModel("boiler_tank", "metal", ITMultiblockProvider.BOILER_TANK.block(), new Vector3f(-3.2f, 0.5f, 0.5f));
         generateMultiblockModel("distiller", "metal", ITMultiblockProvider.DISTILLER.block(), new Vector3f(0.5f, -0.5f, -0.5f));
         generateMultiblockModel("gas_turbine", "metal", ITMultiblockProvider.GAS_TURBINE.block(), new Vector3f(6.0f, -1.3125f, -3.5f));

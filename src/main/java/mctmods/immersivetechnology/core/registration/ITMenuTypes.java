@@ -2,12 +2,8 @@ package mctmods.immersivetechnology.core.registration;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.AdvancedCokeOvenMenu;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.BoilerLiquidMenu;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.BoilerTankMenu;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.DistillerMenu;
+import mctmods.immersivetechnology.common.blocks.multiblocks.gui.*;
 import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.SolarMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.*;
 import mctmods.immersivetechnology.common.blocks.metal.TrashItemBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.gui.TrashItemMenu;
@@ -34,6 +30,7 @@ public class ITMenuTypes {
 
     public static final MultiblockContainer<AdvancedCokeOvenLogic.State, AdvancedCokeOvenMenu> ADVANCED_COKE_OVEN_MENU = registerMultiblock(ITLib.GUIID_Advanced_Coke_Oven, AdvancedCokeOvenMenu::makeServer, AdvancedCokeOvenMenu::makeClient);
     public static final MultiblockContainer<BoilerLiquidLogic.State, BoilerLiquidMenu> BOILER_LIQUID_MENU = registerMultiblock(ITLib.GUIID_Boiler_Liquid, BoilerLiquidMenu::makeServer, BoilerLiquidMenu::makeClient);
+    public static final MultiblockContainer<BoilerSolidLogic.State, BoilerSolidMenu> BOILER_SOLID_MENU = registerMultiblock(ITLib.GUIID_Boiler_Solid, BoilerSolidMenu::makeServer, BoilerSolidMenu::makeClient);
     public static final MultiblockContainer<BoilerTankLogic.State, BoilerTankMenu> BOILER_TANK_MENU = registerMultiblock(ITLib.GUIID_Boiler_Tank, BoilerTankMenu::makeServer, BoilerTankMenu::makeClient);
     public static final MultiblockContainer<DistillerLogic.State, DistillerMenu> DISTILLER_MENU = registerMultiblock(ITLib.GUIID_Distiller, DistillerMenu::makeServer, DistillerMenu::makeClient);
     public static final MultiblockContainer<SolarMelterLogic.State, SolarMenu> SOLAR_MELTER_MENU = registerMultiblock(ITLib.GUIID_SolarMelter, SolarMenu::makeServer, SolarMenu::makeClient);

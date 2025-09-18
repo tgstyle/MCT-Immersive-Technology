@@ -58,8 +58,9 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         newState = newState.setValue(IEProperties.MULTIBLOCKSLAVE, !offsetFromMaster.equals(Vec3i.ZERO));
         if (newState.hasProperty(IEProperties.MIRRORED)) { newState = newState.setValue(IEProperties.MIRRORED, mirrored); }
         if (newState.hasProperty(IEProperties.FACING_HORIZONTAL)) { newState = newState.setValue(IEProperties.FACING_HORIZONTAL, clickDirection.getOpposite()); }
+        if (newState.hasProperty(IEProperties.ACTIVE)) { newState = newState.setValue(IEProperties.ACTIVE, false); }
         BlockState oldState = world.getBlockState(actualPos);
-        world.setBlock(actualPos, newState, 0);
+        world.setBlock(actualPos, newState, 3);
         BlockEntity curr = world.getBlockEntity(actualPos);
         if (curr instanceof MultiblockBlockEntityDummy<?> dummy) { dummy.getHelper().setPositionInMB(info.pos()); }
         else if (!(curr instanceof MultiblockBlockEntityMaster)) { ITLib.IT_LOGGER.error("Expected MB TE at {} during placement", actualPos); }

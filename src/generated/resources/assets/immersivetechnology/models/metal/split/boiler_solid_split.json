@@ -1,0 +1,61 @@
+{
+  "parent": "minecraft:block/block",
+  "dynamic": false,
+  "inner_model": {
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "flip_v": true,
+    "loader": "forge:obj",
+    "model": "immersivetechnology:models/block/multiblock/metal/obj/boiler_solid/boiler_solid.obj",
+    "textures": {
+      "cube_front": "immersivetechnology:block/multiblocks/metal/boiler_solid",
+      "particle": "immersivetechnology:block/multiblocks/metal/boiler_solid"
+    }
+  },
+  "loader": "immersiveengineering:basic_split",
+  "split_parts": [
+    [
+      0,
+      0,
+      -2
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      -2
+    ],
+    [
+      0,
+      1,
+      -1
+    ],
+    [
+      0,
+      -1,
+      -2
+    ],
+    [
+      0,
+      -1,
+      0
+    ],
+    [
+      0,
+      -1,
+      -1
+    ]
+  ],
+  "textures": {
+    "particle": "immersivetechnology:block/multiblocks/metal/boiler_solid"
+  }
+}

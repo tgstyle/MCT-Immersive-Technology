@@ -74,6 +74,7 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
 
             MenuScreens.register(ITMenuTypes.ADVANCED_COKE_OVEN_MENU.getType(), AdvancedCokeOvenScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_LIQUID_MENU.getType(), BoilerLiquidScreen::new);
+            MenuScreens.register(ITMenuTypes.BOILER_SOLID_MENU.getType(), BoilerSolidScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_TANK_MENU.getType(), BoilerTankScreen::new);
             MenuScreens.register(ITMenuTypes.DISTILLER_MENU.getType(), DistillerScreen::new);
             MenuScreens.register(ITMenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
@@ -95,6 +96,9 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
             instance.addEntry(multiblock_category, multiblock.create());
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler_liquid"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler_solid"));
             instance.addEntry(multiblock_category, multiblock.create());
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler_tank"));

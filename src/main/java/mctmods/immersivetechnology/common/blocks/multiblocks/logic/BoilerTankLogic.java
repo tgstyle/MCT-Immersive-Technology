@@ -15,7 +15,6 @@ import mctmods.immersivetechnology.api.capability.IHeatProvider;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerTankRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.BoilerLiquidShape;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.BoilerTankShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
@@ -106,6 +105,11 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         if (state.heatSource.isPresent()) { heatLevel = state.heatSource.get().getHeatLevel(); }
         double previousHeatLevel = state.heatLevel;
         state.heatLevel = heatLevel;
+        boolean isActive = heatLevel >= WORKING_HEAT_LEVEL && state.recipeTimeRemaining > 0;
+        if (state.active != isActive) {
+            state.active = isActive;
+            update = true;
+        }
         if (previousHeatLevel != state.heatLevel) { update = true; }
         if (heatLevel >= WORKING_HEAT_LEVEL) {
             if (state.recipeTimeRemaining > 0) {
@@ -114,7 +118,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
                     state.recipeTimeRemaining--;
                     if (state.recipeTimeRemaining == 0) {
                         state.tanks.input.drain(state.lastRecipe.input.getAmount(), FluidAction.EXECUTE);
-                        state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE);
+                        state.tanks.output.fill(state.lastRecipe.output.copy(), IFluidHandler.FluidAction.EXECUTE);
                         update = true;
                     }
                 }
@@ -201,7 +205,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerTankShape.GETTER; }
 
     public static class State implements IMultiblockState {
-        public final BoilerTank tanks;
+        public final BoilerTanks tanks;
         public StoredCapability<IFluidHandler> inputCap;
         public StoredCapability<IFluidHandler> outputCap;
         public StoredCapability<IItemHandler> invCap;
@@ -212,6 +216,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         public int recipeTimeRemaining = 0;
         public BoilerTankRecipe lastRecipe;
         public double heatLevel = 0;
+        public boolean active = false;
 
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -220,7 +225,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
                 markDirty.run();
                 sync.run();
             };
-            tanks = new BoilerTank(v -> onChanged.run());
+            tanks = new BoilerTanks(v -> onChanged.run());
             inventory = new ITSlotwiseItemHandler(
                     List.of(
                             ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
@@ -262,12 +267,14 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         public void writeSyncNBT(CompoundTag nbt) {
             nbt.put("tanks", tanks.toNBT());
             nbt.putDouble("heatLevel", heatLevel);
+            nbt.putBoolean("active", active);
         }
 
         @Override
         public void readSyncNBT(CompoundTag nbt) {
             tanks.readNBT(nbt.getCompound("tanks"));
             heatLevel = nbt.getDouble("heatLevel");
+            active = nbt.getBoolean("active");
         }
     }
 
@@ -276,12 +283,12 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         public int getFluidAmount() { return tank.getFluidAmount(); }
     }
 
-    public record BoilerTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
-        public BoilerTank(Consumer<Void> markDirty) {
+    public record BoilerTanks(ITMarkableFluidTank input, ITMarkableFluidTank output) {
+        public BoilerTanks(Consumer<Void> markDirty) {
             this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty));
         }
 
-        public static BoilerTank makeClient() { return new BoilerTank(v -> {}); }
+        public static BoilerTanks makeClient() { return new BoilerTanks(v -> {}); }
 
         public Tag toNBT() {
             CompoundTag tag = new CompoundTag();

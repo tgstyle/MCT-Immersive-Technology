@@ -62,7 +62,12 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
             if (dragType==1) amount=1;
             if (stackSlot.isEmpty()) { if (!stackHeld.isEmpty()&&slot.mayPlace(stackHeld)) slot.set(ItemHandlerHelper.copyStackWithSize(stackHeld,amount)); }
             else if (stackHeld.isEmpty()) { slot.set(ItemStack.EMPTY); }
-            else if (slot.mayPlace(stackHeld)) { if (ItemStack.isSameItem(stackSlot,stackHeld)) stackSlot.grow(amount); else slot.set(ItemHandlerHelper.copyStackWithSize(stackHeld,amount)); }
+            else if (slot.mayPlace(stackHeld)) {
+                if (ItemStack.isSameItem(stackSlot,stackHeld)) {
+                    stackSlot.grow(amount);
+                    slot.set(stackSlot);
+                } else slot.set(ItemHandlerHelper.copyStackWithSize(stackHeld,amount));
+            }
             if (stackSlot.getCount()>slot.getMaxStackSize()) stackSlot.setCount(slot.getMaxStackSize());
         } else if (dragType==5) {
             ItemStack stackHeld=getCarried();

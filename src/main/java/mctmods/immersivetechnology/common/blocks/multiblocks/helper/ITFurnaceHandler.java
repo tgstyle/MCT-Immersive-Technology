@@ -114,7 +114,7 @@ public class ITFurnaceHandler<R extends IESerializableRecipe> {
         if (recipe == null) return;
         final IItemHandlerModifiable inv = env.getInventory();
         for (InputSlot<R> slot : inputs) {
-            int reqSize = inputs.stream().map(matchSlot -> matchSlot.get(recipe)).filter(ingr -> ingr.test(inv.getStackInSlot(slot.slotIndex))).mapToInt(IngredientWithSize::getCount).findFirst().orElse(0);
+            int reqSize = inputs.stream().map(matchSlot -> matchSlot.get(recipe)).filter(ingredient -> ingredient.test(inv.getStackInSlot(slot.slotIndex))).mapToInt(IngredientWithSize::getCount).findFirst().orElse(0);
             inv.getStackInSlot(slot.slotIndex).shrink(reqSize);
         }
         for (OutputSlot<R> slot : outputs) {
@@ -182,21 +182,11 @@ public class ITFurnaceHandler<R extends IESerializableRecipe> {
         public int getCount() { return NUM_SLOTS; }
     }
 
-    public static class InputSlot<R> {
-        private final Function<R, IngredientWithSize> getFromRecipe;
-        private final int slotIndex;
-
-        public InputSlot(Function<R, IngredientWithSize> getFromRecipe, int slotIndex) { this.getFromRecipe = getFromRecipe; this.slotIndex = slotIndex; }
-
-        public IngredientWithSize get(R recipe) { return getFromRecipe.apply(recipe); }
+    public record InputSlot<R>(Function<R, IngredientWithSize> getFromRecipe, int slotIndex) {
+        public IngredientWithSize get(R recipe) {return getFromRecipe.apply(recipe);}
     }
 
-    public static class OutputSlot<R> {
-        private final Function<R, Lazy<ItemStack>> getFromRecipe;
-        private final int slotIndex;
-
-        public OutputSlot(Function<R, Lazy<ItemStack>> getFromRecipe, int slotIndex) { this.getFromRecipe = getFromRecipe; this.slotIndex = slotIndex; }
-
-        public ItemStack get(R recipe) { return getFromRecipe.apply(recipe).get(); }
+    public record OutputSlot<R>(Function<R, Lazy<ItemStack>> getFromRecipe, int slotIndex) {
+        public ItemStack get(R recipe) {return getFromRecipe.apply(recipe).get();}
     }
 }
