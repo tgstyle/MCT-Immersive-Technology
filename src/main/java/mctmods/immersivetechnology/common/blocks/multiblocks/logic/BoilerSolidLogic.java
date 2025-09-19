@@ -44,12 +44,14 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State>, IServerTickableComponent<BoilerSolidLogic.State>, IClientTickableComponent<BoilerSolidLogic.State> {
     public static final int INPUT_FUEL_SLOT = 0;
@@ -196,6 +198,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                 if (recipe != null) {
                     heatPerTick = recipe.getHeatPerTick();
                     consumeAmount = recipe.input.getCount();
+                    if (burnTimePerItem <= 0) burnTimePerItem = 200;
                 }
                 if (burnTimePerItem <= 0) {
                     state.pilotLit = false;
@@ -260,6 +263,34 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerSolidShape.GETTER; }
 
+    private static class FuelItemHandler extends ITSlotwiseItemHandler {
+        private final Supplier<Level> levelSupplier;
+
+        public FuelItemHandler(Supplier<Level> levelSupplier, List<IOConstraint> constraints, Runnable onChanged) {
+            super(constraints, onChanged);
+            this.levelSupplier = levelSupplier;
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+            if (slot != INPUT_FUEL_SLOT || stack.isEmpty()) { return false; }
+            ItemStack single = stack.copy(); single.setCount(1);
+            Level l = levelSupplier != null ? levelSupplier.get() : null;
+            if (l != null) {
+                if (ForgeHooks.getBurnTime(single, RecipeType.SMELTING) > 0) { return true; }
+                return BoilerSolidRecipe.findRecipe(l, single) != null;
+            } else {
+                return true;
+            }
+        }
+
+        @Override
+        public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+            if (!simulate && !isItemValid(slot, stack)) { return stack; }
+            return super.insertItem(slot, stack, simulate);
+        }
+    }
+
     public static class State implements IMultiblockState {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public StoredCapability<IItemHandlerModifiable> inputFuelCap;
@@ -281,7 +312,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            inventory = new ITSlotwiseItemHandler(List.of(ITSlotwiseItemHandler.IOConstraint.INPUT), onChanged);
+            inventory = new FuelItemHandler(ctx.levelSupplier(), List.of(ITSlotwiseItemHandler.IOConstraint.INPUT), onChanged);
             inputFuelCap = new StoredCapability<>(inventory);
             heatSourceCap = new StoredCapability<>(new HeatSourceImpl(this));
             MultiblockFace heatMBFace = new MultiblockFace(HEAT_OUTPUT_FACING, HEAT_OUTPUT_POI.get(0));

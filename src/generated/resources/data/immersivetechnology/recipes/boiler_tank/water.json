@@ -1,5 +1,5 @@
 {
-  "type": "immersivetechnology:boiler",
+  "type": "immersivetechnology:boiler_tank",
   "input": {
     "amount": 250,
     "tag": "minecraft:water"

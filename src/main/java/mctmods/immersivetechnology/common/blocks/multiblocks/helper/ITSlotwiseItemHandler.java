@@ -41,8 +41,7 @@ public class ITSlotwiseItemHandler implements IItemHandlerModifiable, Iterable<I
         if (!allowInsert) return stack;
         ItemStack current = getStackInSlot(slot);
         if (!current.isEmpty()) {
-            boolean canMerge = ItemStack.matches(current, stack);
-            if (!canMerge) return stack;
+            if (!ItemStack.isSameItemSameTags(current, stack)) return stack;
         }
         ItemStack result = rawHandler.insertItem(slot, stack, simulate);
         if (!simulate) {
