@@ -109,7 +109,7 @@ def fill_gaps_along_axis(occupied_np, axis, threshold):
                     if occupied_np[x, y, z]:
                         continue
                     left = None
-                    max_dx = threshold + 1 if threshold > 0 else shape[0]
+                    max_dx = shape[0] if threshold == 0 else threshold + 1
                     for dx in range(1, max_dx):
                         if x - dx < 0:
                             break
@@ -123,7 +123,7 @@ def fill_gaps_along_axis(occupied_np, axis, threshold):
                         if occupied_np[x + dx, y, z]:
                             right = x + dx
                             break
-                    if left is not None and right is not None and (right - left - 1) <= threshold:
+                    if left is not None and right is not None and (threshold == 0 or (right - left - 1) <= threshold):
                         occupied_np[left + 1:right, y, z] = True
     elif axis == 1: # y
         for x in range(shape[0]):
@@ -132,7 +132,7 @@ def fill_gaps_along_axis(occupied_np, axis, threshold):
                     if occupied_np[x, y, z]:
                         continue
                     floor_y = None
-                    max_dy = threshold + 1 if threshold > 0 else shape[1]
+                    max_dy = shape[1] if threshold == 0 else threshold + 1
                     for dy in range(1, max_dy):
                         if y - dy < 0:
                             break
@@ -146,7 +146,7 @@ def fill_gaps_along_axis(occupied_np, axis, threshold):
                         if occupied_np[x, y + dy, z]:
                             ceiling_y = y + dy
                             break
-                    if floor_y is not None and ceiling_y is not None and (ceiling_y - floor_y - 1) <= threshold:
+                    if floor_y is not None and ceiling_y is not None and (threshold == 0 or (ceiling_y - floor_y - 1) <= threshold):
                         occupied_np[x, floor_y + 1:ceiling_y, z] = True
     elif axis == 2: # z
         for x in range(shape[0]):
@@ -155,7 +155,7 @@ def fill_gaps_along_axis(occupied_np, axis, threshold):
                     if occupied_np[x, y, z]:
                         continue
                     front = None
-                    max_dz = threshold + 1 if threshold > 0 else shape[2]
+                    max_dz = shape[2] if threshold == 0 else threshold + 1
                     for dz in range(1, max_dz):
                         if z - dz < 0:
                             break
@@ -169,7 +169,7 @@ def fill_gaps_along_axis(occupied_np, axis, threshold):
                         if occupied_np[x, y, z + dz]:
                             back = z + dz
                             break
-                    if front is not None and back is not None and (back - front - 1) <= threshold:
+                    if front is not None and back is not None and (threshold == 0 or (back - front - 1) <= threshold):
                         occupied_np[x, y, front + 1:back] = True
     return occupied_np
 # === Voxelization and AABB Generation ===
