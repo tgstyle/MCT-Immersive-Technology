@@ -18,8 +18,6 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerTankRe
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.BoilerTankShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.common.util.multiblock.MultiblockData;
-import mctmods.immersivetechnology.common.util.multiblock.POIUtils;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -54,16 +52,9 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     public static final int TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
     private static final int PROGRESS_LOSS_PER_TICK = 1;
     private static final double WORKING_HEAT_LEVEL = 100.0;
-    private static final List<PoIJSONSchema> RAW_POIS;
-    private static final int WIDTH;
-    private static final int LENGTH;
-
-    static {
-        MultiblockData data = POIUtils.loadMultiblockData("boiler_tank");
-        RAW_POIS = ImmutableList.copyOf(data.pointsOfInterest);
-        WIDTH = BoilerTankShape.WIDTH;
-        LENGTH = BoilerTankShape.LENGTH;
-    }
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerTankShape.DATA.pointsOfInterest);
+    private static final int WIDTH = BoilerTankShape.WIDTH;
+    private static final int LENGTH = BoilerTankShape.LENGTH;
 
     private static final List<BlockPos> FLUID_INPUT_POI = getPosList("fluid_input");
     private static final List<BlockPos> FLUID_OUTPUT_POI = getPosList("fluid_output");

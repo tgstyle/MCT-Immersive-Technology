@@ -20,8 +20,6 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerLiquid
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.BoilerLiquidShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.common.util.multiblock.MultiblockData;
-import mctmods.immersivetechnology.common.util.multiblock.POIUtils;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
@@ -59,16 +57,9 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     private static final double HEAT_LOSS_PER_TICK = 0.2;
     private static final double WORKING_HEAT_LEVEL = 100.0;
     public static final double PILOT_HEAT = 20.0;
-    private static final List<PoIJSONSchema> RAW_POIS;
-    private static final int WIDTH;
-    private static final int LENGTH;
-
-    static {
-        MultiblockData data = POIUtils.loadMultiblockData("boiler_liquid");
-        RAW_POIS = ImmutableList.copyOf(data.pointsOfInterest);
-        WIDTH = BoilerLiquidShape.WIDTH;
-        LENGTH = BoilerLiquidShape.LENGTH;
-    }
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerLiquidShape.DATA.pointsOfInterest);
+    private static final int WIDTH = BoilerLiquidShape.WIDTH;
+    private static final int LENGTH = BoilerLiquidShape.LENGTH;
 
     public static final BlockPos REDSTONE_POI = RAW_POIS.stream().filter(poi -> poi.name.equals("redstone")).map(poi -> unflatten(poi.position)).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: redstone"));
     public static final List<BlockPos> IGNITION_POI = getPosList("ignition");

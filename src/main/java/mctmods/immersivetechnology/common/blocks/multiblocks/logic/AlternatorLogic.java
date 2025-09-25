@@ -18,8 +18,6 @@ import mctmods.immersivetechnology.api.MechanicalCapabilities;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AlternatorShape;
-import mctmods.immersivetechnology.common.util.multiblock.MultiblockData;
-import mctmods.immersivetechnology.common.util.multiblock.POIUtils;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;
@@ -49,16 +47,9 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     private static final double BASE_MASS = 2;
     private static final double FRICTION = 12;
     private static final int MAX_SPEED = 1800;
-    private static final List<PoIJSONSchema> RAW_POIS;
-    private static final int WIDTH;
-    private static final int LENGTH;
-
-    static {
-        MultiblockData data = POIUtils.loadMultiblockData("alternator");
-        RAW_POIS = ImmutableList.copyOf(data.pointsOfInterest);
-        WIDTH = AlternatorShape.WIDTH;
-        LENGTH = AlternatorShape.LENGTH;
-    }
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AlternatorShape.DATA.pointsOfInterest);
+    private static final int WIDTH = AlternatorShape.WIDTH;
+    private static final int LENGTH = AlternatorShape.LENGTH;
 
     public static final BlockPos RUNNING_SOUND_POI = getSinglePos("running_sound");
     public static final BlockPos ROTATIONAL_INPUT_POI = getSinglePos("rotational_input");

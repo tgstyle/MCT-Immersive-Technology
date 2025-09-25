@@ -19,8 +19,6 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlock
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.BoilerSolidShape;
-import mctmods.immersivetechnology.common.util.multiblock.MultiblockData;
-import mctmods.immersivetechnology.common.util.multiblock.POIUtils;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;
@@ -46,7 +44,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -60,22 +57,9 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     public static final double PILOT_HEAT = 20.0;
     private static final int MULTIPLIER = 15;
     private static final double DEFAULT_HEAT_PER_TICK = 0.1;
-    private static final List<PoIJSONSchema> RAW_POIS;
-    private static final int WIDTH;
-    private static final int LENGTH;
-    private static final List<BlockPos> PART_POSITIONS;
-
-    static {
-        MultiblockData data = POIUtils.loadMultiblockData("boiler_solid");
-        RAW_POIS = ImmutableList.copyOf(data.pointsOfInterest);
-        WIDTH = BoilerSolidShape.WIDTH;
-        LENGTH = BoilerSolidShape.LENGTH;
-        PART_POSITIONS = ImmutableList.copyOf(Arrays.asList(
-                new BlockPos(0, 0, 0), new BlockPos(0, 0, 1), new BlockPos(0, 0, 2),
-                new BlockPos(0, 1, 0), new BlockPos(0, 1, 1), new BlockPos(0, 1, 2),
-                new BlockPos(0, 2, 0), new BlockPos(0, 2, 1), new BlockPos(0, 2, 2)
-        ));
-    }
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerSolidShape.DATA.pointsOfInterest);
+    private static final int WIDTH = BoilerSolidShape.WIDTH;
+    private static final int LENGTH = BoilerSolidShape.LENGTH;
 
     public static final BlockPos REDSTONE_POI = RAW_POIS.stream().filter(poi -> poi.name.equals("redstone")).map(poi -> unflatten(poi.position)).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: redstone"));
     public static final List<BlockPos> IGNITION_POI = getPosList("ignition");
@@ -228,15 +212,20 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         ResourceLocation boilerRL = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler_solid");
         final Block boilerBlock = ForgeRegistries.BLOCKS.getValue(boilerRL);
         if (boilerBlock == null) { return; }
-        for (BlockPos relPos : PART_POSITIONS) {
-            BlockPos absPos = ctx.getLevel().toAbsolute(relPos);
-            BlockState curr = level.getBlockState(absPos);
-            if (curr.getBlock() == boilerBlock && curr.hasProperty(IEProperties.ACTIVE)) {
-                BlockState newState = curr.setValue(IEProperties.ACTIVE, active);
-                if (!curr.equals(newState)) {
-                    level.setBlock(absPos, newState, 19);
-                    level.updateNeighborsAt(absPos, boilerBlock);
-                    if (level.isClientSide) { Minecraft.getInstance().levelRenderer.setBlockDirty(absPos, curr, newState); }
+        for (int y = 0; y < BoilerSolidShape.HEIGHT; y++) {
+            for (int z = 0; z < LENGTH; z++) {
+                for (int x = 0; x < WIDTH; x++) {
+                    BlockPos relPos = new BlockPos(x, y, z);
+                    BlockPos absPos = ctx.getLevel().toAbsolute(relPos);
+                    BlockState curr = level.getBlockState(absPos);
+                    if (curr.getBlock() == boilerBlock && curr.hasProperty(IEProperties.ACTIVE)) {
+                        BlockState newState = curr.setValue(IEProperties.ACTIVE, active);
+                        if (!curr.equals(newState)) {
+                            level.setBlock(absPos, newState, 19);
+                            level.updateNeighborsAt(absPos, boilerBlock);
+                            if (level.isClientSide) { Minecraft.getInstance().levelRenderer.setBlockDirty(absPos, curr, newState); }
+                        }
+                    }
                 }
             }
         }

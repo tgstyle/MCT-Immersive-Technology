@@ -28,7 +28,7 @@ public class SolarTower extends ITTemplateMultiblock {
     public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {
         if (world.isClientSide) return false;
         Direction front = player.getDirection().getOpposite();
-        boolean mirrored = player.isShiftKeyDown(); // Assuming sneaking mirrors; adjust if different
+        boolean mirrored = player.isShiftKeyDown();
         MultiblockOrientation orientation = new MultiblockOrientation(front, mirrored);
         BlockPos origin = pos.subtract(orientation.getAbsoluteOffset(getTriggerOffset()));
         BlockPos base = origin.offset(orientation.getAbsoluteOffset(SolarTowerLogic.LINK_POI));
