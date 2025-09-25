@@ -1,0 +1,12 @@
+{
+  "flip_v": true,
+  "loader": "forge:obj",
+  "model": "immersivetechnology:models/block/multiblock/metal/obj/solar_reflector/solar_reflector_support.obj",
+  "transform": {
+    "translation": [
+      1.6,
+      0.0,
+      1.6
+    ]
+  }
+}

@@ -33,13 +33,17 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class ITTemplateMultiblock extends TemplateMultiblock {
+    public static final int DISASSEMBLE_QUEUE_SIZE = 8;
     private final MultiblockRegistration<?> logic;
+
+    public static final List<ITQueueProcessor> pendingQueues = new ArrayList<>();
 
     public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, MultiblockRegistration<?> logic) {
         super(loc, masterFromOrigin, triggerFromOrigin, size);
@@ -91,24 +95,24 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             for (StructureBlockInfo block : getStructure(world)) { prepareBlockForDisassembly(world, withSettingsAndOffset(origin, block.pos(), mirror, rot)); }
             List<StructureTemplate.StructureBlockInfo> structure = new ArrayList<>(getStructure(world));
             structure.sort(Comparator.comparingInt(a -> -a.pos().getY()));
+            List<AbstractMap.SimpleEntry<BlockPos, BlockState>> toBreak = new ArrayList<>();
             for (StructureTemplate.StructureBlockInfo info : structure) {
                 BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
                 BlockState stateAfterMirror = info.state().mirror(mirror);
                 BlockState templateState = stateAfterMirror.rotate(serverLevel, actualPos, rot);
-                world.setBlockAndUpdate(actualPos, templateState);
                 List<ItemStack> drops;
                 if (breakingPlayer != null) { drops = Block.getDrops(templateState, serverLevel, actualPos, null, breakingPlayer, breakingPlayer.getMainHandItem()); }
                 else { drops = Block.getDrops(templateState, serverLevel, actualPos, null); }
-                world.destroyBlock(actualPos, false);
                 for (ItemStack s : drops) { addToDrops.accept(s); }
+                toBreak.add(new AbstractMap.SimpleEntry<>(actualPos, templateState));
             }
             BlockPos dropPos = origin;
             if (breakingPlayer != null) {
                 BlockPos playerPos = breakingPlayer.blockPosition();
                 double minDist = Double.MAX_VALUE;
                 BlockPos closest = null;
-                for (StructureTemplate.StructureBlockInfo info : structure) {
-                    BlockPos actual = withSettingsAndOffset(origin, info.pos(), mirror, rot);
+                for (AbstractMap.SimpleEntry<BlockPos, BlockState> entry : toBreak) {
+                    BlockPos actual = entry.getKey();
                     double dist = actual.distSqr(playerPos);
                     if (dist < minDist) {
                         minDist = dist;
@@ -118,6 +122,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                 if (closest != null) { dropPos = closest; }
             }
             for (ItemStack s : allDrops) { Utils.dropStackAtPos(world, dropPos, s); }
+            pendingQueues.add(new ITQueueProcessor(world, toBreak));
         }
     }
 

@@ -21,21 +21,23 @@ import net.minecraftforge.common.ForgeHooks;
 public class BoilerSolidProcess implements IMultiblockComponent<BoilerSolidLogic.State> {
     @Override
     public InteractionResult click(IMultiblockContext<BoilerSolidLogic.State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
-        if (!BoilerSolidLogic.IGNITION_POI.contains(posInMultiblock)) return InteractionResult.PASS;
+        if (!BoilerSolidLogic.IGNITION_POI.contains(posInMultiblock)) { return InteractionResult.PASS; }
         Direction hitDir = absoluteHit.getDirection();
-        Direction poiSide = ctx.getLevel().toAbsolute(BoilerSolidLogic.IGNITION_FACING);
-        if (hitDir != poiSide) return InteractionResult.PASS;
+        if (BoilerSolidLogic.IGNITION_FACING != null) {
+            Direction poiSide = ctx.getLevel().toAbsolute(BoilerSolidLogic.IGNITION_FACING);
+            if (hitDir != poiSide) { return InteractionResult.PASS; }
+        }
         ItemStack held = player.getItemInHand(hand);
-        if (!held.is(Items.TORCH)) return InteractionResult.PASS;
+        if (!held.is(Items.TORCH)) { return InteractionResult.PASS; }
         BoilerSolidLogic.State state = ctx.getState();
-        if (state.pilotLit) return InteractionResult.PASS;
+        if (state.pilotLit) { return InteractionResult.PASS; }
         Level level = ctx.getLevel().getRawLevel();
         ItemStack fuelStack = state.inventory.getStackInSlot(BoilerSolidLogic.INPUT_FUEL_SLOT);
         BoilerSolidRecipe recipe = fuelStack.isEmpty() ? null : BoilerSolidRecipe.findRecipe(level, fuelStack);
         int burnTime = ForgeHooks.getBurnTime(fuelStack, RecipeType.SMELTING);
         int consumeAmount = (recipe != null) ? recipe.input.getCount() : 1;
-        if (fuelStack.isEmpty() || burnTime <= 0 || fuelStack.getCount() < consumeAmount) return InteractionResult.PASS;
-        if (isClient) return InteractionResult.SUCCESS;
+        if (fuelStack.isEmpty() || burnTime <= 0 || fuelStack.getCount() < consumeAmount) { return InteractionResult.PASS; }
+        if (isClient) { return InteractionResult.SUCCESS; }
         state.pilotLit = true;
         state.heatLevel = BoilerSolidLogic.PILOT_HEAT;
         level.playSound(null, ctx.getLevel().toAbsolute(BoilerSolidLogic.IGNITION_POI.get(0)), ITSounds.gasIgnite.get(), SoundSource.BLOCKS, 0.5f, 1.0f);

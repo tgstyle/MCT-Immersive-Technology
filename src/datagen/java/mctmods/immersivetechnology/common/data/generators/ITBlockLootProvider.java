@@ -45,6 +45,7 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
         registerMultiblock(ITMultiblockProvider.BOILER_LIQUID);
         registerMultiblock(ITMultiblockProvider.BOILER_SOLID);
         registerMultiblock(ITMultiblockProvider.BOILER_TANK);
+        registerMultiblock(ITMultiblockProvider.COOLING_TOWER);
         registerMultiblock(ITMultiblockProvider.DISTILLER);
         registerMultiblock(ITMultiblockProvider.GAS_TURBINE);
         registerMultiblock(ITMultiblockProvider.SOLAR_MELTER);

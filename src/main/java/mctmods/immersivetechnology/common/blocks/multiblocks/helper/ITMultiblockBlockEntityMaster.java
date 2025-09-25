@@ -17,11 +17,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 public class ITMultiblockBlockEntityMaster<State extends IMultiblockState> extends MultiblockBlockEntityMaster<State> implements ITBlockInterfaces.IPlayerInteraction, IDropInventory {
+    public List<AbstractMap.SimpleEntry<BlockPos, BlockState>> disassembleQueue = null;
+
     public ITMultiblockBlockEntityMaster(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState, MultiblockRegistration<State> multiblock) { super(type, worldPosition, blockState, multiblock); }
 
     @Override

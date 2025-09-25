@@ -15,34 +15,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import java.lang.reflect.Field;
 
 public class ColoredBeam {
-    private static final RenderStateShard.ShaderStateShard BEACON_BEAM_SHADER;
-    private static final RenderStateShard.TransparencyStateShard TRANSLUCENT_TRANSPARENCY;
-    private static final RenderStateShard.TransparencyStateShard NO_TRANSPARENCY;
-    private static final RenderStateShard.WriteMaskStateShard COLOR_WRITE;
-    private static final RenderStateShard.WriteMaskStateShard COLOR_DEPTH_WRITE;
-    private static final RenderStateShard.CullStateShard NO_CULL;
-
-    static {
-        try {
-            BEACON_BEAM_SHADER = (RenderStateShard.ShaderStateShard) getProtectedField("RENDERTYPE_BEACON_BEAM_SHADER");
-            TRANSLUCENT_TRANSPARENCY = (RenderStateShard.TransparencyStateShard) getProtectedField("TRANSLUCENT_TRANSPARENCY");
-            NO_TRANSPARENCY = (RenderStateShard.TransparencyStateShard) getProtectedField("NO_TRANSPARENCY");
-            COLOR_WRITE = (RenderStateShard.WriteMaskStateShard) getProtectedField("COLOR_WRITE");
-            COLOR_DEPTH_WRITE = (RenderStateShard.WriteMaskStateShard) getProtectedField("COLOR_DEPTH_WRITE");
-            NO_CULL = (RenderStateShard.CullStateShard) getProtectedField("NO_CULL");
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to access RenderStateShard fields via reflection", e);
-        }
-    }
-
-    private static Object getProtectedField(String fieldName) throws NoSuchFieldException, IllegalAccessException {
-        Field field = RenderStateShard.class.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        return field.get(null);
-    }
+    private static final RenderStateShard.ShaderStateShard BEACON_BEAM_SHADER = RenderStateShard.RENDERTYPE_BEACON_BEAM_SHADER;
+    private static final RenderStateShard.TransparencyStateShard TRANSLUCENT_TRANSPARENCY = RenderStateShard.TRANSLUCENT_TRANSPARENCY;
+    private static final RenderStateShard.TransparencyStateShard NO_TRANSPARENCY = RenderStateShard.NO_TRANSPARENCY;
+    private static final RenderStateShard.WriteMaskStateShard COLOR_WRITE = RenderStateShard.COLOR_WRITE;
+    private static final RenderStateShard.WriteMaskStateShard COLOR_DEPTH_WRITE = RenderStateShard.COLOR_DEPTH_WRITE;
+    private static final RenderStateShard.CullStateShard NO_CULL = RenderStateShard.NO_CULL;
 
     public static void renderBeam(PoseStack matrixStack, MultiBufferSource buffer, ResourceLocation texture, float partialTicks, float textureScale, long time, boolean upward, float innerBottomG, float innerTopG, float innerA, float outerBottomG, float outerTopG, float outerA, float yBottom, float yTop, double worldX, double worldYBottom, double worldYTop, double worldZ) {
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();

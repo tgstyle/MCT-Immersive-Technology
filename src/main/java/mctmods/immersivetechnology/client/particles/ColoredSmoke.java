@@ -56,8 +56,6 @@ public class ColoredSmoke implements ParticleOptions {
 
     public ColoredSmoke(float r, float g, float b) { this(r, g, b, false, false); }
 
-    public ColoredSmoke(float r, float g, float b, boolean collideHorizontal) { this(r, g, b, collideHorizontal, false); }
-
     public ColoredSmoke(float r, float g, float b, boolean collideHorizontal, boolean collideVertical) {
         this.color = new Vector3f(r, g, b);
         this.collideHorizontal = collideHorizontal;

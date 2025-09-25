@@ -12,6 +12,7 @@ import mctmods.immersivetechnology.client.models.helper.ITObjLoader;
 import mctmods.immersivetechnology.client.models.RotorModels;
 import mctmods.immersivetechnology.client.models.SolarReflectorModels;
 import mctmods.immersivetechnology.client.particles.helper.ITColoredSmokeProvider;
+import mctmods.immersivetechnology.client.particles.helper.ITSmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.GasTurbineRenderer;
 import mctmods.immersivetechnology.client.renderer.OpenBarrelRenderer;
 import mctmods.immersivetechnology.client.renderer.SolarMelterRenderer;
@@ -87,8 +88,7 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
             builder.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "intro"));
             instance.addEntry(parent_category, builder.create());
             InnerNode<ResourceLocation, ManualEntry> multiblock_category = parent_category.getOrCreateSubnode(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "it_multiblocks"), 0);
-            ManualEntry.ManualEntryBuilder
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            ManualEntry.ManualEntryBuilder multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "advanced_coke_oven"));
             instance.addEntry(multiblock_category, multiblock.create());
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
@@ -102,6 +102,9 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
             instance.addEntry(multiblock_category, multiblock.create());
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler_tank"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "cooling_tower"));
             instance.addEntry(multiblock_category, multiblock.create());
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "distiller"));
@@ -125,7 +128,10 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
     }
 
     @SubscribeEvent
-    public static void registerParticleProviders(RegisterParticleProvidersEvent event) { event.registerSpriteSet(ITParticles.COLORED_SMOKE.get(), ITColoredSmokeProvider::new); }
+    public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ITParticles.COLORED_SMOKE.get(), ITColoredSmokeProvider::new);
+        event.registerSpriteSet(ITParticles.SMOKE_CUSTOM.get(), ITSmokeCustomProvider::new);
+    }
 
     @SubscribeEvent
     public static void onItemColor(RegisterColorHandlersEvent.Item event) {

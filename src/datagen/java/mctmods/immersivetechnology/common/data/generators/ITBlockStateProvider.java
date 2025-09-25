@@ -61,20 +61,27 @@ public class ITBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         ITLib.IT_LOGGER.info("Generating Multiblock Splits");
+
         genericMultiblock("alternator", "metal");
         genericMultiblock("advanced_coke_oven", "stone");
         genericMultiblock("solar_reflector", "metal");
-        genericMultiblockMirror("boiler_liquid", "metal");
+        genericMultiblock("cooling_tower", "stone");
+
         specialActiveMultiblockMirror("boiler_solid", "metal", "boiler_solid");
+
+        genericMultiblockMirror("boiler_liquid", "metal");
         genericMultiblockMirror("boiler_tank", "metal");
         genericMultiblockMirror("distiller", "metal");
         genericMultiblockMirror("gas_turbine", "metal");
         genericMultiblockMirror("solar_melter", "metal");
         genericMultiblockMirror("solar_tower", "metal");
         genericMultiblockMirror("steam_turbine", "metal");
+
         createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("block/stone/reinforced_coke_brick", modLoc("block/stone/reinforced_coke_brick")));
         createSimpleBlock(ITBlocks.getBlock.apply("creative_barrel"), models().cubeAll("block/metal/creative_barrel", modLoc("block/metal/creative_barrel")));
+
         VariantBlockStateBuilder steelBuilder = getVariantBuilder(ITBlocks.getBlock.apply("steel_barrel"));
+
         BlockModelBuilder steelModel = models().getBuilder("block/metal/steel_barrel")
                 .customLoader(SideConfigBuilder::begin)
                 .type(ModelConfigurableSides.Type.VERTICAL)

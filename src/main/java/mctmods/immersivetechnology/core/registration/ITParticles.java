@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.core.registration;
 import com.mojang.serialization.Codec;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.core.lib.ITLib;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -16,4 +17,6 @@ public class ITParticles {
         @Override
         public @NotNull Codec<ColoredSmoke> codec() {return ColoredSmoke.CODEC;}
     });
+
+    public static final RegistryObject<SimpleParticleType> SMOKE_CUSTOM = REGISTER.register("smoke_custom", () -> new SimpleParticleType(true));
 }

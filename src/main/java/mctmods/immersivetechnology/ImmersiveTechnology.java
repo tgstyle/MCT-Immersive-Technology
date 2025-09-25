@@ -6,6 +6,8 @@ import mctmods.immersivetechnology.api.capability.IHeatConsumer;
 import mctmods.immersivetechnology.api.capability.IHeatProvider;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITQueueProcessor;
 import mctmods.immersivetechnology.common.network.ITMessageContainerData;
 import mctmods.immersivetechnology.common.network.ITMessageContainerUpdate;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
@@ -19,9 +21,11 @@ import mctmods.immersivetechnology.core.registration.ITFluids;
 import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -59,6 +63,7 @@ public class ImmersiveTechnology {
         context.registerConfig(ModConfig.Type.COMMON, ITCommonConfig.SPEC);
         context.registerConfig(ModConfig.Type.SERVER, ITServerConfig.SPEC);
         context.registerConfig(ModConfig.Type.CLIENT, ITClientConfig.SPEC);
+        MinecraftForge.EVENT_BUS.register(ImmersiveTechnology.class);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -82,6 +87,14 @@ public class ImmersiveTechnology {
         HeatCapabilities.HEAT_CONSUMER_CAPABILITY = CapabilityManager.get(HEAT_CONSUMER_TOKEN);
         MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY = CapabilityManager.get(MECHANICAL_PROVIDER_TOKEN);
         MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY = CapabilityManager.get(MECHANICAL_CONSUMER_TOKEN);
+    }
+
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            ITTemplateMultiblock.pendingQueues.forEach(ITQueueProcessor::tick);
+            ITTemplateMultiblock.pendingQueues.removeIf(ITQueueProcessor::isEmpty);
+        }
     }
 
     @SubscribeEvent

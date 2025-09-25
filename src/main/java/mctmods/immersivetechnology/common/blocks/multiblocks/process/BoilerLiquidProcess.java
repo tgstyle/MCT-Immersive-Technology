@@ -21,8 +21,10 @@ public class BoilerLiquidProcess implements IMultiblockComponent<BoilerLiquidLog
     public InteractionResult click(IMultiblockContext<BoilerLiquidLogic.State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
         if (!BoilerLiquidLogic.IGNITION_POI.contains(posInMultiblock)) { return InteractionResult.PASS; }
         Direction hitDir = absoluteHit.getDirection();
-        Direction poiSide = ctx.getLevel().toAbsolute(BoilerLiquidLogic.IGNITION_FACING);
-        if (hitDir != poiSide) { return InteractionResult.PASS; }
+        if (BoilerLiquidLogic.IGNITION_FACING != null) {
+            Direction poiSide = ctx.getLevel().toAbsolute(BoilerLiquidLogic.IGNITION_FACING);
+            if (hitDir != poiSide) { return InteractionResult.PASS; }
+        }
         ItemStack held = player.getItemInHand(hand);
         if (!held.is(Items.TORCH)) { return InteractionResult.PASS; }
         BoilerLiquidLogic.State state = ctx.getState();

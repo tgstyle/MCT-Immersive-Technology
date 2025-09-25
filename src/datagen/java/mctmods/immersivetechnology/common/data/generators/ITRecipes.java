@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +42,7 @@ public class ITRecipes extends RecipeProvider {
         recipesBoilerTank(consumer);
         recipesBoilerLiquid(consumer);
         recipesBoilerSolid(consumer);
+        recipesCoolingTower(consumer);
         recipesDistiller(consumer);
         recipesMixer(consumer);
         recipesTurbine(consumer);
@@ -75,6 +77,10 @@ public class ITRecipes extends RecipeProvider {
     private void recipesBoilerSolid(@Nonnull Consumer<FinishedRecipe> out) {
         BoilerSolidRecipeBuilder.builder().addInput(ItemTags.COALS, 1).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_solid/coal"));
         BoilerSolidRecipeBuilder.builder().addInput(IETags.coalCoke, 1).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_solid/coal_coke"));
+    }
+
+    private void recipesCoolingTower(@Nonnull Consumer<FinishedRecipe> out) {
+        CoolingTowerRecipeBuilder.builder().addInput(FluidTags.WATER, 2925).addInput(ITTags.fluidExhaustSteam, 8100).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).setTime(3).build(out, toResourceLocation("cooling_tower/water"));
     }
 
     private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) {

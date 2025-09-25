@@ -1,3 +1,309 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.logic;
 
-public class CoolingTowerLogic {}
+import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
+import blusunrize.immersiveengineering.api.utils.CapabilityReference;
+import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
+import blusunrize.immersiveengineering.common.util.Utils;
+import com.google.common.collect.ImmutableList;
+import mctmods.immersivetechnology.common.blocks.multiblocks.process.CoolingTowerProcess;
+import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.CoolingTowerRecipe;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.CoolingTowerShape;
+import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.lib.ITSound;
+import mctmods.immersivetechnology.core.registration.ITParticles;
+import mctmods.immersivetechnology.core.registration.ITSounds;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.State>, IServerTickableComponent<CoolingTowerLogic.State>, IClientTickableComponent<CoolingTowerLogic.State> {
+    public static final int INPUT_TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
+    public static final int OUTPUT_TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(CoolingTowerShape.DATA.pointsOfInterest);
+    private static final int WIDTH = CoolingTowerShape.WIDTH;
+    private static final int LENGTH = CoolingTowerShape.LENGTH;
+
+    public static final List<BlockPos> FLUID_INPUT_POIS = getPosList("fluid_input");
+    public static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
+    public static final BlockPos PARTICLE_POS = getPosList("particle").get(0);
+    public static final BlockPos SOUND_POS = getPosList("sound").get(0);
+    public static final RelativeBlockFace INPUT_FACING = getFacing("fluid_input");
+    public static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
+
+    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> unflatten(poi.position)).collect(ImmutableList.toImmutableList()); }
+
+    private static RelativeBlockFace getFacing(String name) {
+        List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> poi.relativeFace).distinct().toList();
+        if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
+        return facings.get(0);
+    }
+
+    private static BlockPos unflatten(int index) {
+        int y = index / (WIDTH * LENGTH);
+        int temp = index % (WIDTH * LENGTH);
+        int z = temp / WIDTH;
+        int x = temp % WIDTH;
+        return new BlockPos(x, y, z);
+    }
+
+    @Override
+    public void tickClient(IMultiblockContext<State> ctx) {
+        State state = ctx.getState();
+        IMultiblockLevel mlevel = ctx.getLevel();
+        Level level = mlevel.getRawLevel();
+        if (state.isRunning) { state.soundCooldown = 40; } else if (state.soundCooldown > 0) { state.soundCooldown--; }
+        spawnParticles(ctx, state, level);
+        handleSounds(ctx, state);
+    }
+
+    private void spawnParticles(IMultiblockContext<State> ctx, State state, Level level) {
+        if (!state.isRunning) return;
+        RandomSource rand = RandomSource.create();
+        int particleSetting = Minecraft.getInstance().options.particles().get().ordinal();
+        if (particleSetting == 2 || particleSetting == 1 && rand.nextInt(3) == 0) return;
+        LocalPlayer player = Minecraft.getInstance().player;
+        Vec3 particleVec = ctx.getLevel().toAbsolute(new Vec3(PARTICLE_POS.getX() + 0.5, PARTICLE_POS.getY() + 0.5, PARTICLE_POS.getZ() + 0.5));
+        assert player != null;
+        if (particleVec.distanceToSqr(player.position()) > 64 * 64) return;
+        for (int i = 0; i < 3; i++) {
+            double px = particleVec.x + (rand.nextFloat() * 4f - 2f);
+            double py = particleVec.y + rand.nextFloat() * 2f;
+            double pz = particleVec.z + (rand.nextFloat() * 4f - 2f);
+            level.addParticle(ITParticles.SMOKE_CUSTOM.get(), px, py, pz, (rand.nextFloat() - 0.5) * 0.02, 0.01 + rand.nextFloat() * 0.02, (rand.nextFloat() - 0.5) * 0.02);
+        }
+    }
+
+    private void handleSounds(IMultiblockContext<State> ctx, State state) {
+        if (state.isSoundPlaying.getAsBoolean()) return;
+        Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(SOUND_POS.getX() + 0.5, SOUND_POS.getY() + 0.5, SOUND_POS.getZ() + 0.5));
+        state.isSoundPlaying = ITSound.startSound(() -> state.soundCooldown > 0, ctx.isValid(), soundVec, ITSounds.coolingTower, () -> {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player == null) return 0f;
+            return (float) Math.max(1 - Math.sqrt(player.distanceToSqr(soundVec)) / 16, 0);
+        }, () -> 1f);
+    }
+
+    @Override
+    public void tickServer(IMultiblockContext<State> ctx) {
+        State state = ctx.getState();
+        IMultiblockLevel mlevel = ctx.getLevel();
+        Level level = mlevel.getRawLevel();
+        boolean wasRunning = state.isRunning;
+        pumpOutputs(state, ctx);
+        for (int i = state.processQueue.size() - 1; i >= 0; i--) {
+            CoolingTowerProcess process = state.processQueue.get(i);
+            process.tick(state);
+            if (process.isComplete()) state.processQueue.remove(i);
+        }
+        if (state.processQueue.size() < getProcessQueueMaxLength()) {
+            FluidStack in0 = state.tanks.input0.getFluid();
+            FluidStack in1 = state.tanks.input1.getFluid();
+            CoolingTowerRecipe recipe = CoolingTowerRecipe.findRecipe(level, in0, in1);
+            boolean swapped = false;
+            if (recipe == null) {
+                recipe = CoolingTowerRecipe.findRecipe(level, in1, in0);
+                swapped = true;
+            }
+            if (recipe != null) {
+                FluidStack firstIn = swapped ? in1 : in0;
+                FluidStack secondIn = swapped ? in0 : in1;
+                if (firstIn.getAmount() >= recipe.input0.getAmount() && secondIn.getAmount() >= recipe.input1.getAmount()) {
+                    boolean canOutput = true;
+                    if (!recipe.fluidOutput0.isEmpty()) { canOutput &= state.tanks.output0.fill(recipe.fluidOutput0, FluidAction.SIMULATE) >= recipe.fluidOutput0.getAmount(); }
+                    if (!recipe.fluidOutput1.isEmpty()) { canOutput &= state.tanks.output1.fill(recipe.fluidOutput1, FluidAction.SIMULATE) >= recipe.fluidOutput1.getAmount(); }
+                    if (!recipe.fluidOutput2.isEmpty()) { canOutput &= state.tanks.output2.fill(recipe.fluidOutput2, FluidAction.SIMULATE) >= recipe.fluidOutput2.getAmount(); }
+                    if (canOutput) {
+                        CoolingTowerRecipe useRecipe = swapped ? new CoolingTowerRecipe(recipe.getId(), recipe.fluidOutput0, recipe.fluidOutput1, recipe.fluidOutput2, recipe.input1, recipe.input0, recipe.totalProcessTime) : recipe;
+                        state.processQueue.add(new CoolingTowerProcess(useRecipe));
+                    }
+                }
+            }
+        }
+        state.isRunning = !state.processQueue.isEmpty();
+        boolean update = wasRunning != state.isRunning;
+        if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
+    }
+
+    private int getProcessQueueMaxLength() { return 3; }
+
+    private void pumpOutputs(State state, IMultiblockContext<State> ctx) {
+        boolean dirty = false;
+        Level level = ctx.getLevel().getRawLevel();
+        BlockPos[] outputPositions = FLUID_OUTPUT_POIS.toArray(new BlockPos[0]);
+        for (int i = 0; i < 3; i++) {
+            ITMarkableFluidTank tank = state.tanks.outputTanks()[i];
+            if (tank.getFluidAmount() == 0) continue;
+            CapabilityReference<IFluidHandler> ref = state.fluidOutputs[i];
+            if (!ref.isPresent()) continue;
+            IFluidHandler handler = ref.get();
+            BlockPos portAbs = ctx.getLevel().toAbsolute(outputPositions[i]);
+            Direction outputDir = ctx.getLevel().toAbsolute(OUTPUT_FACING);
+            assert outputDir != null;
+            BlockPos externalAbs = portAbs.relative(outputDir);
+            BlockEntity adjTE = level.getBlockEntity(externalAbs);
+            boolean isPipe = adjTE instanceof FluidPipeBlockEntity;
+            FluidStack fs = tank.getFluid().copy();
+            boolean hadTag = fs.hasTag() && fs.getTag().contains(IFluidPipe.NBT_PRESSURIZED);
+            if (isPipe && !hadTag) { fs.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
+            int accepted = handler.fill(fs, FluidAction.SIMULATE);
+            if (!hadTag) { fs.removeChildTag(IFluidPipe.NBT_PRESSURIZED); }
+            if (accepted <= 0) continue;
+            FluidStack toFill = Utils.copyFluidStackWithAmount(fs, Math.min(fs.getAmount(), accepted), false);
+            if (isPipe) { toFill.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
+            int drained = handler.fill(toFill, FluidAction.EXECUTE);
+            tank.drain(drained, FluidAction.EXECUTE);
+            dirty = true;
+        }
+        if (dirty) ctx.markMasterDirty();
+    }
+
+    @Override
+    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
+        State state = ctx.getState();
+        if (cap == ForgeCapabilities.FLUID_HANDLER) {
+            BlockPos localPos = position.posInMultiblock();
+            RelativeBlockFace side = position.side();
+            if (FLUID_INPUT_POIS.contains(localPos) && (side == null || side == INPUT_FACING)) {
+                int index = FLUID_INPUT_POIS.indexOf(localPos);
+                if (index == 0) return state.input0Cap.cast(ctx);
+                if (index == 1) return state.input1Cap.cast(ctx);
+            }
+            if (FLUID_OUTPUT_POIS.contains(localPos) && (side == null || side == OUTPUT_FACING)) {
+                int index = FLUID_OUTPUT_POIS.indexOf(localPos);
+                if (index == 0) return state.output0Cap.cast(ctx);
+                if (index == 1) return state.output1Cap.cast(ctx);
+                if (index == 2) return state.output2Cap.cast(ctx);
+            }
+        }
+        return LazyOptional.empty();
+    }
+
+    @Override
+    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
+
+    @Override
+    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return CoolingTowerShape.GETTER; }
+
+    @Override
+    public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult hit, boolean isClient) { return InteractionResult.SUCCESS; }
+
+    public static class State implements IMultiblockState {
+        public final CoolingTowerTanks tanks;
+        public final StoredCapability<IFluidHandler> input0Cap;
+        public final StoredCapability<IFluidHandler> input1Cap;
+        public final StoredCapability<IFluidHandler> output0Cap;
+        public final StoredCapability<IFluidHandler> output1Cap;
+        public final StoredCapability<IFluidHandler> output2Cap;
+        @SuppressWarnings("unchecked")
+        public final CapabilityReference<IFluidHandler>[] fluidOutputs = new CapabilityReference[3];
+        public boolean isRunning;
+        public int soundCooldown = 0;
+        public List<CoolingTowerProcess> processQueue = new ArrayList<>();
+        public BooleanSupplier isSoundPlaying = () -> false;
+
+        public State(IInitialMultiblockContext<State> ctx) {
+            Runnable markDirty = ctx.getMarkDirtyRunnable();
+            Runnable sync = ctx.getSyncRunnable();
+            Consumer<Void> onChanged = v -> { markDirty.run(); sync.run(); };
+            this.tanks = new CoolingTowerTanks(onChanged);
+            this.input0Cap = new StoredCapability<>(ITArrayFluidHandler.fillOnly(tanks.input0, () -> onChanged.accept(null)));
+            this.input1Cap = new StoredCapability<>(ITArrayFluidHandler.fillOnly(tanks.input1, () -> onChanged.accept(null)));
+            this.output0Cap = new StoredCapability<>(ITArrayFluidHandler.drainOnly(tanks.output0, () -> onChanged.accept(null)));
+            this.output1Cap = new StoredCapability<>(ITArrayFluidHandler.drainOnly(tanks.output1, () -> onChanged.accept(null)));
+            this.output2Cap = new StoredCapability<>(ITArrayFluidHandler.drainOnly(tanks.output2, () -> onChanged.accept(null)));
+            BlockPos[] outputPositions = FLUID_OUTPUT_POIS.toArray(new BlockPos[0]);
+            for (int i = 0; i < 3; i++) {
+                MultiblockFace mbf = new MultiblockFace(OUTPUT_FACING, outputPositions[i]);
+                CapabilityPosition oppCp = CapabilityPosition.opposing(mbf);
+                MultiblockFace oppMbf = new MultiblockFace(oppCp.side(), oppCp.posInMultiblock());
+                fluidOutputs[i] = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, oppMbf);
+            }
+        }
+
+        @Override
+        public void writeSaveNBT(CompoundTag nbt) {
+            nbt.put("tanks", tanks.toNBT());
+        }
+
+        @Override
+        public void readSaveNBT(CompoundTag nbt) {
+            tanks.readNBT(nbt.getCompound("tanks"));
+        }
+
+        @Override
+        public void writeSyncNBT(CompoundTag nbt) {
+            nbt.putBoolean("isRunning", isRunning);
+            nbt.put("tanks", tanks.toNBT());
+        }
+
+        @Override
+        public void readSyncNBT(CompoundTag nbt) {
+            isRunning = nbt.getBoolean("isRunning");
+            tanks.readNBT(nbt.getCompound("tanks"));
+        }
+    }
+
+    public record CoolingTowerTanks(ITMarkableFluidTank input0, ITMarkableFluidTank input1, ITMarkableFluidTank output0, ITMarkableFluidTank output1, ITMarkableFluidTank output2) {
+        @SuppressWarnings("unused")
+        public ITMarkableFluidTank[] inputTanks() { return new ITMarkableFluidTank[]{input0, input1}; }
+        public ITMarkableFluidTank[] outputTanks() { return new ITMarkableFluidTank[]{output0, output1, output2}; }
+
+        public CoolingTowerTanks(Consumer<Void> markDirty) {
+            this(new ITMarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));
+        }
+
+        public static CoolingTowerTanks makeClient() { return new CoolingTowerTanks(v -> {}); }
+
+        public CompoundTag toNBT() {
+            CompoundTag tag = new CompoundTag();
+            tag.put("input0", input0.writeToNBT(new CompoundTag()));
+            tag.put("input1", input1.writeToNBT(new CompoundTag()));
+            tag.put("output0", output0.writeToNBT(new CompoundTag()));
+            tag.put("output1", output1.writeToNBT(new CompoundTag()));
+            tag.put("output2", output2.writeToNBT(new CompoundTag()));
+            return tag;
+        }
+
+        public void readNBT(CompoundTag tag) {
+            input0.readFromNBT(tag.getCompound("input0"));
+            input1.readFromNBT(tag.getCompound("input1"));
+            output0.readFromNBT(tag.getCompound("output0"));
+            output1.readFromNBT(tag.getCompound("output1"));
+            output2.readFromNBT(tag.getCompound("output2"));
+        }
+    }
+}

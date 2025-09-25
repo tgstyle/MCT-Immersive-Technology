@@ -36,9 +36,9 @@
     },
     "fixed": {
       "scale": [
-        0.0625,
-        0.0625,
-        0.0625
+        0.0375,
+        0.0375,
+        0.0375
       ],
       "translation": [
         -1,
@@ -48,9 +48,9 @@
     },
     "ground": {
       "scale": [
-        0.0625,
-        0.0625,
-        0.0625
+        0.0375,
+        0.0375,
+        0.0375
       ],
       "translation": [
         -1.5,
@@ -65,13 +65,13 @@
         0
       ],
       "scale": [
-        0.1875,
-        0.1875,
-        0.1875
+        0.075,
+        0.075,
+        0.075
       ],
       "translation": [
-        3.6,
-        -3.05,
+        -3,
+        -2.9,
         -1.5
       ]
     },
@@ -124,5 +124,5 @@
   },
   "flip_v": true,
   "loader": "forge:obj",
-  "model": "immersivetechnology:models/block/multiblock/stone/obj/advanced_coke_oven/advanced_coke_oven.obj"
+  "model": "immersivetechnology:models/block/multiblock/stone/obj/cooling_tower/cooling_tower.obj"
 }
