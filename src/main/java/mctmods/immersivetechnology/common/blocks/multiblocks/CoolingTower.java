@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.multiblocks;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITClientMultiblockProperties;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.CoolingTowerShape;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
@@ -15,7 +16,7 @@ import java.util.function.Consumer;
 public class CoolingTower extends ITTemplateMultiblock {
     public static final CoolingTower INSTANCE = new CoolingTower();
 
-    public CoolingTower() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/cooling_tower"), new BlockPos(4, 0, 8), new BlockPos(4, 0, 8), new BlockPos(9, 10, 9), ITMultiblockProvider.COOLING_TOWER); }
+    public CoolingTower() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/cooling_tower"), new BlockPos(4, 0, 8), new BlockPos(4, 0, 8), new BlockPos(CoolingTowerShape.WIDTH, CoolingTowerShape.HEIGHT, CoolingTowerShape.LENGTH), ITMultiblockProvider.COOLING_TOWER); }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }

@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.multiblocks;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITClientMultiblockProperties;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AlternatorShape;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
@@ -15,7 +16,7 @@ import java.util.function.Consumer;
 public class Alternator extends ITTemplateMultiblock {
     public static final Alternator INSTANCE = new Alternator();
 
-    public Alternator() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/alternator"), new BlockPos(0,0,0), new BlockPos(1,1,3), new BlockPos(3,3,4), ITMultiblockProvider.ALTERNATOR); }
+    public Alternator() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/alternator"), new BlockPos(0,0,0), new BlockPos(1,1,3), new BlockPos(AlternatorShape.WIDTH,AlternatorShape.HEIGHT,AlternatorShape.LENGTH), ITMultiblockProvider.ALTERNATOR); }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
