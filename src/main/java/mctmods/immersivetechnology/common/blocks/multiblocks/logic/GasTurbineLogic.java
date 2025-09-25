@@ -83,57 +83,48 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
-        final Level level = ctx.getLevel().getRawLevel();
+        State state = ctx.getState();
+        Level level = ctx.getLevel().getRawLevel();
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) { return; }
-        float minSpeedForSound = MAX_SPEED / 4f;
-        float targetLevel = Math.max(0.55f, ITLib.remapRange(minSpeedForSound, MAX_SPEED, 0.55f, 1.0f, state.speed));
+        float targetLevel = ITLib.remapRange(0, MAX_SPEED, 0.5f, 1.0f, state.speed);
         if (state.currentLevel == 0f) { state.currentLevel = targetLevel; }
         else { state.currentLevel = state.currentLevel * 0.9f + targetLevel * 0.1f; }
         float smoothedLevel = state.currentLevel;
-        float targetPitch = Math.max(0.5f, ITLib.remapRange(MAX_SPEED / 4f, MAX_SPEED, 0.5f, 1.5f, state.speed));
+        float targetPitch = ITLib.remapRange(0, MAX_SPEED, 0.5f, 1.5f, state.speed);
         if (state.currentPitch == 0f) { state.currentPitch = targetPitch; }
         if (state.currentPitch < 0.5f) { state.currentPitch = 0.5f; }
         else { state.currentPitch = state.currentPitch * 0.95f + targetPitch * 0.05f; }
-        if (state.active || state.animation_fanFadeIn > 0 || state.animation_fanFadeOut > 0) {
-            float currentBase = (state.speed / (float) MAX_SPEED) * 72f;
-            float step = state.active ? currentBase : 0f;
-            if (state.animation_fanFadeIn > 0) {
-                step -= (state.animation_fanFadeIn / 80f) * currentBase;
-                state.animation_fanFadeIn--;
-            }
-            if (state.animation_fanFadeOut > 0) {
-                step += (state.animation_fanFadeOut / (float) state.animation_fanFadeOutMax) * currentBase;
-                state.animation_fanFadeOut--;
-            }
-            state.animation_fanRotationStep = step;
-            state.animation_fanRotation += step;
-            state.animation_fanRotation %= 360;
+        float currentBase = (state.speed / (float) MAX_SPEED) * 72f;
+        float step = currentBase;
+        if (state.animation_fanFadeIn > 0) {
+            step -= (state.animation_fanFadeIn / 80f) * currentBase;
+            state.animation_fanFadeIn--;
         }
+        state.animation_fanRotationStep = step;
+        state.animation_fanRotation += step;
+        state.animation_fanRotation %= 360;
         Vec3 runningPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
         Vec3 starterPos = ctx.getLevel().toAbsolute(new Vec3(STARTER_SOUND_POI.getX() + 0.5, STARTER_SOUND_POI.getY() + 0.5, STARTER_SOUND_POI.getZ() + 0.5));
         Vec3 arcPos = ctx.getLevel().toAbsolute(new Vec3(ARC_SOUND_POI.getX() + 0.5, ARC_SOUND_POI.getY() + 0.5, ARC_SOUND_POI.getZ() + 0.5));
         Vec3 sparkPos = ctx.getLevel().toAbsolute(new Vec3(SPARK_SOUND_POI.getX() + 0.5, SPARK_SOUND_POI.getY() + 0.5, SPARK_SOUND_POI.getZ() + 0.5));
         Vec3 ignitePos = ctx.getLevel().toAbsolute(new Vec3(IGNITE_SOUND_POI.getX() + 0.5, IGNITE_SOUND_POI.getY() + 0.5, IGNITE_SOUND_POI.getZ() + 0.5));
-        if (state.speed >= (MAX_SPEED / 4)) {
-            if (!state.runningSoundPlaying.getAsBoolean()) {
-                state.runningSoundId++;
-                int thisId = state.runningSoundId;
-                state.runningSoundPlaying = ITSound.startSound(
-                        () -> state.speed >= (MAX_SPEED / 4) && state.runningSoundId == thisId,
-                        ctx.isValid(),
-                        runningPos,
-                        ITSounds.gasRunning,
-                        () -> {
-                            LocalPlayer p = Minecraft.getInstance().player;
-                            if (p == null) { return 0f; }
-                            float a = (float) Math.max(p.distanceToSqr(runningPos) / 32, 1);
-                            return (11 * (smoothedLevel - 0.5f)) / a;
-                        },
-                        () -> state.currentPitch
-                );
-            }
+        if (!state.runningSoundPlaying.getAsBoolean()) {
+            state.runningSoundId++;
+            int thisId = state.runningSoundId;
+            state.runningSoundPlaying = ITSound.startSound(
+                    () -> (!state.starterRunning || (state.stall && state.ignited)) && state.speed > 0 && state.runningSoundId == thisId,
+                    ctx.isValid(),
+                    runningPos,
+                    ITSounds.gasRunning,
+                    () -> {
+                        LocalPlayer p = Minecraft.getInstance().player;
+                        if (p == null) { return 0f; }
+                        float a = (float) Math.max(p.distanceToSqr(runningPos) / 32, 1);
+                        return (11 * (smoothedLevel - 0.5f)) / a;
+                    },
+                    () -> state.currentPitch
+            );
         }
         if (state.starterRunning) {
             if (!state.starterSoundPlaying.getAsBoolean()) {
@@ -173,9 +164,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             level.playLocalSound(sparkPos.x, sparkPos.y, sparkPos.z, ITSounds.gasSpark.get(), SoundSource.BLOCKS, 1 / ignitionAtt, 1, false);
             state.igniteDelay = 3;
         }
-        else {
-            state.lastIgnited = state.ignited;
-        }
+        else { state.lastIgnited = state.ignited; }
         if (state.igniteDelay > 0) {
             state.igniteDelay--;
             if (state.igniteDelay == 0 && state.starterRunning) {
@@ -211,22 +200,14 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                     b = (tint & 0xFF) / 255f;
                 }
                 Level level2 = ctx.getLevel().getRawLevel();
-                level2.addAlwaysVisibleParticle(
-                        new ColoredSmoke(r, g, b),
-                        smokePos.x,
-                        smokePos.y,
-                        smokePos.z,
-                        velX,
-                        velY,
-                        velZ
-                );
+                level2.addAlwaysVisibleParticle(new ColoredSmoke(r, g, b), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ);
             }
         }
     }
 
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
+        State state = ctx.getState();
         boolean wasActive = state.active;
         boolean wasStall = state.stall;
         state.active = false;
@@ -237,16 +218,20 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         BlockEntity entity = level.getBlockEntity(consumerAbsPos);
         boolean hasConsumer = false;
         double additionalMass = 0.0;
+        double additionalFriction = 0.0;
         if (entity != null) {
             LazyOptional<IMechanicalEnergyConsumer> consumerCap = entity.getCapability(MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY, outputFacing.getOpposite());
             if (consumerCap.isPresent()) {
                 hasConsumer = true;
-                additionalMass = consumerCap.orElseThrow(RuntimeException::new).getMass();
+                IMechanicalEnergyConsumer consumer = consumerCap.orElseThrow(RuntimeException::new);
+                additionalMass = consumer.getMass();
+                additionalFriction = consumer.getFriction();
             }
         }
-        if (additionalMass != state.connectedMass) {
+        if (additionalMass != state.connectedMass || additionalFriction != state.connectedFriction) {
             state.connectedMass = additionalMass;
-            state.inertia = new RotationInertiaProcess(BASE_MASS + state.connectedMass, DRIVE_TORQUE, FRICTION);
+            state.connectedFriction = additionalFriction;
+            state.inertia = new RotationInertiaProcess(BASE_MASS + state.connectedMass, DRIVE_TORQUE, FRICTION + state.connectedFriction);
         }
         boolean isRSEnabled = state.rsState.isEnabled(ctx);
         state.ignited = state.ignitionGracePeriod > 0;
@@ -345,7 +330,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 if (accepted > 0) {
                     int drained = handler.fill(Utils.copyFluidStackWithAmount(out, accepted, false), FluidAction.EXECUTE);
                     state.tanks.output.drain(drained, FluidAction.EXECUTE);
-                    if (drained > 0) { changed = true; }
+                    changed = true;
                 }
             }
         }
@@ -368,7 +353,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
-        final State state = ctx.getState();
+        State state = ctx.getState();
         if (cap == ForgeCapabilities.ENERGY) {
             if (ENERGY_INPUTS_HV.contains(position)) { return state.energyCapHV.cast(ctx); }
             if (ENERGY_INPUTS_MV.contains(position)) { return state.energyCapMV.cast(ctx); }
@@ -392,19 +377,14 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     private record MechanicalEnergyProvider(State state) implements IMechanicalEnergyProvider {
         @Override
         public int getSpeed() { return state.speed; }
-
         @Override
         public float getTorque() { return 1f; }
-
         @Override
         public int getMaxSpeed() { return MAX_SPEED; }
-
         @Override
         public double getBaseMass() { return BASE_MASS; }
-
         @Override
         public double getDriveTorque() { return DRIVE_TORQUE; }
-
         @Override
         public double getFriction() { return FRICTION; }
     }
@@ -418,7 +398,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         public StoredCapability<IEnergyStorage> energyCapMV;
         public AveragingEnergyStorage energyStorageHV;
         public AveragingEnergyStorage energyStorageMV;
-        public CapabilityReference<IFluidHandler> fluidOutput;
+        public final CapabilityReference<IFluidHandler> fluidOutput;
         private final BiFunction<Level, FluidStack, GasTurbineRecipe> recipeGetter;
         public int speed = 0;
         public boolean active = false;
@@ -431,28 +411,24 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         public float animation_fanRotationStep = 0;
         public float animation_fanRotation = 0;
         private transient int animation_fanFadeIn = 0;
-        private transient int animation_fanFadeOut = 0;
-        private transient int animation_fanFadeOutMax = 0;
         private transient float currentLevel = 0f;
         private transient float currentPitch = 0f;
         private BooleanSupplier runningSoundPlaying = () -> false;
         private BooleanSupplier starterSoundPlaying = () -> false;
         private BooleanSupplier arcSoundPlaying = () -> false;
-        private transient int runningSoundId = 0;
-        private transient int starterSoundId = 0;
-        private transient int arcSoundId = 0;
+        private int runningSoundId = 0;
+        private int starterSoundId = 0;
+        private int arcSoundId = 0;
         private boolean lastIgnited = false;
-        private transient int igniteDelay = 0;
+        private int igniteDelay = 0;
         private double connectedMass = 0;
+        private double connectedFriction = 0;
         private RotationInertiaProcess inertia;
 
         public State(IInitialMultiblockContext<State> ctx) {
-            final Runnable markDirty = ctx.getMarkDirtyRunnable();
-            final Runnable sync = ctx.getSyncRunnable();
-            final Runnable onChanged = () -> {
-                markDirty.run();
-                sync.run();
-            };
+            Runnable markDirty = ctx.getMarkDirtyRunnable();
+            Runnable sync = ctx.getSyncRunnable();
+            Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             this.tanks = new GasTurbineTank(v -> onChanged.run());
             this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
@@ -474,6 +450,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             nbt.putBoolean("active", active);
             nbt.putBoolean("starterRunning", starterRunning);
             nbt.putBoolean("ignited", ignited);
+            nbt.putBoolean("stall", stall);
             nbt.putInt("burnRemaining", burnRemaining);
             nbt.putInt("ignitionGracePeriod", ignitionGracePeriod);
             nbt.putBoolean("isShutdown", isShutdown);
@@ -486,6 +463,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             active = nbt.getBoolean("active");
             starterRunning = nbt.getBoolean("starterRunning");
             ignited = nbt.getBoolean("ignited");
+            stall = nbt.getBoolean("stall");
             burnRemaining = nbt.getInt("burnRemaining");
             ignitionGracePeriod = nbt.getInt("ignitionGracePeriod");
             isShutdown = nbt.getBoolean("isShutdown");
@@ -505,7 +483,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
         @Override
         public void readSyncNBT(CompoundTag nbt) {
-            final boolean oldActive = active;
+            boolean oldActive = active;
             active = nbt.getBoolean("active");
             starterRunning = nbt.getBoolean("starterRunning");
             ignited = nbt.getBoolean("ignited");
@@ -514,10 +492,6 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             stall = nbt.getBoolean("stall");
             tanks.readNBT(nbt.getCompound("tanks"));
             if (active && !oldActive && speed < MAX_SPEED / 4) { animation_fanFadeIn = 80; }
-            else if (!active && oldActive) {
-                animation_fanFadeOut = Math.max(0, (int) ((speed - (MAX_SPEED / 4f)) / 6f));
-                animation_fanFadeOutMax = animation_fanFadeOut;
-            }
         }
     }
 

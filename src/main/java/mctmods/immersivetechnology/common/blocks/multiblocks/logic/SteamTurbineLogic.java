@@ -67,8 +67,8 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
-        float targetLevel = ITLib.remapRange(0, MAX_SPEED, 0.55f, 1.0f, state.speed);
+        State state = ctx.getState();
+        float targetLevel = ITLib.remapRange(0, MAX_SPEED, 0.5f, 1.0f, state.speed);
         if (state.currentLevel == 0f) { state.currentLevel = targetLevel; }
         else { state.currentLevel = state.currentLevel * 0.9f + targetLevel * 0.1f; }
         float smoothedLevel = state.currentLevel;
@@ -76,27 +76,22 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         if (state.currentPitch == 0f) { state.currentPitch = targetPitch; }
         else { state.currentPitch = state.currentPitch * 0.95f + targetPitch * 0.05f; }
         if (state.currentPitch < 0.5f) { state.currentPitch = 0.5f; }
-        if (state.active || state.animation_fanFadeIn > 0 || state.animation_fanFadeOut > 0) {
-            float base = (state.speed / (float) MAX_SPEED) * 72f;
-            float step = state.active ? base : 0;
-            if (state.animation_fanFadeIn > 0) {
-                step -= (state.animation_fanFadeIn / 80f) * base;
-                state.animation_fanFadeIn--;
-            }
-            if (state.animation_fanFadeOut > 0) {
-                step += (state.animation_fanFadeOut / 80f) * base;
-                state.animation_fanFadeOut--;
-            }
-            state.animation_fanRotationStep = step;
-            state.animation_fanRotation += step;
-            state.animation_fanRotation %= 360;
+        float base = (state.speed / (float) MAX_SPEED) * 72f;
+        float step = base;
+        if (state.animation_fanFadeIn > 0) {
+            step -= (state.animation_fanFadeIn / 80f) * base;
+            state.animation_fanFadeIn--;
         }
+        state.animation_fanRotationStep = step;
+        state.animation_fanRotation += step;
+        state.animation_fanRotation %= 360;
         if (!state.isSoundPlaying.getAsBoolean()) {
-            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
-            state.soundId++;
-            int thisId = state.soundId;
+            Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
             state.isSoundPlaying = ITSound.startSound(
-                    () -> (state.active || state.animation_fanFadeOut > 0) && state.soundId == thisId, ctx.isValid(), soundPos, ITSounds.steamTurbine,
+                    () -> state.active || state.speed > 0,
+                    ctx.isValid(),
+                    soundPos,
+                    ITSounds.steamTurbine,
                     () -> {
                         LocalPlayer player = Minecraft.getInstance().player;
                         if (player == null) { return 0f; }
@@ -123,23 +118,15 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
                     g = ((tint >> 8) & 0xFF) / 255f;
                     b = (tint & 0xFF) / 255f;
                 }
-                Level level2 = ctx.getLevel().getRawLevel();
-                level2.addAlwaysVisibleParticle(
-                        new ColoredSmoke(r, g, b),
-                        smokePos.x,
-                        smokePos.y,
-                        smokePos.z,
-                        velX,
-                        velY,
-                        velZ
-                );
+                Level level = ctx.getLevel().getRawLevel();
+                level.addAlwaysVisibleParticle(new ColoredSmoke(r, g, b), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ);
             }
         }
     }
 
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
+        State state = ctx.getState();
         boolean previouslyActive = state.active;
         state.active = false;
         Level level = ctx.getLevel().getRawLevel();
@@ -150,16 +137,20 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         BlockEntity entity = level.getBlockEntity(consumerAbsPos);
         boolean hasConsumer = false;
         double additionalMass = 0.0;
+        double additionalFriction = 0.0;
         if (entity != null) {
             LazyOptional<IMechanicalEnergyConsumer> consumerCap = entity.getCapability(MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY, outputFacing.getOpposite());
             if (consumerCap.isPresent()) {
                 hasConsumer = true;
-                additionalMass = consumerCap.orElseThrow(RuntimeException::new).getMass();
+                IMechanicalEnergyConsumer consumer = consumerCap.orElseThrow(RuntimeException::new);
+                additionalMass = consumer.getMass();
+                additionalFriction = consumer.getFriction();
             }
         }
-        if (additionalMass != state.connectedMass) {
+        if (additionalMass != state.connectedMass || additionalFriction != state.connectedFriction) {
             state.connectedMass = additionalMass;
-            state.inertia = new RotationInertiaProcess(BASE_MASS + state.connectedMass, DRIVE_TORQUE, FRICTION);
+            state.connectedFriction = additionalFriction;
+            state.inertia = new RotationInertiaProcess(BASE_MASS + state.connectedMass, DRIVE_TORQUE, FRICTION + state.connectedFriction);
         }
         boolean canRun = state.rsState.isEnabled(ctx) && hasConsumer;
         if (!canRun) {
@@ -187,7 +178,9 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
                     state.speed = Math.min(MAX_SPEED, state.speed + state.inertia.getSpeedUpRate());
                     state.active = true;
                 }
-                else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
+                else {
+                    state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate());
+                }
             }
         }
         boolean changed = false;
@@ -200,7 +193,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
                 if (accepted > 0) {
                     int drained = handler.fill(Utils.copyFluidStackWithAmount(out, accepted, false), FluidAction.EXECUTE);
                     state.tanks.output.drain(drained, FluidAction.EXECUTE);
-                    if (drained > 0) { changed = true; }
+                    changed = true;
                 }
             }
         }
@@ -212,7 +205,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
-        final State state = ctx.getState();
+        State state = ctx.getState();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             if ((position.side() == null || position.side() == RelativeBlockFace.BACK) && position.posInMultiblock().equals(INPUT_FLUID_POI.posInMultiblock())) { return state.fluidCap.cast(ctx); }
             if (OUTPUT_FLUID_POI.equals(position)) { return state.fluidCapExhaust.cast(ctx); }
@@ -226,19 +219,14 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     private record MechanicalEnergyProvider(State state) implements IMechanicalEnergyProvider {
         @Override
         public int getSpeed() { return state.speed; }
-
         @Override
         public float getTorque() { return 1f; }
-
         @Override
         public int getMaxSpeed() { return MAX_SPEED; }
-
         @Override
         public double getBaseMass() { return BASE_MASS; }
-
         @Override
         public double getDriveTorque() { return DRIVE_TORQUE; }
-
         @Override
         public double getFriction() { return FRICTION; }
     }
@@ -262,23 +250,19 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         public boolean active = false;
         private int burnRemaining = 0;
         public BooleanSupplier isSoundPlaying = () -> false;
-        private transient int soundId = 0;
         public float animation_fanRotationStep = 0;
         public float animation_fanRotation = 0;
         private transient int animation_fanFadeIn = 0;
-        private transient int animation_fanFadeOut = 0;
         private transient float currentLevel = 0f;
         private transient float currentPitch = 0f;
         private double connectedMass = 0;
+        private double connectedFriction = 0;
         private RotationInertiaProcess inertia;
 
         public State(IInitialMultiblockContext<State> ctx) {
-            final Runnable markDirty = ctx.getMarkDirtyRunnable();
-            final Runnable sync = ctx.getSyncRunnable();
-            final Runnable onChanged = () -> {
-                markDirty.run();
-                sync.run();
-            };
+            Runnable markDirty = ctx.getMarkDirtyRunnable();
+            Runnable sync = ctx.getSyncRunnable();
+            Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             this.tanks = new SteamTurbineTank(v -> onChanged.run());
             this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
@@ -315,12 +299,11 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
         @Override
         public void readSyncNBT(CompoundTag nbt) {
-            final boolean oldActive = active;
+            boolean oldActive = active;
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             tanks.readNBT(nbt.getCompound("tanks"));
             if (active && !oldActive) { animation_fanFadeIn = 80; }
-            else if (!active && oldActive) { animation_fanFadeOut = 80; }
         }
     }
 

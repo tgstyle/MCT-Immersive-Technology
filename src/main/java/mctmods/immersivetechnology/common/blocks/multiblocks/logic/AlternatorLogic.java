@@ -77,9 +77,9 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
+        State state = ctx.getState();
         if (!state.isSoundPlaying.getAsBoolean()) {
-            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
+            Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
             state.isSoundPlaying = ITSound.startSound(
                     () -> state.active,
                     ctx.isValid(),
@@ -99,7 +99,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
+        State state = ctx.getState();
         Level level = ctx.getLevel().getRawLevel();
         state.active = false;
         int turbineSpeed = 0;

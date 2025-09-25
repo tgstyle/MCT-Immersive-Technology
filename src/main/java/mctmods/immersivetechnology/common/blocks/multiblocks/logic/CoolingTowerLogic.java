@@ -85,13 +85,13 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         State state = ctx.getState();
         IMultiblockLevel mlevel = ctx.getLevel();
         Level level = mlevel.getRawLevel();
-        if (state.isRunning) { state.soundCooldown = 40; } else if (state.soundCooldown > 0) { state.soundCooldown--; }
+        if (state.active) { state.soundCooldown = 40; } else if (state.soundCooldown > 0) { state.soundCooldown--; }
         spawnParticles(ctx, state, level);
         handleSounds(ctx, state);
     }
 
     private void spawnParticles(IMultiblockContext<State> ctx, State state, Level level) {
-        if (!state.isRunning) return;
+        if (!state.active) return;
         RandomSource rand = RandomSource.create();
         int particleSetting = Minecraft.getInstance().options.particles().get().ordinal();
         if (particleSetting == 2 || particleSetting == 1 && rand.nextInt(3) == 0) return;
@@ -122,7 +122,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         State state = ctx.getState();
         IMultiblockLevel mlevel = ctx.getLevel();
         Level level = mlevel.getRawLevel();
-        boolean wasRunning = state.isRunning;
+        boolean wasActive = state.active;
         pumpOutputs(state, ctx);
         for (int i = state.processQueue.size() - 1; i >= 0; i--) {
             CoolingTowerProcess process = state.processQueue.get(i);
@@ -153,8 +153,8 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
                 }
             }
         }
-        state.isRunning = !state.processQueue.isEmpty();
-        boolean update = wasRunning != state.isRunning;
+        state.active = !state.processQueue.isEmpty();
+        boolean update = wasActive != state.active;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -230,7 +230,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         public final StoredCapability<IFluidHandler> output2Cap;
         @SuppressWarnings("unchecked")
         public final CapabilityReference<IFluidHandler>[] fluidOutputs = new CapabilityReference[3];
-        public boolean isRunning;
+        public boolean active;
         public int soundCooldown = 0;
         public List<CoolingTowerProcess> processQueue = new ArrayList<>();
         public BooleanSupplier isSoundPlaying = () -> false;
@@ -257,22 +257,24 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         @Override
         public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tanks", tanks.toNBT());
+            nbt.putBoolean("active", active);
         }
 
         @Override
         public void readSaveNBT(CompoundTag nbt) {
             tanks.readNBT(nbt.getCompound("tanks"));
+            active = nbt.getBoolean("active");
         }
 
         @Override
         public void writeSyncNBT(CompoundTag nbt) {
-            nbt.putBoolean("isRunning", isRunning);
+            nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT());
         }
 
         @Override
         public void readSyncNBT(CompoundTag nbt) {
-            isRunning = nbt.getBoolean("isRunning");
+            active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
         }
     }

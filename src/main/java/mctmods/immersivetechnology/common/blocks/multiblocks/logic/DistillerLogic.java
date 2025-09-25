@@ -76,9 +76,9 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
+        State state = ctx.getState();
         if (!state.isSoundPlaying.getAsBoolean()) {
-            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(1, 1, 1));
+            Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(1, 1, 1));
             state.isSoundPlaying = ITSound.startSound(
                     () -> state.active, ctx.isValid(), soundPos, ITSounds.distiller,
                     () -> {
@@ -93,8 +93,8 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
-        final boolean wasActive = state.active;
+        State state = ctx.getState();
+        boolean wasActive = state.active;
         state.active = state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
         boolean update = wasActive != state.active;
         DistillerRecipe recipe = DistillerRecipe.findRecipe(ctx.getLevel().getRawLevel(), state.tanks.input.getFluid());
@@ -115,7 +115,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
                 }
             }
         }
-        final IItemHandlerModifiable inventory = state.inventory;
+        IItemHandlerModifiable inventory = state.inventory;
         ItemStack drainedContainer = inventory.getStackInSlot(SLOT_INPUT_EMPTY);
         if (!drainedContainer.isEmpty()) {
             int origCount = drainedContainer.getCount();
@@ -179,7 +179,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
-        final State state = ctx.getState();
+        State state = ctx.getState();
         if (cap == ForgeCapabilities.ENERGY) {
             if (ENERGY_POI.contains(position)) { return state.energyCap.cast(ctx); }
         }
@@ -224,12 +224,9 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         public BooleanSupplier isSoundPlaying = () -> false;
 
         public State(IInitialMultiblockContext<State> ctx) {
-            final Runnable markDirty = ctx.getMarkDirtyRunnable();
-            final Runnable sync = ctx.getSyncRunnable();
-            final Runnable onChanged = () -> {
-                markDirty.run();
-                sync.run();
-            };
+            Runnable markDirty = ctx.getMarkDirtyRunnable();
+            Runnable sync = ctx.getSyncRunnable();
+            Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             this.tanks = new DistillerTank(v -> onChanged.run());
             this.tankArray = new IFluidTank[]{tanks.input, tanks.output};
             inventory = new ITSlotwiseItemHandler(
@@ -276,6 +273,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             nbt.put("tanks", this.tanks.toNBT());
             nbt.put("processor", processor.toNBT());
             nbt.put("inventory", inventory.serializeNBT());
+            nbt.putBoolean("active", active);
         }
 
         @Override
@@ -284,6 +282,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             this.tanks.readNBT(nbt.getCompound("tanks"));
             this.processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), DistillerProcess::new);
             this.inventory.deserializeNBT(nbt.getCompound("inventory"));
+            active = nbt.getBoolean("active");
         }
 
         @Override

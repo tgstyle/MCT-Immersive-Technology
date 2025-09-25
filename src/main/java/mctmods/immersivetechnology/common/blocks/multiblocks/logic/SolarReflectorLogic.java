@@ -48,7 +48,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
+        State state = ctx.getState();
         state.formedTicks++;
         boolean isDisabled = ITClientConfig.disableReflectorDance.get();
         boolean isLoop = ITClientConfig.loopReflectorDance.get();
