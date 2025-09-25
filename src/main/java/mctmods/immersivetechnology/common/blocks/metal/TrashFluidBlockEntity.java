@@ -18,13 +18,20 @@ import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
 public class TrashFluidBlockEntity extends TrashCommonBlockEntity implements IFluidHandler, TrashCanShape {
+    private final LazyOptional<IFluidHandler> handler = LazyOptional.of(() -> this);
+
     public TrashFluidBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.TRASH_FLUID.get(), pos, state); }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> @Nonnull LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing) {
-        if (capability == ForgeCapabilities.FLUID_HANDLER) { return LazyOptional.of(() -> (T) this); }
+        if (capability == ForgeCapabilities.FLUID_HANDLER) { return handler.cast(); }
         return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        handler.invalidate();
     }
 
     @Override

@@ -45,6 +45,10 @@ public class OpenBarrelBlockEntity extends IEBaseBlockEntity implements IEServer
 
     private static final Random RANDOM = new Random();
 
+    private final LazyOptional<IFluidHandler> nonsidedHandler = LazyOptional.of(() -> new SidedFluidHandler(this, null));
+    private final LazyOptional<IFluidHandler> upHandler = LazyOptional.of(() -> new SidedFluidHandler(this, Direction.UP));
+    private final LazyOptional<IFluidHandler> downHandler = LazyOptional.of(() -> new SidedFluidHandler(this, Direction.DOWN));
+
     public OpenBarrelBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.OPEN_BARREL.get(), pos, state); }
 
     @Override
@@ -112,10 +116,19 @@ public class OpenBarrelBlockEntity extends IEBaseBlockEntity implements IEServer
     @Override
     public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing) {
         if (capability == ForgeCapabilities.FLUID_HANDLER) {
-            if (facing == null) return LazyOptional.of(() -> new SidedFluidHandler(this, null)).cast();
-            if (facing.getAxis() == Direction.Axis.Y) return LazyOptional.of(() -> new SidedFluidHandler(this, facing)).cast();
+            if (facing == null) return nonsidedHandler.cast();
+            if (facing.getAxis() != Direction.Axis.Y) return super.getCapability(capability, facing);
+            return (facing == Direction.UP ? upHandler : downHandler).cast();
         }
         return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        nonsidedHandler.invalidate();
+        upHandler.invalidate();
+        downHandler.invalidate();
     }
 
     @Override

@@ -46,6 +46,10 @@ public class SteelBarrelBlockEntity extends IEBaseBlockEntity implements IEServe
             Direction.UP, CapabilityReference.forNeighbor(this, ForgeCapabilities.FLUID_HANDLER, Direction.UP)
     );
 
+    private final LazyOptional<IFluidHandler> nonsidedHandler = LazyOptional.of(() -> new SidedFluidHandler(this, null));
+    private final LazyOptional<IFluidHandler> upHandler = LazyOptional.of(() -> new SidedFluidHandler(this, Direction.UP));
+    private final LazyOptional<IFluidHandler> downHandler = LazyOptional.of(() -> new SidedFluidHandler(this, Direction.DOWN));
+
     public SteelBarrelBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.STEEL_BARREL.get(), pos, state); }
 
     @Override
@@ -111,10 +115,19 @@ public class SteelBarrelBlockEntity extends IEBaseBlockEntity implements IEServe
     @Override
     public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing) {
         if (capability == ForgeCapabilities.FLUID_HANDLER) {
-            if (facing == null) return LazyOptional.of(() -> new SidedFluidHandler(this, null)).cast();
-            if (facing.getAxis() == Direction.Axis.Y) return LazyOptional.of(() -> new SidedFluidHandler(this, facing)).cast();
+            if (facing == null) return nonsidedHandler.cast();
+            if (facing.getAxis() != Direction.Axis.Y) return super.getCapability(capability, facing);
+            return (facing == Direction.UP ? upHandler : downHandler).cast();
         }
         return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        nonsidedHandler.invalidate();
+        upHandler.invalidate();
+        downHandler.invalidate();
     }
 
     @Override
