@@ -48,26 +48,17 @@ public class ITMultiblockProvider {
                 .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITNonMirrorableWithActiveBlock<>(properties, r), ITBlockItem::new)
                 .customBEs(ITBlockEntities.REGISTER);
     }
-
     public static <S extends IMultiblockState> ITMultiblockBuilder<S> metal(IMultiblockLogic<S> logic, String name) {
         return new ITMultiblockBuilder<>(logic, name)
                 .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockWithMirror<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
                 .customBEs(ITBlockEntities.REGISTER);
     }
-
     public static <S extends IMultiblockState> ITMultiblockBuilder<S> metalNoMirror(IMultiblockLogic<S> logic, String name) {
         return new ITMultiblockBuilder<>(logic, name)
                 .notMirrored()
                 .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockNonMirror<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
                 .customBEs(ITBlockEntities.REGISTER);
     }
-
-    public static final MultiblockRegistration<AdvancedCokeOvenLogic.State> ADVANCED_COKE_OVEN =
-            stone(new AdvancedCokeOvenLogic(), "advanced_coke_oven", false)
-                    .structure(() -> getMBTemplate.apply("advanced_coke_oven"))
-                    .gui(ITMenuTypes.ADVANCED_COKE_OVEN_MENU)
-                    .component(new ITDisassemblyTicker<>(new BlockPos(0, 0, 0)), state -> null)
-                    .build();
     public static final MultiblockRegistration<AlternatorLogic.State> ALTERNATOR =
             metalNoMirror(new AlternatorLogic(), "alternator")
                     .structure(() -> getMBTemplate.apply("alternator"))
@@ -142,7 +133,6 @@ public class ITMultiblockProvider {
                     .build();
 
     public static void init() {
-        registerMB("advanced_coke_oven", AdvancedCokeOven.INSTANCE, ADVANCED_COKE_OVEN);
         registerMB("alternator", Alternator.INSTANCE, ALTERNATOR);
         registerMB("boiler_liquid", BoilerLiquid.INSTANCE, BOILER_LIQUID);
         registerMB("boiler_solid", BoilerSolid.INSTANCE, BOILER_SOLID);

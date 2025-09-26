@@ -37,8 +37,6 @@ public class ITRecipes extends RecipeProvider {
     protected void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
         multiblockRecipes();
         itemRecipes();
-        recipesAdvancedCokeOven(consumer);
-        recipesAdvancedCokeOvenFuel(consumer);
         recipesBoilerTank(consumer);
         recipesBoilerLiquid(consumer);
         recipesBoilerSolid(consumer);
@@ -53,17 +51,6 @@ public class ITRecipes extends RecipeProvider {
     private void itemRecipes() {}
 
     private void multiblockRecipes() { ITLib.IT_LOGGER.info("Starting Multiblock Recipe Registration"); }
-
-    private void recipesAdvancedCokeOven(@Nonnull Consumer<FinishedRecipe> out) {
-        AdvancedCokeOvenRecipeBuilder.builder(Items.COAL).addOutput(IETags.coalCoke, 1).setCreosote(FluidType.BUCKET_VOLUME / 2).setTime(600).build(out, toResourceLocation("advanced_coke_oven/coke"));
-        AdvancedCokeOvenRecipeBuilder.builder(Blocks.COAL_BLOCK.asItem()).addOutput(IETags.getItemTag(IETags.coalCokeBlock), 1).setCreosote(FluidType.BUCKET_VOLUME * 5).setTime(9 * 600).build(out, toResourceLocation("advanced_coke_oven/coke_block"));
-        AdvancedCokeOvenRecipeBuilder.builder(ItemTags.LOGS, 1).addOutput(Items.CHARCOAL).setCreosote(FluidType.BUCKET_VOLUME / 4).setTime(600).build(out, toResourceLocation("advanced_coke_oven/charcoal"));
-    }
-
-    private void recipesAdvancedCokeOvenFuel(@Nonnull Consumer<FinishedRecipe> out) {
-        AdvancedCokeOvenFuelBuilder.builder(Ingredient.of(IETags.coalCoke)).setTime(1200).build(out, toResourceLocation("advanced_coke_oven_fuel/coal_coke"));
-        AdvancedCokeOvenFuelBuilder.builder(Ingredient.of(Items.CHARCOAL)).setTime(600).build(out, toResourceLocation("advanced_coke_oven_fuel/charcoal"));
-    }
 
     private void recipesBoilerTank(@Nonnull Consumer<FinishedRecipe> out) {
         BoilerTankRecipeBuilder.builder(FluidTags.WATER, 250).addOutput(ITFluids.STEAM.getStill(), 450).setTime(10).build(out, toResourceLocation("boiler_tank/water"));

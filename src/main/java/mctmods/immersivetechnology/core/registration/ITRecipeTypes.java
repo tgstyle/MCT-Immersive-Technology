@@ -16,8 +16,6 @@ public class ITRecipeTypes {
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ITLib.MODID);
     private static final DeferredRegister<RecipeType<?>> REGISTER = DeferredRegister.create(Registries.RECIPE_TYPE, ITLib.MODID);
 
-    public static final TypeWithClass<AdvancedCokeOvenRecipe> ADVANCED_COKE_OVEN = register("advanced_coke_oven", AdvancedCokeOvenRecipe.class);
-    public static final TypeWithClass<AdvancedCokeOvenFuel> ADVANCED_COKE_OVEN_FUEL = register("advanced_coke_oven_fuel", AdvancedCokeOvenFuel.class);
     public static final TypeWithClass<BoilerLiquidRecipe> BOILER_LIQUID = register("boiler_liquid", BoilerLiquidRecipe.class);
     public static final TypeWithClass<BoilerSolidRecipe> BOILER_SOLID = register("boiler_solid", BoilerSolidRecipe.class);
     public static final TypeWithClass<BoilerTankRecipe> BOILER_TANK = register("boiler_tank", BoilerTankRecipe.class);
@@ -29,8 +27,6 @@ public class ITRecipeTypes {
     public static final TypeWithClass<SteamTurbineRecipe> STEAM_TURBINE = register("steam_turbine", SteamTurbineRecipe.class);
 
     static {
-        AdvancedCokeOvenRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("advanced_coke_oven", AdvancedCokeOvenRecipeSerializer::new);
-        AdvancedCokeOvenFuel.SERIALIZER = RECIPE_SERIALIZERS.register("advanced_coke_oven_fuel", AdvancedCokeOvenFuelSerializer::new);
         BoilerLiquidRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("boiler_liquid", BoilerLiquidRecipeSerializer::new);
         BoilerSolidRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("boiler_solid", BoilerSolidRecipeSerializer::new);
         BoilerTankRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("boiler_tank", BoilerTankRecipeSerializer::new);

@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 public class ITMenuTypes {
     public static final DeferredRegister<MenuType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.MENU_TYPES, ITLib.MODID);
 
-    public static final MultiblockContainer<AdvancedCokeOvenLogic.State, AdvancedCokeOvenMenu> ADVANCED_COKE_OVEN_MENU = registerMultiblock(ITLib.GUIID_Advanced_Coke_Oven, AdvancedCokeOvenMenu::makeServer, AdvancedCokeOvenMenu::makeClient);
     public static final MultiblockContainer<BoilerLiquidLogic.State, BoilerLiquidMenu> BOILER_LIQUID_MENU = registerMultiblock(ITLib.GUIID_Boiler_Liquid, BoilerLiquidMenu::makeServer, BoilerLiquidMenu::makeClient);
     public static final MultiblockContainer<BoilerSolidLogic.State, BoilerSolidMenu> BOILER_SOLID_MENU = registerMultiblock(ITLib.GUIID_Boiler_Solid, BoilerSolidMenu::makeServer, BoilerSolidMenu::makeClient);
     public static final MultiblockContainer<BoilerTankLogic.State, BoilerTankMenu> BOILER_TANK_MENU = registerMultiblock(ITLib.GUIID_Boiler_Tank, BoilerTankMenu::makeServer, BoilerTankMenu::makeClient);

@@ -16,7 +16,6 @@
   "block.immersivetechnology.trash_fluid": "Trash Fluids",
   "block.immersivetechnology.trash_item": "Trash Items",
 
-  "block.immersivetechnology.advanced_coke_oven": "Advanced Coke Oven",
   "block.immersivetechnology.alternator": "Alternator",
   "block.immersivetechnology.boiler_liquid": "Boiler Liquid Fuel Burner",
   "block.immersivetechnology.boiler_tank": "Boiler Tank",
@@ -53,7 +52,6 @@
   "item.immersivetechnology.salt_slurry_bucket": "Salt Slurry Bucket",
   "item.immersivetechnology.steam_bucket": "Steam Bucket",
 
-  "desc.immersiveengineering.info.multiblock.IE:AdvancedCokeOven": "Advanced Coke Oven",
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "Boiler",
 
   "gui.immersivetechnology.empty": "Empty",

@@ -11,7 +11,6 @@ public class ITSoundProvider extends SoundDefinitionsProvider {
 
     @Override
     public void registerSounds() {
-        add(ITSounds.advancedCokeOven.get(), definition().subtitle("subtitles." + ITLib.MODID + ".advanced_coke_oven").with(sound(ITLib.MODID + ":advanced_coke_oven").volume(1.0f)));
         add(ITSounds.alternator.get(), definition().subtitle("subtitles." + ITLib.MODID + ".alternator").with(sound(ITLib.MODID + ":alternator").volume(1.0f)));
         add(ITSounds.boiler_liquid.get(), definition().subtitle("subtitles." + ITLib.MODID + ".boiler_liquid").with(sound(ITLib.MODID + ":boiler_liquid").volume(1.0f)));
         add(ITSounds.coolingTower.get(), definition().subtitle("subtitles." + ITLib.MODID + ".cooling_tower").with(sound(ITLib.MODID + ":cooling_tower").volume(1.0f)));

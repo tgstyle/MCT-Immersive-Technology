@@ -1,12 +1,9 @@
 package mctmods.immersivetechnology.common.integration.jei;
 
-import mctmods.immersivetechnology.client.gui.AdvancedCokeOvenScreen;
 import mctmods.immersivetechnology.client.gui.BoilerTankScreen;
 import mctmods.immersivetechnology.client.gui.DistillerScreen;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerTankRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
-import mctmods.immersivetechnology.common.integration.jei.category.ITAdvancedCokeOvenCategory;
 import mctmods.immersivetechnology.common.integration.jei.category.ITBoilerTankCategory;
 import mctmods.immersivetechnology.common.integration.jei.category.ITDistillerCategory;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -39,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import static mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea.fillTooltip;
 
@@ -54,28 +50,24 @@ public class JEIIntegration implements IModPlugin {
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        registration.addRecipeCategories(new ITAdvancedCokeOvenCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITBoilerTankCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITDistillerCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(JEIRecipeTypes.ADVANCED_COKE_OVEN, getAdvancedCokeOvenRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_TANK, getBoilerRecipes());
         registration.addRecipes(JEIRecipeTypes.DISTILLER, getDistillerRecipes());
     }
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack(), JEIRecipeTypes.ADVANCED_COKE_OVEN);
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_TANK.iconStack(), JEIRecipeTypes.BOILER_TANK);
         registration.addRecipeCatalyst(ITMultiblockProvider.DISTILLER.iconStack(), JEIRecipeTypes.DISTILLER);
     }
 
     @Override
     public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registration) {
-        registration.addRecipeClickArea(AdvancedCokeOvenScreen.class, 56, 36, 14, 14, JEIRecipeTypes.ADVANCED_COKE_OVEN);
         registration.addRecipeClickArea(DistillerScreen.class, 76, 37, 24, 17, JEIRecipeTypes.DISTILLER);
 
         registration.addGuiContainerHandler(BoilerTankScreen.class, new IGuiContainerHandler<>() {
@@ -138,13 +130,6 @@ public class JEIIntegration implements IModPlugin {
 
     @Override
     public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) { ingredientManager = jeiRuntime.getIngredientManager(); }
-
-    private List<AdvancedCokeOvenRecipe> getAdvancedCokeOvenRecipes() { return getFiltered($ -> true); }
-
-    private List<AdvancedCokeOvenRecipe> getFiltered(Predicate<AdvancedCokeOvenRecipe> include) {
-        assert Minecraft.getInstance().level != null;
-        return AdvancedCokeOvenRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().filter(include).toList();
-    }
 
     private List<BoilerTankRecipe> getBoilerRecipes() {
         assert Minecraft.getInstance().level != null;

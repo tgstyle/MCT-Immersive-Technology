@@ -1,8 +1,10 @@
 {
   "values": [
-    "immersivetechnology:advanced_coke_oven",
     "immersivetechnology:alternator",
+    "immersivetechnology:boiler_liquid",
+    "immersivetechnology:boiler_solid",
     "immersivetechnology:boiler_tank",
+    "immersivetechnology:cooling_tower",
     "immersivetechnology:distiller",
     "immersivetechnology:gas_turbine",
     "immersivetechnology:solar_melter",

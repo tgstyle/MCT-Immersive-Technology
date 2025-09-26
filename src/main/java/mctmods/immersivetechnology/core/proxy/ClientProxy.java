@@ -73,7 +73,6 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
 
             BlockEntityRenderers.register(ITBlockEntities.OPEN_BARREL.get(), context -> new OpenBarrelRenderer());
 
-            MenuScreens.register(ITMenuTypes.ADVANCED_COKE_OVEN_MENU.getType(), AdvancedCokeOvenScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_LIQUID_MENU.getType(), BoilerLiquidScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_SOLID_MENU.getType(), BoilerSolidScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_TANK_MENU.getType(), BoilerTankScreen::new);
@@ -89,9 +88,6 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
             instance.addEntry(parent_category, builder.create());
             InnerNode<ResourceLocation, ManualEntry> multiblock_category = parent_category.getOrCreateSubnode(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "it_multiblocks"), 0);
             ManualEntry.ManualEntryBuilder multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "advanced_coke_oven"));
-            instance.addEntry(multiblock_category, multiblock.create());
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "alternator"));
             instance.addEntry(multiblock_category, multiblock.create());
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());

@@ -40,7 +40,6 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
     }
 
     private void registerMultiblocks() {
-        registerMultiblock(ITMultiblockProvider.ADVANCED_COKE_OVEN);
         registerMultiblock(ITMultiblockProvider.ALTERNATOR);
         registerMultiblock(ITMultiblockProvider.BOILER_LIQUID);
         registerMultiblock(ITMultiblockProvider.BOILER_SOLID);

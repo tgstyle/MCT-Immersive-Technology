@@ -63,7 +63,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
         ITLib.IT_LOGGER.info("Generating Multiblock Splits");
 
         genericMultiblock("alternator", "metal");
-        genericMultiblock("advanced_coke_oven", "stone");
         genericMultiblock("solar_reflector", "metal");
         genericMultiblock("cooling_tower", "stone");
 
