@@ -21,9 +21,8 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
         double minZ = Double.MAX_VALUE, maxZ = Double.MIN_VALUE;
         InputStream is = GenericShape.class.getResourceAsStream(path);
         boolean hasVertices = false;
-        if (is == null) {
-            ITLib.IT_LOGGER.error("OBJ file not found at resource path: {} for multiblock: {}", path, multiblockName);
-        } else {
+        if (is == null) { ITLib.IT_LOGGER.error("OBJ file not found at resource path: {} for multiblock: {}", path, multiblockName); }
+        else {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                 String line;
                 while ((line = br.readLine()) != null) {
@@ -44,34 +43,30 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
                         }
                     }
                 }
-                if (!hasVertices) {
-                    ITLib.IT_LOGGER.warn("OBJ file loaded but no vertices ('v ') found in: {} for multiblock: {}", path, multiblockName);
-                }
-            } catch (Exception e) {
-                ITLib.IT_LOGGER.error("Error reading OBJ file at {} for multiblock: {}", path, multiblockName, e);
-            }
+                if (!hasVertices) { ITLib.IT_LOGGER.warn("OBJ file loaded but no vertices ('v ') found in: {} for multiblock: {}", path, multiblockName); }
+            } catch (Exception e) { ITLib.IT_LOGGER.error("Error reading OBJ file at {} for multiblock: {}", path, multiblockName, e); }
         }
         double dx = maxX - minX;
         double dy = maxY - minY;
         double dz = maxZ - minZ;
-        if (dx <= 0 || dy <= 0 || dz <= 0 || !hasVertices) {
-            return new int[]{0, 0, 0};
-        } else {
-            return new int[]{(int) Math.ceil(dx), (int) Math.ceil(dy), (int) Math.ceil(dz)};
-        }
+        if (dx <= 0 || dy <= 0 || dz <= 0 || !hasVertices) { return new int[]{0, 0, 0}; }
+        else { return new int[]{computeDim(dx), computeDim(dy), computeDim(dz)}; }
     }
 
-    private static VoxelShape toVoxelShape(AABB aabb) {
-        if (aabb == null) return Shapes.empty();
-        return Shapes.create(aabb);
+    private static int computeDim(double d) {
+        double floor = Math.floor(d);
+        double frac = d - floor;
+        double epsilon = 0.1;
+        if (frac > 0 && frac < epsilon) { return (int) floor; }
+        else { return (int) Math.ceil(d); }
     }
+
+    private static VoxelShape toVoxelShape(AABB aabb) { return (aabb == null) ? Shapes.empty() : Shapes.create(aabb); }
 
     @Override
     public VoxelShape apply(BlockPos posInMultiblock) {
         List<AABB> list = getShape(posInMultiblock);
-        if (list.isEmpty()) {
-            return Shapes.block();
-        }
+        if (list.isEmpty()) { return Shapes.block(); }
         VoxelShape base = toVoxelShape(list.get(0));
         if (list.size() > 1) {
             return list.subList(1, list.size()).stream()
