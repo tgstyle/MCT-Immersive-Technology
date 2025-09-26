@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.multiblocks;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITClientMultiblockProperties;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.DistillerShape;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
@@ -15,7 +16,7 @@ import java.util.function.Consumer;
 public class Distiller extends ITTemplateMultiblock {
     public static final Distiller INSTANCE = new Distiller();
 
-    public Distiller() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/distiller"), new BlockPos(1,1,1), new BlockPos(1,1,1), new BlockPos(3,3,3), ITMultiblockProvider.DISTILLER); }
+    public Distiller() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/distiller"), new BlockPos(1,1,1), new BlockPos(1,1,1), new BlockPos(DistillerShape.WIDTH,DistillerShape.HEIGHT,DistillerShape.LENGTH), ITMultiblockProvider.DISTILLER); }
 
     @Override
     public float getManualScale() { return 16; }

@@ -55,9 +55,7 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
 
     private static int computeDim(double d) {
         double floor = Math.floor(d);
-        double frac = d - floor;
-        double epsilon = 0.1;
-        if (frac > 0 && frac < epsilon) { return (int) floor; }
+        if (d == floor) { return (int) floor; }
         else { return (int) Math.ceil(d); }
     }
 

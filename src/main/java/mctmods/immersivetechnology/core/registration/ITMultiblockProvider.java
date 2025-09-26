@@ -109,7 +109,7 @@ public class ITMultiblockProvider {
     public static final MultiblockRegistration<SolarMelterLogic.State> SOLAR_MELTER =
             metal(new SolarMelterLogic(), "solar_melter")
                     .structure(() -> getMBTemplate.apply("solar_melter"))
-                    .redstone(s -> s.rsState, SolarTowerLogic.REDSTONE_POI)
+                    .redstone(s -> s.rsState, SolarMelterLogic.REDSTONE_POI)
                     .gui(ITMenuTypes.SOLAR_MELTER_MENU)
                     .component(new ITDisassemblyTicker<>(new BlockPos(4, 0, 8)), state -> null)
                     .build();

@@ -26,9 +26,9 @@ public class BoilerLiquidShape extends GenericShape {
 
     static {
         int[] dims = loadDimensions("boiler_liquid", "metal");
-        WIDTH = dims[0];
-        HEIGHT = dims[1];
-        LENGTH = dims[2];
+        WIDTH = dims[0] + DATA.padShape[0];
+        HEIGHT = dims[1] + DATA.padShape[1];
+        LENGTH = dims[2] + DATA.padShape[2];
         ITLib.IT_LOGGER.info("Loaded dimensions for boiler_liquid: W={}, H={}, L={}", WIDTH, HEIGHT, LENGTH);
         if (WIDTH <= 0 || HEIGHT <= 0 || LENGTH <= 0) {
             ITLib.IT_LOGGER.error("Invalid dimensions loaded for boiler_liquid multiblock.");

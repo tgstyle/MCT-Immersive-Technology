@@ -10,7 +10,9 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPos
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
-import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.FullblockShape;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarReflectorShape;
+import mctmods.immersivetechnology.common.util.multiblock.MultiblockData;
+import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
@@ -39,12 +41,31 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic.State>, IServerTickableComponent<SolarReflectorLogic.State>, IClientTickableComponent<SolarReflectorLogic.State> {
-    public static final BlockPos DANCE_SOUND_POI = new BlockPos(1, 2, 1);
-    public static final BlockPos LINK_POI = new BlockPos(1, 0, 1);
-    private static final BlockPos SUN_POI = new BlockPos(1, 2, 1);
-    public static final BlockPos BEAM_POI = new BlockPos(1, 2, 1);
     private static final float BASE_FREQ = 2.09f;
     public static final float DANCE_DURATION = 63f;
+
+    private static final MultiblockData DATA = SolarReflectorShape.DATA;
+    private static final int WIDTH = SolarReflectorShape.WIDTH;
+    private static final int LENGTH = SolarReflectorShape.LENGTH;
+
+    private static BlockPos getPosFromIndex(int index) {
+        int layerSize = WIDTH * LENGTH;
+        int y = index / layerSize;
+        int remainder = index % layerSize;
+        int x = remainder % WIDTH;
+        int z = remainder / WIDTH;
+        return new BlockPos(x, y, z);
+    }
+
+    private static PoIJSONSchema findPOI(String name) {
+        for (PoIJSONSchema poi : DATA.pointsOfInterest) { if (poi.name.equals(name)) { return poi; } }
+        throw new RuntimeException("Missing POI: " + name);
+    }
+
+    public static final BlockPos DANCE_SOUND_POI = getPosFromIndex(findPOI("sound").position);
+    public static final BlockPos LINK_POI = getPosFromIndex(findPOI("link").position);
+    private static final BlockPos SUN_POI = getPosFromIndex(findPOI("sun").position);
+    public static final BlockPos BEAM_POI = getPosFromIndex(findPOI("beam").position);
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
@@ -279,7 +300,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) { return LazyOptional.empty(); }
 
     @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return FullblockShape.GETTER; }
+    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SolarReflectorShape.GETTER; }
 
     @Override
     public State createInitialState(IInitialMultiblockContext<State> context) { return new State(context); }

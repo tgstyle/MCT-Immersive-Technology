@@ -25,6 +25,8 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarMelterS
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.network.ITOSDSyncBlock;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
+import mctmods.immersivetechnology.common.util.multiblock.MultiblockData;
+import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITSound;
@@ -45,7 +47,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
@@ -55,6 +56,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -80,16 +82,40 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
     public static final double HEAT_INCREASE_FACTOR = 0.00568;
     public static final int PROGRESS_LOSS_OFF_TEMP = 2;
     public static final float SPEED_MULTIPLIER = 1.0f;
-    public static final CapabilityPosition INPUT_FLUID_POI = new CapabilityPosition(1, 1, 2, RelativeBlockFace.BACK);
-    public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(1, 1, 0, RelativeBlockFace.FRONT);
-    public static final MultiblockFace ITEM_OUTPUT_REF_POI = new MultiblockFace(-3, 1, 1, RelativeBlockFace.BACK);
-    public static final BlockPos REDSTONE_POI = new BlockPos(2, 1, 1);
-    public static final BlockPos RUNNING_SOUND_POI = new BlockPos(1, 2, 1);
-    public static final BlockPos LINK_POI = new BlockPos(1, 1, 1);
-    public static final BlockPos PARTICLE_POI = new BlockPos(1, 2, 1);
-    private static final BlockPos REFLECTOR_POI = new BlockPos(1, 21, 1);
-    private static final BlockPos SUN_POI = new BlockPos(1, 21, 1);
-    private final RedstoneControl<State> rsControl = new RedstoneControl<>(state -> state.rsState, REDSTONE_POI);
+
+    private static final MultiblockData DATA = SolarMelterShape.DATA;
+    private static final int WIDTH = SolarMelterShape.WIDTH;
+    private static final int LENGTH = SolarMelterShape.LENGTH;
+
+    private static BlockPos getPosFromIndex(int index) {
+        int layerSize = WIDTH * LENGTH;
+        int y = index / layerSize;
+        int remainder = index % layerSize;
+        int x = remainder % WIDTH;
+        int z = remainder / WIDTH;
+        return new BlockPos(x, y, z);
+    }
+
+    private static PoIJSONSchema findPOI(String name) {
+        for (PoIJSONSchema poi : DATA.pointsOfInterest) { if (poi.name.equals(name)) { return poi; } }
+        throw new RuntimeException("Missing POI: " + name);
+    }
+
+    private static CapabilityPosition findCapPos(String name) {
+        PoIJSONSchema poi = findPOI(name);
+        return new CapabilityPosition(getPosFromIndex(poi.position), poi.relativeFace);
+    }
+
+    public static final CapabilityPosition INPUT_FLUID_POI = findCapPos("fluid_input");
+    public static final CapabilityPosition OUTPUT_FLUID_POI = findCapPos("fluid_output");
+    private static final PoIJSONSchema ITEM_OUTPUT_JSON_POI = findPOI("item_output");
+    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITEM_OUTPUT_JSON_POI.relativeFace, getPosFromIndex(ITEM_OUTPUT_JSON_POI.position));
+    public static final BlockPos REDSTONE_POI = getPosFromIndex(findPOI("redstone").position);
+    public static final BlockPos RUNNING_SOUND_POI = getPosFromIndex(findPOI("sound").position);
+    public static final BlockPos LINK_POI = getPosFromIndex(findPOI("link").position);
+    public static final BlockPos PARTICLE_POI = getPosFromIndex(findPOI("particle").position);
+    private static final BlockPos REFLECTOR_POI = getPosFromIndex(findPOI("reflector").position);
+    private static final BlockPos SUN_POI = getPosFromIndex(findPOI("sun").position);
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
@@ -335,7 +361,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             if (position.posInMultiblock().equals(INPUT_FLUID_POI.posInMultiblock()) && (position.side() == null || position.side() == INPUT_FLUID_POI.side())) { return state.inputCap.cast(ctx); }
             if (position.posInMultiblock().equals(OUTPUT_FLUID_POI.posInMultiblock()) && (position.side() == null || position.side() == OUTPUT_FLUID_POI.side())) { return state.outputCap.cast(ctx); }
         }
-        if (cap == ForgeCapabilities.ITEM_HANDLER) { if (ITEM_OUTPUT_REF_POI.posInMultiblock().equals(position.posInMultiblock())) { return state.itemOutputCap.cast(ctx); } return state.invCap.cast(ctx); }
+        if (cap == ForgeCapabilities.ITEM_HANDLER) { if (ITEM_OUTPUT_POI.posInMultiblock().equals(position.posInMultiblock())) { return state.itemOutputCap.cast(ctx); } return state.invCap.cast(ctx); }
         return LazyOptional.empty();
     }
 
@@ -343,7 +369,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SolarMelterShape.GETTER; }
 
     @Override
-    public State createInitialState(IInitialMultiblockContext<State> ctx) { State state = new State(ctx); rsControl.wrapState(state); return state; }
+    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override
     public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
@@ -403,7 +429,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
             this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
             this.itemOutputCap = new StoredCapability<>(new ITWrappingItemHandler(inventory, false, true, Lists.newArrayList(new ITWrappingItemHandler.IntRange(SLOT_INPUT_EMPTY, SLOT_INPUT_EMPTY + 1), new ITWrappingItemHandler.IntRange(SLOT_OUTPUT_FILLED, SLOT_OUTPUT_FILLED + 1))));
-            this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, ITEM_OUTPUT_REF_POI);
+            this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, ITEM_OUTPUT_POI);
             InitialMultiblockContext<State> initialContext = (InitialMultiblockContext<State>) ctx;
             MultiblockOrientation orientation = initialContext.orientation();
             BlockPos masterOffset = initialContext.masterOffset();

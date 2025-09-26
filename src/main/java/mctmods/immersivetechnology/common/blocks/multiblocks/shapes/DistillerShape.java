@@ -1,115 +1,82 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.shapes;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
+import mctmods.immersivetechnology.common.util.multiblock.MultiblockData;
+import mctmods.immersivetechnology.common.util.multiblock.MultiblockDataLoader;
+import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public class DistillerShape extends GenericShape {
-    public static final DistillerShape GETTER = new DistillerShape();
+    public static final MultiblockData DATA = MultiblockDataLoader.loadMultiblockData("distiller");
+    public static final Function<BlockPos, VoxelShape> GETTER;
+    public static int WIDTH, HEIGHT, LENGTH;
+
+    private final List<List<AABB>> SHAPES;
+
+    private DistillerShape(List<List<AABB>> shapes) { this.SHAPES = shapes; }
+
+    static {
+        int[] dims = loadDimensions("distiller", "metal");
+        WIDTH = dims[0] + DATA.padShape[0];
+        HEIGHT = dims[1] + DATA.padShape[1];
+        LENGTH = dims[2] + DATA.padShape[2];
+        ITLib.IT_LOGGER.info("Loaded dimensions for distiller: W={}, H={}, L={}", WIDTH, HEIGHT, LENGTH);
+        if (WIDTH <= 0 || HEIGHT <= 0 || LENGTH <= 0) {
+            ITLib.IT_LOGGER.error("Invalid dimensions loaded for distiller multiblock.");
+            GETTER = FullblockShape.GETTER;
+            WIDTH = HEIGHT = LENGTH = 0;
+        } else {
+            int num = WIDTH * HEIGHT * LENGTH;
+            List<List<AABB>> shapes = new ArrayList<>(num);
+            boolean error = false;
+            if (DATA.shapeAABB == null) { error = true; }
+            else if (!DATA.shapeAABB.isEmpty()) {
+                for (JsonElement posElem : DATA.shapeAABB) {
+                    List<AABB> posShapes = new ArrayList<>();
+                    if (posElem.isJsonNull() || !posElem.isJsonArray()) { shapes.add(posShapes); continue; }
+                    JsonArray posArray = posElem.getAsJsonArray();
+                    for (JsonElement aabbElem : posArray) {
+                        JsonArray aabbArray = aabbElem.getAsJsonArray();
+                        double[] vals = new double[6];
+                        for (int i = 0; i < 6; i++) { vals[i] = aabbArray.get(i).getAsDouble(); }
+                        posShapes.add(new AABB(vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]));
+                    }
+                    shapes.add(posShapes);
+                }
+                if (shapes.size() != num) { error = true; }
+            }
+            if (error) {
+                ITLib.IT_LOGGER.error("Failed to load shapes for distiller multiblock.");
+                GETTER = FullblockShape.GETTER;
+            } else {
+                boolean allFull = shapes.isEmpty() || shapes.stream().allMatch(List::isEmpty);
+                if (allFull) { GETTER = FullblockShape.GETTER; }
+                else { GETTER = new DistillerShape(shapes); }
+            }
+        }
+    }
 
     @NotNull
     @Override
     protected List<AABB> getShape(BlockPos posInMultiblock) {
-        final int bX = posInMultiblock.getX();
-        final int bY = posInMultiblock.getY();
-        final int bZ = posInMultiblock.getZ();
-
-        List<AABB> main = new ArrayList<>();
-
-        if (bX == 0 && bY == 0 && bZ == 0) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
+        int x = posInMultiblock.getX();
+        int y = posInMultiblock.getY();
+        int z = posInMultiblock.getZ();
+        if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT || z < 0 || z >= LENGTH) { return new ArrayList<>(); }
+        int index = y * (WIDTH * LENGTH) + z * WIDTH + x;
+        if (index < SHAPES.size()) {
+            List<AABB> shape = SHAPES.get(index);
+            if (!shape.isEmpty()) { return shape; }
         }
-        if (bX == 0 && bY == 0 && bZ == 1) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 0 && bY == 0 && bZ == 2) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 0 && bY == 1 && bZ == 0) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.3125D, 1.0000D));
-            main.add(new AABB(0.0000D, 0.3125D, 0.0000D, 0.0625D, 1.0000D, 0.0625D));
-            main.add(new AABB(0.0625D, 0.3125D, 0.0625D, 1.0000D, 1.0000D, 1.0000D));
-            main.add(new AABB(0.9375D, 0.3125D, 0.0000D, 1.0000D, 1.0000D, 0.0625D));
-        }
-        if (bX == 0 && bY == 1 && bZ == 1) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 0 && bY == 1 && bZ == 2) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 0 && bY == 2 && bZ == 0) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.0625D, 0.5000D, 0.0625D));
-            main.add(new AABB(0.0000D, 0.1875D, 0.0625D, 1.0000D, 0.5000D, 1.0000D));
-            main.add(new AABB(0.0625D, 0.0000D, 0.0625D, 1.0000D, 0.1875D, 1.0000D));
-            main.add(new AABB(0.0625D, 0.1875D, 0.0000D, 1.0000D, 0.5000D, 0.0625D));
-        }
-        if (bX == 0 && bY == 2 && bZ == 1) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.9375D, 1.0000D, 0.5000D, 1.0000D));
-            main.add(new AABB(0.0000D, 0.1875D, 0.0000D, 1.0000D, 0.5000D, 0.9375D));
-            main.add(new AABB(0.0625D, 0.0000D, 0.0000D, 1.0000D, 0.1875D, 0.9375D));
-        }
-        if (bX == 1 && bY == 0 && bZ == 0) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 1 && bY == 0 && bZ == 1) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 1 && bY == 0 && bZ == 2) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.5000D, 1.0000D));
-        }
-        if (bX == 1 && bY == 1 && bZ == 0) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 1 && bY == 1 && bZ == 1) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 1 && bY == 2 && bZ == 0) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 1 && bY == 2 && bZ == 1) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 2 && bY == 0 && bZ == 0) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 2 && bY == 0 && bZ == 1) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 2 && bY == 0 && bZ == 2) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.5000D, 1.0000D));
-            main.add(new AABB(0.0000D, 0.5000D, 0.5000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 2 && bY == 1 && bZ == 0) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 1.0000D, 0.3125D, 1.0000D));
-            main.add(new AABB(0.0000D, 0.3125D, 0.0625D, 0.9375D, 1.0000D, 1.0000D));
-            main.add(new AABB(0.9375D, 0.3125D, 0.0000D, 1.0000D, 1.0000D, 0.0625D));
-        }
-        if (bX == 2 && bY == 1 && bZ == 1) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.9375D, 1.0000D, 0.9375D));
-            main.add(new AABB(0.0000D, 0.0000D, 0.9375D, 1.0000D, 0.3125D, 1.0000D));
-            main.add(new AABB(0.9375D, 0.0000D, 0.0000D, 1.0000D, 0.3125D, 0.9375D));
-            main.add(new AABB(0.9375D, 0.3125D, 0.9375D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 2 && bY == 1 && bZ == 2) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.5000D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 2 && bY == 2 && bZ == 0) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0625D, 0.9375D, 1.0000D, 1.0000D));
-            main.add(new AABB(0.0000D, 0.6875D, 0.0000D, 1.0000D, 1.0000D, 0.0625D));
-            main.add(new AABB(0.9375D, 0.0000D, 0.0000D, 1.0000D, 0.6875D, 0.0625D));
-            main.add(new AABB(0.9375D, 0.6875D, 0.0625D, 1.0000D, 1.0000D, 1.0000D));
-        }
-        if (bX == 2 && bY == 2 && bZ == 1) {
-            main.add(new AABB(0.0000D, 0.0000D, 0.0000D, 0.9375D, 1.0000D, 0.9375D));
-            main.add(new AABB(0.0000D, 0.6875D, 0.9375D, 1.0000D, 1.0000D, 1.0000D));
-            main.add(new AABB(0.9375D, 0.0000D, 0.9375D, 1.0000D, 0.6875D, 1.0000D));
-            main.add(new AABB(0.9375D, 0.6875D, 0.0000D, 1.0000D, 1.0000D, 0.9375D));
-        }
-
-        return main;
+        return List.of(new AABB(0D, 0D, 0D, 1D, 1D, 1D));
     }
 }
