@@ -41,12 +41,12 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
@@ -61,17 +61,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     private static final double FRICTION = 60;
 
     private static final MultiblockData DATA = SteamTurbineShape.DATA;
-    private static final int WIDTH = SteamTurbineShape.WIDTH;
-    private static final int LENGTH = SteamTurbineShape.LENGTH;
-
-    private static BlockPos getPosFromIndex(int index) {
-        int layerSize = WIDTH * LENGTH;
-        int y = index / layerSize;
-        int remainder = index % layerSize;
-        int x = remainder % WIDTH;
-        int z = remainder / WIDTH;
-        return new BlockPos(x, y, z);
-    }
 
     private static PoIJSONSchema findPOI(String name) {
         for (PoIJSONSchema poi : DATA.pointsOfInterest) { if (poi.name.equals(name)) { return poi; } }
@@ -80,25 +69,23 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
     private static CapabilityPosition findCapPos(String name) {
         PoIJSONSchema poi = findPOI(name);
-        return new CapabilityPosition(getPosFromIndex(poi.position), poi.relativeFace);
+        return new CapabilityPosition(new BlockPos(poi.x, poi.y, poi.z), poi.relativeFace);
     }
 
     public static final CapabilityPosition INPUT_FLUID_POI = findCapPos("fluid_input");
     public static final CapabilityPosition OUTPUT_FLUID_POI = findCapPos("fluid_output");
-    public static final BlockPos REDSTONE_POI = getPosFromIndex(findPOI("redstone").position);
-    public static final BlockPos RUNNING_SOUND_POI = getPosFromIndex(findPOI("sound_running").position);
-    public static final BlockPos SMOKE_POI = getPosFromIndex(findPOI("smoke").position);
+    public static final BlockPos REDSTONE_POI = new BlockPos(findPOI("redstone").x, findPOI("redstone").y, findPOI("redstone").z);
+    public static final BlockPos RUNNING_SOUND_POI = new BlockPos(findPOI("sound_running").x, findPOI("sound_running").y, findPOI("sound_running").z);
+    public static final BlockPos SMOKE_POI = new BlockPos(findPOI("smoke").x, findPOI("smoke").y, findPOI("smoke").z);
     public static final CapabilityPosition ROTATIONAL_OUTPUT_POI = findCapPos("mech_output");
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         float targetLevel = ITLib.remapRange(0, MAX_SPEED, 0.5f, 1.0f, state.speed);
-        if (state.currentLevel == 0f) { state.currentLevel = targetLevel; }
-        else { state.currentLevel = state.currentLevel * 0.9f + targetLevel * 0.1f; }
+        if (state.currentLevel == 0f) { state.currentLevel = targetLevel; } else { state.currentLevel = state.currentLevel * 0.9f + targetLevel * 0.1f; }
         float targetPitch = ITLib.remapRange(0, MAX_SPEED, 0.5f, 1.5f, state.speed);
-        if (state.currentPitch == 0f) { state.currentPitch = targetPitch; }
-        else { state.currentPitch = state.currentPitch * 0.95f + targetPitch * 0.05f; }
+        if (state.currentPitch == 0f) { state.currentPitch = targetPitch; } else { state.currentPitch = state.currentPitch * 0.95f + targetPitch * 0.05f; }
         if (state.currentPitch < 0.5f) { state.currentPitch = 0.5f; }
         float base = (state.speed / (float) MAX_SPEED) * 72f;
         float step = base;
@@ -148,7 +135,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         }
     }
 
-    @Override
+    @SuppressWarnings("StatementWithEmptyBody") @Override
     public void tickServer(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         boolean previouslyActive = state.active;
@@ -179,14 +166,12 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         if (!canRun) {
             state.burnRemaining = 0;
             state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate());
-        }
-        else {
+        } else {
             if (state.burnRemaining > 0) {
                 state.burnRemaining--;
                 state.speed = Math.min(MAX_SPEED, state.speed + state.inertia.getSpeedUpRate());
                 state.active = true;
-            }
-            else {
+            } else {
                 FluidStack fluid = state.tanks.input.getFluid();
                 SteamTurbineRecipe recipe = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fluid);
                 if (recipe != null && fluid.getAmount() >= recipe.input.getAmount()) {
@@ -198,10 +183,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
                     state.burnRemaining = recipe.getTotalProcessTime() - 1;
                     state.speed = Math.min(MAX_SPEED, state.speed + state.inertia.getSpeedUpRate());
                     state.active = true;
-                }
-                else {
-                    state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate());
-                }
+                } else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
             }
         }
         boolean changed = false;
@@ -224,6 +206,8 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         }
     }
 
+    private static double particleXZSpeed() { return ApiUtils.RANDOM.nextDouble(-0.015625, 0.015625); }
+
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         State state = ctx.getState();
@@ -236,14 +220,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         }
         return LazyOptional.empty();
     }
-
-    @Override
-    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
-
-    @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SteamTurbineShape.GETTER; }
-
-    private static double particleXZSpeed() { return ApiUtils.RANDOM.nextDouble(-0.015625, 0.015625); }
 
     private record MechanicalEnergyProvider(State state) implements IMechanicalEnergyProvider {
         @Override
@@ -259,6 +235,12 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         @Override
         public double getFriction() { return FRICTION; }
     }
+
+    @Override
+    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
+
+    @Override
+    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SteamTurbineShape.GETTER; }
 
     public static class State implements IMultiblockState {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();

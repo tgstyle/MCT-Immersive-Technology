@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.logic;
 
-import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
+import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
@@ -12,7 +12,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlock
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
-import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.api.MechanicalCapabilities;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
@@ -32,9 +31,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 import java.util.List;
 import java.util.Objects;
@@ -48,8 +47,6 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     private static final double FRICTION = 12;
     private static final int MAX_SPEED = 1800;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AlternatorShape.DATA.pointsOfInterest);
-    private static final int WIDTH = AlternatorShape.WIDTH;
-    private static final int LENGTH = AlternatorShape.LENGTH;
 
     public static final BlockPos RUNNING_SOUND_POI = getSinglePos("running_sound");
     public static final BlockPos ROTATIONAL_INPUT_POI = getSinglePos("rotational_input");
@@ -59,20 +56,12 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     private static final RelativeBlockFace ENERGY_RIGHT_FACING = getFacing("energy_right");
     private static final RelativeBlockFace ROTATIONAL_INPUT_FACING = getFacing("rotational_input");
 
-    private static BlockPos getSinglePos(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> unflatten(poi.position)).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: " + name)); }
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> unflatten(poi.position)).collect(ImmutableList.toImmutableList()); }
+    private static BlockPos getSinglePos(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.x, poi.y, poi.z)).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: " + name)); }
+    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.x, poi.y, poi.z)).collect(ImmutableList.toImmutableList()); }
     private static RelativeBlockFace getFacing(String name) {
         List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> poi.relativeFace).distinct().toList();
         if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
         return facings.get(0);
-    }
-
-    private static BlockPos unflatten(int index) {
-        int y = index / (WIDTH * LENGTH);
-        int temp = index % (WIDTH * LENGTH);
-        int z = temp / WIDTH;
-        int x = temp % WIDTH;
-        return new BlockPos(x, y, z);
     }
 
     @Override
@@ -226,7 +215,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     }
 
     public static class State implements IMultiblockState {
-        public final MutableEnergyStorage energy = new MutableEnergyStorage(ENERGY_CAPACITY, 0, 12288);
+        public final AveragingEnergyStorage energy = new AveragingEnergyStorage(ENERGY_CAPACITY);
         private final List<CapabilityReference<IEnergyStorage>> energyOutputsLeft;
         private final List<CapabilityReference<IEnergyStorage>> energyOutputsRight;
         public boolean active = false;
@@ -248,7 +237,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
         @Override
         public void writeSaveNBT(CompoundTag nbt) {
-            EnergyHelper.serializeTo(energy, nbt);
+            nbt.put("energy", energy.serializeNBT());
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
             nbt.putFloat("torqueMultiplier", torqueMultiplier);
@@ -256,11 +245,10 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
         @Override
         public void readSaveNBT(CompoundTag nbt) {
-            EnergyHelper.deserializeFrom(energy, nbt);
+            energy.deserializeNBT(nbt.get("energy"));
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             torqueMultiplier = nbt.getFloat("torqueMultiplier");
-            energy.setStoredEnergy(Math.max(0, energy.getEnergyStored()));
         }
 
         @Override

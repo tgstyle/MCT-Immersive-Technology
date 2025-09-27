@@ -43,6 +43,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.CoolingTowerLogic.State;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,12 +51,10 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.State>, IServerTickableComponent<CoolingTowerLogic.State>, IClientTickableComponent<CoolingTowerLogic.State> {
+public class CoolingTowerLogic implements IMultiblockLogic<State>, IServerTickableComponent<State>, IClientTickableComponent<CoolingTowerLogic.State> {
     public static final int INPUT_TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
     public static final int OUTPUT_TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(CoolingTowerShape.DATA.pointsOfInterest);
-    private static final int WIDTH = CoolingTowerShape.WIDTH;
-    private static final int LENGTH = CoolingTowerShape.LENGTH;
 
     public static final List<BlockPos> FLUID_INPUT_POIS = getPosList("fluid_input");
     public static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
@@ -64,7 +63,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     public static final RelativeBlockFace INPUT_FACING = getFacing("fluid_input");
     public static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
 
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> unflatten(poi.position)).collect(ImmutableList.toImmutableList()); }
+    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.x, poi.y, poi.z)).collect(ImmutableList.toImmutableList()); }
 
     private static RelativeBlockFace getFacing(String name) {
         List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> poi.relativeFace).distinct().toList();
@@ -72,33 +71,23 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         return facings.get(0);
     }
 
-    private static BlockPos unflatten(int index) {
-        int y = index / (WIDTH * LENGTH);
-        int temp = index % (WIDTH * LENGTH);
-        int z = temp / WIDTH;
-        int x = temp % WIDTH;
-        return new BlockPos(x, y, z);
-    }
-
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
-        IMultiblockLevel mlevel = ctx.getLevel();
-        Level level = mlevel.getRawLevel();
         if (state.active) { state.soundCooldown = 40; } else if (state.soundCooldown > 0) { state.soundCooldown--; }
-        spawnParticles(ctx, state, level);
+        spawnParticles(ctx, state, ctx.getLevel().getRawLevel());
         handleSounds(ctx, state);
     }
 
     private void spawnParticles(IMultiblockContext<State> ctx, State state, Level level) {
-        if (!state.active) return;
+        if (!state.active) { return; }
         RandomSource rand = RandomSource.create();
         int particleSetting = Minecraft.getInstance().options.particles().get().ordinal();
-        if (particleSetting == 2 || particleSetting == 1 && rand.nextInt(3) == 0) return;
+        if (particleSetting == 2 || particleSetting == 1 && rand.nextInt(3) == 0) { return; }
         LocalPlayer player = Minecraft.getInstance().player;
         Vec3 particleVec = ctx.getLevel().toAbsolute(new Vec3(PARTICLE_POS.getX() + 0.5, PARTICLE_POS.getY() + 0.5, PARTICLE_POS.getZ() + 0.5));
         assert player != null;
-        if (particleVec.distanceToSqr(player.position()) > 64 * 64) return;
+        if (particleVec.distanceToSqr(player.position()) > 64 * 64) { return; }
         for (int i = 0; i < 3; i++) {
             double px = particleVec.x + (rand.nextFloat() * 4f - 2f);
             double py = particleVec.y + rand.nextFloat() * 2f;
@@ -108,11 +97,11 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     }
 
     private void handleSounds(IMultiblockContext<State> ctx, State state) {
-        if (state.isSoundPlaying.getAsBoolean()) return;
+        if (state.isSoundPlaying.getAsBoolean()) { return; }
         Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(SOUND_POS.getX() + 0.5, SOUND_POS.getY() + 0.5, SOUND_POS.getZ() + 0.5));
         state.isSoundPlaying = ITSound.startSound(() -> state.soundCooldown > 0, ctx.isValid(), soundVec, ITSounds.coolingTower, () -> {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null) return 0f;
+            if (player == null) { return 0f; }
             return (float) Math.max(1 - Math.sqrt(player.distanceToSqr(soundVec)) / 16, 0);
         }, () -> 1f);
     }
@@ -127,7 +116,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         for (int i = state.processQueue.size() - 1; i >= 0; i--) {
             CoolingTowerProcess process = state.processQueue.get(i);
             process.tick(state);
-            if (process.isComplete()) state.processQueue.remove(i);
+            if (process.isComplete()) { state.processQueue.remove(i); }
         }
         if (state.processQueue.size() < getProcessQueueMaxLength()) {
             FluidStack in0 = state.tanks.input0.getFluid();
@@ -166,9 +155,9 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         BlockPos[] outputPositions = FLUID_OUTPUT_POIS.toArray(new BlockPos[0]);
         for (int i = 0; i < 3; i++) {
             ITMarkableFluidTank tank = state.tanks.outputTanks()[i];
-            if (tank.getFluidAmount() == 0) continue;
+            if (tank.getFluidAmount() == 0) { continue; }
             CapabilityReference<IFluidHandler> ref = state.fluidOutputs[i];
-            if (!ref.isPresent()) continue;
+            if (!ref.isPresent()) { continue; }
             IFluidHandler handler = ref.get();
             BlockPos portAbs = ctx.getLevel().toAbsolute(outputPositions[i]);
             Direction outputDir = ctx.getLevel().toAbsolute(OUTPUT_FACING);
@@ -181,14 +170,14 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             if (isPipe && !hadTag) { fs.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
             int accepted = handler.fill(fs, FluidAction.SIMULATE);
             if (!hadTag) { fs.removeChildTag(IFluidPipe.NBT_PRESSURIZED); }
-            if (accepted <= 0) continue;
+            if (accepted <= 0) { continue; }
             FluidStack toFill = Utils.copyFluidStackWithAmount(fs, Math.min(fs.getAmount(), accepted), false);
             if (isPipe) { toFill.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
             int drained = handler.fill(toFill, FluidAction.EXECUTE);
             tank.drain(drained, FluidAction.EXECUTE);
             dirty = true;
         }
-        if (dirty) ctx.markMasterDirty();
+        if (dirty) { ctx.markMasterDirty(); }
     }
 
     @Override
@@ -199,14 +188,14 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             RelativeBlockFace side = position.side();
             if (FLUID_INPUT_POIS.contains(localPos) && (side == null || side == INPUT_FACING)) {
                 int index = FLUID_INPUT_POIS.indexOf(localPos);
-                if (index == 0) return state.input0Cap.cast(ctx);
-                if (index == 1) return state.input1Cap.cast(ctx);
+                if (index == 0) { return state.input0Cap.cast(ctx); }
+                if (index == 1) { return state.input1Cap.cast(ctx); }
             }
             if (FLUID_OUTPUT_POIS.contains(localPos) && (side == null || side == OUTPUT_FACING)) {
                 int index = FLUID_OUTPUT_POIS.indexOf(localPos);
-                if (index == 0) return state.output0Cap.cast(ctx);
-                if (index == 1) return state.output1Cap.cast(ctx);
-                if (index == 2) return state.output2Cap.cast(ctx);
+                if (index == 0) { return state.output0Cap.cast(ctx); }
+                if (index == 1) { return state.output1Cap.cast(ctx); }
+                if (index == 2) { return state.output2Cap.cast(ctx); }
             }
         }
         return LazyOptional.empty();

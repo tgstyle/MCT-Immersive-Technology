@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.logic;
 
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
+import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
@@ -16,7 +17,6 @@ import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler;
@@ -55,6 +55,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.DistillerLogic.State;
 
 import java.util.List;
 import java.util.Set;
@@ -62,7 +63,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State> {
+public class DistillerLogic implements IMultiblockLogic<State>, IServerTickableComponent<State>, IClientTickableComponent<DistillerLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -71,17 +72,6 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     public static final int TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
 
     private static final MultiblockData DATA = DistillerShape.DATA;
-    private static final int WIDTH = DistillerShape.WIDTH;
-    private static final int LENGTH = DistillerShape.LENGTH;
-
-    private static BlockPos getPosFromIndex(int index) {
-        int layerSize = WIDTH * LENGTH;
-        int y = index / layerSize;
-        int remainder = index % layerSize;
-        int x = remainder % WIDTH;
-        int z = remainder / WIDTH;
-        return new BlockPos(x, y, z);
-    }
 
     private static PoIJSONSchema findPOI(String name) {
         for (PoIJSONSchema poi : DATA.pointsOfInterest) { if (poi.name.equals(name)) { return poi; } }
@@ -90,22 +80,22 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     private static CapabilityPosition findCapPos(String name) {
         PoIJSONSchema poi = findPOI(name);
-        return new CapabilityPosition(getPosFromIndex(poi.position), poi.relativeFace);
+        return new CapabilityPosition(new BlockPos(poi.x, poi.y, poi.z), poi.relativeFace);
     }
 
     public static final CapabilityPosition INPUT_FLUID_POI = findCapPos("fluid_input");
     public static final CapabilityPosition OUTPUT_FLUID_POI = findCapPos("fluid_output");
     private static final Set<CapabilityPosition> ENERGY_POI = Set.of(findCapPos("energy_input"));
     private static final PoIJSONSchema ITEM_OUTPUT_JSON_POI = findPOI("item_output");
-    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITEM_OUTPUT_JSON_POI.relativeFace, getPosFromIndex(ITEM_OUTPUT_JSON_POI.position));
-    public static final BlockPos REDSTONE_POI = getPosFromIndex(findPOI("redstone").position);
+    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITEM_OUTPUT_JSON_POI.relativeFace, new BlockPos(ITEM_OUTPUT_JSON_POI.x, ITEM_OUTPUT_JSON_POI.y, ITEM_OUTPUT_JSON_POI.z));
+    public static final BlockPos REDSTONE_POI = new BlockPos(findPOI("redstone").x, findPOI("redstone").y, findPOI("redstone").z);
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         if (!state.isSoundPlaying.getAsBoolean()) {
             PoIJSONSchema soundPoi = findPOI("sound");
-            BlockPos soundBlockPos = getPosFromIndex(soundPoi.position);
+            BlockPos soundBlockPos = new BlockPos(soundPoi.x, soundPoi.y, soundPoi.z);
             Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(soundBlockPos.getX() + 0.5, soundBlockPos.getY() + 0.5, soundBlockPos.getZ() + 0.5));
             state.isSoundPlaying = ITSound.startSound(
                     () -> state.active, ctx.isValid(), soundPos, ITSounds.distiller,

@@ -17,6 +17,7 @@ import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarReflectorLogic.State;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -40,32 +41,21 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic.State>, IServerTickableComponent<SolarReflectorLogic.State>, IClientTickableComponent<SolarReflectorLogic.State> {
+public class SolarReflectorLogic implements IMultiblockLogic<State>, IServerTickableComponent<State>, IClientTickableComponent<SolarReflectorLogic.State> {
     private static final float BASE_FREQ = 2.09f;
     public static final float DANCE_DURATION = 63f;
 
     private static final MultiblockData DATA = SolarReflectorShape.DATA;
-    private static final int WIDTH = SolarReflectorShape.WIDTH;
-    private static final int LENGTH = SolarReflectorShape.LENGTH;
-
-    private static BlockPos getPosFromIndex(int index) {
-        int layerSize = WIDTH * LENGTH;
-        int y = index / layerSize;
-        int remainder = index % layerSize;
-        int x = remainder % WIDTH;
-        int z = remainder / WIDTH;
-        return new BlockPos(x, y, z);
-    }
 
     private static PoIJSONSchema findPOI(String name) {
         for (PoIJSONSchema poi : DATA.pointsOfInterest) { if (poi.name.equals(name)) { return poi; } }
         throw new RuntimeException("Missing POI: " + name);
     }
 
-    public static final BlockPos DANCE_SOUND_POI = getPosFromIndex(findPOI("sound").position);
-    public static final BlockPos LINK_POI = getPosFromIndex(findPOI("link").position);
-    private static final BlockPos SUN_POI = getPosFromIndex(findPOI("sun").position);
-    public static final BlockPos BEAM_POI = getPosFromIndex(findPOI("beam").position);
+    public static final BlockPos DANCE_SOUND_POI = new BlockPos(findPOI("sound").x, findPOI("sound").y, findPOI("sound").z);
+    public static final BlockPos LINK_POI = new BlockPos(findPOI("link").x, findPOI("link").y, findPOI("link").z);
+    private static final BlockPos SUN_POI = new BlockPos(findPOI("sun").x, findPOI("sun").y, findPOI("sun").z);
+    public static final BlockPos BEAM_POI = new BlockPos(findPOI("beam").x, findPOI("beam").y, findPOI("beam").z);
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
@@ -84,8 +74,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                 state.entry_mirrorTilt = state.animation_mirrorTilt;
                 state.baseRotation = (state.entry_supportRotation % 360 + 360) % 360;
                 state.danceSoundStarted = false;
-            }
-            else if (state.animationPhase == -4) { state.baseRotation = (state.animation_supportRotation % 360 + 360) % 360; }
+            } else if (state.animationPhase == -4) { state.baseRotation = (state.animation_supportRotation % 360 + 360) % 360; }
         }
         if (state.danceStartTick != state.prevDanceStartTick) {
             state.prevDanceStartTick = state.danceStartTick;
@@ -105,8 +94,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                 state.animation_maxTicks = 60;
                 state.animationTicks = 60;
                 state.animationPhase = 0;
-            }
-            else {
+            } else {
                 if (targetPhase == -4) {
                     float deltaRot = 0;
                     float deltaTilt = 0 - state.animation_mirrorTilt;
@@ -141,13 +129,11 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                         state.animation_maxTicks = 60;
                         state.animationTicks = 60;
                         state.animationPhase = 0;
-                    }
-                    else {
+                    } else {
                         state.animationPhase = -4;
                         state.baseRotation = (state.animation_supportRotation % 360 + 360) % 360;
                     }
-                }
-                else if (state.animationPhase == 0) {
+                } else if (state.animationPhase == 0) {
                     float targetTilt = state.computeTargetMirrorTilt();
                     float deltaTilt = targetTilt - state.animation_mirrorTilt;
                     state.start_supportRotation = state.animation_supportRotation;
@@ -157,11 +143,9 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                     state.animation_maxTicks = 60;
                     state.animationTicks = 60;
                     state.animationPhase = 1;
-                }
-                else if (state.animationPhase == 1) { state.animationPhase = 2; }
+                } else if (state.animationPhase == 1) { state.animationPhase = 2; }
             }
-        }
-        else if (state.animationPhase == -2 || state.animationPhase == -3) {
+        } else if (state.animationPhase == -2 || state.animationPhase == -3) {
             float currentDancePhase = (gameTime - state.danceStartTick) * 0.05f;
             if (isLoop) {
                 currentDancePhase = ((currentDancePhase % DANCE_DURATION) + DANCE_DURATION) % DANCE_DURATION;
@@ -210,7 +194,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                                 if (player == null) { return 0f; }
                                 float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 32, 1);
                                 long gt = 0;
-                                if (Minecraft.getInstance().level != null) gt = Minecraft.getInstance().level.getGameTime();
+                                if (Minecraft.getInstance().level != null) { gt = Minecraft.getInstance().level.getGameTime(); }
                                 float cdp = (gt - state.danceStartTick) * 0.05f;
                                 if (cdp < 0) { return 0f; }
                                 if (isLoop) { cdp = ((cdp % DANCE_DURATION) + DANCE_DURATION) % DANCE_DURATION; }
@@ -225,8 +209,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                     state.danceSoundStarted = true;
                 }
             }
-        }
-        else if (state.animationPhase == -4) {
+        } else if (state.animationPhase == -4) {
             state.baseRotation += 0.5f;
             state.baseRotation = (state.baseRotation % 360 + 360) % 360;
             state.animation_supportRotation = state.baseRotation;
@@ -264,10 +247,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             ctx.requestMasterBESync();
         }
         boolean isActive = state.isMirrorTaken && state.getSolarCollectorStrength() > 0;
-        if (state.active != isActive) {
-            state.active = isActive;
-            update = true;
-        }
+        if (state.active != isActive) { state.active = isActive; update = true; }
         long oldDanceStartTick = state.danceStartTick;
         int oldGlobalAnimationPhase = state.globalAnimationPhase;
         if (!state.isMirrorTaken) {
@@ -277,14 +257,12 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                 if (gd != null) {
                     state.danceStartTick = gd.danceStartTick;
                     state.globalAnimationPhase = gd.animationPhase;
-                }
-                else {
+                } else {
                     state.danceStartTick = -1;
                     state.globalAnimationPhase = -4;
                 }
             }
-        }
-        else {
+        } else {
             state.danceStartTick = -1;
             state.globalAnimationPhase = -4;
         }

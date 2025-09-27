@@ -1,1 +1,1 @@
-{"shapeAABB":[],"pointsOfInterest":[{"name":"sound","position":22},{"name":"link","position":4},{"name":"sun","position":22},{"name":"beam","position":22}],"padShape":[0,0,0]}
+{"shapeAABB":[],"pointsOfInterest":[{"name":"sound","x":1,"y":2,"z":1,"facing":null},{"name":"link","x":1,"y":0,"z":1,"facing":null},{"name":"sun","x":1,"y":2,"z":1,"facing":null},{"name":"beam","x":1,"y":2,"z":1,"facing":null}],"padShape":[0,0,0]}

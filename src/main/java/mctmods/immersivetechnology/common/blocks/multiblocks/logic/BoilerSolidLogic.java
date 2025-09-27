@@ -61,7 +61,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     private static final int WIDTH = BoilerSolidShape.WIDTH;
     private static final int LENGTH = BoilerSolidShape.LENGTH;
 
-    public static final BlockPos REDSTONE_POI = RAW_POIS.stream().filter(poi -> poi.name.equals("redstone")).map(poi -> unflatten(poi.position)).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: redstone"));
+    public static final BlockPos REDSTONE_POI = RAW_POIS.stream().filter(poi -> poi.name.equals("redstone")).map(poi -> new BlockPos(poi.x, poi.y, poi.z)).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: redstone"));
     public static final List<BlockPos> IGNITION_POI = getPosList("ignition");
     private static final List<BlockPos> ITEM_INPUT_POI = getPosList("item_input");
     private static final List<BlockPos> HEAT_OUTPUT_POI = getPosList("heat_output");
@@ -71,19 +71,11 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     private static final RelativeBlockFace HEAT_OUTPUT_FACING = getFacing("heat_output");
     public static final RelativeBlockFace IGNITION_FACING = getFacing("ignition");
 
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> unflatten(poi.position)).collect(ImmutableList.toImmutableList()); }
+    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.x, poi.y, poi.z)).collect(ImmutableList.toImmutableList()); }
     private static RelativeBlockFace getFacing(String name) {
         List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> poi.relativeFace).distinct().toList();
         if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
         return facings.get(0);
-    }
-
-    private static BlockPos unflatten(int index) {
-        int y = index / (WIDTH * LENGTH);
-        int temp = index % (WIDTH * LENGTH);
-        int z = temp / WIDTH;
-        int x = temp % WIDTH;
-        return new BlockPos(x, y, z);
     }
 
     @Override
@@ -164,11 +156,8 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             if (state.burnRemaining > 0) {
                 boolean consumeThisTick = fullMode || (level.getGameTime() % MULTIPLIER == 0);
                 if (consumeThisTick) { state.burnRemaining--; }
-                if (fullMode) {
-                    state.heatLevel = Math.min(state.heatLevel + state.heatPerTick, WORKING_HEAT_LEVEL);
-                } else {
-                    state.heatLevel = Math.max(state.heatLevel - HEAT_LOSS_PER_TICK, PILOT_HEAT);
-                }
+                if (fullMode) { state.heatLevel = Math.min(state.heatLevel + state.heatPerTick, WORKING_HEAT_LEVEL); }
+                else { state.heatLevel = Math.max(state.heatLevel - HEAT_LOSS_PER_TICK, PILOT_HEAT); }
             } else {
                 state.totalBurnTime = 0;
                 ItemStack fuelStack = state.inventory.getStackInSlot(INPUT_FUEL_SLOT);
@@ -182,7 +171,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                 if (recipe != null) {
                     heatPerTick = recipe.getHeatPerTick();
                     consumeAmount = recipe.input.getCount();
-                    if (burnTimePerItem <= 0) burnTimePerItem = 200;
+                    if (burnTimePerItem <= 0) { burnTimePerItem = 200; }
                 }
                 if (burnTimePerItem <= 0) {
                     state.pilotLit = false;
@@ -212,20 +201,16 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         ResourceLocation boilerRL = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler_solid");
         final Block boilerBlock = ForgeRegistries.BLOCKS.getValue(boilerRL);
         if (boilerBlock == null) { return; }
-        for (int y = 0; y < BoilerSolidShape.HEIGHT; y++) {
-            for (int z = 0; z < LENGTH; z++) {
-                for (int x = 0; x < WIDTH; x++) {
-                    BlockPos relPos = new BlockPos(x, y, z);
-                    BlockPos absPos = ctx.getLevel().toAbsolute(relPos);
-                    BlockState curr = level.getBlockState(absPos);
-                    if (curr.getBlock() == boilerBlock && curr.hasProperty(IEProperties.ACTIVE)) {
-                        BlockState newState = curr.setValue(IEProperties.ACTIVE, active);
-                        if (!curr.equals(newState)) {
-                            level.setBlock(absPos, newState, 19);
-                            level.updateNeighborsAt(absPos, boilerBlock);
-                            if (level.isClientSide) { Minecraft.getInstance().levelRenderer.setBlockDirty(absPos, curr, newState); }
-                        }
-                    }
+        for (int y = 0; y < BoilerSolidShape.HEIGHT; y++) for (int z = 0; z < LENGTH; z++) for (int x = 0; x < WIDTH; x++) {
+            BlockPos relPos = new BlockPos(x, y, z);
+            BlockPos absPos = ctx.getLevel().toAbsolute(relPos);
+            BlockState curr = level.getBlockState(absPos);
+            if (curr.getBlock() == boilerBlock && curr.hasProperty(IEProperties.ACTIVE)) {
+                BlockState newState = curr.setValue(IEProperties.ACTIVE, active);
+                if (!curr.equals(newState)) {
+                    level.setBlock(absPos, newState, 19);
+                    level.updateNeighborsAt(absPos, boilerBlock);
+                    if (level.isClientSide) { Minecraft.getInstance().levelRenderer.setBlockDirty(absPos, curr, newState); }
                 }
             }
         }
@@ -268,9 +253,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             if (l != null) {
                 if (ForgeHooks.getBurnTime(single, RecipeType.SMELTING) > 0) { return true; }
                 return BoilerSolidRecipe.findRecipe(l, single) != null;
-            } else {
-                return true;
-            }
+            } else { return true; }
         }
 
         @Override

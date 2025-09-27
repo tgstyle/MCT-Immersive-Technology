@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.logic;
 
+import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
@@ -7,7 +8,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockL
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
-import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.HeatCapabilities;
 import mctmods.immersivetechnology.api.capability.IHeatConsumer;
@@ -53,8 +53,6 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     private static final int PROGRESS_LOSS_PER_TICK = 1;
     private static final double WORKING_HEAT_LEVEL = 100.0;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerTankShape.DATA.pointsOfInterest);
-    private static final int WIDTH = BoilerTankShape.WIDTH;
-    private static final int LENGTH = BoilerTankShape.LENGTH;
 
     private static final List<BlockPos> FLUID_INPUT_POI = getPosList("fluid_input");
     private static final List<BlockPos> FLUID_OUTPUT_POI = getPosList("fluid_output");
@@ -67,24 +65,16 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     private static final Map<BlockPos, RelativeBlockFace> ITEM_INPUT_FACINGS = getFacings("item_input");
     private static final Map<BlockPos, RelativeBlockFace> ITEM_OUTPUT_FACINGS = getFacings("item_output");
 
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> unflatten(poi.position)).collect(ImmutableList.toImmutableList()); }
+    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.x, poi.y, poi.z)).collect(ImmutableList.toImmutableList()); }
 
     private static Map<BlockPos, RelativeBlockFace> getFacings(String name) {
         return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).collect(ImmutableMap.toImmutableMap(poi -> {
             assert poi != null;
-            return unflatten(poi.position);
+            return new BlockPos(poi.x, poi.y, poi.z);
         }, poi -> {
             assert poi != null;
             return poi.relativeFace;
         }));
-    }
-
-    private static BlockPos unflatten(int index) {
-        int y = index / (WIDTH * LENGTH);
-        int temp = index % (WIDTH * LENGTH);
-        int z = temp / WIDTH;
-        int x = temp % WIDTH;
-        return new BlockPos(x, y, z);
     }
 
     @Override
@@ -97,10 +87,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         double previousHeatLevel = state.heatLevel;
         state.heatLevel = heatLevel;
         boolean isActive = heatLevel >= WORKING_HEAT_LEVEL && state.recipeTimeRemaining > 0;
-        if (state.active != isActive) {
-            state.active = isActive;
-            update = true;
-        }
+        if (state.active != isActive) { state.active = isActive; update = true; }
         if (previousHeatLevel != state.heatLevel) { update = true; }
         if (heatLevel >= WORKING_HEAT_LEVEL) {
             if (state.recipeTimeRemaining > 0) {

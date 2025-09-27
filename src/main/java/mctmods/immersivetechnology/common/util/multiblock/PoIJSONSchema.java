@@ -5,7 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class PoIJSONSchema {
     public String name;
-    public int position;
+    public int x;
+    public int y;
+    public int z;
     @SerializedName("facing")
     public String facingString;
     public RelativeBlockFace relativeFace;

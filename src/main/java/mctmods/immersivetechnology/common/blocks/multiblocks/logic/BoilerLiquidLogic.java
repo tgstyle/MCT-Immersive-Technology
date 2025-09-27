@@ -10,6 +10,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
+import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.api.HeatCapabilities;
 import mctmods.immersivetechnology.api.capability.IHeatConsumer;
 import mctmods.immersivetechnology.api.capability.IHeatProvider;
@@ -43,7 +44,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
-import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -58,10 +58,8 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     private static final double WORKING_HEAT_LEVEL = 100.0;
     public static final double PILOT_HEAT = 20.0;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerLiquidShape.DATA.pointsOfInterest);
-    private static final int WIDTH = BoilerLiquidShape.WIDTH;
-    private static final int LENGTH = BoilerLiquidShape.LENGTH;
 
-    public static final BlockPos REDSTONE_POI = RAW_POIS.stream().filter(poi -> poi.name.equals("redstone")).map(poi -> unflatten(poi.position)).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: redstone"));
+    public static final BlockPos REDSTONE_POI = RAW_POIS.stream().filter(poi -> poi.name.equals("redstone")).map(poi -> new BlockPos(poi.x, poi.y, poi.z)).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: redstone"));
     public static final List<BlockPos> IGNITION_POI = getPosList("ignition");
     private static final List<BlockPos> FLUID_INPUT_POI = getPosList("fluid_input");
     private static final List<BlockPos> HEAT_OUTPUT_POI = getPosList("heat_output");
@@ -71,19 +69,11 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     private static final RelativeBlockFace HEAT_OUTPUT_FACING = getFacing("heat_output");
     public static final RelativeBlockFace IGNITION_FACING = getFacing("ignition");
 
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> unflatten(poi.position)).collect(ImmutableList.toImmutableList()); }
+    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.x, poi.y, poi.z)).collect(ImmutableList.toImmutableList()); }
     private static RelativeBlockFace getFacing(String name) {
         List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> poi.relativeFace).distinct().toList();
         if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
         return facings.get(0);
-    }
-
-    private static BlockPos unflatten(int index) {
-        int y = index / (WIDTH * LENGTH);
-        int temp = index % (WIDTH * LENGTH);
-        int z = temp / WIDTH;
-        int x = temp % WIDTH;
-        return new BlockPos(x, y, z);
     }
 
     @Override
@@ -142,10 +132,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
         boolean fullMode = state.rsState.isEnabled(ctx) && hasWater;
         boolean isActive = state.pilotLit && fullMode && state.heatLevel >= WORKING_HEAT_LEVEL;
-        if (state.active != isActive) {
-            state.active = isActive;
-            update = true;
-        }
+        if (state.active != isActive) { state.active = isActive; update = true; }
         if (!state.pilotLit) {
             state.heatLevel = Math.max(state.heatLevel - delta, 0);
             state.burnRemaining = 0;
@@ -167,9 +154,8 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                     if (fullMode) {
                         int drainAmount = state.lastFuel.input.getAmount();
                         drained = state.tanks.input1.drain(drainAmount, FluidAction.EXECUTE);
-                        if (drained.getAmount() == drainAmount) {
-                            state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), WORKING_HEAT_LEVEL);
-                        } else {
+                        if (drained.getAmount() == drainAmount) { state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), WORKING_HEAT_LEVEL); }
+                        else {
                             drained = state.tanks.input1.drain(1, FluidAction.EXECUTE);
                             if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
                             else { state.pilotLit = false; state.heatLevel = Math.max(state.heatLevel - delta, 0); }
@@ -314,9 +300,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     }
 
     public record BoilerTank(ITMarkableFluidTank input1) {
-        public BoilerTank(Consumer<Void> markDirty) {
-            this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty));
-        }
+        public BoilerTank(Consumer<Void> markDirty) { this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty)); }
 
         public static BoilerTank makeClient() { return new BoilerTank(v -> {}); }
 
@@ -326,9 +310,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             return tag;
         }
 
-        public void readNBT(CompoundTag tag) {
-            this.input1.readFromNBT(tag.getCompound("input1"));
-        }
+        public void readNBT(CompoundTag tag) { this.input1.readFromNBT(tag.getCompound("input1")); }
 
         @SuppressWarnings("unused")
         public int getCapacity() { return TANK_CAPACITY; }
