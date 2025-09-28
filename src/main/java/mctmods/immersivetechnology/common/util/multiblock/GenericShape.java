@@ -5,16 +5,21 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
 public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
 
-    protected static int[] loadDimensions(String multiblockName, String category) {
+    public static final AABB FULL_BLOCK = new AABB(0D, 0D, 0D, 1D, 1D, 1D);
+
+    public static int[] loadDimensions(String multiblockName, String category) {
         String path = "/assets/immersivetechnology/models/block/multiblock/" + category + "/obj/" + multiblockName + "/" + multiblockName + ".obj";
         double minX = Double.MAX_VALUE, maxX = Double.MIN_VALUE;
         double minY = Double.MAX_VALUE, maxY = Double.MIN_VALUE;
@@ -59,12 +64,34 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
         else { return (int) Math.ceil(d); }
     }
 
+    public static List<List<AABB>> loadShapes(MultiblockData data, int expectedNum) {
+        if (data.shapeAABB == null) { return null; }
+        List<List<AABB>> shapes = new ArrayList<>(expectedNum);
+        for (JsonElement posElem : data.shapeAABB) {
+            List<AABB> posShapes = new ArrayList<>();
+            if (posElem.isJsonNull() || !posElem.isJsonArray()) { shapes.add(posShapes); continue; }
+            JsonArray posArray = posElem.getAsJsonArray();
+            if (posArray.isEmpty()) { posShapes.add(FULL_BLOCK); }
+            for (JsonElement aabbElem : posArray) {
+                if (!aabbElem.isJsonArray()) { continue; }
+                JsonArray aabbArray = aabbElem.getAsJsonArray();
+                if (aabbArray.size() != 6) { continue; }
+                double[] vals = new double[6];
+                for (int i = 0; i < 6; i++) { vals[i] = aabbArray.get(i).getAsDouble(); }
+                posShapes.add(new AABB(vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]));
+            }
+            shapes.add(posShapes);
+        }
+        if (shapes.size() != expectedNum) { return null; }
+        return shapes;
+    }
+
     private static VoxelShape toVoxelShape(AABB aabb) { return (aabb == null) ? Shapes.empty() : Shapes.create(aabb); }
 
     @Override
     public VoxelShape apply(BlockPos posInMultiblock) {
         List<AABB> list = getShape(posInMultiblock);
-        if (list.isEmpty()) { return Shapes.block(); }
+        if (list.isEmpty()) { return Shapes.empty(); }
         VoxelShape base = toVoxelShape(list.get(0));
         if (list.size() > 1) {
             return list.subList(1, list.size()).stream()
@@ -75,4 +102,27 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
     }
 
     protected abstract List<AABB> getShape(BlockPos posInMultiblock);
+
+    public static class JsonShape extends GenericShape {
+        private final int WIDTH, HEIGHT, LENGTH;
+        private final List<List<AABB>> SHAPES;
+
+        public JsonShape(int width, int height, int length, List<List<AABB>> shapes) {
+            this.WIDTH = width;
+            this.HEIGHT = height;
+            this.LENGTH = length;
+            this.SHAPES = shapes;
+        }
+
+        @Override
+        protected List<AABB> getShape(BlockPos posInMultiblock) {
+            int x = posInMultiblock.getX();
+            int y = posInMultiblock.getY();
+            int z = posInMultiblock.getZ();
+            if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT || z < 0 || z >= LENGTH) { return new ArrayList<>(); }
+            int index = y * (WIDTH * LENGTH) + z * WIDTH + x;
+            if (index < SHAPES.size()) { return SHAPES.get(index); }
+            return List.of(FULL_BLOCK);
+        }
+    }
 }
