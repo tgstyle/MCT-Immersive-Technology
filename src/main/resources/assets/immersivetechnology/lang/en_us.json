@@ -11,6 +11,7 @@
   "block.immersivetechnology.creative_barrel": "Creative Fluid Barrel",
   "block.immersivetechnology.open_barrel": "Open Metal Barrel",
   "block.immersivetechnology.reinforced_coke_brick": "Reinforced Coke Brick",
+  "block.immersivetechnology.slab_reinforced_coke_brick": "Reinforced Coke Brick Slab",
   "block.immersivetechnology.steel_barrel": "Steel Metal Barrel",
   "block.immersivetechnology.trash_energy": "Trash Energy",
   "block.immersivetechnology.trash_fluid": "Trash Fluids",
@@ -40,7 +41,7 @@
   "fluid_type.immersivetechnology.salt_slurry": "Salt Slurry",
   "fluid_type.immersivetechnology.steam": "Steam",
 
-  "item.immersivetechnology.formation_tool": "Formation Tool",
+  "item.immersivetechnology.formation_tool": "Technology Wrench",
   "item.immersivetechnology.salt": "Salt",
 
   "item.immersivetechnology.chlorine_bucket": "Chlorine Bucket",

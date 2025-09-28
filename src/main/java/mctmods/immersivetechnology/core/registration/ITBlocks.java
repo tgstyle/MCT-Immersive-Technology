@@ -14,6 +14,7 @@ import mctmods.immersivetechnology.common.blocks.metal.TrashFluidBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.TrashItemBlock;
 import mctmods.immersivetechnology.common.blocks.metal.TrashItemBlockEntity;
 import mctmods.immersivetechnology.common.blocks.stone.ReinforcedCokeBrick;
+import mctmods.immersivetechnology.common.blocks.stone.slab.SlabReinforcedCokeBrick;
 import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.resources.ResourceLocation;
@@ -34,8 +35,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import static blusunrize.immersiveengineering.common.register.IEBlocks.METAL_PROPERTIES_NO_OCCLUSION;
 
 public class ITBlocks {
     public static final DeferredRegister<Block> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCKS, ITLib.MODID);
@@ -92,12 +91,18 @@ public class ITBlocks {
 
     public static final class Stone {
         public static BlockEntry<ReinforcedCokeBrick> REINFORCED_COKE_BRICK;
+        public static BlockEntry<SlabReinforcedCokeBrick> SLAB_REINFORCED_COKE_BRICK;
 
         private static void init() {
             REINFORCED_COKE_BRICK = new BlockEntry<>(
                     "reinforced_coke_brick",
                     () -> BlockBehaviour.Properties.copy(Blocks.STONE),
                     ReinforcedCokeBrick::new
+            );
+            SLAB_REINFORCED_COKE_BRICK = new BlockEntry<>(
+                    "slab_reinforced_coke_brick",
+                    () -> BlockBehaviour.Properties.copy(Blocks.STONE),
+                    SlabReinforcedCokeBrick::new
             );
         }
     }

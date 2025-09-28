@@ -28,6 +28,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraftforge.client.model.generators.*;
@@ -77,6 +78,8 @@ public class ITBlockStateProvider extends BlockStateProvider {
         genericMultiblockMirror("steam_turbine", "metal");
 
         createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("block/stone/reinforced_coke_brick", modLoc("block/stone/reinforced_coke_brick")));
+        ResourceLocation reinforcedTexture = modLoc("block/stone/reinforced_coke_brick");
+        createSlabModels(ITBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get(), reinforcedTexture, reinforcedTexture, reinforcedTexture);
         createSimpleBlock(ITBlocks.getBlock.apply("creative_barrel"), models().cubeAll("block/metal/creative_barrel", modLoc("block/metal/creative_barrel")));
 
         VariantBlockStateBuilder steelBuilder = getVariantBuilder(ITBlocks.getBlock.apply("steel_barrel"));
@@ -210,6 +213,19 @@ public class ITBlockStateProvider extends BlockStateProvider {
                         .addModel();
             }
         }
+    }
+
+    private void createSlabModels(Block block, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
+        String baseName = "slab_reinforced_coke_brick";
+        ModelFile bottomModel = models().slab(baseName, side, bottom, top);
+        ModelFile topModel = models().slabTop(baseName + "_top", side, bottom, top);
+        ModelFile doubleModel = models().cubeAll(baseName + "_double", top);
+        getVariantBuilder(block).forAllStatesExcept(state -> {
+            SlabType type = state.getValue(SlabBlock.TYPE);
+            if (type == SlabType.BOTTOM) { return ConfiguredModel.builder().modelFile(bottomModel).build(); }
+            else if (type == SlabType.TOP) { return ConfiguredModel.builder().modelFile(topModel).build(); }
+            else { return ConfiguredModel.builder().modelFile(doubleModel).build(); }
+        }, SlabBlock.WATERLOGGED);
     }
 
     private void createSimpleBlock(Block block, ModelFile model) { getVariantBuilder(block).partialState().setModels(new ConfiguredModel(model)); }
