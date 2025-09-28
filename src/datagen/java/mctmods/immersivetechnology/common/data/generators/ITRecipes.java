@@ -1,27 +1,30 @@
 package mctmods.immersivetechnology.common.data.generators;
 
 import blusunrize.immersiveengineering.api.IETags;
+import blusunrize.immersiveengineering.api.EnumMetals;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
+import blusunrize.immersiveengineering.common.register.IEBlocks;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.builder.*;
 import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.registration.ITBlocks;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import mctmods.immersivetechnology.core.registration.ITItems;
 import mctmods.immersivetechnology.core.registration.ITTags;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -36,7 +39,7 @@ public class ITRecipes extends RecipeProvider {
     @Override
     protected void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
         multiblockRecipes();
-        itemRecipes();
+        itemRecipes(consumer);
         recipesBoilerTank(consumer);
         recipesBoilerLiquid(consumer);
         recipesBoilerSolid(consumer);
@@ -48,9 +51,18 @@ public class ITRecipes extends RecipeProvider {
         recipesSolarTower(consumer);
     }
 
-    private void itemRecipes() {}
-
     private void multiblockRecipes() { ITLib.IT_LOGGER.info("Starting Multiblock Recipe Registration"); }
+
+    private void itemRecipes(@Nonnull Consumer<FinishedRecipe> consumer) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ITBlocks.Stone.REINFORCED_COKE_BRICK.get().asItem(), 1).define('P', IETags.getTagsFor(EnumMetals.STEEL).plate).define('C', IEBlocks.StoneDecoration.COKEBRICK.get()).pattern("P").pattern("C").unlockedBy("has_steel_plate", has(IETags.getTagsFor(EnumMetals.STEEL).plate)).save(consumer, toResourceLocation("reinforced_coke_brick"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ITBlocks.Stone.REINFORCED_COKE_BRICK.get().asItem(), 1).define('S', ITBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get()).pattern("S").pattern("S").unlockedBy("has_slab_reinforced_coke_brick", has(ITBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get())).save(consumer, toResourceLocation("reinforced_coke_brick_slab_back"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ITBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get().asItem(), 6).define('B', ITBlocks.Stone.REINFORCED_COKE_BRICK.get()).pattern("BBB").unlockedBy("has_reinforced_coke_brick", has(ITBlocks.Stone.REINFORCED_COKE_BRICK.get())).save(consumer, toResourceLocation("reinforced_coke_brick_slab"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ITBlocks.MetalDevices.TRASH_ITEM.get().asItem(), 1).define('P', IETags.getTagsFor(EnumMetals.IRON).plate).define('C', Tags.Items.CHESTS_WOODEN).define('S', IETags.getItemTag(IETags.getTagsFor(EnumMetals.IRON).sheetmetal)).pattern("PPP").pattern("PCP").pattern(" S ").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("trash_item"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ITBlocks.MetalDevices.TRASH_FLUID.get().asItem(), 1).define('P', IETags.getTagsFor(EnumMetals.IRON).plate).define('B', IEBlocks.MetalDevices.FLUID_PUMP.get()).define('S', IETags.getItemTag(IETags.getTagsFor(EnumMetals.IRON).sheetmetal)).pattern("PPP").pattern("PBP").pattern(" S ").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("trash_fluid"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ITBlocks.MetalDevices.TRASH_ENERGY.get().asItem(), 1).define('P', IETags.getTagsFor(EnumMetals.IRON).plate).define('C', IEBlocks.MetalDecoration.HV_COIL.get()).define('S', IETags.getItemTag(IETags.getTagsFor(EnumMetals.IRON).sheetmetal)).pattern("PPP").pattern("PCP").pattern(" S ").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("trash_energy"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ITBlocks.MetalDevices.OPEN_BARREL.get().asItem(), 1).define('S', Ingredient.of(IEBlocks.TO_SLAB.get(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.IRON).getId()).get())).define('B', Ingredient.of(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.IRON).get())).pattern("S S").pattern("B B").pattern("BBB").unlockedBy("has_slab_sheetmetal_iron", has(IEBlocks.TO_SLAB.get(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.IRON).getId()).get())).save(consumer, toResourceLocation("open_barrel"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ITBlocks.MetalDevices.STEEL_BARREL.get().asItem(), 1).define('S', Ingredient.of(IEBlocks.TO_SLAB.get(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.STEEL).getId()).get())).define('B', Ingredient.of(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.STEEL).get())).pattern("SSS").pattern("B B").pattern("BBB").unlockedBy("has_slab_sheetmetal_steel", has(IEBlocks.TO_SLAB.get(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.STEEL).getId()).get())).save(consumer, toResourceLocation("steel_barrel"));
+    }
 
     private void recipesBoilerTank(@Nonnull Consumer<FinishedRecipe> out) {
         BoilerTankRecipeBuilder.builder(FluidTags.WATER, 250).addOutput(ITFluids.STEAM.getStill(), 450).setTime(10).build(out, toResourceLocation("boiler_tank/water"));

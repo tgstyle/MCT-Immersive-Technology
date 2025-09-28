@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "S": {
+      "item": "immersivetechnology:slab_reinforced_coke_brick"
+    }
+  },
+  "pattern": [
+    "S",
+    "S"
+  ],
+  "result": {
+    "item": "immersivetechnology:reinforced_coke_brick"
+  },
+  "show_notification": true
+}
