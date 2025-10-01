@@ -73,7 +73,7 @@ public class ITBlockInterfaces {
         default Component getDisplayName() { return Component.literal(""); }
     }
 
-    public interface IGeneralMultiblock extends ITBlockInterfaces.BlockstateProvider {
+    public interface IGeneralMultiblock extends ITBlockInterfaces.BlockStateProvider {
         @Nullable
         IGeneralMultiblock master();
 
@@ -110,7 +110,7 @@ public class ITBlockInterfaces {
         default VoxelShape getSelectionShape(@Nullable CollisionContext ctx) { return getBlockBounds(ctx); }
     }
 
-    public interface IMirrorAble extends BlockstateProvider {
+    public interface IMirrorAble extends BlockStateProvider {
         default boolean getIsMirrored() {
             BlockState state = getState();
             if (state.hasProperty(IEProperties.MIRRORED)) { return state.getValue(IEProperties.MIRRORED); }
@@ -124,7 +124,7 @@ public class ITBlockInterfaces {
         }
     }
 
-    public interface IActiveState extends BlockstateProvider {
+    public interface IActiveState extends BlockStateProvider {
         default boolean getIsActive() {
             BlockState state = getState();
             if (state.hasProperty(IEProperties.ACTIVE)) { return state.getValue(IEProperties.ACTIVE); }
@@ -192,7 +192,7 @@ public class ITBlockInterfaces {
         void onDirectionalPlacement(Direction var1, float var2, float var3, float var4, LivingEntity var5);
     }
 
-    public interface IStateBasedDirectional extends IDirectionalBE, BlockstateProvider {
+    public interface IStateBasedDirectional extends IDirectionalBE, BlockStateProvider {
         Property<Direction> getFacingProperty();
 
         default Direction getFacing() {
@@ -208,7 +208,7 @@ public class ITBlockInterfaces {
         }
     }
 
-    public interface BlockstateProvider {
+    public interface BlockStateProvider {
         BlockState getState();
         void setState(BlockState var1);
     }

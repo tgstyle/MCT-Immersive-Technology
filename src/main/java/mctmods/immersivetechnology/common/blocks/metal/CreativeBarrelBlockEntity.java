@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
+import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.common.blocks.IEBaseBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
@@ -15,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -24,6 +24,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.HitResult;
@@ -38,7 +39,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEServerTickableBE, IEClientTickableBE {
@@ -55,7 +55,7 @@ public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBl
         @Override
         public @NotNull FluidStack getFluidInTank(int tank) {
             if (selectedFluid.isEmpty()) { return FluidStack.EMPTY; }
-            return new FluidStack(selectedFluid.getFluid(), Integer.MAX_VALUE);
+            return new FluidStack(selectedFluid, Integer.MAX_VALUE);
         }
 
         @Override
@@ -69,14 +69,14 @@ public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBl
 
         @Override
         public @NotNull FluidStack drain(FluidStack resource, FluidAction action) {
-            if (!selectedFluid.isEmpty() && resource.getFluid() == selectedFluid.getFluid()) { return new FluidStack(selectedFluid.getFluid(), resource.getAmount()); }
-            return FluidStack.EMPTY;
+            if (selectedFluid.isEmpty() || !selectedFluid.isFluidEqual(resource)) { return FluidStack.EMPTY; }
+            return new FluidStack(selectedFluid, resource.getAmount());
         }
 
         @Override
         public @NotNull FluidStack drain(int maxDrain, FluidAction action) {
-            if (!selectedFluid.isEmpty()) { return new FluidStack(selectedFluid.getFluid(), maxDrain); }
-            return FluidStack.EMPTY;
+            if (selectedFluid.isEmpty()) { return FluidStack.EMPTY; }
+            return new FluidStack(selectedFluid, maxDrain);
         }
     });
 
@@ -85,26 +85,28 @@ public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBl
     @Override
     public void tickServer() {
         if (!selectedFluid.isEmpty()) {
-            long[] thisTickOutput = {0};
+            long thisTickOutput = 0;
             for (Direction dir : Direction.values()) {
                 BlockPos neighborPos = worldPosition.relative(dir);
-                Object neighbor = Utils.getExistingTileEntity(level, neighborPos);
+                assert level != null;
+                BlockEntity neighbor = level.getBlockEntity(neighborPos);
                 boolean isPipe = neighbor instanceof FluidPipeBlockEntity;
-                FluidStack toPush = new FluidStack(selectedFluid.getFluid(), Integer.MAX_VALUE);
-                if (isPipe) {
-                    CompoundTag tag = new CompoundTag();
-                    tag.putBoolean("pressurized", true);
-                    toPush.setTag(tag);
-                }
-                FluidUtil.getFluidHandler(level, neighborPos, dir.getOpposite()).ifPresent(handler -> {
-                    int accepted = handler.fill(toPush, FluidAction.SIMULATE);
-                    if (accepted > 0) {
-                        int filled = handler.fill(new FluidStack(selectedFluid.getFluid(), accepted, toPush.getTag()), FluidAction.EXECUTE);
-                        thisTickOutput[0] += filled;
-                    }
-                });
+                FluidStack fs = selectedFluid.copy();
+                fs.setAmount(Integer.MAX_VALUE);
+                boolean hadTag = fs.hasTag() && fs.getTag().contains(IFluidPipe.NBT_PRESSURIZED);
+                if (isPipe && !hadTag) { fs.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
+                LazyOptional<IFluidHandler> cap = FluidUtil.getFluidHandler(level, neighborPos, dir.getOpposite());
+                if (!cap.isPresent()) { continue; }
+                IFluidHandler handler = cap.orElseThrow(AssertionError::new);
+                int accepted = handler.fill(fs, FluidAction.SIMULATE);
+                if (!hadTag) { fs.removeChildTag(IFluidPipe.NBT_PRESSURIZED); }
+                if (accepted <= 0) { continue; }
+                FluidStack toFill = Utils.copyFluidStackWithAmount(fs, accepted, false);
+                if (isPipe) { toFill.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
+                int filled = handler.fill(toFill, FluidAction.EXECUTE);
+                thisTickOutput += filled;
             }
-            outputAmount += thisTickOutput[0];
+            outputAmount += thisTickOutput;
         }
         if (++secondCounter >= 20) {
             lastOutputAmount = outputAmount;
@@ -120,14 +122,14 @@ public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBl
     @Override
     public void readCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
         if (nbt.contains("SelectedFluid")) {
-            ResourceLocation fluidId = ResourceLocation.parse(nbt.getString("SelectedFluid"));
-            if (ForgeRegistries.FLUIDS.containsKey(fluidId)) { this.selectedFluid = new FluidStack(Objects.requireNonNull(ForgeRegistries.FLUIDS.getValue(fluidId)), 1); }
+            selectedFluid = FluidStack.loadFluidStackFromNBT(nbt.getCompound("SelectedFluid"));
+            if (selectedFluid == null) selectedFluid = FluidStack.EMPTY;
         }
     }
 
     @Override
     public void writeCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
-        if (!selectedFluid.isEmpty()) { nbt.putString("SelectedFluid", Objects.requireNonNull(ForgeRegistries.FLUIDS.getKey(selectedFluid.getFluid())).toString()); }
+        if (!selectedFluid.isEmpty()) { nbt.put("SelectedFluid", selectedFluid.writeToNBT(new CompoundTag())); }
     }
 
     @Override
@@ -163,7 +165,7 @@ public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBl
             requestCooldown = 20;
         }
         if (selectedFluid.isEmpty()) { return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.text())}; }
-        Component fluidName = new FluidStack(selectedFluid.getFluid(), 1).getDisplayName();
+        Component fluidName = selectedFluid.getDisplayName();
         float value = ITClientConfig.perTickTrashCans.get() ? (float)lastOutputAmount / 20 : lastOutputAmount;
         return new Component[]{Component.translatable(TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE.text(), fluidName, value)};
     }
@@ -184,22 +186,27 @@ public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBl
     public void onBEPlaced(BlockPlaceContext ctx) { onBEPlaced(ctx.getItemInHand()); }
 
     public void setOutputFluid(FluidStack fluidStack) {
-        this.selectedFluid = fluidStack.isEmpty() ? FluidStack.EMPTY : new FluidStack(fluidStack.getFluid(), 1);
+        if (fluidStack.isEmpty()) {
+            this.selectedFluid = FluidStack.EMPTY;
+        } else {
+            this.selectedFluid = fluidStack.copy();
+            this.selectedFluid.setAmount(1);
+        }
         setChanged();
     }
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
-        if (!selectedFluid.isEmpty()) { tag.putString("SelectedFluid", Objects.requireNonNull(ForgeRegistries.FLUIDS.getKey(selectedFluid.getFluid())).toString()); }
+        if (!selectedFluid.isEmpty()) { tag.put("SelectedFluid", selectedFluid.writeToNBT(new CompoundTag())); }
     }
 
     @Override
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         if (tag.contains("SelectedFluid")) {
-            ResourceLocation fluidId = ResourceLocation.parse(tag.getString("SelectedFluid"));
-            if (ForgeRegistries.FLUIDS.containsKey(fluidId)) { this.selectedFluid = new FluidStack(Objects.requireNonNull(ForgeRegistries.FLUIDS.getValue(fluidId)), 1); }
+            selectedFluid = FluidStack.loadFluidStackFromNBT(tag.getCompound("SelectedFluid"));
+            if (selectedFluid == null) selectedFluid = FluidStack.EMPTY;
         }
     }
 
@@ -208,8 +215,8 @@ public class CreativeBarrelBlockEntity extends IEBaseBlockEntity implements IEBl
             CompoundTag tag = stack.getTag();
             assert tag != null;
             if (tag.contains("SelectedFluid")) {
-                ResourceLocation fluidId = ResourceLocation.parse(tag.getString("SelectedFluid"));
-                if (ForgeRegistries.FLUIDS.containsKey(fluidId)) { this.selectedFluid = new FluidStack(Objects.requireNonNull(ForgeRegistries.FLUIDS.getValue(fluidId)), 1); }
+                selectedFluid = FluidStack.loadFluidStackFromNBT(tag.getCompound("SelectedFluid"));
+                if (selectedFluid == null) selectedFluid = FluidStack.EMPTY;
             }
         }
     }

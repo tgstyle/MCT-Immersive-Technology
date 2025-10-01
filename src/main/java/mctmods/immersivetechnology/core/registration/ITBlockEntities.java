@@ -1,13 +1,6 @@
 package mctmods.immersivetechnology.core.registration;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import mctmods.immersivetechnology.common.blocks.helper.ITMultiblockBEType;
-import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.OpenBarrelBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.SteelBarrelBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.TrashEnergyBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.TrashFluidBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.TrashItemBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.*;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -47,6 +40,11 @@ public class ITBlockEntities {
     public static final RegistryObject<BlockEntityType<TrashItemBlockEntity>> TRASH_ITEM = REGISTER.register(
             "trash_item",
             () -> BlockEntityType.Builder.of(TrashItemBlockEntity::new, ITBlocks.MetalDevices.TRASH_ITEM.get()).build(null)
+    );
+
+    public static final RegistryObject<BlockEntityType<FluidValveBlockEntity>> FLUID_VALVE = REGISTER.register(
+            "fluid_valve",
+            () -> BlockEntityType.Builder.of(FluidValveBlockEntity::new, ITBlocks.MetalDevices.FLUID_VALVE.get()).build(null)
     );
 
     public static void init(IEventBus event) { REGISTER.register(event); }

@@ -6,6 +6,7 @@ import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
+import blusunrize.immersiveengineering.common.register.IEItems;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.builder.*;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
@@ -62,6 +63,7 @@ public class ITRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ITBlocks.MetalDevices.TRASH_ENERGY.get().asItem(), 1).define('P', IETags.getTagsFor(EnumMetals.IRON).plate).define('C', IEBlocks.MetalDecoration.HV_COIL.get()).define('S', IETags.getItemTag(IETags.getTagsFor(EnumMetals.IRON).sheetmetal)).pattern("PPP").pattern("PCP").pattern(" S ").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("trash_energy"));
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ITBlocks.MetalDevices.OPEN_BARREL.get().asItem(), 1).define('S', Ingredient.of(IEBlocks.TO_SLAB.get(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.IRON).getId()).get())).define('B', Ingredient.of(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.IRON).get())).pattern("S S").pattern("B B").pattern("BBB").unlockedBy("has_slab_sheetmetal_iron", has(IEBlocks.TO_SLAB.get(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.IRON).getId()).get())).save(consumer, toResourceLocation("open_barrel"));
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ITBlocks.MetalDevices.STEEL_BARREL.get().asItem(), 1).define('S', Ingredient.of(IEBlocks.TO_SLAB.get(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.STEEL).getId()).get())).define('B', Ingredient.of(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.STEEL).get())).pattern("SSS").pattern("B B").pattern("BBB").unlockedBy("has_slab_sheetmetal_steel", has(IEBlocks.TO_SLAB.get(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.STEEL).getId()).get())).save(consumer, toResourceLocation("steel_barrel"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ITBlocks.MetalDevices.FLUID_VALVE.get().asItem(), 2).define('L', IETags.getTagsFor(EnumMetals.IRON).plate).define('R', IEBlocks.Connectors.CONNECTOR_REDSTONE.get()).define('P', IEBlocks.MetalDevices.FLUID_PIPE.get()).define('I', IEItems.Ingredients.COMPONENT_IRON.get()).define('C', IEItems.Ingredients.CIRCUIT_BOARD.get()).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("fluid_valve"));
     }
 
     private void recipesBoilerTank(@Nonnull Consumer<FinishedRecipe> out) {
@@ -79,7 +81,7 @@ public class ITRecipes extends RecipeProvider {
     }
 
     private void recipesCoolingTower(@Nonnull Consumer<FinishedRecipe> out) {
-        CoolingTowerRecipeBuilder.builder().addInput(FluidTags.WATER, 2925).addInput(ITTags.fluidExhaustSteam, 8100).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).setTime(3).build(out, toResourceLocation("cooling_tower/water"));
+        CoolingTowerRecipeBuilder.builder().addInput(FluidTags.WATER, 1000).addInput(ITTags.fluidExhaustSteam, 900).addOutput(Fluids.WATER, 500).addOutput(Fluids.WATER, 500).addOutput(Fluids.WATER, 500).setTime(3).build(out, toResourceLocation("cooling_tower/water"));
     }
 
     private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) {

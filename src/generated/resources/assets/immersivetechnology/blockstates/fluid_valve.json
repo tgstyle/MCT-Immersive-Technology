@@ -1,0 +1,62 @@
+{
+  "variants": {
+    "facing=down,open=false": {
+      "model": "immersivetechnology:block/metal/fluid_valve_closed",
+      "uvlock": true,
+      "x": 90
+    },
+    "facing=down,open=true": {
+      "model": "immersivetechnology:block/metal/fluid_valve_open",
+      "uvlock": true,
+      "x": 90
+    },
+    "facing=east,open=false": {
+      "model": "immersivetechnology:block/metal/fluid_valve_closed",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=east,open=true": {
+      "model": "immersivetechnology:block/metal/fluid_valve_open",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=north,open=false": {
+      "model": "immersivetechnology:block/metal/fluid_valve_closed",
+      "uvlock": true
+    },
+    "facing=north,open=true": {
+      "model": "immersivetechnology:block/metal/fluid_valve_open",
+      "uvlock": true
+    },
+    "facing=south,open=false": {
+      "model": "immersivetechnology:block/metal/fluid_valve_closed",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=south,open=true": {
+      "model": "immersivetechnology:block/metal/fluid_valve_open",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=up,open=false": {
+      "model": "immersivetechnology:block/metal/fluid_valve_closed",
+      "uvlock": true,
+      "x": -90
+    },
+    "facing=up,open=true": {
+      "model": "immersivetechnology:block/metal/fluid_valve_open",
+      "uvlock": true,
+      "x": -90
+    },
+    "facing=west,open=false": {
+      "model": "immersivetechnology:block/metal/fluid_valve_closed",
+      "uvlock": true,
+      "y": 270
+    },
+    "facing=west,open=true": {
+      "model": "immersivetechnology:block/metal/fluid_valve_open",
+      "uvlock": true,
+      "y": 270
+    }
+  }
+}

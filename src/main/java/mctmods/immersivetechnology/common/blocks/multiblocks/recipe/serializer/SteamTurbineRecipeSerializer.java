@@ -40,7 +40,7 @@ public class SteamTurbineRecipeSerializer extends IERecipeSerializer<SteamTurbin
     }
 
     @Override
-    public void toNetwork(FriendlyByteBuf buffer, SteamTurbineRecipe recipe) {
+    public void toNetwork(@NotNull FriendlyByteBuf buffer, SteamTurbineRecipe recipe) {
         recipe.input.write(buffer);
         boolean hasOutput = recipe.fluidOutput != null;
         buffer.writeBoolean(hasOutput);

@@ -1,5 +1,5 @@
 {
-  "parent": "immersivetechnology:block/stone/slab_reinforced_coke_brick",
+  "parent": "immersivetechnology:block/metal/fluid_valve_open",
   "display": {
     "firstperson_lefthand": {
       "rotation": [

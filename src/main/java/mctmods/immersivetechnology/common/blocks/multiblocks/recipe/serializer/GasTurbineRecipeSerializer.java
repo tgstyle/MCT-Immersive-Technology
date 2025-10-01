@@ -40,7 +40,7 @@ public class GasTurbineRecipeSerializer extends IERecipeSerializer<GasTurbineRec
     }
 
     @Override
-    public void toNetwork(FriendlyByteBuf buffer, GasTurbineRecipe recipe) {
+    public void toNetwork(@NotNull FriendlyByteBuf buffer, GasTurbineRecipe recipe) {
         recipe.input.write(buffer);
         boolean hasOutput = recipe.fluidOutput != null;
         buffer.writeBoolean(hasOutput);

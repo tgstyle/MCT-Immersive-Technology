@@ -12,19 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ITMessageContainerData implements ITMessage {
-    private final List<Pair<Integer, DataPair<?>>> synced;
+public record ITMessageContainerData(List<Pair<Integer, DataPair<?>>> synced) implements ITMessage {
+    public ITMessageContainerData(FriendlyByteBuf buf) { this(readSynced(buf)); }
 
-    public ITMessageContainerData(List<Pair<Integer, DataPair<?>>> synced) { this.synced = synced; }
-
-    public ITMessageContainerData(FriendlyByteBuf buf) {
+    private static List<Pair<Integer, DataPair<?>>> readSynced(FriendlyByteBuf buf) {
         int size = buf.readInt();
-        this.synced = new ArrayList<>(size);
+        List<Pair<Integer, DataPair<?>>> synced = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             int index = buf.readVarInt();
             DataPair<?> dataPair = GenericDataSerializers.read(buf);
-            this.synced.add(Pair.of(index, dataPair));
+            synced.add(Pair.of(index, dataPair));
         }
+        return synced;
     }
 
     @Override

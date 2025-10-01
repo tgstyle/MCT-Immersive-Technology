@@ -2,20 +2,23 @@ package mctmods.immersivetechnology.core.registration;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import mctmods.immersivetechnology.common.blocks.metal.gui.FluidValveMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.gui.*;
 import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.*;
 import mctmods.immersivetechnology.common.blocks.metal.TrashItemBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.gui.TrashItemMenu;
+import mctmods.immersivetechnology.common.blocks.metal.FluidValveBlockEntity;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -28,14 +31,16 @@ import javax.annotation.Nullable;
 public class ITMenuTypes {
     public static final DeferredRegister<MenuType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.MENU_TYPES, ITLib.MODID);
 
-    public static final MultiblockContainer<BoilerLiquidLogic.State, BoilerLiquidMenu> BOILER_LIQUID_MENU = registerMultiblock(ITLib.GUIID_Boiler_Liquid, BoilerLiquidMenu::makeServer, BoilerLiquidMenu::makeClient);
-    public static final MultiblockContainer<BoilerSolidLogic.State, BoilerSolidMenu> BOILER_SOLID_MENU = registerMultiblock(ITLib.GUIID_Boiler_Solid, BoilerSolidMenu::makeServer, BoilerSolidMenu::makeClient);
-    public static final MultiblockContainer<BoilerTankLogic.State, BoilerTankMenu> BOILER_TANK_MENU = registerMultiblock(ITLib.GUIID_Boiler_Tank, BoilerTankMenu::makeServer, BoilerTankMenu::makeClient);
-    public static final MultiblockContainer<DistillerLogic.State, DistillerMenu> DISTILLER_MENU = registerMultiblock(ITLib.GUIID_Distiller, DistillerMenu::makeServer, DistillerMenu::makeClient);
-    public static final MultiblockContainer<SolarMelterLogic.State, SolarMenu> SOLAR_MELTER_MENU = registerMultiblock(ITLib.GUIID_SolarMelter, SolarMenu::makeServer, SolarMenu::makeClient);
-    public static final MultiblockContainer<SolarTowerLogic.State, SolarMenu> SOLAR_TOWER_MENU = registerMultiblock(ITLib.GUIID_SolarTower, SolarMenu::makeServer, SolarMenu::makeClient);
+    public static final MultiblockContainer<BoilerLiquidLogic.State, BoilerLiquidMenu> BOILER_LIQUID_MENU = registerMultiblock(ITLib.GUIID_Boiler_Liquid, BoilerLiquidMenu::makeServer, (type, id, inv, buffer) -> BoilerLiquidMenu.makeClient(type, id, inv));
+    public static final MultiblockContainer<BoilerSolidLogic.State, BoilerSolidMenu> BOILER_SOLID_MENU = registerMultiblock(ITLib.GUIID_Boiler_Solid, BoilerSolidMenu::makeServer, (type, id, inv, buffer) -> BoilerSolidMenu.makeClient(type, id, inv));
+    public static final MultiblockContainer<BoilerTankLogic.State, BoilerTankMenu> BOILER_TANK_MENU = registerMultiblock(ITLib.GUIID_Boiler_Tank, BoilerTankMenu::makeServer, (type, id, inv, buffer) -> BoilerTankMenu.makeClient(type, id, inv));
+    public static final MultiblockContainer<DistillerLogic.State, DistillerMenu> DISTILLER_MENU = registerMultiblock(ITLib.GUIID_Distiller, DistillerMenu::makeServer, (type, id, inv, buffer) -> DistillerMenu.makeClient(type, id, inv));
+    public static final MultiblockContainer<SolarMelterLogic.State, SolarMenu> SOLAR_MELTER_MENU = registerMultiblock(ITLib.GUIID_SolarMelter, SolarMenu::makeServer, (type, id, inv, buffer) -> SolarMenu.makeClient(type, id, inv));
+    public static final MultiblockContainer<SolarTowerLogic.State, SolarMenu> SOLAR_TOWER_MENU = registerMultiblock(ITLib.GUIID_SolarTower, SolarMenu::makeServer, (type, id, inv, buffer) -> SolarMenu.makeClient(type, id, inv));
 
-    public static final ArgContainer<TrashItemBlockEntity, TrashItemMenu> TRASH_ITEM = registerArg("trash_item", TrashItemMenu::makeServer, TrashItemMenu::makeClient);
+    public static final ArgContainer<TrashItemBlockEntity, TrashItemMenu> TRASH_ITEM = registerArg("trash_item", TrashItemMenu::makeServer, (type, id, inv, buffer) -> TrashItemMenu.makeClient(type, id, inv));
+
+    public static final ArgContainer<FluidValveBlockEntity, FluidValveMenu> FLUID_VALVE = registerArg("fluid_valve", FluidValveMenu::makeServer, FluidValveMenu::makeClient);
 
     public static <T, C extends ITContainerMenu> ArgContainer<T, C> registerArg(String name, ArgContainerConstructor<T, C> container, ClientContainerConstructor<C> client) {
         RegistryObject<MenuType<C>> typeRef = registerType(name, client);
@@ -80,7 +85,7 @@ public class ITMenuTypes {
         return REGISTER.register(
                 name, () -> {
                     Mutable<MenuType<C>> typeBox = new MutableObject<>();
-                    MenuType<C> type = new MenuType<>((id, inv) -> client.construct(typeBox.getValue(), id, inv), FeatureFlagSet.of());
+                    MenuType<C> type = IForgeMenuType.create((id, inv, buffer) -> client.construct(typeBox.getValue(), id, inv, buffer));
                     typeBox.setValue(type);
                     return type;
                 }
@@ -91,5 +96,5 @@ public class ITMenuTypes {
     public interface ArgContainerConstructor<T, C extends ITContainerMenu> { C construct(MenuType<C> type, int windowId, Inventory invPlayer, T arg); }
 
     @FunctionalInterface
-    public interface ClientContainerConstructor<C extends ITContainerMenu> { C construct(MenuType<C> type, int windowId, Inventory invPlayer); }
+    public interface ClientContainerConstructor<C extends ITContainerMenu> { C construct(MenuType<C> type, int windowId, Inventory invPlayer, FriendlyByteBuf buffer); }
 }

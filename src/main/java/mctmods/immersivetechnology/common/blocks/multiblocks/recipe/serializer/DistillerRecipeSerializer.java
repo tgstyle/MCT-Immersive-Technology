@@ -37,7 +37,7 @@ public class DistillerRecipeSerializer extends IERecipeSerializer<DistillerRecip
     }
 
     @Override
-    public @Nullable DistillerRecipe fromNetwork(@NotNull ResourceLocation recipeId, FriendlyByteBuf buffer) {
+    public @Nullable DistillerRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         FluidStack fluidOutput = buffer.readFluidStack();
         boolean hasItem = buffer.readBoolean();
@@ -49,7 +49,7 @@ public class DistillerRecipeSerializer extends IERecipeSerializer<DistillerRecip
     }
 
     @Override
-    public void toNetwork(FriendlyByteBuf buffer, DistillerRecipe recipe) {
+    public void toNetwork(@NotNull FriendlyByteBuf buffer, DistillerRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.fluidOutput);
         boolean hasItem = !recipe.itemOutput.isEmpty();

@@ -1,6 +1,8 @@
 package mctmods.immersivetechnology.core.proxy;
 
 import mctmods.immersivetechnology.client.gui.*;
+import mctmods.immersivetechnology.common.blocks.metal.gui.FluidValveMenu;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import blusunrize.immersiveengineering.api.ManualHelper;
@@ -38,6 +40,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -80,6 +83,8 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
             MenuScreens.register(ITMenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
             MenuScreens.register(ITMenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
             MenuScreens.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
+
+            MenuScreens.register(ITMenuTypes.FLUID_VALVE.getType(), (FluidValveMenu menu, Inventory inv, Component title) -> new FluidValveScreen(menu, inv));
 
             ManualInstance instance = ManualHelper.getManual();
             InnerNode<ResourceLocation, ManualEntry> parent_category = instance.getRoot().getOrCreateSubnode(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "main"), 99);

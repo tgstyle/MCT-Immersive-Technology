@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings({"unused","deprecation"})
-public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockInterfaces.BlockstateProvider {
+public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockInterfaces.BlockStateProvider {
     protected ITBlockInterfaces.IGeneralMultiblock tempMasterBE;
     @Nullable private BlockState overrideBlockState = null;
     private final EnumMap<Direction, Integer> redstoneBySide = new EnumMap<>(Direction.class);

@@ -4,10 +4,14 @@ import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.client.models.ModelConfigurableSides;
 import blusunrize.immersiveengineering.data.DataGenUtils;
-import blusunrize.immersiveengineering.data.models.*;
+import blusunrize.immersiveengineering.data.models.MirroredModelBuilder;
+import blusunrize.immersiveengineering.data.models.ModelProviderUtils;
+import blusunrize.immersiveengineering.data.models.NongeneratedModels;
 import blusunrize.immersiveengineering.data.models.NongeneratedModels.NongeneratedModel;
+import blusunrize.immersiveengineering.data.models.SideConfigBuilder;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import mctmods.immersivetechnology.common.blocks.metal.FluidValveBlock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.data.loaders.ITSplitModelBuilder;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -29,9 +33,19 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraftforge.client.model.generators.*;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
+import net.minecraftforge.client.model.generators.ModelBuilder;
+import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.ModelProvider;
+import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
 import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -39,13 +53,17 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
+
+import com.google.gson.JsonObject;
 
 public class ITBlockStateProvider extends BlockStateProvider {
     public final Map<Block, ModelFile> unsplitModels = new HashMap<>();
@@ -53,10 +71,50 @@ public class ITBlockStateProvider extends BlockStateProvider {
     protected final ExistingFileHelper existingFileHelper;
     protected final NongeneratedModels innerModels;
 
-    public ITBlockStateProvider(DataGenerator generator, ExistingFileHelper helper) {
-        super(generator.getPackOutput(), ITLib.MODID, helper);
-        this.existingFileHelper = helper;
-        this.innerModels = new NongeneratedModels(generator.getPackOutput(), existingFileHelper);
+    public ITBlockStateProvider(DataGenerator generator, ExistingFileHelper helper) { super(generator.getPackOutput(), ITLib.MODID, helper); this.existingFileHelper = helper; this.innerModels = new NongeneratedModels(generator.getPackOutput(), existingFileHelper); }
+
+    public static class ITObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
+        private ResourceLocation modelLocation;
+        private boolean automaticCulling = true;
+        private boolean shadeQuads = true;
+        private boolean flipV = false;
+        private boolean emissiveAmbient = true;
+        private String mtlOverride;
+        private final Map<String, Boolean> visibility = new HashMap<>();
+
+        public ITObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "obj"), parent, existingFileHelper); }
+
+        public ITObjModelBuilder<T> modelLocation(ResourceLocation modelLocation) { this.modelLocation = modelLocation; return this; }
+
+        public ITObjModelBuilder<T> automaticCulling(boolean automaticCulling) { this.automaticCulling = automaticCulling; return this; }
+
+        public ITObjModelBuilder<T> shadeQuads(boolean shadeQuads) { this.shadeQuads = shadeQuads; return this; }
+
+        public ITObjModelBuilder<T> flipV(boolean flipV) { this.flipV = flipV; return this; }
+
+        public ITObjModelBuilder<T> emissiveAmbient(boolean emissiveAmbient) { this.emissiveAmbient = emissiveAmbient; return this; }
+
+        public ITObjModelBuilder<T> mtlOverride(String mtlOverride) { this.mtlOverride = mtlOverride; return this; }
+
+        public ITObjModelBuilder<T> visibility(String part, boolean show) { visibility.put(part, show); return this; }
+
+        @Override
+        public JsonObject toJson(JsonObject json) {
+            json = super.toJson(json);
+            Preconditions.checkNotNull(modelLocation, "model must be set on obj model");
+            json.addProperty("model", modelLocation.toString());
+            json.addProperty("automatic_culling", automaticCulling);
+            json.addProperty("shade_quads", shadeQuads);
+            json.addProperty("flip_v", flipV);
+            json.addProperty("emissive_ambient", emissiveAmbient);
+            if (mtlOverride != null) { json.addProperty("mtl_override", mtlOverride); }
+            if (!visibility.isEmpty()) {
+                JsonObject visJson = new JsonObject();
+                visibility.forEach(visJson::addProperty);
+                json.add("visibility", visJson);
+            }
+            return json;
+        }
     }
 
     @Override
@@ -213,10 +271,43 @@ public class ITBlockStateProvider extends BlockStateProvider {
                         .addModel();
             }
         }
+
+        BlockModelBuilder valveClosedBuilder = models().getBuilder("block/metal/fluid_valve_closed");
+        ITObjModelBuilder<BlockModelBuilder> closedLoader = valveClosedBuilder.customLoader(ITObjModelBuilder::new)
+                .modelLocation(modLoc("models/block/metal/obj/fluid_valve/fluid_valve.obj"))
+                .automaticCulling(true)
+                .shadeQuads(true)
+                .flipV(true)
+                .emissiveAmbient(true)
+                .mtlOverride(null)
+                .visibility("Pipe", true)
+                .visibility("Handle_Open", false)
+                .visibility("Handle_Closed", true);
+        ModelFile valveClosed = closedLoader.end();
+
+        BlockModelBuilder valveOpenBuilder = models().getBuilder("block/metal/fluid_valve_open");
+        ITObjModelBuilder<BlockModelBuilder> openLoader = valveOpenBuilder.customLoader(ITObjModelBuilder::new)
+                .modelLocation(modLoc("models/block/metal/obj/fluid_valve/fluid_valve.obj"))
+                .automaticCulling(true)
+                .shadeQuads(true)
+                .flipV(true)
+                .emissiveAmbient(true)
+                .mtlOverride(null)
+                .visibility("Pipe", true)
+                .visibility("Handle_Open", true)
+                .visibility("Handle_Closed", false);
+        ModelFile valveOpen = openLoader.end();
+
+        String particleTex = DataGenUtils.getTextureFromObj(modLoc("block/metal/obj/fluid_valve/fluid_valve.obj"), existingFileHelper);
+        valveClosedBuilder.texture("particle", particleTex);
+        valveOpenBuilder.texture("particle", particleTex);
+
+        createAllFacingBlock(ITBlocks.MetalDevices.FLUID_VALVE.get(), state -> state.getValue(FluidValveBlock.OPEN) ? valveOpen : valveClosed);
+        setRenderType(RenderType.cutout(), valveClosedBuilder, valveOpenBuilder);
     }
 
     private void createSlabModels(Block block, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
-        String baseName = "slab_reinforced_coke_brick";
+        String baseName = "block/stone/slab_reinforced_coke_brick";
         ModelFile bottomModel = models().slab(baseName, side, bottom, top);
         ModelFile topModel = models().slabTop(baseName + "_top", side, bottom, top);
         ModelFile doubleModel = models().cubeAll(baseName + "_double", top);
@@ -241,13 +332,12 @@ public class ITBlockStateProvider extends BlockStateProvider {
         createMirroredMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), innerObj("block/multiblock/" + block_type + "/obj/" + registry_name  + "/" + registry_name + "_mirrored.obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name));
     }
 
-    @SuppressWarnings({"SameParameterValue", "unused"})
+    @SuppressWarnings("SameParameterValue")
     private void specialActiveMultiblockMirror(String registry_name, String block_type, String baseTextureName) {
         ITLib.IT_LOGGER.info("Generating [{}] with Active/Mirror Multiblock Model Data", registry_name);
         String objPath = "block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj";
-        String activeMat = "cube_front";
-        Map<String, ResourceLocation> defaultTextures = ImmutableMap.of(activeMat, modLoc("block/multiblocks/" + block_type + "/" + baseTextureName));
-        Map<String, ResourceLocation> activeTextures = ImmutableMap.of(activeMat, modLoc("block/multiblocks/" + block_type + "/" + baseTextureName + "_active"));
+        Map<String, ResourceLocation> defaultTextures = ImmutableMap.of("cube_front", modLoc("block/multiblocks/" + block_type + "/" + baseTextureName));
+        Map<String, ResourceLocation> activeTextures = ImmutableMap.of("cube_front", modLoc("block/multiblocks/" + block_type + "/" + baseTextureName + "_active"));
         NongeneratedModel defaultUnsplit = obj(registry_name, modLoc(objPath), defaultTextures, innerModels);
         NongeneratedModel activeUnsplit = obj(registry_name + "_active", modLoc(objPath), activeTextures, innerModels);
         NongeneratedModel defaultMirror = obj(registry_name + "_mirrored", modLoc(objPath.replace(".obj", "_mirrored.obj")), defaultTextures, innerModels);
@@ -284,10 +374,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
             Direction dir = state.getValue(facing);
             int angleY = getAngle(dir);
             int angleX = 0;
-            if (facing.getPossibleValues().contains(Direction.UP)) {
-                angleX = -90 * dir.getStepY();
-                angleY = dir.getAxis() != Direction.Axis.Y ? getAngle(dir) : 0;
-            }
+            if (facing.getPossibleValues().contains(Direction.UP)) { angleX = -90 * dir.getStepY(); angleY = dir.getAxis() != Direction.Axis.Y ? getAngle(dir) : 0; }
             boolean mirrored = (mirroredState != null) ? state.getValue(mirroredState) : false;
             ModelFile model = mirrored ? mirroredModel : masterModel;
             return new ConfiguredModel[]{new ConfiguredModel(model, angleX, angleY, true)};
@@ -411,21 +498,29 @@ public class ITBlockStateProvider extends BlockStateProvider {
         VariantBlockStateBuilder stateBuilder = getVariantBuilder(block.get());
         forEachState(stateBuilder.partialState(), additionalProps, state -> {
             ModelFile modelLoc = model.apply(state);
-            for (Direction d : IEProperties.FACING_HORIZONTAL.getPossibleValues()) {
-                int x;
-                int y;
-                switch (d) {
-                    case UP: { x = 90; y = 0; break; }
-                    case DOWN: { x = -90; y = 0; break; }
-                    default: { y = getAngle(d); x = 0; }
-                }
-                state.with(IEProperties.FACING_HORIZONTAL, d).setModels(new ConfiguredModel(modelLoc, x, y, false));
+            EnumProperty<Direction> facing = IEProperties.FACING_HORIZONTAL;
+            for (Direction d : facing.getPossibleValues()) {
+                int x = 0;
+                int y = getAngle(d);
+                state.with(facing, d).setModels(new ConfiguredModel(modelLoc, x, y, false));
             }
         });
     }
 
+    protected void createAllFacingBlock(Block block, Function<BlockState, ModelFile> modelFunc) {
+        VariantBlockStateBuilder builder = getVariantBuilder(block);
+        EnumProperty<Direction> facing = IEProperties.FACING_ALL;
+        builder.forAllStates(state -> {
+            Direction dir = state.getValue(facing);
+            ModelFile model = modelFunc.apply(state);
+            int angleX = -90 * dir.getStepY();
+            int angleY = dir.getAxis() != Direction.Axis.Y ? getAngle(dir) : 0;
+            return new ConfiguredModel[]{new ConfiguredModel(model, angleX, angleY, true)};
+        });
+    }
+
     public static <T extends Comparable<T>> void forEach(PartialBlockstate base, Property<T> prop, List<Property<?>> remaining, Consumer<PartialBlockstate> out) {
-        for (T value : prop.getPossibleValues()) { forEachState(base, remaining, map -> out.accept(map.with(prop, value))); }
+        for (T value : prop.getPossibleValues()) { forEachState(base.with(prop, value), remaining, out); }
     }
 
     public static void forEachState(PartialBlockstate base, List<Property<?>> props, Consumer<PartialBlockstate> out) {
@@ -435,7 +530,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     protected ResourceLocation addModelsPrefix(ResourceLocation in) { return ResourceLocation.fromNamespaceAndPath(in.getNamespace(), "models/" + in.getPath()); }
 
-    @SuppressWarnings("unused")
     protected void setRenderType(@Nullable RenderType type, ModelBuilder<?>... builders) {
         if (type != null) { final String typeName = ModelProviderUtils.getName(type); for (final ModelBuilder<?> model : builders) { model.renderType(typeName); } }
     }

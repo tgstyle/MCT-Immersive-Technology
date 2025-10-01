@@ -20,7 +20,6 @@ import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import java.util.logging.Logger;
 
 public class OpenBarrelRenderer extends ITBaseBlockEntityRenderer<OpenBarrelBlockEntity> {
     @Override

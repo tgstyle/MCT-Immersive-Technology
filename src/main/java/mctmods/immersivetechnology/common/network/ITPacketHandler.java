@@ -25,6 +25,7 @@ public class ITPacketHandler {
         registerMessage(ITOSDRequestMessage.class, ITOSDRequestMessage::new);
         registerMessage(ITOSDSyncMessage.class, ITOSDSyncMessage::new);
         registerMessage(ITOSDSyncBlock.class, ITOSDSyncBlock::new);
+        registerMessage(ITMessageTileSync.class, ITMessageTileSync::new);
     }
 
     private static int id = 0;

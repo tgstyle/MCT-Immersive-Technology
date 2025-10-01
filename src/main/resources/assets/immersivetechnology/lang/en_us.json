@@ -9,6 +9,7 @@
   "manual.immersivetechnology.it_multiblocks": "Multiblocks",
 
   "block.immersivetechnology.creative_barrel": "Creative Fluid Barrel",
+  "block.immersivetechnology.fluid_valve": "Fluid Valve",
   "block.immersivetechnology.open_barrel": "Open Metal Barrel",
   "block.immersivetechnology.reinforced_coke_brick": "Reinforced Coke Brick",
   "block.immersivetechnology.slab_reinforced_coke_brick": "Reinforced Coke Brick Slab",
@@ -55,13 +56,14 @@
 
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "Boiler",
 
+  "gui.immersivetechnology.apply": "Apply",
   "gui.immersivetechnology.empty": "Empty",
   "gui.immersivetechnology.ticks": "%st",
   "gui.immersivetechnology.seconds": "%ss",
   "gui.immersivetechnology.if_per_tick": "%s IF/t",
   "gui.immersivetechnology.boiler.heat_per_tick": "%1$s heat per tick",
   "gui.immersivetechnology.boiler.total_heat": "%s total heat",
-  "gui.immersivetechnology.fluid_valve.firstline": "Limit to (leave blank to disable)...",
+  "gui.immersivetechnology.fluid_valve.firstline": "Limit to (set 0 to disable)...",
   "gui.immersivetechnology.fluid_valve.limitpacket": "mB per packet",
   "gui.immersivetechnology.fluid_valve.limittime": "mB per second",
   "gui.immersivetechnology.fluid_valve.limitdestination": "mB in output tank",
