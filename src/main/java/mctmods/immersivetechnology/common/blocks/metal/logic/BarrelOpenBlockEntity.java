@@ -141,7 +141,11 @@ public class BarrelOpenBlockEntity extends ITBaseBlockEntity implements ITServer
     @Override
     public boolean interact(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         FluidStack contained = FluidUtil.getFluidContained(heldItem).orElse(FluidStack.EMPTY);
-        if (!isFluidValid(contained)) { player.displayClientMessage(Component.translatable(TranslationKey.NO_GAS_ALLOWED.text()), false); return true; }
+        if (!isFluidValid(contained)) {
+            assert level != null;
+            if (!level.isClientSide) player.displayClientMessage(Component.translatable(TranslationKey.NO_GAS_ALLOWED.text()), false);
+            return true;
+        }
         if (FluidUtil.interactWithFluidHandler(player, hand, tank)) { setChanged(); markContainingBlockForUpdate(null); return true; }
         return false;
     }
@@ -220,9 +224,7 @@ public class BarrelOpenBlockEntity extends ITBaseBlockEntity implements ITServer
     }
 
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
+    public ClientboundBlockEntityDataPacket getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
