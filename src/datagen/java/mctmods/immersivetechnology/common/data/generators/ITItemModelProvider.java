@@ -44,15 +44,15 @@ public class ITItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        generateBlockItem("creative_barrel", "metal/creative_barrel");
-        generateBlockItem("fluid_valve", "metal/fluid_valve_open");
-        generateBlockItem("open_barrel", "metal/open_barrel");
+        generateBlockItem("barrel_creative", "metal/barrel_creative");
+        generateBlockItem("barrel_open", "metal/barrel_open");
+        generateBlockItem("barrel_steel", "metal/barrel_steel");
         generateBlockItem("reinforced_coke_brick", "stone/reinforced_coke_brick");
         generateBlockItem("slab_reinforced_coke_brick", "stone/slab_reinforced_coke_brick");
-        generateBlockItem("steel_barrel", "metal/steel_barrel");
         generateBlockItem("trash_energy", "metal/trash_energy");
         generateBlockItem("trash_fluid", "metal/trash_fluid");
         generateBlockItem("trash_item", "metal/trash_item");
+        generateBlockItem("valve_fluid", "metal/valve_fluid_open");
 
         generateGeneratedItem();
 

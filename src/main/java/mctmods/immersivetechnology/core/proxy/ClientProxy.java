@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.core.proxy;
 
 import mctmods.immersivetechnology.client.gui.*;
-import mctmods.immersivetechnology.common.blocks.metal.gui.FluidValveMenu;
+import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
@@ -74,7 +74,7 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
                 ItemBlockRenderTypes.setRenderLayer(entry.getFlowing(), RenderType.translucent());
             }
 
-            BlockEntityRenderers.register(ITBlockEntities.OPEN_BARREL.get(), context -> new OpenBarrelRenderer());
+            BlockEntityRenderers.register(ITBlockEntities.BARREL_OPEN.get(), context -> new OpenBarrelRenderer());
 
             MenuScreens.register(ITMenuTypes.BOILER_LIQUID_MENU.getType(), BoilerLiquidScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_SOLID_MENU.getType(), BoilerSolidScreen::new);
@@ -84,7 +84,7 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
             MenuScreens.register(ITMenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
             MenuScreens.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
 
-            MenuScreens.register(ITMenuTypes.FLUID_VALVE.getType(), (FluidValveMenu menu, Inventory inv, Component title) -> new FluidValveScreen(menu, inv));
+            MenuScreens.register(ITMenuTypes.VALVE_FLUID.getType(), (ValveFluidMenu menu, Inventory inv, Component title) -> new ValveFluidScreen(menu, inv));
 
             ManualInstance instance = ManualHelper.getManual();
             InnerNode<ResourceLocation, ManualEntry> parent_category = instance.getRoot().getOrCreateSubnode(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "main"), 99);
@@ -195,7 +195,7 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
     private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render) { event.registerBlockEntityRenderer(type, $ -> render.get()); }
 
     public static void registerBERenders(EntityRenderersEvent.RegisterRenderers event) {
-        registerBERenderNoContext(event, ITBlockEntities.OPEN_BARREL::get, OpenBarrelRenderer::new);
+        registerBERenderNoContext(event, ITBlockEntities.BARREL_OPEN::get, OpenBarrelRenderer::new);
         registerBERenderNoContext(event, ITMultiblockProvider.STEAM_TURBINE.masterBE(), SteamTurbineRenderer::new);
         registerBERenderNoContext(event, ITMultiblockProvider.GAS_TURBINE.masterBE(), GasTurbineRenderer::new);
         registerBERenderNoContext(event, ITMultiblockProvider.SOLAR_REFLECTOR.masterBE(), SolarReflectorRenderer::new);

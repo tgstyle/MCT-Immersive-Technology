@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.registration;
 
 import mctmods.immersivetechnology.common.blocks.metal.*;
+import mctmods.immersivetechnology.common.blocks.metal.logic.*;
 import mctmods.immersivetechnology.common.blocks.stone.ReinforcedCokeBrick;
 import mctmods.immersivetechnology.common.blocks.stone.slab.SlabReinforcedCokeBrick;
 import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
@@ -33,31 +34,31 @@ public class ITBlocks {
     public static Function<String, Block> getBlock = (key) -> BLOCK_REGISTRY_MAP.get(key).get();
 
     public static final class MetalDevices {
-        public static BlockEntry<CreativeBarrelBlock> CREATIVE_BARREL;
-        public static BlockEntry<SteelBarrelBlock> STEEL_BARREL;
-        public static BlockEntry<OpenBarrelBlock> OPEN_BARREL;
+        public static BlockEntry<BarrelCreativeBlock> BARREL_CREATIVE;
+        public static BlockEntry<BarrelSteelBlock> BARREL_STEEL;
+        public static BlockEntry<BarrelOpenBlock> BARREL_OPEN;
         public static BlockEntry<TrashEnergyBlock> TRASH_ENERGY;
         public static BlockEntry<TrashFluidBlock> TRASH_FLUID;
         public static BlockEntry<TrashItemBlock> TRASH_ITEM;
-        public static BlockEntry<FluidValveBlock> FLUID_VALVE;
+        public static BlockEntry<ValveFluidBlock> VALVE_FLUID;
 
         private static void init() {
-            CREATIVE_BARREL = new BlockEntry<>(
-                    "creative_barrel",
+            BARREL_CREATIVE = new BlockEntry<>(
+                    "barrel_creative",
                     () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
-                    p -> new CreativeBarrelBlock(CreativeBarrelBlockEntity::new, p)
+                    p -> new BarrelCreativeBlock(BarrelCreativeBlockEntity::new, p)
             );
 
-            STEEL_BARREL = new BlockEntry<>(
-                    "steel_barrel",
+            BARREL_STEEL = new BlockEntry<>(
+                    "barrel_steel",
                     () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
-                    p -> new SteelBarrelBlock(SteelBarrelBlockEntity::new, p)
+                    p -> new BarrelSteelBlock(BarrelSteelBlockEntity::new, p)
             );
 
-            OPEN_BARREL = new BlockEntry<>(
-                    "open_barrel",
+            BARREL_OPEN = new BlockEntry<>(
+                    "barrel_open",
                     () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
-                    p -> new OpenBarrelBlock(OpenBarrelBlockEntity::new, p)
+                    p -> new BarrelOpenBlock(BarrelOpenBlockEntity::new, p)
             );
 
             TRASH_ENERGY = new BlockEntry<>(
@@ -78,10 +79,10 @@ public class ITBlocks {
                     p -> new TrashItemBlock(TrashItemBlockEntity::new, p)
             );
 
-            FLUID_VALVE = new BlockEntry<>(
-                    "fluid_valve",
+            VALVE_FLUID = new BlockEntry<>(
+                    "valve_fluid",
                     () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
-                    p -> new FluidValveBlock(FluidValveBlockEntity::new, p)
+                    p -> new ValveFluidBlock(ValveFluidBlockEntity::new, p)
             );
         }
     }

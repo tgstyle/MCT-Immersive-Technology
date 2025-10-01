@@ -2,9 +2,8 @@ package mctmods.immersivetechnology.common.network;
 
 import java.util.function.Supplier;
 
-import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.TrashCommonBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.ValveCommonBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.OSDCommonBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,8 +27,7 @@ public record ITOSDRequestMessage(BlockPos pos) implements ITMessage {
                 if (player != null) {
                     Level level = player.level();
                     BlockEntity te = level.getBlockEntity(pos);
-                    if (te instanceof TrashCommonBlockEntity trash) { ITPacketHandler.sendToPlayer(player, new ITOSDSyncMessage(pos, trash.lastAcceptedAmount)); }
-                    if (te instanceof CreativeBarrelBlockEntity barrel) { ITPacketHandler.sendToPlayer(player, new ITOSDSyncMessage(pos, barrel.lastOutputAmount)); }
+                    if (te instanceof OSDCommonBlockEntity trash) { ITPacketHandler.sendToPlayer(player, new ITOSDSyncMessage(pos, trash.lastAcceptedAmount)); }
                     if (te instanceof ValveCommonBlockEntity valve) { ITPacketHandler.sendToPlayer(player, new ITOSDSyncMessage(pos, valve.lastAcceptedAmount)); }
                 }
             }

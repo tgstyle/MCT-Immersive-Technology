@@ -2,9 +2,8 @@ package mctmods.immersivetechnology.common.network;
 
 import java.util.function.Supplier;
 
-import mctmods.immersivetechnology.common.blocks.metal.CreativeBarrelBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.TrashCommonBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.ValveCommonBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.OSDCommonBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -31,8 +30,7 @@ public class ITOSDSyncMessage implements ITMessage {
             if (ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
                 if (Minecraft.getInstance().level != null) {
                     BlockEntity te = Minecraft.getInstance().level.getBlockEntity(pos);
-                    if (te instanceof TrashCommonBlockEntity trash) { trash.lastAcceptedAmount = amount; }
-                    if (te instanceof CreativeBarrelBlockEntity barrel) { barrel.lastOutputAmount = amount; }
+                    if (te instanceof OSDCommonBlockEntity trash) { trash.lastAcceptedAmount = amount; }
                     if (te instanceof ValveCommonBlockEntity valve) { valve.lastAcceptedAmount = amount; }
                 }
             }

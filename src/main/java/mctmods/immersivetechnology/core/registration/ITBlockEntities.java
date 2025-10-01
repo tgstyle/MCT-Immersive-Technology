@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.core.registration;
 
-import mctmods.immersivetechnology.common.blocks.metal.*;
+import mctmods.immersivetechnology.common.blocks.metal.logic.*;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -12,19 +12,19 @@ import net.minecraftforge.registries.RegistryObject;
 public class ITBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, ITLib.MODID);
 
-    public static final RegistryObject<BlockEntityType<CreativeBarrelBlockEntity>> CREATIVE_BARREL = REGISTER.register(
-            "creative_barrel",
-            () -> BlockEntityType.Builder.of(CreativeBarrelBlockEntity::new, ITBlocks.MetalDevices.CREATIVE_BARREL.get()).build(null)
+    public static final RegistryObject<BlockEntityType<BarrelCreativeBlockEntity>> BARREL_CREATIVE = REGISTER.register(
+            "barrel_creative",
+            () -> BlockEntityType.Builder.of(BarrelCreativeBlockEntity::new, ITBlocks.MetalDevices.BARREL_CREATIVE.get()).build(null)
     );
 
-    public static final RegistryObject<BlockEntityType<SteelBarrelBlockEntity>> STEEL_BARREL = REGISTER.register(
-            "steel_barrel",
-            () -> BlockEntityType.Builder.of(SteelBarrelBlockEntity::new, ITBlocks.MetalDevices.STEEL_BARREL.get()).build(null)
+    public static final RegistryObject<BlockEntityType<BarrelSteelBlockEntity>> BARREL_STEEL = REGISTER.register(
+            "barrel_steel",
+            () -> BlockEntityType.Builder.of(BarrelSteelBlockEntity::new, ITBlocks.MetalDevices.BARREL_STEEL.get()).build(null)
     );
 
-    public static final RegistryObject<BlockEntityType<OpenBarrelBlockEntity>> OPEN_BARREL = REGISTER.register(
-            "open_barrel",
-            () -> BlockEntityType.Builder.of(OpenBarrelBlockEntity::new, ITBlocks.MetalDevices.OPEN_BARREL.get()).build(null)
+    public static final RegistryObject<BlockEntityType<BarrelOpenBlockEntity>> BARREL_OPEN = REGISTER.register(
+            "barrel_open",
+            () -> BlockEntityType.Builder.of(BarrelOpenBlockEntity::new, ITBlocks.MetalDevices.BARREL_OPEN.get()).build(null)
     );
 
     public static final RegistryObject<BlockEntityType<TrashEnergyBlockEntity>> TRASH_ENERGY = REGISTER.register(
@@ -42,9 +42,9 @@ public class ITBlockEntities {
             () -> BlockEntityType.Builder.of(TrashItemBlockEntity::new, ITBlocks.MetalDevices.TRASH_ITEM.get()).build(null)
     );
 
-    public static final RegistryObject<BlockEntityType<FluidValveBlockEntity>> FLUID_VALVE = REGISTER.register(
-            "fluid_valve",
-            () -> BlockEntityType.Builder.of(FluidValveBlockEntity::new, ITBlocks.MetalDevices.FLUID_VALVE.get()).build(null)
+    public static final RegistryObject<BlockEntityType<ValveFluidBlockEntity>> VALVE_FLUID = REGISTER.register(
+            "valve_fluid",
+            () -> BlockEntityType.Builder.of(ValveFluidBlockEntity::new, ITBlocks.MetalDevices.VALVE_FLUID.get()).build(null)
     );
 
     public static void init(IEventBus event) { REGISTER.register(event); }

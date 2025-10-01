@@ -2,10 +2,8 @@ package mctmods.immersivetechnology.common.blocks.helper;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
-import blusunrize.immersiveengineering.common.blocks.*;
-import blusunrize.immersiveengineering.common.blocks.ticking.IEClientTickableBE;
-import blusunrize.immersiveengineering.common.blocks.ticking.IEServerTickableBE;
-import blusunrize.immersiveengineering.common.gui.IEBaseContainerOld;
+import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
+import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
@@ -44,7 +42,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 @SuppressWarnings({"unused","deprecation"})
-public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements IEBlockInterfaces.IColouredBlock, EntityBlock {
+public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements ITBlockInterfaces.IColouredBlock, EntityBlock {
     private boolean hasColours = false;
     private final BiFunction<BlockPos, BlockState, T> makeEntity;
     private BEClassInspectedData classData;
@@ -95,8 +93,8 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
 
     @Override
     public void playerDestroy(@NotNull Level world, @NotNull Player player, @NotNull BlockPos pos, @NotNull BlockState state, BlockEntity tile, @NotNull ItemStack stack) {
-        if (tile instanceof IEBlockInterfaces.IAdditionalDrops) {
-            Collection<ItemStack> stacks = ((IEBlockInterfaces.IAdditionalDrops) tile).getExtraDrops(player, state);
+        if (tile instanceof ITBlockInterfaces.IAdditionalDrops) {
+            Collection<ItemStack> stacks = ((ITBlockInterfaces.IAdditionalDrops) tile).getExtraDrops(player, state);
             if (!stacks.isEmpty()) { for (ItemStack s : stacks) { if (!s.isEmpty()) { popResource(world, pos, s); } } }
         }
         super.playerDestroy(world, player, pos, state, tile, stack);
@@ -105,15 +103,15 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     @Override
     public boolean canEntityDestroy(BlockState state, BlockGetter world, BlockPos pos, Entity entity) {
         BlockEntity tile = world.getBlockEntity(pos);
-        if (tile instanceof IEBlockInterfaces.IEntityProof) { return ((IEBlockInterfaces.IEntityProof) tile).canEntityDestroy(entity); }
+        if (tile instanceof ITBlockInterfaces.IEntityProof) { return ((ITBlockInterfaces.IEntityProof) tile).canEntityDestroy(entity); }
         return super.canEntityDestroy(state, world, pos, entity);
     }
 
     @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
         BlockEntity tile = world.getBlockEntity(pos);
-        if (tile instanceof IEBlockInterfaces.IBlockEntityDrop && target instanceof BlockHitResult) {
-            ItemStack s = ((IEBlockInterfaces.IBlockEntityDrop) tile).getPickBlock(player, world.getBlockState(pos), target);
+        if (tile instanceof ITBlockInterfaces.IBlockEntityDrop && target instanceof BlockHitResult) {
+            ItemStack s = ((ITBlockInterfaces.IBlockEntityDrop) tile).getPickBlock(player, world.getBlockState(pos), target);
             if (!s.isEmpty()) { return s; }
         }
         Item item = this.asItem();
@@ -151,8 +149,8 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     @Override
     public InteractionResult hammerUseSide(Direction side, Player player, InteractionHand hand, Level w, BlockPos pos, BlockHitResult hit) {
         BlockEntity tile = w.getBlockEntity(pos);
-        if (tile instanceof IEBlockInterfaces.IHammerInteraction) {
-            boolean b = ((IEBlockInterfaces.IHammerInteraction) tile).hammerUseSide(side, player, hand, hit.getLocation());
+        if (tile instanceof ITBlockInterfaces.IHammerInteraction) {
+            boolean b = ((ITBlockInterfaces.IHammerInteraction) tile).hammerUseSide(side, player, hand, hit.getLocation());
             if (b) { return InteractionResult.SUCCESS; }
             else { return InteractionResult.FAIL; }
         }
@@ -162,8 +160,8 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     @Override
     public InteractionResult screwdriverUseSide(Direction side, Player player, InteractionHand hand, Level w, BlockPos pos, BlockHitResult hit) {
         BlockEntity tile = w.getBlockEntity(pos);
-        if (tile instanceof IEBlockInterfaces.IScrewdriverInteraction) {
-            InteractionResult teResult = ((IEBlockInterfaces.IScrewdriverInteraction) tile).screwdriverUseSide(side, player, hand, hit.getLocation());
+        if (tile instanceof ITBlockInterfaces.IScrewdriverInteraction) {
+            InteractionResult teResult = ((ITBlockInterfaces.IScrewdriverInteraction) tile).screwdriverUseSide(side, player, hand, hit.getLocation());
             if (teResult != InteractionResult.PASS) { return teResult; }
         }
         return super.screwdriverUseSide(side, player, hand, w, pos, hit);
@@ -179,36 +177,32 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         float hitZ = (float) hit.getLocation().z - pos.getZ();
         ItemStack heldItem = player.getItemInHand(hand);
         BlockEntity tile = world.getBlockEntity(pos);
-        if (tile instanceof IEBlockInterfaces.IDirectionalBE && Utils.isHammer(heldItem) && ((IEBlockInterfaces.IDirectionalBE) tile).canHammerRotate(side, hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)), player) && !world.isClientSide) {
-            Direction f = ((IEBlockInterfaces.IDirectionalBE) tile).getFacing();
+        if (tile instanceof ITBlockInterfaces.IDirectionalBE && Utils.isHammer(heldItem) && ((ITBlockInterfaces.IDirectionalBE) tile).canHammerRotate(side, hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)), player) && !world.isClientSide) {
+            Direction f = ((ITBlockInterfaces.IDirectionalBE) tile).getFacing();
             Direction oldF = f;
-            PlacementLimitation limit = ((IEBlockInterfaces.IDirectionalBE) tile).getFacingLimitation();
+            PlacementLimitation limit = ((ITBlockInterfaces.IDirectionalBE) tile).getFacingLimitation();
             f = switch (limit) {
                 case SIDE_CLICKED -> DirectionUtils.VALUES[Math.floorMod(f.ordinal() + (player.isShiftKeyDown() ? -1 : 1), DirectionUtils.VALUES.length)];
                 case PISTON_LIKE -> player.isShiftKeyDown() != (side.getAxisDirection() == Direction.AxisDirection.NEGATIVE) ? DirectionUtils.rotateAround(f, side.getAxis()).getOpposite() : DirectionUtils.rotateAround(f, side.getAxis());
                 case HORIZONTAL, HORIZONTAL_PREFER_SIDE, HORIZONTAL_QUADRANT, HORIZONTAL_AXIS -> player.isShiftKeyDown() != side.equals(Direction.DOWN) ? f.getCounterClockWise() : f.getClockWise();
                 default -> f;
             };
-            ((IEBlockInterfaces.IDirectionalBE) tile).setFacing(f);
-            ((IEBlockInterfaces.IDirectionalBE) tile).afterRotation(oldF, f);
+            ((ITBlockInterfaces.IDirectionalBE) tile).setFacing(f);
+            ((ITBlockInterfaces.IDirectionalBE) tile).afterRotation(oldF, f);
             tile.setChanged();
             world.sendBlockUpdated(pos, state, state, 3);
             world.blockEvent(tile.getBlockPos(), tile.getBlockState().getBlock(), 255, 0);
             return InteractionResult.SUCCESS;
         }
-        if (tile instanceof IEBlockInterfaces.IPlayerInteraction) {
-            boolean b = ((IEBlockInterfaces.IPlayerInteraction) tile).interact(side, player, hand, heldItem, hitX, hitY, hitZ);
+        if (tile instanceof ITBlockInterfaces.IPlayerInteraction) {
+            boolean b = ((ITBlockInterfaces.IPlayerInteraction) tile).interact(side, player, hand, heldItem, hitX, hitY, hitZ);
             if (b) { return InteractionResult.SUCCESS; }
         }
         if (tile instanceof MenuProvider menuProvider && hand == InteractionHand.MAIN_HAND && !player.isShiftKeyDown()) {
             if (player instanceof ServerPlayer serverPlayer) {
-                if (menuProvider instanceof IEBlockInterfaces.IInteractionObjectIE<?> interaction) {
+                if (menuProvider instanceof ITBlockInterfaces.IInteractionObjectIT<?> interaction) {
                     interaction = interaction.getGuiMaster();
-                    if (interaction != null && interaction.canUseGui(player)) {
-                        var tempMenu = interaction.createMenu(0, player.getInventory(), player);
-                        if (tempMenu instanceof IEBaseContainerOld<?>) { NetworkHooks.openScreen(serverPlayer, interaction, ((BlockEntity) interaction).getBlockPos()); }
-                        else { NetworkHooks.openScreen(serverPlayer, interaction); }
-                    }
+                    if (interaction != null && interaction.canUseGui(player)) { NetworkHooks.openScreen(serverPlayer, interaction); }
                 }
                 else { NetworkHooks.openScreen(serverPlayer, menuProvider); }
             }
@@ -237,7 +231,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     public int getRenderColour(@NotNull BlockState state, @Nullable BlockGetter worldIn, @Nullable BlockPos pos, int tintIndex) {
         if (worldIn != null && pos != null) {
             BlockEntity tile = worldIn.getBlockEntity(pos);
-            if (tile instanceof IEBlockInterfaces.IColouredBE) { return ((IEBlockInterfaces.IColouredBE) tile).getRenderColour(tintIndex); }
+            if (tile instanceof ITBlockInterfaces.IColouredBE) { return ((ITBlockInterfaces.IColouredBE) tile).getRenderColour(tintIndex); }
         }
         return 0xffffff;
     }
@@ -246,7 +240,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     public @NotNull VoxelShape getShape(BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         if (state.getBlock() == this) {
             BlockEntity te = world.getBlockEntity(pos);
-            if (te instanceof IEBlockInterfaces.ISelectionBounds) { return ((IEBlockInterfaces.ISelectionBounds) te).getSelectionShape(context); }
+            if (te instanceof ITBlockInterfaces.ISelectionBounds) { return ((ITBlockInterfaces.ISelectionBounds) te).getSelectionShape(context); }
         }
         return super.getShape(state, world, pos, context);
     }
@@ -255,7 +249,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         if (getClassData().customCollisionBounds()) {
             BlockEntity te = world.getBlockEntity(pos);
-            if (te instanceof IEBlockInterfaces.ICollisionBounds collisionBounds) { return collisionBounds.getCollisionShape(context); }
+            if (te instanceof ITBlockInterfaces.ICollisionBounds collisionBounds) { return collisionBounds.getCollisionShape(context); }
             else { return Shapes.empty(); }
         }
         return super.getCollisionShape(state, world, pos, context);
@@ -265,7 +259,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     public @NotNull VoxelShape getInteractionShape(@NotNull BlockState state, BlockGetter world, @NotNull BlockPos pos) {
         if (world.getBlockState(pos).getBlock() == this) {
             BlockEntity te = world.getBlockEntity(pos);
-            if (te instanceof IEBlockInterfaces.ISelectionBounds) { return ((IEBlockInterfaces.ISelectionBounds) te).getSelectionShape(null); }
+            if (te instanceof ITBlockInterfaces.ISelectionBounds) { return ((ITBlockInterfaces.ISelectionBounds) te).getSelectionShape(null); }
         }
         return super.getInteractionShape(state, world, pos);
     }
@@ -276,21 +270,21 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     @Override
     public int getAnalogOutputSignal(@NotNull BlockState state, Level world, @NotNull BlockPos pos) {
         BlockEntity te = world.getBlockEntity(pos);
-        if (te instanceof IEBlockInterfaces.IComparatorOverride compOverride) { return compOverride.getComparatorInputOverride(); }
+        if (te instanceof ITBlockInterfaces.IComparatorOverride compOverride) { return compOverride.getComparatorInputOverride(); }
         return 0;
     }
 
     @Override
     public int getSignal(@NotNull BlockState blockState, BlockGetter world, @NotNull BlockPos pos, @NotNull Direction side) {
         BlockEntity te = world.getBlockEntity(pos);
-        if (te instanceof IEBlockInterfaces.IRedstoneOutput rsOutput) { return rsOutput.getWeakRSOutput(side); }
+        if (te instanceof ITBlockInterfaces.IRedstoneOutput rsOutput) { return rsOutput.getWeakRSOutput(side); }
         return 0;
     }
 
     @Override
     public int getDirectSignal(@NotNull BlockState blockState, BlockGetter world, @NotNull BlockPos pos, @NotNull Direction side) {
         BlockEntity te = world.getBlockEntity(pos);
-        if (te instanceof IEBlockInterfaces.IRedstoneOutput rsOutput) { return rsOutput.getStrongRSOutput(side); }
+        if (te instanceof ITBlockInterfaces.IRedstoneOutput rsOutput) { return rsOutput.getStrongRSOutput(side); }
         return 0;
     }
 
@@ -300,14 +294,14 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     @Override
     public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) {
         BlockEntity te = world.getBlockEntity(pos);
-        if (te instanceof IEBlockInterfaces.IRedstoneOutput rsOutput) { return rsOutput.canConnectRedstone(side); }
+        if (te instanceof ITBlockInterfaces.IRedstoneOutput rsOutput) { return rsOutput.canConnectRedstone(side); }
         return false;
     }
 
     @Override
     public void entityInside(@NotNull BlockState state, Level world, @NotNull BlockPos pos, @NotNull Entity entity) {
         BlockEntity te = world.getBlockEntity(pos);
-        if (te instanceof IEBaseBlockEntity) { ((IEBaseBlockEntity) te).onEntityCollision(world, entity); }
+        if (te instanceof ITBaseBlockEntity) { ((ITBaseBlockEntity) te).onEntityCollision(world, entity); }
     }
 
     public static boolean areAllReplaceable(BlockPos start, BlockPos end, BlockPlaceContext context) {
@@ -318,7 +312,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     private BEClassInspectedData getClassData() {
         if (this.classData == null) {
             T tempBE = makeEntity.apply(BlockPos.ZERO, getInitDefaultState());
-            this.classData = new BEClassInspectedData(tempBE instanceof IEServerTickableBE, tempBE instanceof IEClientTickableBE, tempBE instanceof IEBlockInterfaces.IComparatorOverride, tempBE instanceof IEBlockInterfaces.IRedstoneOutput, tempBE instanceof IEBlockInterfaces.ICollisionBounds);
+            this.classData = new BEClassInspectedData(tempBE instanceof ITServerTickableBE, tempBE instanceof ITClientTickableBE, tempBE instanceof ITBlockInterfaces.IComparatorOverride, tempBE instanceof ITBlockInterfaces.IRedstoneOutput, tempBE instanceof ITBlockInterfaces.ICollisionBounds);
         }
         return this.classData;
     }
@@ -326,8 +320,8 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     private record BEClassInspectedData(boolean serverTicking, boolean clientTicking, boolean hasComparatorOutput, boolean emitsRedstone, boolean customCollisionBounds) {
         @Nullable
         public <U extends BlockEntity> BlockEntityTicker<U> makeBaseTicker(boolean isClient) {
-            if (serverTicking && !isClient) { return IEServerTickableBE.makeTicker(); }
-            else if (clientTicking && isClient) { return IEClientTickableBE.makeTicker(); }
+            if (serverTicking && !isClient) { return ITServerTickableBE.makeTicker(); }
+            else if (clientTicking && isClient) { return ITClientTickableBE.makeTicker(); }
             else { return null; }
         }
     }

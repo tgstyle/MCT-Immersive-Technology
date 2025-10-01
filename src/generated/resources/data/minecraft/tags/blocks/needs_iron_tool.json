@@ -11,10 +11,10 @@
     "immersivetechnology:solar_reflector",
     "immersivetechnology:solar_tower",
     "immersivetechnology:steam_turbine",
-    "immersivetechnology:creative_barrel",
-    "immersivetechnology:open_barrel",
+    "immersivetechnology:barrel_creative",
+    "immersivetechnology:barrel_open",
+    "immersivetechnology:barrel_steel",
     "immersivetechnology:reinforced_coke_brick",
-    "immersivetechnology:steel_barrel",
     "immersivetechnology:trash_energy",
     "immersivetechnology:trash_fluid",
     "immersivetechnology:trash_item"

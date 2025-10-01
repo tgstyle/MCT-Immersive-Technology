@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal.gui;
 import blusunrize.immersiveengineering.common.gui.sync.GenericDataSerializers;
 import com.mojang.datafixers.util.Pair;
 import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
-import mctmods.immersivetechnology.common.blocks.metal.TrashItemBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemBlockEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;

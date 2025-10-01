@@ -25,14 +25,14 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        registerTileDrop(ITBlocks.MetalDevices.CREATIVE_BARREL.get());
-        registerTileDrop(ITBlocks.MetalDevices.OPEN_BARREL.get());
-        registerTileDrop(ITBlocks.MetalDevices.STEEL_BARREL.get());
+        registerTileDrop(ITBlocks.MetalDevices.BARREL_CREATIVE.get());
+        registerTileDrop(ITBlocks.MetalDevices.BARREL_OPEN.get());
+        registerTileDrop(ITBlocks.MetalDevices.BARREL_STEEL.get());
         registerTileDrop(ITBlocks.MetalDevices.TRASH_ENERGY.get());
         registerTileDrop(ITBlocks.MetalDevices.TRASH_FLUID.get());
         registerTileDrop(ITBlocks.MetalDevices.TRASH_ITEM.get());
 
-        dropSelf(ITBlocks.MetalDevices.FLUID_VALVE.get());
+        dropSelf(ITBlocks.MetalDevices.VALVE_FLUID.get());
 
         dropSelf(ITBlocks.Stone.REINFORCED_COKE_BRICK.get());
         dropSelf(ITBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get());

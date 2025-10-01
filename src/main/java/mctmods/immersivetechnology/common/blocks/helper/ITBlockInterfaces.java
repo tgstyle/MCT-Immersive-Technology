@@ -51,7 +51,7 @@ public class ITBlockInterfaces {
         int[] getCurrentProcessesMax();
     }
 
-    public interface IInteractionObjectIE<T extends BlockEntity & ITBlockInterfaces.IInteractionObjectIE<T>> extends MenuProvider {
+    public interface IInteractionObjectIT<T extends BlockEntity & ITBlockInterfaces.IInteractionObjectIT<T>> extends MenuProvider {
         @Nullable
         T getGuiMaster();
 

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.network;
 
-import mctmods.immersivetechnology.common.blocks.metal.ValveCommonBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
