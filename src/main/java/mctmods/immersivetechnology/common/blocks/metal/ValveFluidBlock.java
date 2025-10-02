@@ -4,7 +4,6 @@ import blusunrize.immersiveengineering.api.IEProperties;
 import mctmods.immersivetechnology.common.blocks.helper.ITEntityBlock;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveFluidBlockEntity;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,8 +14,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -26,7 +23,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiFunction;
 
@@ -62,13 +58,6 @@ public class ValveFluidBlock extends ITEntityBlock<ValveFluidBlockEntity> {
 
     @Override
     public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) { return true; }
-
-    @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level pLevel, @NotNull BlockState pState, @NotNull BlockEntityType<T> pBlockEntityType) { return pLevel.isClientSide ? null : createTickerHelper(pBlockEntityType, ITBlockEntities.VALVE_FLUID.get(), ValveFluidBlockEntity::tick); }
-
-    @SuppressWarnings("unchecked")
-    @Nullable
-    private static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> pType, BlockEntityType<E> pExpectedType, BlockEntityTicker<? super E> pTicker) { return pExpectedType == pType ? (BlockEntityTicker<A>) pTicker : null; }
 
     @Override
     public void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block fromBlock, @NotNull BlockPos fromPos, boolean isMoving) {

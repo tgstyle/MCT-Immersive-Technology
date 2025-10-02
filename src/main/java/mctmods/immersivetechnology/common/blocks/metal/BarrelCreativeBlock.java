@@ -8,7 +8,5 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.function.BiFunction;
 
 public class BarrelCreativeBlock extends ITEntityBlock<BarrelCreativeBlockEntity> {
-    public BarrelCreativeBlock(BiFunction<BlockPos, BlockState, BarrelCreativeBlockEntity> makeEntity, Properties blockProps) {
-        super(makeEntity, blockProps);
-    }
+    public BarrelCreativeBlock(BiFunction<BlockPos, BlockState, BarrelCreativeBlockEntity> makeEntity, Properties blockProps) { super(makeEntity, blockProps); }
 }

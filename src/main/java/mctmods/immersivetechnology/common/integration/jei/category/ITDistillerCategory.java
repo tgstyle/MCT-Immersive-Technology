@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.integration.jei.category;
 
+import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.common.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -16,7 +17,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
     private final IDrawableStatic tankOverlay;
@@ -33,13 +37,34 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, DistillerRecipe recipe, @NotNull IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, 56, 43).addIngredient(ForgeTypes.FLUID_STACK, recipe.input.getMatchingFluidStacks().get(0)).setFluidRenderer(recipe.input.getAmount(), false, 16, 47).setOverlay(tankOverlay, 0, 0);
-        if (recipe.fluidOutput != null) { builder.addSlot(RecipeIngredientRole.OUTPUT, 112, 43).addIngredient(ForgeTypes.FLUID_STACK, recipe.fluidOutput).setFluidRenderer(recipe.fluidOutput.getAmount(), false, 16, 47).setOverlay(tankOverlay, 0, 0); }
+        List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
+                .map(fs -> {
+                    FluidStack copy = fs.copy();
+                    copy.setAmount(recipe.input.getAmount());
+                    return copy;
+                })
+                .toList();
+        var inputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 58, 21)
+                .addIngredients(ForgeTypes.FLUID_STACK, inputs)
+                .setFluidRenderer(recipe.input.getAmount(), false, 16, 47);
+        inputSlot.addRichTooltipCallback((slotView, tooltip) -> slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                ITFluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
+        if (recipe.fluidOutput != null) {
+            var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 114, 21)
+                    .addIngredient(ForgeTypes.FLUID_STACK, recipe.fluidOutput)
+                    .setFluidRenderer(recipe.fluidOutput.getAmount(), false, 16, 47);
+            outputSlot.addRichTooltipCallback((slotView, tooltip) -> slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                    ITFluidInfoArea.fillTooltip(fs, fs.getAmount(), tooltip::add)));
+        }
         if (!recipe.itemOutput.isEmpty()) {
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 130, 47).addItemStack(recipe.itemOutput).addRichTooltipCallback((slot, tooltip) -> tooltip.add(Component.translatable("category.immersivetechnology.metal_multiblock.distillerChance", String.format("%.2f", recipe.chance * 100)).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)))));
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 132, 25).addItemStack(recipe.itemOutput).addRichTooltipCallback((slot, tooltip) -> tooltip.add(Component.translatable("category.immersivetechnology.metal_multiblock.distillerChance", String.format("%.2f", recipe.chance * 100)).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)))));
         }
     }
 
     @Override
-    public void draw(@NotNull DistillerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics graphics, double mouseX, double mouseY) { arrow.draw(graphics, 85, 47); }
+    public void draw(@NotNull DistillerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics graphics, double mouseX, double mouseY) {
+        tankOverlay.draw(graphics, 56, 19);
+        if (recipe.fluidOutput != null) { tankOverlay.draw(graphics, 112, 19); }
+        arrow.draw(graphics, 85, 25);
+    }
 }

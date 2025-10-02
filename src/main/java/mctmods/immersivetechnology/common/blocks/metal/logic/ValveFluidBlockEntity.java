@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
+import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
@@ -13,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -27,7 +27,7 @@ import java.util.Optional;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.OPEN;
 
-public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IFluidHandler, IFluidPipe {
+public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IFluidHandler, IFluidPipe, ITServerTickableBE {
     public static class DummyTank implements IFluidHandler {
         @Override public int getTanks() { return 1; }
         @Override public @NotNull FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
@@ -40,8 +40,11 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IFl
 
     public ValveFluidBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.VALVE_FLUID.get(), pos, state, TranslationKey.OVERLAY_OSD_VALVE_FLUID_NORMAL_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_FLUID_SNEAKING_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_FLUID_SNEAKING_SECOND_LINE, 0); }
 
-    @SuppressWarnings("unused")
-    public static void tick(Level level, BlockPos pos, BlockState state, ValveFluidBlockEntity be) { be.updateBase(); }
+    @Override
+    public void tickServer() { updateBase(); }
+
+    @Override
+    public boolean canTickAny() { return true; }
 
     @Override
     public void onLoad() {

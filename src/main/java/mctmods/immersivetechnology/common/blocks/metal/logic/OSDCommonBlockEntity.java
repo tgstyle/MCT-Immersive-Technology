@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import blusunrize.immersiveengineering.common.blocks.ticking.IEClientTickableBE;
-import blusunrize.immersiveengineering.common.blocks.ticking.IEServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
+import mctmods.immersivetechnology.common.blocks.helper.ITClientTickableBE;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
 import mctmods.immersivetechnology.common.network.ITOSDRequestMessage;
 import mctmods.immersivetechnology.common.util.TranslationKey;
@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements IEServerTickableBE, IEClientTickableBE, ITBlockInterfaces.IBlockOverlayText {
+public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements ITServerTickableBE, ITClientTickableBE, ITBlockInterfaces.IBlockOverlayText {
     public long acceptedAmount = 0;
     public long lastAcceptedAmount = 0;
     public int secondCounter = 0;
@@ -26,10 +26,14 @@ public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements 
     protected OSDCommonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) { super(type, pos, state); }
 
     @Override
-    public void readCustomNBT(CompoundTag nbt, boolean descPacket) {}
+    public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
+        if (descPacket) { lastAcceptedAmount = nbt.getLong("lastAcceptedAmount"); }
+    }
 
     @Override
-    public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {}
+    public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {
+        if (descPacket) { nbt.putLong("lastAcceptedAmount", lastAcceptedAmount); }
+    }
 
     @Override
     public void tickServer() {
