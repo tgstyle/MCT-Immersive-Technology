@@ -44,9 +44,6 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IFl
     public void tickServer() { updateBase(); }
 
     @Override
-    public boolean canTickAny() { return true; }
-
-    @Override
     public void onLoad() {
         super.onLoad();
         assert level != null;
@@ -69,21 +66,30 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IFl
     @SuppressWarnings("unused")
     public boolean hasOutputConnection(Direction side) { return side == facing.getOpposite(); }
 
-    private final LazyOptional<IFluidHandler> myCapability = LazyOptional.of(() -> this);
+    private LazyOptional<IFluidHandler> myCapability = null;
 
-    private final LazyOptional<IFluidHandler> dummyCapability = LazyOptional.of(DummyTank::new);
+    private LazyOptional<IFluidHandler> dummyCapability = null;
 
     @Override
     public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
         if (facing == null) return super.getCapability(capability, null);
         if (capability == ForgeCapabilities.FLUID_HANDLER && facing.getAxis() == this.facing.getAxis()) {
-            if (facing == this.facing) return myCapability.cast();
-            else if (facing == this.facing.getOpposite()) return dummyCapability.cast();
+            if (facing == this.facing) {
+                if (myCapability == null || !myCapability.isPresent()) myCapability = LazyOptional.of(() -> this);
+                return myCapability.cast();
+            } else if (facing == this.facing.getOpposite()) {
+                if (dummyCapability == null || !dummyCapability.isPresent()) dummyCapability = LazyOptional.of(DummyTank::new);
+                return dummyCapability.cast();
+            }
         }
         return super.getCapability(capability, facing);
     }
 
-    @Override public void invalidateCaps() { super.invalidateCaps(); myCapability.invalidate(); dummyCapability.invalidate(); }
+    @Override public void invalidateCaps() {
+        super.invalidateCaps();
+        if (myCapability != null) { myCapability.invalidate(); myCapability = null; }
+        if (dummyCapability != null) { dummyCapability.invalidate(); dummyCapability = null; }
+    }
 
     @Override public int getTanks() { return 1; }
 

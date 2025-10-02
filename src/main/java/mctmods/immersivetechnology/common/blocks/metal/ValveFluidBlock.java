@@ -6,7 +6,6 @@ import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEnt
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveFluidBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +20,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
@@ -69,13 +67,6 @@ public class ValveFluidBlock extends ITEntityBlock<ValveFluidBlockEntity> {
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
-        ValveFluidBlockEntity valve = (ValveFluidBlockEntity) level.getBlockEntity(pos);
-        if (valve != null) {
-            if (valve.interact(hit.getDirection(), player, hand, player.getItemInHand(hand), (float) hit.getLocation().x - pos.getX(), (float) hit.getLocation().y - pos.getY(), (float) hit.getLocation().z - pos.getZ())) return InteractionResult.SUCCESS;
-            NetworkHooks.openScreen((ServerPlayer) player, valve, pos);
-            return InteractionResult.CONSUME;
-        }
         return super.use(state, level, pos, player, hand, hit);
     }
 }

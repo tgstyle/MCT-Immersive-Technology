@@ -1,12 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
-import blusunrize.immersiveengineering.common.blocks.ticking.IEClientTickableBE;
-import blusunrize.immersiveengineering.common.blocks.ticking.IEServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.ITClientTickableBE;
+import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
 import mctmods.immersivetechnology.common.items.FormationTool;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
 import mctmods.immersivetechnology.common.network.ITOSDRequestMessage;
@@ -32,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.OPEN;
 
-public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implements IEBlockInterfaces.IDirectionalBE, ITBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction, IEServerTickableBE, IEClientTickableBE, MenuProvider {
+public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implements ITBlockInterfaces.IDirectionalBE, ITBlockInterfaces.IBlockOverlayText, ITBlockInterfaces.IPlayerInteraction, ITServerTickableBE, ITClientTickableBE, MenuProvider {
     final TranslationKey overlayNormal;
     final TranslationKey overlaySneakingFirstLine;
     final TranslationKey overlaySneakingSecondLine;
@@ -209,9 +208,22 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
 
     @Override public @NotNull Direction getFacing() { return this.facing; }
 
-    @Override public void setFacing(@NotNull Direction facing) { this.facing = facing; }
+    @Override
+    public void setFacing(@NotNull Direction facing) {
+        if (level != null && !level.isClientSide) {
+            BlockState state = getBlockState();
+            Direction tempFacing = this.facing.getAxis() == Direction.Axis.Y ? Direction.NORTH : Direction.UP;
+            this.facing = tempFacing;
+            if (state.hasProperty(IEProperties.FACING_ALL)) level.setBlock(worldPosition, state.setValue(IEProperties.FACING_ALL, tempFacing), 3);
+            this.facing = facing;
+            if (state.hasProperty(IEProperties.FACING_ALL)) level.setBlock(worldPosition, state.setValue(IEProperties.FACING_ALL, facing), 3);
+            markContainingBlockForUpdate(null);
+            for (Direction d : Direction.values()) { level.neighborChanged(worldPosition.relative(d), getBlockState().getBlock(), worldPosition); }
+        }
+        efficientSetChanged();
+    }
 
-    @Override public @NotNull PlacementLimitation getFacingLimitation() { return PlacementLimitation.SIDE_CLICKED; }
+    @Override public @NotNull PlacementLimitation getFacingLimitation() { return PlacementLimitation.PISTON_LIKE; }
 
     @Override public boolean mirrorFacingOnPlacement(@NotNull LivingEntity placer) { return false; }
 
