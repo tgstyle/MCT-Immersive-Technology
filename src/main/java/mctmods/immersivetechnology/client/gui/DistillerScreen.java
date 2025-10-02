@@ -24,7 +24,7 @@ public class DistillerScreen extends ITContainerScreen<DistillerMenu> {
     protected List<ITInfoArea> makeInfoAreas() {
         return ImmutableList.of(
                 new ITEnergyInfoArea(this.leftPos + 158, this.topPos + 22, menu.energy),
-                new ITFluidInfoArea(menu.tanks.input(), new Rect2i(leftPos + 58, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE),
-                new ITFluidInfoArea(menu.tanks.output(), new Rect2i(leftPos + 112, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE));
+                new ITFluidInfoArea(menu.tanks.input(), new Rect2i(this.leftPos + 58, this.topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE),
+                new ITFluidInfoArea(menu.tanks.output(), new Rect2i(this.leftPos + 112, this.topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE));
     }
 }

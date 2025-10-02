@@ -68,7 +68,42 @@ public class JEIIntegration implements IModPlugin {
 
     @Override
     public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registration) {
-        registration.addRecipeClickArea(DistillerScreen.class, 76, 37, 24, 17, JEIRecipeTypes.DISTILLER);
+        registration.addGuiContainerHandler(DistillerScreen.class, new IGuiContainerHandler<>() {
+            @Override
+            public @NotNull Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull DistillerScreen gui, double mouseX, double mouseY) {
+                int relX = (int) (mouseX - gui.getLeftPos());
+                int relY = (int) (mouseY - gui.getTopPos());
+                FluidStack fs = null;
+                Rect2i area = null;
+                if (relX >= 56 && relX < 76 && relY >= 19 && relY < 70) {
+                    fs = gui.getMenu().tanks.input().getFluid();
+                    area = new Rect2i(gui.getLeftPos() + 56, gui.getTopPos() + 19, 20, 51);
+                } else if (relX >= 112 && relX < 132 && relY >= 19 && relY < 70) {
+                    fs = gui.getMenu().tanks.output().getFluid();
+                    area = new Rect2i(gui.getLeftPos() + 112, gui.getTopPos() + 19, 20, 51);
+                }
+                if (fs != null && fs.getAmount() > 0) {
+                    Rect2i finalArea = area;
+                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typedIngredient -> new IClickableIngredient<FluidStack>() {
+                        @SuppressWarnings("removal")
+                        @Override
+                        public @NotNull ITypedIngredient<FluidStack> getTypedIngredient() { return typedIngredient; }
+
+                        @Override
+                        public @NotNull Rect2i getArea() { return finalArea; }
+                    });
+                }
+                return Optional.empty();
+            }
+
+            @Override
+            public @NotNull Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull DistillerScreen gui, double guiMouseX, double guiMouseY) {
+                List<IGuiClickableArea> areas = new ArrayList<>();
+                areas.add(createDistillerClickableArea(56, gui.getMenu().tanks.input()));
+                areas.add(createDistillerClickableArea(112, gui.getMenu().tanks.output()));
+                return areas;
+            }
+        });
 
         registration.addGuiContainerHandler(BoilerTankScreen.class, new IGuiContainerHandler<>() {
             @Override
@@ -124,6 +159,26 @@ public class JEIIntegration implements IModPlugin {
             @Override
             public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) {
                 recipesGui.showTypes(List.of(JEIRecipeTypes.BOILER_TANK));
+            }
+        };
+    }
+
+    private static IGuiClickableArea createDistillerClickableArea(int x, IFluidTank tank) {
+        Rect2i area = new Rect2i(x, 19, 20, 51);
+        return new IGuiClickableArea() {
+            @Override
+            public @NotNull Rect2i getArea() { return area; }
+
+            @Override
+            public void getTooltip(@NotNull ITooltipBuilder tooltip) {
+                FluidStack fs = tank.getFluid();
+                fillTooltip(fs, tank.getCapacity(), tooltip::add);
+                tooltip.add(Component.translatable("jei.tooltip.show.recipes"));
+            }
+
+            @Override
+            public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) {
+                recipesGui.showTypes(List.of(JEIRecipeTypes.DISTILLER));
             }
         };
     }

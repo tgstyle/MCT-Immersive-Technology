@@ -75,4 +75,6 @@ public abstract class ITContainerScreen<C extends AbstractContainerMenu> extends
     @SuppressWarnings("unused")
     protected void gatherAdditionalTooltips(int mouseX, int mouseY, Consumer<Component> addLine, Consumer<Component> addGray) {}
 
+    public int getLeftPos() { return leftPos; }
+    public int getTopPos() { return topPos; }
 }

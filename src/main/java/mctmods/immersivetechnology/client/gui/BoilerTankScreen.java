@@ -50,9 +50,5 @@ public class BoilerTankScreen extends ITContainerScreen<BoilerTankMenu> {
         );
     }
 
-    public int getLeftPos() { return leftPos; }
-
-    public int getTopPos() { return topPos; }
-
     public @NotNull BoilerTankMenu getMenu() { return menu; }
 }

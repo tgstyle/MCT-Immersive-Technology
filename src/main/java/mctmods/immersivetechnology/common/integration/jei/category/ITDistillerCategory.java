@@ -13,7 +13,9 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
@@ -25,6 +27,7 @@ import java.util.List;
 public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated arrow;
+    private final IDrawableStatic slotDrawable;
 
     public ITDistillerCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.DISTILLER, "block.immersivetechnology.distiller");
@@ -33,6 +36,7 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
         setIcon(ITMultiblockProvider.DISTILLER.iconStack());
         tankOverlay = helper.createDrawable(background, 176, 31, 20, 51);
         arrow = helper.drawableBuilder(background, 176, 14, 24, 17).buildAnimated(20, IDrawableAnimated.StartDirection.LEFT, false);
+        slotDrawable = helper.getSlotDrawable();
     }
 
     @Override
@@ -44,20 +48,20 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
                     return copy;
                 })
                 .toList();
-        var inputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 58, 21)
+        var inputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 59, 21)
                 .addIngredients(ForgeTypes.FLUID_STACK, inputs)
                 .setFluidRenderer(recipe.input.getAmount(), false, 16, 47);
         inputSlot.addRichTooltipCallback((slotView, tooltip) -> slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
                 ITFluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
         if (recipe.fluidOutput != null) {
-            var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 114, 21)
+            var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 115, 21)
                     .addIngredient(ForgeTypes.FLUID_STACK, recipe.fluidOutput)
                     .setFluidRenderer(recipe.fluidOutput.getAmount(), false, 16, 47);
             outputSlot.addRichTooltipCallback((slotView, tooltip) -> slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
                     ITFluidInfoArea.fillTooltip(fs, fs.getAmount(), tooltip::add)));
         }
         if (!recipe.itemOutput.isEmpty()) {
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 132, 25).addItemStack(recipe.itemOutput).addRichTooltipCallback((slot, tooltip) -> tooltip.add(Component.translatable("category.immersivetechnology.metal_multiblock.distillerChance", String.format("%.2f", recipe.chance * 100)).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)))));
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 88, 25).addItemStack(recipe.itemOutput).setBackground(slotDrawable, -1, -1);
         }
     }
 
@@ -66,5 +70,13 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
         tankOverlay.draw(graphics, 56, 19);
         if (recipe.fluidOutput != null) { tankOverlay.draw(graphics, 112, 19); }
         arrow.draw(graphics, 85, 25);
+        if (!recipe.itemOutput.isEmpty()) {
+            String chanceStr = String.format("%.2f%%", recipe.chance * 100);
+            Component component = Component.translatable("category.immersivetechnology.metal_multiblock.distillerChance", chanceStr).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
+            Font font = Minecraft.getInstance().font;
+            int textWidth = font.width(component);
+            int textX = 85 + (24 - textWidth) / 2;
+            graphics.drawString(font, component, textX, 8, 0xAAAAAA, true);
+        }
     }
 }
