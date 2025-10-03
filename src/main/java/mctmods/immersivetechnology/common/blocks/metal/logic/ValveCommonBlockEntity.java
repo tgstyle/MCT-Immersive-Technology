@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.helper.ITClientTickableBE;
 import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
-import mctmods.immersivetechnology.common.items.FormationTool;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
 import mctmods.immersivetechnology.common.network.ITOSDRequestMessage;
 import mctmods.immersivetechnology.common.util.TranslationKey;
@@ -14,37 +14,27 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.OPEN;
 
-public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implements ITBlockInterfaces.IDirectionalBE, ITBlockInterfaces.IBlockOverlayText, ITBlockInterfaces.IPlayerInteraction, ITServerTickableBE, ITClientTickableBE, MenuProvider {
+public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implements ITBlockInterfaces.IDirectionalBE, ITBlockInterfaces.IBlockOverlayText, ITServerTickableBE, ITClientTickableBE, MenuProvider, IEBlockInterfaces.IHammerInteraction {
     final TranslationKey overlayNormal;
     final TranslationKey overlaySneakingFirstLine;
     final TranslationKey overlaySneakingSecondLine;
     final int GuiID;
 
-    public ValveCommonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, TranslationKey overlayNormal, TranslationKey overlaySneakingFirstLine, TranslationKey overlaySneakingSecondLine, int GuiID) {
-        super(type, pos, state);
-        this.overlayNormal = overlayNormal;
-        this.overlaySneakingFirstLine = overlaySneakingFirstLine;
-        this.overlaySneakingSecondLine = overlaySneakingSecondLine;
-        this.GuiID = GuiID;
-        this.redstoneMode = 1;
-    }
+    public ValveCommonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, TranslationKey overlayNormal, TranslationKey overlaySneakingFirstLine, TranslationKey overlaySneakingSecondLine, int GuiID) { super(type, pos, state); this.overlayNormal = overlayNormal; this.overlaySneakingFirstLine = overlaySneakingFirstLine; this.overlaySneakingSecondLine = overlaySneakingSecondLine; this.GuiID = GuiID; this.redstoneMode = 1; }
 
     public Direction facing = Direction.NORTH;
 
@@ -68,7 +58,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
 
     private int requestCooldown = 0;
 
-    protected void efficientSetChanged() { setChanged(); }
+    public void efficientSetChanged() { setChanged(); }
 
     public void calculateAverages() {
         long sum = 0;
@@ -84,12 +74,8 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         if (level.isClientSide) return;
         efficientSetChanged();
         if (++secondCounter < 20) return;
-        if (average == 0 && acceptedAmount > 0) {
-            for (int i = 0; i < 60; i++) averages[i] = acceptedAmount;
-        }
-        if (packetAverage == 0 && packets > 0) {
-            for (int i = 0; i < 60; i++) packetTotals[i] = packets;
-        }
+        if (average == 0 && acceptedAmount > 0) for (int i = 0; i < 60; i++) averages[i] = acceptedAmount;
+        if (packetAverage == 0 && packets > 0) for (int i = 0; i < 60; i++) packetTotals[i] = packets;
         if (averages[minuteCounter] != acceptedAmount || packetTotals[minuteCounter] != packets) {
             averages[minuteCounter] = acceptedAmount;
             packetTotals[minuteCounter] = packets;
@@ -117,21 +103,6 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
     public void onLoad() {
         super.onLoad();
         facing = getBlockState().getValue(IEProperties.FACING_ALL);
-    }
-
-    @Override
-    public boolean interact(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull ItemStack heldItem, float hitX, float hitY, float hitZ) {
-        assert level != null;
-        if (level.isClientSide) return false;
-        if (heldItem.getItem() instanceof FormationTool) return false;
-        if (player.isCrouching()) {
-            redstoneMode = (byte) (redstoneMode == 1 ? 2 : 1);
-            updateRedstoneState();
-            efficientSetChanged();
-        } else {
-            NetworkHooks.openScreen((ServerPlayer) player, this, buf -> buf.writeBlockPos(worldPosition));
-        }
-        return true;
     }
 
     @Override
@@ -175,15 +146,11 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
             } else if (nbt.contains("averages", 4)) {
                 long avg = nbt.getLong("averages");
                 for (int i = 0; i < 60; i++) averages[i] = avg;
-            } else {
-                averages = new long[60];
-            }
+            } else averages = new long[60];
             if (nbt.contains("packetTotals", 12)) {
                 packetTotals = nbt.getLongArray("packetTotals");
                 if (packetTotals.length != 60) packetTotals = new long[60];
-            } else {
-                packetTotals = new long[60];
-            }
+            } else packetTotals = new long[60];
             calculateAverages();
         }
     }
@@ -206,16 +173,14 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         }
     }
 
-    @Override public @NotNull Direction getFacing() { return this.facing; }
+    @Override
+    public @NotNull Direction getFacing() { return this.facing; }
 
     @Override
     public void setFacing(@NotNull Direction facing) {
+        this.facing = facing;
         if (level != null && !level.isClientSide) {
             BlockState state = getBlockState();
-            Direction tempFacing = this.facing.getAxis() == Direction.Axis.Y ? Direction.NORTH : Direction.UP;
-            this.facing = tempFacing;
-            if (state.hasProperty(IEProperties.FACING_ALL)) level.setBlock(worldPosition, state.setValue(IEProperties.FACING_ALL, tempFacing), 3);
-            this.facing = facing;
             if (state.hasProperty(IEProperties.FACING_ALL)) level.setBlock(worldPosition, state.setValue(IEProperties.FACING_ALL, facing), 3);
             markContainingBlockForUpdate(null);
             for (Direction d : Direction.values()) { level.neighborChanged(worldPosition.relative(d), getBlockState().getBlock(), worldPosition); }
@@ -223,11 +188,25 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         efficientSetChanged();
     }
 
-    @Override public @NotNull PlacementLimitation getFacingLimitation() { return PlacementLimitation.PISTON_LIKE; }
+    @Override
+    public @NotNull PlacementLimitation getFacingLimitation() { return PlacementLimitation.PISTON_LIKE; }
 
-    @Override public boolean mirrorFacingOnPlacement(@NotNull LivingEntity placer) { return false; }
+    @Override
+    public boolean mirrorFacingOnPlacement(@NotNull LivingEntity placer) { return false; }
 
-    @Override public boolean canHammerRotate(@NotNull Direction side, @NotNull Vec3 hit, LivingEntity entity) { return !entity.isCrouching(); }
+    @Override
+    public boolean canHammerRotate(@NotNull Direction side, @NotNull Vec3 hit, LivingEntity entity) { return false; }
+
+    @Override
+    public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
+        assert level != null;
+        if (level.isClientSide) return false;
+        boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
+        Direction oldFacing = facing;
+        Direction newFacing = counter ? oldFacing.getCounterClockWise(side.getAxis()) : oldFacing.getClockWise(side.getAxis());
+        setFacing(newFacing);
+        return true;
+    }
 
     public int getRSPower() {
         assert level != null;
