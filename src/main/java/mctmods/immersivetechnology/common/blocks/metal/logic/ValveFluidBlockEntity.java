@@ -91,6 +91,12 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IFl
         if (dummyCapability != null) { dummyCapability.invalidate(); dummyCapability = null; }
     }
 
+    @Override
+    public void setFacing(@NotNull Direction facing) {
+        super.setFacing(facing);
+        invalidateCaps();
+    }
+
     @Override public int getTanks() { return 1; }
 
     @Override public @NotNull FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
