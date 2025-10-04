@@ -14,6 +14,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
+import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.data.loaders.ITSplitModelBuilder;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -316,6 +317,27 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
         createAllFacingBlock(ITBlocks.MetalDevices.VALVE_FLUID.get(), state -> state.getValue(ValveFluidBlock.OPEN) ? valveOpen : valveClosed);
         setRenderType(RenderType.cutout(), valveClosedBuilder, valveOpenBuilder);
+
+        BlockModelBuilder valveLoadClosedBuilder = models().cube("block/metal/valve_load_closed",
+                        modLoc("block/metal/valve_load_side"),
+                        modLoc("block/metal/valve_load_side"),
+                        modLoc("block/metal/valve_load_bottom"),
+                        modLoc("block/metal/valve_load_top"),
+                        modLoc("block/metal/valve_load_side"),
+                        modLoc("block/metal/valve_load_side"))
+                .texture("particle", modLoc("block/metal/valve_load_side"));
+
+        BlockModelBuilder valveLoadOpenBuilder = models().cube("block/metal/valve_load_open",
+                        modLoc("block/metal/valve_load_side"),
+                        modLoc("block/metal/valve_load_side"),
+                        modLoc("block/metal/valve_load_bottom"),
+                        modLoc("block/metal/valve_load_top"),
+                        modLoc("block/metal/valve_load_side"),
+                        modLoc("block/metal/valve_load_side"))
+                .texture("particle", modLoc("block/metal/valve_load_side"));
+
+        createAllFacingBlock(ITBlocks.MetalDevices.VALVE_LOAD.get(), state -> state.getValue(ValveLoadBlock.OPEN) ? valveLoadOpenBuilder : valveLoadClosedBuilder);
+        setRenderType(RenderType.solid(), valveLoadClosedBuilder, valveLoadOpenBuilder);
     }
 
     private void createSlabModels(Block block, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {

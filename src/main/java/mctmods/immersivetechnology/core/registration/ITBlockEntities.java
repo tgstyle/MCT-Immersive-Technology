@@ -47,5 +47,10 @@ public class ITBlockEntities {
             () -> BlockEntityType.Builder.of(ValveFluidBlockEntity::new, ITBlocks.MetalDevices.VALVE_FLUID.get()).build(null)
     );
 
+    public static final RegistryObject<BlockEntityType<ValveLoadBlockEntity>> VALVE_LOAD = REGISTER.register(
+            "valve_load",
+            () -> BlockEntityType.Builder.of(ValveLoadBlockEntity::new, ITBlocks.MetalDevices.VALVE_LOAD.get()).build(null)
+    );
+
     public static void init(IEventBus event) { REGISTER.register(event); }
 }

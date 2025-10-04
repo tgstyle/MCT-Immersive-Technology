@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.core.proxy;
 
 import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
+import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
@@ -85,6 +86,7 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
             MenuScreens.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
 
             MenuScreens.register(ITMenuTypes.VALVE_FLUID.getType(), (ValveFluidMenu menu, Inventory inv, Component title) -> new ValveFluidScreen(menu, inv));
+            MenuScreens.register(ITMenuTypes.VALVE_LOAD.getType(), (ValveLoadMenu menu, Inventory inv, Component title) -> new ValveLoadScreen(menu, inv));
 
             ManualInstance instance = ManualHelper.getManual();
             InnerNode<ResourceLocation, ManualEntry> parent_category = instance.getRoot().getOrCreateSubnode(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "main"), 99);

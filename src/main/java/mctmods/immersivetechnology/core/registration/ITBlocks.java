@@ -41,6 +41,7 @@ public class ITBlocks {
         public static BlockEntry<TrashFluidBlock> TRASH_FLUID;
         public static BlockEntry<TrashItemBlock> TRASH_ITEM;
         public static BlockEntry<ValveFluidBlock> VALVE_FLUID;
+        public static BlockEntry<ValveLoadBlock> VALVE_LOAD;
 
         private static void init() {
             BARREL_CREATIVE = new BlockEntry<>(
@@ -83,6 +84,12 @@ public class ITBlocks {
                     "valve_fluid",
                     () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
                     p -> new ValveFluidBlock(ValveFluidBlockEntity::new, p)
+            );
+
+            VALVE_LOAD = new BlockEntry<>(
+                    "valve_load",
+                    () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
+                    p -> new ValveLoadBlock(ValveLoadBlockEntity::new, p)
             );
         }
     }
