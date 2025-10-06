@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.core.registration;
 
+import mctmods.immersivetechnology.common.blocks.helper.ITStairsBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITWallBlock;
 import mctmods.immersivetechnology.common.blocks.metal.*;
 import mctmods.immersivetechnology.common.blocks.metal.logic.*;
 import mctmods.immersivetechnology.common.blocks.stone.ReinforcedCokeBrick;
@@ -11,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -19,16 +22,16 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ITBlocks {
     public static final DeferredRegister<Block> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCKS, ITLib.MODID);
+    public static final Map<ResourceLocation, ITBlocks.BlockEntry<? extends SlabBlock>> TO_SLAB = new HashMap<>();
+    public static final Map<ResourceLocation, ITBlocks.BlockEntry<? extends ITStairsBlock>> TO_STAIRS = new HashMap<>();
+    public static final Map<ResourceLocation, ITBlocks.BlockEntry<? extends ITWallBlock>> TO_WALL = new HashMap<>();
 
     private static final HashMap<String, RegistryObject<? extends Block>> BLOCK_REGISTRY_MAP = new HashMap<>();
     public static Function<String, Block> getBlock = (key) -> BLOCK_REGISTRY_MAP.get(key).get();
@@ -115,6 +118,7 @@ public class ITBlocks {
     public static void initBlocks() {
         MetalDevices.init();
         Stone.init();
+        TO_SLAB.put(Stone.REINFORCED_COKE_BRICK.getId(), Stone.SLAB_REINFORCED_COKE_BRICK);
     }
 
     public static List<? extends Block> getITBlocks() { return REGISTER.getEntries().stream().map(RegistryObject::get).collect(Collectors.toList()); }

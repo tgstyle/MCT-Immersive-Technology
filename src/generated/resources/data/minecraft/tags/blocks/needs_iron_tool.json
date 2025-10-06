@@ -15,8 +15,11 @@
     "immersivetechnology:barrel_open",
     "immersivetechnology:barrel_steel",
     "immersivetechnology:reinforced_coke_brick",
+    "immersivetechnology:slab_reinforced_coke_brick",
     "immersivetechnology:trash_energy",
     "immersivetechnology:trash_fluid",
-    "immersivetechnology:trash_item"
+    "immersivetechnology:trash_item",
+    "immersivetechnology:valve_fluid",
+    "immersivetechnology:valve_load"
   ]
 }

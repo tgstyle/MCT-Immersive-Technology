@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
-import blusunrize.immersiveengineering.common.register.IEBlocks;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
@@ -32,8 +31,8 @@ public class ITBlockTags extends BlockTagsProvider {
         registerMineable(tag1, ITMultiblockProvider.ALTERNATOR, ITMultiblockProvider.BOILER_LIQUID,  ITMultiblockProvider.BOILER_SOLID,  ITMultiblockProvider.BOILER_TANK, ITMultiblockProvider.COOLING_TOWER, ITMultiblockProvider.DISTILLER, ITMultiblockProvider.GAS_TURBINE, ITMultiblockProvider.SOLAR_MELTER, ITMultiblockProvider.SOLAR_REFLECTOR, ITMultiblockProvider.SOLAR_TOWER, ITMultiblockProvider.STEAM_TURBINE);
         registerMineable(tag2, ITMultiblockProvider.ALTERNATOR, ITMultiblockProvider.BOILER_LIQUID,  ITMultiblockProvider.BOILER_SOLID,  ITMultiblockProvider.BOILER_TANK, ITMultiblockProvider.COOLING_TOWER, ITMultiblockProvider.DISTILLER, ITMultiblockProvider.GAS_TURBINE, ITMultiblockProvider.SOLAR_MELTER, ITMultiblockProvider.SOLAR_REFLECTOR, ITMultiblockProvider.SOLAR_TOWER, ITMultiblockProvider.STEAM_TURBINE);
 
-        registerMineable(tag1, ITBlocks.MetalDevices.BARREL_CREATIVE, ITBlocks.MetalDevices.BARREL_STEEL, ITBlocks.MetalDevices.BARREL_OPEN, ITBlocks.MetalDevices.TRASH_ENERGY, ITBlocks.MetalDevices.TRASH_FLUID, ITBlocks.MetalDevices.TRASH_ITEM, ITBlocks.Stone.REINFORCED_COKE_BRICK);
-        registerMineable(tag2, ITBlocks.MetalDevices.BARREL_CREATIVE, ITBlocks.MetalDevices.BARREL_STEEL, ITBlocks.MetalDevices.BARREL_OPEN, ITBlocks.MetalDevices.TRASH_ENERGY, ITBlocks.MetalDevices.TRASH_FLUID, ITBlocks.MetalDevices.TRASH_ITEM, ITBlocks.Stone.REINFORCED_COKE_BRICK);
+        registerMineable(tag1, ITBlocks.MetalDevices.BARREL_CREATIVE, ITBlocks.MetalDevices.BARREL_OPEN, ITBlocks.MetalDevices.BARREL_STEEL, ITBlocks.MetalDevices.TRASH_ENERGY, ITBlocks.MetalDevices.TRASH_FLUID, ITBlocks.MetalDevices.TRASH_ITEM, ITBlocks.MetalDevices.VALVE_FLUID, ITBlocks.MetalDevices.VALVE_LOAD, ITBlocks.Stone.REINFORCED_COKE_BRICK);
+        registerMineable(tag2, ITBlocks.MetalDevices.BARREL_CREATIVE, ITBlocks.MetalDevices.BARREL_OPEN, ITBlocks.MetalDevices.BARREL_STEEL, ITBlocks.MetalDevices.TRASH_ENERGY, ITBlocks.MetalDevices.TRASH_FLUID, ITBlocks.MetalDevices.TRASH_ITEM, ITBlocks.MetalDevices.VALVE_FLUID, ITBlocks.MetalDevices.VALVE_LOAD, ITBlocks.Stone.REINFORCED_COKE_BRICK);
     }
 
     private void registerMineable(IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag, MultiblockRegistration<?>... entries) { for (MultiblockRegistration<?> entry : entries) { tag.add(entry.block().get()); } }
@@ -44,11 +43,11 @@ public class ITBlockTags extends BlockTagsProvider {
         entries.sort(Comparator.comparing(ITBlocks.BlockEntry::getId));
         for (ITBlocks.BlockEntry<?> entry : entries) {
             tag.add(entry.get());
-            IEBlocks.BlockEntry<?> slab = IEBlocks.TO_SLAB.get(entry.getId());
+            ITBlocks.BlockEntry<?> slab = ITBlocks.TO_SLAB.get(entry.getId());
             if (slab != null) tag.add(slab.get());
-            IEBlocks.BlockEntry<?> stairs = IEBlocks.TO_STAIRS.get(entry.getId());
+            ITBlocks.BlockEntry<?> stairs = ITBlocks.TO_STAIRS.get(entry.getId());
             if (stairs != null) tag.add(stairs.get());
-            IEBlocks.BlockEntry<?> wall = IEBlocks.TO_WALL.get(entry.getId());
+            ITBlocks.BlockEntry<?> wall = ITBlocks.TO_WALL.get(entry.getId());
             if (wall != null) tag.add(wall.get());
         }
     }
