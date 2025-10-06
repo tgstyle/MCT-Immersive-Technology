@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.common.blocks.IEBaseBlock;
 import net.minecraft.core.BlockPos;
@@ -184,8 +183,8 @@ public class ITBaseBlock extends Block implements ITBlock, SimpleWaterloggedBloc
 
     @Override
     public @NotNull BlockState mirror(BlockState state, @NotNull Mirror mirrorIn) {
-        if (state.hasProperty(IEProperties.MIRRORED) && this.canRotate() && mirrorIn == Mirror.LEFT_RIGHT) {
-            return state.setValue(IEProperties.MIRRORED, !state.getValue(IEProperties.MIRRORED));
+        if (state.hasProperty(ITProperties.MIRRORED) && this.canRotate() && mirrorIn == Mirror.LEFT_RIGHT) {
+            return state.setValue(ITProperties.MIRRORED, !state.getValue(ITProperties.MIRRORED));
         }
         else {
             Property<Direction> facingProp = this.findFacingProperty(state);
@@ -200,12 +199,12 @@ public class ITBaseBlock extends Block implements ITBlock, SimpleWaterloggedBloc
 
     @Nullable
     private Property<Direction> findFacingProperty(BlockState state) {
-        if (state.hasProperty(IEProperties.FACING_ALL)) { return IEProperties.FACING_ALL; }
-        else { return state.hasProperty(IEProperties.FACING_HORIZONTAL) ? IEProperties.FACING_HORIZONTAL : null; }
+        if (state.hasProperty(ITProperties.FACING_ALL)) { return ITProperties.FACING_ALL; }
+        else { return state.hasProperty(ITProperties.FACING_HORIZONTAL) ? ITProperties.FACING_HORIZONTAL : null; }
     }
 
     protected boolean canRotate() {
-        return !this.getStateDefinition().getProperties().contains(IEProperties.MULTIBLOCKSLAVE);
+        return !this.getStateDefinition().getProperties().contains(ITProperties.MULTIBLOCKSLAVE);
     }
 
     public abstract static class IELadderBlock extends IEBaseBlock {

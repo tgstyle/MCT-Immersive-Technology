@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.common.items.helper;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.client.TextUtils;
 import blusunrize.immersiveengineering.common.blocks.BlockItemIE;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -88,7 +88,7 @@ public class ITBlockItem extends BlockItem {
 
     @Override
     protected boolean updateCustomBlockEntityTag(@NotNull BlockPos pos, @NotNull Level worldIn, @Nullable Player player, @NotNull ItemStack stack, BlockState state) {
-        if (!state.hasProperty(IEProperties.MULTIBLOCKSLAVE)) return super.updateCustomBlockEntityTag(pos, worldIn, player, stack, state);
+        if (!state.hasProperty(ITProperties.MULTIBLOCKSLAVE)) return super.updateCustomBlockEntityTag(pos, worldIn, player, stack, state);
         else return false;
     }
 

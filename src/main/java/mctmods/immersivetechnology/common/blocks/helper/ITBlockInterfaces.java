@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.common.blocks.helper;
 
 import blusunrize.immersiveengineering.api.IEApi;
 import blusunrize.immersiveengineering.api.IEEnums;
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
 import com.google.common.base.Preconditions;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
@@ -79,7 +78,7 @@ public class ITBlockInterfaces {
 
         default boolean isDummy() {
             BlockState state = getState();
-            if (state.hasProperty(IEProperties.MULTIBLOCKSLAVE)) { return state.getValue(IEProperties.MULTIBLOCKSLAVE); }
+            if (state.hasProperty(ITProperties.MULTIBLOCKSLAVE)) { return state.getValue(ITProperties.MULTIBLOCKSLAVE); }
             else { return true; }
         }
     }
@@ -113,13 +112,13 @@ public class ITBlockInterfaces {
     public interface IMirrorAble extends BlockStateProvider {
         default boolean getIsMirrored() {
             BlockState state = getState();
-            if (state.hasProperty(IEProperties.MIRRORED)) { return state.getValue(IEProperties.MIRRORED); }
+            if (state.hasProperty(ITProperties.MIRRORED)) { return state.getValue(ITProperties.MIRRORED); }
             else { return false; }
         }
 
         default void setMirrored(boolean mirrored) {
             BlockState state = getState();
-            BlockState newState = state.setValue(IEProperties.MIRRORED, mirrored);
+            BlockState newState = state.setValue(ITProperties.MIRRORED, mirrored);
             setState(newState);
         }
     }
@@ -127,13 +126,13 @@ public class ITBlockInterfaces {
     public interface IActiveState extends BlockStateProvider {
         default boolean getIsActive() {
             BlockState state = getState();
-            if (state.hasProperty(IEProperties.ACTIVE)) { return state.getValue(IEProperties.ACTIVE); }
+            if (state.hasProperty(ITProperties.ACTIVE)) { return state.getValue(ITProperties.ACTIVE); }
             else { return false; }
         }
 
         default void setActive(boolean active) {
             BlockState state = getState();
-            BlockState newState = state.setValue(IEProperties.ACTIVE, active);
+            BlockState newState = state.setValue(ITProperties.ACTIVE, active);
             setState(newState);
         }
     }
@@ -156,6 +155,12 @@ public class ITBlockInterfaces {
 
     public interface IEntityProof {
         boolean canEntityDestroy(Entity var1);
+    }
+
+    public interface BlockStateProvider {
+        BlockState getState();
+
+        void setState(BlockState var1);
     }
 
     public interface IAdditionalDrops {
@@ -206,11 +211,6 @@ public class ITBlockInterfaces {
             BlockState newState = oldState.setValue(getFacingProperty(), facing);
             setState(newState);
         }
-    }
-
-    public interface BlockStateProvider {
-        BlockState getState();
-        void setState(BlockState var1);
     }
 
     public interface IDirectionalBE {

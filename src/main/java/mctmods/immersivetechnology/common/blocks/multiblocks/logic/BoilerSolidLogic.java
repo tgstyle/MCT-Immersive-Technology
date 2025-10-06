@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.logic;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
@@ -15,6 +14,7 @@ import mctmods.immersivetechnology.api.HeatCapabilities;
 import mctmods.immersivetechnology.api.capability.IHeatConsumer;
 import mctmods.immersivetechnology.api.capability.IHeatProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
+import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerSolidRecipe;
@@ -205,8 +205,8 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             BlockPos relPos = new BlockPos(x, y, z);
             BlockPos absPos = ctx.getLevel().toAbsolute(relPos);
             BlockState curr = level.getBlockState(absPos);
-            if (curr.getBlock() == boilerBlock && curr.hasProperty(IEProperties.ACTIVE)) {
-                BlockState newState = curr.setValue(IEProperties.ACTIVE, active);
+            if (curr.getBlock() == boilerBlock && curr.hasProperty(ITProperties.ACTIVE)) {
+                BlockState newState = curr.setValue(ITProperties.ACTIVE, active);
                 if (!curr.equals(newState)) {
                     level.setBlock(absPos, newState, 19);
                     level.updateNeighborsAt(absPos, boilerBlock);

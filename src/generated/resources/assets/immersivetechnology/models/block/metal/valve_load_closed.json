@@ -1,13 +1,17 @@
 {
-  "parent": "minecraft:block/cube",
-  "render_type": "minecraft:solid",
+  "automatic_culling": true,
+  "emissive_ambient": true,
+  "flip_v": true,
+  "loader": "immersivetechnology:obj",
+  "model": "immersivetechnology:models/block/metal/obj/valve_load/valve_load.obj",
+  "render_type": "minecraft:cutout",
+  "shade_quads": true,
   "textures": {
-    "down": "immersivetechnology:block/metal/valve_load_side",
-    "east": "immersivetechnology:block/metal/valve_load_side",
-    "north": "immersivetechnology:block/metal/valve_load_bottom",
-    "particle": "immersivetechnology:block/metal/valve_load_side",
-    "south": "immersivetechnology:block/metal/valve_load_top",
-    "up": "immersivetechnology:block/metal/valve_load_side",
-    "west": "immersivetechnology:block/metal/valve_load_side"
+    "particle": "immersivetechnology:block/metal/valve_load"
+  },
+  "visibility": {
+    "Base": true,
+    "Handle_Closed": true,
+    "Handle_Open": false
   }
 }

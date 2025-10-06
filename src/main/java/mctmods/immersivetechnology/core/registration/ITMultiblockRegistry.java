@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.core.registration;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockItem;
@@ -8,6 +7,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.NonMirrorableWithActiveBlock;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
+import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiblockBuilder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public class ITMultiblockRegistry {
-    public static <T extends BlockEntity & IEBlockInterfaces.IGeneralMultiblock> MultiblockBEType<T> makeMultiblock(String name, MultiblockBEType.BEWithTypeConstructor<T> make, Supplier<? extends Block> block) { return new MultiblockBEType<>(name, ITBlockEntities.REGISTER, make, block, state -> state.hasProperty(IEProperties.MULTIBLOCKSLAVE) && !state.getValue(IEProperties.MULTIBLOCKSLAVE)); }
+    public static <T extends BlockEntity & IEBlockInterfaces.IGeneralMultiblock> MultiblockBEType<T> makeMultiblock(String name, MultiblockBEType.BEWithTypeConstructor<T> make, Supplier<? extends Block> block) { return new MultiblockBEType<>(name, ITBlockEntities.REGISTER, make, block, state -> state.hasProperty(ITProperties.MULTIBLOCKSLAVE) && !state.getValue(ITProperties.MULTIBLOCKSLAVE)); }
 
     public static Supplier<List<? extends Item>> supplyDeferredItems() { return ITItems::getITItems; }
 

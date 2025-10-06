@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 import mctmods.immersivetechnology.common.blocks.helper.ITEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
@@ -18,6 +18,6 @@ public class TrashItemBlock extends ITEntityBlock<TrashItemBlockEntity> {
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(IEProperties.FACING_HORIZONTAL, BlockStateProperties.WATERLOGGED);
+        builder.add(ITProperties.FACING_HORIZONTAL, BlockStateProperties.WATERLOGGED);
     }
 }

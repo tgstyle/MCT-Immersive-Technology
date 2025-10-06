@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.helper;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
@@ -12,6 +11,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.Multibloc
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.base.Preconditions;
+import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -53,7 +53,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     @Override
     public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {
         BlockState triggerState = world.getBlockState(pos);
-        if (triggerState.hasProperty(IEProperties.FACING_HORIZONTAL)) { side = triggerState.getValue(IEProperties.FACING_HORIZONTAL).getOpposite(); }
+        if (triggerState.hasProperty(ITProperties.FACING_HORIZONTAL)) { side = triggerState.getValue(ITProperties.FACING_HORIZONTAL).getOpposite(); }
         else { side = player.getDirection().getOpposite(); }
         return super.createStructure(world, pos, side, player);
     }
@@ -64,10 +64,10 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     @Override
     protected void replaceStructureBlock(StructureTemplate.StructureBlockInfo info, Level world, BlockPos actualPos, boolean mirrored, Direction clickDirection, Vec3i offsetFromMaster) {
         BlockState newState = this.logic.block().get().defaultBlockState();
-        newState = newState.setValue(IEProperties.MULTIBLOCKSLAVE, !offsetFromMaster.equals(Vec3i.ZERO));
-        if (newState.hasProperty(IEProperties.MIRRORED)) { newState = newState.setValue(IEProperties.MIRRORED, mirrored); }
-        if (newState.hasProperty(IEProperties.FACING_HORIZONTAL)) { newState = newState.setValue(IEProperties.FACING_HORIZONTAL, clickDirection.getOpposite()); }
-        if (newState.hasProperty(IEProperties.ACTIVE)) { newState = newState.setValue(IEProperties.ACTIVE, false); }
+        newState = newState.setValue(ITProperties.MULTIBLOCKSLAVE, !offsetFromMaster.equals(Vec3i.ZERO));
+        if (newState.hasProperty(ITProperties.MIRRORED)) { newState = newState.setValue(ITProperties.MIRRORED, mirrored); }
+        if (newState.hasProperty(ITProperties.FACING_HORIZONTAL)) { newState = newState.setValue(ITProperties.FACING_HORIZONTAL, clickDirection.getOpposite()); }
+        if (newState.hasProperty(ITProperties.ACTIVE)) { newState = newState.setValue(ITProperties.ACTIVE, false); }
         BlockState oldState = world.getBlockState(actualPos);
         world.setBlock(actualPos, newState, 3);
         BlockEntity curr = world.getBlockEntity(actualPos);

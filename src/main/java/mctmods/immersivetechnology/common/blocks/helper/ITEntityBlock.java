@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
 import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
 import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
@@ -70,13 +69,13 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         return baseTicker;
     }
 
-    private static final List<BooleanProperty> DEFAULT_OFF = ImmutableList.of(IEProperties.MULTIBLOCKSLAVE, IEProperties.ACTIVE, IEProperties.MIRRORED);
+    private static final List<BooleanProperty> DEFAULT_OFF = ImmutableList.of(ITProperties.MULTIBLOCKSLAVE, ITProperties.ACTIVE, ITProperties.MIRRORED);
 
     @Override
     protected BlockState getInitDefaultState() {
         BlockState ret = super.getInitDefaultState();
-        if (ret.hasProperty(IEProperties.FACING_ALL)) { ret = ret.setValue(IEProperties.FACING_ALL, getDefaultFacing()); }
-        else if (ret.hasProperty(IEProperties.FACING_HORIZONTAL)) { ret = ret.setValue(IEProperties.FACING_HORIZONTAL, getDefaultFacing()); }
+        if (ret.hasProperty(ITProperties.FACING_ALL)) { ret = ret.setValue(ITProperties.FACING_ALL, getDefaultFacing()); }
+        else if (ret.hasProperty(ITProperties.FACING_HORIZONTAL)) { ret = ret.setValue(ITProperties.FACING_HORIZONTAL, getDefaultFacing()); }
         for (BooleanProperty defaultOff : DEFAULT_OFF) { if (ret.hasProperty(defaultOff)) { ret = ret.setValue(defaultOff, false); } }
         return ret;
     }

@@ -1,12 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
-import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.ITClientTickableBE;
-import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
+import mctmods.immersivetechnology.common.blocks.helper.*;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
 import mctmods.immersivetechnology.common.network.ITOSDRequestMessage;
 import mctmods.immersivetechnology.common.util.TranslationKey;
@@ -102,7 +98,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
     @Override
     public void onLoad() {
         super.onLoad();
-        facing = getBlockState().getValue(IEProperties.FACING_ALL);
+        facing = getBlockState().getValue(ITProperties.FACING_ALL);
     }
 
     @Override
@@ -181,7 +177,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         this.facing = facing;
         if (level != null && !level.isClientSide) {
             BlockState state = getBlockState();
-            if (state.hasProperty(IEProperties.FACING_ALL)) level.setBlock(worldPosition, state.setValue(IEProperties.FACING_ALL, facing), 3);
+            if (state.hasProperty(ITProperties.FACING_ALL)) level.setBlock(worldPosition, state.setValue(ITProperties.FACING_ALL, facing), 3);
             markContainingBlockForUpdate(null);
             for (Direction d : Direction.values()) { level.neighborChanged(worldPosition.relative(d), getBlockState().getBlock(), worldPosition); }
         }

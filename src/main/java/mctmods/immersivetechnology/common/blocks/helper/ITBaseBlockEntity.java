@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.client.IModelOffsetProvider;
 import blusunrize.immersiveengineering.api.energy.WrappingEnergyStorage;
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
@@ -214,7 +213,7 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
         BlockState state = getState();
         if (this instanceof IModelOffsetProvider offsetProvider) { offset = offsetProvider.getModelOffset(state, Vec3i.ZERO); }
         else if (state.getBlock() instanceof IModelOffsetProvider offsetProvider) { offset = offsetProvider.getModelOffset(state, Vec3i.ZERO); }
-        if (offset != null) { return ModelData.builder().with(IEProperties.Model.SUBMODEL_OFFSET, offset).build(); }
+        if (offset != null) { return ModelData.builder().with(ITProperties.Model.SUBMODEL_OFFSET, offset).build(); }
         return ModelData.EMPTY;
     }
 

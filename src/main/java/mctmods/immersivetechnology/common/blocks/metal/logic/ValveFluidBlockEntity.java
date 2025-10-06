@@ -11,11 +11,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,9 +25,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-
 import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.OPEN;
+import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.ROTATION;
 
 public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IFluidHandler, IFluidPipe, ITServerTickableBE {
     public static class DummyTank implements IFluidHandler {
@@ -37,6 +38,8 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IFl
         @Override public @NotNull FluidStack drain(FluidStack fluidStack, FluidAction b) { return FluidStack.EMPTY; }
         @Override public @NotNull FluidStack drain(int i, FluidAction b) { return FluidStack.EMPTY; }
     }
+
+    public int rotation = 0;
 
     public ValveFluidBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.VALVE_FLUID.get(), pos, state, TranslationKey.OVERLAY_OSD_VALVE_FLUID_NORMAL_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_FLUID_SNEAKING_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_FLUID_SNEAKING_SECOND_LINE, 0); }
 
@@ -53,6 +56,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IFl
             markContainingBlockForUpdate(null);
             updateRedstoneState();
         }
+        rotation = getBlockState().getValue(ROTATION);
     }
 
     @Override
@@ -155,8 +159,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IFl
         BlockEntity dst = level.getBlockEntity(dstPos);
         if (dst != null) {
             LazyOptional<IFluidHandler> cap = dst.getCapability(ForgeCapabilities.FLUID_HANDLER, facing);
-            Optional<IFluidHandler> resolved = cap.resolve();
-            return resolved.orElse(null);
+            return cap.resolve().orElse(null);
         }
         return null;
     }
@@ -182,4 +185,27 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IFl
     }
 
     @Override public boolean stillValid(Player player) { return !isRemoved() && player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D; }
+
+    @Override
+    public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
+        assert level != null;
+        if (level.isClientSide) return false;
+        boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
+        Direction oldFacing = facing;
+        Direction newFacing = counter ? oldFacing.getCounterClockWise(side.getAxis()) : oldFacing.getClockWise(side.getAxis());
+        setFacing(newFacing);
+        return true;
+    }
+
+    @Override
+    public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
+        super.readCustomNBT(nbt, descPacket);
+        rotation = nbt.getInt("rotation");
+    }
+
+    @Override
+    public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {
+        super.writeCustomNBT(nbt, descPacket);
+        nbt.putInt("rotation", rotation);
+    }
 }

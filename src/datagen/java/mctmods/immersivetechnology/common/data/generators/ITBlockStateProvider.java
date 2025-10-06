@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.client.models.ModelConfigurableSides;
 import blusunrize.immersiveengineering.data.DataGenUtils;
@@ -12,6 +11,7 @@ import blusunrize.immersiveengineering.data.models.NongeneratedModels.Nongenerat
 import blusunrize.immersiveengineering.data.models.SideConfigBuilder;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
@@ -36,7 +36,6 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.SlabType;
@@ -315,29 +314,78 @@ public class ITBlockStateProvider extends BlockStateProvider {
         valveClosedBuilder.texture("particle", particleTex);
         valveOpenBuilder.texture("particle", particleTex);
 
-        createAllFacingBlock(ITBlocks.MetalDevices.VALVE_FLUID.get(), state -> state.getValue(ValveFluidBlock.OPEN) ? valveOpen : valveClosed);
+        VariantBlockStateBuilder valveFluidBuilder = getVariantBuilder(ITBlocks.MetalDevices.VALVE_FLUID.get());
+        valveFluidBuilder.forAllStates(state -> {
+            Direction facing = state.getValue(ITProperties.FACING_ALL);
+            boolean open = state.getValue(ValveFluidBlock.OPEN);
+            int rotationVal = state.getValue(ValveFluidBlock.ROTATION);
+            boolean mirrored = state.getValue(ITProperties.MIRRORED);
+            ModelFile modelFile = open ? valveOpen : valveClosed;
+            int xRot = 0;
+            int yRot;
+            if (facing.getAxis().isHorizontal()) {
+                yRot = ((facing.get2DDataValue() + 2) % 4) * 90;
+            } else {
+                Direction hFacing = Direction.from2DDataValue(rotationVal);
+                yRot = ((hFacing.get2DDataValue() + 2) % 4) * 90;
+                xRot = facing == Direction.DOWN ? 90 : 270;
+            }
+            if (mirrored) yRot = (yRot + 180) % 360;
+            return ConfiguredModel.builder().modelFile(modelFile).rotationX(xRot).rotationY(yRot).build();
+        });
         setRenderType(RenderType.cutout(), valveClosedBuilder, valveOpenBuilder);
 
-        BlockModelBuilder valveLoadClosedBuilder = models().cube("block/metal/valve_load_closed",
-                        modLoc("block/metal/valve_load_side"),
-                        modLoc("block/metal/valve_load_side"),
-                        modLoc("block/metal/valve_load_bottom"),
-                        modLoc("block/metal/valve_load_top"),
-                        modLoc("block/metal/valve_load_side"),
-                        modLoc("block/metal/valve_load_side"))
-                .texture("particle", modLoc("block/metal/valve_load_side"));
+        BlockModelBuilder valveLoadClosedBuilder = models().getBuilder("block/metal/valve_load_closed");
+        ITObjModelBuilder<BlockModelBuilder> loadClosedLoader = valveLoadClosedBuilder.customLoader(ITObjModelBuilder::new)
+                .modelLocation(modLoc("models/block/metal/obj/valve_load/valve_load.obj"))
+                .automaticCulling(true)
+                .shadeQuads(true)
+                .flipV(true)
+                .emissiveAmbient(true)
+                .mtlOverride(null)
+                .visibility("Base", true)
+                .visibility("Handle_Open", false)
+                .visibility("Handle_Closed", true);
+        ModelFile valveLoadClosed = loadClosedLoader.end();
 
-        BlockModelBuilder valveLoadOpenBuilder = models().cube("block/metal/valve_load_open",
-                        modLoc("block/metal/valve_load_side"),
-                        modLoc("block/metal/valve_load_side"),
-                        modLoc("block/metal/valve_load_bottom"),
-                        modLoc("block/metal/valve_load_top"),
-                        modLoc("block/metal/valve_load_side"),
-                        modLoc("block/metal/valve_load_side"))
-                .texture("particle", modLoc("block/metal/valve_load_side"));
+        BlockModelBuilder valveLoadOpenBuilder = models().getBuilder("block/metal/valve_load_open");
+        ITObjModelBuilder<BlockModelBuilder> loadOpenLoader = valveLoadOpenBuilder.customLoader(ITObjModelBuilder::new)
+                .modelLocation(modLoc("models/block/metal/obj/valve_load/valve_load.obj"))
+                .automaticCulling(true)
+                .shadeQuads(true)
+                .flipV(true)
+                .emissiveAmbient(true)
+                .mtlOverride(null)
+                .visibility("Base", true)
+                .visibility("Handle_Open", true)
+                .visibility("Handle_Closed", false);
+        ModelFile valveLoadOpen = loadOpenLoader.end();
 
-        createAllFacingBlock(ITBlocks.MetalDevices.VALVE_LOAD.get(), state -> state.getValue(ValveLoadBlock.OPEN) ? valveLoadOpenBuilder : valveLoadClosedBuilder);
-        setRenderType(RenderType.solid(), valveLoadClosedBuilder, valveLoadOpenBuilder);
+        String particleTexLoad = DataGenUtils.getTextureFromObj(modLoc("block/metal/obj/valve_load/valve_load.obj"), existingFileHelper);
+        valveLoadClosedBuilder.texture("particle", particleTexLoad);
+        valveLoadOpenBuilder.texture("particle", particleTexLoad);
+
+        VariantBlockStateBuilder valveLoadBuilder = getVariantBuilder(ITBlocks.MetalDevices.VALVE_LOAD.get());
+        valveLoadBuilder.forAllStates(state -> {
+            Direction facing = state.getValue(ITProperties.FACING_ALL);
+            boolean open = state.getValue(ValveLoadBlock.OPEN);
+            int rotationVal = state.getValue(ValveLoadBlock.ROTATION);
+            boolean mirrored = state.getValue(ITProperties.MIRRORED);
+            ModelFile modelFile = open ? valveLoadOpen : valveLoadClosed;
+            int xRot;
+            int yRot;
+            if (facing.getAxis().isHorizontal()) {
+                yRot = (facing.get2DDataValue() % 4) * 90;
+                xRot = 270;
+            } else {
+                Direction hFacing = Direction.from2DDataValue(rotationVal);
+                yRot = ((hFacing.get2DDataValue() + 1) % 4) * 90;
+                xRot = facing == Direction.DOWN ? 180 : 0;
+            }
+            if (mirrored) yRot = (yRot + 180) % 360;
+            return ConfiguredModel.builder().modelFile(modelFile).rotationX(xRot).rotationY(yRot).build();
+        });
+        setRenderType(RenderType.cutout(), valveLoadClosedBuilder, valveLoadOpenBuilder);
     }
 
     private void createSlabModels(Block block, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
@@ -381,13 +429,13 @@ public class ITBlockStateProvider extends BlockStateProvider {
         ModelFile activeMain = split(activeUnsplit, multiblock, false, block_type);
         ModelFile defaultMirrorModel = split(defaultMirror, multiblock, true, block_type);
         ModelFile activeMirrorModel = split(activeMirror, multiblock, true, block_type);
-        createActiveMultiblock(multiblock::getBlock, defaultMain, activeMain, defaultMirrorModel, activeMirrorModel, IEProperties.MIRRORED, IEProperties.ACTIVE);
+        createActiveMultiblock(multiblock::getBlock, defaultMain, activeMain, defaultMirrorModel, activeMirrorModel, ITProperties.MIRRORED, ITProperties.ACTIVE);
     }
 
     private void createMirroredMultiblock(NongeneratedModel unsplitModel, NongeneratedModel mirror_model, ITTemplateMultiblock multiblock) {
         final ModelFile mainModel = split(unsplitModel, multiblock, false, "metal");
         final ModelFile mirrorModel = split(mirror_model, multiblock, true, "metal");
-        if (multiblock.getBlock().getStateDefinition().getProperties().contains(IEProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, mirrorModel, IEProperties.MIRRORED); }
+        if (multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, mirrorModel, ITProperties.MIRRORED); }
         else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
     }
 
@@ -395,7 +443,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private void createMultiblock(NongeneratedModel unsplitModel, ITTemplateMultiblock multiblock) {
         final ModelFile mainModel = split(unsplitModel, multiblock, false, "metal");
-        if (multiblock.getBlock().getStateDefinition().getProperties().contains(IEProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, split(mirror(unsplitModel, innerModels), multiblock, true, "metal"), IEProperties.MIRRORED); }
+        if (multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, split(mirror(unsplitModel, innerModels), multiblock, true, "metal"), ITProperties.MIRRORED); }
         else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
     }
 
@@ -403,7 +451,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         unsplitModels.put(b.get(), masterModel);
         Preconditions.checkArgument((mirroredModel == null) == (mirroredState == null));
         VariantBlockStateBuilder builder = getVariantBuilder(b.get());
-        EnumProperty<Direction> facing = IEProperties.FACING_HORIZONTAL;
+        EnumProperty<Direction> facing = ITProperties.FACING_HORIZONTAL;
         builder.forAllStates(state -> {
             Direction dir = state.getValue(facing);
             int angleY = getAngle(dir);
@@ -421,7 +469,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         Preconditions.checkArgument((defaultMirrored == null) == (mirroredState == null));
         Preconditions.checkArgument((activeMaster == null) == (activeState == null));
         VariantBlockStateBuilder builder = getVariantBuilder(b.get());
-        EnumProperty<Direction> facing = IEProperties.FACING_HORIZONTAL;
+        EnumProperty<Direction> facing = ITProperties.FACING_HORIZONTAL;
         builder.forAllStates(state -> {
             Direction dir = state.getValue(facing);
             int angleY = getAngle(dir);
@@ -526,24 +574,12 @@ public class ITBlockStateProvider extends BlockStateProvider {
         VariantBlockStateBuilder stateBuilder = getVariantBuilder(block.get());
         forEachState(stateBuilder.partialState(), additionalProps, state -> {
             ModelFile modelLoc = model.apply(state);
-            EnumProperty<Direction> facing = IEProperties.FACING_HORIZONTAL;
+            EnumProperty<Direction> facing = ITProperties.FACING_HORIZONTAL;
             for (Direction d : facing.getPossibleValues()) {
                 int x = 0;
                 int y = getAngle(d);
                 state.with(facing, d).setModels(new ConfiguredModel(modelLoc, x, y, false));
             }
-        });
-    }
-
-    protected void createAllFacingBlock(Block block, Function<BlockState, ModelFile> modelFunc) {
-        VariantBlockStateBuilder builder = getVariantBuilder(block);
-        EnumProperty<Direction> facing = IEProperties.FACING_ALL;
-        builder.forAllStates(state -> {
-            Direction dir = state.getValue(facing);
-            ModelFile model = modelFunc.apply(state);
-            int angleX = -90 * dir.getStepY();
-            int angleY = dir.getAxis() != Direction.Axis.Y ? getAngle(dir) : 0;
-            return new ConfiguredModel[]{new ConfiguredModel(model, angleX, angleY, true)};
         });
     }
 
