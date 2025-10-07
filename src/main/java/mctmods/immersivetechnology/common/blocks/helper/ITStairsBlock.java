@@ -6,10 +6,10 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import java.util.function.Supplier;
 
-public class ITStairsBlock extends StairBlock implements IITBlock {
-    private final Supplier<? extends IITBlock> base;
+public class ITStairsBlock extends StairBlock implements ITBlock {
+    private final Supplier<? extends ITBlock> base;
 
-    public <T extends Block & IITBlock> ITStairsBlock(BlockBehaviour.Properties properties, Supplier<T> base) {
+    public <T extends Block & ITBlock> ITStairsBlock(BlockBehaviour.Properties properties, Supplier<T> base) {
         super(() -> base.get().defaultBlockState(), properties);
         this.base = base;
     }
