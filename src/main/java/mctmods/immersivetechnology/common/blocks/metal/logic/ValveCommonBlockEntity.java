@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.OPEN;
 
-public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implements ITBlockInterfaces.IDirectionalBE, ITBlockInterfaces.IBlockOverlayText, ITServerTickableBE, ITClientTickableBE, MenuProvider, IEBlockInterfaces.IHammerInteraction {
+public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implements ITServerTickableBE, ITClientTickableBE, MenuProvider, ITBlockInterfaces.IDirectionalBE, ITBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IHammerInteraction {
     final TranslationKey overlayNormal;
     final TranslationKey overlaySneakingFirstLine;
     final TranslationKey overlaySneakingSecondLine;
@@ -185,7 +185,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
     }
 
     @Override
-    public @NotNull PlacementLimitation getFacingLimitation() { return PlacementLimitation.PISTON_LIKE; }
+    public @NotNull PlacementLimitation getFacingLimitation() { return PlacementLimitation.SIDE_CLICKED; }
 
     @Override
     public boolean mirrorFacingOnPlacement(@NotNull LivingEntity placer) { return false; }

@@ -8,6 +8,7 @@ import blusunrize.immersiveengineering.api.wires.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.wires.LocalWireNetwork;
 import blusunrize.immersiveengineering.api.wires.WireType;
 import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler;
+import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler.EnergyConnector;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
@@ -39,7 +40,7 @@ import static mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock.ROT
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock.OPEN;
 
-public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements IImmersiveConnectable, EnergyTransferHandler.EnergyConnector, ITServerTickableBE, ITBlockInterfaces.IMirrorAble {
+public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITServerTickableBE, IImmersiveConnectable, EnergyConnector, ITBlockInterfaces.IMirrorAble {
     protected static final int RIGHT_INDEX = 0;
     protected static final int LEFT_INDEX = 1;
     protected WireType leftType;

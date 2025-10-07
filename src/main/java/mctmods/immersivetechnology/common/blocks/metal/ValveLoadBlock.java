@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -44,7 +45,7 @@ public class ValveLoadBlock extends ITEntityBlock<ValveLoadBlockEntity> {
     @Override
     public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getValveShape(state); }
 
-    @Override
+    @SuppressWarnings("deprecation") @Override
     public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) { return getValveShape(state); }
 
     private VoxelShape getValveShape(BlockState state) {
@@ -61,7 +62,7 @@ public class ValveLoadBlock extends ITEntityBlock<ValveLoadBlockEntity> {
         switch (facing) {
             case UP: {
                 baseShape = Shapes.box(0, 0, 0, 1, baseThickness, 1);
-                boolean alongX = rotation % 2 == 0;
+                boolean alongX = rotation % 2 != 0;
                 if (alongX) {
                     connector1 = Shapes.box(0, baseThickness, centerMin, connectorSize, baseThickness + connectorLength, centerMax);
                     connector2 = Shapes.box(1 - connectorSize, baseThickness, centerMin, 1, baseThickness + connectorLength, centerMax);
@@ -73,7 +74,7 @@ public class ValveLoadBlock extends ITEntityBlock<ValveLoadBlockEntity> {
             }
             case DOWN: {
                 baseShape = Shapes.box(0, 1 - baseThickness, 0, 1, 1, 1);
-                boolean alongX = rotation % 2 == 0;
+                boolean alongX = rotation % 2 != 0;
                 if (alongX) {
                     connector1 = Shapes.box(0, 1 - baseThickness - connectorLength, centerMin, connectorSize, 1 - baseThickness, centerMax);
                     connector2 = Shapes.box(1 - connectorSize, 1 - baseThickness - connectorLength, centerMin, 1, 1 - baseThickness, centerMax);
@@ -122,6 +123,10 @@ public class ValveLoadBlock extends ITEntityBlock<ValveLoadBlockEntity> {
         if (level.isClientSide) return;
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) { valve.updateRedstoneState(); }
+        if (level.isEmptyBlock(pos.relative(state.getValue(ITProperties.FACING_ALL)))) {
+            popResource(level, pos, new ItemStack(this));
+            level.removeBlock(pos, false);
+        }
     }
 
     @Override
@@ -144,11 +149,7 @@ public class ValveLoadBlock extends ITEntityBlock<ValveLoadBlockEntity> {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        Direction clicked = context.getClickedFace();
-        Direction facing = clicked;
-        if (clicked.getAxis().isVertical()) {
-            facing = context.getNearestLookingDirection().getOpposite();
-        }
+        Direction facing = context.getClickedFace();
         int rotation = 0;
         if (facing.getAxis().isVertical()) {
             assert context.getPlayer() != null;

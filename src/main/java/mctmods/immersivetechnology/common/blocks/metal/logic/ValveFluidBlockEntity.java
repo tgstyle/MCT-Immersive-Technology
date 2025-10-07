@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.OPEN;
 import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.ROTATION;
 
-public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IFluidHandler, IFluidPipe, ITServerTickableBE {
+public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITServerTickableBE, IFluidHandler, IFluidPipe {
     public static class DummyTank implements IFluidHandler {
         @Override public int getTanks() { return 1; }
         @Override public @NotNull FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
