@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -123,10 +122,6 @@ public class ValveLoadBlock extends ITEntityBlock<ValveLoadBlockEntity> {
         if (level.isClientSide) return;
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) { valve.updateRedstoneState(); }
-        if (level.isEmptyBlock(pos.relative(state.getValue(ITProperties.FACING_ALL)))) {
-            popResource(level, pos, new ItemStack(this));
-            level.removeBlock(pos, false);
-        }
     }
 
     @Override
