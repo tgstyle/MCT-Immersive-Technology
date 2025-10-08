@@ -1,12 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import blusunrize.immersiveengineering.api.TargetingInfo;
-import blusunrize.immersiveengineering.api.wires.Connection;
-import blusunrize.immersiveengineering.api.wires.ConnectionPoint;
-import blusunrize.immersiveengineering.api.wires.GlobalWireNetwork;
-import blusunrize.immersiveengineering.api.wires.IImmersiveConnectable;
-import blusunrize.immersiveengineering.api.wires.LocalWireNetwork;
-import blusunrize.immersiveengineering.api.wires.WireType;
+import blusunrize.immersiveengineering.api.wires.*;
 import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler;
 import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler.EnergyConnector;
 import com.google.common.collect.ImmutableList;
@@ -33,11 +28,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-
+import java.util.ArrayList;
 import java.util.Collection;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock.ROTATION;
-
 import static mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock.OPEN;
 
 public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITServerTickableBE, IImmersiveConnectable, EnergyConnector, ITBlockInterfaces.IMirrorAble {
@@ -47,6 +41,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     protected WireType rightType;
     private int bufferedEnergy = 0;
     public int rotation = 0;
+    private boolean isUnloading = false;
 
     public ValveLoadBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.VALVE_LOAD.get(), pos, state, TranslationKey.OVERLAY_OSD_VALVE_LOAD_NORMAL_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_LOAD_SNEAKING_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_LOAD_SNEAKING_SECOND_LINE, 1); }
 
@@ -58,14 +53,45 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     public void onLoad() {
         super.onLoad();
         assert level != null;
+        facing = getBlockState().getValue(ITProperties.FACING_ALL);
+        rotation = getBlockState().getValue(ROTATION);
         if (!level.isClientSide) {
+            GlobalWireNetwork.getNetwork(level).onConnectorLoad(this, level);
             efficientSetChanged();
             for (Direction d : Direction.values()) { level.neighborChanged(worldPosition.relative(d), getBlockState().getBlock(), worldPosition); }
             markContainingBlockForUpdate(null);
             updateRedstoneState();
         }
-        facing = getBlockState().getValue(ITProperties.FACING_ALL);
-        rotation = getBlockState().getValue(ROTATION);
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (level != null && !level.isClientSide && !isUnloading) {
+            GlobalWireNetwork global = GlobalWireNetwork.getNetwork(level);
+            for (ConnectionPoint cp : getConnectionPoints()) {
+                LocalWireNetwork net = global.getNullableLocalNet(cp);
+                if (net != null) {
+                    for (Connection conn : new ArrayList<>(net.getConnections(cp))) {
+                        ConnectionPoint otherEnd = conn.getOtherEnd(cp);
+                        if (net.getConnector(otherEnd) != null) {
+                            if (level.isLoaded(otherEnd.position())) global.removeAndDropConnection(conn, worldPosition, level);
+                            else global.removeConnection(conn);
+                        }
+                    }
+                }
+            }
+            global.removeConnector(this);
+        }
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        if (level != null && !level.isClientSide) {
+            GlobalWireNetwork.getNetwork(level).onConnectorUnload(this);
+            isUnloading = true;
+        }
+        super.onChunkUnloaded();
     }
 
     public void onNeighborBlockChange(BlockPos otherPos) { updateRedstoneState(); }
@@ -76,7 +102,6 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         assert level != null;
         long time = level.getGameTime();
         if (time % 12 == ((worldPosition.getX() ^ worldPosition.getZ()) & 11)) updateRedstoneState();
-        if (time % 20 == 0) { acceptedAmount = 0; packets = 0; }
     }
 
     @NotNull
@@ -85,24 +110,22 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         return GlobalWireNetwork.getNetwork(level).getLocalNet(new ConnectionPoint(worldPosition, cpIndex));
     }
 
-    @Override
-    public boolean canConnect() { return true; }
+    @Override public boolean canConnect() { return true; }
 
     @Override
     public boolean canConnectCable(WireType cableType, ConnectionPoint target, Vec3i offset) {
         if (!offset.equals(Vec3i.ZERO)) return false;
         WireType atConn = target.index() == LEFT_INDEX ? leftType : rightType;
-        WireType other = target.index() == LEFT_INDEX ? rightType : leftType;
-        return canAttach(cableType, atConn, other);
+        return canAttach(cableType, atConn);
     }
 
-    @SuppressWarnings("unused")
-    protected boolean canAttach(WireType toAttach, @Nullable WireType atConn, @Nullable WireType other) { return atConn == null; }
+    protected boolean canAttach(WireType toAttach, @Nullable WireType atConn) { return atConn == null || toAttach.equals(atConn); }
 
     @Override
     public void connectCable(WireType cableType, ConnectionPoint target, IImmersiveConnectable other, ConnectionPoint otherTarget) {
         if (target.index() == LEFT_INDEX) leftType = cableType; else rightType = cableType;
         updateMirrorState();
+        markContainingBlockForUpdate(null);
     }
 
     @Override
@@ -115,19 +138,13 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     }
 
     protected void updateMirrorState() {
-        if (rightType != null || leftType != null) {
-            String higher = getHigherWiretype();
-            boolean intendedState = (rightType != null && higher.equals(rightType.getCategory())) || (leftType != null && !higher.equals(leftType.getCategory()));
-            setMirrored(intendedState);
+        if (leftType != null && rightType != null) {
+            int leftL = getLevel(leftType.getCategory());
+            int rightL = getLevel(rightType.getCategory());
+            if (leftL != rightL) {
+                setMirrored(rightL > leftL);
+            }
         }
-    }
-
-    protected String getHigherWiretype() {
-        if (leftType == null) return rightType == null ? WireType.LV_CATEGORY : rightType.getCategory();
-        if (rightType == null) return leftType.getCategory();
-        int left = getLevel(leftType.getCategory());
-        int right = getLevel(rightType.getCategory());
-        return left > right ? leftType.getCategory() : rightType.getCategory();
     }
 
     private int getLevel(String cat) {
@@ -142,30 +159,37 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
 
     protected Vec3 getConnectionOffset(WireType type, boolean right) {
         double conRadius = type.getRenderDiameter() / 2;
-        double offset = getHigherWiretype().equals(type.getCategory()) ? getHigherOffset() : getLowerOffset();
         Direction facing = getFacing();
         boolean isVertical = facing.getAxis().isVertical();
         Direction hFacing = isVertical ? Direction.from2DDataValue(rotation) : facing;
         boolean mirrored = getIsMirrored();
         if (mirrored) right = !right;
-        double yOff;
-        if (isVertical) {
-            if (facing == Direction.UP) { yOff = offset - conRadius; } else { yOff = 1 - offset + conRadius; }
-        } else { yOff = offset - conRadius; }
+        Direction perpDir = isVertical ? hFacing : facing.getClockWise();
+        boolean perpPositive = perpDir.getAxisDirection() == Direction.AxisDirection.POSITIVE;
+        double high = 0.8125;
+        double low = 0.1875;
+        double perpOff = right ? low : high;
+        if (perpPositive) perpOff = 1 - perpOff;
+        Direction.Axis perpAxis = perpDir.getAxis();
+        boolean alongPositive = facing.getAxisDirection() == Direction.AxisDirection.POSITIVE;
+        double alongOff = alongPositive ? 1 - conRadius : conRadius;
         double xOff = 0.5;
+        double yOff = 0.5;
         double zOff = 0.5;
-        switch (hFacing) {
-            case NORTH -> xOff = right ? .8125 : .1875;
-            case SOUTH -> xOff = right ? .1875 : .8125;
-            case WEST -> zOff = right ? .1875 : .8125;
-            case EAST -> zOff = right ? .8125 : .1875;
+        Direction.Axis alongAxis = facing.getAxis();
+        switch (alongAxis) {
+            case X: xOff = alongOff; break;
+            case Y: yOff = alongOff; break;
+            case Z: zOff = alongOff; break;
         }
+        switch (perpAxis) {
+            case X: xOff = perpOff; break;
+            case Y: yOff = perpOff; break;
+            case Z: zOff = perpOff; break;
+        }
+        if (!isVertical) yOff = 0.5;
         return new Vec3(xOff, yOff, zOff);
     }
-
-    protected float getLowerOffset() { return 0.9375F; }
-
-    protected float getHigherOffset() { return 1F; }
 
     @Override
     public Collection<ConnectionPoint> getConnectionPoints() { return ImmutableList.of(new ConnectionPoint(worldPosition, LEFT_INDEX), new ConnectionPoint(worldPosition, RIGHT_INDEX)); }
@@ -185,12 +209,18 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         Direction facing = getFacing();
         boolean isVertical = facing.getAxis().isVertical();
         Direction hFacing = isVertical ? Direction.from2DDataValue(rotation) : facing;
-        double hitPos;
-        if (hFacing.getAxis() == Direction.Axis.X) hitPos = target.hitZ;
-        else hitPos = 1 - target.hitX;
-        boolean positive = hFacing.getAxisDirection() == Direction.AxisDirection.POSITIVE;
-        if ((hitPos < .5) == positive) return leftCP;
+        Direction perpDir = isVertical ? hFacing : facing.getClockWise();
+        double hitPos = getHitPos(target, perpDir);
+        if (hitPos < .5) return leftCP;
         else return rightCP;
+    }
+
+    private double getHitPos(TargetingInfo target, Direction perpDir) {
+        Direction.Axis perpAxis = perpDir.getAxis();
+        double hitPos = perpAxis == Direction.Axis.X ? target.hitX : perpAxis == Direction.Axis.Y ? target.hitY : target.hitZ;
+        boolean positive = perpDir.getAxisDirection() == Direction.AxisDirection.POSITIVE;
+        if (!positive) hitPos = 1 - hitPos;
+        return hitPos;
     }
 
     @Override
@@ -208,6 +238,8 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         if (nbt.contains("leftType")) leftType = WireType.getValue(nbt.getString("leftType")); else leftType = null;
         if (nbt.contains("rightType")) rightType = WireType.getValue(nbt.getString("rightType")); else rightType = null;
         rotation = nbt.getInt("rotation");
+        bufferedEnergy = nbt.getInt("bufferedEnergy");
+        updateMirrorState();
     }
 
     @Override
@@ -216,6 +248,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         if (leftType != null) nbt.putString("leftType", leftType.getUniqueName());
         if (rightType != null) nbt.putString("rightType", rightType.getUniqueName());
         nbt.putInt("rotation", rotation);
+        nbt.putInt("bufferedEnergy", bufferedEnergy);
     }
 
     @Override
@@ -227,17 +260,14 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         }
     }
 
-    @Override
-    public boolean getIsMirrored() { return getBlockState().getValue(ITProperties.MIRRORED); }
+    @Override public boolean getIsMirrored() { return getBlockState().getValue(ITProperties.MIRRORED); }
 
     @Override
     public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveLoadMenu.makeServer(ITMenuTypes.VALVE_LOAD.getType(), id, inv, this); }
 
-    @Override
-    public @NotNull Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_LOAD.location); }
+    @Override public @NotNull Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_LOAD.location); }
 
-    @Override
-    public boolean stillValid(Player player) { return !isRemoved() && player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D; }
+    @Override public boolean stillValid(Player player) { return !isRemoved() && player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D; }
 
     @Override
     public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
@@ -254,22 +284,25 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     @Override
     public boolean isSource(ConnectionPoint cp) {
         boolean mirrored = getIsMirrored();
-        int outputIndex = mirrored ? LEFT_INDEX : RIGHT_INDEX;
+        int outputIndex = mirrored ? RIGHT_INDEX : LEFT_INDEX;
         return cp.index() == outputIndex;
     }
 
     @Override
     public boolean isSink(ConnectionPoint cp) {
         boolean mirrored = getIsMirrored();
-        int inputIndex = mirrored ? RIGHT_INDEX : LEFT_INDEX;
+        int inputIndex = mirrored ? LEFT_INDEX : RIGHT_INDEX;
         return cp.index() == inputIndex;
     }
 
-    @Override
-    public int getAvailableEnergy() { return bufferedEnergy; }
+    @Override public int getAvailableEnergy() { return getBlockState().getValue(OPEN) ? bufferedEnergy : 0; }
 
     @Override
-    public void extractEnergy(int amount) { bufferedEnergy -= amount; if (bufferedEnergy < 0) bufferedEnergy = 0; }
+    public void extractEnergy(int amount) {
+        bufferedEnergy -= amount;
+        if (bufferedEnergy < 0) bufferedEnergy = 0;
+        efficientSetChanged();
+    }
 
     @Override
     public int getRequestedEnergy() {
@@ -289,8 +322,8 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         bufferedEnergy += amount;
         acceptedAmount += amount;
         packets++;
+        efficientSetChanged();
     }
 
-    @Override
-    public void onEnergyPassedThrough(double amount) { }
+    @Override public void onEnergyPassedThrough(double amount) { }
 }

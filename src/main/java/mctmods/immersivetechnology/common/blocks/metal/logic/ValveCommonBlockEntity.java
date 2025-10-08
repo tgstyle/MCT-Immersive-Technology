@@ -62,7 +62,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         average = sum / 60;
         sum = 0;
         for (long avg : packetTotals) sum += avg;
-        packetAverage = (int)sum;
+        packetAverage = (int)(sum / 60);
     }
 
     protected void updateBase() {
