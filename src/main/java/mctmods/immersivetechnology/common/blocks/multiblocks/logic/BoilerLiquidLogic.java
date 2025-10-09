@@ -59,7 +59,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     public static final double PILOT_HEAT = 20.0;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerLiquidShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = RAW_POIS.stream().filter(poi -> poi.name.equals("redstone")).map(poi -> new BlockPos(poi.x, poi.y, poi.z)).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: redstone"));
+    public static final BlockPos REDSTONE_POI = RAW_POIS.stream().filter(poi -> poi.name.equals("redstone")).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: redstone"));
     public static final List<BlockPos> IGNITION_POI = getPosList("ignition");
     private static final List<BlockPos> FLUID_INPUT_POI = getPosList("fluid_input");
     private static final List<BlockPos> HEAT_OUTPUT_POI = getPosList("heat_output");
@@ -69,7 +69,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     private static final RelativeBlockFace HEAT_OUTPUT_FACING = getFacing("heat_output");
     public static final RelativeBlockFace IGNITION_FACING = getFacing("ignition");
 
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.x, poi.y, poi.z)).collect(ImmutableList.toImmutableList()); }
+    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
     private static RelativeBlockFace getFacing(String name) {
         List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> poi.relativeFace).distinct().toList();
         if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }

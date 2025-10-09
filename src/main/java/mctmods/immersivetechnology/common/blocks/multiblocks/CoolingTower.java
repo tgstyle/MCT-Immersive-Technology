@@ -16,14 +16,14 @@ import java.util.function.Consumer;
 public class CoolingTower extends ITTemplateMultiblock {
     public static final CoolingTower INSTANCE = new CoolingTower();
 
-    public CoolingTower() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/cooling_tower"), new BlockPos(4, 0, 8), new BlockPos(4, 0, 8), new BlockPos(CoolingTowerShape.WIDTH, CoolingTowerShape.HEIGHT, CoolingTowerShape.LENGTH), ITMultiblockProvider.COOLING_TOWER); }
+    public CoolingTower() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/cooling_tower"), CoolingTowerShape.MASTER_POS, CoolingTowerShape.TRIGGER_POS, new BlockPos(CoolingTowerShape.WIDTH,CoolingTowerShape.HEIGHT,CoolingTowerShape.LENGTH), ITMultiblockProvider.COOLING_TOWER); }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override
-    public float getManualScale() { return 4; }
+    public float getManualScale() { return CoolingTowerShape.MANUAL_SCALE; }
 
     @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, 4, 4, 8)); }
+    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, CoolingTowerShape.CLIENT_OFFSET.getX(), CoolingTowerShape.CLIENT_OFFSET.getY(), CoolingTowerShape.CLIENT_OFFSET.getZ())); }
 }

@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks;
 
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
-import mctmods.immersivetechnology.client.gui.BoilerTankScreen;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITClientMultiblockProperties;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.BoilerTankShape;
@@ -17,14 +16,14 @@ import java.util.function.Consumer;
 public class BoilerTank extends ITTemplateMultiblock {
     public static final BoilerTank INSTANCE = new BoilerTank();
 
-    public BoilerTank() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/boiler_tank"), new BlockPos(2,1,2), new BlockPos(2,1,2), new BlockPos(BoilerTankShape.WIDTH,BoilerTankShape.HEIGHT,BoilerTankShape.LENGTH), ITMultiblockProvider.BOILER_TANK); }
+    public BoilerTank() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/boiler_tank"), BoilerTankShape.MASTER_POS, BoilerTankShape.TRIGGER_POS, new BlockPos(BoilerTankShape.WIDTH,BoilerTankShape.HEIGHT,BoilerTankShape.LENGTH), ITMultiblockProvider.BOILER_TANK); }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override
-    public float getManualScale() { return 16; }
+    public float getManualScale() { return BoilerTankShape.MANUAL_SCALE; }
 
     @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, 2, 1, 2)); }
+    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, BoilerTankShape.CLIENT_OFFSET.getX(), BoilerTankShape.CLIENT_OFFSET.getY(), BoilerTankShape.CLIENT_OFFSET.getZ())); }
 }

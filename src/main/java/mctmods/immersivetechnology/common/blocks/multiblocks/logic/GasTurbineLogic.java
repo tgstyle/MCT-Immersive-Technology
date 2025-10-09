@@ -75,21 +75,21 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
     private static CapabilityPosition findCapPos(String name) {
         PoIJSONSchema poi = findPOI(name);
-        return new CapabilityPosition(new BlockPos(poi.x, poi.y, poi.z), poi.relativeFace);
+        return new CapabilityPosition(new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]), poi.relativeFace);
     }
 
     public static final CapabilityPosition INPUT_FLUID_POI = findCapPos("fluid_input");
     public static final CapabilityPosition OUTPUT_FLUID_POI = findCapPos("fluid_output");
     private static final Set<CapabilityPosition> ENERGY_INPUTS_HV = Set.of(findCapPos("energy_input_hv"));
     private static final Set<CapabilityPosition> ENERGY_INPUTS_MV = Set.of(findCapPos("energy_input_mv"));
-    public static final BlockPos REDSTONE_POI = new BlockPos(findPOI("redstone").x, findPOI("redstone").y, findPOI("redstone").z);
-    public static final BlockPos SMOKE_POI1 = new BlockPos(findPOI("smoke1").x, findPOI("smoke1").y, findPOI("smoke1").z);
-    public static final BlockPos SMOKE_POI2 = new BlockPos(findPOI("smoke2").x, findPOI("smoke2").y, findPOI("smoke2").z);
-    public static final BlockPos RUNNING_SOUND_POI = new BlockPos(findPOI("sound_running").x, findPOI("sound_running").y, findPOI("sound_running").z);
-    public static final BlockPos STARTER_SOUND_POI = new BlockPos(findPOI("sound_starter").x, findPOI("sound_starter").y, findPOI("sound_starter").z);
-    public static final BlockPos ARC_SOUND_POI = new BlockPos(findPOI("sound_arc").x, findPOI("sound_arc").y, findPOI("sound_arc").z);
-    public static final BlockPos SPARK_SOUND_POI = new BlockPos(findPOI("sound_spark").x, findPOI("sound_spark").y, findPOI("sound_spark").z);
-    public static final BlockPos IGNITE_SOUND_POI = new BlockPos(findPOI("sound_ignite").x, findPOI("sound_ignite").y, findPOI("sound_ignite").z);
+    public static final BlockPos REDSTONE_POI = new BlockPos(findPOI("redstone").pos[0], findPOI("redstone").pos[1], findPOI("redstone").pos[2]);
+    public static final BlockPos SMOKE_POI1 = new BlockPos(findPOI("smoke1").pos[0], findPOI("smoke1").pos[1], findPOI("smoke1").pos[2]);
+    public static final BlockPos SMOKE_POI2 = new BlockPos(findPOI("smoke2").pos[0], findPOI("smoke2").pos[1], findPOI("smoke2").pos[2]);
+    public static final BlockPos RUNNING_SOUND_POI = new BlockPos(findPOI("sound_running").pos[0], findPOI("sound_running").pos[1], findPOI("sound_running").pos[2]);
+    public static final BlockPos STARTER_SOUND_POI = new BlockPos(findPOI("sound_starter").pos[0], findPOI("sound_starter").pos[1], findPOI("sound_starter").pos[2]);
+    public static final BlockPos ARC_SOUND_POI = new BlockPos(findPOI("sound_arc").pos[0], findPOI("sound_arc").pos[1], findPOI("sound_arc").pos[2]);
+    public static final BlockPos SPARK_SOUND_POI = new BlockPos(findPOI("sound_spark").pos[0], findPOI("sound_spark").pos[1], findPOI("sound_spark").pos[2]);
+    public static final BlockPos IGNITE_SOUND_POI = new BlockPos(findPOI("sound_ignite").pos[0], findPOI("sound_ignite").pos[1], findPOI("sound_ignite").pos[2]);
     public static final CapabilityPosition ROTATIONAL_OUTPUT_POI = findCapPos("mech_output");
 
     @Override

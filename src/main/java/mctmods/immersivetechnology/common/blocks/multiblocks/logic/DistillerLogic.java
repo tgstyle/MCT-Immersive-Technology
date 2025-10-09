@@ -80,22 +80,22 @@ public class DistillerLogic implements IMultiblockLogic<State>, IServerTickableC
 
     private static CapabilityPosition findCapPos(String name) {
         PoIJSONSchema poi = findPOI(name);
-        return new CapabilityPosition(new BlockPos(poi.x, poi.y, poi.z), poi.relativeFace);
+        return new CapabilityPosition(new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]), poi.relativeFace);
     }
 
     public static final CapabilityPosition INPUT_FLUID_POI = findCapPos("fluid_input");
     public static final CapabilityPosition OUTPUT_FLUID_POI = findCapPos("fluid_output");
     private static final Set<CapabilityPosition> ENERGY_POI = Set.of(findCapPos("energy_input"));
     private static final PoIJSONSchema ITEM_OUTPUT_JSON_POI = findPOI("item_output");
-    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITEM_OUTPUT_JSON_POI.relativeFace, new BlockPos(ITEM_OUTPUT_JSON_POI.x, ITEM_OUTPUT_JSON_POI.y, ITEM_OUTPUT_JSON_POI.z));
-    public static final BlockPos REDSTONE_POI = new BlockPos(findPOI("redstone").x, findPOI("redstone").y, findPOI("redstone").z);
+    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITEM_OUTPUT_JSON_POI.relativeFace, new BlockPos(ITEM_OUTPUT_JSON_POI.pos[0], ITEM_OUTPUT_JSON_POI.pos[1], ITEM_OUTPUT_JSON_POI.pos[2]));
+    public static final BlockPos REDSTONE_POI = new BlockPos(findPOI("redstone").pos[0], findPOI("redstone").pos[1], findPOI("redstone").pos[2]);
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         if (!state.isSoundPlaying.getAsBoolean()) {
             PoIJSONSchema soundPoi = findPOI("sound");
-            BlockPos soundBlockPos = new BlockPos(soundPoi.x, soundPoi.y, soundPoi.z);
+            BlockPos soundBlockPos = new BlockPos(soundPoi.pos[0], soundPoi.pos[1], soundPoi.pos[2]);
             Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(soundBlockPos.getX() + 0.5, soundBlockPos.getY() + 0.5, soundBlockPos.getZ() + 0.5));
             state.isSoundPlaying = ITSound.startSound(
                     () -> state.active, ctx.isValid(), soundPos, ITSounds.distiller,

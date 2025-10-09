@@ -52,10 +52,10 @@ public class SolarReflectorLogic implements IMultiblockLogic<State>, IServerTick
         throw new RuntimeException("Missing POI: " + name);
     }
 
-    public static final BlockPos DANCE_SOUND_POI = new BlockPos(findPOI("sound").x, findPOI("sound").y, findPOI("sound").z);
-    public static final BlockPos LINK_POI = new BlockPos(findPOI("link").x, findPOI("link").y, findPOI("link").z);
-    private static final BlockPos SUN_POI = new BlockPos(findPOI("sun").x, findPOI("sun").y, findPOI("sun").z);
-    public static final BlockPos BEAM_POI = new BlockPos(findPOI("beam").x, findPOI("beam").y, findPOI("beam").z);
+    public static final BlockPos DANCE_SOUND_POI = new BlockPos(findPOI("sound").pos[0], findPOI("sound").pos[1], findPOI("sound").pos[2]);
+    public static final BlockPos LINK_POI = new BlockPos(findPOI("link").pos[0], findPOI("link").pos[1], findPOI("link").pos[2]);
+    private static final BlockPos SUN_POI = new BlockPos(findPOI("sun").pos[0], findPOI("sun").pos[1], findPOI("sun").pos[2]);
+    public static final BlockPos BEAM_POI = new BlockPos(findPOI("beam").pos[0], findPOI("beam").pos[1], findPOI("beam").pos[2]);
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {

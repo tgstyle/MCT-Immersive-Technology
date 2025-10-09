@@ -5,6 +5,8 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOri
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITClientMultiblockProperties;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarTowerLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarTowerShape;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarMelterShape;
 import mctmods.immersivetechnology.common.network.ITOSDSyncBlock;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
@@ -22,7 +24,7 @@ import java.util.function.Consumer;
 public class SolarTower extends ITTemplateMultiblock {
     public static final SolarTower INSTANCE = new SolarTower();
 
-    public SolarTower() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/solar_tower"), new BlockPos(0,0,0), new BlockPos(1,2,1), new BlockPos(3,21,3), ITMultiblockProvider.SOLAR_TOWER); }
+    public SolarTower() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/solar_tower"), SolarMelterShape.MASTER_POS, SolarMelterShape.TRIGGER_POS, new BlockPos(SolarMelterShape.WIDTH,SolarMelterShape.HEIGHT,SolarMelterShape.LENGTH), ITMultiblockProvider.SOLAR_TOWER); }
 
     @Override
     public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {
@@ -45,11 +47,11 @@ public class SolarTower extends ITTemplateMultiblock {
     }
 
     @Override
-    public float getManualScale() { return 4; }
-
-    @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, 0, 0, 0)); }
+    public float getManualScale() { return SolarTowerShape.MANUAL_SCALE; }
+
+    @Override
+    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, SolarTowerShape.CLIENT_OFFSET.getX(), SolarTowerShape.CLIENT_OFFSET.getY(), SolarTowerShape.CLIENT_OFFSET.getZ())); }
 }

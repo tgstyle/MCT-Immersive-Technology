@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.multiblocks.shapes;
 import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 import mctmods.immersivetechnology.common.util.multiblock.MultiblockData;
 import mctmods.immersivetechnology.common.util.multiblock.MultiblockDataLoader;
+import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
@@ -15,6 +16,11 @@ public class AlternatorShape {
     public static final MultiblockData DATA = MultiblockDataLoader.loadMultiblockData("alternator");
     public static final Function<BlockPos, VoxelShape> GETTER;
     public static int WIDTH, HEIGHT, LENGTH;
+    public static BlockPos MASTER_POS;
+    public static BlockPos TRIGGER_POS;
+    public static BlockPos CLIENT_OFFSET;
+    public static BlockPos DISASSEMBLY_POS;
+    public static float MANUAL_SCALE;
 
     static {
         int[] dims = GenericShape.loadDimensions("alternator", "metal");
@@ -45,6 +51,17 @@ public class AlternatorShape {
                     boolean allFull = !shapes.isEmpty() && shapes.stream().allMatch(list -> list.size() == 1 && list.get(0).equals(GenericShape.FULL_BLOCK));
                     if (allFull) { GETTER = FullblockShape.GETTER; }
                     else { GETTER = new GenericShape.JsonShape(WIDTH, HEIGHT, LENGTH, shapes); }
+                }
+            }
+        }
+        MANUAL_SCALE = DATA.manualScale;
+        if (DATA.pointsOfInterest != null) {
+            for (PoIJSONSchema poi : DATA.pointsOfInterest) {
+                switch (poi.name) {
+                    case "master" -> MASTER_POS = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
+                    case "trigger" -> TRIGGER_POS = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
+                    case "client_offset" -> CLIENT_OFFSET = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
+                    case "disassembly_ticker" -> DISASSEMBLY_POS = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
                 }
             }
         }

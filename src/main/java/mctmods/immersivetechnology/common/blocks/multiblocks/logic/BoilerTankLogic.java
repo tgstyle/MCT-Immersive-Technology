@@ -65,12 +65,12 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     private static final Map<BlockPos, RelativeBlockFace> ITEM_INPUT_FACINGS = getFacings("item_input");
     private static final Map<BlockPos, RelativeBlockFace> ITEM_OUTPUT_FACINGS = getFacings("item_output");
 
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.x, poi.y, poi.z)).collect(ImmutableList.toImmutableList()); }
+    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
 
     private static Map<BlockPos, RelativeBlockFace> getFacings(String name) {
         return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).collect(ImmutableMap.toImmutableMap(poi -> {
             assert poi != null;
-            return new BlockPos(poi.x, poi.y, poi.z);
+            return new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
         }, poi -> {
             assert poi != null;
             return poi.relativeFace;

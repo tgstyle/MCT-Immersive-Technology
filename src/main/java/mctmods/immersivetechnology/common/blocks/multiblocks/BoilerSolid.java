@@ -16,14 +16,14 @@ import java.util.function.Consumer;
 public class BoilerSolid extends ITTemplateMultiblock {
     public static final BoilerSolid INSTANCE = new BoilerSolid();
 
-    public BoilerSolid() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/boiler_solid"), new BlockPos(0,1,2), new BlockPos(0,1,2), new BlockPos(BoilerSolidShape.WIDTH,BoilerSolidShape.HEIGHT,BoilerSolidShape.LENGTH), ITMultiblockProvider.BOILER_SOLID); }
+    public BoilerSolid() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/boiler_solid"), BoilerSolidShape.MASTER_POS, BoilerSolidShape.TRIGGER_POS, new BlockPos(BoilerSolidShape.WIDTH,BoilerSolidShape.HEIGHT,BoilerSolidShape.LENGTH), ITMultiblockProvider.BOILER_SOLID); }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override
-    public float getManualScale() { return 16; }
+    public float getManualScale() { return BoilerSolidShape.MANUAL_SCALE; }
 
     @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, 0, 1, 2)); }
+    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, BoilerSolidShape.CLIENT_OFFSET.getX(), BoilerSolidShape.CLIENT_OFFSET.getY(), BoilerSolidShape.CLIENT_OFFSET.getZ())); }
 }

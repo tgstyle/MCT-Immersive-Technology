@@ -56,8 +56,8 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     private static final RelativeBlockFace ENERGY_RIGHT_FACING = getFacing("energy_right");
     private static final RelativeBlockFace ROTATIONAL_INPUT_FACING = getFacing("rotational_input");
 
-    private static BlockPos getSinglePos(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.x, poi.y, poi.z)).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: " + name)); }
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.x, poi.y, poi.z)).collect(ImmutableList.toImmutableList()); }
+    private static BlockPos getSinglePos(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: " + name)); }
+    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
     private static RelativeBlockFace getFacing(String name) {
         List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> poi.relativeFace).distinct().toList();
         if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }

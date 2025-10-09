@@ -69,14 +69,14 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
     private static CapabilityPosition findCapPos(String name) {
         PoIJSONSchema poi = findPOI(name);
-        return new CapabilityPosition(new BlockPos(poi.x, poi.y, poi.z), poi.relativeFace);
+        return new CapabilityPosition(new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]), poi.relativeFace);
     }
 
     public static final CapabilityPosition INPUT_FLUID_POI = findCapPos("fluid_input");
     public static final CapabilityPosition OUTPUT_FLUID_POI = findCapPos("fluid_output");
-    public static final BlockPos REDSTONE_POI = new BlockPos(findPOI("redstone").x, findPOI("redstone").y, findPOI("redstone").z);
-    public static final BlockPos RUNNING_SOUND_POI = new BlockPos(findPOI("sound_running").x, findPOI("sound_running").y, findPOI("sound_running").z);
-    public static final BlockPos SMOKE_POI = new BlockPos(findPOI("smoke").x, findPOI("smoke").y, findPOI("smoke").z);
+    public static final BlockPos REDSTONE_POI = new BlockPos(findPOI("redstone").pos[0], findPOI("redstone").pos[1], findPOI("redstone").pos[2]);
+    public static final BlockPos RUNNING_SOUND_POI = new BlockPos(findPOI("sound_running").pos[0], findPOI("sound_running").pos[1], findPOI("sound_running").pos[2]);
+    public static final BlockPos SMOKE_POI = new BlockPos(findPOI("smoke").pos[0], findPOI("smoke").pos[1], findPOI("smoke").pos[2]);
     public static final CapabilityPosition ROTATIONAL_OUTPUT_POI = findCapPos("mech_output");
 
     @Override

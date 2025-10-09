@@ -91,18 +91,18 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
 
     private static CapabilityPosition findCapPos(String name) {
         PoIJSONSchema poi = findPOI(name);
-        return new CapabilityPosition(new BlockPos(poi.x, poi.y, poi.z), poi.relativeFace);
+        return new CapabilityPosition(new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]), poi.relativeFace);
     }
 
     public static final CapabilityPosition INPUT_FLUID_POI = findCapPos("fluid_input");
     public static final CapabilityPosition OUTPUT_FLUID_POI = findCapPos("fluid_output");
     private static final PoIJSONSchema ITEM_OUTPUT_JSON_POI = findPOI("item_output");
-    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITEM_OUTPUT_JSON_POI.relativeFace, new BlockPos(ITEM_OUTPUT_JSON_POI.x, ITEM_OUTPUT_JSON_POI.y, ITEM_OUTPUT_JSON_POI.z));
-    public static final BlockPos REDSTONE_POI = new BlockPos(findPOI("redstone").x, findPOI("redstone").y, findPOI("redstone").z);
-    public static final BlockPos RUNNING_SOUND_POI = new BlockPos(findPOI("sound").x, findPOI("sound").y, findPOI("sound").z);
-    public static final BlockPos LINK_POI = new BlockPos(findPOI("link").x, findPOI("link").y, findPOI("link").z);
-    private static final BlockPos REFLECTOR_POI = new BlockPos(findPOI("reflector").x, findPOI("reflector").y, findPOI("reflector").z);
-    private static final BlockPos SUN_POI = new BlockPos(findPOI("sun").x, findPOI("sun").y, findPOI("sun").z);
+    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITEM_OUTPUT_JSON_POI.relativeFace, new BlockPos(ITEM_OUTPUT_JSON_POI.pos[0], ITEM_OUTPUT_JSON_POI.pos[1], ITEM_OUTPUT_JSON_POI.pos[2]));
+    public static final BlockPos REDSTONE_POI = new BlockPos(findPOI("redstone").pos[0], findPOI("redstone").pos[1], findPOI("redstone").pos[2]);
+    public static final BlockPos RUNNING_SOUND_POI = new BlockPos(findPOI("sound").pos[0], findPOI("sound").pos[1], findPOI("sound").pos[2]);
+    public static final BlockPos LINK_POI = new BlockPos(findPOI("link").pos[0], findPOI("link").pos[1], findPOI("link").pos[2]);
+    private static final BlockPos REFLECTOR_POI = new BlockPos(findPOI("reflector").pos[0], findPOI("reflector").pos[1], findPOI("reflector").pos[2]);
+    private static final BlockPos SUN_POI = new BlockPos(findPOI("sun").pos[0], findPOI("sun").pos[1], findPOI("sun").pos[2]);
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
