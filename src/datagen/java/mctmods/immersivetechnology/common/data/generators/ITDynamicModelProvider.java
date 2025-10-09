@@ -24,23 +24,23 @@ public class ITDynamicModelProvider extends ModelProvider<ITDynamicModelProvider
     protected void registerModels() {
         for(Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet()) { withExistingParent(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(multiblock.getKey())).getPath(), multiblock.getValue().getLocation()); }
         getBuilder("dynamic/rotor")
-                .customLoader(ITObjModelBuilder::begin)
-                .model(modLoc("models/block/multiblock/metal/obj/rotor/rotor.obj"))
+                .customLoader(ITObjModelBuilder::new)
+                .modelLocation(modLoc("models/block/multiblock/metal/obj/rotor/rotor.obj"))
                 .flipV(true)
                 .automaticCulling(false);
         getBuilder("dynamic/rotor_east_west")
-                .customLoader(ITObjModelBuilder::begin)
-                .model(modLoc("models/block/multiblock/metal/obj/rotor/rotor_east_west.obj"))
+                .customLoader(ITObjModelBuilder::new)
+                .modelLocation(modLoc("models/block/multiblock/metal/obj/rotor/rotor_east_west.obj"))
                 .flipV(true)
                 .automaticCulling(false);
         getBuilder("dynamic/solar_reflector_mirror")
-                .customLoader(ITObjModelBuilder::begin)
-                .model(modLoc("models/block/multiblock/metal/obj/solar_reflector/solar_reflector_mirror.obj"))
+                .customLoader(ITObjModelBuilder::new)
+                .modelLocation(modLoc("models/block/multiblock/metal/obj/solar_reflector/solar_reflector_mirror.obj"))
                 .flipV(true)
                 .automaticCulling(false);
         getBuilder("dynamic/solar_reflector_support")
-                .customLoader(ITObjModelBuilder::begin)
-                .model(modLoc("models/block/multiblock/metal/obj/solar_reflector/solar_reflector_support.obj"))
+                .customLoader(ITObjModelBuilder::new)
+                .modelLocation(modLoc("models/block/multiblock/metal/obj/solar_reflector/solar_reflector_support.obj"))
                 .flipV(true)
                 .automaticCulling(false);
     }

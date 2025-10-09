@@ -1,6 +1,8 @@
 {
   "automatic_culling": false,
+  "emissive_ambient": true,
   "flip_v": true,
   "loader": "immersivetechnology:obj",
-  "model": "immersivetechnology:models/block/multiblock/metal/obj/rotor/rotor.obj"
+  "model": "immersivetechnology:models/block/multiblock/metal/obj/rotor/rotor.obj",
+  "shade_quads": true
 }

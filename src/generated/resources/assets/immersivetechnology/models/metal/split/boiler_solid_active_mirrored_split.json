@@ -4,9 +4,12 @@
   "inner_model": {
     "ambientocclusion": false,
     "automatic_culling": false,
+    "emissive_ambient": true,
     "flip_v": true,
-    "loader": "forge:obj",
+    "loader": "immersivetechnology:obj",
     "model": "immersivetechnology:models/block/multiblock/metal/obj/boiler_solid/boiler_solid_mirrored.obj",
+    "mtl_override": "boiler_solid.mtl",
+    "shade_quads": true,
     "textures": {
       "cube_front": "immersivetechnology:block/multiblocks/metal/boiler_solid_active",
       "particle": "immersivetechnology:block/multiblocks/metal/boiler_solid"

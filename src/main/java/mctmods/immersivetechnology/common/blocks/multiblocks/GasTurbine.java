@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 public class GasTurbine extends ITTemplateMultiblock {
     public static final GasTurbine INSTANCE = new GasTurbine();
 
-    public GasTurbine() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/gas_turbine"), new BlockPos(1, 1, 0), new BlockPos(1, 1, 7), new BlockPos(GasTurbineShape.WIDTH, GasTurbineShape.HEIGHT, GasTurbineShape.LENGTH), ITMultiblockProvider.GAS_TURBINE); }
+    public GasTurbine() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/gas_turbine"), new BlockPos(1, 1, 7), new BlockPos(1, 1, 7), new BlockPos(GasTurbineShape.WIDTH, GasTurbineShape.HEIGHT, GasTurbineShape.LENGTH), ITMultiblockProvider.GAS_TURBINE); }
 
     @Override
     public float getManualScale() { return 10; }

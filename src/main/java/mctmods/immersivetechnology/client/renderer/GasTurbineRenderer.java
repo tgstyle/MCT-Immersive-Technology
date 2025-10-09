@@ -39,7 +39,7 @@ public class GasTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBloc
         Direction dir = orientation.front();
         Vec3 axisVec = Vec3.atLowerCornerOf(dir.getNormal());
         double angle = state.animation_fanRotation + state.animation_fanRotationStep * partialTicks;
-        Vec3 rotorStart = Vec3.atLowerCornerOf(context.getLevel().toAbsolute(new BlockPos(1, 1, 7)).subtract(pos));
+        Vec3 rotorStart = Vec3.atLowerCornerOf(context.getLevel().toAbsolute(new BlockPos(1, 1, 0)).subtract(pos));
         Vec3 delta = rotorStart.add(axisVec.scale(0));
         poseStack.pushPose();
         poseStack.translate(delta.x + 0.5, delta.y + 0.5, delta.z + 0.5);

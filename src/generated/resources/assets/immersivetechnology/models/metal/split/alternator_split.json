@@ -5,9 +5,11 @@
     "parent": "minecraft:block/block",
     "ambientocclusion": false,
     "automatic_culling": false,
+    "emissive_ambient": true,
     "flip_v": true,
-    "loader": "forge:obj",
+    "loader": "immersivetechnology:obj",
     "model": "immersivetechnology:models/block/multiblock/metal/obj/alternator/alternator.obj",
+    "shade_quads": true,
     "textures": {
       "particle": "immersivetechnology:block/multiblocks/metal/alternator"
     }

@@ -197,9 +197,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             boolean connected = state.fluidOutput.isPresent();
             if (!connected) {
                 Vec3 smokePos = new Vec3(outputAbs.getX() + 0.5, outputAbs.getY() + 0.5, outputAbs.getZ() + 0.5);
-                double velX = -facing.getStepX() * 0.125 + particleXZSpeed();
-                double velY = -facing.getStepY() * 0.1 + 0.0625;
-                double velZ = -facing.getStepZ() * 0.125 + particleXZSpeed();
+                double velX = facing.getStepX() * 0.125 + particleXZSpeed();
+                double velY = facing.getStepY() * 0.1 + 0.0625;
+                double velZ = facing.getStepZ() * 0.125 + particleXZSpeed();
                 FluidStack outFluid = state.tanks.output.getFluid();
                 float r = 0.5F, g = 0.5F, b = 0.5F;
                 if (!outFluid.isEmpty()) {
@@ -220,7 +220,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         boolean wasStall = state.stall;
         state.active = false;
         Level level = ctx.getLevel().getRawLevel();
-        Direction outputFacing = ctx.getLevel().getOrientation().front().getOpposite();
+        Direction outputFacing = ctx.getLevel().getOrientation().front();
         BlockPos outputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_OUTPUT_POI.posInMultiblock());
         BlockPos consumerAbsPos = outputPortAbs.relative(outputFacing);
         BlockEntity entity = level.getBlockEntity(consumerAbsPos);
@@ -347,25 +347,31 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             if (position.posInMultiblock().equals(OUTPUT_FLUID_POI.posInMultiblock()) && (position.side() == null || position.side() == OUTPUT_FLUID_POI.side())) { return state.fluidCapExhaust.cast(ctx); }
         }
         if (cap == MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY) {
-            if (position.posInMultiblock().equals(ROTATIONAL_OUTPUT_POI.posInMultiblock()) && (position.side() == null || position.side() == RelativeBlockFace.BACK)) { return LazyOptional.of(() -> new MechanicalEnergyProvider(state)).cast(); }
+            if (position.posInMultiblock().equals(ROTATIONAL_OUTPUT_POI.posInMultiblock()) && (position.side() == null || position.side() == ROTATIONAL_OUTPUT_POI.side())) { return LazyOptional.of(() -> new MechanicalEnergyProvider(state)).cast(); }
         }
         return LazyOptional.empty();
     }
 
     private record MechanicalEnergyProvider(State state) implements IMechanicalEnergyProvider {
+
         @Override
-        public int getSpeed() { return state.speed; }
-        @Override
-        public float getTorque() { return 1f; }
-        @Override
-        public int getMaxSpeed() { return MAX_SPEED; }
-        @Override
-        public double getBaseMass() { return BASE_MASS; }
-        @Override
-        public double getDriveTorque() { return DRIVE_TORQUE; }
-        @Override
-        public double getFriction() { return FRICTION; }
-    }
+            public int getSpeed() {return state.speed;}
+
+            @Override
+            public float getTorque() {return 1f;}
+
+            @Override
+            public int getMaxSpeed() {return MAX_SPEED;}
+
+            @Override
+            public double getBaseMass() {return BASE_MASS;}
+
+            @Override
+            public double getDriveTorque() {return DRIVE_TORQUE;}
+
+            @Override
+            public double getFriction() {return FRICTION;}
+        }
 
     @Override
     public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }

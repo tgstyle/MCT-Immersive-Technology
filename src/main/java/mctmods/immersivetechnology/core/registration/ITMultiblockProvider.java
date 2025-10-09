@@ -99,7 +99,7 @@ public class ITMultiblockProvider {
             metal(new GasTurbineLogic(), "gas_turbine")
                     .structure(() -> getMBTemplate.apply("gas_turbine"))
                     .redstone(s -> s.rsState, GasTurbineLogic.REDSTONE_POI)
-                    .component(new ITDisassemblyTicker<>(new BlockPos(1, 1, 0)), state -> null)
+                    .component(new ITDisassemblyTicker<>(new BlockPos(1, 1, 7)), state -> null)
                     .build();
     public static final MultiblockRegistration<SolarReflectorLogic.State> SOLAR_REFLECTOR =
             metalNoMirror(new SolarReflectorLogic(), "solar_reflector")

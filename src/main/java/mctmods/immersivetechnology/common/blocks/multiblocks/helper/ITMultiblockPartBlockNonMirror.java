@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-public class ITMultiblockPartBlockNonMirror<S extends IMultiblockState> extends MultiblockPartBlock<S> {
+public class ITMultiblockPartBlockNonMirror<S extends IMultiblockState> extends ITMultiblockPartBlock<S> {
     public ITMultiblockPartBlockNonMirror(BlockBehaviour.Properties properties, MultiblockRegistration<S> registration) { super(properties, registration); }
 
     @Nonnull
@@ -29,7 +29,9 @@ public class ITMultiblockPartBlockNonMirror<S extends IMultiblockState> extends 
         BlockEntity te = level.getBlockEntity(pos);
         if (te instanceof ITBlockInterfaces.IPlayerInteraction be) {
             Vec3 hitVec = hit.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ());
-            if (be.interact(hit.getDirection(), player, hand, player.getItemInHand(hand), (float) hitVec.x, (float) hitVec.y, (float) hitVec.z)) { return InteractionResult.sidedSuccess(level.isClientSide); }
+            if (be.interact(hit.getDirection(), player, hand, player.getItemInHand(hand), (float) hitVec.x, (float) hitVec.y, (float) hitVec.z)) {
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            }
         }
         return super.use(state, level, pos, player, hand, hit);
     }

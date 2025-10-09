@@ -49,7 +49,6 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
-import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import javax.annotation.Nullable;
@@ -70,7 +69,7 @@ import com.google.gson.JsonObject;
 public class ITBlockStateProvider extends BlockStateProvider {
     public final Map<Block, ModelFile> unsplitModels = new HashMap<>();
     protected static final Map<ResourceLocation, String> generatedParticleTextures = new HashMap<>();
-    protected final ExistingFileHelper existingFileHelper;
+    protected ExistingFileHelper existingFileHelper;
     protected NongeneratedModels innerModels;
 
     public ITBlockStateProvider(DataGenerator generator, ExistingFileHelper helper) { super(generator.getPackOutput(), ITLib.MODID, helper); this.existingFileHelper = helper; this.innerModels = new NongeneratedModels(generator.getPackOutput(), existingFileHelper); }
@@ -522,21 +521,28 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     protected NongeneratedModel innerObj(String loc) {
         Preconditions.checkArgument(loc.endsWith(".obj"));
-        return obj(loc.substring(0, loc.length() - 4), modLoc(loc), innerModels);
+        String name = loc.substring(0, loc.length() - 4);
+        ResourceLocation model = modLoc(loc);
+        Map<String, ResourceLocation> textures = ImmutableMap.of();
+        return obj(innerModels.withExistingParent(name, mcLoc("block")), model, textures);
     }
 
-    protected <T extends ModelBuilder<T>> T obj(String name, ResourceLocation model, ModelProvider<T> provider) { return obj(name, model, ImmutableMap.of(), provider); }
-
-    protected <T extends ModelBuilder<T>> T obj(String name, ResourceLocation model, Map<String, ResourceLocation> textures, ModelProvider<T> provider) { return obj(provider.withExistingParent(name, mcLoc("block")), model, textures); }
-
     protected <T extends ModelBuilder<T>> T obj(T base, ResourceLocation model, Map<String, ResourceLocation> textures) {
-        ObjModelBuilder<T> loader = base.customLoader(ObjModelBuilder::begin);
-        loader.automaticCulling(false);
+        ITObjModelBuilder<T> loader = base.customLoader(ITObjModelBuilder::new);
         loader.modelLocation(addModelsPrefix(model));
         loader.flipV(true);
+        loader.automaticCulling(false);
+        String path = model.getPath();
+        ResourceLocation textureModel = model;
+        if (path.endsWith("_mirrored.obj")) {
+            textureModel = ResourceLocation.fromNamespaceAndPath(model.getNamespace(), path.replace("_mirrored.obj", ".obj"));
+            String fileName = path.substring(path.lastIndexOf('/') + 1);
+            String originalMtl = fileName.replace("_mirrored.obj", ".mtl");
+            loader.mtlOverride(originalMtl);
+        }
         T ret = loader.end();
         ret.ao(false);
-        String particleTex = DataGenUtils.getTextureFromObj(model, existingFileHelper);
+        String particleTex = DataGenUtils.getTextureFromObj(textureModel, existingFileHelper);
         if (particleTex.charAt(0) == '#') { particleTex = textures.get(particleTex.substring(1)).toString(); }
         ret.texture("particle", particleTex);
         generatedParticleTextures.put(ret.getLocation(), particleTex);
