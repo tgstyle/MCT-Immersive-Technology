@@ -1,3 +1,8 @@
 Solar Melter
 Melting!
-<&multiblock> TODO: Write something better here.
+<&multiblock> The Solar Melter melts solids into their molten form for processing.
+
+§lOperation§r
+    - Items are inputted in the front.
+    - Fluids are outputted from the back.
+    - Must be 44 blocks away from other towers.

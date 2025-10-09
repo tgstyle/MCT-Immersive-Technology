@@ -1,3 +1,6 @@
 Solar Reflector
 Shine!
-<&multiblock> TODO: Write something better here.
+<&multiblock> Reflects sunlight to a Solar Tower or Solar Melting Tower.
+
+§lOperation§r
+    - Place in a 22 block radius within either Solar Tower.

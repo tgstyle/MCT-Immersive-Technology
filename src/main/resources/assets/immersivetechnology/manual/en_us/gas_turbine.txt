@@ -1,3 +1,9 @@
 Gas Turbine
 GAS GAS GAS!
-<&multiblock> TODO: Write something better here.
+<&multiblock> The Gas Turbine uses a fuel and an ignition source from the combustors inside the turbine to make hot, high velocity gas. The hot, high velocity gas turns the turbine blades to create rotational energy.
+
+§lOperation§r
+    - Liquid fuel is inputted through the back.
+    - On the side with the MV energy input is the spark plug which needs to be powered at all times.
+    - On the side with the HV energy input is the starter which needs power until the spark plug ignites the fuel. Once ignited, you must remove power from the starter.
+    - The very front of the gas turbine is where you connect a multiblock that uses mechanical power to do work.

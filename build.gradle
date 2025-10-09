@@ -127,6 +127,8 @@ minecraft {
 				}
 			}
 			args '--username', 'tgstyle'
+            //args '--username', 'MagneticPrismMC'
+            //args '--uuid', 'b16abd45-6a6f-4167-a2e7-6ef2b3940217'
 			args '--width', '1920'
 			args '--height', '1080'
 		}
