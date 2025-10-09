@@ -112,9 +112,13 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             boolean connected = state.fluidOutput.isPresent();
             if (!connected) {
                 Vec3 smokePos = new Vec3(outputAbs.getX() + 0.5, outputAbs.getY() + 0.5, outputAbs.getZ() + 0.5);
-                double velX = facing.getStepX() * 0.125 + particleXZSpeed();
-                double velY = facing.getStepY() * 0.1 + 0.0625;
-                double velZ = facing.getStepZ() * 0.125 + particleXZSpeed();
+                float normSpeed = Math.max(0f, ITLib.remapRange(100, MAX_SPEED, 0f, 1f, state.speed));
+                double dirVelHoriz = 0.125 * normSpeed;
+                double dirVelVert = 0.1 * normSpeed;
+                double baseUp = 0.0625 + 0.1 * (1 - normSpeed);
+                double velX = facing.getStepX() * dirVelHoriz + particleXZSpeed();
+                double velY = facing.getStepY() * dirVelVert + baseUp;
+                double velZ = facing.getStepZ() * dirVelHoriz + particleXZSpeed();
                 FluidStack outFluid = state.tanks.output.getFluid();
                 float r = 0.5F, g = 0.5F, b = 0.5F;
                 if (!outFluid.isEmpty()) {
