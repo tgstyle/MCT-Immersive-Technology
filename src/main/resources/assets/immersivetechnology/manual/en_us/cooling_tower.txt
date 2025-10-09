@@ -1,3 +1,5 @@
 Cooling Tower
 Chill!
-<&multiblock> TODO: Write something better here.
+<&multiblock> The Cooling Tower cools Exhaust Steam back into water.
+
+§lOperation§r
