@@ -65,9 +65,9 @@ sourceSets {
 
 ext {
     mod_id = gradleProps['mod_id']
-    version_minecraft = versionProps['mc_version']
-    version_forge = versionProps['forge_version']
-    version_jei = versionProps['jei_version']
+    version_minecraft = versionProps['version_mc']
+    version_forge = versionProps['version_forge']
+    version_jei = versionProps['version_jei']
     version_parchment = versionProps['version_parchment']
     version_ie = versionProps['version_ie']
     mod_license = gradleProps['mod_license']
@@ -79,9 +79,9 @@ ext {
 def version_replaces = [
         'version'      : project.version,
         'build_number' : version_buildnumber,
-        'mc_version'   : version_minecraft,
-        'forge_version': version_forge,
-        'jei_version'  : version_jei,
+        'version_mc'   : version_minecraft,
+        'version_forge': version_forge,
+        'version_jei'  : version_jei,
         'mod_license'  : mod_license,
         'mod_name'     : mod_name,
         'mod_authors'  : mod_authors,
@@ -220,6 +220,7 @@ dependencies {
 
     implementation fg.deobf("curse.maven:immersive-engineering-231951:6206989")
     implementation fg.deobf("curse.maven:engineered-schematics-1207780:6560826")
+	//implementation fg.deobf("curse.maven:immersive-fixes-1326199:6880681")
 
     implementation fg.deobf("curse.maven:jade-324717:6271651")
 

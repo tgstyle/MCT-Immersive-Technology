@@ -25,7 +25,7 @@ side="BOTH"
 [[dependencies.immersivetechnology]]
 modId="minecraft"
 mandatory=true
-versionRange="[${mc_version}]"
+versionRange="[${version_mc}]"
 ordering="NONE"
 side="BOTH"
 
@@ -39,7 +39,7 @@ side="BOTH"
 [[dependencies.immersivetechnology]]
 modId="jei"
 mandatory=false
-versionRange="[${jei_version},)"
+versionRange="[${version_jei},)"
 ordering="NONE"
 side="BOTH"
 
