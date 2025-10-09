@@ -59,7 +59,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     public static final double PILOT_HEAT = 20.0;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerLiquidShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = RAW_POIS.stream().filter(poi -> poi.name.equals("redstone")).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: redstone"));
+    public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
     public static final List<BlockPos> IGNITION_POI = getPosList("ignition");
     private static final List<BlockPos> FLUID_INPUT_POI = getPosList("fluid_input");
     private static final List<BlockPos> HEAT_OUTPUT_POI = getPosList("heat_output");

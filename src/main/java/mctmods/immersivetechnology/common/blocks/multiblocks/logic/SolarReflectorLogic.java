@@ -10,14 +10,13 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPos
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
+import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarReflectorShape;
-import mctmods.immersivetechnology.common.util.multiblock.MultiblockData;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarReflectorLogic.State;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -36,26 +35,23 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
+import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class SolarReflectorLogic implements IMultiblockLogic<State>, IServerTickableComponent<State>, IClientTickableComponent<SolarReflectorLogic.State> {
+public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic.State>, IServerTickableComponent<SolarReflectorLogic.State>, IClientTickableComponent<SolarReflectorLogic.State> {
     private static final float BASE_FREQ = 2.09f;
     public static final float DANCE_DURATION = 63f;
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SolarReflectorShape.DATA.pointsOfInterest);
 
-    private static final MultiblockData DATA = SolarReflectorShape.DATA;
+    public static final BlockPos DANCE_SOUND_POI = getPosList("sound").get(0);
+    public static final BlockPos LINK_POI = getPosList("link").get(0);
+    public static final BlockPos SUN_POI = getPosList("sun").get(0);
+    public static final BlockPos BEAM_POI = getPosList("beam").get(0);
 
-    private static PoIJSONSchema findPOI(String name) {
-        for (PoIJSONSchema poi : DATA.pointsOfInterest) { if (poi.name.equals(name)) { return poi; } }
-        throw new RuntimeException("Missing POI: " + name);
-    }
-
-    public static final BlockPos DANCE_SOUND_POI = new BlockPos(findPOI("sound").pos[0], findPOI("sound").pos[1], findPOI("sound").pos[2]);
-    public static final BlockPos LINK_POI = new BlockPos(findPOI("link").pos[0], findPOI("link").pos[1], findPOI("link").pos[2]);
-    private static final BlockPos SUN_POI = new BlockPos(findPOI("sun").pos[0], findPOI("sun").pos[1], findPOI("sun").pos[2]);
-    public static final BlockPos BEAM_POI = new BlockPos(findPOI("beam").pos[0], findPOI("beam").pos[1], findPOI("beam").pos[2]);
+    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {

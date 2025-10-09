@@ -13,17 +13,16 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
 import blusunrize.immersiveengineering.common.util.Utils;
+import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarMelterLogic.State;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarMelterRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarMelterShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.network.ITOSDSyncBlock;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
-import mctmods.immersivetechnology.common.util.multiblock.MultiblockData;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.common.util.TranslationKey;
@@ -60,6 +59,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import com.google.common.collect.Lists;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -69,7 +69,7 @@ import java.util.function.Supplier;
 import static mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry.SOLAR_MAX_RANGE;
 import static mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
 
-public class SolarMelterLogic implements IMultiblockLogic<State>, IServerTickableComponent<State>, IClientTickableComponent<SolarMelterLogic.State> {
+public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State>, IServerTickableComponent<SolarMelterLogic.State>, IClientTickableComponent<SolarMelterLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -83,29 +83,24 @@ public class SolarMelterLogic implements IMultiblockLogic<State>, IServerTickabl
     private static final double REFLECTOR_TIER_OFFSET = 4.0;
     public static final int PROGRESS_LOSS_OFF_TEMP = 2;
     public static final float SPEED_MULTIPLIER = 1.0f;
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SolarMelterShape.DATA.pointsOfInterest);
 
-    private static final MultiblockData DATA = SolarMelterShape.DATA;
+    public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
+    public static final BlockPos RUNNING_SOUND_POI = getPosList("sound").get(0);
+    public static final BlockPos LINK_POI = getPosList("link").get(0);
+    public static final BlockPos PARTICLE_POI = getPosList("particle").get(0);
+    public static final BlockPos REFLECTOR_POI = getPosList("reflector").get(0);
+    public static final BlockPos SUN_POI = getPosList("sun").get(0);
+    public static final CapabilityPosition INPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_input").get(0), getFacing("fluid_input"));
+    public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_output").get(0), getFacing("fluid_output"));
+    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(getFacing("item_output"), getPosList("item_output").get(0));
 
-    private static PoIJSONSchema findPOI(String name) {
-        for (PoIJSONSchema poi : DATA.pointsOfInterest) { if (poi.name.equals(name)) { return poi; } }
-        throw new RuntimeException("Missing POI: " + name);
+    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
+    private static RelativeBlockFace getFacing(String name) {
+        List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> poi.relativeFace).distinct().toList();
+        if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
+        return facings.get(0);
     }
-
-    private static CapabilityPosition findCapPos(String name) {
-        PoIJSONSchema poi = findPOI(name);
-        return new CapabilityPosition(new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]), poi.relativeFace);
-    }
-
-    public static final CapabilityPosition INPUT_FLUID_POI = findCapPos("fluid_input");
-    public static final CapabilityPosition OUTPUT_FLUID_POI = findCapPos("fluid_output");
-    private static final PoIJSONSchema ITEM_OUTPUT_JSON_POI = findPOI("item_output");
-    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITEM_OUTPUT_JSON_POI.relativeFace, new BlockPos(ITEM_OUTPUT_JSON_POI.pos[0], ITEM_OUTPUT_JSON_POI.pos[1], ITEM_OUTPUT_JSON_POI.pos[2]));
-    public static final BlockPos REDSTONE_POI = new BlockPos(findPOI("redstone").pos[0], findPOI("redstone").pos[1], findPOI("redstone").pos[2]);
-    public static final BlockPos RUNNING_SOUND_POI = new BlockPos(findPOI("sound").pos[0], findPOI("sound").pos[1], findPOI("sound").pos[2]);
-    public static final BlockPos LINK_POI = new BlockPos(findPOI("link").pos[0], findPOI("link").pos[1], findPOI("link").pos[2]);
-    public static final BlockPos PARTICLE_POI = new BlockPos(findPOI("particle").pos[0], findPOI("particle").pos[1], findPOI("particle").pos[2]);
-    private static final BlockPos REFLECTOR_POI = new BlockPos(findPOI("reflector").pos[0], findPOI("reflector").pos[1], findPOI("reflector").pos[2]);
-    private static final BlockPos SUN_POI = new BlockPos(findPOI("sun").pos[0], findPOI("sun").pos[1], findPOI("sun").pos[2]);
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
@@ -347,10 +342,10 @@ public class SolarMelterLogic implements IMultiblockLogic<State>, IServerTickabl
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         State state = ctx.getState();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (position.posInMultiblock().equals(INPUT_FLUID_POI.posInMultiblock()) && (position.side() == null || position.side() == INPUT_FLUID_POI.side())) { return state.inputCap.cast(ctx); }
-            if (position.posInMultiblock().equals(OUTPUT_FLUID_POI.posInMultiblock()) && (position.side() == null || position.side() == OUTPUT_FLUID_POI.side())) { return state.outputCap.cast(ctx); }
+            if (position.equals(INPUT_FLUID_POI)) { return state.inputCap.cast(ctx); }
+            if (position.equals(OUTPUT_FLUID_POI)) { return state.outputCap.cast(ctx); }
         }
-        if (cap == ForgeCapabilities.ITEM_HANDLER) { if (ITEM_OUTPUT_POI.posInMultiblock().equals(position.posInMultiblock())) { return state.itemOutputCap.cast(ctx); } return state.invCap.cast(ctx); }
+        if (cap == ForgeCapabilities.ITEM_HANDLER) { if (position.posInMultiblock().equals(ITEM_OUTPUT_POI.posInMultiblock())) { return state.itemOutputCap.cast(ctx); } return state.invCap.cast(ctx); }
         return LazyOptional.empty();
     }
 

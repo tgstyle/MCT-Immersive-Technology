@@ -48,15 +48,14 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     private static final int MAX_SPEED = 1800;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AlternatorShape.DATA.pointsOfInterest);
 
-    public static final BlockPos RUNNING_SOUND_POI = getSinglePos("running_sound");
-    public static final BlockPos ROTATIONAL_INPUT_POI = getSinglePos("rotational_input");
+    public static final BlockPos RUNNING_SOUND_POI = getPosList("running_sound").get(0);
+    public static final BlockPos ROTATIONAL_INPUT_POI = getPosList("rotational_input").get(0);
     private static final List<BlockPos> ENERGY_LEFT_POI = getPosList("energy_left");
     private static final List<BlockPos> ENERGY_RIGHT_POI = getPosList("energy_right");
     private static final RelativeBlockFace ENERGY_LEFT_FACING = getFacing("energy_left");
     private static final RelativeBlockFace ENERGY_RIGHT_FACING = getFacing("energy_right");
     private static final RelativeBlockFace ROTATIONAL_INPUT_FACING = getFacing("rotational_input");
 
-    private static BlockPos getSinglePos(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: " + name)); }
     private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
     private static RelativeBlockFace getFacing(String name) {
         List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> poi.relativeFace).distinct().toList();

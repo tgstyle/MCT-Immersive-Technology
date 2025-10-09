@@ -61,7 +61,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     private static final int WIDTH = BoilerSolidShape.WIDTH;
     private static final int LENGTH = BoilerSolidShape.LENGTH;
 
-    public static final BlockPos REDSTONE_POI = RAW_POIS.stream().filter(poi -> poi.name.equals("redstone")).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).findFirst().orElseThrow(() -> new RuntimeException("Missing POI: redstone"));
+    public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
     public static final List<BlockPos> IGNITION_POI = getPosList("ignition");
     private static final List<BlockPos> ITEM_INPUT_POI = getPosList("item_input");
     private static final List<BlockPos> HEAT_OUTPUT_POI = getPosList("heat_output");

@@ -60,8 +60,8 @@ public class CoolingTowerLogic implements IMultiblockLogic<State>, IServerTickab
     public static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
     public static final BlockPos PARTICLE_POS = getPosList("particle").get(0);
     public static final BlockPos SOUND_POS = getPosList("sound").get(0);
-    public static final RelativeBlockFace INPUT_FACING = getFacing("fluid_input");
-    public static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
+    private static final RelativeBlockFace INPUT_FACING = getFacing("fluid_input");
+    private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
 
     private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
 

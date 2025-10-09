@@ -33,14 +33,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -57,24 +54,16 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     private static final List<BlockPos> FLUID_INPUT_POI = getPosList("fluid_input");
     private static final List<BlockPos> FLUID_OUTPUT_POI = getPosList("fluid_output");
     private static final List<BlockPos> HEAT_INPUT_POI = getPosList("heat_input");
-    private static final List<BlockPos> ITEM_INPUT_POI = getPosList("item_input");
-    private static final List<BlockPos> ITEM_OUTPUT_POI = getPosList("item_output");
-    private static final Map<BlockPos, RelativeBlockFace> FLUID_INPUT_FACINGS = getFacings("fluid_input");
-    private static final Map<BlockPos, RelativeBlockFace> FLUID_OUTPUT_FACINGS = getFacings("fluid_output");
-    private static final Map<BlockPos, RelativeBlockFace> HEAT_INPUT_FACINGS = getFacings("heat_input");
-    private static final Map<BlockPos, RelativeBlockFace> ITEM_INPUT_FACINGS = getFacings("item_input");
-    private static final Map<BlockPos, RelativeBlockFace> ITEM_OUTPUT_FACINGS = getFacings("item_output");
+    private static final RelativeBlockFace FLUID_INPUT_FACING = getFacing("fluid_input");
+    private static final RelativeBlockFace FLUID_OUTPUT_FACING = getFacing("fluid_output");
+    private static final RelativeBlockFace HEAT_INPUT_FACING = getFacing("heat_input");
 
     private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
 
-    private static Map<BlockPos, RelativeBlockFace> getFacings(String name) {
-        return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).collect(ImmutableMap.toImmutableMap(poi -> {
-            assert poi != null;
-            return new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
-        }, poi -> {
-            assert poi != null;
-            return poi.relativeFace;
-        }));
+    private static RelativeBlockFace getFacing(String name) {
+        List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> poi.relativeFace).distinct().toList();
+        if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
+        return facings.get(0);
     }
 
     @Override
@@ -161,14 +150,11 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         BlockPos localPos = position.posInMultiblock();
         RelativeBlockFace side = position.side();
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            if (ITEM_INPUT_POI.contains(localPos) && (side == null || side == ITEM_INPUT_FACINGS.get(localPos))) { return ctx.getState().invCap.cast(ctx); }
-            if (ITEM_OUTPUT_POI.contains(localPos) && (side == null || side == ITEM_OUTPUT_FACINGS.get(localPos))) { return ctx.getState().invCap.cast(ctx); }
-        } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (FLUID_INPUT_POI.contains(localPos) && (side == null || side == FLUID_INPUT_FACINGS.get(localPos))) { return ctx.getState().inputCap.cast(ctx); }
-            if (FLUID_OUTPUT_POI.contains(localPos) && (side == null || side == FLUID_OUTPUT_FACINGS.get(localPos))) { return ctx.getState().outputCap.cast(ctx); }
+        if (cap == ForgeCapabilities.FLUID_HANDLER) {
+            if (FLUID_INPUT_POI.contains(localPos) && (side == null || side == FLUID_INPUT_FACING)) { return ctx.getState().inputCap.cast(ctx); }
+            if (FLUID_OUTPUT_POI.contains(localPos) && (side == null || side == FLUID_OUTPUT_FACING)) { return ctx.getState().outputCap.cast(ctx); }
         } else if (cap == HeatCapabilities.HEAT_CONSUMER_CAPABILITY) {
-            if (HEAT_INPUT_POI.contains(localPos) && (side == null || side == HEAT_INPUT_FACINGS.get(localPos))) { return ctx.getState().boilerInputCap.cast(ctx); }
+            if (HEAT_INPUT_POI.contains(localPos) && (side == null || side == HEAT_INPUT_FACING)) { return ctx.getState().boilerInputCap.cast(ctx); }
         }
         return LazyOptional.empty();
     }
@@ -186,7 +172,6 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         public final BoilerTanks tanks;
         public StoredCapability<IFluidHandler> inputCap;
         public StoredCapability<IFluidHandler> outputCap;
-        public StoredCapability<IItemHandler> invCap;
         public StoredCapability<IHeatConsumer> boilerInputCap;
         public CapabilityReference<IFluidHandler> fluidOutput;
         public CapabilityReference<IHeatProvider> heatSource;
@@ -216,12 +201,11 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
             boilerInputCap = new StoredCapability<>(new BoilerInputImpl(tanks.input));
-            invCap = new StoredCapability<>(inventory);
-            MultiblockFace outputMBFace = new MultiblockFace(FLUID_OUTPUT_FACINGS.values().iterator().next(), FLUID_OUTPUT_POI.get(0)); // Assuming at least one
+            MultiblockFace outputMBFace = new MultiblockFace(FLUID_OUTPUT_FACING, FLUID_OUTPUT_POI.get(0)); // Assuming at least one
             CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
             MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
             fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
-            MultiblockFace heatMBFace = new MultiblockFace(HEAT_INPUT_FACINGS.values().iterator().next(), HEAT_INPUT_POI.get(0)); // Assuming at least one
+            MultiblockFace heatMBFace = new MultiblockFace(HEAT_INPUT_FACING, HEAT_INPUT_POI.get(0)); // Assuming at least one
             CapabilityPosition heatOpposingCP = CapabilityPosition.opposing(heatMBFace);
             MultiblockFace heatOpposingMBFace = new MultiblockFace(heatOpposingCP.side(), heatOpposingCP.posInMultiblock());
             heatSource = ctx.getCapabilityAt(HeatCapabilities.HEAT_PROVIDER_CAPABILITY, heatOpposingMBFace);
@@ -256,6 +240,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         }
     }
 
+    @SuppressWarnings("unused")
     private record BoilerInputImpl(ITMarkableFluidTank tank) implements IHeatConsumer {
         @Override
         public int getFluidAmount() { return tank.getFluidAmount(); }
