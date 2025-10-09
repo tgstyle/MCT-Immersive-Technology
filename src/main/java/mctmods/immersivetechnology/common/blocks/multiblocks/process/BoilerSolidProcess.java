@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.BoilerSolidLogic;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.registration.ITTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -12,7 +13,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -28,7 +28,7 @@ public class BoilerSolidProcess implements IMultiblockComponent<BoilerSolidLogic
             if (hitDir != poiSide) { return InteractionResult.PASS; }
         }
         ItemStack held = player.getItemInHand(hand);
-        if (!held.is(Items.TORCH)) { return InteractionResult.PASS; }
+        if (!held.is(ITTags.igniters)) { return InteractionResult.PASS; }
         BoilerSolidLogic.State state = ctx.getState();
         if (state.pilotLit) { return InteractionResult.PASS; }
         Level level = ctx.getLevel().getRawLevel();
@@ -41,6 +41,8 @@ public class BoilerSolidProcess implements IMultiblockComponent<BoilerSolidLogic
         state.pilotLit = true;
         state.heatLevel = BoilerSolidLogic.PILOT_HEAT;
         level.playSound(null, ctx.getLevel().toAbsolute(BoilerSolidLogic.IGNITION_POI.get(0)), ITSounds.gasIgnite.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
+        if (held.is(ITTags.igniters_consume)) { held.shrink(1); }
+        else if (held.getMaxDamage() > 0) { held.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand)); }
         ctx.markMasterDirty();
         ctx.requestMasterBESync();
         state.clientUpdateCooldown = 1;

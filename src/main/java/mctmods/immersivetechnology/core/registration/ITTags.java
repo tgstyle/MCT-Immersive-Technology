@@ -21,6 +21,8 @@ public class ITTags {
 
     public static final TagKey<Item> salt = TagUtils.createItemWrapper(modLoc("salt"));
     public static final TagKey<Item> saltForge = TagUtils.createItemWrapper(forgeLoc("dusts/salt"));
+    public static final TagKey<Item> igniters = TagUtils.createItemWrapper(modLoc("igniters"));
+    public static final TagKey<Item> igniters_consume = TagUtils.createItemWrapper(modLoc("igniters_consume"));
 
     private static ResourceLocation forgeLoc(String path) { return ResourceLocation.fromNamespaceAndPath("forge", path); }
 
