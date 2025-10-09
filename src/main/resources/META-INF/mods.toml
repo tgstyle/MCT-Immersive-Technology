@@ -36,12 +36,5 @@ versionRange="[${version_ie},]"
 ordering="NONE"
 side="BOTH"
 
-[[dependencies.immersivetechnology]]
-modId="jei"
-mandatory=false
-versionRange="[${version_jei},)"
-ordering="NONE"
-side="BOTH"
-
 [[mixins]]
 config="mixins.immersivetechnology.json"
