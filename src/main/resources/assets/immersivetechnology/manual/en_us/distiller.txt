@@ -1,8 +1,9 @@
 Distiller
 Evaporation!
-<&multiblock> The Distiller evaporates water into Distilled Water with salt being a byproduct.
+<&multiblock>The Distiller evaporates water into §lDistilled Water§r with salt as a byproduct.
+
 
 §lOperation§r
-    - Water is inputted on the left.
-    - Distilled Water is outputted on the right
-    - Salt is outputted in the back.
+    - §lWater§r is input on the left.
+    - §lDistilled Water§r is output on the right.
+    - Salt is output in the back.

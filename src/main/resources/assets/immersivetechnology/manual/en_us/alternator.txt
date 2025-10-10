@@ -1,6 +1,7 @@
 Alternator
 Big and Powerful!
-<&multiblock>§lThe Alternator§r is a multiblock machine used to generate lots energy, aiding in powering many more machines than the §lDiesel Generator§r!
+<&multiblock>The Alternator is a multiblock machine used to generate a lot of energy, aiding in powering many more machines than the §lDiesel Generator§r!
+
 
 §lOperation§r
-    - The §lAlternator§r needs rotational input from a §lSteam Turbine§r or §lGas Turbine§r.
+    - The §lAlternator§r needs rotational input from a mechanical energy provider like the §lSteam Turbine§r or §lGas Turbine§r.

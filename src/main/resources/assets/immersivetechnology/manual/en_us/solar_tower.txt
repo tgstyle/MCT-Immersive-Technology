@@ -1,8 +1,10 @@
 Solar Tower
 Sunny Boiler!
-<&multiblock> The Solar Tower turns water into steam during the daytime.
+<&multiblock>The Solar Tower is a multiblock machine that turns water into steam during the daytime.
+
+
 
 §lOperation§r
-    - Water is inputted in the front.
-    - Steam is outputted from the back.
+    - §lFluids§r to be heated are input in the front.
+    - §lHeated Fluids§r are output in the back.
     - Must be 44 blocks away from other towers.

@@ -1,8 +1,14 @@
-Boiler Solid Fuel
+Boiler Solid Fuel Burner
 Getting steamy in here!
 <&multiblock>The Boiler is a multiblock machine used to §lboil water§r into steam.
 
+
+
+
+
 §lOperation§r
-    - §lFuel§r is inserted into the machine near the §lright side§r.
+    - §lSolid Fuel§r is input below the combustion chamber.
+    - Ignite the §lBoiler§r with a torch or flint and steel on the top meshed exhaust.
+    - §lWater§r must be in an attached §lBoiler Tank§r.
 
 §lTip:§r The Boiler can process a decent amount of water.

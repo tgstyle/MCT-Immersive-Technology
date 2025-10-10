@@ -1,8 +1,10 @@
 Steam Turbine
 Spinny Spin!
-<&multiblock> The Steam Turbine uses steam pressure which turns the turbine blades to create rotational energy.
+<&multiblock>The Steam Turbine uses steam pressure to turn the turbine blades and create rotational energy.
+
+
 
 §lOperation§r
-    - Steam is inputted in the back.
-    - Exhaust Steam is outputted in the front.
-    - The very front of the steam turbine is where you connect a multiblock that uses mechanical power to do work.
+    - §lSteam§r is input by the pipe.
+    - §lExhaust Steam§r is output under the rotor.
+    - You need to attach a multiblock to the rotor that uses mechanical power for the turbine to work.

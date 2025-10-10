@@ -1,6 +1,9 @@
 Solar Reflector
 Shine!
-<&multiblock> Reflects sunlight to a Solar Tower or Solar Melting Tower.
+<&multiblock>The Solar Reflector reflects sunlight to a Solar Tower or Solar Melting Tower.
+
+
+
 
 §lOperation§r
-    - Place in a 22 block radius within either Solar Tower.
+    - Place at a minimum of 12 blocks to a maximum of 22-blocks within the radius of a Solar Tower or Melter.

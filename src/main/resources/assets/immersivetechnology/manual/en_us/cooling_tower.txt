@@ -1,8 +1,13 @@
 Cooling Tower
 Chill!
-<&multiblock> The Cooling Tower cools Exhaust Steam back into water.
+<&multiblock>The Cooling Tower cools §lExhaust Steam§r back into water.
+
+
+
+
+
 
 §lOperation§r
-    - Water goes into the left input.
-    - Exhaust Steam goes into the right input.
-    - Water is outputted by all outputs.
+    - §lWater§r is input at one input.
+    - §lExhaust Steam§r is input at the other input.
+    - §lWater§r is output from all outputs.
