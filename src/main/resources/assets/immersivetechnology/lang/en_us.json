@@ -113,7 +113,6 @@
   "category.immersivetechnology.metal_multiblock.solar_melter.time": "%s ticks / %s mB",
   "category.immersivetechnology.metal_multiblock.solar_melter.temp": "Required Temp: %s °C",
   "category.immersivetechnology.metal_multiblock.solar_tower.time": "%s ticks / %s mB",
-  "category.immersivetechnology.metal_multiblock.solar_tower.temp": "Required Temp: %s °C",
+  "category.immersivetechnology.metal_multiblock.solar_tower.temp": "Required Temp: %s °C"
 
-  "block.immersivetechnology.metal_trash.trash_item.name": "Trash Can"
 }

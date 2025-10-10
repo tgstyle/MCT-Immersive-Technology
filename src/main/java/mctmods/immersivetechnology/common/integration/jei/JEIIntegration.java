@@ -8,15 +8,21 @@ import mctmods.immersivetechnology.client.gui.SolarScreen;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerLiquidRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerTankRecipe;
+import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
+import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarMelterRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarTowerRecipe;
+import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.integration.jei.category.ITBoilerLiquidCategory;
 import mctmods.immersivetechnology.common.integration.jei.category.ITBoilerSolidCategory;
 import mctmods.immersivetechnology.common.integration.jei.category.ITBoilerTankCategory;
+import mctmods.immersivetechnology.common.integration.jei.category.ITCoolingTowerCategory;
 import mctmods.immersivetechnology.common.integration.jei.category.ITDistillerCategory;
+import mctmods.immersivetechnology.common.integration.jei.category.ITGasTurbineCategory;
 import mctmods.immersivetechnology.common.integration.jei.category.ITSolarMelterCategory;
 import mctmods.immersivetechnology.common.integration.jei.category.ITSolarTowerCategory;
+import mctmods.immersivetechnology.common.integration.jei.category.ITSteamTurbineCategory;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mezz.jei.api.IModPlugin;
@@ -66,9 +72,12 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipeCategories(new ITBoilerLiquidCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITBoilerSolidCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITBoilerTankCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new ITCoolingTowerCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITDistillerCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new ITGasTurbineCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITSolarMelterCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITSolarTowerCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new ITSteamTurbineCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -76,9 +85,12 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipes(JEIRecipeTypes.BOILER_LIQUID, getBoilerLiquidRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_SOLID, getBoilerSolidRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_TANK, getBoilerRecipes());
+        registration.addRecipes(JEIRecipeTypes.COOLING_TOWER, getCoolingTowerRecipes());
         registration.addRecipes(JEIRecipeTypes.DISTILLER, getDistillerRecipes());
+        registration.addRecipes(JEIRecipeTypes.GAS_TURBINE, getGasTurbineRecipes());
         registration.addRecipes(JEIRecipeTypes.SOLAR_MELTER, getSolarMelterRecipes());
         registration.addRecipes(JEIRecipeTypes.SOLAR_TOWER, getSolarTowerRecipes());
+        registration.addRecipes(JEIRecipeTypes.STEAM_TURBINE, getSteamTurbineRecipes());
     }
 
     @Override
@@ -86,9 +98,12 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_LIQUID.iconStack(), JEIRecipeTypes.BOILER_LIQUID);
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_SOLID.iconStack(), JEIRecipeTypes.BOILER_SOLID);
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_TANK.iconStack(), JEIRecipeTypes.BOILER_TANK);
+        registration.addRecipeCatalyst(ITMultiblockProvider.COOLING_TOWER.iconStack(), JEIRecipeTypes.COOLING_TOWER);
         registration.addRecipeCatalyst(ITMultiblockProvider.DISTILLER.iconStack(), JEIRecipeTypes.DISTILLER);
+        registration.addRecipeCatalyst(ITMultiblockProvider.GAS_TURBINE.iconStack(), JEIRecipeTypes.GAS_TURBINE);
         registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_MELTER.iconStack(), JEIRecipeTypes.SOLAR_MELTER);
         registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_TOWER.iconStack(), JEIRecipeTypes.SOLAR_TOWER);
+        registration.addRecipeCatalyst(ITMultiblockProvider.STEAM_TURBINE.iconStack(), JEIRecipeTypes.STEAM_TURBINE);
     }
 
     @Override
@@ -386,9 +401,19 @@ public class JEIIntegration implements IModPlugin {
         return new ArrayList<>(BoilerTankRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
     }
 
+    private List<CoolingTowerRecipe> getCoolingTowerRecipes() {
+        assert Minecraft.getInstance().level != null;
+        return new ArrayList<>(CoolingTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
+    }
+
     private List<DistillerRecipe> getDistillerRecipes() {
         assert Minecraft.getInstance().level != null;
         return new ArrayList<>(DistillerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
+    }
+
+    private List<GasTurbineRecipe> getGasTurbineRecipes() {
+        assert Minecraft.getInstance().level != null;
+        return new ArrayList<>(GasTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
     }
 
     private List<SolarMelterRecipe> getSolarMelterRecipes() {
@@ -399,5 +424,10 @@ public class JEIIntegration implements IModPlugin {
     private List<SolarTowerRecipe> getSolarTowerRecipes() {
         assert Minecraft.getInstance().level != null;
         return new ArrayList<>(SolarTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
+    }
+
+    private List<SteamTurbineRecipe> getSteamTurbineRecipes() {
+        assert Minecraft.getInstance().level != null;
+        return new ArrayList<>(SteamTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
     }
 }

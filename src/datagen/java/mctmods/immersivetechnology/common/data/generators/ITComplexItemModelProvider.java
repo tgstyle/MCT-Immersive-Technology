@@ -35,7 +35,7 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
         generateMultiblockModel("boiler_tank", "metal", ITMultiblockProvider.BOILER_TANK.block(), new Vector3f(-3.2f, 0.5f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("cooling_tower", "stone", ITMultiblockProvider.COOLING_TOWER.block(), new Vector3f(-3.0f, -2.9f, -1.5f), 0.075f, 0.0375f, 0.0375f);
         generateMultiblockModel("distiller", "metal", ITMultiblockProvider.DISTILLER.block(), new Vector3f(0.5f, -0.5f, -0.5f), 0.1875f, 0.0625f, 0.0625f);
-        generateMultiblockModel("gas_turbine", "metal", ITMultiblockProvider.GAS_TURBINE.block(), new Vector3f(4.0f, -2.8f, -3.5f), 0.13f, 0.05f, 0.05f);
+        generateMultiblockModel("gas_turbine", "metal", ITMultiblockProvider.GAS_TURBINE.block(), new Vector3f(-4.2f, 2.4f, -3.5f), 0.13f, 0.05f, 0.05f);
         generateMultiblockModel("solar_melter", "metal", ITMultiblockProvider.SOLAR_MELTER.block(), new Vector3f(1.8f, -7.0f, -1.5f), 0.06f, 0.03f, 0.03f);
         generateMultiblockModel("solar_reflector", "metal", ITMultiblockProvider.SOLAR_REFLECTOR.block(), new Vector3f(4.5f, -1.8f, -1.5f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("solar_tower", "metal", ITMultiblockProvider.SOLAR_TOWER.block(), new Vector3f(1.8f, -7.0f, -1.5f), 0.06f, 0.03f, 0.03f);
