@@ -121,7 +121,7 @@ public class JEIIntegration implements IModPlugin {
             @Override
             public @NotNull Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull BoilerLiquidScreen gui, double guiMouseX, double guiMouseY) {
                 List<IGuiClickableArea> areas = new ArrayList<>();
-                areas.add(createBoilerLiquidClickableArea(80, gui.getMenu().tanks.input1()));
+                areas.add(createBoilerLiquidClickableArea(gui.getMenu().tanks.input1()));
                 return areas;
             }
         });
@@ -155,7 +155,7 @@ public class JEIIntegration implements IModPlugin {
             @Override
             public @NotNull Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull BoilerSolidScreen gui, double guiMouseX, double guiMouseY) {
                 List<IGuiClickableArea> areas = new ArrayList<>();
-                areas.add(createBoilerSolidClickableArea(81, 35));
+                areas.add(createBoilerSolidClickableArea());
                 return areas;
             }
         });
@@ -270,8 +270,8 @@ public class JEIIntegration implements IModPlugin {
         });
     }
 
-    private static IGuiClickableArea createBoilerLiquidClickableArea(int x, IFluidTank tank) {
-        Rect2i area = new Rect2i(x, 20, 16, 47);
+    private static IGuiClickableArea createBoilerLiquidClickableArea(IFluidTank tank) {
+        Rect2i area = new Rect2i(80, 20, 16, 47);
         return new IGuiClickableArea() {
             @Override
             public @NotNull Rect2i getArea() { return area; }
@@ -290,8 +290,8 @@ public class JEIIntegration implements IModPlugin {
         };
     }
 
-    private static IGuiClickableArea createBoilerSolidClickableArea(int x, int y) {
-        Rect2i area = new Rect2i(x, y, 14, 14);
+    private static IGuiClickableArea createBoilerSolidClickableArea() {
+        Rect2i area = new Rect2i(81, 35, 14, 14);
         return new IGuiClickableArea() {
             @Override
             public @NotNull Rect2i getArea() { return area; }
