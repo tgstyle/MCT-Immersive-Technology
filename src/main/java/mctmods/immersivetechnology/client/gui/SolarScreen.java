@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 
 public class SolarScreen extends ITContainerScreen<SolarMenu> {
     private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("solar");
-    private final boolean isMelter;
+    public final boolean isMelter;
 
     public SolarScreen(SolarMenu container, Inventory inventoryPlayer, Component title) {
         super(container, inventoryPlayer, title, TEXTURE);

@@ -105,9 +105,15 @@
   "keyword.immersivetechnology.rotations_per_minute": "RPM",
   "keyword.immersivetechnology.speed": "Speed",
 
-  "category.immersivetechnology.metal_multiblock.boilerRecipe": "Boiler",
-  "category.immersivetechnology.metal_multiblock.boilerFuel": "Boiler Fuels",
-  "category.immersivetechnology.metal_multiblock.distillerChance": "Chance: %s",
+  "category.immersivetechnology.metal_multiblock.boiler_liquid.time": "%s ticks / %s mB",
+  "category.immersivetechnology.metal_multiblock.boiler_liquid.heat": "%s heat/tick",
+  "category.immersivetechnology.metal_multiblock.boiler_solid.time": "%s ticks / %s items",
+  "category.immersivetechnology.metal_multiblock.boiler_solid.heat": "%s heat/tick",
+  "category.immersivetechnology.metal_multiblock.distiller.chance": "Chance: %s",
+  "category.immersivetechnology.metal_multiblock.solar_melter.time": "%s ticks / %s mB",
+  "category.immersivetechnology.metal_multiblock.solar_melter.temp": "Required Temp: %s °C",
+  "category.immersivetechnology.metal_multiblock.solar_tower.time": "%s ticks / %s mB",
+  "category.immersivetechnology.metal_multiblock.solar_tower.temp": "Required Temp: %s °C",
 
   "block.immersivetechnology.metal_trash.trash_item.name": "Trash Can"
 }

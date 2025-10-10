@@ -25,7 +25,7 @@ public class ITBoilerTankCategory extends ITRecipeCategory<BoilerTankRecipe> {
     public ITBoilerTankCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.BOILER_TANK, "block.immersivetechnology.boiler_tank");
         ResourceLocation background = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "textures/gui/boiler_tank.png");
-        IDrawableStatic back = guiHelper.drawableBuilder(background, 0, 0, 176, 77).setTextureSize(256, 256).build();
+        IDrawableStatic back = guiHelper.drawableBuilder(background, 0, 0, 176, 74).setTextureSize(256, 256).build();
         setBackground(back);
         setIcon(ITMultiblockProvider.BOILER_TANK.iconStack());
         tankOverlay = helper.createDrawable(background, 177, 31, 20, 51);
@@ -40,12 +40,12 @@ public class ITBoilerTankCategory extends ITRecipeCategory<BoilerTankRecipe> {
                     return copy;
                 })
                 .toList();
-        var inputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 67, 20)
+        var inputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 67, 21)
                 .addIngredients(ForgeTypes.FLUID_STACK, inputs)
                 .setFluidRenderer(recipe.input.getAmount(), false, 16, 47);
         inputSlot.addRichTooltipCallback((slotView, tooltip) -> slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
                 ITFluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
-        var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 92, 20)
+        var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 92, 21)
                 .addIngredient(ForgeTypes.FLUID_STACK, recipe.output)
                 .setFluidRenderer(recipe.output.getAmount(), false, 16, 47);
         outputSlot.addRichTooltipCallback((slotView, tooltip) -> slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
@@ -54,7 +54,7 @@ public class ITBoilerTankCategory extends ITRecipeCategory<BoilerTankRecipe> {
 
     @Override
     public void draw(@NotNull BoilerTankRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        tankOverlay.draw(guiGraphics, 65, 18);
-        tankOverlay.draw(guiGraphics, 90, 18);
+        tankOverlay.draw(guiGraphics, 65, 19);
+        tankOverlay.draw(guiGraphics, 90, 19);
     }
 }

@@ -1,15 +1,23 @@
 package mctmods.immersivetechnology.common.integration.jei;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeTypes;
+import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerLiquidRecipe;
+import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerTankRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
+import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarMelterRecipe;
+import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.world.item.crafting.Recipe;
 
 public class JEIRecipeTypes {
+    public static final RecipeType<BoilerLiquidRecipe> BOILER_LIQUID = create(ITRecipeTypes.BOILER_LIQUID);
+    public static final RecipeType<BoilerSolidRecipe> BOILER_SOLID = create(ITRecipeTypes.BOILER_SOLID);
     public static final RecipeType<BoilerTankRecipe> BOILER_TANK = create(ITRecipeTypes.BOILER_TANK);
     public static final RecipeType<DistillerRecipe> DISTILLER = create(ITRecipeTypes.DISTILLER);
+    public static final RecipeType<SolarMelterRecipe> SOLAR_MELTER = create(ITRecipeTypes.SOLAR_MELTER);
+    public static final RecipeType<SolarTowerRecipe> SOLAR_TOWER = create(ITRecipeTypes.SOLAR_TOWER);
 
     private static <T extends Recipe<?>> RecipeType<T> create(IERecipeTypes.TypeWithClass<T> type) {
         assert type.type().getId() != null;

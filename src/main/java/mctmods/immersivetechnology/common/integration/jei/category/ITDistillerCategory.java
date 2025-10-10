@@ -72,7 +72,7 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
         arrow.draw(graphics, 85, 25);
         if (!recipe.itemOutput.isEmpty()) {
             String chanceStr = String.format("%.2f%%", recipe.chance * 100);
-            Component component = Component.translatable("category.immersivetechnology.metal_multiblock.distillerChance", chanceStr).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
+            Component component = Component.translatable("category.immersivetechnology.metal_multiblock.distiller.chance", chanceStr).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
             Font font = Minecraft.getInstance().font;
             int textWidth = font.width(component);
             int textX = 85 + (24 - textWidth) / 2;
