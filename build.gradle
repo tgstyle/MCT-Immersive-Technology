@@ -27,6 +27,7 @@ file('gradle.properties').withInputStream { gradleProps.load(it) }
 
 version = versionProps.getProperty('version')
 ext.version_buildnumber = versionProps.getProperty('build_number')?.toInteger() ?: 0
+ext.stage = versionProps.getProperty('stage') ?: ''
 
 println "-> build.gradle applying version: $version (build ${version_buildnumber})"
 
@@ -76,7 +77,7 @@ ext {
     mod_description = gradleProps['mod_description']
 }
 
-def version_replaces = [
+def version_replaces = { [
         'version'      : project.version,
         'build_number' : version_buildnumber,
         'version_mc'   : version_minecraft,
@@ -87,15 +88,16 @@ def version_replaces = [
         'mod_authors'  : mod_authors,
         'mod_description': mod_description,
         'version_ie'   : version_ie,
-]
+        'stage'        : stage,
+] as Map<String, Object> }
 
 def jsonPatterns = ["**/*.json", "**/*.mcmeta"]
 
 processResources {
     duplicatesStrategy = DuplicatesStrategy.FAIL
-    inputs.properties(version_replaces)
+    inputs.properties(version_replaces())
     filesMatching("META-INF/mods.toml") {
-        expand version_replaces
+        expand version_replaces()
     }
     exclude ".cache"
     doLast {
@@ -127,8 +129,6 @@ minecraft {
 				}
 			}
 			args '--username', 'tgstyle'
-            //args '--username', 'MagneticPrismMC'
-            //args '--uuid', 'b16abd45-6a6f-4167-a2e7-6ef2b3940217'
 			args '--width', '1920'
 			args '--height', '1080'
 		}
@@ -227,21 +227,6 @@ dependencies {
     datagenImplementation("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    // Ad Astra
-//    implementation fg.deobf("curse.maven:resourceful-config-714059:5020441")
-//    implementation fg.deobf("curse.maven:botarium-704113:5486070")
-//    implementation fg.deobf("curse.maven:resourceful-lib-570073:5568216")
-//    implementation fg.deobf("curse.maven:ad-astra-635042:4894852")
-    // Quark
-//    implementation fg.deobf("curse.maven:zeta-968868:5597406")
-//    implementation fg.deobf("curse.maven:quark-243121:5594847")
-//
-//    // BoP
-//    implementation fg.deobf("curse.maven:terrablender-563928:5068218")
-//    implementation fg.deobf("curse.maven:biomes-o-plenty-220318:4617259")
-    // TFC
-//    implementation fg.deobf("vazkii.patchouli:Patchouli:$version_minecraft-$version_patchouli-FORGE")
-//    implementation fg.deobf("curse.maven:terrafirmacraft-302973:5943050")
 }
 
 def customGradle = rootProject.file('custom.gradle')
@@ -258,7 +243,12 @@ tasks.register('bumpVersion') {
         props['build_number'] = nextBuild.toString()
         file('version.properties').withOutputStream { props.store(it, null) }
         ext.version_buildnumber = nextBuild
-        version = "${props['version']}-b${nextBuild}"
+        def stage = props['stage']
+        def newVersion = "${props['version']}-b${nextBuild}-${stage}"
+        project.version = newVersion
+        tasks.withType(Jar).configureEach {
+            it.archiveVersion.set(newVersion)
+        }
     }
 }
 
@@ -360,3 +350,9 @@ tasks.withType(Task).configureEach {
 idea.project.settings.taskTriggers {
     afterSync genIntellijRunsDummy
 }
+
+processResources.dependsOn bumpVersion
+shadowJar.dependsOn bumpVersion
+jar.dependsOn bumpVersion
+datagenJar.dependsOn bumpVersion
+sourcesJar.dependsOn bumpVersion
