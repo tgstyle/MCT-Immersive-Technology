@@ -16,7 +16,6 @@ import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
-import mctmods.immersivetechnology.common.data.loaders.ITSplitModelBuilder;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
 import mctmods.immersivetechnology.core.registration.ITFluids;
@@ -65,6 +64,8 @@ import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 import com.google.gson.JsonObject;
+
+import mctmods.immersivetechnology.common.data.loaders.ITSplitModelBuilder;
 
 public class ITBlockStateProvider extends BlockStateProvider {
     public final Map<Block, ModelFile> unsplitModels = new HashMap<>();
@@ -404,13 +405,13 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private void genericMultiblock(String registry_name, String block_type) {
         ITLib.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
-        createMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name));
+        createMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
     }
 
     @SuppressWarnings("SameParameterValue")
     private void genericMultiblockMirror(String registry_name, String block_type) {
         ITLib.IT_LOGGER.info("Generating [{}] with Custom Mirror Multiblock Model Data", registry_name);
-        createMirroredMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), innerObj("block/multiblock/" + block_type + "/obj/" + registry_name  + "/" + registry_name + "_mirrored.obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name));
+        createMirroredMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), innerObj("block/multiblock/" + block_type + "/obj/" + registry_name  + "/" + registry_name + "_mirrored.obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -431,18 +432,18 @@ public class ITBlockStateProvider extends BlockStateProvider {
         createActiveMultiblock(multiblock::getBlock, defaultMain, activeMain, defaultMirrorModel, activeMirrorModel, ITProperties.MIRRORED, ITProperties.ACTIVE);
     }
 
-    private void createMirroredMultiblock(NongeneratedModel unsplitModel, NongeneratedModel mirror_model, ITTemplateMultiblock multiblock) {
-        final ModelFile mainModel = split(unsplitModel, multiblock, false, "metal");
-        final ModelFile mirrorModel = split(mirror_model, multiblock, true, "metal");
+    private void createMirroredMultiblock(NongeneratedModel unsplitModel, NongeneratedModel mirror_model, ITTemplateMultiblock multiblock, String block_type) {
+        final ModelFile mainModel = split(unsplitModel, multiblock, false, block_type);
+        final ModelFile mirrorModel = split(mirror_model, multiblock, true, block_type);
         if (multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, mirrorModel, ITProperties.MIRRORED); }
         else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
     }
 
-    private void createMultiblock(NongeneratedModel unsplitModel, TemplateMultiblock multiblock) { createMultiblock(unsplitModel, (ITTemplateMultiblock) multiblock); }
+    private void createMultiblock(NongeneratedModel unsplitModel, TemplateMultiblock multiblock, String block_type) { createMultiblock(unsplitModel, (ITTemplateMultiblock) multiblock, block_type); }
 
-    private void createMultiblock(NongeneratedModel unsplitModel, ITTemplateMultiblock multiblock) {
-        final ModelFile mainModel = split(unsplitModel, multiblock, false, "metal");
-        if (multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, split(mirror(unsplitModel, innerModels), multiblock, true, "metal"), ITProperties.MIRRORED); }
+    private void createMultiblock(NongeneratedModel unsplitModel, ITTemplateMultiblock multiblock, String block_type) {
+        final ModelFile mainModel = split(unsplitModel, multiblock, false, block_type);
+        if (multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, split(mirror(unsplitModel, innerModels), multiblock, true, block_type), ITProperties.MIRRORED); }
         else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
     }
 
