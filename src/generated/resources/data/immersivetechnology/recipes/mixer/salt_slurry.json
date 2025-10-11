@@ -8,7 +8,7 @@
   "inputs": [
     {
       "base_ingredient": {
-        "tag": "immersivetechnology:salt"
+        "tag": "forge:dusts/salt"
       },
       "count": 4
     }

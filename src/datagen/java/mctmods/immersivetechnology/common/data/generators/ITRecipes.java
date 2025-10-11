@@ -91,7 +91,6 @@ public class ITRecipes extends RecipeProvider {
     }
 
     private void recipesMixer(@Nonnull Consumer<FinishedRecipe> out) {
-        MixerRecipeBuilder.builder(ITFluids.SALT_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(new IngredientWithSize(ITTags.salt, 4)).setEnergy(3200).build(out, toResourceLocation("mixer/salt_slurry"));
         MixerRecipeBuilder.builder(ITFluids.SALT_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(new IngredientWithSize(ITTags.saltForge, 4)).setEnergy(3200).build(out, toResourceLocation("mixer/salt_slurry"));
     }
 
