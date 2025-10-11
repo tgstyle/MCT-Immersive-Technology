@@ -54,6 +54,7 @@ public class DistillerShape {
                 }
             }
         }
+        MANUAL_SCALE = DATA.manualScale;
         if (DATA.pointsOfInterest != null) {
             for (PoIJSONSchema poi : DATA.pointsOfInterest) {
                 switch (poi.name) {
