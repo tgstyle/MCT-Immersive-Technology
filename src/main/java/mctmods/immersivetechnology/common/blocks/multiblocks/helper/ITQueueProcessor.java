@@ -17,14 +17,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 public class ITQueueProcessor {
     private final Level level;
     private final List<AbstractMap.SimpleEntry<BlockPos, BlockState>> queue;
     private final Set<ChunkPos> affectedChunks = new HashSet<>();
     private boolean sorted = false;
-    private List<CompletableFuture<Void>> lightingFutures = null;
 
     public ITQueueProcessor(Level level, List<AbstractMap.SimpleEntry<BlockPos, BlockState>> queue) {
         this.level = level;
@@ -41,38 +39,6 @@ public class ITQueueProcessor {
         int blocksPerTick = ITTemplateMultiblock.DISASSEMBLE_QUEUE_SIZE;
         if (level instanceof ServerLevel serverLevel) {
             ThreadedLevelLightEngine lightEngine = serverLevel.getChunkSource().getLightEngine();
-            if (lightingFutures != null) {
-                boolean allDone = true;
-                for (CompletableFuture<Void> future : lightingFutures) { if (!future.isDone()) { allDone = false; break; } }
-                if (allDone) {
-                    ChunkMap chunkMap = serverLevel.getChunkSource().chunkMap;
-                    for (ChunkPos chunk : affectedChunks) {
-                        LevelChunk levelChunk = serverLevel.getChunk(chunk.x, chunk.z);
-                        levelChunk.setLightCorrect(false);
-                        levelChunk.setUnsaved(true);
-                        List<ServerPlayer> players = chunkMap.getPlayers(chunk, false);
-                        players.forEach(p -> p.connection.send(new ClientboundForgetLevelChunkPacket(chunk.x, chunk.z)));
-                        BitSet skyMask = new BitSet();
-                        BitSet blockMask = new BitSet();
-                        int minSection = lightEngine.getMinLightSection();
-                        int maxSection = lightEngine.getMaxLightSection();
-                        for (int y = minSection; y <= maxSection; y++) {
-                            int index = y - minSection;
-                            skyMask.set(index);
-                            blockMask.set(index);
-                        }
-                        ClientboundLevelChunkWithLightPacket packet = new ClientboundLevelChunkWithLightPacket(levelChunk, lightEngine, skyMask, blockMask);
-                        players.forEach(p -> p.connection.send(packet));
-                        ClientboundLightUpdatePacket lightPacket = new ClientboundLightUpdatePacket(chunk, lightEngine, skyMask, blockMask);
-                        players.forEach(p -> p.connection.send(lightPacket));
-                        ChunkHolder holder = chunkMap.getUpdatingChunkIfPresent(chunk.toLong());
-                        if (holder != null) { holder.broadcastChanges(levelChunk); }
-                    }
-                    affectedChunks.clear();
-                    lightingFutures = null;
-                }
-                return;
-            }
             for (int i = 0; i < blocksPerTick && !queue.isEmpty(); ++i) {
                 AbstractMap.SimpleEntry<BlockPos, BlockState> entry = queue.remove(0);
                 BlockPos breakPos = entry.getKey();
@@ -80,8 +46,7 @@ public class ITQueueProcessor {
                 level.setBlock(breakPos, template, 3);
                 level.destroyBlock(breakPos, false);
             }
-            if (queue.isEmpty() && lightingFutures == null) {
-                lightingFutures = new ArrayList<>();
+            if (queue.isEmpty()) {
                 int minSection = lightEngine.getMinLightSection();
                 int maxSection = lightEngine.getMaxLightSection();
                 for (ChunkPos chunk : affectedChunks) {
@@ -95,10 +60,30 @@ public class ITQueueProcessor {
                 for (ChunkPos chunk : affectedChunks) {
                     lightEngine.setLightEnabled(chunk, true);
                     lightEngine.propagateLightSources(chunk);
-                    CompletableFuture<Void> future = new CompletableFuture<>();
-                    lightingFutures.add(future);
-                    lightEngine.addTask(chunk.x, chunk.z, ThreadedLevelLightEngine.TaskType.POST_UPDATE, () -> future.complete(null));
                 }
+                while (!lightEngine.lightTasks.isEmpty() || lightEngine.hasLightWork()) { lightEngine.runUpdate(); }
+                ChunkMap chunkMap = serverLevel.getChunkSource().chunkMap;
+                for (ChunkPos chunk : affectedChunks) {
+                    LevelChunk levelChunk = serverLevel.getChunk(chunk.x, chunk.z);
+                    levelChunk.setLightCorrect(false);
+                    levelChunk.setUnsaved(true);
+                    List<ServerPlayer> players = chunkMap.getPlayers(chunk, false);
+                    players.forEach(p -> p.connection.send(new ClientboundForgetLevelChunkPacket(chunk.x, chunk.z)));
+                    BitSet skyMask = new BitSet();
+                    BitSet blockMask = new BitSet();
+                    for (int y = minSection; y <= maxSection; y++) {
+                        int index = y - minSection;
+                        skyMask.set(index);
+                        blockMask.set(index);
+                    }
+                    ClientboundLevelChunkWithLightPacket packet = new ClientboundLevelChunkWithLightPacket(levelChunk, lightEngine, skyMask, blockMask);
+                    players.forEach(p -> p.connection.send(packet));
+                    ClientboundLightUpdatePacket lightPacket = new ClientboundLightUpdatePacket(chunk, lightEngine, skyMask, blockMask);
+                    players.forEach(p -> p.connection.send(lightPacket));
+                    ChunkHolder holder = chunkMap.getUpdatingChunkIfPresent(chunk.toLong());
+                    if (holder != null) { holder.broadcastChanges(levelChunk); }
+                }
+                affectedChunks.clear();
             }
         }
     }
