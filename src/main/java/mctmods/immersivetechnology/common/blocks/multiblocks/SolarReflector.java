@@ -1,15 +1,20 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks;
 
+import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITClientMultiblockProperties;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarReflectorLogic;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarReflectorShape;
+import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.function.Consumer;
 
@@ -19,7 +24,16 @@ public class SolarReflector extends ITTemplateMultiblock {
     public SolarReflector() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/solar_reflector"), SolarReflectorShape.MASTER_POS, SolarReflectorShape.TRIGGER_POS, new BlockPos(SolarReflectorShape.WIDTH,SolarReflectorShape.HEIGHT,SolarReflectorShape.LENGTH), ITMultiblockProvider.SOLAR_REFLECTOR); }
 
     @Override
-    public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
+    public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
+        BlockState masterState = world.getBlockState(origin);
+        if (masterState.getBlock() != getBlock()) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); return; }
+        Direction facing = masterState.getValue(IEProperties.FACING_HORIZONTAL);
+        boolean actualMirrored = masterState.getValue(IEProperties.MIRRORED);
+        MultiblockOrientation orientation = new MultiblockOrientation(facing, actualMirrored);
+        BlockPos base = origin.offset(orientation.getAbsoluteOffset(SolarReflectorLogic.LINK_POI));
+        SolarRegistry.unregisterReflector(world, base);
+        super.disassemble(world, origin, actualMirrored, facing);
+    }
 
     @Override
     public float getManualScale() { return SolarReflectorShape.MANUAL_SCALE; }
