@@ -20,7 +20,6 @@ public class CommonProxy {
     public static void modConstruction(IEventBus event) {
         ITLib.IT_LOGGER.info("Registering IT Content!");
         ITMultiblockProvider.forceClassLoad();
-        ITMultiblockProvider.init();
         ITMenuTypes.REGISTER.register(event);
         ITRecipeTypes.init(event);
         ITSounds.init(event);
