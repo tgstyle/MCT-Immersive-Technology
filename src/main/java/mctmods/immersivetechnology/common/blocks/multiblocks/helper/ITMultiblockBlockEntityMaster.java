@@ -9,12 +9,14 @@ import blusunrize.immersiveengineering.common.util.inventory.IDropInventory;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import java.util.AbstractMap;
@@ -26,6 +28,15 @@ public class ITMultiblockBlockEntityMaster<State extends IMultiblockState> exten
     public List<AbstractMap.SimpleEntry<BlockPos, BlockState>> disassembleQueue = null;
 
     public ITMultiblockBlockEntityMaster(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState, MultiblockRegistration<State> multiblock) { super(type, worldPosition, blockState, multiblock); }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        IMultiblockContext<State> ctx = getHelper().getContext();
+        BlockPos min = ctx.getLevel().toAbsolute(BlockPos.ZERO);
+        Vec3i size = getHelper().getSize(ctx.getLevel().getRawLevel());
+        BlockPos max = ctx.getLevel().toAbsolute(new BlockPos(size.getX() - 1, size.getY() - 1, size.getZ() - 1));
+        return new AABB(min, max.offset(1, 1, 1)).inflate(1);
+    }
 
     @Override
     public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
