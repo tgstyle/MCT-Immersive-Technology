@@ -1,7 +1,7 @@
 # Made in Blockbench 4.12.6
 mtllib solar_melter.mtl
 
-o solar_melter
+o cube
 v 1.75 1.5 1
 v 1.75 2 1
 v 1.75 2 2
