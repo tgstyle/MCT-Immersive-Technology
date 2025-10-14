@@ -23,11 +23,8 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.logic.interfaces.IT
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarTowerShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.network.ITOSDSyncBlock;
-import mctmods.immersivetechnology.common.network.ITPacketHandler;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
-import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
@@ -35,13 +32,9 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
@@ -326,8 +319,12 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         State state = ctx.getState();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (position.equals(INPUT_FLUID_POI)) { return state.inputCap.cast(ctx); }
-            if (position.equals(OUTPUT_FLUID_POI)) { return state.outputCap.cast(ctx); }
+            if (position.equals(INPUT_FLUID_POI)) {
+                return state.inputCap.cast();
+            }
+            if (position.equals(OUTPUT_FLUID_POI)) {
+                return state.outputCap.cast();
+            }
         }
         if (cap == ForgeCapabilities.ITEM_HANDLER) { if (position.posInMultiblock().equals(ITEM_OUTPUT_POI.posInMultiblock())) { return state.itemOutputCap.cast(ctx); } return state.invCap.cast(ctx); }
         return LazyOptional.empty();
@@ -340,24 +337,13 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
     public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override
-    public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
-        if (isClient) { return InteractionResult.PASS; }
-        State state = ctx.getState();
-        if (state.registered) { return InteractionResult.PASS; }
-        TranslationKey key = state.failVertical ? TranslationKey.SOLAR_VERTICAL_STACK : TranslationKey.SOLAR_TOO_CLOSE;
-        int dist = state.failVertical ? -1 : state.requiredMove;
-        ITPacketHandler.sendToPlayer(player, new ITOSDSyncBlock(key.location, dist));
-        return InteractionResult.SUCCESS;
-    }
-
-    @Override
-    public void dropExtraItems(State state, Consumer<ItemStack> drop) { Level level = state.levelSupplier.get(); if (level != null && !level.isClientSide) { detachReflectorPositions(state); SolarRegistry.unregisterTower(level, state.basePos); } ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
+    public void dropExtraItems(State state, Consumer<ItemStack> drop) { Level level = state.levelSupplier.get(); if (level != null && !level.isClientSide) { detachReflectorPositions(state); SolarRegistry.unregisterTower(level, state.basePos); } ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); state.inputCap.invalidate(); state.outputCap.invalidate(); }
 
     public static class State implements ITISolarMultiblockState {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final ITSolarTank tanks;
-        public final StoredCapability<IFluidHandler> inputCap;
-        public final StoredCapability<IFluidHandler> outputCap;
+        public final LazyOptional<IFluidHandler> inputCap;
+        public final LazyOptional<IFluidHandler> outputCap;
         public final StoredCapability<IItemHandler> invCap;
         public final CapabilityReference<IFluidHandler> fluidOutput;
         public final StoredCapability<IItemHandler> itemOutputCap;
@@ -392,8 +378,8 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             this.tanks = new ITSolarTank(v -> onChanged.run());
             inventory = new ITSlotwiseItemHandler(Lists.newArrayList(ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT, ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT), onChanged);
-            this.inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input(), false, true, onChanged));
-            this.outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output(), true, false, onChanged));
+            this.inputCap = LazyOptional.of(() -> new ITArrayFluidHandler(tanks.input(), false, true, onChanged));
+            this.outputCap = LazyOptional.of(() -> new ITArrayFluidHandler(tanks.output(), true, false, onChanged));
             this.invCap = new StoredCapability<>(inventory);
             MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POI.side(), OUTPUT_FLUID_POI.posInMultiblock());
             CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);

@@ -30,12 +30,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
@@ -212,9 +208,6 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return DistillerShape.GETTER; }
-
-    @Override
-    public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) { return InteractionResult.SUCCESS; }
 
     public static class State implements IMultiblockState, ProcessContext.ProcessContextInMachine<DistillerRecipe> {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
