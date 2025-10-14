@@ -33,14 +33,14 @@ public class SolarRegistryData extends SavedData {
                 ListTag list = nbt.getList(key, Tag.TAG_COMPOUND);
                 Set<BlockPos> set = new HashSet<>();
                 for (Tag tag : list) { set.add(BlockPos.of(((CompoundTag)tag).getLong("pos"))); }
-                data.towerBasesByY.put(y, set);
+                if (!set.isEmpty()) data.towerBasesByY.put(y, set);
             }
             else if (key.startsWith("reflectors_")) {
                 int y = Integer.parseInt(key.substring(11));
                 ListTag list = nbt.getList(key, Tag.TAG_COMPOUND);
                 Set<BlockPos> set = new HashSet<>();
                 for (Tag tag : list) { set.add(BlockPos.of(((CompoundTag)tag).getLong("pos"))); }
-                data.reflectorPOIsByY.put(y, set);
+                if (!set.isEmpty()) data.reflectorPOIsByY.put(y, set);
             }
         }
         if (nbt.contains("untaken")) {
@@ -54,6 +54,7 @@ public class SolarRegistryData extends SavedData {
                 BlockPos leader = BlockPos.of(tag.getLong("leader"));
                 SolarRegistry.GroupData gd = new SolarRegistry.GroupData();
                 gd.danceStartTick = tag.getLong("danceStartTick");
+                gd.pendingTick = tag.getLong("pendingTick");
                 gd.animationPhase = tag.getInt("animationPhase");
                 gd.groupSize = tag.getInt("groupSize");
                 data.groupData.put(leader, gd);
@@ -66,6 +67,7 @@ public class SolarRegistryData extends SavedData {
     @Override
     public @NotNull CompoundTag save(@NotNull CompoundTag nbt) {
         for (Map.Entry<Integer, Set<BlockPos>> entry : towerBasesByY.entrySet()) {
+            if (entry.getValue().isEmpty()) continue;
             ListTag list = new ListTag();
             for (BlockPos pos : entry.getValue()) {
                 CompoundTag tag = new CompoundTag();
@@ -75,6 +77,7 @@ public class SolarRegistryData extends SavedData {
             nbt.put("towers_" + entry.getKey(), list);
         }
         for (Map.Entry<Integer, Set<BlockPos>> entry : reflectorPOIsByY.entrySet()) {
+            if (entry.getValue().isEmpty()) continue;
             ListTag list = new ListTag();
             for (BlockPos pos : entry.getValue()) {
                 CompoundTag tag = new CompoundTag();
@@ -83,19 +86,28 @@ public class SolarRegistryData extends SavedData {
             }
             nbt.put("reflectors_" + entry.getKey(), list);
         }
-        ListTag untakenList = new ListTag();
-        for (BlockPos pos : untakenReflectors) { untakenList.add(LongTag.valueOf(pos.asLong())); }
-        nbt.put("untaken", untakenList);
+        if (!untakenReflectors.isEmpty()) {
+            ListTag untakenList = new ListTag();
+            for (BlockPos pos : untakenReflectors) { untakenList.add(LongTag.valueOf(pos.asLong())); }
+            nbt.put("untaken", untakenList);
+        }
+        if (!groupData.isEmpty()) {
+            nbt.put("groups", createGroupsTag());
+        }
+        return nbt;
+    }
+
+    private ListTag createGroupsTag() {
         ListTag groups = new ListTag();
         for (Map.Entry<BlockPos, SolarRegistry.GroupData> entry : groupData.entrySet()) {
             CompoundTag tag = new CompoundTag();
             tag.putLong("leader", entry.getKey().asLong());
             tag.putLong("danceStartTick", entry.getValue().danceStartTick);
+            tag.putLong("pendingTick", entry.getValue().pendingTick);
             tag.putInt("animationPhase", entry.getValue().animationPhase);
             tag.putInt("groupSize", entry.getValue().groupSize);
             groups.add(tag);
         }
-        nbt.put("groups", groups);
-        return nbt;
+        return groups;
     }
 }

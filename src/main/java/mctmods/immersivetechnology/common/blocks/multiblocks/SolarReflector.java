@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITClientMultiblockProperties;
@@ -14,7 +13,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.function.Consumer;
 
@@ -25,14 +23,10 @@ public class SolarReflector extends ITTemplateMultiblock {
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
-        BlockState masterState = world.getBlockState(origin);
-        if (masterState.getBlock() != getBlock()) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); return; }
-        Direction facing = masterState.getValue(IEProperties.FACING_HORIZONTAL);
-        boolean actualMirrored = masterState.getValue(IEProperties.MIRRORED);
-        MultiblockOrientation orientation = new MultiblockOrientation(facing, actualMirrored);
+        MultiblockOrientation orientation = new MultiblockOrientation(clickDirectionAtCreation, mirrored);
         BlockPos base = origin.offset(orientation.getAbsoluteOffset(SolarReflectorLogic.LINK_POI));
         SolarRegistry.unregisterReflector(world, base);
-        super.disassemble(world, origin, actualMirrored, facing);
+        super.disassemble(world, origin, mirrored, clickDirectionAtCreation);
     }
 
     @Override

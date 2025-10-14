@@ -14,10 +14,13 @@ import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.helper.ITSolarTank;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.interfaces.ITISolarMultiblockState;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarMelterRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarMelterShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
@@ -28,8 +31,6 @@ import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.helper.ITSolarTank;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.interfaces.ITISolarMultiblockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -56,7 +57,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
-import com.google.common.collect.Lists;
 
 import java.util.HashSet;
 import java.util.List;
@@ -179,7 +179,31 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         IMultiblockLevel mlevel = ctx.getLevel();
         Level level = mlevel.getRawLevel();
         boolean update = false;
-        if (!state.isLoaded && !level.isClientSide) { state.isLoaded = true; updatePortNeighbors(mlevel); SolarRegistry.RegisterResult result = SolarRegistry.registerTower(level, state.basePos); state.registered = result.success; state.failVertical = result.vertical; state.requiredMove = result.requiredMove; if (state.registered) { state.reflectorStrength = checkReflectorPositions(mlevel, state); } update = true; }
+        state.loadTicks++;
+        if (state.loadTicks > 10 && !state.isLoaded && !level.isClientSide) {
+            state.isLoaded = true;
+            updatePortNeighbors(mlevel);
+            SolarRegistry.RegisterResult result = SolarRegistry.registerTower(level, state.basePos);
+            state.registered = result.success;
+            state.failVertical = result.vertical;
+            state.requiredMove = result.requiredMove;
+            if (!state.registered && state.savedRegistered) {
+                int y = state.basePos.getY();
+                Set<BlockPos> towersAtY = SolarRegistry.getData(level).towerBasesByY.computeIfAbsent(y, k -> new HashSet<>());
+                towersAtY.add(state.basePos);
+                SolarRegistry.getData(level).setDirty();
+                state.registered = true;
+                state.failVertical = false;
+                state.requiredMove = 0;
+            }
+            if (state.registered) { state.reflectorStrength = checkReflectorPositions(mlevel, state); }
+            update = true;
+        }
+        if (state.loadTicks > 20 && state.reCheckOnLoad && !level.isClientSide) {
+            state.reCheckOnLoad = false;
+            if (state.registered) { state.reflectorStrength = checkReflectorPositions(mlevel, state); }
+            update = true;
+        }
         if (!state.registered) { return; }
         boolean oldVisible = state.sunVisible;
         state.sunVisible = level.canSeeSky(state.sunPos);
@@ -329,9 +353,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             BlockEntity be = level.getBlockEntity(poiPos);
             if (be instanceof IMultiblockBE<?> mbe) {
                 IMultiblockBEHelper<?> helper = mbe.getHelper();
-                if (helper != null && helper.getState() instanceof SolarReflectorLogic.State reflectorState) {
-                    reflectorState.detachTower(collectorPos);
-                }
+                if (helper != null && helper.getState() instanceof SolarReflectorLogic.State reflectorState) { reflectorState.detachTower(collectorPos); }
             }
         }
     }
@@ -398,6 +420,9 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         public BooleanSupplier isSoundPlaying = () -> false;
         private int soundId = 0;
         public boolean sunVisible = true;
+        private int loadTicks = 0;
+        private boolean reCheckOnLoad = false;
+        private transient boolean savedRegistered = false;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -459,7 +484,6 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             nbt.putBoolean("registered", registered);
             nbt.putBoolean("failVertical", failVertical);
             nbt.putInt("requiredMove", requiredMove);
-            nbt.putBoolean("isLoaded", isLoaded);
             nbt.putBoolean("active", active);
         }
 
@@ -476,15 +500,17 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             registered = nbt.getBoolean("registered");
             failVertical = nbt.getBoolean("failVertical");
             requiredMove = nbt.getInt("requiredMove");
-            isLoaded = nbt.getBoolean("isLoaded");
             active = nbt.getBoolean("active");
+            savedRegistered = nbt.getBoolean("registered");
+            reCheckOnLoad = nbt.getBoolean("registered");
+            isLoaded = false;
             Level level = levelSupplier.get();
             if (level != null && !level.isClientSide) {
                 SolarRegistry.RegisterResult result = SolarRegistry.registerTower(level, basePos);
                 this.registered = result.success;
                 this.failVertical = result.vertical;
                 this.requiredMove = result.requiredMove;
-                if (!this.registered && nbt.getBoolean("registered")) {
+                if (!this.registered && savedRegistered) {
                     int y = basePos.getY();
                     Set<BlockPos> towersAtY = SolarRegistry.getData(level).towerBasesByY.computeIfAbsent(y, k -> new HashSet<>());
                     towersAtY.add(basePos);

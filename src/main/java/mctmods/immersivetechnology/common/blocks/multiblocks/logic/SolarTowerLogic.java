@@ -141,7 +141,31 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
         IMultiblockLevel mlevel = ctx.getLevel();
         Level level = mlevel.getRawLevel();
         boolean update = false;
-        if (!state.isLoaded && !level.isClientSide) { state.isLoaded = true; updatePortNeighbors(mlevel); SolarRegistry.RegisterResult result = SolarRegistry.registerTower(level, state.basePos); state.registered = result.success; state.failVertical = result.vertical; state.requiredMove = result.requiredMove; if (state.registered) { state.reflectorStrength = checkReflectorPositions(mlevel, state); } update = true; }
+        state.loadTicks++;
+        if (state.loadTicks > 10 && !state.isLoaded && !level.isClientSide) {
+            state.isLoaded = true;
+            updatePortNeighbors(mlevel);
+            SolarRegistry.RegisterResult result = SolarRegistry.registerTower(level, state.basePos);
+            state.registered = result.success;
+            state.failVertical = result.vertical;
+            state.requiredMove = result.requiredMove;
+            if (!state.registered && state.savedRegistered) {
+                int y = state.basePos.getY();
+                Set<BlockPos> towersAtY = SolarRegistry.getData(level).towerBasesByY.computeIfAbsent(y, k -> new HashSet<>());
+                towersAtY.add(state.basePos);
+                SolarRegistry.getData(level).setDirty();
+                state.registered = true;
+                state.failVertical = false;
+                state.requiredMove = 0;
+            }
+            if (state.registered) { state.reflectorStrength = checkReflectorPositions(mlevel, state); }
+            update = true;
+        }
+        if (state.loadTicks > 20 && state.reCheckOnLoad && !level.isClientSide) {
+            state.reCheckOnLoad = false;
+            if (state.registered) { state.reflectorStrength = checkReflectorPositions(mlevel, state); }
+            update = true;
+        }
         if (!state.registered) { return; }
         boolean oldVisible = state.sunVisible;
         state.sunVisible = level.canSeeSky(state.sunPos);
@@ -291,9 +315,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             BlockEntity be = level.getBlockEntity(poiPos);
             if (be instanceof IMultiblockBE<?> mbe) {
                 IMultiblockBEHelper<?> helper = mbe.getHelper();
-                if (helper != null && helper.getState() instanceof SolarReflectorLogic.State reflectorState) {
-                    reflectorState.detachTower(collectorPos);
-                }
+                if (helper != null && helper.getState() instanceof SolarReflectorLogic.State reflectorState) { reflectorState.detachTower(collectorPos); }
             }
         }
     }
@@ -360,6 +382,9 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
         public BooleanSupplier isSoundPlaying = () -> false;
         private int soundId = 0;
         public boolean sunVisible = true;
+        private int loadTicks = 0;
+        private boolean reCheckOnLoad = false;
+        private transient boolean savedRegistered = false;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -421,7 +446,6 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             nbt.putBoolean("registered", registered);
             nbt.putBoolean("failVertical", failVertical);
             nbt.putInt("requiredMove", requiredMove);
-            nbt.putBoolean("isLoaded", isLoaded);
             nbt.putBoolean("active", active);
         }
 
@@ -438,15 +462,17 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             registered = nbt.getBoolean("registered");
             failVertical = nbt.getBoolean("failVertical");
             requiredMove = nbt.getInt("requiredMove");
-            isLoaded = nbt.getBoolean("isLoaded");
             active = nbt.getBoolean("active");
+            savedRegistered = nbt.getBoolean("registered");
+            reCheckOnLoad = nbt.getBoolean("registered");
+            isLoaded = false;
             Level level = levelSupplier.get();
             if (level != null && !level.isClientSide) {
                 SolarRegistry.RegisterResult result = SolarRegistry.registerTower(level, basePos);
                 this.registered = result.success;
                 this.failVertical = result.vertical;
                 this.requiredMove = result.requiredMove;
-                if (!this.registered && nbt.getBoolean("registered")) {
+                if (!this.registered && savedRegistered) {
                     int y = basePos.getY();
                     Set<BlockPos> towersAtY = SolarRegistry.getData(level).towerBasesByY.computeIfAbsent(y, k -> new HashSet<>());
                     towersAtY.add(basePos);

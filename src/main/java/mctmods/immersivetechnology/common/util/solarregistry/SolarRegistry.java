@@ -20,6 +20,7 @@ public class SolarRegistry {
 
     public static class GroupData {
         public long danceStartTick = -1;
+        public long pendingTick = -1L;
         public int animationPhase = -4;
         public int groupSize = 1;
     }
@@ -52,6 +53,29 @@ public class SolarRegistry {
         }
         towersAtY.add(base);
         data.setDirty();
+        result.success = true;
+        return result;
+    }
+
+    public static synchronized RegisterResult checkReflectorPlacement(Level level, BlockPos poi) {
+        RegisterResult result = new RegisterResult();
+        if (level.isClientSide) return result;
+        SolarRegistryData data = getData(level);
+        int y = poi.getY();
+        Set<BlockPos> reflectorsAtY = data.reflectorPOIsByY.computeIfAbsent(y, k -> new HashSet<>());
+        if (reflectorsAtY.contains(poi)) { result.success = true; return result; }
+        boolean verticalFail = false;
+        for (Set<BlockPos> set : data.towerBasesByY.values()) for (BlockPos existing : set) {
+            int dx = poi.getX() - existing.getX();
+            int dz = poi.getZ() - existing.getZ();
+            if (dx == 0 && dz == 0) { verticalFail = true; }
+        }
+        for (Set<BlockPos> set : data.reflectorPOIsByY.values()) for (BlockPos existing : set) {
+            int dx = poi.getX() - existing.getX();
+            int dz = poi.getZ() - existing.getZ();
+            if (dx == 0 && dz == 0) { verticalFail = true; }
+        }
+        if (verticalFail) { result.vertical = true; return result; }
         result.success = true;
         return result;
     }
@@ -113,14 +137,20 @@ public class SolarRegistry {
         }
         boolean changed = false;
         for (GroupData gd : data.groupData.values()) {
-            if (gd.animationPhase == -2) {
+            if (gd.animationPhase == -5) {
+                long currentTime = level.getGameTime();
+                if (currentTime >= gd.pendingTick) {
+                    gd.danceStartTick = currentTime;
+                    gd.animationPhase = -2;
+                    changed = true;
+                }
+            } else if (gd.animationPhase == -2) {
                 float currentPhase = (level.getGameTime() - gd.danceStartTick) * 0.05f;
                 if (currentPhase >= DANCE_DURATION) {
                     gd.animationPhase = -3;
                     changed = true;
                 }
-            }
-            else if (gd.animationPhase == -3) {
+            } else if (gd.animationPhase == -3) {
                 float currentPhase = (level.getGameTime() - gd.danceStartTick) * 0.05f;
                 if (currentPhase >= DANCE_DURATION + 1) {
                     gd.animationPhase = -4;
@@ -158,6 +188,7 @@ public class SolarRegistry {
             groups.computeIfAbsent(root, k -> new HashSet<>()).add(pos);
         }
         Map<BlockPos, GroupData> newGroupData = new HashMap<>();
+        long currentTime = level.getGameTime();
         for (Map.Entry<BlockPos, Set<BlockPos>> entry : groups.entrySet()) {
             BlockPos root = entry.getKey();
             Set<BlockPos> members = entry.getValue();
@@ -166,8 +197,8 @@ public class SolarRegistry {
             int currentSize = members.size();
             if (gd == null || gd.animationPhase == -4 || gd.groupSize != currentSize) {
                 gd = new GroupData();
-                gd.danceStartTick = level.getGameTime() + 100L;
-                gd.animationPhase = -2;
+                gd.pendingTick = currentTime + 100L;
+                gd.animationPhase = -5;
             }
             gd.groupSize = currentSize;
             newGroupData.put(leader, gd);
@@ -200,8 +231,7 @@ public class SolarRegistry {
         int rb = data.rank.getOrDefault(pb, 0);
         if (ra > rb) {
             data.parent.put(pb, pa);
-        }
-        else {
+        } else {
             data.parent.put(pa, pb);
             if (ra == rb) { data.rank.put(pb, rb + 1); }
         }
