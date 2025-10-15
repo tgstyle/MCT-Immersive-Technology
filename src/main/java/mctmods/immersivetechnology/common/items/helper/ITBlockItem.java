@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.items.helper;
 
 import blusunrize.immersiveengineering.api.client.TextUtils;
-import blusunrize.immersiveengineering.common.blocks.BlockItemIE;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockPartBlock;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlock;
@@ -22,7 +22,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,20 +35,12 @@ import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class ITBlockItem extends BlockItem {
-    private int burnTime;
+    public ITBlockItem(Block b, Item.Properties props) { super(b, props); }
 
-    public ITBlockItem(Block b, Item.Properties props) {
-        super(b, props);
-    }
-
-    public ITBlockItem(Block b) {
-        this(b, new Item.Properties());
-    }
+    public ITBlockItem(Block b) { this(b, new Item.Properties()); }
 
     @Override
-    public @NotNull String getDescriptionId(@NotNull ItemStack stack) {
-        return getBlock().getDescriptionId();
-    }
+    public @NotNull String getDescriptionId(@NotNull ItemStack stack) { return getBlock().getDescriptionId(); }
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level world, @NotNull List<Component> tooltip, @NotNull TooltipFlag advanced) {
@@ -65,18 +56,9 @@ public class ITBlockItem extends BlockItem {
         }
     }
 
-    public ITBlockItem setBurnTime(int burnTime) {
-        this.burnTime = burnTime;
-        return this;
-    }
-
     @Override
-    public int getBurnTime(ItemStack itemStack, RecipeType<?> type) {
-        return this.burnTime;
-    }
-
-    @Override
-    protected boolean placeBlock(@NotNull BlockPlaceContext context, BlockState newState) {
+    protected boolean placeBlock(@NotNull BlockPlaceContext context, @NotNull BlockState newState) {
+        if (getBlock() instanceof MultiblockPartBlock) { return false; }
         Block b = newState.getBlock();
         if (b instanceof ITBaseBlock ieBlock) {
             if (!ieBlock.canIEBlockBePlaced(newState, context)) return false;
@@ -111,22 +93,5 @@ public class ITBlockItem extends BlockItem {
     }
 
     @Override
-    public boolean canFitInsideContainerItems() {
-        return !(getBlock() instanceof ITBaseBlock ieBlock) || ieBlock.fitsIntoContainer();
-    }
-
-    public static class BlockItemIENoInventory extends BlockItemIE {
-        public BlockItemIENoInventory(Block b) { super(b); }
-
-        @Nullable
-        @Override
-        public CompoundTag getShareTag(ItemStack stack) {
-            CompoundTag ret = super.getShareTag(stack);
-            if (ret != null) {
-                ret = ret.copy();
-                ret.remove("Items");
-            }
-            return ret;
-        }
-    }
+    public boolean canFitInsideContainerItems() { return !(getBlock() instanceof ITBaseBlock ieBlock) || ieBlock.fitsIntoContainer(); }
 }
