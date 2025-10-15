@@ -51,14 +51,6 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     }
 
     @Override
-    public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {
-        BlockState triggerState = world.getBlockState(pos);
-        if (triggerState.hasProperty(ITProperties.FACING_HORIZONTAL)) { side = triggerState.getValue(ITProperties.FACING_HORIZONTAL).getOpposite(); }
-        else { side = player.getDirection().getOpposite(); }
-        return super.createStructure(world, pos, side, player);
-    }
-
-    @Override
     public float getManualScale() { return 0; }
 
     @Override
