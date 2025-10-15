@@ -53,7 +53,7 @@ import java.util.function.Function;
 
 public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.State>, IServerTickableComponent<SteamTurbineLogic.State>, IClientTickableComponent<SteamTurbineLogic.State> {
     public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
-    public static final int MAX_SPEED = 1800;
+    public static final int MAX_SPEED = 7200;
     private static final double BASE_MASS = 10;
     private static final double DRIVE_TORQUE = 30;
     private static final double FRICTION = 60;

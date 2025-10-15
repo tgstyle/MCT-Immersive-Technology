@@ -61,7 +61,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     private static final int ENERGY_CAPACITY_MV = 2048;
     private static final int ELECTRIC_STARTER_CONSUMPTION = 4096;
     private static final int SPARKPLUG_CONSUMPTION = 1024;
-    public static final int MAX_SPEED = 1800;
+    public static final int MAX_SPEED = 3600;
     private static final double BASE_MASS = 8;
     private static final double DRIVE_TORQUE = 30;
     private static final double FRICTION = 60;
@@ -119,7 +119,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             state.runningSoundId++;
             int thisId = state.runningSoundId;
             state.runningSoundPlaying = ITSound.startSound(
-                    () -> (!state.starterRunning || (state.stall && state.ignited)) && state.speed > 0 && state.runningSoundId == thisId,
+                    () -> state.speed > 0 && ((state.everIgnited && !state.starterRunning) || (state.stall && state.ignited)) && state.runningSoundId == thisId,
                     ctx.isValid(),
                     runningPos,
                     ITSounds.gasRunning,
@@ -147,12 +147,12 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                         () -> 1f
                 );
             }
-            if (state.speed >= MAX_SPEED / 4) {
+            if (state.speed >= MAX_SPEED / 4 && state.hasIgniter) {
                 if (!state.arcSoundPlaying.getAsBoolean()) {
                     state.arcSoundId++;
                     int thisId = state.arcSoundId;
                     state.arcSoundPlaying = ITSound.startSound(
-                            () -> state.starterRunning && state.speed >= MAX_SPEED / 4 && state.arcSoundId == thisId, ctx.isValid(), arcPos, ITSounds.gasArc,
+                            () -> state.starterRunning && state.speed >= MAX_SPEED / 4 && state.hasIgniter && state.arcSoundId == thisId, ctx.isValid(), arcPos, ITSounds.gasArc,
                             () -> {
                                 LocalPlayer p = Minecraft.getInstance().player;
                                 if (p == null) { return 0f; }
@@ -216,6 +216,8 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     @SuppressWarnings("StatementWithEmptyBody") @Override
     public void tickServer(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
+        state.hasIgniter = state.mvInput.isPresent();
+        state.canIgniteClient = SPARKPLUG_CONSUMPTION <= state.energyStorageMV.getEnergyStored();
         boolean wasActive = state.active;
         boolean wasStall = state.stall;
         state.active = false;
@@ -267,7 +269,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             if (state.isShutdown) { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
             else {
                 if (state.starterRunning) {
-                    if (canIgnite(state)) {
+                    if (state.hasIgniter && canIgnite(state)) {
                         state.stall = true;
                         if (!wasStall) { ignite(state, ctx); }
                         else { state.ignitionGracePeriod = 60; }
@@ -328,6 +330,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
     private void ignite(State state, IMultiblockContext<State> ctx) {
         state.energyStorageMV.extractEnergy(SPARKPLUG_CONSUMPTION, false);
+        state.everIgnited = true;
         state.ignited = true;
         state.ignitionGracePeriod = 60;
         ctx.requestMasterBESync();
@@ -383,12 +386,16 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         public AveragingEnergyStorage energyStorageHV;
         public AveragingEnergyStorage energyStorageMV;
         public final CapabilityReference<IFluidHandler> fluidOutput;
+        public final CapabilityReference<IEnergyStorage> mvInput;
         private final BiFunction<Level, FluidStack, GasTurbineRecipe> recipeGetter;
         public int speed = 0;
         public boolean active = false;
         public boolean starterRunning = false;
         public boolean ignited = false;
         public boolean stall = false;
+        public boolean everIgnited = false;
+        public boolean hasIgniter = false;
+        public boolean canIgniteClient = false;
         public int burnRemaining = 0;
         public int ignitionGracePeriod = 0;
         public boolean isShutdown = false;
@@ -426,6 +433,10 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
             MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
             this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
+            MultiblockFace mvInputMBFace = new MultiblockFace(ENERGY_INPUT_MV_POI.side(), ENERGY_INPUT_MV_POI.posInMultiblock());
+            CapabilityPosition mvOpposingCP = CapabilityPosition.opposing(mvInputMBFace);
+            MultiblockFace mvOpposingMBFace = new MultiblockFace(mvOpposingCP.side(), mvOpposingCP.posInMultiblock());
+            this.mvInput = ctx.getCapabilityAt(ForgeCapabilities.ENERGY, mvOpposingMBFace);
             this.inertia = new RotationInertiaProcess(BASE_MASS, DRIVE_TORQUE, FRICTION);
         }
 
@@ -436,6 +447,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             nbt.putBoolean("starterRunning", starterRunning);
             nbt.putBoolean("ignited", ignited);
             nbt.putBoolean("stall", stall);
+            nbt.putBoolean("everIgnited", everIgnited);
             nbt.putInt("burnRemaining", burnRemaining);
             nbt.putInt("ignitionGracePeriod", ignitionGracePeriod);
             nbt.putBoolean("isShutdown", isShutdown);
@@ -449,6 +461,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             starterRunning = nbt.getBoolean("starterRunning");
             ignited = nbt.getBoolean("ignited");
             stall = nbt.getBoolean("stall");
+            everIgnited = nbt.getBoolean("everIgnited");
             burnRemaining = nbt.getInt("burnRemaining");
             ignitionGracePeriod = nbt.getInt("ignitionGracePeriod");
             isShutdown = nbt.getBoolean("isShutdown");
@@ -463,6 +476,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             nbt.putInt("speed", speed);
             nbt.putBoolean("isShutdown", isShutdown);
             nbt.putBoolean("stall", stall);
+            nbt.putBoolean("everIgnited", everIgnited);
+            nbt.putBoolean("hasIgniter", hasIgniter);
+            nbt.putBoolean("canIgnite", canIgniteClient);
             nbt.put("tanks", tanks.toNBT());
         }
 
@@ -475,6 +491,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             speed = nbt.getInt("speed");
             isShutdown = nbt.getBoolean("isShutdown");
             stall = nbt.getBoolean("stall");
+            everIgnited = nbt.getBoolean("everIgnited");
+            hasIgniter = nbt.getBoolean("hasIgniter");
+            canIgniteClient = nbt.getBoolean("canIgnite");
             tanks.readNBT(nbt.getCompound("tanks"));
             if (active && !oldActive && speed < MAX_SPEED / 4) { animation_fanFadeIn = 80; }
         }
