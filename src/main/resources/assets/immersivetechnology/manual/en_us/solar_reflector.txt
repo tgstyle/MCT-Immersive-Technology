@@ -6,4 +6,6 @@ Shine!
 
 
 §lOperation§r
+    - Place above the cement foundation base of the tower, not higher, nor lower.
+    - Limited to 24 reflectors per tower.
     - Place at a minimum of 12 blocks to a maximum of 22-blocks within the radius of a Solar Tower or Melter.
