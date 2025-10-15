@@ -14,9 +14,15 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.DataLayer;
 import net.minecraft.world.level.chunk.LevelChunk;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.BitSet;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ITQueueProcessor {
     private final Level level;
@@ -52,8 +58,8 @@ public class ITQueueProcessor {
                 for (ChunkPos chunk : affectedChunks) {
                     lightEngine.setLightEnabled(chunk, false);
                     for (int y = minSection; y <= maxSection; ++y) {
-                        lightEngine.queueSectionData(LightLayer.SKY, SectionPos.of(chunk, y), null);
-                        lightEngine.queueSectionData(LightLayer.BLOCK, SectionPos.of(chunk, y), null);
+                        lightEngine.queueSectionData(LightLayer.SKY, SectionPos.of(chunk, y), new DataLayer());
+                        lightEngine.queueSectionData(LightLayer.BLOCK, SectionPos.of(chunk, y), new DataLayer());
                         lightEngine.updateSectionStatus(SectionPos.of(chunk, y), false);
                     }
                 }
