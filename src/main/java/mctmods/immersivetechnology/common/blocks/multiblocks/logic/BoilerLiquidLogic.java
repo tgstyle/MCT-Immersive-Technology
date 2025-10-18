@@ -15,6 +15,7 @@ import mctmods.immersivetechnology.api.HeatCapabilities;
 import mctmods.immersivetechnology.api.capability.IHeatConsumer;
 import mctmods.immersivetechnology.api.capability.IHeatProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerLiquidRecipe;
@@ -40,6 +41,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -55,7 +57,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     public static final int INPUT_FUEL_SLOT_EMPTY = 1;
     public static final int TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
     private static final double HEAT_LOSS_PER_TICK = 0.2;
-    private static final double WORKING_HEAT_LEVEL = 100.0;
+    public static final double WORKING_HEAT_LEVEL = 100.0;
     public static final double PILOT_HEAT = 20.0;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerLiquidShape.DATA.pointsOfInterest);
 
@@ -78,7 +80,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
+        State state = ctx.getState();
         if (state.heatLevel == 0) { state.isSoundPlaying = () -> false; }
         else {
             BlockPos soundAbs = ctx.getLevel().toAbsolute(SOUND_POI.get(0));
@@ -100,14 +102,14 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                 );
             }
         }
-        final Level level = ctx.getLevel().getRawLevel();
+        Level level = ctx.getLevel().getRawLevel();
         if (state.pilotLit) {
             BlockPos exhaustAbs = ctx.getLevel().toAbsolute(EXHAUST_POI.get(0));
             Vec3 flamePos = new Vec3(exhaustAbs.getX() + 0.5, exhaustAbs.getY() + 0.1, exhaustAbs.getZ() + 0.5);
             double velX = (level.random.nextFloat() * 0.0625 - 0.03125);
             double velY = 0.0625;
             double velZ = (level.random.nextFloat() * 0.0625 - 0.03125);
-            if (level.isClientSide) { level.addParticle(ParticleTypes.FLAME, flamePos.x, flamePos.y, flamePos.z, velX, velY, velZ); }
+            level.addParticle(ParticleTypes.FLAME, flamePos.x, flamePos.y, flamePos.z, velX, velY, velZ);
         }
         boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
         if (state.pilotLit && state.heatLevel > PILOT_HEAT && state.rsState.isEnabled(ctx) && hasWater) {
@@ -123,16 +125,17 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
 
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
-        final Level level = ctx.getLevel().getRawLevel();
-        boolean update = false;
-        double previousHeatLevel = state.heatLevel;
+        State state = ctx.getState();
+        Level level = ctx.getLevel().getRawLevel();
+        CompoundTag prevTanksNBT = state.tanks.toNBT();
+        Tag prevInventoryNBT = state.inventory.serializeNBT();
+        double prevHeatLevel = state.heatLevel;
+        boolean prevPilotLit = state.pilotLit;
+        boolean wasActive = state.active;
         if (state.tanks.input1.getFluidAmount() <= 0) { state.pilotLit = false; }
         double delta = HEAT_LOSS_PER_TICK;
         boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
         boolean fullMode = state.rsState.isEnabled(ctx) && hasWater;
-        boolean isActive = state.pilotLit && fullMode && state.heatLevel >= WORKING_HEAT_LEVEL;
-        if (state.active != isActive) { state.active = isActive; update = true; }
         if (!state.pilotLit) {
             state.heatLevel = Math.max(state.heatLevel - delta, 0);
             state.burnRemaining = 0;
@@ -172,32 +175,33 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                 }
             }
         }
-        if (previousHeatLevel != state.heatLevel) { update = true; }
-        if (tryEmptyContainer(state.tanks.input1, state.inventory)) { update = true; }
-        if (update) {
-            ctx.markMasterDirty();
-            if (state.clientUpdateCooldown == 1) {
-                ctx.requestMasterBESync();
-                state.clientUpdateCooldown = 20;
-            } else { state.clientUpdateCooldown--; }
-        }
+        tryEmptyContainer(state.tanks.input1, state.inventory);
+        state.active = state.pilotLit && fullMode && state.heatLevel >= WORKING_HEAT_LEVEL;
+        boolean heatLevelChanged = prevHeatLevel != state.heatLevel;
+        boolean pilotLitChanged = prevPilotLit != state.pilotLit;
+        boolean activeChanged = wasActive != state.active;
+        CompoundTag currentTanksNBT = state.tanks.toNBT();
+        boolean tanksChanged = !prevTanksNBT.equals(currentTanksNBT);
+        Tag currentInventoryNBT = state.inventory.serializeNBT();
+        boolean inventoryChanged = !prevInventoryNBT.equals(currentInventoryNBT);
+        boolean update = heatLevelChanged || pilotLitChanged || activeChanged || tanksChanged || inventoryChanged;
+        if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
-    private boolean tryEmptyContainer(IFluidHandler tank, IItemHandlerModifiable inv) {
-        ItemStack filledContainer = inv.getStackInSlot(BoilerLiquidLogic.INPUT_FUEL_SLOT_FILLED);
-        if (filledContainer.isEmpty()) { return false; }
+    private void tryEmptyContainer(IFluidHandler tank, IItemHandlerModifiable inv) {
+        ItemStack filledContainer = inv.getStackInSlot(INPUT_FUEL_SLOT_FILLED);
+        if (filledContainer.isEmpty()) { return; }
         FluidActionResult simResult = FluidUtils.tryEmptyContainer(filledContainer, tank, FluidType.BUCKET_VOLUME, FluidAction.SIMULATE);
-        if (!simResult.isSuccess()) { return false; }
+        if (!simResult.isSuccess()) { return; }
         ItemStack emptyContainer = simResult.getResult();
-        ItemStack outputStack = inv.getStackInSlot(BoilerLiquidLogic.INPUT_FUEL_SLOT_EMPTY);
-        if (!outputStack.isEmpty() && !ItemHandlerHelper.canItemStacksStack(outputStack, emptyContainer)) { return false; }
-        if (outputStack.getCount() + emptyContainer.getCount() > emptyContainer.getMaxStackSize()) { return false; }
+        ItemStack outputStack = inv.getStackInSlot(INPUT_FUEL_SLOT_EMPTY);
+        if (!outputStack.isEmpty() && !ItemHandlerHelper.canItemStacksStack(outputStack, emptyContainer)) { return; }
+        if (outputStack.getCount() + emptyContainer.getCount() > emptyContainer.getMaxStackSize()) { return; }
         FluidActionResult execResult = FluidUtils.tryEmptyContainer(filledContainer, tank, FluidType.BUCKET_VOLUME, FluidAction.EXECUTE);
         filledContainer.shrink(1);
-        inv.setStackInSlot(BoilerLiquidLogic.INPUT_FUEL_SLOT_FILLED, filledContainer);
-        if (outputStack.isEmpty()) { inv.setStackInSlot(BoilerLiquidLogic.INPUT_FUEL_SLOT_EMPTY, execResult.getResult()); }
+        inv.setStackInSlot(INPUT_FUEL_SLOT_FILLED, filledContainer);
+        if (outputStack.isEmpty()) { inv.setStackInSlot(INPUT_FUEL_SLOT_EMPTY, execResult.getResult()); }
         else { outputStack.grow(execResult.getResult().getCount()); }
-        return true;
     }
 
     @Override
@@ -221,7 +225,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerLiquidShape.GETTER; }
 
-    public static class State implements IMultiblockState {
+    public static class State implements IMultiblockState, ITDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final BoilerTank tanks;
         public StoredCapability<IFluidHandler> inputFuelCap;
@@ -234,15 +238,11 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         public boolean pilotLit = false;
         public boolean active = false;
         public BooleanSupplier isSoundPlaying = () -> false;
-        public int clientUpdateCooldown = 20;
 
         public State(IInitialMultiblockContext<State> ctx) {
-            final Runnable markDirty = ctx.getMarkDirtyRunnable();
-            final Runnable sync = ctx.getSyncRunnable();
-            final Runnable onChanged = () -> {
-                markDirty.run();
-                sync.run();
-            };
+            Runnable markDirty = ctx.getMarkDirtyRunnable();
+            Runnable sync = ctx.getSyncRunnable();
+            Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             tanks = new BoilerTank(v -> onChanged.run());
             inventory = new ITSlotwiseItemHandler(
                     List.of(
@@ -279,18 +279,41 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
 
         @Override
         public void writeSyncNBT(CompoundTag nbt) {
-            nbt.putDouble("heatLevel", heatLevel);
-            nbt.putBoolean("pilotLit", pilotLit);
-            nbt.putBoolean("active", active);
-            nbt.put("tanks", tanks.toNBT());
+            CompoundTag display = new CompoundTag();
+            writeDisplaySyncNBT(display);
+            nbt.put("display", display);
         }
 
         @Override
         public void readSyncNBT(CompoundTag nbt) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        }
+
+        @Override
+        public boolean isActive() { return active; }
+
+        @Override
+        public IItemHandlerModifiable getInventory() { return inventory; }
+
+        @Override
+        public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input1}; }
+
+        @Override
+        public void writeDisplaySyncNBT(CompoundTag nbt) {
+            nbt.putBoolean("active", active);
+            nbt.putDouble("heatLevel", heatLevel);
+            nbt.putBoolean("pilotLit", pilotLit);
+            nbt.put("tanks", tanks.toNBT());
+            nbt.put("inventory", inventory.serializeNBT());
+        }
+
+        @Override
+        public void readDisplaySyncNBT(CompoundTag nbt) {
+            active = nbt.getBoolean("active");
             heatLevel = nbt.getDouble("heatLevel");
             pilotLit = nbt.getBoolean("pilotLit");
-            active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
+            inventory.deserializeNBT(nbt.getCompound("inventory"));
         }
     }
 
@@ -304,7 +327,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
 
         public static BoilerTank makeClient() { return new BoilerTank(v -> {}); }
 
-        public Tag toNBT() {
+        public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();
             tag.put("input1", this.input1.writeToNBT(new CompoundTag()));
             return tag;

@@ -17,6 +17,7 @@ import mctmods.immersivetechnology.api.MechanicalCapabilities;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SteamTurbineShape;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.RotationInertiaProcess;
@@ -42,8 +43,10 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -240,7 +243,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SteamTurbineShape.GETTER; }
 
-    public static class State implements IMultiblockState {
+    public static class State implements IMultiblockState, ITDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final SteamTurbineTank tanks;
         public final StoredCapability<IFluidHandler> fluidCap;
@@ -293,13 +296,34 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
         @Override
         public void writeSyncNBT(CompoundTag nbt) {
+            CompoundTag display = new CompoundTag();
+            writeDisplaySyncNBT(display);
+            nbt.put("display", display);
+        }
+
+        @Override
+        public void readSyncNBT(CompoundTag nbt) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        }
+
+        @Override
+        public boolean isActive() { return active; }
+
+        @Override
+        public IItemHandlerModifiable getInventory() { return null; }
+
+        @Override
+        public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input, tanks.output}; }
+
+        @Override
+        public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
             nbt.put("tanks", tanks.toNBT());
         }
 
         @Override
-        public void readSyncNBT(CompoundTag nbt) {
+        public void readDisplaySyncNBT(CompoundTag nbt) {
             boolean oldActive = active;
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
@@ -315,7 +339,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
         public static SteamTurbineTank makeClient() { return new SteamTurbineTank(v -> {}); }
 
-        public Tag toNBT() {
+        public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();
             tag.put("input", this.input.writeToNBT(new CompoundTag()));
             tag.put("output", this.output.writeToNBT(new CompoundTag()));

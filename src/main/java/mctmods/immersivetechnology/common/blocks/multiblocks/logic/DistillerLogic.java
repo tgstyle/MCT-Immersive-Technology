@@ -12,9 +12,10 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import blusunrize.immersiveengineering.common.util.Utils;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITProcessContext;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.DistillerProcess;
@@ -61,6 +62,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     public static final int SLOT_OUTPUT_FILLED = 3;
     public static final int OUTPUT_SLOT = 4;
     public static final int TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
+    public static final int ENERGY_CAPACITY = 32000;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(DistillerShape.DATA.pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
@@ -100,14 +102,15 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
+        state.energy.updateAverage();
+        int prevEnergy = state.energy.getEnergyStored();
+        CompoundTag prevTanksNBT = state.tanks.toNBT();
+        DistillerRecipe recipe = DistillerRecipe.findRecipe(ctx.getLevel().getRawLevel(), state.tanks.input.getFluid());
         boolean wasActive = state.active;
         state.active = state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
-        boolean update = wasActive != state.active;
-        DistillerRecipe recipe = DistillerRecipe.findRecipe(ctx.getLevel().getRawLevel(), state.tanks.input.getFluid());
-        if (wasActive != state.active || recipe != null) { ctx.requestMasterBESync(); }
         tryEnqueueProcess(state, ctx.getLevel().getRawLevel(), recipe);
-        if (tryEmptyContainer(state.tanks.input, state.inventory)) { update = true; }
-        if (FluidUtils.fillFluidContainer(state.tanks.output, SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory)) { update = true; }
+        tryEmptyContainer(state.tanks.input, state.inventory);
+        FluidUtils.fillFluidContainer(state.tanks.output, SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory);
         if (state.fluidOutput.isPresent()) {
             IFluidHandler outputHandler = state.fluidOutput.get();
             FluidStack fs = state.tanks.output.getFluid();
@@ -117,53 +120,48 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
                 if (accepted > 0) {
                     int drained = outputHandler.fill(Utils.copyFluidStackWithAmount(fs, accepted, false), FluidAction.EXECUTE);
                     state.tanks.output.drain(drained, FluidAction.EXECUTE);
-                    update = true;
                 }
             }
         }
         IItemHandlerModifiable inventory = state.inventory;
         ItemStack drainedContainer = inventory.getStackInSlot(SLOT_INPUT_EMPTY);
         if (!drainedContainer.isEmpty()) {
-            int origCount = drainedContainer.getCount();
             drainedContainer = Utils.insertStackIntoInventory(state.outputRef, drainedContainer, false);
-            if (drainedContainer.getCount() < origCount) { update = true; }
             inventory.setStackInSlot(SLOT_INPUT_EMPTY, drainedContainer);
         }
         ItemStack filledContainer = inventory.getStackInSlot(SLOT_OUTPUT_FILLED);
         if (!filledContainer.isEmpty()) {
-            int origCount = filledContainer.getCount();
             filledContainer = Utils.insertStackIntoInventory(state.outputRef, filledContainer, false);
-            if (filledContainer.getCount() < origCount) { update = true; }
             inventory.setStackInSlot(SLOT_OUTPUT_FILLED, filledContainer);
         }
         ItemStack itemOutput = inventory.getStackInSlot(OUTPUT_SLOT);
         if (!itemOutput.isEmpty()) {
-            int origCount = itemOutput.getCount();
             itemOutput = Utils.insertStackIntoInventory(state.outputRef, itemOutput, false);
-            if (itemOutput.getCount() < origCount) { update = true; }
             inventory.setStackInSlot(OUTPUT_SLOT, itemOutput);
         }
-        if (update) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        boolean activeChanged = wasActive != state.active;
+        int currentEnergy = state.energy.getEnergyStored();
+        boolean energyChanged = prevEnergy != currentEnergy;
+        CompoundTag currentTanksNBT = state.tanks.toNBT();
+        boolean tanksChanged = !prevTanksNBT.equals(currentTanksNBT);
+        boolean update = activeChanged || energyChanged || tanksChanged;
+        if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
-    private boolean tryEmptyContainer(IFluidHandler tank, IItemHandlerModifiable inv) {
+    private void tryEmptyContainer(IFluidHandler tank, IItemHandlerModifiable inv) {
         ItemStack filledContainer = inv.getStackInSlot(DistillerLogic.SLOT_INPUT_FILLED);
-        if (filledContainer.isEmpty()) { return false; }
+        if (filledContainer.isEmpty()) { return; }
         FluidActionResult result = FluidUtils.tryEmptyContainer(filledContainer, tank, FluidType.BUCKET_VOLUME, FluidAction.SIMULATE);
-        if (!result.isSuccess()) { return false; }
+        if (!result.isSuccess()) { return; }
         ItemStack emptyContainer = result.getResult();
         ItemStack outputStack = inv.getStackInSlot(DistillerLogic.SLOT_INPUT_EMPTY);
-        if (!outputStack.isEmpty() && !ItemHandlerHelper.canItemStacksStack(outputStack, emptyContainer)) { return false; }
-        if (outputStack.getCount() + emptyContainer.getCount() > emptyContainer.getMaxStackSize()) { return false; }
+        if (!outputStack.isEmpty() && !ItemHandlerHelper.canItemStacksStack(outputStack, emptyContainer)) { return; }
+        if (outputStack.getCount() + emptyContainer.getCount() > emptyContainer.getMaxStackSize()) { return; }
         result = FluidUtils.tryEmptyContainer(filledContainer, tank, FluidType.BUCKET_VOLUME, FluidAction.EXECUTE);
         filledContainer.shrink(1);
         inv.setStackInSlot(DistillerLogic.SLOT_INPUT_FILLED, filledContainer);
         if (outputStack.isEmpty()) { inv.setStackInSlot(DistillerLogic.SLOT_INPUT_EMPTY, result.getResult()); }
         else { outputStack.grow(result.getResult().getCount()); }
-        return true;
     }
 
     private void tryEnqueueProcess(State state, Level level, DistillerRecipe recipe) {
@@ -209,7 +207,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return DistillerShape.GETTER; }
 
-    public static class State implements IMultiblockState, ProcessContext.ProcessContextInMachine<DistillerRecipe> {
+    public static class State implements IMultiblockState, ITProcessContext.ProcessContextInMachine<DistillerRecipe>, ITDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final DistillerTank tanks;
         public final StoredCapability<IEnergyStorage> energyCap;
@@ -221,8 +219,8 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         public final CapabilityReference<IItemHandler> outputRef;
         public final ITSlotwiseItemHandler inventory;
         private final IFluidTank[] tankArray;
-        private final MultiblockProcessor.InMachineProcessor<DistillerRecipe> processor;
-        public AveragingEnergyStorage energy = new AveragingEnergyStorage(32000);
+        public final MultiblockProcessor.InMachineProcessor<DistillerRecipe> processor;
+        public AveragingEnergyStorage energy;
         public boolean active;
         public BooleanSupplier isSoundPlaying = () -> false;
 
@@ -245,6 +243,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             this.inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             this.outputCapSteam = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
             this.invCap = new StoredCapability<>(inventory);
+            this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
             this.energyCap = new StoredCapability<>(this.energy);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, DistillerRecipe.RECIPES::getById);
             MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POI.side(), OUTPUT_FLUID_POI.posInMultiblock());
@@ -290,14 +289,14 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
         @Override
         public void writeSyncNBT(CompoundTag nbt) {
-            nbt.putBoolean("active", active);
-            nbt.put("tanks", this.tanks.toNBT());
+            CompoundTag display = new CompoundTag();
+            writeDisplaySyncNBT(display);
+            nbt.put("display", display);
         }
 
         @Override
         public void readSyncNBT(CompoundTag nbt) {
-            active = nbt.getBoolean("active");
-            this.tanks.readNBT(nbt.getCompound("tanks"));
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
         }
 
         @Override
@@ -311,6 +310,26 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
         @Override
         public int[] getOutputSlots() { return new int[]{OUTPUT_SLOT}; }
+
+        @Override
+        public boolean isActive() { return active; }
+
+        @Override
+        public void writeDisplaySyncNBT(CompoundTag nbt) {
+            nbt.putBoolean("active", active);
+            nbt.put("tanks", tanks.toNBT());
+            nbt.put("energy", energy.serializeNBT());
+            nbt.put("inventory", inventory.serializeNBT());
+        }
+
+        @Override
+        public void readDisplaySyncNBT(CompoundTag nbt) {
+            active = nbt.getBoolean("active");
+            tanks.readNBT(nbt.getCompound("tanks"));
+            if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); }
+            energy.deserializeNBT(nbt.get("energy"));
+            inventory.deserializeNBT(nbt.getCompound("inventory"));
+        }
     }
 
     public record DistillerTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
@@ -320,7 +339,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
         public static DistillerTank makeClient() { return new DistillerTank(v -> {}); }
 
-        public Tag toNBT() {
+        public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();
             tag.put("input", this.input.writeToNBT(new CompoundTag()));
             tag.put("output", this.output.writeToNBT(new CompoundTag()));
@@ -334,5 +353,28 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
         @SuppressWarnings("unused")
         public int getCapacity() { return TANK_CAPACITY; }
+    }
+
+    private static class SyncEnergyStorage extends AveragingEnergyStorage {
+        private final Runnable onChanged;
+
+        public SyncEnergyStorage(int capacity, Runnable onChanged) {
+            super(capacity);
+            this.onChanged = onChanged;
+        }
+
+        @Override
+        public int receiveEnergy(int maxReceive, boolean simulate) {
+            int received = super.receiveEnergy(maxReceive, simulate);
+            if (received > 0 && !simulate) { onChanged.run(); }
+            return received;
+        }
+
+        @Override
+        public int extractEnergy(int maxExtract, boolean simulate) {
+            int extracted = super.extractEnergy(maxExtract, simulate);
+            if (extracted > 0 && !simulate) { onChanged.run(); }
+            return extracted;
+        }
     }
 }

@@ -9,6 +9,7 @@ Getting steamy in here!
 §lOperation§r
     - §lSolid Fuel§r is input below the combustion chamber.
     - Ignite the §lBoiler§r with a torch or flint and steel on the top meshed exhaust.
+    - Boiler will run in pilot mode when not active and consume a small amount of fuel.
     - §lWater§r must be in an attached §lBoiler Tank§r.
 
 §lTip:§r The Boiler can process a decent amount of water.

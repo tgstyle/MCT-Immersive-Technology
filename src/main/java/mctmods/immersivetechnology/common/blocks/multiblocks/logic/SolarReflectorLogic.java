@@ -13,6 +13,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOri
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
 import com.google.common.collect.ImmutableList;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarReflectorShape;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
@@ -25,6 +26,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -33,6 +35,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -236,6 +240,8 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                 Vec3 end = Vec3.atCenterOf(state.getTowerCollectorPosition());
                 Vec3 diff = end.subtract(start);
                 double dist = diff.length();
+                double distSq = dist * dist;
+                if (distSq > 64 * 64) { return; }
                 Vec3 dir = diff.normalize();
                 double rdist = level.random.nextDouble() * dist * 0.9;
                 Vec3 pos = start.add(dir.scale(rdist));
@@ -255,7 +261,12 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
         Level level = ctx.getLevel().getRawLevel();
         boolean update = false;
         state.loadTicks++;
-        if (state.loadTicks > 10 && !state.initialized && !level.isClientSide) { state.initialized = true; SolarRegistry.registerReflector(level, state.poiPos); ctx.markMasterDirty(); ctx.requestMasterBESync(); }
+        if (state.loadTicks > 10 && !state.initialized && !level.isClientSide) {
+            state.initialized = true;
+            SolarRegistry.registerReflector(level, state.poiPos);
+            ctx.markMasterDirty();
+            ctx.requestMasterBESync();
+        }
         if (state.loadTicks > 20 && state.reAttachOnLoad && !level.isClientSide) {
             state.reAttachOnLoad = false;
             if (level.isLoaded(state.towerCollectorPosition)) {
@@ -327,7 +338,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
     @Override
     public void dropExtraItems(State state, Consumer<ItemStack> drop) { Level level = state.levelSupplier.get(); if (level != null && !level.isClientSide) { SolarRegistry.unregisterReflector(level, state.poiPos); } }
 
-    public static class State implements IMultiblockState {
+    public static class State implements IMultiblockState, ITDisplayContext {
         public boolean isMirrorTaken;
         private BlockPos towerCollectorPosition;
         public float animation_supportRotation;
@@ -483,15 +494,38 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
 
         @Override
         public void writeSyncNBT(CompoundTag nbt) {
-            writeSaveNBT(nbt);
+            CompoundTag display = new CompoundTag();
+            writeDisplaySyncNBT(display);
+            nbt.put("display", display);
+        }
+
+        @Override
+        public void readSyncNBT(CompoundTag nbt) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        }
+
+        @Override
+        public boolean isActive() { return active; }
+
+        @Override
+        public IItemHandlerModifiable getInventory() { return null; }
+
+        @Override
+        public IFluidTank[] getInternalTanks() { return null; }
+
+        @Override
+        public void writeDisplaySyncNBT(CompoundTag nbt) {
+            nbt.putBoolean("isMirrorTaken", isMirrorTaken);
+            nbt.putLong("towerCollectorPosition", towerCollectorPosition.asLong());
             nbt.putLong("danceStartTick", danceStartTick);
             nbt.putLong("pendingTick", pendingTick);
             nbt.putInt("globalAnimationPhase", globalAnimationPhase);
         }
 
         @Override
-        public void readSyncNBT(CompoundTag nbt) {
-            readSaveNBT(nbt);
+        public void readDisplaySyncNBT(CompoundTag nbt) {
+            isMirrorTaken = nbt.getBoolean("isMirrorTaken");
+            towerCollectorPosition = BlockPos.of(nbt.getLong("towerCollectorPosition"));
             danceStartTick = nbt.getLong("danceStartTick");
             pendingTick = nbt.getLong("pendingTick");
             globalAnimationPhase = nbt.getInt("globalAnimationPhase");

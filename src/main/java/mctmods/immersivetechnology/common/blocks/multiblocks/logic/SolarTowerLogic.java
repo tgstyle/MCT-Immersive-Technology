@@ -15,6 +15,7 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.Initi
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler;
@@ -31,6 +32,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -42,6 +44,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandler;
@@ -339,7 +342,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
     @Override
     public void dropExtraItems(State state, Consumer<ItemStack> drop) { Level level = state.levelSupplier.get(); if (level != null && !level.isClientSide) { detachReflectorPositions(state); SolarRegistry.unregisterTower(level, state.basePos); } ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); state.inputCap.invalidate(); state.outputCap.invalidate(); }
 
-    public static class State implements ITISolarMultiblockState {
+    public static class State implements ITISolarMultiblockState, ITDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final ITSolarTank tanks;
         public final LazyOptional<IFluidHandler> inputCap;
@@ -403,10 +406,6 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             if (!this.registered) { this.failVertical = result.vertical; this.requiredMove = result.requiredMove; }
         }
 
-        public ITSlotwiseItemHandler getInventory() { return inventory; }
-
-        public ITSolarTank getTanks() { return tanks; }
-
         @Override
         public double getHeatLevel() { return heatLevel; }
 
@@ -418,6 +417,12 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
 
         @Override
         public boolean isSunVisible() { return sunVisible; }
+
+        @Override
+        public ITSolarTank getTanks() { return tanks; }
+
+        @Override
+        public ITSlotwiseItemHandler getInventory() { return inventory; }
 
         @Override
         public void writeSaveNBT(CompoundTag nbt) {
@@ -472,6 +477,24 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
 
         @Override
         public void writeSyncNBT(CompoundTag nbt) {
+            CompoundTag display = new CompoundTag();
+            writeDisplaySyncNBT(display);
+            nbt.put("display", display);
+        }
+
+        @Override
+        public void readSyncNBT(CompoundTag nbt) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        }
+
+        @Override
+        public boolean isActive() { return active; }
+
+        @Override
+        public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input(), tanks.output()}; }
+
+        @Override
+        public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.put("tanks", this.tanks.toNBT());
             nbt.putDouble("heatLevel", heatLevel);
             nbt.putDouble("reflectorStrength", reflectorStrength);
@@ -481,7 +504,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
         }
 
         @Override
-        public void readSyncNBT(CompoundTag nbt) {
+        public void readDisplaySyncNBT(CompoundTag nbt) {
             this.tanks.readNBT(nbt.getCompound("tanks"));
             heatLevel = nbt.getDouble("heatLevel");
             reflectorStrength = nbt.getDouble("reflectorStrength");

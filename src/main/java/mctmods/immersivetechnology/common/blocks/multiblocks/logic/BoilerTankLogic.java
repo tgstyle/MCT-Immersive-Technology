@@ -12,6 +12,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.HeatCapabilities;
 import mctmods.immersivetechnology.api.capability.IHeatConsumer;
 import mctmods.immersivetechnology.api.capability.IHeatProvider;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerTankRecipe;
@@ -31,6 +32,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -126,7 +128,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             }
         }
         if (tryEmptyContainer(state.tanks.input, state.inventory)) { update = true; }
-        if (update) { ctx.markMasterDirty(); }
+        if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
     private boolean tryEmptyContainer(IFluidHandler tank, IItemHandlerModifiable inv) {
@@ -168,7 +170,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerTankShape.GETTER; }
 
-    public static class State implements IMultiblockState {
+    public static class State implements IMultiblockState, ITDisplayContext {
         public final BoilerTanks tanks;
         public StoredCapability<IFluidHandler> inputCap;
         public StoredCapability<IFluidHandler> outputCap;
@@ -184,10 +186,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
             final Runnable sync = ctx.getSyncRunnable();
-            final Runnable onChanged = () -> {
-                markDirty.run();
-                sync.run();
-            };
+            final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             tanks = new BoilerTanks(v -> onChanged.run());
             inventory = new ITSlotwiseItemHandler(
                     List.of(
@@ -227,16 +226,37 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
 
         @Override
         public void writeSyncNBT(CompoundTag nbt) {
-            nbt.put("tanks", tanks.toNBT());
-            nbt.putDouble("heatLevel", heatLevel);
-            nbt.putBoolean("active", active);
+            CompoundTag display = new CompoundTag();
+            writeDisplaySyncNBT(display);
+            nbt.put("display", display);
         }
 
         @Override
         public void readSyncNBT(CompoundTag nbt) {
-            tanks.readNBT(nbt.getCompound("tanks"));
-            heatLevel = nbt.getDouble("heatLevel");
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        }
+
+        @Override
+        public boolean isActive() { return active; }
+
+        @Override
+        public IItemHandlerModifiable getInventory() { return inventory; }
+
+        @Override
+        public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input, tanks.output}; }
+
+        @Override
+        public void writeDisplaySyncNBT(CompoundTag nbt) {
+            nbt.putBoolean("active", active);
+            nbt.putDouble("heatLevel", heatLevel);
+            nbt.put("tanks", tanks.toNBT());
+        }
+
+        @Override
+        public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
+            heatLevel = nbt.getDouble("heatLevel");
+            tanks.readNBT(nbt.getCompound("tanks"));
         }
     }
 
@@ -253,7 +273,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
 
         public static BoilerTanks makeClient() { return new BoilerTanks(v -> {}); }
 
-        public Tag toNBT() {
+        public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();
             tag.put("input", this.input.writeToNBT(new CompoundTag()));
             tag.put("output", this.output.writeToNBT(new CompoundTag()));

@@ -15,6 +15,7 @@ import mctmods.immersivetechnology.api.capability.IHeatConsumer;
 import mctmods.immersivetechnology.api.capability.IHeatProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerSolidRecipe;
@@ -28,6 +29,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -109,7 +111,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             double velX = (level.random.nextFloat() * 0.0625 - 0.03125);
             double velY = 0.0625;
             double velZ = (level.random.nextFloat() * 0.0625 - 0.03125);
-            if (level.isClientSide) { level.addParticle(ParticleTypes.FLAME, flamePos.x, flamePos.y, flamePos.z, velX, velY, velZ); }
+            level.addParticle(ParticleTypes.FLAME, flamePos.x, flamePos.y, flamePos.z, velX, velY, velZ);
         }
         boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
         if (state.pilotLit && state.heatLevel > PILOT_HEAT && state.rsState.isEnabled(ctx) && hasWater) {
@@ -263,7 +265,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         }
     }
 
-    public static class State implements IMultiblockState {
+    public static class State implements IMultiblockState, ITDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public StoredCapability<IItemHandlerModifiable> inputFuelCap;
         public StoredCapability<IHeatProvider> heatSourceCap;
@@ -315,21 +317,39 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
 
         @Override
         public void writeSyncNBT(CompoundTag nbt) {
-            nbt.putDouble("heatLevel", heatLevel);
-            nbt.putBoolean("pilotLit", pilotLit);
-            nbt.putInt("burnRemaining", burnRemaining);
-            nbt.putInt("totalBurnTime", totalBurnTime);
-            nbt.putBoolean("active", active);
-            nbt.put("inventory", inventory.serializeNBT());
+            CompoundTag display = new CompoundTag();
+            writeDisplaySyncNBT(display);
+            nbt.put("display", display);
         }
 
         @Override
         public void readSyncNBT(CompoundTag nbt) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        }
+
+        @Override
+        public boolean isActive() { return active; }
+
+        @Override
+        public IItemHandlerModifiable getInventory() { return inventory; }
+
+        @Override
+        public void writeDisplaySyncNBT(CompoundTag nbt) {
+            nbt.putBoolean("active", active);
+            nbt.putDouble("heatLevel", heatLevel);
+            nbt.putBoolean("pilotLit", pilotLit);
+            nbt.putInt("burnRemaining", burnRemaining);
+            nbt.putInt("totalBurnTime", totalBurnTime);
+            nbt.put("inventory", inventory.serializeNBT());
+        }
+
+        @Override
+        public void readDisplaySyncNBT(CompoundTag nbt) {
+            active = nbt.getBoolean("active");
             heatLevel = nbt.getDouble("heatLevel");
             pilotLit = nbt.getBoolean("pilotLit");
             burnRemaining = nbt.getInt("burnRemaining");
             totalBurnTime = nbt.getInt("totalBurnTime");
-            active = nbt.getBoolean("active");
             inventory.deserializeNBT(nbt.getCompound("inventory"));
         }
     }

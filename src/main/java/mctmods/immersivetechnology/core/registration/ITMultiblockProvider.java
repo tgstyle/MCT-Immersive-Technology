@@ -20,11 +20,13 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.sub.BoilerSolidBloc
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisassemblyTicker;
 import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Function;
 
 public class ITMultiblockProvider {
@@ -133,6 +135,11 @@ public class ITMultiblockProvider {
                     .structure(() -> getMBTemplate.apply("cooling_tower"))
                     .component(new ITDisassemblyTicker<>(CoolingTowerShape.DISASSEMBLY_POS), state -> null)
                     .build();
+
+    @SuppressWarnings("unused")
+    public static List<Class<? extends Block>> getAllBlockClasses() {
+        return List.of(ALTERNATOR.block().get().getClass(), BOILER_LIQUID.block().get().getClass(), BOILER_SOLID.block().get().getClass(), BOILER_TANK.block().get().getClass(), DISTILLER.block().get().getClass(), GAS_TURBINE.block().get().getClass(), SOLAR_REFLECTOR.block().get().getClass(), SOLAR_MELTER.block().get().getClass(), SOLAR_TOWER.block().get().getClass(), STEAM_TURBINE.block().get().getClass(), COOLING_TOWER.block().get().getClass());
+    }
 
     public static void init() {
         registerMB("alternator", Alternator.INSTANCE, ALTERNATOR);

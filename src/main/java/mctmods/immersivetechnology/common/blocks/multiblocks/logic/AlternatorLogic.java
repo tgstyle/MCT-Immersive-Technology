@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.api.MechanicalCapabilities;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AlternatorShape;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITSound;
@@ -24,6 +25,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -36,6 +39,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>, IServerTickableComponent<AlternatorLogic.State>, IClientTickableComponent<AlternatorLogic.State> {
@@ -92,6 +96,11 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     public void tickServer(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         Level level = ctx.getLevel().getRawLevel();
+        state.energy.updateAverage();
+        int prevEnergy = state.energy.getEnergyStored();
+        int prevSpeed = state.speed;
+        float prevTorque = state.torqueMultiplier;
+        boolean wasActive = state.active;
         state.active = false;
         int turbineSpeed = 0;
         float turbineTorque = 1f;
@@ -122,19 +131,22 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         }
         generateEnergy(state);
         drainBuffer(state, ctx, level);
-        if (state.active) { ctx.markMasterDirty(); }
-        ctx.requestMasterBESync();
+        boolean activeChanged = wasActive != state.active;
+        boolean speedChanged = prevSpeed != state.speed;
+        boolean torqueChanged = prevTorque != state.torqueMultiplier;
+        int currentEnergy = state.energy.getEnergyStored();
+        boolean energyChanged = prevEnergy != currentEnergy;
+        boolean update = activeChanged || speedChanged || torqueChanged || energyChanged;
+        if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
     private void generateEnergy(State state) {
         if (state.speed < state.maxSpeed / POWER_DIVIDER) { return; }
         double ratio = (double) state.speed / state.maxSpeed;
-        if (ratio > 0.0) {
-            int generated = (int) Math.round(ratio * state.torqueMultiplier * MAX_OUTPUT);
-            int current = state.energy.getEnergyStored();
-            int newEnergy = Math.min(state.energy.getMaxEnergyStored(), current + generated);
-            state.energy.setStoredEnergy(newEnergy);
-        }
+        int generated = (int) Math.round(ratio * state.torqueMultiplier * MAX_OUTPUT);
+        int current = state.energy.getEnergyStored();
+        int newEnergy = Math.min(state.energy.getMaxEnergyStored(), current + generated);
+        state.energy.setStoredEnergy(newEnergy);
     }
 
     private void drainBuffer(State state, IMultiblockContext<State> ctx, Level level) {
@@ -188,12 +200,6 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     }
 
     @Override
-    public State createInitialState(IInitialMultiblockContext<State> context) { return new State(); }
-
-    @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AlternatorShape.GETTER; }
-
-    @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         State state = ctx.getState();
         if (cap == ForgeCapabilities.ENERGY) {
@@ -203,11 +209,21 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             if (ENERGY_RIGHT_POI.contains(localPos) && (side == null || side == ENERGY_RIGHT_FACING)) { return state.energyCap.cast(ctx); }
         }
         if (cap == MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY) {
-            if (position.posInMultiblock().equals(BlockPos.ZERO)) { position = new CapabilityPosition(ROTATIONAL_INPUT_POI, position.side()); }
-            if (position.posInMultiblock().equals(ROTATIONAL_INPUT_POI) && (position.side() == null || position.side() == ROTATIONAL_INPUT_FACING || position.side() == ROTATIONAL_INPUT_FACING.getOpposite())) { return LazyOptional.of(MechanicalEnergyConsumer::new).cast(); }
+            CapabilityPosition checkPos = position;
+            if (position.posInMultiblock().equals(BlockPos.ZERO)) { checkPos = new CapabilityPosition(ROTATIONAL_INPUT_POI, position.side()); }
+            if (checkPos.posInMultiblock().equals(ROTATIONAL_INPUT_POI) && (checkPos.side() == null || checkPos.side() == ROTATIONAL_INPUT_FACING || checkPos.side() == ROTATIONAL_INPUT_FACING.getOpposite())) { return LazyOptional.of(MechanicalEnergyConsumer::new).cast(); }
         }
         return LazyOptional.empty();
     }
+
+    @Override
+    public void dropExtraItems(State state, Consumer<ItemStack> drop) { }
+
+    @Override
+    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
+
+    @Override
+    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AlternatorShape.GETTER; }
 
     private static class MechanicalEnergyConsumer implements IMechanicalEnergyConsumer {
         @Override
@@ -216,8 +232,8 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         public double getFriction() { return FRICTION; }
     }
 
-    public static class State implements IMultiblockState {
-        public final AveragingEnergyStorage energy = new AveragingEnergyStorage(ENERGY_CAPACITY);
+    public static class State implements IMultiblockState, ITDisplayContext {
+        public AveragingEnergyStorage energy;
         public boolean active = false;
         public int speed = 0;
         public float torqueMultiplier = 1f;
@@ -225,8 +241,12 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         public BooleanSupplier isSoundPlaying = () -> false;
         private final StoredCapability<IEnergyStorage> energyCap;
 
-        public State() {
-            this.energyCap = new StoredCapability<>(energy);
+        public State(IInitialMultiblockContext<State> ctx) {
+            Runnable markDirty = ctx.getMarkDirtyRunnable();
+            Runnable sync = ctx.getSyncRunnable();
+            Runnable onChanged = () -> { markDirty.run(); sync.run(); };
+            this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
+            this.energyCap = new StoredCapability<>(this.energy);
         }
 
         @Override
@@ -235,6 +255,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
             nbt.putFloat("torqueMultiplier", torqueMultiplier);
+            nbt.putInt("maxSpeed", maxSpeed);
         }
 
         @Override
@@ -243,20 +264,71 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             torqueMultiplier = nbt.getFloat("torqueMultiplier");
+            maxSpeed = nbt.getInt("maxSpeed");
         }
 
         @Override
         public void writeSyncNBT(CompoundTag nbt) {
-            nbt.putBoolean("active", active);
-            nbt.putInt("speed", speed);
-            nbt.putFloat("torqueMultiplier", torqueMultiplier);
+            CompoundTag display = new CompoundTag();
+            writeDisplaySyncNBT(display);
+            nbt.put("display", display);
         }
 
         @Override
         public void readSyncNBT(CompoundTag nbt) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        }
+
+        @Override
+        public void writeDisplaySyncNBT(CompoundTag nbt) {
+            nbt.putBoolean("active", active);
+            nbt.putInt("speed", speed);
+            nbt.putFloat("torqueMultiplier", torqueMultiplier);
+            nbt.put("energy", energy.serializeNBT());
+        }
+
+        @Override
+        public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             torqueMultiplier = nbt.getFloat("torqueMultiplier");
+            if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); }
+            energy.deserializeNBT(nbt.get("energy"));
+        }
+
+        @Override
+        public boolean isActive() { return active; }
+
+        @Override
+        public AveragingEnergyStorage getEnergy() { return energy; }
+    }
+
+    private static class SyncEnergyStorage extends AveragingEnergyStorage {
+        private final Runnable onChanged;
+
+        public SyncEnergyStorage(int capacity, Runnable onChanged) {
+            super(capacity);
+            this.onChanged = onChanged;
+        }
+
+        @Override
+        public int receiveEnergy(int maxReceive, boolean simulate) {
+            int received = super.receiveEnergy(maxReceive, simulate);
+            if (received > 0 && !simulate) { onChanged.run(); }
+            return received;
+        }
+
+        @Override
+        public int extractEnergy(int maxExtract, boolean simulate) {
+            int extracted = super.extractEnergy(maxExtract, simulate);
+            if (extracted > 0 && !simulate) { onChanged.run(); }
+            return extracted;
+        }
+
+        public void setStoredEnergy(int energy) {
+            int prev = getEnergyStored();
+            super.setStoredEnergy(energy);
+            if (energy != prev && onChanged != null) { onChanged.run(); }
         }
     }
 }

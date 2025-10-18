@@ -13,6 +13,7 @@ import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.CoolingTowerProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.CoolingTowerShape;
@@ -27,6 +28,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -37,9 +39,9 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.CoolingTowerLogic.State;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +49,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class CoolingTowerLogic implements IMultiblockLogic<State>, IServerTickableComponent<State>, IClientTickableComponent<CoolingTowerLogic.State> {
+public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.State>, IServerTickableComponent<CoolingTowerLogic.State>, IClientTickableComponent<CoolingTowerLogic.State> {
     public static final int INPUT_TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
     public static final int OUTPUT_TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(CoolingTowerShape.DATA.pointsOfInterest);
@@ -60,7 +62,6 @@ public class CoolingTowerLogic implements IMultiblockLogic<State>, IServerTickab
     private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
 
     private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
-
     private static RelativeBlockFace getFacing(String name) {
         List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> poi.relativeFace).distinct().toList();
         if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
@@ -68,14 +69,14 @@ public class CoolingTowerLogic implements IMultiblockLogic<State>, IServerTickab
     }
 
     @Override
-    public void tickClient(IMultiblockContext<State> ctx) {
-        State state = ctx.getState();
+    public void tickClient(IMultiblockContext<CoolingTowerLogic.State> ctx) {
+        CoolingTowerLogic.State state = ctx.getState();
         if (state.active) { state.soundCooldown = 40; } else if (state.soundCooldown > 0) { state.soundCooldown--; }
         spawnParticles(ctx, state, ctx.getLevel().getRawLevel());
         handleSounds(ctx, state);
     }
 
-    private void spawnParticles(IMultiblockContext<State> ctx, State state, Level level) {
+    private void spawnParticles(IMultiblockContext<CoolingTowerLogic.State> ctx, CoolingTowerLogic.State state, Level level) {
         if (!state.active) { return; }
         RandomSource rand = RandomSource.create();
         int particleSetting = Minecraft.getInstance().options.particles().get().ordinal();
@@ -92,7 +93,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<State>, IServerTickab
         }
     }
 
-    private void handleSounds(IMultiblockContext<State> ctx, State state) {
+    private void handleSounds(IMultiblockContext<CoolingTowerLogic.State> ctx, CoolingTowerLogic.State state) {
         if (state.isSoundPlaying.getAsBoolean()) { return; }
         Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(SOUND_POS.getX() + 0.5, SOUND_POS.getY() + 0.5, SOUND_POS.getZ() + 0.5));
         state.isSoundPlaying = ITSound.startSound(() -> state.soundCooldown > 0, ctx.isValid(), soundVec, ITSounds.coolingTower, () -> {
@@ -103,8 +104,8 @@ public class CoolingTowerLogic implements IMultiblockLogic<State>, IServerTickab
     }
 
     @Override
-    public void tickServer(IMultiblockContext<State> ctx) {
-        State state = ctx.getState();
+    public void tickServer(IMultiblockContext<CoolingTowerLogic.State> ctx) {
+        CoolingTowerLogic.State state = ctx.getState();
         IMultiblockLevel mlevel = ctx.getLevel();
         Level level = mlevel.getRawLevel();
         boolean wasActive = state.active;
@@ -145,7 +146,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<State>, IServerTickab
 
     private int getProcessQueueMaxLength() { return 3; }
 
-    private void pumpOutputs(State state, IMultiblockContext<State> ctx) {
+    private void pumpOutputs(CoolingTowerLogic.State state, IMultiblockContext<CoolingTowerLogic.State> ctx) {
         boolean dirty = false;
         Level level = ctx.getLevel().getRawLevel();
         BlockPos[] outputPositions = FLUID_OUTPUT_POIS.toArray(new BlockPos[0]);
@@ -177,8 +178,8 @@ public class CoolingTowerLogic implements IMultiblockLogic<State>, IServerTickab
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
-        State state = ctx.getState();
+    public <T> LazyOptional<T> getCapability(IMultiblockContext<CoolingTowerLogic.State> ctx, CapabilityPosition position, Capability<T> cap) {
+        CoolingTowerLogic.State state = ctx.getState();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             BlockPos localPos = position.posInMultiblock();
             RelativeBlockFace side = position.side();
@@ -198,12 +199,12 @@ public class CoolingTowerLogic implements IMultiblockLogic<State>, IServerTickab
     }
 
     @Override
-    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
+    public CoolingTowerLogic.State createInitialState(IInitialMultiblockContext<CoolingTowerLogic.State> ctx) { return new State(ctx); }
 
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return CoolingTowerShape.GETTER; }
 
-    public static class State implements IMultiblockState {
+    public static class State implements IMultiblockState, ITDisplayContext {
         public final CoolingTowerTanks tanks;
         public final StoredCapability<IFluidHandler> input0Cap;
         public final StoredCapability<IFluidHandler> input1Cap;
@@ -250,12 +251,30 @@ public class CoolingTowerLogic implements IMultiblockLogic<State>, IServerTickab
 
         @Override
         public void writeSyncNBT(CompoundTag nbt) {
+            CompoundTag display = new CompoundTag();
+            writeDisplaySyncNBT(display);
+            nbt.put("display", display);
+        }
+
+        @Override
+        public void readSyncNBT(CompoundTag nbt) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        }
+
+        @Override
+        public boolean isActive() { return active; }
+
+        @Override
+        public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input0, tanks.input1, tanks.output0, tanks.output1, tanks.output2}; }
+
+        @Override
+        public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT());
         }
 
         @Override
-        public void readSyncNBT(CompoundTag nbt) {
+        public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
         }
