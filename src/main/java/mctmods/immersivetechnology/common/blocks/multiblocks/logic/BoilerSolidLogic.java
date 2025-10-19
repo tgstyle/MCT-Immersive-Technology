@@ -57,11 +57,12 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     private static final double HEAT_LOSS_PER_TICK = 0.2;
     private static final double WORKING_HEAT_LEVEL = 100.0;
     public static final double PILOT_HEAT = 20.0;
-    private static final int MULTIPLIER = 15;
+    private static final int PILOT_MULTIPLIER = 15;
     private static final double DEFAULT_HEAT_PER_TICK = 0.1;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerSolidShape.DATA.pointsOfInterest);
     private static final int WIDTH = BoilerSolidShape.WIDTH;
     private static final int LENGTH = BoilerSolidShape.LENGTH;
+    private static final int BURN_TIME_DIVIDER = 10;
 
     public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
     public static final List<BlockPos> IGNITION_POI = getPosList("ignition");
@@ -156,7 +157,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             state.totalBurnTime = 0;
         } else {
             if (state.burnRemaining > 0) {
-                boolean consumeThisTick = fullMode || (level.getGameTime() % MULTIPLIER == 0);
+                boolean consumeThisTick = fullMode || (level.getGameTime() % PILOT_MULTIPLIER == 0);
                 if (consumeThisTick) { state.burnRemaining--; }
                 if (fullMode) { state.heatLevel = Math.min(state.heatLevel + state.heatPerTick, WORKING_HEAT_LEVEL); }
                 else { state.heatLevel = Math.max(state.heatLevel - HEAT_LOSS_PER_TICK, PILOT_HEAT); }
@@ -181,7 +182,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                 } else {
                     ItemStack consumed = state.inventory.getRawHandler().extractItem(INPUT_FUEL_SLOT, consumeAmount, false);
                     if (consumed.getCount() == consumeAmount) {
-                        state.burnRemaining = burnTimePerItem * consumeAmount;
+                        state.burnRemaining = (burnTimePerItem * consumeAmount) / BURN_TIME_DIVIDER;
                         state.totalBurnTime = state.burnRemaining;
                         state.heatPerTick = heatPerTick;
                         state.pilotLit = true;
