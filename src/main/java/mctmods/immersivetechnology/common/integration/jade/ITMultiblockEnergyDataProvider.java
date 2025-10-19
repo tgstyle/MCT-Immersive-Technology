@@ -25,25 +25,17 @@ public class ITMultiblockEnergyDataProvider<T extends IMultiblockState> implemen
         if (helper.getState() instanceof ITDisplayContext dc) {
             List<AveragingEnergyStorage> energies = dc.getEnergies();
             if (!energies.isEmpty()) {
-                List<ViewGroup<CompoundTag>> groups = new ArrayList<>();
-                for (AveragingEnergyStorage energy : energies) {
-                    List<CompoundTag> list = new ArrayList<>();
-                    list.add(EnergyView.of(energy.getEnergyStored(), energy.getMaxEnergyStored()));
-                    groups.add(new ViewGroup<>(list));
-                }
-                return groups;
+                List<CompoundTag> list = new ArrayList<>();
+                for (AveragingEnergyStorage energy : energies) { list.add(EnergyView.of(energy.getEnergyStored(), energy.getMaxEnergyStored())); }
+                return List.of(new ViewGroup<>(list));
             }
         }
         return null;
     }
 
     @Override
-    public List<ClientViewGroup<EnergyView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<CompoundTag>> list) {
-        return ClientViewGroup.map(list, tag -> EnergyView.read(tag, "RF"), null);
-    }
+    public List<ClientViewGroup<EnergyView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<CompoundTag>> list) { return ClientViewGroup.map(list, tag -> EnergyView.read(tag, "RF"), null); }
 
     @Override
-    public ResourceLocation getUid() {
-        return ITLib.rl("multiblock_energy");
-    }
+    public ResourceLocation getUid() { return ITLib.rl("multiblock_energy"); }
 }
