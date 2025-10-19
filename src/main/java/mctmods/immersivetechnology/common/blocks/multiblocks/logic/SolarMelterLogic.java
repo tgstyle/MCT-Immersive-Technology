@@ -16,15 +16,13 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.helper.ITSolarTank;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.interfaces.ITISolarMultiblockState;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarMelterRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarMelterShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.lib.ITSound;
@@ -32,6 +30,7 @@ import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -65,16 +64,16 @@ import java.util.function.Supplier;
 import static mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry.SOLAR_MAX_RANGE;
 import static mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
 
-public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State>, IServerTickableComponent<SolarMelterLogic.State>, IClientTickableComponent<SolarMelterLogic.State> {
+public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State>, IServerTickableComponent<SolarMelterLogic.State>, IClientTickableComponent<SolarMelterLogic.State>, ITPressurizedFluidOutput<SolarMelterLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
     public static final int SLOT_OUTPUT_FILLED = 3;
     public static final double WORKING_HEAT_LEVEL = 1000.0;
-    public static final double DAY_MIN_HEAT_LOSS = 0.0;
-    public static final double LOSS_PER_SECTION_DROP = 0.035;
-    public static final double TEMP_DEPENDENT_LOSS_FACTOR = 0.00036;
-    public static final double HEAT_INCREASE_FACTOR = 0.00568;
+    private static final double DAY_MIN_HEAT_LOSS = 0.0;
+    private static final double LOSS_PER_SECTION_DROP = 0.035;
+    private static final double TEMP_DEPENDENT_LOSS_FACTOR = 0.00036;
+    private static final double HEAT_INCREASE_FACTOR = 0.00568;
     private static final double TEMP_TO_MIN_REFLECTORS_DIVISOR = 25.0;
     private static final double REFLECTOR_TIER_OFFSET = 4.0;
     public static final int PROGRESS_LOSS_OFF_TEMP = 2;
@@ -90,6 +89,8 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
     public static final CapabilityPosition INPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_input").get(0), getFacing("fluid_input"));
     public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_output").get(0), getFacing("fluid_output"));
     public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(getFacing("item_output"), getPosList("item_output").get(0));
+    public static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
+    private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
 
     private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
     private static RelativeBlockFace getFacing(String name) {
@@ -97,6 +98,18 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
         return facings.get(0);
     }
+
+    @Override
+    public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
+
+    @Override
+    public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
+
+    @Override
+    public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
+
+    @Override
+    public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
@@ -237,15 +250,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
                 }
             }
         }
-        if (state.fluidOutput.isPresent()) {
-            IFluidHandler outputHandler = state.fluidOutput.get();
-            FluidStack fs = state.tanks.output().getFluid();
-            if (fs.getAmount() > 0) {
-                fs = fs.copy();
-                int accepted = outputHandler.fill(fs, FluidAction.SIMULATE);
-                if (accepted > 0) { int drained = outputHandler.fill(Utils.copyFluidStackWithAmount(fs, accepted, false), FluidAction.EXECUTE); state.tanks.output().drain(drained, FluidAction.EXECUTE); update = true; }
-            }
-        }
+        pumpOutputs(ctx);
         IItemHandlerModifiable inventory = state.inventory;
         ItemStack drainedContainer = inventory.getStackInSlot(SLOT_INPUT_EMPTY);
         if (!drainedContainer.isEmpty()) { int origCount = drainedContainer.getCount(); drainedContainer = Utils.insertStackIntoInventory(state.outputRef, drainedContainer, false); if (drainedContainer.getCount() < origCount) { update = true; } inventory.setStackInSlot(SLOT_INPUT_EMPTY, drainedContainer); }
@@ -360,12 +365,8 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
     public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         State state = ctx.getState();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (position.equals(INPUT_FLUID_POI)) {
-                return state.inputCap.cast();
-            }
-            if (position.equals(OUTPUT_FLUID_POI)) {
-                return state.outputCap.cast();
-            }
+            if (position.equals(INPUT_FLUID_POI)) { return state.inputCap.cast(); }
+            if (position.equals(OUTPUT_FLUID_POI)) { return state.outputCap.cast(); }
         }
         if (cap == ForgeCapabilities.ITEM_HANDLER) { if (position.posInMultiblock().equals(ITEM_OUTPUT_POI.posInMultiblock())) { return state.itemOutputCap.cast(ctx); } return state.invCap.cast(ctx); }
         return LazyOptional.empty();
@@ -422,10 +423,10 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             this.inputCap = LazyOptional.of(() -> new ITArrayFluidHandler(tanks.input(), false, true, onChanged));
             this.outputCap = LazyOptional.of(() -> new ITArrayFluidHandler(tanks.output(), true, false, onChanged));
             this.invCap = new StoredCapability<>(inventory);
-            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POI.side(), OUTPUT_FLUID_POI.posInMultiblock());
-            CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
-            MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
-            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
+            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FACING, FLUID_OUTPUT_POIS.get(0));
+            CapabilityPosition oppCp = CapabilityPosition.opposing(outputMBFace);
+            MultiblockFace oppMbf = new MultiblockFace(oppCp.side(), oppCp.posInMultiblock());
+            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, oppMbf);
             this.itemOutputCap = new StoredCapability<>(new ITWrappingItemHandler(inventory, false, true, Lists.newArrayList(new ITWrappingItemHandler.IntRange(SLOT_INPUT_EMPTY, SLOT_INPUT_EMPTY + 1), new ITWrappingItemHandler.IntRange(SLOT_OUTPUT_FILLED, SLOT_OUTPUT_FILLED + 1))));
             this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, ITEM_OUTPUT_POI);
             InitialMultiblockContext<State> initialContext = (InitialMultiblockContext<State>) ctx;

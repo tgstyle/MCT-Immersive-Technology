@@ -13,11 +13,8 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
 import blusunrize.immersiveengineering.common.util.Utils;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITProcessContext;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITWrappingItemHandler;
+import com.google.common.collect.ImmutableList;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.DistillerProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.DistillerShape;
@@ -29,6 +26,7 @@ import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
@@ -47,7 +45,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import com.google.common.collect.ImmutableList;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.List;
@@ -55,7 +52,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State> {
+public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State>, ITPressurizedFluidOutput<DistillerLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -72,6 +69,8 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     private static final RelativeBlockFace ENERGY_POI_FACING = getFacing("energy_input");
     public static final CapabilityPosition ENERGY_POI = new CapabilityPosition(ENERGY_POI_POS.get(0), ENERGY_POI_FACING);
     public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(getFacing("item_output"), getPosList("item_output").get(0));
+    private static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
+    private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
 
     private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
     private static RelativeBlockFace getFacing(String name) {
@@ -79,6 +78,18 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
         return facings.get(0);
     }
+
+    @Override
+    public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
+
+    @Override
+    public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
+
+    @Override
+    public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
+
+    @Override
+    public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
@@ -111,18 +122,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         tryEnqueueProcess(state, ctx.getLevel().getRawLevel(), recipe);
         tryEmptyContainer(state.tanks.input, state.inventory);
         FluidUtils.fillFluidContainer(state.tanks.output, SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory);
-        if (state.fluidOutput.isPresent()) {
-            IFluidHandler outputHandler = state.fluidOutput.get();
-            FluidStack fs = state.tanks.output.getFluid();
-            if (fs.getAmount() > 0) {
-                fs = fs.copy();
-                int accepted = outputHandler.fill(fs, FluidAction.SIMULATE);
-                if (accepted > 0) {
-                    int drained = outputHandler.fill(Utils.copyFluidStackWithAmount(fs, accepted, false), FluidAction.EXECUTE);
-                    state.tanks.output.drain(drained, FluidAction.EXECUTE);
-                }
-            }
-        }
+        pumpOutputs(ctx);
         IItemHandlerModifiable inventory = state.inventory;
         ItemStack drainedContainer = inventory.getStackInSlot(SLOT_INPUT_EMPTY);
         if (!drainedContainer.isEmpty()) {

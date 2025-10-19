@@ -11,13 +11,13 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.CachedRecipe;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.api.MechanicalCapabilities;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SteamTurbineShape;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.RotationInertiaProcess;
@@ -54,7 +54,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.State>, IServerTickableComponent<SteamTurbineLogic.State>, IClientTickableComponent<SteamTurbineLogic.State> {
+public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.State>, IServerTickableComponent<SteamTurbineLogic.State>, IClientTickableComponent<SteamTurbineLogic.State>, ITPressurizedFluidOutput<SteamTurbineLogic.State> {
     public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
     public static final int MAX_SPEED = 7200;
     private static final double BASE_MASS = 10;
@@ -68,6 +68,8 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     public static final CapabilityPosition INPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_input").get(0), getFacing("fluid_input"));
     public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_output").get(0), getFacing("fluid_output"));
     public static final CapabilityPosition ROTATIONAL_OUTPUT_POI = new CapabilityPosition(getPosList("mech_output").get(0), getFacing("mech_output"));
+    public static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
+    private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
 
     private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
     private static RelativeBlockFace getFacing(String name) {
@@ -75,6 +77,18 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
         return facings.get(0);
     }
+
+    @Override
+    public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
+
+    @Override
+    public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
+
+    @Override
+    public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
+
+    @Override
+    public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
@@ -138,6 +152,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
     @SuppressWarnings("StatementWithEmptyBody") @Override
     public void tickServer(IMultiblockContext<State> ctx) {
+        pumpOutputs(ctx);
         State state = ctx.getState();
         boolean previouslyActive = state.active;
         state.active = false;
@@ -187,21 +202,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
                 } else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
             }
         }
-        boolean changed = false;
-        if (state.tanks.output.getFluidAmount() > 0 && state.fluidOutput.isPresent()) {
-            IFluidHandler handler = state.fluidOutput.get();
-            FluidStack out = state.tanks.output.getFluid();
-            if (out.getAmount() > 0) {
-                out = out.copy();
-                int accepted = handler.fill(out, FluidAction.SIMULATE);
-                if (accepted > 0) {
-                    int drained = handler.fill(Utils.copyFluidStackWithAmount(out, accepted, false), FluidAction.EXECUTE);
-                    state.tanks.output.drain(drained, FluidAction.EXECUTE);
-                    changed = true;
-                }
-            }
-        }
-        if (previouslyActive != state.active || state.speed % 20 == 0 || changed) {
+        if (previouslyActive != state.active || state.speed % 20 == 0) {
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
         }
@@ -271,10 +272,10 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
             this.recipeGetter = CachedRecipe.cached(SteamTurbineRecipe::findRecipe);
-            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POI.side(), OUTPUT_FLUID_POI.posInMultiblock());
-            CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
-            MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
-            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
+            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FACING, FLUID_OUTPUT_POIS.get(0));
+            CapabilityPosition oppCp = CapabilityPosition.opposing(outputMBFace);
+            MultiblockFace oppMbf = new MultiblockFace(oppCp.side(), oppCp.posInMultiblock());
+            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, oppMbf);
             this.inertia = new RotationInertiaProcess(BASE_MASS, DRIVE_TORQUE, FRICTION);
         }
 

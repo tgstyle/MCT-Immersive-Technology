@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.logic;
 
-import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
@@ -10,10 +9,9 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockL
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
-import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.CoolingTowerProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.CoolingTowerShape;
@@ -31,7 +29,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
@@ -49,7 +46,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.State>, IServerTickableComponent<CoolingTowerLogic.State>, IClientTickableComponent<CoolingTowerLogic.State> {
+public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.State>, IServerTickableComponent<CoolingTowerLogic.State>, IClientTickableComponent<CoolingTowerLogic.State>, ITPressurizedFluidOutput<CoolingTowerLogic.State> {
     public static final int INPUT_TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
     public static final int OUTPUT_TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(CoolingTowerShape.DATA.pointsOfInterest);
@@ -67,6 +64,18 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
         return facings.get(0);
     }
+
+    @Override
+    public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
+
+    @Override
+    public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
+
+    @Override
+    public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1, state.tanks.output2); }
+
+    @Override
+    public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutputs[0], state.fluidOutputs[1], state.fluidOutputs[2]); }
 
     @Override
     public void tickClient(IMultiblockContext<CoolingTowerLogic.State> ctx) {
@@ -105,11 +114,11 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
     @Override
     public void tickServer(IMultiblockContext<CoolingTowerLogic.State> ctx) {
+        pumpOutputs(ctx);
         CoolingTowerLogic.State state = ctx.getState();
         IMultiblockLevel mlevel = ctx.getLevel();
         Level level = mlevel.getRawLevel();
         boolean wasActive = state.active;
-        pumpOutputs(state, ctx);
         for (int i = state.processQueue.size() - 1; i >= 0; i--) {
             CoolingTowerProcess process = state.processQueue.get(i);
             process.tick(state);
@@ -145,37 +154,6 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     }
 
     private int getProcessQueueMaxLength() { return 3; }
-
-    private void pumpOutputs(CoolingTowerLogic.State state, IMultiblockContext<CoolingTowerLogic.State> ctx) {
-        boolean dirty = false;
-        Level level = ctx.getLevel().getRawLevel();
-        BlockPos[] outputPositions = FLUID_OUTPUT_POIS.toArray(new BlockPos[0]);
-        for (int i = 0; i < 3; i++) {
-            ITMarkableFluidTank tank = state.tanks.outputTanks()[i];
-            if (tank.getFluidAmount() == 0) { continue; }
-            CapabilityReference<IFluidHandler> ref = state.fluidOutputs[i];
-            if (!ref.isPresent()) { continue; }
-            IFluidHandler handler = ref.get();
-            BlockPos portAbs = ctx.getLevel().toAbsolute(outputPositions[i]);
-            Direction outputDir = ctx.getLevel().toAbsolute(OUTPUT_FACING);
-            assert outputDir != null;
-            BlockPos externalAbs = portAbs.relative(outputDir);
-            BlockEntity adjTE = level.getBlockEntity(externalAbs);
-            boolean isPipe = adjTE instanceof FluidPipeBlockEntity;
-            FluidStack fs = tank.getFluid().copy();
-            boolean hadTag = fs.hasTag() && fs.getTag().contains(IFluidPipe.NBT_PRESSURIZED);
-            if (isPipe && !hadTag) { fs.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
-            int accepted = handler.fill(fs, FluidAction.SIMULATE);
-            if (!hadTag) { fs.removeChildTag(IFluidPipe.NBT_PRESSURIZED); }
-            if (accepted <= 0) { continue; }
-            FluidStack toFill = Utils.copyFluidStackWithAmount(fs, Math.min(fs.getAmount(), accepted), false);
-            if (isPipe) { toFill.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
-            int drained = handler.fill(toFill, FluidAction.EXECUTE);
-            tank.drain(drained, FluidAction.EXECUTE);
-            dirty = true;
-        }
-        if (dirty) { ctx.markMasterDirty(); }
-    }
 
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<CoolingTowerLogic.State> ctx, CapabilityPosition position, Capability<T> cap) {
@@ -281,9 +259,6 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     }
 
     public record CoolingTowerTanks(ITMarkableFluidTank input0, ITMarkableFluidTank input1, ITMarkableFluidTank output0, ITMarkableFluidTank output1, ITMarkableFluidTank output2) {
-        @SuppressWarnings("unused")
-        public ITMarkableFluidTank[] inputTanks() { return new ITMarkableFluidTank[]{input0, input1}; }
-        public ITMarkableFluidTank[] outputTanks() { return new ITMarkableFluidTank[]{output0, output1, output2}; }
 
         public CoolingTowerTanks(Consumer<Void> markDirty) {
             this(new ITMarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));

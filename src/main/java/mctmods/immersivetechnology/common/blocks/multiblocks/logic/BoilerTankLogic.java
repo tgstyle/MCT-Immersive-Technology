@@ -8,12 +8,13 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockL
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
-import blusunrize.immersiveengineering.common.util.Utils;
+import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.api.HeatCapabilities;
 import mctmods.immersivetechnology.api.capability.IHeatConsumer;
 import mctmods.immersivetechnology.api.capability.IHeatProvider;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITMultiBlockInventoryUtils;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerTankRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.BoilerTankShape;
@@ -21,6 +22,7 @@ import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
@@ -30,20 +32,18 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import com.google.common.collect.ImmutableList;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>, IServerTickableComponent<BoilerTankLogic.State> {
+public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>, IServerTickableComponent<BoilerTankLogic.State>, ITPressurizedFluidOutput<BoilerTankLogic.State> {
     public static final int INPUT_SLOT_FILLED = 0;
     public static final int INPUT_SLOT_EMPTY = 1;
     public static final int OUTPUT_SLOT_EMPTY = 2;
@@ -67,6 +67,18 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
         return facings.get(0);
     }
+
+    @Override
+    public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POI; }
+
+    @Override
+    public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(FLUID_OUTPUT_FACING); }
+
+    @Override
+    public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
+
+    @Override
+    public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
 
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
@@ -113,20 +125,8 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         }
         if (state.tanks.output.getFluidAmount() > 0) {
             if (FluidUtils.fillFluidContainer(state.tanks.output, OUTPUT_SLOT_EMPTY, OUTPUT_SLOT_FILLED, state.inventory)) { update = true; }
-            if (state.fluidOutput.isPresent()) {
-                IFluidHandler outputHandler = state.fluidOutput.get();
-                FluidStack fs = state.tanks.output.getFluid();
-                if (fs.getAmount() > 0) {
-                    fs = fs.copy();
-                    int accepted = outputHandler.fill(fs, FluidAction.SIMULATE);
-                    if (accepted > 0) {
-                        int drained = outputHandler.fill(Utils.copyFluidStackWithAmount(fs, accepted, false), FluidAction.EXECUTE);
-                        state.tanks.output.drain(drained, FluidAction.EXECUTE);
-                        update = true;
-                    }
-                }
-            }
         }
+        pumpOutputs(ctx);
         if (tryEmptyContainer(state.tanks.input, state.inventory)) { update = true; }
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }

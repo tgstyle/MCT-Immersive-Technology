@@ -12,13 +12,13 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.CachedRecipe;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.api.MechanicalCapabilities;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.GasTurbineShape;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.RotationInertiaProcess;
@@ -57,9 +57,9 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>, IServerTickableComponent<GasTurbineLogic.State>, IClientTickableComponent<GasTurbineLogic.State> {
+public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>, IServerTickableComponent<GasTurbineLogic.State>, IClientTickableComponent<GasTurbineLogic.State>, ITPressurizedFluidOutput<GasTurbineLogic.State> {
     public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
-    private static final int ENERGY_CAPACITY = 8192;
+    public static final int ENERGY_CAPACITY = 8192;
     private static final int ENERGY_CAPACITY_MV = 2048;
     private static final int ELECTRIC_STARTER_CONSUMPTION = 4096;
     private static final int SPARKPLUG_CONSUMPTION = 1024;
@@ -82,6 +82,8 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     public static final CapabilityPosition ENERGY_INPUT_HV_POI = new CapabilityPosition(getPosList("energy_input_hv").get(0), getFacing("energy_input_hv"));
     public static final CapabilityPosition ENERGY_INPUT_MV_POI = new CapabilityPosition(getPosList("energy_input_mv").get(0), getFacing("energy_input_mv"));
     public static final CapabilityPosition ROTATIONAL_OUTPUT_POI = new CapabilityPosition(getPosList("mech_output").get(0), getFacing("mech_output"));
+    public static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
+    private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
 
     private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
     private static RelativeBlockFace getFacing(String name) {
@@ -89,6 +91,18 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
         return facings.get(0);
     }
+
+    @Override
+    public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
+
+    @Override
+    public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
+
+    @Override
+    public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
+
+    @Override
+    public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
 
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
@@ -217,6 +231,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
     @SuppressWarnings("StatementWithEmptyBody") @Override
     public void tickServer(IMultiblockContext<State> ctx) {
+        pumpOutputs(ctx);
         State state = ctx.getState();
         state.hasIgniter = state.mvInput.isPresent();
         state.canIgniteClient = SPARKPLUG_CONSUMPTION <= state.energyStorageMV.getEnergyStored();
@@ -308,21 +323,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 }
             }
         }
-        boolean changed = false;
-        if (state.tanks.output.getFluidAmount() > 0 && state.fluidOutput.isPresent()) {
-            IFluidHandler handler = state.fluidOutput.get();
-            FluidStack out = state.tanks.output.getFluid();
-            if (out.getAmount() > 0) {
-                out = out.copy();
-                int accepted = handler.fill(out, FluidAction.SIMULATE);
-                if (accepted > 0) {
-                    int drained = handler.fill(Utils.copyFluidStackWithAmount(out, accepted, false), FluidAction.EXECUTE);
-                    state.tanks.output.drain(drained, FluidAction.EXECUTE);
-                    changed = true;
-                }
-            }
-        }
-        if (wasActive != state.active || wasStall != state.stall || state.speed % 20 == 0 || changed) {
+        if (wasActive != state.active || wasStall != state.stall || state.speed % 20 == 0) {
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
         }
@@ -345,7 +346,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         State state = ctx.getState();
         if (cap == ForgeCapabilities.ENERGY) {
             if (position.equals(ENERGY_INPUT_HV_POI)) { return state.energyCapHV.cast(ctx); }
-            if (position.equals(ENERGY_INPUT_MV_POI)) { return state.energyCapMV.cast(ctx); }
+            if (position.equals(ENERGY_INPUT_MV_POI) ) { return state.energyCapMV.cast(ctx); }
         }
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             if (position.equals(INPUT_FLUID_POI)) { return state.fluidCap.cast(ctx); }
@@ -431,10 +432,10 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             this.energyCapHV = new StoredCapability<>(energyStorageHV);
             this.energyCapMV = new StoredCapability<>(energyStorageMV);
             this.recipeGetter = CachedRecipe.cached(GasTurbineRecipe::findRecipe);
-            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POI.side(), OUTPUT_FLUID_POI.posInMultiblock());
-            CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
-            MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
-            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
+            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FACING, FLUID_OUTPUT_POIS.get(0));
+            CapabilityPosition oppCp = CapabilityPosition.opposing(outputMBFace);
+            MultiblockFace oppMbf = new MultiblockFace(oppCp.side(), oppCp.posInMultiblock());
+            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, oppMbf);
             MultiblockFace mvInputMBFace = new MultiblockFace(ENERGY_INPUT_MV_POI.side(), ENERGY_INPUT_MV_POI.posInMultiblock());
             CapabilityPosition mvOpposingCP = CapabilityPosition.opposing(mvInputMBFace);
             MultiblockFace mvOpposingMBFace = new MultiblockFace(mvOpposingCP.side(), mvOpposingCP.posInMultiblock());
