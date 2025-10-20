@@ -15,7 +15,7 @@ public class ITCommonConfig {
     public static int burnTimeDivider;
 
     static {
-        BUILDER.push("boiler_solid");
+        BUILDER.comment("Solid Boiler options").push("boiler_solid");
         CONFIG_BURN_TIME_DIVIDER = BUILDER.comment("Divider for burn time in solid boiler (Default: 10)").defineInRange("burnTimeDivider", 10, 1, Integer.MAX_VALUE);
         BUILDER.pop();
     }
