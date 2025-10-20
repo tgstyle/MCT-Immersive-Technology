@@ -12,10 +12,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import snownee.jade.api.Accessor;
-import snownee.jade.api.view.*;
+import snownee.jade.api.view.ClientViewGroup;
+import snownee.jade.api.view.IClientExtensionProvider;
+import snownee.jade.api.view.IServerExtensionProvider;
+import snownee.jade.api.view.ViewGroup;
 import snownee.jade.api.fluid.JadeFluidObject;
 import snownee.jade.api.view.FluidView;
-
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,27 +32,19 @@ public class ITMultiblockFluidDataProvider<T extends IMultiblockState> implement
                 List<CompoundTag> list = new ArrayList<>();
                 for (IFluidTank tank : tanks) {
                     FluidStack fs = tank.getFluid();
-                    if (!fs.isEmpty()) {
-                        JadeFluidObject fluidObject = JadeFluidObject.of(fs.getFluid(), fs.getAmount(), fs.getTag());
-                        CompoundTag tag = FluidView.writeDefault(fluidObject, tank.getCapacity());
-                        list.add(tag);
-                    }
+                    JadeFluidObject fluidObject = JadeFluidObject.of(fs.getFluid(), fs.getAmount(), fs.getTag());
+                    CompoundTag tag = FluidView.writeDefault(fluidObject, tank.getCapacity());
+                    list.add(tag);
                 }
-                if (!list.isEmpty()) {
-                    return List.of(new ViewGroup<>(list));
-                }
+                return List.of(new ViewGroup<>(list));
             }
         }
         return null;
     }
 
     @Override
-    public List<ClientViewGroup<FluidView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<CompoundTag>> list) {
-        return ClientViewGroup.map(list, FluidView::readDefault, null);
-    }
+    public List<ClientViewGroup<FluidView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<CompoundTag>> list) { return ClientViewGroup.map(list, FluidView::readDefault, null); }
 
     @Override
-    public ResourceLocation getUid() {
-        return ITLib.rl("multiblock_fluid");
-    }
+    public ResourceLocation getUid() { return ITLib.rl("multiblock_fluid"); }
 }
