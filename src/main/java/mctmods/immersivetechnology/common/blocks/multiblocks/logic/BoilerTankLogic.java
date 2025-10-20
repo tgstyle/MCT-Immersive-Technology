@@ -53,7 +53,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     private static final double WORKING_HEAT_LEVEL = 100.0;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerTankShape.DATA.pointsOfInterest);
 
-    private static final List<BlockPos> FLUID_INPUT_POI = getPosList("fluid_input");
+    public static final List<BlockPos> FLUID_INPUT_POI = getPosList("fluid_input");
     private static final List<BlockPos> FLUID_OUTPUT_POI = getPosList("fluid_output");
     private static final List<BlockPos> HEAT_INPUT_POI = getPosList("heat_input");
     private static final RelativeBlockFace FLUID_INPUT_FACING = getFacing("fluid_input");

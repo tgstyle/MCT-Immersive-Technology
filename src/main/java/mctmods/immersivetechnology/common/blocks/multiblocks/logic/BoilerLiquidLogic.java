@@ -63,7 +63,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
 
     public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
     public static final List<BlockPos> IGNITION_POI = getPosList("ignition");
-    private static final List<BlockPos> FLUID_INPUT_POI = getPosList("fluid_input");
+    public static final List<BlockPos> FLUID_INPUT_POI = getPosList("fluid_input");
     private static final List<BlockPos> HEAT_OUTPUT_POI = getPosList("heat_output");
     private static final List<BlockPos> SOUND_POI = getPosList("sound");
     private static final List<BlockPos> EXHAUST_POI = getPosList("exhaust");
