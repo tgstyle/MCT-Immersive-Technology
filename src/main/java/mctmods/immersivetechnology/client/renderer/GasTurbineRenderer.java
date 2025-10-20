@@ -29,7 +29,7 @@ import java.util.List;
 public class GasTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<GasTurbineLogic.State>> {
     @Override
     public void render(@NotNull MultiblockBlockEntityMaster<GasTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        if (!ITClientConfig.doSpecialRenderGasTurbine.get()) { return; }
+        if (!ITClientConfig.doSpecialRenderGasTurbine) { return; }
         IMultiblockBEHelperMaster<GasTurbineLogic.State> helper = tile.getHelper();
         IMultiblockContext<GasTurbineLogic.State> context = helper.getContext();
         GasTurbineLogic.State state = context.getState();

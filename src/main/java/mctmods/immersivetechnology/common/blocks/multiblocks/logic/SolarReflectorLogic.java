@@ -60,8 +60,8 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
     public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         state.formedTicks++;
-        boolean isDisabled = ITClientConfig.disableReflectorDance.get();
-        boolean isLoop = ITClientConfig.loopReflectorDance.get();
+        boolean isDisabled = ITClientConfig.disableReflectorDance;
+        boolean isLoop = ITClientConfig.loopReflectorDance;
         long gameTime = ctx.getLevel().getRawLevel().getGameTime();
         int targetPhase;
         if (state.isMirrorTaken) { targetPhase = -4; }

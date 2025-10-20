@@ -26,7 +26,7 @@ public abstract class ITBaseBlockEntityRenderer<T extends BlockEntity> implement
 
     @Override
     public int getViewDistance() {
-        double distanceMod = ITClientConfig.multiblockSpecialRenderDistanceModifier.get();
+        double distanceMod = ITClientConfig.multiblockSpecialRenderDistanceModifier;
         return (int) (BlockEntityRenderer.super.getViewDistance() * distanceMod);
     }
 

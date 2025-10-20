@@ -21,6 +21,7 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITSlotwiseIt
 import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.BoilerSolidShape;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
@@ -62,7 +63,6 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerSolidShape.DATA.pointsOfInterest);
     private static final int WIDTH = BoilerSolidShape.WIDTH;
     private static final int LENGTH = BoilerSolidShape.LENGTH;
-    private static final int BURN_TIME_DIVIDER = 10;
 
     public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
     public static final List<BlockPos> IGNITION_POI = getPosList("ignition");
@@ -182,7 +182,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                 } else {
                     ItemStack consumed = state.inventory.getRawHandler().extractItem(INPUT_FUEL_SLOT, consumeAmount, false);
                     if (consumed.getCount() == consumeAmount) {
-                        state.burnRemaining = (burnTimePerItem * consumeAmount) / BURN_TIME_DIVIDER;
+                        state.burnRemaining = (burnTimePerItem * consumeAmount) / ITCommonConfig.burnTimeDivider;
                         state.totalBurnTime = state.burnRemaining;
                         state.heatPerTick = heatPerTick;
                         state.pilotLit = true;

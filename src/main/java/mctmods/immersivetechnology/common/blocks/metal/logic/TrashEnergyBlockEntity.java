@@ -48,5 +48,5 @@ public class TrashEnergyBlockEntity extends OSDCommonBlockEntity implements IEne
     public boolean canReceive() { return true; }
 
     @Override
-    public TranslationKey text() { return ITClientConfig.perTickTrashCans.get() ? TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_FIRST_LINE; }
+    public TranslationKey text() { return ITClientConfig.perTickTrashCans ? TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_FIRST_LINE; }
 }

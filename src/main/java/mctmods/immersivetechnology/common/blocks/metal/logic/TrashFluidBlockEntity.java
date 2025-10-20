@@ -62,5 +62,5 @@ public class TrashFluidBlockEntity extends OSDCommonBlockEntity implements IFlui
     public FluidStack drain(int maxDrain, FluidAction action) { return FluidStack.EMPTY; }
 
     @Override
-    public TranslationKey text() { return ITClientConfig.perTickTrashCans.get() ? TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_FIRST_LINE; }
+    public TranslationKey text() { return ITClientConfig.perTickTrashCans ? TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_FIRST_LINE; }
 }

@@ -65,7 +65,7 @@ public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemH
     public boolean canUseGui(Player player) { return true; }
 
     @Override
-    public TranslationKey text() { return ITClientConfig.perTickTrashCans.get() ? TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE; }
+    public TranslationKey text() { return ITClientConfig.perTickTrashCans ? TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE; }
 
     @Override
     public int getContainerSize() { return 1; }

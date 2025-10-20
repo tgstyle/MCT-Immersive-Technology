@@ -55,7 +55,7 @@ public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements 
             ITPacketHandler.sendToServer(new ITOSDRequestMessage(worldPosition));
             requestCooldown = 20;
         }
-        float value = ITClientConfig.perTickTrashCans.get() ? (float)lastAcceptedAmount / 20 : lastAcceptedAmount;
+        float value = ITClientConfig.perTickTrashCans ? (float)lastAcceptedAmount / 20 : lastAcceptedAmount;
         return new Component[] { Component.literal(text().format(value)) };
     }
 

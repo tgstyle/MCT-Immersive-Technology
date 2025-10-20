@@ -29,7 +29,7 @@ import java.util.List;
 public class SteamTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<SteamTurbineLogic.State>> {
     @Override
     public void render(@NotNull MultiblockBlockEntityMaster<SteamTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        if (!ITClientConfig.doSpecialRenderSteamTurbine.get()) { return; }
+        if (!ITClientConfig.doSpecialRenderSteamTurbine) { return; }
         IMultiblockBEHelperMaster<SteamTurbineLogic.State> helper = tile.getHelper();
         IMultiblockContext<SteamTurbineLogic.State> context = helper.getContext();
         SteamTurbineLogic.State state = context.getState();

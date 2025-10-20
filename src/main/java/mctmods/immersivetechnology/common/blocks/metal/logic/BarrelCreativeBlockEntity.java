@@ -154,7 +154,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
         }
         if (selectedFluid.isEmpty()) { return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.text())}; }
         Component fluidName = selectedFluid.getDisplayName();
-        float value = ITClientConfig.perTickTrashCans.get() ? (float)lastAcceptedAmount / 20 : lastAcceptedAmount;
+        float value = ITClientConfig.perTickTrashCans ? (float)lastAcceptedAmount / 20 : lastAcceptedAmount;
         return new Component[]{Component.translatable(text().text(), fluidName, value)};
     }
 
