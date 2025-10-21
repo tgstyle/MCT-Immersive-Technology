@@ -194,6 +194,7 @@ public class TileEntityFluidPipeAlternative extends blusunrize.immersiveengineer
 			connected.markDirty();
 			world.addBlockEvent(getPos().offset(fd), getBlockType(), 0, 0);
 		}
+		updateConnectionByte(EnumFacing.byIndex(side));
 		world.addBlockEvent(getPos(), getBlockType(), 0, 0);
 	}
 
