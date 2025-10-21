@@ -222,7 +222,7 @@ dependencies {
     implementation fg.deobf("curse.maven:engineered-schematics-1207780:6560826")
 	//implementation fg.deobf("curse.maven:immersive-fixes-1326199:6880681")
 
-    implementation fg.deobf("curse.maven:jade-324717:6271651")
+    implementation fg.deobf("curse.maven:jade-324717:6855440")
 
     datagenImplementation("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
 
