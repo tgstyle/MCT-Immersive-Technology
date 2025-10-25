@@ -3,10 +3,12 @@ import os
 import torch
 import itertools
 
+# Worker initialization function
 def init_worker():
     os.environ['OMP_NUM_THREADS'] = '1'
     torch.set_num_threads(1)
 
+# Function to find the maximum box in voxel grid
 def find_max_box(occupied, visited, i, j, k, res):
     best_volume = 0
     best_dx, best_dy, best_dz = 1, 1, 1
@@ -38,6 +40,7 @@ def find_max_box(occupied, visited, i, j, k, res):
                 visited[x][y][z] = True
     return best_dx, best_dy, best_dz
 
+# Function to merge AABBs along a specific dimension
 def merge_along_dim(aabbs, dim):
     epsilon = 1e-3
     if dim == 0:
@@ -71,6 +74,7 @@ def merge_along_dim(aabbs, dim):
         merged.append(tuple(current))
     return merged
 
+# Function to merge AABBs iteratively across dimensions
 def merge_aabbs(aabbs):
     if not aabbs: return []
     previous_len = -1
@@ -80,6 +84,7 @@ def merge_aabbs(aabbs):
             aabbs = merge_along_dim(aabbs, dim)
     return aabbs
 
+# Threshold value parsing function
 def parse_thresh_val(s, default=None):
     s = s.lower()
     if s == 'd' and default is not None:

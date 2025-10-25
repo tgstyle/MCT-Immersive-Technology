@@ -10,7 +10,7 @@ import numpy as np
 import torch
 from tqdm import tqdm
 from bb_voxelization import process_block
-from bb_postprocess import process_post, fill_gaps_along_axis
+from bb_postprocess import process_post, fill_gaps_along_axis, remove_protrusions
 from bb_utils import find_max_box, merge_aabbs, merge_along_dim, parse_thresh_val, init_worker
 from bb_model_parser import parse_bbmodel, list_bbmodel_files, select_file, normalize_offsets
 try:
@@ -48,30 +48,47 @@ def extract_aabbs_from_occupied(occupied_np, res=16):
 def main():
     start_time = time.time()
     parser = argparse.ArgumentParser()
-    parser.add_argument('path', nargs='?', help='Path to bbmodel or directory')
-    parser.add_argument('--main', type=str, help='Main model file (bypasses prompt)')
-    parser.add_argument('--output', choices=['java', 'json'], help='Output type: java or json')
+    
+    # Input and output paths
+    parser.add_argument('path', nargs='?', help='Path to bbmodel file or directory containing bbmodel files')
+    parser.add_argument('--main', type=str, help='Specify the main model file (bypasses selection prompt)')
+    parser.add_argument('--output', choices=['java', 'json'], help='Output format: java or json')
+    
+    # Post-processing control flags
     parser.add_argument('--no-postprocess', action='store_true', help='Disable all post-processing steps')
-    parser.add_argument('--no-gpp', action='store_true', help='Disable global post-processing on the full model (default: enabled)')
-    parser.add_argument('--no-holes', action='store_true', help='Disable binary_fill_holes')
+    parser.add_argument('--no-gpp', action='store_true', help='Disable global post-processing on the full model (enabled by default)')
+    parser.add_argument('--no-holes', action='store_true', help='Disable filling of holes using binary_fill_holes')
     parser.add_argument('--no-gaps', action='store_true', help='Disable gap filling along axes (overrides thresholds)')
-    parser.add_argument('--no-small-voids', action='store_true', help='Disable small void removal')
-    parser.add_argument('--fill-all-voids', action='store_true', help='Fill all internal voids regardless of size (for large hollow models)')
-    parser.add_argument('--thresh', type=str, default='2,4,2', help='Comma-separated thresholds for x,y,z; 0 for unlimited, d for default, x for disable')
-    parser.add_argument('--ex-thresh', type=str, default='d,d,d', help='Comma-separated gap thresholds along x,y,z for excluded blocks; d uses --thresh, x for disable')
-    parser.add_argument('--mi', type=str, default='3,4,4', help='Comma-separated max intrusion for global fill into excluded blocks along x,y,z; d for default, x for no intrusion')
-    parser.add_argument('--gap-passes', type=int, default=3, help='Number of passes for gap filling per axis')
-    parser.add_argument('--void-thresh', type=int, default=4, help='Maximum voxel count for small voids to fill (fills if size < threshold)')
-    parser.add_argument('--occ-thresh', type=int, default=4, help='Maximum voxel count for small occupied clusters to remove (removes if size < threshold)')
-    parser.add_argument('--pbg', type=str, default='', help='Comma-separated axes for per-block gap filling (e.g. "x,y,z")')
-    parser.add_argument('--rpp', action='append', default=[], help='Regional post-processing: "bx,by,bz bx,by,bz ... : x,y,z" thresholds d for main thresh, x disable')
-    parser.add_argument('--solid-blocks', type=str, default='', help='Space-separated bx,by,bz to force solid before postprocess (e.g. "0,0,0 1,0,0")')
-    parser.add_argument('--exclude-global', type=str, default='', help='Space-separated bx,by,bz to exclude from global postprocess (e.g. "0,0,0 1,0,0")')
-    parser.add_argument('--fill-order', type=str, default='x,z,y', help='Order of axes for gap filling (comma-separated x,y,z in any order)')
-    parser.add_argument('--supp-config', nargs='+', action='append', default=[], help='Auto supp: model num_times offset1 offset2... e.g. model.bbmodel 2 0,0,0 1,0,0 [next_model ...]')
+    parser.add_argument('--no-small-voids', action='store_true', help='Disable removal of small voids and occupied clusters')
+    parser.add_argument('--fill-all-voids', action='store_true', help='Fill all internal voids regardless of size (useful for large hollow models)')
     parser.add_argument('--no-supplementary', action='store_true', help='Disable processing of supplementary models')
-    parser.add_argument('--dml-index', type=int, default=None, help='DirectML device index to use (overrides enumeration)')
+    
+    # Threshold and value settings
+    parser.add_argument('--thresh', type=str, default='2,4,2', help='Comma-separated gap thresholds for x,y,z; use 0 for unlimited, d for default, x to disable')
+    parser.add_argument('--ex-thresh', type=str, default='d,d,d', help='Comma-separated gap thresholds for excluded blocks along x,y,z; d uses --thresh value, x to disable')
+    parser.add_argument('--mi', type=str, default='3,4,4', help='Comma-separated max intrusion into excluded blocks along x,y,z; d for default, x for no intrusion')
+    parser.add_argument('--gap-passes', type=int, default=3, help='Number of passes for gap filling per axis')
+    parser.add_argument('--void-thresh', type=int, default=4, help='Max voxel count for small voids to fill (fills if size < threshold)')
+    parser.add_argument('--occ-thresh', type=int, default=4, help='Max voxel count for small occupied clusters to remove (removes if size < threshold)')
+    
+    # Block and region specifications
+    parser.add_argument('--pbg', type=str, default='', help='Comma-separated axes for per-block gap filling (e.g., x,y,z)')
+    parser.add_argument('--rpp', action='append', default=[], help='Regional post-processing: "bx,by,bz bx,by,bz ... : x,y,z" where thresholds use d for main thresh, x to disable')
+    parser.add_argument('--solid-blocks', type=str, default='', help='Space-separated bx,by,bz to force as solid before post-processing (e.g., "0,0,0 1,0,0")')
+    parser.add_argument('--exclude-global', type=str, default='', help='Space-separated bx,by,bz to exclude from global post-processing (e.g., "0,0,0 1,0,0")')
+    
+    # Order and configuration options
+    parser.add_argument('--fill-order', type=str, default='x,z,y', help='Order of axes for gap filling (comma-separated x,y,z in any order)')
+    parser.add_argument('--pp-order', type=str, default='per-block,regional,global,per-block-gaps,protrusions', help='Comma-separated order of main post-processing steps: per-block,regional,global,per-block-gaps,protrusions')
+    parser.add_argument('--sub-pp-order', type=str, default='remove-small,fill-holes,fill-voids,fill-gaps', help='Comma-separated order of sub-post-processing steps: remove-small,fill-holes,fill-voids,fill-gaps')
+    
+    # Supplementary model configurations
+    parser.add_argument('--supp-config', nargs='+', action='append', default=[], help='Supplementary model config: model.bbmodel num_times offset1 offset2... (e.g., model.bbmodel 2 0,0,0 1,0,0)')
+    
+    # Device and performance options
+    parser.add_argument('--dml-index', type=int, default=None, help='DirectML device index to use (overrides automatic enumeration)')
     parser.add_argument('--single-thread', action='store_true', help='Force single-threaded processing even on CPU')
+    
     args = parser.parse_args()
     solid_set = set()
     if args.solid_blocks:
@@ -220,13 +237,13 @@ def main():
                     offsets.append((offset_bx, offset_by, offset_bz))
                 supp_list.append((supp_file, offsets))
     print("Processing main model...")
-    overall_voxels = parse_bbmodel(main_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, False, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, solid_set, args.fill_all_voids, set(), axis_order, "d,d,d", "d,d,d", [], return_voxels=True)
+    overall_voxels = parse_bbmodel(main_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, solid_set, args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=args.sub_pp_order)
     cache = {}
     unique_supps = set(s_file for s_file, _ in supp_list)
     for s_file in unique_supps:
         print(f"Processing supplementary model: {s_file}")
         s_path = os.path.join(directory, s_file)
-        s_voxels = parse_bbmodel(s_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, False, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, solid_set, args.fill_all_voids, set(), axis_order, "d,d,d", "d,d,d", [], return_voxels=True)
+        s_voxels = parse_bbmodel(s_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, solid_set, args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=args.sub_pp_order)
         cache[s_file] = s_voxels
     placements = []
     for s_file, offsets in supp_list:
@@ -283,7 +300,7 @@ def main():
                 continue
             occupied_np_copy = overall_dict[ex_b].copy()
             thresh_dict_ex = (ex_x_threshold, ex_y_threshold, ex_z_threshold)
-            occupied_np_copy = process_post(occupied_np_copy, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, axis_order, thresh_dict_ex, args.void_thresh, args.occ_thresh, args.fill_all_voids)
+            occupied_np_copy = process_post(occupied_np_copy, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, axis_order, thresh_dict_ex, args.void_thresh, args.occ_thresh, args.fill_all_voids, sub_order=args.sub_pp_order)
             excluded_processed[ex_b] = occupied_np_copy
         # Build is_excluded_full
         is_excluded_full = np.zeros_like(full_occupied, dtype=bool)
@@ -305,7 +322,7 @@ def main():
         # Now call process_post with excludes
         max_intrude_dict = {0: max_intrude_x, 1: max_intrude_y, 2: max_intrude_z}
         ex_thresholds = (ex_x_threshold, ex_y_threshold, ex_z_threshold)
-        full_occupied = process_post(full_occupied, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, axis_order, (x_threshold, y_threshold, z_threshold), args.void_thresh, args.occ_thresh, args.fill_all_voids, is_excluded=is_excluded_full, max_intrude_dict=max_intrude_dict, ex_thresholds=ex_thresholds)
+        full_occupied = process_post(full_occupied, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, axis_order, (x_threshold, y_threshold, z_threshold), args.void_thresh, args.occ_thresh, args.fill_all_voids, is_excluded=is_excluded_full, max_intrude_dict=max_intrude_dict, ex_thresholds=ex_thresholds, sub_order=args.sub_pp_order)
         # Then overwrite excluded
         for ex_b in excluded_processed:
             bx, by, bz = ex_b
@@ -327,13 +344,11 @@ def main():
             sub_shape = ((max_bx_r - min_bx_r + 1) * res, (max_by_r - min_by_r + 1) * res, (max_bz_r - min_bz_r + 1) * res)
             sub_occupied = np.zeros(sub_shape, dtype=bool)
             for b in reg_blocks:
-                if b not in overall_dict:
-                    continue
                 off_x = (b[0] - min_bx_r) * res
                 off_y = (b[1] - min_by_r) * res
                 off_z = (b[2] - min_bz_r) * res
                 sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = full_occupied[(b[0] - min_bx) * res:(b[0] - min_bx + 1) * res, (b[1] - min_by) * res:(b[1] - min_by + 1) * res, (b[2] - min_bz) * res:(b[2] - min_bz + 1) * res]
-            sub_occupied = process_post(sub_occupied, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, axis_order, region['thresholds'], args.void_thresh, args.occ_thresh, args.fill_all_voids)
+            sub_occupied = process_post(sub_occupied, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, axis_order, region['thresholds'], args.void_thresh, args.occ_thresh, args.fill_all_voids, sub_order=args.sub_pp_order)
             for b in reg_blocks:
                 off_x = (b[0] - min_bx_r) * res
                 off_y = (b[1] - min_by_r) * res

@@ -8,7 +8,7 @@ import os
 from tqdm import tqdm
 import threading
 import multiprocessing as mp
-from bb_postprocess import process_post, fill_gaps_along_axis
+from bb_postprocess import process_post, fill_gaps_along_axis, remove_protrusions
 from bb_utils import find_max_box, merge_aabbs, parse_thresh_val
 from bb_voxelization import process_block
 from bb_utils import init_worker
@@ -16,7 +16,10 @@ try:
     import torch_directml
 except ImportError:
     torch_directml = None
-def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=set(), fill_all_voids=False, exclude_set=set(), axis_order=[0,2,1], mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=[], return_voxels=False):
+
+# Main model parsing function
+def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=set(), fill_all_voids=False, exclude_set=set(), axis_order=[0,2,1], mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=[], return_voxels=False, pp_order='per-block,regional,global,per-block-gaps,protrusions', sub_order='remove-small,fill-holes,fill-voids,fill-gaps'):
+    # Parse thresholds and settings
     thresh_parts = thresh_str.split(',')
     x_threshold = parse_thresh_val(thresh_parts[0], 2)
     y_threshold = parse_thresh_val(thresh_parts[1], 4)
@@ -30,6 +33,8 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
     ex_x_threshold = parse_thresh_val(ex_thresh_parts[0], x_threshold)
     ex_y_threshold = parse_thresh_val(ex_thresh_parts[1], y_threshold)
     ex_z_threshold = parse_thresh_val(ex_thresh_parts[2], z_threshold)
+    
+    # Process regional post-processing arguments
     regions = []
     all_region_blocks = set()
     for rpp_str in rpp_list:
@@ -46,6 +51,8 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
                 raise ValueError(f"Overlapping block {b} in regions")
             all_region_blocks.add(b)
         regions.append({'blocks': blocks, 'thresholds': (reg_x, reg_y, reg_z)})
+    
+    # Load and validate BBModel data
     with open(file_path, 'r') as f:
         data = json.load(f)
     elements = data.get('elements', [])
@@ -62,6 +69,8 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
                     print(f" python bb_sterilize.py {file_path}")
                     print("This will create a sterilized version of the model with grid-aligned vertices.")
                     sys.exit(1)
+    
+    # Process elements: vertices, triangles, edges
     all_verts = []
     all_triangles = []
     all_edges = set()
@@ -173,87 +182,153 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
     raw_results = [r for r in results if r is not None]
     block_occupied = {(bx, by, bz): occupied_np for bx, by, bz, occupied_np in raw_results}
     if not no_postprocess:
-        # Process excluded
-        excluded_processed = {}
-        for ex_b in exclude_set:
-            if ex_b not in block_occupied:
-                continue
-            occupied_np_copy = block_occupied[ex_b].copy()
-            thresh_dict_ex = (ex_x_threshold, ex_y_threshold, ex_z_threshold)
-            occupied_np_copy = process_post(occupied_np_copy, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresh_dict_ex, small_void_threshold, small_occupied_threshold, fill_all_voids)
-            excluded_processed[ex_b] = occupied_np_copy
-        # Process regions
-        for region in regions:
-            reg_blocks = region['blocks']
-            if not reg_blocks:
-                continue
-            min_bx = min(b[0] for b in reg_blocks)
-            max_bx = max(b[0] for b in reg_blocks)
-            min_by = min(b[1] for b in reg_blocks)
-            max_by = max(b[1] for b in reg_blocks)
-            min_bz = min(b[2] for b in reg_blocks)
-            max_bz = max(b[2] for b in reg_blocks)
-            sub_shape = ((max_bx - min_bx + 1) * res, (max_by - min_by + 1) * res, (max_bz - min_bz + 1) * res)
-            sub_occupied = np.zeros(sub_shape, dtype=bool)
-            for b in reg_blocks:
-                if b not in block_occupied:
-                    continue
-                occ = block_occupied[b]
-                off_x = (b[0] - min_bx) * res
-                off_y = (b[1] - min_by) * res
-                off_z = (b[2] - min_bz) * res
-                sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = occ
-            sub_occupied = process_post(sub_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, region['thresholds'], small_void_threshold, small_occupied_threshold, fill_all_voids)
-            for b in reg_blocks:
-                off_x = (b[0] - min_bx) * res
-                off_y = (b[1] - min_by) * res
-                off_z = (b[2] - min_bz) * res
-                block_occupied[b] = sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res].copy()
-        if global_postprocess:
-            full_occupied = np.zeros((num_bx * res, num_by * res, num_bz * res), dtype=bool)
-            is_excluded_full = np.zeros_like(full_occupied, dtype=bool)
-            for ex_b in exclude_set | all_region_blocks:
-                bx, by, bz = ex_b
-                is_excluded_full[bx*res:(bx+1)*res, by*res:(by+1)*res, bz*res:(bz+1)*res] = True
-            for b in block_occupied:
-                bx, by, bz = b
-                full_occupied[bx*res:(bx+1)*res, by*res:(by+1)*res, bz*res:(bz+1)*res] = block_occupied[b]
-            max_intrude_dict = {0: max_intrude_x, 1: max_intrude_y, 2: max_intrude_z}
-            full_occupied = process_post(full_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, (x_threshold, y_threshold, z_threshold), small_void_threshold, small_occupied_threshold, fill_all_voids, is_excluded=is_excluded_full, max_intrude_dict=max_intrude_dict, ex_thresholds=(ex_x_threshold, ex_y_threshold, ex_z_threshold))
-            for ex_b in excluded_processed:
-                bx, by, bz = ex_b
-                full_occupied[bx*res:(bx+1)*res, by*res:(by+1)*res, bz*res:(bz+1)*res] = excluded_processed[ex_b]
-            for region in regions:
-                reg_blocks = region['blocks']
-                if not reg_blocks:
-                    continue
-                min_bx = min(b[0] for b in reg_blocks)
-                max_bx = max(b[0] for b in reg_blocks)
-                min_by = min(b[1] for b in reg_blocks)
-                max_by = max(b[1] for b in reg_blocks)
-                min_bz = min(b[2] for b in reg_blocks)
-                max_bz = max(b[2] for b in reg_blocks)
-                sub_shape = ((max_bx - min_bx + 1) * res, (max_by - min_by + 1) * res, (max_bz - min_bz + 1) * res)
-                sub_occupied = np.zeros(sub_shape, dtype=bool)
-                for b in reg_blocks:
+        pp_order_list = [s.strip() for s in pp_order.split(',')]
+        max_intrude_dict = {0: max_intrude_x, 1: max_intrude_y, 2: max_intrude_z}
+        for step in pp_order_list:
+            if step == 'per-block':
+                for b in block_occupied:
+                    thresh = (x_threshold, y_threshold, z_threshold)
+                    block_occupied[b] = process_post(block_occupied[b], no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresh, small_void_threshold, small_occupied_threshold, fill_all_voids, sub_order=sub_order)
+            elif step == 'regional':
+                for region in regions:
+                    reg_blocks = region['blocks']
+                    if not reg_blocks:
+                        continue
+                    min_bx_r = min(b[0] for b in reg_blocks)
+                    max_bx_r = max(b[0] for b in reg_blocks)
+                    min_by_r = min(b[1] for b in reg_blocks)
+                    max_by_r = max(b[1] for b in reg_blocks)
+                    min_bz_r = min(b[2] for b in reg_blocks)
+                    max_bz_r = max(b[2] for b in reg_blocks)
+                    sub_shape = ((max_bx_r - min_bx_r + 1) * res, (max_by_r - min_by_r + 1) * res, (max_bz_r - min_bz_r + 1) * res)
+                    sub_occupied = np.zeros(sub_shape, dtype=bool)
+                    for b in reg_blocks:
+                        if b not in block_occupied:
+                            continue
+                        off_x = (b[0] - min_bx_r) * res
+                        off_y = (b[1] - min_by_r) * res
+                        off_z = (b[2] - min_bz_r) * res
+                        sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = block_occupied[b]
+                    sub_occupied = process_post(sub_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, region['thresholds'], small_void_threshold, small_occupied_threshold, fill_all_voids, sub_order=sub_order)
+                    for b in reg_blocks:
+                        off_x = (b[0] - min_bx_r) * res
+                        off_y = (b[1] - min_by_r) * res
+                        off_z = (b[2] - min_bz_r) * res
+                        block_occupied[b] = sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res].copy()
+            elif step == 'global':
+                excluded_processed = {}
+                for ex_b in exclude_set:
+                    if ex_b not in block_occupied:
+                        continue
+                    occupied_np_copy = block_occupied[ex_b].copy()
+                    thresh_dict_ex = (ex_x_threshold, ex_y_threshold, ex_z_threshold)
+                    occupied_np_copy = process_post(occupied_np_copy, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresh_dict_ex, small_void_threshold, small_occupied_threshold, fill_all_voids, sub_order=sub_order)
+                    excluded_processed[ex_b] = occupied_np_copy
+                min_bx = min(bx for bx, _, _ in block_occupied) if block_occupied else 0
+                min_by = min(by for _, by, _ in block_occupied) if block_occupied else 0
+                min_bz = min(bz for _, _, bz in block_occupied) if block_occupied else 0
+                max_bx = max(bx for bx, _, _ in block_occupied) if block_occupied else 0
+                max_by = max(by for _, by, _ in block_occupied) if block_occupied else 0
+                max_bz = max(bz for _, _, bz in block_occupied) if block_occupied else 0
+                num_bx = max_bx - min_bx + 1
+                num_by = max_by - min_by + 1
+                num_bz = max_bz - min_bz + 1
+                full_occupied = np.zeros((num_bx * res, num_by * res, num_bz * res), dtype=bool)
+                for b in block_occupied:
                     bx, by, bz = b
                     off_x = (bx - min_bx) * res
                     off_y = (by - min_by) * res
                     off_z = (bz - min_bz) * res
-                    sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = full_occupied[bx*res:(bx+1)*res, by*res:(by+1)*res, bz*res:(bz+1)*res]
-                sub_occupied = process_post(sub_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, region['thresholds'], small_void_threshold, small_occupied_threshold, fill_all_voids)
-                for b in reg_blocks:
+                    full_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = block_occupied[b]
+                is_excluded_full = np.zeros_like(full_occupied, dtype=bool)
+                for ex_b in exclude_set:
+                    if ex_b in block_occupied:
+                        bx, by, bz = ex_b
+                        off_x = (bx - min_bx) * res
+                        off_y = (by - min_by) * res
+                        off_z = (bz - min_bz) * res
+                        is_excluded_full[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = True
+                for region in regions:
+                    for b in region['blocks']:
+                        if b in block_occupied:
+                            bx, by, bz = b
+                            off_x = (bx - min_bx) * res
+                            off_y = (by - min_by) * res
+                            off_z = (bz - min_bz) * res
+                            is_excluded_full[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = True
+                full_occupied = process_post(full_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, (x_threshold, y_threshold, z_threshold), small_void_threshold, small_occupied_threshold, fill_all_voids, is_excluded=is_excluded_full, max_intrude_dict=max_intrude_dict, ex_thresholds=(ex_x_threshold, ex_y_threshold, ex_z_threshold), sub_order=sub_order)
+                for ex_b in excluded_processed:
+                    bx, by, bz = ex_b
+                    off_x = (bx - min_bx) * res
+                    off_y = (by - min_by) * res
+                    off_z = (bz - min_bz) * res
+                    full_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = excluded_processed[ex_b]
+                for region in regions:
+                    reg_blocks = region['blocks']
+                    if not reg_blocks:
+                        continue
+                    min_bx_r = min(b[0] for b in reg_blocks)
+                    max_bx_r = max(b[0] for b in reg_blocks)
+                    min_by_r = min(b[1] for b in reg_blocks)
+                    max_by_r = max(b[1] for b in reg_blocks)
+                    min_bz_r = min(b[2] for b in reg_blocks)
+                    max_bz_r = max(b[2] for b in reg_blocks)
+                    sub_shape = ((max_bx_r - min_bx_r + 1) * res, (max_by_r - min_by_r + 1) * res, (max_bz_r - min_bz_r + 1) * res)
+                    sub_occupied = np.zeros(sub_shape, dtype=bool)
+                    for b in reg_blocks:
+                        bx, by, bz = b
+                        off_x = (b[0] - min_bx_r) * res
+                        off_y = (b[1] - min_by_r) * res
+                        off_z = (b[2] - min_bz_r) * res
+                        sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = full_occupied[(b[0] - min_bx) * res:(b[0] - min_bx + 1) * res, (b[1] - min_by) * res:(b[1] - min_by + 1) * res, (b[2] - min_bz) * res:(b[2] - min_bz + 1) * res]
+                    sub_occupied = process_post(sub_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, region['thresholds'], small_void_threshold, small_occupied_threshold, fill_all_voids, sub_order=sub_order)
+                    for b in reg_blocks:
+                        bx, by, bz = b
+                        off_x = (b[0] - min_bx_r) * res
+                        off_y = (b[1] - min_by_r) * res
+                        off_z = (b[2] - min_bz_r) * res
+                        full_occupied[(b[0] - min_bx) * res:(b[0] - min_bx + 1) * res, (b[1] - min_by) * res:(b[1] - min_by + 1) * res, (b[2] - min_bz) * res:(b[2] - min_bz + 1) * res] = sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res]
+                for b in block_occupied:
                     bx, by, bz = b
                     off_x = (bx - min_bx) * res
                     off_y = (by - min_by) * res
                     off_z = (bz - min_bz) * res
-                    full_occupied[bx*res:(bx+1)*res, by*res:(by+1)*res, bz*res:(bz+1)*res] = sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res]
-            for b in block_occupied:
-                bx, by, bz = b
-                off_x = bx * res
-                off_y = by * res
-                off_z = bz * res
-                block_occupied[b] = full_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res].copy()
+                    block_occupied[b] = full_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res].copy()
+            elif step == 'per-block-gaps':
+                for b in block_occupied:
+                    occupied_np = block_occupied[b]
+                    if not no_gaps:
+                        for _ in range(gap_passes):
+                            for axis in axis_order:
+                                if axis == 0 and 'x' in per_block_gap_axes or axis == 1 and 'y' in per_block_gap_axes or axis == 2 and 'z' in per_block_gap_axes:
+                                    thresh = {0: x_threshold, 1: y_threshold, 2: z_threshold}[axis]
+                                    if thresh >= 0:
+                                        occupied_np = fill_gaps_along_axis(occupied_np, axis, thresh)
+                    block_occupied[b] = occupied_np
+            elif step == 'protrusions':
+                min_bx = min(bx for bx, _, _ in block_occupied) if block_occupied else 0
+                min_by = min(by for _, by, _ in block_occupied) if block_occupied else 0
+                min_bz = min(bz for _, _, bz in block_occupied) if block_occupied else 0
+                max_bx = max(bx for bx, _, _ in block_occupied) if block_occupied else 0
+                max_by = max(by for _, by, _ in block_occupied) if block_occupied else 0
+                max_bz = max(bz for _, _, bz in block_occupied) if block_occupied else 0
+                num_bx = max_bx - min_bx + 1
+                num_by = max_by - min_by + 1
+                num_bz = max_bz - min_bz + 1
+                full_occupied = np.zeros((num_bx * res, num_by * res, num_bz * res), dtype=bool)
+                for b in block_occupied:
+                    bx, by, bz = b
+                    off_x = (bx - min_bx) * res
+                    off_y = (by - min_by) * res
+                    off_z = (bz - min_bz) * res
+                    full_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = block_occupied[b]
+                full_occupied = remove_protrusions(full_occupied)
+                for b in block_occupied:
+                    bx, by, bz = b
+                    off_x = (bx - min_bx) * res
+                    off_y = (by - min_by) * res
+                    off_z = (bz - min_bz) * res
+                    block_occupied[b] = full_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res].copy()
     if return_voxels:
         overall_voxels = []
         for bx in range(num_bx):
@@ -270,26 +345,14 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
         for by in range(num_by):
             for bz in range(num_bz):
                 b = (bx, by, bz)
-                if b not in block_occupied and not global_postprocess:
+                if b not in block_occupied:
                     continue
-                if global_postprocess:
-                    occupied_np = full_occupied[bx*res:(bx+1)*res, by*res:(by+1)*res, bz*res:(bz+1)*res].copy()
-                else:
-                    if b not in block_occupied:
-                        continue
-                    occupied_np = block_occupied[b].copy()
-                if not no_postprocess and not no_gaps:
-                    for _ in range(gap_passes):
-                        for axis in axis_order:
-                            if axis == 0 and 'x' in per_block_gap_axes or axis == 1 and 'y' in per_block_gap_axes or axis == 2 and 'z' in per_block_gap_axes:
-                                thresh = {0: x_threshold, 1: y_threshold, 2: z_threshold}[axis]
-                                if thresh >= 0:
-                                    occupied_np = fill_gaps_along_axis(occupied_np, axis, thresh)
-                occupied = occupied_np.tolist()
-                num_occupied = np.sum(occupied_np)
-                if num_occupied == res**3:
+                occupied_np = block_occupied[b].copy()
+                if occupied_np.sum() == res**3:
                     aabbs.append((bx, by, bz, [(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)]))
                     continue
+                occupied = occupied_np.tolist()
+                num_occupied = np.sum(occupied_np)
                 block_aabbs = []
                 visited = [[[False for _ in range(res)] for _ in range(res)] for _ in range(res)]
                 for i in range(res):
@@ -332,8 +395,11 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
             shifted_aabbs.append((minx + shift_x, miny + shift_y, minz + shift_z, maxx + shift_x, maxy + shift_y, maxz + shift_z))
         aabbs[0] = (0, 0, 0, shifted_aabbs)
     return normalize_offsets(aabbs)
+
+# Utility functions for file handling and selection
 def list_bbmodel_files(directory):
     return [f for f in os.listdir(directory) if f.lower().endswith('.bbmodel')]
+
 def select_file(bbmodel_files, prompt="Select a file by number: "):
     if not bbmodel_files: raise ValueError("No BBModel files found in the directory.")
     print("Available BBModel files:")
@@ -344,6 +410,8 @@ def select_file(bbmodel_files, prompt="Select a file by number: "):
             if 1 <= choice <= len(bbmodel_files): return bbmodel_files[choice - 1]
             else: print("Invalid selection. Try again.")
         except ValueError: print("Please enter a number.")
+
+# Normalization function
 def normalize_offsets(aabbs):
     if not aabbs: return aabbs
     min_bx = min(bx for bx, _, _, _ in aabbs)
