@@ -18,7 +18,7 @@ except ImportError:
     torch_directml = None
 
 # Main model parsing function
-def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=set(), fill_all_voids=False, exclude_set=set(), axis_order=[0,2,1], mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=[], return_voxels=False, pp_order='per-block,regional,global,per-block-gaps,protrusions', sub_order='remove-small,fill-holes,fill-voids,fill-gaps'):
+def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=set(), empty_set=set(), fill_all_voids=False, exclude_set=set(), axis_order=[0,2,1], mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=[], return_voxels=False, pp_order='per-block,regional,global,per-block-gaps,protrusions', sub_order='remove-small,fill-holes,fill-voids,fill-gaps'):
     # Parse thresholds and settings
     thresh_parts = thresh_str.split(',')
     x_threshold = parse_thresh_val(thresh_parts[0], 2)
@@ -152,7 +152,7 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
     for bx in range(num_bx):
         for by in range(num_by):
             for bz in range(num_bz):
-                args_list.append((bx, by, bz, minx, miny, minz, verts, triangles, edges, res, x_threshold, y_threshold, z_threshold, is_watertight, has_thin_features, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, device, solid_set, directions_t, offsets_t, fill_all_voids, axis_order))
+                args_list.append((bx, by, bz, minx, miny, minz, verts, triangles, edges, res, x_threshold, y_threshold, z_threshold, is_watertight, has_thin_features, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, device, solid_set, empty_set, directions_t, offsets_t, fill_all_voids, axis_order))
     def refresher(pbar, stop_event):
         while not stop_event.wait(1):
             pbar.refresh()

@@ -15,6 +15,8 @@ Script setup:
 		e.g. "C:\SteamTurbine\steam_turbine.bbmodel"
 		     "C:\SteamTurbine\rotor.bbmodel"
 
+	Note: Model coordinates must always be in the positive space; negative coordinates are not supported.
+
 Execute python:
 	python bb_shape.py C:\SteamTurbine\steam_turbine.bbmodel
 
@@ -43,36 +45,39 @@ Script arguments:
     # Post-processing control flags
     --no-postprocess	Default: False	Description: Disable all post-processing steps.
     --no-gpp	Default: False	Description: Disable global post-processing on the full model (enabled by default).
-    --no-holes	Default: False	Description: Disable binary_fill_holes.
+    --no-holes	Default: False	Description: Disable filling of holes using binary_fill_holes.
     --no-gaps	Default: False	Description: Disable gap filling along axes (overrides thresholds).
-    --no-small-voids	Default: False	Description: Disable small void removal.
-    --fill-all-voids	Default: False	Description: Fill all internal voids regardless of size (for large hollow models).
+    --no-small-voids	Default: False	Description: Disable removal of small voids and occupied clusters.
+    --fill-all-voids	Default: False	Description: Fill all internal voids regardless of size (useful for large hollow models).
     --no-supplementary	Default: False	Description: Disable processing of supplementary models.
 
     # Threshold and value settings
-    --thresh <str>	Default: '2,4,2'	Description: Comma-separated thresholds for x,y,z; 0 for unlimited, d for default, x for disable.
-    --ex-thresh <str>	Default: 'd,d,d'	Description: Comma-separated gap thresholds along x,y,z for excluded blocks; d uses --thresh, x for disable.
-    --mi <str>	Default: '3,4,4'	Description: Comma-separated max intrusion for global fill into excluded blocks along x,y,z; d for default, x for no intrusion.
+    --thresh <str>	Default: '2,4,2'	Description: Comma-separated gap thresholds for x,y,z; use 0 for unlimited, d for default, x to disable (use quotes if needed, e.g., "2,4,2").
+    --ex-thresh <str>	Default: 'd,d,d'	Description: Comma-separated gap thresholds for excluded blocks along x,y,z; d uses --thresh value, x to disable (use quotes if needed, e.g., "d,d,d").
+    --mi <str>	Default: '3,4,4'	Description: Comma-separated max intrusion into excluded blocks along x,y,z; d for default, x for no intrusion (use quotes if needed, e.g., "3,4,4").
     --gap-passes <int>	Default: 3	Description: Number of passes for gap filling per axis.
-    --void-thresh <int>	Default: 4	Description: Maximum voxel count for small voids to fill (fills if size < threshold).
-    --occ-thresh <int>	Default: 4	Description: Maximum voxel count for small occupied clusters to remove (removes if size < threshold).
+    --void-thresh <int>	Default: 4	Description: Max voxel count for small voids to fill (fills if size < threshold).
+    --occ-thresh <int>	Default: 4	Description: Max voxel count for small occupied clusters to remove (removes if size < threshold).
 
     # Block and region specifications
-    --pbg <str>	Default: ''	Description: Comma-separated axes for per-block gap filling (e.g. "x,y,z").
-    --rpp <str> (append)	Default: []	Description: Regional post-processing: "bx,by,bz bx,by,bz ... : x,y,z" thresholds d for main thresh, x disable.
-    --solid-blocks <str>	Default: ''	Description: Space-separated bx,by,bz to force solid before postprocess (e.g. "0,0,0 1,0,0").
-    --exclude-global <str>	Default: ''	Description: Space-separated bx,by,bz to exclude from global postprocess (e.g. "0,0,0 1,0,0").
+    --pbg <str>	Default: ''	Description: Comma-separated axes for per-block gap filling (e.g., x,y,z; use quotes if needed, e.g., "x,y,z").
+    --rpp <str> (append)	Default: []	Description: Regional post-processing: "bx,by,bz bx,by,bz ... : x,y,z" where thresholds use d for main thresh, x to disable (use quotes if needed, e.g., "0,0,0 1,0,0 : d,d,d").
+    --solid-blocks <str>	Default: ''	Description: Space-separated bx,by,bz to force as solid before post-processing (e.g., "0,0,0 1,0,0"; use quotes if needed).
+    --empty-blocks <str>	Default: ''	Description: Space-separated bx,by,bz to force as empty before post-processing (e.g., "0,0,0 1,0,0"; use quotes if needed).
+    --exclude-global <str>	Default: ''	Description: Space-separated bx,by,bz to exclude from global post-processing (e.g., "0,0,0 1,0,0"; use quotes if needed).
+    --sub-solid-block <str> (append)	Default: []	Description: Force sub-region solid in final shape: "bx,by,bz minX,minY,minZ,maxX,maxY,maxZ" (e.g., "0,0,0 0,0,0,16,16,16"; use quotes if needed). Applied as final override on the combined model. Values >16 clip to 16, <0 to 0.
+    --sub-empty-block <str> (append)	Default: []	Description: Force sub-region empty in final shape: "bx,by,bz minX,minY,minZ,maxX,maxY,maxZ" (e.g., "0,0,0 0,0,0,16,16,16"; use quotes if needed). Applied as final override on the combined model. Values >16 clip to 16, <0 to 0.
 
     # Order and configuration options
-    --fill-order <str>	Default: 'x,z,y'	Description: Order of axes for gap filling (comma-separated x,y,z in any order).
-    --pp-order <str>	Default: 'per-block,regional,global,per-block-gaps,protrusions'	Description: Comma-separated order of post-processing steps: per-block,regional,global,per-block-gaps,protrusions.
-    --sub-pp-order <str>	Default: 'remove-small,fill-holes,fill-voids,fill-gaps'	Description: Comma-separated order of sub-post-processing steps: remove-small,fill-holes,fill-voids,fill-gaps.
+    --fill-order <str>	Default: 'x,z,y'	Description: Order of axes for gap filling (comma-separated x,y,z in any order; use quotes if needed, e.g., "x,z,y").
+    --pp-order <str>	Default: 'per-block,regional,global,per-block-gaps,protrusions'	Description: Comma-separated order of main post-processing steps: per-block,regional,global,per-block-gaps,protrusions (use quotes if needed).
+    --sub-pp-order <str>	Default: 'remove-small,fill-holes,fill-voids,fill-gaps'	Description: Comma-separated order of sub-post-processing steps: remove-small,fill-holes,fill-voids,fill-gaps (use quotes if needed).
 
     # Supplementary model configurations
-    --supp-config <str...> (append)	Default: []	Description: Auto supp: model num_times offset1 offset2... e.g. model.bbmodel 2 0,0,0 1,0,0 [next_model ...].
+    --supp-config <str...> (append)	Default: []	Description: Supplementary model config: model.bbmodel num_times offset1 offset2... (e.g., model.bbmodel 2 0,0,0 1,0,0; use quotes if needed around the whole config).
 
     # Device and performance options
-    --dml-index <int>	Default: None	Description: DirectML device index to use (overrides enumeration).
+    --dml-index <int>	Default: None	Description: DirectML device index to use (overrides automatic enumeration).
     --single-thread	Default: False	Description: Force single-threaded processing even on CPU.
 
 	Example:

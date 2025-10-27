@@ -6,11 +6,14 @@ import math
 # Main function to process a single block for voxelization
 def process_block(args):
     # Unpack input arguments
-    bx, by, bz, minx, miny, minz, verts, triangles, edges, res, x_threshold, y_threshold, z_threshold, is_watertight, has_thin_features, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, device, solid_set, directions_t, offsets_t, fill_all_voids, axis_order = args
+    bx, by, bz, minx, miny, minz, verts, triangles, edges, res, x_threshold, y_threshold, z_threshold, is_watertight, has_thin_features, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, device, solid_set, empty_set, directions_t, offsets_t, fill_all_voids, axis_order = args
     
     # Handle solid blocks directly
     if (bx, by, bz) in solid_set:
         occupied_np = np.ones((res, res, res), dtype=bool)
+        return (bx, by, bz, occupied_np)
+    elif (bx, by, bz) in empty_set:
+        occupied_np = np.zeros((res, res, res), dtype=bool)
         return (bx, by, bz, occupied_np)
     
     # Define data types and small epsilon values
