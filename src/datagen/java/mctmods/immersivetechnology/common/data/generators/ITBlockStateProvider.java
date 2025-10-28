@@ -138,6 +138,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         genericMultiblockMirror("steam_turbine", "metal");
 
         createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("block/stone/reinforced_coke_brick", modLoc("block/stone/reinforced_coke_brick")));
+        createSimpleBlock(ITBlocks.getBlock.apply("technology_engineering"), models().cubeAll("block/metal/technology_engineering", modLoc("block/metal/technology_engineering")));
         ResourceLocation reinforcedTexture = modLoc("block/stone/reinforced_coke_brick");
         createSlabModels(ITBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get(), reinforcedTexture, reinforcedTexture, reinforcedTexture);
         createSimpleBlock(ITBlocks.getBlock.apply("barrel_creative"), models().cubeAll("block/metal/barrel_creative", modLoc("block/metal/barrel_creative")));

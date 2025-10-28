@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": {
+      "tag": "forge:sheetmetals/copper"
+    },
+    "E": {
+      "tag": "forge:ingots/electrum"
+    },
+    "S": {
+      "item": "immersiveengineering:component_steel"
+    }
+  },
+  "pattern": [
+    "CSC",
+    "SES",
+    "CSC"
+  ],
+  "result": {
+    "item": "immersivetechnology:technology_engineering"
+  },
+  "show_notification": true
+}

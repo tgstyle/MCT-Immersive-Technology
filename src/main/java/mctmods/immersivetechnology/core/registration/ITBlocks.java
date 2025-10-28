@@ -45,6 +45,7 @@ public class ITBlocks {
         public static BlockEntry<TrashItemBlock> TRASH_ITEM;
         public static BlockEntry<ValveFluidBlock> VALVE_FLUID;
         public static BlockEntry<ValveLoadBlock> VALVE_LOAD;
+        public static BlockEntry<TechnologyEngineeringBlock> TECHNOLOGY_ENGINEERING;
 
         private static void init() {
             BARREL_CREATIVE = new BlockEntry<>(
@@ -93,6 +94,12 @@ public class ITBlocks {
                     "valve_load",
                     () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
                     p -> new ValveLoadBlock(ValveLoadBlockEntity::new, p)
+            );
+
+            TECHNOLOGY_ENGINEERING = new BlockEntry<>(
+                    "technology_engineering",
+                    () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F),
+                    TechnologyEngineeringBlock::new
             );
         }
     }

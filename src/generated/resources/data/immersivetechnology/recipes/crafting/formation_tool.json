@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "E": {
+      "tag": "forge:ingots/electrum"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "pattern": [
+    " I ",
+    " EI",
+    "I  "
+  ],
+  "result": {
+    "item": "immersivetechnology:formation_tool"
+  },
+  "show_notification": true
+}
