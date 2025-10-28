@@ -2,6 +2,7 @@
 import os
 import torch
 import itertools
+import numpy as np
 
 # Worker initialization function
 def init_worker():
@@ -92,3 +93,33 @@ def parse_thresh_val(s, default=None):
     if s == 'x':
         return -1
     return int(s)
+
+def extract_aabbs_from_occupied(occupied_np, res=16, force_merge=False):
+    if occupied_np.sum() == 0:
+        return []
+    if occupied_np.all():
+        return [(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)]
+    occupied = occupied_np.tolist()
+    visited = [[[False for _ in range(res)] for _ in range(res)] for _ in range(res)]
+    block_aabbs = []
+    for i in range(res):
+        for j in range(res):
+            for k in range(res):
+                if occupied[i][j][k] and not visited[i][j][k]:
+                    dx, dy, dz = find_max_box(occupied, visited, i, j, k, res)
+                    minx = i / res
+                    miny = j / res
+                    minz = k / res
+                    maxx = (i + dx) / res
+                    maxy = (j + dy) / res
+                    maxz = (k + dz) / res
+                    block_aabbs.append((minx, miny, minz, maxx, maxy, maxz))
+    block_aabbs = [a for a in block_aabbs if (a[3] - a[0]) * (a[4] - a[1]) * (a[5] - a[2]) > 0.001]
+    pre_merge = list(block_aabbs)
+    block_aabbs = merge_aabbs(block_aabbs)
+    if not force_merge:
+        vox_vol = occupied_np.sum() / (res ** 3)
+        aabb_vol = sum((a[3] - a[0]) * (a[4] - a[1]) * (a[5] - a[2]) for a in block_aabbs)
+        if abs(aabb_vol - vox_vol) > 0.01 * vox_vol:
+            block_aabbs = pre_merge
+    return block_aabbs

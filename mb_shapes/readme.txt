@@ -80,5 +80,11 @@ Script arguments:
     --dml-index <int>	Default: None	Description: DirectML device index to use (overrides automatic enumeration).
     --single-thread	Default: False	Description: Force single-threaded processing even on CPU.
 
+    # Low-res merge option
+    --low-res-merge	Default: False	Description: Enable low-res merge for angled faces.
+
+    # Copy AABB option
+    --copy-aabb <str> (append)	Default: []	Description: Copy AABBs: "from_bx,from_by,from_bz to_bx,to_by,to_bz" (use quotes if needed). Applied as the final step after AABB extraction.
+
 	Example:
-		bb_shape.py ..\Boiler\single\boiler_new_sterilized.bbmodel --thresh '8,4,4' --pbg 'x' --gap-passes 4
+		bb_shape.py ..\Boiler\single\boiler.bbmodel ..\Boiler\boiler.bbmodel --thresh "4,10,4" --gap-passes 4 --no-supplementary
