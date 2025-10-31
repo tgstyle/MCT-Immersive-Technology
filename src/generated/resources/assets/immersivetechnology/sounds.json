@@ -77,6 +77,12 @@
     ],
     "subtitle": "subtitles.immersivetechnology.melting_crucible"
   },
+  "pressure_release": {
+    "sounds": [
+      "immersivetechnology:pressure_release"
+    ],
+    "subtitle": "subtitles.immersivetechnology.pressure_release"
+  },
   "solar_melter": {
     "sounds": [
       {

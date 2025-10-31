@@ -33,6 +33,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -155,6 +156,8 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         pumpOutputs(ctx);
         State state = ctx.getState();
         boolean previouslyActive = state.active;
+        int previousSpeed = state.speed;
+        boolean currentlyEnabled = state.rsState.isEnabled(ctx);
         state.active = false;
         Level level = ctx.getLevel().getRawLevel();
         Direction outputFacing = ctx.getLevel().getOrientation().front();
@@ -178,7 +181,8 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             state.connectedFriction = additionalFriction;
             state.inertia = new RotationInertiaProcess(BASE_MASS + state.connectedMass, DRIVE_TORQUE, FRICTION + state.connectedFriction);
         }
-        boolean canRun = state.rsState.isEnabled(ctx) && hasConsumer;
+        boolean canRun = currentlyEnabled && hasConsumer;
+        int prevBurnRemaining = state.burnRemaining;
         if (!canRun) {
             state.burnRemaining = 0;
             state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate());
@@ -202,7 +206,16 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
                 } else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
             }
         }
-        if (previouslyActive != state.active || state.speed % 20 == 0) {
+        if (state.pressureReleaseCooldown > 0) { state.pressureReleaseCooldown--; }
+        boolean triggerRelease = !state.wasEnabled && currentlyEnabled;
+        if (prevBurnRemaining == 0 && state.burnRemaining > 0) { triggerRelease = true; }
+        if (triggerRelease && state.pressureReleaseCooldown <= 0) {
+            BlockPos soundPos = ctx.getLevel().toAbsolute(RUNNING_SOUND_POI);
+            level.playSound(null, soundPos, ITSounds.pressure_release.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+            state.pressureReleaseCooldown = 200;
+        }
+        state.wasEnabled = currentlyEnabled;
+        if (previouslyActive != state.active || state.speed % 5 == 0 || previousSpeed != state.speed) {
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
         }
@@ -263,6 +276,8 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         private double connectedMass = 0;
         private double connectedFriction = 0;
         private RotationInertiaProcess inertia;
+        private int pressureReleaseCooldown = 0;
+        private boolean wasEnabled = false;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -285,6 +300,8 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             nbt.putBoolean("active", active);
             nbt.putInt("burnRemaining", burnRemaining);
             nbt.put("tanks", tanks.toNBT());
+            nbt.putInt("pressureReleaseCooldown", pressureReleaseCooldown);
+            nbt.putBoolean("wasEnabled", wasEnabled);
         }
 
         @Override
@@ -293,6 +310,8 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             active = nbt.getBoolean("active");
             burnRemaining = nbt.getInt("burnRemaining");
             tanks.readNBT(nbt.getCompound("tanks"));
+            pressureReleaseCooldown = nbt.getInt("pressureReleaseCooldown");
+            wasEnabled = nbt.getBoolean("wasEnabled");
         }
 
         @Override

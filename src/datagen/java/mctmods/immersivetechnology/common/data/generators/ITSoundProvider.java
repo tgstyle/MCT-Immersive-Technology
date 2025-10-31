@@ -24,6 +24,7 @@ public class ITSoundProvider extends SoundDefinitionsProvider {
         add(ITSounds.gasStarter.get(), definition().subtitle("subtitles." + ITLib.MODID + ".gas_starter").with(sound(ITLib.MODID + ":gas_starter").volume(1.0f)));
         add(ITSounds.heatExchanger.get(), definition().subtitle("subtitles." + ITLib.MODID + ".heat_exchanger").with(sound(ITLib.MODID + ":heat_exchanger").volume(1.0f)));
         add(ITSounds.meltingCrucible.get(), definition().subtitle("subtitles." + ITLib.MODID + ".melting_crucible").with(sound(ITLib.MODID + ":melting_crucible").volume(1.0f)));
+        add(ITSounds.pressure_release.get(), definition().subtitle("subtitles." + ITLib.MODID + ".pressure_release").with(sound(ITLib.MODID + ":pressure_release").volume(1.0f)));
         add(ITSounds.steamTurbine.get(), definition().subtitle("subtitles." + ITLib.MODID + ".steam_turbine").with(sound(ITLib.MODID + ":steam_turbine").volume(1.0f)));
         add(ITSounds.solarMelter.get(), definition().subtitle("subtitles." + ITLib.MODID + ".solar_melter").with(sound(ITLib.MODID + ":solar_melter").attenuationDistance(64).volume(1.0f)));
         add(ITSounds.solarTower.get(), definition().subtitle("subtitles." + ITLib.MODID + ".solar_tower").with(sound(ITLib.MODID + ":solar_tower").attenuationDistance(64).volume(1.0f)));

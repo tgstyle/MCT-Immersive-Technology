@@ -23,15 +23,12 @@ public class ITSounds {
     public static final RegistryObject<SoundEvent> gasStarter = registerSound("gas_starter");
     public static final RegistryObject<SoundEvent> heatExchanger = registerSound("heat_exchanger");
     public static final RegistryObject<SoundEvent> meltingCrucible = registerSound("melting_crucible");
+    public static final RegistryObject<SoundEvent> pressure_release = registerSound("pressure_release");
     public static final RegistryObject<SoundEvent> steamTurbine = registerSound("steam_turbine");
     public static final RegistryObject<SoundEvent> solarMelter = registerSound("solar_melter");
     public static final RegistryObject<SoundEvent> solarTower = registerSound("solar_tower");
 
-    public static void init(IEventBus event) {
-        REGISTER.register(event);
-    }
+    public static void init(IEventBus event) { REGISTER.register(event); }
 
-    private static RegistryObject<SoundEvent> registerSound(String name) {
-        return REGISTER.register(name, () -> SoundEvent.createVariableRangeEvent(ITLib.rl(name)));
-    }
+    private static RegistryObject<SoundEvent> registerSound(String name) { return REGISTER.register(name, () -> SoundEvent.createVariableRangeEvent(ITLib.rl(name))); }
 }
