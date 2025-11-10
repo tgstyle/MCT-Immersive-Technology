@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.proxy;
 
 import mctmods.immersivetechnology.client.gui.*;
+import mctmods.immersivetechnology.client.renderer.*;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
 import net.minecraft.network.chat.Component;
@@ -16,11 +17,6 @@ import mctmods.immersivetechnology.client.models.RotorModels;
 import mctmods.immersivetechnology.client.models.SolarReflectorModels;
 import mctmods.immersivetechnology.client.particles.helper.ITColoredSmokeProvider;
 import mctmods.immersivetechnology.client.particles.helper.ITSmokeCustomProvider;
-import mctmods.immersivetechnology.client.renderer.GasTurbineRenderer;
-import mctmods.immersivetechnology.client.renderer.OpenBarrelRenderer;
-import mctmods.immersivetechnology.client.renderer.SolarMelterRenderer;
-import mctmods.immersivetechnology.client.renderer.SolarReflectorRenderer;
-import mctmods.immersivetechnology.client.renderer.SteamTurbineRenderer;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockType;
 import mctmods.immersivetechnology.common.items.helper.ITFlagItem;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -127,6 +123,9 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "steam_turbine"));
             instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "steel_sheetmetal_tank"));
+            instance.addEntry(multiblock_category, multiblock.create());
         });
     }
 
@@ -202,5 +201,6 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
         registerBERenderNoContext(event, ITMultiblockProvider.GAS_TURBINE.masterBE(), GasTurbineRenderer::new);
         registerBERenderNoContext(event, ITMultiblockProvider.SOLAR_REFLECTOR.masterBE(), SolarReflectorRenderer::new);
         registerBERenderNoContext(event, ITMultiblockProvider.SOLAR_MELTER.masterBE(), SolarMelterRenderer::new);
+        registerBERenderNoContext(event, ITMultiblockProvider.STEEL_SHEETMETAL_TANK.masterBE(), SteelSheetmetalTankRenderer::new);
     }
 }

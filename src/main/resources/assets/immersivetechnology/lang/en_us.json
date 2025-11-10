@@ -31,6 +31,7 @@
   "block.immersivetechnology.solar_reflector": "Solar Reflector",
   "block.immersivetechnology.solar_tower": "Solar Tower",
   "block.immersivetechnology.steam_turbine": "Steam Turbine",
+  "block.immersivetechnology.steel_sheetmetal_tank": "Steel Tank",
 
   "block.immersivetechnology.solartower.osd.vertical_stack": "Solar Towers Cannot Be Stacked Vertically",
   "block.immersivetechnology.solartower.osd.too_close": "Solar Tower Too Close To Another - Move At Least %s Blocks Away",

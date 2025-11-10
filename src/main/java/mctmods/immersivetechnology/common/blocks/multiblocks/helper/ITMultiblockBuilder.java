@@ -16,9 +16,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
 import java.lang.reflect.Field;
@@ -37,7 +37,7 @@ public class ITMultiblockBuilder<S extends IMultiblockState> extends MultiblockR
 
     public ITMultiblockBuilder<S> redstone(IMultiblockComponent.StateWrapper<S, RedstoneControl.RSState> getState, BlockPos... positions) { redstoneAware(); return selfWrappingComponent(new RedstoneControl<>(getState, positions)); }
 
-    public ITMultiblockBuilder<S> comparator(ComparatorManager<S> comparator) { withComparator(); return super.selfWrappingComponent(comparator); }
+    public ITMultiblockBuilder<S> comparator(ComparatorManager<S> comparator) { withComparator(); return selfWrappingComponent(comparator); }
 
     @SuppressWarnings("ConstantConditions")
     public ITMultiblockBuilder<S> customBEs(DeferredRegister<BlockEntityType<?>> register) {

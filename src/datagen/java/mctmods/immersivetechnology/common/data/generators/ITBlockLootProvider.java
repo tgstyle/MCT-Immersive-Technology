@@ -56,6 +56,7 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
         registerMultiblock(ITMultiblockProvider.SOLAR_REFLECTOR);
         registerMultiblock(ITMultiblockProvider.SOLAR_TOWER);
         registerMultiblock(ITMultiblockProvider.STEAM_TURBINE);
+        registerMultiblock(ITMultiblockProvider.STEEL_SHEETMETAL_TANK);
     }
 
     private void registerMultiblock(MultiblockRegistration<?> registration) { registerMultiblock(registration.block()); }

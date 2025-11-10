@@ -13,6 +13,7 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarMelterLo
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarReflectorLogic;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarTowerLogic;
 import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SteamTurbineLogic;
+import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SteelSheetmetalTankLogic;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -43,6 +44,7 @@ public enum ITStatusDataProvider implements IServerDataProvider<BlockAccessor> {
             else if (state instanceof SolarReflectorLogic.State reflector) { active = reflector.active; }
             else if (state instanceof SolarTowerLogic.State tower) { active = tower.active; fuelEmpty = tower.tanks.input().getFluid().isEmpty(); }
             else if (state instanceof SteamTurbineLogic.State steam) { active = steam.active; fuelEmpty = steam.tanks.input().getFluid().isEmpty(); }
+            else if (state instanceof SteelSheetmetalTankLogic.State tank) { active = tank.active; }
             data.putBoolean("ITActive", active);
             if (fuelEmpty) { data.putBoolean("ITFuelEmpty", true); }
         }

@@ -1,0 +1,11 @@
+Steel Tank
+Fill it up!
+<&multiblock>The Steel Tank is just a larger version of the Tank.
+
+
+
+
+
+§lOperation§r
+    - §lSteam§r is input on the top.
+    - §lExhaust Steam§r is output on the bottom.

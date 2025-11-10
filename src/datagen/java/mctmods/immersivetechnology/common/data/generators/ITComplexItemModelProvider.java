@@ -40,6 +40,7 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
         generateMultiblockModel("solar_reflector", "metal", ITMultiblockProvider.SOLAR_REFLECTOR.block(), new Vector3f(4.5f, -1.8f, -1.5f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("solar_tower", "metal", ITMultiblockProvider.SOLAR_TOWER.block(), new Vector3f(1.8f, -7.0f, -1.5f), 0.06f, 0.03f, 0.03f);
         generateMultiblockModel("steam_turbine", "metal", ITMultiblockProvider.STEAM_TURBINE.block(), new Vector3f(6.5f, -4.5f, -5.5f), 0.11f, 0.04f, 0.04f);
+        generateMultiblockModel("steel_sheetmetal_tank", "metal", ITMultiblockProvider.STEEL_SHEETMETAL_TANK.block(), new Vector3f(0f, -4.0f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
     }
 
     private TRSRModelBuilder createObjModel(String modelPath, String jsonName) {

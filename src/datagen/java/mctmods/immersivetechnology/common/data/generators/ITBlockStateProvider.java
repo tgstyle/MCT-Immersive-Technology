@@ -126,6 +126,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         genericMultiblock("alternator", "metal");
         genericMultiblock("solar_reflector", "metal");
         genericMultiblock("cooling_tower", "stone");
+        genericMultiblock("steel_sheetmetal_tank", "metal");
 
         specialActiveMultiblockMirror("boiler_solid", "metal", "boiler_solid");
 

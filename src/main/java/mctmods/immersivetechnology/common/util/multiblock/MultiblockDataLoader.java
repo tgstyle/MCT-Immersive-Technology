@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.util.multiblock;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonReader;
 import mctmods.immersivetechnology.core.lib.ITLib;
 
@@ -24,10 +25,19 @@ public class MultiblockDataLoader {
                 data = gson.fromJson(reader, MultiblockData.class);
                 reader.close();
                 for (PoIJSONSchema poi : data.pointsOfInterest) {
-                    if (poi.facingString != null && !poi.facingString.isEmpty()) {
-                        if (poi.facingString.equalsIgnoreCase("any")) { poi.relativeFace = null; }
-                        else { poi.relativeFace = RelativeBlockFace.valueOf(poi.facingString.toUpperCase()); }
-                    } else { poi.relativeFace = null; }
+                    if (poi.facing != null) {
+                        if (poi.facing.isJsonPrimitive()) {
+                            String str = poi.facing.getAsString();
+                            RelativeBlockFace face = str.isEmpty() || str.equalsIgnoreCase("any") ? null : RelativeBlockFace.valueOf(str.toUpperCase());
+                            poi.relativeFaces.add(face);
+                        } else if (poi.facing.isJsonArray()) {
+                            for (JsonElement el : poi.facing.getAsJsonArray()) {
+                                String str = el.getAsString();
+                                RelativeBlockFace face = str.isEmpty() || str.equalsIgnoreCase("any") ? null : RelativeBlockFace.valueOf(str.toUpperCase());
+                                poi.relativeFaces.add(face);
+                            }
+                        }
+                    }
                 }
             } else { ITLib.IT_LOGGER.error("{} JSON resource not found at /assets/immersivetechnology/multiblocks/{}.json", multiblockName, multiblockName); }
         } catch (Exception e) { ITLib.IT_LOGGER.error("Error loading {} from JSON", multiblockName, e); }
