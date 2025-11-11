@@ -1,7 +1,7 @@
-# Made in Blockbench 4.12.6
+# Made in Blockbench 5.0.4
 mtllib distiller.mtl
 
-o base
+o cube
 v 0.0625 1.1875 -1
 v 0.0625 1.6875 -1
 v 0.0625 1.6875 -0.9375
