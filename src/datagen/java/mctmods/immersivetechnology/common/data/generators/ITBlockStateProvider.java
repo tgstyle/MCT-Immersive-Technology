@@ -127,10 +127,10 @@ public class ITBlockStateProvider extends BlockStateProvider {
         genericMultiblock("solar_reflector", "metal");
         genericMultiblock("cooling_tower", "stone");
         genericMultiblock("steel_sheetmetal_tank", "metal");
+        genericMultiblock("boiler_liquid", "metal");
 
-        specialActiveMultiblockMirror("boiler_solid", "metal", "boiler_solid");
+        specialActiveMultiblockNoMirror("boiler_solid", "metal", "boiler_solid");
 
-        genericMultiblockMirror("boiler_liquid", "metal");
         genericMultiblockMirror("boiler_tank", "metal");
         genericMultiblockMirror("distiller", "metal");
         genericMultiblockMirror("gas_turbine", "metal");
@@ -417,21 +417,17 @@ public class ITBlockStateProvider extends BlockStateProvider {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void specialActiveMultiblockMirror(String registry_name, String block_type, String baseTextureName) {
-        ITLib.IT_LOGGER.info("Generating [{}] with Active/Mirror Multiblock Model Data", registry_name);
+    private void specialActiveMultiblockNoMirror(String registry_name, String block_type, String baseTextureName) {
+        ITLib.IT_LOGGER.info("Generating [{}] with Active Multiblock Model Data", registry_name);
         String objPath = "block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj";
         Map<String, ResourceLocation> defaultTextures = ImmutableMap.of("cube_front", modLoc("block/multiblocks/" + block_type + "/" + baseTextureName));
         Map<String, ResourceLocation> activeTextures = ImmutableMap.of("cube_front", modLoc("block/multiblocks/" + block_type + "/" + baseTextureName + "_active"));
         NongeneratedModel defaultUnsplit = obj(registry_name, modLoc(objPath), defaultTextures, innerModels);
         NongeneratedModel activeUnsplit = obj(registry_name + "_active", modLoc(objPath), activeTextures, innerModels);
-        NongeneratedModel defaultMirror = obj(registry_name + "_mirrored", modLoc(objPath.replace(".obj", "_mirrored.obj")), defaultTextures, innerModels);
-        NongeneratedModel activeMirror = obj(registry_name + "_active_mirrored", modLoc(objPath.replace(".obj", "_mirrored.obj")), activeTextures, innerModels);
         ITTemplateMultiblock multiblock = (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name);
         ModelFile defaultMain = split(defaultUnsplit, multiblock, false, block_type);
         ModelFile activeMain = split(activeUnsplit, multiblock, false, block_type);
-        ModelFile defaultMirrorModel = split(defaultMirror, multiblock, true, block_type);
-        ModelFile activeMirrorModel = split(activeMirror, multiblock, true, block_type);
-        createActiveMultiblock(multiblock::getBlock, defaultMain, activeMain, defaultMirrorModel, activeMirrorModel, ITProperties.MIRRORED, ITProperties.ACTIVE);
+        createActiveMultiblock(multiblock::getBlock, defaultMain, activeMain, null, null, null, ITProperties.ACTIVE);
     }
 
     private void createMirroredMultiblock(NongeneratedModel unsplitModel, NongeneratedModel mirror_model, ITTemplateMultiblock multiblock, String block_type) {

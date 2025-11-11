@@ -12,7 +12,6 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.logic.*;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.BoilerLiquidProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.process.BoilerSolidProcess;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.*;
-import mctmods.immersivetechnology.common.blocks.multiblocks.sub.BoilerSolidBlock;
 import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
@@ -59,13 +58,19 @@ public class ITMultiblockProvider {
                 .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockNonMirror<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
                 .customBEs(ITBlockEntities.REGISTER);
     }
+    public static <S extends IMultiblockState> ITMultiblockBuilder<S> metalNoMirrorWithActive(IMultiblockLogic<S> logic, String name) {
+        return new ITMultiblockBuilder<>(logic, name)
+                .notMirrored()
+                .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockNonMirrorActive<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
+                .customBEs(ITBlockEntities.REGISTER);
+    }
     public static final MultiblockRegistration<AlternatorLogic.State> ALTERNATOR =
             metalNoMirror(new AlternatorLogic(), "alternator")
                     .structure(() -> getMBTemplate.apply("alternator"))
                     .component(new ITDisassemblyTicker<>(AlternatorShape.DISASSEMBLY_POS), state -> null)
                     .build();
     public static final MultiblockRegistration<BoilerLiquidLogic.State> BOILER_LIQUID =
-            metal(new BoilerLiquidLogic(), "boiler_liquid")
+            metalNoMirror(new BoilerLiquidLogic(), "boiler_liquid")
                     .structure(() -> getMBTemplate.apply("boiler_liquid"))
                     .redstone(s -> s.rsState, BoilerLiquidLogic.REDSTONE_POI)
                     .component(new BoilerLiquidProcess())
@@ -74,9 +79,7 @@ public class ITMultiblockProvider {
                     .gui(ITMenuTypes.BOILER_LIQUID_MENU)
                     .build();
     public static final MultiblockRegistration<BoilerSolidLogic.State> BOILER_SOLID =
-            new ITMultiblockBuilder<>(new BoilerSolidLogic(), "boiler_solid")
-                    .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, BoilerSolidBlock::new, ITBlockItem::new)
-                    .customBEs(ITBlockEntities.REGISTER)
+            metalNoMirrorWithActive(new BoilerSolidLogic(), "boiler_solid")
                     .structure(() -> getMBTemplate.apply("boiler_solid"))
                     .redstone(s -> s.rsState, BoilerSolidLogic.REDSTONE_POI)
                     .component(new BoilerSolidProcess())
@@ -84,7 +87,7 @@ public class ITMultiblockProvider {
                     .gui(ITMenuTypes.BOILER_SOLID_MENU)
                     .build();
     public static final MultiblockRegistration<BoilerTankLogic.State> BOILER_TANK =
-            metalNoMirror(new BoilerTankLogic(), "boiler_tank")
+            metal(new BoilerTankLogic(), "boiler_tank")
                     .structure(() -> getMBTemplate.apply("boiler_tank"))
                     .component(new ITClearTank<>(BoilerTankLogic.FLUID_INPUT_POI, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.literal("Input tank cleared")))
                     .component(new ITDisassemblyTicker<>(BoilerTankShape.DISASSEMBLY_POS), state -> null)
