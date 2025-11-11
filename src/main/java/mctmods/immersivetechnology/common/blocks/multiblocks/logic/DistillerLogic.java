@@ -103,7 +103,9 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
                     () -> {
                         LocalPlayer player = Minecraft.getInstance().player;
                         if (player == null) { return 0f; }
-                        return (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
+                        float distSq = (float) player.distanceToSqr(soundPos);
+                        float attenuation = Math.max(distSq / 32f, 1f);
+                        return 1f / attenuation;
                     },
                     () -> 1f
             );
