@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.helper.ITEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelSteelBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;

@@ -1,21 +1,20 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
-import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
-import blusunrize.immersiveengineering.client.models.ModelConfigurableSides;
-import blusunrize.immersiveengineering.data.DataGenUtils;
-import blusunrize.immersiveengineering.data.models.MirroredModelBuilder;
-import blusunrize.immersiveengineering.data.models.ModelProviderUtils;
-import blusunrize.immersiveengineering.data.models.NongeneratedModels;
-import blusunrize.immersiveengineering.data.models.NongeneratedModels.NongeneratedModel;
-import blusunrize.immersiveengineering.data.models.SideConfigBuilder;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import mctmods.immersivetechnology.client.models.helper.ITModelConfigurableSides;
+import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
+import mctmods.immersivetechnology.common.data.ITDataGenUtils;
+import mctmods.immersivetechnology.common.data.models.ITMirroredModelBuilder;
+import mctmods.immersivetechnology.common.data.models.ITModelProviderUtils;
+import mctmods.immersivetechnology.common.data.models.ITNongeneratedModels;
+import mctmods.immersivetechnology.common.data.models.ITNongeneratedModels.ITNongeneratedModel;
+import mctmods.immersivetechnology.common.data.models.ITSideConfigBuilder;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
 import mctmods.immersivetechnology.core.registration.ITFluids;
@@ -71,9 +70,9 @@ public class ITBlockStateProvider extends BlockStateProvider {
     public final Map<Block, ModelFile> unsplitModels = new HashMap<>();
     protected static final Map<ResourceLocation, String> generatedParticleTextures = new HashMap<>();
     protected ExistingFileHelper existingFileHelper;
-    protected NongeneratedModels innerModels;
+    protected ITNongeneratedModels innerModels;
 
-    public ITBlockStateProvider(DataGenerator generator, ExistingFileHelper helper) { super(generator.getPackOutput(), ITLib.MODID, helper); this.existingFileHelper = helper; this.innerModels = new NongeneratedModels(generator.getPackOutput(), existingFileHelper); }
+    public ITBlockStateProvider(DataGenerator generator, ExistingFileHelper helper) { super(generator.getPackOutput(), ITLib.MODID, helper); this.existingFileHelper = helper; this.innerModels = new ITNongeneratedModels(generator.getPackOutput(), existingFileHelper); }
 
     public static class ITObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
         private ResourceLocation modelLocation;
@@ -147,8 +146,8 @@ public class ITBlockStateProvider extends BlockStateProvider {
         VariantBlockStateBuilder steelBuilder = getVariantBuilder(ITBlocks.getBlock.apply("barrel_steel"));
 
         BlockModelBuilder steelModel = models().getBuilder("block/metal/barrel_steel")
-                .customLoader(SideConfigBuilder::begin)
-                .type(ModelConfigurableSides.Type.VERTICAL)
+                .customLoader(ITSideConfigBuilder::begin)
+                .type(ITModelConfigurableSides.Type.VERTICAL)
                 .baseName(modLoc("block/metal/barrel_steel"))
                 .end();
         steelBuilder.partialState().setModels(new ConfiguredModel(steelModel));
@@ -312,7 +311,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
                 .visibility("Handle_Closed", false);
         ModelFile valveOpen = openLoader.end();
 
-        String particleTex = DataGenUtils.getTextureFromObj(modLoc("block/metal/obj/valve_fluid/valve_fluid.obj"), existingFileHelper);
+        String particleTex = ITDataGenUtils.getTextureFromObj(modLoc("block/metal/obj/valve_fluid/valve_fluid.obj"), existingFileHelper);
         valveClosedBuilder.texture("particle", particleTex);
         valveOpenBuilder.texture("particle", particleTex);
 
@@ -363,7 +362,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
                 .visibility("Handle_Closed", false);
         ModelFile valveLoadOpen = loadOpenLoader.end();
 
-        String particleTexLoad = DataGenUtils.getTextureFromObj(modLoc("block/metal/obj/valve_load/valve_load.obj"), existingFileHelper);
+        String particleTexLoad = ITDataGenUtils.getTextureFromObj(modLoc("block/metal/obj/valve_load/valve_load.obj"), existingFileHelper);
         valveLoadClosedBuilder.texture("particle", particleTexLoad);
         valveLoadOpenBuilder.texture("particle", particleTexLoad);
 
@@ -407,7 +406,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private void genericMultiblock(String registry_name, String block_type) {
         ITLib.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
-        createMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
+        createMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), (ITTemplateMultiblock)ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -422,24 +421,22 @@ public class ITBlockStateProvider extends BlockStateProvider {
         String objPath = "block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj";
         Map<String, ResourceLocation> defaultTextures = ImmutableMap.of("cube_front", modLoc("block/multiblocks/" + block_type + "/" + baseTextureName));
         Map<String, ResourceLocation> activeTextures = ImmutableMap.of("cube_front", modLoc("block/multiblocks/" + block_type + "/" + baseTextureName + "_active"));
-        NongeneratedModel defaultUnsplit = obj(registry_name, modLoc(objPath), defaultTextures, innerModels);
-        NongeneratedModel activeUnsplit = obj(registry_name + "_active", modLoc(objPath), activeTextures, innerModels);
+        ITNongeneratedModel defaultUnsplit = obj(registry_name, modLoc(objPath), defaultTextures, innerModels);
+        ITNongeneratedModel activeUnsplit = obj(registry_name + "_active", modLoc(objPath), activeTextures, innerModels);
         ITTemplateMultiblock multiblock = (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name);
         ModelFile defaultMain = split(defaultUnsplit, multiblock, false, block_type);
         ModelFile activeMain = split(activeUnsplit, multiblock, false, block_type);
         createActiveMultiblock(multiblock::getBlock, defaultMain, activeMain, null, null, null, ITProperties.ACTIVE);
     }
 
-    private void createMirroredMultiblock(NongeneratedModel unsplitModel, NongeneratedModel mirror_model, ITTemplateMultiblock multiblock, String block_type) {
+    private void createMirroredMultiblock(ITNongeneratedModel unsplitModel, ITNongeneratedModel mirror_model, ITTemplateMultiblock multiblock, String block_type) {
         final ModelFile mainModel = split(unsplitModel, multiblock, false, block_type);
         final ModelFile mirrorModel = split(mirror_model, multiblock, true, block_type);
         if (multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, mirrorModel, ITProperties.MIRRORED); }
         else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
     }
 
-    private void createMultiblock(NongeneratedModel unsplitModel, TemplateMultiblock multiblock, String block_type) { createMultiblock(unsplitModel, (ITTemplateMultiblock) multiblock, block_type); }
-
-    private void createMultiblock(NongeneratedModel unsplitModel, ITTemplateMultiblock multiblock, String block_type) {
+    private void createMultiblock(ITNongeneratedModel unsplitModel, ITTemplateMultiblock multiblock, String block_type) {
         final ModelFile mainModel = split(unsplitModel, multiblock, false, block_type);
         if (multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, split(mirror(unsplitModel, innerModels), multiblock, true, block_type), ITProperties.MIRRORED); }
         else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
@@ -481,9 +478,9 @@ public class ITBlockStateProvider extends BlockStateProvider {
         });
     }
 
-    private void loadTemplateFor(TemplateMultiblock multiblock) {
+    private void loadTemplateFor(ITTemplateMultiblock multiblock) {
         final ResourceLocation name = multiblock.getUniqueName();
-        if (TemplateMultiblock.SYNCED_CLIENT_TEMPLATES.containsKey(name)) { return; }
+        if (ITTemplateMultiblock.SYNCED_CLIENT_TEMPLATES.containsKey(name)) { return; }
         final String filePath = "structures/" + name.getPath() + ".nbt";
         int slash = filePath.indexOf('/');
         String prefix = filePath.substring(0, slash);
@@ -494,13 +491,13 @@ public class ITBlockStateProvider extends BlockStateProvider {
                 final CompoundTag nbt = NbtIo.readCompressed(input);
                 final StructureTemplate template = new StructureTemplate();
                 template.load(VanillaRegistries.createLookup().lookupOrThrow(Registries.BLOCK), nbt);
-                TemplateMultiblock.SYNCED_CLIENT_TEMPLATES.put(name, template);
+                ITTemplateMultiblock.SYNCED_CLIENT_TEMPLATES.put(name, template);
             }
         }
         catch (IOException e) { throw new RuntimeException("Failed on " + name, e); }
     }
 
-    private ModelFile split(NongeneratedModel unsplit, ITTemplateMultiblock multiblock, boolean mirror, String block_type) {
+    private ModelFile split(ITNongeneratedModel unsplit, ITTemplateMultiblock multiblock, boolean mirror, String block_type) {
         UnaryOperator<BlockPos> transform = UnaryOperator.identity();
         if (mirror) {
             loadTemplateFor(multiblock);
@@ -510,7 +507,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         return split(unsplit, multiblock, transform, block_type);
     }
 
-    private ModelFile split(NongeneratedModel unsplit, ITTemplateMultiblock multiblock, UnaryOperator<BlockPos> transform, String block_type) {
+    private ModelFile split(ITNongeneratedModel unsplit, ITTemplateMultiblock multiblock, UnaryOperator<BlockPos> transform, String block_type) {
         loadTemplateFor(multiblock);
         final Vec3i offset = multiblock.getMasterFromOriginOffset();
         Stream<Vec3i> partsStream = multiblock.getTemplate(null).blocksWithoutAir().stream().map(StructureTemplate.StructureBlockInfo::pos).map(transform).map(p -> p.subtract(offset));
@@ -518,7 +515,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         return splitModel(block_type + "/split/" + baseName + "_split", unsplit, partsStream.collect(Collectors.toList()));
     }
 
-    protected NongeneratedModel innerObj(String loc) {
+    protected ITNongeneratedModel innerObj(String loc) {
         Preconditions.checkArgument(loc.endsWith(".obj"));
         String name = loc.substring(0, loc.length() - 4);
         ResourceLocation model = modLoc(loc);
@@ -541,7 +538,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         }
         T ret = loader.end();
         ret.ao(false);
-        String particleTex = DataGenUtils.getTextureFromObj(textureModel, existingFileHelper);
+        String particleTex = ITDataGenUtils.getTextureFromObj(textureModel, existingFileHelper);
         if (particleTex.charAt(0) == '#') { particleTex = textures.get(particleTex.substring(1)).toString(); }
         ret.texture("particle", particleTex);
         generatedParticleTextures.put(ret.getLocation(), particleTex);
@@ -549,8 +546,8 @@ public class ITBlockStateProvider extends BlockStateProvider {
         return ret;
     }
 
-    protected NongeneratedModel obj(String name, ResourceLocation model, Map<String, ResourceLocation> textures, NongeneratedModels provider) {
-        NongeneratedModel base = provider.getBuilder(name);
+    protected ITNongeneratedModel obj(String name, ResourceLocation model, Map<String, ResourceLocation> textures, ITNongeneratedModels provider) {
+        ITNongeneratedModel base = provider.getBuilder(name);
         return obj(base, model, textures);
     }
 
@@ -568,9 +565,9 @@ public class ITBlockStateProvider extends BlockStateProvider {
         }
     }
 
-    protected <T extends ModelBuilder<T>> T mirror(NongeneratedModel inner, ModelProvider<T> provider) {
+    protected <T extends ModelBuilder<T>> T mirror(ITNongeneratedModel inner, ModelProvider<T> provider) {
         String path = inner.getLocation().getPath() + "_mirrored";
-        return provider.getBuilder(path).customLoader(MirroredModelBuilder::begin).inner(inner).end();
+        return provider.getBuilder(path).customLoader(ITMirroredModelBuilder::begin).inner(inner).end();
     }
 
     protected int getAngle(Direction dir) { return (int) ((dir.toYRot() + 180) % 360); }
@@ -600,6 +597,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
     protected ResourceLocation addModelsPrefix(ResourceLocation in) { return ResourceLocation.fromNamespaceAndPath(in.getNamespace(), "models/" + in.getPath()); }
 
     protected void setRenderType(@Nullable RenderType type, ModelBuilder<?>... builders) {
-        if (type != null) { final String typeName = ModelProviderUtils.getName(type); for (final ModelBuilder<?> model : builders) { model.renderType(typeName); } }
+        if (type != null) { final String typeName = ITModelProviderUtils.getName(type); for (final ModelBuilder<?> model : builders) { model.renderType(typeName); } }
     }
 }

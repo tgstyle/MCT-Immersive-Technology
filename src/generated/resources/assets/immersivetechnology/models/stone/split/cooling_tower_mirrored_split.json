@@ -15,7 +15,7 @@
         "particle": "immersivetechnology:block/multiblocks/stone/cooling_tower_top"
       }
     },
-    "loader": "immersiveengineering:mirror"
+    "loader": "immersivetechnology:mirror"
   },
   "loader": "immersiveengineering:basic_split",
   "split_parts": [

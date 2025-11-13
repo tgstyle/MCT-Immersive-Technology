@@ -1,13 +1,14 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
-import blusunrize.immersiveengineering.api.IEApi;
-import blusunrize.immersiveengineering.api.IEEnums;
 import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
 import com.google.common.base.Preconditions;
+import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -117,8 +118,8 @@ public class ITBlockInterfaces {
         }
 
         default void setMirrored(boolean mirrored) {
-            BlockState state = getState();
-            BlockState newState = state.setValue(ITProperties.MIRRORED, mirrored);
+            BlockState oldState = getState();
+            BlockState newState = oldState.setValue(ITProperties.MIRRORED, mirrored);
             setState(newState);
         }
     }
@@ -131,8 +132,8 @@ public class ITBlockInterfaces {
         }
 
         default void setActive(boolean active) {
-            BlockState state = getState();
-            BlockState newState = state.setValue(ITProperties.ACTIVE, active);
+            BlockState oldState = getState();
+            BlockState newState = oldState.setValue(ITProperties.ACTIVE, active);
             setState(newState);
         }
     }
@@ -180,7 +181,7 @@ public class ITBlockInterfaces {
                         .withOptionalParameter(LootContextParams.BLOCK_STATE, world.getBlockState(tile.getBlockPos()))
                         .withOptionalParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(tile.getBlockPos()))
                         .create(LootContextParamSets.BLOCK);
-                LootContext var10001 = (new LootContext.Builder(parms)).create(IEApi.ieLoc("pick_block"));
+                LootContext var10001 = (new LootContext.Builder(parms)).create(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "pick_block"));
                 Objects.requireNonNull(drop);
                 getBlockEntityDrop(var10001, drop::setValue);
             }
@@ -189,7 +190,7 @@ public class ITBlockInterfaces {
     }
 
     public interface IConfigurableSides {
-        IEEnums.IOSideConfig getSideConfig(Direction var1);
+        ITEnums.IOSideConfig getSideConfig(Direction var1);
         boolean toggleSide(Direction var1, Player var2);
     }
 
@@ -259,5 +260,14 @@ public class ITBlockInterfaces {
         default float getSoundRadiusSq() { return 256.0F; }
     }
 
-    public interface IBlockOverlayText extends blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText { }
+    public interface IBlockOverlayText {
+        @Nullable
+        Component[] getOverlayText(Player player, HitResult mop, boolean hammer);
+        @Deprecated
+        boolean useNixieFont(Player player, HitResult mop);
+    }
+
+    public interface IModelOffsetProvider {
+        BlockPos getModelOffset(BlockState state, Vec3i size);
+    }
 }

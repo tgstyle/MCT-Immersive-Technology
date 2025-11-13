@@ -1,23 +1,26 @@
 package mctmods.immersivetechnology.core.proxy;
 
-import mctmods.immersivetechnology.client.gui.*;
-import mctmods.immersivetechnology.client.renderer.*;
-import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
-import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
-import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.lib.manual.ManualEntry;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.Tree.InnerNode;
-import mctmods.immersivetechnology.client.models.helper.ITDynamicModel;
-import mctmods.immersivetechnology.client.models.helper.ITObjLoader;
+import mctmods.immersivetechnology.client.gui.*;
+import mctmods.immersivetechnology.client.gui.helper.ITContainerScreen;
 import mctmods.immersivetechnology.client.models.RotorModels;
 import mctmods.immersivetechnology.client.models.SolarReflectorModels;
+import mctmods.immersivetechnology.client.models.helper.ITDynamicModel;
+import mctmods.immersivetechnology.client.models.helper.ITModelConfigurableSides;
+import mctmods.immersivetechnology.client.models.helper.ITObjLoader;
+import mctmods.immersivetechnology.client.models.mirror.ITMirroredModelLoader;
+import mctmods.immersivetechnology.client.models.split.ITSplitModelLoader;
 import mctmods.immersivetechnology.client.particles.helper.ITColoredSmokeProvider;
 import mctmods.immersivetechnology.client.particles.helper.ITSmokeCustomProvider;
+import mctmods.immersivetechnology.client.renderer.*;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockType;
+import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
+import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
 import mctmods.immersivetechnology.common.items.helper.ITFlagItem;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
@@ -61,6 +64,7 @@ import java.util.function.Supplier;
 @SuppressWarnings("unused")
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ITLib.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
+
     public static final ClientProxy INSTANCE = new ClientProxy();
 
     @SubscribeEvent
@@ -170,7 +174,7 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
     @Override
     public void reinitializeGUI() {
         Screen currentScreen = Minecraft.getInstance().screen;
-        if (currentScreen instanceof IEContainerScreen) { currentScreen.init(Minecraft.getInstance(), currentScreen.width, currentScreen.height); }
+        if (currentScreen instanceof ITContainerScreen) { currentScreen.init(Minecraft.getInstance(), currentScreen.width, currentScreen.height); }
     }
 
     @Override
@@ -182,6 +186,9 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
     @SubscribeEvent
     public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
         ev.register("obj", ITObjLoader.INSTANCE);
+        ev.register(ITModelConfigurableSides.Loader.NAME.getPath(), new ITModelConfigurableSides.Loader());
+        ev.register(ITMirroredModelLoader.ID.getPath(), new ITMirroredModelLoader());
+        ev.register(ITSplitModelLoader.LOCATION.getPath(), new ITSplitModelLoader());
         RotorModels.ROTOR = new ITDynamicModel("rotor");
         RotorModels.ROTOR_EAST_WEST = new ITDynamicModel("rotor_east_west");
         SolarReflectorModels.SUPPORT = new ITDynamicModel("solar_reflector_support");

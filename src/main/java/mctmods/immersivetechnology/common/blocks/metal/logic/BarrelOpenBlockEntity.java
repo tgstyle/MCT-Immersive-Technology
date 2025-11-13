@@ -1,12 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableMap;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.helper.ITClientTickableBE;
 import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
@@ -41,7 +40,7 @@ import java.util.EnumMap;
 import java.util.Random;
 import java.util.function.Consumer;
 
-public class BarrelOpenBlockEntity extends ITBaseBlockEntity implements ITServerTickableBE, ITClientTickableBE, ITBlockInterfaces.IBlockOverlayText, ITBlockInterfaces.IPlayerInteraction, ITBlockInterfaces.IBlockEntityDrop, ITBlockInterfaces.IComparatorOverride, ITBlockInterfaces.IPlacementInteraction, IEBlockInterfaces.IConfigurableSides {
+public class BarrelOpenBlockEntity extends ITBaseBlockEntity implements ITServerTickableBE, ITClientTickableBE, ITBlockInterfaces.IBlockOverlayText, ITBlockInterfaces.IPlayerInteraction, ITBlockInterfaces.IBlockEntityDrop, ITBlockInterfaces.IComparatorOverride, ITBlockInterfaces.IPlacementInteraction, ITBlockInterfaces.IConfigurableSides {
     private static final int tankSize = 12 * FluidType.BUCKET_VOLUME;
     private static final int transferSpeed = FluidType.BUCKET_VOLUME;
 

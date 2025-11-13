@@ -4,10 +4,10 @@ import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.client.TextUtils;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.immersiveengineering.common.util.advancements.IEAdvancements;
 import blusunrize.immersiveengineering.common.util.orientation.RotationUtil;
+import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -109,19 +109,19 @@ public class FormationTool extends Item {
             }
         }
         BlockEntity tile = world.getBlockEntity(pos);
-        if (tile instanceof IEBlockInterfaces.IConfigurableSides sideConfig) {
+        if (tile instanceof ITBlockInterfaces.IConfigurableSides sideConfig) {
             Direction activeSide = ((player != null) && player.isShiftKeyDown()) ? side.getOpposite() : side;
             assert player != null;
             if (sideConfig.toggleSide(activeSide, player)) { return InteractionResult.SUCCESS; }
             else { return InteractionResult.FAIL; }
         }
         else {
-            boolean rotate = !(tile instanceof IEBlockInterfaces.IDirectionalBE) && !(tile instanceof IEBlockInterfaces.IHammerInteraction);
-            if (!rotate && tile instanceof IEBlockInterfaces.IDirectionalBE dirBE) {
+            boolean rotate = !(tile instanceof ITBlockInterfaces.IDirectionalBE) && !(tile instanceof ITBlockInterfaces.IHammerInteraction);
+            if (!rotate && tile instanceof ITBlockInterfaces.IDirectionalBE dirBE) {
                 assert player != null;
                 rotate = dirBE.canHammerRotate(side, context.getClickLocation().subtract(Vec3.atLowerCornerOf(pos)), player); }
             if (rotate && RotationUtil.rotateBlock(world, pos, player != null && (player.isShiftKeyDown() != side.equals(Direction.DOWN)))) { return InteractionResult.SUCCESS; }
-            else if (!rotate && tile instanceof IEBlockInterfaces.IHammerInteraction hammerInteraction) {
+            else if (!rotate && tile instanceof ITBlockInterfaces.IHammerInteraction hammerInteraction) {
                 assert player != null;
                 if (hammerInteraction.hammerUseSide(side, player, context.getHand(), context.getClickLocation())) { return InteractionResult.SUCCESS; }
             }

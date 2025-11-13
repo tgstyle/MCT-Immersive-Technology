@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Plane;
@@ -9,6 +8,8 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraftforge.client.model.data.ModelProperty;
+
+import java.util.Map;
 
 public class ITProperties {
     public static final DirectionProperty FACING_ALL;
@@ -32,6 +33,7 @@ public class ITProperties {
     }
 
     public static class Model {
+        public static final ModelProperty<Map<Direction, ITEnums.IOSideConfig>> SIDECONFIG = new ModelProperty<>();
         public static final ModelProperty<BlockPos> SUBMODEL_OFFSET = new ModelProperty<>();
     }
 }
