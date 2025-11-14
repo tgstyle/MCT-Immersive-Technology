@@ -10,7 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import mctmods.immersivetechnology.client.models.helper.ITDynamicModel;
 import mctmods.immersivetechnology.client.models.RotorModels;
 import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SteamTurbineLogic;
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteamTurbineLogic;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;

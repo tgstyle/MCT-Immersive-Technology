@@ -1,0 +1,204 @@
+{
+  "parent": "minecraft:block/block",
+  "dynamic": false,
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "immersivetechnology:obj",
+    "model": "immersivetechnology:models/multiblock/metal/obj/boiler_tank/boiler_tank_mirrored.obj",
+    "mtl_override": "boiler_tank.mtl",
+    "shade_quads": true,
+    "textures": {
+      "particle": "immersivetechnology:block/multiblock/metal/boiler_tank"
+    }
+  },
+  "loader": "immersiveengineering:basic_split",
+  "split_parts": [
+    [
+      1,
+      0,
+      -2
+    ],
+    [
+      1,
+      0,
+      -1
+    ],
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      -2
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      -1,
+      0,
+      -2
+    ],
+    [
+      -1,
+      0,
+      -1
+    ],
+    [
+      -1,
+      0,
+      0
+    ],
+    [
+      -2,
+      0,
+      -2
+    ],
+    [
+      -2,
+      0,
+      -1
+    ],
+    [
+      -2,
+      0,
+      0
+    ],
+    [
+      1,
+      1,
+      -2
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      0,
+      1,
+      -2
+    ],
+    [
+      0,
+      1,
+      -1
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      -1,
+      1,
+      -2
+    ],
+    [
+      -1,
+      1,
+      -1
+    ],
+    [
+      -1,
+      1,
+      0
+    ],
+    [
+      -2,
+      1,
+      -2
+    ],
+    [
+      -2,
+      1,
+      -1
+    ],
+    [
+      -2,
+      1,
+      0
+    ],
+    [
+      1,
+      -1,
+      -2
+    ],
+    [
+      1,
+      -1,
+      0
+    ],
+    [
+      0,
+      -1,
+      -2
+    ],
+    [
+      0,
+      -1,
+      -1
+    ],
+    [
+      0,
+      -1,
+      0
+    ],
+    [
+      -1,
+      -1,
+      -2
+    ],
+    [
+      -1,
+      -1,
+      -1
+    ],
+    [
+      -1,
+      -1,
+      0
+    ],
+    [
+      -2,
+      -1,
+      -2
+    ],
+    [
+      -2,
+      -1,
+      -1
+    ],
+    [
+      -2,
+      -1,
+      0
+    ],
+    [
+      1,
+      -1,
+      -1
+    ],
+    [
+      1,
+      1,
+      -1
+    ]
+  ],
+  "textures": {
+    "particle": "immersivetechnology:block/multiblock/metal/boiler_tank"
+  }
+}

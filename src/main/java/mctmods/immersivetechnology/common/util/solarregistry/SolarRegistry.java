@@ -6,7 +6,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.*;
 
-import static mctmods.immersivetechnology.common.blocks.multiblocks.logic.SolarReflectorLogic.DANCE_DURATION;
+import static mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic.DANCE_DURATION;
 
 public class SolarRegistry {
     public static final int SOLAR_MAX_RANGE = 22;

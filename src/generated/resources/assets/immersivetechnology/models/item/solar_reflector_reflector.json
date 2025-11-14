@@ -1,5 +1,5 @@
 {
   "flip_v": true,
   "loader": "forge:obj",
-  "model": "immersivetechnology:models/block/multiblock/metal/obj/solar_reflector/solar_reflector.obj"
+  "model": "immersivetechnology:models/multiblock/metal/obj/solar_reflector/solar_reflector.obj"
 }

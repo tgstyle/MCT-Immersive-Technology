@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.gui;
 
-import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

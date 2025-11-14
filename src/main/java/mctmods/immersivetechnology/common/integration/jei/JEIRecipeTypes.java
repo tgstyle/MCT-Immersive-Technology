@@ -1,15 +1,15 @@
 package mctmods.immersivetechnology.common.integration.jei;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeTypes;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerLiquidRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerSolidRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerTankRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.CoolingTowerRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.DistillerRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.GasTurbineRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarMelterRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarTowerRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SteamTurbineRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.GasTurbineRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarMelterRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SteamTurbineRecipe;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.world.item.crafting.Recipe;

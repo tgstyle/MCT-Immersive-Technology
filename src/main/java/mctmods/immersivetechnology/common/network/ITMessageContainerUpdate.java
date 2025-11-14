@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.network;
 
-import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

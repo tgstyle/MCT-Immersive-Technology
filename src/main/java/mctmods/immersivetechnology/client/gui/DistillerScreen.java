@@ -5,7 +5,7 @@ import mctmods.immersivetechnology.client.gui.helper.ITContainerScreen;
 import mctmods.immersivetechnology.client.gui.helper.ITEnergyInfoArea;
 import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.client.gui.helper.ITInfoArea;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.DistillerMenu;
+import mctmods.immersivetechnology.common.multiblocks.gui.DistillerMenu;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;

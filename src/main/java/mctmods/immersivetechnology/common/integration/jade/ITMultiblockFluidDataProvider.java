@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.integration.jade;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;

@@ -5,12 +5,12 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadBlockEntity;
-import mctmods.immersivetechnology.common.blocks.multiblocks.gui.*;
-import mctmods.immersivetechnology.common.blocks.gui.helper.ITContainerMenu;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.*;
+import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.gui.TrashItemMenu;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveFluidBlockEntity;
+import mctmods.immersivetechnology.common.multiblocks.gui.*;
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

@@ -1,0 +1,43 @@
+package mctmods.immersivetechnology.common.multiblocks.helper;
+
+import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityDummy;
+import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+
+public class ITMultiblockBlockEntityDummy<State extends IMultiblockState> extends MultiblockBlockEntityDummy<State> implements ITBlockInterfaces.IPlayerInteraction {
+    public ITMultiblockBlockEntityDummy(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState, MultiblockRegistration<State> multiblock) { super(type, worldPosition, blockState, multiblock); }
+
+    @Override
+    public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
+        IMultiblockContext<State> ctx = getHelper().getContext();
+        BlockPos posInMultiblock = getHelper().getPositionInMB();
+        Vec3 hitVec = new Vec3(hitX, hitY, hitZ);
+        BlockHitResult absoluteHit = new BlockHitResult(hitVec, side, getBlockPos(), false);
+        assert this.level != null;
+        boolean isClient = this.level.isClientSide;
+        InteractionResult result = InteractionResult.PASS;
+        for (MultiblockRegistration.ExtraComponent<State, ?> extra : getHelper().getMultiblock().extraComponents()) {
+            @SuppressWarnings("unchecked")
+            IMultiblockComponent<State> component = (IMultiblockComponent<State>) extra.component();
+            InteractionResult componentResult = component.click(ctx, posInMultiblock, player, hand, absoluteHit, isClient);
+            if (componentResult.consumesAction()) {
+                result = componentResult;
+                break;
+            }
+        }
+        return result.consumesAction();
+    }
+}

@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.integration.jei.category;
 
 import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.SolarTowerRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;

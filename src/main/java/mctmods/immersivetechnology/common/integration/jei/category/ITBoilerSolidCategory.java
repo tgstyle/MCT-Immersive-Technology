@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.integration.jei.category;
 
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerSolidRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.common.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;

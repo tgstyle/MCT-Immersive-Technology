@@ -1,8 +1,10 @@
 package mctmods.immersivetechnology.core.registration;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeTypes.TypeWithClass;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.*;
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.serializer.*;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.*;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.*;
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer.CoolingTowerRecipeSerializer;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.Recipe;

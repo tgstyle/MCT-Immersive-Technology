@@ -3,7 +3,7 @@
     "mirror": {
       "flip_v": true,
       "loader": "forge:obj",
-      "model": "immersivetechnology:models/block/multiblock/metal/obj/solar_reflector/solar_reflector_mirror.obj",
+      "model": "immersivetechnology:models/multiblock/metal/obj/solar_reflector/solar_reflector_mirror.obj",
       "transform": {
         "translation": [
           1.6,
@@ -15,12 +15,12 @@
     "reflector": {
       "flip_v": true,
       "loader": "forge:obj",
-      "model": "immersivetechnology:models/block/multiblock/metal/obj/solar_reflector/solar_reflector.obj"
+      "model": "immersivetechnology:models/multiblock/metal/obj/solar_reflector/solar_reflector.obj"
     },
     "support": {
       "flip_v": true,
       "loader": "forge:obj",
-      "model": "immersivetechnology:models/block/multiblock/metal/obj/solar_reflector/solar_reflector_support.obj",
+      "model": "immersivetechnology:models/multiblock/metal/obj/solar_reflector/solar_reflector_support.obj",
       "transform": {
         "translation": [
           1.6,

@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
-import mctmods.immersivetechnology.common.blocks.multiblocks.logic.SteelSheetmetalTankLogic.State;
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteelSheetmetalTankLogic.State;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.fluids.FluidStack;

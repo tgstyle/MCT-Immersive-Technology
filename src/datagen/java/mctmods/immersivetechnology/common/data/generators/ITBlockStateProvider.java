@@ -8,7 +8,7 @@ import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
-import mctmods.immersivetechnology.common.blocks.multiblocks.helper.ITTemplateMultiblock;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.data.ITDataGenUtils;
 import mctmods.immersivetechnology.common.data.models.ITMirroredModelBuilder;
 import mctmods.immersivetechnology.common.data.models.ITModelProviderUtils;
@@ -406,21 +406,21 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private void genericMultiblock(String registry_name, String block_type) {
         ITLib.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
-        createMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), (ITTemplateMultiblock)ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
+        createMultiblock(innerObj("multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), (ITTemplateMultiblock)ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
     }
 
     @SuppressWarnings("SameParameterValue")
     private void genericMultiblockMirror(String registry_name, String block_type) {
         ITLib.IT_LOGGER.info("Generating [{}] with Custom Mirror Multiblock Model Data", registry_name);
-        createMirroredMultiblock(innerObj("block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), innerObj("block/multiblock/" + block_type + "/obj/" + registry_name  + "/" + registry_name + "_mirrored.obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
+        createMirroredMultiblock(innerObj("multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), innerObj("multiblock/" + block_type + "/obj/" + registry_name  + "/" + registry_name + "_mirrored.obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
     }
 
     @SuppressWarnings("SameParameterValue")
     private void specialActiveMultiblockNoMirror(String registry_name, String block_type, String baseTextureName) {
         ITLib.IT_LOGGER.info("Generating [{}] with Active Multiblock Model Data", registry_name);
-        String objPath = "block/multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj";
-        Map<String, ResourceLocation> defaultTextures = ImmutableMap.of("cube_front", modLoc("block/multiblocks/" + block_type + "/" + baseTextureName));
-        Map<String, ResourceLocation> activeTextures = ImmutableMap.of("cube_front", modLoc("block/multiblocks/" + block_type + "/" + baseTextureName + "_active"));
+        String objPath = "multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj";
+        Map<String, ResourceLocation> defaultTextures = ImmutableMap.of("cube_front", modLoc("block/multiblock/" + block_type + "/" + baseTextureName));
+        Map<String, ResourceLocation> activeTextures = ImmutableMap.of("cube_front", modLoc("block/multiblock/" + block_type + "/" + baseTextureName + "_active"));
         ITNongeneratedModel defaultUnsplit = obj(registry_name, modLoc(objPath), defaultTextures, innerModels);
         ITNongeneratedModel activeUnsplit = obj(registry_name + "_active", modLoc(objPath), activeTextures, innerModels);
         ITTemplateMultiblock multiblock = (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name);
@@ -512,7 +512,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         final Vec3i offset = multiblock.getMasterFromOriginOffset();
         Stream<Vec3i> partsStream = multiblock.getTemplate(null).blocksWithoutAir().stream().map(StructureTemplate.StructureBlockInfo::pos).map(transform).map(p -> p.subtract(offset));
         String baseName = unsplit.getLocation().getPath().substring(unsplit.getLocation().getPath().lastIndexOf("/") + 1).replace(".obj", ""); // e.g., "boiler_solid"
-        return splitModel(block_type + "/split/" + baseName + "_split", unsplit, partsStream.collect(Collectors.toList()));
+        return splitModel("multiblock/" + block_type + "/split/" + baseName + "_split", unsplit, partsStream.collect(Collectors.toList()));
     }
 
     protected ITNongeneratedModel innerObj(String loc) {

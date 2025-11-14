@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.integration.jei.category;
 
-import mctmods.immersivetechnology.common.blocks.multiblocks.recipe.BoilerLiquidRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
 import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.common.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;

@@ -25,22 +25,22 @@ public class ITDynamicModelProvider extends ModelProvider<ITDynamicModelProvider
         for(Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet()) { withExistingParent(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(multiblock.getKey())).getPath(), multiblock.getValue().getLocation()); }
         getBuilder("dynamic/rotor")
                 .customLoader(ITObjModelBuilder::new)
-                .modelLocation(modLoc("models/block/multiblock/metal/obj/rotor/rotor.obj"))
+                .modelLocation(modLoc("models/multiblock/metal/obj/rotor/rotor.obj"))
                 .flipV(true)
                 .automaticCulling(false);
         getBuilder("dynamic/rotor_east_west")
                 .customLoader(ITObjModelBuilder::new)
-                .modelLocation(modLoc("models/block/multiblock/metal/obj/rotor/rotor_east_west.obj"))
+                .modelLocation(modLoc("models/multiblock/metal/obj/rotor/rotor_east_west.obj"))
                 .flipV(true)
                 .automaticCulling(false);
         getBuilder("dynamic/solar_reflector_mirror")
                 .customLoader(ITObjModelBuilder::new)
-                .modelLocation(modLoc("models/block/multiblock/metal/obj/solar_reflector/solar_reflector_mirror.obj"))
+                .modelLocation(modLoc("models/multiblock/metal/obj/solar_reflector/solar_reflector_mirror.obj"))
                 .flipV(true)
                 .automaticCulling(false);
         getBuilder("dynamic/solar_reflector_support")
                 .customLoader(ITObjModelBuilder::new)
-                .modelLocation(modLoc("models/block/multiblock/metal/obj/solar_reflector/solar_reflector_support.obj"))
+                .modelLocation(modLoc("models/multiblock/metal/obj/solar_reflector/solar_reflector_support.obj"))
                 .flipV(true)
                 .automaticCulling(false);
     }
