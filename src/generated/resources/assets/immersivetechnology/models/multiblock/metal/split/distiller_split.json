@@ -11,7 +11,7 @@
     "model": "immersivetechnology:models/multiblock/metal/obj/distiller/distiller.obj",
     "shade_quads": true,
     "textures": {
-      "particle": "immersivetechnology:block/multiblock/metal/distiller"
+      "particle": "immersivetechnology:multiblock/metal/distiller"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -133,6 +133,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblock/metal/distiller"
+    "particle": "immersivetechnology:multiblock/metal/distiller"
   }
 }

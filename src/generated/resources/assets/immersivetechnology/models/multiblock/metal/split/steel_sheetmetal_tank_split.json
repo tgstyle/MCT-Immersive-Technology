@@ -11,7 +11,7 @@
     "model": "immersivetechnology:models/multiblock/metal/obj/steel_sheetmetal_tank/steel_sheetmetal_tank.obj",
     "shade_quads": true,
     "textures": {
-      "particle": "immersivetechnology:block/multiblock/metal/steel_sheetmetal_tank"
+      "particle": "immersivetechnology:multiblock/metal/steel_sheetmetal_tank"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -208,6 +208,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblock/metal/steel_sheetmetal_tank"
+    "particle": "immersivetechnology:multiblock/metal/steel_sheetmetal_tank"
   }
 }

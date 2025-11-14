@@ -11,7 +11,7 @@
     "model": "immersivetechnology:models/multiblock/metal/obj/gas_turbine/gas_turbine.obj",
     "shade_quads": true,
     "textures": {
-      "particle": "immersivetechnology:block/multiblock/metal/gas_turbine"
+      "particle": "immersivetechnology:multiblock/metal/gas_turbine"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -323,6 +323,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblock/metal/gas_turbine"
+    "particle": "immersivetechnology:multiblock/metal/gas_turbine"
   }
 }

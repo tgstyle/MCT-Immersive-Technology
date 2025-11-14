@@ -12,7 +12,7 @@
     "mtl_override": "steam_turbine.mtl",
     "shade_quads": true,
     "textures": {
-      "particle": "immersivetechnology:block/multiblock/metal/steam_turbine"
+      "particle": "immersivetechnology:multiblock/metal/steam_turbine"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -394,6 +394,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblock/metal/steam_turbine"
+    "particle": "immersivetechnology:multiblock/metal/steam_turbine"
   }
 }

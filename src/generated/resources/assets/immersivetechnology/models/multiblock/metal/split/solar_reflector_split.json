@@ -11,7 +11,7 @@
     "model": "immersivetechnology:models/multiblock/metal/obj/solar_reflector/solar_reflector.obj",
     "shade_quads": true,
     "textures": {
-      "particle": "immersivetechnology:block/multiblock/metal/solar_reflector"
+      "particle": "immersivetechnology:multiblock/metal/solar_reflector"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -143,6 +143,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblock/metal/solar_reflector"
+    "particle": "immersivetechnology:multiblock/metal/solar_reflector"
   }
 }

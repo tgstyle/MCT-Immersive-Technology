@@ -88,7 +88,7 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
                     .modelLocation(modLoc("models/" + objPath))
                     .flipV(true)
                     .end()
-                    .texture("cube_front", modLoc("block/multiblock/metal/boiler_solid"));
+                    .texture("cube_front", modLoc("multiblock/metal/boiler_solid"));
         }
         else { model = obj(block, objPath); }
         ModelBuilder<?>.TransformsBuilder trans = model.transforms();

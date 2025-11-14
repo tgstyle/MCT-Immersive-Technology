@@ -11,7 +11,7 @@
     "model": "immersivetechnology:models/multiblock/metal/obj/solar_melter/solar_melter.obj",
     "shade_quads": true,
     "textures": {
-      "particle": "immersivetechnology:block/multiblock/metal/solar_melter"
+      "particle": "immersivetechnology:multiblock/metal/solar_melter"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -753,6 +753,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblock/metal/solar_melter"
+    "particle": "immersivetechnology:multiblock/metal/solar_melter"
   }
 }

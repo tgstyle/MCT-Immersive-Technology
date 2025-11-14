@@ -12,7 +12,7 @@
     "mtl_override": "boiler_tank.mtl",
     "shade_quads": true,
     "textures": {
-      "particle": "immersivetechnology:block/multiblock/metal/boiler_tank"
+      "particle": "immersivetechnology:multiblock/metal/boiler_tank"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -199,6 +199,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblock/metal/boiler_tank"
+    "particle": "immersivetechnology:multiblock/metal/boiler_tank"
   }
 }

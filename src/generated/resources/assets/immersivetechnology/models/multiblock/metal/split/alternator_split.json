@@ -11,7 +11,7 @@
     "model": "immersivetechnology:models/multiblock/metal/obj/alternator/alternator.obj",
     "shade_quads": true,
     "textures": {
-      "particle": "immersivetechnology:block/multiblock/metal/alternator"
+      "particle": "immersivetechnology:multiblock/metal/alternator"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -183,6 +183,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblock/metal/alternator"
+    "particle": "immersivetechnology:multiblock/metal/alternator"
   }
 }

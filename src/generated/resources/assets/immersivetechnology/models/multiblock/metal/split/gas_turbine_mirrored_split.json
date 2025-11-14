@@ -12,7 +12,7 @@
     "mtl_override": "gas_turbine.mtl",
     "shade_quads": true,
     "textures": {
-      "particle": "immersivetechnology:block/multiblock/metal/gas_turbine"
+      "particle": "immersivetechnology:multiblock/metal/gas_turbine"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -324,6 +324,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblock/metal/gas_turbine"
+    "particle": "immersivetechnology:multiblock/metal/gas_turbine"
   }
 }

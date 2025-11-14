@@ -12,7 +12,7 @@
     "mtl_override": "solar_tower.mtl",
     "shade_quads": true,
     "textures": {
-      "particle": "immersivetechnology:block/multiblock/metal/solar_tower"
+      "particle": "immersivetechnology:multiblock/metal/solar_tower"
     }
   },
   "loader": "immersiveengineering:basic_split",
@@ -814,6 +814,6 @@
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:block/multiblock/metal/solar_tower"
+    "particle": "immersivetechnology:multiblock/metal/solar_tower"
   }
 }

@@ -419,8 +419,8 @@ public class ITBlockStateProvider extends BlockStateProvider {
     private void specialActiveMultiblockNoMirror(String registry_name, String block_type, String baseTextureName) {
         ITLib.IT_LOGGER.info("Generating [{}] with Active Multiblock Model Data", registry_name);
         String objPath = "multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj";
-        Map<String, ResourceLocation> defaultTextures = ImmutableMap.of("cube_front", modLoc("block/multiblock/" + block_type + "/" + baseTextureName));
-        Map<String, ResourceLocation> activeTextures = ImmutableMap.of("cube_front", modLoc("block/multiblock/" + block_type + "/" + baseTextureName + "_active"));
+        Map<String, ResourceLocation> defaultTextures = ImmutableMap.of("cube_front", modLoc("multiblock/" + block_type + "/" + baseTextureName));
+        Map<String, ResourceLocation> activeTextures = ImmutableMap.of("cube_front", modLoc("multiblock/" + block_type + "/" + baseTextureName + "_active"));
         ITNongeneratedModel defaultUnsplit = obj(registry_name, modLoc(objPath), defaultTextures, innerModels);
         ITNongeneratedModel activeUnsplit = obj(registry_name + "_active", modLoc(objPath), activeTextures, innerModels);
         ITTemplateMultiblock multiblock = (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name);
