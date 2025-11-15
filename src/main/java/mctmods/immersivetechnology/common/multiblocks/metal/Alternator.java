@@ -26,4 +26,7 @@ public class Alternator extends ITTemplateMultiblock {
 
     @Override
     public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, AlternatorShape.CLIENT_OFFSET.getX(), AlternatorShape.CLIENT_OFFSET.getY(), AlternatorShape.CLIENT_OFFSET.getZ())); }
+
+    @Override
+    public boolean canBeMirrored() { return false; }
 }

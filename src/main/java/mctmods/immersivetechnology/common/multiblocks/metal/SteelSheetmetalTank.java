@@ -25,4 +25,7 @@ public class SteelSheetmetalTank extends ITTemplateMultiblock {
 
     @Override
     public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, SteelSheetmetalTankShape.CLIENT_OFFSET.getX(), SteelSheetmetalTankShape.CLIENT_OFFSET.getY(), SteelSheetmetalTankShape.CLIENT_OFFSET.getZ())); }
+
+    @Override
+    public boolean canBeMirrored() { return false; }
 }

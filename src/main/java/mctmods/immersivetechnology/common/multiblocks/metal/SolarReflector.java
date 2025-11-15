@@ -34,4 +34,7 @@ public class SolarReflector extends ITTemplateMultiblock {
 
     @Override
     public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, SolarReflectorShape.CLIENT_OFFSET.getX(), SolarReflectorShape.CLIENT_OFFSET.getY(), SolarReflectorShape.CLIENT_OFFSET.getZ())); }
+
+    @Override
+    public boolean canBeMirrored() { return false; }
 }
