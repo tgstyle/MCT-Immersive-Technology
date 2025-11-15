@@ -90,7 +90,7 @@ public class ITMultiblockProvider {
                     .gui(ITMenuTypes.BOILER_SOLID_MENU)
                     .build();
     public static final MultiblockRegistration<BoilerTankLogic.State> BOILER_TANK =
-            metal(new BoilerTankLogic(), "boiler_tank")
+            metalNoMirror(new BoilerTankLogic(), "boiler_tank")
                     .structure(() -> getMBTemplate.apply("boiler_tank"))
                     .component(new ITClearTank<>(BoilerTankLogic.FLUID_INPUT_POI, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.literal("Input tank cleared")))
                     .component(new ITDisassemblyTicker<>(BoilerTankShape.DISASSEMBLY_POS), state -> null)

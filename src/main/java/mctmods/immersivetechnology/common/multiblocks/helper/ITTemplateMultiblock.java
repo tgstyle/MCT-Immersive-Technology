@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.helper;
 
+import blusunrize.immersiveengineering.api.multiblocks.BlockMatcher;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
@@ -47,6 +48,11 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
 
     public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, MultiblockRegistration<?> logic) {
         super(loc, masterFromOrigin, triggerFromOrigin, size);
+        this.logic = logic;
+    }
+
+    public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, List<BlockMatcher.MatcherPredicate> additionalPredicates, MultiblockRegistration<?> logic) {
+        super(loc, masterFromOrigin, triggerFromOrigin, size, additionalPredicates);
         this.logic = logic;
     }
 

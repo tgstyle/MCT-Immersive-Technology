@@ -26,4 +26,7 @@ public class BoilerLiquid extends ITTemplateMultiblock {
 
     @Override
     public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, BoilerLiquidShape.CLIENT_OFFSET.getX(), BoilerLiquidShape.CLIENT_OFFSET.getY(), BoilerLiquidShape.CLIENT_OFFSET.getZ())); }
+
+    @Override
+    public boolean canBeMirrored() { return false; }
 }

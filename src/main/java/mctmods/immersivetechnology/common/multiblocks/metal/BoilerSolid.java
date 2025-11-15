@@ -1,6 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
+import blusunrize.immersiveengineering.api.multiblocks.BlockMatcher;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
+import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITClientMultiblockProperties;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerSolidShape;
@@ -10,13 +12,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.function.Consumer;
 
 public class BoilerSolid extends ITTemplateMultiblock {
     public static final BoilerSolid INSTANCE = new BoilerSolid();
 
-    public BoilerSolid() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/boiler_solid"), BoilerSolidShape.MASTER_POS, BoilerSolidShape.TRIGGER_POS, new BlockPos(BoilerSolidShape.WIDTH,BoilerSolidShape.HEIGHT,BoilerSolidShape.LENGTH), ITMultiblockProvider.BOILER_SOLID); }
+    public BoilerSolid() {
+        super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/boiler_solid"), BoilerSolidShape.MASTER_POS, BoilerSolidShape.TRIGGER_POS, new BlockPos(BoilerSolidShape.WIDTH,BoilerSolidShape.HEIGHT,BoilerSolidShape.LENGTH), ImmutableList.of((expected, found, world, pos) -> {
+            if (expected.getBlock() == Blocks.BLAST_FURNACE) { return BlockMatcher.Result.allow(5); }
+            return BlockMatcher.Result.DEFAULT;
+        }), ITMultiblockProvider.BOILER_SOLID);
+    }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
@@ -26,4 +34,7 @@ public class BoilerSolid extends ITTemplateMultiblock {
 
     @Override
     public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, BoilerSolidShape.CLIENT_OFFSET.getX(), BoilerSolidShape.CLIENT_OFFSET.getY(), BoilerSolidShape.CLIENT_OFFSET.getZ())); }
+
+    @Override
+    public boolean canBeMirrored() { return false; }
 }
