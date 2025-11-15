@@ -27,8 +27,12 @@ public record ITOSDRequestMessage(BlockPos pos) implements ITMessage {
                 if (player != null) {
                     Level level = player.level();
                     BlockEntity te = level.getBlockEntity(pos);
-                    if (te instanceof OSDCommonBlockEntity trash) { ITPacketHandler.sendToPlayer(player, new ITOSDSyncMessage(pos, trash.lastAcceptedAmount)); }
-                    if (te instanceof ValveCommonBlockEntity valve) { ITPacketHandler.sendToPlayer(player, new ITOSDSyncMessage(pos, valve.lastAcceptedAmount)); }
+                    if (te instanceof OSDCommonBlockEntity trash) {
+                        ITPacketHandler.sendToPlayer(player, new ITOSDSyncMessage(pos, trash.lastAcceptedAmount, 0, 0));
+                    }
+                    if (te instanceof ValveCommonBlockEntity valve) {
+                        ITPacketHandler.sendToPlayer(player, new ITOSDSyncMessage(pos, valve.lastAcceptedAmount, valve.average, valve.packetAverage));
+                    }
                 }
             }
         });

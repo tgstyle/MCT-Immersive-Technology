@@ -1,7 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
 import mctmods.immersivetechnology.common.blocks.helper.*;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
 import mctmods.immersivetechnology.common.network.ITOSDRequestMessage;
@@ -24,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.OPEN;
 
-public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implements ITServerTickableBE, ITClientTickableBE, MenuProvider, ITBlockInterfaces.IDirectionalBE, ITBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IHammerInteraction {
+public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implements ITServerTickableBE, ITClientTickableBE, MenuProvider, ITBlockInterfaces.IDirectionalBE, ITBlockInterfaces.IBlockOverlayText, ITBlockInterfaces.IHammerInteraction {
     final TranslationKey overlayNormal;
     final TranslationKey overlaySneakingFirstLine;
     final TranslationKey overlaySneakingSecondLine;
@@ -120,10 +118,6 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
     }
 
     @Override
-    @Deprecated
-    public boolean useNixieFont(@NotNull Player player, @NotNull HitResult mop) { return false; }
-
-    @Override
     public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
         packetLimit = nbt.getInt("packetLimit");
         timeLimit = nbt.getInt("timeLimit");
@@ -185,7 +179,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
     }
 
     @Override
-    public @NotNull PlacementLimitation getFacingLimitation() { return PlacementLimitation.SIDE_CLICKED; }
+    public @NotNull ITPlacementLimitation getFacingLimitation() { return ITPlacementLimitation.SIDE_CLICKED; }
 
     @Override
     public boolean mirrorFacingOnPlacement(@NotNull LivingEntity placer) { return false; }

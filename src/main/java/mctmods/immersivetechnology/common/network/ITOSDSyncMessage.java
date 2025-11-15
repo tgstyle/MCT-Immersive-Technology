@@ -1,7 +1,5 @@
 package mctmods.immersivetechnology.common.network;
 
-import java.util.function.Supplier;
-
 import mctmods.immersivetechnology.common.blocks.metal.logic.OSDCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 
@@ -13,15 +11,20 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
-public class ITOSDSyncMessage implements ITMessage {
-    private final BlockPos pos;
-    private final long amount;
+import java.util.function.Supplier;
 
-    public ITOSDSyncMessage(BlockPos pos, long amount) { this.pos = pos; this.amount = amount; }
-    public ITOSDSyncMessage(FriendlyByteBuf buf) { this.pos = buf.readBlockPos(); this.amount = buf.readLong(); }
+public record ITOSDSyncMessage(BlockPos pos, long lastAccepted, long average, int packetAverage) implements ITMessage {
+    public ITOSDSyncMessage(FriendlyByteBuf buf) {
+        this(buf.readBlockPos(), buf.readLong(), buf.readLong(), buf.readInt());
+    }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) { buf.writeBlockPos(pos); buf.writeLong(amount); }
+    public void toBytes(FriendlyByteBuf buf) {
+        buf.writeBlockPos(pos);
+        buf.writeLong(lastAccepted);
+        buf.writeLong(average);
+        buf.writeInt(packetAverage);
+    }
 
     @Override
     public void process(Supplier<NetworkEvent.Context> context) {
@@ -30,10 +33,17 @@ public class ITOSDSyncMessage implements ITMessage {
             if (ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
                 if (Minecraft.getInstance().level != null) {
                     BlockEntity te = Minecraft.getInstance().level.getBlockEntity(pos);
-                    if (te instanceof OSDCommonBlockEntity trash) { trash.lastAcceptedAmount = amount; }
-                    if (te instanceof ValveCommonBlockEntity valve) { valve.lastAcceptedAmount = amount; }
+                    if (te instanceof OSDCommonBlockEntity osd) {
+                        osd.lastAcceptedAmount = lastAccepted;
+                    }
+                    if (te instanceof ValveCommonBlockEntity valve) {
+                        valve.lastAcceptedAmount = lastAccepted;
+                        valve.average = average;
+                        valve.packetAverage = packetAverage;
+                    }
                 }
             }
         });
+        ctx.setPacketHandled(true);
     }
 }

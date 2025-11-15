@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
-import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
 import com.google.common.base.Preconditions;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
@@ -217,7 +216,7 @@ public class ITBlockInterfaces {
     public interface IDirectionalBE {
         Direction getFacing();
         void setFacing(Direction var1);
-        PlacementLimitation getFacingLimitation();
+        ITPlacementLimitation getFacingLimitation();
 
         default Direction getFacingForPlacement(BlockPlaceContext ctx) {
             Direction f = getFacingLimitation().getDirectionForPlacement(ctx);
@@ -263,8 +262,6 @@ public class ITBlockInterfaces {
     public interface IBlockOverlayText {
         @Nullable
         Component[] getOverlayText(Player player, HitResult mop, boolean hammer);
-        @Deprecated
-        boolean useNixieFont(Player player, HitResult mop);
     }
 
     public interface IModelOffsetProvider {

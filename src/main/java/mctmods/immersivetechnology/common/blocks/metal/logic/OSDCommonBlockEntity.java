@@ -41,6 +41,7 @@ public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements 
         lastAcceptedAmount = acceptedAmount;
         acceptedAmount = 0;
         secondCounter = 0;
+        markContainingBlockForUpdate(null); // ensure client sync every second
     }
 
     @Override
@@ -58,7 +59,4 @@ public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements 
         float value = ITClientConfig.perTickTrashCans ? (float)lastAcceptedAmount / 20 : lastAcceptedAmount;
         return new Component[] { Component.literal(text().format(value)) };
     }
-
-    @Override
-    public boolean useNixieFont(@NotNull Player player, @NotNull HitResult mop) { return false; }
 }

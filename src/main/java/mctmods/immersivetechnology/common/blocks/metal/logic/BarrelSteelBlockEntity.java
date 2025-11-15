@@ -135,9 +135,6 @@ public class BarrelSteelBlockEntity extends ITBaseBlockEntity implements ITServe
     }
 
     @Override
-    public boolean useNixieFont(@NotNull Player player, @NotNull HitResult mop) { return false; }
-
-    @Override
     public int getComparatorInputOverride() { return (15 * tank.getFluidAmount()) / tank.getCapacity(); }
 
     @Override

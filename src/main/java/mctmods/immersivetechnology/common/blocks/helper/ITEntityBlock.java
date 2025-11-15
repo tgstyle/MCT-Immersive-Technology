@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.common.blocks.helper;
 
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
 import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
-import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
@@ -179,7 +178,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         if (tile instanceof ITBlockInterfaces.IDirectionalBE && Utils.isHammer(heldItem) && ((ITBlockInterfaces.IDirectionalBE) tile).canHammerRotate(side, hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)), player) && !world.isClientSide) {
             Direction f = ((ITBlockInterfaces.IDirectionalBE) tile).getFacing();
             Direction oldF = f;
-            PlacementLimitation limit = ((ITBlockInterfaces.IDirectionalBE) tile).getFacingLimitation();
+            ITPlacementLimitation limit = ((ITBlockInterfaces.IDirectionalBE) tile).getFacingLimitation();
             f = switch (limit) {
                 case SIDE_CLICKED -> DirectionUtils.VALUES[Math.floorMod(f.ordinal() + (player.isShiftKeyDown() ? -1 : 1), DirectionUtils.VALUES.length)];
                 case PISTON_LIKE -> player.isShiftKeyDown() != (side.getAxisDirection() == Direction.AxisDirection.NEGATIVE) ? DirectionUtils.rotateAround(f, side.getAxis()).getOpposite() : DirectionUtils.rotateAround(f, side.getAxis());
