@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.client.models.mirror;
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
 import mctmods.immersivetechnology.client.models.util.ITModelUtils;
 import mctmods.immersivetechnology.client.models.helper.ITICacheKeyProvider;
-import mctmods.immersivetechnology.mixin.accessors.client.SimpleModelAccess;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -26,10 +25,9 @@ public record ITMirroredGeometry(UnbakedModel inner) implements IUnbakedGeometry
             if (baseResult instanceof ITICacheKeyProvider<?> cachedModel) { return new ITCachedMirroredModel<>(cachedModel); }
             throw new RuntimeException("Tried to mirror model " + inner + " which is neither simple nor cacheable");
         }
-        SimpleModelAccess access = (SimpleModelAccess) simpleModel;
         List<BakedQuad> unculledQuads = ITMirroredModelLoader.getReversedQuads(simpleModel, null);
         Map<Direction, List<BakedQuad>> culledQuads = new EnumMap<>(Direction.class);
         for (Direction d : DirectionUtils.VALUES) { culledQuads.put(d, ITMirroredModelLoader.getReversedQuads(simpleModel, d)); }
-        return new SimpleBakedModel(unculledQuads, culledQuads, baseResult.useAmbientOcclusion(), baseResult.usesBlockLight(), baseResult.isGui3d(), baseResult.getParticleIcon(ModelData.EMPTY), access.getTransformsField(), baseResult.getOverrides(), ITModelUtils.copyTypes(simpleModel), ITModelUtils.copyTypesFast(simpleModel));
+        return new SimpleBakedModel(unculledQuads, culledQuads, baseResult.useAmbientOcclusion(), baseResult.usesBlockLight(), baseResult.isGui3d(), baseResult.getParticleIcon(ModelData.EMPTY), simpleModel.getTransforms(), baseResult.getOverrides(), ITModelUtils.copyTypes(simpleModel), ITModelUtils.copyTypesFast(simpleModel));
     }
 }

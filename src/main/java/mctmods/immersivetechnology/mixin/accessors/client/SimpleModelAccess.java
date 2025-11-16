@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.mixin.accessors.client;
 
 import java.util.List;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraftforge.client.ChunkRenderTypeSet;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +14,4 @@ public interface SimpleModelAccess extends blusunrize.immersiveengineering.mixin
 
     @Accessor(remap = false)
     List<RenderType> getItemRenderTypesFast();
-
-    @Accessor(value = "transforms", remap = false)
-    ItemTransforms getTransformsField();
 }
