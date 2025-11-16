@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
-import blusunrize.immersiveengineering.api.IETags;
-import blusunrize.immersiveengineering.common.blocks.IEBaseBlock;
+import mctmods.immersivetechnology.core.registration.ITTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -107,8 +106,8 @@ public class ITBaseBlock extends Block implements ITBlock, SimpleWaterloggedBloc
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         ItemStack activeStack = player.getItemInHand(hand);
-        if (activeStack.is(IETags.hammers)) { return this.hammerUseSide(hit.getDirection(), player, hand, world, pos, hit); }
-        else if (activeStack.is(IETags.screwdrivers)) { return this.screwdriverUseSide(hit.getDirection(), player, hand, world, pos, hit); }
+        if (activeStack.is(ITTags.formationTools)) { return this.hammerUseSide(hit.getDirection(), player, hand, world, pos, hit); }
+        else if (activeStack.is(ITTags.screwdrivers)) { return this.screwdriverUseSide(hit.getDirection(), player, hand, world, pos, hit); }
         else { return super.use(state, world, pos, player, hand, hit); }
     }
 
@@ -207,8 +206,8 @@ public class ITBaseBlock extends Block implements ITBlock, SimpleWaterloggedBloc
         return !this.getStateDefinition().getProperties().contains(ITProperties.MULTIBLOCKSLAVE);
     }
 
-    public abstract static class IELadderBlock extends IEBaseBlock {
-        public IELadderBlock(BlockBehaviour.Properties material) { super(material); }
+    public abstract static class ITLadderBlock extends ITBaseBlock {
+        public ITLadderBlock(BlockBehaviour.Properties material) { super(material, true); }
 
         public boolean isLadder(BlockState state, LevelReader world, BlockPos pos, @Nullable LivingEntity entity) {
             return true;

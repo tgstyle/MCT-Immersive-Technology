@@ -1,10 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
-import blusunrize.immersiveengineering.api.client.IModelOffsetProvider;
-import blusunrize.immersiveengineering.api.energy.WrappingEnergyStorage;
-import blusunrize.immersiveengineering.api.utils.DirectionUtils;
-import blusunrize.immersiveengineering.api.utils.SafeChunkUtils;
-import blusunrize.immersiveengineering.common.util.ResettableCapability;
 import com.google.common.base.Preconditions;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import net.minecraft.core.BlockPos;
@@ -111,32 +106,32 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
         level.updateNeighborsAt(pos, newState.getBlock());
     }
 
-    private final List<ResettableCapability<?>> caps = new ArrayList<>();
+    private final List<ITResettableCapability<?>> caps = new ArrayList<>();
     private final List<Runnable> onCapInvalidate = new ArrayList<>();
 
-    protected <T> ResettableCapability<T> registerCapability(T val) {
-        ResettableCapability<T> cap = new ResettableCapability<>(val);
+    protected <T> ITResettableCapability<T> registerCapability(T val) {
+        ITResettableCapability<T> cap = new ITResettableCapability<>(val);
         caps.add(cap);
         return cap;
     }
 
     public void addCapInvalidateHook(Runnable hook) { onCapInvalidate.add(hook); }
 
-    protected ResettableCapability<IEnergyStorage> registerEnergyInput(IEnergyStorage directStorage) { return registerCapability(new WrappingEnergyStorage(directStorage, true, false, this::setChanged)); }
+    protected ITResettableCapability<IEnergyStorage> registerEnergyInput(IEnergyStorage directStorage) { return registerCapability(new ITWrappingEnergyStorage(directStorage, true, false, this::setChanged)); }
 
-    protected ResettableCapability<IEnergyStorage> registerEnergyOutput(IEnergyStorage directStorage) { return registerCapability(new WrappingEnergyStorage(directStorage, false, true, this::setChanged)); }
+    protected ITResettableCapability<IEnergyStorage> registerEnergyOutput(IEnergyStorage directStorage) { return registerCapability(new ITWrappingEnergyStorage(directStorage, false, true, this::setChanged)); }
 
-    private ResettableCapability<IFluidHandler> registerFluidHandler(IFluidTank[] tanks, boolean allowDrain, boolean allowFill) {
+    private ITResettableCapability<IFluidHandler> registerFluidHandler(IFluidTank[] tanks, boolean allowDrain, boolean allowFill) {
         return registerCapability(new ITArrayFluidHandler(tanks, allowDrain, allowFill, () -> markContainingBlockForUpdate(null)));
     }
 
-    protected ResettableCapability<IFluidHandler> registerFluidHandler(IFluidTank... tanks) { return registerFluidHandler(tanks, true, true); }
+    protected ITResettableCapability<IFluidHandler> registerFluidHandler(IFluidTank... tanks) { return registerFluidHandler(tanks, true, true); }
 
-    protected ResettableCapability<IFluidHandler> registerFluidInput(IFluidTank... tanks) { return registerFluidHandler(tanks, false, true); }
+    protected ITResettableCapability<IFluidHandler> registerFluidInput(IFluidTank... tanks) { return registerFluidHandler(tanks, false, true); }
 
-    protected ResettableCapability<IFluidHandler> registerFluidOutput(IFluidTank... tanks) { return registerFluidHandler(tanks, true, false); }
+    protected ITResettableCapability<IFluidHandler> registerFluidOutput(IFluidTank... tanks) { return registerFluidHandler(tanks, true, false); }
 
-    protected ResettableCapability<IFluidHandler> registerFluidView(IFluidTank... tanks) { return registerFluidHandler(tanks, false, false); }
+    protected ITResettableCapability<IFluidHandler> registerFluidView(IFluidTank... tanks) { return registerFluidHandler(tanks, false, false); }
 
     @Override
     public void setRemoved() {
@@ -153,7 +148,7 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
         onCapInvalidate.clear();
     }
 
-    protected void resetAllCaps() { caps.forEach(ResettableCapability::reset); }
+    protected void resetAllCaps() { caps.forEach(ITResettableCapability::reset); }
 
     private boolean isUnloaded = false;
 
@@ -211,8 +206,8 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
     public @NotNull ModelData getModelData() {
         BlockPos offset = null;
         BlockState state = getState();
-        if (this instanceof IModelOffsetProvider offsetProvider) { offset = offsetProvider.getModelOffset(state, Vec3i.ZERO); }
-        else if (state.getBlock() instanceof IModelOffsetProvider offsetProvider) { offset = offsetProvider.getModelOffset(state, Vec3i.ZERO); }
+        if (this instanceof ITModelOffsetProvider offsetProvider) { offset = offsetProvider.getModelOffset(state, Vec3i.ZERO); }
+        else if (state.getBlock() instanceof ITModelOffsetProvider offsetProvider) { offset = offsetProvider.getModelOffset(state, Vec3i.ZERO); }
         if (offset != null) { return ModelData.builder().with(ITProperties.Model.SUBMODEL_OFFSET, offset).build(); }
         return ModelData.EMPTY;
     }
@@ -237,7 +232,7 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
         int rsStrength = getLevelNonnull().getSignal(worldPosition.relative(side), side);
         if (rsStrength == 0 && this instanceof ITBlockInterfaces.IRedstoneOutput && ((ITBlockInterfaces.IRedstoneOutput) this).canConnectRedstone(side)) {
             assert level != null;
-            BlockState state = SafeChunkUtils.getBlockState(level, worldPosition.relative(side));
+            BlockState state = level.getBlockState(worldPosition.relative(side));
             if (state.getBlock() == Blocks.REDSTONE_WIRE && state.getValue(RedStoneWireBlock.POWER) > rsStrength) { rsStrength = state.getValue(RedStoneWireBlock.POWER); }
         }
         redstoneBySide.put(side, rsStrength);
@@ -251,12 +246,12 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
 
     protected int getMaxRSInput() {
         int ret = 0;
-        for (Direction d : DirectionUtils.VALUES) { ret = Math.max(ret, getRSInput(d)); }
+        for (Direction d : Direction.values()) { ret = Math.max(ret, getRSInput(d)); }
         return ret;
     }
 
     protected boolean isRSPowered() {
-        for (Direction d : DirectionUtils.VALUES) { if (getRSInput(d) > 0) { return true; } }
+        for (Direction d : Direction.values()) { if (getRSInput(d) > 0) { return true; } }
         return false;
     }
 }

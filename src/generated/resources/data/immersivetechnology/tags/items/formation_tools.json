@@ -1,0 +1,9 @@
+{
+  "values": [
+    "immersivetechnology:formation_tool",
+    {
+      "id": "immersiveengineering:hammer",
+      "required": false
+    }
+  ]
+}

@@ -26,5 +26,7 @@ public class ITItemTags extends ItemTagsProvider {
         tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", "dusts/salt"))).add(ITItems.SALT.get());
         tag(ITTags.igniters).add(Items.TORCH, Items.FLINT_AND_STEEL);
         tag(ITTags.igniters_consume).add(Items.TORCH);
+        tag(ITTags.formationTools).add(ITItems.FORMATION_TOOL.get()).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "hammer"));
+        tag(ITTags.screwdrivers).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "screwdriver"));
     }
 }

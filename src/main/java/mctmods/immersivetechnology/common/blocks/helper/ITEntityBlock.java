@@ -1,9 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
-import blusunrize.immersiveengineering.api.utils.DirectionUtils;
-import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
+import mctmods.immersivetechnology.core.registration.ITTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -63,9 +61,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     @Nullable
     @Override
     public <U extends BlockEntity> BlockEntityTicker<U> getTicker(Level world, @NotNull BlockState state, @NotNull BlockEntityType<U> type) {
-        BlockEntityTicker<U> baseTicker = getClassData().makeBaseTicker(world.isClientSide);
-        if (makeEntity instanceof MultiblockBEType<?> multiBEType && type != multiBEType.master()) { return null; }
-        return baseTicker;
+        return getClassData().makeBaseTicker(world.isClientSide);
     }
 
     private static final List<BooleanProperty> DEFAULT_OFF = ImmutableList.of(ITProperties.MULTIBLOCKSLAVE, ITProperties.ACTIVE, ITProperties.MIRRORED);
@@ -175,13 +171,17 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         float hitZ = (float) hit.getLocation().z - pos.getZ();
         ItemStack heldItem = player.getItemInHand(hand);
         BlockEntity tile = world.getBlockEntity(pos);
-        if (tile instanceof ITBlockInterfaces.IDirectionalBE && Utils.isHammer(heldItem) && ((ITBlockInterfaces.IDirectionalBE) tile).canHammerRotate(side, hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)), player) && !world.isClientSide) {
+        if (tile instanceof ITBlockInterfaces.IDirectionalBE && heldItem.is(ITTags.formationTools) && ((ITBlockInterfaces.IDirectionalBE) tile).canHammerRotate(side, hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)), player) && !world.isClientSide) {
             Direction f = ((ITBlockInterfaces.IDirectionalBE) tile).getFacing();
             Direction oldF = f;
             ITPlacementLimitation limit = ((ITBlockInterfaces.IDirectionalBE) tile).getFacingLimitation();
             f = switch (limit) {
-                case SIDE_CLICKED -> DirectionUtils.VALUES[Math.floorMod(f.ordinal() + (player.isShiftKeyDown() ? -1 : 1), DirectionUtils.VALUES.length)];
-                case PISTON_LIKE -> player.isShiftKeyDown() != (side.getAxisDirection() == Direction.AxisDirection.NEGATIVE) ? DirectionUtils.rotateAround(f, side.getAxis()).getOpposite() : DirectionUtils.rotateAround(f, side.getAxis());
+                case SIDE_CLICKED -> Direction.values()[Math.floorMod(f.ordinal() + (player.isShiftKeyDown() ? -1 : 1), 6)];
+                case PISTON_LIKE -> {
+                    Direction.Axis axis = side.getAxis();
+                    Direction rotated = rotateAround(f, axis);
+                    yield player.isShiftKeyDown() != (side.getAxisDirection() == Direction.AxisDirection.NEGATIVE) ? rotated.getOpposite() : rotated;
+                }
                 case HORIZONTAL, HORIZONTAL_PREFER_SIDE, HORIZONTAL_QUADRANT, HORIZONTAL_AXIS -> player.isShiftKeyDown() != side.equals(Direction.DOWN) ? f.getCounterClockWise() : f.getClockWise();
                 default -> f;
             };
@@ -191,6 +191,10 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
             world.sendBlockUpdated(pos, state, state, 3);
             world.blockEvent(tile.getBlockPos(), tile.getBlockState().getBlock(), 255, 0);
             return InteractionResult.SUCCESS;
+        }
+        if (tile instanceof ITBlockInterfaces.IConfigurableSides && heldItem.is(ITTags.formationTools) && !world.isClientSide) {
+            Direction configSide = player.isShiftKeyDown() ? side.getOpposite() : side;
+            if (((ITBlockInterfaces.IConfigurableSides) tile).toggleSide(configSide, player)) { return InteractionResult.SUCCESS; }
         }
         if (tile instanceof ITBlockInterfaces.IPlayerInteraction) {
             boolean b = ((ITBlockInterfaces.IPlayerInteraction) tile).interact(side, player, hand, heldItem, hitX, hitY, hitZ);
@@ -207,6 +211,11 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
             return InteractionResult.SUCCESS;
         }
         return superResult;
+    }
+
+    private static Direction rotateAround(Direction dir, Direction.Axis axis) {
+        if (dir.getAxis() == axis) { return dir; }
+        return dir.getClockWise(axis);
     }
 
     @Override
