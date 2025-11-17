@@ -14,7 +14,7 @@
       "particle": "immersivetechnology:multiblock/metal/gas_turbine"
     }
   },
-  "loader": "immersiveengineering:basic_split",
+  "loader": "immersivetechnology:basic_split",
   "split_parts": [
     [
       -1,

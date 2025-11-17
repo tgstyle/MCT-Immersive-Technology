@@ -15,7 +15,7 @@
       "particle": "immersivetechnology:multiblock/metal/solar_tower"
     }
   },
-  "loader": "immersiveengineering:basic_split",
+  "loader": "immersivetechnology:basic_split",
   "split_parts": [
     [
       2,

@@ -14,7 +14,7 @@
       "particle": "immersivetechnology:multiblock/metal/distiller"
     }
   },
-  "loader": "immersiveengineering:basic_split",
+  "loader": "immersivetechnology:basic_split",
   "split_parts": [
     [
       -1,
