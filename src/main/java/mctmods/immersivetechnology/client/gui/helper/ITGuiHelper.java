@@ -2,8 +2,11 @@ package mctmods.immersivetechnology.client.gui.helper;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import mctmods.immersivetechnology.client.renderer.helper.ITRenderTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -11,6 +14,12 @@ import net.minecraftforge.fluids.FluidStack;
 import org.joml.Matrix4f;
 
 public class ITGuiHelper {
+    public static void drawRepeatedFluidSpriteGui(MultiBufferSource buffer, PoseStack transform, FluidStack fluid, float x, float y, float w, float h) {
+        RenderType renderType = ITRenderTypes.getGuiTranslucent(InventoryMenu.BLOCK_ATLAS);
+        VertexConsumer builder = buffer.getBuffer(renderType);
+        drawRepeatedFluidSprite(builder, transform, fluid, x, y, w, h);
+    }
+
     public static void drawRepeatedFluidSprite(VertexConsumer builder, PoseStack transform, FluidStack fluid, float x, float y, float w, float h) {
         IClientFluidTypeExtensions props = IClientFluidTypeExtensions.of(fluid.getFluid());
         TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(props.getStillTexture(fluid));
@@ -42,6 +51,8 @@ public class ITGuiHelper {
             drawTexturedColoredRect(builder, transform, x + iterMaxW * iconWidth, y + iterMaxH * iconHeight, leftoverW, leftoverH, r, g, b, alpha, uMin, uMin + iconUDif * leftoverWf, vMin, vMin + iconVDif * leftoverHf);
         }
     }
+
+    public static void drawTexturedRect(VertexConsumer builder, PoseStack transform, float x, float y, float w, float h, float picSize, float u0, float u1, float v0, float v1) { drawTexturedColoredRect(builder, transform, x, y, w, h, 1f, 1f, 1f, 1f, u0 / picSize, u1 / picSize, v0 / picSize, v1 / picSize); }
 
     public static void drawTexturedColoredRect(VertexConsumer builder, PoseStack transform, float x, float y, float w, float h, float r, float g, float b, float alpha, float u0, float u1, float v0, float v1) {
         Matrix4f mat = transform.last().pose();
