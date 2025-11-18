@@ -11,6 +11,7 @@ import mctmods.immersivetechnology.common.multiblocks.helper.ITQueueProcessor;
 import mctmods.immersivetechnology.common.network.ITMessageContainerData;
 import mctmods.immersivetechnology.common.network.ITMessageContainerUpdate;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
+import mctmods.immersivetechnology.common.util.loot.ITLootFunctions;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.ITServerConfig;
@@ -55,6 +56,7 @@ public class ImmersiveTechnology {
         modEventBus.addListener(this::registerCapabilities);
         ITLib.IT_LOGGER.info("Starting Proxy Mod Construction");
         CommonProxy.modConstruction(modEventBus);
+        ITLootFunctions.init(modEventBus);
         ITLib.IT_LOGGER.info("Initializing Packet Handler");
         ITPacketHandler.initialize();
         ITLib.IT_LOGGER.info("Initializing Mixins and adding Mixin Configuration");

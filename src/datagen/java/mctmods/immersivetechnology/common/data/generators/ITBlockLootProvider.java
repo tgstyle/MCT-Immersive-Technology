@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.data.generators;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
-import blusunrize.immersiveengineering.common.util.loot.BEDropLootEntry;
-import blusunrize.immersiveengineering.common.util.loot.DropInventoryLootEntry;
-import blusunrize.immersiveengineering.data.loot.LootUtils;
+import mctmods.immersivetechnology.common.util.loot.ITBEDropLootEntry;
+import mctmods.immersivetechnology.common.util.loot.ITDropInventoryLootEntry;
+import mctmods.immersivetechnology.common.util.loot.ITMultiblockDropsLootContainer;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
@@ -31,16 +31,12 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
         registerTileDrop(ITBlocks.MetalDevices.TRASH_ENERGY.get());
         registerTileDrop(ITBlocks.MetalDevices.TRASH_FLUID.get());
         registerTileDrop(ITBlocks.MetalDevices.TRASH_ITEM.get());
-
         dropSelf(ITBlocks.MetalDevices.VALVE_FLUID.get());
         dropSelf(ITBlocks.MetalDevices.VALVE_LOAD.get());
         dropSelf(ITBlocks.MetalDevices.TECHNOLOGY_ENGINEERING.get());
-
         dropSelf(ITBlocks.Stone.REINFORCED_COKE_BRICK.get());
         dropSelf(ITBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get());
-
         registerMultiblocks();
-
         ITFluids.ALL_ENTRIES.forEach(entry -> add(entry.getBlock(), noDrop()));
     }
 
@@ -69,13 +65,13 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
         add(b.get(), builder);
     }
 
-    private LootPool.Builder dropInv() { return createPoolBuilder().add(DropInventoryLootEntry.builder()); }
+    private LootPool.Builder dropInv() { return createPoolBuilder().add(ITDropInventoryLootEntry.builder()); }
 
-    private LootPool.Builder dropOriginalBlock() { return createPoolBuilder().add(LootUtils.getMultiblockDropBuilder()); }
+    private LootPool.Builder dropOriginalBlock() { return createPoolBuilder().add(ITMultiblockDropsLootContainer.builder()); }
 
     private void registerTileDrop(Block b) { add(b, LootTable.lootTable().withPool(tileDrop())); }
 
-    private LootPool.Builder tileDrop() { return createPoolBuilder().add(BEDropLootEntry.builder()); }
+    private LootPool.Builder tileDrop() { return createPoolBuilder().add(ITBEDropLootEntry.builder()); }
 
     private LootPool.Builder createPoolBuilder() { return LootPool.lootPool().when(ExplosionCondition.survivesExplosion()); }
 

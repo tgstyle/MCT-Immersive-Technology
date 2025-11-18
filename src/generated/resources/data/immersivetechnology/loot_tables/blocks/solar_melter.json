@@ -10,7 +10,7 @@
       ],
       "entries": [
         {
-          "type": "immersiveengineering:drop_inv"
+          "type": "immersivetechnology:drop_inv"
         }
       ],
       "rolls": 1.0
@@ -24,7 +24,7 @@
       ],
       "entries": [
         {
-          "type": "immersiveengineering:multiblock"
+          "type": "immersivetechnology:multiblock"
         }
       ],
       "rolls": 1.0
