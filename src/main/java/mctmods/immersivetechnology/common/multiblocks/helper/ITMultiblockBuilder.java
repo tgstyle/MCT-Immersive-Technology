@@ -25,7 +25,6 @@ import java.lang.reflect.Field;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@SuppressWarnings("unused")
 public class ITMultiblockBuilder<S extends IMultiblockState> extends MultiblockRegistrationBuilder<S, ITMultiblockBuilder<S>> {
     private Supplier<MultiblockRegistration<S>> regSupplier = () -> { throw new IllegalStateException("Accessed multiblock registration too early"); };
 
@@ -33,11 +32,7 @@ public class ITMultiblockBuilder<S extends IMultiblockState> extends MultiblockR
 
     public ITMultiblockBuilder<S> gui(ITMenuTypes.MultiblockContainer<S, ?> menu) { return component(new ITMultiblockGui<>(menu)); }
 
-    public ITMultiblockBuilder<S> redstoneNoComputer(IMultiblockComponent.StateWrapper<S, RedstoneControl.RSState> getState, BlockPos... positions) { redstoneAware(); return selfWrappingComponent(new RedstoneControl<>(getState, false, positions)); }
-
     public ITMultiblockBuilder<S> redstone(IMultiblockComponent.StateWrapper<S, RedstoneControl.RSState> getState, BlockPos... positions) { redstoneAware(); return selfWrappingComponent(new RedstoneControl<>(getState, positions)); }
-
-    public ITMultiblockBuilder<S> comparator(ComparatorManager<S> comparator) { withComparator(); return selfWrappingComponent(comparator); }
 
     @SuppressWarnings("ConstantConditions")
     public ITMultiblockBuilder<S> customBEs(DeferredRegister<BlockEntityType<?>> register) {

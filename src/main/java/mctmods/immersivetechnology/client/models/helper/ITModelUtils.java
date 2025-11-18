@@ -35,8 +35,8 @@ import java.util.function.Function;
 
 import static blusunrize.immersiveengineering.client.ClientUtils.mc;
 
+@SuppressWarnings("unused")
 public class ITModelUtils {
-    @SuppressWarnings("unused")
     public static RenderTypeGroup copyTypes(SimpleBakedModel simpleModel) {
         SimpleModelAccess access = (SimpleModelAccess)simpleModel;
         ChunkRenderTypeSet blockTypes = access.getBlockRenderTypes();
@@ -67,7 +67,6 @@ public class ITModelUtils {
         return new Transformation(translate, leftRotation, transform.scale, rightRotation);
     }
 
-    @SuppressWarnings("unused")
     public static Set<BakedQuad> createBakedBox(Vec3 from, Vec3 to, Matrix4 matrix, Direction facing, Function<Direction, TextureAtlasSprite> textureGetter, float[] colour) { return createBakedBox(from, to, matrix, facing, vertices -> vertices, textureGetter, colour); }
 
     @Nonnull
@@ -122,13 +121,11 @@ public class ITModelUtils {
         return builder.bake(-1, facing, sprite, true);
     }
 
-    @SuppressWarnings("unused")
     public static ResourceLocation getSideTexture(@Nonnull ItemStack stack, Direction side) {
         BakedModel model = mc().getItemRenderer().getModel(stack, null, null, 0);
         return getSideTexture(model, side, null);
     }
 
-    @SuppressWarnings("unused")
     public static ResourceLocation getSideTexture(@Nonnull BlockState state, Direction side) {
         BakedModel model = mc().getBlockRenderer().getBlockModel(state);
         return getSideTexture(model, side, state);
@@ -141,7 +138,6 @@ public class ITModelUtils {
         return quads.get(0).getSprite().contents().name();
     }
 
-    @SuppressWarnings("unused")
     public static BakedQuad reverseOrder(BakedQuad in) {
         int[] oldData = in.getVertices();
         int[] newData = new int[oldData.length];

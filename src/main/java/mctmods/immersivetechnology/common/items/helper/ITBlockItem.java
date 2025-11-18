@@ -33,7 +33,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-@SuppressWarnings("unused")
 public class ITBlockItem extends BlockItem {
     public ITBlockItem(Block b, Item.Properties props) { super(b, props); }
 

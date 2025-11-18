@@ -8,7 +8,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 
-@SuppressWarnings("unused")
 public interface ITDisplayContext {
     default boolean isActive() { return false; }
 

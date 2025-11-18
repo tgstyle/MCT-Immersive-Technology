@@ -5,14 +5,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-@SuppressWarnings("unused")
 public record ITArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boolean allowFill, Runnable afterTransfer) implements IFluidHandler {
     public ITArrayFluidHandler(IFluidTank internal, boolean allowDrain, boolean allowFill, Runnable afterTransfer) {
         this(new IFluidTank[]{internal}, allowDrain, allowFill, afterTransfer);
-    }
-
-    public ITArrayFluidHandler(boolean allowDrain, boolean allowFill, Runnable afterTransfer, IFluidTank... tanks) {
-        this(tanks, allowDrain, allowFill, afterTransfer);
     }
 
     public static ITArrayFluidHandler drainOnly(IFluidTank internal, Runnable afterTransfer) {
@@ -23,22 +18,14 @@ public record ITArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boo
         return new ITArrayFluidHandler(internal, false, true, afterTransfer);
     }
 
-    public int getTanks() {
-        return this.internal.length;
-    }
+    public int getTanks() { return this.internal.length; }
 
     @Nonnull
-    public FluidStack getFluidInTank(int tank) {
-        return this.internal[tank].getFluid();
-    }
+    public FluidStack getFluidInTank(int tank) { return this.internal[tank].getFluid(); }
 
-    public int getTankCapacity(int tank) {
-        return this.internal[tank].getCapacity();
-    }
+    public int getTankCapacity(int tank) { return this.internal[tank].getCapacity(); }
 
-    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
-        return this.internal[tank].isFluidValid(stack);
-    }
+    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) { return this.internal[tank].isFluidValid(stack); }
 
     public int fill(FluidStack resource, IFluidHandler.FluidAction action) {
         if (this.allowFill && !resource.isEmpty()) {
@@ -50,16 +37,14 @@ public record ITArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boo
                     break;
                 }
             }
-            if (existing != null) {
-                remaining.shrink(existing.fill(remaining, action));
-            } else {
+            if (existing != null) { remaining.shrink(existing.fill(remaining, action)); }
+            else {
                 for(IFluidTank tank : this.internal) {
                     int filledHere = tank.fill(remaining, action);
                     remaining.shrink(filledHere);
                     if (filledHere > 0) { break; }
                 }
             }
-
             return resource.getAmount() - remaining.getAmount();
         } else { return 0; }
     }

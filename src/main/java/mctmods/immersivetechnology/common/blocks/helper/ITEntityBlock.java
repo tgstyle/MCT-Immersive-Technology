@@ -1,6 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.function.BiFunction;
+import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
+import org.jetbrains.annotations.NotNull;
 import mctmods.immersivetechnology.core.registration.ITTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,16 +35,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.BiFunction;
 
-@SuppressWarnings({"unused","deprecation"})
-public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements ITBlockInterfaces.IColouredBlock, EntityBlock {
-    private boolean hasColours = false;
+@SuppressWarnings("deprecation")
+public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements EntityBlock {
     private final BiFunction<BlockPos, BlockState, T> makeEntity;
     private BEClassInspectedData classData;
 
@@ -50,19 +48,13 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         this.makeEntity = makeEntity;
     }
 
-    public ITEntityBlock(RegistryObject<BlockEntityType<T>> tileType, Properties blockProps) { this(tileType, blockProps, true); }
-
-    public ITEntityBlock(RegistryObject<BlockEntityType<T>> tileType, Properties blockProps, boolean fitsIntoContainer) { this((bp, state) -> tileType.get().create(bp, state), blockProps, fitsIntoContainer); }
-
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) { return makeEntity.apply(pPos, pState); }
 
     @Nullable
     @Override
-    public <U extends BlockEntity> BlockEntityTicker<U> getTicker(Level world, @NotNull BlockState state, @NotNull BlockEntityType<U> type) {
-        return getClassData().makeBaseTicker(world.isClientSide);
-    }
+    public <U extends BlockEntity> BlockEntityTicker<U> getTicker(Level world, @NotNull BlockState state, @NotNull BlockEntityType<U> type) { return getClassData().makeBaseTicker(world.isClientSide); }
 
     private static final List<BooleanProperty> DEFAULT_OFF = ImmutableList.of(ITProperties.MULTIBLOCKSLAVE, ITProperties.ACTIVE, ITProperties.MIRRORED);
 
@@ -105,7 +97,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof ITBlockInterfaces.IBlockEntityDrop && target instanceof BlockHitResult) {
-            ItemStack s = ((ITBlockInterfaces.IBlockEntityDrop) tile).getPickBlock(player, world.getBlockState(pos), target);
+            ItemStack s = ((ITBlockInterfaces.IBlockEntityDrop) tile).getPickBlock(world.getBlockState(pos));
             if (!s.isEmpty()) { return s; }
         }
         Item item = this.asItem();
@@ -173,7 +165,6 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof ITBlockInterfaces.IDirectionalBE && heldItem.is(ITTags.formationTools) && ((ITBlockInterfaces.IDirectionalBE) tile).canHammerRotate(side, hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)), player) && !world.isClientSide) {
             Direction f = ((ITBlockInterfaces.IDirectionalBE) tile).getFacing();
-            Direction oldF = f;
             ITPlacementLimitation limit = ((ITBlockInterfaces.IDirectionalBE) tile).getFacingLimitation();
             f = switch (limit) {
                 case SIDE_CLICKED -> Direction.values()[Math.floorMod(f.ordinal() + (player.isShiftKeyDown() ? -1 : 1), 6)];
@@ -186,7 +177,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
                 default -> f;
             };
             ((ITBlockInterfaces.IDirectionalBE) tile).setFacing(f);
-            ((ITBlockInterfaces.IDirectionalBE) tile).afterRotation(oldF, f);
+            ((ITBlockInterfaces.IDirectionalBE) tile).afterRotation();
             tile.setChanged();
             world.sendBlockUpdated(pos, state, state, 3);
             world.blockEvent(tile.getBlockPos(), tile.getBlockState().getBlock(), 255, 0);
@@ -224,23 +215,6 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
             BlockEntity tile = world.getBlockEntity(pos);
             if (tile instanceof ITBaseBlockEntity) { ((ITBaseBlockEntity) tile).onNeighborBlockChange(fromPos); }
         }
-    }
-
-    public ITEntityBlock<T> setHasColours() {
-        this.hasColours = true;
-        return this;
-    }
-
-    @Override
-    public boolean hasCustomBlockColours() { return hasColours; }
-
-    @Override
-    public int getRenderColour(@NotNull BlockState state, @Nullable BlockGetter worldIn, @Nullable BlockPos pos, int tintIndex) {
-        if (worldIn != null && pos != null) {
-            BlockEntity tile = worldIn.getBlockEntity(pos);
-            if (tile instanceof ITBlockInterfaces.IColouredBE) { return ((ITBlockInterfaces.IColouredBE) tile).getRenderColour(tintIndex); }
-        }
-        return 0xffffff;
     }
 
     @Override
@@ -309,11 +283,6 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     public void entityInside(@NotNull BlockState state, Level world, @NotNull BlockPos pos, @NotNull Entity entity) {
         BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof ITBaseBlockEntity) { ((ITBaseBlockEntity) te).onEntityCollision(world, entity); }
-    }
-
-    public static boolean areAllReplaceable(BlockPos start, BlockPos end, BlockPlaceContext context) {
-        Level w = context.getLevel();
-        return BlockPos.betweenClosedStream(start, end).allMatch(pos -> { BlockPlaceContext subContext = BlockPlaceContext.at(context, pos, context.getClickedFace()); return w.getBlockState(pos).canBeReplaced(subContext); });
     }
 
     private BEClassInspectedData getClassData() {

@@ -1,4 +1,5 @@
 package mctmods.immersivetechnology.client.gui;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -14,6 +15,7 @@ import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
+
 public class ValveFluidScreen extends AbstractContainerScreen<ValveFluidMenu> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("immersivetechnology", "textures/gui/valve.png");
     private final ValveCommonBlockEntity tile;

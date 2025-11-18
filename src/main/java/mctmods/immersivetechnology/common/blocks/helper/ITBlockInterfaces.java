@@ -5,7 +5,6 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -19,11 +18,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -41,14 +38,8 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-@SuppressWarnings({"unused"})
 public class ITBlockInterfaces {
     public ITBlockInterfaces() { }
-
-    public interface IProcessBE {
-        int[] getCurrentProcessesStep();
-        int[] getCurrentProcessesMax();
-    }
 
     public interface IInteractionObjectIT<T extends BlockEntity & ITBlockInterfaces.IInteractionObjectIT<T>> extends MenuProvider {
         @Nullable
@@ -75,12 +66,6 @@ public class ITBlockInterfaces {
     public interface IGeneralMultiblock extends ITBlockInterfaces.BlockStateProvider {
         @Nullable
         IGeneralMultiblock master();
-
-        default boolean isDummy() {
-            BlockState state = getState();
-            if (state.hasProperty(ITProperties.MULTIBLOCKSLAVE)) { return state.getValue(ITProperties.MULTIBLOCKSLAVE); }
-            else { return true; }
-        }
     }
 
     public interface IHasDummyBlocks extends IGeneralMultiblock {
@@ -123,20 +108,6 @@ public class ITBlockInterfaces {
         }
     }
 
-    public interface IActiveState extends BlockStateProvider {
-        default boolean getIsActive() {
-            BlockState state = getState();
-            if (state.hasProperty(ITProperties.ACTIVE)) { return state.getValue(ITProperties.ACTIVE); }
-            else { return false; }
-        }
-
-        default void setActive(boolean active) {
-            BlockState oldState = getState();
-            BlockState newState = oldState.setValue(ITProperties.ACTIVE, active);
-            setState(newState);
-        }
-    }
-
     public interface IPlacementInteraction {
         void onBEPlaced(BlockPlaceContext var1);
     }
@@ -170,7 +141,7 @@ public class ITBlockInterfaces {
     public interface IBlockEntityDrop extends IPlacementInteraction {
         void getBlockEntityDrop(LootContext var1, Consumer<ItemStack> var2);
 
-        default ItemStack getPickBlock(@Nullable Player player, BlockState state, HitResult rayRes) {
+        default ItemStack getPickBlock(BlockState state) {
             BlockEntity tile = (BlockEntity) this;
             MutableObject<ItemStack> drop = new MutableObject<>(new ItemStack(state.getBlock()));
             Level var7 = tile.getLevel();
@@ -197,22 +168,6 @@ public class ITBlockInterfaces {
         void onDirectionalPlacement(Direction var1, float var2, float var3, float var4, LivingEntity var5);
     }
 
-    public interface IStateBasedDirectional extends IDirectionalBE, BlockStateProvider {
-        Property<Direction> getFacingProperty();
-
-        default Direction getFacing() {
-            BlockState state = getState();
-            if (state.hasProperty(getFacingProperty())) { return state.getValue(getFacingProperty()); }
-            else { return Direction.NORTH; }
-        }
-
-        default void setFacing(Direction facing) {
-            BlockState oldState = getState();
-            BlockState newState = oldState.setValue(getFacingProperty(), facing);
-            setState(newState);
-        }
-    }
-
     public interface IDirectionalBE {
         Direction getFacing();
         void setFacing(Direction var1);
@@ -228,16 +183,7 @@ public class ITBlockInterfaces {
 
         default boolean canHammerRotate(Direction side, Vec3 hit, LivingEntity entity) { return true; }
 
-        default void afterRotation(Direction oldDir, Direction newDir) { }
-    }
-
-    public interface IColouredBE {
-        int getRenderColour(int var1);
-    }
-
-    public interface IColouredBlock {
-        boolean hasCustomBlockColours();
-        int getRenderColour(BlockState var1, @Nullable BlockGetter var2, @Nullable BlockPos var3, int var4);
+        default void afterRotation() { }
     }
 
     public interface IRedstoneOutput {
@@ -250,21 +196,8 @@ public class ITBlockInterfaces {
         int getComparatorInputOverride();
     }
 
-    public interface ISpawnInterdiction {
-        double getInterdictionRangeSquared();
-    }
-
-    public interface ISoundBE {
-        boolean shouldPlaySound(String var1);
-        default float getSoundRadiusSq() { return 256.0F; }
-    }
-
     public interface IBlockOverlayText {
         @Nullable
         Component[] getOverlayText(Player player, HitResult mop, boolean hammer);
-    }
-
-    public interface IModelOffsetProvider {
-        BlockPos getModelOffset(BlockState state, Vec3i size);
     }
 }

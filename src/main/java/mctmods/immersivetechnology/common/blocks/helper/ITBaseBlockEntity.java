@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
 import com.google.common.base.Preconditions;
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -15,23 +14,16 @@ import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.ticks.ScheduledTick;
 import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings({"unused","deprecation"})
 public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockInterfaces.BlockStateProvider {
-    protected ITBlockInterfaces.IGeneralMultiblock tempMasterBE;
     @Nullable private BlockState overrideBlockState = null;
     private final EnumMap<Direction, Integer> redstoneBySide = new EnumMap<>(Direction.class);
 
@@ -82,8 +74,6 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
 
     public void receiveMessageFromServer(CompoundTag message) { }
 
-    public void onEntityCollision(Level world, Entity entity) { }
-
     @Override
     public boolean triggerEvent(int id, int type) {
         if (id == 0 || id == 255) { markContainingBlockForUpdate(null); return true; }
@@ -106,33 +96,6 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
         level.updateNeighborsAt(pos, newState.getBlock());
     }
 
-    private final List<ITResettableCapability<?>> caps = new ArrayList<>();
-    private final List<Runnable> onCapInvalidate = new ArrayList<>();
-
-    protected <T> ITResettableCapability<T> registerCapability(T val) {
-        ITResettableCapability<T> cap = new ITResettableCapability<>(val);
-        caps.add(cap);
-        return cap;
-    }
-
-    public void addCapInvalidateHook(Runnable hook) { onCapInvalidate.add(hook); }
-
-    protected ITResettableCapability<IEnergyStorage> registerEnergyInput(IEnergyStorage directStorage) { return registerCapability(new ITWrappingEnergyStorage(directStorage, true, false, this::setChanged)); }
-
-    protected ITResettableCapability<IEnergyStorage> registerEnergyOutput(IEnergyStorage directStorage) { return registerCapability(new ITWrappingEnergyStorage(directStorage, false, true, this::setChanged)); }
-
-    private ITResettableCapability<IFluidHandler> registerFluidHandler(IFluidTank[] tanks, boolean allowDrain, boolean allowFill) {
-        return registerCapability(new ITArrayFluidHandler(tanks, allowDrain, allowFill, () -> markContainingBlockForUpdate(null)));
-    }
-
-    protected ITResettableCapability<IFluidHandler> registerFluidHandler(IFluidTank... tanks) { return registerFluidHandler(tanks, true, true); }
-
-    protected ITResettableCapability<IFluidHandler> registerFluidInput(IFluidTank... tanks) { return registerFluidHandler(tanks, false, true); }
-
-    protected ITResettableCapability<IFluidHandler> registerFluidOutput(IFluidTank... tanks) { return registerFluidHandler(tanks, true, false); }
-
-    protected ITResettableCapability<IFluidHandler> registerFluidView(IFluidTank... tanks) { return registerFluidHandler(tanks, false, false); }
-
     @Override
     public void setRemoved() {
         if (!isUnloaded) { setRemovedIE(); }
@@ -140,15 +103,7 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
     }
 
     @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        resetAllCaps();
-        caps.clear();
-        onCapInvalidate.forEach(Runnable::run);
-        onCapInvalidate.clear();
-    }
-
-    protected void resetAllCaps() { caps.forEach(ITResettableCapability::reset); }
+    public void invalidateCaps() { super.invalidateCaps(); }
 
     private boolean isUnloaded = false;
 
@@ -169,9 +124,7 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
     @Nonnull
     public Level getLevelNonnull() { return Objects.requireNonNull(super.getLevel()); }
 
-    protected void checkLight() { checkLight(worldPosition); }
-
-    protected void checkLight(BlockPos pos) { getLevelNonnull().getBlockTicks().schedule(new ScheduledTick<>(getBlockState().getBlock(), pos, 4, 0)); }
+    public void onEntityCollision(Level world, Entity entity) { }
 
     public void setOverrideState(@Nullable BlockState state) { overrideBlockState = state; }
 
@@ -179,13 +132,11 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
     public @NotNull BlockState getBlockState() { if (overrideBlockState != null) { return overrideBlockState; } else { return super.getBlockState(); } }
 
     @Override
-    @Deprecated
     public void setBlockState(@NotNull BlockState newState) {
         BlockState old = getBlockState();
         super.setBlockState(newState);
         if (getType().isValid(old) && !getType().isValid(newState)) { setOverrideState(old); }
         else if (getType().isValid(newState)) { setOverrideState(null); }
-        resetAllCaps();
     }
 
     @Override
@@ -194,7 +145,7 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
     @Override
     public BlockState getState() { return getBlockState(); }
 
-    protected void markChunkDirty() { if (level != null && level.hasChunkAt(worldPosition)) { level.getChunkAt(worldPosition).setUnsaved(true); } }
+    protected void markChunkDirty() { if (level != null && level.hasChunk(worldPosition.getX() >> 4, worldPosition.getZ() >> 4)) { level.getChunkAt(worldPosition).setUnsaved(true); } }
 
     @Override
     public void setLevel(@NotNull Level world) {
@@ -242,12 +193,6 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
         assert level != null;
         if (level.isClientSide || !redstoneBySide.containsKey(from)) { updateRSForSide(from); }
         return redstoneBySide.get(from);
-    }
-
-    protected int getMaxRSInput() {
-        int ret = 0;
-        for (Direction d : Direction.values()) { ret = Math.max(ret, getRSInput(d)); }
-        return ret;
     }
 
     protected boolean isRSPowered() {

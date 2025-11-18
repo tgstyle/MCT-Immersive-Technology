@@ -3,19 +3,15 @@ package mctmods.immersivetechnology.common.blocks.helper;
 import mctmods.immersivetechnology.core.registration.ITTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -29,45 +25,32 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.ticks.ScheduledTick;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-@SuppressWarnings({"unused","deprecation"})
+@SuppressWarnings("deprecation")
 public class ITBaseBlock extends Block implements ITBlock, SimpleWaterloggedBlock {
-    boolean isHidden;
-    boolean hasFlavour;
-    protected int lightOpacity;
     protected final boolean notNormalBlock;
     private final boolean fitsIntoContainer;
+    boolean hasFlavour;
 
     public ITBaseBlock(BlockBehaviour.Properties blockProps, boolean fitsIntoContainer) {
         super(blockProps);
         this.fitsIntoContainer = fitsIntoContainer;
         this.notNormalBlock = !this.defaultBlockState().canOcclude();
         this.registerDefaultState(this.getInitDefaultState());
-        this.lightOpacity = -1;
     }
-
-    public ITBaseBlock setHidden(boolean shouldHide) { this.isHidden = shouldHide; return this; }
-
-    public boolean isHidden() { return this.isHidden; }
-
-    public ITBaseBlock setHasFlavour(boolean shouldHave) { this.hasFlavour = shouldHave; return this; }
 
     public String getNameForFlavour() { return Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(this)).getPath(); }
 
     public boolean hasFlavour() { return this.hasFlavour; }
 
-    public ITBaseBlock setLightOpacity(int opacity) { this.lightOpacity = opacity; return this; }
-
     @Override
     public int getLightBlock(@NotNull BlockState state, @NotNull BlockGetter worldIn, @NotNull BlockPos pos) {
-        if (this.lightOpacity != -1) { return this.lightOpacity; }
-        else { return this.notNormalBlock ? 0 : super.getLightBlock(state, worldIn, pos); }
+        return this.notNormalBlock ? 0 : super.getLightBlock(state, worldIn, pos);
     }
 
     @Override
@@ -86,16 +69,16 @@ public class ITBaseBlock extends Block implements ITBlock, SimpleWaterloggedBloc
         return state;
     }
 
+    @SuppressWarnings("unused")
     public void onIEBlockPlacedBy(BlockPlaceContext context, BlockState state) {}
 
+    @SuppressWarnings("unused")
     public boolean canIEBlockBePlaced(BlockState newState, BlockPlaceContext context) { return true; }
 
     @Override
     public void setPlacedBy(@NotNull Level worldIn, @NotNull BlockPos pos, @NotNull BlockState state, LivingEntity placer, @NotNull ItemStack stack) {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
     }
-
-    public void fillCreativeTab(CreativeModeTab.Output out) { out.accept(this); }
 
     @Override
     public boolean triggerEvent(@NotNull BlockState state, Level worldIn, @NotNull BlockPos pos, int eventID, int eventParam) {
@@ -204,39 +187,5 @@ public class ITBaseBlock extends Block implements ITBlock, SimpleWaterloggedBloc
 
     protected boolean canRotate() {
         return !this.getStateDefinition().getProperties().contains(ITProperties.MULTIBLOCKSLAVE);
-    }
-
-    public abstract static class ITLadderBlock extends ITBaseBlock {
-        public ITLadderBlock(BlockBehaviour.Properties material) { super(material, true); }
-
-        public boolean isLadder(BlockState state, LevelReader world, BlockPos pos, @Nullable LivingEntity entity) {
-            return true;
-        }
-
-        @Override
-        public void entityInside(@NotNull BlockState state, @NotNull Level worldIn, @NotNull BlockPos pos, @NotNull Entity entityIn) {
-            super.entityInside(state, worldIn, pos, entityIn);
-            if (entityIn instanceof LivingEntity && this.isLadder(state, worldIn, pos, (LivingEntity) entityIn)) {
-                applyLadderLogic(entityIn);
-            }
-        }
-
-        public static void applyLadderLogic(Entity entityIn) {
-            if (entityIn instanceof LivingEntity && !((LivingEntity) entityIn).onClimbable()) {
-                Vec3 motion = entityIn.getDeltaMovement();
-                float maxMotion = 0.15F;
-                motion = new Vec3(
-                        Mth.clamp(motion.x, -maxMotion, maxMotion),
-                        Math.max(motion.y, -maxMotion),
-                        Mth.clamp(motion.z, -maxMotion, maxMotion)
-                );
-                entityIn.fallDistance = 0.0F;
-                if (motion.y < 0.0 && entityIn instanceof Player && entityIn.isShiftKeyDown()) {
-                    motion = new Vec3(motion.x, 0.0, motion.z);
-                }
-                else if (entityIn.horizontalCollision) { motion = new Vec3(motion.x, 0.2, motion.z); }
-                entityIn.setDeltaMovement(motion);
-            }
-        }
     }
 }

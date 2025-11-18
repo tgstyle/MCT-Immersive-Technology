@@ -21,7 +21,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ITSplitModelLoader implements IGeometryLoader<ITUnbakedSplitModel> {
-
     public static final ResourceLocation LOCATION = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "basic_split");
     public static final String PARTS = "split_parts";
     public static final String INNER_MODEL = "inner_model";

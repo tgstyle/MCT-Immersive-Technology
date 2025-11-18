@@ -61,7 +61,6 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Supplier;
 
-@SuppressWarnings("unused")
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ITLib.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
 
@@ -199,8 +198,6 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
     public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) { registerBERenders(event); }
 
     private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, Supplier<BlockEntityRenderer<T>> render) { event.registerBlockEntityRenderer(type.get(), $ -> render.get()); }
-
-    private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render) { event.registerBlockEntityRenderer(type, $ -> render.get()); }
 
     public static void registerBERenders(EntityRenderersEvent.RegisterRenderers event) {
         registerBERenderNoContext(event, ITBlockEntities.BARREL_OPEN::get, OpenBarrelRenderer::new);

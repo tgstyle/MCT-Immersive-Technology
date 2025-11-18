@@ -101,6 +101,4 @@ public class ImmersiveTechnology {
     public void onServerStarting(ServerStartingEvent event) { ITLib.IT_LOGGER.info("HELLO from server starting"); }
 
     public static ResourceLocation rl(String path) { return ResourceLocation.fromNamespaceAndPath(MODID, path); }
-
-    public static ResourceLocation makeTextureLocation(String name) { return rl("textures/gui/" + name + ".png"); }
 }

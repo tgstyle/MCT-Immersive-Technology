@@ -18,9 +18,8 @@ import java.util.function.BiFunction;
 public class BarrelOpenBlock extends ITEntityBlock<BarrelOpenBlockEntity> {
     public static final EnumProperty<IOSideConfig> BOTTOM_CONFIG = EnumProperty.create("bottom_config", IOSideConfig.class);
 
-    @SuppressWarnings("unused")
     public BarrelOpenBlock(BiFunction<BlockPos, BlockState, BarrelOpenBlockEntity> makeEntity, BlockBehaviour.Properties blockProps) {
-        super(makeEntity, Properties.of().mapColor(MapColor.METAL).strength(3.0F, 20.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion());
+        super(makeEntity, blockProps);
         registerDefaultState(stateDefinition.any().setValue(BOTTOM_CONFIG, IOSideConfig.OUTPUT));
     }
 
