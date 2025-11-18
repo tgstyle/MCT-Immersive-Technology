@@ -5,12 +5,12 @@
   "minVersion": "0.8",
   "refmap": "immersivetechnology.refmap.json",
   "mixins": [
-    "MixinInitializationTracker"
+    "common.InitializationTrackerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "client": [
-    "accessors.client.SimpleModelAccess"
+    "client.SimpleModelAccessMixin"
   ]
 }

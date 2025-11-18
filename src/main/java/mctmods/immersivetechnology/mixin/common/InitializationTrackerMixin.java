@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.mixin;
+package mctmods.immersivetechnology.mixin.common;
 
 import blusunrize.immersiveengineering.api.utils.SetRestrictedField;
 import org.apache.commons.lang3.tuple.Pair;
@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Mixin(targets = "blusunrize.immersiveengineering.api.utils.SetRestrictedField$InitializationTracker", remap = false)
-public class MixinInitializationTracker {
+public class InitializationTrackerMixin {
     @Shadow @Final @Mutable
     private List<Pair<Exception, SetRestrictedField<?>>> fields;
 
