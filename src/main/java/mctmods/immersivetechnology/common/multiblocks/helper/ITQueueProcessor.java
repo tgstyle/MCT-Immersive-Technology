@@ -37,7 +37,7 @@ public class ITQueueProcessor {
         Set<ChunkPos> baseChunks = new HashSet<>();
         for (AbstractMap.SimpleEntry<BlockPos, BlockState> entry : queue) { baseChunks.add(new ChunkPos(entry.getKey())); }
         for (ChunkPos base : baseChunks) {
-            for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) { affectedChunks.add(new ChunkPos(base.x + dx, base.z + dz)); }
+            for (int dx = -5; dx <= 5; dx++) for (int dz = -5; dz <= 5; dz++) { affectedChunks.add(new ChunkPos(base.x + dx, base.z + dz)); }
         }
     }
 
@@ -57,6 +57,7 @@ public class ITQueueProcessor {
                 if (queue.isEmpty()) {
                     int minSection = lightEngine.getMinLightSection();
                     int maxSection = lightEngine.getMaxLightSection();
+                    for (ChunkPos chunk : affectedChunks) { serverLevel.getChunk(chunk.x, chunk.z); }
                     for (ChunkPos chunk : affectedChunks) {
                         lightEngine.setLightEnabled(chunk, false);
                         for (int y = minSection; y <= maxSection; ++y) {
@@ -73,8 +74,7 @@ public class ITQueueProcessor {
                 }
             }
             if (relighting) {
-                int maxUpdates = 10000;
-                while (maxUpdates-- > 0 && (!lightEngine.lightTasks.isEmpty() || lightEngine.hasLightWork())) { lightEngine.runUpdate(); }
+                lightEngine.tryScheduleUpdate();
                 if (lightEngine.lightTasks.isEmpty() && !lightEngine.hasLightWork()) {
                     ChunkMap chunkMap = serverLevel.getChunkSource().chunkMap;
                     int minSection = lightEngine.getMinLightSection();
