@@ -10,9 +10,9 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityDummy;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.base.Preconditions;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,7 +20,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -85,7 +85,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         Consumer<ItemStack> addToDrops = stack -> { if (!stack.isEmpty()) { allDrops.add(stack); } };
         if (world instanceof ServerLevel serverLevel) {
             BlockPos masterPos = withSettingsAndOffset(origin, masterFromOrigin, mirror, rot);
-            Player breakingPlayer = serverLevel.getNearestPlayer(masterPos.getX() + 0.5, masterPos.getY() + 0.5, masterPos.getZ() + 0.5, -1.0, e -> true);
+            ServerPlayer breakingPlayer = (ServerPlayer) serverLevel.getNearestPlayer(masterPos.getX() + 0.5, masterPos.getY() + 0.5, masterPos.getZ() + 0.5, -1.0, e -> true);
             IMultiblockBEHelperMaster<?> masterHelper = null;
             BlockEntity masterBE = world.getBlockEntity(masterPos);
             if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof IMultiblockBEHelperMaster<?> h) { masterHelper = h; }
@@ -104,7 +104,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                 for (ItemStack s : drops) { addToDrops.accept(s); }
                 toBreak.add(new AbstractMap.SimpleEntry<>(actualPos, templateState));
             }
-            BlockPos dropPos = origin;
+            BlockPos dropPos = breakingPlayer != null ? breakingPlayer.blockPosition() : origin;
             if (breakingPlayer != null) {
                 BlockPos playerPos = breakingPlayer.blockPosition();
                 double minDist = Double.MAX_VALUE;
@@ -119,8 +119,8 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                 }
                 if (closest != null) { dropPos = closest; }
             }
-            for (ItemStack s : allDrops) { Utils.dropStackAtPos(world, dropPos, s); }
-            pendingQueues.add(new ITQueueProcessor(world, toBreak));
+            for (ItemStack s : allDrops) { ITUtils.dropStackAtPos(world, dropPos, s); }
+            pendingQueues.add(new ITQueueProcessor(world, toBreak, breakingPlayer));
         }
     }
 
