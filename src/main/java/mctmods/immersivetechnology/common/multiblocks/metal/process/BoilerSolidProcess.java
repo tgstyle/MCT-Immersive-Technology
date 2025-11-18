@@ -45,7 +45,6 @@ public class BoilerSolidProcess implements IMultiblockComponent<BoilerSolidLogic
         else if (held.getMaxDamage() > 0) { held.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand)); }
         ctx.markMasterDirty();
         ctx.requestMasterBESync();
-        state.clientUpdateCooldown = 1;
         return InteractionResult.SUCCESS;
     }
 }

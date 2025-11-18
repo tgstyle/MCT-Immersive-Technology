@@ -124,10 +124,9 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             float r = 0.2F, g = 0.2F, b = 0.2F;
             level.addAlwaysVisibleParticle(new ColoredSmoke(r, g, b), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ);
         }
-        if (state.clientUpdateCooldown == 0 && !state.isInitialUpdateDone) {
+        if (state.needClientBlockUpdate) {
             updateAllBlocks(ctx, level, state.active);
-            state.clientUpdateCooldown = 1;
-            state.isInitialUpdateDone = true;
+            state.needClientBlockUpdate = false;
         }
     }
 
@@ -149,7 +148,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             state.active = isActive;
             update = true;
             updateAllBlocks(ctx, level, state.active);
-            state.clientUpdateCooldown = 1;
+            state.needClientBlockUpdate = true;
         }
         if (!state.pilotLit) {
             state.heatLevel = Math.max(state.heatLevel - HEAT_LOSS_PER_TICK, 0);
@@ -279,9 +278,8 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         public boolean pilotLit = false;
         public boolean active = false;
         public BooleanSupplier isSoundPlaying = () -> false;
-        public int clientUpdateCooldown = 0;
-        public boolean isInitialUpdateDone = false;
         public boolean isInitialServerUpdateDone = false;
+        public boolean needClientBlockUpdate = true;
 
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -342,6 +340,8 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             nbt.putInt("burnRemaining", burnRemaining);
             nbt.putInt("totalBurnTime", totalBurnTime);
             nbt.put("inventory", inventory.serializeNBT());
+            nbt.putBoolean("needClientBlockUpdate", needClientBlockUpdate);
+            needClientBlockUpdate = false;
         }
 
         @Override
@@ -352,6 +352,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             burnRemaining = nbt.getInt("burnRemaining");
             totalBurnTime = nbt.getInt("totalBurnTime");
             inventory.deserializeNBT(nbt.getCompound("inventory"));
+            needClientBlockUpdate = nbt.getBoolean("needClientBlockUpdate");
         }
     }
 

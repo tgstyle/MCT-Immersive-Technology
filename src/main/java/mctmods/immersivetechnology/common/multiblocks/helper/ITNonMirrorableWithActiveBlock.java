@@ -2,33 +2,29 @@ package mctmods.immersivetechnology.common.multiblocks.helper;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.NonMirrorableWithActiveBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import com.google.common.base.Preconditions;
+import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.Property;
 
 import javax.annotation.Nonnull;
 
-public class ITNonMirrorableWithActiveBlock<S extends IMultiblockState> extends NonMirrorableWithActiveBlock<S> {
-    public ITNonMirrorableWithActiveBlock(Properties properties, MultiblockRegistration<S> multiblock) { super(properties, multiblock); }
+public class ITNonMirrorableWithActiveBlock<S extends IMultiblockState> extends ITMultiblockPartBlock<S> {
+    public static final Property<Boolean> ACTIVE;
 
-    @Nonnull
-    @Override
-    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
-        BlockEntity te = level.getBlockEntity(pos);
-        if (te instanceof ITBlockInterfaces.IPlayerInteraction be) {
-            Vec3 hitVec = hit.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ());
-            if (be.interact(hit.getDirection(), player, hand, player.getItemInHand(hand), (float) hitVec.x, (float) hitVec.y, (float) hitVec.z)) {
-                return InteractionResult.sidedSuccess(level.isClientSide);
-            }
-        }
-        return super.use(state, level, pos, player, hand, hit);
+    public ITNonMirrorableWithActiveBlock(BlockBehaviour.Properties properties, MultiblockRegistration<S> multiblock) {
+        super(properties, multiblock);
+        Preconditions.checkState(!multiblock.mirrorable());
+    }
+
+    protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(ACTIVE);
+    }
+
+    static {
+        ACTIVE = ITProperties.ACTIVE;
     }
 }
