@@ -118,7 +118,7 @@ public class ITMultiblockProvider {
                     .component(new ITDisassemblyTicker<>(GasTurbineShape.DISASSEMBLY_POS), state -> null)
                     .build();
     public static final MultiblockRegistration<SolarMelterLogic.State> SOLAR_MELTER =
-            metal(new SolarMelterLogic(), "solar_melter")
+            metalNoMirror(new SolarMelterLogic(), "solar_melter")
                     .structure(() -> getMBTemplate.apply("solar_melter"))
                     .redstone(s -> s.rsState, SolarMelterLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(ImmutableList.of(SolarMelterLogic.INPUT_FLUID_POI.posInMultiblock()), s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.literal("Input tank cleared")))
@@ -131,7 +131,7 @@ public class ITMultiblockProvider {
                     .component(new ITDisassemblyTicker<>(SolarReflectorShape.DISASSEMBLY_POS), state -> null)
                     .build();
     public static final MultiblockRegistration<SolarTowerLogic.State> SOLAR_TOWER =
-            metal(new SolarTowerLogic(), "solar_tower")
+            metalNoMirror(new SolarTowerLogic(), "solar_tower")
                     .structure(() -> getMBTemplate.apply("solar_tower"))
                     .redstone(s -> s.rsState, SolarTowerLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(ImmutableList.of(SolarTowerLogic.INPUT_FLUID_POI.posInMultiblock()), s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.literal("Input tank cleared")))

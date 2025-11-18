@@ -128,13 +128,13 @@ public class ITBlockStateProvider extends BlockStateProvider {
         genericMultiblock("steel_sheetmetal_tank", "metal");
         genericMultiblock("boiler_liquid", "metal");
         genericMultiblock("boiler_tank", "metal");
+        genericMultiblock("solar_melter", "metal");
+        genericMultiblock("solar_tower", "metal");
 
         specialActiveMultiblockNoMirror("boiler_solid", "metal", "boiler_solid");
 
         genericMultiblockMirror("distiller", "metal");
         genericMultiblockMirror("gas_turbine", "metal");
-        genericMultiblockMirror("solar_melter", "metal");
-        genericMultiblockMirror("solar_tower", "metal");
         genericMultiblockMirror("steam_turbine", "metal");
 
         createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("block/stone/reinforced_coke_brick", modLoc("block/stone/reinforced_coke_brick")));
