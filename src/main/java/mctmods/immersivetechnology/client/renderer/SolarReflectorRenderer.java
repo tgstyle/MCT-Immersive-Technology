@@ -5,11 +5,11 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEH
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
-import blusunrize.immersiveengineering.client.utils.RenderUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mctmods.immersivetechnology.client.models.SolarReflectorModels;
 import mctmods.immersivetechnology.client.models.helper.ITDynamicModel;
 import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
+import mctmods.immersivetechnology.client.renderer.helper.ITRenderUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -45,14 +45,12 @@ public class SolarReflectorRenderer extends ITBaseBlockEntityRenderer<Multiblock
         Quaternionf rotY = new Quaternionf().rotateY((float)(supportAngle * Mth.DEG_TO_RAD));
         Vector3f axis = new Vector3f(dir.getStepZ(), 0, dir.getStepX());
         orientRot.transform(axis);
-        // Render support
         poseStack.pushPose();
         poseStack.translate(start.x + 0.5, start.y, start.z + 0.5);
         poseStack.mulPose(orientRot);
         poseStack.mulPose(rotY);
         renderDynamicModel(supportModel, poseStack, buffer, level, pos, packedLight);
         poseStack.popPose();
-        // Render mirror
         poseStack.pushPose();
         poseStack.translate(start.x + 0.5, start.y, start.z + 0.5);
         poseStack.mulPose(orientRot);
@@ -63,10 +61,11 @@ public class SolarReflectorRenderer extends ITBaseBlockEntityRenderer<Multiblock
         renderDynamicModel(mirrorModel, poseStack, buffer, level, pos, packedLight);
         poseStack.popPose();
     }
+
     private void renderDynamicModel(ITDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
         matrix.pushPose();
         List<BakedQuad> quads = model.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
-        RenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, false, 0xffffff, light);
+        ITRenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, false, 0xffffff, light);
         matrix.popPose();
     }
 }
