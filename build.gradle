@@ -32,7 +32,7 @@ ext.stage = versionProps.getProperty('stage') ?: ''
 println "-> build.gradle applying version: $version (build ${version_buildnumber})"
 
 group = 'mctmods.immersivetechnology'
-archivesBaseName = 'immersivetechnology'
+archivesBaseName = "MCTImmersiveTechnology-${versionProps.getProperty('version_mc')}"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
