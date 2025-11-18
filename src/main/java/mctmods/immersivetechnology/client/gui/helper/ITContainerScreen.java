@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.client.gui.helper;
 
 import blusunrize.immersiveengineering.api.client.TextUtils;
 import blusunrize.immersiveengineering.api.utils.ResettableLazy;
-import blusunrize.immersiveengineering.client.gui.elements.ITooltipWidget;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -53,7 +52,7 @@ public abstract class ITContainerScreen<C extends AbstractContainerMenu> extends
         List<Component> tooltip = new ArrayList<>();
         for (ITInfoArea area : this.infoAreas.get()) { area.fillTooltip(mouseX, mouseY, tooltip); }
         for (GuiEventListener w : this.children()) {
-            if (w.isMouseOver(mouseX, mouseY) && w instanceof ITooltipWidget ttw) { ttw.gatherTooltip(mouseX, mouseY, tooltip); }
+            if (w.isMouseOver(mouseX, mouseY) && w instanceof IITTooltipWidget ttw) { ttw.gatherTooltip(mouseX, mouseY, tooltip); }
         }
         Objects.requireNonNull(tooltip);
         this.gatherAdditionalTooltips(mouseX, mouseY, tooltip::add, (t) -> tooltip.add(TextUtils.applyFormat(t, ChatFormatting.GRAY)));
