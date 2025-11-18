@@ -1,12 +1,16 @@
 package mctmods.immersivetechnology.client.renderer.helper;
 
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.config.IEClientConfig;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.UnmodifiableIterator;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
+import com.mojang.blaze3d.vertex.VertexFormatElement.Type;
+import com.mojang.blaze3d.vertex.VertexFormatElement.Usage;
+import mctmods.immersivetechnology.core.ITClientConfig;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -26,15 +30,15 @@ public class ITRenderUtils {
     private static final float[][] normalizationFactors = new float[2][8];
     private static final VertexFormat FORMAT = DefaultVertexFormat.BLOCK;
     private static final int VERTEX_SIZE = FORMAT.getIntegerSize();
-    private static final int UV_OFFSET = ClientUtils.findTextureOffset(FORMAT);
-    private static final int POSITION_OFFSET = ClientUtils.findPositionOffset(FORMAT);
+    private static final int UV_OFFSET = findTextureOffset();
+    private static final int POSITION_OFFSET = findPositionOffset();
 
     static {
         for (int i = 0; i < quadCoords.length; ++i) { quadCoords[i] = new Vector4f(); }
     }
 
     public static void renderModelTESRFancy(List<BakedQuad> quads, VertexConsumer renderer, PoseStack transform, Level world, BlockPos pos, boolean useCached, int color, int light) {
-        if (IEClientConfig.disableFancyTESR.get()) { renderModelTESRFast(quads, renderer, transform, -1, LevelRenderer.getLightColor(world, pos), OverlayTexture.NO_OVERLAY); }
+        if (ITClientConfig.disableFancyTESR) { renderModelTESRFast(quads, renderer, transform, -1, LevelRenderer.getLightColor(world, pos), OverlayTexture.NO_OVERLAY); }
         else {
             if (!useCached) {
                 for (Direction f : DirectionUtils.VALUES) {
@@ -113,4 +117,22 @@ public class ITRenderUtils {
         }
         for (BakedQuad quad : quads) { renderer.putBulkData(transform.last(), quad, red, green, blue, light, overlay); }
     }
+
+    private static int findOffset(Usage u) {
+        int offset = 0;
+        VertexFormatElement element;
+        for (UnmodifiableIterator<VertexFormatElement> var4 = ITRenderUtils.FORMAT.getElements().iterator(); var4.hasNext(); offset += element.getByteSize()) {
+            element = var4.next();
+            assert element != null;
+            if (element.getUsage() == u && element.getType() == Type.FLOAT) {
+                Preconditions.checkState(offset % 4 == 0);
+                return offset / 4;
+            }
+        }
+        throw new IllegalStateException();
+    }
+
+    private static int findTextureOffset() { return findOffset(Usage.UV); }
+
+    private static int findPositionOffset() { return findOffset(Usage.POSITION); }
 }

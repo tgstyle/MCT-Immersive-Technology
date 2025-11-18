@@ -17,6 +17,7 @@ public class ITClientConfig {
     public static final ForgeConfigSpec.BooleanValue CONFIG_DISABLE_REFLECTOR_DANCE;
     public static final ForgeConfigSpec.BooleanValue CONFIG_LOOP_REFLECTOR_DANCE;
     public static final ForgeConfigSpec.BooleanValue CONFIG_PER_TICK_TRASH_CANS;
+    public static final ForgeConfigSpec.BooleanValue CONFIG_DISABLE_FANCY_TESR;
 
     public static double multiblockSpecialRenderDistanceModifier;
     public static boolean doSpecialRenderGasTurbine;
@@ -24,12 +25,14 @@ public class ITClientConfig {
     public static boolean disableReflectorDance;
     public static boolean loopReflectorDance;
     public static boolean perTickTrashCans;
+    public static boolean disableFancyTESR;
 
     static {
         BUILDER.comment("Render options").push("render");
         CONFIG_MULTIBLOCK_SPECIAL_RENDER_DISTANCE_MODIFIER = BUILDER.comment("This modifies the distance a special multiblock renderer is visible from (Default: 2.5)").defineInRange("multiblockSpecialRenderDistanceModifier", 2.5, 0, Double.MAX_VALUE);
         CONFIG_DO_SPECIAL_RENDER_GAS_TURBINE = BUILDER.comment("This controls if the animations and special client rendering applies to the Gas Turbine (Default: true)").define("gas_turbine_renderer", true);
         CONFIG_DO_SPECIAL_RENDER_STEAM_TURBINE = BUILDER.comment("This controls if the animations and special client rendering applies to the Steam Turbine (Default: true)").define("steam_turbine_renderer", true);
+        CONFIG_DISABLE_FANCY_TESR = BUILDER.comment("Disables most lighting code for certain models that are rendered dynamically (TESR). May improve FPS. Affects various multiblocks.").define("disableFancyTESR", false);
         BUILDER.pop();
         BUILDER.comment("Solar Reflector options").push("solar_reflector");
         CONFIG_DISABLE_REFLECTOR_DANCE = BUILDER.comment("Disable the dance animation and sound for untaken solar reflectors (Default: false").define("disable_dance", false);
@@ -51,6 +54,7 @@ public class ITClientConfig {
             disableReflectorDance = CONFIG_DISABLE_REFLECTOR_DANCE.get();
             loopReflectorDance = CONFIG_LOOP_REFLECTOR_DANCE.get();
             perTickTrashCans = CONFIG_PER_TICK_TRASH_CANS.get();
+            disableFancyTESR = CONFIG_DISABLE_FANCY_TESR.get();
         }
     }
 }
