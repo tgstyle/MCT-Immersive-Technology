@@ -12,7 +12,7 @@ displayName = "Immersive Technology"
 description = "An in development version of Immersive Technology for 1.20.1."
 authors = "tgstyle, MagneticPrism"
 displayURL = "https://www.curseforge.com/minecraft/mc-mods/mct-immersive-technology"
-logoFile = "logo.png"
+logoFile = "ITlogo.png"
 credits = "tgstyle (author), Peter (new models), MagneticPrism (started the port), KHAZ (new sounds), and the Immersive Engineering Team (code dependencies)"
 
 [[dependencies.immersivetechnology]]
