@@ -41,14 +41,14 @@ public class ITModelUtils {
         Vec3 faceNormal = new Vec3(normalInt.getX(), normalInt.getY(), normalInt.getZ());
         int vId = invert ? 3 : 0;
         int u = vId > 1 ? 2 : 0;
-        builder.putVertexData(vertices[vId], faceNormal, uvs[u], uvs[1], colour, 1.0F);
+        builder.putVertexData(vertices[vId], faceNormal, uvs[u], uvs[1], sprite, colour, 1.0F);
         vId = invert ? 2 : 1;
-        builder.putVertexData(vertices[vId], faceNormal, uvs[u], uvs[3], colour, 1.0F);
+        builder.putVertexData(vertices[vId], faceNormal, uvs[u], uvs[3], sprite, colour, 1.0F);
         vId = invert ? 1 : 2;
         u = vId > 1 ? 2 : 0;
-        builder.putVertexData(vertices[vId], faceNormal, uvs[u], uvs[3], colour, 1.0F);
+        builder.putVertexData(vertices[vId], faceNormal, uvs[u], uvs[3], sprite, colour, 1.0F);
         vId = invert ? 0 : 3;
-        builder.putVertexData(vertices[vId], faceNormal, uvs[u], uvs[1], colour, 1.0F);
+        builder.putVertexData(vertices[vId], faceNormal, uvs[u], uvs[1], sprite, colour, 1.0F);
         return builder.bake(-1, facing, sprite, true);
     }
 

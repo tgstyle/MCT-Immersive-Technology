@@ -71,24 +71,40 @@ public class ITPolygonUtils {
         Preconditions.checkArgument(points.size() == 4);
         ITBakedQuadBuilder quadBuilder = new ITBakedQuadBuilder();
         Vector3f normal = new Vector3f();
+        float u0 = data.sprite().getU0();
+        float u1 = data.sprite().getU1();
+        float v0 = data.sprite().getV0();
+        float v1 = data.sprite().getV1();
         for (Vertex v : points) {
             Vector4f pos = new Vector4f();
             pos.set(toArray(v.position(), 4));
             normal.set(toArray(v.normal(), 3));
             rotation.transformPosition(pos);
             rotation.transformNormal(normal);
-            pos.mul(1 / pos.w);
+            pos.mul(1 / pos.w());
             final double epsilon = 1e-5;
             for (int i = 0; i < 2; ++i) {
                 if (Math.abs(i - pos.x()) < epsilon) { pos.setComponent(0, i); }
                 if (Math.abs(i - pos.y()) < epsilon) { pos.setComponent(1, i); }
                 if (Math.abs(i - pos.z()) < epsilon) { pos.setComponent(2, i); }
             }
+            double builder_u;
+            double builder_v;
+            if (absoluteUV) {
+                double abs_u = v.uv().u();
+                double abs_v = v.uv().v();
+                builder_u = (abs_u - u0) / (u1 - u0) * 16;
+                builder_v = (abs_v - v0) / (v1 - v0) * 16;
+            } else {
+                builder_u = 16 * v.uv().u();
+                builder_v = 16 * (1 - v.uv().v());
+            }
             quadBuilder.putVertexData(
                     new Vec3(pos.x(), pos.y(), pos.z()),
                     new Vec3(normal),
-                    absoluteUV ? v.uv().u() : data.sprite().getU(16 * v.uv().u()),
-                    absoluteUV ? v.uv().v() : data.sprite().getV(16 * (1 - v.uv().v())),
+                    builder_u,
+                    builder_v,
+                    data.sprite(),
                     new float[] { data.color.x(), data.color.y(), data.color.z(), data.color.w() },
                     1
             );

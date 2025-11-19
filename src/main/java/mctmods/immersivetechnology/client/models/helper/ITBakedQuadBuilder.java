@@ -15,7 +15,7 @@ public class ITBakedQuadBuilder {
     private int nextVertex = 0;
     private final int[] data = new int[FORMAT.getIntegerSize() * 4];
 
-    public void putVertexData(Vec3 pos, Vec3 faceNormal, double u, double v, float[] colour, float alpha) {
+    public void putVertexData(Vec3 pos, Vec3 faceNormal, double u, double v, TextureAtlasSprite sprite, float[] colour, float alpha) {
         int next = nextVertex * FORMAT.getIntegerSize();
 
         data[next++] = Float.floatToIntBits((float)pos.x);
@@ -27,10 +27,10 @@ public class ITBakedQuadBuilder {
                 ((int)(colour[2] * 255) << 16) |
                 ((int)(colour[3] * alpha * 255) << 24);
 
-        data[next++] = Float.floatToIntBits((float)u);
-        data[next++] = Float.floatToIntBits((float)v);
+        data[next++] = Float.floatToIntBits(sprite.getU((float)u));
+        data[next++] = Float.floatToIntBits(sprite.getV((float)v));
 
-        data[next++] = 0;
+        data[next++] = 0xF000F0; // Full brightness for block and sky light
 
         data[next] |= (int)(faceNormal.x * 127) & 255;
         data[next] |= ((int)(faceNormal.y * 127) & 255) << 8;
