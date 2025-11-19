@@ -76,7 +76,8 @@ dependencies {
 
     implementation fg.deobf("${common.jei_version}")
 
-    compileOnly fg.deobf("curse.maven:${common.top_version}")
+    implementation fg.deobf("curse.maven:${common.top_version}")
+
     compileOnly fg.deobf("curse.maven:${common.hwya_version}")
     compileOnly fg.deobf("curse.maven:${common.advr_version}")
     compileOnly fg.deobf("curse.maven:${common.libv_version}")
@@ -91,14 +92,21 @@ dependencies {
 }
 
 minecraft {
-    accessTransformers { file('src/main/resources/META-INF/it_at.cfg') }
+    accessTransformers {
+        file('src/main/resources/META-INF/it_at.cfg')
+    }
     mappings channel: 'stable', version: "${common.mcp_mappings}"
     runs {
         client {
             workingDirectory project.file('run')
+			args '--width', '1920'
+			args '--height', '1080'
+			args '--add-opens=java.base/java.lang=ALL-UNNAMED'
             args '--version', common.mcversion
             args '--tweakClass', 'org.spongepowered.asm.launch.MixinTweaker'
             args '--mixin', 'mixins.immersivetechnology.json'
+            args '--mixin', 'mixins.immersiveengineering.json'
+			args '--username', 'tgstyle'
             property 'forge.logging.console.level', 'debug'
             mods {
                 "${archivesBaseName}" {
@@ -111,6 +119,7 @@ minecraft {
             args '--version', common.mcversion
             args '--tweakClass', 'org.spongepowered.asm.launch.MixinTweaker'
             args '--mixin', 'mixins.immersivetechnology.json'
+            args '--mixin', 'mixins.immersiveengineering.json'
             property 'forge.logging.console.level', 'debug'
             mods {
                 "${archivesBaseName}" {
@@ -136,9 +145,11 @@ tasks.withType(JavaExec).configureEach { task ->
 }
 
 compileJava.doLast {
-    def refmapSrc = file('build/tmp/compileJava/compileJava-refmap.json')
-    if (refmapSrc.exists()) {
-        new File(sourceSets.main.output.resourcesDir, 'mixins.immersivetechnology.refmap.json').bytes = refmapSrc.bytes
+    ['immersivetechnology', 'immersiveengineering'].each { name ->
+        def refmapSrc = file("build/tmp/compileJava/compileJava-${name}-refmap.json")
+        if (refmapSrc.exists()) {
+            new File(sourceSets.main.output.resourcesDir, "mixins.${name}.refmap.json").bytes = refmapSrc.bytes
+        }
     }
 }
 
@@ -154,6 +165,8 @@ processResources {
 mixin {
     config 'mixins.immersivetechnology.json'
     add sourceSets.main, 'mixins.immersivetechnology.refmap.json'
+    config 'mixins.immersiveengineering.json'
+    add sourceSets.main, 'mixins.immersiveengineering.refmap.json'
 }
 
 fancyGradle {
@@ -164,10 +177,14 @@ fancyGradle {
 }
 
 jar {
-    exclude 'mctmods/immersivetechnology/mixin/**'
-    exclude 'mixins.*.json'
-    exclude 'mixins.*.refmap.json'
+    manifest {
+        attributes(
+            'FMLCorePlugin': 'mctmods.immersivetechnology.mixin.MixinLoader',
+            'FMLCorePluginContainsFMLMod': 'true'
+        )
+    }
     exclude 'META-INF/it_at.cfg'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 sourceSets.configureEach { it.output.resourcesDir = it.output.classesDirs.getFiles().iterator().next() }
