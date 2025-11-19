@@ -41,7 +41,7 @@ public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements 
         lastAcceptedAmount = acceptedAmount;
         acceptedAmount = 0;
         secondCounter = 0;
-        markContainingBlockForUpdate(null); // ensure client sync every second
+        markContainingBlockForUpdate(null);
     }
 
     @Override

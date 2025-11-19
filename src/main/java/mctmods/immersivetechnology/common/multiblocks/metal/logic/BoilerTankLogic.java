@@ -200,11 +200,11 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
             boilerInputCap = new StoredCapability<>(new BoilerInputImpl(tanks.input));
-            MultiblockFace outputMBFace = new MultiblockFace(FLUID_OUTPUT_FACING, FLUID_OUTPUT_POI.get(0)); // Assuming at least one
+            MultiblockFace outputMBFace = new MultiblockFace(FLUID_OUTPUT_FACING, FLUID_OUTPUT_POI.get(0));
             CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
             MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
             fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
-            MultiblockFace heatMBFace = new MultiblockFace(HEAT_INPUT_FACING, HEAT_INPUT_POI.get(0)); // Assuming at least one
+            MultiblockFace heatMBFace = new MultiblockFace(HEAT_INPUT_FACING, HEAT_INPUT_POI.get(0));
             CapabilityPosition heatOpposingCP = CapabilityPosition.opposing(heatMBFace);
             MultiblockFace heatOpposingMBFace = new MultiblockFace(heatOpposingCP.side(), heatOpposingCP.posInMultiblock());
             heatSource = ctx.getCapabilityAt(HeatCapabilities.HEAT_PROVIDER_CAPABILITY, heatOpposingMBFace);

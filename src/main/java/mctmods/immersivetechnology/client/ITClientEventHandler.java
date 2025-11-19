@@ -52,7 +52,7 @@ public class ITClientEventHandler {
 
         PoseStack pose = guiGraphics.pose();
         pose.pushPose();
-        pose.translate(width / 2f, height / 2f + 30, 0); // positioned below vanilla block/item name like IE
+        pose.translate(width / 2f, height / 2f + 30, 0);
 
         int maxWidth = 0;
         for (Component component : text) {

@@ -420,7 +420,7 @@ public class ITFluid extends FlowingFluid {
             if (bucketitem.emptyContents(null, world, blockpos, null, stack)) {
                 bucketitem.checkExtraContent(null, world, stack, blockpos);
                 FluidState placedState = world.getFluidState(blockpos);
-                if (placedState.getType().getFluidType().getDensity() < 0) { world.scheduleTick(blockpos, placedState.getType(), 100); } // Schedule dissipation after 5 seconds for gaseous sources
+                if (placedState.getType().getFluidType().getDensity() < 0) { world.scheduleTick(blockpos, placedState.getType(), 100); }
                 return new ItemStack(Items.BUCKET);
             }
             else { return this.defaultBehavior.dispense(source, stack); }

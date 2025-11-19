@@ -38,7 +38,7 @@ public class ITQueueProcessor {
         this.level = level;
         this.owner = owner;
         queue.addAll(sourceQueue);
-        queue.sort(Comparator.comparingInt(e -> -e.getKey().getY())); // top → bottom guaranteed
+        queue.sort(Comparator.comparingInt(e -> -e.getKey().getY()));
 
         for (var entry : sourceQueue) {
             ChunkPos cp = new ChunkPos(entry.getKey());
