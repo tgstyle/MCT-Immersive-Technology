@@ -30,7 +30,7 @@ public class ITBakedQuadBuilder {
         data[next++] = Float.floatToIntBits(sprite.getU((float)u));
         data[next++] = Float.floatToIntBits(sprite.getV((float)v));
 
-        data[next++] = 0xF000F0;
+        data[next++] = 0xF00000;
 
         data[next] |= (int)(faceNormal.x * 127) & 255;
         data[next] |= ((int)(faceNormal.y * 127) & 255) << 8;

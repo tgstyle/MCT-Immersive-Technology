@@ -109,7 +109,7 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
     @Override
     public boolean shouldPumpOutputs(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
-        return !state.rsState.isEnabled(ctx) && !state.tank.isEmpty();
+        return state.rsState.isEnabled(ctx) && !state.tank.isEmpty();
     }
 
     private record ConditionalFluidHandler(ITMarkableFluidTank tank, boolean canFill, boolean canDrain, Runnable onChange, Supplier<Boolean> allowDrain) implements IFluidHandler {
@@ -159,7 +159,6 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
         private final StoredCapability<IFluidHandler> ioHandler;
         public RSState rsState = RSState.disabledByDefault();
         public boolean active = false;
-        private boolean allowDrain = false;
 
         public State(IInitialMultiblockContext<State> capabilitySource) {
             ImmutableList.Builder<CapabilityReference<IFluidHandler>> outputBuilder = ImmutableList.builder();
@@ -172,8 +171,7 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
             Runnable changedAndSync = () -> { capabilitySource.getSyncRunnable().run(); capabilitySource.getMarkDirtyRunnable().run(); };
             this.tank = new ITMarkableFluidTank(CAPACITY, v -> changedAndSync.run());
             this.inputHandler = new StoredCapability<>(new ConditionalFluidHandler(tank, true, false, changedAndSync, () -> false));
-            Supplier<Boolean> allowDrainSupplier = () -> allowDrain;
-            this.ioHandler = new StoredCapability<>(new ConditionalFluidHandler(tank, true, true, changedAndSync, allowDrainSupplier));
+            this.ioHandler = new StoredCapability<>(new ConditionalFluidHandler(tank, true, true, changedAndSync, () -> true));
             try {
                 Field positionsField = RSState.class.getDeclaredField("positions");
                 positionsField.setAccessible(true);
@@ -250,8 +248,7 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
     public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         state.comparatorHelper.update(ctx, state.tank.getFluidAmount());
-        boolean enabled = !state.rsState.isEnabled(ctx);
-        state.allowDrain = enabled;
+        boolean enabled = state.rsState.isEnabled(ctx);
         boolean isActive = enabled && !state.tank.isEmpty();
         if (state.active != isActive) { state.active = isActive; ctx.markDirtyAndSync(); }
         pumpOutputs(ctx);

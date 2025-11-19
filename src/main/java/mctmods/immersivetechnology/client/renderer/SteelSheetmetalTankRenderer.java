@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.client.renderer;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -27,6 +28,8 @@ public class SteelSheetmetalTankRenderer extends ITBaseBlockEntityRenderer<Multi
         matrixStack.scale(baseScale, -baseScale, baseScale);
         float xx = -.5f / baseScale;
         float zz = (1.5f + .004f) / baseScale;
+        RenderSystem.enablePolygonOffset();
+        RenderSystem.polygonOffset(0.0f, 1.0f);
         for (int side = 0; side < 4; side++) {
             matrixStack.pushPose();
             matrixStack.mulPose(Axis.YP.rotationDegrees(side * 90f));
@@ -44,6 +47,7 @@ public class SteelSheetmetalTankRenderer extends ITBaseBlockEntityRenderer<Multi
             }
             matrixStack.popPose();
         }
+        RenderSystem.disablePolygonOffset();
         matrixStack.popPose();
     }
 }
