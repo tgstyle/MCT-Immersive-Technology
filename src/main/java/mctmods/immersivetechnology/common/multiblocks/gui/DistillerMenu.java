@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.multiblocks.gui;
 
 import blusunrize.immersiveengineering.api.energy.IMutableEnergyStorage;
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
-import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
 import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.gui.helper.ITGenericContainerData;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ITSlot;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.DistillerLogic;
@@ -53,8 +53,8 @@ public class DistillerMenu extends ITContainerMenu {
         this.addSlot(new ITSlot.Output(inv, DistillerLogic.OUTPUT_SLOT, 80, 35));
         for (int i = 0; i < 3; i++) { for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); } }
         for (int i = 0; i < 9; i++) { addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142)); }
-        addGenericData(GenericContainerData.energy(energy));
-        addGenericData(GenericContainerData.fluid(tanks.input()));
-        addGenericData(GenericContainerData.fluid(tanks.output()));
+        addGenericData(ITGenericContainerData.energy(energy));
+        addGenericData(ITGenericContainerData.fluid(tanks.input()));
+        addGenericData(ITGenericContainerData.fluid(tanks.output()));
     }
 }

@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.gui;
 
-import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
 import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.gui.helper.ITGenericContainerData;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ITSlot;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
@@ -63,8 +63,8 @@ public class SolarMenu extends ITContainerMenu {
         for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); }
         for (int i = 0; i < 9; i++) { addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142)); }
         addDataSlots(state);
-        addGenericData(GenericContainerData.fluid(inputTank));
-        addGenericData(GenericContainerData.fluid(outputTank));
+        addGenericData(ITGenericContainerData.fluid(inputTank));
+        addGenericData(ITGenericContainerData.fluid(outputTank));
     }
 
     @Override

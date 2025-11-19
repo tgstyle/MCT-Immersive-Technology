@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.gui;
 
-import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
-import blusunrize.immersiveengineering.common.gui.sync.GenericDataSerializers;
 import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.gui.helper.ITGenericContainerData;
+import mctmods.immersivetechnology.common.gui.helper.ITGenericDataSerializers;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ITSlot;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerTankLogic;
@@ -48,9 +48,9 @@ public class BoilerTankMenu extends ITContainerMenu {
         this.addSlot(new ITSlot.Output(inv, BoilerTankLogic.OUTPUT_SLOT_FILLED, 116, 54));
         for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); }
         for (int i = 0; i < 9; i++) { addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142)); }
-        addGenericData(GenericContainerData.fluid(tanks.input()));
-        addGenericData(GenericContainerData.fluid(tanks.output()));
-        addGenericData(new GenericContainerData<>(GenericDataSerializers.FLOAT, () -> (state != null ? (float)state.heatLevel : heatLevel), f -> this.heatLevel = f));
+        addGenericData(ITGenericContainerData.fluid(tanks.input()));
+        addGenericData(ITGenericContainerData.fluid(tanks.output()));
+        addGenericData(new ITGenericContainerData<>(ITGenericDataSerializers.FLOAT, () -> (state != null ? (float)state.heatLevel : heatLevel), f -> this.heatLevel = f));
     }
 
     public float getHeatLevel() { return heatLevel; }

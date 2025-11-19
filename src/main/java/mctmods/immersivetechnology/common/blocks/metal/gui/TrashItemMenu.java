@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal.gui;
 
-import blusunrize.immersiveengineering.common.gui.sync.GenericDataSerializers;
 import com.mojang.datafixers.util.Pair;
 import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.gui.helper.ITGenericDataSerializers;
 import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemBlockEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -69,7 +69,7 @@ public class TrashItemMenu extends ITContainerMenu {
     public boolean stillValid(@NotNull Player player) { return tile == null || tile.stillValid(player); }
 
     @Override
-    public void receiveSync(List<Pair<Integer, GenericDataSerializers.DataPair<?>>> synced) {}
+    public void receiveSync(List<Pair<Integer, ITGenericDataSerializers.DataPair<?>>> synced) {}
 
     private static class DummyHandler implements IItemHandlerModifiable {
         @Override

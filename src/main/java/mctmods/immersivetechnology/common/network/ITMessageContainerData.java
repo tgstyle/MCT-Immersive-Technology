@@ -1,13 +1,13 @@
 package mctmods.immersivetechnology.common.network;
 
-import blusunrize.immersiveengineering.common.gui.sync.GenericDataSerializers;
-import blusunrize.immersiveengineering.common.gui.sync.GenericDataSerializers.DataPair;
 import com.mojang.datafixers.util.Pair;
+import mctmods.immersivetechnology.common.gui.helper.ITGenericDataSerializers;
+import mctmods.immersivetechnology.common.gui.helper.ITGenericDataSerializers.DataPair;
+import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent.Context;
-import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -20,7 +20,7 @@ public record ITMessageContainerData(List<Pair<Integer, DataPair<?>>> synced) im
         List<Pair<Integer, DataPair<?>>> synced = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             int index = buf.readVarInt();
-            DataPair<?> dataPair = GenericDataSerializers.read(buf);
+            DataPair<?> dataPair = ITGenericDataSerializers.read(buf);
             synced.add(Pair.of(index, dataPair));
         }
         return synced;
