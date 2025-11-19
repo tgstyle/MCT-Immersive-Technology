@@ -27,7 +27,7 @@ public class SteelSheetmetalTankRenderer extends ITBaseBlockEntityRenderer<Multi
         float baseScale = .0625f;
         matrixStack.scale(baseScale, -baseScale, baseScale);
         float xx = -.5f / baseScale;
-        float zz = (1.5f + .004f) / baseScale;
+        float zz = (1.5f + .001f) / baseScale;
         RenderSystem.enablePolygonOffset();
         RenderSystem.polygonOffset(0.0f, 1.0f);
         for (int side = 0; side < 4; side++) {
