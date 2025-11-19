@@ -1,5 +1,5 @@
 ---
-name: Feature request
+name: Mod Feature request
 about: Suggest an idea for this project
 title: "[FEATURE] [MC Version] - Summary"
 labels: enhancement
