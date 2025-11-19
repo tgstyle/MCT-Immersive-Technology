@@ -19,5 +19,4 @@ public class GuiTrashItem extends GuiIEContainerBase {
 		ClientUtils.bindTexture("immersivetech:textures/gui/gui_single_item.png");
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 	}
-
 }

@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.blocks;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
-import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
-import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidValve;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityLoadController;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityStackLimiter;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Locale;
 
@@ -36,7 +37,7 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 		STACK_LIMITER;
 
 		@Override
-		public String getName() {
+		public @Nonnull String getName() {
 			return this.toString().toLowerCase(Locale.ENGLISH);
 		}
 
@@ -60,7 +61,7 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 	}
 
 	@Override
-	public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+	public boolean canConnectRedstone(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) {
 		return true;
 	}
 }

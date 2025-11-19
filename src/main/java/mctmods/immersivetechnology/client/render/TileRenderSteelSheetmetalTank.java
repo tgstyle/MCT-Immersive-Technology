@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.render;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntitySteelSheetmetalTankMaster;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11;
 public class TileRenderSteelSheetmetalTank extends TileEntitySpecialRenderer<TileEntitySteelSheetmetalTankMaster> {
 	@Override
 	public void render(TileEntitySteelSheetmetalTankMaster tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-		if(!tile.formed || tile.pos != 4 || !tile.getWorld().isBlockLoaded(tile.getPos(), false)) return;
+		if (!tile.formed || tile.pos != 4 || !tile.getWorld().isBlockLoaded(tile.getPos(), false)) return;
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x+.5, y, z+.5);
 		FluidStack fs = tile.tank.getFluid();
@@ -26,7 +26,7 @@ public class TileRenderSteelSheetmetalTank extends TileEntitySpecialRenderer<Til
 		float zz = 1.5f-offset;
 		xx /= baseScale;
 		zz /= baseScale;
-		for(int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			GlStateManager.translate(xx, 0, zz);
 			GlStateManager.disableTexture2D();
 			GlStateManager.enableBlend();
@@ -45,7 +45,7 @@ public class TileRenderSteelSheetmetalTank extends TileEntitySpecialRenderer<Til
 			GlStateManager.disableBlend();
 			GlStateManager.enableAlpha();
 			GlStateManager.enableTexture2D();
-			if(fs != null) {
+			if (fs != null) {
 				float h = fs.amount / (float)tile.tank.getCapacity();
 				GlStateManager.depthMask(false);
 				GlStateManager.translate(0, 0, .004f);

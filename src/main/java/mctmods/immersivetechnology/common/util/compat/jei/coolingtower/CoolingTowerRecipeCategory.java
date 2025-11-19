@@ -12,10 +12,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class CoolingTowerRecipeCategory extends ITRecipeCategory<CoolingTowerRecipe, CoolingTowerRecipeWrapper> {
-
     public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_cooling_tower.png");
     private final IDrawable tankOverlay;
     private final IDrawableAnimated arrow;
@@ -33,40 +33,40 @@ public class CoolingTowerRecipeCategory extends ITRecipeCategory<CoolingTowerRec
 
     @SuppressWarnings("deprecation")
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, CoolingTowerRecipeWrapper recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull CoolingTowerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
         List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
         List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
 
         int tankSize = 0;
-        for(List<FluidStack> lists : inputs) {
-            for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
+        for (List<FluidStack> lists : inputs) {
+            for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
         }
-        for(List<FluidStack> lists : outputs) {
-            for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
+        for (List<FluidStack> lists : outputs) {
+            for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
         }
 
         int tankIndex = 0;
         IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-        if(!inputs.isEmpty()) {
+        if (!inputs.isEmpty()) {
             guiFluidStacks.init(tankIndex, true, 11, 11, 16, 47, tankSize, true, tankOverlay);
             guiFluidStacks.set(tankIndex, inputs.get(0));
-            if(inputs.size() == 2) {
+            if (inputs.size() == 2) {
                 tankIndex++;
                 guiFluidStacks.init(tankIndex, true, 34, 11, 16, 47, tankSize, true, tankOverlay);
                 guiFluidStacks.set(tankIndex, inputs.get(1));
             }
         }
 
-        if(!outputs.isEmpty()) {
+        if (!outputs.isEmpty()) {
             tankIndex++;
             guiFluidStacks.init(tankIndex, false, 86, 11, 16, 47, tankSize, true, tankOverlay);
             guiFluidStacks.set(tankIndex, outputs.get(0));
-            if(outputs.size() == 2) {
+            if (outputs.size() == 2) {
                 tankIndex++;
                 guiFluidStacks.init(tankIndex, false, 109, 11, 16, 47, tankSize, true, tankOverlay);
                 guiFluidStacks.set(tankIndex, outputs.get(1));
             }
-            if(outputs.size() == 3) {
+            if (outputs.size() == 3) {
                 tankIndex++;
                 guiFluidStacks.init(tankIndex, false, 109, 11, 16, 47, tankSize, true, tankOverlay);
                 guiFluidStacks.set(tankIndex, outputs.get(1));
@@ -79,12 +79,12 @@ public class CoolingTowerRecipeCategory extends ITRecipeCategory<CoolingTowerRec
     }
 
     @Override
-    public IRecipeWrapper getRecipeWrapper(CoolingTowerRecipe recipe) {
+    public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull CoolingTowerRecipe recipe) {
         return new CoolingTowerRecipeWrapper(recipe);
     }
 
     @Override
-    public void drawExtras(Minecraft minecraft) {
+    public void drawExtras(@Nonnull Minecraft minecraft) {
         arrow.draw(minecraft, 52, 51);
         drops.draw(minecraft, 55, 32);
     }

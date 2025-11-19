@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
+@SuppressWarnings("unused")
 @ZenClass("mods.immersivetechnology.ElectrolyticCrucibleBattery")
 public class ElectrolyticCrucibleBattery {
 
@@ -21,7 +22,7 @@ public class ElectrolyticCrucibleBattery {
         ItemStack itemOut = CraftTweakerHelper.toStack(outputItem);
         FluidStack fluidIn0 = CraftTweakerHelper.toFluidStack(inputFluid0);
 
-        if(fluidIn0 == null || fluidOut0 == null) return;
+        if (fluidIn0 == null || fluidOut0 == null) return;
 
         ElectrolyticCrucibleBatteryRecipe recipe = new ElectrolyticCrucibleBatteryRecipe(fluidOut0, fluidOut1, fluidOut2, itemOut, fluidIn0, energy, time);
         CraftTweakerAPI.apply(new ElectrolyticCrucibleBattery.Add(recipe));
@@ -45,7 +46,7 @@ public class ElectrolyticCrucibleBattery {
     @ZenMethod
     public static void removeRecipe(ILiquidStack inputFluid0) {
         FluidStack fluidIn0 = CraftTweakerHelper.toFluidStack(inputFluid0);
-        if(fluidIn0 != null)
+        if (fluidIn0 != null)
             CraftTweakerAPI.apply(new ElectrolyticCrucibleBattery.Remove(fluidIn0));
     }
 

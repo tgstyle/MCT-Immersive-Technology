@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-import mctmods.immersivetechnology.api.ITLib;
-import mctmods.immersivetechnology.common.Config;
+import mctmods.immersivetechnology.api.ITGUI;
+import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
 import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITrashCanBounds;
 import mctmods.immersivetechnology.common.util.TranslationKey;
@@ -17,166 +17,122 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHandler, IGuiTile, ITrashCanBounds {
+    public DummyInventory inv = new DummyInventory();
 
-	public DummyInventory inv = new DummyInventory();
+    public class DummyInventory implements IInventory {
+        @Override
+        public int getSizeInventory() { return 1; }
 
-	class DummyInventory implements IInventory {
+        @Override
+        public boolean isEmpty() { return true; }
 
-		@Override
-		public int getSizeInventory() {
-			return 1;
-		}
+        @Nonnull
+        @Override
+        public ItemStack getStackInSlot(int i) { return ItemStack.EMPTY; }
 
-		@Override
-		public boolean isEmpty() {
-			return true;
-		}
+        @Nonnull
+        @Override
+        public ItemStack decrStackSize(int i, int i1) { return ItemStack.EMPTY; }
 
-		@Nonnull
-		@Override
-		public ItemStack getStackInSlot(int i) {
-			return ItemStack.EMPTY;
-		}
+        @Nonnull
+        @Override
+        public ItemStack removeStackFromSlot(int i) { return ItemStack.EMPTY; }
 
-		@Override
-		public ItemStack decrStackSize(int i, int i1) {
-			return ItemStack.EMPTY;
-		}
+        @Override
+        public void setInventorySlotContents(int i, @Nonnull ItemStack itemStack) { if (!itemStack.isEmpty()) { insertItem(i, itemStack, false); } }
 
-		@Override
-		public ItemStack removeStackFromSlot(int i) {
-			return ItemStack.EMPTY;
-		}
+        @Override
+        public int getInventoryStackLimit() { return Integer.MAX_VALUE; }
 
-		@Override
-		public void setInventorySlotContents(int i, ItemStack itemStack) {
-			if(!itemStack.isEmpty()) insertItem(i, itemStack, false);
-		}
+        @Override
+        public void markDirty() {}
 
-		@Override
-		public int getInventoryStackLimit() {
-			return Integer.MAX_VALUE;
-		}
+        @Override
+        public boolean isUsableByPlayer(@Nonnull EntityPlayer entityPlayer) { return true; }
 
-		@Override
-		public void markDirty() {}
+        @Override
+        public void openInventory(@Nonnull EntityPlayer entityPlayer) {}
 
-		@Override
-		public boolean isUsableByPlayer(EntityPlayer entityPlayer) {
-			return true;
-		}
+        @Override
+        public void closeInventory(@Nonnull EntityPlayer entityPlayer) {}
 
-		@Override
-		public void openInventory(EntityPlayer entityPlayer) {}
+        @Override
+        public boolean isItemValidForSlot(int i, @Nonnull ItemStack itemStack) { return true; }
 
-		@Override
-		public void closeInventory(EntityPlayer entityPlayer) {}
+        @Override
+        public int getField(int i) { return 0; }
 
-		@Override
-		public boolean isItemValidForSlot(int i, ItemStack itemStack) {
-			return true;
-		}
+        @Override
+        public void setField(int i, int i1) {}
 
-		@Override
-		public int getField(int i) {
-			return 0;
-		}
+        @Override
+        public int getFieldCount() { return 0; }
 
-		@Override
-		public void setField(int i, int i1) {}
+        @Override
+        public void clear() {}
 
-		@Override
-		public int getFieldCount() {
-			return 0;
-		}
+        @Nonnull
+        @Override
+        public String getName() { return TranslationKey.TILE_TRASH_ITEM_NAME.text(); }
 
-		@Override
-		public void clear() {}
+        @Override
+        public boolean hasCustomName() { return false; }
 
-		@Override
-		public String getName() {
-			return TranslationKey.TILE_TRASH_ITEM_NAME.text();
-		}
+        @SuppressWarnings({"NullableProblems"})
+        @Override
+        public @Nullable ITextComponent getDisplayName() { return null; }
+    }
 
-		@Override
-		public boolean hasCustomName() {
-			return false;
-		}
+    @Override
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) { return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY; }
 
-		@Override
-		public ITextComponent getDisplayName() {
-			return null;
-		}
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public @Nonnull <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) { return (T) this; }
+        return super.getCapability(capability, facing);
+    }
 
-	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
-		return false;
-	}
+    @Override
+    public int getSlots() { return 9; }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)this;
-		return super.getCapability(capability, facing);
-	}
+    @Nonnull
+    @Override
+    public ItemStack getStackInSlot(int i) { return ItemStack.EMPTY; }
 
-	@Override
-	public int getSlots() {
-		return 9;
-	}
+    @Nonnull
+    @Override
+    public ItemStack insertItem(int i, @Nonnull ItemStack itemStack, boolean simulate) {
+        if (!simulate) { acceptedAmount += itemStack.getCount(); }
+        return ItemStack.EMPTY;
+    }
 
-	@Nonnull
-	@Override
-	public ItemStack getStackInSlot(int i) {
-		return ItemStack.EMPTY;
-	}
+    @Nonnull
+    @Override
+    public ItemStack extractItem(int i, int i1, boolean b) { return ItemStack.EMPTY; }
 
-	@Nonnull
-	@Override
-	public ItemStack insertItem(int i, @Nonnull ItemStack itemStack, boolean simulate) {
-		if(!simulate) acceptedAmount += itemStack.getCount();
-		return ItemStack.EMPTY;
-	}
+    @Override
+    public int getSlotLimit(int slot) { return Integer.MAX_VALUE; }
 
-	@Nonnull
-	@Override
-	public ItemStack extractItem(int i, int i1, boolean b) {
-		return ItemStack.EMPTY;
-	}
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return true; }
 
-	@Override
-	public int getSlotLimit(int slot) {
-		return Integer.MAX_VALUE;
-	}
+    @Override
+    public boolean canOpenGui() { return true; }
 
-	@Override
-	public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-		return true;
-	}
+    @Override
+    public int getGuiID() { return ITGUI.GUIID_Trash_Item; }
 
-	@Override
-	public boolean canOpenGui() {
-		return true;
-	}
+    @Override
+    public TileEntity getGuiMaster() { return this; }
 
-	@Override
-	public int getGuiID() {
-		return ITLib.GUIID_Trash_Item;
-	}
-
-	@Override
-	public TileEntity getGuiMaster() {
-		return this;
-	}
-
-	@Override
-	public TranslationKey text() {
-		return Config.ITConfig.Experimental.per_tick_trash_cans?
-				TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_ALTERNATIVE :
-				TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE;
-	}
+    @Override
+    public TranslationKey text() {
+        return Settings.experimental.per_tick_trash_cans ?
+                TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_ALTERNATIVE :
+                TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE;
+    }
 }

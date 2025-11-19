@@ -31,7 +31,7 @@ public class AdvancedRocketryHelper {
         //Grab the dT and use that for the cooling temperature
         double deltaTemperatureRatio = (fluidTemperature - temperature)/212.9671;
         //Return a minimum plus extra for if we have an atmosphere we're working in (why would you use it there, the cooling tower is MUCH better)
-        //This is also pretty made up but it works mostly sort of, so roll with it
+        //This is also pretty made up, but it works mostly sort of, so roll with it
         return (radiationEfficiency + (3.0 * Math.sqrt(actualAtmosphereDensity/100))) * Math.pow(deltaTemperatureRatio, 4);
     }
     public static boolean isAtmosphereSuitableForCombustion(World world, BlockPos pos) {

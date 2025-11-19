@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class HighPressureSteamTurbineRecipeCategory extends ITRecipeCategory<HighPressureSteamTurbineRecipe, HighPressureSteamTurbineRecipeWrapper> {
@@ -30,22 +31,22 @@ public class HighPressureSteamTurbineRecipeCategory extends ITRecipeCategory<Hig
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, HighPressureSteamTurbineRecipeWrapper recipeWrapper, IIngredients ingredients) {
+	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull HighPressureSteamTurbineRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
 
 		int tankSize = 0;
-		for(List<FluidStack> lists : inputs) {
-			for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
+		for (List<FluidStack> lists : inputs) {
+			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
 		}
-		for(List<FluidStack> lists : outputs) {
-			for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
+		for (List<FluidStack> lists : outputs) {
+			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
 		}
 
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
 		guiFluidStacks.init(0, true, 11, 11, 16, 47, tankSize, true, tankOverlay);
 		guiFluidStacks.set(0, inputs.get(0));
-		if(!outputs.isEmpty()) {
+		if (!outputs.isEmpty()) {
 			guiFluidStacks.init(1, false, 89, 11, 16, 47, tankSize, true, tankOverlay);
 			guiFluidStacks.set(1, outputs.get(0));
 		}
@@ -53,13 +54,12 @@ public class HighPressureSteamTurbineRecipeCategory extends ITRecipeCategory<Hig
 	}
 
 	@Override
-	public IRecipeWrapper getRecipeWrapper(HighPressureSteamTurbineRecipe recipe) {
+	public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull HighPressureSteamTurbineRecipe recipe) {
 		return new HighPressureSteamTurbineRecipeWrapper(recipe);
 	}
-	
+
 	@Override
-	public void drawExtras(Minecraft minecraft) {
+	public void drawExtras(@Nonnull Minecraft minecraft) {
 		turbineAndArrow.draw(minecraft, 42, 18);
 	}
-
 }

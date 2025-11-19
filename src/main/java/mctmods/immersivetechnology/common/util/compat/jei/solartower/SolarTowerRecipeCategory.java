@@ -17,13 +17,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe, SolarTowerRecipeWrapper> {
 	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_solar_tower_jei.png");
 	private final IDrawable tankOverlay;
 	private final IDrawable reflectorOverlay;
-	private ITickTimer timer;
+	private final ITickTimer timer;
 
 	@SuppressWarnings("deprecation")
 	public SolarTowerRecipeCategory(IGuiHelper helper) {
@@ -35,23 +36,23 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, SolarTowerRecipeWrapper recipeWrapper, IIngredients ingredients) {
+	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull SolarTowerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		int tankCapacity = 0;
-		for(List<FluidStack> stacks : inputs) {
-			for(FluidStack stack : stacks) {
-				if(stack.amount > tankCapacity) tankCapacity = stack.amount;
+		for (List<FluidStack> stacks : inputs) {
+			for (FluidStack stack : stacks) {
+				if (stack.amount > tankCapacity) tankCapacity = stack.amount;
 			}
 		}
 		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
-		for(List<FluidStack> stacks : outputs) {
-			for(FluidStack stack : stacks) {
-				if(stack.amount > tankCapacity) tankCapacity = stack.amount;
+		for (List<FluidStack> stacks : outputs) {
+			for (FluidStack stack : stacks) {
+				if (stack.amount > tankCapacity) tankCapacity = stack.amount;
 			}
 		}
 
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-		if(inputs.size() > 0) {
+		if (!inputs.isEmpty()) {
 			guiFluidStacks.init(0, true, 102, 21, 16, 47, tankCapacity, false, tankOverlay);
 			guiFluidStacks.set(0, inputs.get(0));
 		}
@@ -63,17 +64,16 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void drawExtras(Minecraft minecraft) {
+	public void drawExtras(@Nonnull Minecraft minecraft) {
 		int reflectors = timer.getValue();
 		reflectorOverlay.draw(minecraft, 32, 24);
-		if(reflectors >= 1) reflectorOverlay.draw(minecraft, 16, 40);
-		if(reflectors >= 2) reflectorOverlay.draw(minecraft, 48, 40);
-		if(reflectors == 3) reflectorOverlay.draw(minecraft, 32, 56);
+		if (reflectors >= 1) reflectorOverlay.draw(minecraft, 16, 40);
+		if (reflectors >= 2) reflectorOverlay.draw(minecraft, 48, 40);
+		if (reflectors == 3) reflectorOverlay.draw(minecraft, 32, 56);
 	}
 
 	@Override
-	public IRecipeWrapper getRecipeWrapper(SolarTowerRecipe recipe) {
+	public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull SolarTowerRecipe recipe) {
 		return new SolarTowerRecipeWrapper(recipe);
 	}
-
 }

@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei.meltingcrucible;
 
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
-import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Multiblock;
+import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCrucibleRecipe, MeltingCrucibleRecipeWrapper> {
@@ -23,20 +24,20 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 
 	@SuppressWarnings("deprecation")
 	public MeltingCrucibleRecipeCategory(IGuiHelper helper) {
-		super("meltingCrucible", "tile.immersivetech.metal_multiblock1.melting_crucible.name", helper.createDrawable(background, 0, 0, 176, 64), MeltingCrucibleRecipe.class, Multiblock.enable_meltingCrucible ? GenericMultiblockIngredient.MELTING_CRUCIBLE :  null, Multiblock.enable_solarMelter ? GenericMultiblockIngredient.SOLAR_MELTER : null);
+		super("meltingCrucible", "tile.immersivetech.metal_multiblock1.melting_crucible.name", helper.createDrawable(background, 0, 0, 176, 64), MeltingCrucibleRecipe.class, Multiblocks.enable.enable_meltingCrucible ? GenericMultiblockIngredient.MELTING_CRUCIBLE :  null, Multiblocks.enable.enable_solarMelter ? GenericMultiblockIngredient.SOLAR_MELTER : null);
 		tankOverlay = helper.createDrawable(background, 178, 2, 16, 47, -2, 2, -2, 2);
 		IDrawableStatic staticImage = helper.createDrawable(background, 196, 0, 32, 18);
 		this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, MeltingCrucibleRecipeWrapper recipeWrapper, IIngredients ingredients) {
+	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull MeltingCrucibleRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
 		int tankSize = 0;
 
-		for(List<FluidStack> lists : outputs) {
-			for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
+		for (List<FluidStack> lists : outputs) {
+			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
 		}
 
 		IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
@@ -44,7 +45,7 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 		guiItemStacks.set(0, recipeWrapper.recipe.itemInput.getExampleStack());
 
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-		if(!outputs.isEmpty()) {
+		if (!outputs.isEmpty()) {
 			guiFluidStacks.init(0, false, 149, 12, 16, 47, tankSize, true, tankOverlay);
 			guiFluidStacks.set(0, outputs.get(0));
 		}
@@ -52,11 +53,10 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 	}
 	
 	@Override
-	public IRecipeWrapper getRecipeWrapper(MeltingCrucibleRecipe recipe) { return new MeltingCrucibleRecipeWrapper(recipe); }
+	public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull MeltingCrucibleRecipe recipe) { return new MeltingCrucibleRecipeWrapper(recipe); }
 
 	@Override
-	public void drawExtras(Minecraft minecraft) {
+	public void drawExtras(@Nonnull Minecraft minecraft) {
 		arrow.draw(minecraft, 57, 39);
 	}
-
 }

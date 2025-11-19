@@ -2,15 +2,14 @@ package mctmods.immersivetechnology.common;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.api.ITLib;
-import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.api.ITGUI;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityBoilerMaster;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityDistillerMaster;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntitySolarTowerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
 import mctmods.immersivetechnology.common.gui.*;
-import mctmods.immersivetechnology.common.util.TemporaryTileEntityRequest;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
@@ -26,37 +25,22 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
+@SuppressWarnings("unused")
 public class CommonProxy implements IGuiHandler {
 
 	public void preInit() {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	public static List<TemporaryTileEntityRequest> toReform = new ArrayList<>();
-
 	@SubscribeEvent
-	public void onWorldUnload(WorldEvent.Unload event) {
-
-	}
+	public void onWorldUnload(WorldEvent.Unload event) {}
 
 	@SubscribeEvent
 	public void onWorldTick(TickEvent.WorldTickEvent event) {
 		if(!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
 			event.world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
 			ITUtils.REMOVE_FROM_TICKING.clear();
-		}
-
-		//REMOVE THIS GARBAGE WHEN PORTING THIS MOD PAST 1.12
-		if(!toReform.isEmpty() && event.phase == TickEvent.Phase.END) {
-			for(TemporaryTileEntityRequest request : toReform) {
-				request.multiblock.createStructure(request.world, request.formationPosition == null? request.position : request.formationPosition, request.facing.getOpposite(), null);
-				TileEntity te = request.world.getTileEntity(request.position);
-				if(te != null) te.readFromNBT(request.nbtTag);
-			}
-			toReform.clear();
 		}
 	}
 
@@ -83,11 +67,11 @@ public class CommonProxy implements IGuiHandler {
 		TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
 		if(tile instanceof IGuiTile) {
 			Object gui = null;
-			if(ID == ITLib.GUIID_Boiler && tile instanceof TileEntityBoilerMaster) gui = new ContainerBoiler(player.inventory, (TileEntityBoilerMaster) tile);
-			if(ID == ITLib.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) gui = new ContainerDistiller(player.inventory, (TileEntityDistillerMaster) tile);
-			if(ID == ITLib.GUIID_Solar_Tower && tile instanceof TileEntitySolarTowerMaster) gui = new ContainerSolarTower(player.inventory, (TileEntitySolarTowerMaster) tile);
-			if(ID == ITLib.GUIID_Timer && tile instanceof TileEntityTimer) gui = new ContainerTimer(player.inventory, (TileEntityTimer) tile);
-			if(ID == ITLib.GUIID_Trash_Item && tile instanceof TileEntityTrashItem) gui = new ContainerTrashItem(player.inventory, (TileEntityTrashItem) tile);
+			if(ID == ITGUI.GUIID_Boiler && tile instanceof TileEntityBoilerMaster) gui = new ContainerBoiler(player.inventory, (TileEntityBoilerMaster) tile);
+			if(ID == ITGUI.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) gui = new ContainerDistiller(player.inventory, (TileEntityDistillerMaster) tile);
+			if(ID == ITGUI.GUIID_Solar_Tower && tile instanceof TileEntitySolarTowerMaster) gui = new ContainerSolarTower(player.inventory, (TileEntitySolarTowerMaster) tile);
+			if(ID == ITGUI.GUIID_Timer && tile instanceof TileEntityTimer) gui = new ContainerTimer(player.inventory, (TileEntityTimer) tile);
+			if(ID == ITGUI.GUIID_Trash_Item && tile instanceof TileEntityTrashItem) gui = new ContainerTrashItem(player.inventory, (TileEntityTrashItem) tile);
 			if(gui != null) ((IGuiTile)tile).onGuiOpened(player, false);
 			return gui;
 		}

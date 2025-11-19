@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class DistillerRecipeCategory extends ITRecipeCategory<DistillerRecipe, DistillerRecipeWrapper> {
@@ -30,19 +31,19 @@ public class DistillerRecipeCategory extends ITRecipeCategory<DistillerRecipe, D
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, DistillerRecipeWrapper recipeWrapper, IIngredients ingredients) {
+	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull DistillerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
 
 		int tankSize = 0;
-		for(List<FluidStack> lists : inputs) {
-			for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
+		for (List<FluidStack> lists : inputs) {
+			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
 		}
-		for(List<FluidStack> lists : outputs) {
-			for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
+		for (List<FluidStack> lists : outputs) {
+			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
 		}
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-		if(inputs.size() > 0) {
+		if (!inputs.isEmpty()) {
 			guiFluidStacks.init(0, true, 58, 21, 16, 47, tankSize, false, tankOverlay);
 			guiFluidStacks.set(0, inputs.get(0));
 		}
@@ -51,7 +52,7 @@ public class DistillerRecipeCategory extends ITRecipeCategory<DistillerRecipe, D
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
 
 		ItemStack itemOutput = recipeWrapper.recipe.itemOutput;
-		if(!itemOutput.isEmpty()) {
+		if (!itemOutput.isEmpty()) {
 			IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
 			guiItemStacks.init(0, false, 133, 52);
 			guiItemStacks.set(0, itemOutput);
@@ -60,8 +61,7 @@ public class DistillerRecipeCategory extends ITRecipeCategory<DistillerRecipe, D
 	}
 	
 	@Override
-	public IRecipeWrapper getRecipeWrapper(DistillerRecipe recipe) {
+	public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull DistillerRecipe recipe) {
 		return new DistillerRecipeWrapper(recipe);
 	}
-
 }

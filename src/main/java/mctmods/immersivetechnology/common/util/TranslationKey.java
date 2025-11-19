@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.common.util;
 import net.minecraft.client.resources.I18n;
 
 public enum TranslationKey {
-
     OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE("overlay.immersivetech.osd.trash_item.normal.firstline"),
     OVERLAY_OSD_TRASH_FLUID_NORMAL_FIRST_LINE("overlay.immersivetech.osd.trash_fluid.normal.firstline"),
     OVERLAY_OSD_TRASH_ENERGY_NORMAL_FIRST_LINE("overlay.immersivetech.osd.trash_energy.normal.firstline"),
@@ -50,7 +49,7 @@ public enum TranslationKey {
     CHAT_PUMP_PUSH_ONLY_MODE("chat.immersivetech.fluid_pump.push_only_mode"),
     GUI_IF_PER_TICK("gui.immersivetech.if_per_tick");
 
-	public String location;
+	public final String location;
 	TranslationKey(String location) {
 		this.location = location;
 	}
@@ -78,5 +77,4 @@ public enum TranslationKey {
 	public String format(Object... parameters) {
 		return format(false, false, parameters);
 	}
-
 }

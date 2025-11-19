@@ -3,22 +3,13 @@ package mctmods.immersivetechnology.common.util;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 
+@SuppressWarnings("unused")
 public class ITFluxStorage extends FluxStorage implements IEnergyStorage {
-
     public boolean canExtract = true, canReceive = true;
 
-    public ITFluxStorage(int capacity, int limitReceive, int limitExtract) {
-        super(capacity, limitReceive, limitExtract);
-    }
-
-    public ITFluxStorage(int capacity, int limitTransfer) {
-        super(capacity, limitTransfer);
-    }
-
-    public ITFluxStorage(int capacity) {
-        super(capacity);
-    }
-
+    public ITFluxStorage(int capacity, int limitReceive, int limitExtract) { super(capacity, limitReceive, limitExtract); }
+    public ITFluxStorage(int capacity, int limitTransfer) { super(capacity, limitTransfer); }
+    public ITFluxStorage(int capacity) { super(capacity); }
     public ITFluxStorage(int capacity, boolean canExtract, boolean canReceive) {
         super(capacity);
         this.canExtract = canExtract;

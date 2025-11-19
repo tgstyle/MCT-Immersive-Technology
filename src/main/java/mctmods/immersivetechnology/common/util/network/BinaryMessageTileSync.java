@@ -60,9 +60,9 @@ public class BinaryMessageTileSync implements IMessage {
             EntityPlayerMP player = ctx.getServerHandler().player;
             WorldServer world = player.getServerWorld();
             world.addScheduledTask(() -> {
-                if(world.isBlockLoaded(message.pos)) {
+                if (world.isBlockLoaded(message.pos)) {
                     TileEntity tile = world.getTileEntity(message.pos);
-                    if(tile instanceof IBinaryMessageReceiver)
+                    if (tile instanceof IBinaryMessageReceiver)
                         ((IBinaryMessageReceiver)tile).receiveMessageFromClient(message.buffer, player);
                 }
             });
@@ -76,14 +76,13 @@ public class BinaryMessageTileSync implements IMessage {
         public IMessage onMessage(BinaryMessageTileSync message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 World world = Minecraft.getMinecraft().world;
-                if(world!=null) {
+                if (world!=null) {
                     TileEntity tile = world.getTileEntity(message.pos);
-                    if(tile instanceof IBinaryMessageReceiver)
+                    if (tile instanceof IBinaryMessageReceiver)
                         ((IBinaryMessageReceiver)tile).receiveMessageFromServer(message.buffer);
                 }
             });
             return null;
         }
     }
-
 }

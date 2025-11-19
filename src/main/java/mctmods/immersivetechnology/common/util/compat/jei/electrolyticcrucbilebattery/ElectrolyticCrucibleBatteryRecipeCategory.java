@@ -17,7 +17,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ElectrolyticCrucibleBatteryRecipeCategory extends ITRecipeCategory<ElectrolyticCrucibleBatteryRecipe, ElectrolyticCrucibleBatteryWrapper> {
-
     public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_electrolytic_crucible_battery_jei.png");
     private final IDrawable tankOverlay;
     private final IDrawableAnimated arrow;
@@ -31,16 +30,16 @@ public class ElectrolyticCrucibleBatteryRecipeCategory extends ITRecipeCategory<
     }
 
     @Override
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull ElectrolyticCrucibleBatteryWrapper recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull ElectrolyticCrucibleBatteryWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
         List<List<FluidStack>> inputs = ingredients.getInputs(VanillaTypes.FLUID);
         List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
         int tankSize = 0;
-        for(List<FluidStack> lists : inputs) {
-            for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
+        for (List<FluidStack> lists : inputs) {
+            for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
         }
-        for(List<FluidStack> lists : outputs) {
-            for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
+        for (List<FluidStack> lists : outputs) {
+            for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
         }
 
         int tankIndex = 0;
@@ -48,16 +47,16 @@ public class ElectrolyticCrucibleBatteryRecipeCategory extends ITRecipeCategory<
         guiFluidStacks.init(tankIndex, false, 12, 12, 16, 47, tankSize, true, tankOverlay);
         guiFluidStacks.set(tankIndex, inputs.get(0));
 
-        if(!outputs.isEmpty()) {
+        if (!outputs.isEmpty()) {
             tankIndex++;
             guiFluidStacks.init(tankIndex, false, 102, 12, 16, 47, tankSize, true, tankOverlay);
             guiFluidStacks.set(tankIndex, outputs.get(0));
-            if(outputs.size() >= 2) {
+            if (outputs.size() >= 2) {
                 tankIndex++;
                 guiFluidStacks.init(tankIndex, false, 125, 12, 16, 47, tankSize, true, tankOverlay);
                 guiFluidStacks.set(tankIndex, outputs.get(1));
             }
-            if(outputs.size() == 3) {
+            if (outputs.size() == 3) {
                 tankIndex++;
                 guiFluidStacks.init(tankIndex, false, 148, 12, 16, 47, tankSize, true, tankOverlay);
                 guiFluidStacks.set(tankIndex, outputs.get(2));
@@ -67,12 +66,12 @@ public class ElectrolyticCrucibleBatteryRecipeCategory extends ITRecipeCategory<
     }
 
     @Override
-    public IRecipeWrapper getRecipeWrapper(ElectrolyticCrucibleBatteryRecipe recipe) {
+    public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull ElectrolyticCrucibleBatteryRecipe recipe) {
         return new ElectrolyticCrucibleBatteryWrapper(recipe);
     }
 
     @Override
-    public void drawExtras(Minecraft minecraft) {
+    public void drawExtras(@Nonnull Minecraft minecraft) {
         arrow.draw(minecraft, 50, 39);
     }
 }

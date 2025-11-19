@@ -8,8 +8,9 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class CoolingTowerRecipeWrapper extends MultiblockRecipeWrapper {
+import javax.annotation.Nonnull;
 
+public class CoolingTowerRecipeWrapper extends MultiblockRecipeWrapper {
     public MultiblockRecipe recipe;
 
     public CoolingTowerRecipeWrapper(MultiblockRecipe recipe) {
@@ -19,7 +20,7 @@ public class CoolingTowerRecipeWrapper extends MultiblockRecipeWrapper {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+    public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         String text = (GuiScreen.isShiftKeyDown())?
                 TranslationKey.GUI_TICKS.format(recipe.getTotalProcessTime()) :
                 TranslationKey.GUI_SECONDS.format(((float)recipe.getTotalProcessTime()) / 20);

@@ -12,6 +12,8 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
+
 public class GuiTimer extends GuiIEContainerBase {
 	TileEntityTimer tile;
 
@@ -29,7 +31,7 @@ public class GuiTimer extends GuiIEContainerBase {
 	}
 
 	@Override
-	protected void actionPerformed(GuiButton button) {
+	protected void actionPerformed(@Nonnull GuiButton button) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("buttonId", button.id);
 		ImmersiveTechnology.packetHandler.sendToServer(new MessageTileSync(tile, tag));
@@ -43,7 +45,6 @@ public class GuiTimer extends GuiIEContainerBase {
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		float time = (float)tile.getTarget() / 20;
-		this.drawString(this.fontRenderer, String.valueOf(time) + " Sec.", guiLeft + 68, guiTop + 40, 0xFFFFFF);
+		this.drawString(this.fontRenderer, time + " Sec.", guiLeft + 68, guiTop + 40, 0xFFFFFF);
 	}
-
 }

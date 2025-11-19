@@ -9,7 +9,7 @@ tile.immersivetech.stone_decoration.cokebrick_reinforced.name=Reinforced Coke Br
 
 #ITEMS
 item.immersivetech.material.salt.name=Salt
-
+item.immersivetech.material.formation_tool.name=Formation Tool
 
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=Distilled Water
@@ -27,19 +27,21 @@ fluid.steam=Steam
 fluid.exhauststeam=Exhaust Steam
 fluid.fluegas=Flue Gas
 fluid.highpressuresteam=High Pressure Steam
-fluid.hot_spring_water=Hot Spring Water
+fluid.hotwater=Hot Water
 fluid.moltensalt=Molten Salt
 fluid.moltensodium=Molten Sodium
 fluid.superheatedmoltensodium=Superheated Molten Sodium
 fluid.chlorine=Chlorine
-
 
 #KEYWORDS
 keyword.immersivetech.generate=Generates
 keyword.immersivetech.heat_level=Temperature
 keyword.immersivetech.rotations_per_minute=RPM
 keyword.immersivetech.speed=Speed
-
+keyword.immersivetech.fluid_input=Fluid Input
+keyword.immersivetech.fluid_output=Fluid Output
+keyword.immersivetech.starter_energy=Starter Energy
+keyword.immersivetech.sparkplug_energy=Sparkplug Energy
 
 #JEI
 category.immersivetech.metal_multiblock.boilerRecipe=Boiler
@@ -167,7 +169,6 @@ desc.immersiveengineering.info.multiblock.IT:SolarMelter=Solar Melting Crucible
 #CONNECTORS
 tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
 
-
 #MANUAL
 ie.manual.category.it_power.name=Turbine Power Systems
 ie.manual.category.it.name=Immersive Technology
@@ -197,7 +198,7 @@ ie.manual.entry.solarTower.name=Solar Tower
 ie.manual.entry.solarTower.subtext=Automatic Bird Roaster 2056
 ie.manual.entry.solarTower0=The Solar Tower is a multiblock structure that uses the light of the Sun to heat water into steam. The structure is built as shown and formed by using the Engineer's Hammer on the central Light Engineering Block.
 ie.manual.entry.solarTower1=The Solar Tower can produce Steam from Water and <link;distiller;§n§oDistilled Water§r>. Water can be input into the Solar Tower via the hatch marked with the blue dot. The hatch with the orange dot serves as a fluid output. The Solar Tower needs at least one Solar Reflector to work, and many to reach full efficiency. The fraction of reflectors out of the maximum number of reflectors is the fraction of the recipe processed. In the overworld, about 230 reflectors are needed to reach full output.
-ie.manual.entry.solarTower2=The Solar Reflector is a multiblock structure that reflects the light of the Sun to the center of the Solar Tower.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Silver Block. 
+ie.manual.entry.solarTower2=The Solar Reflector is a multiblock structure that reflects the light of the Sun to the center of the Solar Tower.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Silver Block. It must be placed above the concrete foundation layer of the Tower/Melter. If too low or too high, it will not connect.
 ie.manual.entry.solarTower3=Reflector distance from the Solar Tower must be between <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> blocks. The reflector does not work at night or during thunderstorms, and has reduced efficiency during rainstorms. Efficiency is also reduced at dawn and dusk when the sunlight's angle of incidence is too low to be easily collected, and by high ambient humidity. Full reflector efficiency depends on full sky access. If §lAdvanced Rocketry§r exists, the reflector strength will vary with the amount of received sunlight per planet.
 
 ie.manual.entry.controlBlocks.name=Limiter and Control Devices

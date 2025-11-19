@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.connectors.types;
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 
 public enum BlockType_Connectors implements IStringSerializable, BlockITBase.IBlockEnum {
@@ -19,8 +20,5 @@ public enum BlockType_Connectors implements IStringSerializable, BlockITBase.IBl
 	}
 
 	@Override
-	public String getName() {
-		return this.toString().toLowerCase(Locale.ENGLISH);
-	}
-
+	public @Nonnull String getName() { return this.toString().toLowerCase(Locale.ENGLISH); }
 }

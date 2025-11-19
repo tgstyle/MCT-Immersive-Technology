@@ -6,8 +6,8 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerSlave;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityBoilerMaster;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityBoilerSlave;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -16,18 +16,16 @@ import net.minecraft.world.World;
 
 import java.util.HashMap;
 
-
+@SuppressWarnings("unused")
 public class BoilerDriver extends DriverSidedTileEntity {
 	@Override
 	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
-		if(tile instanceof TileEntityBoilerSlave) {
+		if (tile instanceof TileEntityBoilerSlave) {
 			TileEntityBoilerSlave te = (TileEntityBoilerSlave) tile;
 			TileEntityBoilerMaster tem = te.master();
-			if(tem != null && te.isRedstonePos()) {
-				return new BoilerEnvironment(world, tem.getPos());
-			}
+			if (tem != null && te.isRedstonePos()) { return new BoilerEnvironment(world, tem.getPos()); }
 		}
 		return null;
 	}
@@ -37,7 +35,7 @@ public class BoilerDriver extends DriverSidedTileEntity {
 		return TileEntityBoilerSlave.class;
 	}
 
-	public class BoilerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntityBoilerMaster> {
+	public static class BoilerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntityBoilerMaster> {
 		public BoilerEnvironment(World world, BlockPos pos) {
 			super(world, pos, TileEntityBoilerMaster.class);
 		}

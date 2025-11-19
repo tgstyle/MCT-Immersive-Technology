@@ -34,35 +34,35 @@ public class HeatExchangerRecipeCategory extends ITRecipeCategory<HeatExchangerR
     }
 
     @Override
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull HeatExchangerRecipeWrapper recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull HeatExchangerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
         List<List<FluidStack>> inputs = ingredients.getInputs(VanillaTypes.FLUID);
         List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
         int tankSize = 0;
-        for(List<FluidStack> lists : inputs) {
-            for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
+        for (List<FluidStack> lists : inputs) {
+            for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
         }
-        for(List<FluidStack> lists : outputs) {
-            for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
+        for (List<FluidStack> lists : outputs) {
+            for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
         }
 
         int tankIndex = 0;
         IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-        if(!inputs.isEmpty()) {
+        if (!inputs.isEmpty()) {
             guiFluidStacks.init(tankIndex, true, 35, 12, 16, 47, tankSize, true, tankOverlay);
             guiFluidStacks.set(tankIndex, inputs.get(0));
-            if(inputs.size() == 2) {
+            if (inputs.size() == 2) {
                 tankIndex++;
                 guiFluidStacks.init(tankIndex, true, 12, 12, 16, 47, tankSize, true, tankOverlay);
                 guiFluidStacks.set(tankIndex, inputs.get(1));
             }
         }
 
-        if(!outputs.isEmpty()) {
+        if (!outputs.isEmpty()) {
             tankIndex++;
             guiFluidStacks.init(tankIndex, false, 125, 12, 16, 47, tankSize, true, tankOverlay);
             guiFluidStacks.set(tankIndex, outputs.get(0));
-            if(outputs.size() == 2) {
+            if (outputs.size() == 2) {
                 tankIndex++;
                 guiFluidStacks.init(tankIndex, false, 148, 12, 16, 47, tankSize, true, tankOverlay);
                 guiFluidStacks.set(tankIndex, outputs.get(1));
@@ -72,12 +72,10 @@ public class HeatExchangerRecipeCategory extends ITRecipeCategory<HeatExchangerR
     }
 
     @Override
-    public IRecipeWrapper getRecipeWrapper(HeatExchangerRecipe recipe) {
-        return new HeatExchangerRecipeWrapper(recipe);
-    }
+    public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull HeatExchangerRecipe recipe) { return new HeatExchangerRecipeWrapper(recipe); }
 
     @Override
-    public void drawExtras(Minecraft minecraft) {
+    public void drawExtras(@Nonnull Minecraft minecraft) {
         arrow.draw(minecraft, 73, 50);
         drops.draw(minecraft, 73, 40);
     }

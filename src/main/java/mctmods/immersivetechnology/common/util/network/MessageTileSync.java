@@ -24,8 +24,7 @@ public class MessageTileSync implements IMessage {
 		this.nbt = nbt;
 	}
 
-	public MessageTileSync() {
-	}
+	public MessageTileSync() { }
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
@@ -44,30 +43,29 @@ public class MessageTileSync implements IMessage {
 		public IMessage onMessage(MessageTileSync message, MessageContext ctx) {
 			WorldServer world = ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
-				if(world.isBlockLoaded(message.pos)) {
+				if (world.isBlockLoaded(message.pos)) {
 					TileEntity tile = world.getTileEntity(message.pos);
-					if(tile instanceof TileEntityIEBase)
+					if (tile instanceof TileEntityIEBase)
 						((TileEntityIEBase)tile).receiveMessageFromClient(message.nbt);
 				}
 			});
 			return null;
 		}
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	public static class HandlerClient implements IMessageHandler<MessageTileSync, IMessage>	{
 		@Override
 		public IMessage onMessage(MessageTileSync message, MessageContext ctx) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
 				World world = Minecraft.getMinecraft().world;
-				if(world!=null) {
+				if (world!=null) {
 					TileEntity tile = world.getTileEntity(message.pos);
-					if(tile instanceof TileEntityIEBase)
+					if (tile instanceof TileEntityIEBase)
 						((TileEntityIEBase)tile).receiveMessageFromServer(message.nbt);
 				}
 			});
 			return null;
 		}
 	}
-
 }

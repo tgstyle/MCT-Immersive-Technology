@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName;
 import net.minecraft.util.EnumFacing;
 
 public enum LocalFacing {
-
     @SerializedName("0")
     DOWN(0),
     @SerializedName("1")
@@ -20,9 +19,7 @@ public enum LocalFacing {
 
     private final int index;
 
-    LocalFacing(int index) {
-        this.index = index;
-    }
+    LocalFacing(int index) { this.index = index; }
 
     public EnumFacing LocalToGlobal(EnumFacing origin) {
         if(origin == null) return null;

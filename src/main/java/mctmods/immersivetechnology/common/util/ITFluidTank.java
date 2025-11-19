@@ -8,10 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ITFluidTank extends FluidTank {
-
-	public interface TankListener {
-		void TankContentsChanged();
-	}
+	public interface TankListener {  void TankContentsChanged(); }
 
 	TankListener listener;
 
@@ -33,5 +30,4 @@ public class ITFluidTank extends FluidTank {
 		listener.TankContentsChanged();
 		super.onContentsChanged();
 	}
-
 }

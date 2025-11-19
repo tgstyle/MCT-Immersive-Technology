@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.gui;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
-import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidValve;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
@@ -9,8 +9,7 @@ import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.*;
 
-public class GuiFluidValve extends GUICommonValve {
-
+public class GuiFluidValve extends GuiCommonValve {
 	public GuiFluidValve(TileEntityFluidValve tile) {
 		this.tile = tile;
 	}

@@ -11,10 +11,11 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.HashMap;
 
+@SuppressWarnings("unused")
 public class ITSoundHandler extends PositionedSound implements ITickableSound {
 
-	private static HashMap<BlockPos, ITSoundHandler> playingSounds = new HashMap<>();
-	private BlockPos pos;
+	private static final HashMap<BlockPos, ITSoundHandler> playingSounds = new HashMap<>();
+	private final BlockPos pos;
 	private float unmodifiedVolume;
 
 	public static void PlayOnceSound(BlockPos posIn, SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn) {
@@ -24,10 +25,11 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
 
 	public static void PlayRepeatingSound(BlockPos posIn, SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn) {
 		ITSoundHandler sound = playingSounds.get(posIn);
-		if(sound == null) {
+		if (sound == null) {
 			sound = new ITSoundHandler(posIn, soundIn, categoryIn, true, volumeIn, pitchIn);
 			playingSounds.put(posIn, sound);
-		} else {
+		}
+        else {
 			sound.unmodifiedVolume = volumeIn;
 			sound.volume = volumeIn * ClientProxy.volumeAdjustment;
 			sound.pitch = pitchIn;
@@ -37,7 +39,7 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
 
 	public static void StopSound(BlockPos posIn) {
 		ITSoundHandler sound = playingSounds.get(posIn);
-		if(sound == null) return;
+		if (sound == null) return;
 		sound.stopSound();
 	}
 
@@ -56,19 +58,15 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
 	}
 
 	@Override
-	public boolean isDonePlaying() {
-		return !playingSounds.containsValue(this);
-	}
+	public boolean isDonePlaying() { return !playingSounds.containsValue(this); }
 
-	public static boolean isPlaying(BlockPos posIn) {
-		return playingSounds.get(posIn) != null;
-	}
+	public static boolean isPlaying(BlockPos posIn) { return playingSounds.get(posIn) != null; }
 
 	@Override
 	public void update() {}
 
 	private void stopSound(boolean keepOnList) {
-		if(!keepOnList) playingSounds.remove(pos);
+		if (!keepOnList) playingSounds.remove(pos);
 		Minecraft.getMinecraft().getSoundHandler().stopSound(this);
 	}
 
@@ -88,5 +86,4 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
 	public static void UpdateAllVolumes() {
 		playingSounds.forEach((blockPos, itSoundHandler) -> itSoundHandler.updateVolume());
 	}
-
 }

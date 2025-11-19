@@ -1,2 +1,4 @@
+# Made in Blockbench 4.12.6
 newmtl distiller
 map_Kd immersivetech:blocks/metal_multiblock_distiller
+newmtl none

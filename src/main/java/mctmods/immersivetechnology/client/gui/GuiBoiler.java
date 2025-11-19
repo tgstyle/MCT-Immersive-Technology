@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.client.gui;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
-import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Boiler;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
+import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityBoilerMaster;
 import mctmods.immersivetechnology.common.gui.ContainerBoiler;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class GuiBoiler extends GuiIEContainerBase {
 	TileEntityBoilerMaster tile;
 
-	private static double workingHeatLevel = Boiler.boiler_heat_workingLevel;
+	private static final double workingHeatLevel = Multiblocks.boiler.boiler_heat_workingLevel;
 	
 	public GuiBoiler(InventoryPlayer inventoryPlayer, TileEntityBoilerMaster tile) {
 		super(new ContainerBoiler(inventoryPlayer, tile));
@@ -30,11 +30,11 @@ public class GuiBoiler extends GuiIEContainerBase {
 		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 13, guiTop + 20, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_boiler.png", tooltip);
 		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft + 100, guiTop + 20, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_boiler.png", tooltip);
 		ClientUtils.handleGuiTank(tile.tanks[2], guiLeft + 123, guiTop + 20, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_boiler.png", tooltip);
-		if(mx >= guiLeft + 100 && mx < guiLeft + 141 && my >= guiTop + 5 && my < guiTop + 14) {
+		if (mx >= guiLeft + 100 && mx < guiLeft + 141 && my >= guiTop + 5 && my < guiTop + 14) {
 			tooltip.add("Temperature");
 			tooltip.add(TextFormatting.RED + "" + ((tile.heatLevel/20) + 30) + "/" + ((workingHeatLevel/20) + 30) + "C");
 		}
-		if(!tooltip.isEmpty()) {
+		if (!tooltip.isEmpty()) {
 			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, - 1);
 			RenderHelper.enableGUIStandardItemLighting();
 		}
@@ -54,5 +54,4 @@ public class GuiBoiler extends GuiIEContainerBase {
 		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft + 100, guiTop + 20, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_boiler.png", null);
 		ClientUtils.handleGuiTank(tile.tanks[2], guiLeft + 123, guiTop + 20, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_boiler.png", null);
 	}
-
 }

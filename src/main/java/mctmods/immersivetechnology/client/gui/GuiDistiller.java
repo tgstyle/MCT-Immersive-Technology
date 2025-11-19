@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.client.gui;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityDistillerMaster;
 import mctmods.immersivetechnology.common.gui.ContainerDistiller;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -25,9 +25,9 @@ public class GuiDistiller extends GuiIEContainerBase {
 		ArrayList<String> tooltip = new ArrayList<>();
 		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 58, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_distiller.png", tooltip);
 		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft + 112, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_distiller.png", tooltip);
-		if(mx > guiLeft + 157 && mx < guiLeft + 164 && my > guiTop + 21 && my < guiTop + 67)
+		if (mx > guiLeft + 157 && mx < guiLeft + 164 && my > guiTop + 21 && my < guiTop + 67)
 			tooltip.add(tile.getEnergyStored(null) + "/" + tile.getMaxEnergyStored(null) + " RF");
-		if(!tooltip.isEmpty()) {
+		if (!tooltip.isEmpty()) {
 			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
 			RenderHelper.enableGUIStandardItemLighting();
 		}
@@ -45,5 +45,4 @@ public class GuiDistiller extends GuiIEContainerBase {
 		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 58, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_distiller.png", null);
 		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft + 112, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_distiller.png", null);
 	}
-
 }

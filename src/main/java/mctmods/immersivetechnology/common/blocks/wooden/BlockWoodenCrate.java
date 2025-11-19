@@ -12,6 +12,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
 public class BlockWoodenCrate extends BlockITTileProvider<BlockType_WoodenCrate> {
 	public BlockWoodenCrate() {
 		super("wooden_crate", Material.IRON, PropertyEnum.create("type", BlockType_WoodenCrate.class), ItemBlockITBase.class);
@@ -21,8 +24,9 @@ public class BlockWoodenCrate extends BlockITTileProvider<BlockType_WoodenCrate>
 		this.setAllNotNormalBlock();
 	}
 
-	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	@Nonnull
+    @Override
+	public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		return state;
 	}
@@ -34,13 +38,9 @@ public class BlockWoodenCrate extends BlockITTileProvider<BlockType_WoodenCrate>
 
 	@Override
 	public TileEntity createBasicTE(World worldIn, BlockType_WoodenCrate type) {
-		switch(type) {
-		case CRATE:
-			return new TileEntityCrate();
-		default:
-			break;
-		}
+        if (Objects.requireNonNull(type) == BlockType_WoodenCrate.CRATE) {
+            return new TileEntityCrate();
+        }
 		return null;
 	}
-
 }

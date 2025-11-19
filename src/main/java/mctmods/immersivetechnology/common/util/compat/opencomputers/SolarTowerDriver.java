@@ -6,8 +6,8 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerSlave;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntitySolarTowerMaster;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntitySolarTowerSlave;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -16,16 +16,16 @@ import net.minecraft.world.World;
 
 import java.util.HashMap;
 
-
+@SuppressWarnings("unused")
 public class SolarTowerDriver extends DriverSidedTileEntity {
 	@Override
 	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
-		if(tile instanceof TileEntitySolarTowerSlave) {
+		if (tile instanceof TileEntitySolarTowerSlave) {
 			TileEntitySolarTowerSlave te = (TileEntitySolarTowerSlave) tile;
 			TileEntitySolarTowerMaster tem = te.master();
-			if(tem != null && te.isRedstonePos()) {
+			if (tem != null && te.isRedstonePos()) {
 				return new SolarTowerEnvironment(world, tem.getPos());
 			}
 		}
@@ -37,7 +37,7 @@ public class SolarTowerDriver extends DriverSidedTileEntity {
 		return TileEntitySolarTowerSlave.class;
 	}
 
-	public class SolarTowerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntitySolarTowerMaster> {
+	public static class SolarTowerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntitySolarTowerMaster> {
 		public SolarTowerEnvironment(World world, BlockPos pos) {
 			super(world, pos, TileEntitySolarTowerMaster.class);
 		}

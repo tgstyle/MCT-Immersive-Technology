@@ -7,9 +7,10 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HeatExchangerRecipe extends MultiblockRecipe {
-
     public static float timeModifier = 1;
     public static float energyModifier = 1;
 
@@ -26,67 +27,56 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
         this.fluidOutput1 = fluidOutput1;
         this.fluidInput0 = fluidInput0;
         this.fluidInput1 = fluidInput1;
-        this.totalProcessTime = (int)Math.floor(time * timeModifier);
-        this.totalProcessEnergy = (int)Math.floor(energy * energyModifier);
+        this.totalProcessTime = (int) Math.floor(time * timeModifier);
+        this.totalProcessEnergy = (int) Math.floor(energy * energyModifier);
         this.fluidInputList = Lists.newArrayList(fluidInput0, fluidInput1);
+        this.fluidOutputList = Lists.newArrayList(fluidOutput0);
+        if (fluidOutput1 != null) this.fluidOutputList.add(fluidOutput1);
     }
 
     public static ArrayList<HeatExchangerRecipe> recipeList = new ArrayList<>();
 
+    private static final Map<FluidPair, HeatExchangerRecipe> recipeMap = new HashMap<>();
+    private static final Map<Fluid, HeatExchangerRecipe> input0Map = new HashMap<>();
+    private static final Map<Fluid, HeatExchangerRecipe> input1Map = new HashMap<>();
+
     public static HeatExchangerRecipe addRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidInput0, FluidStack fluidInput1, int energy, int time) {
         HeatExchangerRecipe recipe = new HeatExchangerRecipe(fluidOutput0, fluidOutput1, fluidInput0, fluidInput1, energy, time);
         recipeList.add(recipe);
+        if (fluidInput0 != null) input0Map.put(fluidInput0.getFluid(), recipe);
+        if (fluidInput1 != null) input1Map.put(fluidInput1.getFluid(), recipe);
+        recipeMap.put(new FluidPair(fluidInput0 != null ? fluidInput0.getFluid() : null, fluidInput1 != null ? fluidInput1.getFluid() : null), recipe);
         return recipe;
     }
 
     public static HeatExchangerRecipe findRecipe(FluidStack fluidInput0, FluidStack fluidInput1) {
-        if(fluidInput0 == null || fluidInput1 == null) return null;
-        for(HeatExchangerRecipe recipe : recipeList) {
-            if(     recipe.fluidInput0 != null && fluidInput0.containsFluid(recipe.fluidInput0) &&
-                    recipe.fluidInput1 != null && fluidInput1.containsFluid(recipe.fluidInput1)) return recipe;
+        if (fluidInput0 == null || fluidInput1 == null) {
+            return null;
         }
-        return null;
-    }
-
-    public static HeatExchangerRecipe findRecipe0(FluidStack fluidInput0) {
-        if(fluidInput0 == null) return null;
-        for(HeatExchangerRecipe recipe : recipeList) {
-            if(recipe.fluidInput0 != null && fluidInput0.containsFluid(recipe.fluidInput0)) return recipe;
+        HeatExchangerRecipe recipe = recipeMap.get(new FluidPair(fluidInput0.getFluid(), fluidInput1.getFluid()));
+        if (recipe != null && fluidInput0.containsFluid(recipe.fluidInput0) && fluidInput1.containsFluid(recipe.fluidInput1)) {
+            return recipe;
         }
-        return null;
-    }
-
-    public static HeatExchangerRecipe findRecipe1(FluidStack fluidInput1) {
-        if(fluidInput1 == null) return null;
-        for(HeatExchangerRecipe recipe : recipeList) {
-            if(recipe.fluidInput1 != null && fluidInput1.containsFluid(recipe.fluidInput1)) return recipe;
-        }
-        return null;
-    }
-
-    public static HeatExchangerRecipe findRecipeByFluid(Fluid fluidInput0, Fluid fluidInput1) {
-        if(fluidInput0 == null || fluidInput1 == null) return null;
-        for(HeatExchangerRecipe recipe : recipeList) {
-            if(     recipe.fluidInput0 != null && fluidInput0 == recipe.fluidInput0.getFluid() &&
-                    recipe.fluidInput1 != null && fluidInput1 == recipe.fluidInput1.getFluid()) return recipe;
+        for (HeatExchangerRecipe r : recipeList) {
+            if (r.fluidInput0 != null && fluidInput0.containsFluid(r.fluidInput0) && r.fluidInput1 != null && fluidInput1.containsFluid(r.fluidInput1)) {
+                return r;
+            }
         }
         return null;
     }
 
     public static HeatExchangerRecipe findRecipeByFluid0(Fluid fluidInput0) {
-        if(fluidInput0 == null) return null;
-        for(HeatExchangerRecipe recipe : recipeList) {
-            if(recipe.fluidInput0 != null && fluidInput0 == recipe.fluidInput0.getFluid()) return recipe;
+        if (fluidInput0 == null) {
+            return null;
         }
-        return null;
+        return input0Map.get(fluidInput0);
     }
 
     public static HeatExchangerRecipe findRecipeByFluid1(Fluid fluidInput1) {
-        if(fluidInput1 == null) return null;
-        for(HeatExchangerRecipe recipe : recipeList) {
-            if(recipe.fluidInput1 != null && fluidInput1 == recipe.fluidInput1.getFluid()) return recipe;
+        if (fluidInput1 == null) {
+            return null;
         }
-        return null;
+        return input1Map.get(fluidInput1);
     }
 
     @Override
@@ -102,7 +92,7 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt.setTag("input0", fluidInput0.writeToNBT(new NBTTagCompound()));
-        nbt.setTag("input1", fluidInput0.writeToNBT(new NBTTagCompound()));
+        nbt.setTag("input1", fluidInput1.writeToNBT(new NBTTagCompound()));
         return nbt;
     }
 
@@ -122,6 +112,37 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
         super.setupJEI();
         jeiFluidOutputList = new ArrayList<>();
         jeiFluidOutputList.add(fluidOutput0.copy());
-        if (fluidOutput1 != null) jeiFluidOutputList.add(fluidOutput1.copy());
+        if (fluidOutput1 != null) {
+            jeiFluidOutputList.add(fluidOutput1.copy());
+        }
+    }
+
+    static class FluidPair {
+        private final Fluid fluid0;
+        private final Fluid fluid1;
+
+        FluidPair(Fluid f0, Fluid f1) {
+            fluid0 = f0;
+            fluid1 = f1;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            FluidPair that = (FluidPair) o;
+            return fluid0 == that.fluid0 && fluid1 == that.fluid1;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = fluid0 != null ? fluid0.hashCode() : 0;
+            result = 31 * result + (fluid1 != null ? fluid1.hashCode() : 0);
+            return result;
+        }
     }
 }

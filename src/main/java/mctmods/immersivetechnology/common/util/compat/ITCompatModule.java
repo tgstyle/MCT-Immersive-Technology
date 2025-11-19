@@ -14,11 +14,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
-	/*
-	* Highly inspired to BluSunrize's class
-	*/
+@SuppressWarnings("unused")
 public abstract class ITCompatModule {
-
 	public static HashMap<String, Class<? extends ITCompatModule>> moduleClasses = new HashMap<>();
 	public static Set<ITCompatModule> modules = new HashSet<>();
 
@@ -34,49 +31,49 @@ public abstract class ITCompatModule {
 	}
 
 	public static void doModulesPreInit() {
-		for(Entry<String, Class<? extends ITCompatModule>> e : moduleClasses.entrySet()) {
-			if(Loader.isModLoaded(e.getKey())) {
+		for (Entry<String, Class<? extends ITCompatModule>> e : moduleClasses.entrySet()) {
+			if (Loader.isModLoaded(e.getKey())) {
 				try {
 					ITCompatModule m = e.getValue().newInstance();
 					modules.add(m);
 					m.preInit();
 				} catch(Exception exception) {
-					ITLogger.logger.error("Compat module for" + e.getKey() + " could not be preInitialized. Report this and include the error message below!", exception);
+                    ITLogger.logger.error("Compat module for{} could not be preInitialized. Report this and include the error message below!", e.getKey(), exception);
 				}
 			}
 		}
-		if(Loader.isModLoaded("advancedrocketry")) isAdvancedRocketryLoaded = true;
+		if (Loader.isModLoaded("advanced rocketry")) isAdvancedRocketryLoaded = true;
 	}
 
 	public static void doModulesInit() {
-		for(ITCompatModule compat : ITCompatModule.modules) {
+		for (ITCompatModule compat : ITCompatModule.modules) {
 			try {
 				compat.init();
 			} catch(Exception exception) {
-				ITLogger.logger.error("Compat module for" + compat + " could not be initialized. Report this and include the error message below!", exception);
+                ITLogger.logger.error("Compat module for{} could not be initialized. Report this and include the error message below!", compat, exception);
 			}
 		}
 	}
 
 	public static void doModulesPostInit() {
-		for(ITCompatModule compat : ITCompatModule.modules) {
+		for (ITCompatModule compat : ITCompatModule.modules) {
 			try {
 				compat.postInit();
 			} catch(Exception exception) {
-				ITLogger.logger.error("Compat module for" + compat + " could not be postInitialized. Report this and include the error message below!", exception);
+                ITLogger.logger.error("Compat module for{} could not be postInitialized. Report this and include the error message below!", compat, exception);
 			}
 		}
 	}
 
 	public static boolean serverStartingDone = false;
 	public static void doModulesLoadComplete() {
-		if(!serverStartingDone) {
+		if (!serverStartingDone) {
 			serverStartingDone = true;
-			for(ITCompatModule compat : ITCompatModule.modules) {
+			for (ITCompatModule compat : ITCompatModule.modules) {
 				try {
 					compat.loadComplete();
 				} catch(Exception exception) {
-					ITLogger.logger.error("Compat module for" + compat + " could not be initialized. Report this and include the error message below!", exception);
+                    ITLogger.logger.error("Compat module for{} could not be initialized. Report this and include the error message below!", compat, exception);
 				}
 			}
 		}
@@ -88,19 +85,15 @@ public abstract class ITCompatModule {
 
 	public abstract void postInit();
 
-	public void loadComplete() {
-	}
+	public void loadComplete() { }
 
 	@SideOnly(Side.CLIENT)
-	public void clientPreInit() {
-	}
+	public void clientPreInit() { }
 
 	@SideOnly(Side.CLIENT)
-	public void clientInit() {
-	}
+	public void clientInit() { }
 
 	@SideOnly(Side.CLIENT)
-	public void clientPostInit() {
-	}
-
+	public void clientPostInit() { }
 }
+

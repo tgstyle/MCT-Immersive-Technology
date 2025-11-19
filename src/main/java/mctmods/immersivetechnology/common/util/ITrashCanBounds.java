@@ -2,11 +2,11 @@ package mctmods.immersivetechnology.common.util;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 
-public interface ITrashCanBounds extends IEBlockInterfaces.IBlockBounds {
+import javax.annotation.Nonnull;
 
+public interface ITrashCanBounds extends IEBlockInterfaces.IBlockBounds {
 	@Override
-	default float[] getBlockBounds() {
+	default @Nonnull float[] getBlockBounds() {
 		return new float[]{ .125f, 0, .125f, .875f, 1, .875f};
 	}
-
 }

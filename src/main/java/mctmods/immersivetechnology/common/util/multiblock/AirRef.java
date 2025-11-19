@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.common.util.multiblock;
 import net.minecraft.item.ItemStack;
 
 public class AirRef implements IRefComparable {
-
     public static AirRef instance = new AirRef();
 
     @Override

@@ -6,23 +6,23 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHighPressureSteamTurbineMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHighPressureSteamTurbineSlave;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityHighPressureSteamTurbineMaster;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityHighPressureSteamTurbineSlave;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-
+@SuppressWarnings("unused")
 public class HighPressureSteamTurbineDriver extends DriverSidedTileEntity {
 	@Override
 	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
-		if(tile instanceof TileEntityHighPressureSteamTurbineSlave) {
+		if (tile instanceof TileEntityHighPressureSteamTurbineSlave) {
 			TileEntityHighPressureSteamTurbineSlave te = (TileEntityHighPressureSteamTurbineSlave) tile;
 			TileEntityHighPressureSteamTurbineMaster tem = te.master();
-			if(tem != null && te.isRedstonePos()) {
+			if (tem != null && te.isRedstonePos()) {
 				return new HighPressureSteamTurbineEnvironment(world, tem.getPos());
 			}
 		}
@@ -34,7 +34,7 @@ public class HighPressureSteamTurbineDriver extends DriverSidedTileEntity {
 		return TileEntityHighPressureSteamTurbineSlave.class;
 	}
 
-	public class HighPressureSteamTurbineEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntityHighPressureSteamTurbineMaster> {
+	public static class HighPressureSteamTurbineEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntityHighPressureSteamTurbineMaster> {
 		public HighPressureSteamTurbineEnvironment(World world, BlockPos pos) {
 			super(world, pos, TileEntityHighPressureSteamTurbineMaster.class);
 		}

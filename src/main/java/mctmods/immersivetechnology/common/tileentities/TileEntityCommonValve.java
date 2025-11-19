@@ -26,6 +26,7 @@ import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
@@ -65,32 +66,32 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	public long[] packetTotals = new long[60];
 
 	public void efficientMarkDirty() {//!!!!!!! only use it within update() function !!!!!!!
-		world.getChunkFromBlockCoords(this.getPos()).markDirty();
+		world.getChunk(this.getPos()).markDirty();
 	}
 
 	public void calculateAverages() {
 		long sum = 0;
-		for(long avg : averages) sum += avg;
+		for (long avg : averages) sum += avg;
 		average = sum / 60;
 		sum = 0;
-		for(long avg : packetTotals) sum += avg;
+		for (long avg : packetTotals) sum += avg;
 		packetAverage = (int)sum;
 	}
 
 	@Override
 	public void update() {
-		if(world.isRemote) {
+		if (world.isRemote) {
 			if (requestCooldown > 0) requestCooldown--;
 			return;
 		}
 		efficientMarkDirty();
-		if(++secondCounter < 20) return;
-		if(average == 0 && acceptedAmount > 0) {//pre-populate averages to avoid slow build up
-			for(int i = 0; i < 60; i++) averages[i] = acceptedAmount;
+		if (++secondCounter < 20) return;
+		if (average == 0 && acceptedAmount > 0) {//pre-populate averages to avoid slow build up
+			for (int i = 0; i < 60; i++) averages[i] = acceptedAmount;
 			packetTotals[minuteCounter] = packets;
 			calculateAverages();
 		}
-		if(averages[minuteCounter] != acceptedAmount || packetTotals[minuteCounter] != packets) {
+		if (averages[minuteCounter] != acceptedAmount || packetTotals[minuteCounter] != packets) {
 			averages[minuteCounter] = acceptedAmount;
 			packetTotals[minuteCounter] = packets;
 			calculateAverages();
@@ -99,7 +100,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 		acceptedAmount = 0;
 		packets = 0;
 		secondCounter = 0;
-		if(++minuteCounter == 60) {
+		if (++minuteCounter == 60) {
 			lastPacketAverage = packetAverage;
 			lastAverage = average;
 			minuteCounter = 0;
@@ -107,16 +108,16 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	}
 
 	@Override
-	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
-		if(!world.isRemote && !Utils.isHammer(heldItem)) {
+	public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
+		if (!world.isRemote && !Utils.isHammer(heldItem)) {
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setInteger("packetLimit", packetLimit);
 			tag.setInteger("timeLimit", timeLimit);
 			tag.setInteger("keepSize", keepSize);
 			ImmersiveTechnology.packetHandler.sendTo(new MessageTileSync(this, tag), (EntityPlayerMP) player);
 			return true;
-		} else if(player.isSneaking() && Utils.isHammer(heldItem)) {
-			if(++redstoneMode > 2) redstoneMode = 0;
+		} else if (player.isSneaking() && Utils.isHammer(heldItem)) {
+			if (++redstoneMode > 2) redstoneMode = 0;
 			String translationKey;
 			switch(redstoneMode) {
 				case 1: translationKey = TranslationKey.OVERLAY_REDSTONE_NORMAL.location; break;
@@ -133,7 +134,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	int requestCooldown = 0;
 
 	@Override
-	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
+	public @Nonnull String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
 		if (requestCooldown == 0) {
 			ByteBuf message = Unpooled.copyBoolean(true);
 			BinaryMessageTileSync.sendToServer(getPos(), message);
@@ -158,28 +159,28 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	}
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		facing = EnumFacing.getFront(nbt.getByte("facing"));
+	public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+		facing = EnumFacing.byIndex(nbt.getByte("facing"));
 		packetLimit = nbt.getInteger("packetLimit");
 		timeLimit = nbt.getInteger("timeLimit");
 		keepSize = nbt.getInteger("keepSize");
 		redstoneMode = nbt.getByte("redstoneMode");
-		if(Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return;
+		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return;
 		lastAcceptedAmount = acceptedAmount = nbt.getLong("acceptedAmount");
 		secondCounter = nbt.getInteger("secondCounter");
 		long avg = nbt.getLong("averages");
-		for(int i = 0; i < 60; i++) averages[i] = avg;
+		for (int i = 0; i < 60; i++) averages[i] = avg;
 		calculateAverages();
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
 		nbt.setByte("facing", (byte)facing.getIndex());
 		nbt.setInteger("packetLimit", packetLimit);
 		nbt.setInteger("timeLimit", timeLimit);
 		nbt.setInteger("keepSize", keepSize);
 		nbt.setByte("redstoneMode", redstoneMode);
-		if(Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return;
+		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return;
 		nbt.setLong("acceptedAmount", acceptedAmount);
 		nbt.setInteger("secondCounter", secondCounter);
 		calculateAverages();
@@ -207,8 +208,8 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
-		if(message.hasKey("packetLimit")) {
+	public void receiveMessageFromServer(@Nonnull NBTTagCompound message) {
+		if (message.hasKey("packetLimit")) {
 			packetLimit = message.getInteger("packetLimit");
 			timeLimit = message.getInteger("timeLimit");
 			keepSize = message.getInteger("keepSize");
@@ -217,7 +218,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	}
 
 	@Override
-	public void receiveMessageFromClient(NBTTagCompound message) {
+	public void receiveMessageFromClient(@Nonnull NBTTagCompound message) {
 		packetLimit = message.getInteger("packetLimit");
 		timeLimit = message.getInteger("timeLimit");
 		keepSize = message.getInteger("keepSize");
@@ -225,17 +226,17 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	}
 
 	@Override
-	public boolean useNixieFont(EntityPlayer player, RayTraceResult mop) {
+	public boolean useNixieFont(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop) {
 		return false;
 	}
 
 	@Override
-	public EnumFacing getFacing() {
+	public @Nonnull EnumFacing getFacing() {
 		return this.facing;
 	}
 
 	@Override
-	public void setFacing(EnumFacing facing) {
+	public void setFacing(@Nonnull EnumFacing facing) {
 		this.facing = facing;
 	}
 
@@ -245,23 +246,23 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	}
 
 	@Override
-	public boolean mirrorFacingOnPlacement(EntityLivingBase placer) {
+	public boolean mirrorFacingOnPlacement(@Nonnull EntityLivingBase placer) {
 		return false;
 	}
 
 	@Override
-	public boolean canHammerRotate(EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase entity) {
+	public boolean canHammerRotate(@Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EntityLivingBase entity) {
 		return !entity.isSneaking();
 	}
 
 	@Override
-	public boolean canRotate(EnumFacing axis) {
+	public boolean canRotate(@Nonnull EnumFacing axis) {
 		return true;
 	}
 
 	public int getRSPower() {
 		int toReturn = 0;
-		for(EnumFacing directions : EnumSet.complementOf(EnumSet.of(facing, facing.getOpposite()))) {
+		for (EnumFacing directions : EnumSet.complementOf(EnumSet.of(facing, facing.getOpposite()))) {
 			toReturn = Math.max(world.getRedstonePower(pos.offset(directions,-1), directions), toReturn);
 		}
 		return toReturn;
@@ -270,5 +271,4 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	public static int longToInt(long value) {
 		return value > Integer.MAX_VALUE? Integer.MAX_VALUE : value < Integer.MIN_VALUE? Integer.MIN_VALUE : (int) value;
 	}
-
 }

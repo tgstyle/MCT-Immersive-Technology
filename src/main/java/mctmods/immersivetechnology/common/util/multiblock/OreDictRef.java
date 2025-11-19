@@ -5,7 +5,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class OreDictRef implements IRefComparable {
-
     public final String name;
 
     public OreDictRef(String name) {

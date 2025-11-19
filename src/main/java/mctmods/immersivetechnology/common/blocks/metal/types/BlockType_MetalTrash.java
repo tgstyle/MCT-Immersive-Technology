@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal.types;
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 
 public enum BlockType_MetalTrash implements IStringSerializable, BlockITBase.IBlockEnum {
@@ -10,6 +11,7 @@ public enum BlockType_MetalTrash implements IStringSerializable, BlockITBase.IBl
 	TRASH_FLUID,
 	TRASH_ENERGY;
 
+    @Nonnull
 	@Override
 	public String getName() {
 		return this.toString().toLowerCase(Locale.ENGLISH);
@@ -24,4 +26,5 @@ public enum BlockType_MetalTrash implements IStringSerializable, BlockITBase.IBl
 	public boolean listForCreative() {
 		return true;
 	}
+
 }

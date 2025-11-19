@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class RadiatorRecipeCategory extends ITRecipeCategory<RadiatorRecipe, RadiatorRecipeWrapper> {
@@ -32,23 +33,23 @@ public class RadiatorRecipeCategory extends ITRecipeCategory<RadiatorRecipe, Rad
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, RadiatorRecipeWrapper recipeWrapper, IIngredients ingredients) {
+	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull RadiatorRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		int tankCapacity = 0;
-		for(List<FluidStack> stacks : inputs) {
-			for(FluidStack stack : stacks) {
-				if(stack.amount > tankCapacity) tankCapacity = stack.amount;
+		for (List<FluidStack> stacks : inputs) {
+			for (FluidStack stack : stacks) {
+				if (stack.amount > tankCapacity) tankCapacity = stack.amount;
 			}
 		}
 		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
-		for(List<FluidStack> stacks : outputs) {
-			for(FluidStack stack : stacks) {
-				if(stack.amount > tankCapacity) tankCapacity = stack.amount;
+		for (List<FluidStack> stacks : outputs) {
+			for (FluidStack stack : stacks) {
+				if (stack.amount > tankCapacity) tankCapacity = stack.amount;
 			}
 		}
 
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-		if(inputs.size() > 0) {
+		if (!inputs.isEmpty()) {
 			guiFluidStacks.init(0, true, 11, 11, 16, 47, tankCapacity, false, tankOverlay);
 			guiFluidStacks.set(0, inputs.get(0));
 		}
@@ -57,13 +58,14 @@ public class RadiatorRecipeCategory extends ITRecipeCategory<RadiatorRecipe, Rad
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
 	}
 
-	@Override
-	public IRecipeWrapper getRecipeWrapper(RadiatorRecipe recipe) {
+	@Nonnull
+    @Override
+	public IRecipeWrapper getRecipeWrapper(@Nonnull RadiatorRecipe recipe) {
 		return new RadiatorRecipeWrapper(recipe);
 	}
 
 	@Override
-	public void drawExtras(Minecraft minecraft) {
+	public void drawExtras(@Nonnull Minecraft minecraft) {
 		arrow.draw(minecraft, 52, 51);
 		drops.draw(minecraft, 55, 32);
 	}

@@ -7,66 +7,76 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SteamTurbineRecipe extends MultiblockRecipe {
-	public static float timeModifier = 1;
+    public static float timeModifier = 1;
 
-	public final FluidStack fluidOutput;
-	public final FluidStack fluidInput;
+    public final FluidStack fluidOutput;
+    public final FluidStack fluidInput;
 
-	int totalProcessTime;
+    int totalProcessTime;
 
-	public SteamTurbineRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
-		this.fluidOutput = fluidOutput;
-		this.fluidInput = fluidInput;
-		this.totalProcessTime = (int)Math.floor(time * timeModifier);
-		this.fluidInputList = Lists.newArrayList(this.fluidInput);
-		this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
-	}
+    public SteamTurbineRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
+        this.fluidOutput = fluidOutput;
+        this.fluidInput = fluidInput;
+        this.totalProcessTime = (int) Math.floor(time * timeModifier);
+        this.fluidInputList = Lists.newArrayList(this.fluidInput);
+        this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
+    }
 
-	public static ArrayList<SteamTurbineRecipe> recipeList = new ArrayList<>();
+    public static ArrayList<SteamTurbineRecipe> recipeList = new ArrayList<>();
 
-	public static SteamTurbineRecipe addFuel(FluidStack fluidOutput, FluidStack fluidInput, int time) {
-		SteamTurbineRecipe recipe = new SteamTurbineRecipe(fluidOutput, fluidInput, time);
-		recipeList.add(recipe);
-		return recipe;
-	}
+    private static final Map<Fluid, SteamTurbineRecipe> recipeMap = new HashMap<>();
 
-	public static SteamTurbineRecipe findFuel(FluidStack fluidInput) {
-		if(fluidInput == null) return null;
-		for(SteamTurbineRecipe recipe : recipeList) {
-			if(recipe.fluidInput != null && (fluidInput.containsFluid(recipe.fluidInput))) return recipe;
-		}
-		return null;
-	}
+    public static void addFuel(FluidStack fluidOutput, FluidStack fluidInput, int time) {
+        SteamTurbineRecipe recipe = new SteamTurbineRecipe(fluidOutput, fluidInput, time);
+        recipeList.add(recipe);
+        recipeMap.put(fluidInput.getFluid(), recipe);
+    }
 
-	public static SteamTurbineRecipe findFuelByFluid(Fluid fluidInput) {
-		if(fluidInput == null) return null;
-		for(SteamTurbineRecipe recipe : recipeList) {
-			if(recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
-		}
-		return null;
-	}
+    public static SteamTurbineRecipe findFuel(FluidStack fluidInput) {
+        if (fluidInput == null) {
+            return null;
+        }
+        SteamTurbineRecipe recipe = recipeMap.get(fluidInput.getFluid());
+        if (recipe != null && fluidInput.containsFluid(recipe.fluidInput)) {
+            return recipe;
+        }
+        for (SteamTurbineRecipe r : recipeList) {
+            if (r.fluidInput != null && fluidInput.containsFluid(r.fluidInput)) {
+                return r;
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public int getMultipleProcessTicks() {
-		return 0;
-	}
+    public static SteamTurbineRecipe findFuelByFluid(Fluid fluidInput) {
+        if (fluidInput == null) {
+            return null;
+        }
+        return recipeMap.get(fluidInput);
+    }
 
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-		nbt.setTag("input", fluidInput.writeToNBT(new NBTTagCompound()));
-		return nbt;
-	}
+    @Override
+    public int getMultipleProcessTicks() {
+        return 0;
+    }
 
-	public static SteamTurbineRecipe loadFromNBT(NBTTagCompound nbt) {
-		FluidStack fluidInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input"));
-		return findFuel(fluidInput);
-	}
-	
-	@Override
-	public int getTotalProcessTime() {
-		return this.totalProcessTime;
-	}
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        nbt.setTag("input", fluidInput.writeToNBT(new NBTTagCompound()));
+        return nbt;
+    }
 
+    public static SteamTurbineRecipe loadFromNBT(NBTTagCompound nbt) {
+        FluidStack fluidInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input"));
+        return findFuel(fluidInput);
+    }
+
+    @Override
+    public int getTotalProcessTime() {
+        return this.totalProcessTime;
+    }
 }

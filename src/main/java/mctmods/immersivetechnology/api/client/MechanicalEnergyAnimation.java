@@ -43,5 +43,4 @@ public class MechanicalEnergyAnimation {
 	public void setAnimationMomentum(float animationMomentum) {
 		this.animationMomentum = animationMomentum;
 	}
-
 }

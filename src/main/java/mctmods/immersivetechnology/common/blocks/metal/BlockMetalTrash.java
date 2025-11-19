@@ -14,6 +14,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+
 public class BlockMetalTrash extends BlockITTileProvider<BlockType_MetalTrash> {
 	public BlockMetalTrash() {
 		super("metal_trash", Material.IRON, PropertyEnum.create("type", BlockType_MetalTrash.class), ItemBlockITBase.class);
@@ -23,8 +25,9 @@ public class BlockMetalTrash extends BlockITTileProvider<BlockType_MetalTrash> {
 		this.setAllNotNormalBlock();
 	}
 
+    @Nonnull
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		return state;
 	}
@@ -48,5 +51,4 @@ public class BlockMetalTrash extends BlockITTileProvider<BlockType_MetalTrash> {
 		}
 		return null;
 	}
-
 }

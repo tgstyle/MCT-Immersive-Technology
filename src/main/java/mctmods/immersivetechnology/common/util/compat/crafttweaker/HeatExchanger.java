@@ -8,6 +8,7 @@ import net.minecraftforge.fluids.FluidStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
+@SuppressWarnings("unused")
 @ZenClass("mods.immersivetechnology.HeatExchanger")
 public class HeatExchanger {
 
@@ -18,7 +19,7 @@ public class HeatExchanger {
         FluidStack fluidIn0 = CraftTweakerHelper.toFluidStack(inputFluid0);
         FluidStack fluidIn1 = CraftTweakerHelper.toFluidStack(inputFluid1);
 
-        if(fluidIn0 == null || fluidIn1 == null || fluidOut0 == null) return;
+        if (fluidIn0 == null || fluidIn1 == null || fluidOut0 == null) return;
 
         HeatExchangerRecipe recipe = new HeatExchangerRecipe(fluidOut0, fluidOut1, fluidIn0, fluidIn1, energy, time);
         CraftTweakerAPI.apply(new HeatExchanger.Add(recipe));
@@ -45,7 +46,7 @@ public class HeatExchanger {
     public static void removeRecipe(ILiquidStack inputFluid0, ILiquidStack inputFluid1) {
         FluidStack fluidIn0 = CraftTweakerHelper.toFluidStack(inputFluid0);
         FluidStack fluidIn1 = CraftTweakerHelper.toFluidStack(inputFluid1);
-        if(fluidIn0 != null && fluidIn1 != null)
+        if (fluidIn0 != null && fluidIn1 != null)
             CraftTweakerAPI.apply(new HeatExchanger.Remove(fluidIn0, fluidIn1));
     }
 

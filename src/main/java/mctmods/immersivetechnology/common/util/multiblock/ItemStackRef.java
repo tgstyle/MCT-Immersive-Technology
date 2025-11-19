@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.common.util.multiblock;
 import net.minecraft.item.ItemStack;
 
 public class ItemStackRef implements IRefComparable {
-
     public final ItemStack itemStack;
 
     public ItemStackRef(ItemStack itemStack) {

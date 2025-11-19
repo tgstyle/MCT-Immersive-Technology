@@ -12,10 +12,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class SteamTurbineRecipeCategory extends ITRecipeCategory<SteamTurbineRecipe, SteamTurbineRecipeWrapper> {
-
 	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_steam_turbine.png");
 	private final IDrawable tankOverlay;
 	private final IDrawableAnimated turbineAndArrow;
@@ -30,7 +30,7 @@ public class SteamTurbineRecipeCategory extends ITRecipeCategory<SteamTurbineRec
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, SteamTurbineRecipeWrapper recipeWrapper, IIngredients ingredients) {
+	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull SteamTurbineRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
 
@@ -53,13 +53,12 @@ public class SteamTurbineRecipeCategory extends ITRecipeCategory<SteamTurbineRec
 	}
 
 	@Override
-	public IRecipeWrapper getRecipeWrapper(SteamTurbineRecipe recipe) {
+	public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull SteamTurbineRecipe recipe) {
 		return new SteamTurbineRecipeWrapper(recipe);
 	}
 	
 	@Override
-	public void drawExtras(Minecraft minecraft) {
+	public void drawExtras(@Nonnull Minecraft minecraft) {
 		turbineAndArrow.draw(minecraft, 42, 18);
 	}
-
 }

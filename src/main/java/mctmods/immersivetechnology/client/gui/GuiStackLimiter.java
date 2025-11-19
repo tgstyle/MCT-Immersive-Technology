@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.gui;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
-import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityStackLimiter;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
@@ -9,8 +9,7 @@ import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.*;
 
-public class GuiStackLimiter extends GUICommonValve {
-
+public class GuiStackLimiter extends GuiCommonValve {
 	public GuiStackLimiter(TileEntityStackLimiter tile) {
 		this.tile = tile;
 	}

@@ -23,73 +23,68 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
-	public BlockConnectors() {
-		super("connectors", Material.IRON, PropertyEnum.create("type", BlockType_Connectors.class), ItemBlockITBase.class, IEProperties.FACING_ALL, IEProperties.BOOLEANS[0], IEProperties.BOOLEANS[1], IEProperties.MULTIBLOCKSLAVE, IOBJModelCallback.PROPERTY);
-		setHardness(3.0F);
-		setResistance(15.0F);
-		lightOpacity = 0;
-		setMetaBlockLayer(BlockType_Connectors.CONNECTORS_TIMER.getMeta(), BlockRenderLayer.CUTOUT, BlockRenderLayer.TRANSLUCENT, BlockRenderLayer.SOLID);
-		setAllNotNormalBlock();
-	}
+    public BlockConnectors() {
+        super("connectors", Material.IRON, PropertyEnum.create("type", BlockType_Connectors.class), ItemBlockITBase.class, IEProperties.FACING_ALL, IEProperties.BOOLEANS[0], IEProperties.BOOLEANS[1], IEProperties.MULTIBLOCKSLAVE, IOBJModelCallback.PROPERTY);
+        setHardness(3.0F);
+        setResistance(15.0F);
+        lightOpacity = 0;
+        setMetaBlockLayer(BlockType_Connectors.CONNECTORS_TIMER.getMeta(), BlockRenderLayer.CUTOUT, BlockRenderLayer.TRANSLUCENT, BlockRenderLayer.SOLID);
+        setAllNotNormalBlock();
+    }
 
-	@Override
-	public boolean useCustomStateMapper() {
-		return true;
-	}
+    @Override
+    public boolean useCustomStateMapper() { return true; }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	protected BlockStateContainer createBlockState() {
-		BlockStateContainer base = super.createBlockState();
-		IUnlistedProperty[] unlisted = (base instanceof ExtendedBlockState) ? ((ExtendedBlockState) base).getUnlistedProperties().toArray(new IUnlistedProperty[0]) : new IUnlistedProperty[0];
-		unlisted = Arrays.copyOf(unlisted, unlisted.length+1);
-		unlisted[unlisted.length-1] = IEProperties.CONNECTIONS;
-		return new ExtendedBlockState(this, base.getProperties().toArray(new IProperty[0]), unlisted);
-	}
+    @Override
+    public @Nonnull String getCustomStateMapping(int meta, boolean itemBlock) { return BlockType_Connectors.values()[meta].getName(); }
 
-	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-		state = super.getExtendedState(state, world, pos);
-		if(state instanceof IExtendedBlockState) {
-			IExtendedBlockState ext = (IExtendedBlockState) state;
-			TileEntity te = world.getTileEntity(pos);
-			if(!(te instanceof TileEntityImmersiveConnectable))	return state;
-			state = ext.withProperty(IEProperties.CONNECTIONS, ((TileEntityImmersiveConnectable)te).genConnBlockstate());
-		}
-		return state;
-	}
+    @SuppressWarnings("rawtypes")
+    @Override
+    protected @Nonnull BlockStateContainer createBlockState() {
+        BlockStateContainer base = super.createBlockState();
+        IUnlistedProperty[] unlisted = (base instanceof ExtendedBlockState) ? ((ExtendedBlockState) base).getUnlistedProperties().toArray(new IUnlistedProperty[0]) : new IUnlistedProperty[0];
+        unlisted = Arrays.copyOf(unlisted, unlisted.length+1);
+        unlisted[unlisted.length-1] = IEProperties.CONNECTIONS;
+        return new ExtendedBlockState(this, base.getProperties().toArray(new IProperty[0]), unlisted);
+    }
 
-	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
-		super.neighborChanged(state, world, pos, blockIn, fromPos);
-		TileEntity te = world.getTileEntity(pos);
+    @Override
+    public @Nonnull IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+        state = super.getExtendedState(state, world, pos);
+        if (state instanceof IExtendedBlockState) {
+            IExtendedBlockState ext = (IExtendedBlockState) state;
+            TileEntity te = world.getTileEntity(pos);
+            if (!(te instanceof TileEntityImmersiveConnectable)) return state;
+            state = ext.withProperty(IEProperties.CONNECTIONS, ((TileEntityImmersiveConnectable)te).genConnBlockstate());
+        }
+        return state;
+    }
 
-		if(te instanceof TileEntityConnectorRedstone) {
-			TileEntityConnectorRedstone connector = (TileEntityConnectorRedstone) te;
-			if(world.isAirBlock(pos.offset(connector.facing))) {
-				this.dropBlockAsItem(connector.getWorld(), pos, world.getBlockState(pos), 0);
-				connector.getWorld().setBlockToAir(pos);
-				return;
-			}
-			if(connector.isRSInput()) connector.rsDirty = true;
-		}
-	}
+    @Override
+    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
+        super.neighborChanged(state, world, pos, blockIn, fromPos);
+        TileEntity te = world.getTileEntity(pos);
 
-	@Override
-	public boolean allowHammerHarvest(IBlockState state) {
-		return true;
-	}
+        if (te instanceof TileEntityConnectorRedstone) {
+            TileEntityConnectorRedstone connector = (TileEntityConnectorRedstone) te;
+            if (world.isAirBlock(pos.offset(connector.facing))) {
+                this.dropBlockAsItem(connector.getWorld(), pos, world.getBlockState(pos), 0);
+                connector.getWorld().setBlockToAir(pos);
+                return;
+            }
+            if (connector.isRSInput()) connector.rsDirty = true;
+        }
+    }
 
-	@Override
-	public TileEntity createBasicTE(World worldIn, BlockType_Connectors type) {
-		switch(type) {
-		case CONNECTORS_TIMER:
-			return new TileEntityTimer();
-		}
-		return null;
-	}
-
+    @Override
+    public TileEntity createBasicTE(@Nonnull World world, @Nonnull BlockType_Connectors type) {
+        if (type == BlockType_Connectors.CONNECTORS_TIMER) {
+            return new TileEntityTimer();
+        }
+        return null;
+    }
 }

@@ -9,10 +9,12 @@ import mezz.jei.api.recipe.IRecipeWrapperFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements IRecipeCategory<W>, IRecipeWrapperFactory<T> {
 	public String uniqueName;
 	public String localizedName;
@@ -29,38 +31,35 @@ public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements I
 	}
 
 	public void addCatalysts(IModRegistry registry) {
-		for(GenericMultiblockIngredient stack : displayStacks) {
-			if(stack!=null) registry.addRecipeCatalyst(stack, getUid());
+		for (GenericMultiblockIngredient stack : displayStacks) {
+			if (stack!=null) registry.addRecipeCatalyst(stack, getUid());
 		}
 	}
 
 	@Nullable
 	@Override
-	public IDrawable getIcon() {
-		return null;
-	}
+	public IDrawable getIcon() { return null; }
 
 	@Override
-	public String getUid() {
+	public @Nonnull String getUid() {
 		return "it."+uniqueName;
 	}
 
 	@Override
-	public String getTitle() {
+	public @Nonnull String getTitle() {
 		return localizedName;
 	}
 
 	@Override
-	public IDrawable getBackground() {
+	public @Nonnull IDrawable getBackground() {
 		return background;
 	}
 
 	@Override
-	public void drawExtras(Minecraft minecraft) {
-	}
+	public void drawExtras(@Nonnull Minecraft minecraft) { }
 
 	@Override
-	public List<String> getTooltipStrings(int mouseX, int mouseY) {
+	public @Nonnull List<String> getTooltipStrings(int mouseX, int mouseY) {
 		return Collections.emptyList();
 	}
 
@@ -72,13 +71,10 @@ public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements I
 		return "it."+uniqueName;
 	}
 
-	public boolean isRecipeValid(T recipe) {
-		return true;
-	}
+	public boolean isRecipeValid(T recipe) { return true; }
 
 	@Override
-	public String getModName() {
+	public @Nonnull String getModName() {
 		return ImmersiveTechnology.NAME;
 	}
-
 }

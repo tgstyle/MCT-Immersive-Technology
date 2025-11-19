@@ -6,8 +6,8 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerSlave;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityDistillerMaster;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityDistillerSlave;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -16,16 +16,16 @@ import net.minecraft.world.World;
 
 import java.util.HashMap;
 
-
+@SuppressWarnings("unused")
 public class DistillerDriver extends DriverSidedTileEntity {
 	@Override
 	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
-		if(tile instanceof TileEntityDistillerSlave) {
+		if (tile instanceof TileEntityDistillerSlave) {
 			TileEntityDistillerSlave te = (TileEntityDistillerSlave) tile;
 			TileEntityDistillerMaster tem = te.master();
-			if(tem != null && te.isRedstonePos()) {
+			if (tem != null && te.isRedstonePos()) {
 				return new DistillerEnvironment(world, tem.getPos());
 			}
 		}
@@ -37,7 +37,7 @@ public class DistillerDriver extends DriverSidedTileEntity {
 		return TileEntityDistillerSlave.class;
 	}
 
-	public class DistillerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntityDistillerMaster> {
+	public static class DistillerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntityDistillerMaster> {
 		public DistillerEnvironment(World world, BlockPos pos) {
 			super(world, pos, TileEntityDistillerMaster.class);
 		}

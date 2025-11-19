@@ -6,23 +6,24 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHeatExchangerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHeatExchangerSlave;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityHeatExchangerMaster;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityHeatExchangerSlave;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+@SuppressWarnings("unused")
 public class HeatExchangerDriver extends DriverSidedTileEntity {
     @Override
     public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
         TileEntity tile = world.getTileEntity(pos);
 
-        if(tile instanceof TileEntityHeatExchangerSlave) {
+        if (tile instanceof TileEntityHeatExchangerSlave) {
             TileEntityHeatExchangerSlave te = (TileEntityHeatExchangerSlave) tile;
             TileEntityHeatExchangerMaster tem = te.master();
-            if(tem != null && te.isRedstonePos()) {
-                return new HeatExchangerDriver.HeatExchangerEnvironment(world, tem.getPos());
+            if (tem != null && te.isRedstonePos()) {
+                return new HeatExchangerEnvironment(world, tem.getPos());
             }
         }
         return null;
@@ -33,7 +34,7 @@ public class HeatExchangerDriver extends DriverSidedTileEntity {
         return TileEntityHeatExchangerSlave.class;
     }
 
-    public class HeatExchangerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntityHeatExchangerMaster> {
+    public static class HeatExchangerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntityHeatExchangerMaster> {
         public HeatExchangerEnvironment(World world, BlockPos pos) {
             super(world, pos, TileEntityHeatExchangerMaster.class);
         }

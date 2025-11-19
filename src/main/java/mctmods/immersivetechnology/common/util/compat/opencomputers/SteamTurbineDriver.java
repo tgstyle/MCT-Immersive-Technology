@@ -6,23 +6,23 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineSlave;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntitySteamTurbineMaster;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntitySteamTurbineSlave;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-
+@SuppressWarnings("unused")
 public class SteamTurbineDriver extends DriverSidedTileEntity {
 	@Override
 	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
-		if(tile instanceof TileEntitySteamTurbineSlave) {
+		if (tile instanceof TileEntitySteamTurbineSlave) {
 			TileEntitySteamTurbineSlave te = (TileEntitySteamTurbineSlave) tile;
 			TileEntitySteamTurbineMaster tem = te.master();
-			if(tem != null && te.isRedstonePos()) {
+			if (tem != null && te.isRedstonePos()) {
 				return new SteamTurbineEnvironment(world, tem.getPos());
 			}
 		}
@@ -34,7 +34,7 @@ public class SteamTurbineDriver extends DriverSidedTileEntity {
 		return TileEntitySteamTurbineSlave.class;
 	}
 
-	public class SteamTurbineEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntitySteamTurbineMaster> {
+	public static class SteamTurbineEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntitySteamTurbineMaster> {
 		public SteamTurbineEnvironment(World world, BlockPos pos) {
 			super(world, pos, TileEntitySteamTurbineMaster.class);
 		}

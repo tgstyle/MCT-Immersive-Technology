@@ -12,17 +12,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class MessageStopSound implements IMessage {
 	BlockPos pos;
 
-	public MessageStopSound(BlockPos tile) {
-		this.pos = tile;
-	}
+	public MessageStopSound(BlockPos tile) { this.pos = tile; }
 
-	public MessageStopSound() {
-	}
+	public MessageStopSound() { }
 
 	@Override
-	public void fromBytes(ByteBuf buf) {
-		this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-	}
+	public void fromBytes(ByteBuf buf) { this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt()); }
 
 	@Override
 	public void toBytes(ByteBuf buf) {
@@ -43,5 +38,4 @@ public class MessageStopSound implements IMessage {
 		@Override
 		public IMessage onMessage(MessageStopSound message, MessageContext ctx) { return null; }
 	}
-
 }

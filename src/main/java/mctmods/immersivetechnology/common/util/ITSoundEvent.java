@@ -6,8 +6,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 
+@SuppressWarnings("unused")
 public class ITSoundEvent extends SoundEvent {
-
     public SoundCategory soundCategory;
 
     public ITSoundEvent(ResourceLocation soundNameIn, SoundCategory soundCategory) {
@@ -18,7 +18,6 @@ public class ITSoundEvent extends SoundEvent {
     public void PlayOnce(BlockPos posIn, float volumeIn, float pitchIn) {
         ITSoundHandler.PlayOnceSound(posIn, this, soundCategory, volumeIn, pitchIn);
     }
-
     public void PlayOnce(BlockPos posIn, float volumeIn) {
         ITSoundHandler.PlayOnceSound(posIn, this, soundCategory, volumeIn, 1);
     }
@@ -26,7 +25,6 @@ public class ITSoundEvent extends SoundEvent {
     public void PlayRepeating(BlockPos posIn, float volumeIn, float pitchIn) {
         ITSoundHandler.PlayRepeatingSound(posIn, this, soundCategory, volumeIn, pitchIn);
     }
-
     public void PlayRepeating(BlockPos posIn, float volumeIn) {
         ITSoundHandler.PlayRepeatingSound(posIn, this, soundCategory, volumeIn, 1);
     }

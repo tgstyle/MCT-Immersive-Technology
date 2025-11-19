@@ -13,6 +13,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
+@SuppressWarnings("unused")
 @ZenClass("mods.immersivetechnology.MeltingCrucible")
 public class MeltingCrucible {
 
@@ -21,7 +22,7 @@ public class MeltingCrucible {
         FluidStack fluidOut = CraftTweakerHelper.toFluidStack(outputFluid);
         IngredientStack itemIn = CraftTweakerHelper.toIEIngredientStack(inputItem);
 
-        if(inputItem.getItems().isEmpty() || fluidOut == null) return;
+        if (inputItem.getItems().isEmpty() || fluidOut == null) return;
 
         MeltingCrucibleRecipe recipe = new MeltingCrucibleRecipe(fluidOut, itemIn, energy, time);
         CraftTweakerAPI.apply(new MeltingCrucible.Add(recipe));
@@ -45,7 +46,7 @@ public class MeltingCrucible {
     @ZenMethod
     public static void removeRecipe(IItemStack inputItem) {
         ItemStack itemIn = CraftTweakerHelper.toStack(inputItem);
-        if(itemIn != null)
+        if (itemIn != null)
             CraftTweakerAPI.apply(new MeltingCrucible.Remove(itemIn));
     }
 

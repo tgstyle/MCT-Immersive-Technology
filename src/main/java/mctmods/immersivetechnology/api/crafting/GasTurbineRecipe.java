@@ -7,6 +7,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GasTurbineRecipe extends MultiblockRecipe {
     public static float timeModifier = 1;
@@ -19,39 +21,38 @@ public class GasTurbineRecipe extends MultiblockRecipe {
     public GasTurbineRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
         this.fluidOutput = fluidOutput;
         this.fluidInput = fluidInput;
-        this.totalProcessTime = (int)Math.floor(time * timeModifier);
+        this.totalProcessTime = (int) Math.floor(time * timeModifier);
         this.fluidInputList = Lists.newArrayList(this.fluidInput);
         this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
     }
 
     public static ArrayList<GasTurbineRecipe> recipeList = new ArrayList<>();
 
-    public static GasTurbineRecipe addFuel(FluidStack fluidOutput, FluidStack fluidInput, int time) {
+    private static final Map<Fluid, GasTurbineRecipe> fuelMap = new HashMap<>();
+
+    public static void addFuel(FluidStack fluidOutput, FluidStack fluidInput, int time) {
         GasTurbineRecipe recipe = new GasTurbineRecipe(fluidOutput, fluidInput, time);
         recipeList.add(recipe);
-        return recipe;
+        fuelMap.put(fluidInput.getFluid(), recipe);
     }
 
     public static GasTurbineRecipe findFuel(FluidStack fluidInput) {
-        if(fluidInput == null) return null;
-        for(GasTurbineRecipe recipe : recipeList) {
-            if(recipe.fluidInput != null && (fluidInput.containsFluid(recipe.fluidInput))) return recipe;
+        if (fluidInput == null) { return null; }
+        GasTurbineRecipe recipe = fuelMap.get(fluidInput.getFluid());
+        if (recipe != null && fluidInput.containsFluid(recipe.fluidInput)) { return recipe; }
+        for (GasTurbineRecipe r : recipeList) {
+            if (r.fluidInput != null && fluidInput.containsFluid(r.fluidInput)) { return r; }
         }
         return null;
     }
 
     public static GasTurbineRecipe findFuelByFluid(Fluid fluidInput) {
-        if(fluidInput == null) return null;
-        for(GasTurbineRecipe recipe : recipeList) {
-            if(recipe.fluidInput != null && fluidInput == recipe.fluidInput.getFluid()) return recipe;
-        }
-        return null;
+        if (fluidInput == null) { return null; }
+        return fuelMap.get(fluidInput);
     }
 
     @Override
-    public int getMultipleProcessTicks() {
-        return 0;
-    }
+    public int getMultipleProcessTicks() { return 0; }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
@@ -65,8 +66,5 @@ public class GasTurbineRecipe extends MultiblockRecipe {
     }
 
     @Override
-    public int getTotalProcessTime() {
-        return this.totalProcessTime;
-    }
-
+    public int getTotalProcessTime() { return this.totalProcessTime; }
 }

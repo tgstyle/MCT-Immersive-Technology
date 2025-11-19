@@ -24,6 +24,7 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.lwjgl.util.vector.Vector3f;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ import java.util.function.Function;
 public class ModelConfigurableSides implements IBakedModel {
 	private static final String MODEL_PREFIX = "conf_sides_";
 	private static final String RESOURCE_LOCATION = "models/block/smartmodels/" + MODEL_PREFIX;
-	private static HashMap<String, ITextureNamer> TYPES = new HashMap<>();
+	private static final HashMap<String, ITextureNamer> TYPES = new HashMap<>();
 
 	static {
 		TYPES.put("all6_", new ITextureNamer() {
@@ -89,17 +90,18 @@ public class ModelConfigurableSides implements IBakedModel {
 		this.textures = textures;
 	}
 
+    @Nonnull
 	@Override
 	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
 		TextureAtlasSprite[] tex = new TextureAtlasSprite[6];
-		for(int i = 0; i < tex.length; i++) tex[i] = this.textures[i][0];
+		for (int i = 0; i < tex.length; i++) tex[i] = this.textures[i][0];
 		char[] keyArray = "000000".toCharArray();
-		if(state instanceof IExtendedBlockState) {
+		if (state instanceof IExtendedBlockState) {
 			IExtendedBlockState extended = (IExtendedBlockState)state;
-			for(int i = 0; i < IEProperties.SIDECONFIG.length; i++) {
-				if(extended.getUnlistedNames().contains(IEProperties.SIDECONFIG[i])) {
+			for (int i = 0; i < IEProperties.SIDECONFIG.length; i++) {
+				if (extended.getUnlistedNames().contains(IEProperties.SIDECONFIG[i])) {
 					IEEnums.SideConfig config = extended.getValue(IEProperties.SIDECONFIG[i]);
-					if(config != null) {
+					if (config != null) {
 						int c = config.ordinal();
 						tex[i] = this.textures[i][c];
 						keyArray[i] = Character.forDigit(c, 10);
@@ -108,7 +110,7 @@ public class ModelConfigurableSides implements IBakedModel {
 			}
 		}
 		String key = name + String.copyValueOf(keyArray);
-		if(!modelCache.containsKey(key)) modelCache.put(key, bakeQuads(tex));
+		if (!modelCache.containsKey(key)) modelCache.put(key, bakeQuads(tex));
 		return modelCache.get(key);
 	}
 
@@ -145,6 +147,7 @@ public class ModelConfigurableSides implements IBakedModel {
 		return false;
 	}
 
+    @Nonnull
 	@Override
 	public TextureAtlasSprite getParticleTexture() {
 		return this.textures[0][0];
@@ -161,55 +164,59 @@ public class ModelConfigurableSides implements IBakedModel {
 			new ItemTransformVec3f(new Vector3f(0, 0, 0), new Vector3f(0, .1875f, 0), new Vector3f(.25f, .25f, .25f)), //ground
 			new ItemTransformVec3f(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(.5f, .5f, .5f))); //fixed
 
+    @SuppressWarnings("deprecation")
+    @Nonnull
 	@Override
 	public ItemCameraTransforms getItemCameraTransforms() {
 		return defaultTransforms;
 	}
 
+    @Nonnull
 	@Override
 	public ItemOverrideList getOverrides() {
 		return ItemOverrideList.NONE;
 	}
 
-	public static class Loader implements ICustomModelLoader {
-		@Override
-		public void onResourceManagerReload(IResourceManager resourceManager) {
-			modelCache.clear();
-		}
+    public static class Loader implements ICustomModelLoader {
+        @Override
+        public void onResourceManagerReload(@Nonnull IResourceManager resourceManager) {
+            modelCache.clear();
+        }
 
-		@Override
-		public boolean accepts(ResourceLocation modelLocation) {
-			return modelLocation.getResourcePath().contains(RESOURCE_LOCATION);
-		}
+        @Override
+        public boolean accepts(@Nonnull ResourceLocation modelLocation) {
+            return modelLocation.getPath().contains(RESOURCE_LOCATION);
+        }
 
-		@Override
-		public IModel loadModel(ResourceLocation modelLocation) {
-			String resourcePath = modelLocation.getResourcePath();
-			int pos = resourcePath.indexOf(MODEL_PREFIX);
-			if(pos >= 0) {
-				pos += MODEL_PREFIX.length();
-				String sub = resourcePath.substring(pos);
-				String name = sub;
-				String type = null;
-				ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
-				for(Entry<String, ITextureNamer> e : TYPES.entrySet()) {
-					if(sub.startsWith(e.getKey())) {
-						type = e.getKey();
-						name = sub.substring(type.length());
-						for(EnumFacing f : EnumFacing.VALUES) {
-							for(SideConfig cfg : SideConfig.values()) {
-								String key = f.getName() + "_" + cfg.getTextureName();
-								String tex = name + "_" + e.getValue().getTextureName(f, cfg);
-								builder.put(key, new ResourceLocation(ImmersiveTechnology.MODID, "blocks/" + tex));
-							}
-						}
-					}
-				}
-				return new ConfigSidesModelBase(name, type, builder.build());
-			}
-			return ModelLoaderRegistry.getMissingModel();
-		}
-	}
+        @Nonnull
+        @Override
+        public IModel loadModel(@Nonnull ResourceLocation modelLocation) {
+            String resourcePath = modelLocation.getPath();
+            int pos = resourcePath.indexOf(MODEL_PREFIX);
+            if (pos >= 0) {
+                pos += MODEL_PREFIX.length();
+                String sub = resourcePath.substring(pos);
+                String name = sub;
+                String type = null;
+                ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
+                for (Entry<String, ITextureNamer> e : TYPES.entrySet()) {
+                    if (sub.startsWith(e.getKey())) {
+                        type = e.getKey();
+                        name = sub.substring(type.length());
+                        for (EnumFacing f : EnumFacing.VALUES) {
+                            for (SideConfig cfg : SideConfig.values()) {
+                                String key = f.getName() + "_" + cfg.getTextureName();
+                                String tex = name + "_" + e.getValue().getTextureName(f, cfg);
+                                builder.put(key, new ResourceLocation(ImmersiveTechnology.MODID, "blocks/" + tex));
+                            }
+                        }
+                    }
+                }
+                return new ConfigSidesModelBase(name, type, builder.build());
+            }
+            return ModelLoaderRegistry.getMissingModel();
+        }
+    }
 
 	private static class ConfigSidesModelBase implements IModel {
 		final String name;
@@ -222,48 +229,52 @@ public class ModelConfigurableSides implements IBakedModel {
 			this.textures = textures;
 		}
 
+        @Nonnull
 		@Override
 		public Collection<ResourceLocation> getDependencies() {
 			return ImmutableList.of();
 		}
 
+        @Nonnull
 		@Override
 		public Collection<ResourceLocation> getTextures() {
 			return textures.values();
 		}
 
+        @Nonnull
 		@Override
-		public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+		public IBakedModel bake(@Nonnull IModelState state, @Nonnull VertexFormat format, @Nonnull Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
 			TextureAtlasSprite[][] tex = new TextureAtlasSprite[6][3];
-			for(EnumFacing f : EnumFacing.VALUES) {
-				for(SideConfig cfg : SideConfig.values()) {
+			for (EnumFacing f : EnumFacing.VALUES) {
+				for (SideConfig cfg : SideConfig.values()) {
 					ResourceLocation rl = textures.get(f.getName() + "_" + cfg.getTextureName());
-					if(rl != null) tex[f.ordinal()][cfg.ordinal()] = ApiUtils.getRegisterSprite(ClientUtils.mc().getTextureMapBlocks(), rl);
+					if (rl != null) tex[f.ordinal()][cfg.ordinal()] = ApiUtils.getRegisterSprite(ClientUtils.mc().getTextureMapBlocks(), rl);
 				}
 			}
 			return new ModelConfigurableSides(name, tex);
 		}
 
+        @Nonnull
 		@Override
-		public IModel retexture(ImmutableMap<String, String> textures) {
+		public IModel retexture(@Nonnull ImmutableMap<String, String> textures) {
 			String newName = this.name;
 			ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
-			for(EnumFacing f : EnumFacing.VALUES) {
-				for(SideConfig cfg : SideConfig.values()) {
+			for (EnumFacing f : EnumFacing.VALUES) {
+				for (SideConfig cfg : SideConfig.values()) {
 					String key = f.getName() + "_" + cfg.getTextureName();
 					ResourceLocation rl = this.textures.get(key);
-					if(textures.containsKey(key)) rl = new ResourceLocation(textures.get(key));
-					else if(textures.containsKey(f.getName())) {
+					if (textures.containsKey(key)) rl = new ResourceLocation(textures.get(key));
+					else if (textures.containsKey(f.getName())) {
 						ITextureNamer namer = TYPES.get(type);
 						rl = new ResourceLocation(textures.get(f.getName()));
-						if(namer != null) {
+						if (namer != null) {
 							String c = namer.nameFromCfg(f, cfg);
-							if(c != null) rl = new ResourceLocation(textures.get(f.getName()) + "_" + c);
+							if (c != null) rl = new ResourceLocation(textures.get(f.getName()) + "_" + c);
 						}
-					} else if(textures.containsKey("name")) {
+					} else if (textures.containsKey("name")) {
 						ITextureNamer namer = TYPES.get(type);
 						newName = textures.get("name");
-						if(namer != null) rl = new ResourceLocation(newName + "_" + namer.getTextureName(f, cfg));
+						if (namer != null) rl = new ResourceLocation(newName + "_" + namer.getTextureName(f, cfg));
 					}
 					builder.put(key, rl);
 				}
@@ -276,9 +287,9 @@ public class ModelConfigurableSides implements IBakedModel {
 		default String getTextureName(EnumFacing side, SideConfig cfg) {
 			String s = nameFromSide(side, cfg);
 			String c = nameFromCfg(side, cfg);
-			if(s != null && c != null) return s + "_" + c;
-			else if(s != null) return s;
-			else if(c != null) return c;
+			if (s != null && c != null) return s + "_" + c;
+			else if (s != null) return s;
+			else if (c != null) return c;
 			return "";
 		}
 		default String nameFromSide(EnumFacing side, SideConfig cfg) {

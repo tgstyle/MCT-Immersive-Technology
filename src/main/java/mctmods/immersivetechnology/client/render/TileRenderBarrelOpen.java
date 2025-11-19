@@ -28,7 +28,7 @@ public class TileRenderBarrelOpen extends TileEntitySpecialRenderer<TileEntityBa
 		final int capacity = tank.getCapacity();
 		final FluidStack fluidStack = tank.getFluid();
 		final Fluid fluid = (fluidStack != null) ? fluidStack.getFluid() : null;
-		if(fluid != null) {
+		if (fluid != null) {
 			final int c = fluid.getColor();
 			this.blue = c & 0xFF;
 			this.green = (c >> 8) & 0xFF;
@@ -37,7 +37,7 @@ public class TileRenderBarrelOpen extends TileEntitySpecialRenderer<TileEntityBa
 			final TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
 			this.diffU = this.maxU - this.minU;
 			this.diffV = this.maxV - this.minV;
-			if(sprite != null) {
+			if (sprite != null) {
 				final double multiplier = 0.25;
 				this.minU = sprite.getMinU() + this.diffU * multiplier;
 				this.maxU = sprite.getMaxU() - this.diffU * multiplier;

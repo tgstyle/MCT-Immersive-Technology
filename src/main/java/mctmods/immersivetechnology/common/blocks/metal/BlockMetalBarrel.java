@@ -16,6 +16,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+
 public class BlockMetalBarrel extends BlockITTileProvider<BlockType_MetalBarrel> {
 	public BlockMetalBarrel() {
 		super("metal_barrel", Material.IRON, PropertyEnum.create("type", BlockType_MetalBarrel.class), ItemBlockITBase.class, IEProperties.SIDECONFIG[0], IEProperties.SIDECONFIG[1]);
@@ -30,8 +32,9 @@ public class BlockMetalBarrel extends BlockITTileProvider<BlockType_MetalBarrel>
 		return EnumFacing.UP;
 	}
 
+    @Nonnull
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		return state;
 	}
@@ -55,5 +58,4 @@ public class BlockMetalBarrel extends BlockITTileProvider<BlockType_MetalBarrel>
 		}
 		return null;
 	}
-
 }

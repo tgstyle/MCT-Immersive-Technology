@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.common.gui;
 
 import blusunrize.immersiveengineering.common.gui.ContainerIEBase;
 import blusunrize.immersiveengineering.common.gui.IESlot;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityBoilerMaster;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -20,12 +20,12 @@ public class ContainerBoiler extends ContainerIEBase<TileEntityBoilerMaster> {
 			@Override
 			public boolean isItemValid(ItemStack itemStack) {
 				IFluidHandler h = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-				if(h == null || h.getTankProperties().length == 0) return false;
+				if (h == null || h.getTankProperties().length == 0) return false;
 				FluidStack fs = h.getTankProperties()[0].getContents();
-				if(fs == null) return false;
-				if(tileF.tanks[0].getFluidAmount() > 0 && !fs.isFluidEqual(tileF.tanks[0].getFluid())) return false;
-				if(tileF.tanks[1].getFluidAmount() <= 0) return true;
-				return true;
+				if (fs == null) return false;
+				if (tileF.tanks[0].getFluidAmount() > 0 && !fs.isFluidEqual(tileF.tanks[0].getFluid())) return false;
+                tileF.tanks[1].getFluidAmount();
+                return true;
 			}
 		});
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 1, 37, 54));
@@ -33,12 +33,12 @@ public class ContainerBoiler extends ContainerIEBase<TileEntityBoilerMaster> {
 			@Override
 			public boolean isItemValid(ItemStack itemStack) {
 				IFluidHandler h = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-				if(h == null || h.getTankProperties().length == 0) return false;
+				if (h == null || h.getTankProperties().length == 0) return false;
 				FluidStack fs = h.getTankProperties()[0].getContents();
-				if(fs == null) return false;
-				if(tileF.tanks[1].getFluidAmount() > 0 && !fs.isFluidEqual(tileF.tanks[1].getFluid())) return false;
-				if(tileF.tanks[0].getFluidAmount() <= 0) return true;
-				return true;
+				if (fs == null) return false;
+				if (tileF.tanks[1].getFluidAmount() > 0 && !fs.isFluidEqual(tileF.tanks[1].getFluid())) return false;
+                tileF.tanks[0].getFluidAmount();
+                return true;
 			}
 		});
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 3, 76, 54));
@@ -50,13 +50,9 @@ public class ContainerBoiler extends ContainerIEBase<TileEntityBoilerMaster> {
 		});
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 5, 149, 54));
 
-		for(int i = 0 ; i < 3 ; i++) {
-			for(int j = 0 ; j < 9 ; j++) {
-				addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));
-			}
+		for (int i = 0 ; i < 3 ; i++) {
+			for (int j = 0 ; j < 9 ; j++) { addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18)); }
 		}
-		for(int i = 0 ; i < 9 ; i++)
-			addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 143));
+		for (int i = 0 ; i < 9 ; i++) { addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 143)); }
 	}
-
 }

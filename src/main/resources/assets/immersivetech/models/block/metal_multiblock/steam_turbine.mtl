@@ -1,2 +1,4 @@
-newmtl steam_turbine
+# Made in Blockbench 4.12.6
+newmtl base
 map_Kd immersivetech:blocks/metal_multiblock_steam_turbine
+newmtl none

@@ -9,33 +9,31 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import java.util.HashSet;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 public class ITSounds {
-
 	static Set<ITSoundEvent> registeredEvents = new HashSet<>();
-	public static ITSoundEvent turbine = registerSound("turbine", SoundCategory.BLOCKS);
-	public static ITSoundEvent alternator = registerSound("alternator", SoundCategory.BLOCKS);
-	public static ITSoundEvent boiler = registerSound("boiler", SoundCategory.BLOCKS);
-	public static ITSoundEvent distiller = registerSound("distiller", SoundCategory.BLOCKS);
-	public static ITSoundEvent advCokeOven = registerSound("advCokeOven", SoundCategory.BLOCKS);
-	public static ITSoundEvent solarTower = registerSound("solarTower", SoundCategory.BLOCKS);
-	public static ITSoundEvent coolingTower = registerSound("coolingTower", SoundCategory.BLOCKS);
-	public static ITSoundEvent gasTurbineRunning = registerSound("gasTurbineRunning", SoundCategory.BLOCKS);
-	public static ITSoundEvent gasTurbineStarter = registerSound("gasTurbineStarter", SoundCategory.BLOCKS);
-	public static ITSoundEvent gasTurbineArc = registerSound("gasTurbineArc", SoundCategory.BLOCKS);
-	public static ITSoundEvent gasTurbineSpark = registerSound("gasTurbineSpark", SoundCategory.BLOCKS);
-	public static ITSoundEvent heatExchanger = registerSound("heatExchanger", SoundCategory.BLOCKS);
+	public static ITSoundEvent turbine = registerSound("turbine");
+	public static ITSoundEvent alternator = registerSound("alternator");
+	public static ITSoundEvent boiler = registerSound("boiler");
+	public static ITSoundEvent distiller = registerSound("distiller");
+	public static ITSoundEvent advCokeOven = registerSound("advCokeOven");
+	public static ITSoundEvent solarTower = registerSound("solarTower");
+	public static ITSoundEvent coolingTower = registerSound("coolingTower");
+	public static ITSoundEvent gasTurbineRunning = registerSound("gasTurbineRunning");
+	public static ITSoundEvent gasTurbineStarter = registerSound("gasTurbineStarter");
+	public static ITSoundEvent gasTurbineArc = registerSound("gasTurbineArc");
+	public static ITSoundEvent gasTurbineSpark = registerSound("gasTurbineSpark");
+	public static ITSoundEvent heatExchanger = registerSound("heatExchanger");
 
-	private static ITSoundEvent registerSound(String name, SoundCategory category) {
+	private static ITSoundEvent registerSound(String name) {
 		ResourceLocation location = new ResourceLocation(ImmersiveTechnology.MODID, name);
-		ITSoundEvent event = new ITSoundEvent(location, category);
+		ITSoundEvent event = new ITSoundEvent(location, SoundCategory.BLOCKS);
 		event.setRegistryName(location);
 		registeredEvents.add(event);
 		return event;
 	}
 
 	public static void init() {
-		for(SoundEvent event : registeredEvents)
-			ForgeRegistries.SOUND_EVENTS.register(event);
+		for(SoundEvent event : registeredEvents) { ForgeRegistries.SOUND_EVENTS.register(event); }
 	}
-
 }

@@ -33,27 +33,26 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 	}
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 		setItemStack(new ItemStack(nbt.getCompoundTag("item")));
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.setTag("item", interactiveItemStack.writeToNBT(new NBTTagCompound()));
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
-		return false;
-	}
+	public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+    }
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)this;
+	public @Nonnull <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)this;
 		return super.getCapability(capability, facing);
 	}
 
@@ -77,10 +76,10 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 	@Nonnull
 	@Override
 	public ItemStack extractItem(int slot, int amount, boolean simulate) {
-		if(interactiveItemStack.isEmpty()) return ItemStack.EMPTY;
+		if (interactiveItemStack.isEmpty()) return ItemStack.EMPTY;
 		ItemStack toReturn = interactiveItemStack.copy();
 		toReturn.setCount(amount);
-		if(!simulate) acceptedAmount += amount;
+		if (!simulate) acceptedAmount += amount;
 		return toReturn;
 	}
 
@@ -95,17 +94,17 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 	}
 
 	@Override
-	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
-		if(heldItem.isEmpty()) {
-			if(player.isSneaking()) {
+	public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
+		if (heldItem.isEmpty()) {
+			if (player.isSneaking()) {
 				visibleItemStack = ItemStack.EMPTY;
 				interactiveItemStack = ItemStack.EMPTY;
 				return true;
-			} else if(!interactiveItemStack.isEmpty()) {
+			} else if (!interactiveItemStack.isEmpty()) {
 				player.inventory.addItemStackToInventory(interactiveItemStack);
 				return true;
 			}
-		} else if(interactiveItemStack.isEmpty()) {
+		} else if (interactiveItemStack.isEmpty()) {
 			setItemStack(heldItem.copy());
 			return true;
 		}
@@ -113,7 +112,7 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 	}
 
 	@Override
-	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
+	public @Nonnull String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
 		if (requestCooldown == 0) {
 			ByteBuf message = Unpooled.copyBoolean(true);
 			BinaryMessageTileSync.sendToServer(getPos(), message);
@@ -139,5 +138,4 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 	public TranslationKey text() {
 		return TranslationKey.OVERLAY_OSD_CREATIVE_CRATE_NORMAL_FIRST_LINE;
 	}
-
 }

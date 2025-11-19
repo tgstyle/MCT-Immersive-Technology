@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.common.util.multiblock;
 import net.minecraft.util.EnumFacing;
 
 public class PoICache {
-
     public EnumFacing facing;
     public int position;
 

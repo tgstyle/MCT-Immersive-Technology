@@ -9,16 +9,13 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SuppressWarnings("unused")
 public class MessageRequestUpdate implements IMessage {
-
 	BlockPos pos;
 
-	public MessageRequestUpdate(TileEntityIEBase tile) {
-		this.pos = tile.getPos();
-	}
+	public MessageRequestUpdate(TileEntityIEBase tile) { this.pos = tile.getPos(); }
 
-	public MessageRequestUpdate() {
-	}
+	public MessageRequestUpdate() { }
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
@@ -37,5 +34,4 @@ public class MessageRequestUpdate implements IMessage {
 			return null;
 		}
 	}
-
 }

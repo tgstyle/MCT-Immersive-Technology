@@ -13,6 +13,7 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BoilerFuelRecipeCategory extends ITRecipeCategory<BoilerFuelRecipe, BoilerFuelRecipeWrapper> {
@@ -27,11 +28,11 @@ public class BoilerFuelRecipeCategory extends ITRecipeCategory<BoilerFuelRecipe,
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, BoilerFuelRecipeWrapper recipeWrapper, IIngredients ingredients) {
+	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull BoilerFuelRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		int tankSize = 0;
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
-		for(List<FluidStack> lists : inputs) {
-			for(FluidStack fluid : lists) if(fluid.amount > tankSize) tankSize = fluid.amount;
+		for (List<FluidStack> lists : inputs) {
+			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
 		}
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
 		guiFluidStacks.init(0, true, 13, 20, 16, 47, tankSize, false, tankOverlay);
@@ -40,8 +41,7 @@ public class BoilerFuelRecipeCategory extends ITRecipeCategory<BoilerFuelRecipe,
 	}
 	
 	@Override
-	public IRecipeWrapper getRecipeWrapper(BoilerFuelRecipe recipe) {
+	public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull BoilerFuelRecipe recipe) {
 		return new BoilerFuelRecipeWrapper(recipe);
 	}
-
 }
