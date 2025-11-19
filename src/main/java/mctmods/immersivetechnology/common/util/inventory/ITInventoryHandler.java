@@ -1,14 +1,12 @@
 package mctmods.immersivetechnology.common.util.inventory;
 
-
-import javax.annotation.Nonnull;
-
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import javax.annotation.Nonnull;
 
 public class ITInventoryHandler implements IItemHandlerModifiable {
     int slots;

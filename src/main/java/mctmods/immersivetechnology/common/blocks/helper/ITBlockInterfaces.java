@@ -63,9 +63,14 @@ public class ITBlockInterfaces {
         default Component getDisplayName() { return Component.literal(""); }
     }
 
-    public interface IGeneralMultiblock extends ITBlockInterfaces.BlockStateProvider {
+    public interface IGeneralMultiblock extends ITBlockInterfaces.BlockStateProvider, blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGeneralMultiblock {
         @Nullable
         IGeneralMultiblock master();
+
+        default boolean isDummy() {
+            BlockState state = getState();
+            return state.hasProperty(ITProperties.MULTIBLOCKSLAVE) ? state.getValue(ITProperties.MULTIBLOCKSLAVE) : true;
+        }
     }
 
     public interface IHasDummyBlocks extends IGeneralMultiblock {

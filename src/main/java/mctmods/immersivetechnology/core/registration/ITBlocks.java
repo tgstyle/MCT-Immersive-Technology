@@ -14,6 +14,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -35,6 +36,9 @@ public class ITBlocks {
 
     private static final HashMap<String, RegistryObject<? extends Block>> BLOCK_REGISTRY_MAP = new HashMap<>();
     public static Function<String, Block> getBlock = (key) -> BLOCK_REGISTRY_MAP.get(key).get();
+
+    private static final Supplier<BlockBehaviour.Properties> METAL_PROPERTIES_NO_OVERLAY = () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0F, 15.0F).requiresCorrectToolForDrops().isViewBlocking((state, blockReader, pos) -> false);
+    public static final Supplier<BlockBehaviour.Properties> METAL_PROPERTIES_NO_OCCLUSION = () -> METAL_PROPERTIES_NO_OVERLAY.get().noOcclusion();
 
     public static final class MetalDevices {
         public static BlockEntry<BarrelCreativeBlock> BARREL_CREATIVE;
@@ -141,7 +145,7 @@ public class ITBlocks {
     }
 
     public static final class BlockEntry<T extends Block> implements Supplier<T>, ItemLike {
-        public static final Collection<BlockEntry<?> > ALL_ENTRIES = new ArrayList<>();
+        public static final Collection<BlockEntry<?>> ALL_ENTRIES = new ArrayList<>();
 
         private final RegistryObject<T> regObject;
         private final Supplier<BlockBehaviour.Properties> properties;

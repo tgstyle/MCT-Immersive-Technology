@@ -6,8 +6,8 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
-import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -56,13 +56,13 @@ public interface ITPressurizedFluidOutput<State extends IMultiblockState> {
             FluidStack fs = tank.getFluid().copy();
             if (fs == null) continue;
             int transferSpeed = getTransferSpeed();
-            if (transferSpeed != Integer.MAX_VALUE && !isPipe) fs = Utils.copyFluidStackWithAmount(fs, Math.min(transferSpeed, fs.getAmount()), false);
+            if (transferSpeed != Integer.MAX_VALUE && !isPipe) fs = ITUtils.copyFluidStackWithAmount(fs, Math.min(transferSpeed, fs.getAmount()), false);
             boolean hadTag = fs.hasTag() && fs.getTag().contains(IFluidPipe.NBT_PRESSURIZED);
             if (isPipe && !hadTag) fs.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true);
             int accepted = handler.fill(fs, FluidAction.SIMULATE);
             if (!hadTag && fs.hasTag()) fs.getTag().remove(IFluidPipe.NBT_PRESSURIZED);
             if (accepted <= 0) continue;
-            FluidStack toFill = Utils.copyFluidStackWithAmount(fs, Math.min(fs.getAmount(), accepted), false);
+            FluidStack toFill = ITUtils.copyFluidStackWithAmount(fs, Math.min(fs.getAmount(), accepted), false);
             if (isPipe) toFill.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true);
             int drained = handler.fill(toFill, FluidAction.EXECUTE);
             tank.drain(drained, FluidAction.EXECUTE);

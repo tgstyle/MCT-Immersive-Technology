@@ -5,7 +5,6 @@ import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.common.register.IEBlocks;
 import mctmods.immersivetechnology.common.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
@@ -52,19 +51,19 @@ public class ITMultiblockProvider {
     }
     public static <S extends IMultiblockState> ITMultiblockBuilder<S> metal(IMultiblockLogic<S> logic, String name) {
         return new ITMultiblockBuilder<>(logic, name)
-                .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockWithMirror<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
+                .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockWithMirror<>(ITBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
                 .customBEs(ITBlockEntities.REGISTER);
     }
     public static <S extends IMultiblockState> ITMultiblockBuilder<S> metalNoMirror(IMultiblockLogic<S> logic, String name) {
         return new ITMultiblockBuilder<>(logic, name)
                 .notMirrored()
-                .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockNonMirror<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
+                .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockNonMirror<>(ITBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
                 .customBEs(ITBlockEntities.REGISTER);
     }
     public static <S extends IMultiblockState> ITMultiblockBuilder<S> metalNoMirrorWithActive(IMultiblockLogic<S> logic, String name) {
         return new ITMultiblockBuilder<>(logic, name)
                 .notMirrored()
-                .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockNonMirrorActive<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
+                .customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockNonMirrorActive<>(ITBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new)
                 .customBEs(ITBlockEntities.REGISTER);
     }
     public static final MultiblockRegistration<AlternatorLogic.State> ALTERNATOR =
