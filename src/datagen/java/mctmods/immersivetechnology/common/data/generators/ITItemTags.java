@@ -28,5 +28,6 @@ public class ITItemTags extends ItemTagsProvider {
         tag(ITTags.igniters_consume).add(Items.TORCH);
         tag(ITTags.formationTools).add(ITItems.FORMATION_TOOL.get()).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "hammer"));
         tag(ITTags.screwdrivers).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "screwdriver"));
+        tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "tools/hammers"))).add(ITItems.FORMATION_TOOL.get());
     }
 }
