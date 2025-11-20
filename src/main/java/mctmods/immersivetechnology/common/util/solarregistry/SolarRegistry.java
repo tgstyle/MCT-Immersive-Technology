@@ -57,29 +57,6 @@ public class SolarRegistry {
         return result;
     }
 
-    public static synchronized RegisterResult checkReflectorPlacement(Level level, BlockPos poi) {
-        RegisterResult result = new RegisterResult();
-        if (level.isClientSide) return result;
-        SolarRegistryData data = getData(level);
-        int y = poi.getY();
-        Set<BlockPos> reflectorsAtY = data.reflectorPOIsByY.computeIfAbsent(y, k -> new HashSet<>());
-        if (reflectorsAtY.contains(poi)) { result.success = true; return result; }
-        boolean verticalFail = false;
-        for (Set<BlockPos> set : data.towerBasesByY.values()) for (BlockPos existing : set) {
-            int dx = poi.getX() - existing.getX();
-            int dz = poi.getZ() - existing.getZ();
-            if (dx == 0 && dz == 0) { verticalFail = true; }
-        }
-        for (Set<BlockPos> set : data.reflectorPOIsByY.values()) for (BlockPos existing : set) {
-            int dx = poi.getX() - existing.getX();
-            int dz = poi.getZ() - existing.getZ();
-            if (dx == 0 && dz == 0) { verticalFail = true; }
-        }
-        if (verticalFail) { result.vertical = true; return result; }
-        result.success = true;
-        return result;
-    }
-
     public static synchronized void unregisterTower(Level level, BlockPos base) {
         if (level.isClientSide) return;
         SolarRegistryData data = getData(level);
