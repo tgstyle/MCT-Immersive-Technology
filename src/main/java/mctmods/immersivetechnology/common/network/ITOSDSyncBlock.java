@@ -30,7 +30,7 @@ public class ITOSDSyncBlock implements ITMessage {
                 Component msg;
                 if (distance >= 0) { msg = Component.translatable(actualKey, distance); }
                 else { msg = Component.translatable(actualKey); }
-                Minecraft.getInstance().gui.setOverlayMessage(msg, false);
+                Minecraft.getInstance().gui.getChat().addMessage(msg);
             }
         });
         ctx.setPacketHandled(true);
