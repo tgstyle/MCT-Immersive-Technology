@@ -74,7 +74,7 @@
   "gui.immersivetechnology.valve_fluid.limit_time": "mB per second",
   "gui.immersivetechnology.valve_limiter.limit_destination": "Items in output storage",
   "gui.immersivetechnology.valve_limiter.limit_packet": "Items per packet",
-  "gui.immersivetechnology.valve_limiter.limit_time": "Items per second",  
+  "gui.immersivetechnology.valve_limiter.limit_time": "Items per second",
   "gui.immersivetechnology.valve_load.limit_destination": "IF in output storage",
   "gui.immersivetechnology.valve_load.limit_packet": "IF per packet",
   "gui.immersivetechnology.valve_load.limit_time": "IF per second",
@@ -117,5 +117,23 @@
   "category.immersivetechnology.metal_multiblock.solar_tower.time": "%s ticks / %s mB",
   "category.immersivetechnology.metal_multiblock.solar_tower.temp": "Required Temp: %s °C",
 
-  "config.jade.plugin_immersivetechnology.display": "IT Multiblock Display"
+  "config.jade.plugin_immersivetechnology.display": "IT Multiblock Display",
+
+  "subtitles.immersivetechnology.alternator": "Alternator humming",
+  "subtitles.immersivetechnology.boiler_liquid": "Boiler roaring",
+  "subtitles.immersivetechnology.cooling_tower": "Cooling Tower dripping",
+  "subtitles.immersivetechnology.dance": "Party music playing",
+  "subtitles.immersivetechnology.distiller": "Distiller bubbling",
+  "subtitles.immersivetechnology.electrolytic_crucible_battery": "Electrolytic Crucible humming",
+  "subtitles.immersivetechnology.gas_arc": "Gas Turbine arc crackling",
+  "subtitles.immersivetechnology.gas_ignite": "Gas Turbine ignites",
+  "subtitles.immersivetechnology.gas_running": "Gas Turbine running",
+  "subtitles.immersivetechnology.gas_spark": "Gas Turbine ignition sparking",
+  "subtitles.immersivetechnology.gas_starter": "Gas Turbine starting",
+  "subtitles.immersivetechnology.heat_exchanger": "Heat Exchanger humming",
+  "subtitles.immersivetechnology.melting_crucible": "Crucible melting",
+  "subtitles.immersivetechnology.pressure_release": "Pressure releasing",
+  "subtitles.immersivetechnology.steam_turbine": "Steam Turbine spinning",
+  "subtitles.immersivetechnology.solar_melter": "Solar Melter melting",
+  "subtitles.immersivetechnology.solar_tower": "Solar Tower boiling"
 }
