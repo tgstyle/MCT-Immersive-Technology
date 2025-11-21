@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.core.proxy;
 
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.Nullable;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.lib.manual.ManualEntry;
 import blusunrize.lib.manual.ManualInstance;
@@ -18,7 +17,6 @@ import mctmods.immersivetechnology.client.models.split.ITSplitModelLoader;
 import mctmods.immersivetechnology.client.particles.helper.ITColoredSmokeProvider;
 import mctmods.immersivetechnology.client.particles.helper.ITSmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.*;
-import mctmods.immersivetechnology.common.blocks.helper.ITBlockType;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
 import mctmods.immersivetechnology.common.items.helper.ITFlagItem;
@@ -30,25 +28,19 @@ import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mctmods.immersivetechnology.core.registration.ITParticles;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.block.BlockColor;
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
@@ -62,9 +54,7 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ITLib.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
-
-    public static final ClientProxy INSTANCE = new ClientProxy();
+public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
@@ -142,7 +132,12 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
     public static void onItemColor(RegisterColorHandlersEvent.Item event) {
         for (RegistryObject<? extends Item> holder : ITItems.getItemRegistryMap().values()) {
             Item i = holder.get();
-            if (i instanceof ITFlagItem) { event.register(INSTANCE, i); }
+            if (i instanceof ITFlagItem) {
+                event.register((stack, tintIndex) -> {
+                    if (stack.getItem() instanceof ITFlagItem type) { return type.getColor(tintIndex); }
+                    return 0xffffff;
+                }, i);
+            }
         }
         for (ITFluids.FluidEntry entry : ITFluids.ALL_ENTRIES) {
             final int tint = entry.tintColor();
@@ -156,18 +151,6 @@ public class ClientProxy extends CommonProxy implements ItemColor, BlockColor {
             final int tint = entry.tintColor();
             event.register((state, level, pos, index) -> tint, entry.block().get());
         }
-    }
-
-    @Override
-    public int getColor(BlockState state, @Nullable BlockAndTintGetter getter, @Nullable BlockPos pos, int index) {
-        if (state.getBlock() instanceof ITBlockType type) { return type.getColor(index); }
-        return 0xffffff;
-    }
-
-    @Override
-    public int getColor(ItemStack stack, int tintIndex) {
-        if (stack.getItem() instanceof ITFlagItem type) { return type.getColor(tintIndex); }
-        return 0xffffff;
     }
 
     @Override

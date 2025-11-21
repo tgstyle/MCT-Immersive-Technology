@@ -16,10 +16,9 @@ import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.proxy.ClientProxy;
+import mctmods.immersivetechnology.core.proxy.ClientProxySupplier;
 import mctmods.immersivetechnology.core.proxy.CommonProxy;
 import mctmods.immersivetechnology.core.registration.ITFluids;
-import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.common.MinecraftForge;
@@ -30,11 +29,11 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
 
@@ -44,10 +43,7 @@ import static mctmods.immersivetechnology.core.lib.ITLib.MODID;
 @SuppressWarnings("unused")
 @Mod(MODID)
 public class ImmersiveTechnology {
-    public static CommonProxy proxy = Util.make(() -> {
-        if (FMLLoader.getDist().isClient()) return new ClientProxy();
-        return new CommonProxy();
-    });
+    public static final CommonProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxySupplier::get, () -> CommonProxy::new);
 
     public ImmersiveTechnology(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
@@ -70,7 +66,9 @@ public class ImmersiveTechnology {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         ITLib.IT_LOGGER.info("HELLO FROM COMMON SETUP");
-        for (ITFluids.FluidEntry entry : ITFluids.ALL_ENTRIES) { DispenserBlock.registerBehavior(entry.getBucket(), BUCKET_DISPENSE_BEHAVIOR); }
+        for (ITFluids.FluidEntry entry : ITFluids.ALL_ENTRIES) {
+            DispenserBlock.registerBehavior(entry.getBucket(), BUCKET_DISPENSE_BEHAVIOR);
+        }
         ITPacketHandler.registerMessage(ITMessageContainerUpdate.class, ITMessageContainerUpdate::new);
         ITPacketHandler.registerMessage(ITMessageContainerData.class, ITMessageContainerData::new);
     }
@@ -100,7 +98,11 @@ public class ImmersiveTechnology {
     }
 
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) { ITLib.IT_LOGGER.info("HELLO from server starting"); }
+    public void onServerStarting(ServerStartingEvent event) {
+        ITLib.IT_LOGGER.info("HELLO FROM SERVER STARTING");
+    }
 
-    public static ResourceLocation rl(String path) { return ResourceLocation.fromNamespaceAndPath(MODID, path); }
+    public static ResourceLocation rl(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    }
 }
