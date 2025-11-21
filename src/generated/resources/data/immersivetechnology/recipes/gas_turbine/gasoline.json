@@ -1,0 +1,12 @@
+{
+  "type": "immersivetechnology:gas_turbine",
+  "input": {
+    "amount": 800,
+    "tag": "forge:gasoline"
+  },
+  "output": {
+    "amount": 1000,
+    "fluid": "immersivetechnology:flue_gas"
+  },
+  "time": 10
+}

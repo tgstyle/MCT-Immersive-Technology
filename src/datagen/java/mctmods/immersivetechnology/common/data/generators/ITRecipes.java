@@ -81,6 +81,9 @@ public class ITRecipes extends RecipeProvider {
 
     private void recipesBoilerLiquid(@Nonnull Consumer<FinishedRecipe> out) {
         BoilerLiquidRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 10).setTime(10).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_liquid/biodiesel"));
+        BoilerLiquidRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 50).setTime(10).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_liquid/gasoline"));
+        BoilerLiquidRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "diesel")), 7).setTime(10).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_liquid/diesel"));
+        BoilerLiquidRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "kerosene")), 9).setTime(10).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_liquid/kerosene"));
     }
 
     private void recipesBoilerSolid(@Nonnull Consumer<FinishedRecipe> out) {
@@ -105,6 +108,9 @@ public class ITRecipes extends RecipeProvider {
         SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteam, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).build(out, toResourceLocation("steam_turbine/steam"));
         SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteamForge, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).build(out, toResourceLocation("steam_turbine/steam_forge"));
         GasTurbineRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 160).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toResourceLocation("gas_turbine/biodiesel"));
+        GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 800).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toResourceLocation("gas_turbine/gasoline"));
+        GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "diesel")), 114).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toResourceLocation("gas_turbine/diesel"));
+        GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "kerosene")), 150).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toResourceLocation("gas_turbine/kerosene"));
     }
 
     private void recipesSolarMelter(@Nonnull Consumer<FinishedRecipe> out) {
@@ -112,9 +118,9 @@ public class ITRecipes extends RecipeProvider {
     }
 
     private void recipesSolarTower(@Nonnull Consumer<FinishedRecipe> out) {
-        SolarTowerRecipeBuilder.builder().addInput(FluidTags.WATER, 250).addOutput(ITFluids.STEAM.getStill(), 450).setTime(20).setRequiredTemp(100.0).build(out, toResourceLocation("solar_tower/water"));
-        SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidDistilledWater, 250).addOutput(ITFluids.STEAM.getStill(), 500).setTime(20).setRequiredTemp(100.0).build(out, toResourceLocation("solar_tower/distilled_water"));
-        SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidSaltSlurry, 1000).addOutput(ITFluids.HEATED_SALT.getStill(), 500).setTime(20).setRequiredTemp(400.0).build(out, toResourceLocation("solar_tower/salt_slurry"));
+        SolarTowerRecipeBuilder.builder().addInput(FluidTags.WATER, 250).addOutput(ITFluids.STEAM.getStill(), 450).setTime(10).setRequiredTemp(100.0).build(out, toResourceLocation("solar_tower/water"));
+        SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidDistilledWater, 250).addOutput(ITFluids.STEAM.getStill(), 500).setTime(10).setRequiredTemp(100.0).build(out, toResourceLocation("solar_tower/distilled_water"));
+        SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidSaltSlurry, 1000).addOutput(ITFluids.HEATED_SALT.getStill(), 500).setTime(10).setRequiredTemp(400.0).build(out, toResourceLocation("solar_tower/salt_slurry"));
     }
 
     private ResourceLocation toResourceLocation(String resourceLocation) {

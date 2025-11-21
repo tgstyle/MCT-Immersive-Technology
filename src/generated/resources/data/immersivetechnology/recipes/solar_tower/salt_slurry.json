@@ -9,5 +9,5 @@
     "fluid": "immersivetechnology:heated_salt_slurry"
   },
   "requiredTemp": 400.0,
-  "time": 20
+  "time": 10
 }

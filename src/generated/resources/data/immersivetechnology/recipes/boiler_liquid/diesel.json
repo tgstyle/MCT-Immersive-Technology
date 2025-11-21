@@ -1,0 +1,9 @@
+{
+  "type": "immersivetechnology:boiler_liquid",
+  "heatPerTick": 0.1,
+  "input": {
+    "amount": 7,
+    "tag": "forge:diesel"
+  },
+  "time": 10
+}
