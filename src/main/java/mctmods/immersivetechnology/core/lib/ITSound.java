@@ -1,12 +1,9 @@
 package mctmods.immersivetechnology.core.lib;
 
-import blusunrize.immersiveengineering.mixin.accessors.client.GuiSubtitleOverlayAccess;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.client.sounds.WeighedSoundEvents;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.Vec3;
@@ -20,10 +17,9 @@ public class ITSound extends AbstractTickableSoundInstance {
     private final BooleanSupplier valid;
     private final Supplier<Float> volumeSupplier;
     private final Supplier<Float> pitchSupplier;
-    private long subtitleMillis;
     private int inactiveTicks;
 
-    public ITSound(
+    private ITSound(
             BooleanSupplier active,
             BooleanSupplier valid,
             Vec3 pos,
@@ -43,7 +39,6 @@ public class ITSound extends AbstractTickableSoundInstance {
         this.volumeSupplier = volumeSupplier;
         this.pitchSupplier = pitchSupplier;
         this.pitch = pitchSupplier.get();
-        this.subtitleMillis = Util.getMillis();
         this.inactiveTicks = 0;
     }
 
@@ -76,13 +71,6 @@ public class ITSound extends AbstractTickableSoundInstance {
     public void tick() {
         if (!this.valid.getAsBoolean()) { this.stop(); }
         else {
-            long currentMillis = Util.getMillis();
-            if (currentMillis - this.subtitleMillis > 1000L) {
-                SoundManager soundManager = Minecraft.getInstance().getSoundManager();
-                WeighedSoundEvents weighedsoundevents = this.resolve(soundManager);
-                ((GuiSubtitleOverlayAccess) Minecraft.getInstance().gui).getSubtitleOverlay().onPlaySound(this, weighedsoundevents);
-                this.subtitleMillis = currentMillis;
-            }
             if (this.active.getAsBoolean()) {
                 this.volume = this.volumeSupplier.get();
                 this.pitch = this.pitchSupplier.get();
@@ -91,7 +79,7 @@ public class ITSound extends AbstractTickableSoundInstance {
             else {
                 this.volume = 0.0F;
                 this.inactiveTicks++;
-                if (this.inactiveTicks > 20) { this.stop(); }
+                if (this.inactiveTicks > 5) { this.stop(); }
             }
         }
     }

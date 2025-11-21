@@ -131,7 +131,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         Vec3 arcPos = ctx.getLevel().toAbsolute(new Vec3(ARC_SOUND_POI.getX() + 0.5, ARC_SOUND_POI.getY() + 0.5, ARC_SOUND_POI.getZ() + 0.5));
         Vec3 sparkPos = ctx.getLevel().toAbsolute(new Vec3(SPARK_SOUND_POI.getX() + 0.5, SPARK_SOUND_POI.getY() + 0.5, SPARK_SOUND_POI.getZ() + 0.5));
         Vec3 ignitePos = ctx.getLevel().toAbsolute(new Vec3(IGNITE_SOUND_POI.getX() + 0.5, IGNITE_SOUND_POI.getY() + 0.5, IGNITE_SOUND_POI.getZ() + 0.5));
-        if (!state.runningSoundPlaying.getAsBoolean()) {
+        float runningAtt = (float) Math.max(player.distanceToSqr(runningPos) / 32, 1);
+        float runningVol = (11 * (smoothedLevel - 0.2f)) / runningAtt;
+        if (state.speed > 0 && ((state.everIgnited && !state.starterRunning) || (state.stall && state.ignited)) && runningVol > 0.01f && !state.runningSoundPlaying.getAsBoolean()) {
             state.runningSoundId++;
             int thisId = state.runningSoundId;
             state.runningSoundPlaying = ITSound.startSound(
@@ -149,7 +151,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             );
         }
         if (state.starterRunning) {
-            if (!state.starterSoundPlaying.getAsBoolean()) {
+            float starterAtt = (float) Math.max(player.distanceToSqr(starterPos) / 64, 1);
+            float starterVol = Math.min(smoothedLevel / starterAtt, 0.4f);
+            if (starterVol > 0.01f && !state.starterSoundPlaying.getAsBoolean()) {
                 state.starterSoundId++;
                 int thisId = state.starterSoundId;
                 state.starterSoundPlaying = ITSound.startSound(
@@ -164,7 +168,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 );
             }
             if (state.speed >= MAX_SPEED / 4 && state.hasIgniter) {
-                if (!state.arcSoundPlaying.getAsBoolean()) {
+                float arcAtt = (float) Math.max(player.distanceToSqr(arcPos) / 64, 1);
+                float arcVol = Math.min(smoothedLevel / arcAtt, 0.4f);
+                if (arcVol > 0.01f && !state.arcSoundPlaying.getAsBoolean()) {
                     state.arcSoundId++;
                     int thisId = state.arcSoundId;
                     state.arcSoundPlaying = ITSound.startSound(

@@ -69,18 +69,21 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
-        if (!state.isSoundPlaying.getAsBoolean()) {
-            Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) { return; }
+        Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
+        float att = Math.max((float) player.distanceToSqr(soundPos) / 8, 1);
+        float vol = 20f / att;
+        if (state.active && state.speed >= state.maxSpeed / POWER_DIVIDER && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
             state.isSoundPlaying = ITSound.startSound(
                     () -> state.active && state.speed >= state.maxSpeed / POWER_DIVIDER,
                     ctx.isValid(),
                     soundPos,
                     ITSounds.alternator,
                     () -> {
-                        LocalPlayer player = Minecraft.getInstance().player;
-                        if (player == null) { return 0f; }
-                        float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
-                        return 20f / attenuation;
+                        LocalPlayer p = Minecraft.getInstance().player;
+                        if (p == null) { return 0f; }
+                        return 20f / Math.max((float) p.distanceToSqr(soundPos) / 8, 1);
                     },
                     () -> {
                         float half = (float) state.maxSpeed / POWER_DIVIDER;

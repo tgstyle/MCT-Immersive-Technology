@@ -118,28 +118,37 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             double maxHeat = recipe != null ? recipe.requiredTemp : WORKING_HEAT_LEVEL;
             boolean shouldPlay = state.heatLevel >= maxHeat && state.sunVisible && state.reflectorStrength > 0;
             if (shouldPlay) {
-                state.soundId++;
-                int thisId = state.soundId;
-                state.isSoundPlaying = ITSound.startSound(
-                        () -> {
-                            FluidStack fsActive = state.tanks.input().getFluid();
-                            SolarTowerRecipe recipeActive = fsActive.getAmount() > 0 ? SolarTowerRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsActive) : null;
-                            double maxHeatActive = recipeActive != null ? recipeActive.requiredTemp : WORKING_HEAT_LEVEL;
-                            return state.heatLevel >= maxHeatActive && state.sunVisible && state.reflectorStrength > 0 && state.soundId == thisId;
-                        },
-                        ctx.isValid(), soundVec, ITSounds.solarTower,
-                        () -> {
-                            LocalPlayer player = Minecraft.getInstance().player;
-                            if (player == null) { return 0f; }
-                            float a = (float) Math.max(player.distanceToSqr(soundVec) / 32, 1);
-                            FluidStack fsVol = state.tanks.input().getFluid();
-                            SolarTowerRecipe recipeVol = fsVol.getAmount() > 0 ? SolarTowerRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsVol) : null;
-                            double maxHeatVol = recipeVol != null ? recipeVol.requiredTemp : WORKING_HEAT_LEVEL;
-                            float heatFactor = (float) (state.heatLevel / maxHeatVol);
-                            return (2 * heatFactor) / a;
-                        },
-                        () -> 1f
-                );
+                LocalPlayer player = Minecraft.getInstance().player;
+                if (player != null) {
+                    double distSq = player.distanceToSqr(soundVec);
+                    float att = (float) Math.max(distSq / 32, 1);
+                    float heatFactor = (float) (state.heatLevel / maxHeat);
+                    float vol = (2 * heatFactor) / att;
+                    if (vol > 0.01f) {
+                        state.soundId++;
+                        int thisId = state.soundId;
+                        state.isSoundPlaying = ITSound.startSound(
+                                () -> {
+                                    FluidStack fsActive = state.tanks.input().getFluid();
+                                    SolarTowerRecipe recipeActive = fsActive.getAmount() > 0 ? SolarTowerRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsActive) : null;
+                                    double maxHeatActive = recipeActive != null ? recipeActive.requiredTemp : WORKING_HEAT_LEVEL;
+                                    return state.heatLevel >= maxHeatActive && state.sunVisible && state.reflectorStrength > 0 && state.soundId == thisId;
+                                },
+                                ctx.isValid(), soundVec, ITSounds.solarTower,
+                                () -> {
+                                    LocalPlayer playerVol = Minecraft.getInstance().player;
+                                    if (playerVol == null) { return 0f; }
+                                    float a = (float) Math.max(playerVol.distanceToSqr(soundVec) / 32, 1);
+                                    FluidStack fsVol = state.tanks.input().getFluid();
+                                    SolarTowerRecipe recipeVol = fsVol.getAmount() > 0 ? SolarTowerRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsVol) : null;
+                                    double maxHeatVol = recipeVol != null ? recipeVol.requiredTemp : WORKING_HEAT_LEVEL;
+                                    float heatFactorVol = (float) (state.heatLevel / maxHeatVol);
+                                    return (2 * heatFactorVol) / a;
+                                },
+                                () -> 1f
+                        );
+                    }
+                }
             }
         }
     }

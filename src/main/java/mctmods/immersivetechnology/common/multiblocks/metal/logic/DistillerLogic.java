@@ -94,18 +94,22 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
-        if (!state.isSoundPlaying.getAsBoolean()) {
-            List<BlockPos> soundPosList = getPosList("sound");
-            BlockPos soundBlockPos = soundPosList.get(0);
-            Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(soundBlockPos.getX() + 0.5, soundBlockPos.getY() + 0.5, soundBlockPos.getZ() + 0.5));
+        List<BlockPos> soundPosList = getPosList("sound");
+        BlockPos soundBlockPos = soundPosList.get(0);
+        Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(soundBlockPos.getX() + 0.5, soundBlockPos.getY() + 0.5, soundBlockPos.getZ() + 0.5));
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) { return; }
+        float distSq = (float) player.distanceToSqr(soundPos);
+        float attenuation = Math.max(distSq / 32f, 1f);
+        float vol = 1f / attenuation;
+        if (state.active && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
             state.isSoundPlaying = ITSound.startSound(
                     () -> state.active, ctx.isValid(), soundPos, ITSounds.distiller,
                     () -> {
-                        LocalPlayer player = Minecraft.getInstance().player;
-                        if (player == null) { return 0f; }
-                        float distSq = (float) player.distanceToSqr(soundPos);
-                        float attenuation = Math.max(distSq / 32f, 1f);
-                        return 1f / attenuation;
+                        LocalPlayer p = Minecraft.getInstance().player;
+                        if (p == null) { return 0f; }
+                        float a = (float) Math.max(p.distanceToSqr(soundPos) / 32f, 1f);
+                        return 1f / a;
                     },
                     () -> 1f
             );

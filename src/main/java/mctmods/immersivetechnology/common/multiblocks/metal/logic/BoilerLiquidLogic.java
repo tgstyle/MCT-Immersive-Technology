@@ -81,26 +81,27 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
-        if (state.heatLevel == 0) { state.isSoundPlaying = () -> false; }
-        else {
-            BlockPos soundAbs = ctx.getLevel().toAbsolute(SOUND_POI.get(0));
-            Vec3 soundPos = new Vec3(soundAbs.getX() + 0.5, soundAbs.getY() + 0.5, soundAbs.getZ() + 0.5);
-            if (!state.isSoundPlaying.getAsBoolean()) {
-                state.isSoundPlaying = ITSound.startSound(
-                        () -> state.heatLevel > 0,
-                        ctx.isValid(),
-                        soundPos,
-                        ITSounds.boiler_liquid,
-                        () -> {
-                            LocalPlayer player = Minecraft.getInstance().player;
-                            if (player == null) { return 0f; }
-                            float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
-                            float currentLevel = (float) (state.heatLevel / WORKING_HEAT_LEVEL);
-                            return (2 * currentLevel) / attenuation;
-                        },
-                        () -> (float) (state.heatLevel / WORKING_HEAT_LEVEL)
-                );
-            }
+        BlockPos soundAbs = ctx.getLevel().toAbsolute(SOUND_POI.get(0));
+        Vec3 soundPos = new Vec3(soundAbs.getX() + 0.5, soundAbs.getY() + 0.5, soundAbs.getZ() + 0.5);
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) { return; }
+        float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
+        float currentLevel = (float) (state.heatLevel / WORKING_HEAT_LEVEL);
+        float vol = (2 * currentLevel) / attenuation;
+        if (state.heatLevel > 0 && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
+            state.isSoundPlaying = ITSound.startSound(
+                    () -> state.heatLevel > 0,
+                    ctx.isValid(),
+                    soundPos,
+                    ITSounds.boiler_liquid,
+                    () -> {
+                        LocalPlayer p = Minecraft.getInstance().player;
+                        if (p == null) { return 0f; }
+                        float a = (float) Math.max(p.distanceToSqr(soundPos) / 8, 1);
+                        return (2 * (float) (state.heatLevel / WORKING_HEAT_LEVEL)) / a;
+                    },
+                    () -> (float) (state.heatLevel / WORKING_HEAT_LEVEL)
+            );
         }
         Level level = ctx.getLevel().getRawLevel();
         if (state.pilotLit) {

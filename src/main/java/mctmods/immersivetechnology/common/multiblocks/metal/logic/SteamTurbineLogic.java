@@ -94,6 +94,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     @Override
     public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
+        boolean targetActive = state.active || state.speed > 0;
         float targetLevel = ITLib.remapRange(0,MAX_SPEED, 0.5f, 1.0f, state.speed);
         if (state.currentLevel == 0f) { state.currentLevel = targetLevel; } else { state.currentLevel = state.currentLevel * 0.9f + targetLevel * 0.1f; }
         float targetPitch = ITLib.remapRange(0, MAX_SPEED, 0.5f, 1.5f, state.speed);
@@ -108,18 +109,22 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         state.animation_fanRotationStep = step;
         state.animation_fanRotation += step;
         state.animation_fanRotation %= 360;
-        if (!state.isSoundPlaying.getAsBoolean()) {
-            final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
+        final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) { return; }
+        float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 32, 1);
+        float vol = (11 * (state.currentLevel - 0.5f)) / attenuation;
+        if (targetActive && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
             state.isSoundPlaying = ITSound.startSound(
                     () -> state.active || state.speed > 0,
                     ctx.isValid(),
                     soundPos,
                     ITSounds.steamTurbine,
                     () -> {
-                        LocalPlayer player = Minecraft.getInstance().player;
-                        if (player == null) { return 0f; }
-                        float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 32, 1);
-                        return (11 * (state.currentLevel - 0.5f)) / attenuation;
+                        LocalPlayer p = Minecraft.getInstance().player;
+                        if (p == null) { return 0f; }
+                        float a = (float) Math.max(p.distanceToSqr(soundPos) / 32, 1);
+                        return (11 * (state.currentLevel - 0.5f)) / a;
                     },
                     () -> state.currentPitch
             );
@@ -182,7 +187,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             state.inertia = new RotationInertiaProcess(BASE_MASS + state.connectedMass, DRIVE_TORQUE, FRICTION + state.connectedFriction);
         }
         boolean canRun = currentlyEnabled && hasConsumer;
-        int prevBurnRemaining = state.burnRemaining;
+        boolean prevBurnRemaining = state.burnRemaining > 0;
         if (!canRun) {
             state.burnRemaining = 0;
             state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate());
@@ -208,7 +213,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         }
         if (state.pressureReleaseCooldown > 0) { state.pressureReleaseCooldown--; }
         boolean triggerRelease = !state.wasEnabled && currentlyEnabled;
-        if (prevBurnRemaining == 0 && state.burnRemaining > 0) { triggerRelease = true; }
+        if (!prevBurnRemaining && state.burnRemaining > 0) { triggerRelease = true; }
         if (triggerRelease && state.pressureReleaseCooldown <= 0) {
             BlockPos soundPos = ctx.getLevel().toAbsolute(RUNNING_SOUND_POI);
             level.playSound(null, soundPos, ITSounds.pressure_release.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
