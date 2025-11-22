@@ -18,6 +18,7 @@
   "block.immersivetechnology.trash_fluid": "Papelera de Fluidos",
   "block.immersivetechnology.trash_item": "Papelera de Objetos",
   "block.immersivetechnology.valve_fluid": "Válvula de Fluidos",
+  "block.immersivetechnology.valve_limiter": "Limitador de pila",
   "block.immersivetechnology.valve_load": "Controlador de Carga",
 
   "block.immersivetechnology.alternator": "Alternador",

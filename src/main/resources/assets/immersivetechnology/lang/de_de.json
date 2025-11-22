@@ -18,6 +18,7 @@
   "block.immersivetechnology.trash_fluid": "Flüssigkeitsmülleimer",
   "block.immersivetechnology.trash_item": "Gegenstands-Mülleimer",
   "block.immersivetechnology.valve_fluid": "Flüssigkeitsventil",
+  "block.immersivetechnology.valve_limiter": "Stapelbegrenzer",
   "block.immersivetechnology.valve_load": "Lastenregler",
 
   "block.immersivetechnology.alternator": "Generator",

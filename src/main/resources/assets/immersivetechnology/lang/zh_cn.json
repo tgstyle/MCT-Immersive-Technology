@@ -18,6 +18,7 @@
   "block.immersivetechnology.trash_fluid": "流体垃圾箱",
   "block.immersivetechnology.trash_item": "物品垃圾箱",
   "block.immersivetechnology.valve_fluid": "流体阀门",
+  "block.immersivetechnology.valve_limiter": "堆栈限制器",
   "block.immersivetechnology.valve_load": "负载控制器",
 
   "block.immersivetechnology.alternator": "交流发电机",

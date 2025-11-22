@@ -27,10 +27,12 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class ITRecipes extends RecipeProvider {
@@ -69,6 +71,7 @@ public class ITRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ITBlocks.MetalDevices.TRASH_ENERGY.get().asItem(), 1).define('P', IETags.getTagsFor(EnumMetals.IRON).plate).define('C', IEBlocks.MetalDecoration.HV_COIL.get()).define('S', IETags.getItemTag(IETags.getTagsFor(EnumMetals.IRON).sheetmetal)).pattern("PPP").pattern("PCP").pattern(" S ").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("trash_energy"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ITBlocks.MetalDevices.VALVE_FLUID.get().asItem(), 2).define('L', IETags.getTagsFor(EnumMetals.IRON).plate).define('R', IEBlocks.Connectors.CONNECTOR_REDSTONE.get()).define('P', IEBlocks.MetalDevices.FLUID_PIPE.get()).define('I', IEItems.Ingredients.COMPONENT_IRON.get()).define('C', IEItems.Ingredients.CIRCUIT_BOARD.get()).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("valve_fluid"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ITBlocks.MetalDevices.VALVE_LIMITER.get().asItem(), 2).define('L', IETags.getTagsFor(EnumMetals.IRON).plate).define('R', IEBlocks.Connectors.CONNECTOR_REDSTONE.get()).define('P', Objects.requireNonNull(ForgeRegistries.BLOCKS.getValue(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "conveyor_basic")))).define('I', IEItems.Ingredients.COMPONENT_IRON.get()).define('C', IEItems.Ingredients.CIRCUIT_BOARD.get()).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("valve_limiter"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ITBlocks.MetalDevices.VALVE_LOAD.get().asItem(), 2).define('L', IETags.getTagsFor(EnumMetals.IRON).plate).define('R', IEBlocks.Connectors.CONNECTOR_REDSTONE.get()).define('P', IEBlocks.Connectors.getEnergyConnector("HV", false).get()).define('I', IEItems.Ingredients.COMPONENT_IRON.get()).define('C', IEItems.Ingredients.CIRCUIT_BOARD.get()).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("valve_load"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ITItems.FORMATION_TOOL.get(), 1).define('I', IETags.getTagsFor(EnumMetals.IRON).ingot).define('E', IETags.getTagsFor(EnumMetals.ELECTRUM).ingot).pattern(" I ").pattern(" EI").pattern("I  ").unlockedBy("has_iron_ingot", has(IETags.getTagsFor(EnumMetals.IRON).ingot)).save(consumer, toResourceLocation("formation_tool"));

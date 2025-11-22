@@ -18,6 +18,7 @@
   "block.immersivetechnology.trash_fluid": "Мусорка жидкостей",
   "block.immersivetechnology.trash_item": "Мусорка предметов",
   "block.immersivetechnology.valve_fluid": "Жидкостный клапан",
+  "block.immersivetechnology.valve_limiter": "Ограничитель стека",
   "block.immersivetechnology.valve_load": "Контроллер загрузки",
 
   "block.immersivetechnology.alternator": "Альтернатор",

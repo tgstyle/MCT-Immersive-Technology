@@ -18,6 +18,7 @@
   "block.immersivetechnology.trash_fluid": "Trash Fluids",
   "block.immersivetechnology.trash_item": "Trash Items",
   "block.immersivetechnology.valve_fluid": "Fluid Valve",
+  "block.immersivetechnology.valve_limiter": "Stack Limiter",
   "block.immersivetechnology.valve_load": "Load Controller",
 
   "block.immersivetechnology.alternator": "Alternator",

@@ -54,6 +54,7 @@ public class ITItemModelProvider extends ItemModelProvider {
         generateBlockItem("trash_fluid", "metal/trash_fluid");
         generateBlockItem("trash_item", "metal/trash_item");
         generateBlockItem("valve_fluid", "metal/valve_fluid_open");
+        generateBlockItem("valve_limiter", "metal/valve_limiter");
         generateBlockItem("valve_load", "metal/valve_load_open");
 
         generateGeneratedItem();

@@ -18,6 +18,7 @@
   "block.immersivetechnology.trash_fluid": "유체 쓰레기통",
   "block.immersivetechnology.trash_item": "아이템 쓰레기통",
   "block.immersivetechnology.valve_fluid": "유체 밸브",
+  "block.immersivetechnology.valve_limiter": "스택 제한기",
   "block.immersivetechnology.valve_load": "부하 컨트롤러",
 
   "block.immersivetechnology.alternator": "알터네이터",

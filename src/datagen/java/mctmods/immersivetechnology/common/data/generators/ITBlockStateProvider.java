@@ -7,6 +7,7 @@ import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
+import mctmods.immersivetechnology.common.blocks.metal.ValveLimiterBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.data.ITDataGenUtils;
@@ -159,7 +160,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
                 IOSideConfig.OUTPUT, "_out"
         );
         for (IOSideConfig config : IOSideConfig.VALUES) {
-            String suffix = suffixes.getOrDefault(config, "");
+            String suffix = suffixes.get(config);
             BlockModelBuilder openModel = models().getBuilder("block/metal/barrel_open" + suffix)
                     .texture("up", modLoc("block/metal/barrel_open_up"))
                     .texture("down", modLoc("block/metal/barrel_open_down" + suffix))
@@ -336,6 +337,32 @@ public class ITBlockStateProvider extends BlockStateProvider {
         });
         setRenderType(RenderType.cutout(), valveClosedBuilder, valveOpenBuilder);
 
+        BlockModelBuilder valveLimiterBuilder = models().cubeBottomTop("block/metal/valve_limiter",
+                modLoc("block/metal/valve_limiter_side"),
+                modLoc("block/metal/valve_limiter_bottom"),
+                modLoc("block/metal/valve_limiter_top"));
+        valveLimiterBuilder.texture("particle", modLoc("block/metal/valve_limiter_side"));
+
+        VariantBlockStateBuilder valveLimiterStateBuilder = getVariantBuilder(ITBlocks.MetalDevices.VALVE_LIMITER.get());
+        valveLimiterStateBuilder.forAllStates(state -> {
+            Direction facing = state.getValue(ITProperties.FACING_ALL);
+            int rotationVal = state.getValue(ValveLimiterBlock.ROTATION);
+            boolean mirrored = state.getValue(ITProperties.MIRRORED);
+            int xRot;
+            int yRot;
+            if (facing.getAxis().isHorizontal()) {
+                yRot = ((facing.get2DDataValue() + 2) % 4) * 90;
+                xRot = 90;
+            } else {
+                Direction hFacing = Direction.from2DDataValue(rotationVal);
+                yRot = ((hFacing.get2DDataValue() + 2) % 4) * 90;
+                xRot = facing == Direction.DOWN ? 180 : 0;
+            }
+            if (mirrored) yRot = (yRot + 180) % 360;
+            return ConfiguredModel.builder().modelFile(valveLimiterBuilder).rotationX(xRot).rotationY(yRot).build();
+        });
+        setRenderType(RenderType.cutout(), valveLimiterBuilder);
+
         BlockModelBuilder valveLoadClosedBuilder = models().getBuilder("block/metal/valve_load_closed");
         ITObjModelBuilder<BlockModelBuilder> loadClosedLoader = valveLoadClosedBuilder.customLoader(ITObjModelBuilder::new)
                 .modelLocation(modLoc("models/block/metal/obj/valve_load/valve_load.obj"))
@@ -406,7 +433,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private void genericMultiblock(String registry_name, String block_type) {
         ITLib.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
-        createMultiblock(innerObj("multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), (ITTemplateMultiblock)ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
+        createMultiblock(innerObj("multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
     }
 
     @SuppressWarnings("SameParameterValue")

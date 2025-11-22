@@ -52,5 +52,10 @@ public class ITBlockEntities {
             () -> BlockEntityType.Builder.of(ValveLoadBlockEntity::new, ITBlocks.MetalDevices.VALVE_LOAD.get()).build(null)
     );
 
+    public static final RegistryObject<BlockEntityType<ValveLimiterBlockEntity>> VALVE_LIMITER = REGISTER.register(
+            "valve_limiter",
+            () -> BlockEntityType.Builder.of(ValveLimiterBlockEntity::new, ITBlocks.MetalDevices.VALVE_LIMITER.get()).build(null)
+    );
+
     public static void init(IEventBus event) { REGISTER.register(event); }
 }

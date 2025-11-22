@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.core.proxy;
 
+import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
 import net.minecraft.network.chat.Component;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.lib.manual.ManualEntry;
@@ -75,6 +76,7 @@ public class ClientProxy extends CommonProxy {
             MenuScreens.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
 
             MenuScreens.register(ITMenuTypes.VALVE_FLUID.getType(), (ValveFluidMenu menu, Inventory inv, Component title) -> new ValveFluidScreen(menu, inv));
+            MenuScreens.register(ITMenuTypes.VALVE_LIMITER.getType(), (ValveLimiterMenu menu, Inventory inv, Component title) -> new ValveLimiterScreen(menu, inv));
             MenuScreens.register(ITMenuTypes.VALVE_LOAD.getType(), (ValveLoadMenu menu, Inventory inv, Component title) -> new ValveLoadScreen(menu, inv));
 
             ManualInstance instance = ManualHelper.getManual();

@@ -32,6 +32,7 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
         registerTileDrop(ITBlocks.MetalDevices.TRASH_FLUID.get());
         registerTileDrop(ITBlocks.MetalDevices.TRASH_ITEM.get());
         dropSelf(ITBlocks.MetalDevices.VALVE_FLUID.get());
+        dropSelf(ITBlocks.MetalDevices.VALVE_LIMITER.get());
         dropSelf(ITBlocks.MetalDevices.VALVE_LOAD.get());
         dropSelf(ITBlocks.MetalDevices.TECHNOLOGY_ENGINEERING.get());
         dropSelf(ITBlocks.Stone.REINFORCED_COKE_BRICK.get());

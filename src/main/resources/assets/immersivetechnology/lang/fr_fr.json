@@ -19,7 +19,7 @@
   "block.immersivetechnology.trash_item": "Poubelle d'Objets",
   "block.immersivetechnology.valve_fluid": "Vanne de Fluides",
   "block.immersivetechnology.valve_load": "Contrôleur de Charge",
-
+  "block.immersivetechnology.valve_limiter": "Limiteur de pile",
   "block.immersivetechnology.alternator": "Alternateur",
   "block.immersivetechnology.boiler_liquid": "Brûleur de Carburant Liquide de Chaudière",
   "block.immersivetechnology.boiler_tank": "Réservoir de Chaudière",
