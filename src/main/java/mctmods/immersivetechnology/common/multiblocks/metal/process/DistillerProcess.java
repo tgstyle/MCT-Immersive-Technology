@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -29,35 +30,22 @@ public class DistillerProcess extends MultiblockProcessInMachine<DistillerRecipe
     @Override
     public void doProcessTick(ProcessContext.ProcessContextInMachine<DistillerRecipe> context, IMultiblockLevel level) {
         LevelDependentData<DistillerRecipe> levelData = getLevelData(level.getRawLevel());
-        if (levelData.recipe() == null) {
-            this.clearProcess = true;
-            return;
+        if (levelData.recipe() == null) { this.clearProcess = true; return; }
+        if (this.processTick == 0) {
+            IFluidTank inputTank = context.getInternalTanks()[0];
+            int amount = levelData.recipe().input.getAmount();
+            FluidStack drained = inputTank.drain(amount, FluidAction.SIMULATE);
+            if (drained.getAmount() < amount || !levelData.recipe().input.testIgnoringAmount(drained)) { this.clearProcess = true; return; }
+            inputTank.drain(amount, FluidAction.EXECUTE);
         }
-        int processPre = this.processTick;
         super.doProcessTick(context, level);
-        final IFluidTank inputTank = context.getInternalTanks()[0];
-        int timerStep = Math.max(levelData.maxTicks() / levelData.recipe().input.getAmount(), 1);
-        while (processPre < this.processTick) {
-            if (processPre % timerStep == 0) {
-                int amount = levelData.recipe().input.getAmount() / levelData.maxTicks();
-                int leftover = levelData.recipe().input.getAmount() % levelData.maxTicks();
-                if (leftover > 0) {
-                    double distBetweenExtra = levelData.maxTicks() / (double) leftover;
-                    if (Math.floor(processTick / distBetweenExtra) != Math.floor((processTick - 1) / distBetweenExtra)) amount++;
-                }
-                inputTank.drain(amount, FluidAction.EXECUTE);
-            }
-            processPre++;
-        }
     }
 
     @Override
     public boolean canProcess(ProcessContext.ProcessContextInMachine<DistillerRecipe> context, Level level) {
         LevelDependentData<DistillerRecipe> levelData = getLevelData(level);
         if (levelData.recipe() == null) return true;
-        IFluidTank inputTank = context.getInternalTanks()[0];
-        return context.getEnergy().extractEnergy(levelData.energyPerTick(), true) == levelData.energyPerTick() &&
-                inputTank.drain(1, FluidAction.SIMULATE).getAmount() > 0;
+        return context.getEnergy().extractEnergy(levelData.energyPerTick(), true) == levelData.energyPerTick();
     }
 
     @Override
@@ -72,9 +60,8 @@ public class DistillerProcess extends MultiblockProcessInMachine<DistillerRecipe
                 IItemHandlerModifiable inv = context.getInventory();
                 ItemStack salt = recipe.itemOutput.copy();
                 ItemStack current = inv.getStackInSlot(DistillerLogic.OUTPUT_SLOT);
-                if (current.isEmpty()) {
-                    inv.setStackInSlot(DistillerLogic.OUTPUT_SLOT, salt);
-                } else if (ItemHandlerHelper.canItemStacksStack(current, salt) && current.getCount() + salt.getCount() <= current.getMaxStackSize()) {
+                if (current.isEmpty()) { inv.setStackInSlot(DistillerLogic.OUTPUT_SLOT, salt); }
+                else if (ItemHandlerHelper.canItemStacksStack(current, salt) && current.getCount() + salt.getCount() <= current.getMaxStackSize()) {
                     current.grow(salt.getCount());
                     inv.setStackInSlot(DistillerLogic.OUTPUT_SLOT, current);
                 }
