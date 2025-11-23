@@ -32,6 +32,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -98,21 +99,23 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
                 else {
                     state.recipeTimeRemaining--;
                     if (state.recipeTimeRemaining == 0) {
-                        state.tanks.input.drain(state.lastRecipe.input.getAmount(), FluidAction.EXECUTE);
-                        state.tanks.output.fill(state.lastRecipe.output.copy(), IFluidHandler.FluidAction.EXECUTE);
+                        state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE);
                         update = true;
                     }
                 }
             } else if (state.tanks.input.getFluidAmount() > 0) {
                 state.lastRecipe = BoilerTankRecipe.findRecipe(level, state.tanks.input.getFluid());
                 if (state.lastRecipe != null && state.lastRecipe.input.getAmount() <= state.tanks.input.getFluidAmount() && state.lastRecipe.output.getAmount() <= state.tanks.output.getCapacity() - state.tanks.output.getFluidAmount()) {
-                    state.recipeTimeRemaining = state.lastRecipe.getTotalProcessTime();
-                    state.recipeTimeRemaining--;
-                    if (state.recipeTimeRemaining == 0) {
-                        state.tanks.input.drain(state.lastRecipe.input.getAmount(), FluidAction.EXECUTE);
-                        state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE);
+                    int reqAmount = state.lastRecipe.input.getAmount();
+                    FluidStack drained = state.tanks.input.drain(reqAmount, FluidAction.EXECUTE);
+                    if (drained.getAmount() == reqAmount && state.lastRecipe.input.testIgnoringAmount(drained)) {
+                        state.recipeTimeRemaining = state.lastRecipe.getTotalProcessTime();
+                        state.recipeTimeRemaining--;
+                        if (state.recipeTimeRemaining == 0) {
+                            state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE);
+                        }
+                        update = true;
                     }
-                    update = true;
                 }
             }
         } else if (state.recipeTimeRemaining > 0) {

@@ -349,7 +349,14 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         if (state.processProgress >= state.activeRecipe.getTotalProcessTime()) {
             assert state.activeRecipe.fluidOutput != null;
             FluidStack out = state.activeRecipe.fluidOutput.copy();
-            if (state.tanks.output().fill(out, FluidAction.SIMULATE) == out.getAmount()) { state.tanks.input().drain(state.activeRecipe.input.getAmount(), FluidAction.EXECUTE); state.tanks.output().fill(out, FluidAction.EXECUTE); state.processProgress = 0; return true; }
+            if (state.tanks.output().fill(out, FluidAction.SIMULATE) == out.getAmount()) {
+                FluidStack drained = state.tanks.input().drain(state.activeRecipe.input.getAmount(), FluidAction.EXECUTE);
+                if (drained.getAmount() == state.activeRecipe.input.getAmount() && state.activeRecipe.input.testIgnoringAmount(drained)) {
+                    state.tanks.output().fill(out, FluidAction.EXECUTE);
+                    state.processProgress = 0;
+                    return true;
+                }
+            }
         }
         return false;
     }
