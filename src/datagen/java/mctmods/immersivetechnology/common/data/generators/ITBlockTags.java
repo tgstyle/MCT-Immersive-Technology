@@ -17,9 +17,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class ITBlockTags extends BlockTagsProvider {
-    public ITBlockTags(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, ITLib.MODID, existingFileHelper);
-    }
+    public ITBlockTags(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper) { super(output, lookupProvider, ITLib.MODID, existingFileHelper); }
 
     @Override
     protected void addTags(@NotNull Provider provider) {
@@ -28,11 +26,11 @@ public class ITBlockTags extends BlockTagsProvider {
         IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag1 = this.tag(BlockTags.MINEABLE_WITH_PICKAXE);
         IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag2 = this.tag(BlockTags.NEEDS_IRON_TOOL);
 
-        registerMineable(tag1, ITMultiblockProvider.ALTERNATOR, ITMultiblockProvider.BOILER_LIQUID,  ITMultiblockProvider.BOILER_SOLID,  ITMultiblockProvider.BOILER_TANK, ITMultiblockProvider.COOLING_TOWER, ITMultiblockProvider.DISTILLER, ITMultiblockProvider.GAS_TURBINE, ITMultiblockProvider.SOLAR_MELTER, ITMultiblockProvider.SOLAR_REFLECTOR, ITMultiblockProvider.SOLAR_TOWER, ITMultiblockProvider.STEAM_TURBINE);
-        registerMineable(tag2, ITMultiblockProvider.ALTERNATOR, ITMultiblockProvider.BOILER_LIQUID,  ITMultiblockProvider.BOILER_SOLID,  ITMultiblockProvider.BOILER_TANK, ITMultiblockProvider.COOLING_TOWER, ITMultiblockProvider.DISTILLER, ITMultiblockProvider.GAS_TURBINE, ITMultiblockProvider.SOLAR_MELTER, ITMultiblockProvider.SOLAR_REFLECTOR, ITMultiblockProvider.SOLAR_TOWER, ITMultiblockProvider.STEAM_TURBINE);
+        registerMineable(tag1, ITMultiblockProvider.ALTERNATOR, ITMultiblockProvider.BOILER_LIQUID, ITMultiblockProvider.BOILER_SOLID, ITMultiblockProvider.BOILER_TANK, ITMultiblockProvider.COOLING_TOWER, ITMultiblockProvider.DISTILLER, ITMultiblockProvider.GAS_TURBINE, ITMultiblockProvider.SOLAR_MELTER, ITMultiblockProvider.SOLAR_REFLECTOR, ITMultiblockProvider.SOLAR_TOWER, ITMultiblockProvider.STEAM_TURBINE, ITMultiblockProvider.STEEL_SHEETMETAL_TANK);
+        registerMineable(tag2, ITMultiblockProvider.ALTERNATOR, ITMultiblockProvider.BOILER_LIQUID, ITMultiblockProvider.BOILER_SOLID, ITMultiblockProvider.BOILER_TANK, ITMultiblockProvider.COOLING_TOWER, ITMultiblockProvider.DISTILLER, ITMultiblockProvider.GAS_TURBINE, ITMultiblockProvider.SOLAR_MELTER, ITMultiblockProvider.SOLAR_REFLECTOR, ITMultiblockProvider.SOLAR_TOWER, ITMultiblockProvider.STEAM_TURBINE, ITMultiblockProvider.STEEL_SHEETMETAL_TANK);
 
-        registerMineable(tag1, ITBlocks.MetalDevices.BARREL_CREATIVE, ITBlocks.MetalDevices.BARREL_OPEN, ITBlocks.MetalDevices.BARREL_STEEL, ITBlocks.MetalDevices.TRASH_ENERGY, ITBlocks.MetalDevices.TRASH_FLUID, ITBlocks.MetalDevices.TRASH_ITEM, ITBlocks.MetalDevices.VALVE_FLUID, ITBlocks.MetalDevices.VALVE_LOAD, ITBlocks.Stone.REINFORCED_COKE_BRICK);
-        registerMineable(tag2, ITBlocks.MetalDevices.BARREL_CREATIVE, ITBlocks.MetalDevices.BARREL_OPEN, ITBlocks.MetalDevices.BARREL_STEEL, ITBlocks.MetalDevices.TRASH_ENERGY, ITBlocks.MetalDevices.TRASH_FLUID, ITBlocks.MetalDevices.TRASH_ITEM, ITBlocks.MetalDevices.VALVE_FLUID, ITBlocks.MetalDevices.VALVE_LOAD, ITBlocks.Stone.REINFORCED_COKE_BRICK);
+        registerMineable(tag1, ITBlocks.MetalDevices.BARREL_CREATIVE, ITBlocks.MetalDevices.BARREL_OPEN, ITBlocks.MetalDevices.BARREL_STEEL, ITBlocks.MetalDevices.TRASH_ENERGY, ITBlocks.MetalDevices.TRASH_FLUID, ITBlocks.MetalDevices.TRASH_ITEM, ITBlocks.MetalDevices.VALVE_FLUID, ITBlocks.MetalDevices.VALVE_LIMITER, ITBlocks.MetalDevices.VALVE_LOAD, ITBlocks.MetalDevices.TECHNOLOGY_ENGINEERING, ITBlocks.Stone.REINFORCED_COKE_BRICK);
+        registerMineable(tag2, ITBlocks.MetalDevices.BARREL_CREATIVE, ITBlocks.MetalDevices.BARREL_OPEN, ITBlocks.MetalDevices.BARREL_STEEL, ITBlocks.MetalDevices.TRASH_ENERGY, ITBlocks.MetalDevices.TRASH_FLUID, ITBlocks.MetalDevices.TRASH_ITEM, ITBlocks.MetalDevices.VALVE_FLUID, ITBlocks.MetalDevices.VALVE_LIMITER, ITBlocks.MetalDevices.VALVE_LOAD, ITBlocks.MetalDevices.TECHNOLOGY_ENGINEERING, ITBlocks.Stone.REINFORCED_COKE_BRICK);
     }
 
     private void registerMineable(IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag, MultiblockRegistration<?>... entries) { for (MultiblockRegistration<?> entry : entries) { tag.add(entry.block().get()); } }
