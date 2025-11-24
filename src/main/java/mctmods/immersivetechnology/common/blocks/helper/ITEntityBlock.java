@@ -32,7 +32,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -71,8 +70,10 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     public void onRemove(BlockState state, Level world, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (state.getBlock() != newState.getBlock()) {
-            if (tile instanceof ITBaseBlockEntity) { ((ITBaseBlockEntity) tile).setOverrideState(state); }
-            if (tile instanceof ITBlockInterfaces.IHasDummyBlocks) { ((ITBlockInterfaces.IHasDummyBlocks) tile).breakDummies(pos, state); }
+            if (state.getBlock() != newState.getBlock()) {
+                if (tile instanceof ITBaseBlockEntity) { ((ITBaseBlockEntity) tile).setOverrideState(state); }
+                if (tile instanceof ITBlockInterfaces.IHasDummyBlocks) { ((ITBlockInterfaces.IHasDummyBlocks) tile).breakDummies(pos, state); }
+            }
         }
         super.onRemove(state, world, pos, newState, isMoving);
     }
@@ -218,30 +219,23 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        if (state.getBlock() == this) {
-            BlockEntity te = world.getBlockEntity(pos);
-            if (te instanceof ITBlockInterfaces.ISelectionBounds) { return ((ITBlockInterfaces.ISelectionBounds) te).getSelectionShape(context); }
-        }
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        BlockEntity te = world.getBlockEntity(pos);
+        if (te instanceof ITBlockInterfaces.ISelectionBounds) { return ((ITBlockInterfaces.ISelectionBounds) te).getSelectionShape(context); }
         return super.getShape(state, world, pos, context);
     }
 
     @Override
     public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        if (getClassData().customCollisionBounds()) {
-            BlockEntity te = world.getBlockEntity(pos);
-            if (te instanceof ITBlockInterfaces.ICollisionBounds collisionBounds) { return collisionBounds.getCollisionShape(context); }
-            else { return Shapes.empty(); }
-        }
+        BlockEntity te = world.getBlockEntity(pos);
+        if (te instanceof ITBlockInterfaces.ICollisionBounds collisionBounds) { return collisionBounds.getCollisionShape(context); }
         return super.getCollisionShape(state, world, pos, context);
     }
 
     @Override
     public @NotNull VoxelShape getInteractionShape(@NotNull BlockState state, BlockGetter world, @NotNull BlockPos pos) {
-        if (world.getBlockState(pos).getBlock() == this) {
-            BlockEntity te = world.getBlockEntity(pos);
-            if (te instanceof ITBlockInterfaces.ISelectionBounds) { return ((ITBlockInterfaces.ISelectionBounds) te).getSelectionShape(null); }
-        }
+        BlockEntity te = world.getBlockEntity(pos);
+        if (te instanceof ITBlockInterfaces.ISelectionBounds) { return ((ITBlockInterfaces.ISelectionBounds) te).getSelectionShape(null); }
         return super.getInteractionShape(state, world, pos);
     }
 
@@ -288,12 +282,12 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     private BEClassInspectedData getClassData() {
         if (this.classData == null) {
             T tempBE = makeEntity.apply(BlockPos.ZERO, getInitDefaultState());
-            this.classData = new BEClassInspectedData(tempBE instanceof ITServerTickableBE, tempBE instanceof ITClientTickableBE, tempBE instanceof ITBlockInterfaces.IComparatorOverride, tempBE instanceof ITBlockInterfaces.IRedstoneOutput, tempBE instanceof ITBlockInterfaces.ICollisionBounds);
+            this.classData = new BEClassInspectedData(tempBE instanceof ITServerTickableBE, tempBE instanceof ITClientTickableBE, tempBE instanceof ITBlockInterfaces.IComparatorOverride, tempBE instanceof ITBlockInterfaces.IRedstoneOutput);
         }
         return this.classData;
     }
 
-    private record BEClassInspectedData(boolean serverTicking, boolean clientTicking, boolean hasComparatorOutput, boolean emitsRedstone, boolean customCollisionBounds) {
+    private record BEClassInspectedData(boolean serverTicking, boolean clientTicking, boolean hasComparatorOutput, boolean emitsRedstone) {
         @Nullable
         public <U extends BlockEntity> BlockEntityTicker<U> makeBaseTicker(boolean isClient) {
             if (serverTicking && !isClient) { return ITServerTickableBE.makeTicker(); }
