@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
-import mctmods.immersivetechnology.common.util.loot.ITBEDropLootEntry;
 import mctmods.immersivetechnology.common.util.loot.ITDropInventoryLootEntry;
 import mctmods.immersivetechnology.common.util.loot.ITMultiblockDropsLootContainer;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
@@ -25,12 +24,12 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        registerTileDrop(ITBlocks.MetalDevices.BARREL_CREATIVE.get());
-        registerTileDrop(ITBlocks.MetalDevices.BARREL_OPEN.get());
-        registerTileDrop(ITBlocks.MetalDevices.BARREL_STEEL.get());
-        registerTileDrop(ITBlocks.MetalDevices.TRASH_ENERGY.get());
-        registerTileDrop(ITBlocks.MetalDevices.TRASH_FLUID.get());
-        registerTileDrop(ITBlocks.MetalDevices.TRASH_ITEM.get());
+        dropSelf(ITBlocks.MetalDevices.BARREL_CREATIVE.get());
+        dropSelf(ITBlocks.MetalDevices.BARREL_OPEN.get());
+        dropSelf(ITBlocks.MetalDevices.BARREL_STEEL.get());
+        dropSelf(ITBlocks.MetalDevices.TRASH_ENERGY.get());
+        dropSelf(ITBlocks.MetalDevices.TRASH_FLUID.get());
+        dropSelf(ITBlocks.MetalDevices.TRASH_ITEM.get());
         dropSelf(ITBlocks.MetalDevices.VALVE_FLUID.get());
         dropSelf(ITBlocks.MetalDevices.VALVE_LIMITER.get());
         dropSelf(ITBlocks.MetalDevices.VALVE_LOAD.get());
@@ -69,10 +68,6 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
     private LootPool.Builder dropInv() { return createPoolBuilder().add(ITDropInventoryLootEntry.builder()); }
 
     private LootPool.Builder dropOriginalBlock() { return createPoolBuilder().add(ITMultiblockDropsLootContainer.builder()); }
-
-    private void registerTileDrop(Block b) { add(b, LootTable.lootTable().withPool(tileDrop())); }
-
-    private LootPool.Builder tileDrop() { return createPoolBuilder().add(ITBEDropLootEntry.builder()); }
 
     private LootPool.Builder createPoolBuilder() { return LootPool.lootPool().when(ExplosionCondition.survivesExplosion()); }
 

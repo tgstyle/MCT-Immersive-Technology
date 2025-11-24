@@ -10,7 +10,8 @@
       ],
       "entries": [
         {
-          "type": "immersivetechnology:tile_drop"
+          "type": "minecraft:item",
+          "name": "immersivetechnology:barrel_steel"
         }
       ],
       "rolls": 1.0
