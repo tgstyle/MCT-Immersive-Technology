@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
+import java.text.DecimalFormat;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
@@ -22,6 +23,8 @@ public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements 
     public long lastAcceptedAmount = 0;
     public int secondCounter = 0;
     public int requestCooldown = 0;
+
+    private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0.###");
 
     protected OSDCommonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) { super(type, pos, state); }
 
@@ -56,7 +59,8 @@ public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements 
             ITPacketHandler.sendToServer(new ITOSDRequestMessage(worldPosition));
             requestCooldown = 20;
         }
-        float value = ITClientConfig.perTickTrashCans ? (float)lastAcceptedAmount / 20 : lastAcceptedAmount;
+        double rawValue = ITClientConfig.perTickTrashCans ? (double)lastAcceptedAmount / 20.0 : lastAcceptedAmount;
+        String value = NUMBER_FORMAT.format(rawValue);
         return new Component[] { Component.literal(text().format(value)) };
     }
 }

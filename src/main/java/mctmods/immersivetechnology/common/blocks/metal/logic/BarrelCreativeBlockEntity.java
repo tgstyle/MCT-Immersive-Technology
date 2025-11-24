@@ -3,11 +3,13 @@ package mctmods.immersivetechnology.common.blocks.metal.logic;
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
 import blusunrize.immersiveengineering.common.util.Utils;
+import java.text.DecimalFormat;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.network.ITOSDRequestMessage;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.ITClientConfig;
+import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -73,6 +75,8 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
         }
     });
 
+    private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0.###");
+
     public BarrelCreativeBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.BARREL_CREATIVE.get(), pos, state); }
 
     @Override
@@ -85,7 +89,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
                 BlockEntity neighbor = level.getBlockEntity(neighborPos);
                 boolean isPipe = neighbor instanceof FluidPipeBlockEntity;
                 FluidStack fs = selectedFluid.copy();
-                fs.setAmount(Integer.MAX_VALUE);
+                fs.setAmount(ITCommonConfig.creativeBarrelOutputAmount);
                 boolean hadTag = fs.hasTag() && fs.getTag().contains(IFluidPipe.NBT_PRESSURIZED);
                 if (isPipe && !hadTag) { fs.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
                 LazyOptional<IFluidHandler> cap = FluidUtil.getFluidHandler(level, neighborPos, dir.getOpposite());
@@ -154,7 +158,8 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
         }
         if (selectedFluid.isEmpty()) { return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.text())}; }
         Component fluidName = selectedFluid.getDisplayName();
-        float value = ITClientConfig.perTickTrashCans ? (float)lastAcceptedAmount / 20 : lastAcceptedAmount;
+        double rawValue = ITClientConfig.perTickTrashCans ? (double)lastAcceptedAmount / 20.0 : lastAcceptedAmount;
+        String value = NUMBER_FORMAT.format(rawValue);
         return new Component[]{Component.translatable(text().text(), fluidName, value)};
     }
 
