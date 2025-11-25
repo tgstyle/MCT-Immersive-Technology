@@ -22,7 +22,7 @@ public class ITCommonConfig {
         BUILDER.pop();
 
         BUILDER.comment("Creative Barrel options").push("barrel_creative");
-        CONFIG_CREATIVE_BARREL_OUTPUT_AMOUNT = BUILDER.comment("Maximum fluid amount to output per tick from the creative barrel (Default: 10000000)").defineInRange("creativeBarrelOutputAmount", 10000000, 1, Integer.MAX_VALUE);
+        CONFIG_CREATIVE_BARREL_OUTPUT_AMOUNT = BUILDER.comment("Maximum fluid amount to output per tick from the creative barrel (Default: 2147483647)").defineInRange("creativeBarrelOutputAmount", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
         BUILDER.pop();
     }
 
