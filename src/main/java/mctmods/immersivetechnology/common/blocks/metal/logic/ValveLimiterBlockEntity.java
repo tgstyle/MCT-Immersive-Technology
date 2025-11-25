@@ -27,37 +27,37 @@ import static mctmods.immersivetechnology.common.blocks.metal.ValveLimiterBlock.
 import static mctmods.immersivetechnology.common.blocks.metal.ValveLimiterBlock.ROTATION;
 
 public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements ITServerTickableBE, IItemHandler {
-    public record OutputItemHandler(ValveLimiterBlockEntity te) implements IItemHandler {
-        @Override public int getSlots() { return te.getSource() != null ? te.getSource().getSlots() : 0; }
+    public record OutputItemHandler(ValveLimiterBlockEntity be) implements IItemHandler {
+        @Override public int getSlots() { return be.getSource() != null ? be.getSource().getSlots() : 0; }
 
-        @Override public @NotNull ItemStack getStackInSlot(int slot) { return te.getSource() != null ? te.getSource().getStackInSlot(slot) : ItemStack.EMPTY; }
+        @Override public @NotNull ItemStack getStackInSlot(int slot) { return be.getSource() != null ? be.getSource().getStackInSlot(slot) : ItemStack.EMPTY; }
 
         @Override public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) { return stack; }
 
         @Override public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-            assert te.level != null;
-            if (te.level.isClientSide) return ItemStack.EMPTY;
-            if (te.busy) return ItemStack.EMPTY;
-            BlockState state = te.getBlockState();
+            assert be.level != null;
+            if (be.level.isClientSide) return ItemStack.EMPTY;
+            if (be.busy) return ItemStack.EMPTY;
+            BlockState state = be.getBlockState();
             if (!state.getValue(OPEN)) return ItemStack.EMPTY;
-            IItemHandler src = te.getSource();
+            IItemHandler src = be.getSource();
             if (src == null) return ItemStack.EMPTY;
             int canAccept = amount;
-            canAccept = te.timeLimit > 0 ? Math.min(Math.max(te.timeLimit - ValveCommonBlockEntity.longToInt(te.acceptedAmount), 0), canAccept) : canAccept;
-            canAccept = te.packetLimit > 0 ? Math.min(canAccept, te.packetLimit) : canAccept;
-            if (te.redstoneMode > 0) canAccept = (int) (canAccept * ((te.redstoneMode == 1 ? 15 - te.getRSPower() : te.getRSPower()) / 15.0));
+            canAccept = be.timeLimit > 0 ? Math.min(Math.max(be.timeLimit - ValveCommonBlockEntity.longToInt(be.acceptedAmount), 0), canAccept) : canAccept;
+            canAccept = be.packetLimit > 0 ? Math.min(canAccept, be.packetLimit) : canAccept;
+            if (be.redstoneMode > 0) canAccept = (int) (canAccept * ((be.redstoneMode == 1 ? 15 - be.getRSPower() : be.getRSPower()) / 15.0));
             if (canAccept == 0) return ItemStack.EMPTY;
-            te.busy = true;
+            be.busy = true;
             ItemStack extracted = src.extractItem(slot, canAccept, simulate);
-            te.busy = false;
+            be.busy = false;
             if (!simulate && !extracted.isEmpty()) {
-                te.acceptedAmount += extracted.getCount();
-                te.packets++;
+                be.acceptedAmount += extracted.getCount();
+                be.packets++;
             }
             return extracted;
         }
 
-        @Override public int getSlotLimit(int slot) { return te.getSource() != null ? te.getSource().getSlotLimit(slot) : 0; }
+        @Override public int getSlotLimit(int slot) { return be.getSource() != null ? be.getSource().getSlotLimit(slot) : 0; }
 
         @Override public boolean isItemValid(int slot, @NotNull ItemStack stack) { return false; }
     }
