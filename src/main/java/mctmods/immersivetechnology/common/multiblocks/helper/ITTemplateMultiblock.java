@@ -22,6 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
@@ -84,6 +85,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         List<ItemStack> allDrops = new ArrayList<>();
         Consumer<ItemStack> addToDrops = stack -> { if (!stack.isEmpty()) { allDrops.add(stack); } };
         if (world instanceof ServerLevel serverLevel) {
+            boolean doTileDrops = serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
             BlockPos masterPos = withSettingsAndOffset(origin, masterFromOrigin, mirror, rot);
             ServerPlayer breakingPlayer = (ServerPlayer) serverLevel.getNearestPlayer(masterPos.getX() + 0.5, masterPos.getY() + 0.5, masterPos.getZ() + 0.5, -1.0, e -> true);
             IMultiblockBEHelperMaster<?> masterHelper = null;
@@ -98,9 +100,11 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                 BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
                 BlockState stateAfterMirror = info.state().mirror(mirror);
                 BlockState templateState = stateAfterMirror.rotate(serverLevel, actualPos, rot);
-                List<ItemStack> drops;
-                if (breakingPlayer != null) { drops = Block.getDrops(templateState, serverLevel, actualPos, null, breakingPlayer, breakingPlayer.getMainHandItem()); }
-                else { drops = Block.getDrops(templateState, serverLevel, actualPos, null); }
+                List<ItemStack> drops = List.of();
+                if (doTileDrops) {
+                    if (breakingPlayer != null) { drops = Block.getDrops(templateState, serverLevel, actualPos, null, breakingPlayer, breakingPlayer.getMainHandItem()); }
+                    else { drops = Block.getDrops(templateState, serverLevel, actualPos, null); }
+                }
                 for (ItemStack s : drops) { addToDrops.accept(s); }
                 toBreak.add(new AbstractMap.SimpleEntry<>(actualPos, templateState));
             }
