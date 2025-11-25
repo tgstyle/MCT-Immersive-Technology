@@ -26,22 +26,22 @@ import org.joml.Matrix4f;
 
 public class OpenBarrelRenderer extends ITBaseBlockEntityRenderer<BarrelOpenBlockEntity> {
     @Override
-    public void render(BarrelOpenBlockEntity te, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
-        BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(te.getBlockState());
-        RandomSource random = RandomSource.create(te.getBlockState().getSeed(te.getBlockPos()));
+    public void render(BarrelOpenBlockEntity be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+        BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(be.getBlockState());
+        RandomSource random = RandomSource.create(be.getBlockState().getSeed(be.getBlockPos()));
         ModelData modelData = ModelData.EMPTY;
-        for (RenderType rt : model.getRenderTypes(te.getBlockState(), random, modelData)) {
+        for (RenderType rt : model.getRenderTypes(be.getBlockState(), random, modelData)) {
             VertexConsumer consumer = buffer.getBuffer(rt);
-            assert te.getLevel() != null;
-            Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(te.getLevel(), model, te.getBlockState(), te.getBlockPos(), matrixStack, consumer, true, random, te.getBlockState().getSeed(te.getBlockPos()), OverlayTexture.NO_OVERLAY, modelData, rt);
+            assert be.getLevel() != null;
+            Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(be.getLevel(), model, be.getBlockState(), be.getBlockPos(), matrixStack, consumer, true, random, be.getBlockState().getSeed(be.getBlockPos()), OverlayTexture.NO_OVERLAY, modelData, rt);
         }
-        FluidStack fluidStack = te.tank.getFluid();
+        FluidStack fluidStack = be.tank.getFluid();
         if (fluidStack.isEmpty()) { return; }
         Fluid fluid = fluidStack.getFluid();
         if (fluid == null) { return; }
         IClientFluidTypeExtensions extensions = IClientFluidTypeExtensions.of(fluid);
         FluidState fluidState = fluid.defaultFluidState();
-        int color = extensions.getTintColor(fluidState, te.getLevel(), te.getBlockPos());
+        int color = extensions.getTintColor(fluidState, be.getLevel(), be.getBlockPos());
         if ((color >>> 24) == 0) color |= 0xFF000000;
         float r = ((color >> 16) & 0xFF) / 255f;
         float g = ((color >> 8) & 0xFF) / 255f;
@@ -62,15 +62,15 @@ public class OpenBarrelRenderer extends ITBaseBlockEntityRenderer<BarrelOpenBloc
         maxU -= diffU * multiplier;
         minV += diffV * multiplier;
         maxV -= diffV * multiplier;
-        Level level = te.getLevel();
-        BlockPos pos = te.getBlockPos();
+        Level level = be.getLevel();
+        BlockPos pos = be.getBlockPos();
         if (level == null) { return; }
         int blockLight = level.getBrightness(LightLayer.BLOCK, pos);
         int skyLight = level.getBrightness(LightLayer.SKY, pos);
         int luminosity = fluid.getFluidType().getLightLevel(fluidStack);
         blockLight = Math.max(blockLight, luminosity);
         int packedLight = (skyLight << 20) | (blockLight << 4);
-        float ratio = (float) fluidStack.getAmount() / te.tank.getCapacity();
+        float ratio = (float) fluidStack.getAmount() / be.tank.getCapacity();
         float yFilled = 0.8125f * ratio;
         float yStartOffset = 0.125f;
         float fluidHeight = yStartOffset + yFilled;

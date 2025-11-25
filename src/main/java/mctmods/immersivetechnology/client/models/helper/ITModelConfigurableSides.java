@@ -88,9 +88,9 @@ public class ITModelConfigurableSides extends ITBakedModel {
     public ModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ModelData tileData) {
         ModelData.Builder data = super.getModelData(world, pos, state, tileData).derive();
         BlockEntity te = world.getBlockEntity(pos);
-        if (te instanceof ITBlockInterfaces.IConfigurableSides confTE) {
+        if (te instanceof ITBlockInterfaces.IConfigurableSides confBE) {
             Map<Direction, ITEnums.IOSideConfig> conf = new EnumMap<>(Direction.class);
-            for (Direction d : DirectionUtils.VALUES) { conf.put(d, confTE.getSideConfig(d)); }
+            for (Direction d : DirectionUtils.VALUES) { conf.put(d, confBE.getSideConfig(d)); }
             data.with(ITProperties.Model.SIDECONFIG, conf);
         }
         return data.build();
