@@ -2,16 +2,20 @@ package mctmods.immersivetechnology.common.tileentities;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
+import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.multiblock.MultiblockUtils;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -31,6 +35,9 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
     protected abstract IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position);
     protected abstract boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position);
     protected abstract boolean canDrainTankFrom(int iTank, EnumFacing side, int position);
+
+    public boolean shouldDropOriginal = true;
+    public boolean shouldDropInventory = true;
 
     @Override protected void setWorldCreate(@Nonnull World worldIn) { this.world = worldIn; }
 
@@ -53,25 +60,21 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public @Nullable T getTileForPos(int targetPos) {
+    @Override public @Nullable T getTileForPos(int targetPos) {
         BlockPos target = getBlockPosForPos(targetPos);
         TileEntity tile = Utils.getExistingTileEntity(world, target);
-        if(tile instanceof TileEntityITMultiblock && tile.getClass().isInstance(this)) { return (T)tile; }
+        if (tile instanceof TileEntityITMultiblock && tile.getClass().isInstance(this)) return (T)tile;
         return null;
     }
 
-    @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if(capability== CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY&&this.getAccessibleFluidTanks(facing).length > 0)
-            return true;
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && this.getAccessibleFluidTanks(facing).length > 0) return true;
         return super.hasCapability(capability, facing);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public @Nullable <TE> TE getCapability(@Nonnull Capability<TE> capability, @Nullable EnumFacing facing) {
-        if(capability==CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY&&this.getAccessibleFluidTanks(facing).length > 0) {
+    @Override public @Nullable <TE> TE getCapability(@Nonnull Capability<TE> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && this.getAccessibleFluidTanks(facing).length > 0) {
             assert facing != null;
             return (TE)new MultiblockFluidWrapper(this, facing);
         }
@@ -113,20 +116,45 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
 
     @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
         M master = master();
-        if (master == null) { return ITUtils.emptyIFluidTankList; }
+        if (master == null) return ITUtils.emptyIFluidTankList;
         return master.getAccessibleFluidTanks(side, this.pos);
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource) {
         M master = master();
-        if (master == null) { return false; }
+        if (master == null) return false;
         return master.canFillTankFrom(iTank, side, resource, this.pos);
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side) {
         M master = master();
-        if (master == null) { return false; }
+        if (master == null) return false;
         return master.canDrainTankFrom(iTank, side, this.pos);
     }
 
+    @Override public void disassemble() {
+        if (formed && !world.isRemote) {
+            BlockPos startPos = getBlockPosForPos(0);
+            BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
+            long time = world.getTotalWorldTime();
+            for (int h = 0; h < structureDimensions[0]; h++) for (int l = 0; l < structureDimensions[1]; l++) for (int w = 0; w < structureDimensions[2]; w++) {
+                int ww = mirrored ? -w : w;
+                BlockPos pos2 = startPos.offset(facing, l).offset(facing.rotateY(), ww).add(0, h, 0);
+                ItemStack s = ItemStack.EMPTY;
+                TileEntity te = world.getTileEntity(pos2);
+                if (te instanceof TileEntityMultiblockPart) {
+                    TileEntityMultiblockPart<?> part = (TileEntityMultiblockPart<?>) te;
+                    Vec3i diff = pos2.subtract(masterPos);
+                    if (part.offset[0] != diff.getX() || part.offset[1] != diff.getY() || part.offset[2] != diff.getZ()) continue;
+                    if (time != part.onlyLocalDissassembly) { s = part.getOriginalBlock(); part.formed = false; }
+                }
+                if (pos2.equals(getPos())) s = this.getOriginalBlock();
+                IBlockState state = Utils.getStateFromItemStack(s);
+                if (state != null) {
+                    if (pos2.equals(getPos())) { if (shouldDropOriginal) world.spawnEntity(new EntityItem(world, pos2.getX() + 0.5, pos2.getY() + 0.5, pos2.getZ() + 0.5, s)); }
+                    else replaceStructureBlock(pos2, state, s, h, l, w);
+                }
+            }
+        }
+    }
 }

@@ -64,6 +64,7 @@ public abstract class TileEntityITMultiblockPart<T extends TileEntityMultiblockP
             this.masterZ = data.master.z;
             this.structure = MultiblockUtils.GetStructure(data, width, length, height);
             this.materials = MultiblockUtils.GetMaterials(data);
+            this.structureExport = MultiblockUtils.Convert(this.structure);
             if (data.master.mod.equals("ore")) { trigger = new OreDictRef(data.master.name); }
             else {
                 Item item = Item.getByNameOrId(data.master.mod + ":" + data.master.name);
