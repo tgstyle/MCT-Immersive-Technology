@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.data.generators;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
+import mctmods.immersivetechnology.common.util.loot.ITBEDropLootEntry;
 import mctmods.immersivetechnology.common.util.loot.ITDropInventoryLootEntry;
 import mctmods.immersivetechnology.common.util.loot.ITMultiblockDropsLootContainer;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
@@ -24,9 +25,9 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        dropSelf(ITBlocks.MetalDevices.BARREL_CREATIVE.get());
-        dropSelf(ITBlocks.MetalDevices.BARREL_OPEN.get());
-        dropSelf(ITBlocks.MetalDevices.BARREL_STEEL.get());
+        registerEntity(ITBlocks.MetalDevices.BARREL_CREATIVE.getRegObject());
+        registerEntity(ITBlocks.MetalDevices.BARREL_OPEN.getRegObject());
+        registerEntity(ITBlocks.MetalDevices.BARREL_STEEL.getRegObject());
         dropSelf(ITBlocks.MetalDevices.TRASH_ENERGY.get());
         dropSelf(ITBlocks.MetalDevices.TRASH_FLUID.get());
         dropSelf(ITBlocks.MetalDevices.TRASH_ITEM.get());
@@ -55,6 +56,8 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
         registerMultiblock(ITMultiblockProvider.STEEL_SHEETMETAL_TANK);
     }
 
+    private void registerEntity(RegistryObject<? extends Block> block) { register(block, dropBEDrop()); }
+
     private void registerMultiblock(MultiblockRegistration<?> registration) { registerMultiblock(registration.block()); }
 
     private void registerMultiblock(Supplier<? extends Block> b) { register(b, dropInv(), dropOriginalBlock()); }
@@ -64,6 +67,8 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
         for (LootPool.Builder pool : pools) { builder.withPool(pool); }
         add(b.get(), builder);
     }
+
+    private LootPool.Builder dropBEDrop() { return createPoolBuilder().add(ITBEDropLootEntry.builder()); }
 
     private LootPool.Builder dropInv() { return createPoolBuilder().add(ITDropInventoryLootEntry.builder()); }
 
