@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.api.TargetingInfo;
 import blusunrize.immersiveengineering.api.wires.*;
 import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler;
 import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler.EnergyConnector;
+import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler.IEnergyWire;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
@@ -43,7 +44,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     protected static final int LEFT_INDEX = 1;
     protected WireType leftType;
     protected WireType rightType;
-    private int bufferedEnergy = 0;
+    private long bufferedEnergy = 0L;
     public int rotation = 0;
     private boolean isUnloading = false;
 
@@ -121,7 +122,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         if (canAccept <= 0) return;
         int extracted;
         if (inputWired) {
-            extracted = Math.min(bufferedEnergy, canAccept);
+            extracted = Math.min(canAccept, (int) Math.min(bufferedEnergy, Integer.MAX_VALUE));
             int inserted = outputStorage.receiveEnergy(extracted, false);
             bufferedEnergy -= inserted;
             acceptedAmount += inserted;
@@ -129,8 +130,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         } else if (outputWired) {
             extracted = inputStorage.extractEnergy(canAccept, false);
             bufferedEnergy += extracted;
-            acceptedAmount += extracted;
-            packets++;
+            // Do not add to acceptedAmount here; it will be added in extractEnergy when the wire pulls
         } else {
             extracted = inputStorage.extractEnergy(canAccept, true);
             int inserted = outputStorage.receiveEnergy(extracted, false);
@@ -145,21 +145,47 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         int canAccept = Integer.MAX_VALUE;
         canAccept = timeLimit > 0 ? Math.min(Math.max(timeLimit - longToInt(acceptedAmount), 0), canAccept) : canAccept;
         if (outputWired) {
-            canAccept = keepSize > 0 ? Math.min(Math.max(keepSize - bufferedEnergy, 0), canAccept) : canAccept;
+            canAccept = keepSize > 0 ? Math.min(Math.max(keepSize - (int) bufferedEnergy, 0), canAccept) : canAccept;
+            canAccept = Math.min(canAccept, getWireRate(false));
         } else {
             if (outputStorage == null) { canAccept = 0; }
             else { canAccept = keepSize > 0 ? Math.min(Math.max(keepSize - outputStorage.getEnergyStored(), 0), canAccept) : canAccept; }
         }
         canAccept = packetLimit > 0 ? Math.min(canAccept, packetLimit) : canAccept;
         if (redstoneMode > 0) canAccept = (int) (canAccept * ((redstoneMode == 1 ? 15 - getRSPower() : getRSPower()) / 15.0));
+        boolean inputWired = isSideWired(true);
+        if (inputWired) canAccept = Math.min(canAccept, getWireRate(true));
         return canAccept;
+    }
+
+    private int getWireRate(boolean isInput) {
+        int index = isInput ? getInputWireIndex() : getOutputWireIndex();
+        WireType wt = index == LEFT_INDEX ? leftType : rightType;
+        if (wt instanceof IEnergyWire ew) return ew.getTransferRate();
+        return Integer.MAX_VALUE;
+    }
+
+    private int getInputWireIndex() {
+        boolean mirrored = getIsMirrored();
+        boolean flip = !facing.getAxis().isVertical();
+        int index = mirrored ? LEFT_INDEX : RIGHT_INDEX;
+        if (flip) index = 1 - index;
+        return index;
+    }
+
+    private int getOutputWireIndex() {
+        boolean mirrored = getIsMirrored();
+        boolean flip = !facing.getAxis().isVertical();
+        int index = mirrored ? RIGHT_INDEX : LEFT_INDEX;
+        if (flip) index = 1 - index;
+        return index;
     }
 
     private boolean isSideWired(boolean isInput) {
         boolean mirrored = getIsMirrored();
         boolean flip = !facing.getAxis().isVertical();
-        boolean effectiveMirrored = mirrored ^ flip;
-        int index = isInput ? (effectiveMirrored ? LEFT_INDEX : RIGHT_INDEX) : (effectiveMirrored ? RIGHT_INDEX : LEFT_INDEX);
+        int index = isInput ? (mirrored ? LEFT_INDEX : RIGHT_INDEX) : (mirrored ? RIGHT_INDEX : LEFT_INDEX);
+        if (flip) index = 1 - index;
         return index == LEFT_INDEX ? leftType != null : rightType != null;
     }
 
@@ -335,7 +361,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         if (nbt.contains("leftType")) leftType = WireType.getValue(nbt.getString("leftType")); else leftType = null;
         if (nbt.contains("rightType")) rightType = WireType.getValue(nbt.getString("rightType")); else rightType = null;
         rotation = nbt.getInt("rotation");
-        bufferedEnergy = nbt.getInt("bufferedEnergy");
+        bufferedEnergy = nbt.getLong("bufferedEnergy");
         updateMirrorState();
     }
 
@@ -345,7 +371,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         if (leftType != null) nbt.putString("leftType", leftType.getUniqueName());
         if (rightType != null) nbt.putString("rightType", rightType.getUniqueName());
         nbt.putInt("rotation", rotation);
-        nbt.putInt("bufferedEnergy", bufferedEnergy);
+        nbt.putLong("bufferedEnergy", bufferedEnergy);
     }
 
     @Override
@@ -382,8 +408,8 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     public boolean isSource(ConnectionPoint cp) {
         boolean mirrored = getIsMirrored();
         boolean flip = !facing.getAxis().isVertical();
-        boolean effectiveMirrored = mirrored ^ flip;
-        int outputIndex = effectiveMirrored ? RIGHT_INDEX : LEFT_INDEX;
+        int outputIndex = mirrored ? RIGHT_INDEX : LEFT_INDEX;
+        if (flip) outputIndex = 1 - outputIndex;
         return cp.index() == outputIndex;
     }
 
@@ -391,17 +417,27 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     public boolean isSink(ConnectionPoint cp) {
         boolean mirrored = getIsMirrored();
         boolean flip = !facing.getAxis().isVertical();
-        boolean effectiveMirrored = mirrored ^ flip;
-        int inputIndex = effectiveMirrored ? LEFT_INDEX : RIGHT_INDEX;
+        int inputIndex = mirrored ? LEFT_INDEX : RIGHT_INDEX;
+        if (flip) inputIndex = 1 - inputIndex;
         return cp.index() == inputIndex;
     }
 
-    @Override public int getAvailableEnergy() { return getBlockState().getValue(OPEN) ? bufferedEnergy : 0; }
+    @Override public int getAvailableEnergy() {
+        if (!getBlockState().getValue(OPEN)) return 0;
+        long avail = bufferedEnergy;
+        boolean outputWired = isSideWired(false);
+        if (outputWired) avail = Math.min(avail, getWireRate(false));
+        return (int) Math.min(avail, Integer.MAX_VALUE);
+    }
 
     @Override
     public void extractEnergy(int amount) {
-        bufferedEnergy -= amount;
-        if (bufferedEnergy < 0) bufferedEnergy = 0;
+        if (amount > 0) {
+            long drain = Math.min(amount, bufferedEnergy);
+            bufferedEnergy -= drain;
+            acceptedAmount += drain;
+            packets++;
+        }
         efficientSetChanged();
     }
 
@@ -410,7 +446,10 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         if (!getBlockState().getValue(OPEN)) return 0;
         boolean outputWired = isSideWired(false);
         IEnergyStorage outputStorage = outputWired ? null : getOutputEnergy();
-        return getTransferLimit(outputWired, outputStorage);
+        int req = getTransferLimit(outputWired, outputStorage);
+        boolean inputWired = isSideWired(true);
+        if (inputWired) req = Math.min(req, getWireRate(true));
+        return req;
     }
 
     @Override
@@ -418,10 +457,11 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         int max = timeLimit > 0 ? Math.max(timeLimit - longToInt(acceptedAmount), 0) : amount;
         amount = Math.min(amount, max);
         bufferedEnergy += amount;
-        acceptedAmount += amount;
-        packets++;
         efficientSetChanged();
     }
 
-    @Override public void onEnergyPassedThrough(double amount) { }
+    @Override public void onEnergyPassedThrough(double amount) {
+        acceptedAmount += (long)amount;
+        packets++;
+    }
 }
