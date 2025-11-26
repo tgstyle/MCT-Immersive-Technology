@@ -157,7 +157,9 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
 
     private boolean isSideWired(boolean isInput) {
         boolean mirrored = getIsMirrored();
-        int index = isInput ? (mirrored ? RIGHT_INDEX : LEFT_INDEX) : (mirrored ? LEFT_INDEX : RIGHT_INDEX);
+        boolean flip = !facing.getAxis().isVertical();
+        boolean effectiveMirrored = mirrored ^ flip;
+        int index = isInput ? (effectiveMirrored ? LEFT_INDEX : RIGHT_INDEX) : (effectiveMirrored ? RIGHT_INDEX : LEFT_INDEX);
         return index == LEFT_INDEX ? leftType != null : rightType != null;
     }
 
@@ -379,14 +381,18 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     @Override
     public boolean isSource(ConnectionPoint cp) {
         boolean mirrored = getIsMirrored();
-        int outputIndex = mirrored ? LEFT_INDEX : RIGHT_INDEX;
+        boolean flip = !facing.getAxis().isVertical();
+        boolean effectiveMirrored = mirrored ^ flip;
+        int outputIndex = effectiveMirrored ? RIGHT_INDEX : LEFT_INDEX;
         return cp.index() == outputIndex;
     }
 
     @Override
     public boolean isSink(ConnectionPoint cp) {
         boolean mirrored = getIsMirrored();
-        int inputIndex = mirrored ? RIGHT_INDEX : LEFT_INDEX;
+        boolean flip = !facing.getAxis().isVertical();
+        boolean effectiveMirrored = mirrored ^ flip;
+        int inputIndex = effectiveMirrored ? LEFT_INDEX : RIGHT_INDEX;
         return cp.index() == inputIndex;
     }
 
