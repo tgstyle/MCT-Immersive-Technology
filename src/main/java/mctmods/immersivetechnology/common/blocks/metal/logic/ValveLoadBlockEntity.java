@@ -22,8 +22,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +36,7 @@ import java.util.Collection;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock.ROTATION;
 import static mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock.OPEN;
+import static net.minecraftforge.common.capabilities.ForgeCapabilities.ENERGY;
 
 public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITServerTickableBE, IImmersiveConnectable, EnergyConnector, ITBlockInterfaces.IMirrorAble {
     protected static final int RIGHT_INDEX = 0;
@@ -102,6 +106,97 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         assert level != null;
         long time = level.getGameTime();
         if (time % 12 == ((worldPosition.getX() ^ worldPosition.getZ()) & 11)) updateRedstoneState();
+        if (!level.isClientSide && getBlockState().getValue(OPEN)) handleDirectTransfers();
+    }
+
+    private void handleDirectTransfers() {
+        boolean inputWired = isSideWired(true);
+        boolean outputWired = isSideWired(false);
+        if (inputWired && outputWired) return;
+        IEnergyStorage inputStorage = getInputEnergy();
+        IEnergyStorage outputStorage = getOutputEnergy();
+        if (!inputWired && inputStorage == null) return;
+        if (!outputWired && outputStorage == null) return;
+        int canAccept = getTransferLimit(outputWired, outputStorage);
+        if (canAccept <= 0) return;
+        int extracted;
+        if (inputWired) {
+            extracted = Math.min(bufferedEnergy, canAccept);
+            int inserted = outputStorage.receiveEnergy(extracted, false);
+            bufferedEnergy -= inserted;
+            acceptedAmount += inserted;
+            packets++;
+        } else if (outputWired) {
+            extracted = inputStorage.extractEnergy(canAccept, false);
+            bufferedEnergy += extracted;
+            acceptedAmount += extracted;
+            packets++;
+        } else {
+            extracted = inputStorage.extractEnergy(canAccept, true);
+            int inserted = outputStorage.receiveEnergy(extracted, false);
+            inputStorage.extractEnergy(inserted, false);
+            acceptedAmount += inserted;
+            packets++;
+        }
+        efficientSetChanged();
+    }
+
+    private int getTransferLimit(boolean outputWired, IEnergyStorage outputStorage) {
+        int canAccept = Integer.MAX_VALUE;
+        canAccept = timeLimit > 0 ? Math.min(Math.max(timeLimit - longToInt(acceptedAmount), 0), canAccept) : canAccept;
+        if (outputWired) {
+            canAccept = keepSize > 0 ? Math.min(Math.max(keepSize - bufferedEnergy, 0), canAccept) : canAccept;
+        } else {
+            if (outputStorage == null) { canAccept = 0; }
+            else { canAccept = keepSize > 0 ? Math.min(Math.max(keepSize - outputStorage.getEnergyStored(), 0), canAccept) : canAccept; }
+        }
+        canAccept = packetLimit > 0 ? Math.min(canAccept, packetLimit) : canAccept;
+        if (redstoneMode > 0) canAccept = (int) (canAccept * ((redstoneMode == 1 ? 15 - getRSPower() : getRSPower()) / 15.0));
+        return canAccept;
+    }
+
+    private boolean isSideWired(boolean isInput) {
+        boolean mirrored = getIsMirrored();
+        int index = isInput ? (mirrored ? RIGHT_INDEX : LEFT_INDEX) : (mirrored ? LEFT_INDEX : RIGHT_INDEX);
+        return index == LEFT_INDEX ? leftType != null : rightType != null;
+    }
+
+    private Direction getPortDirection() {
+        boolean isVertical = facing.getAxis().isVertical();
+        Direction base = isVertical ? Direction.from2DDataValue(rotation) : facing;
+        return isVertical ? base : facing.getClockWise();
+    }
+
+    private Direction getInputDir() {
+        Direction portDir = getPortDirection();
+        boolean reverse = !facing.getAxis().isVertical();
+        return (getIsMirrored() ^ reverse) ? portDir.getOpposite() : portDir;
+    }
+
+    private Direction getOutputDir() { return getInputDir().getOpposite(); }
+
+    public IEnergyStorage getInputEnergy() {
+        assert level != null;
+        Direction inputDir = getInputDir();
+        BlockPos srcPos = worldPosition.relative(inputDir);
+        BlockEntity src = level.getBlockEntity(srcPos);
+        if (src != null) {
+            LazyOptional<IEnergyStorage> cap = src.getCapability(ENERGY, inputDir.getOpposite());
+            return cap.resolve().orElse(null);
+        }
+        return null;
+    }
+
+    public IEnergyStorage getOutputEnergy() {
+        assert level != null;
+        Direction outputDir = getOutputDir();
+        BlockPos dstPos = worldPosition.relative(outputDir);
+        BlockEntity dst = level.getBlockEntity(dstPos);
+        if (dst != null) {
+            LazyOptional<IEnergyStorage> cap = dst.getCapability(ENERGY, outputDir.getOpposite());
+            return cap.resolve().orElse(null);
+        }
+        return null;
     }
 
     @NotNull
@@ -284,14 +379,14 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     @Override
     public boolean isSource(ConnectionPoint cp) {
         boolean mirrored = getIsMirrored();
-        int outputIndex = mirrored ? RIGHT_INDEX : LEFT_INDEX;
+        int outputIndex = mirrored ? LEFT_INDEX : RIGHT_INDEX;
         return cp.index() == outputIndex;
     }
 
     @Override
     public boolean isSink(ConnectionPoint cp) {
         boolean mirrored = getIsMirrored();
-        int inputIndex = mirrored ? LEFT_INDEX : RIGHT_INDEX;
+        int inputIndex = mirrored ? RIGHT_INDEX : LEFT_INDEX;
         return cp.index() == inputIndex;
     }
 
@@ -307,12 +402,9 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     @Override
     public int getRequestedEnergy() {
         if (!getBlockState().getValue(OPEN)) return 0;
-        int canAccept = Integer.MAX_VALUE;
-        canAccept = timeLimit > 0 ? Math.min(Math.max(timeLimit - longToInt(acceptedAmount), 0), canAccept) : canAccept;
-        canAccept = keepSize > 0 ? Math.min(Math.max(keepSize - bufferedEnergy, 0), canAccept) : canAccept;
-        canAccept = packetLimit > 0 ? Math.min(canAccept, packetLimit) : canAccept;
-        if (redstoneMode > 0) canAccept = (int) (canAccept * ((redstoneMode == 1 ? 15 - getRSPower() : getRSPower()) / 15.0));
-        return canAccept;
+        boolean outputWired = isSideWired(false);
+        IEnergyStorage outputStorage = outputWired ? null : getOutputEnergy();
+        return getTransferLimit(outputWired, outputStorage);
     }
 
     @Override
