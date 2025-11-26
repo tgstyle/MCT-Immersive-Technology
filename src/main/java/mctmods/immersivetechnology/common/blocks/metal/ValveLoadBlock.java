@@ -44,7 +44,8 @@ public class ValveLoadBlock extends ITEntityBlock<ValveLoadBlockEntity> {
     @Override
     public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getValveShape(state); }
 
-    @SuppressWarnings("deprecation") @Override
+    @SuppressWarnings("deprecation")
+    @Override
     public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) { return getValveShape(state); }
 
     private VoxelShape getValveShape(BlockState state) {
@@ -107,8 +108,7 @@ public class ValveLoadBlock extends ITEntityBlock<ValveLoadBlockEntity> {
                 connector2 = Shapes.box(1 - baseThickness - connectorLength, centerMin, 1 - connectorSize, 1 - baseThickness, centerMax, 1);
                 break;
             }
-            default:
-                throw new IllegalArgumentException("Unknown facing: " + facing);
+            default: throw new IllegalArgumentException("Unknown facing: " + facing);
         }
         return Shapes.or(baseShape, connector1, connector2);
     }
@@ -145,12 +145,9 @@ public class ValveLoadBlock extends ITEntityBlock<ValveLoadBlockEntity> {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction facing = context.getClickedFace();
-        int rotation = 0;
-        if (facing.getAxis().isVertical()) {
-            assert context.getPlayer() != null;
-            float yRot = context.getPlayer().getYRot();
-            rotation = Direction.fromYRot(yRot).get2DDataValue();
-        }
+        assert context.getPlayer() != null;
+        float yRot = context.getPlayer().getYRot();
+        int rotation = Direction.fromYRot(yRot).get2DDataValue();
         return defaultBlockState().setValue(ITProperties.FACING_ALL, facing).setValue(ITProperties.MIRRORED, false).setValue(OPEN, true).setValue(ROTATION, rotation);
     }
 }
