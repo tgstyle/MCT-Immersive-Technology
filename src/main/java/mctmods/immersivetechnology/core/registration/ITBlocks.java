@@ -37,8 +37,9 @@ public class ITBlocks {
     private static final HashMap<String, RegistryObject<? extends Block>> BLOCK_REGISTRY_MAP = new HashMap<>();
     public static Function<String, Block> getBlock = (key) -> BLOCK_REGISTRY_MAP.get(key).get();
 
-    private static final Supplier<BlockBehaviour.Properties> METAL_PROPERTIES_NO_OVERLAY = () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0F, 15.0F).requiresCorrectToolForDrops().isViewBlocking((state, blockReader, pos) -> false);
-    public static final Supplier<BlockBehaviour.Properties> METAL_PROPERTIES_NO_OCCLUSION = () -> METAL_PROPERTIES_NO_OVERLAY.get().noOcclusion();
+    private static final Supplier<BlockBehaviour.Properties> DEFAULT_METAL_PROPERTIES = () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0F, 15.0F).requiresCorrectToolForDrops();
+    private static final Supplier<BlockBehaviour.Properties> METAL_PROPERTIES_NO_OVERLAY = () -> DEFAULT_METAL_PROPERTIES.get().isViewBlocking((state, blockReader, pos) -> false);
+    public static final Supplier<BlockBehaviour.Properties> METAL_PROPERTIES_NO_OCCLUSION = () -> METAL_PROPERTIES_NO_OVERLAY.get().noOcclusion().forceSolidOn();
 
     public static final class MetalDevices {
         public static BlockEntry<BarrelCreativeBlock> BARREL_CREATIVE;
@@ -55,61 +56,61 @@ public class ITBlocks {
         private static void init() {
             BARREL_CREATIVE = new BlockEntry<>(
                     "barrel_creative",
-                    () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
+                    METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new BarrelCreativeBlock(BarrelCreativeBlockEntity::new, p)
             );
 
             BARREL_STEEL = new BlockEntry<>(
                     "barrel_steel",
-                    () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
+                    METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new BarrelSteelBlock(BarrelSteelBlockEntity::new, p)
             );
 
             BARREL_OPEN = new BlockEntry<>(
                     "barrel_open",
-                    () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
+                    METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new BarrelOpenBlock(BarrelOpenBlockEntity::new, p)
             );
 
             TRASH_ENERGY = new BlockEntry<>(
                     "trash_energy",
-                    () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
+                    METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new TrashEnergyBlock(TrashEnergyBlockEntity::new, p)
             );
 
             TRASH_FLUID = new BlockEntry<>(
                     "trash_fluid",
-                    () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
+                    METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new TrashFluidBlock(TrashFluidBlockEntity::new, p)
             );
 
             TRASH_ITEM = new BlockEntry<>(
                     "trash_item",
-                    () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
+                    METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new TrashItemBlock(TrashItemBlockEntity::new, p)
             );
 
             VALVE_FLUID = new BlockEntry<>(
                     "valve_fluid",
-                    () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
+                    METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new ValveFluidBlock(ValveFluidBlockEntity::new, p)
             );
 
             VALVE_LOAD = new BlockEntry<>(
                     "valve_load",
-                    () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
+                    METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new ValveLoadBlock(ValveLoadBlockEntity::new, p)
             );
 
             VALVE_LIMITER = new BlockEntry<>(
                     "valve_limiter",
-                    () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F).noOcclusion(),
+                    METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new ValveLimiterBlock(ValveLimiterBlockEntity::new, p)
             );
 
             TECHNOLOGY_ENGINEERING = new BlockEntry<>(
                     "technology_engineering",
-                    () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 15.0F),
+                    DEFAULT_METAL_PROPERTIES,
                     TechnologyEngineeringBlock::new
             );
         }
