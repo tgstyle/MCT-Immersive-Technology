@@ -287,14 +287,6 @@ def main():
         overall_dict[b] = np.ones((res, res, res), dtype=bool)
     for b in empty_set:
         overall_dict[b] = np.zeros((res, res, res), dtype=bool)
-    if args.mc_version == '1.12.2':
-        max_bz = max(bz for bx,by,bz in overall_dict) if overall_dict else 0
-        new_dict = {}
-        for bx,by,bz in list(overall_dict):
-            new_bz = max_bz - bz
-            occupied_np = overall_dict[(bx,by,bz)]
-            new_dict[(bx,by,new_bz)] = occupied_np
-        overall_dict = new_dict
     # Apply post-processing to the combined model
     block_occupied = overall_dict
     if not args.no_postprocess:
@@ -311,6 +303,14 @@ def main():
         occ_thresh = args.occ_thresh
         sub_order = args.sub_pp_order
         block_occupied = apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_order, pp_order_list, subs, res=16)
+    if args.mc_version == '1.12.2':
+        max_bz = max(bz for bx,by,bz in block_occupied) if block_occupied else 0
+        new_dict = {}
+        for bx,by,bz in list(block_occupied):
+            new_bz = max_bz - bz
+            occupied_np = block_occupied[(bx,by,bz)]
+            new_dict[(bx,by,new_bz)] = occupied_np
+        block_occupied = new_dict
     # Extract AABBs
     overall_aabbs = []
     for (bx, by, bz), occupied_np in sorted(block_occupied.items(), key=lambda k: k[0]):
