@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.blocks.multiblocks;
+package mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.client.ClientUtils;

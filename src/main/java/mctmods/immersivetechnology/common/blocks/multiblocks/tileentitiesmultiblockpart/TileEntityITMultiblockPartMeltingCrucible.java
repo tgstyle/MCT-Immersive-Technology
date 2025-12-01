@@ -1,9 +1,9 @@
-package mctmods.immersivetechnology.common.blocks.multiblocks;
+package mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityHeatExchangerSlave;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityMeltingCrucibleSlave;
 import mctmods.immersivetechnology.common.blocks.multiblocks.types.BlockType_MetalMultiblock1;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblockPart;
 import net.minecraft.client.renderer.GlStateManager;
@@ -12,16 +12,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityITMultiblockPartHeatExchanger extends TileEntityITMultiblockPart<TileEntityHeatExchangerSlave> implements MultiblockHandler.IMultiblock {
-    public static TileEntityITMultiblockPartHeatExchanger instance = new TileEntityITMultiblockPartHeatExchanger();
+public class TileEntityITMultiblockPartMeltingCrucible extends TileEntityITMultiblockPart<TileEntityMeltingCrucibleSlave> implements MultiblockHandler.IMultiblock {
+    public static TileEntityITMultiblockPartMeltingCrucible instance = new TileEntityITMultiblockPartMeltingCrucible();
 
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartHeatExchanger() {
-        super("multiblocks/heat_exchanger.json",
-                ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.HEAT_EXCHANGER.getMeta()),
-                ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.HEAT_EXCHANGER_SLAVE.getMeta()));
+    public TileEntityITMultiblockPartMeltingCrucible() {
+        super("multiblocks/melting_crucible.json",
+                ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.MELTING_CRUCIBLE.getMeta()),
+                ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.MELTING_CRUCIBLE_SLAVE.getMeta()));
     }
 
     @Override
@@ -42,12 +42,11 @@ public class TileEntityITMultiblockPartHeatExchanger extends TileEntityITMultibl
     @Override
     @SideOnly(Side.CLIENT)
     public void renderFormedStructure() {
-        if (renderStack == null) renderStack = new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.HEAT_EXCHANGER.getMeta());
-        GlStateManager.translate(.1, 0, 0);
-        GlStateManager.translate(0.8, 1.5, 3);
+        if (renderStack == null) renderStack = new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.MELTING_CRUCIBLE.getMeta());
+        GlStateManager.translate(1.5, 1.5, 1.5);
         GlStateManager.rotate(- 45, 0, 1, 0);
         GlStateManager.rotate(- 20, 1, 0, 0);
-        GlStateManager.scale(5.88, 5.88, 5.88);
+        GlStateManager.scale(3.5, 3.5, 3.5);
         GlStateManager.disableCull();
         ClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
         GlStateManager.enableCull();

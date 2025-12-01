@@ -1,13 +1,13 @@
-package mctmods.immersivetechnology.common.blocks.multiblocks;
+package mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityAlternatorSlave;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntitySteamTurbineSlave;
 import mctmods.immersivetechnology.common.blocks.multiblocks.types.BlockType_MetalMultiblock;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblockPart;
 import mctmods.immersivetechnology.common.util.ITLogger;
-import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AlternatorShape;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SteamTurbineShape;
 import mctmods.immersivetechnology.common.util.multiblock.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -16,17 +16,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityITMultiblockPartAlternator extends TileEntityITMultiblockPart<TileEntityAlternatorSlave> implements MultiblockHandler.IMultiblock {
-    public static TileEntityITMultiblockPartAlternator instance = new TileEntityITMultiblockPartAlternator();
+public class TileEntityITMultiblockPartSteamTurbine extends TileEntityITMultiblockPart<TileEntitySteamTurbineSlave> implements MultiblockHandler.IMultiblock {
+    public static TileEntityITMultiblockPartSteamTurbine instance = new TileEntityITMultiblockPartSteamTurbine();
 
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartAlternator() {
-        super(ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.ALTERNATOR.getMeta()),
-                ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.ALTERNATOR_SLAVE.getMeta()));
-        MultiblockJSONSchema data = AlternatorShape.DATA;
-        if (data == null) { ITLogger.error("No data for alternator"); return; }
+    public TileEntityITMultiblockPartSteamTurbine() {
+        super(ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEAM_TURBINE.getMeta()),
+                ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEAM_TURBINE_SLAVE.getMeta()));
+        MultiblockJSONSchema data = SteamTurbineShape.DATA;
+        if (data == null) { ITLogger.error("No data for steam_turbine"); return; }
         this.uniqueName = data.uniqueName;
         this.width = data.width;
         this.height = data.height;
@@ -48,18 +48,19 @@ public class TileEntityITMultiblockPartAlternator extends TileEntityITMultiblock
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 
-    @Override public float getManualScale() { return 11; }
+    @Override public float getManualScale() { return 8; }
 
     @Override public boolean canRenderFormedStructure() { return true; }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void renderFormedStructure() {
-        if (renderStack == null) renderStack = new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.ALTERNATOR.getMeta());
-        GlStateManager.translate(.5, 1.5, 1.5);
+        if (renderStack == null) renderStack = new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.STEAM_TURBINE.getMeta());
+        GlStateManager.translate(0.3, 0.1, 0);
+        GlStateManager.translate(2.4, 2, 3.2);
         GlStateManager.rotate(-45, 0, 1, 0);
         GlStateManager.rotate(-20, 1, 0, 0);
-        GlStateManager.scale(4, 4, 4);
+        GlStateManager.scale(8.7, 8.7, 8.7);
         GlStateManager.disableCull();
         ClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
         GlStateManager.enableCull();

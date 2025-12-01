@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.TileEntityITMultiblockPartCoolingTower;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
 
 import net.minecraft.item.ItemStack;

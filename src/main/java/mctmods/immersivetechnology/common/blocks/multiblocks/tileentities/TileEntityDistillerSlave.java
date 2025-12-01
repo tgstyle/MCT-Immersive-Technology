@@ -14,7 +14,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
-import mctmods.immersivetechnology.common.blocks.multiblocks.TileEntityITMultiblockPartDistiller;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
 
 import net.minecraft.item.ItemStack;
