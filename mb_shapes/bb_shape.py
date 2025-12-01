@@ -70,6 +70,9 @@ def main():
     # Copy AABB option
     parser.add_argument('--copy-aabb', action='append', default=[], help='Copy AABBs: "from_bx,from_by,from_bz to_bx,to_by,to_bz" (use quotes if needed)')
     
+    # Minecraft version option
+    parser.add_argument('--mc-version', type=str, default='default', choices=['1.12.2', 'default'], help='Minecraft version for output adjustment')
+    
     args = parser.parse_args()
     solid_set = set()
     if args.solid_blocks:
@@ -284,6 +287,14 @@ def main():
         overall_dict[b] = np.ones((res, res, res), dtype=bool)
     for b in empty_set:
         overall_dict[b] = np.zeros((res, res, res), dtype=bool)
+    if args.mc_version == '1.12.2':
+        max_bz = max(bz for bx,by,bz in overall_dict) if overall_dict else 0
+        new_dict = {}
+        for bx,by,bz in list(overall_dict):
+            new_bz = max_bz - bz
+            occupied_np = overall_dict[(bx,by,bz)]
+            new_dict[(bx,by,new_bz)] = occupied_np
+        overall_dict = new_dict
     # Apply post-processing to the combined model
     block_occupied = overall_dict
     if not args.no_postprocess:
