@@ -14,15 +14,22 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
+import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.DistillerShape;
 import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
+import mctmods.immersivetechnology.common.util.shapes.*;
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -32,9 +39,11 @@ import net.minecraftforge.fluids.IFluidTank;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IMirrorAble, IUsesBooleanProperty, IFluxReceiver, IIEInternalFluxHandler {
+public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IMirrorAble, IUsesBooleanProperty, IFluxReceiver, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntityDistillerSlave() { super(TileEntityITMultiblockPartDistiller.instance, 16000, true); }
 
     @Override
@@ -138,12 +147,41 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
     @Override
     public @Nonnull IEProperties.PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
 
-    public BlockPos posToMultiblock() {
+    private BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartDistiller.instance.width;
         int length = TileEntityITMultiblockPartDistiller.instance.length;
-        int h = pos / (width * length);
-        int l = (pos % (width * length)) / width;
-        int w = pos % width;
-        return new BlockPos(w, h, l);
+        int y = pos / (length * width);
+        int rem = pos % (length * width);
+        int z = rem / width;
+        int x = rem % width;
+        if (mirrored) x = width - 1 - x;
+        return new BlockPos(x, y, z);
+    }
+
+    private VoxelShape getVoxelShape() {
+        BlockPos posInMultiblock = posToMultiblock();
+        List<AxisAlignedBB> list = DistillerShape.GETTER.getShape(posInMultiblock);
+        if (list.isEmpty()) return Shapes.empty();
+        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        VoxelShape vs = Shapes.empty();
+        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
+        return vs.optimize();
+    }
+
+    @Nonnull
+    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
+
+    @Nonnull
+    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+
+    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
+
+    @Nonnull
+    @Override public float[] getBlockBounds() {
+        VoxelShape vs = getVoxelShape();
+        if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
+        AxisAlignedBB bb = vs.bounds();
+        return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
     }
 }
