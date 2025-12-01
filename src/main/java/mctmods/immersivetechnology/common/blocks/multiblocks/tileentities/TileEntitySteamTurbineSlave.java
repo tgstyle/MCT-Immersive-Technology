@@ -109,12 +109,13 @@ public class TileEntitySteamTurbineSlave extends TileEntityITMultiblock<TileEnti
     }
 
     private BlockPos posToMultiblock() {
-        final int width = 3;
-        final int height = 4;
-        final int length = 10;
+        int width = TileEntityITMultiblockPartSteamTurbine.instance.width;
+        int length = TileEntityITMultiblockPartSteamTurbine.instance.length;
         int y = pos / (length * width);
-        int z = (pos % (length * width)) / width;
-        int x = pos % width;
+        int rem = pos % (length * width);
+        int z = rem / width;
+        int x = rem % width;
+        if (mirrored) x = width - 1 - x;
         return new BlockPos(x, y, z);
     }
 
@@ -122,16 +123,10 @@ public class TileEntitySteamTurbineSlave extends TileEntityITMultiblock<TileEnti
         BlockPos posInMultiblock = posToMultiblock();
         List<AxisAlignedBB> list = SteamTurbineShape.GETTER.getShape(posInMultiblock);
         if (list.isEmpty()) return Shapes.empty();
+        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
         VoxelShape vs = Shapes.empty();
-        for (AxisAlignedBB aabb : list) { vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR); }
-        vs = vs.optimize();
-        List<AxisAlignedBB> rotatedList = new ArrayList<>();
-        vs.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
-            AxisAlignedBB aabb = new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
-            rotatedList.add(rotateAABB(aabb, facing));
-        });
-        vs = Shapes.empty();
-        for (AxisAlignedBB aabb : rotatedList) { vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR); }
+        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
         return vs.optimize();
     }
 

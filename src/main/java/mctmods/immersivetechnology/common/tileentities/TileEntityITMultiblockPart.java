@@ -47,18 +47,23 @@ public abstract class TileEntityITMultiblockPart<T extends TileEntityMultiblockP
 
     @Override public boolean isBlockTrigger(IBlockState state) { return trigger.isEquals(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state))); }
 
+    protected TileEntityITMultiblockPart(IBlockState master, IBlockState slave) {
+        this.masterBlockState = master;
+        this.slaveBlockState = slave;
+        this.pointsOfInterest = new PoIJSONSchema[0];
+    }
+
     public TileEntityITMultiblockPart(String structurePath, IBlockState master, IBlockState slave) {
         this.masterBlockState = master;
         this.slaveBlockState = slave;
         try {
             MultiblockJSONSchema data = MultiblockUtils.Load(structurePath);
-            if (data == null) { ITLogger.error("Missing multiblock JSON: " + structurePath); setFallbacks(); return; }
+            if (data == null) { ITLogger.error("Missing multiblock JSON: " + structurePath); return; }
             this.uniqueName = data.uniqueName;
             this.width = data.width;
             this.length = data.length;
             this.height = data.height;
-            this.pointsOfInterest = data.pointsOfInterest;
-            if (this.pointsOfInterest == null) this.pointsOfInterest = new PoIJSONSchema[0];
+            this.pointsOfInterest = data.pointsOfInterest != null ? data.pointsOfInterest : new PoIJSONSchema[0];
             this.masterX = data.master.x;
             this.masterY = data.master.y;
             this.masterZ = data.master.z;
@@ -73,59 +78,36 @@ public abstract class TileEntityITMultiblockPart<T extends TileEntityMultiblockP
             }
             VoxelShape[] shapesArray = new VoxelShape[width * length * height];
             if (data.shapeAABB != null) {
-                try {
-                    int expectedSize = width * length * height;
-                    if (data.shapeAABB.size() > 0 && data.shapeAABB.size() != expectedSize) { ITLogger.warn("ShapeAABB size mismatch for " + structurePath + ": expected " + expectedSize + ", got " + data.shapeAABB.size()); }
-                    for (int i = 0; i < Math.min(data.shapeAABB.size(), shapesArray.length); i++) {
-                        JsonElement el = data.shapeAABB.get(i);
-                        if (el.isJsonNull()) { shapesArray[i] = Shapes.create(0,0,0,1,1,1); continue; }
-                        if (!el.isJsonArray()) { shapesArray[i] = Shapes.create(0,0,0,1,1,1); continue; }
-                        JsonArray sub = el.getAsJsonArray();
-                        if (sub.size() == 0) { shapesArray[i] = Shapes.create(0,0,0,1,1,1); continue; }
-                        VoxelShape shape = Shapes.empty();
-                        try {
-                            for (JsonElement b : sub) {
-                                JsonArray box = b.getAsJsonArray();
-                                double minX = box.get(0).getAsDouble();
-                                double minY = box.get(1).getAsDouble();
-                                double minZ = box.get(2).getAsDouble();
-                                double maxX = box.get(3).getAsDouble();
-                                double maxY = box.get(4).getAsDouble();
-                                double maxZ = box.get(5).getAsDouble();
-                                shape = Shapes.joinUnoptimized(shape, Shapes.box(minX, minY, minZ, maxX, maxY, maxZ), BooleanOp.OR);
-                            }
-                            shape = shape.optimize();
-                            if (shape.isEmpty() && sub.size() > 0) { ITLogger.error("Shape became empty after optimize for index " + i + " in " + structurePath + " despite " + sub.size() + " boxes"); }
-                            shapesArray[i] = shape;
-                        } catch (Exception e) { ITLogger.error("Error parsing shapeAABB at index " + i + " for " + structurePath + ": " + e.getMessage()); }
+                int expectedSize = width * length * height;
+                if (data.shapeAABB.size() > 0 && data.shapeAABB.size() != expectedSize) { ITLogger.warn("ShapeAABB size mismatch for " + structurePath + ": expected " + expectedSize + ", got " + data.shapeAABB.size()); }
+                for (int i = 0; i < Math.min(data.shapeAABB.size(), shapesArray.length); i++) {
+                    JsonElement el = data.shapeAABB.get(i);
+                    if (el.isJsonNull()) { shapesArray[i] = Shapes.create(0,0,0,1,1,1); continue; }
+                    if (!el.isJsonArray()) { shapesArray[i] = Shapes.create(0,0,0,1,1,1); continue; }
+                    JsonArray sub = el.getAsJsonArray();
+                    if (sub.size() == 0) { shapesArray[i] = Shapes.create(0,0,0,1,1,1); continue; }
+                    VoxelShape shape = Shapes.empty();
+                    for (JsonElement b : sub) {
+                        JsonArray box = b.getAsJsonArray();
+                        double minX = box.get(0).getAsDouble();
+                        double minY = box.get(1).getAsDouble();
+                        double minZ = box.get(2).getAsDouble();
+                        double maxX = box.get(3).getAsDouble();
+                        double maxY = box.get(4).getAsDouble();
+                        double maxZ = box.get(5).getAsDouble();
+                        shape = Shapes.joinUnoptimized(shape, Shapes.box(minX, minY, minZ, maxX, maxY, maxZ), BooleanOp.OR);
                     }
-                    for (int i = data.shapeAABB.size(); i < shapesArray.length; i++) { shapesArray[i] = Shapes.create(0,0,0,1,1,1); }
-                } catch (Exception e) { ITLogger.error("Shape parse failed for " + structurePath, e); for (int i = 0; i < shapesArray.length; i++) { shapesArray[i] = Shapes.create(0,0,0,1,1,1); } }
+                    shape = shape.optimize();
+                    if (shape.isEmpty() && sub.size() > 0) { ITLogger.error("Shape became empty after optimize for index " + i + " in " + structurePath + " despite " + sub.size() + " boxes"); }
+                    shapesArray[i] = shape;
+                }
+                for (int i = data.shapeAABB.size(); i < shapesArray.length; i++) { shapesArray[i] = Shapes.create(0,0,0,1,1,1); }
             } else {
                 for (int i = 0; i < shapesArray.length; i++) { shapesArray[i] = Shapes.create(0,0,0,1,1,1); }
             }
             this.shapes = shapesArray;
             ITLogger.info("Loaded multiblock " + uniqueName + " with shapeAABB size " + (data.shapeAABB != null ? data.shapeAABB.size() : "null") + ", POI count " + pointsOfInterest.length);
-        } catch (Exception e) { ITLogger.error("Error loading multiblock " + structurePath, e); setFallbacks(); }
-    }
-
-    private void setFallbacks() {
-        this.uniqueName = "fallback";
-        this.width = 1;
-        this.length = 1;
-        this.height = 1;
-        this.pointsOfInterest = new PoIJSONSchema[0];
-        this.masterX = 0;
-        this.masterY = 0;
-        this.masterZ = 0;
-        this.trigger = new ItemStackRef(ItemStack.EMPTY);
-        this.structure = new IRefComparable[height][length][width];
-        for (int h = 0; h < height; h++) for (int l = 0; l < length; l++) for (int w = 0; w < width; w++) { this.structure[h][l][w] = AirRef.instance; }
-        this.materials = new IngredientStack[0];
-        this.structureExport = new ItemStack[height][length][width];
-        for (int h = 0; h < height; h++) for (int l = 0; l < length; l++) for (int w = 0; w < width; w++) { this.structureExport[h][l][w] = ItemStack.EMPTY; }
-        this.shapes = new VoxelShape[width * length * height];
-        for (int i = 0; i < shapes.length; i++) { shapes[i] = Shapes.create(0,0,0,1,1,1); }
+        } catch (Exception e) { ITLogger.error("Error loading multiblock " + structurePath, e); }
     }
 
     @Override public String getUniqueName() { return uniqueName; }

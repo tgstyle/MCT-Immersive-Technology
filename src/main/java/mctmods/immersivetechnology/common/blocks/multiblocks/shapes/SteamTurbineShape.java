@@ -17,16 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SteamTurbineShape extends GenericShape {
-    public static final SteamTurbineShape GETTER = new SteamTurbineShape();
-    public static final int WIDTH = 3;
-    public static final int HEIGHT = 4;
-    public static final int LENGTH = 10;
-    public static final BlockPos MASTER_GRID_POS;
+    public static SteamTurbineShape GETTER = new SteamTurbineShape();
+    public static int WIDTH, HEIGHT, LENGTH;
+    public static BlockPos MASTER_GRID_POS;
+    public static MultiblockJSONSchema DATA;
     private static final List<List<AxisAlignedBB>> SHAPES;
 
     static {
         List<List<AxisAlignedBB>> rawShapes = new ArrayList<>();
-        for (int i = 0; i < WIDTH * HEIGHT * LENGTH; i++) rawShapes.add(new ArrayList<>());
         BlockPos masterPos = BlockPos.ORIGIN;
         MultiblockJSONSchema data;
         try {
@@ -36,6 +34,11 @@ public class SteamTurbineShape extends GenericShape {
                 data = new Gson().fromJson(reader, MultiblockJSONSchema.class);
                 reader.close();
                 if (data != null) {
+                    DATA = data;
+                    WIDTH = data.width;
+                    HEIGHT = data.height;
+                    LENGTH = data.length;
+                    for (int i = 0; i < WIDTH * HEIGHT * LENGTH; i++) rawShapes.add(new ArrayList<>());
                     if (data.shapeAABB != null && data.shapeAABB.isJsonArray()) {
                         JsonArray shapeArray = data.shapeAABB.getAsJsonArray();
                         int idx = 0;
@@ -56,19 +59,6 @@ public class SteamTurbineShape extends GenericShape {
                                 if (valid) posShapes.add(new AxisAlignedBB(vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]));
                             }
                             idx++;
-                        }
-                    } else if (data.structure != null) {
-                        int total = WIDTH * HEIGHT * LENGTH;
-                        for (int i = 0; i < total; i++) {
-                            int y = i / (LENGTH * WIDTH);
-                            int rem = i % (LENGTH * WIDTH);
-                            int z = rem / WIDTH;
-                            int x = rem % WIDTH;
-                            int strIdx = y * LENGTH + z;
-                            String line = data.structure[strIdx];
-                            char c = (line != null && x < line.length()) ? line.charAt(x) : ' ';
-                            List<AxisAlignedBB> posShapes = rawShapes.get(i);
-                            if (c != ' ' && c != '~' && c != '.') posShapes.add(new AxisAlignedBB(0, 0, 0, 1, 1, 1));
                         }
                     }
                     masterPos = new BlockPos(data.master.x, data.master.y, data.master.z);

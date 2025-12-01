@@ -107,41 +107,46 @@ public class ITUtils {
         return pSupplier.get();
     }
 
-    public static List<AxisAlignedBB> transformAABBs(List<AxisAlignedBB> list, EnumFacing facing, boolean mirrored) {
-        List<AxisAlignedBB> newList = new ArrayList<>();
-        int rotation = (facing.getHorizontalIndex() - EnumFacing.SOUTH.getHorizontalIndex() + 4) % 4;
-        for (AxisAlignedBB aabb : list) {
-            double minX = aabb.minX;
-            double minY = aabb.minY;
-            double minZ = aabb.minZ;
-            double maxX = aabb.maxX;
-            double maxY = aabb.maxY;
-            double maxZ = aabb.maxZ;
-            if (mirrored) {
-                double temp = minX;
+    public static AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing facing, boolean mirrored) {
+        double minX = aabb.minX;
+        double minY = aabb.minY;
+        double minZ = aabb.minZ;
+        double maxX = aabb.maxX;
+        double maxY = aabb.maxY;
+        double maxZ = aabb.maxZ;
+        double temp;
+        switch (facing) {
+            case SOUTH:
+                temp = minX;
                 minX = 1 - maxX;
                 maxX = 1 - temp;
-            }
-            for (int i = 0; i < rotation; i++) {
-                double temp = minX;
-                double temp_max = maxX;
+                temp = minZ;
+                minZ = 1 - maxZ;
+                maxZ = 1 - temp;
+                break;
+            case WEST:
+                temp = minX;
+                minX = minZ;
+                minZ = 1 - maxX;
+                maxX = maxZ;
+                maxZ = 1 - temp;
+                break;
+            case EAST:
+                temp = minX;
                 minX = 1 - maxZ;
+                maxZ = maxX;
                 maxX = 1 - minZ;
                 minZ = temp;
-                maxZ = temp_max;
-            }
-            if (minX > maxX) {
-                double temp = minX;
-                minX = maxX;
-                maxX = temp;
-            }
-            if (minZ > maxZ) {
-                double temp = minZ;
-                minZ = maxZ;
-                maxZ = temp;
-            }
-            newList.add(new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ));
+                break;
+            default:
+                // NORTH, no rotation
+                break;
         }
-        return newList;
+        if (mirrored) {
+            temp = minX;
+            minX = 1 - maxX;
+            maxX = 1 - temp;
+        }
+        return new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
     }
 }
