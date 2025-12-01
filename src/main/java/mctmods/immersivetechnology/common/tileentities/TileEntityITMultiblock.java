@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
@@ -155,6 +156,15 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
                     else replaceStructureBlock(pos2, state, s, h, l, w);
                 }
             }
+        }
+    }
+
+    protected AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing f) {
+        switch (f) {
+            case SOUTH: { return new AxisAlignedBB(1 - aabb.maxX, aabb.minY, 1 - aabb.maxZ, 1 - aabb.minX, aabb.maxY, 1 - aabb.minZ); }
+            case EAST: { return new AxisAlignedBB(1 - aabb.maxZ, aabb.minY, aabb.minX, 1 - aabb.minZ, aabb.maxY, aabb.maxX); }
+            case WEST: { return new AxisAlignedBB(aabb.minZ, aabb.minY, 1 - aabb.maxX, aabb.maxZ, aabb.maxY, 1 - aabb.minX); }
+            default: { return aabb; }
         }
     }
 }

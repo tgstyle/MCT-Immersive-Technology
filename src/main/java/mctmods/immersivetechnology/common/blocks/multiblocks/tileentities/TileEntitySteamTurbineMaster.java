@@ -4,7 +4,6 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import io.netty.buffer.ByteBuf;
-
 import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
@@ -28,7 +27,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -198,7 +196,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
 
     @Override public void TankContentsChanged() {
         cachedRecipe = null;
-        this.markContainingBlockForUpdate(null);
+        world.markBlockRangeForRenderUpdate(getPos(), getPos());
     }
 
     @Override public boolean isDummy() { return false; }

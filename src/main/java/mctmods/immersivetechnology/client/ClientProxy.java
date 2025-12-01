@@ -16,6 +16,7 @@ import blusunrize.lib.manual.ManualPages;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITGUI;
+import mctmods.immersivetechnology.client.event.ClientEventHandler;
 import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
 import mctmods.immersivetechnology.client.render.*;
@@ -200,7 +201,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void init() {
-        //MinecraftForge.EVENT_BUS.register(ClientEventHandler.class);
+        MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
         //ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoolingTowerSlave.class, new TileRenderMultiblockSlave());
         //ClientRegistry.bindTileEntitySpecialRenderer(TileEntityElectrolyticCrucibleBatterySlave.class, new TileRenderMultiblockSlave());
         //ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHighPressureSteamTurbineSlave.class, new TileRenderMultiblockSlave());

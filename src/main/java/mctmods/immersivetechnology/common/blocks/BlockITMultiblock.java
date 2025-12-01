@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks;
 
 import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
@@ -13,10 +14,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -75,5 +79,22 @@ public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEn
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileEntityMultiblockPart) return ((TileEntityMultiblockPart<?>) te).getOriginalBlock();
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public @Nonnull AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
+        TileEntity te = source.getTileEntity(pos);
+        if (te instanceof IBlockBounds) {
+            float[] bounds = ((IBlockBounds) te).getBlockBounds();
+            return new AxisAlignedBB(bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]).offset(pos);
+        }
+        return FULL_BLOCK_AABB;
+    }
+
+    @SuppressWarnings("deprecation")
+    @SideOnly(Side.CLIENT)
+    @Override
+    public @Nonnull AxisAlignedBB getSelectedBoundingBox(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
+        return getBoundingBox(state, world, pos);
     }
 }

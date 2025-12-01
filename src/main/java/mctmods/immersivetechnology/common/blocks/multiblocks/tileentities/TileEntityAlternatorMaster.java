@@ -65,47 +65,37 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     private boolean needsPoIInit = false;
     private boolean needsNotify = false;
 
-    @Override
-    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         energyStorage.readFromNBT(nbt);
         animation.readFromNBT(nbt);
-        if (!descPacket && !world.isRemote && formed) {
-            needsPoIInit = true;
-            needsNotify = true;
-        }
+        if (!descPacket && !world.isRemote && formed) { needsPoIInit = true; needsNotify = true; }
     }
 
-    @Override
-    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
         energyStorage.writeToNBT(nbt);
         animation.writeToNBT(nbt);
     }
 
-    @Override
-    public @Nonnull NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
+    @Override public @Nonnull NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
         nbt = super.writeToNBT(nbt);
         nbt.setFloat("animationRotation", getAnimation().getAnimationRotation());
         return nbt;
     }
 
-    @Override
-    public void readFromNBT(@Nonnull NBTTagCompound nbt) {
+    @Override public void readFromNBT(@Nonnull NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         getAnimation().setAnimationRotation(nbt.getFloat("animationRotation"));
     }
 
-    public int energyGenerated() {
-        return ((double)speed / (double)maxSpeed > rfThreshold) ? (int)Math.round(Math.pow((double)speed / (double)maxSpeed, rfExponent) * torqueMult * rfPerTick) : 0;
-    }
+    public int energyGenerated() { return ((double)speed / (double)maxSpeed > rfThreshold) ? (int)Math.round(Math.pow((double)speed / (double)maxSpeed, rfExponent) * torqueMult * rfPerTick) : 0; }
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
         if (soundOrigin == null) InitializePoIs();
-        if(soundVolume == 0) {
-            ITSoundHandler.StopSound(soundOrigin);
-        } else {
+        if (soundVolume == 0) { ITSoundHandler.StopSound(soundOrigin); }
+        else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(soundOrigin.getX(), soundOrigin.getY(), soundOrigin.getZ()) / 8, 1);
             float level = ITUtils.remapRange(0, 1, 0.5f, 1.0f, soundVolume);
@@ -114,27 +104,21 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     }
 
     @SideOnly(Side.CLIENT)
-    @Override
-    public void onChunkUnload() {
+    @Override public void onChunkUnload() {
         if (soundOrigin == null) InitializePoIs();
         ITSoundHandler.StopSound(soundOrigin);
         super.onChunkUnload();
     }
 
-    @Override
-    public void disassemble() {
+    @Override public void disassemble() {
         super.disassemble();
         if (soundOrigin == null) InitializePoIs();
         ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundOrigin), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundOrigin.getX(), soundOrigin.getY(), soundOrigin.getZ(), 0));
     }
 
-    public void notifyNearbyClients() {
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.copyInt(energyStorage.getEnergyStored(), speed));
-    }
+    public void notifyNearbyClients() { BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.copyInt(energyStorage.getEnergyStored(), speed)); }
 
-    public void efficientMarkDirty() {
-        world.getChunk(this.getPos()).markDirty();
-    }
+    public void efficientMarkDirty() { world.getChunk(this.getPos()).markDirty(); }
 
     public boolean isValidProvider() {
         if (mechanicalInput == null) InitializePoIs();
@@ -152,40 +136,26 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         if (isValidProvider()) {
             speed = provider.getSpeed();
             torqueMult = provider.getTorqueMultiplier();
-        } else if (speed > 0) {
-            speed = Math.max(speed - speedLossPerTick, 0);
-        }
+        } else if (speed > 0) { speed = Math.max(speed - speedLossPerTick, 0); }
     }
 
-    @Override
-    public void update() {
+    @Override public void update() {
         if (!formed) return;
         if (world.isRemote) {
             float rotationSpeed = speed == 0 ? 0f : ((float) speed / (float) maxSpeed) * maxRotationSpeed;
             float oldMomentum = animation.getAnimationMomentum();
             animation.setAnimationMomentum(rotationSpeed);
             animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
-            if (soundVolume < targetEnergyPercentage) {
-                soundVolume = Math.min(soundVolume + 0.01f, targetEnergyPercentage);
-            } else if (soundVolume > targetEnergyPercentage) {
-                soundVolume = Math.max(soundVolume - 0.01f, targetEnergyPercentage);
-            }
+            if (soundVolume < targetEnergyPercentage) { soundVolume = Math.min(soundVolume + 0.01f, targetEnergyPercentage); }
+            else if (soundVolume > targetEnergyPercentage) { soundVolume = Math.max(soundVolume - 0.01f, targetEnergyPercentage); }
             handleSounds();
             return;
         }
-        if (needsPoIInit) {
-            needsPoIInit = false;
-            InitializePoIs();
-        }
-        if (needsNotify) {
-            needsNotify = false;
-            notifyIONeighbors();
-        }
+        if (needsPoIInit) { needsPoIInit = false; InitializePoIs(); }
+        if (needsNotify) { needsNotify = false; notifyIONeighbors(); }
         checkProvider();
         if (speed > 0) {
-            if (oldSpeed != speed || oldTorqueMult != torqueMult) {
-                cachedGenerated = energyGenerated();
-            }
+            if (oldSpeed != speed || oldTorqueMult != torqueMult) { cachedGenerated = energyGenerated(); }
             this.energyStorage.modifyEnergyStored(cachedGenerated);
         }
         int currentEnergy = energyStorage.getEnergyStored();
@@ -212,27 +182,17 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             this.markContainingBlockForUpdate(null);
             clientUpdateCooldown = 5;
         }
-        if (oldEnergy != currentEnergy || oldSpeed != speed) {
-            notifyNearbyClients();
-        }
+        if (oldEnergy != currentEnergy || oldSpeed != speed) { notifyNearbyClients(); }
         oldEnergy = currentEnergy;
         oldSpeed = speed;
         oldTorqueMult = torqueMult;
     }
 
-    @Override
-    public boolean isDummy() {
-        return false;
-    }
+    @Override public boolean isDummy() { return false; }
 
-    @Override
-    public TileEntityAlternatorMaster master() {
-        master = this;
-        return this;
-    }
+    @Override public TileEntityAlternatorMaster master() { master = this; return this; }
 
-    @Override
-    public void receiveMessageFromServer(ByteBuf buf) {
+    @Override public void receiveMessageFromServer(ByteBuf buf) {
         int energy = buf.readInt();
         int speed = buf.readInt();
         targetEnergyPercentage = (!soundRPM) ? (float)energy / energyStorage.getMaxEnergyStored() : (float)speed / maxSpeed;
@@ -250,10 +210,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         return false;
     }
 
-    @Override
-    public int getComparatorInputOverride() {
-        return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
-    }
+    @Override public int getComparatorInputOverride() { return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored(); }
 
     private void InitializePoIs() {
         int energyIndex = 0;
@@ -264,16 +221,12 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
                     EnergyOutputPositions[energyIndex] = getBlockPosForPos(energyOutputs[energyIndex].position).offset(energyOutputs[energyIndex].facing);
                     energyIndex++;
                     break;
-                case "redstone":
-                    redstone = new PoICache(facing, poi, mirrored);
-                    break;
+                case "redstone": redstone = new PoICache(facing, poi, mirrored); break;
                 case "mechanical_input":
                     mechanicalInput = new PoICache(facing, poi, mirrored);
                     mechanicalInputFront = getBlockPosForPos(mechanicalInput.position).offset(mechanicalInput.facing);
                     break;
-                case "sound":
-                    soundOrigin = getBlockPosForPos(poi.position);
-                    break;
+                case "sound": soundOrigin = getBlockPosForPos(poi.position); break;
             }
         }
     }
@@ -283,12 +236,9 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         notifyNeighbor(getBlockPosForPos(redstone.position));
     }
 
-    private void notifyNeighbor(BlockPos pos) {
-        world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false);
-    }
+    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
-    @Override
-    public @Nonnull int[] getRedstonePos() {
+    @Override public @Nonnull int[] getRedstonePos() {
         if (redstone == null) InitializePoIs();
         return new int[] {redstone.position};
     }

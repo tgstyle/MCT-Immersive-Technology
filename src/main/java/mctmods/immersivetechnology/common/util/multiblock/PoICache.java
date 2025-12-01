@@ -7,12 +7,12 @@ public class PoICache {
     public int position;
 
     public PoICache(EnumFacing facing, PoIJSONSchema poi, boolean isMirrored) {
-        this(poi.facing.LocalToGlobal(facing), poi.position, poi.facing, isMirrored);
+        this(LocalFacing.values()[poi.facing].LocalToGlobal(facing), poi.position, LocalFacing.values()[poi.facing], isMirrored);
     }
 
     public PoICache(EnumFacing facing, int position, LocalFacing localFacing, boolean isMirrored) {
         this.position = position;
-        this.facing = isMirrored && (localFacing == LocalFacing.LEFT || localFacing == LocalFacing.RIGHT)? facing.getOpposite() : facing;
+        this.facing = isMirrored && (localFacing == LocalFacing.LEFT || localFacing == LocalFacing.RIGHT) ? facing.getOpposite() : facing;
     }
 
     public boolean isPoI(EnumFacing facing, int position) {

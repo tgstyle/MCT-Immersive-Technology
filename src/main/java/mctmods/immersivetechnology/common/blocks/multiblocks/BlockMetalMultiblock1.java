@@ -1,6 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks;
 
 import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 
 import mctmods.immersivetechnology.common.blocks.BlockITMultiblock;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
@@ -10,11 +13,21 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.types.BlockType_Met
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.Properties;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class BlockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMultiblock1> {
     public BlockMetalMultiblock1() {
@@ -33,11 +46,9 @@ public class BlockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
         return BlockType_MetalMultiblock1.values()[meta].needsCustomState() ? BlockType_MetalMultiblock1.values()[meta].getCustomState() : "";
     }
 
-    @Override
-    public boolean allowHammerHarvest(IBlockState state) { return true; }
+    @Override public boolean allowHammerHarvest(IBlockState state) { return true; }
 
-    @Override
-    public TileEntity createBasicTE(World worldIn, BlockType_MetalMultiblock1 type) {
+    @Override public TileEntity createBasicTE(World worldIn, BlockType_MetalMultiblock1 type) {
         switch (type) {
             case GAS_TURBINE: { return new TileEntityGasTurbineMaster(); }
             case GAS_TURBINE_SLAVE: { return new TileEntityGasTurbineSlave(); }
@@ -55,5 +66,70 @@ public class BlockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
             case SOLAR_MELTER_SLAVE: { return new TileEntitySolarMelterSlave(); }
         }
         return null;
+    }
+
+    @Override public @Nonnull AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
+        TileEntity te = source.getTileEntity(pos);
+        if (te instanceof IBlockBounds) {
+            float[] bounds = ((IBlockBounds) te).getBlockBounds();
+            return new AxisAlignedBB(bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]);
+        }
+        return FULL_BLOCK_AABB;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public @Nonnull AxisAlignedBB getSelectedBoundingBox(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof IAdvancedSelectionBounds) {
+            List<AxisAlignedBB> list = ((IAdvancedSelectionBounds) te).getAdvancedSelectionBounds();
+            if (!list.isEmpty()) {
+                return new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+            }
+        }
+        return getBoundingBox(state, world, pos).offset(pos);
+    }
+
+    @Override
+    public RayTraceResult collisionRayTrace(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof IAdvancedSelectionBounds) {
+            List<AxisAlignedBB> list = ((IAdvancedSelectionBounds) te).getAdvancedSelectionBounds();
+            RayTraceResult minMOP = null;
+            double minDist = Double.POSITIVE_INFINITY;
+            int subHit = 0;
+            for (AxisAlignedBB aabb : list) {
+                RayTraceResult mop = aabb.offset(pos).calculateIntercept(start, end);
+                if (mop != null) {
+                    mop = new RayTraceResult(mop.hitVec, mop.sideHit, pos);
+                    double dist = mop.hitVec.squareDistanceTo(start);
+                    if (dist < minDist) {
+                        minMOP = mop;
+                        minMOP.subHit = subHit;
+                        minDist = dist;
+                    }
+                }
+                subHit++;
+            }
+            if (minMOP != null) return minMOP;
+        }
+        return super.collisionRayTrace(state, world, pos, start, end);
+    }
+
+    @Override
+    public void addCollisionBoxToList(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
+        TileEntity te = world.getTileEntity(pos);
+        boolean hasAdvanced = false;
+        if (te instanceof IAdvancedCollisionBounds) {
+            List<AxisAlignedBB> list = ((IAdvancedCollisionBounds) te).getAdvancedColisionBounds();
+            for (AxisAlignedBB aabb : list) {
+                AxisAlignedBB worldAABB = aabb.offset(pos);
+                if (worldAABB.intersects(entityBox)) {
+                    collidingBoxes.add(worldAABB);
+                }
+            }
+            hasAdvanced = !list.isEmpty();
+        }
+        if (!hasAdvanced) super.addCollisionBoxToList(state, world, pos, entityBox, collidingBoxes, entityIn, isActualState);
     }
 }
