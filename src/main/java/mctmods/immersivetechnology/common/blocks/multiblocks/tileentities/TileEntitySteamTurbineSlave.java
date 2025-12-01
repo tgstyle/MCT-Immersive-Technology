@@ -4,11 +4,15 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
+import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.TileEntityITMultiblockPartSteamTurbine;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SteamTurbineShape;
+
+import mctmods.immersivetechnology.common.util.shapes.*;
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,15 +30,10 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
-
 import java.util.ArrayList;
 import java.util.List;
-import com.google.common.collect.ImmutableList;
 
-public class TileEntitySteamTurbineSlave extends TileEntityITMultiblock<TileEntitySteamTurbineSlave, SteamTurbineRecipe, TileEntitySteamTurbineMaster> implements IMechanicalEnergy, IBlockBounds, IAdvancedCollisionBounds, IAdvancedSelectionBounds {
+public class TileEntitySteamTurbineSlave extends TileEntityITMultiblock<TileEntitySteamTurbineSlave, SteamTurbineRecipe, TileEntitySteamTurbineMaster> implements IMechanicalEnergy, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     private static final float outputtorque = Multiblocks.steamTurbine.steamTurbine_torque;
     TileEntitySteamTurbineMaster master;
 
@@ -109,35 +108,6 @@ public class TileEntitySteamTurbineSlave extends TileEntityITMultiblock<TileEnti
         return m.canDrainTankFrom(iTank, side, position);
     }
 
-    @Nonnull
-    @Override public float[] getBlockBounds() {
-        if (!formed) return new float[]{0f,0f,0f,1f,1f,1f};
-        List<AxisAlignedBB> list = getAdvancedBounds();
-        if (list.isEmpty() || (list.size() == 1 && list.get(0).equals(new AxisAlignedBB(0,0,0,1,1,1)))) return new float[]{0f,0f,0f,1f,1f,1f};
-        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, minZ = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE, maxZ = Double.MIN_VALUE;
-        for (AxisAlignedBB aabb : list) {
-            minX = Math.min(minX, aabb.minX);
-            minY = Math.min(minY, aabb.minY);
-            minZ = Math.min(minZ, aabb.minZ);
-            maxX = Math.max(maxX, aabb.maxX);
-            maxY = Math.max(maxY, aabb.maxY);
-            maxZ = Math.max(maxZ, aabb.maxZ);
-        }
-        return new float[]{(float)minX, (float)minY, (float)minZ, (float)maxX, (float)maxY, (float)maxZ};
-    }
-
-    @Nonnull
-    @Override
-    public List<AxisAlignedBB> getAdvancedColisionBounds() { return getAdvancedBounds(); }
-
-    @Nonnull
-    @Override
-    public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getAdvancedBounds(); }
-
-    @Override
-    public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull ArrayList<AxisAlignedBB> list) { return false; }
-
     private BlockPos posToMultiblock() {
         final int width = 3;
         final int height = 4;
@@ -148,13 +118,36 @@ public class TileEntitySteamTurbineSlave extends TileEntityITMultiblock<TileEnti
         return new BlockPos(x, y, z);
     }
 
-    private List<AxisAlignedBB> getAdvancedBounds() {
-        if (!formed) return ImmutableList.of(new AxisAlignedBB(0, 0, 0, 1, 1, 1));
+    private VoxelShape getVoxelShape() {
         BlockPos posInMultiblock = posToMultiblock();
         List<AxisAlignedBB> list = SteamTurbineShape.GETTER.getShape(posInMultiblock);
-        if (list.isEmpty()) return ImmutableList.of(new AxisAlignedBB(0, 0, 0, 1, 1, 1));
-        List<AxisAlignedBB> rotated = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) { rotated.add(rotateAABB(aabb, facing)); }
-        return rotated;
+        if (list.isEmpty()) return Shapes.empty();
+        VoxelShape vs = Shapes.empty();
+        for (AxisAlignedBB aabb : list) { vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR); }
+        vs = vs.optimize();
+        List<AxisAlignedBB> rotatedList = new ArrayList<>();
+        vs.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
+            AxisAlignedBB aabb = new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
+            rotatedList.add(rotateAABB(aabb, facing));
+        });
+        vs = Shapes.empty();
+        for (AxisAlignedBB aabb : rotatedList) { vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR); }
+        return vs.optimize();
+    }
+
+    @Nonnull
+    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
+
+    @Nonnull
+    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+
+    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
+
+    @Nonnull
+    @Override public float[] getBlockBounds() {
+        VoxelShape vs = getVoxelShape();
+        if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
+        AxisAlignedBB bb = vs.bounds();
+        return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
     }
 }

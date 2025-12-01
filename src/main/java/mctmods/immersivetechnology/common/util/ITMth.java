@@ -19,13 +19,7 @@ public class ITMth {
         return pMin;
     }
 
-    public static int clamp(int pValue, int pMin, int pMax) {
-        return Math.max(pMin, Math.min(pValue, pMax));
-    }
-
-    public static double clamp(double pValue, double pMin, double pMax) {
-        return Math.max(pMin, Math.min(pValue, pMax));
-    }
+    public static double clamp(double pValue, double pMin, double pMax) { return Math.max(pMin, Math.min(pValue, pMax)); }
 
     public static int floor(double pValue) {
         int i = (int)pValue;
@@ -46,10 +40,6 @@ public class ITMth {
     public static long lcm(int a, int b) {
         if (a == 0 || b == 0) return 0;
         return Math.abs((long) a * (long) b) / gcd(a, b);
-    }
-
-    public static boolean fuzzyEquals(double a, double b, double tolerance) {
-        return Math.abs(a - b) < tolerance;
     }
 
     public static int choose(EnumFacing.Axis axis, int x, int y, int z) {

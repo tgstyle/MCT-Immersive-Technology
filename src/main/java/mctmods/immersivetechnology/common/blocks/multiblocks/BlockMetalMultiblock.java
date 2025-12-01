@@ -1,11 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 
 import mctmods.immersivetechnology.common.blocks.BlockITMultiblock;
+import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.multiblocks.types.BlockType_MetalMultiblock;
@@ -72,8 +70,8 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
 
     @Override public @Nonnull AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
         TileEntity te = source.getTileEntity(pos);
-        if (te instanceof IBlockBounds) {
-            float[] bounds = ((IBlockBounds) te).getBlockBounds();
+        if (te instanceof ITBlockInterfaces.IBlockBounds) {
+            float[] bounds = ((ITBlockInterfaces.IBlockBounds) te).getBlockBounds();
             return new AxisAlignedBB(bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]);
         }
         return FULL_BLOCK_AABB;
@@ -83,8 +81,8 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
     @Override
     public @Nonnull AxisAlignedBB getSelectedBoundingBox(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof IAdvancedSelectionBounds) {
-            List<AxisAlignedBB> list = ((IAdvancedSelectionBounds) te).getAdvancedSelectionBounds();
+        if (te instanceof ITBlockInterfaces.IAdvancedSelectionBounds) {
+            List<AxisAlignedBB> list = ((ITBlockInterfaces.IAdvancedSelectionBounds) te).getAdvancedSelectionBounds();
             if (!list.isEmpty()) {
                 return new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
             }
@@ -95,8 +93,8 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
     @Override
     public RayTraceResult collisionRayTrace(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof IAdvancedSelectionBounds) {
-            List<AxisAlignedBB> list = ((IAdvancedSelectionBounds) te).getAdvancedSelectionBounds();
+        if (te instanceof ITBlockInterfaces.IAdvancedSelectionBounds) {
+            List<AxisAlignedBB> list = ((ITBlockInterfaces.IAdvancedSelectionBounds) te).getAdvancedSelectionBounds();
             RayTraceResult minMOP = null;
             double minDist = Double.POSITIVE_INFINITY;
             int subHit = 0;
@@ -122,8 +120,8 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
     public void addCollisionBoxToList(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
         TileEntity te = world.getTileEntity(pos);
         boolean hasAdvanced = false;
-        if (te instanceof IAdvancedCollisionBounds) {
-            List<AxisAlignedBB> list = ((IAdvancedCollisionBounds) te).getAdvancedColisionBounds();
+        if (te instanceof ITBlockInterfaces.IAdvancedCollisionBounds) {
+            List<AxisAlignedBB> list = ((ITBlockInterfaces.IAdvancedCollisionBounds) te).getAdvancedCollisionBounds();
             for (AxisAlignedBB aabb : list) {
                 AxisAlignedBB worldAABB = aabb.offset(pos);
                 if (worldAABB.intersects(entityBox)) {

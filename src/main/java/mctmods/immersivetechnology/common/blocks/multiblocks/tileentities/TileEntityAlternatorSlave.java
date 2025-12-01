@@ -4,19 +4,20 @@ import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxProvider;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.TileEntityITMultiblockPartAlternator;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AlternatorShape;
+
+import mctmods.immersivetechnology.common.util.shapes.*;
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -39,10 +40,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
 @SuppressWarnings("NullableProblems")
-public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntityAlternatorSlave, IMultiblockRecipe, TileEntityAlternatorMaster> implements IMechanicalEnergy, IFluxProvider, IIEInternalFluxHandler, IBlockBounds, IAdvancedCollisionBounds, IAdvancedSelectionBounds {
+public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntityAlternatorSlave, IMultiblockRecipe, TileEntityAlternatorMaster> implements IMechanicalEnergy, IFluxProvider, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntityAlternatorSlave() { super(TileEntityITMultiblockPartAlternator.instance, 0, false); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
@@ -73,7 +72,7 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
 
     @Override protected @Nullable IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return null; }
 
-    @Override public @Nonnull int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
+    @Override public @Nonnull int[] getRedstonePos() { return new int[0]; }
 
     @Override public @Nonnull int[] getOutputTanks() { return new int[0]; }
 
@@ -127,42 +126,40 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
         int y = pos / (length * width);
         int z = (pos % (length * width)) / width;
         int x = pos % width;
+        if (mirrored) x = width - 1 - x;
         return new BlockPos(x, y, z);
     }
 
-    @Nonnull
-    @Override public float[] getBlockBounds() {
-        if (!formed) return new float[]{0f,0f,0f,1f,1f,1f};
-        List<AxisAlignedBB> list = getAdvancedBounds();
-        if (list.isEmpty() || (list.size() == 1 && list.get(0).equals(new AxisAlignedBB(0,0,0,1,1,1)))) return new float[]{0f,0f,0f,1f,1f,1f};
-        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, minZ = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE, maxZ = Double.MIN_VALUE;
-        for (AxisAlignedBB aabb : list) {
-            minX = Math.min(minX, aabb.minX);
-            minY = Math.min(minY, aabb.minY);
-            minZ = Math.min(minZ, aabb.minZ);
-            maxX = Math.max(maxX, aabb.maxX);
-            maxY = Math.max(maxY, aabb.maxY);
-            maxZ = Math.max(maxZ, aabb.maxZ);
-        }
-        return new float[]{(float)minX, (float)minY, (float)minZ, (float)maxX, (float)maxY, (float)maxZ};
+    private VoxelShape getVoxelShape() {
+        BlockPos posInMultiblock = posToMultiblock();
+        List<AxisAlignedBB> list = AlternatorShape.GETTER.getShape(posInMultiblock);
+        if (list.isEmpty()) return Shapes.empty();
+        VoxelShape vs = Shapes.empty();
+        for (AxisAlignedBB aabb : list) { vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR); }
+        vs = vs.optimize();
+        List<AxisAlignedBB> rotatedList = new ArrayList<>();
+        vs.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
+            AxisAlignedBB aabb = new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
+            rotatedList.add(rotateAABB(aabb, facing));
+        });
+        vs = Shapes.empty();
+        for (AxisAlignedBB aabb : rotatedList) { vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR); }
+        return vs.optimize();
     }
 
     @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedColisionBounds() { return getAdvancedBounds(); }
+    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
 
     @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getAdvancedBounds(); }
+    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
 
-    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull ArrayList<AxisAlignedBB> list) { return false; }
+    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
 
-    private List<AxisAlignedBB> getAdvancedBounds() {
-        if (!formed) return ImmutableList.of(new AxisAlignedBB(0, 0, 0, 1, 1, 1));
-        BlockPos posInMultiblock = posToMultiblock();
-        List<AxisAlignedBB> list = AlternatorShape.GETTER.getShape(posInMultiblock);
-        if (list.isEmpty()) return ImmutableList.of(new AxisAlignedBB(0, 0, 0, 1, 1, 1));
-        List<AxisAlignedBB> rotated = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) { rotated.add(rotateAABB(aabb, facing)); }
-        return rotated;
+    @Nonnull
+    @Override public float[] getBlockBounds() {
+        VoxelShape vs = getVoxelShape();
+        if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
+        AxisAlignedBB bb = vs.bounds();
+        return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
     }
 }

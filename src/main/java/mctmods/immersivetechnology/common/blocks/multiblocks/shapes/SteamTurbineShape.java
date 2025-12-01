@@ -22,38 +22,75 @@ public class SteamTurbineShape extends GenericShape {
     public static final int HEIGHT = 4;
     public static final int LENGTH = 10;
     public static final BlockPos MASTER_GRID_POS;
+    private static final List<List<AxisAlignedBB>> SHAPES;
 
     static {
-        List<List<AxisAlignedBB>> rawShapes = new ArrayList<>(WIDTH * HEIGHT * LENGTH);
+        List<List<AxisAlignedBB>> rawShapes = new ArrayList<>();
+        for (int i = 0; i < WIDTH * HEIGHT * LENGTH; i++) rawShapes.add(new ArrayList<>());
         BlockPos masterPos = BlockPos.ORIGIN;
+        MultiblockJSONSchema data;
         try {
             InputStream is = SteamTurbineShape.class.getResourceAsStream("/assets/immersivetech/multiblocks/steam_turbine.json");
             if (is != null) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                MultiblockJSONSchema data = new Gson().fromJson(reader, MultiblockJSONSchema.class);
+                data = new Gson().fromJson(reader, MultiblockJSONSchema.class);
                 reader.close();
-                masterPos = new BlockPos(data.master.x, data.master.y, data.master.z);
-                for (JsonElement posElem : data.shapeAABB) {
-                    List<AxisAlignedBB> posShapes = new ArrayList<>();
-                    if (posElem.isJsonNull() || !posElem.isJsonArray()) { rawShapes.add(posShapes); continue; }
-                    JsonArray posArray = posElem.getAsJsonArray();
-                    for (JsonElement aabbElem : posArray) {
-                        JsonArray aabbArray = aabbElem.getAsJsonArray();
-                        double[] vals = new double[6];
-                        for (int i = 0; i < 6; i++) { vals[i] = aabbArray.get(i).getAsDouble(); }
-                        posShapes.add(new AxisAlignedBB(vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]));
+                if (data != null) {
+                    if (data.shapeAABB != null && data.shapeAABB.isJsonArray()) {
+                        JsonArray shapeArray = data.shapeAABB.getAsJsonArray();
+                        int idx = 0;
+                        for (JsonElement posElem : shapeArray) {
+                            if (idx >= rawShapes.size()) break;
+                            List<AxisAlignedBB> posShapes = rawShapes.get(idx);
+                            if (posElem.isJsonNull() || !posElem.isJsonArray()) { idx++; continue; }
+                            JsonArray posArray = posElem.getAsJsonArray();
+                            for (JsonElement aabbElem : posArray) {
+                                if (!aabbElem.isJsonArray()) continue;
+                                JsonArray aabbArray = aabbElem.getAsJsonArray();
+                                if (aabbArray.size() != 6) continue;
+                                double[] vals = {0,0,0,0,0,0};
+                                boolean valid = true;
+                                for (int j = 0; j < 6; j++) {
+                                    try { vals[j] = aabbArray.get(j).getAsDouble(); } catch (Exception e) { valid = false; break; }
+                                }
+                                if (valid) posShapes.add(new AxisAlignedBB(vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]));
+                            }
+                            idx++;
+                        }
+                    } else if (data.structure != null) {
+                        int total = WIDTH * HEIGHT * LENGTH;
+                        for (int i = 0; i < total; i++) {
+                            int y = i / (LENGTH * WIDTH);
+                            int rem = i % (LENGTH * WIDTH);
+                            int z = rem / WIDTH;
+                            int x = rem % WIDTH;
+                            int strIdx = y * LENGTH + z;
+                            String line = data.structure[strIdx];
+                            char c = (line != null && x < line.length()) ? line.charAt(x) : ' ';
+                            List<AxisAlignedBB> posShapes = rawShapes.get(i);
+                            if (c != ' ' && c != '~' && c != '.') posShapes.add(new AxisAlignedBB(0, 0, 0, 1, 1, 1));
+                        }
                     }
-                    rawShapes.add(posShapes);
+                    masterPos = new BlockPos(data.master.x, data.master.y, data.master.z);
                 }
-                ITLogger.info("AlternatorShape loaded: SHAPES size=" + rawShapes.size() + ", master pos=" + masterPos);
+                ITLogger.info("SteamTurbineShape loaded: SHAPES size=" + rawShapes.size() + ", master pos=" + masterPos);
             }
-        } catch (Exception ignored) { }
-        GenericShape.SHAPES = rawShapes;
+        } catch (Exception e) {
+            ITLogger.error("Failed to load SteamTurbineShape: " + e.getMessage(), e);
+        }
+        SHAPES = rawShapes;
         MASTER_GRID_POS = masterPos;
-        if(FMLCommonHandler.instance().getSide().isClient()) ITLogger.info("AlternatorShape loaded on client: SHAPES size=" + rawShapes.size());
+        if(FMLCommonHandler.instance().getSide().isClient()) ITLogger.info("SteamTurbineShape loaded on client: SHAPES size=" + rawShapes.size());
     }
 
     public SteamTurbineShape() { super(WIDTH, HEIGHT, LENGTH, new int[]{1, 2, 0}); }
 
-    @Override public List<AxisAlignedBB> getShape(BlockPos posInMultiblock) { return super.getShape(posInMultiblock); }
+    @Override public List<AxisAlignedBB> getShape(BlockPos posInMultiblock) {
+        int x = posInMultiblock.getX();
+        int y = posInMultiblock.getY();
+        int z = posInMultiblock.getZ();
+        int index = x + z * WIDTH + y * WIDTH * LENGTH;
+        if (index < 0 || index >= SHAPES.size()) return new ArrayList<>();
+        return SHAPES.get(index);
+    }
 }

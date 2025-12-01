@@ -17,6 +17,10 @@ public abstract class DiscreteVoxelShape {
         } else { throw new IllegalArgumentException("Need all positive sizes: x: " + xSize + ", y: " + ySize + ", z: " + zSize); }
     }
 
+    public boolean isFullWide(AxisCycle axisCycle, int x, int y, int z) {
+        return this.isFullWide(axisCycle.cycle(x, y, z, EnumFacing.Axis.X), axisCycle.cycle(x, y, z, EnumFacing.Axis.Y), axisCycle.cycle(x, y, z, EnumFacing.Axis.Z));
+    }
+
     public boolean isFullWide(int x, int y, int z) { return x >= 0 && y >= 0 && z >= 0 && x < this.xSize && y < this.ySize && z < this.zSize && this.isFull(x, y, z); }
 
     public boolean isFull(AxisCycle rotation, int x, int y, int z) { return this.isFull(rotation.cycle(x, y, z, EnumFacing.Axis.X), rotation.cycle(x, y, z, EnumFacing.Axis.Y), rotation.cycle(x, y, z, EnumFacing.Axis.Z)); }
@@ -67,6 +71,51 @@ public abstract class DiscreteVoxelShape {
     public int getYSize() { return this.getSize(EnumFacing.Axis.Y); }
 
     public int getZSize() { return this.getSize(EnumFacing.Axis.Z); }
+
+    public void forAllEdges(IntLineConsumer consumer, boolean combine) {
+        this.forAllAxisEdges(consumer, AxisCycle.NONE, combine);
+        this.forAllAxisEdges(consumer, AxisCycle.FORWARD, combine);
+        this.forAllAxisEdges(consumer, AxisCycle.BACKWARD, combine);
+    }
+
+    private void forAllAxisEdges(IntLineConsumer consumer, AxisCycle axisCycle, boolean combine) {
+        AxisCycle inverseCycle = axisCycle.inverse();
+        int xMax = this.getSize(inverseCycle.cycle(EnumFacing.Axis.X));
+        int yMax = this.getSize(inverseCycle.cycle(EnumFacing.Axis.Y));
+        int zMax = this.getSize(inverseCycle.cycle(EnumFacing.Axis.Z));
+
+        for (int x = 0; x <= xMax; ++x) {
+            for (int y = 0; y <= yMax; ++y) {
+                int zStart = -1;
+                for (int z = 0; z <= zMax; ++z) {
+                    int fullCount = 0;
+                    int parity = 0;
+
+                    for (int dx = 0; dx <= 1; ++dx) {
+                        for (int dy = 0; dy <= 1; ++dy) {
+                            if (this.isFullWide(inverseCycle, x + dx - 1, y + dy - 1, z)) {
+                                ++fullCount;
+                                parity ^= dx ^ dy;
+                            }
+                        }
+                    }
+
+                    if (fullCount == 1 || fullCount == 3 || fullCount == 2 && (parity & 1) == 0) {
+                        if (combine) {
+                            if (zStart == -1) { zStart = z; }
+                        } else {
+                            consumer.consume(inverseCycle.cycle(x, y, z, EnumFacing.Axis.X), inverseCycle.cycle(x, y, z, EnumFacing.Axis.Y), inverseCycle.cycle(x, y, z, EnumFacing.Axis.Z),
+                                    inverseCycle.cycle(x, y, z + 1, EnumFacing.Axis.X), inverseCycle.cycle(x, y, z + 1, EnumFacing.Axis.Y), inverseCycle.cycle(x, y, z + 1, EnumFacing.Axis.Z));
+                        }
+                    } else if (zStart != -1) {
+                        consumer.consume(inverseCycle.cycle(x, y, zStart, EnumFacing.Axis.X), inverseCycle.cycle(x, y, zStart, EnumFacing.Axis.Y), inverseCycle.cycle(x, y, zStart, EnumFacing.Axis.Z),
+                                inverseCycle.cycle(x, y, z, EnumFacing.Axis.X), inverseCycle.cycle(x, y, z, EnumFacing.Axis.Y), inverseCycle.cycle(x, y, z, EnumFacing.Axis.Z));
+                        zStart = -1;
+                    }
+                }
+            }
+        }
+    }
 
     public void forAllBoxes(IntLineConsumer consumer, boolean combine) { BitSetDiscreteVoxelShape.forAllBoxes(this, consumer, combine); }
 
