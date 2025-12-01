@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultib
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.client.ClientUtils;
+
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityAlternatorSlave;
 import mctmods.immersivetechnology.common.blocks.multiblocks.types.BlockType_MetalMultiblock;
@@ -9,6 +10,7 @@ import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblockPar
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AlternatorShape;
 import mctmods.immersivetechnology.common.util.multiblock.*;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.item.Item;

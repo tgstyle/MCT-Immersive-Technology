@@ -24,7 +24,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fluids.FluidStack;
@@ -60,11 +59,10 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     public BoilerRecipe.BoilerFuelRecipe lastFuel;
     public BoilerRecipe lastRecipe;
 
-    private PoICache fuelInput, waterInput, steamOutput;
+    private PoICache fuelInput, waterInput, steamOutput, redstone;
     private BlockPos steamOutputFront;
 
-    @Override
-    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
@@ -75,8 +73,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         if (!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
     }
 
-    @Override
-    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
@@ -146,11 +143,9 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     }
 
     @SideOnly(Side.CLIENT)
-    @Override
-    public void onChunkUnload() { ITSoundHandler.StopSound(getPos()); super.onChunkUnload(); }
+    @Override public void onChunkUnload() { ITSoundHandler.StopSound(getPos()); super.onChunkUnload(); }
 
-    @Override
-    public void disassemble() {
+    @Override public void disassemble() {
         BlockPos center = getPos();
         ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
         super.disassemble();
@@ -163,8 +158,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         ImmersiveTechnology.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
     }
 
-    @Override
-    public void receiveMessageFromServer(@Nonnull NBTTagCompound message) { heatLevel = message.getDouble("heat"); }
+    @Override public void receiveMessageFromServer(@Nonnull NBTTagCompound message) { heatLevel = message.getDouble("heat"); }
 
     public void efficientMarkDirty() { world.getChunk(this.getPos()).markDirty(); }
 
@@ -253,8 +247,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         return false;
     }
 
-    @Override
-    public void update() {
+    @Override public void update() {
         super.update();
         if (!formed || world.isRemote) {
             if (world.isRemote) handleSounds();
@@ -275,46 +268,16 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         }
     }
 
-    @Override
-    public void TankContentsChanged() { this.markContainingBlockForUpdate(null); }
+    @Override public void TankContentsChanged() { this.markContainingBlockForUpdate(null); }
 
-    @Override
-    public boolean isDummy() { return false; }
+    @Override public boolean isDummy() { return false; }
 
-    @Override
-    public TileEntityBoilerMaster master() {
+    @Override public TileEntityBoilerMaster master() {
         master = this;
         return this;
     }
 
-    @Override
-    public int getComparatorInputOverride() { return (int)(15 * (heatLevel / workingHeatLevel)); }
-
-    private AxisAlignedBB renderBoundingBox = null;
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public @Nonnull AxisAlignedBB getRenderBoundingBox() {
-        if (renderBoundingBox == null) {
-            int h = TileEntityITMultiblockPartBoiler.instance.height;
-            int l = TileEntityITMultiblockPartBoiler.instance.length;
-            int w = TileEntityITMultiblockPartBoiler.instance.width;
-            int total = h * l * w;
-            double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, minZ = Double.MAX_VALUE;
-            double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE, maxZ = Double.MIN_VALUE;
-            for (int pos = 0; pos < total; pos++) {
-                BlockPos bp = getBlockPosForPos(pos);
-                minX = Math.min(minX, bp.getX());
-                minY = Math.min(minY, bp.getY());
-                minZ = Math.min(minZ, bp.getZ());
-                maxX = Math.max(maxX, bp.getX());
-                maxY = Math.max(maxY, bp.getY());
-                maxZ = Math.max(maxZ, bp.getZ());
-            }
-            renderBoundingBox = new AxisAlignedBB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1);
-        }
-        return renderBoundingBox;
-    }
+    @Override public int getComparatorInputOverride() { return (int)(15 * (heatLevel / workingHeatLevel)); }
 
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartBoiler.instance.pointsOfInterest) {
@@ -329,6 +292,9 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
                     steamOutput = new PoICache(facing, poi, mirrored);
                     steamOutputFront = getBlockPosForPos(steamOutput.position).offset(steamOutput.facing);
                     break;
+                case "redstone":
+                    redstone = new PoICache(facing, poi, mirrored);
+                    break;
             }
         }
         if (!world.isRemote) notifyIONeighbors();
@@ -338,12 +304,12 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         notifyNeighbor(getBlockPosForPos(fuelInput.position));
         notifyNeighbor(getBlockPosForPos(waterInput.position));
         notifyNeighbor(getBlockPosForPos(steamOutput.position));
+        notifyNeighbor(getBlockPosForPos(redstone.position));
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
-    @Override
-    protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if (fuelInput == null) InitializePoIs();
         if (fuelInput.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
         if (waterInput.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
@@ -351,8 +317,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override
-    protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) {
         if (fuelInput.isPoI(side, position) && iTank == 0) {
             if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
             if (tanks[0].getFluid() == null) return BoilerRecipe.findFuel(resource) != null;
@@ -365,6 +330,10 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         return false;
     }
 
-    @Override
-    protected boolean canDrainTankFrom(int iTank, EnumFacing side, int position) { return steamOutput.isPoI(side, position) && iTank == 2; }
+    @Override protected boolean canDrainTankFrom(int iTank, EnumFacing side, int position) { return steamOutput.isPoI(side, position) && iTank == 2; }
+
+    @Override public @Nonnull int[] getRedstonePos() {
+        if (redstone == null) InitializePoIs();
+        return new int[] {redstone.position};
+    }
 }

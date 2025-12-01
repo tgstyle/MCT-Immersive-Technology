@@ -3,9 +3,11 @@ package mctmods.immersivetechnology.common.blocks.multiblocks.shapes;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.helper.GenericShape;
 import mctmods.immersivetechnology.common.util.multiblock.MultiblockJSONSchema;
+
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;

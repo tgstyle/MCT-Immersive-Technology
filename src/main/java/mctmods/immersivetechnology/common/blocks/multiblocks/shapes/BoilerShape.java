@@ -18,8 +18,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SteamTurbineShape extends GenericShape {
-    public static SteamTurbineShape GETTER = new SteamTurbineShape();
+public class BoilerShape extends GenericShape {
+    public static final BoilerShape GETTER = new BoilerShape();
     public static int WIDTH, HEIGHT, LENGTH;
     public static BlockPos MASTER_GRID_POS;
     public static MultiblockJSONSchema DATA;
@@ -30,7 +30,7 @@ public class SteamTurbineShape extends GenericShape {
         BlockPos masterPos = BlockPos.ORIGIN;
         MultiblockJSONSchema data;
         try {
-            InputStream is = SteamTurbineShape.class.getResourceAsStream("/assets/immersivetech/multiblocks/steam_turbine.json");
+            InputStream is = BoilerShape.class.getResourceAsStream("/assets/immersivetech/multiblocks/boiler.json");
             if (is != null) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
                 data = new Gson().fromJson(reader, MultiblockJSONSchema.class);
@@ -65,17 +65,17 @@ public class SteamTurbineShape extends GenericShape {
                     }
                     masterPos = new BlockPos(data.master.x, data.master.y, data.master.z);
                 }
-                ITLogger.info("SteamTurbineShape loaded: SHAPES size=" + rawShapes.size() + ", master pos=" + masterPos);
+                ITLogger.info("BoilerShape loaded: SHAPES size=" + rawShapes.size() + ", master pos=" + masterPos);
             }
         } catch (Exception e) {
-            ITLogger.error("Failed to load SteamTurbineShape: " + e.getMessage(), e);
+            ITLogger.error("Failed to load BoilerShape: " + e.getMessage(), e);
         }
         SHAPES = rawShapes;
         MASTER_GRID_POS = masterPos;
-        if(FMLCommonHandler.instance().getSide().isClient()) ITLogger.info("SteamTurbineShape loaded on client: SHAPES size=" + rawShapes.size());
+        if(FMLCommonHandler.instance().getSide().isClient()) ITLogger.info("BoilerShape loaded on client: SHAPES size=" + rawShapes.size());
     }
 
-    public SteamTurbineShape() { super(WIDTH, HEIGHT, LENGTH, new int[]{1, 2, 0}); }
+    public BoilerShape() { super(WIDTH, HEIGHT, LENGTH, new int[]{0, 1, 0}); }
 
     @Override public List<AxisAlignedBB> getShape(BlockPos posInMultiblock) {
         int x = posInMultiblock.getX();
