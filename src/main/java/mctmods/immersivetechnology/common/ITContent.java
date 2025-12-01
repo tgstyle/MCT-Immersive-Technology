@@ -15,6 +15,7 @@ import mctmods.immersivetechnology.common.blocks.metal.*;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.multiblocks.*;
 import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.*;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.*;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneDecoration;
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneDecoration;
 import mctmods.immersivetechnology.common.blocks.wooden.BlockWoodenCrate;

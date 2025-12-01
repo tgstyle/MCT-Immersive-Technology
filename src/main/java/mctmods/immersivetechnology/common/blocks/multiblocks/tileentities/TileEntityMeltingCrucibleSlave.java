@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
-import mctmods.immersivetechnology.common.blocks.multiblocks.TileEntityITMultiblockPartMeltingCrucible;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartMeltingCrucible;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

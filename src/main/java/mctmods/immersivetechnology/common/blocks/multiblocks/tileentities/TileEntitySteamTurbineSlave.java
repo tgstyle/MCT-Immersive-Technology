@@ -7,7 +7,7 @@ import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
-import mctmods.immersivetechnology.common.blocks.multiblocks.TileEntityITMultiblockPartSteamTurbine;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteamTurbine;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SteamTurbineShape;
 

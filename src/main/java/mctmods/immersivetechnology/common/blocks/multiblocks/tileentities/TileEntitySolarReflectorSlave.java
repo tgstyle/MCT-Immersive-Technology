@@ -6,7 +6,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
-import mctmods.immersivetechnology.common.blocks.multiblocks.TileEntityITMultiblockPartSolarReflector;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarReflector;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

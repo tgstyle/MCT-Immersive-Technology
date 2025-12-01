@@ -8,7 +8,7 @@ import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
-import mctmods.immersivetechnology.common.blocks.multiblocks.TileEntityITMultiblockPartBoiler;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoiler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

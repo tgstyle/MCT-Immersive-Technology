@@ -1,12 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
-import mctmods.immersivetechnology.common.blocks.multiblocks.TileEntityITMultiblockPartSolarMelter;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

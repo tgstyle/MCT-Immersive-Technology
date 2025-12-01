@@ -9,7 +9,7 @@ import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.*;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
-import mctmods.immersivetechnology.common.blocks.multiblocks.TileEntityITMultiblockPartGasTurbine;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartGasTurbine;
 
 import mctmods.immersivetechnology.common.util.shapes.VoxelShape;
 import net.minecraft.item.ItemStack;

@@ -29,8 +29,8 @@ import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEnt
 import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Connectors;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalBarrel;
-import mctmods.immersivetechnology.common.blocks.multiblocks.*;
 import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.*;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.*;
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidValve;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityLoadController;

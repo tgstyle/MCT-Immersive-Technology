@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.blocks.multiblocks.tileentities;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.blocks.multiblocks.TileEntityITMultiblockPartSteelSheetmetalTank;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteelSheetmetalTank;
 import mctmods.immersivetechnology.common.util.ITIPipe;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
