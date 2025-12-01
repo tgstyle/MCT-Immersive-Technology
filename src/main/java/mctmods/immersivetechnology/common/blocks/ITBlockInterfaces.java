@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;

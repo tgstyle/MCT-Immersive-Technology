@@ -1,8 +1,8 @@
 # Made in Blockbench 4.12.6
-newmtl tower
+newmtl m_f697c660-651c-3627-f30d-b324dfa25e94
 map_Kd immersivetech:blocks/metal_multiblock_cooling_tower_top
-newmtl base
+newmtl m_4274f88e-010f-c548-57df-b27e3387830b
 map_Kd immersivetech:blocks/metal_multiblock_cooling_tower_bottom
-newmtl connectors
+newmtl m_9860b512-efa9-331c-182d-cc9fd5f4c810
 map_Kd immersivetech:blocks/metal_multiblock_cooling_tower_connections
 newmtl none
