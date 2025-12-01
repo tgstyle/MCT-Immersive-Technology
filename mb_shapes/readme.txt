@@ -86,5 +86,8 @@ Script arguments:
     # Copy AABB option
     --copy-aabb <str> (append)	Default: []	Description: Copy AABBs: "from_bx,from_by,from_bz to_bx,to_by,to_bz" (use quotes if needed). Applied as the final step after AABB extraction.
 
+    # Minecraft version option
+    --mc-version {1.12.2,default}	Default: 'default'	Description: Minecraft version for output adjustment. The script runs by default with the northeast corner 0,0,0. For 1.12.2, it builds the shape from the northwest corner 0,0,0 by flipping the Z-axis after post-processing. Therefore, post-processing values (e.g., block coordinates in --rpp, --solid-blocks, etc.) need to account for this flip when entered for 1.12.2 mode. Adjust coordinates accordingly based on the model's original orientation.
+
 	Example:
 		bb_shape.py ..\Boiler\single\boiler.bbmodel ..\Boiler\boiler.bbmodel --thresh "4,10,4" --gap-passes 4 --no-supplementary
