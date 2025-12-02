@@ -299,7 +299,11 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                     off_x = (b[0] - min_bx_r) * res
                     off_y = (b[1] - min_by_r) * res
                     off_z = (b[2] - min_bz_r) * res
-                    block_occupied[b] = sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res].copy()
+                    slice_occ = sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res]
+                    if slice_occ.sum() > 0:
+                        block_occupied[b] = slice_occ.copy()
+                    elif b in block_occupied:
+                        del block_occupied[b]
         elif step == 'global':
             # Pre-save state for regions before global processing
             pre_region_blocks = {}
@@ -314,12 +318,28 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                 occupied_np_copy = block_occupied[ex_b].copy()
                 occupied_np_copy = process_post(occupied_np_copy, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, ex_thresholds, void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order)
                 excluded_processed[ex_b] = occupied_np_copy
-            min_bx = min(bx for bx, _, _ in block_occupied) if block_occupied else 0
-            min_by = min(by for _, by, _ in block_occupied) if block_occupied else 0
-            min_bz = min(bz for _, _, bz in block_occupied) if block_occupied else 0
-            max_bx = max(bx for bx, _, _ in block_occupied) if block_occupied else 0
-            max_by = max(by for _, by, _ in block_occupied) if block_occupied else 0
-            max_bz = max(bz for _, _, bz in block_occupied) if block_occupied else 0
+            # Compute overall bounds including regions and excludes
+            all_bxs = [bx for bx, _, _ in block_occupied] if block_occupied else []
+            all_bys = [by for _, by, _ in block_occupied] if block_occupied else []
+            all_bzs = [bz for _, _, bz in block_occupied] if block_occupied else []
+            for region in regions:
+                for bx, by, bz in region['blocks']:
+                    all_bxs.append(bx)
+                    all_bys.append(by)
+                    all_bzs.append(bz)
+            for bx, by, bz in exclude_set:
+                all_bxs.append(bx)
+                all_bys.append(by)
+                all_bzs.append(bz)
+            if all_bxs:
+                min_bx = min(all_bxs)
+                max_bx = max(all_bxs)
+                min_by = min(all_bys)
+                max_by = max(all_bys)
+                min_bz = min(all_bzs)
+                max_bz = max(all_bzs)
+            else:
+                min_bx = max_bx = min_by = max_by = min_bz = max_bz = 0
             num_bx = max_bx - min_bx + 1
             num_by = max_by - min_by + 1
             num_bz = max_bz - min_bz + 1
@@ -332,20 +352,18 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                 full_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = block_occupied[b]
             is_excluded_full = np.zeros_like(full_occupied, dtype=bool)
             for ex_b in exclude_set:
-                if ex_b in block_occupied:
-                    bx, by, bz = ex_b
+                bx, by, bz = ex_b
+                off_x = (bx - min_bx) * res
+                off_y = (by - min_by) * res
+                off_z = (bz - min_bz) * res
+                is_excluded_full[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = True
+            for region in regions:
+                for b in region['blocks']:
+                    bx, by, bz = b
                     off_x = (bx - min_bx) * res
                     off_y = (by - min_by) * res
                     off_z = (bz - min_bz) * res
                     is_excluded_full[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = True
-            for region in regions:
-                for b in region['blocks']:
-                    if b in block_occupied:
-                        bx, by, bz = b
-                        off_x = (bx - min_bx) * res
-                        off_y = (by - min_by) * res
-                        off_z = (bz - min_bz) * res
-                        is_excluded_full[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = True
             full_occupied = process_post(full_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, is_excluded=is_excluded_full, max_intrude_dict=max_intrude_dict, ex_thresholds=ex_thresholds, sub_order=sub_order)
             for ex_b in excluded_processed:
                 bx, by, bz = ex_b
@@ -377,10 +395,11 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                     off_x = (b[0] - min_bx_r) * res
                     off_y = (b[1] - min_by_r) * res
                     off_z = (b[2] - min_bz_r) * res
+                    slice_occ = sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res]
                     full_x_start = (b[0] - min_bx) * res
                     full_y_start = (b[1] - min_by) * res
                     full_z_start = (b[2] - min_bz) * res
-                    full_occupied[full_x_start:full_x_start + res, full_y_start:full_y_start + res, full_z_start:full_z_start + res] = sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res]
+                    full_occupied[full_x_start:full_x_start + res, full_y_start:full_y_start + res, full_z_start:full_z_start + res] = slice_occ
             block_occupied = {}
             for bx in range(num_bx):
                 for by in range(num_by):
