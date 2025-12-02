@@ -17,8 +17,24 @@ try:
 except ImportError:
     torch_directml = None
 
+def center_in_block(occupied_np, res=16):
+    if occupied_np.sum() == 0 or occupied_np.all():
+        return occupied_np
+    coords = np.nonzero(occupied_np)
+    if len(coords[0]) == 0:
+        return occupied_np
+    mins = [np.min(c) for c in coords]
+    maxs = [np.max(c) for c in coords]
+    widths = [maxs[d] - mins[d] + 1 for d in range(3)]
+    pads = [(res - widths[d]) // 2 for d in range(3)]
+    new_occupied = np.zeros_like(occupied_np)
+    old_slices = tuple(slice(mins[d], maxs[d] + 1) for d in range(3))
+    new_slices = tuple(slice(pads[d], pads[d] + widths[d]) for d in range(3))
+    new_occupied[new_slices] = occupied_np[old_slices]
+    return new_occupied
+
 # Main model parsing function
-def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=set(), empty_set=set(), fill_all_voids=False, exclude_set=set(), axis_order=[0,2,1], mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=[], return_voxels=False, pp_order='per-block,regional,global,per-block-gaps,protrusions', sub_order='remove-small,fill-holes,fill-voids,fill-gaps'):
+def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=set(), empty_set=set(), fill_all_voids=False, exclude_set=set(), axis_order=[0,2,1], mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=[], return_voxels=False, pp_order='per-block,regional,global,per-block-gaps,protrusions', sub_order='remove-small,fill-holes,fill-voids,fill-gaps', do_center=False):
     # Parse thresholds and settings
     thresh_parts = thresh_str.split(',')
     x_threshold = parse_thresh_val(thresh_parts[0], 2)
@@ -189,6 +205,9 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
         ex_thresholds = (ex_x_threshold, ex_y_threshold, ex_z_threshold)
         max_intrude_dict = {0: max_intrude_x, 1: max_intrude_y, 2: max_intrude_z}
         block_occupied = apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, small_void_threshold, small_occupied_threshold, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_order, pp_order_list, subs=[], do_global=global_postprocess, res=16)
+    if do_center:
+        for b in list(block_occupied):
+            block_occupied[b] = center_in_block(block_occupied[b])
     if return_voxels:
         overall_voxels = []
         for bx in range(num_bx):
