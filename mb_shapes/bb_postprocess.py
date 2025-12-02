@@ -266,7 +266,10 @@ def process_post(np_arr, no_holes, no_gaps, no_small_voids, gap_passes, axis_ord
             np_arr = fill_gaps(np_arr, gap_passes, axis_order, thresholds, is_excluded, max_intrude_dict, ex_thresholds)
     return np_arr
 
-def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_order, pp_order_list, subs, res=16):
+def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_order, pp_order_list, subs, do_global=True, res=16):
+    # Dynamically adjust pp_order_list to avoid double regional processing when global is enabled
+    if do_global:
+        pp_order_list = [s for s in pp_order_list if s.strip() != 'regional']
     for step in pp_order_list:
         if step == 'per-block':
             for b in list(block_occupied):
@@ -298,6 +301,12 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                     off_z = (b[2] - min_bz_r) * res
                     block_occupied[b] = sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res].copy()
         elif step == 'global':
+            # Pre-save state for regions before global processing
+            pre_region_blocks = {}
+            for region in regions:
+                for b in region['blocks']:
+                    if b in block_occupied:
+                        pre_region_blocks[b] = block_occupied[b].copy()
             excluded_processed = {}
             for ex_b in exclude_set:
                 if ex_b not in block_occupied:
@@ -344,6 +353,7 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                 off_y = (by - min_by) * res
                 off_z = (bz - min_bz) * res
                 full_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = excluded_processed[ex_b]
+            # Now handle regions: restore pre-state and re-apply regional processing
             for region in regions:
                 reg_blocks = region['blocks']
                 if not reg_blocks:
@@ -357,17 +367,20 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                 sub_shape = ((max_bx_r - min_bx_r + 1) * res, (max_by_r - min_by_r + 1) * res, (max_bz_r - min_bz_r + 1) * res)
                 sub_occupied = np.zeros(sub_shape, dtype=bool)
                 for b in reg_blocks:
-                    bx, by, bz = b
-                    off_x = (b[0] - min_bx_r) * res
-                    off_y = (b[1] - min_by_r) * res
-                    off_z = (b[2] - min_bz_r) * res
-                    sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = full_occupied[(b[0] - min_bx) * res:(b[0] - min_bx + 1) * res, (b[1] - min_by) * res:(b[1] - min_by + 1) * res, (b[2] - min_bz) * res:(b[2] - min_bz + 1) * res]
+                    if b in pre_region_blocks:
+                        off_x = (b[0] - min_bx_r) * res
+                        off_y = (b[1] - min_by_r) * res
+                        off_z = (b[2] - min_bz_r) * res
+                        sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = pre_region_blocks[b]
                 sub_occupied = process_post(sub_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, region['thresholds'], void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order)
                 for b in reg_blocks:
                     off_x = (b[0] - min_bx_r) * res
                     off_y = (b[1] - min_by_r) * res
                     off_z = (b[2] - min_bz_r) * res
-                    full_occupied[(b[0] - min_bx) * res:(b[0] - min_bx + 1) * res, (b[1] - min_by) * res:(b[1] - min_by + 1) * res, (b[2] - min_bz) * res:(b[2] - min_bz + 1) * res] = sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res]
+                    full_x_start = (b[0] - min_bx) * res
+                    full_y_start = (b[1] - min_by) * res
+                    full_z_start = (b[2] - min_bz) * res
+                    full_occupied[full_x_start:full_x_start + res, full_y_start:full_y_start + res, full_z_start:full_z_start + res] = sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res]
             block_occupied = {}
             for bx in range(num_bx):
                 for by in range(num_by):

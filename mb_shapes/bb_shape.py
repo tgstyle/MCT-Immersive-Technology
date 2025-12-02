@@ -291,6 +291,8 @@ def main():
     block_occupied = overall_dict
     if not args.no_postprocess:
         pp_order_list = [s.strip() for s in args.pp_order.split(',')]
+        if not global_postprocess:
+            pp_order_list = [s for s in pp_order_list if s != 'global']
         thresholds = (x_threshold, y_threshold, z_threshold)
         ex_thresholds = (ex_x_threshold, ex_y_threshold, ex_z_threshold)
         max_intrude_dict = {0: max_intrude_x, 1: max_intrude_y, 2: max_intrude_z}
@@ -302,7 +304,7 @@ def main():
         void_thresh = args.void_thresh
         occ_thresh = args.occ_thresh
         sub_order = args.sub_pp_order
-        block_occupied = apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_order, pp_order_list, subs, res=16)
+        block_occupied = apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_order, pp_order_list, subs, do_global=global_postprocess, res=16)
     if args.mc_version == '1.12.2':
         max_bz = max(bz for bx,by,bz in block_occupied) if block_occupied else 0
         new_dict = {}

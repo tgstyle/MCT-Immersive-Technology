@@ -183,10 +183,12 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
     block_occupied = {(bx, by, bz): occupied_np for bx, by, bz, occupied_np in raw_results}
     if not no_postprocess:
         pp_order_list = [s.strip() for s in pp_order.split(',')]
+        if not global_postprocess:
+            pp_order_list = [s for s in pp_order_list if s.strip() != 'global']
         thresholds = (x_threshold, y_threshold, z_threshold)
         ex_thresholds = (ex_x_threshold, ex_y_threshold, ex_z_threshold)
         max_intrude_dict = {0: max_intrude_x, 1: max_intrude_y, 2: max_intrude_z}
-        block_occupied = apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, small_void_threshold, small_occupied_threshold, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_order, pp_order_list, subs=[], res=16)
+        block_occupied = apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, small_void_threshold, small_occupied_threshold, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_order, pp_order_list, subs=[], do_global=global_postprocess, res=16)
     if return_voxels:
         overall_voxels = []
         for bx in range(num_bx):
