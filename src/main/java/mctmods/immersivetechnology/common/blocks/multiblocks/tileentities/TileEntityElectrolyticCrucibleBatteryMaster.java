@@ -59,22 +59,10 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     private boolean notify;
 
     @Override
-    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
-        super.readCustomNBT(nbt, descPacket);
-        tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
-        tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
-        tanks[2].readFromNBT(nbt.getCompoundTag("tank2"));
-        tanks[3].readFromNBT(nbt.getCompoundTag("tank3"));
-    }
+    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); tanks[0].readFromNBT(nbt.getCompoundTag("tank0")); tanks[1].readFromNBT(nbt.getCompoundTag("tank1")); tanks[2].readFromNBT(nbt.getCompoundTag("tank2")); tanks[3].readFromNBT(nbt.getCompoundTag("tank3")); }
 
     @Override
-    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
-        super.writeCustomNBT(nbt, descPacket);
-        nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
-        nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
-        nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound()));
-        nbt.setTag("tank3", tanks[3].writeToNBT(new NBTTagCompound()));
-    }
+    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound())); nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound())); nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound())); nbt.setTag("tank3", tanks[3].writeToNBT(new NBTTagCompound())); }
 
     public void requestUpdate() {
         ByteBuf buffer = Unpooled.copyBoolean(true);

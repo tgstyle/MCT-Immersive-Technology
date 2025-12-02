@@ -1,5 +1,4 @@
-# Blender MTL File: 'electrolytic_crucible_battery.blend'
-# Material Count: 1
-
-newmtl electrolytic_cell_battery
+# Made in Blockbench 5.0.4
+newmtl m_f4233543-45c1-7eb4-442c-0fd84b72c1e4
 map_Kd immersivetech:blocks/metal_multiblock_electrolytic_crucible_battery
+newmtl none
