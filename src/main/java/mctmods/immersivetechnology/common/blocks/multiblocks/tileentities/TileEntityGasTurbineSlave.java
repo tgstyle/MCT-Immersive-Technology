@@ -8,10 +8,13 @@ import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.*;
-import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.GasTurbineShape;
 import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartGasTurbine;
+import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
+import mctmods.immersivetechnology.common.util.shapes.*;
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
-import mctmods.immersivetechnology.common.util.shapes.VoxelShape;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -19,6 +22,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -33,11 +37,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IMechanicalEnergy, IIEInventory {
+public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IMechanicalEnergy, IIEInventory, IBlockBounds, IAdvancedCollisionBounds, IAdvancedSelectionBounds {
     private static final float outputtorque = Multiblocks.gasTurbine.gasTurbine_torque;
     public TileEntityGasTurbineSlave() { super(TileEntityITMultiblockPartGasTurbine.instance, 0, true); }
     private int loadGrace = 0;
@@ -233,44 +236,40 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
         }
     }
 
-    public BlockPos posToMultiblock() {
+    private BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartGasTurbine.instance.width;
         int length = TileEntityITMultiblockPartGasTurbine.instance.length;
-        int h = pos / (width * length);
-        int l = (pos % (width * length)) / width;
-        int w = pos % width;
-        return new BlockPos(w, h, l);
+        int y = pos / (length * width);
+        int rem = pos % (length * width);
+        int z = rem / width;
+        int x = rem % width;
+        if (mirrored) x = width - 1 - x;
+        return new BlockPos(x, y, z);
     }
 
-    public @Nonnull List<AxisAlignedBB> getAdvancedSelectionBounds() {
-        if (!formed || pos == -1 || master() == null) return Collections.emptyList();
-        VoxelShape shape = TileEntityITMultiblockPartGasTurbine.instance.shapes[pos];
-        List<AxisAlignedBB> list = new ArrayList<>();
-        shape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> list.add(new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ)));
-        return orientList(list, facing, mirrored);
+    private VoxelShape getVoxelShape() {
+        BlockPos posInMultiblock = posToMultiblock();
+        List<AxisAlignedBB> list = GasTurbineShape.GETTER.getShape(posInMultiblock);
+        if (list.isEmpty()) return Shapes.create(0, 0, 0, 1, 1, 1);
+        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        VoxelShape vs = Shapes.empty();
+        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
+        return vs.optimize();
     }
 
-    public @Nonnull List<AxisAlignedBB> getAdvancedColisionBounds() {
-        if (!formed || pos == -1 || master() == null) return Collections.emptyList();
-        VoxelShape shape = TileEntityITMultiblockPartGasTurbine.instance.shapes[pos];
-        List<AxisAlignedBB> list = new ArrayList<>();
-        shape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> list.add(new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ)));
-        return orientList(list, facing, mirrored);
-    }
+    @Nonnull
+    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
 
-    private List<AxisAlignedBB> orientList(List<AxisAlignedBB> list, EnumFacing facing, boolean mirrored) {
-        List<AxisAlignedBB> transformed = new ArrayList<>(list.size());
-        for (AxisAlignedBB box : list) {
-            AxisAlignedBB transformedBox = box;
-            if (mirrored) { transformedBox = new AxisAlignedBB(1 - transformedBox.maxX, transformedBox.minY, transformedBox.minZ, 1 - transformedBox.minX, transformedBox.maxY, transformedBox.maxZ); }
-            switch (facing) {
-                case NORTH: break;
-                case SOUTH: transformedBox = new AxisAlignedBB(1 - transformedBox.maxX, transformedBox.minY, 1 - transformedBox.maxZ, 1 - transformedBox.minX, transformedBox.maxY, 1 - transformedBox.minZ); break;
-                case EAST: transformedBox = new AxisAlignedBB(transformedBox.minZ, transformedBox.minY, 1 - transformedBox.maxX, transformedBox.maxZ, transformedBox.maxY, 1 - transformedBox.minX); break;
-                case WEST: transformedBox = new AxisAlignedBB(1 - transformedBox.maxZ, transformedBox.minY, transformedBox.minX, 1 - transformedBox.minZ, transformedBox.maxY, transformedBox.maxX); break;
-            }
-            transformed.add(transformedBox);
-        }
-        return transformed;
+    @Nonnull
+    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+
+    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
+
+    @Nonnull
+    @Override public float[] getBlockBounds() {
+        VoxelShape vs = getVoxelShape();
+        AxisAlignedBB bb = vs.bounds();
+        return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
     }
 }
