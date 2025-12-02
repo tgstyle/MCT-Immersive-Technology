@@ -123,6 +123,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     }
 
     private void clientUpdate() {
+        if (soundOrigin == null) InitializePoIs();
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         double distSq = player.getDistanceSq(soundOrigin.getX() + 0.5, soundOrigin.getY() + 0.5, soundOrigin.getZ() + 0.5);
         if (getWorld().provider.getDimension() == player.dimension && distSq < 400 && (distanceSqToTE > 400 || playerDimension != player.dimension)) requestUpdate();
