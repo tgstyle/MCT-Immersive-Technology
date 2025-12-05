@@ -6,6 +6,7 @@
   "refmap": "immersivetechnology.refmap.json",
   "mixins": [
     "common.CapacitorBlockEntityMixin",
+    "common.FluidPipeBlockEntityMixin",
     "common.InitializationTrackerMixin"
   ],
   "injectors": {

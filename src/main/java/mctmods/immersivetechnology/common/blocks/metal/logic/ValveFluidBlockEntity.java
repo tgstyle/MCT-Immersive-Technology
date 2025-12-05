@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
+import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
 import mctmods.immersivetechnology.common.util.TranslationKey;
@@ -68,7 +69,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
     @Override public boolean canOutputPressurized(boolean consumePower) { return true; }
 
     @SuppressWarnings("unused")
-    public boolean hasOutputConnection(Direction side) { return side == facing.getOpposite(); }
+    public boolean hasOutputConnection(Direction side) { return side == getBlockState().getValue(ITProperties.FACING_ALL).getOpposite(); }
 
     private LazyOptional<IFluidHandler> myCapability = null;
 
@@ -77,11 +78,13 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
     @Override
     public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
         if (facing == null) return super.getCapability(capability, null);
-        if (capability == ForgeCapabilities.FLUID_HANDLER && facing.getAxis() == this.facing.getAxis()) {
-            if (facing == this.facing) {
+        BlockState state = getBlockState();
+        Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
+        if (capability == ForgeCapabilities.FLUID_HANDLER && facing.getAxis() == blockFacing.getAxis()) {
+            if (facing == blockFacing) {
                 if (myCapability == null || !myCapability.isPresent()) myCapability = LazyOptional.of(() -> this);
                 return myCapability.cast();
-            } else if (facing == this.facing.getOpposite()) {
+            } else if (facing == blockFacing.getOpposite()) {
                 if (dummyCapability == null || !dummyCapability.isPresent()) dummyCapability = LazyOptional.of(DummyTank::new);
                 return dummyCapability.cast();
             }
@@ -97,8 +100,41 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
 
     @Override
     public void setFacing(@NotNull Direction facing) {
-        super.setFacing(facing);
+        this.facing = facing;
         invalidateCaps();
+        if (level != null && !level.isClientSide) {
+            BlockState state = getBlockState();
+            if (state.hasProperty(ITProperties.FACING_ALL)) {
+                int newRot = rotation;
+                Direction currentFacing = state.getValue(ITProperties.FACING_ALL);
+                if (facing.getAxis() == Direction.Axis.Y) {
+                    if (currentFacing.getAxis() != Direction.Axis.Y) newRot = currentFacing.get2DDataValue();
+                } else {
+                    newRot = facing.get2DDataValue();
+                }
+                state = state.setValue(ITProperties.FACING_ALL, facing).setValue(ROTATION, newRot);
+                level.setBlock(worldPosition, state, 3);
+                rotation = newRot;
+            }
+            markContainingBlockForUpdate(null);
+            level.updateNeighborsAt(worldPosition, state.getBlock());
+            // Trigger updates on adjacent blocks for general compatibility
+            for (Direction d : Direction.values()) {
+                BlockPos adjPos = worldPosition.relative(d);
+                BlockEntity adj = level.getBlockEntity(adjPos);
+                if (adj instanceof FluidPipeBlockEntity pipe) {
+                    Direction pipeSide = d.getOpposite();
+                    pipe.updateConnectionByte(pipeSide);
+                    pipe.markContainingBlockForUpdate(null);
+                    pipe.setChanged();
+                } else if (adj != null) {
+                    adj.invalidateCaps();
+                    adj.setChanged();
+                }
+                level.neighborChanged(adjPos, level.getBlockState(adjPos).getBlock(), worldPosition);
+            }
+        }
+        efficientSetChanged();
     }
 
     @Override public int getTanks() { return 1; }
@@ -118,6 +154,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
         if (busy) return 0;
         BlockState state = getBlockState();
         if (!state.getValue(OPEN)) return 0;
+        Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
         IFluidHandler destination = getDestination();
         if (destination == null) return 0;
         int canAccept = fluidStack.getAmount();
@@ -126,8 +163,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
         canAccept = packetLimit > 0 ? Math.min(canAccept, packetLimit) : canAccept;
         if (redstoneMode > 0) canAccept = (int) (canAccept * ((redstoneMode == 1 ? 15 - getRSPower() : getRSPower()) / 15.0));
         if (canAccept == 0) return 0;
-        assert level != null;
-        BlockEntity dst = level.getBlockEntity(worldPosition.relative(facing.getOpposite()));
+        BlockEntity dst = level.getBlockEntity(worldPosition.relative(blockFacing.getOpposite()));
         boolean isPipe = dst instanceof FluidPipeBlockEntity;
         FluidStack fillStack = new FluidStack(fluidStack.getFluid(), canAccept, fluidStack.getTag());
         boolean hadTag = fillStack.hasTag() && fillStack.getTag().contains(IFluidPipe.NBT_PRESSURIZED);
@@ -155,10 +191,12 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
 
     public IFluidHandler getDestination() {
         assert level != null;
-        BlockPos dstPos = worldPosition.relative(facing.getOpposite());
+        BlockState state = getBlockState();
+        Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
+        BlockPos dstPos = worldPosition.relative(blockFacing.getOpposite());
         BlockEntity dst = level.getBlockEntity(dstPos);
         if (dst != null) {
-            LazyOptional<IFluidHandler> cap = dst.getCapability(ForgeCapabilities.FLUID_HANDLER, facing);
+            LazyOptional<IFluidHandler> cap = dst.getCapability(ForgeCapabilities.FLUID_HANDLER, blockFacing);
             return cap.resolve().orElse(null);
         }
         return null;
@@ -191,8 +229,8 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
         assert level != null;
         if (level.isClientSide) return false;
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
-        Direction oldFacing = facing;
-        Direction newFacing = counter ? oldFacing.getCounterClockWise(side.getAxis()) : oldFacing.getClockWise(side.getAxis());
+        Direction newFacing = counter ? facing.getCounterClockWise(side.getAxis()) : facing.getClockWise(side.getAxis());
+        if (newFacing.getAxis() == Direction.Axis.Y) return false;
         setFacing(newFacing);
         return true;
     }

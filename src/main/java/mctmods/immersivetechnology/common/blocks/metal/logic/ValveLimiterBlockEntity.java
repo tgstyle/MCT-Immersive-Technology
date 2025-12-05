@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
+import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
 import mctmods.immersivetechnology.common.util.TranslationKey;
@@ -95,11 +96,13 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     @Override
     public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
         if (facing == null) return super.getCapability(capability, null);
-        if (capability == ForgeCapabilities.ITEM_HANDLER && facing.getAxis() == this.facing.getAxis()) {
-            if (facing == this.facing) {
+        BlockState state = getBlockState();
+        Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
+        if (capability == ForgeCapabilities.ITEM_HANDLER && facing.getAxis() == blockFacing.getAxis()) {
+            if (facing == blockFacing) {
                 if (myCapability == null || !myCapability.isPresent()) myCapability = LazyOptional.of(() -> this);
                 return myCapability.cast();
-            } else if (facing == this.facing.getOpposite()) {
+            } else if (facing == blockFacing.getOpposite()) {
                 if (dummyCapability == null || !dummyCapability.isPresent()) dummyCapability = LazyOptional.of(() -> new OutputItemHandler(this));
                 return dummyCapability.cast();
             }
@@ -115,7 +118,6 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
 
     @Override public void setFacing(@NotNull Direction facing) {
         super.setFacing(facing);
-        invalidateCaps();
     }
 
     @Override public int getSlots() {
@@ -180,10 +182,12 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
 
     public IItemHandler getDestination() {
         assert level != null;
-        BlockPos dstPos = worldPosition.relative(facing.getOpposite());
+        BlockState state = getBlockState();
+        Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
+        BlockPos dstPos = worldPosition.relative(blockFacing.getOpposite());
         BlockEntity dst = level.getBlockEntity(dstPos);
         if (dst != null) {
-            LazyOptional<IItemHandler> cap = dst.getCapability(ForgeCapabilities.ITEM_HANDLER, facing);
+            LazyOptional<IItemHandler> cap = dst.getCapability(ForgeCapabilities.ITEM_HANDLER, blockFacing);
             return cap.resolve().orElse(null);
         }
         return null;
@@ -191,10 +195,12 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
 
     public IItemHandler getSource() {
         assert level != null;
-        BlockPos srcPos = worldPosition.relative(facing);
+        BlockState state = getBlockState();
+        Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
+        BlockPos srcPos = worldPosition.relative(blockFacing);
         BlockEntity src = level.getBlockEntity(srcPos);
         if (src != null) {
-            LazyOptional<IItemHandler> cap = src.getCapability(ForgeCapabilities.ITEM_HANDLER, facing.getOpposite());
+            LazyOptional<IItemHandler> cap = src.getCapability(ForgeCapabilities.ITEM_HANDLER, blockFacing.getOpposite());
             return cap.resolve().orElse(null);
         }
         return null;
