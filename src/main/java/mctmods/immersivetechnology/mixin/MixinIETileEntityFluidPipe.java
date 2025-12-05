@@ -7,8 +7,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(TileEntityFluidPipe.class)
 public interface MixinIETileEntityFluidPipe {
-    @Accessor("connections")
+    @Accessor(value="connections", remap=false)
     byte getConnections();
-    @Accessor("connections")
+    @Accessor(value="connections", remap=false)
     void setConnections(byte connections);
 }

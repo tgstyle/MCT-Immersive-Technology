@@ -22,19 +22,19 @@ import java.util.List;
 
 @Mixin(World.class)
 public abstract class MixinMCTWorldCMEFix {
-    @Shadow
+    @Shadow(remap = false)
     private boolean processingLoadedTiles;
 
-    @Shadow @Final
+    @Shadow(remap = false) @Final
     private List<TileEntity> addedTileEntityList;
 
-    @Shadow @Final
+    @Shadow(remap = false) @Final
     public List<TileEntity> loadedTileEntityList;
 
-    @Shadow @Final
+    @Shadow(remap = false) @Final
     public List<TileEntity> tickableTileEntities;
 
-    @Shadow
+    @Shadow(remap = false)
     public abstract void notifyBlockUpdate(net.minecraft.util.math.BlockPos pos, IBlockState oldState, IBlockState newState, int flags);
 
     @Inject(method = "addTileEntities(Ljava/util/Collection;)V", at = @At("HEAD"), cancellable = true, remap = false)
