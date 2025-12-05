@@ -358,10 +358,11 @@ def main():
             overall_aabbs.append((to_b[0], to_b[1], to_b[2], source_aabbs[:]))
     overall_aabbs = normalize_offsets(overall_aabbs)
     base_name = os.path.splitext(main_file)[0]
+    version_suffix = '_1.12.2' if args.mc_version == '1.12.2' else ''
     do_java = args.output != 'json'
     do_json = args.output != 'java'
     if do_java:
-        out_file = f"{base_name}_java.txt"
+        out_file = f"{base_name}{version_suffix}_java.txt"
         with open(out_file, 'w') as f:
             for bx, by, bz, block_aabbs in sorted(overall_aabbs, key=lambda x: (x[0], x[1], x[2])):
                 f.write(f'if (bX == {bx} && bY == {by} && bZ == {bz}) {{\n')
@@ -390,7 +391,7 @@ def main():
             for minx, miny, minz, maxx, maxy, maxz in sorted(block_aabbs, key=lambda x: (x[0], x[1], x[2])):
                 boxes.append([minx, miny, minz, maxx, maxy, maxz])
             aabb_json[index] = boxes
-        out_file = f"{base_name}_json.txt"
+        out_file = f"{base_name}{version_suffix}_json.txt"
         with open(out_file, 'w') as f:
             json.dump({"shapeAABB": aabb_json}, f, indent=None, separators=(',', ':'))
         print(f"JSON output written to {out_file}")
