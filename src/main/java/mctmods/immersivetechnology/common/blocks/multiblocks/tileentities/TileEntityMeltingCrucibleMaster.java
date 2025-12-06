@@ -45,12 +45,13 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     public static int slotCount = 1;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
-    IItemHandler insertionHandler = new IEInventoryHandler(slotCount, this, 0, new boolean[] {true}, new boolean[1]);
+    IItemHandler insertionHandler = new IEInventoryHandler(slotCount, this, 0, new boolean[] {true}, new boolean[]{false});
 
     MeltingCrucibleRecipe recipe;
     private MeltingCrucibleRecipe cachedRecipe;
 
     private PoICache output0;
+    PoICache input;
     private BlockPos soundOrigin, output0Front;
     private int redstonePos = -1, energyPos = -1;
     private float soundVolume;
@@ -196,7 +197,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         return this;
     }
 
-    private void InitializePoIs() {
+    void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartMeltingCrucible.instance.pointsOfInterest) {
             switch (poi.name) {
                 case "redstone": redstonePos = poi.position; break;
@@ -205,6 +206,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
                     output0 = new PoICache(facing, poi, mirrored);
                     output0Front = getBlockPosForPos(output0.position).offset(output0.facing);
                     break;
+                case "input0": input = new PoICache(facing, poi, mirrored); break;
                 case "sound": soundOrigin = getBlockPosForPos(poi.position); break;
             }
         }
@@ -215,6 +217,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         notifyNeighbor(getBlockPosForPos(output0.position));
         notifyNeighbor(getBlockPosForPos(redstonePos));
         notifyNeighbor(getBlockPosForPos(energyPos));
+        notifyNeighbor(getBlockPosForPos(input.position));
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
