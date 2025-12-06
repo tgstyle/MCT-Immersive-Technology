@@ -22,8 +22,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -151,30 +149,5 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
         if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
         AxisAlignedBB bb = vs.bounds();
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
-    }
-
-    private AxisAlignedBB renderBoundingBox = null;
-
-    @SideOnly(Side.CLIENT)
-    @Override public @Nonnull AxisAlignedBB getRenderBoundingBox() {
-        if(renderBoundingBox == null) {
-            int h = TileEntityITMultiblockPartSolarMelter.instance.height;
-            int l = TileEntityITMultiblockPartSolarMelter.instance.length;
-            int w = TileEntityITMultiblockPartSolarMelter.instance.width;
-            int total = h * l * w;
-            double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, minZ = Double.MAX_VALUE;
-            double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE, maxZ = Double.MIN_VALUE;
-            for(int pos = 0; pos < total; pos++) {
-                BlockPos bp = master().getBlockPosForPos(pos);
-                minX = Math.min(minX, bp.getX());
-                minY = Math.min(minY, bp.getY());
-                minZ = Math.min(minZ, bp.getZ());
-                maxX = Math.max(maxX, bp.getX());
-                maxY = Math.max(maxY, bp.getY());
-                maxZ = Math.max(maxZ, bp.getZ());
-            }
-            renderBoundingBox = new AxisAlignedBB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1);
-        }
-        return renderBoundingBox;
     }
 }
