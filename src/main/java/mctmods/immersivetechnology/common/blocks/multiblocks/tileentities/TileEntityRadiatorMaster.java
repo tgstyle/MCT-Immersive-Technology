@@ -6,10 +6,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartRadiator;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.RadiatorRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartRadiator;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
@@ -53,8 +53,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     public RadiatorRecipe lastRecipe;
     private RadiatorRecipe cachedRecipe;
 
-    private PoICache input, output;
-    private BlockPos soundOrigin, outputFront;
+    private PoICache fluidInput0, fluidOutput0;
+    private BlockPos soundOrigin0, fluidOutputFront0;
     private float soundVolume;
     private boolean isRunning;
     private int gracePeriod = 60;
@@ -123,7 +123,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         pos2 = this.getPos().offset(this.facing, 3);
         halfEfficiency += checkColumnEfficiency(pos2, this.facing.rotateY())/12.0;
         halfEfficiency += checkColumnEfficiency(pos2, this.facing.rotateYCCW())/12.0;
-        pos2 = this.getPos().offset(this.facing, 3);
+        pos2 = this.getPos().offset(this.facing, 5);
         halfEfficiency += checkColumnEfficiency(pos2, this.facing.rotateY())/12.0;
         halfEfficiency += checkColumnEfficiency(pos2, this.facing.rotateYCCW())/12.0;
         return halfEfficiency;
@@ -137,7 +137,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         pos2 = this.getPos().offset(this.facing, 3);
         halfEfficiency += checkColumnEfficiency(pos2, EnumFacing.DOWN)/12.0;
         halfEfficiency += checkColumnEfficiency(pos2, EnumFacing.UP)/12.0;
-        pos2 = this.getPos().offset(this.facing, 3);
+        pos2 = this.getPos().offset(this.facing, 5);
         halfEfficiency += checkColumnEfficiency(pos2, EnumFacing.DOWN)/12.0;
         halfEfficiency += checkColumnEfficiency(pos2, EnumFacing.UP)/12.0;
         return halfEfficiency;
@@ -159,9 +159,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     }
 
     private void pumpOutputOut() {
-        if (output == null) InitializePoIs();
         if (tanks[1].getFluidAmount() == 0) return;
-        IFluidHandler handler = FluidUtil.getFluidHandler(world, outputFront, output.facing.getOpposite());
+        IFluidHandler handler = FluidUtil.getFluidHandler(world, fluidOutputFront0, fluidOutput0.facing.getOpposite());
         if (handler == null) return;
         FluidStack out = tanks[1].getFluid();
         int accepted = handler.fill(out, false);
@@ -180,28 +179,25 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
-        if (soundOrigin == null) InitializePoIs();
         if (isRunning) { if (soundVolume < 1) soundVolume += 0.01f; }
         else { if (soundVolume > 0) soundVolume -= 0.01f; }
-        if (soundVolume == 0) { ITSoundHandler.StopSound(soundOrigin); }
+        if (soundVolume == 0) { ITSoundHandler.StopSound(soundOrigin0); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float) player.getDistanceSq(soundOrigin.getX(), soundOrigin.getY(), soundOrigin.getZ()) / 8, 1);
-            ITSounds.solarTower.PlayRepeating(soundOrigin, (2 * soundVolume) / attenuation, soundVolume);
+            float attenuation = Math.max((float) player.getDistanceSq(soundOrigin0.getX(), soundOrigin0.getY(), soundOrigin0.getZ()) / 8, 1);
+            ITSounds.solarTower.PlayRepeating(soundOrigin0, (2 * soundVolume) / attenuation, soundVolume);
         }
     }
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        if (soundOrigin == null) InitializePoIs();
-        ITSoundHandler.StopSound(soundOrigin);
+        ITSoundHandler.StopSound(soundOrigin0);
         super.onChunkUnload();
     }
 
     @Override public void disassemble() {
         super.disassemble();
-        if (soundOrigin == null) InitializePoIs();
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundOrigin), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundOrigin.getX(), soundOrigin.getY(), soundOrigin.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundOrigin0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundOrigin0.getX(), soundOrigin0.getY(), soundOrigin0.getZ(), 0));
     }
 
     public void efficientMarkDirty() { world.getChunk(this.getPos()).markDirty(); }
@@ -235,7 +231,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     private void clientUpdate() {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double distSq = player.getDistanceSq(soundOrigin.getX(), soundOrigin.getY(), soundOrigin.getZ());
+        double distSq = player.getDistanceSq(soundOrigin0.getX(), soundOrigin0.getY(), soundOrigin0.getZ());
         if (getWorld().provider.getDimension() == player.dimension && distSq < 400 && (distanceSqToTE > 400 || playerDimension != player.dimension)) requestUpdate();
         distanceSqToTE = distSq;
         playerDimension = player.dimension;
@@ -264,6 +260,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     @Override public void update() {
         super.update();
+        if (fluidInput0 == null || fluidOutput0 == null || soundOrigin0 == null) InitializePoIs();
         if (world.isRemote) { clientUpdate(); return; }
         serverUpdate();
     }
@@ -271,35 +268,33 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartRadiator.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "input": input = new PoICache(facing, poi, mirrored); break;
-                case "output":
-                    output = new PoICache(facing, poi, mirrored);
-                    outputFront = getBlockPosForPos(output.position).offset(output.facing);
+                case "fluid_input": fluidInput0 = new PoICache(facing, poi, mirrored); break;
+                case "fluid_output":
+                    fluidOutput0 = new PoICache(facing, poi, mirrored);
+                    fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
                     break;
-                case "sound": soundOrigin = getBlockPosForPos(poi.position); break;
+                case "sound": soundOrigin0 = getBlockPosForPos(poi.position); break;
             }
         }
         if (!world.isRemote) notifyIONeighbors();
     }
 
     private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(input.position));
-        notifyNeighbor(getBlockPosForPos(output.position));
+        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
+        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
     protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        if (input == null) InitializePoIs();
         if (side == null) return tanks;
-        if (input.isPoI(side, position)) return new FluidTank[] {tanks[0]};
-        if (output.isPoI(side, position)) return new FluidTank[] {tanks[1]};
+        if (fluidInput0.isPoI(side, position)) return new FluidTank[] {tanks[0]};
+        if (fluidOutput0.isPoI(side, position)) return new FluidTank[] {tanks[1]};
         return ITUtils.emptyIFluidTankList;
     }
 
     protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if (input == null) InitializePoIs();
-        if (input.isPoI(side, position)) {
+        if (fluidInput0.isPoI(side, position)) {
             if (tanks[iTank].getFluidAmount() >= tanks[iTank].getCapacity()) return false;
             FluidStack current = tanks[iTank].getFluid();
             if (current == null) return RadiatorRecipe.findRecipeByFluid(resource.getFluid()) != null;
@@ -309,8 +304,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     }
 
     protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (output == null) InitializePoIs();
-        if (output.isPoI(side, position)) return tanks[1].getFluidAmount() > 0;
+        if (fluidOutput0.isPoI(side, position)) return tanks[1].getFluidAmount() > 0;
         return false;
     }
 }

@@ -102,11 +102,11 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
-        if (pos == 12 && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             TileEntityMeltingCrucibleMaster master = master();
             if (master == null) return false;
-            if (master.input == null) master.InitializePoIs();
-            return master.input.isPoI(facing, pos);
+            if (master.itemInput0 == null) master.InitializePoIs();
+            return master.itemInput0.isPoI(facing, pos);
         }
         return super.hasCapability(capability, facing);
     }
@@ -114,11 +114,11 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
-        if (pos == 12 && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             TileEntityMeltingCrucibleMaster master = master();
             if (master == null) return null;
-            if (master.input == null) master.InitializePoIs();
-            if (master.input.isPoI(facing, pos)) return (T)master.insertionHandler;
+            if (master.itemInput0 == null) master.InitializePoIs();
+            if (master.itemInput0.isPoI(facing, pos)) return (T)master.insertionHandler;
         }
         return super.getCapability(capability, facing);
     }
