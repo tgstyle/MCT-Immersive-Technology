@@ -1,2 +1,4 @@
-newmtl steel_tank
-map_Ka immersivetech:blocks/metal_multiblock_steel_tank
+# Made in Blockbench 5.0.4
+newmtl m_72ef355c-32cc-bc9b-0ea7-a5d48b98ec81
+map_Kd immersivetech:blocks/metal_multiblock_steel_tank
+newmtl none
