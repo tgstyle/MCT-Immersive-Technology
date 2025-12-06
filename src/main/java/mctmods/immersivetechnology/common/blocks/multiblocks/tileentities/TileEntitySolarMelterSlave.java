@@ -1,43 +1,53 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
-
+import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarMelterShape;
+import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
-import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
+import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.util.shapes.*;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.entity.player.EntityPlayer;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntitySolarMelterSlave, MeltingCrucibleRecipe, TileEntitySolarMelterMaster> {
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
+
+public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntitySolarMelterSlave, MeltingCrucibleRecipe, TileEntitySolarMelterMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntitySolarMelterSlave() { super(TileEntityITMultiblockPartSolarMelter.instance, 0, false); }
 
-    @Override
-    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 
-    @Override
-    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
-    @Override
-    public void update() { if (isDummy()) ITUtils.RemoveDummyFromTicking(this); super.update(); }
+    @Override public void update() {
+        if(isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        super.update();
+    }
 
-    @Override
-    public boolean isDummy() { return true; }
+    @Override public boolean isDummy() { return true; }
 
     TileEntitySolarMelterMaster master;
 
@@ -49,70 +59,58 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
         return master;
     }
 
-    @Override
-    public NonNullList<ItemStack> getInventory() { return master() == null ? NonNullList.withSize(1, ItemStack.EMPTY) : master.inventory; }
+    @Override public NonNullList<ItemStack> getInventory() { return master() == null ? NonNullList.withSize(1, ItemStack.EMPTY) : master.inventory; }
 
-    @Override
-    public boolean isStackValid(int slot, ItemStack stack) { return true; }
+    @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
 
-    @Override
-    public int getSlotLimit(int slot) { return 64; }
+    @Override public int getSlotLimit(int slot) { return 64; }
 
-    @Override
-    public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
+    @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
 
-    @Override
-    protected @Nonnull MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return Objects.requireNonNull(MeltingCrucibleRecipe.loadFromNBT(tag)); }
+    @Override protected @Nonnull MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return Objects.requireNonNull(MeltingCrucibleRecipe.loadFromNBT(tag)); }
 
-    @Override
-    public @Nullable MeltingCrucibleRecipe findRecipeForInsertion(@Nonnull ItemStack inserting) { return MeltingCrucibleRecipe.findRecipe(inserting); }
+    @Override public @Nonnull MeltingCrucibleRecipe findRecipeForInsertion(@Nonnull ItemStack inserting) { return Objects.requireNonNull(MeltingCrucibleRecipe.findRecipe(inserting)); }
 
-    @Override
-    public @Nonnull int[] getRedstonePos() { return new int[]{12}; }
+    @Override public @Nonnull int[] getRedstonePos() { return Objects.requireNonNull(master()).getRedstonePos(); }
 
-    @Override
-    public @Nonnull int[] getOutputTanks() { return new int[]{1}; }
+    @Override public @Nonnull int[] getOutputTanks() { return Objects.requireNonNull(master()).getOutputTanks(); }
 
-    @Override
-    public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<MeltingCrucibleRecipe> process) { return true; }
+    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<MeltingCrucibleRecipe> process) { return true; }
 
-    @Override
-    public int getMaxProcessPerTick() { return 1; }
+    @Override public int getMaxProcessPerTick() { return 1; }
 
-    @Override
-    public int getProcessQueueMaxLength() { return 1; }
+    @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override
-    protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        TileEntitySolarMelterMaster master = master();
-        if (master == null) return ITUtils.emptyIFluidTankList;
-        return master.getAccessibleFluidTanks(side, position);
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+        TileEntitySolarMelterMaster m = master();
+        if (m == null) return ITUtils.emptyIFluidTankList;
+        return m.getAccessibleFluidTanks(side, position);
     }
 
-    @Override
-    protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        TileEntitySolarMelterMaster master = master();
-        if (master == null) return false;
-        return master.canFillTankFrom(iTank, side, resource, position);
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+        TileEntitySolarMelterMaster m = master();
+        if (m == null) return false;
+        return m.canFillTankFrom(iTank, side, resource, position);
     }
 
-    @Override
-    protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        TileEntitySolarMelterMaster master = master();
-        if (master == null) return false;
-        return master.canDrainTankFrom(iTank, side, position);
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+        TileEntitySolarMelterMaster m = master();
+        if (m == null) return false;
+        return m.canDrainTankFrom(iTank, side, position);
     }
 
-    @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) { return (pos == 16) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? master() != null : super.hasCapability(capability, facing); }
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && master() != null) { return Objects.requireNonNull(master()).getAccessibleItemHandlers(facing, pos).length > 0; }
+        return super.hasCapability(capability, facing);
+    }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
-        if (pos == 16 && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+    @Override public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             TileEntitySolarMelterMaster master = master();
             if (master == null) return null;
-            return (T) master.insertionHandler;
+            IItemHandler[] handlers = master.getAccessibleItemHandlers(facing, pos);
+            if (handlers.length > 0) return (T)handlers[0];
         }
         return super.getCapability(capability, facing);
     }
@@ -120,9 +118,63 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
     public BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartSolarMelter.instance.width;
         int length = TileEntityITMultiblockPartSolarMelter.instance.length;
-        int h = pos / (width * length);
-        int l = (pos % (width * length)) / width;
-        int w = pos % width;
-        return new BlockPos(w, h, l);
+        int y = pos / (length * width);
+        int rem = pos % (length * width);
+        int z = rem / width;
+        int x = rem % width;
+        if (mirrored) x = width - 1 - x;
+        return new BlockPos(x, y, z);
+    }
+
+    private VoxelShape getVoxelShape() {
+        BlockPos posInMultiblock = posToMultiblock();
+        List<AxisAlignedBB> list = SolarMelterShape.GETTER.getShape(posInMultiblock);
+        if (list.isEmpty()) return Shapes.empty();
+        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        VoxelShape vs = Shapes.empty();
+        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
+        return vs.optimize();
+    }
+
+    @Nonnull
+    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
+
+    @Nonnull
+    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+
+    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
+
+    @Nonnull
+    @Override public float[] getBlockBounds() {
+        VoxelShape vs = getVoxelShape();
+        if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
+        AxisAlignedBB bb = vs.bounds();
+        return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
+    }
+
+    private AxisAlignedBB renderBoundingBox = null;
+
+    @SideOnly(Side.CLIENT)
+    @Override public @Nonnull AxisAlignedBB getRenderBoundingBox() {
+        if(renderBoundingBox == null) {
+            int h = TileEntityITMultiblockPartSolarMelter.instance.height;
+            int l = TileEntityITMultiblockPartSolarMelter.instance.length;
+            int w = TileEntityITMultiblockPartSolarMelter.instance.width;
+            int total = h * l * w;
+            double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, minZ = Double.MAX_VALUE;
+            double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE, maxZ = Double.MIN_VALUE;
+            for(int pos = 0; pos < total; pos++) {
+                BlockPos bp = master().getBlockPosForPos(pos);
+                minX = Math.min(minX, bp.getX());
+                minY = Math.min(minY, bp.getY());
+                minZ = Math.min(minZ, bp.getZ());
+                maxX = Math.max(maxX, bp.getX());
+                maxY = Math.max(maxY, bp.getY());
+                maxZ = Math.max(maxZ, bp.getZ());
+            }
+            renderBoundingBox = new AxisAlignedBB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1);
+        }
+        return renderBoundingBox;
     }
 }
