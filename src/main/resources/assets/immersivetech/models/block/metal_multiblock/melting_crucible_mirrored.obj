@@ -1,5 +1,5 @@
 # Made in Blockbench 5.0.4
-mtllib melting_crucible_mirrored.mtl
+mtllib melting_crucible.mtl
 
 o cube
 v -0.5 -0.5 -0.25
