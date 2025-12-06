@@ -63,6 +63,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -147,11 +148,7 @@ public class ClientProxy extends CommonProxy {
             if (block instanceof IIEMetaBlock) {
                 IIEMetaBlock ieMetaBlock = (IIEMetaBlock)block;
                 if (ieMetaBlock.useCustomStateMapper()) { ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock)); }
-                ModelLoader.setCustomMeshDefinition(blockItem, new ItemMeshDefinition() {
-                    @Nonnull
-                    @Override
-                    public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) { return new ModelResourceLocation(loc, "inventory"); }
-                });
+                ModelLoader.setCustomMeshDefinition(blockItem, stack -> new ModelResourceLocation(loc, "inventory"));
                 for (int meta = 0; meta < ieMetaBlock.getMetaEnums().length; meta++) {
                     String location = loc.toString();
                     String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getName() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)) : null;
@@ -178,22 +175,14 @@ public class ClientProxy extends CommonProxy {
                 } else {
                     final ResourceLocation loc = new ResourceLocation(ImmersiveTechnology.MODID, ipMetaItem.itemName);
                     ModelBakery.registerItemVariants(ipMetaItem, loc);
-                    ModelLoader.setCustomMeshDefinition(ipMetaItem, new ItemMeshDefinition() {
-                        @Nonnull
-                        @Override
-                        public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) { return new ModelResourceLocation(loc, "inventory"); }
-                    });
+                    ModelLoader.setCustomMeshDefinition(ipMetaItem, stack -> new ModelResourceLocation(loc, "inventory"));
                 }
             } else {
                 final ResourceLocation loc = Item.REGISTRY.getNameForObject(item);
                 ModelBakery.registerItemVariants(item, loc);
-                ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition() {
-                    @Nonnull
-                    @Override
-                    public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) {
-                        assert loc != null;
-                        return new ModelResourceLocation(loc, "inventory");
-                    }
+                ModelLoader.setCustomMeshDefinition(item, stack -> {
+                    assert loc != null;
+                    return new ModelResourceLocation(loc, "inventory");
                 });
             }
         }
@@ -202,19 +191,11 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init() {
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-        //ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoolingTowerSlave.class, new TileRenderMultiblockSlave());
-        //ClientRegistry.bindTileEntitySpecialRenderer(TileEntityElectrolyticCrucibleBatterySlave.class, new TileRenderMultiblockSlave());
-        //ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHighPressureSteamTurbineSlave.class, new TileRenderMultiblockSlave());
-        //ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRadiatorSlave.class, new TileRenderMultiblockSlave());
-        //ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySolarMelterSlave.class, new TileRenderMultiblockSlave());
-        //ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySolarTowerSlave.class, new TileRenderMultiblockSlave());
-        //ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineSlave.class, new TileRenderMultiblockSlave());
-        //ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGasTurbineSlave.class, new TileRenderMultiblockSlave());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGasTurbineMaster.class, new TileRendererGasTurbine());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySolarReflectorMaster.class, new TileRenderSolarReflector());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHighPressureSteamTurbineMaster.class, new TileRenderHighPressureSteamTurbine());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBarrelOpen.class, new TileRenderBarrelOpen());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGasTurbineMaster.class, new TileRendererGasTurbine());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHighPressureSteamTurbineMaster.class, new TileRenderHighPressureSteamTurbine());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySolarReflectorMaster.class, new TileRenderSolarReflector());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTankMaster.class, new TileRenderSteelSheetmetalTank());
         ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
         ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);

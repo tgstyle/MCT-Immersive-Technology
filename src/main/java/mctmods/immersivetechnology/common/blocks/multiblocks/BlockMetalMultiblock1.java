@@ -36,11 +36,9 @@ public class BlockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
         lightOpacity = 0;
     }
 
-    @Override
-    public boolean useCustomStateMapper() { return true; }
+    @Override public boolean useCustomStateMapper() { return true; }
 
-    @Override
-    public @Nonnull String getCustomStateMapping(int meta, boolean itemBlock) {
+    @Override public @Nonnull String getCustomStateMapping(int meta, boolean itemBlock) {
         return BlockType_MetalMultiblock1.values()[meta].needsCustomState() ? BlockType_MetalMultiblock1.values()[meta].getCustomState() : "";
     }
 
