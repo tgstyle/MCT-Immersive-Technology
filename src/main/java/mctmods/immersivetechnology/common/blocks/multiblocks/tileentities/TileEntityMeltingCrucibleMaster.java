@@ -202,11 +202,11 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
             switch (poi.name) {
                 case "redstone": redstonePos = poi.position; break;
                 case "energy": energyPos = poi.position; break;
-                case "output0":
+                case "output":
                     output0 = new PoICache(facing, poi, mirrored);
                     output0Front = getBlockPosForPos(output0.position).offset(output0.facing);
                     break;
-                case "input0": input = new PoICache(facing, poi, mirrored); break;
+                case "input": input = new PoICache(facing, poi, mirrored); break;
                 case "sound": soundOrigin = getBlockPosForPos(poi.position); break;
             }
         }
