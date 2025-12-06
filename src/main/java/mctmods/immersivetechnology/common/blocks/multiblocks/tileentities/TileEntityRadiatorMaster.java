@@ -61,8 +61,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     private double distanceSqToTE;
     private int playerDimension;
 
-    @Override
-    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
@@ -70,8 +69,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         radiationEfficiency = nbt.getDouble("radiationEfficiency");
     }
 
-    @Override
-    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
@@ -91,15 +89,13 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         ImmersiveTechnology.packetHandler.sendToAllAround(new BinaryMessageTileSync(center, buffer), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
     }
 
-    @Override
-    public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {
         ByteBuf buffer = Unpooled.copyBoolean(isRunning);
         BlockPos center = getPos();
         ImmersiveTechnology.packetHandler.sendTo(new BinaryMessageTileSync(center, buffer), player);
     }
 
-    @Override
-    public void receiveMessageFromServer(ByteBuf message) { isRunning = message.readBoolean(); }
+    @Override public void receiveMessageFromServer(ByteBuf message) { isRunning = message.readBoolean(); }
 
     private boolean gainProgress() {
         if (lastRecipe == null) { recipeTimeRemaining = 0; return true; }
@@ -196,15 +192,13 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     }
 
     @SideOnly(Side.CLIENT)
-    @Override
-    public void onChunkUnload() {
+    @Override public void onChunkUnload() {
         if (soundOrigin == null) InitializePoIs();
         ITSoundHandler.StopSound(soundOrigin);
         super.onChunkUnload();
     }
 
-    @Override
-    public void disassemble() {
+    @Override public void disassemble() {
         super.disassemble();
         if (soundOrigin == null) InitializePoIs();
         ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundOrigin), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundOrigin.getX(), soundOrigin.getY(), soundOrigin.getZ(), 0));
@@ -227,17 +221,14 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         return update;
     }
 
-    @Override
-    public void TankContentsChanged() {
+    @Override public void TankContentsChanged() {
         cachedRecipe = null;
         this.markContainingBlockForUpdate(null);
     }
 
-    @Override
-    public boolean isDummy() { return false; }
+    @Override public boolean isDummy() { return false; }
 
-    @Override
-    public TileEntityRadiatorMaster master() {
+    @Override public TileEntityRadiatorMaster master() {
         master = this;
         return this;
     }
@@ -271,8 +262,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         }
     }
 
-    @Override
-    public void update() {
+    @Override public void update() {
         super.update();
         if (world.isRemote) { clientUpdate(); return; }
         serverUpdate();
