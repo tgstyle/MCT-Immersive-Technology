@@ -294,6 +294,17 @@ public class ITBlockStateProvider extends BlockStateProvider {
             return ConfiguredModel.builder().modelFile(modelFile).rotationX(xRot).rotationY(yRot).build();
         });
         setRenderType(RenderType.cutout(), (BlockModelBuilder) valveLoadClosed, (BlockModelBuilder) valveLoadOpen);
+
+        VariantBlockStateBuilder rotorBuilder = getVariantBuilder(ITBlocks.MetalDevices.ROTOR_CREATIVE.get());
+        ModelFile rotorNS = new ModelFile.UncheckedModelFile(modLoc("dynamic/rotor"));
+        ModelFile rotorEW = new ModelFile.UncheckedModelFile(modLoc("dynamic/rotor_east_west"));
+        rotorBuilder.forAllStates(state -> {
+            Direction facing = state.getValue(ITProperties.FACING_HORIZONTAL);
+            ModelFile modelFile = (facing == Direction.NORTH || facing == Direction.SOUTH) ? rotorNS : rotorEW;
+            int yRot = 0;
+            if (facing == Direction.SOUTH || facing == Direction.WEST) yRot = 180;
+            return ConfiguredModel.builder().modelFile(modelFile).rotationY(yRot).build();
+        });
     }
 
     private BlockModelBuilder createTrashModel(String subtype) {

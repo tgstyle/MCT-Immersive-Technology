@@ -2,14 +2,12 @@ package mctmods.immersivetechnology.core.registration;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
-import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
-import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
+import mctmods.immersivetechnology.common.blocks.metal.gui.*;
+import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadBlockEntity;
 import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.gui.TrashItemMenu;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveFluidBlockEntity;
 import mctmods.immersivetechnology.common.multiblocks.gui.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
@@ -41,6 +39,8 @@ public class ITMenuTypes {
     public static final MultiblockContainer<DistillerLogic.State, DistillerMenu> DISTILLER_MENU = registerMultiblock(ITLib.GUIID_Distiller, DistillerMenu::makeServer, (type, id, inv, buffer) -> DistillerMenu.makeClient(type, id, inv));
     public static final MultiblockContainer<SolarMelterLogic.State, SolarMenu> SOLAR_MELTER_MENU = registerMultiblock(ITLib.GUIID_SolarMelter, SolarMenu::makeServer, (type, id, inv, buffer) -> SolarMenu.makeClient(type, id, inv));
     public static final MultiblockContainer<SolarTowerLogic.State, SolarMenu> SOLAR_TOWER_MENU = registerMultiblock(ITLib.GUIID_SolarTower, SolarMenu::makeServer, (type, id, inv, buffer) -> SolarMenu.makeClient(type, id, inv));
+
+    public static final ArgContainer<RotorCreativeBlockEntity, RotorCreativeMenu> ROTOR_CREATIVE = registerArg("rotor_creative", RotorCreativeMenu::makeServer, RotorCreativeMenu::makeClient);
 
     public static final ArgContainer<TrashItemBlockEntity, TrashItemMenu> TRASH_ITEM = registerArg("trash_item", TrashItemMenu::makeServer, (type, id, inv, buffer) -> TrashItemMenu.makeClient(type, id, inv));
 

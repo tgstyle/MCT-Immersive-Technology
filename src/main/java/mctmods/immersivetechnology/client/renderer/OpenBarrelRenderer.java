@@ -25,6 +25,9 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 public class OpenBarrelRenderer extends ITBaseBlockEntityRenderer<BarrelOpenBlockEntity> {
+
+    public OpenBarrelRenderer() {}
+
     @Override
     public void render(BarrelOpenBlockEntity be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(be.getBlockState());

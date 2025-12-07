@@ -4,5 +4,9 @@
   "flip_v": true,
   "loader": "immersivetechnology:obj",
   "model": "immersivetechnology:models/multiblock/metal/obj/rotor/rotor_east_west.obj",
-  "shade_quads": true
+  "render_type": "minecraft:cutout",
+  "shade_quads": true,
+  "textures": {
+    "particle": "immersivetechnology:multiblock/metal/rotor"
+  }
 }

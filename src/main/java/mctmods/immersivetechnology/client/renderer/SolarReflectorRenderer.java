@@ -26,6 +26,9 @@ import org.joml.Vector3f;
 import java.util.List;
 
 public class SolarReflectorRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarReflectorLogic.State>> {
+
+    public SolarReflectorRenderer() {}
+
     @Override
     public void render(@NotNull MultiblockBlockEntityMaster<SolarReflectorLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         IMultiblockBEHelperMaster<SolarReflectorLogic.State> helper = tile.getHelper();

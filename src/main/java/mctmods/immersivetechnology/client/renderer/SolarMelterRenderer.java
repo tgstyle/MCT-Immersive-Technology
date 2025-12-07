@@ -16,6 +16,9 @@ import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 public class SolarMelterRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarMelterLogic.State>> {
+
+    public SolarMelterRenderer() {}
+
     private static final ResourceLocation BEAM_TEXTURE = ResourceLocation.withDefaultNamespace("textures/entity/beacon_beam.png");
 
     @Override

@@ -27,12 +27,22 @@ public class ITDynamicModelProvider extends ModelProvider<ITDynamicModelProvider
                 .customLoader(ITObjModelBuilder::new)
                 .modelLocation(modLoc("models/multiblock/metal/obj/rotor/rotor.obj"))
                 .flipV(true)
-                .automaticCulling(false);
+                .automaticCulling(false)
+                .shadeQuads(true)
+                .emissiveAmbient(true)
+                .end()
+                .texture("particle", modLoc("multiblock/metal/rotor"))
+                .renderType("cutout");
         getBuilder("dynamic/rotor_east_west")
                 .customLoader(ITObjModelBuilder::new)
                 .modelLocation(modLoc("models/multiblock/metal/obj/rotor/rotor_east_west.obj"))
                 .flipV(true)
-                .automaticCulling(false);
+                .automaticCulling(false)
+                .shadeQuads(true)
+                .emissiveAmbient(true)
+                .end()
+                .texture("particle", modLoc("multiblock/metal/rotor"))
+                .renderType("cutout");
         getBuilder("dynamic/solar_reflector_mirror")
                 .customLoader(ITObjModelBuilder::new)
                 .modelLocation(modLoc("models/multiblock/metal/obj/solar_reflector/solar_reflector_mirror.obj"))

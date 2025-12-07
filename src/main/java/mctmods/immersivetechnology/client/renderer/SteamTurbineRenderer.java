@@ -26,6 +26,9 @@ import org.joml.Quaternionf;
 import java.util.List;
 
 public class SteamTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<SteamTurbineLogic.State>> {
+
+    public SteamTurbineRenderer() {}
+
     @Override
     public void render(@NotNull MultiblockBlockEntityMaster<SteamTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if (!ITClientConfig.doSpecialRenderSteamTurbine) { return; }

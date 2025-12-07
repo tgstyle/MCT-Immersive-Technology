@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.network;
 
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
+import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -39,8 +39,8 @@ public class ITMessageTileSync implements ITMessage {
             ctx.enqueueWork(() -> {
                 Level level = player.level();
                 BlockEntity tile = level.getBlockEntity(this.pos);
-                if (tile instanceof ValveCommonBlockEntity valve) {
-                    valve.receiveMessageFromClient(this.nbt);
+                if (tile instanceof ITBaseBlockEntity itbe) {
+                    itbe.receiveMessageFromClient(this.nbt);
                 }
             });
         }

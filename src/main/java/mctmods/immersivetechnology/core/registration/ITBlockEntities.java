@@ -27,6 +27,11 @@ public class ITBlockEntities {
             () -> BlockEntityType.Builder.of(BarrelOpenBlockEntity::new, ITBlocks.MetalDevices.BARREL_OPEN.get()).build(null)
     );
 
+    public static final RegistryObject<BlockEntityType<RotorCreativeBlockEntity>> ROTOR_CREATIVE = REGISTER.register(
+            "rotor_creative",
+            () -> BlockEntityType.Builder.of(RotorCreativeBlockEntity::new, ITBlocks.MetalDevices.ROTOR_CREATIVE.get()).build(null)
+    );
+
     public static final RegistryObject<BlockEntityType<TrashEnergyBlockEntity>> TRASH_ENERGY = REGISTER.register(
             "trash_energy",
             () -> BlockEntityType.Builder.of(TrashEnergyBlockEntity::new, ITBlocks.MetalDevices.TRASH_ENERGY.get()).build(null)

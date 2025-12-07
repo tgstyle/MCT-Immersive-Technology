@@ -26,6 +26,9 @@ import org.joml.Quaternionf;
 import java.util.List;
 
 public class GasTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<GasTurbineLogic.State>> {
+
+    public GasTurbineRenderer() {}
+
     @Override
     public void render(@NotNull MultiblockBlockEntityMaster<GasTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if (!ITClientConfig.doSpecialRenderGasTurbine) { return; }

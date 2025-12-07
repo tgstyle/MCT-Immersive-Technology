@@ -20,7 +20,7 @@ public class ITObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBu
     private boolean emissiveAmbient = true;
     private String mtlOverride;
     private final Map<String, Boolean> visibility = new HashMap<>();
-    public void automaticCulling(boolean automaticCulling) { this.automaticCulling = automaticCulling;}
+    public ITObjModelBuilder<T> automaticCulling(boolean automaticCulling) { this.automaticCulling = automaticCulling; return this; }
     public ITObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(ResourceLocation.fromNamespaceAndPath("immersivetechnology", "obj"), parent, existingFileHelper); }
     public ITObjModelBuilder<T> modelLocation(ResourceLocation modelLocation) { this.modelLocation = modelLocation; return this; }
     public ITObjModelBuilder<T> shadeQuads(boolean shadeQuads) { this.shadeQuads = shadeQuads; return this; }

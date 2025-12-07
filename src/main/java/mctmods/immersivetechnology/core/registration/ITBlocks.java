@@ -45,6 +45,7 @@ public class ITBlocks {
         public static BlockEntry<BarrelCreativeBlock> BARREL_CREATIVE;
         public static BlockEntry<BarrelSteelBlock> BARREL_STEEL;
         public static BlockEntry<BarrelOpenBlock> BARREL_OPEN;
+        public static BlockEntry<RotorCreativeBlock> ROTOR_CREATIVE;
         public static BlockEntry<TrashEnergyBlock> TRASH_ENERGY;
         public static BlockEntry<TrashFluidBlock> TRASH_FLUID;
         public static BlockEntry<TrashItemBlock> TRASH_ITEM;
@@ -88,6 +89,12 @@ public class ITBlocks {
                     "trash_item",
                     METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new TrashItemBlock(TrashItemBlockEntity::new, p)
+            );
+
+            ROTOR_CREATIVE = new BlockEntry<>(
+                    "rotor_creative",
+                    METAL_PROPERTIES_NO_OCCLUSION,
+                    p -> new RotorCreativeBlock(RotorCreativeBlockEntity::new, p)
             );
 
             VALVE_FLUID = new BlockEntry<>(

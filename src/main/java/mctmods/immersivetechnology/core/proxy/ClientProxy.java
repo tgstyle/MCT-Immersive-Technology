@@ -1,7 +1,5 @@
 package mctmods.immersivetechnology.core.proxy;
 
-import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
-import net.minecraft.network.chat.Component;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.lib.manual.ManualEntry;
 import blusunrize.lib.manual.ManualInstance;
@@ -18,7 +16,9 @@ import mctmods.immersivetechnology.client.models.split.ITSplitModelLoader;
 import mctmods.immersivetechnology.client.particles.helper.ITColoredSmokeProvider;
 import mctmods.immersivetechnology.client.particles.helper.ITSmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.*;
+import mctmods.immersivetechnology.common.blocks.metal.gui.RotorCreativeMenu;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
+import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
 import mctmods.immersivetechnology.common.items.helper.ITFlagItem;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -31,10 +31,10 @@ import mctmods.immersivetechnology.core.registration.ITParticles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -65,8 +65,6 @@ public class ClientProxy extends CommonProxy {
                 ItemBlockRenderTypes.setRenderLayer(entry.getFlowing(), RenderType.translucent());
             }
 
-            BlockEntityRenderers.register(ITBlockEntities.BARREL_OPEN.get(), context -> new OpenBarrelRenderer());
-
             MenuScreens.register(ITMenuTypes.BOILER_LIQUID_MENU.getType(), BoilerLiquidScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_SOLID_MENU.getType(), BoilerSolidScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_TANK_MENU.getType(), BoilerTankScreen::new);
@@ -74,6 +72,8 @@ public class ClientProxy extends CommonProxy {
             MenuScreens.register(ITMenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
             MenuScreens.register(ITMenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
             MenuScreens.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
+
+            MenuScreens.register(ITMenuTypes.ROTOR_CREATIVE.getType(), (RotorCreativeMenu menu, Inventory inv, Component title) -> new RotorCreativeScreen(menu, inv));
 
             MenuScreens.register(ITMenuTypes.VALVE_FLUID.getType(), (ValveFluidMenu menu, Inventory inv, Component title) -> new ValveFluidScreen(menu, inv));
             MenuScreens.register(ITMenuTypes.VALVE_LIMITER.getType(), (ValveLimiterMenu menu, Inventory inv, Component title) -> new ValveLimiterScreen(menu, inv));
@@ -182,14 +182,15 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) { registerBERenders(event); }
 
-    private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, Supplier<BlockEntityRenderer<T>> render) { event.registerBlockEntityRenderer(type.get(), $ -> render.get()); }
+    private static <T extends BlockEntity> void registerBERender(EntityRenderersEvent.RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, BlockEntityRendererProvider<T> provider) { event.registerBlockEntityRenderer(type.get(), provider); }
 
     public static void registerBERenders(EntityRenderersEvent.RegisterRenderers event) {
-        registerBERenderNoContext(event, ITBlockEntities.BARREL_OPEN::get, OpenBarrelRenderer::new);
-        registerBERenderNoContext(event, ITMultiblockProvider.STEAM_TURBINE.masterBE(), SteamTurbineRenderer::new);
-        registerBERenderNoContext(event, ITMultiblockProvider.GAS_TURBINE.masterBE(), GasTurbineRenderer::new);
-        registerBERenderNoContext(event, ITMultiblockProvider.SOLAR_REFLECTOR.masterBE(), SolarReflectorRenderer::new);
-        registerBERenderNoContext(event, ITMultiblockProvider.SOLAR_MELTER.masterBE(), SolarMelterRenderer::new);
-        registerBERenderNoContext(event, ITMultiblockProvider.STEEL_SHEETMETAL_TANK.masterBE(), SteelSheetmetalTankRenderer::new);
+        registerBERender(event, ITBlockEntities.BARREL_OPEN::get, ctx3 -> new OpenBarrelRenderer());
+        registerBERender(event, ITBlockEntities.ROTOR_CREATIVE::get, context -> new RotorCreativeRenderer());
+        registerBERender(event, ITMultiblockProvider.STEAM_TURBINE.masterBE(), ctx2 -> new SteamTurbineRenderer());
+        registerBERender(event, ITMultiblockProvider.GAS_TURBINE.masterBE(), ctx -> new GasTurbineRenderer());
+        registerBERender(event, ITMultiblockProvider.SOLAR_REFLECTOR.masterBE(), ctx1 -> new SolarReflectorRenderer());
+        registerBERender(event, ITMultiblockProvider.SOLAR_MELTER.masterBE(), ctx -> new SolarMelterRenderer());
+        registerBERender(event, ITMultiblockProvider.STEEL_SHEETMETAL_TANK.masterBE(), ctx -> new SteelSheetmetalTankRenderer());
     }
 }

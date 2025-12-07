@@ -28,6 +28,7 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
         registerEntity(ITBlocks.MetalDevices.BARREL_CREATIVE.getRegObject());
         registerEntity(ITBlocks.MetalDevices.BARREL_OPEN.getRegObject());
         registerEntity(ITBlocks.MetalDevices.BARREL_STEEL.getRegObject());
+        dropSelf(ITBlocks.MetalDevices.ROTOR_CREATIVE.get());
         dropSelf(ITBlocks.MetalDevices.TRASH_ENERGY.get());
         dropSelf(ITBlocks.MetalDevices.TRASH_FLUID.get());
         dropSelf(ITBlocks.MetalDevices.TRASH_ITEM.get());

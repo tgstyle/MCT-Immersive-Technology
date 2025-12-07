@@ -18,7 +18,12 @@ public class ITItemModelProvider extends ItemModelProvider {
     public ITItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) { super(generator.getPackOutput(), ITLib.MODID, existingFileHelper); }
 
     private void generateBlockItem(String item_name, String parent_loc) {
-        ModelFile parentModel = new ModelFile.UncheckedModelFile(modLoc("block/" + parent_loc));
+        generateBlockItem(item_name, parent_loc, true);
+    }
+
+    private void generateBlockItem(String item_name, String parent_loc, boolean useBlockPrefix) {
+        String prefix = useBlockPrefix ? "block/" : "";
+        ModelFile parentModel = new ModelFile.UncheckedModelFile(modLoc(prefix + parent_loc));
         getBuilder(item_name).parent(parentModel)
                 .transforms()
                 .transform(ItemDisplayContext.GUI).rotation(30, 225, 0).translation(0, 0, 0).scale(0.625f, 0.625f, 0.625f).end()
@@ -47,6 +52,7 @@ public class ITItemModelProvider extends ItemModelProvider {
         generateBlockItem("barrel_creative", "metal/barrel_creative");
         generateBlockItem("barrel_open", "metal/barrel_open");
         generateBlockItem("barrel_steel", "metal/barrel_steel");
+        generateBlockItem("rotor_creative", "dynamic/rotor", false);
         generateBlockItem("reinforced_coke_brick", "stone/reinforced_coke_brick");
         generateBlockItem("slab_reinforced_coke_brick", "stone/slab_reinforced_coke_brick");
         generateBlockItem("technology_engineering", "metal/technology_engineering");
