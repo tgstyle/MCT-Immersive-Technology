@@ -1,9 +1,11 @@
 package mctmods.immersivetechnology.client.gui;
 
+import blusunrize.immersiveengineering.api.client.TextUtils;
 import mctmods.immersivetechnology.client.gui.helper.ITContainerScreen;
 import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.client.gui.helper.ITInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.BoilerTankMenu;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -13,7 +15,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import com.google.common.collect.ImmutableList;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -39,9 +40,9 @@ public class BoilerTankScreen extends ITContainerScreen<BoilerTankMenu> {
                 new ITInfoArea(new Rect2i(leftPos + 67, topPos + 5, 41, 9)) {
                     @Override
                     protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
-                        tooltip.add(Component.literal("Temperature"));
+                        tooltip.add(Component.translatable(TranslationKey.GUI_TEMPERATURE.getLocation()));
                         float heatLevel = menu.getHeatLevel();
-                        tooltip.add(Component.literal(ChatFormatting.RED + "" + (int)heatLevel + "/100 C"));
+                        tooltip.add(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_HEAT_LEVEL.getLocation(), (int)heatLevel), ChatFormatting.RED));
                     }
 
                     @Override
@@ -49,6 +50,4 @@ public class BoilerTankScreen extends ITContainerScreen<BoilerTankMenu> {
                 }
         );
     }
-
-    public @NotNull BoilerTankMenu getMenu() { return menu; }
 }

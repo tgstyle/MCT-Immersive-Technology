@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.core.registration;
 
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -15,7 +16,7 @@ public class ITCreativeTab {
             "main",
             () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 0)
                     .icon(() -> ITItems.FORMATION_TOOL.get().getDefaultInstance())
-                    .title(Component.translatable("itemGroup.immersivetechnology"))
+                    .title(Component.translatable(TranslationKey.CREATIVE_TAB.getLocation()))
                     .displayItems(ITCreativeTab::fillITTab)
                     .build()
     );

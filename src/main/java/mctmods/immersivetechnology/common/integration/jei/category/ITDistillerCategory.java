@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.integration.jei.category;
 import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.common.integration.jei.JEIRecipeTypes;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mezz.jei.api.forge.ForgeTypes;
@@ -72,7 +73,7 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
         arrow.draw(graphics, 85, 25);
         if (!recipe.itemOutput.isEmpty()) {
             String chanceStr = String.format("%.2f%%", recipe.chance * 100);
-            Component component = Component.translatable("category.immersivetechnology.metal_multiblock.distiller.chance", chanceStr).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
+            Component component = Component.translatable(TranslationKey.CATEGORY_DISTILLER_CHANCE.getLocation(), chanceStr).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
             Font font = Minecraft.getInstance().font;
             int textWidth = font.width(component);
             int textX = 85 + (24 - textWidth) / 2;

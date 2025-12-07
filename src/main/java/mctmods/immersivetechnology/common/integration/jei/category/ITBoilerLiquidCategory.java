@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.integration.jei.category;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
 import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.common.integration.jei.JEIRecipeTypes;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mezz.jei.api.forge.ForgeTypes;
@@ -55,11 +56,11 @@ public class ITBoilerLiquidCategory extends ITRecipeCategory<BoilerLiquidRecipe>
     public void draw(@NotNull BoilerLiquidRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         tankOverlay.draw(guiGraphics, 78, 19);
         Font font = Minecraft.getInstance().font;
-        Component timeComponent = Component.translatable("category.immersivetechnology.metal_multiblock.boiler_liquid.time", recipe.getTotalProcessTime(), recipe.input.getAmount()).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
+        Component timeComponent = Component.translatable(TranslationKey.CATEGORY_BOILER_LIQUID_TIME.getLocation(), recipe.getTotalProcessTime(), recipe.input.getAmount()).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
         int timeWidth = font.width(timeComponent);
         int timeX = 80 + 8 - timeWidth / 2;
         guiGraphics.drawString(font, timeComponent, timeX, 0, 0xAAAAAA, true);
-        Component heatComponent = Component.translatable("category.immersivetechnology.metal_multiblock.boiler_liquid.heat", String.format("%.2f", recipe.getHeatPerTick())).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
+        Component heatComponent = Component.translatable(TranslationKey.CATEGORY_BOILER_LIQUID_HEAT.getLocation(), String.format("%.2f", recipe.getHeatPerTick())).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
         int heatWidth = font.width(heatComponent);
         int heatX = 80 + 8 - heatWidth / 2;
         guiGraphics.drawString(font, heatComponent, heatX, 9, 0xAAAAAA, true);

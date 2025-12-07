@@ -9,11 +9,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultib
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPosition;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockFace;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.client.utils.TextUtils;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.interfaces.MBOverlayText;
@@ -23,6 +19,7 @@ import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import net.minecraft.core.BlockPos;
@@ -292,7 +289,7 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
                     boolean current = (boolean) f.get(state.rsState);
                     boolean inverted = !current;
                     f.set(state.rsState, inverted);
-                    player.displayClientMessage(Component.translatable("chat.immersiveengineering.info.rsControl." + (inverted ? "invertedOff" : "invertedOn")), true);
+                    player.displayClientMessage(Component.translatable(inverted ? TranslationKey.CHAT_RS_CONTROL_INVERTED_OFF.getLocation() : TranslationKey.CHAT_RS_CONTROL_INVERTED_ON.getLocation()), true);
                     ctx.markDirtyAndSync();
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to invert RSState", e);

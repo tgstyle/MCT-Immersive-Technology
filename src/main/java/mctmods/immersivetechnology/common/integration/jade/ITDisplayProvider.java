@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.integration.jade;
 
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -24,11 +25,9 @@ public enum ITDisplayProvider implements IBlockComponentProvider {
             CompoundTag data = accessor.getServerData();
             if (data.contains("ITActive")) {
                 boolean active = data.getBoolean("ITActive");
-                tooltip.add(Component.literal("Status: " + (active ? "Active" : "Inactive")).withStyle(active ? ChatFormatting.GREEN : ChatFormatting.RED));
+                tooltip.add(Component.translatable(TranslationKey.GUI_STATUS.getLocation(), Component.translatable(active ? TranslationKey.GUI_STATUS_ACTIVE.getLocation() : TranslationKey.GUI_STATUS_INACTIVE.getLocation())).withStyle(active ? ChatFormatting.GREEN : ChatFormatting.RED));
             }
-            if (data.contains("ITFuelEmpty")) {
-                tooltip.add(Component.literal("Fuel: Empty").withStyle(ChatFormatting.GRAY));
-            }
+            if (data.contains("ITFuelEmpty")) { tooltip.add(Component.translatable(TranslationKey.GUI_FUEL_EMPTY.getLocation()).withStyle(ChatFormatting.GRAY)); }
         }
     }
 }

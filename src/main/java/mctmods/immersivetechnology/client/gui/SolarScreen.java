@@ -9,6 +9,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLog
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarMelterRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.ChatFormatting;
@@ -55,7 +56,7 @@ public class SolarScreen extends ITContainerScreen<SolarMenu> {
         int bit_back = getBitForDir(back);
         int bit_left = getBitForDir(left);
         int[][] blitCoordinates = {{32, 24}, {48, 40}, {32, 56}, {16, 40}};
-        String[] labels = {"N", "E", "S", "W"};
+        String[] labels = {TranslationKey.GUI_DIRECTION_NORTH.text(), TranslationKey.GUI_DIRECTION_EAST.text(), TranslationKey.GUI_DIRECTION_SOUTH.text(), TranslationKey.GUI_DIRECTION_WEST.text()};
         boolean canHeat = menu.state.get(1) > 0 && minecraft.level != null && !minecraft.level.isRaining() && menu.state.get(7) == 1;
         for (int pos = 0; pos < 4; pos++) {
             int bit = switch (pos) {
@@ -111,8 +112,8 @@ public class SolarScreen extends ITContainerScreen<SolarMenu> {
         if (mouseX >= leftPos + 16 && mouseX < leftPos + 58 && mouseY >= topPos + 9 && mouseY < topPos + 17) {
             double heat = menu.state.get(0);
             double maxHeat = getMaxHeat();
-            addLine.accept(Component.literal("Temperature"));
-            addLine.accept(Component.literal(String.format("%.2f/%.2f°C", heat, maxHeat)).withStyle(ChatFormatting.RED));
+            addLine.accept(Component.translatable(TranslationKey.GUI_TEMPERATURE.getLocation()));
+            addLine.accept(Component.translatable(TranslationKey.GUI_HEAT_LEVEL_DETAILED.getLocation(), heat, maxHeat).withStyle(ChatFormatting.RED));
         }
     }
 }

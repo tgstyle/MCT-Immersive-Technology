@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.integration.jei.category;
 import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.integration.jei.JEIRecipeTypes;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mezz.jei.api.forge.ForgeTypes;
@@ -63,11 +64,11 @@ public class ITSolarTowerCategory extends ITRecipeCategory<SolarTowerRecipe> {
         tankOverlay.draw(guiGraphics, 100, 19);
         if (recipe.fluidOutput != null) { tankOverlay.draw(guiGraphics, 124, 19); }
         Font font = Minecraft.getInstance().font;
-        Component timeComponent = Component.translatable("category.immersivetechnology.metal_multiblock.solar_tower.time", recipe.getTotalProcessTime(), recipe.input.getAmount()).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
+        Component timeComponent = Component.translatable(TranslationKey.CATEGORY_SOLAR_TOWER_TIME.getLocation(), recipe.getTotalProcessTime(), recipe.input.getAmount()).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
         int timeWidth = font.width(timeComponent);
         int timeX = 122 - timeWidth / 2;
         guiGraphics.drawString(font, timeComponent, timeX, 0, 0xAAAAAA, true);
-        Component tempComponent = Component.translatable("category.immersivetechnology.metal_multiblock.solar_tower.temp", recipe.requiredTemp).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
+        Component tempComponent = Component.translatable(TranslationKey.CATEGORY_SOLAR_TOWER_TEMP.getLocation(), recipe.requiredTemp).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
         int tempWidth = font.width(tempComponent);
         int tempX = 122 - tempWidth / 2;
         guiGraphics.drawString(font, tempComponent, tempX, 9, 0xAAAAAA, true);

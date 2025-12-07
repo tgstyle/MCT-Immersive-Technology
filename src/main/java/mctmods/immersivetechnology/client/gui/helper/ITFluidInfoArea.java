@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.client.gui.helper;
 import blusunrize.immersiveengineering.api.client.TextUtils;
 import com.mojang.blaze3d.vertex.Tesselator;
 import mctmods.immersivetechnology.client.renderer.helper.ITRenderTypes;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -40,31 +41,25 @@ public class ITFluidInfoArea extends ITInfoArea {
         this.overlayTexture = overlayTexture;
     }
 
-    public void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
-        if (ModList.get().isLoaded("jei")) { return; }
-        FluidStack fluid = tank.getFluid();
-        int capacity = tank.getCapacity();
-        Objects.requireNonNull(tooltip);
-        fillTooltip(fluid, capacity, tooltip::add);
-    }
+    public void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) { if (ModList.get().isLoaded("jei")) { return; } FluidStack fluid = tank.getFluid(); int capacity = tank.getCapacity(); Objects.requireNonNull(tooltip); fillTooltip(fluid, capacity, tooltip::add); }
 
     public static void fillTooltip(FluidStack fluid, int tankCapacity, Consumer<Component> tooltip) {
         if (!fluid.isEmpty()) { tooltip.accept(fluid.getDisplayName().copy().withStyle(fluid.getFluid().getFluidType().getRarity(fluid).getStyleModifier())); }
-        else { tooltip.accept(Component.translatable("gui.immersiveengineering.empty")); }
+        else { tooltip.accept(Component.translatable(TranslationKey.GUI_EMPTY.getLocation())); }
 
         if (Minecraft.getInstance().options.advancedItemTooltips && !fluid.isEmpty()) {
-            if (!Screen.hasShiftDown()) { tooltip.accept(Component.translatable("desc.immersiveengineering.info.holdShiftForInfo")); }
+            if (!Screen.hasShiftDown()) { tooltip.accept(Component.translatable(TranslationKey.DESC_HOLD_SHIFT_FOR_INFO.getLocation())); }
             else {
-                tooltip.accept(TextUtils.applyFormat(Component.literal("Fluid Registry: " + ForgeRegistries.FLUIDS.getKey(fluid.getFluid())), ChatFormatting.DARK_GRAY));
-                tooltip.accept(TextUtils.applyFormat(Component.literal("Density: " + fluid.getFluid().getFluidType().getDensity(fluid)), ChatFormatting.DARK_GRAY));
-                tooltip.accept(TextUtils.applyFormat(Component.literal("Temperature: " + fluid.getFluid().getFluidType().getTemperature(fluid)), ChatFormatting.DARK_GRAY));
-                tooltip.accept(TextUtils.applyFormat(Component.literal("Viscosity: " + fluid.getFluid().getFluidType().getViscosity(fluid)), ChatFormatting.DARK_GRAY));
-                tooltip.accept(TextUtils.applyFormat(Component.literal("NBT Data: " + fluid.getTag()), ChatFormatting.DARK_GRAY));
+                tooltip.accept(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_FLUID_REGISTRY.getLocation(), ForgeRegistries.FLUIDS.getKey(fluid.getFluid())), ChatFormatting.DARK_GRAY));
+                tooltip.accept(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_FLUID_DENSITY.getLocation(), fluid.getFluid().getFluidType().getDensity(fluid)), ChatFormatting.DARK_GRAY));
+                tooltip.accept(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_FLUID_TEMPERATURE.getLocation(), fluid.getFluid().getFluidType().getTemperature(fluid)), ChatFormatting.DARK_GRAY));
+                tooltip.accept(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_FLUID_VISCOSITY.getLocation(), fluid.getFluid().getFluidType().getViscosity(fluid)), ChatFormatting.DARK_GRAY));
+                tooltip.accept(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_FLUID_NBT.getLocation(), fluid.getTag()), ChatFormatting.DARK_GRAY));
             }
         }
 
-        if (tankCapacity > 0) { tooltip.accept(TextUtils.applyFormat(Component.literal(fluid.getAmount() + "/" + tankCapacity + "mB"), ChatFormatting.GRAY)); }
-        else if (tankCapacity == 0) { tooltip.accept(TextUtils.applyFormat(Component.literal(fluid.getAmount() + "mB"), ChatFormatting.GRAY)); }
+        if (tankCapacity > 0) { tooltip.accept(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_FLUID_CAPACITY.getLocation(), fluid.getAmount(), tankCapacity), ChatFormatting.GRAY)); }
+        else if (tankCapacity == 0) { tooltip.accept(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_FLUID_AMOUNT.getLocation(), fluid.getAmount()), ChatFormatting.GRAY)); }
     }
 
     public void draw(GuiGraphics graphics) {

@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.integration.jei.category;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.common.integration.jei.JEIRecipeTypes;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mezz.jei.api.constants.VanillaTypes;
@@ -52,11 +53,11 @@ public class ITBoilerSolidCategory extends ITRecipeCategory<BoilerSolidRecipe> {
         ItemStack exampleStack = recipe.input.getMatchingStacks()[0].copy();
         exampleStack.setCount(recipe.input.getCount());
         int burnTime = ForgeHooks.getBurnTime(exampleStack, null);
-        Component timeComponent = Component.translatable("category.immersivetechnology.metal_multiblock.boiler_solid.time", burnTime, recipe.input.getCount()).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
+        Component timeComponent = Component.translatable(TranslationKey.CATEGORY_BOILER_SOLID_TIME.getLocation(), burnTime, recipe.input.getCount()).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
         int timeWidth = font.width(timeComponent);
         int timeX = 90 - timeWidth / 2;
         guiGraphics.drawString(font, timeComponent, timeX, 0, 0xAAAAAA, true);
-        Component heatComponent = Component.translatable("category.immersivetechnology.metal_multiblock.boiler_solid.heat", String.format("%.2f", recipe.getHeatPerTick())).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
+        Component heatComponent = Component.translatable(TranslationKey.CATEGORY_BOILER_SOLID_HEAT.getLocation(), String.format("%.2f", recipe.getHeatPerTick())).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
         int heatWidth = font.width(heatComponent);
         int heatX = 90 - heatWidth / 2;
         guiGraphics.drawString(font, heatComponent, heatX, 9, 0xAAAAAA, true);

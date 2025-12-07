@@ -1,5 +1,8 @@
 package mctmods.immersivetechnology.client.gui.helper;
 
+import blusunrize.immersiveengineering.api.client.TextUtils;
+import mctmods.immersivetechnology.common.util.TranslationKey;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -17,7 +20,7 @@ public class ITEnergyInfoArea extends ITInfoArea {
 
     @Override
     protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
-        tooltip.add(Component.literal(energy.getEnergyStored() + "/" + energy.getMaxEnergyStored() + " IF"));
+        tooltip.add(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_ENERGY_STORED.getLocation(), energy.getEnergyStored(), energy.getMaxEnergyStored()), ChatFormatting.GRAY));
     }
 
     @Override
