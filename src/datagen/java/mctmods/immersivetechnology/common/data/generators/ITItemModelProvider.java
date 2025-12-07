@@ -18,15 +18,15 @@ public class ITItemModelProvider extends ItemModelProvider {
     public ITItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) { super(generator.getPackOutput(), ITLib.MODID, existingFileHelper); }
 
     private void generateBlockItem(String item_name, String parent_loc) {
-        generateBlockItem(item_name, parent_loc, true);
+        generateBlockItem(item_name, parent_loc, true, 0, 0, 0.625f);
     }
 
-    private void generateBlockItem(String item_name, String parent_loc, boolean useBlockPrefix) {
+    private void generateBlockItem(String item_name, String parent_loc, boolean useBlockPrefix, float guiTransX, float guiTransY, float guiScale) {
         String prefix = useBlockPrefix ? "block/" : "";
         ModelFile parentModel = new ModelFile.UncheckedModelFile(modLoc(prefix + parent_loc));
         getBuilder(item_name).parent(parentModel)
                 .transforms()
-                .transform(ItemDisplayContext.GUI).rotation(30, 225, 0).translation(0, 0, 0).scale(0.625f, 0.625f, 0.625f).end()
+                .transform(ItemDisplayContext.GUI).rotation(30, 225, 0).translation(guiTransX, guiTransY, 0).scale(guiScale, guiScale, guiScale).end()
                 .transform(ItemDisplayContext.FIXED).rotation(0, 180, 0).scale(0.5f, 0.5f, 0.5f).end()
                 .transform(ItemDisplayContext.GROUND).translation(0, 3, 0).scale(0.25f, 0.25f, 0.25f).end()
                 .transform(ItemDisplayContext.HEAD).rotation(0, 180, 0).translation(0, 0, 0).scale(1f, 1f, 1f).end()
@@ -52,7 +52,6 @@ public class ITItemModelProvider extends ItemModelProvider {
         generateBlockItem("barrel_creative", "metal/barrel_creative");
         generateBlockItem("barrel_open", "metal/barrel_open");
         generateBlockItem("barrel_steel", "metal/barrel_steel");
-        generateBlockItem("rotor_creative", "dynamic/rotor", false);
         generateBlockItem("reinforced_coke_brick", "stone/reinforced_coke_brick");
         generateBlockItem("slab_reinforced_coke_brick", "stone/slab_reinforced_coke_brick");
         generateBlockItem("technology_engineering", "metal/technology_engineering");
@@ -62,6 +61,8 @@ public class ITItemModelProvider extends ItemModelProvider {
         generateBlockItem("valve_fluid", "metal/valve_fluid_open");
         generateBlockItem("valve_limiter", "metal/valve_limiter");
         generateBlockItem("valve_load", "metal/valve_load_open");
+
+        generateBlockItem("rotor_creative", "dynamic/rotor", false, -8, 4, 0.7f);
 
         generateGeneratedItem();
 
