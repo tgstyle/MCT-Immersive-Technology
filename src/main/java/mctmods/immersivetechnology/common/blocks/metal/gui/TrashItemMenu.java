@@ -39,7 +39,7 @@ public class TrashItemMenu extends ITContainerMenu {
 
     public static TrashItemMenu makeClient(MenuType<TrashItemMenu> type, int id, Inventory inv) { return new TrashItemMenu(type, id, inv); }
 
-    private void addOwnSlots() { addSlot(new SlotItemHandler(handler, 0, 80, 34)); ownSlotCount=1; }
+    private void addOwnSlots() { addSlot(new SlotItemHandler(handler, 0, 79, 36)); ownSlotCount=1; }
 
     private void addPlayerSlots(Inventory inv) {
         for (int y = 0; y < 3; y++) for (int x = 0; x < 9; x++) addSlot(new Slot(inv, x + y * 9 + 9, 8 + x * 18, 84 + y * 18));
