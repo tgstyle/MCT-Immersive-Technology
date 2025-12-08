@@ -48,9 +48,9 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     public static final int ENERGY_CAPACITY = 1200000;
     private static final double BASE_MASS = 2;
     private static final double FRICTION = 12;
-    private static final int MAX_SPEED = 7200;
     private static final int POWER_DIVIDER = 2;
     private static final int MAX_OUTPUT = 12288;
+    private static final int MAX_SPEED = MechanicalCapabilities.MAX_RPM;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AlternatorShape.DATA.pointsOfInterest);
 
     public static final BlockPos RUNNING_SOUND_POI = getPosList("running_sound").get(0);
@@ -76,9 +76,9 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
         float att = Math.max((float) player.distanceToSqr(soundPos) / 8, 1);
         float vol = 20f / att;
-        if (state.active && state.speed >= state.maxSpeed / POWER_DIVIDER && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
+        if (state.active && state.speed >= state.effectiveMaxSpeed / POWER_DIVIDER && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
             state.isSoundPlaying = ITSound.startSound(
-                    () -> state.active && state.speed >= state.maxSpeed / POWER_DIVIDER,
+                    () -> state.active && state.speed >= state.effectiveMaxSpeed / POWER_DIVIDER,
                     ctx.isValid(),
                     soundPos,
                     ITSounds.alternator,
@@ -88,7 +88,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
                         return 20f / Math.max((float) p.distanceToSqr(soundPos) / 8, 1);
                     },
                     () -> {
-                        float half = (float) state.maxSpeed / POWER_DIVIDER;
+                        float half = (float) state.effectiveMaxSpeed / POWER_DIVIDER;
                         if (state.speed <= half) { return 0.75f; }
                         float normalized = (state.speed - half) / half;
                         return 0.75f + (0.25f * normalized);
@@ -110,6 +110,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         int turbineSpeed = 0;
         float turbineTorque = 1f;
         boolean hasProvider = false;
+        int providerMaxSpeed = MAX_SPEED;
         Direction inputFacing = ctx.getLevel().toAbsolute(ROTATIONAL_INPUT_FACING);
         BlockPos inputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_INPUT_POI);
         assert inputFacing != null;
@@ -121,14 +122,16 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
                 IMechanicalEnergyProvider provider = providerCap.orElseThrow(RuntimeException::new);
                 turbineSpeed = provider.getSpeed();
                 turbineTorque = provider.getTorque();
+                providerMaxSpeed = provider.getMaxSpeed();
                 hasProvider = true;
                 if (turbineSpeed > 0) { state.active = true; }
             }
         }
+        int effectiveMax = hasProvider ? Math.min(MAX_SPEED, providerMaxSpeed) : MAX_SPEED;
+        state.effectiveMaxSpeed = effectiveMax;
         if (hasProvider) {
-            state.speed = turbineSpeed;
+            state.speed = Math.min(turbineSpeed, effectiveMax);
             state.torqueMultiplier = turbineTorque;
-            state.maxSpeed = MAX_SPEED;
         } else if (state.speed > 0) {
             int speedDownRate = (int) Math.round(FRICTION / BASE_MASS);
             state.speed = Math.max(state.speed - speedDownRate, 0);
@@ -145,8 +148,8 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     }
 
     private void generateAndPushEnergy(State state, IMultiblockContext<State> ctx, Level level) {
-        if (state.speed < state.maxSpeed / POWER_DIVIDER) { return; }
-        double ratio = (double) state.speed / state.maxSpeed;
+        if (state.speed < state.effectiveMaxSpeed / POWER_DIVIDER) { return; }
+        double ratio = (double) state.speed / MAX_SPEED;
         int generatedThisTick = (int) Math.round(ratio * state.torqueMultiplier * MAX_OUTPUT);
         List<IEnergyStorage> connected = getConnectedHandlers(ctx, level);
         if (connected.isEmpty()) { state.energy.receiveEnergy(generatedThisTick, false); return; }
@@ -234,6 +237,8 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         public double getMass() { return BASE_MASS; }
         @Override
         public double getFriction() { return FRICTION; }
+        @Override
+        public int getMaxSpeed() { return MechanicalCapabilities.MAX_RPM; }
     }
 
     public static class State implements IMultiblockState, ITDisplayContext {
@@ -241,7 +246,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         public boolean active = false;
         public int speed = 0;
         public float torqueMultiplier = 1f;
-        public int maxSpeed = MAX_SPEED;
+        public int effectiveMaxSpeed = MAX_SPEED;
         public BooleanSupplier isSoundPlaying = () -> false;
         private final StoredCapability<IEnergyStorage> energyCap;
 
@@ -259,7 +264,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
             nbt.putFloat("torqueMultiplier", torqueMultiplier);
-            nbt.putInt("maxSpeed", maxSpeed);
+            nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
         }
 
         @Override
@@ -268,7 +273,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             torqueMultiplier = nbt.getFloat("torqueMultiplier");
-            maxSpeed = nbt.getInt("maxSpeed");
+            effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
         }
 
         @Override
@@ -289,6 +294,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             nbt.putInt("speed", speed);
             nbt.putFloat("torqueMultiplier", torqueMultiplier);
             nbt.put("energy", energy.serializeNBT());
+            nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
         }
 
         @Override
@@ -298,6 +304,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             torqueMultiplier = nbt.getFloat("torqueMultiplier");
             if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); }
             energy.deserializeNBT(nbt.get("energy"));
+            effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
         }
 
         @Override

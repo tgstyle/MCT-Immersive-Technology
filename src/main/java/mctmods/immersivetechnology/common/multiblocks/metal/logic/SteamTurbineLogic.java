@@ -57,10 +57,10 @@ import java.util.function.Function;
 
 public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.State>, IServerTickableComponent<SteamTurbineLogic.State>, IClientTickableComponent<SteamTurbineLogic.State>, ITPressurizedFluidOutput<SteamTurbineLogic.State> {
     public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
-    public static final int MAX_SPEED = 7200;
     private static final double BASE_MASS = 10;
     private static final double DRIVE_TORQUE = 30;
     private static final double FRICTION = 60;
+    private static final int MAX_SPEED = MechanicalCapabilities.MAX_RPM;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SteamTurbineShape.DATA.pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
@@ -95,12 +95,12 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         boolean targetActive = state.active || state.speed > 0;
-        float targetLevel = ITLib.remapRange(0,MAX_SPEED, 0.5f, 1.0f, state.speed);
+        float targetLevel = ITLib.remapRange(0, state.effectiveMaxSpeed, 0.5f, 1.0f, state.speed);
         if (state.currentLevel == 0f) { state.currentLevel = targetLevel; } else { state.currentLevel = state.currentLevel * 0.9f + targetLevel * 0.1f; }
-        float targetPitch = ITLib.remapRange(0, MAX_SPEED, 0.5f, 1.5f, state.speed);
+        float targetPitch = ITLib.remapRange(0, state.effectiveMaxSpeed, 0.5f, 1.5f, state.speed);
         if (state.currentPitch == 0f) { state.currentPitch = targetPitch; } else { state.currentPitch = state.currentPitch * 0.95f + targetPitch * 0.05f; }
         if (state.currentPitch < 0.5f) { state.currentPitch = 0.5f; }
-        float base = (state.speed / (float) MAX_SPEED) * 72f;
+        float base = (state.speed / (float) state.effectiveMaxSpeed) * 72f;
         float step = base;
         if (state.animation_fanFadeIn > 0) {
             step -= (state.animation_fanFadeIn / 80f) * base;
@@ -135,7 +135,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             boolean connected = state.fluidOutput.isPresent();
             if (!connected) {
                 Vec3 smokePos = new Vec3(outputAbs.getX() + 0.5, outputAbs.getY() + 0.5, outputAbs.getZ() + 0.5);
-                float normSpeed = Math.max(0f, ITLib.remapRange(100, MAX_SPEED, 0f, 1f, state.speed));
+                float normSpeed = Math.max(0f, ITLib.remapRange(100, state.effectiveMaxSpeed, 0f, 1f, state.speed));
                 double dirVelHoriz = 0.125 * normSpeed;
                 double dirVelVert = 0.1 * normSpeed;
                 double baseUp = 0.0625 + 0.1 * (1 - normSpeed);
@@ -172,6 +172,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         boolean hasConsumer = false;
         double additionalMass = 0.0;
         double additionalFriction = 0.0;
+        int consumerMaxSpeed = MechanicalCapabilities.MAX_RPM;
         if (entity != null) {
             LazyOptional<IMechanicalEnergyConsumer> consumerCap = entity.getCapability(MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY, outputFacing.getOpposite());
             if (consumerCap.isPresent()) {
@@ -179,8 +180,11 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
                 IMechanicalEnergyConsumer consumer = consumerCap.orElseThrow(RuntimeException::new);
                 additionalMass = consumer.getMass();
                 additionalFriction = consumer.getFriction();
+                consumerMaxSpeed = consumer.getMaxSpeed();
             }
         }
+        int effectiveMax = hasConsumer ? Math.min(MAX_SPEED, consumerMaxSpeed) : MAX_SPEED;
+        state.effectiveMaxSpeed = effectiveMax;
         if (additionalMass != state.connectedMass || additionalFriction != state.connectedFriction) {
             state.connectedMass = additionalMass;
             state.connectedFriction = additionalFriction;
@@ -194,7 +198,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         } else {
             if (state.burnRemaining > 0) {
                 state.burnRemaining--;
-                state.speed = Math.min(MAX_SPEED, state.speed + state.inertia.getSpeedUpRate());
+                state.speed = Math.min(effectiveMax, state.speed + state.inertia.getSpeedUpRate());
                 state.active = true;
             } else {
                 FluidStack fluid = state.tanks.input.getFluid();
@@ -206,7 +210,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
                         if (filled < recipe.fluidOutput.getAmount()) {}
                     }
                     state.burnRemaining = recipe.getTotalProcessTime() - 1;
-                    state.speed = Math.min(MAX_SPEED, state.speed + state.inertia.getSpeedUpRate());
+                    state.speed = Math.min(effectiveMax, state.speed + state.inertia.getSpeedUpRate());
                     state.active = true;
                 } else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
             }
@@ -283,6 +287,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         private RotationInertiaProcess inertia;
         private int pressureReleaseCooldown = 0;
         private boolean wasEnabled = false;
+        public int effectiveMaxSpeed = MAX_SPEED;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -307,6 +312,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             nbt.put("tanks", tanks.toNBT());
             nbt.putInt("pressureReleaseCooldown", pressureReleaseCooldown);
             nbt.putBoolean("wasEnabled", wasEnabled);
+            nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
         }
 
         @Override
@@ -317,6 +323,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             tanks.readNBT(nbt.getCompound("tanks"));
             pressureReleaseCooldown = nbt.getInt("pressureReleaseCooldown");
             wasEnabled = nbt.getBoolean("wasEnabled");
+            effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
         }
 
         @Override
@@ -345,6 +352,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
             nbt.put("tanks", tanks.toNBT());
+            nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
         }
 
         @Override
@@ -353,6 +361,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             tanks.readNBT(nbt.getCompound("tanks"));
+            effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
             if (active && !oldActive) { animation_fanFadeIn = 80; }
         }
     }

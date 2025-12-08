@@ -28,10 +28,10 @@ public class RotorCreativeBlockEntity extends ITBaseBlockEntity implements MenuP
     public float animation_rotation = 0f;
     public float animation_step = 0f;
 
-    public RotorCreativeBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.ROTOR_CREATIVE.get(), pos, state); rpm = 7200; }
+    public RotorCreativeBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.ROTOR_CREATIVE.get(), pos, state); rpm = MechanicalCapabilities.MAX_RPM; }
 
     @Override public void tickClient() {
-        animation_step = (Math.abs(rpm) / 7200f) * 72f;
+        animation_step = (Math.abs(rpm) / (float) MechanicalCapabilities.MAX_RPM) * 72f;
         float dir = Math.signum(rpm);
         animation_rotation += animation_step * dir;
         animation_rotation %= 360;
@@ -46,7 +46,7 @@ public class RotorCreativeBlockEntity extends ITBaseBlockEntity implements MenuP
     private class Provider implements IMechanicalEnergyProvider {
         @Override public int getSpeed() { return rpm; }
         @Override public float getTorque() { return 1f; }
-        @Override public int getMaxSpeed() { return Integer.MAX_VALUE / 2; }
+        @Override public int getMaxSpeed() { return MechanicalCapabilities.MAX_RPM; }
         @Override public double getBaseMass() { return 0; }
         @Override public double getDriveTorque() { return 0; }
         @Override public double getFriction() { return 0; }
@@ -71,7 +71,7 @@ public class RotorCreativeBlockEntity extends ITBaseBlockEntity implements MenuP
     @Override public void receiveMessageFromClient(CompoundTag message) {
         if (message.contains("rpm")) {
             int newRpm = message.getInt("rpm");
-            rpm = Math.max(Math.min(newRpm, 7200), -7200);
+            rpm = Math.max(Math.min(newRpm, MechanicalCapabilities.MAX_RPM), -MechanicalCapabilities.MAX_RPM);
             setChanged();
             markContainingBlockForUpdate(null);
         }
