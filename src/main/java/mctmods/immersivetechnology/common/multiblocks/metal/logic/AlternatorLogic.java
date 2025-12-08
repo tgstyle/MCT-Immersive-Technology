@@ -12,6 +12,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlock
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
 import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.util.Pair;
 import mctmods.immersivetechnology.api.MechanicalCapabilities;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
@@ -35,9 +36,10 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
-
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -132,8 +134,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             state.speed = Math.max(state.speed - speedDownRate, 0);
             if (state.speed > 0) { state.active = true; }
         }
-        generateEnergy(state);
-        drainBuffer(state, ctx, level);
+        generateAndPushEnergy(state, ctx, level);
         boolean activeChanged = wasActive != state.active;
         boolean speedChanged = prevSpeed != state.speed;
         boolean torqueChanged = prevTorque != state.torqueMultiplier;
@@ -143,18 +144,37 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
-    private void generateEnergy(State state) {
+    private void generateAndPushEnergy(State state, IMultiblockContext<State> ctx, Level level) {
         if (state.speed < state.maxSpeed / POWER_DIVIDER) { return; }
         double ratio = (double) state.speed / state.maxSpeed;
-        int generated = (int) Math.round(ratio * state.torqueMultiplier * MAX_OUTPUT);
-        int current = state.energy.getEnergyStored();
-        int newEnergy = Math.min(state.energy.getMaxEnergyStored(), current + generated);
-        state.energy.setStoredEnergy(newEnergy);
+        int generatedThisTick = (int) Math.round(ratio * state.torqueMultiplier * MAX_OUTPUT);
+        List<IEnergyStorage> connected = getConnectedHandlers(ctx, level);
+        if (connected.isEmpty()) { state.energy.receiveEnergy(generatedThisTick, false); return; }
+        int pushed = distributeFluxProper(connected, generatedThisTick);
+        state.energy.receiveEnergy(generatedThisTick - pushed, false);
     }
 
-    private void drainBuffer(State state, IMultiblockContext<State> ctx, Level level) {
-        int initialStored = state.energy.getEnergyStored();
-        if (initialStored <= 0) { return; }
+    private int distributeFluxProper(List<IEnergyStorage> storages, int amount) {
+        if (storages.isEmpty()) { return amount; }
+        List<Pair<IEnergyStorage, Integer>> pairs = storages.stream()
+                .filter(Objects::nonNull)
+                .map(storage -> Pair.of(storage, storage.receiveEnergy(amount, true)))
+                .sorted(Comparator.comparingInt(Pair::getSecond))
+                .toList();
+        int remaining = amount;
+        int remainingOutputs = pairs.size();
+        for (Pair<IEnergyStorage, Integer> pair : pairs) {
+            IEnergyStorage storage = pair.getFirst();
+            if (remaining <= 0) { break; }
+            int possibleOutput = (int) Math.ceil((double) remaining / remainingOutputs);
+            int inserted = storage.receiveEnergy(possibleOutput, false);
+            remaining -= inserted;
+            remainingOutputs--;
+        }
+        return amount - remaining;
+    }
+
+    private List<IEnergyStorage> getConnectedHandlers(IMultiblockContext<State> ctx, Level level) {
         List<IEnergyStorage> connected = new ArrayList<>();
         for (BlockPos pos : ENERGY_LEFT_POI) {
             BlockPos absolutePos = ctx.getLevel().toAbsolute(pos);
@@ -180,26 +200,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
                 }
             }
         }
-        if (connected.isEmpty()) { return; }
-        int numConnected = connected.size();
-        int base = initialStored / numConnected;
-        int extra = initialStored % numConnected;
-        int pushed = 0;
-        int i = 0;
-        for (IEnergyStorage handler : connected) {
-            int amount = base + (i < extra ? 1 : 0);
-            int accepted = handler.receiveEnergy(amount, false);
-            pushed += accepted;
-            i++;
-        }
-        int leftover = initialStored - pushed;
-        for (IEnergyStorage handler : connected) {
-            if (leftover <= 0) { break; }
-            int accepted = handler.receiveEnergy(leftover, false);
-            pushed += accepted;
-            leftover -= accepted;
-        }
-        state.energy.setStoredEnergy(initialStored - pushed);
+        return connected;
     }
 
     @Override
