@@ -21,27 +21,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BoilerTankRecipeSerializer extends IERecipeSerializer<BoilerTankRecipe> {
-    @Override
-    public ItemStack getIcon() { return ITMultiblockProvider.BOILER_TANK.iconStack(); }
+    @Override public ItemStack getIcon() { return ITMultiblockProvider.BOILER_TANK.iconStack(); }
 
-    @Override
-    public BoilerTankRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
+    @Override public BoilerTankRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
         FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         FluidStack output = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result"));
         int time = GsonHelper.getAsInt(json, "time", 1);
         return new BoilerTankRecipe(recipeID, input, output, time);
     }
 
-    @Override
-    public @Nullable BoilerTankRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public BoilerTankRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         FluidStack output = buffer.readFluidStack();
         int time = buffer.readInt();
         return new BoilerTankRecipe(recipeId, input, output, time);
     }
 
-    @Override
-    public void toNetwork(@NotNull FriendlyByteBuf buffer, BoilerTankRecipe recipe) {
+    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, BoilerTankRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.output);
         buffer.writeInt(recipe.getTotalProcessTime());

@@ -16,11 +16,9 @@ public enum ITDisplayProvider implements IBlockComponentProvider {
 
     private static long lastAddTime = 0;
 
-    @Override
-    public ResourceLocation getUid() { return ITLib.rl("display"); }
+    @Override public ResourceLocation getUid() { return ITLib.rl("display"); }
 
-    @Override
-    public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+    @Override public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
         if (System.currentTimeMillis() - lastAddTime > 10) {
             lastAddTime = System.currentTimeMillis();
             CompoundTag data = accessor.getServerData();

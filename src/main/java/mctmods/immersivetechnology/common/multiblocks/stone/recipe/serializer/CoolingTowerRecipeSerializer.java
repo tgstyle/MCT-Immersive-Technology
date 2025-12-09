@@ -15,11 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CoolingTowerRecipeSerializer extends IERecipeSerializer<CoolingTowerRecipe> {
-    @Override
-    public net.minecraft.world.item.ItemStack getIcon() { return ITMultiblockProvider.COOLING_TOWER.iconStack(); }
+    @Override public net.minecraft.world.item.ItemStack getIcon() { return ITMultiblockProvider.COOLING_TOWER.iconStack(); }
 
-    @Override
-    public CoolingTowerRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
+    @Override public CoolingTowerRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
         FluidTagInput input0 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input0"));
         FluidTagInput input1 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input1"));
         FluidStack output0 = json.has("output0") ? ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output0")) : null;
@@ -29,8 +27,7 @@ public class CoolingTowerRecipeSerializer extends IERecipeSerializer<CoolingTowe
         return new CoolingTowerRecipe(recipeID, output0, output1, output2, input0, input1, time);
     }
 
-    @Override
-    public @Nullable CoolingTowerRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public CoolingTowerRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
         FluidTagInput input0 = FluidTagInput.read(buffer);
         FluidTagInput input1 = FluidTagInput.read(buffer);
         FluidStack output0 = buffer.readBoolean() ? buffer.readFluidStack() : null;
@@ -40,8 +37,7 @@ public class CoolingTowerRecipeSerializer extends IERecipeSerializer<CoolingTowe
         return new CoolingTowerRecipe(recipeId, output0, output1, output2, input0, input1, time);
     }
 
-    @Override
-    public void toNetwork(@NotNull FriendlyByteBuf buffer, @NotNull CoolingTowerRecipe recipe) {
+    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, @NotNull CoolingTowerRecipe recipe) {
         recipe.input0.write(buffer);
         recipe.input1.write(buffer);
         buffer.writeBoolean(recipe.fluidOutput0 != null);

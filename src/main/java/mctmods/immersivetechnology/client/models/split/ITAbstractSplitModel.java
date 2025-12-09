@@ -24,17 +24,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class ITAbstractSplitModel<T extends BakedModel> extends ITCompositeBakedModel<T> {
-    @Nonnull
-    private final Vec3i size;
+    @Nonnull private final Vec3i size;
 
     public ITAbstractSplitModel(T base, @NotNull Vec3i size) {
         super(base);
         this.size = size;
     }
 
-    @Nonnull
-    @Override
-    public ModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ModelData tileData) {
+    @Override @Nonnull public ModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ModelData tileData) {
         ModelData baseData = super.getModelData(world, pos, state, tileData);
         BlockEntity te = world.getBlockEntity(pos);
         BlockPos offset = null;

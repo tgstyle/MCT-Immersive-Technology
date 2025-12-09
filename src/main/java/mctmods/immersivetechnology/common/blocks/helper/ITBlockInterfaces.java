@@ -6,7 +6,6 @@ import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -42,8 +41,7 @@ public class ITBlockInterfaces {
     public ITBlockInterfaces() { }
 
     public interface IInteractionObjectIT<T extends BlockEntity & ITBlockInterfaces.IInteractionObjectIT<T>> extends MenuProvider {
-        @Nullable
-        T getGuiMaster();
+        @Nullable T getGuiMaster();
 
         ITMenuTypes.ArgContainer<? super T, ?> getContainerType();
 
@@ -51,21 +49,18 @@ public class ITBlockInterfaces {
 
         default boolean isValid() { return getGuiMaster() != null; }
 
-        @Nonnull
-        default AbstractContainerMenu createMenu(int id, @NotNull Inventory playerInventory, @NotNull Player playerEntity) {
+        @Nonnull default AbstractContainerMenu createMenu(int id, @NotNull Inventory playerInventory, @NotNull Player playerEntity) {
             T master = getGuiMaster();
             Preconditions.checkNotNull(master);
             ITMenuTypes.ArgContainer<? super T, ?> type = getContainerType();
             return type.create(id, playerInventory, master);
         }
 
-        @Nonnull
-        default Component getDisplayName() { return Component.literal(""); }
+        @Nonnull default Component getDisplayName() { return Component.literal(""); }
     }
 
     public interface IGeneralMultiblock extends ITBlockInterfaces.BlockStateProvider, blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGeneralMultiblock {
-        @Nullable
-        IGeneralMultiblock master();
+        @Nullable IGeneralMultiblock master();
 
         default boolean isDummy() {
             BlockState state = getState();
@@ -79,24 +74,19 @@ public class ITBlockInterfaces {
     }
 
     public interface ICollisionBounds {
-        @Nonnull
-        VoxelShape getCollisionShape(CollisionContext var1);
+        @Nonnull VoxelShape getCollisionShape(CollisionContext var1);
     }
 
     public interface ISelectionBounds {
-        @Nonnull
-        VoxelShape getSelectionShape(@Nullable CollisionContext var1);
+        @Nonnull VoxelShape getSelectionShape(@Nullable CollisionContext var1);
     }
 
     public interface IBlockBounds extends ISelectionBounds, ICollisionBounds {
-        @Nonnull
-        VoxelShape getBlockBounds(@Nullable CollisionContext var1);
+        @Nonnull VoxelShape getBlockBounds(@Nullable CollisionContext var1);
 
-        @Nonnull
-        default VoxelShape getCollisionShape(CollisionContext ctx) { return getBlockBounds(ctx); }
+        @Nonnull default VoxelShape getCollisionShape(CollisionContext ctx) { return getBlockBounds(ctx); }
 
-        @Nonnull
-        default VoxelShape getSelectionShape(@Nullable CollisionContext ctx) { return getBlockBounds(ctx); }
+        @Nonnull default VoxelShape getSelectionShape(@Nullable CollisionContext ctx) { return getBlockBounds(ctx); }
     }
 
     public interface IMirrorAble extends BlockStateProvider {
@@ -202,7 +192,6 @@ public class ITBlockInterfaces {
     }
 
     public interface IBlockOverlayText {
-        @Nullable
-        Component[] getOverlayText(Player player, HitResult mop, boolean hammer);
+        @Nullable Component[] getOverlayText(Player player, HitResult mop, boolean hammer);
     }
 }

@@ -48,8 +48,7 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
 
     public void addGenericData(ITGenericContainerData<?> newData) { genericData.add(newData); }
 
-    @Override
-    public void broadcastChanges() {
+    @Override public void broadcastChanges() {
         super.broadcastChanges();
         List<Pair<Integer, ITGenericDataSerializers.DataPair<?>>> toSync = new ArrayList<>();
         for (int i = 0; i < genericData.size(); i++) {
@@ -67,8 +66,7 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
         }
     }
 
-    @Override
-    public void clicked(int id, int dragType, @NotNull ClickType clickType, @NotNull Player player) {
+    @Override public void clicked(int id, int dragType, @NotNull ClickType clickType, @NotNull Player player) {
         Slot slot = id < 0 ? null : this.slots.get(id);
         if (!(slot instanceof ITSlot.ItemHandlerGhost)) { super.clicked(id, dragType, clickType, player); return; }
         ItemStack stackSlot = slot.getItem();
@@ -96,9 +94,7 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
         }
     }
 
-    @Nonnull
-    @Override
-    public ItemStack quickMoveStack(@NotNull Player player, int slot) {
+    @Override @Nonnull public ItemStack quickMoveStack(@NotNull Player player, int slot) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slotObject = this.slots.get(slot);
         if (slotObject.hasItem()) {
@@ -135,14 +131,11 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
     @SuppressWarnings("unused")
     public void receiveMessageFromScreen(CompoundTag nbt) {}
 
-    @Override
-    public void removed(@Nonnull Player player) { super.removed(player); setChanged.run(); }
+    @Override public void removed(@Nonnull Player player) { super.removed(player); setChanged.run(); }
 
-    @Override
-    public boolean stillValid(@Nonnull Player pPlayer) { return isValid.test(pPlayer); }
+    @Override public boolean stillValid(@Nonnull Player pPlayer) { return isValid.test(pPlayer); }
 
-    @SubscribeEvent
-    public static void onContainerOpened(PlayerContainerEvent.Open ev) {
+    @SubscribeEvent public static void onContainerOpened(PlayerContainerEvent.Open ev) {
         if (ev.getContainer() instanceof ITContainerMenu itContainer && ev.getEntity() instanceof ServerPlayer serverPlayer) {
             itContainer.usingPlayers.add(serverPlayer);
             List<Pair<Integer, ITGenericDataSerializers.DataPair<?>>> list = new ArrayList<>();
@@ -153,8 +146,7 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
         }
     }
 
-    @SubscribeEvent
-    public static void onContainerClosed(PlayerContainerEvent.Close ev) {
+    @SubscribeEvent public static void onContainerClosed(PlayerContainerEvent.Close ev) {
         if (ev.getContainer() instanceof ITContainerMenu itContainer && ev.getEntity() instanceof ServerPlayer serverPlayer) {
             itContainer.usingPlayers.remove(serverPlayer);
         }

@@ -16,8 +16,7 @@ public class ITMirroredModelState implements ModelState {
         this.mirroredMainRotation = mirror(inner.getRotation());
     }
 
-    @Nonnull
-    public Transformation getRotation() { return this.mirroredMainRotation; }
+    @Nonnull public Transformation getRotation() { return this.mirroredMainRotation; }
 
     public boolean isUvLocked() { return this.inner.isUvLocked(); }
 

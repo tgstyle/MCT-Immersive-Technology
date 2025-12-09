@@ -65,20 +65,15 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         return facings.get(0);
     }
 
-    @Override
-    public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
+    @Override public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
 
-    @Override
-    public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
+    @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
-    @Override
-    public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1, state.tanks.output2); }
+    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1, state.tanks.output2); }
 
-    @Override
-    public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutputs[0], state.fluidOutputs[1], state.fluidOutputs[2]); }
+    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutputs[0], state.fluidOutputs[1], state.fluidOutputs[2]); }
 
-    @Override
-    public void tickClient(IMultiblockContext<CoolingTowerLogic.State> ctx) {
+    @Override public void tickClient(IMultiblockContext<CoolingTowerLogic.State> ctx) {
         CoolingTowerLogic.State state = ctx.getState();
         if (state.active) { state.soundCooldown = 40; } else if (state.soundCooldown > 0) { state.soundCooldown--; }
         spawnParticles(ctx, state, ctx.getLevel().getRawLevel());
@@ -112,8 +107,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         }, () -> 1f);
     }
 
-    @Override
-    public void tickServer(IMultiblockContext<CoolingTowerLogic.State> ctx) {
+    @Override public void tickServer(IMultiblockContext<CoolingTowerLogic.State> ctx) {
         pumpOutputs(ctx);
         CoolingTowerLogic.State state = ctx.getState();
         IMultiblockLevel mlevel = ctx.getLevel();
@@ -155,8 +149,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
     private int getProcessQueueMaxLength() { return 3; }
 
-    @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<CoolingTowerLogic.State> ctx, CapabilityPosition position, Capability<T> cap) {
+    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<CoolingTowerLogic.State> ctx, CapabilityPosition position, Capability<T> cap) {
         CoolingTowerLogic.State state = ctx.getState();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             BlockPos localPos = position.posInMultiblock();
@@ -176,11 +169,9 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         return LazyOptional.empty();
     }
 
-    @Override
-    public CoolingTowerLogic.State createInitialState(IInitialMultiblockContext<CoolingTowerLogic.State> ctx) { return new State(ctx); }
+    @Override public CoolingTowerLogic.State createInitialState(IInitialMultiblockContext<CoolingTowerLogic.State> ctx) { return new State(ctx); }
 
-    @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return CoolingTowerShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return CoolingTowerShape.GETTER; }
 
     public static class State implements IMultiblockState, ITDisplayContext {
         public final CoolingTowerTanks tanks;
@@ -215,44 +206,36 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             }
         }
 
-        @Override
-        public void writeSaveNBT(CompoundTag nbt) {
+        @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tanks", tanks.toNBT());
             nbt.putBoolean("active", active);
         }
 
-        @Override
-        public void readSaveNBT(CompoundTag nbt) {
+        @Override public void readSaveNBT(CompoundTag nbt) {
             tanks.readNBT(nbt.getCompound("tanks"));
             active = nbt.getBoolean("active");
         }
 
-        @Override
-        public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt) {
             CompoundTag display = new CompoundTag();
             writeDisplaySyncNBT(display);
             nbt.put("display", display);
         }
 
-        @Override
-        public void readSyncNBT(CompoundTag nbt) {
+        @Override public void readSyncNBT(CompoundTag nbt) {
             if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
         }
 
-        @Override
-        public boolean isActive() { return active; }
+        @Override public boolean isActive() { return active; }
 
-        @Override
-        public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input0, tanks.input1, tanks.output0, tanks.output1, tanks.output2}; }
+        @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input0, tanks.input1, tanks.output0, tanks.output1, tanks.output2}; }
 
-        @Override
-        public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT());
         }
 
-        @Override
-        public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
         }

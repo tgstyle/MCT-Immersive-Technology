@@ -19,8 +19,7 @@ public class SteelSheetmetalTankRenderer extends ITBaseBlockEntityRenderer<Multi
 
     public SteelSheetmetalTankRenderer() {}
 
-    @Override
-    public void render(MultiblockBlockEntityMaster<State> tile, float partialTicks, PoseStack matrixStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    @Override public void render(MultiblockBlockEntityMaster<State> tile, float partialTicks, PoseStack matrixStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         final State state = tile.getHelper().getState();
         matrixStack.pushPose();
         rotateForFacing(matrixStack, tile.getHelper().getContext().getLevel().getOrientation().front());

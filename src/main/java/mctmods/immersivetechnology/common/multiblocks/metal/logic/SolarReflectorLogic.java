@@ -56,8 +56,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
 
     private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
 
-    @Override
-    public void tickClient(IMultiblockContext<State> ctx) {
+    @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         state.formedTicks++;
         boolean isDisabled = ITClientConfig.disableReflectorDance;
@@ -255,8 +254,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
         }
     }
 
-    @Override
-    public void tickServer(IMultiblockContext<State> ctx) {
+    @Override public void tickServer(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         Level level = ctx.getLevel().getRawLevel();
         boolean update = false;
@@ -326,17 +324,13 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
         if (!state.isMirrorTaken) { SolarRegistry.updateDance(level); }
     }
 
-    @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) { return LazyOptional.empty(); }
+    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) { return LazyOptional.empty(); }
 
-    @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SolarReflectorShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SolarReflectorShape.GETTER; }
 
-    @Override
-    public State createInitialState(IInitialMultiblockContext<State> context) { return new State(context); }
+    @Override public State createInitialState(IInitialMultiblockContext<State> context) { return new State(context); }
 
-    @Override
-    public void dropExtraItems(State state, Consumer<ItemStack> drop) { Level level = state.levelSupplier.get(); if (level != null && !level.isClientSide) { SolarRegistry.unregisterReflector(level, state.poiPos); } }
+    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { Level level = state.levelSupplier.get(); if (level != null && !level.isClientSide) { SolarRegistry.unregisterReflector(level, state.poiPos); } }
 
     public static class State implements IMultiblockState, ITDisplayContext {
         public boolean isMirrorTaken;
@@ -474,15 +468,13 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             }
         }
 
-        @Override
-        public void writeSaveNBT(CompoundTag nbt) {
+        @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.putBoolean("isMirrorTaken", isMirrorTaken);
             nbt.putLong("towerCollectorPosition", towerCollectorPosition.asLong());
             nbt.putBoolean("active", active);
         }
 
-        @Override
-        public void readSaveNBT(CompoundTag nbt) {
+        @Override public void readSaveNBT(CompoundTag nbt) {
             isMirrorTaken = nbt.getBoolean("isMirrorTaken");
             towerCollectorPosition = BlockPos.of(nbt.getLong("towerCollectorPosition"));
             active = nbt.getBoolean("active");
@@ -492,29 +484,23 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             if (level != null && !level.isClientSide) { SolarRegistry.registerReflector(level, poiPos); }
         }
 
-        @Override
-        public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt) {
             CompoundTag display = new CompoundTag();
             writeDisplaySyncNBT(display);
             nbt.put("display", display);
         }
 
-        @Override
-        public void readSyncNBT(CompoundTag nbt) {
+        @Override public void readSyncNBT(CompoundTag nbt) {
             if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
         }
 
-        @Override
-        public boolean isActive() { return active; }
+        @Override public boolean isActive() { return active; }
 
-        @Override
-        public IItemHandlerModifiable getInventory() { return null; }
+        @Override public IItemHandlerModifiable getInventory() { return null; }
 
-        @Override
-        public IFluidTank[] getInternalTanks() { return null; }
+        @Override public IFluidTank[] getInternalTanks() { return null; }
 
-        @Override
-        public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("isMirrorTaken", isMirrorTaken);
             nbt.putLong("towerCollectorPosition", towerCollectorPosition.asLong());
             nbt.putLong("danceStartTick", danceStartTick);
@@ -522,8 +508,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             nbt.putInt("globalAnimationPhase", globalAnimationPhase);
         }
 
-        @Override
-        public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             isMirrorTaken = nbt.getBoolean("isMirrorTaken");
             towerCollectorPosition = BlockPos.of(nbt.getLong("towerCollectorPosition"));
             danceStartTick = nbt.getLong("danceStartTick");

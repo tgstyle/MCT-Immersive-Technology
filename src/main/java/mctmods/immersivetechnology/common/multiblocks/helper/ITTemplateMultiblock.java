@@ -58,11 +58,9 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         this.logic = logic;
     }
 
-    @Override
-    public float getManualScale() { return 0; }
+    @Override public float getManualScale() { return 0; }
 
-    @Override
-    protected void replaceStructureBlock(StructureTemplate.StructureBlockInfo info, Level world, BlockPos actualPos, boolean mirrored, Direction clickDirection, Vec3i offsetFromMaster) {
+    @Override protected void replaceStructureBlock(StructureTemplate.StructureBlockInfo info, Level world, BlockPos actualPos, boolean mirrored, Direction clickDirection, Vec3i offsetFromMaster) {
         BlockState newState = this.logic.block().get().defaultBlockState();
         newState = newState.setValue(ITProperties.MULTIBLOCKSLAVE, !offsetFromMaster.equals(Vec3i.ZERO));
         if (newState.hasProperty(ITProperties.MIRRORED)) { newState = newState.setValue(ITProperties.MIRRORED, mirrored); }
@@ -77,8 +75,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         world.markAndNotifyBlock(actualPos, chunk, oldState, newState, 3, 512);
     }
 
-    @Override
-    public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
+    @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
         if (world.isClientSide) { return; }
         if (ITServerConfig.DISASSEMBLY_MODE.get() == ITServerConfig.DisassemblyMode.TEMPLATE_BLOCKS) {
             super.disassemble(world, origin, mirrored, clickDirectionAtCreation);
@@ -137,19 +134,15 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         helper.getMultiblock().logic().dropExtraItems(helper.getState(), dropIt);
     }
 
-    @Override
-    public Component getDisplayName() { return this.logic.block().get().getName(); }
+    @Override public Component getDisplayName() { return this.logic.block().get().getName(); }
 
-    @Override
-    public Block getBlock() { return this.logic.block().get(); }
+    @Override public Block getBlock() { return this.logic.block().get(); }
 
     public Vec3i getSize(@Nullable Level world) { return this.size; }
 
-    @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { }
+    @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { }
 
-    @Nonnull
-    public TemplateMultiblock.TemplateData getTemplate(@Nullable Level world) {
+    @Nonnull public TemplateMultiblock.TemplateData getTemplate(@Nullable Level world) {
         assert world != null;
         TemplateMultiblock.TemplateData result = super.getTemplate(world);
         Vec3i resultSize = result.template().getSize();

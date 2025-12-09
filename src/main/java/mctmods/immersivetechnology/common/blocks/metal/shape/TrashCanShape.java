@@ -9,6 +9,5 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 
 public interface TrashCanShape extends ITBlockInterfaces.IBlockBounds {
-    @Override
-    default @NotNull VoxelShape getBlockBounds(@Nullable CollisionContext ctx) { return Shapes.box(0.125, 0, 0.125, 0.875, 1, 0.875); }
+    @Override @NotNull default VoxelShape getBlockBounds(@Nullable CollisionContext ctx) { return Shapes.box(0.125, 0, 0.125, 0.875, 1, 0.875); }
 }

@@ -64,8 +64,7 @@ public class SolarRegistryData extends SavedData {
         return data;
     }
 
-    @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag nbt) {
+    @Override @NotNull public CompoundTag save(@NotNull CompoundTag nbt) {
         for (Map.Entry<Integer, Set<BlockPos>> entry : towerBasesByY.entrySet()) {
             if (entry.getValue().isEmpty()) continue;
             ListTag list = new ListTag();

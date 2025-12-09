@@ -37,18 +37,14 @@ public class ValveLoadBlock extends ITEntityBlock<ValveLoadBlockEntity> {
 
     public ValveLoadBlock(BiFunction<BlockPos, BlockState, ValveLoadBlockEntity> makeEntity, Properties p) { super(makeEntity, p); registerDefaultState(stateDefinition.any().setValue(OPEN, true).setValue(ITProperties.FACING_ALL, Direction.NORTH).setValue(ITProperties.MIRRORED, false).setValue(ROTATION, 0)); }
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(ITProperties.FACING_ALL, ITProperties.MIRRORED, OPEN, ROTATION); }
+    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(ITProperties.FACING_ALL, ITProperties.MIRRORED, OPEN, ROTATION); }
 
-    @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getValveShape(state); }
+    @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getValveShape(state); }
 
-    @Override
-    public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getValveShape(state); }
+    @Override @NotNull public VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getValveShape(state); }
 
     @SuppressWarnings("deprecation")
-    @Override
-    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) { return getValveShape(state); }
+    @Override @NotNull public VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) { return getValveShape(state); }
 
     private VoxelShape getValveShape(BlockState state) {
         Direction facing = state.getValue(ITProperties.FACING_ALL);
@@ -115,19 +111,16 @@ public class ValveLoadBlock extends ITEntityBlock<ValveLoadBlockEntity> {
         return Shapes.or(baseShape, connector1, connector2);
     }
 
-    @Override
-    public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) { return true; }
+    @Override public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) { return true; }
 
-    @Override
-    public void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block fromBlock, @NotNull BlockPos fromPos, boolean isMoving) {
+    @Override public void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block fromBlock, @NotNull BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, fromBlock, fromPos, isMoving);
         if (level.isClientSide) return;
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) { valve.updateRedstoneState(); }
     }
 
-    @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    @Override @NotNull public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         ItemStack heldItem = player.getItemInHand(hand);
         if (heldItem.is(ITTags.formationTools)) return super.use(state, level, pos, player, hand, hit);
         if (level.isClientSide) return InteractionResult.SUCCESS;
@@ -146,8 +139,7 @@ public class ValveLoadBlock extends ITEntityBlock<ValveLoadBlockEntity> {
         return InteractionResult.PASS;
     }
 
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
+    @Override public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction facing = context.getClickedFace();
         assert context.getPlayer() != null;
         float yRot = context.getPlayer().getYRot();

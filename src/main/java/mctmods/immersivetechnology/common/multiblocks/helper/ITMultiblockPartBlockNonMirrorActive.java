@@ -17,8 +17,7 @@ public class ITMultiblockPartBlockNonMirrorActive<S extends IMultiblockState> ex
         super(properties, registration);
     }
 
-    @Override
-    protected void createBlockStateDefinition(@NotNull StateDefinition.Builder<Block, BlockState> builder) {
+    @Override protected void createBlockStateDefinition(@NotNull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(ACTIVE);
     }

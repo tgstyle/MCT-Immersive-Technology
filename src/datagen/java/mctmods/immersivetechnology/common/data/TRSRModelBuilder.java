@@ -12,9 +12,7 @@ public class TRSRModelBuilder extends ModelBuilder<TRSRModelBuilder> {
 
     public TRSRModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) { super(outputLocation, existingFileHelper); }
 
-    @Nonnull
-    @Override
-    public JsonObject toJson() {
+    @Override @Nonnull public JsonObject toJson() {
         JsonObject ret = super.toJson();
         JsonObject transformJson = transforms.toJson();
         if (!transformJson.entrySet().isEmpty()) { ret.add("transform", transformJson); }

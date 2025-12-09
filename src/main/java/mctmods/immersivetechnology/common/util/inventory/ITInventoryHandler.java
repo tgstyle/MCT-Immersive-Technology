@@ -19,9 +19,9 @@ public class ITInventoryHandler implements IItemHandlerModifiable {
 
     public int getSlots() { return this.slots; }
 
-    public @NotNull ItemStack getStackInSlot(int slot) { return Objects.requireNonNull(this.inv.getInventory()).get(this.slotOffset + slot); }
+    @NotNull public ItemStack getStackInSlot(int slot) { return Objects.requireNonNull(this.inv.getInventory()).get(this.slotOffset + slot); }
 
-    public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+    @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (this.canInsert[slot] && !stack.isEmpty()) {
             if (!this.inv.isStackValid(this.slotOffset + slot, stack)) { return stack; }
             else {
@@ -53,7 +53,7 @@ public class ITInventoryHandler implements IItemHandlerModifiable {
         } else { return stack; }
     }
 
-    public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
+    @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (this.canExtract[slot] && amount != 0) {
             int offsetSlot = this.slotOffset + slot;
             ItemStack currentStack = Objects.requireNonNull(this.inv.getInventory()).get(offsetSlot);

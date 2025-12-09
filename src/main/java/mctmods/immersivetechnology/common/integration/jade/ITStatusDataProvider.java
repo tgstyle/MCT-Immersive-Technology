@@ -23,11 +23,9 @@ import snownee.jade.api.IServerDataProvider;
 public enum ITStatusDataProvider implements IServerDataProvider<BlockAccessor> {
     INSTANCE;
 
-    @Override
-    public ResourceLocation getUid() { return ITLib.rl("status"); }
+    @Override public ResourceLocation getUid() { return ITLib.rl("status"); }
 
-    @Override
-    public void appendServerData(CompoundTag data, BlockAccessor accessor) {
+    @Override public void appendServerData(CompoundTag data, BlockAccessor accessor) {
         if (accessor.getBlockEntity() instanceof IMultiblockBE<?> mbe) {
             IMultiblockState state = mbe.getHelper().getState();
             if (state == null) { return; }

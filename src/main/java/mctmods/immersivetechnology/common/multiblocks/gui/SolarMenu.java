@@ -44,8 +44,7 @@ public class SolarMenu extends ITContainerMenu {
         this.mbStateSupplier = mbStateSupplier;
         this.state = new SimpleContainerData(8);
         this.addSlot(new ITSlot.FluidContainer(inv, 0, 80, 17, 1) {
-            @Override
-            public boolean mayPlace(@Nonnull ItemStack itemStack) {
+            @Override public boolean mayPlace(@Nonnull ItemStack itemStack) {
                 FluidStack fs = FluidUtil.getFluidContained(itemStack).orElse(null);
                 if (fs == null) return false;
                 return inputTank.getFluidAmount() <= 0 || fs.isFluidEqual(inputTank.getFluid());
@@ -53,8 +52,7 @@ public class SolarMenu extends ITContainerMenu {
         });
         this.addSlot(new ITSlot.Output(inv, 1, 80, 53));
         this.addSlot(new ITSlot.FluidContainer(inv, 2, 148, 17, 0) {
-            @Override
-            public boolean mayPlace(@Nonnull ItemStack itemStack) {
+            @Override public boolean mayPlace(@Nonnull ItemStack itemStack) {
                 return itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent();
             }
         });
@@ -67,8 +65,7 @@ public class SolarMenu extends ITContainerMenu {
         addGenericData(ITGenericContainerData.fluid(outputTank));
     }
 
-    @Override
-    public void broadcastChanges() {
+    @Override public void broadcastChanges() {
         if (mbStateSupplier != null) {
             ITISolarMultiblockState s = mbStateSupplier.get();
             state.set(0, (int) s.getHeatLevel());

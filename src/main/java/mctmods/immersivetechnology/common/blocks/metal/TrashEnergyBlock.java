@@ -27,11 +27,9 @@ public class TrashEnergyBlock extends ITEntityBlock<TrashEnergyBlockEntity> {
 
     public TrashEnergyBlock(BiFunction<BlockPos, BlockState, TrashEnergyBlockEntity> makeEntity, Properties blockProps) { super(makeEntity, blockProps); }
 
-    @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return BOUNDS; }
+    @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return BOUNDS; }
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(ITProperties.FACING_HORIZONTAL, BlockStateProperties.WATERLOGGED);
     }

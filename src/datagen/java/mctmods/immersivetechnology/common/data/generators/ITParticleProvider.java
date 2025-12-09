@@ -28,8 +28,7 @@ public class ITParticleProvider implements DataProvider {
         descriptions.put(ITParticles.COLORED_SMOKE.getId(), bigSmokeTextures);
     }
 
-    @Override
-    public @NotNull CompletableFuture<?> run(@NotNull CachedOutput cache) {
+    @Override @NotNull public CompletableFuture<?> run(@NotNull CachedOutput cache) {
         addDescriptions();
         return CompletableFuture.allOf(descriptions.entrySet().stream().map(entry -> {
             JsonArray textures = new JsonArray();
@@ -41,6 +40,5 @@ public class ITParticleProvider implements DataProvider {
         }).toArray(CompletableFuture[]::new));
     }
 
-    @Override
-    public @NotNull String getName() { return "Particle Descriptions"; }
+    @Override @NotNull public String getName() { return "Particle Descriptions"; }
 }

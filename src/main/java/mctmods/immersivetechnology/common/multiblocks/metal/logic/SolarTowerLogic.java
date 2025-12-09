@@ -96,20 +96,15 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
         return facings.get(0);
     }
 
-    @Override
-    public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
+    @Override public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
 
-    @Override
-    public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
+    @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
-    @Override
-    public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
+    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
 
-    @Override
-    public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
+    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
 
-    @Override
-    public void tickClient(IMultiblockContext<State> ctx) {
+    @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         if (!state.isSoundPlaying.getAsBoolean()) {
             Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
@@ -153,8 +148,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
         }
     }
 
-    @Override
-    public void tickServer(IMultiblockContext<State> ctx) {
+    @Override public void tickServer(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         IMultiblockLevel mlevel = ctx.getLevel();
         Level level = mlevel.getRawLevel();
@@ -339,8 +333,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
 
     public static int getSolarIncidenceAngleSection(Level level) { int skyDarken = level.getSkyDarken(); if (skyDarken == 3) { return 1; } else if (skyDarken == 2) { return 2; } else if (skyDarken == 1) { return 3; } else if (skyDarken == 0) { return 4; } return 0; }
 
-    @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
+    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         State state = ctx.getState();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             if (position.equals(INPUT_FLUID_POI)) { return state.inputCap.cast(); }
@@ -350,14 +343,11 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
         return LazyOptional.empty();
     }
 
-    @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SolarTowerShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SolarTowerShape.GETTER; }
 
-    @Override
-    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
+    @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override
-    public void dropExtraItems(State state, Consumer<ItemStack> drop) { Level level = state.levelSupplier.get(); if (level != null && !level.isClientSide) { detachReflectorPositions(state); SolarRegistry.unregisterTower(level, state.basePos); } ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); state.inputCap.invalidate(); state.outputCap.invalidate(); }
+    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { Level level = state.levelSupplier.get(); if (level != null && !level.isClientSide) { detachReflectorPositions(state); SolarRegistry.unregisterTower(level, state.basePos); } ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); state.inputCap.invalidate(); state.outputCap.invalidate(); }
 
     public static class State implements ITISolarMultiblockState, ITDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
@@ -423,26 +413,19 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             if (!this.registered) { this.failVertical = result.vertical; this.requiredMove = result.requiredMove; }
         }
 
-        @Override
-        public double getHeatLevel() { return heatLevel; }
+        @Override public double getHeatLevel() { return heatLevel; }
 
-        @Override
-        public byte[] getDirCounts() { return dirCounts; }
+        @Override public byte[] getDirCounts() { return dirCounts; }
 
-        @Override
-        public int getProcessProgress() { return processProgress; }
+        @Override public int getProcessProgress() { return processProgress; }
 
-        @Override
-        public boolean isSunVisible() { return sunVisible; }
+        @Override public boolean isSunVisible() { return sunVisible; }
 
-        @Override
-        public ITSolarTank getTanks() { return tanks; }
+        @Override public ITSolarTank getTanks() { return tanks; }
 
-        @Override
-        public ITSlotwiseItemHandler getInventory() { return inventory; }
+        @Override public ITSlotwiseItemHandler getInventory() { return inventory; }
 
-        @Override
-        public void writeSaveNBT(CompoundTag nbt) {
+        @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tanks", this.tanks.toNBT());
             nbt.put("inventory", inventory.serializeNBT());
             nbt.putDouble("heatLevel", heatLevel);
@@ -457,8 +440,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             nbt.putBoolean("active", active);
         }
 
-        @Override
-        public void readSaveNBT(CompoundTag nbt) {
+        @Override public void readSaveNBT(CompoundTag nbt) {
             this.tanks.readNBT(nbt.getCompound("tanks"));
             this.inventory.deserializeNBT(nbt.getCompound("inventory"));
             heatLevel = nbt.getDouble("heatLevel");
@@ -492,26 +474,21 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             }
         }
 
-        @Override
-        public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt) {
             CompoundTag display = new CompoundTag();
             writeDisplaySyncNBT(display);
             nbt.put("display", display);
         }
 
-        @Override
-        public void readSyncNBT(CompoundTag nbt) {
+        @Override public void readSyncNBT(CompoundTag nbt) {
             if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
         }
 
-        @Override
-        public boolean isActive() { return active; }
+        @Override public boolean isActive() { return active; }
 
-        @Override
-        public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input(), tanks.output()}; }
+        @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input(), tanks.output()}; }
 
-        @Override
-        public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.put("tanks", this.tanks.toNBT());
             nbt.putDouble("heatLevel", heatLevel);
             nbt.putDouble("reflectorStrength", reflectorStrength);
@@ -520,8 +497,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             nbt.putBoolean("active", active);
         }
 
-        @Override
-        public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             this.tanks.readNBT(nbt.getCompound("tanks"));
             heatLevel = nbt.getDouble("heatLevel");
             reflectorStrength = nbt.getDouble("reflectorStrength");

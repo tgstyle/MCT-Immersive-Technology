@@ -12,8 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.AbstractMap;
 
 public record ITDisassemblyTicker<S extends IMultiblockState>(BlockPos masterRel) implements IServerTickableComponent<S>, IMultiblockComponent.StateWrapper<S, Void> {
-    @Override
-    public void tickServer(IMultiblockContext<S> context) {
+    @Override public void tickServer(IMultiblockContext<S> context) {
         Level level = context.getLevel().getRawLevel();
         BlockPos masterAbs = context.getLevel().toAbsolute(masterRel);
         BlockEntity be = level.getBlockEntity(masterAbs);
@@ -30,6 +29,5 @@ public record ITDisassemblyTicker<S extends IMultiblockState>(BlockPos masterRel
         }
     }
 
-    @Override
-    public Void wrapState(S state) { return null; }
+    @Override public Void wrapState(S state) { return null; }
 }

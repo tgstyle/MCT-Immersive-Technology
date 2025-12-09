@@ -21,8 +21,7 @@ public class BarrelOpenBlockEntity extends BarrelCommonBlockEntity {
 
     public BarrelOpenBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.BARREL_OPEN.get(), pos, state, tankSize); }
 
-    @Override
-    public void tickServer() {
+    @Override public void tickServer() {
         boolean update = false;
         if (level == null || level.isClientSide) return;
         if (tank.getFluidAmount() < tank.getCapacity() && RANDOM.nextInt(20) == 0) {
@@ -57,17 +56,13 @@ public class BarrelOpenBlockEntity extends BarrelCommonBlockEntity {
         if (update) { setChanged(); markContainingBlockForUpdate(null); }
     }
 
-    @Override
-    protected boolean isFluidValid(@NotNull FluidStack fluid) { return !fluid.isEmpty() && fluid.getFluid().getFluidType().getDensity(fluid) >= 0; }
+    @Override protected boolean isFluidValid(@NotNull FluidStack fluid) { return !fluid.isEmpty() && fluid.getFluid().getFluidType().getDensity(fluid) >= 0; }
 
-    @Override
-    protected void postRead(boolean descPacket) { if (!descPacket) updateState(); }
+    @Override protected void postRead(boolean descPacket) { if (!descPacket) updateState(); }
 
-    @Override
-    protected boolean canConfigureSide(Direction side) { return side != Direction.UP; }
+    @Override protected boolean canConfigureSide(Direction side) { return side != Direction.UP; }
 
-    @Override
-    protected void updateState() {
+    @Override protected void updateState() {
         if (level == null || level.isClientSide) return;
         BlockState current = getBlockState();
         BlockState newState = current.setValue(BarrelOpenBlock.BOTTOM_CONFIG, sideConfig.getOrDefault(Direction.DOWN, IOSideConfig.OUTPUT));

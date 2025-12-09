@@ -42,11 +42,9 @@ public class ValveLimiterMenu extends ITContainerMenu {
 
     public static ValveLimiterMenu makeClient(MenuType<ValveLimiterMenu> type, int id, Inventory inv, FriendlyByteBuf buffer) { return new ValveLimiterMenu(type, id, inv, buffer); }
 
-    @Override
-    public boolean stillValid(@NotNull Player player) { return tile == null || tile.stillValid(player); }
+    @Override public boolean stillValid(@NotNull Player player) { return tile == null || tile.stillValid(player); }
 
-    @Override
-    public @NotNull ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) { return ItemStack.EMPTY; }
+    @Override @NotNull public ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) { return ItemStack.EMPTY; }
 
     public int getPacketLimit() { return packetLimit; }
 

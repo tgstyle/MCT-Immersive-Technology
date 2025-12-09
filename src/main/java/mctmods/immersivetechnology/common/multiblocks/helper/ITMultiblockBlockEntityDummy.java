@@ -20,8 +20,7 @@ import net.minecraft.world.phys.Vec3;
 public class ITMultiblockBlockEntityDummy<State extends IMultiblockState> extends MultiblockBlockEntityDummy<State> implements ITBlockInterfaces.IPlayerInteraction {
     public ITMultiblockBlockEntityDummy(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState, MultiblockRegistration<State> multiblock) { super(type, worldPosition, blockState, multiblock); }
 
-    @Override
-    public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
+    @Override public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
         IMultiblockContext<State> ctx = getHelper().getContext();
         BlockPos posInMultiblock = getHelper().getPositionInMB();
         Vec3 hitVec = new Vec3(hitX, hitY, hitZ);

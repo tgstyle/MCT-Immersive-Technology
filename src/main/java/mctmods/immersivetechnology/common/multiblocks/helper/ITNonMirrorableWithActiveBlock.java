@@ -24,7 +24,5 @@ public class ITNonMirrorableWithActiveBlock<S extends IMultiblockState> extends 
         builder.add(ACTIVE);
     }
 
-    static {
-        ACTIVE = ITProperties.ACTIVE;
-    }
+    static { ACTIVE = ITProperties.ACTIVE; }
 }

@@ -11,12 +11,6 @@ public class ITLib {
     public static final String DESC = "desc." + MODID + ".";
     public static final String DESC_INFO = DESC + "info.";
     public static final String DESC_FLAVOUR = DESC + "flavour.";
-    public static final String GUIID_Boiler_Liquid = "gui_boiler";
-    public static final String GUIID_Boiler_Solid = "gui_solid";
-    public static final String GUIID_Boiler_Tank = "gui_boiler_tank";
-    public static final String GUIID_Distiller = "gui_distiller";
-    public static final String GUIID_SolarMelter = "gui_solar_melter";
-    public static final String GUIID_SolarTower = "gui_solar_tower";
     public static final Logger IT_LOGGER = LogUtils.getLogger();
 
     public static ResourceLocation makeTextureLocation(String name) { return rl("textures/gui/" + name + ".png"); }

@@ -17,11 +17,9 @@ public class ITOSDSyncBlock implements ITMessage {
 
     public ITOSDSyncBlock(FriendlyByteBuf buf) { this.key = buf.readUtf(); this.distance = buf.readInt(); }
 
-    @Override
-    public void toBytes(FriendlyByteBuf buf) { buf.writeUtf(key); buf.writeInt(distance); }
+    @Override public void toBytes(FriendlyByteBuf buf) { buf.writeUtf(key); buf.writeInt(distance); }
 
-    @Override
-    public void process(Supplier<NetworkEvent.Context> context) {
+    @Override public void process(Supplier<NetworkEvent.Context> context) {
         NetworkEvent.Context ctx = context.get();
         ctx.enqueueWork(() -> {
             if (ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {

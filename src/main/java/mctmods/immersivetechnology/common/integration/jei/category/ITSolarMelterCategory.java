@@ -36,8 +36,7 @@ public class ITSolarMelterCategory extends ITRecipeCategory<SolarMelterRecipe> {
         tankOverlay = helper.createDrawable(background, 177, 31, 20, 51);
     }
 
-    @Override
-    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SolarMelterRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SolarMelterRecipe recipe, @NotNull IFocusGroup focuses) {
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
                 .map(fs -> {
                     FluidStack copy = fs.copy();
@@ -59,8 +58,7 @@ public class ITSolarMelterCategory extends ITRecipeCategory<SolarMelterRecipe> {
         }
     }
 
-    @Override
-    public void draw(@NotNull SolarMelterRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@NotNull SolarMelterRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         tankOverlay.draw(guiGraphics, 100, 19);
         if (recipe.fluidOutput != null) { tankOverlay.draw(guiGraphics, 124, 19); }
         Font font = Minecraft.getInstance().font;

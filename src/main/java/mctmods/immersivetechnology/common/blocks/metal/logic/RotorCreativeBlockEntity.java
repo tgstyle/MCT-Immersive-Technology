@@ -37,7 +37,7 @@ public class RotorCreativeBlockEntity extends ITBaseBlockEntity implements MenuP
         animation_rotation %= 360;
     }
 
-    @Override public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+    @Override @NotNull public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         Direction facing = getBlockState().getValue(RotorCreativeBlock.FACING);
         if ((side == facing || side == facing.getOpposite()) && cap == MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY) { return providerCap.cast(); }
         return super.getCapability(cap, side);
@@ -79,7 +79,7 @@ public class RotorCreativeBlockEntity extends ITBaseBlockEntity implements MenuP
 
     public boolean stillValid(Player player) { return player.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5) < 64; }
 
-    @Override public @Nullable AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ITMenuTypes.ROTOR_CREATIVE.create(id, inv, this); }
+    @Override @Nullable public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ITMenuTypes.ROTOR_CREATIVE.create(id, inv, this); }
 
-    @Override public @NotNull Component getDisplayName() { return Component.translatable(TranslationKey.GUI_ROTOR_CREATIVE.getLocation()); }
+    @Override @NotNull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_ROTOR_CREATIVE.getLocation()); }
 }

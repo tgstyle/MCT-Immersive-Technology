@@ -14,7 +14,6 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -25,8 +24,7 @@ public class SolarMelter extends ITTemplateMultiblock {
 
     public SolarMelter() { super(ITLib.rl("multiblocks/solar_melter"), SolarMelterShape.MASTER_POS, SolarMelterShape.TRIGGER_POS, new BlockPos(SolarMelterShape.WIDTH,SolarMelterShape.HEIGHT,SolarMelterShape.LENGTH), ITMultiblockProvider.SOLAR_MELTER); }
 
-    @Override
-    public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {
+    @Override public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {
         if (world.isClientSide) return false;
         Direction front = player.getDirection();
         boolean mirrored = false;
@@ -47,20 +45,16 @@ public class SolarMelter extends ITTemplateMultiblock {
         return formed;
     }
 
-    @Override
-    public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
+    @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
         MultiblockOrientation orientation = new MultiblockOrientation(clickDirectionAtCreation, mirrored);
         BlockPos base = origin.offset(orientation.getAbsoluteOffset(SolarMelterLogic.LINK_POI));
         SolarRegistry.unregisterTower(world, base);
         super.disassemble(world, origin, mirrored, clickDirectionAtCreation);
     }
 
-    @Override
-    public float getManualScale() { return SolarMelterShape.MANUAL_SCALE; }
+    @Override public float getManualScale() { return SolarMelterShape.MANUAL_SCALE; }
 
-    @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, SolarMelterShape.CLIENT_OFFSET.getX(), SolarMelterShape.CLIENT_OFFSET.getY(), SolarMelterShape.CLIENT_OFFSET.getZ())); }
+    @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, SolarMelterShape.CLIENT_OFFSET.getX(), SolarMelterShape.CLIENT_OFFSET.getY(), SolarMelterShape.CLIENT_OFFSET.getZ())); }
 
-    @Override
-    public boolean canBeMirrored() { return false; }
+    @Override public boolean canBeMirrored() { return false; }
 }

@@ -31,11 +31,11 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     public record OutputItemHandler(ValveLimiterBlockEntity be) implements IItemHandler {
         @Override public int getSlots() { return be.getSource() != null ? be.getSource().getSlots() : 0; }
 
-        @Override public @NotNull ItemStack getStackInSlot(int slot) { return be.getSource() != null ? be.getSource().getStackInSlot(slot) : ItemStack.EMPTY; }
+        @Override @NotNull public ItemStack getStackInSlot(int slot) { return be.getSource() != null ? be.getSource().getStackInSlot(slot) : ItemStack.EMPTY; }
 
-        @Override public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) { return stack; }
+        @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) { return stack; }
 
-        @Override public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
+        @Override @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) {
             assert be.level != null;
             if (be.level.isClientSide) return ItemStack.EMPTY;
             if (be.busy) return ItemStack.EMPTY;
@@ -67,11 +67,9 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
 
     public ValveLimiterBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.VALVE_LIMITER.get(), pos, state, TranslationKey.OVERLAY_OSD_VALVE_LIMITER_NORMAL_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_LIMITER_SNEAKING_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_LIMITER_SNEAKING_SECOND_LINE, 2); }
 
-    @Override
-    public void tickServer() { updateBase(); }
+    @Override public void tickServer() { updateBase(); }
 
-    @Override
-    public void onLoad() {
+    @Override public void onLoad() {
         super.onLoad();
         assert level != null;
         if (!level.isClientSide) {
@@ -83,8 +81,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
         rotation = getBlockState().getValue(ROTATION);
     }
 
-    @Override
-    public void onNeighborBlockChange(BlockPos otherPos) {
+    @Override public void onNeighborBlockChange(BlockPos otherPos) {
         super.onNeighborBlockChange(otherPos);
         updateRedstoneState();
     }
@@ -93,8 +90,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
 
     private LazyOptional<IItemHandler> dummyCapability = null;
 
-    @Override
-    public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
+    @Override public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
         if (facing == null) return super.getCapability(capability, null);
         BlockState state = getBlockState();
         Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
@@ -132,8 +128,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
 
     boolean busy = false;
 
-    @Override
-    public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+    @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         assert level != null;
         if (level.isClientSide) return stack;
         if (busy) return stack;

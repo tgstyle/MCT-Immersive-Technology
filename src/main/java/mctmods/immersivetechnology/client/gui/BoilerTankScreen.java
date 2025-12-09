@@ -24,29 +24,24 @@ public class BoilerTankScreen extends ITContainerScreen<BoilerTankMenu> {
 
     public BoilerTankScreen(BoilerTankMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
-    @Override
-    protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
         float heatLevel = menu.getHeatLevel();
         int barWidth = Mth.clamp(Math.round(41 * heatLevel / 100.0f), 0, 41);
         graphics.blit(TEXTURE, leftPos + 67, topPos + 5, 176, 0, barWidth, 9);
     }
 
-    @Nonnull
-    @Override
-    protected List<ITInfoArea> makeInfoAreas() {
+    @Override @Nonnull protected List<ITInfoArea> makeInfoAreas() {
         return ImmutableList.of(
                 new ITFluidInfoArea(menu.tanks.input(), new Rect2i(leftPos + 67, topPos + 20, 16, 47), 177, 31, 20, 51, TEXTURE),
                 new ITFluidInfoArea(menu.tanks.output(), new Rect2i(leftPos + 92, topPos + 20, 16, 47), 177, 31, 20, 51, TEXTURE),
                 new ITInfoArea(new Rect2i(leftPos + 67, topPos + 5, 41, 9)) {
-                    @Override
-                    protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
+                    @Override protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
                         tooltip.add(Component.translatable(TranslationKey.GUI_TEMPERATURE.getLocation()));
                         float heatLevel = menu.getHeatLevel();
                         tooltip.add(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_HEAT_LEVEL.getLocation(), (int)heatLevel), ChatFormatting.RED));
                     }
 
-                    @Override
-                    public void draw(GuiGraphics graphics) { }
+                    @Override public void draw(GuiGraphics graphics) { }
                 }
         );
     }

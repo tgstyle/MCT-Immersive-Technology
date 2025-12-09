@@ -25,13 +25,11 @@ public class BarrelSteelBlock extends ITEntityBlock<BarrelSteelBlockEntity> {
         registerDefaultState(stateDefinition.any().setValue(TOP_CONFIG, IOSideConfig.INPUT).setValue(BOTTOM_CONFIG, IOSideConfig.OUTPUT));
     }
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(TOP_CONFIG, BOTTOM_CONFIG);
     }
 
-    @Override
     @SuppressWarnings("deprecation")
-    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) { return RenderShape.MODEL; }
+    @Override @NotNull public RenderShape getRenderShape(@NotNull BlockState state) { return RenderShape.MODEL; }
 }

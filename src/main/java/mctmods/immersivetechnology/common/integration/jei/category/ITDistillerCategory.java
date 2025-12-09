@@ -40,8 +40,7 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
         slotDrawable = helper.getSlotDrawable();
     }
 
-    @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, DistillerRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(IRecipeLayoutBuilder builder, DistillerRecipe recipe, @NotNull IFocusGroup focuses) {
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
                 .map(fs -> {
                     FluidStack copy = fs.copy();
@@ -66,8 +65,7 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
         }
     }
 
-    @Override
-    public void draw(@NotNull DistillerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics graphics, double mouseX, double mouseY) {
+    @Override public void draw(@NotNull DistillerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics graphics, double mouseX, double mouseY) {
         tankOverlay.draw(graphics, 56, 19);
         if (recipe.fluidOutput != null) { tankOverlay.draw(graphics, 112, 19); }
         arrow.draw(graphics, 85, 25);

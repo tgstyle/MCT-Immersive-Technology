@@ -25,8 +25,7 @@ import org.jetbrains.annotations.NotNull;
 public class ITMultiblockDropsLootContainer extends LootPoolSingletonContainer {
     protected ITMultiblockDropsLootContainer(int weightIn, int qualityIn, LootItemCondition[] conditionsIn, LootItemFunction[] functionsIn) { super(weightIn, qualityIn, conditionsIn, functionsIn); }
 
-    @Override
-    protected void createItemStack(@Nonnull Consumer<ItemStack> output, LootContext context) {
+    @Override protected void createItemStack(@Nonnull Consumer<ItemStack> output, LootContext context) {
         if (context.getParamOrNull(LootContextParams.BLOCK_ENTITY) instanceof IMultiblockBE<?> multiblockBE) {
             final IMultiblockBEHelper<?> helper = multiblockBE.getHelper();
             dropOriginalBlock(helper, context, output);
@@ -48,12 +47,9 @@ public class ITMultiblockDropsLootContainer extends LootPoolSingletonContainer {
 
     public static LootPoolSingletonContainer.Builder<?> builder() { return simpleBuilder(ITMultiblockDropsLootContainer::new); }
 
-    @Override
-    public @NotNull LootPoolEntryType getType() { return ITLootFunctions.MULTIBLOCK_DROPS.get(); }
+    @Override @NotNull public LootPoolEntryType getType() { return ITLootFunctions.MULTIBLOCK_DROPS.get(); }
 
     public static class Serializer extends LootPoolSingletonContainer.Serializer<ITMultiblockDropsLootContainer> {
-        @Nonnull
-        @Override
-        protected ITMultiblockDropsLootContainer deserialize(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context, int weight, int quality, @Nonnull LootItemCondition[] conditions, @Nonnull LootItemFunction[] functions) { return new ITMultiblockDropsLootContainer(weight, quality, conditions, functions); }
+        @Override @Nonnull protected ITMultiblockDropsLootContainer deserialize(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context, int weight, int quality, @Nonnull LootItemCondition[] conditions, @Nonnull LootItemFunction[] functions) { return new ITMultiblockDropsLootContainer(weight, quality, conditions, functions); }
     }
 }

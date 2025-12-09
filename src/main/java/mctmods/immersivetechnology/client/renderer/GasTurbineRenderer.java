@@ -29,8 +29,7 @@ public class GasTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBloc
 
     public GasTurbineRenderer() {}
 
-    @Override
-    public void render(@NotNull MultiblockBlockEntityMaster<GasTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    @Override public void render(@NotNull MultiblockBlockEntityMaster<GasTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if (!ITClientConfig.doSpecialRenderGasTurbine) { return; }
         IMultiblockBEHelperMaster<GasTurbineLogic.State> helper = tile.getHelper();
         IMultiblockContext<GasTurbineLogic.State> context = helper.getContext();

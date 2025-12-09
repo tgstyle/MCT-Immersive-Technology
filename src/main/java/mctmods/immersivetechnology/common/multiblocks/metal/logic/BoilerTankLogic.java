@@ -69,20 +69,15 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         return facings.get(0);
     }
 
-    @Override
-    public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POI; }
+    @Override public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POI; }
 
-    @Override
-    public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(FLUID_OUTPUT_FACING); }
+    @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(FLUID_OUTPUT_FACING); }
 
-    @Override
-    public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
+    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
 
-    @Override
-    public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
+    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
 
-    @Override
-    public void tickServer(IMultiblockContext<State> ctx) {
+    @Override public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         final Level level = ctx.getLevel().getRawLevel();
         boolean update = false;
@@ -151,8 +146,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         return true;
     }
 
-    @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
+    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         BlockPos localPos = position.posInMultiblock();
         RelativeBlockFace side = position.side();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
@@ -164,14 +158,11 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         return LazyOptional.empty();
     }
 
-    @Override
-    public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
+    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
 
-    @Override
-    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
+    @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerTankShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerTankShape.GETTER; }
 
     public static class State implements IMultiblockState, ITDisplayContext {
         public final BoilerTanks tanks;
@@ -213,50 +204,41 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             heatSource = ctx.getCapabilityAt(HeatCapabilities.HEAT_PROVIDER_CAPABILITY, heatOpposingMBFace);
         }
 
-        @Override
-        public void writeSaveNBT(CompoundTag nbt) {
+        @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tanks", tanks.toNBT());
             nbt.putInt("recipeTimeRemaining", recipeTimeRemaining);
             nbt.put("inventory", inventory.serializeNBT());
         }
 
-        @Override
-        public void readSaveNBT(CompoundTag nbt) {
+        @Override public void readSaveNBT(CompoundTag nbt) {
             tanks.readNBT(nbt.getCompound("tanks"));
             recipeTimeRemaining = nbt.getInt("recipeTimeRemaining");
             inventory.deserializeNBT(nbt.getCompound("inventory"));
         }
 
-        @Override
-        public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt) {
             CompoundTag display = new CompoundTag();
             writeDisplaySyncNBT(display);
             nbt.put("display", display);
         }
 
-        @Override
-        public void readSyncNBT(CompoundTag nbt) {
+        @Override public void readSyncNBT(CompoundTag nbt) {
             if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
         }
 
-        @Override
-        public boolean isActive() { return active; }
+        @Override public boolean isActive() { return active; }
 
-        @Override
-        public IItemHandlerModifiable getInventory() { return inventory; }
+        @Override public IItemHandlerModifiable getInventory() { return inventory; }
 
-        @Override
-        public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input, tanks.output}; }
+        @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input, tanks.output}; }
 
-        @Override
-        public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.putDouble("heatLevel", heatLevel);
             nbt.put("tanks", tanks.toNBT());
         }
 
-        @Override
-        public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             heatLevel = nbt.getDouble("heatLevel");
             tanks.readNBT(nbt.getCompound("tanks"));
@@ -265,8 +247,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
 
     @SuppressWarnings("unused")
     private record BoilerInputImpl(ITMarkableFluidTank tank) implements IHeatConsumer {
-        @Override
-        public int getFluidAmount() { return tank.getFluidAmount(); }
+        @Override public int getFluidAmount() { return tank.getFluidAmount(); }
     }
 
     public record BoilerTanks(ITMarkableFluidTank input, ITMarkableFluidTank output) {

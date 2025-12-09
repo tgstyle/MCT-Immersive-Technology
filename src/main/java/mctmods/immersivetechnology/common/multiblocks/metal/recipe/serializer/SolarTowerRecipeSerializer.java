@@ -16,11 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRecipe> {
-    @Override
-    public ItemStack getIcon() { return ITMultiblockProvider.SOLAR_TOWER.iconStack(); }
+    @Override public ItemStack getIcon() { return ITMultiblockProvider.SOLAR_TOWER.iconStack(); }
 
-    @Override
-    public SolarTowerRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
+    @Override public SolarTowerRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
         FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         FluidStack fluidOutput = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output"));
         int time = GsonHelper.getAsInt(json, "time");
@@ -28,8 +26,7 @@ public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRec
         return new SolarTowerRecipe(recipeID, input, fluidOutput, time, requiredTemp);
     }
 
-    @Override
-    public @Nullable SolarTowerRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public SolarTowerRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         FluidStack fluidOutput = buffer.readFluidStack();
         int time = buffer.readInt();
@@ -37,8 +34,7 @@ public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRec
         return new SolarTowerRecipe(recipeId, input, fluidOutput, time, requiredTemp);
     }
 
-    @Override
-    public void toNetwork(@NotNull FriendlyByteBuf buffer, SolarTowerRecipe recipe) {
+    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, SolarTowerRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.fluidOutput);
         buffer.writeInt(recipe.getTotalProcessTime());

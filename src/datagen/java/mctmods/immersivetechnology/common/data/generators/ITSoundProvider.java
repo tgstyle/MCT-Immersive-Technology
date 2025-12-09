@@ -9,8 +9,7 @@ import net.minecraftforge.common.data.SoundDefinitionsProvider;
 public class ITSoundProvider extends SoundDefinitionsProvider {
     public ITSoundProvider(PackOutput output, ExistingFileHelper helper) { super(output, ITLib.MODID, helper); }
 
-    @Override
-    public void registerSounds() {
+    @Override public void registerSounds() {
         add(ITSounds.alternator.get(), definition().subtitle("subtitles." + ITLib.MODID + ".alternator").with(sound(ITLib.MODID + ":alternator").volume(1.0f)));
         add(ITSounds.boiler_liquid.get(), definition().subtitle("subtitles." + ITLib.MODID + ".boiler_liquid").with(sound(ITLib.MODID + ":boiler_liquid").volume(1.0f)));
         add(ITSounds.coolingTower.get(), definition().subtitle("subtitles." + ITLib.MODID + ".cooling_tower").with(sound(ITLib.MODID + ":cooling_tower").volume(1.0f)));

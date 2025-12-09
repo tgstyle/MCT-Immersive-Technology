@@ -72,8 +72,7 @@ public class ITModelConfigurableSides extends ITBakedModel {
         this.renderTypes = renderTypes;
     }
 
-    @Nonnull
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData, @Nullable RenderType layer) {
+    @Nonnull public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData, @Nullable RenderType layer) {
         if (side == null) { return ImmutableList.of(); }
         Map<Direction, ITEnums.IOSideConfig> config;
         if (extraData.has(ITProperties.Model.SIDECONFIG)) { config = extraData.get(ITProperties.Model.SIDECONFIG); }
@@ -85,8 +84,7 @@ public class ITModelConfigurableSides extends ITBakedModel {
         return ImmutableList.of(this.modelCache.getUnchecked(config).get(side));
     }
 
-    @Nonnull
-    public ModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ModelData tileData) {
+    @Nonnull public ModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ModelData tileData) {
         ModelData.Builder data = super.getModelData(world, pos, state, tileData).derive();
         BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof ITBlockInterfaces.IConfigurableSides confBE) {
@@ -118,19 +116,15 @@ public class ITModelConfigurableSides extends ITBakedModel {
         out.put(side, ITModelUtils.createBakedQuad(vertices, side, sprites.get(side), uv, new float[] { 1.0F, 1.0F, 1.0F, 1.0F }, side.getAxisDirection() == Direction.AxisDirection.NEGATIVE));
     }
 
-    @Override
-    @NotNull
-    public TextureAtlasSprite getParticleIcon(@NotNull ModelData data) { return this.textures.get(Direction.DOWN).get(ITEnums.IOSideConfig.NONE); }
+    @Override @NotNull public TextureAtlasSprite getParticleIcon(@NotNull ModelData data) { return this.textures.get(Direction.DOWN).get(ITEnums.IOSideConfig.NONE); }
 
-    @Nonnull
-    public ItemOverrides getOverrides() { return ItemOverrides.EMPTY; }
+    @Nonnull public ItemOverrides getOverrides() { return ItemOverrides.EMPTY; }
 
-    public @NotNull ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) { return ChunkRenderTypeSet.of(this.renderTypes.block()); }
+    @NotNull public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) { return ChunkRenderTypeSet.of(this.renderTypes.block()); }
 
-    public @NotNull List<RenderType> getRenderTypes(@NotNull ItemStack itemStack, boolean fabulous) { return List.of(fabulous ? this.renderTypes.entityFabulous() : this.renderTypes.entity()); }
+    @NotNull public List<RenderType> getRenderTypes(@NotNull ItemStack itemStack, boolean fabulous) { return List.of(fabulous ? this.renderTypes.entityFabulous() : this.renderTypes.entity()); }
 
-    @Override
-    public @NotNull BakedModel applyTransform(@NotNull ItemDisplayContext transformType, @NotNull PoseStack poseStack, boolean applyLeftHandTransform) {
+    @Override @NotNull public BakedModel applyTransform(@NotNull ItemDisplayContext transformType, @NotNull PoseStack poseStack, boolean applyLeftHandTransform) {
         defaultTransforms.getTransform(transformType).apply(applyLeftHandTransform, poseStack);
         return this;
     }
@@ -175,8 +169,7 @@ public class ITModelConfigurableSides extends ITBakedModel {
     public static class Loader implements IGeometryLoader<ITModelConfigurableSides.ConfigSidesModelBase> {
         public static ResourceLocation NAME = ITLib.rl("conf_sides");
 
-        @Nonnull
-        public ITModelConfigurableSides.ConfigSidesModelBase read(JsonObject modelContents, @Nonnull JsonDeserializationContext deserializationContext) {
+        @Nonnull public ITModelConfigurableSides.ConfigSidesModelBase read(JsonObject modelContents, @Nonnull JsonDeserializationContext deserializationContext) {
             String name = modelContents.get("base_name").getAsString();
             String type = modelContents.get("type").getAsString();
             ImmutableMap.Builder<String, Material> builder = ImmutableMap.builder();

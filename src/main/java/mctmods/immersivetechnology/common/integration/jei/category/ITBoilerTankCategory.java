@@ -31,8 +31,7 @@ public class ITBoilerTankCategory extends ITRecipeCategory<BoilerTankRecipe> {
         tankOverlay = helper.createDrawable(background, 177, 31, 20, 51);
     }
 
-    @Override
-    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull BoilerTankRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull BoilerTankRecipe recipe, @NotNull IFocusGroup focuses) {
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
                 .map(fs -> {
                     FluidStack copy = fs.copy();
@@ -52,8 +51,7 @@ public class ITBoilerTankCategory extends ITRecipeCategory<BoilerTankRecipe> {
                 ITFluidInfoArea.fillTooltip(fs, fs.getAmount(), tooltip::add)));
     }
 
-    @Override
-    public void draw(@NotNull BoilerTankRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@NotNull BoilerTankRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         tankOverlay.draw(guiGraphics, 65, 19);
         tankOverlay.draw(guiGraphics, 90, 19);
     }

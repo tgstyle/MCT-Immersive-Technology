@@ -18,8 +18,7 @@ public class ITSlotwiseItemHandler implements IItemHandlerModifiable, Iterable<I
 
     public ITSlotwiseItemHandler(List<IOConstraint> slotConstraints, Runnable onChanged) {
         this.rawHandler = new ItemStackHandler(slotConstraints.size()) {
-            @Override
-            protected void onContentsChanged(int slot) {
+            @Override protected void onContentsChanged(int slot) {
                 super.onContentsChanged(slot);
                 onChanged.run();
             }
@@ -27,15 +26,11 @@ public class ITSlotwiseItemHandler implements IItemHandlerModifiable, Iterable<I
         this.slotConstraints = slotConstraints;
     }
 
-    @Override
-    public int getSlots() { return rawHandler.getSlots(); }
+    @Override public int getSlots() { return rawHandler.getSlots(); }
 
-    @Override
-    public @NotNull ItemStack getStackInSlot(int slot) { return rawHandler.getStackInSlot(slot); }
+    @Override @NotNull public ItemStack getStackInSlot(int slot) { return rawHandler.getStackInSlot(slot); }
 
-    @Override
-    @NotNull
-    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+    @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (slot >= this.slotConstraints.size()) return stack;
         boolean allowInsert = this.slotConstraints.get(slot).allowInsert.test(stack);
         if (!allowInsert) return stack;
@@ -54,18 +49,14 @@ public class ITSlotwiseItemHandler implements IItemHandlerModifiable, Iterable<I
         return result;
     }
 
-    @Override
-    @NotNull
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+    @Override @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (slot >= this.slotConstraints.size() || !this.slotConstraints.get(slot).allowExtract()) return ItemStack.EMPTY;
         return rawHandler.extractItem(slot, amount, simulate);
     }
 
-    @Override
-    public int getSlotLimit(int slot) { return rawHandler.getSlotLimit(slot); }
+    @Override public int getSlotLimit(int slot) { return rawHandler.getSlotLimit(slot); }
 
-    @Override
-    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+    @Override public boolean isItemValid(int slot, @NotNull ItemStack stack) {
         if (slot >= this.slotConstraints.size()) return false;
         return this.slotConstraints.get(slot).allowInsert.test(stack);
     }
@@ -82,17 +73,13 @@ public class ITSlotwiseItemHandler implements IItemHandlerModifiable, Iterable<I
 
     public ItemStackHandler getRawHandler() { return rawHandler; }
 
-    @Nonnull
-    @Override
-    public Iterator<ItemStack> iterator() {
+    @Nonnull @Override public Iterator<ItemStack> iterator() {
         return new Iterator<>() {
             private int slot = 0;
 
-            @Override
-            public boolean hasNext() { return slot < getSlots(); }
+            @Override public boolean hasNext() { return slot < getSlots(); }
 
-            @Override
-            public ItemStack next() {
+            @Override public ItemStack next() {
                 final ItemStack next = getStackInSlot(slot);
                 ++slot;
                 return next;

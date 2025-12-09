@@ -40,8 +40,7 @@ public class ITRecipes extends RecipeProvider {
 
     public ITRecipes(PackOutput pOutput) { super(pOutput); }
 
-    @Override
-    protected void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
+    @Override protected void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
         multiblockRecipes();
         itemRecipes(consumer);
         recipesBoilerTank(consumer);

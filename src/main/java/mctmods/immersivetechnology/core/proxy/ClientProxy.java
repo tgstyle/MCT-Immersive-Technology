@@ -57,8 +57,7 @@ import java.util.function.Supplier;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ITLib.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientProxy extends CommonProxy {
 
-    @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
+    @SubscribeEvent public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             for (ITFluids.FluidEntry entry : ITFluids.ALL_ENTRIES) {
                 ItemBlockRenderTypes.setRenderLayer(entry.getStill(), RenderType.translucent());
@@ -125,14 +124,12 @@ public class ClientProxy extends CommonProxy {
         });
     }
 
-    @SubscribeEvent
-    public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+    @SubscribeEvent public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ITParticles.COLORED_SMOKE.get(), ITColoredSmokeProvider::new);
         event.registerSpriteSet(ITParticles.SMOKE_CUSTOM.get(), ITSmokeCustomProvider::new);
     }
 
-    @SubscribeEvent
-    public static void onItemColor(RegisterColorHandlersEvent.Item event) {
+    @SubscribeEvent public static void onItemColor(RegisterColorHandlersEvent.Item event) {
         for (RegistryObject<? extends Item> holder : ITItems.getItemRegistryMap().values()) {
             Item i = holder.get();
             if (i instanceof ITFlagItem) {
@@ -148,28 +145,23 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    @SubscribeEvent
-    public static void onBlockColor(RegisterColorHandlersEvent.Block event) {
+    @SubscribeEvent public static void onBlockColor(RegisterColorHandlersEvent.Block event) {
         for (ITFluids.FluidEntry entry : ITFluids.ALL_ENTRIES) {
             final int tint = entry.tintColor();
             event.register((state, level, pos, index) -> tint, entry.block().get());
         }
     }
 
-    @Override
-    public void reinitializeGUI() {
+    @Override public void reinitializeGUI() {
         Screen currentScreen = Minecraft.getInstance().screen;
         if (currentScreen instanceof ITContainerScreen) { currentScreen.init(Minecraft.getInstance(), currentScreen.width, currentScreen.height); }
     }
 
-    @Override
-    public Level getClientWorld() { return Minecraft.getInstance().level; }
+    @Override public Level getClientWorld() { return Minecraft.getInstance().level; }
 
-    @Override
-    public Player getClientPlayer() { return Minecraft.getInstance().player; }
+    @Override public Player getClientPlayer() { return Minecraft.getInstance().player; }
 
-    @SubscribeEvent
-    public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
+    @SubscribeEvent public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
         ev.register("obj", ITObjLoader.INSTANCE);
         ev.register(ITModelConfigurableSides.Loader.NAME.getPath(), new ITModelConfigurableSides.Loader());
         ev.register(ITMirroredModelLoader.ID.getPath(), new ITMirroredModelLoader());
@@ -180,8 +172,7 @@ public class ClientProxy extends CommonProxy {
         SolarReflectorModels.MIRROR = new ITDynamicModel("solar_reflector_mirror");
     }
 
-    @SubscribeEvent
-    public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) { registerBERenders(event); }
+    @SubscribeEvent public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) { registerBERenders(event); }
 
     private static <T extends BlockEntity> void registerBERender(EntityRenderersEvent.RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, BlockEntityRendererProvider<T> provider) { event.registerBlockEntityRenderer(type.get(), provider); }
 

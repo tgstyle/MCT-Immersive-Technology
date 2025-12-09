@@ -34,8 +34,7 @@ public class ITBoilerSolidCategory extends ITRecipeCategory<BoilerSolidRecipe> {
         setIcon(ITMultiblockProvider.BOILER_SOLID.iconStack());
     }
 
-    @Override
-    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull BoilerSolidRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull BoilerSolidRecipe recipe, @NotNull IFocusGroup focuses) {
         List<ItemStack> inputs = Arrays.stream(recipe.input.getMatchingStacks())
                 .map(stack -> {
                     ItemStack copy = stack.copy();
@@ -47,8 +46,7 @@ public class ITBoilerSolidCategory extends ITRecipeCategory<BoilerSolidRecipe> {
                 .addIngredients(VanillaTypes.ITEM_STACK, inputs);
     }
 
-    @Override
-    public void draw(@NotNull BoilerSolidRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@NotNull BoilerSolidRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
         ItemStack exampleStack = recipe.input.getMatchingStacks()[0].copy();
         exampleStack.setCount(recipe.input.getCount());

@@ -23,6 +23,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
 public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvider, IItemHandlerModifiable {
+
     private ItemStack template = ItemStack.EMPTY;
     private final LazyOptional<IItemHandlerModifiable> itemHandler = LazyOptional.of(() -> this);
 
@@ -30,20 +31,17 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
         super(ITBlockEntities.CRATE_CREATIVE.get(), pos, state);
     }
 
-    @Override
-    public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) return itemHandler.cast();
+    @Override public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction side) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) { return itemHandler.cast(); }
         return super.getCapability(cap, side);
     }
 
-    @Override
-    public void invalidateCaps() {
+    @Override public void invalidateCaps() {
         super.invalidateCaps();
         itemHandler.invalidate();
     }
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
+    @Override protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         if (!template.isEmpty()) {
             CompoundTag itemTag = new CompoundTag();
@@ -52,23 +50,18 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
         }
     }
 
-    @Override
-    public void load(@NotNull CompoundTag tag) {
+    @Override public void load(@NotNull CompoundTag tag) {
         super.load(tag);
-        if (tag.contains("template")) {
-            template = ItemStack.of(tag.getCompound("template"));
-        }
+        if (tag.contains("template")) { template = ItemStack.of(tag.getCompound("template")); }
     }
 
-    @Override
-    public @NotNull CompoundTag getUpdateTag() {
+    @Override @NotNull public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
         saveAdditional(tag);
         return tag;
     }
 
-    @Override
-    public void handleUpdateTag(@NotNull CompoundTag tag) {
+    @Override public void handleUpdateTag(@NotNull CompoundTag tag) {
         super.handleUpdateTag(tag);
         load(tag);
     }
@@ -83,15 +76,9 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
         }
     }
 
-    @Override
-    public @NotNull Component getDisplayName() {
-        return Component.translatable(TranslationKey.GUI_CRATE_CREATIVE.getLocation());
-    }
+    @Override @NotNull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_CRATE_CREATIVE.getLocation()); }
 
-    @Override
-    public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) {
-        return CrateCreativeMenu.makeServer(ITMenuTypes.CRATE_CREATIVE.getType(), id, inv, this);
-    }
+    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return CrateCreativeMenu.makeServer(ITMenuTypes.CRATE_CREATIVE.getType(), id, inv, this); }
 
     public boolean stillValid(Player player) {
         if (level != null && !level.isClientSide) {
@@ -100,43 +87,30 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
         return false;
     }
 
-    @Override
-    public int getSlots() { return 1; }
+    @Override public int getSlots() { return 1; }
 
-    @Override
-    public @NotNull ItemStack getStackInSlot(int slot) {
-        return slot == 0 ? template.copy() : ItemStack.EMPTY;
-    }
+    @Override @NotNull public ItemStack getStackInSlot(int slot) { return slot == 0 ? template.copy() : ItemStack.EMPTY; }
 
-    @Override
-    public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        if (slot != 0 || stack.isEmpty()) return stack;
-        if (simulate) return ItemStack.EMPTY;
+    @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+        if (slot != 0 || stack.isEmpty()) { return stack; }
+        if (simulate) { return ItemStack.EMPTY; }
         template = stack.copy();
         setChanged();
         return ItemStack.EMPTY;
     }
 
-    @Override
-    public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if (slot != 0 || template.isEmpty() || amount <= 0) return ItemStack.EMPTY;
+    @Override @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        if (slot != 0 || template.isEmpty() || amount <= 0) { return ItemStack.EMPTY; }
         ItemStack out = template.copy();
         out.setCount(Math.min(amount, template.getCount()));
         return out;
     }
 
-    @Override
-    public int getSlotLimit(int slot) {
-        return slot == 0 ? (template.isEmpty() ? 64 : template.getMaxStackSize()) : 0;
-    }
+    @Override public int getSlotLimit(int slot) { return slot == 0 ? (template.isEmpty() ? 64 : template.getMaxStackSize()) : 0; }
 
-    @Override
-    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-        return slot == 0 && !stack.isEmpty();
-    }
+    @Override public boolean isItemValid(int slot, @NotNull ItemStack stack) { return slot == 0 && !stack.isEmpty(); }
 
-    @Override
-    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+    @Override public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         if (slot == 0) {
             template = stack.copy();
             setChanged();

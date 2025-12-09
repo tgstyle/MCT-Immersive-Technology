@@ -12,8 +12,7 @@ public class ITMarkableFluidTank extends FluidTank {
         this.markDirty = markDirty;
     }
 
-    @Override
-    protected void onContentsChanged() {
+    @Override protected void onContentsChanged() {
         markDirty.accept(null);
     }
 

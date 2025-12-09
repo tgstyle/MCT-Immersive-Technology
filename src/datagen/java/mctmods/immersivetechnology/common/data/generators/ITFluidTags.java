@@ -16,8 +16,7 @@ public class ITFluidTags extends FluidTagsProvider {
         super(output, lookupProvider, ITLib.MODID, existingFileHelper);
     }
 
-    @Override
-    protected void addTags(@NotNull Provider provider) {
+    @Override protected void addTags(@NotNull Provider provider) {
         tag(ITTags.fluidChlorine).add(ITFluids.CHLORINE.getStill());
         tag(ITTags.fluidDistilledWater).add(ITFluids.DISTILLED_WATER.getStill());
         tag(ITTags.fluidDistilledWaterForge).add(ITFluids.DISTILLED_WATER.getStill());

@@ -134,16 +134,12 @@ public class ITFluids {
         }
 
         private static FluidType makeTypeWithTextures(FluidType.Properties builder, ResourceLocation stillTex, ResourceLocation flowingTex, int tintColor) { return new FluidType(builder) {
-            @Override
-            public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) { consumer.accept(new IClientFluidTypeExtensions() {
-                @Override
-                public ResourceLocation getStillTexture() { return stillTex; }
+            @Override public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) { consumer.accept(new IClientFluidTypeExtensions() {
+                @Override public ResourceLocation getStillTexture() { return stillTex; }
 
-                @Override
-                public ResourceLocation getFlowingTexture() { return flowingTex; }
+                @Override public ResourceLocation getFlowingTexture() { return flowingTex; }
 
-                @Override
-                public int getTintColor() { return tintColor; }
+                @Override public int getTintColor() { return tintColor; }
             });
             }
         };
@@ -159,11 +155,9 @@ public class ITFluids {
 
         private static BucketItem makeBucket(RegistryObject<ITFluid> still, int burnTime) {
             return new BucketItem(still, new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET)) {
-                @Override
-                public @NotNull ICapabilityProvider initCapabilities(@NotNull ItemStack stack, @Nullable CompoundTag nbt) {return new FluidBucketWrapper(stack);}
+                @Override public @NotNull ICapabilityProvider initCapabilities(@NotNull ItemStack stack, @Nullable CompoundTag nbt) {return new FluidBucketWrapper(stack);}
 
-                @Override
-                public int getBurnTime(ItemStack itemStack, RecipeType<?> type) {return burnTime;}
+                @Override public int getBurnTime(ItemStack itemStack, RecipeType<?> type) {return burnTime;}
 
                 @SuppressWarnings("unused")
                 public boolean emptyContents(@Nullable Player player, Level level, BlockPos pos, @Nullable HitResult target) {

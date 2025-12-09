@@ -19,9 +19,7 @@ import javax.annotation.Nonnull;
 public class ITMultiblockPartBlock<S extends IMultiblockState> extends MultiblockPartBlock<S> {
     public ITMultiblockPartBlock(Properties properties, MultiblockRegistration<S> multiblock) { super(properties, multiblock); }
 
-    @Nonnull
-    @Override
-    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+    @Nonnull @Override public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         BlockEntity te = level.getBlockEntity(pos);
         if (te instanceof ITBlockInterfaces.IPlayerInteraction be) {
             Vec3 hitVec = hit.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ());

@@ -29,8 +29,7 @@ public class SolarReflectorRenderer extends ITBaseBlockEntityRenderer<Multiblock
 
     public SolarReflectorRenderer() {}
 
-    @Override
-    public void render(@NotNull MultiblockBlockEntityMaster<SolarReflectorLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    @Override public void render(@NotNull MultiblockBlockEntityMaster<SolarReflectorLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         IMultiblockBEHelperMaster<SolarReflectorLogic.State> helper = tile.getHelper();
         IMultiblockContext<SolarReflectorLogic.State> context = helper.getContext();
         SolarReflectorLogic.State state = context.getState();

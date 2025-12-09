@@ -27,11 +27,9 @@ public class ITBEDropLootEntry extends LootPoolSingletonContainer {
 
     public static LootPoolSingletonContainer.Builder<?> builder() { return simpleBuilder(ITBEDropLootEntry::new); }
 
-    @Nonnull
-    public LootPoolEntryType getType() { return ITLootFunctions.TILE_DROP.get(); }
+    @Nonnull public LootPoolEntryType getType() { return ITLootFunctions.TILE_DROP.get(); }
 
     public static class Serializer extends LootPoolSingletonContainer.Serializer<ITBEDropLootEntry> {
-        @Nonnull
-        protected ITBEDropLootEntry deserialize(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context, int weight, int quality, @Nonnull LootItemCondition[] conditions, @Nonnull LootItemFunction[] functions) { return new ITBEDropLootEntry(weight, quality, conditions, functions); }
+        @Nonnull protected ITBEDropLootEntry deserialize(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context, int weight, int quality, @Nonnull LootItemCondition[] conditions, @Nonnull LootItemFunction[] functions) { return new ITBEDropLootEntry(weight, quality, conditions, functions); }
     }
 }

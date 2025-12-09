@@ -48,8 +48,7 @@ public class ITBakedDynamicSplitModel<K, T extends ITICacheKeyProvider<K> & Bake
                 }));
     }
 
-    @Override
-    public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @Nullable RenderType renderType) {
+    @Override @NotNull public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @Nullable RenderType renderType) {
         BlockPos offset = data.get(ITProperties.Model.SUBMODEL_OFFSET);
         if (offset == null) { return super.getQuads(state, side, rand, data, renderType); }
         K key = base.getKey(state, side, rand, data, renderType);

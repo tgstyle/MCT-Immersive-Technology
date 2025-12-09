@@ -44,32 +44,25 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
     private FluidStack selectedFluid = FluidStack.EMPTY;
 
     private final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> new IFluidHandler() {
-        @Override
-        public int getTanks() { return 1; }
+        @Override public int getTanks() { return 1; }
 
-        @Override
-        public @NotNull FluidStack getFluidInTank(int tank) {
+        @Override @NotNull public FluidStack getFluidInTank(int tank) {
             if (selectedFluid.isEmpty()) { return FluidStack.EMPTY; }
             return new FluidStack(selectedFluid, Integer.MAX_VALUE);
         }
 
-        @Override
-        public int getTankCapacity(int tank) { return Integer.MAX_VALUE; }
+        @Override public int getTankCapacity(int tank) { return Integer.MAX_VALUE; }
 
-        @Override
-        public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return false; }
+        @Override public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return false; }
 
-        @Override
-        public int fill(FluidStack resource, FluidAction action) { return 0; }
+        @Override public int fill(FluidStack resource, FluidAction action) { return 0; }
 
-        @Override
-        public @NotNull FluidStack drain(FluidStack resource, FluidAction action) {
+        @Override @NotNull public FluidStack drain(FluidStack resource, FluidAction action) {
             if (selectedFluid.isEmpty() || !selectedFluid.isFluidEqual(resource)) { return FluidStack.EMPTY; }
             return new FluidStack(selectedFluid, resource.getAmount());
         }
 
-        @Override
-        public @NotNull FluidStack drain(int maxDrain, FluidAction action) {
+        @Override public @NotNull FluidStack drain(int maxDrain, FluidAction action) {
             if (selectedFluid.isEmpty()) { return FluidStack.EMPTY; }
             return new FluidStack(selectedFluid, maxDrain);
         }
@@ -79,8 +72,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
 
     public BarrelCreativeBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.BARREL_CREATIVE.get(), pos, state); }
 
-    @Override
-    public void tickServer() {
+    @Override public void tickServer() {
         if (!selectedFluid.isEmpty()) {
             long thisTickOutput = 0;
             for (Direction dir : Direction.values()) {
@@ -108,27 +100,23 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
         super.tickServer();
     }
 
-    @Override
-    public void readCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
+    @Override public void readCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
         if (nbt.contains("SelectedFluid")) {
             selectedFluid = FluidStack.loadFluidStackFromNBT(nbt.getCompound("SelectedFluid"));
             if (selectedFluid == null) selectedFluid = FluidStack.EMPTY;
         }
     }
 
-    @Override
-    public void writeCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
+    @Override public void writeCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
         if (!selectedFluid.isEmpty()) { nbt.put("SelectedFluid", selectedFluid.writeToNBT(new CompoundTag())); }
     }
 
-    @Override
-    public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+    @Override public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.FLUID_HANDLER) { return fluidHandler.cast(); }
         return super.getCapability(cap, side);
     }
 
-    @Override
-    public boolean interact(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull ItemStack heldItem, float hitX, float hitY, float hitZ) {
+    @Override public boolean interact(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         FluidStack contained = FluidUtil.getFluidContained(heldItem).orElse(FluidStack.EMPTY);
         if (!contained.isEmpty()) {
             setOutputFluid(contained);
@@ -145,11 +133,9 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
         return FluidUtil.interactWithFluidHandler(player, hand, fluidHandler.orElseThrow(RuntimeException::new));
     }
 
-    @Override
-    public TranslationKey text() { return TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE; }
+    @Override public TranslationKey text() { return TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE; }
 
-    @Override
-    public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult rtr, boolean hammer) {
+    @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult rtr, boolean hammer) {
         if (rtr.getType() == HitResult.Type.MISS) { return null; }
         assert level != null;
         if (level.isClientSide && requestCooldown == 0) {
@@ -163,8 +149,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
         return new Component[]{Component.translatable(text().text(), fluidName, value)};
     }
 
-    @Override
-    public void getBlockEntityDrop(@NotNull LootContext context, @NotNull Consumer<ItemStack> drop) {
+    @Override public void getBlockEntityDrop(@NotNull LootContext context, @NotNull Consumer<ItemStack> drop) {
         ItemStack stack = new ItemStack(getBlockState().getBlock(), 1);
         CompoundTag tag = new CompoundTag();
         saveAdditional(tag);
@@ -172,8 +157,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
         drop.accept(stack);
     }
 
-    @Override
-    public void onBEPlaced(BlockPlaceContext ctx) { onBEPlaced(ctx.getItemInHand()); }
+    @Override public void onBEPlaced(BlockPlaceContext ctx) { onBEPlaced(ctx.getItemInHand()); }
 
     public void setOutputFluid(FluidStack fluidStack) {
         if (fluidStack.isEmpty()) {
@@ -185,14 +169,12 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
         setChanged();
     }
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
+    @Override protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         if (!selectedFluid.isEmpty()) { tag.put("SelectedFluid", selectedFluid.writeToNBT(new CompoundTag())); }
     }
 
-    @Override
-    public void load(@NotNull CompoundTag tag) {
+    @Override public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         if (tag.contains("SelectedFluid")) {
             selectedFluid = FluidStack.loadFluidStackFromNBT(tag.getCompound("SelectedFluid"));
@@ -211,8 +193,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
         }
     }
 
-    @Override
-    public void invalidateCaps() {
+    @Override public void invalidateCaps() {
         super.invalidateCaps();
         fluidHandler.invalidate();
     }

@@ -46,13 +46,9 @@ public class ITItems {
     static <T extends Item> ITItems.ItemRegObject<T> register(String name, Supplier<? extends T> make) { return new ITItems.ItemRegObject<>(REGISTER.register(name, make)); }
 
     public record ItemRegObject<T extends Item>(RegistryObject<T> regObject) implements Supplier<T>, ItemLike {
-        @Override
-        @Nonnull
-        public T get() { return regObject.get(); }
+        @Override @Nonnull public T get() { return regObject.get(); }
 
-        @Nonnull
-        @Override
-        public Item asItem() { return regObject.get(); }
+        @Override @Nonnull public Item asItem() { return regObject.get(); }
         public ResourceLocation getId() { return regObject.getId(); }
     }
 }

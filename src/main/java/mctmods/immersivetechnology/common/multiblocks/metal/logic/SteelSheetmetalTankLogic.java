@@ -85,45 +85,33 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
         return ImmutableList.copyOf(result);
     }
 
-    @Override
-    public List<BlockPos> getOutputPositions() { return IO_POIS.stream().map(CapabilityPosition::posInMultiblock).collect(ImmutableList.toImmutableList()); }
+    @Override public List<BlockPos> getOutputPositions() { return IO_POIS.stream().map(CapabilityPosition::posInMultiblock).collect(ImmutableList.toImmutableList()); }
 
-    @Override
-    public Direction getOutputDirection(IMultiblockContext<State> ctx) { return null; }
+    @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return null; }
 
-    @Override
-    public List<RelativeBlockFace> getOutputFacings() { return IO_POIS.stream().map(CapabilityPosition::side).collect(ImmutableList.toImmutableList()); }
+    @Override public List<RelativeBlockFace> getOutputFacings() { return IO_POIS.stream().map(CapabilityPosition::side).collect(ImmutableList.toImmutableList()); }
 
-    @Override
-    public List<ITMarkableFluidTank> getOutputTanks(State state) { return Stream.generate(() -> state.tank).limit(IO_POIS.size()).collect(ImmutableList.toImmutableList()); }
+    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return Stream.generate(() -> state.tank).limit(IO_POIS.size()).collect(ImmutableList.toImmutableList()); }
 
-    @Override
-    public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return state.outputs; }
+    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return state.outputs; }
 
-    @Override
-    public int getTransferSpeed() { return TRANSFER_SPEED; }
+    @Override public int getTransferSpeed() { return TRANSFER_SPEED; }
 
-    @Override
-    public boolean shouldPumpOutputs(IMultiblockContext<State> ctx) {
+    @Override public boolean shouldPumpOutputs(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         return state.rsState.isEnabled(ctx) && !state.tank.isEmpty();
     }
 
     private record ConditionalFluidHandler(ITMarkableFluidTank tank, boolean canFill, boolean canDrain, Runnable onChange, Supplier<Boolean> allowDrain) implements IFluidHandler {
-        @Override
-        public int getTanks() { return 1; }
+        @Override public int getTanks() { return 1; }
 
-        @Override
-        public @NotNull FluidStack getFluidInTank(int tank) { return this.tank.getFluid(); }
+        @Override @NotNull public FluidStack getFluidInTank(int tank) { return this.tank.getFluid(); }
 
-        @Override
-        public int getTankCapacity(int tank) { return this.tank.getCapacity(); }
+        @Override public int getTankCapacity(int tank) { return this.tank.getCapacity(); }
 
-        @Override
-        public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return this.tank.isFluidValid(stack); }
+        @Override public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return this.tank.isFluidValid(stack); }
 
-        @Override
-        public int fill(FluidStack resource, FluidAction action) {
+        @Override public int fill(FluidStack resource, FluidAction action) {
             if (!canFill || resource.isEmpty()) return 0;
             if (action == FluidAction.SIMULATE) return this.tank.fill(resource, FluidAction.SIMULATE);
             int filled = this.tank.fill(resource, FluidAction.EXECUTE);
@@ -131,16 +119,14 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
             return filled;
         }
 
-        @Override
-        public @NotNull FluidStack drain(FluidStack resource, FluidAction action) {
+        @Override @NotNull public FluidStack drain(FluidStack resource, FluidAction action) {
             if (!canDrain || !allowDrain.get() || resource.isEmpty()) return FluidStack.EMPTY;
             FluidStack drained = this.tank.drain(resource, action);
             if (!drained.isEmpty() && action == FluidAction.EXECUTE) onChange.run();
             return drained;
         }
 
-        @Override
-        public @NotNull FluidStack drain(int maxDrain, FluidAction action) {
+        @Override @NotNull public FluidStack drain(int maxDrain, FluidAction action) {
             if (!canDrain || !allowDrain.get() || maxDrain <= 0) return FluidStack.EMPTY;
             FluidStack drained = this.tank.drain(maxDrain, action);
             if (!drained.isEmpty() && action == FluidAction.EXECUTE) onChange.run();
@@ -196,53 +182,42 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
             );
         }
 
-        @Override
-        public boolean isActive() { return active; }
+        @Override public boolean isActive() { return active; }
 
-        @Override
-        public List<AveragingEnergyStorage> getEnergies() { return ImmutableList.of(); }
+        @Override public List<AveragingEnergyStorage> getEnergies() { return ImmutableList.of(); }
 
-        @Override
-        public IItemHandlerModifiable getInventory() { return null; }
+        @Override public IItemHandlerModifiable getInventory() { return null; }
 
-        @Override
-        public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tank}; }
+        @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tank}; }
 
-        @Override
-        public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.put("tank", tank.writeToNBT(new CompoundTag()));
         }
 
-        @Override
-        public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tank.readFromNBT(nbt.getCompound("tank"));
         }
 
-        @Override
-        public void writeSaveNBT(CompoundTag nbt) {
+        @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tank", tank.writeToNBT(new CompoundTag()));
             CompoundTag rsTag = new CompoundTag();
             rsState.writeSaveNBT(rsTag);
             nbt.put("rsState", rsTag);
         }
 
-        @Override
-        public void readSaveNBT(CompoundTag nbt) {
+        @Override public void readSaveNBT(CompoundTag nbt) {
             tank.readFromNBT(nbt.getCompound("tank"));
             rsState.readSaveNBT(nbt.getCompound("rsState"));
         }
 
-        @Override
-        public void writeSyncNBT(CompoundTag nbt) { writeSaveNBT(nbt); nbt.putBoolean("active", active); }
+        @Override public void writeSyncNBT(CompoundTag nbt) { writeSaveNBT(nbt); nbt.putBoolean("active", active); }
 
-        @Override
-        public void readSyncNBT(CompoundTag nbt) { readSaveNBT(nbt); active = nbt.getBoolean("active"); }
+        @Override public void readSyncNBT(CompoundTag nbt) { readSaveNBT(nbt); active = nbt.getBoolean("active"); }
     }
 
-    @Override
-    public void tickServer(IMultiblockContext<State> ctx) {
+    @Override public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         state.comparatorHelper.update(ctx, state.tank.getFluidAmount());
         boolean enabled = state.rsState.isEnabled(ctx);
@@ -251,11 +226,9 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
         pumpOutputs(ctx);
     }
 
-    @Override
-    public State createInitialState(IInitialMultiblockContext<State> capabilitySource) { return new State(capabilitySource); }
+    @Override public State createInitialState(IInitialMultiblockContext<State> capabilitySource) { return new State(capabilitySource); }
 
-    @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
+    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         State state = ctx.getState();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             BlockPos posIn = position.posInMultiblock();
@@ -268,18 +241,14 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
         return LazyOptional.empty();
     }
 
-    @Nullable
-    @Override
-    public List<Component> getOverlayText(State state, Player player, boolean hammer) {
+    @Override @Nullable public List<Component> getOverlayText(State state, Player player, boolean hammer) {
         if (Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) return List.of(TextUtils.formatFluidStack(state.tank.getFluid()));
         return null;
     }
 
-    @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType forType) { return SteelSheetmetalTankShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType forType) { return SteelSheetmetalTankShape.GETTER; }
 
-    @Override
-    public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
+    @Override public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
         if (posInMultiblock.equals(REDSTONE_POI) && player.getItemInHand(hand).is(IETags.screwdrivers)) {
             if (!isClient) {
                 State state = ctx.getState();

@@ -47,8 +47,7 @@ public class ITItemModelProvider extends ItemModelProvider {
         withExistingParent(name(entry.getBucket()), forgeLoc()).customLoader(DynamicFluidContainerModelBuilder::begin).fluid(entry.getStill()).flipGas(isGas);
     }
 
-    @Override
-    protected void registerModels() {
+    @Override protected void registerModels() {
         generateBlockItem("barrel_creative", "metal/barrel_creative");
         generateBlockItem("barrel_open", "metal/barrel_open");
         generateBlockItem("barrel_steel", "metal/barrel_steel");

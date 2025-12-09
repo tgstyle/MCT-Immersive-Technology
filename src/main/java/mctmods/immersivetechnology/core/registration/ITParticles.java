@@ -14,8 +14,7 @@ public class ITParticles {
     public static final DeferredRegister<ParticleType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, ITLib.MODID);
 
     public static final RegistryObject<ParticleType<ColoredSmoke>> COLORED_SMOKE = REGISTER.register("colored_smoke", () -> new ParticleType<>(false, ColoredSmoke.DESERIALIZER) {
-        @Override
-        public @NotNull Codec<ColoredSmoke> codec() {return ColoredSmoke.CODEC;}
+        @Override @NotNull public Codec<ColoredSmoke> codec() {return ColoredSmoke.CODEC;}
     });
 
     public static final RegistryObject<SimpleParticleType> SMOKE_CUSTOM = REGISTER.register("smoke_custom", () -> new SimpleParticleType(true));

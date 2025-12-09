@@ -23,8 +23,7 @@ public abstract class ITSlot extends Slot {
     public static class Output extends SlotItemHandlerIT {
         public Output(IItemHandler inv, int id, int x, int y) { super(inv, id, x, y); }
 
-        @Override
-        public boolean mayPlace(@NotNull ItemStack itemStack) { return false; }
+        @Override public boolean mayPlace(@NotNull ItemStack itemStack) { return false; }
     }
 
     public static class FluidContainer extends SlotItemHandlerIT {
@@ -35,8 +34,7 @@ public abstract class ITSlot extends Slot {
             this.filter = filter;
         }
 
-        @Override
-        public boolean mayPlace(@NotNull ItemStack itemStack) {
+        @Override public boolean mayPlace(@NotNull ItemStack itemStack) {
             LazyOptional<IFluidHandlerItem> handlerCap = FluidUtil.getFluidHandler(itemStack);
             return handlerCap.map(handler -> {
                 if (handler.getTanks() <= 0) return false;
@@ -51,22 +49,19 @@ public abstract class ITSlot extends Slot {
     public static class Fuel extends SlotItemHandlerIT {
         public Fuel(IItemHandler inv, int id, int x, int y) { super(inv, id, x, y); }
 
-        @Override
-        public boolean mayPlace(@NotNull ItemStack stack) { return getItemHandler().isItemValid(getSlotIndex(), stack); }
+        @Override public boolean mayPlace(@NotNull ItemStack stack) { return getItemHandler().isItemValid(getSlotIndex(), stack); }
     }
 
     public static class ItemHandlerGhost extends ITSlot.SlotItemHandlerIT {
 
         public ItemHandlerGhost(IItemHandler itemHandler, int index, int xPosition, int yPosition) { super(itemHandler, index, xPosition, yPosition); }
 
-        @Override
-        public boolean mayPickup(Player playerIn) { return false; }
+        @Override public boolean mayPickup(Player playerIn) { return false; }
     }
 
     private static class SlotItemHandlerIT extends SlotItemHandler {
         public SlotItemHandlerIT(IItemHandler itemHandler, int index, int xPosition, int yPosition) { super(itemHandler, index, xPosition, yPosition); }
 
-        @Override
-        public int getMaxStackSize(@NotNull ItemStack stack) { return Math.min(this.getMaxStackSize(), stack.getMaxStackSize()); }
+        @Override public int getMaxStackSize(@NotNull ItemStack stack) { return Math.min(this.getMaxStackSize(), stack.getMaxStackSize()); }
     }
 }

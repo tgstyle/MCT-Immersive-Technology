@@ -81,8 +81,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         return facings.get(0);
     }
 
-    @Override
-    public void tickClient(IMultiblockContext<State> ctx) {
+    @Override public void tickClient(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         BlockPos soundAbs = ctx.getLevel().toAbsolute(SOUND_POI.get(0));
         Vec3 soundPos = new Vec3(soundAbs.getX() + 0.5, soundAbs.getY() + 0.5, soundAbs.getZ() + 0.5);
@@ -131,8 +130,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         }
     }
 
-    @Override
-    public void tickServer(IMultiblockContext<State> ctx) {
+    @Override public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         final Level level = ctx.getLevel().getRawLevel();
         if (!state.isInitialServerUpdateDone) {
@@ -219,8 +217,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         }
     }
 
-    @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
+    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         BlockPos localPos = position.posInMultiblock();
         RelativeBlockFace side = position.side();
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
@@ -231,14 +228,11 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         return LazyOptional.empty();
     }
 
-    @Override
-    public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
+    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
 
-    @Override
-    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
+    @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerSolidShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerSolidShape.GETTER; }
 
     private static class FuelItemHandler extends ITSlotwiseItemHandler {
         private final Supplier<Level> levelSupplier;
@@ -248,8 +242,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             this.levelSupplier = levelSupplier;
         }
 
-        @Override
-        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+        @Override public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             if (slot != INPUT_FUEL_SLOT || stack.isEmpty()) { return false; }
             ItemStack single = stack.copy(); single.setCount(1);
             Level l = levelSupplier != null ? levelSupplier.get() : null;
@@ -259,8 +252,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             } else { return true; }
         }
 
-        @Override
-        public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+        @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             if (!simulate && !isItemValid(slot, stack)) { return stack; }
             return super.insertItem(slot, stack, simulate);
         }
@@ -295,8 +287,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             boilerInput = ctx.getCapabilityAt(HeatCapabilities.HEAT_CONSUMER_CAPABILITY, opposingMBFace);
         }
 
-        @Override
-        public void writeSaveNBT(CompoundTag nbt) {
+        @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.putDouble("heatLevel", heatLevel);
             nbt.putInt("burnRemaining", burnRemaining);
             nbt.putInt("totalBurnTime", totalBurnTime);
@@ -305,8 +296,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             nbt.put("inventory", inventory.serializeNBT());
         }
 
-        @Override
-        public void readSaveNBT(CompoundTag nbt) {
+        @Override public void readSaveNBT(CompoundTag nbt) {
             heatLevel = nbt.getDouble("heatLevel");
             burnRemaining = nbt.getInt("burnRemaining");
             totalBurnTime = nbt.getInt("totalBurnTime");
@@ -315,26 +305,21 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             inventory.deserializeNBT(nbt.getCompound("inventory"));
         }
 
-        @Override
-        public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt) {
             CompoundTag display = new CompoundTag();
             writeDisplaySyncNBT(display);
             nbt.put("display", display);
         }
 
-        @Override
-        public void readSyncNBT(CompoundTag nbt) {
+        @Override public void readSyncNBT(CompoundTag nbt) {
             if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
         }
 
-        @Override
-        public boolean isActive() { return active; }
+        @Override public boolean isActive() { return active; }
 
-        @Override
-        public IItemHandlerModifiable getInventory() { return inventory; }
+        @Override public IItemHandlerModifiable getInventory() { return inventory; }
 
-        @Override
-        public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.putDouble("heatLevel", heatLevel);
             nbt.putBoolean("pilotLit", pilotLit);
@@ -345,8 +330,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             needClientBlockUpdate = false;
         }
 
-        @Override
-        public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             heatLevel = nbt.getDouble("heatLevel");
             pilotLit = nbt.getBoolean("pilotLit");
@@ -358,7 +342,6 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     }
 
     private record HeatSourceImpl(State state) implements IHeatProvider {
-        @Override
-        public double getHeatLevel() { return state.heatLevel; }
+        @Override public double getHeatLevel() { return state.heatLevel; }
     }
 }

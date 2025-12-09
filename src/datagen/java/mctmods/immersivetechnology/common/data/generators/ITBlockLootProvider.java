@@ -23,8 +23,7 @@ import java.util.stream.Collectors;
 public class ITBlockLootProvider extends BlockLootSubProvider {
     public ITBlockLootProvider() { super(Set.of(), FeatureFlags.REGISTRY.allFlags()); }
 
-    @Override
-    protected void generate() {
+    @Override protected void generate() {
         registerEntity(ITBlocks.Metal.BARREL_CREATIVE.getRegObject());
         registerEntity(ITBlocks.Metal.BARREL_OPEN.getRegObject());
         registerEntity(ITBlocks.Metal.BARREL_STEEL.getRegObject());
@@ -79,6 +78,5 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
 
     private LootPool.Builder createPoolBuilder() { return LootPool.lootPool().when(ExplosionCondition.survivesExplosion()); }
 
-    @Override
-    protected @NotNull Set<Block> getKnownBlocks() { return ITBlocks.REGISTER.getEntries().stream().map(RegistryObject::get).collect(Collectors.toSet()); }
+    @Override @NotNull protected Set<Block> getKnownBlocks() { return ITBlocks.REGISTER.getEntries().stream().map(RegistryObject::get).collect(Collectors.toSet()); }
 }

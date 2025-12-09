@@ -40,14 +40,11 @@ import java.util.List;
 public class FormationTool extends Item {
     public FormationTool() { super(new Properties()); }
 
-    @Override
-    public int getMaxStackSize(ItemStack stack) { return 1; }
+    @Override public int getMaxStackSize(ItemStack stack) { return 1; }
 
-    @Override
-    public @NotNull Component getName(@NotNull ItemStack pStack) { return Component.translatable(this.getDescriptionId(pStack)); }
+    @Override @NotNull public Component getName(@NotNull ItemStack pStack) { return Component.translatable(this.getDescriptionId(pStack)); }
 
-    @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
+    @Override public void appendHoverText(@NotNull ItemStack stack, @Nullable Level worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
         addInfo(tooltip, Lib.DESC_INFO + "multiblocksAllowed", stack, "multiblockPermission");
         addInfo(tooltip, Lib.DESC_INFO + "multiblockForbidden", stack, "multiblockInterdiction");
     }
@@ -68,8 +65,7 @@ public class FormationTool extends Item {
         }
     }
 
-    @Override
-    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+    @Override public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         Level world = context.getLevel();
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
@@ -125,8 +121,7 @@ public class FormationTool extends Item {
         return InteractionResult.PASS;
     }
 
-    @Nullable
-    private static List<ResourceLocation> parseMultiblockNames(ListTag data, @Nullable Player player, String prefix) {
+    @Nullable private static List<ResourceLocation> parseMultiblockNames(ListTag data, @Nullable Player player, String prefix) {
         List<ResourceLocation> result = new ArrayList<>();
         for (int i = 0; i < data.size(); ++i) {
             String listEntry = data.getString(i);
@@ -140,36 +135,26 @@ public class FormationTool extends Item {
         return result;
     }
 
-    @Override
-    public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) { return true; }
+    @Override public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) { return true; }
 
-    @Override
-    public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
+    @Override @NotNull public InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
         if (!player.level().isClientSide && ITRotationUtil.rotateEntity(entity)) { return InteractionResult.SUCCESS; }
         return InteractionResult.PASS;
     }
 
-    @Override
-    public boolean hasCraftingRemainingItem(@NotNull ItemStack stack) { return true; }
+    @Override public boolean hasCraftingRemainingItem(@NotNull ItemStack stack) { return true; }
 
-    @Override
-    @NotNull
-    public ItemStack getCraftingRemainingItem(@NotNull ItemStack stack) {
+    @Override @NotNull public ItemStack getCraftingRemainingItem(@NotNull ItemStack stack) {
         ItemStack container = stack.copy();
         if (container.hurt(1, ApiUtils.RANDOM_SOURCE, null)) { return ItemStack.EMPTY; }
         else { return container; }
     }
 
-    @Override
-    public boolean isEnchantable(@NotNull ItemStack stack) { return false; }
+    @Override public boolean isEnchantable(@NotNull ItemStack stack) { return false; }
 
-    @Override
-    public int getEnchantmentValue(ItemStack stack) { return 0; }
+    @Override public int getEnchantmentValue(ItemStack stack) { return 0; }
 
-    @Override
-    public boolean isBookEnchantable(ItemStack stack, ItemStack book) { return false; }
+    @Override public boolean isBookEnchantable(ItemStack stack, ItemStack book) { return false; }
 
-    @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) { return false; }
-
+    @Override public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) { return false; }
 }

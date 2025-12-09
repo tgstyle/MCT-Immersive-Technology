@@ -23,8 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ITMultiblockFluidDataProvider<T extends IMultiblockState> implements IServerExtensionProvider<IMultiblockBE<T>, CompoundTag>, IClientExtensionProvider<CompoundTag, FluidView> {
-    @Override
-    public @Nullable List<ViewGroup<CompoundTag>> getGroups(ServerPlayer serverPlayer, ServerLevel serverLevel, IMultiblockBE<T> multiblockBE, boolean b) {
+    @Override public @Nullable List<ViewGroup<CompoundTag>> getGroups(ServerPlayer serverPlayer, ServerLevel serverLevel, IMultiblockBE<T> multiblockBE, boolean b) {
         final IMultiblockBEHelper<T> helper = multiblockBE.getHelper();
         if (helper.getState() instanceof ITDisplayContext dc) {
             IFluidTank[] tanks = dc.getInternalTanks();
@@ -42,9 +41,7 @@ public class ITMultiblockFluidDataProvider<T extends IMultiblockState> implement
         return null;
     }
 
-    @Override
-    public List<ClientViewGroup<FluidView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<CompoundTag>> list) { return ClientViewGroup.map(list, FluidView::readDefault, null); }
+    @Override public List<ClientViewGroup<FluidView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<CompoundTag>> list) { return ClientViewGroup.map(list, FluidView::readDefault, null); }
 
-    @Override
-    public ResourceLocation getUid() { return ITLib.rl("multiblock_fluid"); }
+    @Override public ResourceLocation getUid() { return ITLib.rl("multiblock_fluid"); }
 }

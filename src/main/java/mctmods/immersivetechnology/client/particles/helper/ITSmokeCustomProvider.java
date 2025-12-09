@@ -9,8 +9,7 @@ import net.minecraft.core.particles.SimpleParticleType;
 import org.jetbrains.annotations.NotNull;
 
 public record ITSmokeCustomProvider(SpriteSet sprites) implements ParticleProvider<SimpleParticleType> {
-    @Override
-    public Particle createParticle(@NotNull SimpleParticleType type, @NotNull ClientLevel level, double x, double y, double z, double velX, double velY, double velZ) {
+    @Override public Particle createParticle(@NotNull SimpleParticleType type, @NotNull ClientLevel level, double x, double y, double z, double velX, double velY, double velZ) {
         return new CustomSmoke(level, x, y, z, velX, velY, velZ, sprites, 7.0F);
     }
 }

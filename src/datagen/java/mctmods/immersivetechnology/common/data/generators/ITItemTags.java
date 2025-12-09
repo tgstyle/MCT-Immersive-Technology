@@ -20,8 +20,7 @@ public class ITItemTags extends ItemTagsProvider {
         super(output, lookupProvider, blocks, ITLib.MODID, existingFileHelper);
     }
 
-    @Override
-    protected void addTags(@NotNull Provider provider) {
+    @Override protected void addTags(@NotNull Provider provider) {
         tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", "salts"))).add(ITItems.SALT.get());
         tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", "dusts/salt"))).add(ITItems.SALT.get());
         tag(ITTags.igniters).add(Items.TORCH, Items.FLINT_AND_STEEL);

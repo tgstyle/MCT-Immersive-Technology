@@ -32,23 +32,21 @@ import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.RO
 public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITServerTickableBE, IFluidHandler, IFluidPipe {
     public static class DummyTank implements IFluidHandler {
         @Override public int getTanks() { return 1; }
-        @Override public @NotNull FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
+        @Override @NotNull public FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
         @Override public int getTankCapacity(int tank) { return 0; }
         @Override public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return false; }
         @Override public int fill(FluidStack fluidStack, FluidAction b) { return 0; }
-        @Override public @NotNull FluidStack drain(FluidStack fluidStack, FluidAction b) { return FluidStack.EMPTY; }
-        @Override public @NotNull FluidStack drain(int i, FluidAction b) { return FluidStack.EMPTY; }
+        @Override @NotNull public FluidStack drain(FluidStack fluidStack, FluidAction b) { return FluidStack.EMPTY; }
+        @Override @NotNull public FluidStack drain(int i, FluidAction b) { return FluidStack.EMPTY; }
     }
 
     public int rotation = 0;
 
     public ValveFluidBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.VALVE_FLUID.get(), pos, state, TranslationKey.OVERLAY_OSD_VALVE_FLUID_NORMAL_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_FLUID_SNEAKING_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_FLUID_SNEAKING_SECOND_LINE, 0); }
 
-    @Override
-    public void tickServer() { updateBase(); }
+    @Override public void tickServer() { updateBase(); }
 
-    @Override
-    public void onLoad() {
+    @Override public void onLoad() {
         super.onLoad();
         assert level != null;
         if (!level.isClientSide) {
@@ -60,8 +58,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
         rotation = getBlockState().getValue(ROTATION);
     }
 
-    @Override
-    public void onNeighborBlockChange(BlockPos otherPos) {
+    @Override public void onNeighborBlockChange(BlockPos otherPos) {
         super.onNeighborBlockChange(otherPos);
         updateRedstoneState();
     }
@@ -75,8 +72,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
 
     private LazyOptional<IFluidHandler> dummyCapability = null;
 
-    @Override
-    public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
+    @Override public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
         if (facing == null) return super.getCapability(capability, null);
         BlockState state = getBlockState();
         Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
@@ -98,8 +94,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
         if (dummyCapability != null) { dummyCapability.invalidate(); dummyCapability = null; }
     }
 
-    @Override
-    public void setFacing(@NotNull Direction facing) {
+    @Override public void setFacing(@NotNull Direction facing) {
         this.facing = facing;
         invalidateCaps();
         if (level != null && !level.isClientSide) {
@@ -147,8 +142,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
 
     boolean busy = false;
 
-    @Override
-    public int fill(FluidStack fluidStack, FluidAction doFill) {
+    @Override public int fill(FluidStack fluidStack, FluidAction doFill) {
         assert level != null;
         if (level.isClientSide) return 0;
         if (busy) return 0;
@@ -185,9 +179,9 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
         return toReturn;
     }
 
-    @Override public @NotNull FluidStack drain(FluidStack fluidStack, FluidAction b) { return FluidStack.EMPTY; }
+    @Override @NotNull public FluidStack drain(FluidStack fluidStack, FluidAction b) { return FluidStack.EMPTY; }
 
-    @Override public @NotNull FluidStack drain(int i, FluidAction b) { return FluidStack.EMPTY; }
+    @Override @NotNull public FluidStack drain(int i, FluidAction b) { return FluidStack.EMPTY; }
 
     public IFluidHandler getDestination() {
         assert level != null;
@@ -202,20 +196,17 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
         return null;
     }
 
-    @Override
-    public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveFluidMenu.makeServer(ITMenuTypes.VALVE_FLUID.getType(), id, inv, this); }
+    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveFluidMenu.makeServer(ITMenuTypes.VALVE_FLUID.getType(), id, inv, this); }
 
-    @Override public @NotNull Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_FLUID.location); }
+    @Override @NotNull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_FLUID.location); }
 
-    @Override
-    public void receiveMessageFromServer(CompoundTag nbt) {
+    @Override public void receiveMessageFromServer(CompoundTag nbt) {
         packetLimit = nbt.getInt("packetLimit");
         timeLimit = nbt.getInt("timeLimit");
         keepSize = nbt.getInt("keepSize");
     }
 
-    @Override
-    public void receiveMessageFromClient(CompoundTag nbt) {
+    @Override public void receiveMessageFromClient(CompoundTag nbt) {
         packetLimit = nbt.getInt("packetLimit");
         timeLimit = nbt.getInt("timeLimit");
         keepSize = nbt.getInt("keepSize");
@@ -224,8 +215,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
 
     @Override public boolean stillValid(Player player) { return !isRemoved() && player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D; }
 
-    @Override
-    public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
+    @Override public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
         assert level != null;
         if (level.isClientSide) return false;
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
@@ -235,14 +225,12 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
         return true;
     }
 
-    @Override
-    public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
+    @Override public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         rotation = nbt.getInt("rotation");
     }
 
-    @Override
-    public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {
+    @Override public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
         nbt.putInt("rotation", rotation);
     }

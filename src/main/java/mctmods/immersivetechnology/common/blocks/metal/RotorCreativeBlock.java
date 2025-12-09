@@ -35,11 +35,12 @@ public class RotorCreativeBlock extends ITEntityBlock<RotorCreativeBlockEntity> 
 
     @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(FACING); }
 
-    @Override public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getRotorShape(state); }
+    @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getRotorShape(state); }
 
-    @Override public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getRotorShape(state); }
+    @Override @NotNull public VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getRotorShape(state); }
 
-    @SuppressWarnings("deprecation") @Override public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) { return getRotorShape(state); }
+    @SuppressWarnings("deprecation")
+    @Override public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) { return getRotorShape(state); }
 
     private VoxelShape getRotorShape(BlockState state) {
         Direction facing = state.getValue(FACING);
@@ -53,7 +54,7 @@ public class RotorCreativeBlock extends ITEntityBlock<RotorCreativeBlockEntity> 
 
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) { return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()); }
 
-    @Override public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    @Override @NotNull public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof MenuProvider menuProvider) { NetworkHooks.openScreen((ServerPlayer) player, menuProvider, buf -> buf.writeBlockPos(pos)); }

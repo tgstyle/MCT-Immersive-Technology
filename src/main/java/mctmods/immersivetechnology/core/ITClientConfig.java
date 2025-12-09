@@ -45,8 +45,7 @@ public class ITClientConfig {
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
 
-    @SubscribeEvent
-    static void onConfig(final ModConfigEvent event) {
+    @SubscribeEvent static void onConfig(final ModConfigEvent event) {
         if (event.getConfig().getSpec() == SPEC) {
             multiblockSpecialRenderDistanceModifier = CONFIG_MULTIBLOCK_SPECIAL_RENDER_DISTANCE_MODIFIER.get();
             doSpecialRenderGasTurbine = CONFIG_DO_SPECIAL_RENDER_GAS_TURBINE.get();

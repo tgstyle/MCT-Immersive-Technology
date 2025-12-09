@@ -29,8 +29,7 @@ public class ITMultiblockBlockEntityMaster<State extends IMultiblockState> exten
 
     public ITMultiblockBlockEntityMaster(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState, MultiblockRegistration<State> multiblock) { super(type, worldPosition, blockState, multiblock); }
 
-    @Override
-    public AABB getRenderBoundingBox() {
+    @Override public AABB getRenderBoundingBox() {
         IMultiblockContext<State> ctx = getHelper().getContext();
         BlockPos min = ctx.getLevel().toAbsolute(BlockPos.ZERO);
         Vec3i size = getHelper().getSize(ctx.getLevel().getRawLevel());
@@ -38,8 +37,7 @@ public class ITMultiblockBlockEntityMaster<State extends IMultiblockState> exten
         return new AABB(min, max.offset(1, 1, 1)).inflate(1);
     }
 
-    @Override
-    public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
+    @Override public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
         IMultiblockContext<State> ctx = getHelper().getContext();
         BlockPos posInMultiblock = getHelper().getPositionInMB();
         Vec3 hitVec = new Vec3(hitX, hitY, hitZ);
@@ -59,8 +57,7 @@ public class ITMultiblockBlockEntityMaster<State extends IMultiblockState> exten
         return result.consumesAction();
     }
 
-    @Override
-    public Stream<ItemStack> getDroppedItems() {
+    @Override public Stream<ItemStack> getDroppedItems() {
         List<ItemStack> drops = new ArrayList<>();
         getHelper().getMultiblock().logic().dropExtraItems(getHelper().getState(), drops::add);
         return drops.stream();

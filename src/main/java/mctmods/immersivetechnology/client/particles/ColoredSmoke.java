@@ -25,7 +25,7 @@ public class ColoredSmoke implements ParticleOptions {
     ).apply(inst, ColoredSmoke::new));
 
     public static final Deserializer<ColoredSmoke> DESERIALIZER = new Deserializer<>() {
-        public @NotNull ColoredSmoke fromCommand(@NotNull ParticleType<ColoredSmoke> type, StringReader reader) throws CommandSyntaxException {
+        @NotNull public ColoredSmoke fromCommand(@NotNull ParticleType<ColoredSmoke> type, StringReader reader) throws CommandSyntaxException {
             reader.expect(' ');
             float r = reader.readFloat();
             reader.expect(' ');
@@ -45,7 +45,7 @@ public class ColoredSmoke implements ParticleOptions {
             return new ColoredSmoke(r, g, b, collideHorizontal, collideVertical);
         }
 
-        public @NotNull ColoredSmoke fromNetwork(@NotNull ParticleType<ColoredSmoke> type, FriendlyByteBuf buf) {
+        @NotNull public ColoredSmoke fromNetwork(@NotNull ParticleType<ColoredSmoke> type, FriendlyByteBuf buf) {
             return new ColoredSmoke(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readBoolean(), buf.readBoolean());
         }
     };
@@ -62,11 +62,9 @@ public class ColoredSmoke implements ParticleOptions {
         this.collideVertical = collideVertical;
     }
 
-    @Override
-    public @NotNull ParticleType<?> getType() { return ITParticles.COLORED_SMOKE.get(); }
+    @Override @NotNull public ParticleType<?> getType() { return ITParticles.COLORED_SMOKE.get(); }
 
-    @Override
-    public void writeToNetwork(FriendlyByteBuf buf) {
+    @Override public void writeToNetwork(FriendlyByteBuf buf) {
         buf.writeFloat(color.x());
         buf.writeFloat(color.y());
         buf.writeFloat(color.z());
@@ -74,6 +72,5 @@ public class ColoredSmoke implements ParticleOptions {
         buf.writeBoolean(collideVertical);
     }
 
-    @Override
-    public @NotNull String writeToString() { return String.format(Locale.ROOT, "%s %.2f %.2f %.2f %b %b", Objects.requireNonNull(ForgeRegistries.PARTICLE_TYPES.getKey(this.getType())), this.color.x(), this.color.y(), this.color.z(), this.collideHorizontal, this.collideVertical); }
+    @Override @NotNull public String writeToString() { return String.format(Locale.ROOT, "%s %.2f %.2f %.2f %b %b", Objects.requireNonNull(ForgeRegistries.PARTICLE_TYPES.getKey(this.getType())), this.color.x(), this.color.y(), this.color.z(), this.collideHorizontal, this.collideVertical); }
 }

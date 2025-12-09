@@ -27,9 +27,7 @@ public class ITCachedMirroredModel<K, T extends ITICacheKeyProvider<K>> extends 
 
     public List<BakedQuad> getQuads(K key) { return this.cache.getUnchecked(key); }
 
-    @Nullable
-    public K getKey(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData, @Nullable RenderType layer) { return this.base.getKey(state, side, rand, extraData, layer); }
+    @Nullable public K getKey(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData, @Nullable RenderType layer) { return this.base.getKey(state, side, rand, extraData, layer); }
 
-    @Nonnull
-    public List<BakedQuad> getQuads(@Nullable BlockState pState, @Nullable Direction pSide, @Nonnull RandomSource pRand, @Nonnull ModelData extraData, @Nullable RenderType layer) { return super.getQuads(pState, pSide, pRand, extraData, layer); }
+    @Nonnull public List<BakedQuad> getQuads(@Nullable BlockState pState, @Nullable Direction pSide, @Nonnull RandomSource pRand, @Nonnull ModelData extraData, @Nullable RenderType layer) { return super.getQuads(pState, pSide, pRand, extraData, layer); }
 }

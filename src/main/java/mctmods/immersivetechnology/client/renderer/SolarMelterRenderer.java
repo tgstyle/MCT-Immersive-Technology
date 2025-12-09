@@ -21,8 +21,7 @@ public class SolarMelterRenderer extends ITBaseBlockEntityRenderer<MultiblockBlo
 
     private static final ResourceLocation BEAM_TEXTURE = ResourceLocation.withDefaultNamespace("textures/entity/beacon_beam.png");
 
-    @Override
-    public void render(MultiblockBlockEntityMaster<SolarMelterLogic.State> be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    @Override public void render(MultiblockBlockEntityMaster<SolarMelterLogic.State> be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         SolarMelterLogic.State state = be.getHelper().getState();
         IMultiblockContext<SolarMelterLogic.State> ctx = be.getHelper().getContext();
         IMultiblockLevel mLevel = ctx.getLevel();
@@ -58,6 +57,5 @@ public class SolarMelterRenderer extends ITBaseBlockEntityRenderer<MultiblockBlo
         matrixStack.popPose();
     }
 
-    @Override
-    public boolean shouldRenderOffScreen(@NotNull MultiblockBlockEntityMaster<SolarMelterLogic.State> be) { return true; }
+    @Override public boolean shouldRenderOffScreen(@NotNull MultiblockBlockEntityMaster<SolarMelterLogic.State> be) { return true; }
 }

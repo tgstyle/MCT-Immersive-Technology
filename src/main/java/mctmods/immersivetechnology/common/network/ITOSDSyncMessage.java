@@ -18,16 +18,14 @@ public record ITOSDSyncMessage(BlockPos pos, long lastAccepted, long average, in
         this(buf.readBlockPos(), buf.readLong(), buf.readLong(), buf.readInt());
     }
 
-    @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    @Override public void toBytes(FriendlyByteBuf buf) {
         buf.writeBlockPos(pos);
         buf.writeLong(lastAccepted);
         buf.writeLong(average);
         buf.writeInt(packetAverage);
     }
 
-    @Override
-    public void process(Supplier<NetworkEvent.Context> context) {
+    @Override public void process(Supplier<NetworkEvent.Context> context) {
         NetworkEvent.Context ctx = context.get();
         ctx.enqueueWork(() -> {
             if (ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {

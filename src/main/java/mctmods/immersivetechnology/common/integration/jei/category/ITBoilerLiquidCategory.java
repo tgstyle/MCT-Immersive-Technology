@@ -36,8 +36,7 @@ public class ITBoilerLiquidCategory extends ITRecipeCategory<BoilerLiquidRecipe>
         tankOverlay = helper.createDrawable(background, 177, 31, 20, 51);
     }
 
-    @Override
-    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull BoilerLiquidRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull BoilerLiquidRecipe recipe, @NotNull IFocusGroup focuses) {
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
                 .map(fs -> {
                     FluidStack copy = fs.copy();
@@ -52,8 +51,7 @@ public class ITBoilerLiquidCategory extends ITRecipeCategory<BoilerLiquidRecipe>
                 ITFluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
     }
 
-    @Override
-    public void draw(@NotNull BoilerLiquidRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@NotNull BoilerLiquidRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         tankOverlay.draw(guiGraphics, 78, 19);
         Font font = Minecraft.getInstance().font;
         Component timeComponent = Component.translatable(TranslationKey.CATEGORY_BOILER_LIQUID_TIME.getLocation(), recipe.getTotalProcessTime(), recipe.input.getAmount()).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));

@@ -21,8 +21,7 @@ import java.util.List;
 public class ITDataProvider {
     public static Logger log = LogManager.getLogger(ITLib.MODID + "/DataGenerator");
 
-    @SubscribeEvent
-    public static void generate(GatherDataEvent event) {
+    @SubscribeEvent public static void generate(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         ExistingFileHelper helper = event.getExistingFileHelper();
         PackOutput out = generator.getPackOutput();

@@ -68,8 +68,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         return facings.get(0);
     }
 
-    @Override
-    public void tickClient(IMultiblockContext<State> ctx) {
+    @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) { return; }
@@ -97,8 +96,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         }
     }
 
-    @Override
-    public void tickServer(IMultiblockContext<State> ctx) {
+    @Override public void tickServer(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         Level level = ctx.getLevel().getRawLevel();
         state.energy.updateAverage();
@@ -206,8 +204,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         return connected;
     }
 
-    @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
+    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         State state = ctx.getState();
         if (cap == ForgeCapabilities.ENERGY) {
             BlockPos localPos = position.posInMultiblock();
@@ -223,22 +220,16 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         return LazyOptional.empty();
     }
 
-    @Override
-    public void dropExtraItems(State state, Consumer<ItemStack> drop) { }
+    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { }
 
-    @Override
-    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
+    @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AlternatorShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AlternatorShape.GETTER; }
 
     private static class MechanicalEnergyConsumer implements IMechanicalEnergyConsumer {
-        @Override
-        public double getMass() { return BASE_MASS; }
-        @Override
-        public double getFriction() { return FRICTION; }
-        @Override
-        public int getMaxSpeed() { return MechanicalCapabilities.MAX_RPM; }
+        @Override public double getMass() { return BASE_MASS; }
+        @Override public double getFriction() { return FRICTION; }
+        @Override public int getMaxSpeed() { return MechanicalCapabilities.MAX_RPM; }
     }
 
     public static class State implements IMultiblockState, ITDisplayContext {
@@ -258,8 +249,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             this.energyCap = new StoredCapability<>(this.energy);
         }
 
-        @Override
-        public void writeSaveNBT(CompoundTag nbt) {
+        @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("energy", energy.serializeNBT());
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
@@ -267,8 +257,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
         }
 
-        @Override
-        public void readSaveNBT(CompoundTag nbt) {
+        @Override public void readSaveNBT(CompoundTag nbt) {
             energy.deserializeNBT(nbt.get("energy"));
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
@@ -276,20 +265,17 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
         }
 
-        @Override
-        public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt) {
             CompoundTag display = new CompoundTag();
             writeDisplaySyncNBT(display);
             nbt.put("display", display);
         }
 
-        @Override
-        public void readSyncNBT(CompoundTag nbt) {
+        @Override public void readSyncNBT(CompoundTag nbt) {
             if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
         }
 
-        @Override
-        public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
             nbt.putFloat("torqueMultiplier", torqueMultiplier);
@@ -297,8 +283,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
         }
 
-        @Override
-        public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             torqueMultiplier = nbt.getFloat("torqueMultiplier");
@@ -307,11 +292,9 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
         }
 
-        @Override
-        public boolean isActive() { return active; }
+        @Override public boolean isActive() { return active; }
 
-        @Override
-        public AveragingEnergyStorage getEnergy() { return energy; }
+        @Override public AveragingEnergyStorage getEnergy() { return energy; }
     }
 
     private static class SyncEnergyStorage extends AveragingEnergyStorage {
@@ -322,15 +305,13 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             this.onChanged = onChanged;
         }
 
-        @Override
-        public int receiveEnergy(int maxReceive, boolean simulate) {
+        @Override public int receiveEnergy(int maxReceive, boolean simulate) {
             int received = super.receiveEnergy(maxReceive, simulate);
             if (received > 0 && !simulate) { onChanged.run(); }
             return received;
         }
 
-        @Override
-        public int extractEnergy(int maxExtract, boolean simulate) {
+        @Override public int extractEnergy(int maxExtract, boolean simulate) {
             int extracted = super.extractEnergy(maxExtract, simulate);
             if (extracted > 0 && !simulate) { onChanged.run(); }
             return extracted;

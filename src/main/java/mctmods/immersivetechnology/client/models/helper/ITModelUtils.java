@@ -69,8 +69,7 @@ public class ITModelUtils {
 
     public static Set<BakedQuad> createBakedBox(Vec3 from, Vec3 to, Matrix4 matrix, Direction facing, Function<Direction, TextureAtlasSprite> textureGetter, float[] colour) { return createBakedBox(from, to, matrix, facing, vertices -> vertices, textureGetter, colour); }
 
-    @Nonnull
-    public static Set<BakedQuad> createBakedBox(Vec3 from, Vec3 to, Matrix4 matrixIn, Direction facing, Function<Vec3[], Vec3[]> vertexTransformer, Function<Direction, TextureAtlasSprite> textureGetter, float[] colour) {
+    @Nonnull public static Set<BakedQuad> createBakedBox(Vec3 from, Vec3 to, Matrix4 matrixIn, Direction facing, Function<Vec3[], Vec3[]> vertexTransformer, Function<Direction, TextureAtlasSprite> textureGetter, float[] colour) {
         Transformation matrix = matrixIn.toTransformationMatrix();
         HashSet<BakedQuad> quads = new HashSet<>();
         if (vertexTransformer == null) { vertexTransformer = v -> v; }

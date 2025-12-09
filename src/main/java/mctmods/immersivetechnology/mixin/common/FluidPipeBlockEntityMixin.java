@@ -17,8 +17,7 @@ import java.util.Map;
 
 @Mixin(FluidPipeBlockEntity.class)
 public abstract class FluidPipeBlockEntityMixin {
-    @Final
-    @Shadow(remap = false) private Map<Direction, CapabilityReference<IFluidHandler>> neighbors;
+    @Final @Shadow(remap = false) private Map<Direction, CapabilityReference<IFluidHandler>> neighbors;
 
     @Inject(method = "updateConnectionByte(Lnet/minecraft/core/Direction;)Z", at = @At("HEAD"), remap = false)
     private void invalidateCache(Direction dir, CallbackInfoReturnable<Boolean> cir) {

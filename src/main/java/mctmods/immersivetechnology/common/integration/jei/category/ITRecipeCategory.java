@@ -32,23 +32,17 @@ public abstract class ITRecipeCategory<T> implements IRecipeCategory<T> {
 
     protected void setBackground(IDrawableStatic background) { this.background = background; }
 
-    @Nullable
-    @Override
-    public IDrawable getIcon() { return this.icon; }
+    @Nullable @Override public IDrawable getIcon() { return this.icon; }
 
     protected void setIcon(ItemStack stack) { this.setIcon(this.guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, stack)); }
 
     protected void setIcon(IDrawable icon) { this.icon = icon; }
 
-    @Override
-    public @NotNull Component getTitle() { return this.title; }
+    @Override public @NotNull Component getTitle() { return this.title; }
 
-    @Override
-    public final @NotNull RecipeType<T> getRecipeType() { return type; }
+    @Override public final @NotNull RecipeType<T> getRecipeType() { return type; }
 
-    @Override
-    public int getWidth() { return background.getWidth(); }
+    @Override public int getWidth() { return background.getWidth(); }
 
-    @Override
-    public int getHeight() { return background.getHeight(); }
+    @Override public int getHeight() { return background.getHeight(); }
 }

@@ -93,8 +93,7 @@ public class ITFurnaceHandler<R extends IESerializableRecipe> {
         return false;
     }
 
-    @Nullable
-    private R getRecipe(IFurnaceEnvironment<R> env, Level level) {
+    @Nullable private R getRecipe(IFurnaceEnvironment<R> env, Level level) {
         R recipe = env.getRecipeForInput(level);
         if (recipe == null) return null;
         final IItemHandlerModifiable inv = env.getInventory();
@@ -131,8 +130,7 @@ public class ITFurnaceHandler<R extends IESerializableRecipe> {
     public interface IFurnaceEnvironment<R extends IESerializableRecipe> {
         IItemHandlerModifiable getInventory();
 
-        @Nullable
-        R getRecipeForInput(Level level);
+        @Nullable R getRecipeForInput(Level level);
 
         int getBurnTimeOf(Level level, ItemStack fuel);
 
@@ -156,8 +154,7 @@ public class ITFurnaceHandler<R extends IESerializableRecipe> {
 
         public static int getProcess(ContainerData data) { return data.get(CURRENT_PROCESS); }
 
-        @Override
-        public int get(int index) {
+        @Override public int get(int index) {
             return switch (index) {
                 case LAST_BURN_TIME -> (int)lastBurnTime;
                 case BURN_TIME -> (int)burnTime;
@@ -167,8 +164,7 @@ public class ITFurnaceHandler<R extends IESerializableRecipe> {
             };
         }
 
-        @Override
-        public void set(int index, int value) {
+        @Override public void set(int index, int value) {
             switch (index) {
                 case LAST_BURN_TIME: lastBurnTime = value; break;
                 case BURN_TIME: burnTime = value; break;
@@ -178,15 +174,14 @@ public class ITFurnaceHandler<R extends IESerializableRecipe> {
             }
         }
 
-        @Override
-        public int getCount() { return NUM_SLOTS; }
+        @Override public int getCount() { return NUM_SLOTS; }
     }
 
     public record InputSlot<R>(Function<R, IngredientWithSize> getFromRecipe, int slotIndex) {
-        public IngredientWithSize get(R recipe) {return getFromRecipe.apply(recipe);}
+        public IngredientWithSize get(R recipe) { return getFromRecipe.apply(recipe);}
     }
 
     public record OutputSlot<R>(Function<R, Lazy<ItemStack>> getFromRecipe, int slotIndex) {
-        public ItemStack get(R recipe) {return getFromRecipe.apply(recipe).get();}
+        public ItemStack get(R recipe) { return getFromRecipe.apply(recipe).get();}
     }
 }

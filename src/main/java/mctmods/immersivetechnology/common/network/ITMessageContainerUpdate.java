@@ -18,14 +18,12 @@ public class ITMessageContainerUpdate implements ITMessage {
         this.nbt = buf.readNbt();
     }
 
-    @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    @Override public void toBytes(FriendlyByteBuf buf) {
         buf.writeByte(this.windowId);
         buf.writeNbt(this.nbt);
     }
 
-    @Override
-    public void process(Supplier<NetworkEvent.Context> context) {
+    @Override public void process(Supplier<NetworkEvent.Context> context) {
         NetworkEvent.Context ctx = context.get();
         ServerPlayer player = ctx.getSender();
         if (player != null) {

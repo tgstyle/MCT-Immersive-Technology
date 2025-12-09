@@ -19,9 +19,7 @@ public class DistillerScreen extends ITContainerScreen<DistillerMenu> {
     private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("distiller");
     public DistillerScreen(DistillerMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
-    @Nonnull
-    @Override
-    protected List<ITInfoArea> makeInfoAreas() {
+    @Override @Nonnull protected List<ITInfoArea> makeInfoAreas() {
         return ImmutableList.of(
                 new ITEnergyInfoArea(this.leftPos + 158, this.topPos + 22, menu.energy),
                 new ITFluidInfoArea(menu.tanks.input(), new Rect2i(this.leftPos + 58, this.topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE),

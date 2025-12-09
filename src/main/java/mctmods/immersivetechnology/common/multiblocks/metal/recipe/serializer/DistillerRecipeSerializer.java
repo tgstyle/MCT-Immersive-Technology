@@ -17,11 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DistillerRecipeSerializer extends IERecipeSerializer<DistillerRecipe> {
-    @Override
-    public ItemStack getIcon() { return ITMultiblockProvider.DISTILLER.iconStack(); }
+    @Override public ItemStack getIcon() { return ITMultiblockProvider.DISTILLER.iconStack(); }
 
-    @Override
-    public DistillerRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
+    @Override public DistillerRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
         FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         FluidStack fluidOutput = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result"));
         ItemStack itemOutput = ItemStack.EMPTY;
@@ -36,8 +34,7 @@ public class DistillerRecipeSerializer extends IERecipeSerializer<DistillerRecip
         return new DistillerRecipe(recipeID, input, fluidOutput, itemOutput, chance, time, energy);
     }
 
-    @Override
-    public @Nullable DistillerRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public DistillerRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         FluidStack fluidOutput = buffer.readFluidStack();
         boolean hasItem = buffer.readBoolean();
@@ -48,8 +45,7 @@ public class DistillerRecipeSerializer extends IERecipeSerializer<DistillerRecip
         return new DistillerRecipe(recipeId, input, fluidOutput, itemOutput, chance, time, energy);
     }
 
-    @Override
-    public void toNetwork(@NotNull FriendlyByteBuf buffer, DistillerRecipe recipe) {
+    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, DistillerRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.fluidOutput);
         boolean hasItem = !recipe.itemOutput.isEmpty();

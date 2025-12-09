@@ -16,8 +16,7 @@ public class BarrelSteelBlockEntity extends BarrelCommonBlockEntity {
 
     public BarrelSteelBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.BARREL_STEEL.get(), pos, state, tankSize); }
 
-    @Override
-    public void tickServer() {
+    @Override public void tickServer() {
         if (level == null || level.isClientSide) return;
         if (isRSPowered()) return;
         boolean update = false;
@@ -40,20 +39,16 @@ public class BarrelSteelBlockEntity extends BarrelCommonBlockEntity {
         if (update) { setChanged(); markContainingBlockForUpdate(null); }
     }
 
-    @Override
-    protected boolean isFluidValid(@NotNull FluidStack fluid) { return !fluid.isEmpty(); }
+    @Override protected boolean isFluidValid(@NotNull FluidStack fluid) { return !fluid.isEmpty(); }
 
-    @Override
-    protected void postRead(boolean descPacket) {
+    @Override protected void postRead(boolean descPacket) {
         if (descPacket) markContainingBlockForUpdate(null);
         else updateState();
     }
 
-    @Override
-    protected boolean canConfigureSide(Direction side) { return true; }
+    @Override protected boolean canConfigureSide(Direction side) { return true; }
 
-    @Override
-    protected void updateState() {
+    @Override protected void updateState() {
         if (level == null || level.isClientSide) return;
         BlockState current = getBlockState();
         BlockState newState = current.setValue(BarrelSteelBlock.TOP_CONFIG, sideConfig.getOrDefault(Direction.UP, IOSideConfig.INPUT)).setValue(BarrelSteelBlock.BOTTOM_CONFIG, sideConfig.getOrDefault(Direction.DOWN, IOSideConfig.OUTPUT));

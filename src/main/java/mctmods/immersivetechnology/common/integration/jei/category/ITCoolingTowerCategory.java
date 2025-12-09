@@ -31,8 +31,7 @@ public class ITCoolingTowerCategory extends ITRecipeCategory<CoolingTowerRecipe>
         tankOverlay = helper.createDrawable(guiTexture, 177, 31, 20, 51);
     }
 
-    @Override
-    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull CoolingTowerRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull CoolingTowerRecipe recipe, @NotNull IFocusGroup focuses) {
         List<FluidStack> inputs0 = recipe.input0.getMatchingFluidStacks().stream()
                 .map(fs -> {
                     FluidStack copy = fs.copy();
@@ -84,8 +83,7 @@ public class ITCoolingTowerCategory extends ITRecipeCategory<CoolingTowerRecipe>
         }
     }
 
-    @Override
-    public void draw(@NotNull CoolingTowerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@NotNull CoolingTowerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         tankOverlay.draw(guiGraphics, 36, 19);
         tankOverlay.draw(guiGraphics, 60, 19);
         if (recipe.fluidOutput0 != null && !recipe.fluidOutput0.isEmpty()) tankOverlay.draw(guiGraphics, 96, 19);

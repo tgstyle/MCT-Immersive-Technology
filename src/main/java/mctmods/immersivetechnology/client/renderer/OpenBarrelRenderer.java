@@ -28,8 +28,7 @@ public class OpenBarrelRenderer extends ITBaseBlockEntityRenderer<BarrelOpenBloc
 
     public OpenBarrelRenderer() {}
 
-    @Override
-    public void render(BarrelOpenBlockEntity be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+    @Override public void render(BarrelOpenBlockEntity be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(be.getBlockState());
         RandomSource random = RandomSource.create(be.getBlockState().getSeed(be.getBlockPos()));
         ModelData modelData = ModelData.EMPTY;

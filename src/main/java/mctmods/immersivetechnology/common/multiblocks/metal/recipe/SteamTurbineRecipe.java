@@ -21,8 +21,7 @@ public class SteamTurbineRecipe extends IESerializableRecipe {
     public static final CachedRecipeList<SteamTurbineRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.STEAM_TURBINE);
 
     public final FluidTagInput input;
-    @Nullable
-    public final FluidStack fluidOutput;
+    @Nullable public final FluidStack fluidOutput;
     private final int time;
     Lazy<Integer> totalProcessTime;
 
@@ -37,8 +36,7 @@ public class SteamTurbineRecipe extends IESerializableRecipe {
     @Override
     protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 
-    @Override
-    public @NotNull ItemStack getResultItem(@NotNull RegistryAccess registryAccess) { return ItemStack.EMPTY; }
+    @Override @NotNull public ItemStack getResultItem(@NotNull RegistryAccess registryAccess) { return ItemStack.EMPTY; }
 
     public boolean matches(FluidStack fluid) { return input.test(fluid); }
 

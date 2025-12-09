@@ -26,8 +26,7 @@ public record ITMessageContainerData(List<Pair<Integer, DataPair<?>>> synced) im
         return synced;
     }
 
-    @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    @Override public void toBytes(FriendlyByteBuf buf) {
         buf.writeInt(synced.size());
         for (Pair<Integer, DataPair<?>> pair : synced) {
             buf.writeVarInt(pair.getFirst());
@@ -35,8 +34,7 @@ public record ITMessageContainerData(List<Pair<Integer, DataPair<?>>> synced) im
         }
     }
 
-    @Override
-    public void process(Supplier<Context> context) {
+    @Override public void process(Supplier<Context> context) {
         context.get().enqueueWork(() -> {
             assert Minecraft.getInstance().player != null;
             AbstractContainerMenu currentContainer = Minecraft.getInstance().player.containerMenu;

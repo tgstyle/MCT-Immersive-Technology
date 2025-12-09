@@ -34,7 +34,7 @@ public class SolarMelterRecipe extends MultiblockRecipe {
         this.fluidOutputList = fluidOutput == null ? Lists.newArrayList() : Lists.newArrayList(fluidOutput);
     }
 
-    public static @Nullable SolarMelterRecipe findRecipe(Level level, FluidStack fluid) {
+    @Nullable public static SolarMelterRecipe findRecipe(Level level, FluidStack fluid) {
         if (fluid == null || fluid.isEmpty()) return null;
         for (SolarMelterRecipe recipe : RECIPES.getRecipes(level)) {
             if (recipe.input.testIgnoringAmount(fluid) && fluid.getAmount() >= recipe.input.getAmount()) return recipe;
@@ -42,15 +42,11 @@ public class SolarMelterRecipe extends MultiblockRecipe {
         return null;
     }
 
-    @Override
-    protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 
-    @Override
-    public int getMultipleProcessTicks() { return 0; }
+    @Override public int getMultipleProcessTicks() { return 0; }
 
-    @Override
-    public int getTotalProcessTime() { return time; }
+    @Override public int getTotalProcessTime() { return time; }
 
-    @Override
-    public int getTotalProcessEnergy() { return 0; }
+    @Override public int getTotalProcessEnergy() { return 0; }
 }

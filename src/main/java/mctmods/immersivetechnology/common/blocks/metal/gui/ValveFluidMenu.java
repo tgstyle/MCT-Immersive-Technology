@@ -43,11 +43,9 @@ public class ValveFluidMenu extends ITContainerMenu {
 
     public static ValveFluidMenu makeClient(MenuType<ValveFluidMenu> type, int id, Inventory inv, FriendlyByteBuf buffer) { return new ValveFluidMenu(type, id, inv, buffer); }
 
-    @Override
-    public boolean stillValid(@NotNull Player player) { return tile == null || tile.stillValid(player); }
+    @Override public boolean stillValid(@NotNull Player player) { return tile == null || tile.stillValid(player); }
 
-    @Override
-    public @NotNull ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) {
+    @Override @NotNull public ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) {
         if (pIndex < 0 || pIndex >= slots.size()) { return ItemStack.EMPTY; }
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(pIndex);

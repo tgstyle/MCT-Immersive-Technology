@@ -16,11 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SolarMelterRecipeSerializer extends IERecipeSerializer<SolarMelterRecipe> {
-    @Override
-    public ItemStack getIcon() { return ITMultiblockProvider.SOLAR_MELTER.iconStack(); }
+    @Override public ItemStack getIcon() { return ITMultiblockProvider.SOLAR_MELTER.iconStack(); }
 
-    @Override
-    public SolarMelterRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext iContext) {
+    @Override public SolarMelterRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext iContext) {
         FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         FluidStack fluidOutput = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output"));
         int time = GsonHelper.getAsInt(json, "time");
@@ -28,8 +26,7 @@ public class SolarMelterRecipeSerializer extends IERecipeSerializer<SolarMelterR
         return new SolarMelterRecipe(recipeId, input, fluidOutput, time, requiredTemp);
     }
 
-    @Override
-    public @Nullable SolarMelterRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public SolarMelterRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         FluidStack fluidOutput = buffer.readFluidStack();
         int time = buffer.readInt();
@@ -37,8 +34,7 @@ public class SolarMelterRecipeSerializer extends IERecipeSerializer<SolarMelterR
         return new SolarMelterRecipe(recipeId, input, fluidOutput, time, requiredTemp);
     }
 
-    @Override
-    public void toNetwork(@NotNull FriendlyByteBuf buffer, @NotNull SolarMelterRecipe recipe) {
+    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, @NotNull SolarMelterRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.fluidOutput);
         buffer.writeInt(recipe.getTotalProcessTime());

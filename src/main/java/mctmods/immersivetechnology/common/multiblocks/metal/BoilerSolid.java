@@ -10,7 +10,6 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
@@ -26,15 +25,11 @@ public class BoilerSolid extends ITTemplateMultiblock {
         }), ITMultiblockProvider.BOILER_SOLID);
     }
 
-    @Override
-    public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
+    @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
-    @Override
-    public float getManualScale() { return BoilerSolidShape.MANUAL_SCALE; }
+    @Override public float getManualScale() { return BoilerSolidShape.MANUAL_SCALE; }
 
-    @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, BoilerSolidShape.CLIENT_OFFSET.getX(), BoilerSolidShape.CLIENT_OFFSET.getY(), BoilerSolidShape.CLIENT_OFFSET.getZ())); }
+    @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, BoilerSolidShape.CLIENT_OFFSET.getX(), BoilerSolidShape.CLIENT_OFFSET.getY(), BoilerSolidShape.CLIENT_OFFSET.getZ())); }
 
-    @Override
-    public boolean canBeMirrored() { return false; }
+    @Override public boolean canBeMirrored() { return false; }
 }

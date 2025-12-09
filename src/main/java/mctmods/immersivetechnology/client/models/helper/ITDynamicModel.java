@@ -20,8 +20,7 @@ import java.util.List;
 public record ITDynamicModel(ResourceLocation name) {
     private static final List<ResourceLocation> MODELS = new ArrayList<>();
 
-    @SubscribeEvent
-    public static void registerModels(ModelEvent.RegisterAdditional ev) { for (ResourceLocation model : MODELS) { ev.register(model); } }
+    @SubscribeEvent public static void registerModels(ModelEvent.RegisterAdditional ev) { for (ResourceLocation model : MODELS) { ev.register(model); } }
 
     public ITDynamicModel(String desc) { this(ITLib.rl("dynamic/" + desc)); MODELS.add(name); }
 

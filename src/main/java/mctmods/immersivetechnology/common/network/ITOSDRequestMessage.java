@@ -15,11 +15,9 @@ import net.minecraftforge.network.NetworkEvent;
 public record ITOSDRequestMessage(BlockPos pos) implements ITMessage {
     public ITOSDRequestMessage(FriendlyByteBuf buf) { this(buf.readBlockPos()); }
 
-    @Override
-    public void toBytes(FriendlyByteBuf buf) { buf.writeBlockPos(pos); }
+    @Override public void toBytes(FriendlyByteBuf buf) { buf.writeBlockPos(pos); }
 
-    @Override
-    public void process(Supplier<NetworkEvent.Context> context) {
+    @Override public void process(Supplier<NetworkEvent.Context> context) {
         NetworkEvent.Context ctx = context.get();
         ctx.enqueueWork(() -> {
             if (ctx.getDirection() == NetworkDirection.PLAY_TO_SERVER) {

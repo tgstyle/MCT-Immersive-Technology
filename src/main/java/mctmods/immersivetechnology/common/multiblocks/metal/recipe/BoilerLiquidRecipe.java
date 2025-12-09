@@ -38,20 +38,15 @@ public class BoilerLiquidRecipe extends MultiblockRecipe {
         return null;
     }
 
-    @Override
-    public @NotNull ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
+    @Override @NotNull public ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
 
-    @Override
-    protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 
-    @Override
-    public int getTotalProcessTime() { return totalProcessTime.get(); }
+    @Override public int getTotalProcessTime() { return totalProcessTime.get(); }
 
-    @Override
-    public int getTotalProcessEnergy() { return 0; }
+    @Override public int getTotalProcessEnergy() { return 0; }
 
-    @Override
-    public int getMultipleProcessTicks() { return 0; }
+    @Override public int getMultipleProcessTicks() { return 0; }
 
     public double getHeatPerTick() { return heatPerTick; }
 }

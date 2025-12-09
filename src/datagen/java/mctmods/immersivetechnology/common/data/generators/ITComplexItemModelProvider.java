@@ -24,11 +24,9 @@ public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> 
         super(output, ITLib.MODID, ITEM_FOLDER, TRSRModelBuilder::new, existingFileHelper);
     }
 
-    @Override
-    public @NotNull String getName() { return getClass().getSimpleName(); }
+    @Override @NotNull public String getName() { return getClass().getSimpleName(); }
 
-    @Override
-    protected void registerModels() {
+    @Override protected void registerModels() {
         generateMultiblockModel("alternator", "metal", ITMultiblockProvider.ALTERNATOR.block(), new Vector3f(5.5f, -3.5f, -2.0f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("boiler_liquid", "metal", ITMultiblockProvider.BOILER_LIQUID.block(), new Vector3f(-2.0f, -0.525f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("boiler_solid", "metal", ITMultiblockProvider.BOILER_SOLID.block(), new Vector3f(-2.0f, -0.525f, 0.5f), 0.1875f, 0.0625f, 0.0625f);

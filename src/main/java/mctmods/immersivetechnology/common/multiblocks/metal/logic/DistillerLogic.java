@@ -79,20 +79,15 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         return facings.get(0);
     }
 
-    @Override
-    public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
+    @Override public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
 
-    @Override
-    public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
+    @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
-    @Override
-    public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
+    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
 
-    @Override
-    public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
+    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
 
-    @Override
-    public void tickClient(IMultiblockContext<State> ctx) {
+    @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         List<BlockPos> soundPosList = getPosList("sound");
         BlockPos soundBlockPos = soundPosList.get(0);
@@ -116,8 +111,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         }
     }
 
-    @Override
-    public void tickServer(IMultiblockContext<State> ctx) {
+    @Override public void tickServer(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         state.energy.updateAverage();
         int prevEnergy = state.energy.getEnergyStored();
@@ -187,8 +181,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         state.processor.addProcessToQueue(process, level, false);
     }
 
-    @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
+    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         State state = ctx.getState();
         if (cap == ForgeCapabilities.ENERGY) {
             if (position.posInMultiblock().equals(ENERGY_POI.posInMultiblock()) && (position.side() == null || position.side() == ENERGY_POI.side())) { return state.energyCap.cast(ctx); }
@@ -204,14 +197,11 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         return LazyOptional.empty();
     }
 
-    @Override
-    public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
+    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
 
-    @Override
-    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
+    @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return DistillerShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return DistillerShape.GETTER; }
 
     public static class State implements IMultiblockState, ITProcessContext.ProcessContextInMachine<DistillerRecipe>, ITDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
@@ -275,8 +265,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
         public DistillerTank getTanks() { return tanks; }
 
-        @Override
-        public void writeSaveNBT(CompoundTag nbt) {
+        @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("energy", energy.serializeNBT());
             nbt.put("tanks", this.tanks.toNBT());
             nbt.put("processor", processor.toNBT());
@@ -284,8 +273,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             nbt.putBoolean("active", active);
         }
 
-        @Override
-        public void readSaveNBT(CompoundTag nbt) {
+        @Override public void readSaveNBT(CompoundTag nbt) {
             energy.deserializeNBT(nbt.get("energy"));
             this.tanks.readNBT(nbt.getCompound("tanks"));
             this.processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), DistillerProcess::new);
@@ -293,43 +281,34 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             active = nbt.getBoolean("active");
         }
 
-        @Override
-        public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt) {
             CompoundTag display = new CompoundTag();
             writeDisplaySyncNBT(display);
             nbt.put("display", display);
         }
 
-        @Override
-        public void readSyncNBT(CompoundTag nbt) {
+        @Override public void readSyncNBT(CompoundTag nbt) {
             if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
         }
 
-        @Override
-        public AveragingEnergyStorage getEnergy() { return energy; }
+        @Override public AveragingEnergyStorage getEnergy() { return energy; }
 
-        @Override
-        public IFluidTank[] getInternalTanks() { return tankArray; }
+        @Override public IFluidTank[] getInternalTanks() { return tankArray; }
 
-        @Override
-        public int[] getOutputTanks() { return new int[]{1}; }
+        @Override public int[] getOutputTanks() { return new int[]{1}; }
 
-        @Override
-        public int[] getOutputSlots() { return new int[]{OUTPUT_SLOT}; }
+        @Override public int[] getOutputSlots() { return new int[]{OUTPUT_SLOT}; }
 
-        @Override
-        public boolean isActive() { return active; }
+        @Override public boolean isActive() { return active; }
 
-        @Override
-        public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT());
             nbt.put("energy", energy.serializeNBT());
             nbt.put("inventory", inventory.serializeNBT());
         }
 
-        @Override
-        public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
             if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); }
@@ -369,15 +348,13 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             this.onChanged = onChanged;
         }
 
-        @Override
-        public int receiveEnergy(int maxReceive, boolean simulate) {
+        @Override public int receiveEnergy(int maxReceive, boolean simulate) {
             int received = super.receiveEnergy(maxReceive, simulate);
             if (received > 0 && !simulate) { onChanged.run(); }
             return received;
         }
 
-        @Override
-        public int extractEnergy(int maxExtract, boolean simulate) {
+        @Override public int extractEnergy(int maxExtract, boolean simulate) {
             int extracted = super.extractEnergy(maxExtract, simulate);
             if (extracted > 0 && !simulate) { onChanged.run(); }
             return extracted;

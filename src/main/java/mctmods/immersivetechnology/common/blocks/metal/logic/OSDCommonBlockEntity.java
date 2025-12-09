@@ -28,18 +28,15 @@ public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements 
 
     protected OSDCommonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) { super(type, pos, state); }
 
-    @Override
-    public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
+    @Override public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
         if (descPacket) { lastAcceptedAmount = nbt.getLong("lastAcceptedAmount"); }
     }
 
-    @Override
-    public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {
+    @Override public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {
         if (descPacket) { nbt.putLong("lastAcceptedAmount", lastAcceptedAmount); }
     }
 
-    @Override
-    public void tickServer() {
+    @Override public void tickServer() {
         if (++secondCounter < 20) { return; }
         lastAcceptedAmount = acceptedAmount;
         acceptedAmount = 0;
@@ -47,13 +44,11 @@ public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements 
         markContainingBlockForUpdate(null);
     }
 
-    @Override
-    public void tickClient() { if (requestCooldown > 0) { requestCooldown--; } }
+    @Override public void tickClient() { if (requestCooldown > 0) { requestCooldown--; } }
 
     abstract public TranslationKey text();
 
-    @Override
-    public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
+    @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
         assert level != null;
         if (level.isClientSide && requestCooldown == 0) {
             ITPacketHandler.sendToServer(new ITOSDRequestMessage(worldPosition));

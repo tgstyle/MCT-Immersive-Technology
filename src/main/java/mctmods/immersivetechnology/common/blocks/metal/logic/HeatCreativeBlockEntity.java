@@ -18,7 +18,7 @@ public class HeatCreativeBlockEntity extends ITBaseBlockEntity {
 
     public HeatCreativeBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.HEAT_CREATIVE.get(), pos, state); }
 
-    @Override public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+    @Override @NotNull public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == HeatCapabilities.HEAT_PROVIDER_CAPABILITY) { return providerCap.cast(); }
         return super.getCapability(cap, side);
     }

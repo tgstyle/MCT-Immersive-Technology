@@ -11,10 +11,8 @@ import snownee.jade.api.IWailaPlugin;
 import snownee.jade.api.WailaPlugin;
 
 @SuppressWarnings({"unused", "unchecked", "rawtypes"})
-@WailaPlugin
-public class ITWailaPlugin implements IWailaPlugin {
-    @Override
-    public void registerClient(IWailaClientRegistration registration) {
+@WailaPlugin public class ITWailaPlugin implements IWailaPlugin {
+    @Override public void registerClient(IWailaClientRegistration registration) {
         ITLib.IT_LOGGER.info("ITWailaPlugin: Client registration");
         for (var blockClass : ITMultiblockProvider.getAllBlockClasses()) { registration.registerBlockComponent(ITDisplayProvider.INSTANCE, blockClass); }
         registration.registerEnergyStorageClient(new ITMultiblockEnergyDataProvider());
@@ -22,8 +20,7 @@ public class ITWailaPlugin implements IWailaPlugin {
         registration.registerBlockComponent(ITDisplayProvider.INSTANCE, MultiblockPartBlock.class);
     }
 
-    @Override
-    public void register(IWailaCommonRegistration registration) {
+    @Override public void register(IWailaCommonRegistration registration) {
         ITLib.IT_LOGGER.info("ITWailaPlugin: Common registration");
         registration.registerBlockDataProvider(ITStatusDataProvider.INSTANCE, MultiblockBlockEntityMaster.class);
         registration.registerBlockDataProvider(ITStatusDataProvider.INSTANCE, MultiblockBlockEntityDummy.class);

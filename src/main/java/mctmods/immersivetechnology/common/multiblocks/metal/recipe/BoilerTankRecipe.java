@@ -31,13 +31,11 @@ public class BoilerTankRecipe extends MultiblockRecipe {
         this.fluidOutputList = Lists.newArrayList(this.output);
     }
 
-    @Override
-    protected IERecipeSerializer<?> getIESerializer() {
+    @Override protected IERecipeSerializer<?> getIESerializer() {
         return SERIALIZER.get();
     }
 
-    @Override
-    public @NotNull ItemStack getResultItem(RegistryAccess registryAccess) {
+    @Override @NotNull public ItemStack getResultItem(RegistryAccess registryAccess) {
         return ItemStack.EMPTY;
     }
 
@@ -46,18 +44,15 @@ public class BoilerTankRecipe extends MultiblockRecipe {
         return null;
     }
 
-    @Override
-    public int getTotalProcessTime() {
+    @Override public int getTotalProcessTime() {
         return totalProcessTime.get();
     }
 
-    @Override
-    public int getTotalProcessEnergy() {
+    @Override public int getTotalProcessEnergy() {
         return 0;
     }
 
-    @Override
-    public int getMultipleProcessTicks() {
+    @Override public int getMultipleProcessTicks() {
         return 0;
     }
 }

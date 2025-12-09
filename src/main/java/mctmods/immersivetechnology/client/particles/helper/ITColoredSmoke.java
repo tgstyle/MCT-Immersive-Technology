@@ -37,8 +37,7 @@ public class ITColoredSmoke extends TextureSheetParticle {
         this.setBoundingBox(new AABB(x - 1.5D, y - 1.5D, z - 1.5D, x + 1.5D, y + 1.5D, z + 1.5D));
     }
 
-    @Override
-    public void tick() {
+    @Override public void tick() {
         this.xo = this.x;
         this.yo = this.y;
         this.zo = this.z;
@@ -59,14 +58,11 @@ public class ITColoredSmoke extends TextureSheetParticle {
         }
     }
 
-    @Override
-    public @NotNull ParticleRenderType getRenderType() { return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT; }
+    @Override @NotNull public ParticleRenderType getRenderType() { return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT; }
 
-    @Override
-    public float getQuadSize(float partialTicks) { return this.quadSize * Mth.clamp(((float)this.age + partialTicks) / (float)this.lifetime * 32.0F, 0.0F, 1.0F); }
+    @Override public float getQuadSize(float partialTicks) { return this.quadSize * Mth.clamp(((float)this.age + partialTicks) / (float)this.lifetime * 32.0F, 0.0F, 1.0F); }
 
-    @Override
-    public void move(double dx, double dy, double dz) {
+    @Override public void move(double dx, double dy, double dz) {
         double d0 = dx;
         double d1 = dy;
         double d2 = dz;

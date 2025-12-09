@@ -16,8 +16,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 public record ITObjModel(ObjModel inner, Map<String, Boolean> defaultVisibility) implements IUnbakedGeometry<ITObjModel> {
-    @Override
-    public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+    @Override public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
         IGeometryBakingContext wrappedContext = new IGeometryBakingContext() {
             @Override public String getModelName() { return context.getModelName(); }
             @Override public boolean hasMaterial(String name) { return context.hasMaterial(name); }

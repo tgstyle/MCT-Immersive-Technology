@@ -31,8 +31,7 @@ public class ITGasTurbineCategory extends ITRecipeCategory<GasTurbineRecipe> {
         tankOverlay = helper.createDrawable(guiTexture, 177, 31, 20, 51);
     }
 
-    @Override
-    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull GasTurbineRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull GasTurbineRecipe recipe, @NotNull IFocusGroup focuses) {
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
                 .map(fs -> {
                     FluidStack copy = fs.copy();
@@ -55,8 +54,7 @@ public class ITGasTurbineCategory extends ITRecipeCategory<GasTurbineRecipe> {
         }
     }
 
-    @Override
-    public void draw(@NotNull GasTurbineRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@NotNull GasTurbineRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         tankOverlay.draw(guiGraphics, 78, 19);
         if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) tankOverlay.draw(guiGraphics, 120, 19);
     }

@@ -12,8 +12,7 @@ public class CustomSmoke extends BaseAshSmokeParticle {
         this.bCol = 1.0F;
     }
 
-    @Override
-    public void tick() {
+    @Override public void tick() {
         super.tick();
         if (this.y == this.yo) { this.xd *= 1.1D; this.zd *= 1.1D; }
     }

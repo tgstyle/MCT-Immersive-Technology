@@ -22,8 +22,8 @@ import javax.annotation.Nullable;
 public class ITFluidBlock extends LiquidBlock {
     private static ITFluids.FluidEntry entryStatic;
     private final ITFluids.FluidEntry entry;
-    @Nullable
-    private MobEffect effect;
+
+    @Nullable private MobEffect effect;
     private int duration;
     private int level;
 
@@ -33,23 +33,18 @@ public class ITFluidBlock extends LiquidBlock {
         entryStatic = null;
     }
 
-    @Override
-    protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         for (Property<?> p : (entry == null ? entryStatic : entry).properties()) { builder.add(p); }
     }
 
-    @Nonnull
-    @Override
-    public FluidState getFluidState(@Nonnull BlockState state) {
+    @Override@Nonnull public FluidState getFluidState(@Nonnull BlockState state) {
         FluidState baseState = super.getFluidState(state);
-        for (Property<?> prop : baseState.getProperties()) { if (state.hasProperty(prop)) baseState = withCopiedValue(prop, baseState, state); }
+        for (Property<?> prop : baseState.getProperties()) if (state.hasProperty(prop)) { baseState = withCopiedValue(prop, baseState, state); }
         return baseState;
     }
 
-    public static <T extends StateHolder<?, T>, S extends Comparable<S>> T withCopiedValue(Property<S> prop, T oldState, StateHolder<?, ?> copyFrom) {
-        return oldState.setValue(prop, copyFrom.getValue(prop));
-    }
+    public static <T extends StateHolder<?, T>, S extends Comparable<S>> T withCopiedValue(Property<S> prop, T oldState, StateHolder<?, ?> copyFrom) { return oldState.setValue(prop, copyFrom.getValue(prop)); }
 
     @SuppressWarnings("unused")
     public void setEffect(@Nonnull MobEffect effect, int duration, int level) {
@@ -59,9 +54,8 @@ public class ITFluidBlock extends LiquidBlock {
     }
 
     @SuppressWarnings("deprecation")
-    @Override
-    public void entityInside(@Nonnull BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn) {
+    @Override public void entityInside(@Nonnull BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn) {
         super.entityInside(state, worldIn, pos, entityIn);
-        if (effect != null && entityIn instanceof LivingEntity) { ((LivingEntity) entityIn).addEffect(new MobEffectInstance(effect, duration, level)); }
+        if (effect != null && entityIn instanceof LivingEntity living) { living.addEffect(new MobEffectInstance(effect, duration, level)); }
     }
 }

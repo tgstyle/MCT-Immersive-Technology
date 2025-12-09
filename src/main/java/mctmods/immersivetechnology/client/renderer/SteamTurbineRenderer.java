@@ -29,8 +29,7 @@ public class SteamTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBl
 
     public SteamTurbineRenderer() {}
 
-    @Override
-    public void render(@NotNull MultiblockBlockEntityMaster<SteamTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    @Override public void render(@NotNull MultiblockBlockEntityMaster<SteamTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if (!ITClientConfig.doSpecialRenderSteamTurbine) { return; }
         IMultiblockBEHelperMaster<SteamTurbineLogic.State> helper = tile.getHelper();
         IMultiblockContext<SteamTurbineLogic.State> context = helper.getContext();

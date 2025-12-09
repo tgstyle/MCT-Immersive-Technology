@@ -19,8 +19,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.ForgeHooks;
 
 public class BoilerSolidProcess implements IMultiblockComponent<BoilerSolidLogic.State> {
-    @Override
-    public InteractionResult click(IMultiblockContext<BoilerSolidLogic.State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
+    @Override public InteractionResult click(IMultiblockContext<BoilerSolidLogic.State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
         if (!BoilerSolidLogic.IGNITION_POI.contains(posInMultiblock)) { return InteractionResult.PASS; }
         Direction hitDir = absoluteHit.getDirection();
         if (BoilerSolidLogic.IGNITION_FACING != null) {

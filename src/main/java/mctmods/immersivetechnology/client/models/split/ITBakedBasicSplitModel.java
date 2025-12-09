@@ -45,16 +45,12 @@ public class ITBakedBasicSplitModel extends ITAbstractSplitModel<BakedModel> {
         WEAK_INSTANCES.add(this);
     }
 
-    @Nonnull
-    @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData, @Nullable RenderType layer) {
+    @Override @Nonnull public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData, @Nullable RenderType layer) {
         BlockPos offset = extraData.get(ITProperties.Model.SUBMODEL_OFFSET);
         if (offset != null) { return splitModels.get().getOrDefault(offset, ImmutableList.of()); }
         else { return base.getQuads(state, side, rand, extraData, layer); }
     }
 
     @SuppressWarnings("deprecation")
-    @Nonnull
-    @Override
-    public ItemTransforms getTransforms() { return itemTransforms; }
+    @Override @Nonnull public ItemTransforms getTransforms() { return itemTransforms; }
 }

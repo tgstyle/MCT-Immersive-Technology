@@ -36,7 +36,7 @@ public class RotorCreativeMenu extends ITContainerMenu {
 
     @Override public boolean stillValid(@NotNull Player player) { return tile.stillValid(player); }
 
-    @Override public @NotNull ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) {
+    @Override @NotNull public ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) {
         if (pIndex < 0 || pIndex >= slots.size()) { return ItemStack.EMPTY; }
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(pIndex);

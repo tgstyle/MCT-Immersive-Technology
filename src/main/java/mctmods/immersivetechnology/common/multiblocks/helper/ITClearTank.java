@@ -17,12 +17,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public record ITClearTank<S>(List<BlockPos> pois, Consumer<S> clearAction, Component message) implements IMultiblockComponent<S> {
-    public ITClearTank {
-        pois = ImmutableList.copyOf(pois);
-    }
+    public ITClearTank { pois = ImmutableList.copyOf(pois); }
 
-    @Override
-    public InteractionResult click(IMultiblockContext<S> context, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
+    @Override public InteractionResult click(IMultiblockContext<S> context, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
         if (pois.contains(posInMultiblock) && player.isShiftKeyDown()) {
             ItemStack held = player.getItemInHand(hand);
             if (held.getItem() == IEItems.Tools.HAMMER.get() || held.getItem() instanceof FormationTool) {

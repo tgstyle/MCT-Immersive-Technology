@@ -23,8 +23,7 @@ public abstract class ITBaseBlockEntityRenderer<T extends BlockEntity> implement
         stack.mulPose(ROTATE_FOR_FACING.get(facing));
     }
 
-    @Override
-    public int getViewDistance() {
+    @Override public int getViewDistance() {
         double distanceMod = ITClientConfig.multiblockSpecialRenderDistanceModifier;
         return (int) (BlockEntityRenderer.super.getViewDistance() * distanceMod);
     }

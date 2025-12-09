@@ -18,7 +18,7 @@ public class ITEnums {
             this.texture = texture;
         }
 
-        public @NotNull String getSerializedName() {
+        @NotNull public String getSerializedName() {
             return this.toString().toLowerCase(Locale.ENGLISH);
         }
 

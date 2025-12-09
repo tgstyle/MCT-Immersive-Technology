@@ -27,8 +27,7 @@ public class DistillerProcess extends MultiblockProcessInMachine<DistillerRecipe
         this.setInputTanks(0);
     }
 
-    @Override
-    public void doProcessTick(ProcessContext.ProcessContextInMachine<DistillerRecipe> context, IMultiblockLevel level) {
+    @Override public void doProcessTick(ProcessContext.ProcessContextInMachine<DistillerRecipe> context, IMultiblockLevel level) {
         LevelDependentData<DistillerRecipe> levelData = getLevelData(level.getRawLevel());
         if (levelData.recipe() == null) { this.clearProcess = true; return; }
         if (this.processTick == 0) {
@@ -41,15 +40,13 @@ public class DistillerProcess extends MultiblockProcessInMachine<DistillerRecipe
         super.doProcessTick(context, level);
     }
 
-    @Override
-    public boolean canProcess(ProcessContext.ProcessContextInMachine<DistillerRecipe> context, Level level) {
+    @Override public boolean canProcess(ProcessContext.ProcessContextInMachine<DistillerRecipe> context, Level level) {
         LevelDependentData<DistillerRecipe> levelData = getLevelData(level);
         if (levelData.recipe() == null) return true;
         return context.getEnergy().extractEnergy(levelData.energyPerTick(), true) == levelData.energyPerTick();
     }
 
-    @Override
-    protected void processFinish(ProcessContext.ProcessContextInMachine<DistillerRecipe> context, IMultiblockLevel level) {
+    @Override protected void processFinish(ProcessContext.ProcessContextInMachine<DistillerRecipe> context, IMultiblockLevel level) {
         super.processFinish(context, level);
         DistillerRecipe recipe = getRecipe(level.getRawLevel());
         if (recipe != null) {

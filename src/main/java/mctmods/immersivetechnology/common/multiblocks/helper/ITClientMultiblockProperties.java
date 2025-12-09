@@ -20,11 +20,9 @@ import java.util.Objects;
 
 public class ITClientMultiblockProperties implements ClientMultiblocks.MultiblockManualData {
     private final ITTemplateMultiblock multiblock;
-    @Nullable
-    private NonNullList<ItemStack> materials;
+    @Nullable private NonNullList<ItemStack> materials;
     private final ItemStack renderStack;
-    @Nullable
-    private final Vec3 renderOffset;
+    @Nullable private final Vec3 renderOffset;
 
     public ITClientMultiblockProperties(ITTemplateMultiblock multiblock, double offX, double offY, double offZ) { this(multiblock, new Vec3(offX, offY, offZ)); }
 
@@ -36,8 +34,7 @@ public class ITClientMultiblockProperties implements ClientMultiblocks.Multibloc
 
     protected boolean usingCustomRendering() { return false; }
 
-    @Override
-    public NonNullList<ItemStack> getTotalMaterials() {
+    @Override public NonNullList<ItemStack> getTotalMaterials() {
         if (this.materials == null) {
             assert Minecraft.getInstance().level != null;
             List<StructureTemplate.StructureBlockInfo> structure = this.multiblock.getStructure(Minecraft.getInstance().level);
@@ -58,8 +55,7 @@ public class ITClientMultiblockProperties implements ClientMultiblocks.Multibloc
         return this.materials;
     }
 
-    @Override
-    public boolean canRenderFormedStructure() { return this.renderOffset != null; }
+    @Override public boolean canRenderFormedStructure() { return this.renderOffset != null; }
 
     @SuppressWarnings("unused")
     public void renderExtras(PoseStack matrix, MultiBufferSource buffer) {}
@@ -67,8 +63,7 @@ public class ITClientMultiblockProperties implements ClientMultiblocks.Multibloc
     @SuppressWarnings("unused")
     public void renderCustomFormedStructure(PoseStack matrix, MultiBufferSource buffer) {}
 
-    @Override
-    public final void renderFormedStructure(PoseStack matrix, MultiBufferSource buffer) {
+    @Override public final void renderFormedStructure(PoseStack matrix, MultiBufferSource buffer) {
         Objects.requireNonNull(this.renderOffset);
 
         if (usingCustomRendering()) {

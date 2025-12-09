@@ -20,8 +20,7 @@ public record ITUnbakedSplitModel(UnbakedModel baseModel, Set<Vec3i> parts, bool
         this(baseModel, new HashSet<>(parts), dynamic, size);
     }
 
-    @Override
-    public BakedModel bake(IGeometryBakingContext owner, ModelBaker bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
+    @Override public BakedModel bake(IGeometryBakingContext owner, ModelBaker bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
         BakedModel bakedBase = baseModel.bake(bakery, spriteGetter, BlockModelRotation.X0_Y0, modelLocation);
         if (dynamic) { return new ITBakedDynamicSplitModel<>((ITICacheKeyProvider<?>)bakedBase, parts, modelTransform, size); }
         else { return new ITBakedBasicSplitModel(bakedBase, parts, modelTransform, size, owner.getTransforms()); }

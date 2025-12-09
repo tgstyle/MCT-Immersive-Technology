@@ -26,9 +26,7 @@ public class ITSplitModelLoader implements IGeometryLoader<ITUnbakedSplitModel> 
     public static final String INNER_MODEL = "inner_model";
     public static final String DYNAMIC = "dynamic";
 
-    @Nonnull
-    @Override
-    public ITUnbakedSplitModel read(JsonObject modelContents, @Nonnull JsonDeserializationContext deserializationContext) {
+    @Override @Nonnull public ITUnbakedSplitModel read(JsonObject modelContents, @Nonnull JsonDeserializationContext deserializationContext) {
         UnbakedModel baseModel;
         JsonElement innerJson = modelContents.get(INNER_MODEL);
         baseModel = ExtendedBlockModelDeserializer.INSTANCE.fromJson(innerJson, BlockModel.class);

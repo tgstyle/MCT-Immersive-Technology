@@ -20,8 +20,7 @@ public class ITDynamicModelProvider extends ModelProvider<ITDynamicModelProvider
 
     public ITDynamicModelProvider(ITBlockStateProvider multiblocks, PackOutput output, ExistingFileHelper existingFileHelper) { super(output, ITLib.MODID, "dynamic", rl -> new SimpleModelBuilder(rl, existingFileHelper), existingFileHelper); this.multiblocks = multiblocks; }
 
-    @Override
-    protected void registerModels() {
+    @Override protected void registerModels() {
         for(Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet()) { withExistingParent(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(multiblock.getKey())).getPath(), multiblock.getValue().getLocation()); }
         getBuilder("dynamic/rotor")
                 .customLoader(ITObjModelBuilder::new)
@@ -55,9 +54,8 @@ public class ITDynamicModelProvider extends ModelProvider<ITDynamicModelProvider
                 .automaticCulling(false);
     }
 
-    @Nonnull
-    @Override
-    public String getName() { return "IT Dynamic models"; }
+
+    @Override @Nonnull public String getName() { return "IT Dynamic models"; }
 
     public static class SimpleModelBuilder extends ModelBuilder<SimpleModelBuilder> {
         public SimpleModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) { super(outputLocation, existingFileHelper); }

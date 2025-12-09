@@ -79,20 +79,15 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         return facings.get(0);
     }
 
-    @Override
-    public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
+    @Override public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
 
-    @Override
-    public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
+    @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
-    @Override
-    public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
+    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
 
-    @Override
-    public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
+    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
 
-    @Override
-    public void tickClient(IMultiblockContext<State> ctx) {
+    @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         boolean targetActive = state.active || state.speed > 0;
         float targetLevel = ITLib.remapRange(0, state.effectiveMaxSpeed, 0.5f, 1.0f, state.speed);
@@ -156,8 +151,8 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody") @Override
-    public void tickServer(IMultiblockContext<State> ctx) {
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override public void tickServer(IMultiblockContext<State> ctx) {
         pumpOutputs(ctx);
         State state = ctx.getState();
         boolean previouslyActive = state.active;
@@ -232,8 +227,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
     private static double particleXZSpeed() { return ApiUtils.RANDOM.nextDouble(-0.015625, 0.015625); }
 
-    @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
+    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         State state = ctx.getState();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             if (position.equals(INPUT_FLUID_POI)) { return state.fluidCap.cast(ctx); }
@@ -246,25 +240,17 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     }
 
     private record MechanicalEnergyProvider(State state) implements IMechanicalEnergyProvider {
-        @Override
-        public int getSpeed() { return state.speed; }
-        @Override
-        public float getTorque() { return 1f; }
-        @Override
-        public int getMaxSpeed() { return MAX_SPEED; }
-        @Override
-        public double getBaseMass() { return BASE_MASS; }
-        @Override
-        public double getDriveTorque() { return DRIVE_TORQUE; }
-        @Override
-        public double getFriction() { return FRICTION; }
+        @Override public int getSpeed() { return state.speed; }
+        @Override public float getTorque() { return 1f; }
+        @Override public int getMaxSpeed() { return MAX_SPEED; }
+        @Override public double getBaseMass() { return BASE_MASS; }
+        @Override public double getDriveTorque() { return DRIVE_TORQUE; }
+        @Override public double getFriction() { return FRICTION; }
     }
 
-    @Override
-    public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
+    @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override
-    public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SteamTurbineShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SteamTurbineShape.GETTER; }
 
     public static class State implements IMultiblockState, ITDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
@@ -304,8 +290,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             this.inertia = new RotationInertiaProcess(BASE_MASS, DRIVE_TORQUE, FRICTION);
         }
 
-        @Override
-        public void writeSaveNBT(CompoundTag nbt) {
+        @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.putInt("speed", speed);
             nbt.putBoolean("active", active);
             nbt.putInt("burnRemaining", burnRemaining);
@@ -315,8 +300,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
         }
 
-        @Override
-        public void readSaveNBT(CompoundTag nbt) {
+        @Override public void readSaveNBT(CompoundTag nbt) {
             speed = nbt.getInt("speed");
             active = nbt.getBoolean("active");
             burnRemaining = nbt.getInt("burnRemaining");
@@ -326,37 +310,30 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
         }
 
-        @Override
-        public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt) {
             CompoundTag display = new CompoundTag();
             writeDisplaySyncNBT(display);
             nbt.put("display", display);
         }
 
-        @Override
-        public void readSyncNBT(CompoundTag nbt) {
+        @Override public void readSyncNBT(CompoundTag nbt) {
             if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
         }
 
-        @Override
-        public boolean isActive() { return active; }
+        @Override public boolean isActive() { return active; }
 
-        @Override
-        public IItemHandlerModifiable getInventory() { return null; }
+        @Override public IItemHandlerModifiable getInventory() { return null; }
 
-        @Override
-        public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input, tanks.output}; }
+        @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input, tanks.output}; }
 
-        @Override
-        public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
             nbt.put("tanks", tanks.toNBT());
             nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
         }
 
-        @Override
-        public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             boolean oldActive = active;
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");

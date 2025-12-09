@@ -47,18 +47,14 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         this.makeEntity = makeEntity;
     }
 
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) { return makeEntity.apply(pPos, pState); }
 
-    @Nullable
-    @Override
-    public <U extends BlockEntity> BlockEntityTicker<U> getTicker(Level world, @NotNull BlockState state, @NotNull BlockEntityType<U> type) { return getClassData().makeBaseTicker(world.isClientSide); }
+    @Override @Nullable public BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) { return makeEntity.apply(pPos, pState); }
+
+    @Override @Nullable public <U extends BlockEntity> BlockEntityTicker<U> getTicker(Level world, @NotNull BlockState state, @NotNull BlockEntityType<U> type) { return getClassData().makeBaseTicker(world.isClientSide); }
 
     private static final List<BooleanProperty> DEFAULT_OFF = ImmutableList.of(ITProperties.MULTIBLOCKSLAVE, ITProperties.ACTIVE, ITProperties.MIRRORED);
 
-    @Override
-    protected BlockState getInitDefaultState() {
+    @Override protected BlockState getInitDefaultState() {
         BlockState ret = super.getInitDefaultState();
         if (ret.hasProperty(ITProperties.FACING_ALL)) { ret = ret.setValue(ITProperties.FACING_ALL, getDefaultFacing()); }
         else if (ret.hasProperty(ITProperties.FACING_HORIZONTAL)) { ret = ret.setValue(ITProperties.FACING_HORIZONTAL, getDefaultFacing()); }
@@ -66,8 +62,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         return ret;
     }
 
-    @Override
-    public void onRemove(BlockState state, Level world, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
+    @Override public void onRemove(BlockState state, Level world, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (state.getBlock() != newState.getBlock()) {
             if (state.getBlock() != newState.getBlock()) {
@@ -78,8 +73,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         super.onRemove(state, world, pos, newState, isMoving);
     }
 
-    @Override
-    public void playerDestroy(@NotNull Level world, @NotNull Player player, @NotNull BlockPos pos, @NotNull BlockState state, BlockEntity tile, @NotNull ItemStack stack) {
+    @Override public void playerDestroy(@NotNull Level world, @NotNull Player player, @NotNull BlockPos pos, @NotNull BlockState state, BlockEntity tile, @NotNull ItemStack stack) {
         if (tile instanceof ITBlockInterfaces.IAdditionalDrops) {
             Collection<ItemStack> stacks = ((ITBlockInterfaces.IAdditionalDrops) tile).getExtraDrops(player, state);
             if (!stacks.isEmpty()) { for (ItemStack s : stacks) { if (!s.isEmpty()) { popResource(world, pos, s); } } }
@@ -87,15 +81,13 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         super.playerDestroy(world, player, pos, state, tile, stack);
     }
 
-    @Override
-    public boolean canEntityDestroy(BlockState state, BlockGetter world, BlockPos pos, Entity entity) {
+    @Override public boolean canEntityDestroy(BlockState state, BlockGetter world, BlockPos pos, Entity entity) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof ITBlockInterfaces.IEntityProof) { return ((ITBlockInterfaces.IEntityProof) tile).canEntityDestroy(entity); }
         return super.canEntityDestroy(state, world, pos, entity);
     }
 
-    @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
+    @Override public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof ITBlockInterfaces.IBlockEntityDrop && target instanceof BlockHitResult) {
             ItemStack s = ((ITBlockInterfaces.IBlockEntityDrop) tile).getPickBlock(world.getBlockState(pos));
@@ -105,8 +97,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         return item == Items.AIR ? ItemStack.EMPTY : new ItemStack(item, 1);
     }
 
-    @Override
-    public boolean triggerEvent(@NotNull BlockState state, Level worldIn, @NotNull BlockPos pos, int eventID, int eventParam) {
+    @Override public boolean triggerEvent(@NotNull BlockState state, Level worldIn, @NotNull BlockPos pos, int eventID, int eventParam) {
         super.triggerEvent(state, worldIn, pos, eventID, eventParam);
         BlockEntity blockEntity = worldIn.getBlockEntity(pos);
         return blockEntity != null && blockEntity.triggerEvent(eventID, eventParam);
@@ -114,8 +105,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
 
     protected Direction getDefaultFacing() { return Direction.NORTH; }
 
-    @Override
-    public void onIEBlockPlacedBy(BlockPlaceContext context, BlockState state) {
+    @Override public void onIEBlockPlacedBy(BlockPlaceContext context, BlockState state) {
         Level world = context.getLevel();
         BlockPos pos = context.getClickedPos();
         BlockEntity tile = world.getBlockEntity(pos);
@@ -133,8 +123,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         if (tile instanceof ITBlockInterfaces.IPlacementInteraction placementInteractionBE) { placementInteractionBE.onBEPlaced(context); }
     }
 
-    @Override
-    public InteractionResult hammerUseSide(Direction side, Player player, InteractionHand hand, Level w, BlockPos pos, BlockHitResult hit) {
+    @Override public InteractionResult hammerUseSide(Direction side, Player player, InteractionHand hand, Level w, BlockPos pos, BlockHitResult hit) {
         BlockEntity tile = w.getBlockEntity(pos);
         if (tile instanceof ITBlockInterfaces.IHammerInteraction) {
             boolean b = ((ITBlockInterfaces.IHammerInteraction) tile).hammerUseSide(side, player, hand, hit.getLocation());
@@ -144,8 +133,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         return super.hammerUseSide(side, player, hand, w, pos, hit);
     }
 
-    @Override
-    public InteractionResult screwdriverUseSide(Direction side, Player player, InteractionHand hand, Level w, BlockPos pos, BlockHitResult hit) {
+    @Override public InteractionResult screwdriverUseSide(Direction side, Player player, InteractionHand hand, Level w, BlockPos pos, BlockHitResult hit) {
         BlockEntity tile = w.getBlockEntity(pos);
         if (tile instanceof ITBlockInterfaces.IScrewdriverInteraction) {
             InteractionResult teResult = ((ITBlockInterfaces.IScrewdriverInteraction) tile).screwdriverUseSide(side, player, hand, hit.getLocation());
@@ -154,8 +142,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         return super.screwdriverUseSide(side, player, hand, w, pos, hit);
     }
 
-    @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    @Override @NotNull public InteractionResult use(@NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         InteractionResult superResult = super.use(state, world, pos, player, hand, hit);
         if (superResult.consumesAction()) { return superResult; }
         Direction side = hit.getDirection();
@@ -210,71 +197,60 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
         return dir.getClockWise(axis);
     }
 
-    @Override
-    public void neighborChanged(@NotNull BlockState state, Level world, @NotNull BlockPos pos, @NotNull Block block, @NotNull BlockPos fromPos, boolean isMoving) {
+    @Override public void neighborChanged(@NotNull BlockState state, Level world, @NotNull BlockPos pos, @NotNull Block block, @NotNull BlockPos fromPos, boolean isMoving) {
         if (!world.isClientSide) {
             BlockEntity tile = world.getBlockEntity(pos);
             if (tile instanceof ITBaseBlockEntity) { ((ITBaseBlockEntity) tile).onNeighborBlockChange(fromPos); }
         }
     }
 
-    @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+    @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof ITBlockInterfaces.ISelectionBounds) { return ((ITBlockInterfaces.ISelectionBounds) te).getSelectionShape(context); }
         return super.getShape(state, world, pos, context);
     }
 
-    @Override
-    public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+    @Override @NotNull public VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof ITBlockInterfaces.ICollisionBounds collisionBounds) { return collisionBounds.getCollisionShape(context); }
         return super.getCollisionShape(state, world, pos, context);
     }
 
-    @Override
-    public @NotNull VoxelShape getInteractionShape(@NotNull BlockState state, BlockGetter world, @NotNull BlockPos pos) {
+    @Override @NotNull public VoxelShape getInteractionShape(@NotNull BlockState state, BlockGetter world, @NotNull BlockPos pos) {
         BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof ITBlockInterfaces.ISelectionBounds) { return ((ITBlockInterfaces.ISelectionBounds) te).getSelectionShape(null); }
         return super.getInteractionShape(state, world, pos);
     }
 
-    @Override
-    public boolean hasAnalogOutputSignal(@NotNull BlockState state) { return getClassData().hasComparatorOutput; }
+    @Override public boolean hasAnalogOutputSignal(@NotNull BlockState state) { return getClassData().hasComparatorOutput; }
 
-    @Override
-    public int getAnalogOutputSignal(@NotNull BlockState state, Level world, @NotNull BlockPos pos) {
+    @Override public int getAnalogOutputSignal(@NotNull BlockState state, Level world, @NotNull BlockPos pos) {
         BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof ITBlockInterfaces.IComparatorOverride compOverride) { return compOverride.getComparatorInputOverride(); }
         return 0;
     }
 
-    @Override
-    public int getSignal(@NotNull BlockState blockState, BlockGetter world, @NotNull BlockPos pos, @NotNull Direction side) {
+    @Override public int getSignal(@NotNull BlockState blockState, BlockGetter world, @NotNull BlockPos pos, @NotNull Direction side) {
         BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof ITBlockInterfaces.IRedstoneOutput rsOutput) { return rsOutput.getWeakRSOutput(side); }
         return 0;
     }
 
-    @Override
-    public int getDirectSignal(@NotNull BlockState blockState, BlockGetter world, @NotNull BlockPos pos, @NotNull Direction side) {
+    @Override public int getDirectSignal(@NotNull BlockState blockState, BlockGetter world, @NotNull BlockPos pos, @NotNull Direction side) {
         BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof ITBlockInterfaces.IRedstoneOutput rsOutput) { return rsOutput.getStrongRSOutput(side); }
         return 0;
     }
 
-    @Override
-    public boolean isSignalSource(@NotNull BlockState state) { return getClassData().emitsRedstone(); }
+    @Override public boolean isSignalSource(@NotNull BlockState state) { return getClassData().emitsRedstone(); }
 
-    @Override
-    public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) {
+    @Override public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) {
         BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof ITBlockInterfaces.IRedstoneOutput rsOutput) { return rsOutput.canConnectRedstone(side); }
         return false;
     }
 
-    @Override
-    public void entityInside(@NotNull BlockState state, Level world, @NotNull BlockPos pos, @NotNull Entity entity) {
+    @Override public void entityInside(@NotNull BlockState state, Level world, @NotNull BlockPos pos, @NotNull Entity entity) {
         BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof ITBaseBlockEntity) { ((ITBaseBlockEntity) te).onEntityCollision(world, entity); }
     }
@@ -288,8 +264,7 @@ public class ITEntityBlock<T extends BlockEntity> extends ITBaseBlock implements
     }
 
     private record BEClassInspectedData(boolean serverTicking, boolean clientTicking, boolean hasComparatorOutput, boolean emitsRedstone) {
-        @Nullable
-        public <U extends BlockEntity> BlockEntityTicker<U> makeBaseTicker(boolean isClient) {
+        @Nullable public <U extends BlockEntity> BlockEntityTicker<U> makeBaseTicker(boolean isClient) {
             if (serverTicking && !isClient) { return ITServerTickableBE.makeTicker(); }
             else if (clientTicking && isClient) { return ITClientTickableBE.makeTicker(); }
             else { return null; }

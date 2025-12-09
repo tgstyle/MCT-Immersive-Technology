@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ITMultiblockEnergyDataProvider<T extends IMultiblockState> implements IServerExtensionProvider<IMultiblockBE<T>, CompoundTag>, IClientExtensionProvider<CompoundTag, EnergyView> {
-    @Override
-    public @Nullable List<ViewGroup<CompoundTag>> getGroups(ServerPlayer serverPlayer, ServerLevel serverLevel, IMultiblockBE<T> multiblockBE, boolean b) {
+    @Override @Nullable public List<ViewGroup<CompoundTag>> getGroups(ServerPlayer serverPlayer, ServerLevel serverLevel, IMultiblockBE<T> multiblockBE, boolean b) {
         final IMultiblockBEHelper<T> helper = multiblockBE.getHelper();
         if (helper.getState() instanceof ITDisplayContext dc) {
             List<AveragingEnergyStorage> energies = dc.getEnergies();
@@ -33,9 +32,7 @@ public class ITMultiblockEnergyDataProvider<T extends IMultiblockState> implemen
         return null;
     }
 
-    @Override
-    public List<ClientViewGroup<EnergyView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<CompoundTag>> list) { return ClientViewGroup.map(list, tag -> EnergyView.read(tag, "RF"), null); }
+    @Override public List<ClientViewGroup<EnergyView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<CompoundTag>> list) { return ClientViewGroup.map(list, tag -> EnergyView.read(tag, "RF"), null); }
 
-    @Override
-    public ResourceLocation getUid() { return ITLib.rl("multiblock_energy"); }
+    @Override public ResourceLocation getUid() { return ITLib.rl("multiblock_energy"); }
 }

@@ -15,7 +15,6 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -26,8 +25,7 @@ public class SolarTower extends ITTemplateMultiblock {
 
     public SolarTower() { super(ITLib.rl("multiblocks/solar_tower"), SolarTowerShape.MASTER_POS, SolarTowerShape.TRIGGER_POS, new BlockPos(SolarTowerShape.WIDTH,SolarTowerShape.HEIGHT,SolarTowerShape.LENGTH), ITMultiblockProvider.SOLAR_TOWER); }
 
-    @Override
-    public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {
+    @Override public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {
         if (world.isClientSide) return false;
         Direction front = player.getDirection();
         boolean mirrored = false;
@@ -48,20 +46,16 @@ public class SolarTower extends ITTemplateMultiblock {
         return formed;
     }
 
-    @Override
-    public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
+    @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
         MultiblockOrientation orientation = new MultiblockOrientation(clickDirectionAtCreation, mirrored);
         BlockPos base = origin.offset(orientation.getAbsoluteOffset(SolarTowerLogic.LINK_POI));
         SolarRegistry.unregisterTower(world, base);
         super.disassemble(world, origin, mirrored, clickDirectionAtCreation);
     }
 
-    @Override
-    public float getManualScale() { return SolarTowerShape.MANUAL_SCALE; }
+    @Override public float getManualScale() { return SolarTowerShape.MANUAL_SCALE; }
 
-    @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, SolarTowerShape.CLIENT_OFFSET.getX(), SolarTowerShape.CLIENT_OFFSET.getY(), SolarTowerShape.CLIENT_OFFSET.getZ())); }
+    @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, SolarTowerShape.CLIENT_OFFSET.getX(), SolarTowerShape.CLIENT_OFFSET.getY(), SolarTowerShape.CLIENT_OFFSET.getZ())); }
 
-    @Override
-    public boolean canBeMirrored() { return false; }
+    @Override public boolean canBeMirrored() { return false; }
 }

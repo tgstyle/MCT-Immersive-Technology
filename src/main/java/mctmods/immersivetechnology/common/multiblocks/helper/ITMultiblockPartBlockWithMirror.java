@@ -16,8 +16,7 @@ public class ITMultiblockPartBlockWithMirror<S extends IMultiblockState> extends
         Preconditions.checkState(multiblock.mirrorable());
     }
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(ITProperties.MIRRORED);
     }

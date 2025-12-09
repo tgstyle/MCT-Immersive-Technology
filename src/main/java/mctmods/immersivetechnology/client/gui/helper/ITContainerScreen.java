@@ -29,24 +29,20 @@ public abstract class ITContainerScreen<C extends AbstractContainerMenu> extends
         this.infoAreas = new ResettableLazy<>(this::makeInfoAreas);
     }
 
-    @Override
-    protected void init() {
+    @Override protected void init() {
         super.init();
         this.infoAreas.reset();
         this.inventoryLabelY = this.imageHeight - 91;
     }
 
-    @Nonnull
-    protected List<ITInfoArea> makeInfoAreas() { return ImmutableList.of(); }
+    @Nonnull protected List<ITInfoArea> makeInfoAreas() { return ImmutableList.of(); }
 
-    @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+    @Override protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, -557004, true);
         graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, -557004, true);
     }
 
-    @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    @Override public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTicks);
         List<Component> tooltip = new ArrayList<>();
@@ -60,8 +56,7 @@ public abstract class ITContainerScreen<C extends AbstractContainerMenu> extends
         else { this.renderTooltip(graphics, mouseX, mouseY); }
     }
 
-    @Override
-    protected final void renderBg(@Nonnull GuiGraphics graphics, float partialTicks, int x, int y) {
+    @Override protected final void renderBg(@Nonnull GuiGraphics graphics, float partialTicks, int x, int y) {
         this.drawBackgroundTexture(graphics);
         this.drawContainerBackgroundPre(graphics, partialTicks, x, y);
         for (ITInfoArea area : this.infoAreas.get()) { area.draw(graphics); }

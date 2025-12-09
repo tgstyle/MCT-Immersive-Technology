@@ -47,11 +47,9 @@ public class ITDropInventoryLootEntry extends LootPoolSingletonContainer {
 
     public static LootPoolSingletonContainer.Builder<?> builder() { return simpleBuilder(ITDropInventoryLootEntry::new); }
 
-    @Nonnull
-    public LootPoolEntryType getType() { return ITLootFunctions.DROP_INVENTORY.get(); }
+    @Nonnull public LootPoolEntryType getType() { return ITLootFunctions.DROP_INVENTORY.get(); }
 
     public static class Serializer extends LootPoolSingletonContainer.Serializer<ITDropInventoryLootEntry> {
-        @Nonnull
-        protected ITDropInventoryLootEntry deserialize(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context, int weight, int quality, @Nonnull LootItemCondition[] conditions, @Nonnull LootItemFunction[] functions) { return new ITDropInventoryLootEntry(weight, quality, conditions, functions); }
+        @Nonnull protected ITDropInventoryLootEntry deserialize(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context, int weight, int quality, @Nonnull LootItemCondition[] conditions, @Nonnull LootItemFunction[] functions) { return new ITDropInventoryLootEntry(weight, quality, conditions, functions); }
     }
 }

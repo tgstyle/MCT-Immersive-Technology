@@ -87,20 +87,16 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         markContainingBlockForUpdate(null);
     }
 
-    @Override
-    public void tickServer() { updateBase(); }
+    @Override public void tickServer() { updateBase(); }
 
-    @Override
-    public void tickClient() { if (requestCooldown > 0) requestCooldown--; }
+    @Override public void tickClient() { if (requestCooldown > 0) requestCooldown--; }
 
-    @Override
-    public void onLoad() {
+    @Override public void onLoad() {
         super.onLoad();
         facing = getBlockState().getValue(ITProperties.FACING_ALL);
     }
 
-    @Override
-    public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
+    @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
         assert level != null;
         if (level.isClientSide && requestCooldown == 0) {
             ITPacketHandler.sendToServer(new ITOSDRequestMessage(worldPosition));
@@ -117,8 +113,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         }
     }
 
-    @Override
-    public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
+    @Override public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
         packetLimit = nbt.getInt("packetLimit");
         timeLimit = nbt.getInt("timeLimit");
         keepSize = nbt.getInt("keepSize");
@@ -145,8 +140,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         }
     }
 
-    @Override
-    public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {
+    @Override public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {
         nbt.putInt("packetLimit", packetLimit);
         nbt.putInt("timeLimit", timeLimit);
         nbt.putInt("keepSize", keepSize);
@@ -163,11 +157,9 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         }
     }
 
-    @Override
-    public @NotNull Direction getFacing() { return this.facing; }
+    @Override @NotNull public Direction getFacing() { return this.facing; }
 
-    @Override
-    public void setFacing(@NotNull Direction facing) {
+    @Override public void setFacing(@NotNull Direction facing) {
         this.facing = facing;
         invalidateCaps(); // Common cap invalidation
         if (level != null && !level.isClientSide) {
@@ -179,17 +171,13 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         efficientSetChanged();
     }
 
-    @Override
-    public @NotNull ITPlacementLimitation getFacingLimitation() { return ITPlacementLimitation.SIDE_CLICKED; }
+    @Override @NotNull public ITPlacementLimitation getFacingLimitation() { return ITPlacementLimitation.SIDE_CLICKED; }
 
-    @Override
-    public boolean mirrorFacingOnPlacement(@NotNull LivingEntity placer) { return false; }
+    @Override public boolean mirrorFacingOnPlacement(@NotNull LivingEntity placer) { return false; }
 
-    @Override
-    public boolean canHammerRotate(@NotNull Direction side, @NotNull Vec3 hit, LivingEntity entity) { return false; }
+    @Override public boolean canHammerRotate(@NotNull Direction side, @NotNull Vec3 hit, LivingEntity entity) { return false; }
 
-    @Override
-    public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
+    @Override public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
         assert level != null;
         if (level.isClientSide) return false;
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
@@ -216,8 +204,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         }
     }
 
-    @Override
-    public void receiveMessageFromClient(CompoundTag nbt) {
+    @Override public void receiveMessageFromClient(CompoundTag nbt) {
         packetLimit = nbt.getInt("packetLimit");
         timeLimit = nbt.getInt("timeLimit");
         keepSize = nbt.getInt("keepSize");
@@ -229,7 +216,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
 
     public abstract AbstractContainerMenu createMenu(int id, @NotNull Inventory playerInventory, @NotNull Player player);
 
-    public abstract @NotNull Component getDisplayName();
+    @NotNull public abstract Component getDisplayName();
 
     public abstract boolean stillValid(Player player);
 }

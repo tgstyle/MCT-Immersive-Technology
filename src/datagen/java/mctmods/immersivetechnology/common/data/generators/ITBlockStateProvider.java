@@ -100,8 +100,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
         public ITObjModelBuilder<T> visibility(String part, boolean show) { visibility.put(part, show); return this; }
 
-        @Override
-        public JsonObject toJson(JsonObject json) {
+        @Override public JsonObject toJson(JsonObject json) {
             json = super.toJson(json);
             Preconditions.checkNotNull(modelLocation, "model must be set on obj model");
             json.addProperty("model", modelLocation.toString());
@@ -119,8 +118,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         }
     }
 
-    @Override
-    protected void registerStatesAndModels() {
+    @Override protected void registerStatesAndModels() {
         ITLib.IT_LOGGER.info("Generating Multiblock Splits");
 
         genericMultiblock("alternator", "metal");

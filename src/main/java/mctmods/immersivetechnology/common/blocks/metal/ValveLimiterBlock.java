@@ -38,25 +38,21 @@ public class ValveLimiterBlock extends ITEntityBlock<ValveLimiterBlockEntity> {
                 .setValue(ROTATION, 0));
     }
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(ITProperties.FACING_ALL, ITProperties.MIRRORED, OPEN, ROTATION);
     }
 
-    @Override
-    public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) { return true; }
+    @Override public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) { return true; }
 
-    @Override
-    public void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block fromBlock, @NotNull BlockPos fromPos, boolean isMoving) {
+    @Override public void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block fromBlock, @NotNull BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, fromBlock, fromPos, isMoving);
         if (level.isClientSide) return;
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) { valve.updateRedstoneState(); }
     }
 
-    @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    @Override @NotNull public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) {
@@ -70,8 +66,7 @@ public class ValveLimiterBlock extends ITEntityBlock<ValveLimiterBlockEntity> {
         return InteractionResult.PASS;
     }
 
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
+    @Override public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction facing = context.getClickedFace();
         int rotation = 0;
         if (facing.getAxis().isVertical()) {

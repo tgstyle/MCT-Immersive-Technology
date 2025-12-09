@@ -64,24 +64,19 @@ public class ITMultiblockBuilder<S extends IMultiblockState> extends MultiblockR
         return this;
     }
 
-    @Override
-    public ITMultiblockBuilder<S> customBlock(DeferredRegister<Block> register, DeferredRegister<Item> blockItemRegister, Function<MultiblockRegistration<S>, ? extends MultiblockPartBlock<S>> make, Function<Block, Item> makeItem) {
+    @Override public ITMultiblockBuilder<S> customBlock(DeferredRegister<Block> register, DeferredRegister<Item> blockItemRegister, Function<MultiblockRegistration<S>, ? extends MultiblockPartBlock<S>> make, Function<Block, Item> makeItem) {
         super.customBlock(register, blockItemRegister, make, makeItem);
         return this;
     }
 
-    @Override
-    public ITMultiblockBuilder<S> defaultBlock(DeferredRegister<Block> register, DeferredRegister<Item> blockItemRegister, BlockBehaviour.Properties properties) {
+    @Override public ITMultiblockBuilder<S> defaultBlock(DeferredRegister<Block> register, DeferredRegister<Item> blockItemRegister, BlockBehaviour.Properties properties) {
         super.defaultBlock(register, blockItemRegister, properties);
         return this;
     }
 
-    @Override
-    public <CS, C extends IMultiblockComponent<CS> & IMultiblockComponent.StateWrapper<S, CS>> ITMultiblockBuilder<S> selfWrappingComponent(C extraComponent) { Preconditions.checkArgument(!(extraComponent instanceof ComparatorManager<?>)); return super.selfWrappingComponent(extraComponent); }
+    @Override public <CS, C extends IMultiblockComponent<CS> & IMultiblockComponent.StateWrapper<S, CS>> ITMultiblockBuilder<S> selfWrappingComponent(C extraComponent) { Preconditions.checkArgument(!(extraComponent instanceof ComparatorManager<?>)); return super.selfWrappingComponent(extraComponent); }
 
-    @Override
-    protected ITMultiblockBuilder<S> self() { return this; }
+    @Override protected ITMultiblockBuilder<S> self() { return this; }
 
-    @Override
-    public MultiblockRegistration<S> build() { MultiblockRegistration<S> reg = super.build(); regSupplier = () -> reg; return reg; }
+    @Override public MultiblockRegistration<S> build() { MultiblockRegistration<S> reg = super.build(); regSupplier = () -> reg; return reg; }
 }

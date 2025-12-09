@@ -25,14 +25,12 @@ public class ITMessageTileSync implements ITMessage {
         this.nbt = buf.readNbt();
     }
 
-    @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    @Override public void toBytes(FriendlyByteBuf buf) {
         buf.writeBlockPos(this.pos);
         buf.writeNbt(this.nbt);
     }
 
-    @Override
-    public void process(Supplier<NetworkEvent.Context> context) {
+    @Override public void process(Supplier<NetworkEvent.Context> context) {
         NetworkEvent.Context ctx = context.get();
         ServerPlayer player = ctx.getSender();
         if (player != null) {

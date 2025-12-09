@@ -34,12 +34,9 @@ public class SolarScreen extends ITContainerScreen<SolarMenu> {
         this.isMelter = menu.getType() == ITMenuTypes.SOLAR_MELTER_MENU.getType();
     }
 
-    @Nonnull
-    @Override
-    protected List<ITInfoArea> makeInfoAreas() { return ImmutableList.of(new ITFluidInfoArea(menu.inputTank, new Rect2i(leftPos + 102, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE), new ITFluidInfoArea(menu.outputTank, new Rect2i(leftPos + 126, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE)); }
+    @Override @Nonnull protected List<ITInfoArea> makeInfoAreas() { return ImmutableList.of(new ITFluidInfoArea(menu.inputTank, new Rect2i(leftPos + 102, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE), new ITFluidInfoArea(menu.outputTank, new Rect2i(leftPos + 126, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE)); }
 
-    @Override
-    protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float f, int mx, int my) {
+    @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float f, int mx, int my) {
         double heatLevel = menu.state.get(0);
         double max = getMaxHeat();
         int heatBarSize = (int) Math.round(42 * Math.min(1, heatLevel / max));
@@ -107,8 +104,7 @@ public class SolarScreen extends ITContainerScreen<SolarMenu> {
         }
     }
 
-    @Override
-    protected void gatherAdditionalTooltips(int mouseX, int mouseY, Consumer<Component> addLine, Consumer<Component> addGray) {
+    @Override protected void gatherAdditionalTooltips(int mouseX, int mouseY, Consumer<Component> addLine, Consumer<Component> addGray) {
         if (mouseX >= leftPos + 16 && mouseX < leftPos + 58 && mouseY >= topPos + 9 && mouseY < topPos + 17) {
             double heat = menu.state.get(0);
             double maxHeat = getMaxHeat();

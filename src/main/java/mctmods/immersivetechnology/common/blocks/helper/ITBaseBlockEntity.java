@@ -29,24 +29,21 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
 
     public ITBaseBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) { super(type, pos, state); }
 
-    @Override
-    public void load(@NotNull CompoundTag nbtIn) {
+    @Override public void load(@NotNull CompoundTag nbtIn) {
         super.load(nbtIn);
         readCustomNBT(nbtIn, false);
     }
 
     public abstract void readCustomNBT(CompoundTag nbt, boolean descPacket);
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag nbt) {
+    @Override protected void saveAdditional(@NotNull CompoundTag nbt) {
         super.saveAdditional(nbt);
         writeCustomNBT(nbt, false);
     }
 
     public abstract void writeCustomNBT(CompoundTag nbt, boolean descPacket);
 
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+    @Override public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this, be -> {
             CompoundTag nbtTagCompound = new CompoundTag();
             writeCustomNBT(nbtTagCompound, true);
@@ -54,17 +51,14 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
         });
     }
 
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+    @Override public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         CompoundTag nonNullTag = pkt.getTag() != null ? pkt.getTag() : new CompoundTag();
         readCustomNBT(nonNullTag, true);
     }
 
-    @Override
-    public void handleUpdateTag(CompoundTag tag) { readCustomNBT(tag, true); }
+    @Override public void handleUpdateTag(CompoundTag tag) { readCustomNBT(tag, true); }
 
-    @Override
-    public @NotNull CompoundTag getUpdateTag() {
+    @Override @NotNull public CompoundTag getUpdateTag() {
         CompoundTag nbt = super.getUpdateTag();
         writeCustomNBT(nbt, true);
         return nbt;
@@ -74,8 +68,7 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
 
     public void receiveMessageFromServer(CompoundTag message) { }
 
-    @Override
-    public boolean triggerEvent(int id, int type) {
+    @Override public boolean triggerEvent(int id, int type) {
         if (id == 0 || id == 255) { markContainingBlockForUpdate(null); return true; }
         else if (id == 254) {
             assert level != null;
@@ -96,65 +89,54 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
         level.updateNeighborsAt(pos, newState.getBlock());
     }
 
-    @Override
-    public void setRemoved() {
+    @Override public void setRemoved() {
         if (!isUnloaded) { setRemovedIE(); }
         super.setRemoved();
     }
 
-    @Override
-    public void invalidateCaps() { super.invalidateCaps(); }
+    @Override public void invalidateCaps() { super.invalidateCaps(); }
 
     private boolean isUnloaded = false;
 
-    @Override
-    public void onLoad() {
+    @Override public void onLoad() {
         super.onLoad();
         isUnloaded = false;
     }
 
-    @Override
-    public void onChunkUnloaded() {
+    @Override public void onChunkUnloaded() {
         super.onChunkUnloaded();
         isUnloaded = true;
     }
 
     public void setRemovedIE() { }
 
-    @Nonnull
-    public Level getLevelNonnull() { return Objects.requireNonNull(super.getLevel()); }
+    @Nonnull public Level getLevelNonnull() { return Objects.requireNonNull(super.getLevel()); }
 
     public void onEntityCollision(Level world, Entity entity) { }
 
     public void setOverrideState(@Nullable BlockState state) { overrideBlockState = state; }
 
-    @Override
-    public @NotNull BlockState getBlockState() { if (overrideBlockState != null) { return overrideBlockState; } else { return super.getBlockState(); } }
+    @Override @NotNull public BlockState getBlockState() { if (overrideBlockState != null) { return overrideBlockState; } else { return super.getBlockState(); } }
 
-    @Override
-    public void setBlockState(@NotNull BlockState newState) {
+    @Override public void setBlockState(@NotNull BlockState newState) {
         BlockState old = getBlockState();
         super.setBlockState(newState);
         if (getType().isValid(old) && !getType().isValid(newState)) { setOverrideState(old); }
         else if (getType().isValid(newState)) { setOverrideState(null); }
     }
 
-    @Override
-    public void setState(BlockState state) { if (getLevelNonnull().getBlockState(worldPosition) == getState()) { getLevelNonnull().setBlockAndUpdate(worldPosition, state); } }
+    @Override public void setState(BlockState state) { if (getLevelNonnull().getBlockState(worldPosition) == getState()) { getLevelNonnull().setBlockAndUpdate(worldPosition, state); } }
 
-    @Override
-    public BlockState getState() { return getBlockState(); }
+    @Override public BlockState getState() { return getBlockState(); }
 
     protected void markChunkDirty() { if (level != null && level.hasChunk(worldPosition.getX() >> 4, worldPosition.getZ() >> 4)) { level.getChunkAt(worldPosition).setUnsaved(true); } }
 
-    @Override
-    public void setLevel(@NotNull Level world) {
+    @Override public void setLevel(@NotNull Level world) {
         super.setLevel(world);
         redstoneBySide.clear();
     }
 
-    @Override
-    public @NotNull ModelData getModelData() {
+    @Override @NotNull public ModelData getModelData() {
         BlockPos offset = null;
         BlockState state = getState();
         if (this instanceof ITModelOffsetProvider offsetProvider) { offset = offsetProvider.getModelOffset(state, Vec3i.ZERO); }
@@ -163,8 +145,7 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
         return ModelData.EMPTY;
     }
 
-    @Override
-    public void setChanged() {
+    @Override public void setChanged() {
         if (level != null) {
             markChunkDirty();
             BlockState state = getBlockState();

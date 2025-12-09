@@ -23,7 +23,7 @@ public class CrateCreativeBlock extends ITEntityBlock<CrateCreativeBlockEntity> 
         super.setPlacedBy(level, pos, state, placer, stack); if (!level.isClientSide) { CrateCreativeBlockEntity be = (CrateCreativeBlockEntity) level.getBlockEntity(pos); if (be != null) be.onBEPlaced(stack); }
     }
 
-    @Override public @NotNull InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    @Override public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS; CrateCreativeBlockEntity tile = (CrateCreativeBlockEntity) level.getBlockEntity(pos); if (tile != null) NetworkHooks.openScreen((ServerPlayer) player, tile, b -> b.writeBlockPos(pos)); return InteractionResult.CONSUME;
     }
 }

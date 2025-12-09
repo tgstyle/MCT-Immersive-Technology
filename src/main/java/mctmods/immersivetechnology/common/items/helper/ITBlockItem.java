@@ -38,11 +38,9 @@ public class ITBlockItem extends BlockItem {
 
     public ITBlockItem(Block b) { this(b, new Item.Properties()); }
 
-    @Override
-    public @NotNull String getDescriptionId(@NotNull ItemStack stack) { return getBlock().getDescriptionId(); }
+    @Override @NotNull public String getDescriptionId(@NotNull ItemStack stack) { return getBlock().getDescriptionId(); }
 
-    @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level world, @NotNull List<Component> tooltip, @NotNull TooltipFlag advanced) {
+    @Override public void appendHoverText(@NotNull ItemStack stack, @Nullable Level world, @NotNull List<Component> tooltip, @NotNull TooltipFlag advanced) {
         if (getBlock() instanceof ITBlock ieBlock && ieBlock.hasFlavour()) {
             String flavourKey = ITLib.DESC_FLAVOUR + ieBlock.getNameForFlavour();
             tooltip.add(TextUtils.applyFormat(Component.translatable(flavourKey), ChatFormatting.GRAY));
@@ -55,8 +53,7 @@ public class ITBlockItem extends BlockItem {
         }
     }
 
-    @Override
-    protected boolean placeBlock(@NotNull BlockPlaceContext context, @NotNull BlockState newState) {
+    @Override protected boolean placeBlock(@NotNull BlockPlaceContext context, @NotNull BlockState newState) {
         if (getBlock() instanceof MultiblockPartBlock) { return false; }
         Block b = newState.getBlock();
         if (b instanceof ITBaseBlock ieBlock) {
@@ -67,15 +64,12 @@ public class ITBlockItem extends BlockItem {
         } else return super.placeBlock(context, newState);
     }
 
-    @Override
-    protected boolean updateCustomBlockEntityTag(@NotNull BlockPos pos, @NotNull Level worldIn, @Nullable Player player, @NotNull ItemStack stack, BlockState state) {
+    @Override protected boolean updateCustomBlockEntityTag(@NotNull BlockPos pos, @NotNull Level worldIn, @Nullable Player player, @NotNull ItemStack stack, BlockState state) {
         if (!state.hasProperty(ITProperties.MULTIBLOCKSLAVE)) return super.updateCustomBlockEntityTag(pos, worldIn, player, stack, state);
         else return false;
     }
 
-    @Nonnull
-    @Override
-    public Optional<TooltipComponent> getTooltipImage(@Nonnull ItemStack stack) {
+    @Override @Nonnull public Optional<TooltipComponent> getTooltipImage(@Nonnull ItemStack stack) {
         if (stack.hasTag()) {
             CompoundTag tag = stack.getOrCreateTag();
             if (tag.contains("Items")) {
@@ -91,6 +85,5 @@ public class ITBlockItem extends BlockItem {
         return super.getTooltipImage(stack);
     }
 
-    @Override
-    public boolean canFitInsideContainerItems() { return !(getBlock() instanceof ITBaseBlock ieBlock) || ieBlock.fitsIntoContainer(); }
+    @Override public boolean canFitInsideContainerItems() { return !(getBlock() instanceof ITBaseBlock ieBlock) || ieBlock.fitsIntoContainer(); }
 }

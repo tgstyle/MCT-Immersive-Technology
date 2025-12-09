@@ -20,8 +20,7 @@ public class ITObjLoader implements IGeometryLoader<ITObjModel> {
 
     private ITObjLoader() {}
 
-    @Override
-    public ITObjModel read(JsonObject modelContents, JsonDeserializationContext deserializationContext) {
+    @Override public ITObjModel read(JsonObject modelContents, JsonDeserializationContext deserializationContext) {
         if (!modelContents.has("model")) { throw new JsonParseException("OBJ Loader requires a 'model' key that points to a valid .OBJ model."); }
 
         String modelLocationStr = modelContents.get("model").getAsString();

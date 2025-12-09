@@ -88,16 +88,14 @@ public class ImmersiveTechnology {
         MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY = CapabilityManager.get(MECHANICAL_CONSUMER_TOKEN);
     }
 
-    @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
+    @SubscribeEvent public static void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             ITTemplateMultiblock.pendingQueues.forEach(ITQueueProcessor::tick);
             ITTemplateMultiblock.pendingQueues.removeIf(ITQueueProcessor::isEmpty);
         }
     }
 
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
+    @SubscribeEvent public void onServerStarting(ServerStartingEvent event) {
         ITLib.IT_LOGGER.info("HELLO FROM SERVER STARTING");
     }
 }

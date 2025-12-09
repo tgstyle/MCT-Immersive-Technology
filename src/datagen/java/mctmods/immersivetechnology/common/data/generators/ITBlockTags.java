@@ -36,8 +36,7 @@ public class ITBlockTags extends BlockTagsProvider {
 
     public ITBlockTags(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper) { super(output, lookupProvider, ITLib.MODID, existingFileHelper); }
 
-    @Override
-    protected void addTags(@NotNull Provider provider) {
+    @Override protected void addTags(@NotNull Provider provider) {
         ITLib.IT_LOGGER.info("IT Block Tags");
 
         IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tagAxe = this.tag(BlockTags.MINEABLE_WITH_AXE);

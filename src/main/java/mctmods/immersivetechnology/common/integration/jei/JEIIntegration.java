@@ -28,20 +28,20 @@ import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.handlers.IGuiClickableArea;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.ingredients.ITypedIngredient;
+import mezz.jei.api.recipe.IFocusFactory;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
-import mezz.jei.api.runtime.IJeiRuntime;
-import mezz.jei.api.runtime.IIngredientManager;
-import mezz.jei.api.recipe.IFocusFactory;
 import mezz.jei.api.runtime.IClickableIngredient;
+import mezz.jei.api.runtime.IIngredientManager;
+import mezz.jei.api.runtime.IJeiRuntime;
 import mezz.jei.api.runtime.IRecipesGui;
-import mezz.jei.api.forge.ForgeTypes;
-import mezz.jei.api.gui.builder.ITooltipBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -59,16 +59,14 @@ import java.util.Optional;
 import static mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea.fillTooltip;
 
 @SuppressWarnings({"unused"})
-@JeiPlugin
-public class JEIIntegration implements IModPlugin {
+@JeiPlugin public class JEIIntegration implements IModPlugin {
+
     private static final ResourceLocation ID = ITLib.rl("main");
     private static IIngredientManager ingredientManager;
 
-    @Override
-    public @NotNull ResourceLocation getPluginUid() { return ID; }
+    @Override @NotNull public ResourceLocation getPluginUid() { return ID; }
 
-    @Override
-    public void registerCategories(IRecipeCategoryRegistration registration) {
+    @Override public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new ITBoilerLiquidCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITBoilerSolidCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITBoilerTankCategory(registration.getJeiHelpers().getGuiHelper()));
@@ -80,8 +78,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipeCategories(new ITSteamTurbineCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
-    @Override
-    public void registerRecipes(IRecipeRegistration registration) {
+    @Override public void registerRecipes(IRecipeRegistration registration) {
         registration.addRecipes(JEIRecipeTypes.BOILER_LIQUID, getBoilerLiquidRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_SOLID, getBoilerSolidRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_TANK, getBoilerRecipes());
@@ -93,8 +90,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipes(JEIRecipeTypes.STEAM_TURBINE, getSteamTurbineRecipes());
     }
 
-    @Override
-    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+    @Override public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_LIQUID.iconStack(), JEIRecipeTypes.BOILER_LIQUID);
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_SOLID.iconStack(), JEIRecipeTypes.BOILER_SOLID);
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_TANK.iconStack(), JEIRecipeTypes.BOILER_TANK);
@@ -106,8 +102,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipeCatalyst(ITMultiblockProvider.STEAM_TURBINE.iconStack(), JEIRecipeTypes.STEAM_TURBINE);
     }
 
-    @Override
-    public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registration) {
+    @Override public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registration) {
         registration.addGuiContainerHandler(BoilerLiquidScreen.class, new IGuiContainerHandler<>() {
             @Override
             public @NotNull Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerLiquidScreen gui, double mouseX, double mouseY) {
@@ -121,28 +116,25 @@ public class JEIIntegration implements IModPlugin {
                 }
                 if (fs != null && fs.getAmount() > 0) {
                     Rect2i finalArea = area;
-                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typedIngredient -> new IClickableIngredient<FluidStack>() {
+                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typed -> new IClickableIngredient<FluidStack>() {
                         @SuppressWarnings("removal")
-                        @Override
-                        public @NotNull ITypedIngredient<FluidStack> getTypedIngredient() { return typedIngredient; }
+                        @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() {return typed;}
 
-                        @Override
-                        public @NotNull Rect2i getArea() { return finalArea; }
+                        @Override @NotNull public Rect2i getArea() {return finalArea;}
                     });
                 }
                 return Optional.empty();
             }
 
-            @Override
-            public @NotNull Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull BoilerLiquidScreen gui, double guiMouseX, double guiMouseY) {
+            @Override @NotNull public Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull BoilerLiquidScreen gui, double mouseX, double mouseY) {
                 List<IGuiClickableArea> areas = new ArrayList<>();
                 areas.add(createBoilerLiquidClickableArea(gui.getMenu().tanks.input1()));
                 return areas;
             }
         });
+
         registration.addGuiContainerHandler(BoilerSolidScreen.class, new IGuiContainerHandler<>() {
-            @Override
-            public @NotNull Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerSolidScreen gui, double mouseX, double mouseY) {
+            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerSolidScreen gui, double mouseX, double mouseY) {
                 int relX = (int) (mouseX - gui.getLeftPos());
                 int relY = (int) (mouseY - gui.getTopPos());
                 ItemStack is = ItemStack.EMPTY;
@@ -153,30 +145,28 @@ public class JEIIntegration implements IModPlugin {
                 }
                 if (!is.isEmpty()) {
                     Rect2i finalArea = area;
-                    return ingredientManager.createTypedIngredient(VanillaTypes.ITEM_STACK, is).map(typedIngredient -> new IClickableIngredient<ItemStack>() {
+                    return ingredientManager.createTypedIngredient(VanillaTypes.ITEM_STACK, is).map(typed -> new IClickableIngredient<ItemStack>() {
                         @SuppressWarnings("removal")
-                        @Override
-                        public @NotNull ITypedIngredient<ItemStack> getTypedIngredient() { return typedIngredient; }
+                        @Override @NotNull public ITypedIngredient<ItemStack> getTypedIngredient() {return typed;}
 
-                        @Override
-                        public @NotNull Rect2i getArea() {
+                        @Override @NotNull public Rect2i getArea() {
                             assert finalArea != null;
-                            return finalArea; }
+                            return finalArea;
+                        }
                     });
                 }
                 return Optional.empty();
             }
 
-            @Override
-            public @NotNull Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull BoilerSolidScreen gui, double guiMouseX, double guiMouseY) {
+            @Override @NotNull public Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull BoilerSolidScreen gui, double mouseX, double mouseY) {
                 List<IGuiClickableArea> areas = new ArrayList<>();
                 areas.add(createBoilerSolidClickableArea());
                 return areas;
             }
         });
+
         registration.addGuiContainerHandler(DistillerScreen.class, new IGuiContainerHandler<>() {
-            @Override
-            public @NotNull Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull DistillerScreen gui, double mouseX, double mouseY) {
+            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull DistillerScreen gui, double mouseX, double mouseY) {
                 int relX = (int) (mouseX - gui.getLeftPos());
                 int relY = (int) (mouseY - gui.getTopPos());
                 FluidStack fs = null;
@@ -190,20 +180,17 @@ public class JEIIntegration implements IModPlugin {
                 }
                 if (fs != null && fs.getAmount() > 0) {
                     Rect2i finalArea = area;
-                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typedIngredient -> new IClickableIngredient<FluidStack>() {
+                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typed -> new IClickableIngredient<FluidStack>() {
                         @SuppressWarnings("removal")
-                        @Override
-                        public @NotNull ITypedIngredient<FluidStack> getTypedIngredient() { return typedIngredient; }
+                        @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() {return typed;}
 
-                        @Override
-                        public @NotNull Rect2i getArea() { return finalArea; }
+                        @Override @NotNull public Rect2i getArea() {return finalArea;}
                     });
                 }
                 return Optional.empty();
             }
 
-            @Override
-            public @NotNull Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull DistillerScreen gui, double guiMouseX, double guiMouseY) {
+            @Override @NotNull public Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull DistillerScreen gui, double mouseX, double mouseY) {
                 List<IGuiClickableArea> areas = new ArrayList<>();
                 areas.add(createDistillerClickableArea(56, gui.getMenu().tanks.input()));
                 areas.add(createDistillerClickableArea(112, gui.getMenu().tanks.output()));
@@ -212,8 +199,7 @@ public class JEIIntegration implements IModPlugin {
         });
 
         registration.addGuiContainerHandler(BoilerTankScreen.class, new IGuiContainerHandler<>() {
-            @Override
-            public @NotNull Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerTankScreen gui, double mouseX, double mouseY) {
+            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerTankScreen gui, double mouseX, double mouseY) {
                 int relX = (int) (mouseX - gui.getLeftPos());
                 int relY = (int) (mouseY - gui.getTopPos());
                 FluidStack fs = null;
@@ -227,29 +213,26 @@ public class JEIIntegration implements IModPlugin {
                 }
                 if (fs != null && fs.getAmount() > 0) {
                     Rect2i finalArea = area;
-                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typedIngredient -> new IClickableIngredient<FluidStack>() {
+                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typed -> new IClickableIngredient<FluidStack>() {
                         @SuppressWarnings("removal")
-                        @Override
-                        public @NotNull ITypedIngredient<FluidStack> getTypedIngredient() { return typedIngredient; }
+                        @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() {return typed;}
 
-                        @Override
-                        public @NotNull Rect2i getArea() { return finalArea; }
+                        @Override @NotNull public Rect2i getArea() {return finalArea;}
                     });
                 }
                 return Optional.empty();
             }
 
-            @Override
-            public @NotNull Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull BoilerTankScreen gui, double guiMouseX, double guiMouseY) {
+            @Override @NotNull public Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull BoilerTankScreen gui, double mouseX, double mouseY) {
                 List<IGuiClickableArea> areas = new ArrayList<>();
                 areas.add(createBoilerClickableArea(65, gui.getMenu().tanks.input()));
                 areas.add(createBoilerClickableArea(90, gui.getMenu().tanks.output()));
                 return areas;
             }
         });
+
         registration.addGuiContainerHandler(SolarScreen.class, new IGuiContainerHandler<>() {
-            @Override
-            public @NotNull Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull SolarScreen gui, double mouseX, double mouseY) {
+            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull SolarScreen gui, double mouseX, double mouseY) {
                 int relX = (int) (mouseX - gui.getLeftPos());
                 int relY = (int) (mouseY - gui.getTopPos());
                 FluidStack fs = null;
@@ -263,20 +246,17 @@ public class JEIIntegration implements IModPlugin {
                 }
                 if (fs != null && fs.getAmount() > 0) {
                     Rect2i finalArea = area;
-                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typedIngredient -> new IClickableIngredient<FluidStack>() {
+                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typed -> new IClickableIngredient<FluidStack>() {
                         @SuppressWarnings("removal")
-                        @Override
-                        public @NotNull ITypedIngredient<FluidStack> getTypedIngredient() { return typedIngredient; }
+                        @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() {return typed;}
 
-                        @Override
-                        public @NotNull Rect2i getArea() { return finalArea; }
+                        @Override @NotNull public Rect2i getArea() {return finalArea;}
                     });
                 }
                 return Optional.empty();
             }
 
-            @Override
-            public @NotNull Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull SolarScreen gui, double guiMouseX, double guiMouseY) {
+            @Override @NotNull public Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull SolarScreen gui, double mouseX, double mouseY) {
                 List<IGuiClickableArea> areas = new ArrayList<>();
                 areas.add(createSolarClickableArea(102, gui.getMenu().inputTank, gui));
                 areas.add(createSolarClickableArea(126, gui.getMenu().outputTank, gui));
@@ -288,146 +268,71 @@ public class JEIIntegration implements IModPlugin {
     private static IGuiClickableArea createBoilerLiquidClickableArea(IFluidTank tank) {
         Rect2i area = new Rect2i(80, 20, 16, 47);
         return new IGuiClickableArea() {
-            @Override
-            public @NotNull Rect2i getArea() { return area; }
-
-            @Override
-            public void getTooltip(@NotNull ITooltipBuilder tooltip) {
-                FluidStack fs = tank.getFluid();
-                fillTooltip(fs, tank.getCapacity(), tooltip::add);
+            @Override @NotNull public Rect2i getArea() { return area; }
+            @Override public void getTooltip(@NotNull ITooltipBuilder tooltip) {
+                fillTooltip(tank.getFluid(), tank.getCapacity(), tooltip::add);
                 tooltip.add(Component.translatable("jei.tooltip.show.recipes"));
             }
-
-            @Override
-            public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) {
-                recipesGui.showTypes(List.of(JEIRecipeTypes.BOILER_LIQUID));
-            }
+            @Override public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) { recipesGui.showTypes(List.of(JEIRecipeTypes.BOILER_LIQUID)); }
         };
     }
 
     private static IGuiClickableArea createBoilerSolidClickableArea() {
         Rect2i area = new Rect2i(81, 35, 14, 14);
         return new IGuiClickableArea() {
-            @Override
-            public @NotNull Rect2i getArea() { return area; }
-
-            @Override
-            public void getTooltip(@NotNull ITooltipBuilder tooltip) {
-                tooltip.add(Component.translatable("jei.tooltip.show.recipes"));
-            }
-
-            @Override
-            public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) {
-                recipesGui.showTypes(List.of(JEIRecipeTypes.BOILER_SOLID));
-            }
+            @Override @NotNull public Rect2i getArea() { return area; }
+            @Override public void getTooltip(@NotNull ITooltipBuilder tooltip) { tooltip.add(Component.translatable("jei.tooltip.show.recipes")); }
+            @Override public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) { recipesGui.showTypes(List.of(JEIRecipeTypes.BOILER_SOLID)); }
         };
     }
 
     private static IGuiClickableArea createBoilerClickableArea(int x, IFluidTank tank) {
         Rect2i area = new Rect2i(x, 18, 20, 51);
         return new IGuiClickableArea() {
-            @Override
-            public @NotNull Rect2i getArea() { return area; }
-
-            @Override
-            public void getTooltip(@NotNull ITooltipBuilder tooltip) {
-                FluidStack fs = tank.getFluid();
-                fillTooltip(fs, tank.getCapacity(), tooltip::add);
+            @Override @NotNull public Rect2i getArea() { return area; }
+            @Override public void getTooltip(@NotNull ITooltipBuilder tooltip) {
+                fillTooltip(tank.getFluid(), tank.getCapacity(), tooltip::add);
                 tooltip.add(Component.translatable("jei.tooltip.show.recipes"));
             }
-
-            @Override
-            public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) {
-                recipesGui.showTypes(List.of(JEIRecipeTypes.BOILER_TANK));
-            }
+            @Override public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) { recipesGui.showTypes(List.of(JEIRecipeTypes.BOILER_TANK)); }
         };
     }
 
     private static IGuiClickableArea createDistillerClickableArea(int x, IFluidTank tank) {
         Rect2i area = new Rect2i(x, 19, 20, 51);
         return new IGuiClickableArea() {
-            @Override
-            public @NotNull Rect2i getArea() { return area; }
-
-            @Override
-            public void getTooltip(@NotNull ITooltipBuilder tooltip) {
-                FluidStack fs = tank.getFluid();
-                fillTooltip(fs, tank.getCapacity(), tooltip::add);
+            @Override @NotNull public Rect2i getArea() { return area; }
+            @Override public void getTooltip(@NotNull ITooltipBuilder tooltip) {
+                fillTooltip(tank.getFluid(), tank.getCapacity(), tooltip::add);
                 tooltip.add(Component.translatable("jei.tooltip.show.recipes"));
             }
-
-            @Override
-            public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) {
-                recipesGui.showTypes(List.of(JEIRecipeTypes.DISTILLER));
-            }
+            @Override public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) { recipesGui.showTypes(List.of(JEIRecipeTypes.DISTILLER)); }
         };
     }
 
     private static IGuiClickableArea createSolarClickableArea(int x, IFluidTank tank, SolarScreen gui) {
         Rect2i area = new Rect2i(x, 21, 16, 47);
         return new IGuiClickableArea() {
-            @Override
-            public @NotNull Rect2i getArea() { return area; }
-
-            @Override
-            public void getTooltip(@NotNull ITooltipBuilder tooltip) {
-                FluidStack fs = tank.getFluid();
-                fillTooltip(fs, tank.getCapacity(), tooltip::add);
+            @Override @NotNull public Rect2i getArea() { return area; }
+            @Override public void getTooltip(@NotNull ITooltipBuilder tooltip) {
+                fillTooltip(tank.getFluid(), tank.getCapacity(), tooltip::add);
                 tooltip.add(Component.translatable("jei.tooltip.show.recipes"));
             }
-
-            @Override
-            public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) {
+            @Override public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) {
                 recipesGui.showTypes(List.of(gui.isMelter ? JEIRecipeTypes.SOLAR_MELTER : JEIRecipeTypes.SOLAR_TOWER));
             }
         };
     }
 
-    @Override
-    public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) { ingredientManager = jeiRuntime.getIngredientManager(); }
+    @Override public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) { ingredientManager = jeiRuntime.getIngredientManager(); }
 
-    private List<BoilerLiquidRecipe> getBoilerLiquidRecipes() {
-        assert Minecraft.getInstance().level != null;
-        return new ArrayList<>(BoilerLiquidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
-    }
-
-    private List<BoilerSolidRecipe> getBoilerSolidRecipes() {
-        assert Minecraft.getInstance().level != null;
-        return new ArrayList<>(BoilerSolidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
-    }
-
-    private List<BoilerTankRecipe> getBoilerRecipes() {
-        assert Minecraft.getInstance().level != null;
-        return new ArrayList<>(BoilerTankRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
-    }
-
-    private List<CoolingTowerRecipe> getCoolingTowerRecipes() {
-        assert Minecraft.getInstance().level != null;
-        return new ArrayList<>(CoolingTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
-    }
-
-    private List<DistillerRecipe> getDistillerRecipes() {
-        assert Minecraft.getInstance().level != null;
-        return new ArrayList<>(DistillerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
-    }
-
-    private List<GasTurbineRecipe> getGasTurbineRecipes() {
-        assert Minecraft.getInstance().level != null;
-        return new ArrayList<>(GasTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
-    }
-
-    private List<SolarMelterRecipe> getSolarMelterRecipes() {
-        assert Minecraft.getInstance().level != null;
-        return new ArrayList<>(SolarMelterRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
-    }
-
-    private List<SolarTowerRecipe> getSolarTowerRecipes() {
-        assert Minecraft.getInstance().level != null;
-        return new ArrayList<>(SolarTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
-    }
-
-    private List<SteamTurbineRecipe> getSteamTurbineRecipes() {
-        assert Minecraft.getInstance().level != null;
-        return new ArrayList<>(SteamTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
-    }
+    private List<BoilerLiquidRecipe> getBoilerLiquidRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(BoilerLiquidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<BoilerSolidRecipe> getBoilerSolidRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(BoilerSolidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<BoilerTankRecipe> getBoilerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(BoilerTankRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<CoolingTowerRecipe> getCoolingTowerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(CoolingTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<DistillerRecipe> getDistillerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(DistillerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<GasTurbineRecipe> getGasTurbineRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(GasTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<SolarMelterRecipe> getSolarMelterRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(SolarMelterRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<SolarTowerRecipe> getSolarTowerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(SolarTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<SteamTurbineRecipe> getSteamTurbineRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(SteamTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
 }

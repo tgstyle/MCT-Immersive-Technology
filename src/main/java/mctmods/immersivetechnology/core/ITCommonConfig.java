@@ -28,8 +28,7 @@ public class ITCommonConfig {
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
 
-    @SubscribeEvent
-    static void onConfig(final ModConfigEvent event) {
+    @SubscribeEvent static void onConfig(final ModConfigEvent event) {
         if (event.getConfig().getSpec() == SPEC) {
             burnTimeDivider = CONFIG_BURN_TIME_DIVIDER.get();
             creativeBarrelOutputAmount = CONFIG_CREATIVE_BARREL_OUTPUT_AMOUNT.get();

@@ -23,8 +23,7 @@ public class BoilerSolidScreen extends ITContainerScreen<BoilerSolidMenu> {
 
     public BoilerSolidScreen(BoilerSolidMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
-    @Override
-    protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
         float heatLevel = menu.getHeatLevel();
         int barWidth = Mth.clamp(Math.round(41 * heatLevel / 100.0f), 0, 41);
         graphics.blit(TEXTURE, leftPos + 119, topPos + 38, 176, 0, barWidth, 9);
@@ -36,20 +35,16 @@ public class BoilerSolidScreen extends ITContainerScreen<BoilerSolidMenu> {
         }
     }
 
-    @Nonnull
-    @Override
-    protected List<ITInfoArea> makeInfoAreas() {
+    @Override @Nonnull protected List<ITInfoArea> makeInfoAreas() {
         return ImmutableList.of(
                 new ITInfoArea(new Rect2i(leftPos + 119, topPos + 38, 41, 9)) {
-                    @Override
-                    protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
+                    @Override protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
                         tooltip.add(Component.translatable(TranslationKey.GUI_TEMPERATURE.getLocation()));
                         float heatLevel = menu.getHeatLevel();
                         tooltip.add(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_HEAT_LEVEL.getLocation(), (int)heatLevel), ChatFormatting.RED));
                     }
 
-                    @Override
-                    public void draw(GuiGraphics graphics) {}
+                    @Override public void draw(GuiGraphics graphics) {}
                 }
         );
     }
