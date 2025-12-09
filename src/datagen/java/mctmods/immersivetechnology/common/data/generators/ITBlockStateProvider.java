@@ -118,6 +118,24 @@ public class ITBlockStateProvider extends BlockStateProvider {
         }
     }
 
+    private record ValveRotationConfig(int horizontalXRot, int verticalDownXRot, int verticalUpXRot, Function<Direction, Integer> yRotOffsetSupplier) {}
+
+    private int[] calculateValveRotations(Direction facing, int rotationVal, boolean mirrored, ValveRotationConfig config) {
+        int xRot;
+        int yRot;
+        int yRotOffset = config.yRotOffsetSupplier.apply(facing);
+        if (facing.getAxis().isHorizontal()) {
+            yRot = ((facing.get2DDataValue() + yRotOffset) % 4) * 90;
+            xRot = config.horizontalXRot;
+        } else {
+            Direction hFacing = Direction.from2DDataValue(rotationVal);
+            yRot = ((hFacing.get2DDataValue() + yRotOffset) % 4) * 90;
+            xRot = (facing == Direction.DOWN) ? config.verticalDownXRot : config.verticalUpXRot;
+        }
+        if (mirrored) { yRot = (yRot + 180) % 360; }
+        return new int[]{xRot, yRot};
+    }
+
     @Override protected void registerStatesAndModels() {
         ITLib.IT_LOGGER.info("Generating Multiblock Splits");
 
@@ -223,6 +241,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         ModelFile valveClosed = createValveObjModel("valve_fluid", "valve_fluid", false, "Pipe");
         ModelFile valveOpen = createValveObjModel("valve_fluid", "valve_fluid", true, "Pipe");
 
+        ValveRotationConfig fluidConfig = new ValveRotationConfig(0, 90, 270, facing -> 2);
         VariantBlockStateBuilder valveFluidBuilder = getVariantBuilder(ITBlocks.Metal.VALVE_FLUID.get());
         valveFluidBuilder.forAllStates(state -> {
             Direction facing = state.getValue(ITProperties.FACING_ALL);
@@ -230,17 +249,8 @@ public class ITBlockStateProvider extends BlockStateProvider {
             int rotationVal = state.getValue(ValveFluidBlock.ROTATION);
             boolean mirrored = state.getValue(ITProperties.MIRRORED);
             ModelFile modelFile = open ? valveOpen : valveClosed;
-            int xRot = 0;
-            int yRot;
-            if (facing.getAxis().isHorizontal()) {
-                yRot = ((facing.get2DDataValue() + 2) % 4) * 90;
-            } else {
-                Direction hFacing = Direction.from2DDataValue(rotationVal);
-                yRot = ((hFacing.get2DDataValue() + 2) % 4) * 90;
-                xRot = facing == Direction.DOWN ? 90 : 270;
-            }
-            if (mirrored) yRot = (yRot + 180) % 360;
-            return ConfiguredModel.builder().modelFile(modelFile).rotationX(xRot).rotationY(yRot).build();
+            int[] rotations = calculateValveRotations(facing, rotationVal, mirrored, fluidConfig);
+            return ConfiguredModel.builder().modelFile(modelFile).rotationX(rotations[0]).rotationY(rotations[1]).build();
         });
         setRenderType(RenderType.cutout(), (BlockModelBuilder) valveClosed, (BlockModelBuilder) valveOpen);
 
@@ -250,29 +260,21 @@ public class ITBlockStateProvider extends BlockStateProvider {
                 modLoc("block/metal/valve_limiter_top"));
         valveLimiterBuilder.texture("particle", modLoc("block/metal/valve_limiter_side"));
 
+        ValveRotationConfig limiterConfig = new ValveRotationConfig(90, 180, 0, facing -> 2);
         VariantBlockStateBuilder valveLimiterStateBuilder = getVariantBuilder(ITBlocks.Metal.VALVE_LIMITER.get());
         valveLimiterStateBuilder.forAllStates(state -> {
             Direction facing = state.getValue(ITProperties.FACING_ALL);
             int rotationVal = state.getValue(ValveLimiterBlock.ROTATION);
             boolean mirrored = state.getValue(ITProperties.MIRRORED);
-            int xRot;
-            int yRot;
-            if (facing.getAxis().isHorizontal()) {
-                yRot = ((facing.get2DDataValue() + 2) % 4) * 90;
-                xRot = 90;
-            } else {
-                Direction hFacing = Direction.from2DDataValue(rotationVal);
-                yRot = ((hFacing.get2DDataValue() + 2) % 4) * 90;
-                xRot = facing == Direction.DOWN ? 180 : 0;
-            }
-            if (mirrored) yRot = (yRot + 180) % 360;
-            return ConfiguredModel.builder().modelFile(valveLimiterBuilder).rotationX(xRot).rotationY(yRot).build();
+            int[] rotations = calculateValveRotations(facing, rotationVal, mirrored, limiterConfig);
+            return ConfiguredModel.builder().modelFile(valveLimiterBuilder).rotationX(rotations[0]).rotationY(rotations[1]).build();
         });
         setRenderType(RenderType.cutout(), valveLimiterBuilder);
 
         ModelFile valveLoadClosed = createValveObjModel("valve_load", "valve_load", false, "Base");
         ModelFile valveLoadOpen = createValveObjModel("valve_load", "valve_load", true, "Base");
 
+        ValveRotationConfig loadConfig = new ValveRotationConfig(270, 180, 0, facing -> facing.getAxis().isHorizontal() ? 0 : 1);
         VariantBlockStateBuilder valveLoadBuilder = getVariantBuilder(ITBlocks.Metal.VALVE_LOAD.get());
         valveLoadBuilder.forAllStates(state -> {
             Direction facing = state.getValue(ITProperties.FACING_ALL);
@@ -280,18 +282,8 @@ public class ITBlockStateProvider extends BlockStateProvider {
             int rotationVal = state.getValue(ValveLoadBlock.ROTATION);
             boolean mirrored = state.getValue(ITProperties.MIRRORED);
             ModelFile modelFile = open ? valveLoadOpen : valveLoadClosed;
-            int xRot;
-            int yRot;
-            if (facing.getAxis().isHorizontal()) {
-                yRot = (facing.get2DDataValue() % 4) * 90;
-                xRot = 270;
-            } else {
-                Direction hFacing = Direction.from2DDataValue(rotationVal);
-                yRot = ((hFacing.get2DDataValue() + 1) % 4) * 90;
-                xRot = facing == Direction.DOWN ? 180 : 0;
-            }
-            if (mirrored) yRot = (yRot + 180) % 360;
-            return ConfiguredModel.builder().modelFile(modelFile).rotationX(xRot).rotationY(yRot).build();
+            int[] rotations = calculateValveRotations(facing, rotationVal, mirrored, loadConfig);
+            return ConfiguredModel.builder().modelFile(modelFile).rotationX(rotations[0]).rotationY(rotations[1]).build();
         });
         setRenderType(RenderType.cutout(), (BlockModelBuilder) valveLoadClosed, (BlockModelBuilder) valveLoadOpen);
 
@@ -390,40 +382,11 @@ public class ITBlockStateProvider extends BlockStateProvider {
         ITTemplateMultiblock multiblock = (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name);
         ModelFile defaultMain = split(defaultUnsplit, multiblock, false, block_type);
         ModelFile activeMain = split(activeUnsplit, multiblock, false, block_type);
-        createActiveMultiblock(multiblock::getBlock, defaultMain, activeMain, null, null, null, ITProperties.ACTIVE);
-    }
-
-    private void createMirroredMultiblock(ITNongeneratedModel unsplitModel, ITNongeneratedModel mirror_model, ITTemplateMultiblock multiblock, String block_type) {
-        final ModelFile mainModel = split(unsplitModel, multiblock, false, block_type);
-        final ModelFile mirrorModel = split(mirror_model, multiblock, true, block_type);
-        if (multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, mirrorModel, ITProperties.MIRRORED); }
-        else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
-    }
-
-    private void createMultiblock(ITNongeneratedModel unsplitModel, ITTemplateMultiblock multiblock, String block_type) {
-        final ModelFile mainModel = split(unsplitModel, multiblock, false, block_type);
-        if (multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED)) { createMultiblock(multiblock::getBlock, mainModel, split(mirror(unsplitModel, innerModels), multiblock, true, block_type), ITProperties.MIRRORED); }
-        else { createMultiblock(multiblock::getBlock, mainModel, null, null); }
-    }
-
-    private void createMultiblock(Supplier<? extends Block> b, ModelFile masterModel, @Nullable ModelFile mirroredModel, @Nullable Property<Boolean> mirroredState) {
-        unsplitModels.put(b.get(), masterModel);
-        Preconditions.checkArgument((mirroredModel == null) == (mirroredState == null));
-        VariantBlockStateBuilder builder = getVariantBuilder(b.get());
-        EnumProperty<Direction> facing = ITProperties.FACING_HORIZONTAL;
-        builder.forAllStates(state -> {
-            Direction dir = state.getValue(facing);
-            int angleY = getAngle(dir);
-            int angleX = 0;
-            if (facing.getPossibleValues().contains(Direction.UP)) { angleX = -90 * dir.getStepY(); angleY = dir.getAxis() != Direction.Axis.Y ? getAngle(dir) : 0; }
-            boolean mirrored = (mirroredState != null) ? state.getValue(mirroredState) : false;
-            ModelFile model = mirrored ? mirroredModel : masterModel;
-            return new ConfiguredModel[]{new ConfiguredModel(model, angleX, angleY, true)};
-        });
+        createMultiblockVariant(multiblock::getBlock, defaultMain, activeMain, null, null, null, ITProperties.ACTIVE);
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void createActiveMultiblock(Supplier<? extends Block> b, ModelFile defaultMaster, ModelFile activeMaster, ModelFile defaultMirrored, ModelFile activeMirrored, @Nullable Property<Boolean> mirroredState, @Nullable Property<Boolean> activeState) {
+    private void createMultiblockVariant(Supplier<? extends Block> b, ModelFile defaultMaster, @Nullable ModelFile activeMaster, @Nullable ModelFile defaultMirrored, @Nullable ModelFile activeMirrored, @Nullable Property<Boolean> mirroredState, @Nullable Property<Boolean> activeState) {
         unsplitModels.put(b.get(), defaultMaster);
         Preconditions.checkArgument((defaultMirrored == null) == (mirroredState == null));
         Preconditions.checkArgument((activeMaster == null) == (activeState == null));
@@ -438,8 +401,22 @@ public class ITBlockStateProvider extends BlockStateProvider {
             boolean active = (activeState != null) ? state.getValue(activeState) : false;
             ModelFile baseModel = active ? activeMaster : defaultMaster;
             ModelFile model = mirrored ? (active ? activeMirrored : defaultMirrored) : baseModel;
+            assert model != null;
             return new ConfiguredModel[]{new ConfiguredModel(model, angleX, angleY, true)};
         });
+    }
+
+    private void createMirroredMultiblock(ITNongeneratedModel unsplitModel, ITNongeneratedModel mirror_model, ITTemplateMultiblock multiblock, String block_type) {
+        final ModelFile mainModel = split(unsplitModel, multiblock, false, block_type);
+        final ModelFile mirrorModel = split(mirror_model, multiblock, true, block_type);
+        if (multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED)) { createMultiblockVariant(multiblock::getBlock, mainModel, null, mirrorModel, null, ITProperties.MIRRORED, null); }
+        else { createMultiblockVariant(multiblock::getBlock, mainModel, null, null, null, null, null); }
+    }
+
+    private void createMultiblock(ITNongeneratedModel unsplitModel, ITTemplateMultiblock multiblock, String block_type) {
+        final ModelFile mainModel = split(unsplitModel, multiblock, false, block_type);
+        if (multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED)) { createMultiblockVariant(multiblock::getBlock, mainModel, null, split(mirror(unsplitModel, innerModels), multiblock, true, block_type), null, ITProperties.MIRRORED, null); }
+        else { createMultiblockVariant(multiblock::getBlock, mainModel, null, null, null, null, null); }
     }
 
     private void loadTemplateFor(ITTemplateMultiblock multiblock) {
@@ -561,6 +538,9 @@ public class ITBlockStateProvider extends BlockStateProvider {
     protected ResourceLocation addModelsPrefix(ResourceLocation in) { return ResourceLocation.fromNamespaceAndPath(in.getNamespace(), "models/" + in.getPath()); }
 
     protected void setRenderType(@Nullable RenderType type, ModelBuilder<?>... builders) {
-        if (type != null) { final String typeName = ITModelProviderUtils.getName(type); for (final ModelBuilder<?> model : builders) { model.renderType(typeName); } }
+        if (type != null) {
+            final String typeName = ITModelProviderUtils.getName(type);
+            for (final ModelBuilder<?> model : builders) { model.renderType(typeName); }
+        }
     }
 }
