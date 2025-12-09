@@ -24,7 +24,7 @@ public class ITBoilerTankCategory extends ITRecipeCategory<BoilerTankRecipe> {
 
     public ITBoilerTankCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.BOILER_TANK, "block.immersivetechnology.boiler_tank");
-        ResourceLocation background = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "textures/gui/boiler_tank.png");
+        ResourceLocation background = ITLib.makeTextureLocation("boiler_tank");
         IDrawableStatic back = guiHelper.drawableBuilder(background, 0, 0, 176, 74).setTextureSize(256, 256).build();
         setBackground(back);
         setIcon(ITMultiblockProvider.BOILER_TANK.iconStack());

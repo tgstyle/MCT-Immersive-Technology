@@ -18,7 +18,7 @@ public class MultiblockDataLoader {
         if (CACHE.containsKey(multiblockName)) { return CACHE.get(multiblockName); }
         MultiblockData data = null;
         try {
-            InputStream is = MultiblockDataLoader.class.getResourceAsStream("/assets/immersivetechnology/multiblocks/" + multiblockName + ".json");
+            InputStream is = MultiblockDataLoader.class.getResourceAsStream("/assets/" + ITLib.MODID + "/multiblocks/" + multiblockName + ".json");
             if (is != null) {
                 JsonReader reader = new JsonReader(new InputStreamReader(is));
                 Gson gson = new Gson();
@@ -39,7 +39,7 @@ public class MultiblockDataLoader {
                         }
                     }
                 }
-            } else { ITLib.IT_LOGGER.error("{} JSON resource not found at /assets/immersivetechnology/multiblocks/{}.json", multiblockName, multiblockName); }
+            } else { ITLib.IT_LOGGER.error("{} JSON resource not found at /assets/" + ITLib.MODID + "/multiblocks/{}.json", multiblockName, multiblockName); }
         } catch (Exception e) { ITLib.IT_LOGGER.error("Error loading {} from JSON", multiblockName, e); }
         if (data != null) { CACHE.put(multiblockName, data); }
         return data;

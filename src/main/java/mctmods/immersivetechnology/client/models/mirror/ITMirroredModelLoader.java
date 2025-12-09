@@ -26,7 +26,7 @@ import java.util.List;
 
 public class ITMirroredModelLoader implements IGeometryLoader<ITMirroredGeometry> {
     public static final String INNER_MODEL = "inner_model";
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "mirror");
+    public static final ResourceLocation ID = ITLib.rl("mirror");
 
     public ITMirroredGeometry read(JsonObject modelContents, JsonDeserializationContext deserializationContext) throws JsonParseException {
         JsonElement innerJson = modelContents.get("inner_model");

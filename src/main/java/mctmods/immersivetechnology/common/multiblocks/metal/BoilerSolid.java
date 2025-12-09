@@ -20,7 +20,7 @@ public class BoilerSolid extends ITTemplateMultiblock {
     public static final BoilerSolid INSTANCE = new BoilerSolid();
 
     public BoilerSolid() {
-        super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/boiler_solid"), BoilerSolidShape.MASTER_POS, BoilerSolidShape.TRIGGER_POS, new BlockPos(BoilerSolidShape.WIDTH,BoilerSolidShape.HEIGHT,BoilerSolidShape.LENGTH), ImmutableList.of((expected, found, world, pos) -> {
+        super(ITLib.rl("multiblocks/boiler_solid"), BoilerSolidShape.MASTER_POS, BoilerSolidShape.TRIGGER_POS, new BlockPos(BoilerSolidShape.WIDTH,BoilerSolidShape.HEIGHT,BoilerSolidShape.LENGTH), ImmutableList.of((expected, found, world, pos) -> {
             if (expected.getBlock() == Blocks.BLAST_FURNACE) { return BlockMatcher.Result.allow(5); }
             return BlockMatcher.Result.DEFAULT;
         }), ITMultiblockProvider.BOILER_SOLID);

@@ -29,7 +29,7 @@ public class ITSolarTowerCategory extends ITRecipeCategory<SolarTowerRecipe> {
 
     public ITSolarTowerCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.SOLAR_TOWER, "block.immersivetechnology.solar_tower");
-        ResourceLocation background = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "textures/gui/solar.png");
+        ResourceLocation background = ITLib.makeTextureLocation("solar");
         IDrawableStatic back = guiHelper.drawableBuilder(background, 0, 0, 176, 74).setTextureSize(256, 256).build();
         setBackground(back);
         setIcon(ITMultiblockProvider.SOLAR_TOWER.iconStack());

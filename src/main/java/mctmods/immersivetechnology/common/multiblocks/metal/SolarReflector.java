@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 public class SolarReflector extends ITTemplateMultiblock {
     public static final SolarReflector INSTANCE = new SolarReflector();
 
-    public SolarReflector() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/solar_reflector"), SolarReflectorShape.MASTER_POS, SolarReflectorShape.TRIGGER_POS, new BlockPos(SolarReflectorShape.WIDTH,SolarReflectorShape.HEIGHT,SolarReflectorShape.LENGTH), ITMultiblockProvider.SOLAR_REFLECTOR); }
+    public SolarReflector() { super(ITLib.rl("multiblocks/solar_reflector"), SolarReflectorShape.MASTER_POS, SolarReflectorShape.TRIGGER_POS, new BlockPos(SolarReflectorShape.WIDTH,SolarReflectorShape.HEIGHT,SolarReflectorShape.LENGTH), ITMultiblockProvider.SOLAR_REFLECTOR); }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {

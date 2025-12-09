@@ -24,7 +24,7 @@ public class ITCoolingTowerCategory extends ITRecipeCategory<CoolingTowerRecipe>
 
     public ITCoolingTowerCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.COOLING_TOWER, "block.immersivetechnology.cooling_tower");
-        ResourceLocation guiTexture = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "textures/gui/boiler_liquid.png");
+        ResourceLocation guiTexture = ITLib.makeTextureLocation("boiler_liquid");
         IDrawableStatic back = guiHelper.createBlankDrawable(176, 74);
         setBackground(back);
         setIcon(ITMultiblockProvider.COOLING_TOWER.iconStack());

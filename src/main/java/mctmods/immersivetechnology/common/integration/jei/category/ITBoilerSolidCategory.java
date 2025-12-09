@@ -28,7 +28,7 @@ import java.util.List;
 public class ITBoilerSolidCategory extends ITRecipeCategory<BoilerSolidRecipe> {
     public ITBoilerSolidCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.BOILER_SOLID, "block.immersivetechnology.boiler_solid");
-        ResourceLocation background = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "textures/gui/boiler_solid.png");
+        ResourceLocation background = ITLib.makeTextureLocation("boiler_solid");
         IDrawableStatic back = guiHelper.drawableBuilder(background, 0, 0, 176, 74).setTextureSize(256, 256).build();
         setBackground(back);
         setIcon(ITMultiblockProvider.BOILER_SOLID.iconStack());

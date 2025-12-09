@@ -24,7 +24,7 @@ public class ITSteamTurbineCategory extends ITRecipeCategory<SteamTurbineRecipe>
 
     public ITSteamTurbineCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.STEAM_TURBINE, "block.immersivetechnology.steam_turbine");
-        ResourceLocation guiTexture = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "textures/gui/boiler_liquid.png");
+        ResourceLocation guiTexture = ITLib.makeTextureLocation("boiler_liquid");
         IDrawableStatic back = guiHelper.createBlankDrawable(176, 74);
         setBackground(back);
         setIcon(ITMultiblockProvider.STEAM_TURBINE.iconStack());

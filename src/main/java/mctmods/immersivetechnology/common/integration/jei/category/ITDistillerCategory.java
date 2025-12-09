@@ -32,7 +32,7 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
 
     public ITDistillerCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.DISTILLER, "block.immersivetechnology.distiller");
-        ResourceLocation background = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "textures/gui/distiller.png");
+        ResourceLocation background = ITLib.makeTextureLocation("distiller");
         setBackground(helper.createDrawable(background, 0, 0, 176, 74));
         setIcon(ITMultiblockProvider.DISTILLER.iconStack());
         tankOverlay = helper.createDrawable(background, 176, 31, 20, 51);

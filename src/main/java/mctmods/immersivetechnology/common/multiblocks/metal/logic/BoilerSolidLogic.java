@@ -201,7 +201,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     }
 
     private void updateAllBlocks(IMultiblockContext<State> ctx, Level level, boolean active) {
-        ResourceLocation boilerRL = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler_solid");
+        ResourceLocation boilerRL = ITLib.rl("boiler_solid");
         final Block boilerBlock = ForgeRegistries.BLOCKS.getValue(boilerRL);
         if (boilerBlock == null) { return; }
         for (int y = 0; y < BoilerSolidShape.HEIGHT; y++) for (int z = 0; z < LENGTH; z++) for (int x = 0; x < WIDTH; x++) {

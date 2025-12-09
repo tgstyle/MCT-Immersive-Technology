@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 public class SolarMelter extends ITTemplateMultiblock {
     public static final SolarMelter INSTANCE = new SolarMelter();
 
-    public SolarMelter() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/solar_melter"), SolarMelterShape.MASTER_POS, SolarMelterShape.TRIGGER_POS, new BlockPos(SolarMelterShape.WIDTH,SolarMelterShape.HEIGHT,SolarMelterShape.LENGTH), ITMultiblockProvider.SOLAR_MELTER); }
+    public SolarMelter() { super(ITLib.rl("multiblocks/solar_melter"), SolarMelterShape.MASTER_POS, SolarMelterShape.TRIGGER_POS, new BlockPos(SolarMelterShape.WIDTH,SolarMelterShape.HEIGHT,SolarMelterShape.LENGTH), ITMultiblockProvider.SOLAR_MELTER); }
 
     @Override
     public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {

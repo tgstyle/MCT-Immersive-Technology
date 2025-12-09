@@ -20,7 +20,7 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
     public static final AABB FULL_BLOCK = new AABB(0D, 0D, 0D, 1D, 1D, 1D);
 
     public static int[] loadDimensions(String multiblockName, String category) {
-        String path = "/assets/immersivetechnology/models/multiblock/" + category + "/obj/" + multiblockName + "/" + multiblockName + ".obj";
+        String path = "/assets/" + ITLib.MODID + "/models/multiblock/" + category + "/obj/" + multiblockName + "/" + multiblockName + ".obj";
         double minX = Double.MAX_VALUE, maxX = Double.MIN_VALUE;
         double minY = Double.MAX_VALUE, maxY = Double.MIN_VALUE;
         double minZ = Double.MAX_VALUE, maxZ = Double.MIN_VALUE;

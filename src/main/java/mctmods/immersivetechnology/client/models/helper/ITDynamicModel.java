@@ -23,7 +23,7 @@ public record ITDynamicModel(ResourceLocation name) {
     @SubscribeEvent
     public static void registerModels(ModelEvent.RegisterAdditional ev) { for (ResourceLocation model : MODELS) { ev.register(model); } }
 
-    public ITDynamicModel(String desc) { this(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "dynamic/" + desc)); MODELS.add(name); }
+    public ITDynamicModel(String desc) { this(ITLib.rl("dynamic/" + desc)); MODELS.add(name); }
 
     public BakedModel get() {
         final BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();

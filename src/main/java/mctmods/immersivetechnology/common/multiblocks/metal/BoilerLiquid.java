@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 public class BoilerLiquid extends ITTemplateMultiblock {
     public static final BoilerLiquid INSTANCE = new BoilerLiquid();
 
-    public BoilerLiquid() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/boiler_liquid"), BoilerLiquidShape.MASTER_POS, BoilerLiquidShape.TRIGGER_POS, new BlockPos(BoilerLiquidShape.WIDTH,BoilerLiquidShape.HEIGHT,BoilerLiquidShape.LENGTH), ITMultiblockProvider.BOILER_LIQUID); }
+    public BoilerLiquid() { super(ITLib.rl("multiblocks/boiler_liquid"), BoilerLiquidShape.MASTER_POS, BoilerLiquidShape.TRIGGER_POS, new BlockPos(BoilerLiquidShape.WIDTH,BoilerLiquidShape.HEIGHT,BoilerLiquidShape.LENGTH), ITMultiblockProvider.BOILER_LIQUID); }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }

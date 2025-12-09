@@ -156,7 +156,7 @@ public class ITBlockInterfaces {
                         .withOptionalParameter(LootContextParams.BLOCK_STATE, world.getBlockState(tile.getBlockPos()))
                         .withOptionalParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(tile.getBlockPos()))
                         .create(LootContextParamSets.BLOCK);
-                LootContext var10001 = (new LootContext.Builder(parms)).create(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "pick_block"));
+                LootContext var10001 = (new LootContext.Builder(parms)).create(ITLib.rl("pick_block"));
                 Objects.requireNonNull(drop);
                 getBlockEntityDrop(var10001, drop::setValue);
             }

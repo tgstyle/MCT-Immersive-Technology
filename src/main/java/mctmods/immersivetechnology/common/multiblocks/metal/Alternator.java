@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 public class Alternator extends ITTemplateMultiblock {
     public static final Alternator INSTANCE = new Alternator();
 
-    public Alternator() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/alternator"), AlternatorShape.MASTER_POS, AlternatorShape.TRIGGER_POS, new BlockPos(AlternatorShape.WIDTH,AlternatorShape.HEIGHT,AlternatorShape.LENGTH), ITMultiblockProvider.ALTERNATOR); }
+    public Alternator() { super(ITLib.rl("multiblocks/alternator"), AlternatorShape.MASTER_POS, AlternatorShape.TRIGGER_POS, new BlockPos(AlternatorShape.WIDTH,AlternatorShape.HEIGHT,AlternatorShape.LENGTH), ITMultiblockProvider.ALTERNATOR); }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }

@@ -29,7 +29,7 @@ public class ITSolarMelterCategory extends ITRecipeCategory<SolarMelterRecipe> {
 
     public ITSolarMelterCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.SOLAR_MELTER, "block.immersivetechnology.solar_melter");
-        ResourceLocation background = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "textures/gui/solar.png");
+        ResourceLocation background = ITLib.makeTextureLocation("solar");
         IDrawableStatic back = guiHelper.drawableBuilder(background, 0, 0, 176, 74).setTextureSize(256, 256).build();
         setBackground(back);
         setIcon(ITMultiblockProvider.SOLAR_MELTER.iconStack());

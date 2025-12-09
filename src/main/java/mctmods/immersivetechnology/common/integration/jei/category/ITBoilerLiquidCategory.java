@@ -29,7 +29,7 @@ public class ITBoilerLiquidCategory extends ITRecipeCategory<BoilerLiquidRecipe>
 
     public ITBoilerLiquidCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.BOILER_LIQUID, "block.immersivetechnology.boiler_liquid");
-        ResourceLocation background = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "textures/gui/boiler_liquid.png");
+        ResourceLocation background = ITLib.makeTextureLocation("boiler_liquid");
         IDrawableStatic back = guiHelper.drawableBuilder(background, 0, 0, 176, 74).setTextureSize(256, 256).build();
         setBackground(back);
         setIcon(ITMultiblockProvider.BOILER_LIQUID.iconStack());

@@ -24,7 +24,7 @@ public class ITGasTurbineCategory extends ITRecipeCategory<GasTurbineRecipe> {
 
     public ITGasTurbineCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.GAS_TURBINE, "block.immersivetechnology.gas_turbine");
-        ResourceLocation guiTexture = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "textures/gui/boiler_liquid.png");
+        ResourceLocation guiTexture = ITLib.makeTextureLocation("boiler_liquid");
         IDrawableStatic back = guiHelper.createBlankDrawable(176, 74);
         setBackground(back);
         setIcon(ITMultiblockProvider.GAS_TURBINE.iconStack());

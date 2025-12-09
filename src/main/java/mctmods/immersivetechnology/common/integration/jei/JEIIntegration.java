@@ -61,7 +61,7 @@ import static mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea.fill
 @SuppressWarnings({"unused"})
 @JeiPlugin
 public class JEIIntegration implements IModPlugin {
-    private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "main");
+    private static final ResourceLocation ID = ITLib.rl("main");
     private static IIngredientManager ingredientManager;
 
     @Override

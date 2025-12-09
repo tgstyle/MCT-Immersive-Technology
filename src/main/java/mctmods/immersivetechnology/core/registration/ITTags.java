@@ -29,5 +29,5 @@ public class ITTags {
 
     private static ResourceLocation forgeLoc(String path) { return ResourceLocation.fromNamespaceAndPath("forge", path); }
 
-    private static ResourceLocation modLoc(String path) { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, path); }
+    private static ResourceLocation modLoc(String path) { return ITLib.rl(path); }
 }

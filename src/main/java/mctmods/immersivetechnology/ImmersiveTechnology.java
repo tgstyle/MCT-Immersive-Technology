@@ -19,7 +19,6 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.proxy.ClientProxySupplier;
 import mctmods.immersivetechnology.core.proxy.CommonProxy;
 import mctmods.immersivetechnology.core.registration.ITFluids;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -100,9 +99,5 @@ public class ImmersiveTechnology {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         ITLib.IT_LOGGER.info("HELLO FROM SERVER STARTING");
-    }
-
-    public static ResourceLocation rl(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 }

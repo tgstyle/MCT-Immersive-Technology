@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 public class CoolingTower extends ITTemplateMultiblock {
     public static final CoolingTower INSTANCE = new CoolingTower();
 
-    public CoolingTower() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/cooling_tower"), CoolingTowerShape.MASTER_POS, CoolingTowerShape.TRIGGER_POS, new BlockPos(CoolingTowerShape.WIDTH,CoolingTowerShape.HEIGHT,CoolingTowerShape.LENGTH), ITMultiblockProvider.COOLING_TOWER); }
+    public CoolingTower() { super(ITLib.rl("multiblocks/cooling_tower"), CoolingTowerShape.MASTER_POS, CoolingTowerShape.TRIGGER_POS, new BlockPos(CoolingTowerShape.WIDTH,CoolingTowerShape.HEIGHT,CoolingTowerShape.LENGTH), ITMultiblockProvider.COOLING_TOWER); }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }

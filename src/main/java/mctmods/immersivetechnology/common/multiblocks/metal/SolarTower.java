@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 public class SolarTower extends ITTemplateMultiblock {
     public static final SolarTower INSTANCE = new SolarTower();
 
-    public SolarTower() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/solar_tower"), SolarTowerShape.MASTER_POS, SolarTowerShape.TRIGGER_POS, new BlockPos(SolarTowerShape.WIDTH,SolarTowerShape.HEIGHT,SolarTowerShape.LENGTH), ITMultiblockProvider.SOLAR_TOWER); }
+    public SolarTower() { super(ITLib.rl("multiblocks/solar_tower"), SolarTowerShape.MASTER_POS, SolarTowerShape.TRIGGER_POS, new BlockPos(SolarTowerShape.WIDTH,SolarTowerShape.HEIGHT,SolarTowerShape.LENGTH), ITMultiblockProvider.SOLAR_TOWER); }
 
     @Override
     public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {

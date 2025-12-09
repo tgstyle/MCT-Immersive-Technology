@@ -5,6 +5,7 @@ import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockE
 import mctmods.immersivetechnology.common.network.ITMessageTileSync;
 import mctmods.immersivetechnology.common.network.ITPacketHandler;
 import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -17,7 +18,7 @@ import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class RotorCreativeScreen extends AbstractContainerScreen<RotorCreativeMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("immersivetechnology", "textures/gui/rotor.png");
+    private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("rotor");
     private final RotorCreativeBlockEntity tile;
     private EditBox rpmField;
     private int prevRpm = Integer.MIN_VALUE;

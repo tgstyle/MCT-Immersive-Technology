@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.client.gui;
 
+import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -17,7 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 public class ValveLoadScreen extends AbstractContainerScreen<ValveLoadMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("immersivetechnology", "textures/gui/valve.png");
+    private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("valve");
     private final ValveCommonBlockEntity tile;
     private EditBox packetLimitField;
     private EditBox timeLimitField;

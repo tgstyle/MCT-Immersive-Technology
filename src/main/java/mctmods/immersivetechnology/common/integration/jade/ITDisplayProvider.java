@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.integration.jade;
 
 import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -16,7 +17,7 @@ public enum ITDisplayProvider implements IBlockComponentProvider {
     private static long lastAddTime = 0;
 
     @Override
-    public ResourceLocation getUid() { return ResourceLocation.fromNamespaceAndPath("immersivetechnology", "display"); }
+    public ResourceLocation getUid() { return ITLib.rl("display"); }
 
     @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {

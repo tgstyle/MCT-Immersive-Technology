@@ -84,7 +84,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         private String mtlOverride;
         private final Map<String, Boolean> visibility = new HashMap<>();
 
-        public ITObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "obj"), parent, existingFileHelper); }
+        public ITObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(ITLib.rl("obj"), parent, existingFileHelper); }
 
         public ITObjModelBuilder<T> modelLocation(ResourceLocation modelLocation) { this.modelLocation = modelLocation; return this; }
 

@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.common.network;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -17,7 +16,7 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public class ITPacketHandler {
     public static final String NET_VERSION = "1";
-    public static final SimpleChannel INSTANCE = NetworkRegistry.ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "main")).networkProtocolVersion(() -> NET_VERSION).serverAcceptedVersions(NET_VERSION::equals).clientAcceptedVersions(NET_VERSION::equals).simpleChannel();
+    public static final SimpleChannel INSTANCE = NetworkRegistry.ChannelBuilder.named(ITLib.rl("main")).networkProtocolVersion(() -> NET_VERSION).serverAcceptedVersions(NET_VERSION::equals).clientAcceptedVersions(NET_VERSION::equals).simpleChannel();
 
     public static void initialize() {
         registerMessage(ITMessageContainerUpdate.class, ITMessageContainerUpdate::new);

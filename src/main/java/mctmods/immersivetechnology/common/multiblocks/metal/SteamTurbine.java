@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 public class SteamTurbine extends ITTemplateMultiblock {
     public static final SteamTurbine INSTANCE = new SteamTurbine();
 
-    public SteamTurbine() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/steam_turbine"), SteamTurbineShape.MASTER_POS, SteamTurbineShape.TRIGGER_POS, new BlockPos(SteamTurbineShape.WIDTH,SteamTurbineShape.HEIGHT,SteamTurbineShape.LENGTH), ITMultiblockProvider.STEAM_TURBINE); }
+    public SteamTurbine() { super(ITLib.rl("multiblocks/steam_turbine"), SteamTurbineShape.MASTER_POS, SteamTurbineShape.TRIGGER_POS, new BlockPos(SteamTurbineShape.WIDTH,SteamTurbineShape.HEIGHT,SteamTurbineShape.LENGTH), ITMultiblockProvider.STEAM_TURBINE); }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }

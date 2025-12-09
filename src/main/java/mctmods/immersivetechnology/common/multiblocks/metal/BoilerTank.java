@@ -19,7 +19,7 @@ import com.google.common.collect.ImmutableList;
 public class BoilerTank extends ITTemplateMultiblock {
     public static final BoilerTank INSTANCE = new BoilerTank();
 
-    public BoilerTank() { super(ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "multiblocks/boiler_tank"), BoilerTankShape.MASTER_POS, BoilerTankShape.TRIGGER_POS, new BlockPos(BoilerTankShape.WIDTH,BoilerTankShape.HEIGHT,BoilerTankShape.LENGTH), ITMultiblockProvider.BOILER_TANK); }
+    public BoilerTank() { super(ITLib.rl("multiblocks/boiler_tank"), BoilerTankShape.MASTER_POS, BoilerTankShape.TRIGGER_POS, new BlockPos(BoilerTankShape.WIDTH,BoilerTankShape.HEIGHT,BoilerTankShape.LENGTH), ITMultiblockProvider.BOILER_TANK); }
 
     @Override
     public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }

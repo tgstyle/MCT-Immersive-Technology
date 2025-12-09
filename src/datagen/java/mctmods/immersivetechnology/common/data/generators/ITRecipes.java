@@ -131,9 +131,9 @@ public class ITRecipes extends RecipeProvider {
         if (PATH_COUNT.containsKey(resourceLocation)) {
             int count = PATH_COUNT.get(resourceLocation) + 1;
             PATH_COUNT.put(resourceLocation, count);
-            return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, resourceLocation + count);
+            return ITLib.rl(resourceLocation + count);
         }
         PATH_COUNT.put(resourceLocation, 1);
-        return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, resourceLocation);
+        return ITLib.rl(resourceLocation);
     }
 }

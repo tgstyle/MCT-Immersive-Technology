@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.data.loaders;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
+import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
@@ -21,7 +22,7 @@ public class ITObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBu
     private String mtlOverride;
     private final Map<String, Boolean> visibility = new HashMap<>();
     public ITObjModelBuilder<T> automaticCulling(boolean automaticCulling) { this.automaticCulling = automaticCulling; return this; }
-    public ITObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(ResourceLocation.fromNamespaceAndPath("immersivetechnology", "obj"), parent, existingFileHelper); }
+    public ITObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(ITLib.rl("obj"), parent, existingFileHelper); }
     public ITObjModelBuilder<T> modelLocation(ResourceLocation modelLocation) { this.modelLocation = modelLocation; return this; }
     public ITObjModelBuilder<T> shadeQuads(boolean shadeQuads) { this.shadeQuads = shadeQuads; return this; }
     public ITObjModelBuilder<T> flipV(boolean flipV) { this.flipV = flipV; return this; }

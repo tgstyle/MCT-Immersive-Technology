@@ -13,6 +13,7 @@ import mctmods.immersivetechnology.client.models.util.ITModelUtils;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.helper.ITEnums;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
+import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -172,7 +173,7 @@ public class ITModelConfigurableSides extends ITBakedModel {
     }
 
     public static class Loader implements IGeometryLoader<ITModelConfigurableSides.ConfigSidesModelBase> {
-        public static ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath("immersivetechnology", "conf_sides");
+        public static ResourceLocation NAME = ITLib.rl("conf_sides");
 
         @Nonnull
         public ITModelConfigurableSides.ConfigSidesModelBase read(JsonObject modelContents, @Nonnull JsonDeserializationContext deserializationContext) {
