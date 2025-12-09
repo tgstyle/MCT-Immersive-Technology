@@ -33,6 +33,11 @@ public class ITBlockEntities {
             () -> BlockEntityType.Builder.of(CrateCreativeBlockEntity::new, ITBlocks.Wooden.CRATE_CREATIVE.get()).build(null)
     );
 
+    public static final RegistryObject<BlockEntityType<HeatCreativeBlockEntity>> HEAT_CREATIVE = REGISTER.register(
+            "heat_creative",
+            () -> BlockEntityType.Builder.of(HeatCreativeBlockEntity::new, ITBlocks.Metal.HEAT_CREATIVE.get()).build(null)
+    );
+
     public static final RegistryObject<BlockEntityType<RotorCreativeBlockEntity>> ROTOR_CREATIVE = REGISTER.register(
             "rotor_creative",
             () -> BlockEntityType.Builder.of(RotorCreativeBlockEntity::new, ITBlocks.Metal.ROTOR_CREATIVE.get()).build(null)

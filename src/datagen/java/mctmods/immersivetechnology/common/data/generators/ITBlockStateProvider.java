@@ -144,6 +144,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         ResourceLocation reinforcedTexture = modLoc("block/stone/reinforced_coke_brick");
         createSlabModels(ITBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get(), reinforcedTexture, reinforcedTexture, reinforcedTexture);
         createSimpleBlock(ITBlocks.getBlock.apply("barrel_creative"), models().cubeAll("block/metal/barrel_creative", modLoc("block/metal/barrel_creative")));
+        createSimpleBlock(ITBlocks.getBlock.apply("heat_creative"), models().cubeAll("block/metal/heat_creative", modLoc("block/metal/heat_creative")));
 
         VariantBlockStateBuilder steelBuilder = getVariantBuilder(ITBlocks.getBlock.apply("barrel_steel"));
 

@@ -53,7 +53,9 @@ public class ITItemModelProvider extends ItemModelProvider {
         generateBlockItem("barrel_open", "metal/barrel_open");
         generateBlockItem("barrel_steel", "metal/barrel_steel");
         generateBlockItem("crate_creative", "wooden/crate_creative");
+        generateBlockItem("heat_creative", "metal/heat_creative");
         generateBlockItem("reinforced_coke_brick", "stone/reinforced_coke_brick");
+        generateBlockItem("rotor_creative", "dynamic/rotor", false, -8, 4, 0.7f);
         generateBlockItem("slab_reinforced_coke_brick", "stone/slab_reinforced_coke_brick");
         generateBlockItem("technology_engineering", "metal/technology_engineering");
         generateBlockItem("trash_energy", "metal/trash_energy");
@@ -62,8 +64,6 @@ public class ITItemModelProvider extends ItemModelProvider {
         generateBlockItem("valve_fluid", "metal/valve_fluid_open");
         generateBlockItem("valve_limiter", "metal/valve_limiter");
         generateBlockItem("valve_load", "metal/valve_load_open");
-
-        generateBlockItem("rotor_creative", "dynamic/rotor", false, -8, 4, 0.7f);
 
         generateGeneratedItem();
 

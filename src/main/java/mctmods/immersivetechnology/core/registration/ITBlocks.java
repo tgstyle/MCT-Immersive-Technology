@@ -47,14 +47,15 @@ public class ITBlocks {
         public static BlockEntry<BarrelCreativeBlock> BARREL_CREATIVE;
         public static BlockEntry<BarrelSteelBlock> BARREL_STEEL;
         public static BlockEntry<BarrelOpenBlock> BARREL_OPEN;
+        public static BlockEntry<HeatCreativeBlock> HEAT_CREATIVE;
         public static BlockEntry<RotorCreativeBlock> ROTOR_CREATIVE;
+        public static BlockEntry<TechnologyEngineeringBlock> TECHNOLOGY_ENGINEERING;
         public static BlockEntry<TrashEnergyBlock> TRASH_ENERGY;
         public static BlockEntry<TrashFluidBlock> TRASH_FLUID;
         public static BlockEntry<TrashItemBlock> TRASH_ITEM;
         public static BlockEntry<ValveFluidBlock> VALVE_FLUID;
         public static BlockEntry<ValveLoadBlock> VALVE_LOAD;
         public static BlockEntry<ValveLimiterBlock> VALVE_LIMITER;
-        public static BlockEntry<TechnologyEngineeringBlock> TECHNOLOGY_ENGINEERING;
 
         private static void init() {
             BARREL_CREATIVE = new BlockEntry<>(
@@ -75,6 +76,24 @@ public class ITBlocks {
                     p -> new BarrelOpenBlock(BarrelOpenBlockEntity::new, p)
             );
 
+            ROTOR_CREATIVE = new BlockEntry<>(
+                    "rotor_creative",
+                    METAL_PROPERTIES_NO_OCCLUSION,
+                    p -> new RotorCreativeBlock(RotorCreativeBlockEntity::new, p)
+            );
+
+            HEAT_CREATIVE = new BlockEntry<>(
+                    "heat_creative",
+                    METAL_PROPERTIES_NO_OCCLUSION,
+                    p -> new HeatCreativeBlock(HeatCreativeBlockEntity::new, p)
+            );
+
+            TECHNOLOGY_ENGINEERING = new BlockEntry<>(
+                    "technology_engineering",
+                    DEFAULT_METAL_PROPERTIES,
+                    TechnologyEngineeringBlock::new
+            );
+
             TRASH_ENERGY = new BlockEntry<>(
                     "trash_energy",
                     METAL_PROPERTIES_NO_OCCLUSION,
@@ -93,12 +112,6 @@ public class ITBlocks {
                     p -> new TrashItemBlock(TrashItemBlockEntity::new, p)
             );
 
-            ROTOR_CREATIVE = new BlockEntry<>(
-                    "rotor_creative",
-                    METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new RotorCreativeBlock(RotorCreativeBlockEntity::new, p)
-            );
-
             VALVE_FLUID = new BlockEntry<>(
                     "valve_fluid",
                     METAL_PROPERTIES_NO_OCCLUSION,
@@ -115,12 +128,6 @@ public class ITBlocks {
                     "valve_limiter",
                     METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new ValveLimiterBlock(ValveLimiterBlockEntity::new, p)
-            );
-
-            TECHNOLOGY_ENGINEERING = new BlockEntry<>(
-                    "technology_engineering",
-                    DEFAULT_METAL_PROPERTIES,
-                    TechnologyEngineeringBlock::new
             );
         }
     }
