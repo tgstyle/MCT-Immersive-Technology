@@ -8,6 +8,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.extensions.IForgeFriendlyByteBuf;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -16,6 +17,7 @@ public class ITGenericDataSerializers {
     public static final DataSerializer<Integer> INT32 = register(FriendlyByteBuf::readVarInt, FriendlyByteBuf::writeVarInt);
     public static final DataSerializer<FluidStack> FLUID_STACK = register(IForgeFriendlyByteBuf::readFluidStack, IForgeFriendlyByteBuf::writeFluidStack, FluidStack::copy, FluidStack::isFluidStackIdentical);
     public static final DataSerializer<Float> FLOAT = register(FriendlyByteBuf::readFloat, FriendlyByteBuf::writeFloat);
+    public static final DataSerializer<ItemStack> ITEM_STACK = register(FriendlyByteBuf::readItem, FriendlyByteBuf::writeItem, ItemStack::copy, Object::equals);
 
     private static <T> DataSerializer<T> register(Function<FriendlyByteBuf, T> read, BiConsumer<FriendlyByteBuf, T> write) { return register(read, write, (t) -> t, Objects::equals); }
     private static <T> DataSerializer<T> register(Function<FriendlyByteBuf, T> read, BiConsumer<FriendlyByteBuf, T> write, UnaryOperator<T> copy, BiPredicate<T, T> equals) {

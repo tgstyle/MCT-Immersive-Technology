@@ -25,17 +25,18 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        registerEntity(ITBlocks.MetalDevices.BARREL_CREATIVE.getRegObject());
-        registerEntity(ITBlocks.MetalDevices.BARREL_OPEN.getRegObject());
-        registerEntity(ITBlocks.MetalDevices.BARREL_STEEL.getRegObject());
-        dropSelf(ITBlocks.MetalDevices.ROTOR_CREATIVE.get());
-        dropSelf(ITBlocks.MetalDevices.TRASH_ENERGY.get());
-        dropSelf(ITBlocks.MetalDevices.TRASH_FLUID.get());
-        dropSelf(ITBlocks.MetalDevices.TRASH_ITEM.get());
-        dropSelf(ITBlocks.MetalDevices.VALVE_FLUID.get());
-        dropSelf(ITBlocks.MetalDevices.VALVE_LIMITER.get());
-        dropSelf(ITBlocks.MetalDevices.VALVE_LOAD.get());
-        dropSelf(ITBlocks.MetalDevices.TECHNOLOGY_ENGINEERING.get());
+        registerEntity(ITBlocks.Metal.BARREL_CREATIVE.getRegObject());
+        registerEntity(ITBlocks.Metal.BARREL_OPEN.getRegObject());
+        registerEntity(ITBlocks.Metal.BARREL_STEEL.getRegObject());
+        dropSelf(ITBlocks.Wooden.CRATE_CREATIVE.get());
+        dropSelf(ITBlocks.Metal.ROTOR_CREATIVE.get());
+        dropSelf(ITBlocks.Metal.TRASH_ENERGY.get());
+        dropSelf(ITBlocks.Metal.TRASH_FLUID.get());
+        dropSelf(ITBlocks.Metal.TRASH_ITEM.get());
+        dropSelf(ITBlocks.Metal.VALVE_FLUID.get());
+        dropSelf(ITBlocks.Metal.VALVE_LIMITER.get());
+        dropSelf(ITBlocks.Metal.VALVE_LOAD.get());
+        dropSelf(ITBlocks.Metal.TECHNOLOGY_ENGINEERING.get());
         dropSelf(ITBlocks.Stone.REINFORCED_COKE_BRICK.get());
         dropSelf(ITBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get());
         registerMultiblocks();

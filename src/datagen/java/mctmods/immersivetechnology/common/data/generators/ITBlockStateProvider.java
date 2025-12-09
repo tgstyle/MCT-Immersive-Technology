@@ -140,6 +140,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
         createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("block/stone/reinforced_coke_brick", modLoc("block/stone/reinforced_coke_brick")));
         createSimpleBlock(ITBlocks.getBlock.apply("technology_engineering"), models().cubeAll("block/metal/technology_engineering", modLoc("block/metal/technology_engineering")));
+        createSimpleBlock(ITBlocks.getBlock.apply("crate_creative"), models().cubeAll("block/wooden/crate_creative", modLoc("block/wooden/crate_creative")));
         ResourceLocation reinforcedTexture = modLoc("block/stone/reinforced_coke_brick");
         createSlabModels(ITBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get(), reinforcedTexture, reinforcedTexture, reinforcedTexture);
         createSimpleBlock(ITBlocks.getBlock.apply("barrel_creative"), models().cubeAll("block/metal/barrel_creative", modLoc("block/metal/barrel_creative")));
@@ -200,11 +201,11 @@ public class ITBlockStateProvider extends BlockStateProvider {
             openBuilder.partialState().with(BarrelOpenBlock.BOTTOM_CONFIG, config).setModels(new ConfiguredModel(openModel));
         }
         BlockModelBuilder trashItemModel = createTrashModel("item");
-        createRotatedBlock(ITBlocks.MetalDevices.TRASH_ITEM, state -> trashItemModel, List.of());
+        createRotatedBlock(ITBlocks.Metal.TRASH_ITEM, state -> trashItemModel, List.of());
         BlockModelBuilder trashFluidModel = createTrashModel("fluid");
-        createRotatedBlock(ITBlocks.MetalDevices.TRASH_FLUID, state -> trashFluidModel, List.of());
+        createRotatedBlock(ITBlocks.Metal.TRASH_FLUID, state -> trashFluidModel, List.of());
         BlockModelBuilder trashEnergyModel = createTrashModel("energy");
-        createRotatedBlock(ITBlocks.MetalDevices.TRASH_ENERGY, state -> trashEnergyModel, List.of());
+        createRotatedBlock(ITBlocks.Metal.TRASH_ENERGY, state -> trashEnergyModel, List.of());
         ModelFile emptyModel = models().withExistingParent("empty", mcLoc("block/block"))
                 .renderType("cutout")
                 .texture("particle", "#missingno");
@@ -223,7 +224,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         ModelFile valveClosed = createValveObjModel("valve_fluid", "valve_fluid", false, "Pipe");
         ModelFile valveOpen = createValveObjModel("valve_fluid", "valve_fluid", true, "Pipe");
 
-        VariantBlockStateBuilder valveFluidBuilder = getVariantBuilder(ITBlocks.MetalDevices.VALVE_FLUID.get());
+        VariantBlockStateBuilder valveFluidBuilder = getVariantBuilder(ITBlocks.Metal.VALVE_FLUID.get());
         valveFluidBuilder.forAllStates(state -> {
             Direction facing = state.getValue(ITProperties.FACING_ALL);
             boolean open = state.getValue(ValveFluidBlock.OPEN);
@@ -250,7 +251,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
                 modLoc("block/metal/valve_limiter_top"));
         valveLimiterBuilder.texture("particle", modLoc("block/metal/valve_limiter_side"));
 
-        VariantBlockStateBuilder valveLimiterStateBuilder = getVariantBuilder(ITBlocks.MetalDevices.VALVE_LIMITER.get());
+        VariantBlockStateBuilder valveLimiterStateBuilder = getVariantBuilder(ITBlocks.Metal.VALVE_LIMITER.get());
         valveLimiterStateBuilder.forAllStates(state -> {
             Direction facing = state.getValue(ITProperties.FACING_ALL);
             int rotationVal = state.getValue(ValveLimiterBlock.ROTATION);
@@ -273,7 +274,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         ModelFile valveLoadClosed = createValveObjModel("valve_load", "valve_load", false, "Base");
         ModelFile valveLoadOpen = createValveObjModel("valve_load", "valve_load", true, "Base");
 
-        VariantBlockStateBuilder valveLoadBuilder = getVariantBuilder(ITBlocks.MetalDevices.VALVE_LOAD.get());
+        VariantBlockStateBuilder valveLoadBuilder = getVariantBuilder(ITBlocks.Metal.VALVE_LOAD.get());
         valveLoadBuilder.forAllStates(state -> {
             Direction facing = state.getValue(ITProperties.FACING_ALL);
             boolean open = state.getValue(ValveLoadBlock.OPEN);
@@ -295,7 +296,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         });
         setRenderType(RenderType.cutout(), (BlockModelBuilder) valveLoadClosed, (BlockModelBuilder) valveLoadOpen);
 
-        VariantBlockStateBuilder rotorBuilder = getVariantBuilder(ITBlocks.MetalDevices.ROTOR_CREATIVE.get());
+        VariantBlockStateBuilder rotorBuilder = getVariantBuilder(ITBlocks.Metal.ROTOR_CREATIVE.get());
         ModelFile rotorNS = new ModelFile.UncheckedModelFile(modLoc("dynamic/rotor"));
         ModelFile rotorEW = new ModelFile.UncheckedModelFile(modLoc("dynamic/rotor_east_west"));
         rotorBuilder.forAllStates(state -> {

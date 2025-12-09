@@ -52,6 +52,7 @@ public class ITItemModelProvider extends ItemModelProvider {
         generateBlockItem("barrel_creative", "metal/barrel_creative");
         generateBlockItem("barrel_open", "metal/barrel_open");
         generateBlockItem("barrel_steel", "metal/barrel_steel");
+        generateBlockItem("crate_creative", "wooden/crate_creative");
         generateBlockItem("reinforced_coke_brick", "stone/reinforced_coke_brick");
         generateBlockItem("slab_reinforced_coke_brick", "stone/slab_reinforced_coke_brick");
         generateBlockItem("technology_engineering", "metal/technology_engineering");

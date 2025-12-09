@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.common.gui.sync.GetterAndSetter;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
@@ -42,6 +43,8 @@ public class ITGenericContainerData<T> {
         return new ITGenericContainerData<>(serializer, getFluid, tank::setFluid);
     }
 
+    public static ITGenericContainerData<ItemStack> itemStack(Supplier<ItemStack> get, Consumer<ItemStack> set) { return new ITGenericContainerData<>(ITGenericDataSerializers.ITEM_STACK, get, set); }
+
     @SuppressWarnings("unused")
     public static ITGenericContainerData<Float> float32(Supplier<Float> get, Consumer<Float> set) { return new ITGenericContainerData<>(ITGenericDataSerializers.FLOAT, get, set); }
 
@@ -53,7 +56,7 @@ public class ITGenericContainerData<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public void processSync(Object receivedData) { this.current = (T)receivedData; this.set.accept(this.serializer.copy().apply(this.current)); }
+    public void processSync(Object receivedData) { this.set.accept(this.serializer.copy().apply((T)receivedData)); }
 
     public ITGenericDataSerializers.DataPair<T> dataPair() { return new ITGenericDataSerializers.DataPair<>(this.serializer, this.current); }
 }

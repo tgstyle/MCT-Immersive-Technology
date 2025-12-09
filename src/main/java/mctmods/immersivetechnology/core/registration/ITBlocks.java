@@ -6,6 +6,8 @@ import mctmods.immersivetechnology.common.blocks.metal.*;
 import mctmods.immersivetechnology.common.blocks.metal.logic.*;
 import mctmods.immersivetechnology.common.blocks.stone.ReinforcedCokeBrick;
 import mctmods.immersivetechnology.common.blocks.stone.slab.SlabReinforcedCokeBrick;
+import mctmods.immersivetechnology.common.blocks.wooden.CrateCreativeBlock;
+import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlockEntity;
 import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.resources.ResourceLocation;
@@ -41,7 +43,7 @@ public class ITBlocks {
     private static final Supplier<BlockBehaviour.Properties> METAL_PROPERTIES_NO_OVERLAY = () -> DEFAULT_METAL_PROPERTIES.get().isViewBlocking((state, blockReader, pos) -> false);
     public static final Supplier<BlockBehaviour.Properties> METAL_PROPERTIES_NO_OCCLUSION = () -> METAL_PROPERTIES_NO_OVERLAY.get().noOcclusion().forceSolidOn();
 
-    public static final class MetalDevices {
+    public static final class Metal {
         public static BlockEntry<BarrelCreativeBlock> BARREL_CREATIVE;
         public static BlockEntry<BarrelSteelBlock> BARREL_STEEL;
         public static BlockEntry<BarrelOpenBlock> BARREL_OPEN;
@@ -141,9 +143,22 @@ public class ITBlocks {
         }
     }
 
+    public static final class Wooden {
+        public static BlockEntry<CrateCreativeBlock> CRATE_CREATIVE;
+
+        private static void init() {
+            CRATE_CREATIVE = new BlockEntry<>(
+                    "crate_creative",
+                    METAL_PROPERTIES_NO_OCCLUSION,
+                    p -> new CrateCreativeBlock(CrateCreativeBlockEntity::new, p)
+            );
+        }
+    }
+
     public static void initBlocks() {
-        MetalDevices.init();
+        Metal.init();
         Stone.init();
+        Wooden.init();
         TO_SLAB.put(Stone.REINFORCED_COKE_BRICK.getId(), Stone.SLAB_REINFORCED_COKE_BRICK);
     }
 
