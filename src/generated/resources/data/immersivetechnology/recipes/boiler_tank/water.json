@@ -4,6 +4,7 @@
     "amount": 250,
     "tag": "minecraft:water"
   },
+  "requiredHeat": 100.0,
   "result": {
     "amount": 450,
     "fluid": "immersivetechnology:steam"

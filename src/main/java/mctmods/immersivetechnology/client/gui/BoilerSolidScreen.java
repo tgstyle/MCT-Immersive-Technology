@@ -25,7 +25,8 @@ public class BoilerSolidScreen extends ITContainerScreen<BoilerSolidMenu> {
 
     @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
         float heatLevel = menu.getHeatLevel();
-        int barWidth = Mth.clamp(Math.round(41 * heatLevel / 100.0f), 0, 41);
+        double workingHeatLevel = menu.getWorkingHeatLevel();
+        int barWidth = Mth.clamp(Math.round(41 * heatLevel / (float)workingHeatLevel), 0, 41);
         graphics.blit(TEXTURE, leftPos + 119, topPos + 38, 176, 0, barWidth, 9);
 
         int total = menu.getTotalBurnTime();

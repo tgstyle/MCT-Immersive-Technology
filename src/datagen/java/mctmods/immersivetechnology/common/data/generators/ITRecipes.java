@@ -77,20 +77,20 @@ public class ITRecipes extends RecipeProvider {
     }
 
     private void recipesBoilerTank(@Nonnull Consumer<FinishedRecipe> out) {
-        BoilerTankRecipeBuilder.builder(FluidTags.WATER, 250).addOutput(ITFluids.STEAM.getStill(), 450).setTime(10).build(out, toResourceLocation("boiler_tank/water"));
-        BoilerTankRecipeBuilder.builder(ITTags.fluidDistilledWater, 250).addOutput(ITFluids.STEAM.getStill(), 500).setTime(10).build(out, toResourceLocation("boiler_tank/distilled_water"));
+        BoilerTankRecipeBuilder.builder(FluidTags.WATER, 250).addOutput(ITFluids.STEAM.getStill(), 450).setTime(10).setRequiredHeat(100.0).build(out, toResourceLocation("boiler_tank/water"));
+        BoilerTankRecipeBuilder.builder(ITTags.fluidDistilledWater, 250).addOutput(ITFluids.STEAM.getStill(), 500).setTime(10).setRequiredHeat(100.0).build(out, toResourceLocation("boiler_tank/distilled_water"));
     }
 
     private void recipesBoilerLiquid(@Nonnull Consumer<FinishedRecipe> out) {
-        BoilerLiquidRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 10).setTime(10).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_liquid/biodiesel"));
-        BoilerLiquidRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 50).setTime(10).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_liquid/gasoline"));
-        BoilerLiquidRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "diesel")), 7).setTime(10).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_liquid/diesel"));
-        BoilerLiquidRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "kerosene")), 9).setTime(10).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_liquid/kerosene"));
+        BoilerLiquidRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 10).setTime(10).setHeatPerTick(0.1).setTargetHeat(100.0).build(out, toResourceLocation("boiler_liquid/biodiesel"));
+        BoilerLiquidRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 50).setTime(10).setHeatPerTick(0.1).setTargetHeat(100.0).build(out, toResourceLocation("boiler_liquid/gasoline"));
+        BoilerLiquidRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "diesel")), 7).setTime(10).setHeatPerTick(0.1).setTargetHeat(100.0).build(out, toResourceLocation("boiler_liquid/diesel"));
+        BoilerLiquidRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "kerosene")), 9).setTime(10).setHeatPerTick(0.1).setTargetHeat(100.0).build(out, toResourceLocation("boiler_liquid/kerosene"));
     }
 
     private void recipesBoilerSolid(@Nonnull Consumer<FinishedRecipe> out) {
-        BoilerSolidRecipeBuilder.builder().addInput(ItemTags.COALS, 1).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_solid/coal"));
-        BoilerSolidRecipeBuilder.builder().addInput(IETags.coalCoke, 1).setHeatPerTick(0.1).build(out, toResourceLocation("boiler_solid/coal_coke"));
+        BoilerSolidRecipeBuilder.builder().addInput(ItemTags.COALS, 1).setHeatPerTick(0.1).setTargetHeat(100.0).build(out, toResourceLocation("boiler_solid/coal"));
+        BoilerSolidRecipeBuilder.builder().addInput(IETags.coalCoke, 1).setHeatPerTick(0.1).setTargetHeat(100.0).build(out, toResourceLocation("boiler_solid/coal_coke"));
     }
 
     private void recipesCoolingTower(@Nonnull Consumer<FinishedRecipe> out) {

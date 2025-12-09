@@ -19,4 +19,6 @@ public class BoilerTankRecipeBuilder extends IEFinishedRecipe<BoilerTankRecipeBu
     public BoilerTankRecipeBuilder addOutput(Fluid outputFluid, int outputAmount) { return addFluid("result", new FluidStack(outputFluid, outputAmount)); }
 
     public BoilerTankRecipeBuilder setTime(int time) { return this.addWriter((jsonObject) -> jsonObject.addProperty("time", time)); }
+
+    public BoilerTankRecipeBuilder setRequiredHeat(double requiredHeat) { return this.addWriter((jsonObject) -> jsonObject.addProperty("requiredHeat", requiredHeat)); }
 }

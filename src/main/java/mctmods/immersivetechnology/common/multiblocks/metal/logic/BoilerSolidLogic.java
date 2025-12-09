@@ -56,7 +56,7 @@ import java.util.function.Supplier;
 public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State>, IServerTickableComponent<BoilerSolidLogic.State>, IClientTickableComponent<BoilerSolidLogic.State> {
     public static final int INPUT_FUEL_SLOT = 0;
     private static final double HEAT_LOSS_PER_TICK = 0.2;
-    private static final double WORKING_HEAT_LEVEL = 100.0;
+    public static final double DEFAULT_WORKING_HEAT_LEVEL = 100.0;
     public static final double PILOT_HEAT = 20.0;
     private static final int PILOT_MULTIPLIER = 15;
     private static final double DEFAULT_HEAT_PER_TICK = 0.1;
@@ -88,7 +88,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) { return; }
         float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
-        float currentLevel = (float) (state.heatLevel / WORKING_HEAT_LEVEL);
+        float currentLevel = (float) (state.heatLevel / state.getWorkingHeatLevel());
         float vol = (2 * currentLevel) / attenuation;
         if (state.heatLevel > 0 && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
             state.isSoundPlaying = ITSound.startSound(
@@ -100,9 +100,9 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                         LocalPlayer p = Minecraft.getInstance().player;
                         if (p == null) { return 0f; }
                         float a = (float) Math.max(p.distanceToSqr(soundPos) / 8, 1);
-                        return (2 * (float) (state.heatLevel / WORKING_HEAT_LEVEL)) / a;
+                        return (2 * (float) (state.heatLevel / state.getWorkingHeatLevel())) / a;
                     },
-                    () -> (float) (state.heatLevel / WORKING_HEAT_LEVEL)
+                    () -> (float) (state.heatLevel / state.getWorkingHeatLevel())
             );
         }
         final Level level = ctx.getLevel().getRawLevel();
@@ -141,7 +141,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         double previousHeatLevel = state.heatLevel;
         boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
         boolean fullMode = state.rsState.isEnabled(ctx) && hasWater;
-        boolean isActive = state.pilotLit && fullMode && state.heatLevel >= WORKING_HEAT_LEVEL;
+        boolean isActive = state.pilotLit && fullMode && state.heatLevel >= state.getWorkingHeatLevel();
         if (!ctx.isValid().getAsBoolean()) { state.active = false; isActive = false; update = true; }
         if (state.active != isActive) {
             state.active = isActive;
@@ -157,7 +157,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             if (state.burnRemaining > 0) {
                 boolean consumeThisTick = fullMode || (level.getGameTime() % PILOT_MULTIPLIER == 0);
                 if (consumeThisTick) { state.burnRemaining--; }
-                if (fullMode) { state.heatLevel = Math.min(state.heatLevel + state.heatPerTick, WORKING_HEAT_LEVEL); }
+                if (fullMode) { state.heatLevel = Math.min(state.heatLevel + state.heatPerTick, state.targetHeat); }
                 else { state.heatLevel = Math.max(state.heatLevel - HEAT_LOSS_PER_TICK, PILOT_HEAT); }
             } else {
                 state.totalBurnTime = 0;
@@ -168,9 +168,11 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                 single.setCount(1);
                 int burnTimePerItem = ForgeHooks.getBurnTime(single, RecipeType.SMELTING);
                 double heatPerTick = DEFAULT_HEAT_PER_TICK;
+                double targetHeat = DEFAULT_WORKING_HEAT_LEVEL;
                 int consumeAmount = 1;
                 if (recipe != null) {
                     heatPerTick = recipe.getHeatPerTick();
+                    targetHeat = recipe.getTargetHeat();
                     consumeAmount = recipe.input.getCount();
                     if (burnTimePerItem <= 0) { burnTimePerItem = 200; }
                 }
@@ -183,6 +185,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                         state.burnRemaining = (burnTimePerItem * consumeAmount) / ITCommonConfig.burnTimeDivider;
                         state.totalBurnTime = state.burnRemaining;
                         state.heatPerTick = heatPerTick;
+                        state.targetHeat = targetHeat;
                         state.pilotLit = true;
                     } else {
                         state.pilotLit = false;
@@ -268,6 +271,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         public int burnRemaining = 0;
         public int totalBurnTime = 0;
         public double heatPerTick = 0;
+        public double targetHeat = DEFAULT_WORKING_HEAT_LEVEL;
         public boolean pilotLit = false;
         public boolean active = false;
         public BooleanSupplier isSoundPlaying = () -> false;
@@ -287,11 +291,14 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             boilerInput = ctx.getCapabilityAt(HeatCapabilities.HEAT_CONSUMER_CAPABILITY, opposingMBFace);
         }
 
+        public double getWorkingHeatLevel() { return targetHeat; }
+
         @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.putDouble("heatLevel", heatLevel);
             nbt.putInt("burnRemaining", burnRemaining);
             nbt.putInt("totalBurnTime", totalBurnTime);
             nbt.putDouble("heatPerTick", heatPerTick);
+            nbt.putDouble("targetHeat", targetHeat);
             nbt.putBoolean("pilotLit", pilotLit);
             nbt.put("inventory", inventory.serializeNBT());
         }
@@ -301,6 +308,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             burnRemaining = nbt.getInt("burnRemaining");
             totalBurnTime = nbt.getInt("totalBurnTime");
             heatPerTick = nbt.getDouble("heatPerTick");
+            targetHeat = nbt.getDouble("targetHeat");
             pilotLit = nbt.getBoolean("pilotLit");
             inventory.deserializeNBT(nbt.getCompound("inventory"));
         }
@@ -327,6 +335,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             nbt.putInt("totalBurnTime", totalBurnTime);
             nbt.put("inventory", inventory.serializeNBT());
             nbt.putBoolean("needClientBlockUpdate", needClientBlockUpdate);
+            nbt.putDouble("workingHeatLevel", getWorkingHeatLevel());
             needClientBlockUpdate = false;
         }
 

@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 import blusunrize.immersiveengineering.api.crafting.*;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
+import mctmods.immersivetechnology.api.HeatCapabilities;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -19,12 +20,14 @@ public class BoilerTankRecipe extends MultiblockRecipe {
 
     public final FluidTagInput input;
     public final FluidStack output;
+    public final double requiredHeat;
     Lazy<Integer> totalProcessTime;
 
-    public BoilerTankRecipe(ResourceLocation id, FluidTagInput input, FluidStack output, int time) {
+    public BoilerTankRecipe(ResourceLocation id, FluidTagInput input, FluidStack output, int time, double requiredHeat) {
         super(LAZY_EMPTY, ITRecipeTypes.BOILER_TANK, id);
         this.input = input;
         this.output = output;
+        this.requiredHeat = Math.min(requiredHeat, HeatCapabilities.MAX_HEAT);
         totalProcessTime = Lazy.of(() -> time);
 
         this.fluidInputList = Lists.newArrayList(this.input);

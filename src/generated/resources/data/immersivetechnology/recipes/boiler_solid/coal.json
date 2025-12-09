@@ -3,5 +3,6 @@
   "heatPerTick": 0.1,
   "input": {
     "tag": "minecraft:coals"
-  }
+  },
+  "targetHeat": 100.0
 }

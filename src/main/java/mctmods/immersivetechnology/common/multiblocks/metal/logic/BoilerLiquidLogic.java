@@ -57,7 +57,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     public static final int INPUT_FUEL_SLOT_EMPTY = 1;
     public static final int TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
     private static final double HEAT_LOSS_PER_TICK = 0.2;
-    public static final double WORKING_HEAT_LEVEL = 100.0;
+    public static final double DEFAULT_WORKING_HEAT_LEVEL = 100.0;
     public static final double PILOT_HEAT = 20.0;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerLiquidShape.DATA.pointsOfInterest);
 
@@ -85,7 +85,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) { return; }
         float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
-        float currentLevel = (float) (state.heatLevel / WORKING_HEAT_LEVEL);
+        float currentLevel = (float) (state.heatLevel / state.getWorkingHeatLevel());
         float vol = (2 * currentLevel) / attenuation;
         if (state.heatLevel > 0 && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
             state.isSoundPlaying = ITSound.startSound(
@@ -97,9 +97,9 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                         LocalPlayer p = Minecraft.getInstance().player;
                         if (p == null) { return 0f; }
                         float a = (float) Math.max(p.distanceToSqr(soundPos) / 8, 1);
-                        return (2 * (float) (state.heatLevel / WORKING_HEAT_LEVEL)) / a;
+                        return (2 * (float) (state.heatLevel / state.getWorkingHeatLevel()) ) / a;
                     },
-                    () -> (float) (state.heatLevel / WORKING_HEAT_LEVEL)
+                    () -> (float) (state.heatLevel / state.getWorkingHeatLevel())
             );
         }
         Level level = ctx.getLevel().getRawLevel();
@@ -152,11 +152,12 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                     state.lastFuel = BoilerLiquidRecipe.findRecipe(level, dummy);
                 }
                 if (state.lastFuel != null) {
+                    state.targetHeat = state.lastFuel.getTargetHeat();
                     FluidStack drained;
                     if (fullMode) {
                         int drainAmount = state.lastFuel.input.getAmount();
                         drained = state.tanks.input1.drain(drainAmount, FluidAction.EXECUTE);
-                        if (drained.getAmount() == drainAmount) { state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), WORKING_HEAT_LEVEL); }
+                        if (drained.getAmount() == drainAmount) { state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), state.targetHeat); }
                         else {
                             drained = state.tanks.input1.drain(1, FluidAction.EXECUTE);
                             if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
@@ -175,7 +176,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             }
         }
         tryEmptyContainer(state.tanks.input1, state.inventory);
-        state.active = state.pilotLit && fullMode && state.heatLevel >= WORKING_HEAT_LEVEL;
+        state.active = state.pilotLit && fullMode && state.heatLevel >= state.getWorkingHeatLevel();
         boolean heatLevelChanged = prevHeatLevel != state.heatLevel;
         boolean pilotLitChanged = prevPilotLit != state.pilotLit;
         boolean activeChanged = wasActive != state.active;
@@ -230,6 +231,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         public double heatLevel = 0;
         public int burnRemaining = 0;
         public BoilerLiquidRecipe lastFuel;
+        public double targetHeat = DEFAULT_WORKING_HEAT_LEVEL;
         public boolean pilotLit = false;
         public boolean active = false;
         public BooleanSupplier isSoundPlaying = () -> false;
@@ -254,11 +256,16 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             boilerInput = ctx.getCapabilityAt(HeatCapabilities.HEAT_CONSUMER_CAPABILITY, opposingMBFace);
         }
 
+        public double getWorkingHeatLevel() {
+            return (lastFuel != null) ? lastFuel.getTargetHeat() : DEFAULT_WORKING_HEAT_LEVEL;
+        }
+
         @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tanks", tanks.toNBT());
             nbt.putDouble("heatLevel", heatLevel);
             nbt.putInt("burnRemaining", burnRemaining);
             nbt.putBoolean("pilotLit", pilotLit);
+            nbt.putDouble("targetHeat", targetHeat);
             nbt.put("inventory", inventory.serializeNBT());
         }
 
@@ -267,6 +274,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             heatLevel = nbt.getDouble("heatLevel");
             burnRemaining = nbt.getInt("burnRemaining");
             pilotLit = nbt.getBoolean("pilotLit");
+            targetHeat = nbt.getDouble("targetHeat");
             inventory.deserializeNBT(nbt.getCompound("inventory"));
         }
 
@@ -292,6 +300,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             nbt.putBoolean("pilotLit", pilotLit);
             nbt.put("tanks", tanks.toNBT());
             nbt.put("inventory", inventory.serializeNBT());
+            nbt.putDouble("workingHeatLevel", getWorkingHeatLevel());
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {

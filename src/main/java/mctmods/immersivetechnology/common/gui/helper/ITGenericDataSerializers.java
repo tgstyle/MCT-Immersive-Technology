@@ -17,6 +17,7 @@ public class ITGenericDataSerializers {
     public static final DataSerializer<Integer> INT32 = register(FriendlyByteBuf::readVarInt, FriendlyByteBuf::writeVarInt);
     public static final DataSerializer<FluidStack> FLUID_STACK = register(IForgeFriendlyByteBuf::readFluidStack, IForgeFriendlyByteBuf::writeFluidStack, FluidStack::copy, FluidStack::isFluidStackIdentical);
     public static final DataSerializer<Float> FLOAT = register(FriendlyByteBuf::readFloat, FriendlyByteBuf::writeFloat);
+    public static final DataSerializer<Double> DOUBLE = register(FriendlyByteBuf::readDouble, FriendlyByteBuf::writeDouble);
     public static final DataSerializer<ItemStack> ITEM_STACK = register(FriendlyByteBuf::readItem, FriendlyByteBuf::writeItem, ItemStack::copy, Object::equals);
 
     private static <T> DataSerializer<T> register(Function<FriendlyByteBuf, T> read, BiConsumer<FriendlyByteBuf, T> write) { return register(read, write, (t) -> t, Objects::equals); }

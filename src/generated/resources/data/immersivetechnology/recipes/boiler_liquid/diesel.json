@@ -5,5 +5,6 @@
     "amount": 7,
     "tag": "forge:diesel"
   },
+  "targetHeat": 100.0,
   "time": 10
 }

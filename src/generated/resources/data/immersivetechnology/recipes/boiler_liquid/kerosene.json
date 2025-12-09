@@ -5,5 +5,6 @@
     "amount": 9,
     "tag": "forge:kerosene"
   },
+  "targetHeat": 100.0,
   "time": 10
 }

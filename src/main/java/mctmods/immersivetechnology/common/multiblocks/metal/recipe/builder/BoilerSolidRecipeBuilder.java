@@ -18,4 +18,6 @@ public class BoilerSolidRecipeBuilder extends IEFinishedRecipe<BoilerSolidRecipe
     public BoilerSolidRecipeBuilder addInput(TagKey<Item> itemTag, int amount) { return addInput(new IngredientWithSize(Ingredient.of(itemTag), amount)); }
 
     public BoilerSolidRecipeBuilder setHeatPerTick(double heatPerTick) { return this.addWriter((jsonObject) -> jsonObject.addProperty("heatPerTick", heatPerTick)); }
+
+    public BoilerSolidRecipeBuilder setTargetHeat(double targetHeat) { return this.addWriter((jsonObject) -> jsonObject.addProperty("targetHeat", targetHeat)); }
 }

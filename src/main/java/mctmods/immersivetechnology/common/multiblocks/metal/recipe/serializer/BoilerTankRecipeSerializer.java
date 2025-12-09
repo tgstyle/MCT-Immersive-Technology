@@ -6,6 +6,7 @@ import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 
 import com.google.gson.JsonObject;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerTankLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 
@@ -27,19 +28,22 @@ public class BoilerTankRecipeSerializer extends IERecipeSerializer<BoilerTankRec
         FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         FluidStack output = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result"));
         int time = GsonHelper.getAsInt(json, "time", 1);
-        return new BoilerTankRecipe(recipeID, input, output, time);
+        double requiredHeat = GsonHelper.getAsDouble(json, "requiredHeat", BoilerTankLogic.DEFAULT_WORKING_HEAT_LEVEL);
+        return new BoilerTankRecipe(recipeID, input, output, time, requiredHeat);
     }
 
     @Override @Nullable public BoilerTankRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         FluidStack output = buffer.readFluidStack();
         int time = buffer.readInt();
-        return new BoilerTankRecipe(recipeId, input, output, time);
+        double requiredHeat = buffer.readDouble();
+        return new BoilerTankRecipe(recipeId, input, output, time, requiredHeat);
     }
 
     @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, BoilerTankRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.output);
         buffer.writeInt(recipe.getTotalProcessTime());
+        buffer.writeDouble(recipe.requiredHeat);
     }
 }

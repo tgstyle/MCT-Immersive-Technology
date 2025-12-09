@@ -4,6 +4,7 @@
     "amount": 250,
     "tag": "immersivetechnology:distilled_water"
   },
+  "requiredHeat": 100.0,
   "result": {
     "amount": 500,
     "fluid": "immersivetechnology:steam"

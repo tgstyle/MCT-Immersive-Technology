@@ -16,6 +16,7 @@ import java.util.List;
 public class BoilerLiquidMenu extends ITContainerMenu {
     public final BoilerLiquidLogic.BoilerTank tanks;
     private float heatLevel = 0.0f;
+    private double workingHeatLevel = BoilerLiquidLogic.DEFAULT_WORKING_HEAT_LEVEL;
 
     public static BoilerLiquidMenu makeServer(MenuType<BoilerLiquidMenu> type, int id, Inventory invPlayer, ITContainerMenu.MultiblockMenuContext<BoilerLiquidLogic.State> ctx) {
         final BoilerLiquidLogic.State state = ctx.mbContext().getState();
@@ -47,7 +48,9 @@ public class BoilerLiquidMenu extends ITContainerMenu {
         for (int i = 0; i < 9; i++) { addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142)); }
         addGenericData(ITGenericContainerData.fluid(tanks.input1()));
         addGenericData(new ITGenericContainerData<>(ITGenericDataSerializers.FLOAT, () -> (state != null ? (float)state.heatLevel : heatLevel), f -> this.heatLevel = f));
+        addGenericData(new ITGenericContainerData<>(ITGenericDataSerializers.DOUBLE, () -> (state != null ? state.getWorkingHeatLevel() : workingHeatLevel), d -> this.workingHeatLevel = d));
     }
 
     public float getHeatLevel() { return heatLevel; }
+    public double getWorkingHeatLevel() { return workingHeatLevel; }
 }

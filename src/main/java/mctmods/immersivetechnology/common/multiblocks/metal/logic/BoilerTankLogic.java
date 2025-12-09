@@ -51,7 +51,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     public static final int OUTPUT_SLOT_FILLED = 3;
     public static final int TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
     private static final int PROGRESS_LOSS_PER_TICK = 1;
-    private static final double WORKING_HEAT_LEVEL = 100.0;
+    public static final double DEFAULT_WORKING_HEAT_LEVEL = 100.0;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerTankShape.DATA.pointsOfInterest);
 
     public static final List<BlockPos> FLUID_INPUT_POI = getPosList("fluid_input");
@@ -85,10 +85,11 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         if (state.heatSource.isPresent()) { heatLevel = state.heatSource.get().getHeatLevel(); }
         double previousHeatLevel = state.heatLevel;
         state.heatLevel = heatLevel;
-        boolean isActive = heatLevel >= WORKING_HEAT_LEVEL && state.recipeTimeRemaining > 0;
+        boolean isActive = heatLevel >= state.getWorkingHeatLevel() && state.recipeTimeRemaining > 0;
         if (state.active != isActive) { state.active = isActive; update = true; }
         if (previousHeatLevel != state.heatLevel) { update = true; }
-        if (heatLevel >= WORKING_HEAT_LEVEL) {
+        double required = state.getWorkingHeatLevel();
+        if (heatLevel >= required) {
             if (state.recipeTimeRemaining > 0) {
                 if (state.lastRecipe == null) { state.recipeTimeRemaining = 0; update = true; }
                 else {
@@ -101,15 +102,17 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             } else if (state.tanks.input.getFluidAmount() > 0) {
                 state.lastRecipe = BoilerTankRecipe.findRecipe(level, state.tanks.input.getFluid());
                 if (state.lastRecipe != null && state.lastRecipe.input.getAmount() <= state.tanks.input.getFluidAmount() && state.lastRecipe.output.getAmount() <= state.tanks.output.getCapacity() - state.tanks.output.getFluidAmount()) {
-                    int reqAmount = state.lastRecipe.input.getAmount();
-                    FluidStack drained = state.tanks.input.drain(reqAmount, FluidAction.EXECUTE);
-                    if (drained.getAmount() == reqAmount && state.lastRecipe.input.testIgnoringAmount(drained)) {
-                        state.recipeTimeRemaining = state.lastRecipe.getTotalProcessTime();
-                        state.recipeTimeRemaining--;
-                        if (state.recipeTimeRemaining == 0) {
-                            state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE);
+                    if (heatLevel >= state.lastRecipe.requiredHeat) {
+                        int reqAmount = state.lastRecipe.input.getAmount();
+                        FluidStack drained = state.tanks.input.drain(reqAmount, FluidAction.EXECUTE);
+                        if (drained.getAmount() == reqAmount && state.lastRecipe.input.testIgnoringAmount(drained)) {
+                            state.recipeTimeRemaining = state.lastRecipe.getTotalProcessTime();
+                            state.recipeTimeRemaining--;
+                            if (state.recipeTimeRemaining == 0) {
+                                state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE);
+                            }
+                            update = true;
                         }
-                        update = true;
                     }
                 }
             }
@@ -204,6 +207,10 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             heatSource = ctx.getCapabilityAt(HeatCapabilities.HEAT_PROVIDER_CAPABILITY, heatOpposingMBFace);
         }
 
+        public double getWorkingHeatLevel() {
+            return (lastRecipe != null) ? lastRecipe.requiredHeat : DEFAULT_WORKING_HEAT_LEVEL;
+        }
+
         @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tanks", tanks.toNBT());
             nbt.putInt("recipeTimeRemaining", recipeTimeRemaining);
@@ -236,6 +243,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             nbt.putBoolean("active", active);
             nbt.putDouble("heatLevel", heatLevel);
             nbt.put("tanks", tanks.toNBT());
+            nbt.putDouble("workingHeatLevel", getWorkingHeatLevel());
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {

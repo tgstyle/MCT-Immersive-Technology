@@ -1,10 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.api.crafting.*;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
+import mctmods.immersivetechnology.api.HeatCapabilities;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -22,13 +21,15 @@ public class BoilerLiquidRecipe extends MultiblockRecipe {
     public final FluidTagInput input;
     private final int time;
     private final double heatPerTick;
+    private final double targetHeat;
     Lazy<Integer> totalProcessTime;
 
-    public BoilerLiquidRecipe(ResourceLocation id, FluidTagInput input, int time, double heatPerTick) {
+    public BoilerLiquidRecipe(ResourceLocation id, FluidTagInput input, int time, double heatPerTick, double targetHeat) {
         super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.BOILER_LIQUID, id);
         this.input = input;
         this.time = time;
         this.heatPerTick = heatPerTick;
+        this.targetHeat = Math.min(targetHeat, HeatCapabilities.MAX_HEAT);
         totalProcessTime = Lazy.of(() -> this.time);
         this.fluidInputList = Lists.newArrayList(this.input);
     }
@@ -49,4 +50,6 @@ public class BoilerLiquidRecipe extends MultiblockRecipe {
     @Override public int getMultipleProcessTicks() { return 0; }
 
     public double getHeatPerTick() { return heatPerTick; }
+
+    public double getTargetHeat() { return targetHeat; }
 }
