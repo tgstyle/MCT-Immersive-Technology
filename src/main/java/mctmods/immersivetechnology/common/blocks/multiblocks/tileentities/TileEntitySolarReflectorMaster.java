@@ -15,11 +15,11 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     private BlockPos towerCollectorPosition;
     private float[] animationRotations = new float[2];
 
-    @Override
-    public void update() { super.update(); }
+    private BlockPos getTowerCollectorPosition() { return towerCollectorPosition != null ? towerCollectorPosition : getPos(); }
 
-    @Override
-    public boolean isDummy() { return false; }
+    @Override public void update() { super.update(); }
+
+    @Override public boolean isDummy() { return false; }
 
     @Override
     public TileEntitySolarReflectorMaster master() {
@@ -44,22 +44,15 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
             notifyNearbyClients();
             this.markDirty();
         }
-        return towerCollectorPosition.equals(position);
+        return getTowerCollectorPosition().equals(position);
     }
 
-    public void detachTower(BlockPos position) {
-        if (!towerCollectorPosition.equals(position)) return;
-        isMirrorTaken = false;
-        towerCollectorPosition = this.getPos();
-        calculateAnimationRotations();
-        notifyNearbyClients();
-        this.markDirty();
-    }
+    public void detachTower(BlockPos position) { if (!getTowerCollectorPosition().equals(position)) return; isMirrorTaken = false; towerCollectorPosition = getPos(); calculateAnimationRotations(); notifyNearbyClients(); this.markDirty(); }
 
     public void notifyNearbyClients() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setBoolean("isMirrorTaken", isMirrorTaken);
-        tag.setIntArray("towerCollectorPosition", new int[]{towerCollectorPosition.getX(), towerCollectorPosition.getY(), towerCollectorPosition.getZ()});
+        tag.setIntArray("towerCollectorPosition", new int[]{getTowerCollectorPosition().getX(), getTowerCollectorPosition().getY(), getTowerCollectorPosition().getZ()});
         tag.setFloat("rotation0", animationRotations[0]);
         tag.setFloat("rotation1", animationRotations[1]);
         BlockPos center = getPos();
@@ -69,9 +62,10 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     public float[] getAnimationRotations() { return animationRotations; }
 
     private void calculateAnimationRotations() {
-        int xdiff = getPos().getX() - towerCollectorPosition.getX();
-        int ydiff = getPos().getY() - towerCollectorPosition.getY();
-        int zdiff = getPos().getZ() - towerCollectorPosition.getZ();
+        BlockPos target = getTowerCollectorPosition();
+        int xdiff = getPos().getX() - target.getX();
+        int ydiff = getPos().getY() - target.getY();
+        int zdiff = getPos().getZ() - target.getZ();
         double xzdiff = Math.sqrt(xdiff * xdiff + zdiff * zdiff);
         animationRotations = new float[]{(float)(Math.atan2(xdiff, zdiff) * 180 / Math.PI) + 90 * (getFacing().getHorizontalIndex() + ((getFacing().getXOffset() == 0) ? 0 : 2)), (float) (Math.abs(Math.atan2(ydiff, xzdiff) * 180 / Math.PI) - 90)};
     }
@@ -86,6 +80,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         isMirrorTaken = nbt.getBoolean("isMirrorTaken");
+        towerCollectorPosition = null;
         if (nbt.hasKey("towerCollectorPosition")) {
             int[] posArr = nbt.getIntArray("towerCollectorPosition");
             if (posArr.length == 3) towerCollectorPosition = new BlockPos(posArr[0], posArr[1], posArr[2]);
@@ -98,7 +93,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
         nbt.setBoolean("isMirrorTaken", isMirrorTaken);
-        nbt.setIntArray("towerCollectorPosition", new int[]{towerCollectorPosition.getX(), towerCollectorPosition.getY(), towerCollectorPosition.getZ()});
+        nbt.setIntArray("towerCollectorPosition", new int[]{getTowerCollectorPosition().getX(), getTowerCollectorPosition().getY(), getTowerCollectorPosition().getZ()});
         nbt.setFloat("rotation0", animationRotations[0]);
         nbt.setFloat("rotation1", animationRotations[1]);
     }
