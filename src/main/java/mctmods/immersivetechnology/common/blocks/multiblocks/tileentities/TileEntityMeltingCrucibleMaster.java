@@ -7,12 +7,12 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartMeltingCrucible;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
-import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
@@ -43,21 +43,17 @@ import javax.annotation.Nonnull;
 
 public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver {
     private static final int outputTankSize = Multiblocks.meltingCrucible.meltingCrucible_output_tankSize;
-
-    public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(outputTankSize, this)};
-
+    public FluidTank[] tanks = new FluidTank[] { new ITFluidTank(outputTankSize, this) };
     public static int slotCount = 1;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
-
     IItemHandler insertionHandler = new IEInventoryHandler(slotCount, this, 0, new boolean[]{true}, new boolean[]{false});
-
     MeltingCrucibleRecipe recipe;
     private MeltingCrucibleRecipe cachedRecipe;
-
     PoICache itemInput0;
     PoICache fluidOutput0;
-    private BlockPos soundOrigin, outputFront;
-    private int redstonePos0 = -1, energyPos0 = -1;
+    private BlockPos soundPos0, fluidOutputFront0;
+    private PoICache redstone0;
+    private PoICache energyInput0;
     private float soundVolume;
     private float targetVolume;
     private int clientUpdateCooldown = 20;
@@ -67,74 +63,57 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     private boolean notify;
     private int gracePeriod = 60;
 
-    @Override
-    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
     }
 
-    @Override
-    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
         nbt.setTag("inventory", Utils.writeInventory(inventory));
     }
 
-    public void requestUpdate() {
-        ByteBuf buffer = Unpooled.copyBoolean(true);
-        BlockPos center = getPos();
-        ImmersiveTechnology.packetHandler.sendToServer(new BinaryMessageTileSync(center, buffer));
-    }
+    public void requestUpdate() { BinaryMessageTileSync.sendToServer(getPos(), Unpooled.copyBoolean(true)); }
 
     public void notifyNearbyClients() {
         if (clientUpdateCooldown > 0) { notify = true; return; }
         clientUpdateCooldown = 20;
-        ByteBuf buffer = Unpooled.copyBoolean(isRunning);
-        BlockPos center = getPos();
-        ImmersiveTechnology.packetHandler.sendToAllAround(new BinaryMessageTileSync(center, buffer), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
+        ImmersiveTechnology.packetHandler.sendToAllAround(new BinaryMessageTileSync(getPos(), Unpooled.copyBoolean(isRunning)), new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 40));
         notify = false;
     }
 
-    @Override
-    public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {
-        ByteBuf buffer = Unpooled.copyBoolean(isRunning);
-        BlockPos center = getPos();
-        ImmersiveTechnology.packetHandler.sendTo(new BinaryMessageTileSync(center, buffer), player);
-    }
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { BinaryMessageTileSync.sendToPlayer(player, getPos(), Unpooled.copyBoolean(isRunning)); }
 
-    @Override
-    public void receiveMessageFromServer(ByteBuf message) { targetVolume = message.readBoolean() ? 1f : 0f; }
+    @Override public void receiveMessageFromServer(ByteBuf message) { targetVolume = message.readBoolean() ? 1f : 0f; }
 
     public void handleSounds() {
         if (soundVolume < targetVolume) { soundVolume = Math.min(soundVolume + 0.02f, targetVolume); }
         else if (soundVolume > targetVolume) { soundVolume = Math.max(soundVolume - 0.02f, targetVolume); }
-        if (soundVolume == 0) { ITSoundHandler.StopSound(soundOrigin); }
+        if (soundVolume == 0) { ITSoundHandler.StopSound(soundPos0); }
         else {
             float attenuation = Math.max((float) Math.sqrt(distanceSqToTE) / 8, 1);
-            ITSounds.heatExchanger.PlayRepeating(soundOrigin, (10 * soundVolume) / attenuation, 1);
+            ITSounds.heatExchanger.PlayRepeating(soundPos0, (10 * soundVolume) / attenuation, 1);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    @Override
-    public void onChunkUnload() {
-        if (soundOrigin == null) InitializePoIs();
-        ITSoundHandler.StopSound(soundOrigin);
+    @Override public void onChunkUnload() {
+        ITSoundHandler.StopSound(soundPos0);
         super.onChunkUnload();
     }
 
-    @Override
-    public void disassemble() {
-        if (soundOrigin == null) InitializePoIs();
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundOrigin), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundOrigin.getX(), soundOrigin.getY(), soundOrigin.getZ(), 0));
+    @Override public void disassemble() {
+        if (soundPos0 == null) InitializePoIs();
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         super.disassemble();
     }
 
     private void clientUpdate() {
-        if (soundOrigin == null) InitializePoIs();
+        if (soundPos0 == null) InitializePoIs();
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double currentDistance = player.getDistanceSq(soundOrigin.getX(), soundOrigin.getY(), soundOrigin.getZ());
+        double currentDistance = player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ());
         if (getWorld().provider.getDimension() == player.dimension && currentDistance < 400 && (distanceSqToTE > 400 || playerDimension != player.dimension)) { requestUpdate(); }
         distanceSqToTE = currentDistance;
         playerDimension = player.dimension;
@@ -171,8 +150,8 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         }
     }
 
-    @Override
-    public void update() {
+    @Override public void update() {
+        if (formed && redstone0 == null) InitializePoIs();
         super.update();
         if (world.isRemote) {
             clientUpdate();
@@ -183,32 +162,25 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
     public void efficientMarkDirty() { world.getChunk(this.getPos()).markDirty(); }
 
-    @Override
-    public void TankContentsChanged() { this.markContainingBlockForUpdate(null); }
+    @Override public void TankContentsChanged() { this.markContainingBlockForUpdate(null); }
 
-    @Override
-    public void onProcessFinish(@Nonnull MultiblockProcess<MeltingCrucibleRecipe> process) { tanks[0].fill(process.recipe.fluidOutput, true); }
+    @Override public void onProcessFinish(@Nonnull MultiblockProcess<MeltingCrucibleRecipe> process) { tanks[0].fill(process.recipe.fluidOutput, true); }
 
-    @Override
-    public boolean isDummy() { return false; }
+    @Override public boolean isDummy() { return false; }
 
-    @Override
-    public TileEntityMeltingCrucibleMaster master() {
-        master = this;
-        return this;
-    }
+    @Override public TileEntityMeltingCrucibleMaster master() { return this; }
 
     void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartMeltingCrucible.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "redstone": redstonePos0 = poi.position; break;
-                case "energy_input": energyPos0 = poi.position; break;
+                case "redstone": redstone0 = new PoICache(facing, poi, mirrored); break;
+                case "energy_input": energyInput0 = new PoICache(facing, poi, mirrored); break;
                 case "item_input": itemInput0 = new PoICache(facing, poi, mirrored); break;
                 case "fluid_output":
                     fluidOutput0 = new PoICache(facing, poi, mirrored);
-                    outputFront = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
                     break;
-                case "sound": soundOrigin = getBlockPosForPos(poi.position); break;
+                case "sound": soundPos0 = getBlockPosForPos(poi.position); break;
             }
         }
         if (!world.isRemote) notifyIONeighbors();
@@ -217,50 +189,42 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     private void notifyIONeighbors() {
         notifyNeighbor(getBlockPosForPos(itemInput0.position));
         notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        notifyNeighbor(getBlockPosForPos(redstonePos0));
-        notifyNeighbor(getBlockPosForPos(energyPos0));
+        notifyNeighbor(getBlockPosForPos(redstone0.position));
+        notifyNeighbor(getBlockPosForPos(energyInput0.position));
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
     protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        if (fluidOutput0 == null) InitializePoIs();
-        if (side == null) return tanks;
-        else if (fluidOutput0.isPoI(side, position)) return new FluidTank[] {tanks[0]};
+        if (side == null) return new IFluidTank[] {tanks[0]};
+        else if (fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
         return ITUtils.emptyIFluidTankList;
     }
 
     protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
 
-    protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (fluidOutput0 == null) InitializePoIs();
-        if (fluidOutput0.isPoI(side, position)) return tanks[0].getFluidAmount() > 0;
-        return false;
-    }
+    protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { return fluidOutput0.isPoI(side, position); }
 
     private void pumpOutputOut() {
-        if (fluidOutput0 == null) InitializePoIs();
         if (tanks[0].getFluidAmount() == 0) return;
-        IFluidHandler output;
-        if ((output = FluidUtil.getFluidHandler(world, outputFront, fluidOutput0.facing.getOpposite())) != null) {
-            FluidStack out = tanks[0].getFluid();
-            int accepted = output.fill(out, false);
-            if (accepted == 0) return;
-            assert out != null;
-            int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-            this.tanks[0].drain(drained, true);
-        }
+        if (fluidOutput0 == null) InitializePoIs();
+        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputFront0, fluidOutput0.facing.getOpposite());
+        if (output == null) return;
+        FluidStack out = tanks[0].getFluid();
+        int accepted = output.fill(out, false);
+        if (accepted == 0) return;
+        assert out != null;
+        int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+        this.tanks[0].drain(drained, true);
     }
 
-    @Override
-    public @Nonnull int[] getRedstonePos() {
-        if (redstonePos0 == -1) InitializePoIs();
-        return new int[] {redstonePos0};
+    @Override public @Nonnull int[] getRedstonePos() {
+        if (redstone0 == null) InitializePoIs();
+        return new int[] {redstone0.position};
     }
 
-    @Override
-    public @Nonnull int[] getEnergyPos() {
-        if (energyPos0 == -1) InitializePoIs();
-        return new int[] {energyPos0};
+    @Override public @Nonnull int[] getEnergyPos() {
+        if (energyInput0 == null) InitializePoIs();
+        return new int[] {energyInput0.position};
     }
 }

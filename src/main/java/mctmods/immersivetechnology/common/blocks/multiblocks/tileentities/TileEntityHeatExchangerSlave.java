@@ -33,17 +33,13 @@ import java.util.List;
 public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEntityHeatExchangerSlave, HeatExchangerRecipe, TileEntityHeatExchangerMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntityHeatExchangerSlave() { super(TileEntityITMultiblockPartHeatExchanger.instance, Multiblocks.heatExchanger.heatExchanger_energy_size, true); }
 
-    @Override
-    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 
-    @Override
-    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
-    @Override
-    public void update() { if (isDummy()) ITUtils.RemoveDummyFromTicking(this); super.update(); }
+    @Override public void update() { if (isDummy()) ITUtils.RemoveDummyFromTicking(this); super.update(); }
 
-    @Override
-    public boolean isDummy() { return true; }
+    @Override public boolean isDummy() { return true; }
 
     TileEntityHeatExchangerMaster master;
 
@@ -55,68 +51,54 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
         return master;
     }
 
-    @Override
-    public NonNullList<ItemStack> getInventory() { return null; }
+    @Override public NonNullList<ItemStack> getInventory() { return null; }
 
-    @Override
-    public boolean isStackValid(int slot, ItemStack stack) { return false; }
+    @Override public boolean isStackValid(int slot, ItemStack stack) { return false; }
 
-    @Override
-    public int getSlotLimit(int slot) { return 0; }
+    @Override public int getSlotLimit(int slot) { return 0; }
 
-    @Override
-    public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
+    @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
 
-    @Override
-    protected @Nonnull HeatExchangerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return HeatExchangerRecipe.loadFromNBT(tag); }
+    @Override protected @Nonnull HeatExchangerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return HeatExchangerRecipe.loadFromNBT(tag); }
 
-    @Override
-    public @Nonnull int[] getEnergyPos() { return master() == null ? new int[0] : master.getEnergyPos(); }
+    @Override public @Nonnull int[] getEnergyPos() { return master() == null ? new int[0] : master.getEnergyPos(); }
 
-    @Override
-    public @Nonnull int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
+    @Override public @Nonnull int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
 
-    @Override
-    public @Nonnull int[] getOutputTanks() { return new int[]{2, 3}; }
+    @Override public @Nonnull int[] getOutputTanks() { return new int[]{2, 3}; }
 
-    @Override
-    public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<HeatExchangerRecipe> process) { return true; }
+    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<HeatExchangerRecipe> process) { return true; }
 
-    @Override
-    public int getMaxProcessPerTick() { return 1; }
+    @Override public int getMaxProcessPerTick() { return 1; }
 
-    @Override
-    public int getProcessQueueMaxLength() { return 1; }
+    @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override
-    protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         TileEntityHeatExchangerMaster master = master();
         if (master == null) return ITUtils.emptyIFluidTankList;
         return master.getAccessibleFluidTanks(side, position);
     }
 
-    @Override
-    protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) {
         TileEntityHeatExchangerMaster master = master();
         if (master == null) return false;
         return master.canFillTankFrom(iTank, side, resource, position);
     }
 
-    @Override
-    protected boolean canDrainTankFrom(int iTank, EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, EnumFacing side, int position) {
         TileEntityHeatExchangerMaster master = master();
         if (master == null) return false;
         return master.canDrainTankFrom(iTank, side, position);
     }
 
-    private BlockPos posToMultiblock() {
+    public BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartHeatExchanger.instance.width;
         int length = TileEntityITMultiblockPartHeatExchanger.instance.length;
         int y = pos / (length * width);
         int rem = pos % (length * width);
         int z = rem / width;
         int x = rem % width;
-        if (mirrored) x = width - 1 - x;
+        if (this.mirrored) x = width - 1 - x;
         return new BlockPos(x, y, z);
     }
 
@@ -125,7 +107,7 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
         List<AxisAlignedBB> list = HeatExchangerShape.GETTER.getShape(posInMultiblock);
         if (list.isEmpty()) return Shapes.empty();
         List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, this.facing, this.mirrored));
         VoxelShape vs = Shapes.empty();
         for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
         return vs.optimize();

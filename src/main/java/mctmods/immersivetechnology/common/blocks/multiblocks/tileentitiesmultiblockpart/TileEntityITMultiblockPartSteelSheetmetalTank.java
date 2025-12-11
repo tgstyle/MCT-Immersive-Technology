@@ -24,14 +24,11 @@ public class TileEntityITMultiblockPartSteelSheetmetalTank extends TileEntityITM
                 ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEEL_TANK_SLAVE.getMeta()));
     }
 
-    @Override
-    public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
+    @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 
-    @Override
-    public float getManualScale() { return 10; }
+    @Override public float getManualScale() { return 10; }
 
-    @Override
-    public boolean canRenderFormedStructure() { return true; }
+    @Override public boolean canRenderFormedStructure() { return true; }
 
     @Override
     @SideOnly(Side.CLIENT)

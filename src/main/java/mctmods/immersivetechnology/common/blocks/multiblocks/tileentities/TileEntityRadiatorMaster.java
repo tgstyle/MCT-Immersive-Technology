@@ -43,18 +43,15 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     private static final int inputTankSize = Multiblocks.radiator.radiator_input_tankSize;
     private static final int outputTankSize = Multiblocks.radiator.radiator_output_tankSize;
     private static final float speedMult = Multiblocks.radiator.radiator_speed_multiplier;
-
     public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(inputTankSize, this), new ITFluidTank(outputTankSize, this)};
-
     public int recipeTimeRemaining = 0;
     private int clientUpdateCooldown = 20;
     private double radiationEfficiency = 0;
-
     public RadiatorRecipe lastRecipe;
     private RadiatorRecipe cachedRecipe;
-
     private PoICache fluidInput0, fluidOutput0;
-    private BlockPos soundOrigin0, fluidOutputFront0;
+    private BlockPos soundPos0, fluidOutputFront0;
+    private PoICache redstone0;
     private float soundVolume;
     private boolean isRunning;
     private int gracePeriod = 60;
@@ -77,23 +74,11 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         nbt.setDouble("radiationEfficiency", radiationEfficiency);
     }
 
-    public void requestUpdate() {
-        ByteBuf buffer = Unpooled.copyBoolean(true);
-        BlockPos center = getPos();
-        ImmersiveTechnology.packetHandler.sendToServer(new BinaryMessageTileSync(center, buffer));
-    }
+    public void requestUpdate() { BinaryMessageTileSync.sendToServer(getPos(), Unpooled.copyBoolean(true)); }
 
-    public void notifyNearbyClients() {
-        ByteBuf buffer = Unpooled.copyBoolean(isRunning);
-        BlockPos center = getPos();
-        ImmersiveTechnology.packetHandler.sendToAllAround(new BinaryMessageTileSync(center, buffer), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
-    }
+    public void notifyNearbyClients() { BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.copyBoolean(isRunning)); }
 
-    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {
-        ByteBuf buffer = Unpooled.copyBoolean(isRunning);
-        BlockPos center = getPos();
-        ImmersiveTechnology.packetHandler.sendTo(new BinaryMessageTileSync(center, buffer), player);
-    }
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { BinaryMessageTileSync.sendToPlayer(player, getPos(), Unpooled.copyBoolean(isRunning)); }
 
     @Override public void receiveMessageFromServer(ByteBuf message) { isRunning = message.readBoolean(); }
 
@@ -181,23 +166,23 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     public void handleSounds() {
         if (isRunning) { if (soundVolume < 1) soundVolume += 0.01f; }
         else { if (soundVolume > 0) soundVolume -= 0.01f; }
-        if (soundVolume == 0) { ITSoundHandler.StopSound(soundOrigin0); }
+        if (soundVolume == 0) { ITSoundHandler.StopSound(soundPos0); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float) player.getDistanceSq(soundOrigin0.getX(), soundOrigin0.getY(), soundOrigin0.getZ()) / 8, 1);
-            ITSounds.solarTower.PlayRepeating(soundOrigin0, (2 * soundVolume) / attenuation, soundVolume);
+            float attenuation = Math.max((float) player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 8, 1);
+            ITSounds.solarTower.PlayRepeating(soundPos0, (2 * soundVolume) / attenuation, soundVolume);
         }
     }
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        ITSoundHandler.StopSound(soundOrigin0);
+        ITSoundHandler.StopSound(soundPos0);
         super.onChunkUnload();
     }
 
     @Override public void disassemble() {
         super.disassemble();
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundOrigin0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundOrigin0.getX(), soundOrigin0.getY(), soundOrigin0.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
     }
 
     public void efficientMarkDirty() { world.getChunk(this.getPos()).markDirty(); }
@@ -224,14 +209,12 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     @Override public boolean isDummy() { return false; }
 
-    @Override public TileEntityRadiatorMaster master() {
-        master = this;
-        return this;
-    }
+    @Override public TileEntityRadiatorMaster master() { return this; }
 
     private void clientUpdate() {
+        if (soundPos0 == null) InitializePoIs();
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double distSq = player.getDistanceSq(soundOrigin0.getX(), soundOrigin0.getY(), soundOrigin0.getZ());
+        double distSq = player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ());
         if (getWorld().provider.getDimension() == player.dimension && distSq < 400 && (distanceSqToTE > 400 || playerDimension != player.dimension)) requestUpdate();
         distanceSqToTE = distSq;
         playerDimension = player.dimension;
@@ -259,8 +242,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     }
 
     @Override public void update() {
+        if (formed && redstone0 == null) InitializePoIs();
         super.update();
-        if (fluidInput0 == null || fluidOutput0 == null || soundOrigin0 == null) InitializePoIs();
         if (world.isRemote) { clientUpdate(); return; }
         serverUpdate();
     }
@@ -273,7 +256,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
                     fluidOutput0 = new PoICache(facing, poi, mirrored);
                     fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
                     break;
-                case "sound": soundOrigin0 = getBlockPosForPos(poi.position); break;
+                case "sound": soundPos0 = getBlockPosForPos(poi.position); break;
+                case "redstone": redstone0 = new PoICache(facing, poi, mirrored); break;
             }
         }
         if (!world.isRemote) notifyIONeighbors();
@@ -282,14 +266,15 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     private void notifyIONeighbors() {
         notifyNeighbor(getBlockPosForPos(fluidInput0.position));
         notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
+        notifyNeighbor(getBlockPosForPos(redstone0.position));
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
     protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        if (side == null) return tanks;
-        if (fluidInput0.isPoI(side, position)) return new FluidTank[] {tanks[0]};
-        if (fluidOutput0.isPoI(side, position)) return new FluidTank[] {tanks[1]};
+        if (side == null) return new IFluidTank[] {tanks[0], tanks[1]};
+        if (fluidInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
+        if (fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
         return ITUtils.emptyIFluidTankList;
     }
 
@@ -298,13 +283,16 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
             if (tanks[iTank].getFluidAmount() >= tanks[iTank].getCapacity()) return false;
             FluidStack current = tanks[iTank].getFluid();
             if (current == null) return RadiatorRecipe.findRecipeByFluid(resource.getFluid()) != null;
-            return resource.getFluid() == current.getFluid();
+            return resource.isFluidEqual(current);
         }
         return false;
     }
 
-    protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (fluidOutput0.isPoI(side, position)) return tanks[1].getFluidAmount() > 0;
-        return false;
+    protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { return fluidOutput0.isPoI(side, position); }
+
+    @Override public @Nonnull int[] getRedstonePos() {
+        if (!formed) return new int[0];
+        if (redstone0 == null) InitializePoIs();
+        return new int[] {redstone0.position};
     }
 }

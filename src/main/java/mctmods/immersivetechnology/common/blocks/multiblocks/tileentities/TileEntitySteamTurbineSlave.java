@@ -80,7 +80,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityITMultiblock<TileEnti
 
     @Override protected @Nullable SteamTurbineRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return null; }
 
-    @Override public @Nonnull int[] getRedstonePos() { return new int[] { 32 }; }
+    @Override public @Nonnull int[] getRedstonePos() { return new int[0]; }
 
     @Override public @Nonnull int[] getOutputTanks() { return new int[] { 1 }; }
 

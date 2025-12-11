@@ -55,8 +55,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         tag.setIntArray("towerCollectorPosition", new int[]{getTowerCollectorPosition().getX(), getTowerCollectorPosition().getY(), getTowerCollectorPosition().getZ()});
         tag.setFloat("rotation0", animationRotations[0]);
         tag.setFloat("rotation1", animationRotations[1]);
-        BlockPos center = getPos();
-        ImmersiveTechnology.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
+        ImmersiveTechnology.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 40));
     }
 
     public float[] getAnimationRotations() { return animationRotations; }

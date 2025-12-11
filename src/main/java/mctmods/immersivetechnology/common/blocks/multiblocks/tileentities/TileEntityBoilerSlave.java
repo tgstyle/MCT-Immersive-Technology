@@ -94,7 +94,7 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
         int rem = pos % (length * width);
         int z = rem / width;
         int x = rem % width;
-        if (mirrored) x = width - 1 - x;
+        if (this.mirrored) x = width - 1 - x;
         return new BlockPos(x, y, z);
     }
 
@@ -103,7 +103,7 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
         List<AxisAlignedBB> list = BoilerShape.GETTER.getShape(posInMultiblock);
         if (list.isEmpty()) return Shapes.empty();
         List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, this.facing, this.mirrored));
         VoxelShape vs = Shapes.empty();
         for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
         return vs.optimize();

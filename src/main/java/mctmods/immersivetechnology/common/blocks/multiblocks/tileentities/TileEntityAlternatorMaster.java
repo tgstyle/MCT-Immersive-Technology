@@ -58,10 +58,10 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     private float oldTorqueMult = 1;
     private int cachedGenerated = 0;
     MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
-    private final PoICache[] energyOutputs = new PoICache[6];
+    private PoICache energyOutput0, energyOutput1, energyOutput2, energyOutput3, energyOutput4, energyOutput5;
     private PoICache redstone, mechanicalInput;
     private BlockPos soundOrigin, mechanicalInputFront;
-    private final BlockPos[] EnergyOutputPositions = new BlockPos[6];
+    private BlockPos energyOutputPos0, energyOutputPos1, energyOutputPos2, energyOutputPos3, energyOutputPos4, energyOutputPos5;
     private boolean needsPoIInit = false;
     private boolean needsNotify = false;
 
@@ -126,7 +126,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             TileEntity tile = world.getTileEntity(mechanicalInputFront);
             if (tile instanceof ITBlockInterfaces.IMechanicalEnergy) {
                 ITBlockInterfaces.IMechanicalEnergy possibleProvider = (ITBlockInterfaces.IMechanicalEnergy) tile;
-                if (possibleProvider.isValid() && possibleProvider.isMechanicalEnergyTransmitter(facing.getOpposite())) provider = possibleProvider;
+                if (possibleProvider.isValid() && possibleProvider.isMechanicalEnergyTransmitter(this.facing.getOpposite())) provider = possibleProvider;
             }
         }
         return provider != null && provider.isValid();
@@ -162,17 +162,89 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         if (currentEnergy > 0) {
             TileEntity tileEntity;
             int transferRate = (int)Math.ceil(rfPerTickPerPort * torqueMult);
-            for (int i = 0; i < 6; i++) {
-                if (currentEnergy == 0) break;
-                tileEntity = Utils.getExistingTileEntity(world, EnergyOutputPositions[i]);
-                if (tileEntity == null) continue;
-                EnumFacing energyFacing = energyOutputs[i].facing.getOpposite();
-                if (!EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) continue;
-                int canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, transferRate), true);
-                if (canReceiveAmount == 0) continue;
-                EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
-                energyStorage.modifyEnergyStored(-canReceiveAmount);
-                currentEnergy = energyStorage.getEnergyStored();
+            EnumFacing energyFacing;
+            int canReceiveAmount;
+            tileEntity = Utils.getExistingTileEntity(world, energyOutputPos0);
+            if (tileEntity != null) {
+                energyFacing = energyOutput0.facing.getOpposite();
+                if (EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) {
+                    canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, transferRate), true);
+                    if (canReceiveAmount > 0) {
+                        EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
+                        energyStorage.modifyEnergyStored(-canReceiveAmount);
+                        currentEnergy = energyStorage.getEnergyStored();
+                    }
+                }
+            }
+            if (currentEnergy > 0) {
+                tileEntity = Utils.getExistingTileEntity(world, energyOutputPos1);
+                if (tileEntity != null) {
+                    energyFacing = energyOutput1.facing.getOpposite();
+                    if (EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) {
+                        canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, transferRate), true);
+                        if (canReceiveAmount > 0) {
+                            EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
+                            energyStorage.modifyEnergyStored(-canReceiveAmount);
+                            currentEnergy = energyStorage.getEnergyStored();
+                        }
+                    }
+                }
+            }
+            if (currentEnergy > 0) {
+                tileEntity = Utils.getExistingTileEntity(world, energyOutputPos2);
+                if (tileEntity != null) {
+                    energyFacing = energyOutput2.facing.getOpposite();
+                    if (EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) {
+                        canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, transferRate), true);
+                        if (canReceiveAmount > 0) {
+                            EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
+                            energyStorage.modifyEnergyStored(-canReceiveAmount);
+                            currentEnergy = energyStorage.getEnergyStored();
+                        }
+                    }
+                }
+            }
+            if (currentEnergy > 0) {
+                tileEntity = Utils.getExistingTileEntity(world, energyOutputPos3);
+                if (tileEntity != null) {
+                    energyFacing = energyOutput3.facing.getOpposite();
+                    if (EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) {
+                        canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, transferRate), true);
+                        if (canReceiveAmount > 0) {
+                            EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
+                            energyStorage.modifyEnergyStored(-canReceiveAmount);
+                            currentEnergy = energyStorage.getEnergyStored();
+                        }
+                    }
+                }
+            }
+            if (currentEnergy > 0) {
+                tileEntity = Utils.getExistingTileEntity(world, energyOutputPos4);
+                if (tileEntity != null) {
+                    energyFacing = energyOutput4.facing.getOpposite();
+                    if (EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) {
+                        canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, transferRate), true);
+                        if (canReceiveAmount > 0) {
+                            EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
+                            energyStorage.modifyEnergyStored(-canReceiveAmount);
+                            currentEnergy = energyStorage.getEnergyStored();
+                        }
+                    }
+                }
+            }
+            if (currentEnergy > 0) {
+                tileEntity = Utils.getExistingTileEntity(world, energyOutputPos5);
+                if (tileEntity != null) {
+                    energyFacing = energyOutput5.facing.getOpposite();
+                    if (EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) {
+                        canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, transferRate), true);
+                        if (canReceiveAmount > 0) {
+                            EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
+                            energyStorage.modifyEnergyStored(-canReceiveAmount);
+                            currentEnergy = energyStorage.getEnergyStored();
+                        }
+                    }
+                }
             }
         }
         boolean changed = oldSpeed != speed;
@@ -204,26 +276,48 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     }
 
     public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
-        if (energyOutputs[0] == null) InitializePoIs();
+        if (energyOutput0 == null) InitializePoIs();
         if (facing == null) return false;
-        for (PoICache p : energyOutputs) if (p.isPoI(facing, position)) return true;
-        return false;
+        if (energyOutput0.isPoI(facing, position)) return true;
+        if (energyOutput1.isPoI(facing, position)) return true;
+        if (energyOutput2.isPoI(facing, position)) return true;
+        if (energyOutput3.isPoI(facing, position)) return true;
+        if (energyOutput4.isPoI(facing, position)) return true;
+        return energyOutput5.isPoI(facing, position);
     }
 
     @Override public int getComparatorInputOverride() { return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored(); }
 
     private void InitializePoIs() {
-        int energyIndex = 0;
         for (PoIJSONSchema poi : TileEntityITMultiblockPartAlternator.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "energy_output":
-                    energyOutputs[energyIndex] = new PoICache(facing, poi, mirrored);
-                    EnergyOutputPositions[energyIndex] = getBlockPosForPos(energyOutputs[energyIndex].position).offset(energyOutputs[energyIndex].facing);
-                    energyIndex++;
+                case "energy_output0":
+                    energyOutput0 = new PoICache(this.facing, poi, this.mirrored);
+                    energyOutputPos0 = getBlockPosForPos(energyOutput0.position).offset(energyOutput0.facing);
                     break;
-                case "redstone": redstone = new PoICache(facing, poi, mirrored); break;
+                case "energy_output1":
+                    energyOutput1 = new PoICache(this.facing, poi, this.mirrored);
+                    energyOutputPos1 = getBlockPosForPos(energyOutput1.position).offset(energyOutput1.facing);
+                    break;
+                case "energy_output2":
+                    energyOutput2 = new PoICache(this.facing, poi, this.mirrored);
+                    energyOutputPos2 = getBlockPosForPos(energyOutput2.position).offset(energyOutput2.facing);
+                    break;
+                case "energy_output3":
+                    energyOutput3 = new PoICache(this.facing, poi, this.mirrored);
+                    energyOutputPos3 = getBlockPosForPos(energyOutput3.position).offset(energyOutput3.facing);
+                    break;
+                case "energy_output4":
+                    energyOutput4 = new PoICache(this.facing, poi, this.mirrored);
+                    energyOutputPos4 = getBlockPosForPos(energyOutput4.position).offset(energyOutput4.facing);
+                    break;
+                case "energy_output5":
+                    energyOutput5 = new PoICache(this.facing, poi, this.mirrored);
+                    energyOutputPos5 = getBlockPosForPos(energyOutput5.position).offset(energyOutput5.facing);
+                    break;
+                case "redstone": redstone = new PoICache(this.facing, poi, this.mirrored); break;
                 case "mechanical_input":
-                    mechanicalInput = new PoICache(facing, poi, mirrored);
+                    mechanicalInput = new PoICache(this.facing, poi, this.mirrored);
                     mechanicalInputFront = getBlockPosForPos(mechanicalInput.position).offset(mechanicalInput.facing);
                     break;
                 case "sound": soundOrigin = getBlockPosForPos(poi.position); break;
@@ -232,7 +326,12 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     }
 
     private void notifyIONeighbors() {
-        for (PoICache p : energyOutputs) notifyNeighbor(getBlockPosForPos(p.position));
+        notifyNeighbor(getBlockPosForPos(energyOutput0.position));
+        notifyNeighbor(getBlockPosForPos(energyOutput1.position));
+        notifyNeighbor(getBlockPosForPos(energyOutput2.position));
+        notifyNeighbor(getBlockPosForPos(energyOutput3.position));
+        notifyNeighbor(getBlockPosForPos(energyOutput4.position));
+        notifyNeighbor(getBlockPosForPos(energyOutput5.position));
         notifyNeighbor(getBlockPosForPos(redstone.position));
     }
 

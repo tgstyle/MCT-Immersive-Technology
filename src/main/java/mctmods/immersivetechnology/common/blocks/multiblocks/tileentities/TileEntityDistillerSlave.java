@@ -46,17 +46,13 @@ import java.util.Objects;
 public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IMirrorAble, IUsesBooleanProperty, IFluxReceiver, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntityDistillerSlave() { super(TileEntityITMultiblockPartDistiller.instance, 16000, true); }
 
-    @Override
-    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 
-    @Override
-    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
-    @Override
-    public void update() { if(isDummy()) ITUtils.RemoveDummyFromTicking(this); super.update(); }
+    @Override public void update() { if(isDummy()) ITUtils.RemoveDummyFromTicking(this); super.update(); }
 
-    @Override
-    public boolean isDummy() { return true; }
+    @Override public boolean isDummy() { return true; }
 
     TileEntityDistillerMaster master;
 
@@ -68,84 +64,60 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
         return master;
     }
 
-    @Override
-    public NonNullList<ItemStack> getInventory() { return master() == null ? NonNullList.withSize(4, ItemStack.EMPTY) : master.inventory; }
+    @Override public NonNullList<ItemStack> getInventory() { return master() == null ? NonNullList.withSize(4, ItemStack.EMPTY) : master.inventory; }
 
-    @Override
-    public boolean isStackValid(int slot, ItemStack stack) { return true; }
+    @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
 
-    @Override
-    public int getSlotLimit(int slot) { return 64; }
+    @Override public int getSlotLimit(int slot) { return 64; }
 
-    @Override
-    public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
+    @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
 
-    @Override
-    protected @Nonnull DistillerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DistillerRecipe.loadFromNBT(tag); }
+    @Override protected @Nonnull DistillerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DistillerRecipe.loadFromNBT(tag); }
 
-    @Override
-    public @Nonnull int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
+    @Override public @Nonnull int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
 
-    @Override
-    public @Nonnull int[] getOutputTanks() { return new int[]{1}; }
+    @Override public @Nonnull int[] getOutputTanks() { return new int[]{1}; }
 
-    @Override
-    public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<DistillerRecipe> process) { return true; }
+    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<DistillerRecipe> process) { return true; }
 
-    @Override
-    public int getMaxProcessPerTick() { return 1; }
+    @Override public int getMaxProcessPerTick() { return 1; }
 
-    @Override
-    public int getProcessQueueMaxLength() { return 1; }
+    @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override
-    public float getMinProcessDistance(@Nonnull MultiblockProcess<DistillerRecipe> process) { return 1f; }
+    @Override public float getMinProcessDistance(@Nonnull MultiblockProcess<DistillerRecipe> process) { return 1f; }
 
-    @Override
-    protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { return master() != null ? master.getAccessibleFluidTanks(side, position) : ITUtils.emptyIFluidTankList; }
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { return master() != null ? master.getAccessibleFluidTanks(side, position) : ITUtils.emptyIFluidTankList; }
 
-    @Override
-    protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return master() != null && master.canFillTankFrom(iTank, side, resource, position); }
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return master() != null && master.canFillTankFrom(iTank, side, resource, position); }
 
-    @Override
-    protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { return master() != null && master.canDrainTankFrom(iTank, side, position); }
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { return master() != null && master.canDrainTankFrom(iTank, side, position); }
 
-    @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if(capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.isEnergyPosition(facing, pos)) return true;
         return super.hasCapability(capability, facing);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public @Nonnull <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override public @Nonnull <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if(capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.isEnergyPosition(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
         return Objects.requireNonNull(super.getCapability(capability, facing));
     }
 
-    @Override
-    public @Nonnull FluxStorage getFluxStorage() { return master() == null ? new FluxStorage(0) : master.energyStorage; }
+    @Override public @Nonnull FluxStorage getFluxStorage() { return master() == null ? new FluxStorage(0) : master.energyStorage; }
 
-    @Override
-    public @Nonnull SideConfig getEnergySideConfig(@Nullable EnumFacing facing) { return formed && master() != null && master.isEnergyPosition(facing, pos) ? SideConfig.INPUT : SideConfig.NONE; }
+    @Override public @Nonnull SideConfig getEnergySideConfig(@Nullable EnumFacing facing) { return formed && master() != null && master.isEnergyPosition(facing, pos) ? SideConfig.INPUT : SideConfig.NONE; }
 
-    @Override
-    public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) { return !formed ? 0 : energyStorage.receiveEnergy(energy, simulate); }
+    @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) { return !formed ? 0 : energyStorage.receiveEnergy(energy, simulate); }
 
-    @Override
-    public boolean canOpenGui() { return formed; }
+    @Override public boolean canOpenGui() { return formed; }
 
-    @Override
-    public int getGuiID() { return ITGUI.GUIID_Distiller; }
+    @Override public int getGuiID() { return ITGUI.GUIID_Distiller; }
 
-    @Override
-    public TileEntity getGuiMaster() { return master(); }
+    @Override public TileEntity getGuiMaster() { return master(); }
 
-    @Override
-    public boolean getIsMirrored() { return mirrored; }
+    @Override public boolean getIsMirrored() { return mirrored; }
 
-    @Override
-    public @Nonnull IEProperties.PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
+    @Override public @Nonnull IEProperties.PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
 
     private BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartDistiller.instance.width;
@@ -154,7 +126,7 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
         int rem = pos % (length * width);
         int z = rem / width;
         int x = rem % width;
-        if (mirrored) x = width - 1 - x;
+        if (this.mirrored) x = width - 1 - x;
         return new BlockPos(x, y, z);
     }
 
@@ -163,7 +135,7 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
         List<AxisAlignedBB> list = DistillerShape.GETTER.getShape(posInMultiblock);
         if (list.isEmpty()) return Shapes.empty();
         List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, this.facing, this.mirrored));
         VoxelShape vs = Shapes.empty();
         for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
         return vs.optimize();

@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.common.blocks.multiblocks.tileentities;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
 import blusunrize.immersiveengineering.common.util.Utils;
 
-import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
@@ -32,70 +31,55 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("NullableProblems")
 public class TileEntitySolarReflectorSlave extends TileEntityITMultiblock<TileEntitySolarReflectorSlave, IMultiblockRecipe, TileEntitySolarReflectorMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntitySolarReflectorSlave() { super(TileEntityITMultiblockPartSolarReflector.instance, 0, false); }
 
-    @Override
-    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 
-    @Override
-    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
-    @Override
-    public void update() { if (isDummy()) ITUtils.RemoveDummyFromTicking(this); super.update(); }
+    @Override public void update() {
+        if(isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        super.update();
+    }
 
-    @Override
-    public boolean isDummy() { return true; }
+    @Override public boolean isDummy() { return true; }
 
     TileEntitySolarReflectorMaster master;
 
     public TileEntitySolarReflectorMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
+        if(master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntitySolarReflectorMaster ? (TileEntitySolarReflectorMaster)te : null;
+        master = te instanceof TileEntitySolarReflectorMaster?(TileEntitySolarReflectorMaster) te: null;
         return master;
     }
 
-    @Override
-    public NonNullList<ItemStack> getInventory() { return null; }
+    @Override public NonNullList<ItemStack> getInventory() { return null; }
 
-    @Override
-    public boolean isStackValid(int slot, ItemStack stack) { return false; }
+    @Override public boolean isStackValid(int slot, ItemStack stack) { return false; }
 
-    @Override
-    public int getSlotLimit(int slot) { return 0; }
+    @Override public int getSlotLimit(int slot) { return 0; }
 
-    @Override
-    public @Nonnull IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
+    @Override public @Nonnull IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
 
-    @Override
-    protected @Nullable DummyRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return null; }
+    @Override protected @Nullable IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return null; }
 
-    @Override
-    public @Nonnull int[] getRedstonePos() { return new int[0]; }
+    @Override public @Nonnull int[] getRedstonePos() { return new int[0]; }
 
-    @Override
-    public @Nonnull int[] getOutputTanks() { return new int[0]; }
+    @Override public @Nonnull int[] getOutputTanks() { return new int[0]; }
 
-    @Override
-    public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<IMultiblockRecipe> process) { return true; }
+    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<IMultiblockRecipe> process) { return true; }
 
-    @Override
-    public int getMaxProcessPerTick() { return 1; }
+    @Override public int getMaxProcessPerTick() { return 1; }
 
-    @Override
-    public int getProcessQueueMaxLength() { return 1; }
+    @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override
-    protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { return ITUtils.emptyIFluidTankList; }
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { return ITUtils.emptyIFluidTankList; }
 
-    @Override
-    protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
 
-    @Override
-    protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { return false; }
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { return false; }
 
     public BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartSolarReflector.instance.width;

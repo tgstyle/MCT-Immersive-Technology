@@ -100,24 +100,20 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
         return m.canDrainTankFrom(iTank, side, position);
     }
 
-    @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             TileEntityMeltingCrucibleMaster master = master();
             if (master == null) return false;
-            if (master.itemInput0 == null) master.InitializePoIs();
             return master.itemInput0.isPoI(facing, pos);
         }
         return super.hasCapability(capability, facing);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+    @Override public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             TileEntityMeltingCrucibleMaster master = master();
             if (master == null) return null;
-            if (master.itemInput0 == null) master.InitializePoIs();
             if (master.itemInput0.isPoI(facing, pos)) return (T)master.insertionHandler;
         }
         return super.getCapability(capability, facing);

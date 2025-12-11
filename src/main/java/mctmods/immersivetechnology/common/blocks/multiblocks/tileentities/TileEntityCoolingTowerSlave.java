@@ -9,7 +9,6 @@ import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.CoolingTower
 import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.shapes.*;
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -25,25 +24,22 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("NullableProblems")
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
+
 public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEntityCoolingTowerSlave, CoolingTowerRecipe, TileEntityCoolingTowerMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntityCoolingTowerSlave() { super(TileEntityITMultiblockPartCoolingTower.instance, 0, false); }
 
-    @Override
-    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 
-    @Override
-    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
-    @Override
-    public void update() { if (isDummy()) ITUtils.RemoveDummyFromTicking(this); super.update(); }
+    @Override public void update() { if (isDummy()) ITUtils.RemoveDummyFromTicking(this); super.update(); }
 
-    @Override
-    public boolean isDummy() { return true; }
+    @Override public boolean isDummy() { return true; }
 
     TileEntityCoolingTowerMaster master;
 
@@ -55,55 +51,41 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
         return master;
     }
 
-    @Override
-    public NonNullList<ItemStack> getInventory() { return null; }
+    @Override public NonNullList<ItemStack> getInventory() { return null; }
 
-    @Override
-    public boolean isStackValid(int slot, ItemStack stack) { return false; }
+    @Override public boolean isStackValid(int slot, ItemStack stack) { return false; }
 
-    @Override
-    public int getSlotLimit(int slot) { return 0; }
+    @Override public int getSlotLimit(int slot) { return 0; }
 
-    @Override
-    public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
+    @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
 
-    @Override
-    protected @Nonnull CoolingTowerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return CoolingTowerRecipe.loadFromNBT(tag); }
+    @Override protected @Nonnull CoolingTowerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return CoolingTowerRecipe.loadFromNBT(tag); }
 
-    @Override
-    public @Nullable int[] getRedstonePos() { return null; }
+    @Override public @Nonnull int[] getRedstonePos() { return null; }
 
-    @Override
-    public @Nonnull int[] getOutputTanks() { return new int[] {2, 3, 4}; }
+    @Override public @Nonnull int[] getOutputTanks() { return new int[]{2, 3, 4}; }
 
-    @Override
-    public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<CoolingTowerRecipe> process) { return true; }
+    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<CoolingTowerRecipe> process) { return true; }
 
-    @Override
-    public int getMaxProcessPerTick() { return 1; }
+    @Override public int getMaxProcessPerTick() { return 1; }
 
-    @Override
-    public int getProcessQueueMaxLength() { return 1; }
+    @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override
-    public float getMinProcessDistance(@Nonnull MultiblockProcess<CoolingTowerRecipe> process) { return 1; }
+    @Override public float getMinProcessDistance(@Nonnull MultiblockProcess<CoolingTowerRecipe> process) { return 1; }
 
-    @Override
-    protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         TileEntityCoolingTowerMaster master = master();
         if (master == null) return ITUtils.emptyIFluidTankList;
         return master.getAccessibleFluidTanks(side, position);
     }
 
-    @Override
-    protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
         TileEntityCoolingTowerMaster master = this.master();
         if (master == null) return false;
         return master.canFillTankFrom(iTank, side, resource, position);
     }
 
-    @Override
-    protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
         TileEntityCoolingTowerMaster master = this.master();
         if (master == null) return false;
         return master.canDrainTankFrom(iTank, side, position);
@@ -116,7 +98,7 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
         int rem = pos % (length * width);
         int z = rem / width;
         int x = rem % width;
-        if (mirrored) x = width - 1 - x;
+        if (this.mirrored) x = width - 1 - x;
         return new BlockPos(x, y, z);
     }
 
@@ -125,7 +107,7 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
         List<AxisAlignedBB> list = CoolingTowerShape.GETTER.getShape(posInMultiblock);
         if (list.isEmpty()) return Shapes.empty();
         List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, this.facing, this.mirrored));
         VoxelShape vs = Shapes.empty();
         for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
         return vs.optimize();

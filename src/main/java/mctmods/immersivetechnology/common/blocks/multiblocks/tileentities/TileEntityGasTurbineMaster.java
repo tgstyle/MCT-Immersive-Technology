@@ -72,14 +72,15 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private GasTurbineRecipe cachedRecipe;
     MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
     IMechanicalEnergy alternator;
-    private PoICache input, output, energy0, energy1, redstone, mechanicalOutput;
-    private BlockPos particleOrigin, runningSoundOrigin, arcSoundOrigin, ignitionSoundOrigin, starterSoundOrigin, outputFront, mechanicalOutputFront;
+    private PoICache input0, output0;
+    private PoICache energyInput0, energyInput1;
+    private PoICache redstone0, mechanicalOutput0;
+    private BlockPos particle0, runningSound0, arcSound0, ignitionSound0, starterSound0, outputFront0, mechanicalOutputFront0;
     private boolean lastStarterRunning = false;
     private int clientUpdateCooldown = 1;
 
     @SideOnly(Side.CLIENT)
     public void spawnParticles() {
-        if (input == null) InitializePoIs();
         if (!starterRunning || speed < maxSpeed / 4) return;
         Random rand = new Random();
         if (rand.nextInt(40) == 0) return;
@@ -87,48 +88,42 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         if (lessParticleSetting == 2 || lessParticleSetting == 1 && rand.nextInt(3) == 0) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         double distanceLimit = 64;
-        if (particleOrigin.distanceSq(player.posX, player.posY, player.posZ) > distanceLimit * distanceLimit) return;
-        Particle particle = new ParticleSmokeNormal.Factory().createParticle(0, world, particleOrigin.getX() + 2 - rand.nextFloat() * 3, particleOrigin.getY() + 0.5f, particleOrigin.getZ() + 2 - rand.nextFloat() * 3, 0, 0.02f, 0);
+        if (particle0.distanceSq(player.posX, player.posY, player.posZ) > distanceLimit * distanceLimit) return;
+        Particle particle = new ParticleSmokeNormal.Factory().createParticle(0, world, particle0.getX() + 2 - rand.nextFloat() * 3, particle0.getY() + 0.5f, particle0.getZ() + 2 - rand.nextFloat() * 3, 0, 0.02f, 0);
         ClientUtils.mc().effectRenderer.addEffect(particle);
     }
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
-        if (input == null) InitializePoIs();
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        float att = Math.max((float) player.getDistanceSq(runningSoundOrigin.getX(), runningSoundOrigin.getY(), runningSoundOrigin.getZ()) / 64, 1);
+        float att = Math.max((float) player.getDistanceSq(runningSound0.getX(), runningSound0.getY(), runningSound0.getZ()) / 64, 1);
         float level = ITUtils.remapRange(0, maxSpeed, 0.5f, 1.5f, speed);
-        if (speed == 0) ITSoundHandler.StopSound(runningSoundOrigin);
-        else ITSounds.gasTurbineRunning.PlayRepeating(runningSoundOrigin, (level - 0.5f) / (4 * att), level);
+        if (speed == 0) ITSoundHandler.StopSound(runningSound0);
+        else ITSounds.gasTurbineRunning.PlayRepeating(runningSound0, (level - 0.5f) / (4 * att), level);
         if (starterRunning) {
-            ITSounds.gasTurbineStarter.PlayRepeating(starterSoundOrigin, Math.min((level - .5f) / att, .2f), 1);
-            if (speed >= maxSpeed / 4) ITSounds.gasTurbineArc.PlayRepeating(arcSoundOrigin, Math.min((level - .5f) / att, .2f), 1);
+            ITSounds.gasTurbineStarter.PlayRepeating(starterSound0, Math.min((level - .5f) / att, .2f), 1);
+            if (speed >= maxSpeed / 4) ITSounds.gasTurbineArc.PlayRepeating(arcSound0, Math.min((level - .5f) / att, .2f), 1);
         } else {
-            ITSoundHandler.StopSound(starterSoundOrigin);
-            ITSoundHandler.StopSound(arcSoundOrigin);
+            ITSoundHandler.StopSound(starterSound0);
+            ITSoundHandler.StopSound(arcSound0);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    @Override
-    public void onChunkUnload() {
-        if (input == null) InitializePoIs();
-        ITSoundHandler.StopSound(runningSoundOrigin);
-        ITSoundHandler.StopSound(arcSoundOrigin);
-        ITSoundHandler.StopSound(ignitionSoundOrigin);
-        ITSoundHandler.StopSound(starterSoundOrigin);
+    @Override public void onChunkUnload() {
+        ITSoundHandler.StopSound(runningSound0);
+        ITSoundHandler.StopSound(arcSound0);
+        ITSoundHandler.StopSound(ignitionSound0);
+        ITSoundHandler.StopSound(starterSound0);
         super.onChunkUnload();
     }
 
-    @Override
-    public void disassemble() {
+    @Override public void disassemble() {
         super.disassemble();
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(runningSoundOrigin), new NetworkRegistry.TargetPoint(world.provider.getDimension(), runningSoundOrigin.getX(), runningSoundOrigin.getY(), runningSoundOrigin.getZ(), 0));
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(arcSoundOrigin), new NetworkRegistry.TargetPoint(world.provider.getDimension(), arcSoundOrigin.getX(), arcSoundOrigin.getY(), arcSoundOrigin.getZ(), 0));
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(ignitionSoundOrigin), new NetworkRegistry.TargetPoint(world.provider.getDimension(), ignitionSoundOrigin.getX(), ignitionSoundOrigin.getY(), ignitionSoundOrigin.getZ(), 0));
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(starterSoundOrigin), new NetworkRegistry.TargetPoint(world.provider.getDimension(), starterSoundOrigin.getX(), starterSoundOrigin.getY(), starterSoundOrigin.getZ(), 0));
-        input = output = energy0 = energy1 = redstone = mechanicalOutput = null;
-        particleOrigin = runningSoundOrigin = arcSoundOrigin = ignitionSoundOrigin = starterSoundOrigin = outputFront = mechanicalOutputFront = null;
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(runningSound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), runningSound0.getX(), runningSound0.getY(), runningSound0.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(arcSound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), arcSound0.getX(), arcSound0.getY(), arcSound0.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(ignitionSound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), ignitionSound0.getX(), ignitionSound0.getY(), ignitionSound0.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(starterSound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), starterSound0.getX(), starterSound0.getY(), starterSound0.getZ(), 0));
     }
 
     private void speedUp() {
@@ -147,13 +142,10 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     public boolean isValidAlternator() {
-        if (mechanicalOutput == null) InitializePoIs();
-        if (alternator == null || !alternator.isValid()) {
-            TileEntity tile = world.getTileEntity(mechanicalOutputFront);
-            if (tile instanceof IMechanicalEnergy) {
-                IMechanicalEnergy possibleAlternator = (IMechanicalEnergy) tile;
-                if (possibleAlternator.isValid() && possibleAlternator.isMechanicalEnergyReceiver(facing.getOpposite())) alternator = possibleAlternator;
-            }
+        TileEntity tile = world.getTileEntity(mechanicalOutputFront0);
+        if (tile instanceof IMechanicalEnergy) {
+            IMechanicalEnergy possibleAlternator = (IMechanicalEnergy) tile;
+            if (possibleAlternator.isValid() && possibleAlternator.isMechanicalEnergyReceiver(facing.getOpposite())) alternator = possibleAlternator;
         }
         return alternator != null && alternator.isValid();
     }
@@ -171,16 +163,14 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         return sparkplugConsumption <= sparkplugStorage.getEnergyStored() && canFuelCombust;
     }
 
-    @Override
-    public void receiveMessageFromServer(ByteBuf buf) {
-        if (input == null) InitializePoIs();
+    @Override public void receiveMessageFromServer(ByteBuf buf) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        float attenuation = Math.max((float) player.getDistanceSq(runningSoundOrigin.getX(), runningSoundOrigin.getY(), runningSoundOrigin.getZ()) / 8, 1);
-        ITSounds.gasTurbineSpark.PlayOnce(ignitionSoundOrigin, 1 / attenuation, 1);
+        float attenuation = Math.max((float) player.getDistanceSq(runningSound0.getX(), runningSound0.getY(), runningSound0.getZ()) / 8, 1);
+        ITSounds.gasTurbineSpark.PlayOnce(ignitionSound0, 1 / attenuation, 1);
     }
 
-    @Override
-    public void update() {
+    @Override public void update() {
+        if (formed && redstone0 == null) InitializePoIs();
         super.update();
         if (!formed || world.isRemote) {
             if (world.isRemote) {
@@ -236,8 +226,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         }
     }
 
-    @Override
-    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
@@ -251,8 +240,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         lastStarterRunning = starterRunning;
     }
 
-    @Override
-    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
@@ -265,29 +253,24 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         nbt.setTag("sparkplugStorage", sparkplugStorage.writeToNBT(new NBTTagCompound()));
     }
 
-    @Override
-    public @Nonnull NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
+    @Override public @Nonnull NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
         nbt = super.writeToNBT(nbt);
         nbt.setFloat("animationRotation", getAnimation().getAnimationRotation());
         return nbt;
     }
 
-    @Override
-    public void readFromNBT(@Nonnull NBTTagCompound nbt) {
+    @Override public void readFromNBT(@Nonnull NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         getAnimation().setAnimationRotation(nbt.getFloat("animationRotation"));
     }
 
     public void efficientMarkDirty() { world.getChunk(this.getPos()).markDirty(); }
 
-    @Override
-    public void TankContentsChanged() { this.markContainingBlockForUpdate(null); clientUpdateCooldown = 0; }
+    @Override public void TankContentsChanged() { this.markContainingBlockForUpdate(null); clientUpdateCooldown = 0; }
 
-    @Override
-    public boolean isDummy() { return false; }
+    @Override public boolean isDummy() { return false; }
 
-    @Override
-    public TileEntityGasTurbineMaster master() {
+    @Override public TileEntityGasTurbineMaster master() {
         master = this;
         return this;
     }
@@ -295,70 +278,65 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartGasTurbine.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "input": input = new PoICache(facing, poi, mirrored); break;
-                case "output":
-                    output = new PoICache(facing, poi, mirrored);
-                    outputFront = getBlockPosForPos(output.position).offset(output.facing);
+                case "input0": input0 = new PoICache(this.facing, poi, this.mirrored); break;
+                case "output0":
+                    output0 = new PoICache(this.facing, poi, this.mirrored);
+                    outputFront0 = getBlockPosForPos(output0.position).offset(output0.facing);
                     break;
-                case "particle": particleOrigin = getBlockPosForPos(poi.position); break;
-                case "running_sound": runningSoundOrigin = getBlockPosForPos(poi.position); break;
-                case "arc_sound": arcSoundOrigin = getBlockPosForPos(poi.position); break;
-                case "ignition_sound": ignitionSoundOrigin = getBlockPosForPos(poi.position); break;
-                case "starter_sound": starterSoundOrigin = getBlockPosForPos(poi.position); break;
-                case "energy0": energy0 = new PoICache(facing, poi, mirrored); break;
-                case "energy1": energy1 = new PoICache(facing, poi, mirrored); break;
-                case "mechanical_output":
-                    mechanicalOutput = new PoICache(facing, poi, mirrored);
-                    mechanicalOutputFront = getBlockPosForPos(mechanicalOutput.position).offset(mechanicalOutput.facing);
+                case "particle0": particle0 = getBlockPosForPos(poi.position); break;
+                case "running_sound0": runningSound0 = getBlockPosForPos(poi.position); break;
+                case "arc_sound0": arcSound0 = getBlockPosForPos(poi.position); break;
+                case "ignition_sound0": ignitionSound0 = getBlockPosForPos(poi.position); break;
+                case "starter_sound0": starterSound0 = getBlockPosForPos(poi.position); break;
+                case "energy_input0": energyInput0 = new PoICache(this.facing, poi, this.mirrored); break;
+                case "energy_input1": energyInput1 = new PoICache(this.facing, poi, this.mirrored); break;
+                case "mechanical_output0":
+                    mechanicalOutput0 = new PoICache(this.facing, poi, this.mirrored);
+                    mechanicalOutputFront0 = getBlockPosForPos(mechanicalOutput0.position).offset(mechanicalOutput0.facing);
                     break;
-                case "redstone": redstone = new PoICache(facing, poi, mirrored); break;
+                case "redstone0": redstone0 = new PoICache(this.facing, poi, this.mirrored); break;
             }
         }
         if (!world.isRemote) notifyIONeighbors();
     }
 
     private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(input.position));
-        notifyNeighbor(getBlockPosForPos(output.position));
-        notifyNeighbor(getBlockPosForPos(energy0.position));
-        notifyNeighbor(getBlockPosForPos(energy1.position));
+        notifyNeighbor(getBlockPosForPos(input0.position));
+        notifyNeighbor(getBlockPosForPos(output0.position));
+        notifyNeighbor(getBlockPosForPos(energyInput0.position));
+        notifyNeighbor(getBlockPosForPos(energyInput1.position));
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
-    @Override
-    public @Nonnull int[] getRedstonePos() {
-        if (redstone == null) InitializePoIs();
-        return new int[] {redstone.position};
+    @Override public @Nonnull int[] getRedstonePos() {
+        if (!formed) return new int[0];
+        return new int[] {redstone0.position};
     }
 
     public @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        if (input == null) InitializePoIs();
         if (side == null) return tanks;
-        if (input.isPoI(side, position)) return new FluidTank[] {tanks[0]};
-        else if (output.isPoI(side, position)) return new FluidTank[] {tanks[1]};
+        if (input0.isPoI(side, position)) return new FluidTank[] {tanks[0]};
+        else if (output0.isPoI(side, position)) return new FluidTank[] {tanks[1]};
         return ITUtils.emptyIFluidTankList;
     }
 
     public boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if (input == null) InitializePoIs();
-        if (!input.isPoI(side, position)) return false;
+        if (!input0.isPoI(side, position)) return false;
         if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
         if (tanks[0].getFluid() == null) return GasTurbineRecipe.findFuelByFluid(resource.getFluid()) != null;
         else return resource.getFluid() == tanks[0].getFluid().getFluid();
     }
 
     public boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (output == null) InitializePoIs();
-        if (output.isPoI(side, position)) return tanks[1].getFluidAmount() > 0;
+        if (output0.isPoI(side, position)) return tanks[1].getFluidAmount() > 0;
         return false;
     }
 
     private void pumpOutputOut() {
-        if (output == null) InitializePoIs();
         if (tanks[1].getFluidAmount() == 0) return;
         IFluidHandler output;
-        if ((output = FluidUtil.getFluidHandler(world, outputFront, this.output.facing.getOpposite())) != null) {
+        if ((output = FluidUtil.getFluidHandler(world, outputFront0, output0.facing.getOpposite())) != null) {
             FluidStack out = tanks[1].getFluid();
             int accepted = output.fill(out, false);
             if (accepted == 0) return;
@@ -369,40 +347,42 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     public boolean isMechanicalEnergyTransmitter(EnumFacing facing, int position) {
-        if (mechanicalOutput == null) InitializePoIs();
-        return mechanicalOutput.isPoI(facing, position);
+        if (!formed) return false;
+        return mechanicalOutput0.isPoI(facing, position);
     }
 
     public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
-        if (energy0 == null) InitializePoIs();
-        return energy0.isPoI(facing, position) || energy1.isPoI(facing, position);
+        if (!formed) return false;
+        if (facing == null) return false;
+        if (energyInput0.isPoI(facing, position)) return true;
+        return energyInput1.isPoI(facing, position);
     }
 
     public IEnergyStorage getEnergyAtPosition(@Nullable EnumFacing facing, int position) {
-        if (energy0 == null) InitializePoIs();
+        if (!formed) return null;
         if (facing == null) return null;
-        if (energy1.isPoI(facing, position)) return sparkplugStorage;
-        else if (energy0.isPoI(facing, position)) return starterStorage;
-        else return null;
+        if (energyInput0.isPoI(facing, position)) return starterStorage;
+        if (energyInput1.isPoI(facing, position)) return sparkplugStorage;
+        return null;
     }
 
     public boolean isFluidInputPosition(@Nullable EnumFacing facing, int position) {
-        if (input == null) InitializePoIs();
-        return input.isPoI(facing, position);
+        if (!formed) return false;
+        return input0.isPoI(facing, position);
     }
 
     public boolean isFluidOutputPosition(@Nullable EnumFacing facing, int position) {
-        if (output == null) InitializePoIs();
-        return output.isPoI(facing, position);
+        if (!formed) return false;
+        return output0.isPoI(facing, position);
     }
 
     public boolean isStarterPosition(@Nullable EnumFacing facing, int position) {
-        if (energy0 == null) InitializePoIs();
-        return energy0.isPoI(facing, position);
+        if (!formed) return false;
+        return energyInput0.isPoI(facing, position);
     }
 
     public boolean isSparkplugPosition(@Nullable EnumFacing facing, int position) {
-        if (energy1 == null) InitializePoIs();
-        return energy1.isPoI(facing, position);
+        if (!formed) return false;
+        return energyInput1.isPoI(facing, position);
     }
 }

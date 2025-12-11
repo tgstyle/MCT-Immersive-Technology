@@ -11,7 +11,6 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
-import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.AlternatorShape;
@@ -41,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("NullableProblems")
-public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntityAlternatorSlave, IMultiblockRecipe, TileEntityAlternatorMaster> implements IMechanicalEnergy, IFluxProvider, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntityAlternatorSlave, IMultiblockRecipe, TileEntityAlternatorMaster> implements ITBlockInterfaces.IMechanicalEnergy, IFluxProvider, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntityAlternatorSlave() { super(TileEntityITMultiblockPartAlternator.instance, 0, false); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
@@ -126,7 +125,7 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
         int rem = pos % (length * width);
         int z = rem / width;
         int x = rem % width;
-        if (mirrored) x = width - 1 - x;
+        if (this.mirrored) x = width - 1 - x;
         return new BlockPos(x, y, z);
     }
 
@@ -135,7 +134,7 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
         List<AxisAlignedBB> list = AlternatorShape.GETTER.getShape(posInMultiblock);
         if (list.isEmpty()) return Shapes.empty();
         List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, this.facing, this.mirrored));
         VoxelShape vs = Shapes.empty();
         for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
         return vs.optimize();

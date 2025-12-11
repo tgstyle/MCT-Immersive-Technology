@@ -1,14 +1,18 @@
 package mctmods.immersivetechnology.common.blocks.multiblocks.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
+
 import mctmods.immersivetechnology.common.blocks.multiblocks.shapes.SolarMelterShape;
 import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.blocks.multiblocks.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.util.shapes.*;
 
+import mctmods.immersivetechnology.common.util.shapes.*;
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
+
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -17,7 +21,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.entity.player.EntityPlayer;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -26,12 +29,10 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntitySolarMelterSlave, MeltingCrucibleRecipe, TileEntitySolarMelterMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntitySolarMelterSlave() { super(TileEntityITMultiblockPartSolarMelter.instance, 0, false); }
@@ -50,10 +51,10 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
     TileEntitySolarMelterMaster master;
 
     public TileEntitySolarMelterMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
+        if(master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntitySolarMelterMaster ? (TileEntitySolarMelterMaster)te : null;
+        master = te instanceof TileEntitySolarMelterMaster?(TileEntitySolarMelterMaster) te: null;
         return master;
     }
 
@@ -65,13 +66,13 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
 
     @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
 
-    @Override protected @Nonnull MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return Objects.requireNonNull(MeltingCrucibleRecipe.loadFromNBT(tag)); }
+    @Override protected @Nullable MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return MeltingCrucibleRecipe.loadFromNBT(tag); }
 
-    @Override public @Nonnull MeltingCrucibleRecipe findRecipeForInsertion(@Nonnull ItemStack inserting) { return Objects.requireNonNull(MeltingCrucibleRecipe.findRecipe(inserting)); }
+    @Override public @Nullable MeltingCrucibleRecipe findRecipeForInsertion(@Nonnull ItemStack inserting) { return MeltingCrucibleRecipe.findRecipe(inserting); }
 
-    @Override public @Nonnull int[] getRedstonePos() { return Objects.requireNonNull(master()).getRedstonePos(); }
+    @Override public @Nonnull int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
 
-    @Override public @Nonnull int[] getOutputTanks() { return Objects.requireNonNull(master()).getOutputTanks(); }
+    @Override public @Nonnull int[] getOutputTanks() { return new int[] {0}; }
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<MeltingCrucibleRecipe> process) { return true; }
 
@@ -98,7 +99,12 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && master() != null) { return Objects.requireNonNull(master()).getAccessibleItemHandlers(facing, pos).length > 0; }
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            TileEntitySolarMelterMaster master = master();
+            if (master == null) return false;
+            IItemHandler[] handlers = master.getAccessibleItemHandlers(facing, pos);
+            return handlers.length > 0;
+        }
         return super.hasCapability(capability, facing);
     }
 
