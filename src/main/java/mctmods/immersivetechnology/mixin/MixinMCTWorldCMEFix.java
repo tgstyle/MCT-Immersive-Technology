@@ -43,11 +43,13 @@ public abstract class MixinMCTWorldCMEFix {
         ci.cancel();
         World world = (World)(Object)this;
         List<TileEntity> toAdd = new ArrayList<>(collection);
+        if (MCTMixinConfig.mixinSettings.enableAdditionsLogging) {
+            MCTMixin.LOGGER.info("Adding {} TEs (delayed): {}", toAdd.size(), processingLoadedTiles ? "delayed" : "immediate");
+        }
         if (processingLoadedTiles) {
             for (TileEntity tile : toAdd) {
                 if (tile.getWorld() != world) { tile.setWorld(world); }
                 int sizeBefore = addedTileEntityList.size();
-                if (MCTMixinConfig.mixinSettings.enableAdditionsLogging) { MCTMixin.LOGGER.info("Adding TE (delayed): {} at {}", tile.getClass().getName(), tile.getPos()); }
                 addedTileEntityList.add(tile);
                 int sizeAfter = addedTileEntityList.size();
                 if (MCTMixinConfig.mixinSettings.enablePotentialsLogging && sizeAfter > sizeBefore + 1) { MCTMixin.LOGGER.warn("Potential CME in delayed add: {} at {}", tile.getClass().getName(), tile.getPos()); }
@@ -56,7 +58,6 @@ public abstract class MixinMCTWorldCMEFix {
             for (TileEntity tile : toAdd) {
                 if (tile.getWorld() != world) { tile.setWorld(world); }
                 int sizeBefore = loadedTileEntityList.size();
-                if (MCTMixinConfig.mixinSettings.enableAdditionsLogging) { MCTMixin.LOGGER.info("Adding TE: {} at {}", tile.getClass().getName(), tile.getPos()); }
                 loadedTileEntityList.add(tile);
                 if (tile instanceof ITickable) { tickableTileEntities.add(tile); }
                 Chunk chunk = world.getChunk(tile.getPos());
