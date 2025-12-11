@@ -7,7 +7,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -43,8 +42,9 @@ public abstract class MixinMCTWorldCMEFix {
         ci.cancel();
         World world = (World)(Object)this;
         List<TileEntity> toAdd = new ArrayList<>(collection);
-        if (MCTMixinConfig.mixinSettings.enableAdditionsLogging) {
-            MCTMixin.LOGGER.info("Adding {} TEs (delayed): {}", toAdd.size(), processingLoadedTiles ? "delayed" : "immediate");
+        if (MCTMixinConfig.mixinSettings.enableAdditionsLogging && !toAdd.isEmpty()) {
+            String mode = processingLoadedTiles ? "delayed" : "immediate";
+            MCTMixin.LOGGER.debug("Adding {} TEs ({} add)", toAdd.size(), mode);
         }
         if (processingLoadedTiles) {
             for (TileEntity tile : toAdd) {
@@ -60,9 +60,6 @@ public abstract class MixinMCTWorldCMEFix {
                 int sizeBefore = loadedTileEntityList.size();
                 loadedTileEntityList.add(tile);
                 if (tile instanceof ITickable) { tickableTileEntities.add(tile); }
-                Chunk chunk = world.getChunk(tile.getPos());
-                chunk.addTileEntity(tile.getPos(), tile);
-                tile.onLoad();
                 if (world.isRemote) {
                     IBlockState state = world.getBlockState(tile.getPos());
                     notifyBlockUpdate(tile.getPos(), state, state, 2);
