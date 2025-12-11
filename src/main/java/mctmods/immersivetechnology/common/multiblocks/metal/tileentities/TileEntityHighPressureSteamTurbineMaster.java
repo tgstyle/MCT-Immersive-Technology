@@ -73,6 +73,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         speed = nbt.getInteger("speed");
         animation.readFromNBT(nbt);
         burnRemaining = nbt.getInteger("burnRemaining");
+        if (!descPacket && formed && redstone0 == null) InitializePoIs();
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -197,6 +198,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     @Override public int getComparatorInputOverride() { return 15 * speed / maxSpeed; }
 
     public boolean isMechanicalEnergyTransmitter(@Nullable EnumFacing facing, int position) {
+        if (mechanicalOutput0 == null) InitializePoIs();
         if (!formed) return false;
         return facing != null && mechanicalOutput0.isPoI(facing, position);
     }
