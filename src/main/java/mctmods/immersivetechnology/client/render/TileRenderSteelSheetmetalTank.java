@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.render;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
-import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntitySteelSheetmetalTankMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;

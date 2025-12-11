@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
 
 import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityGasTurbineMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityGasTurbineMaster;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;

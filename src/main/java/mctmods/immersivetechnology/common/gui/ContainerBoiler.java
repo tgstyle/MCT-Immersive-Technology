@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.common.gui;
 
 import blusunrize.immersiveengineering.common.gui.ContainerIEBase;
 import blusunrize.immersiveengineering.common.gui.IESlot;
-import mctmods.immersivetechnology.common.blocks.multiblocks.tileentities.TileEntityBoilerMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerMaster;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
