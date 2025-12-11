@@ -23,5 +23,7 @@ public class MCTMixinConfig {
         public boolean enableWorldMixin = true;
         @Config.Comment({"Replace IE pipes with IT's own version. [Default=true]"})
         public boolean replace_IE_pipes = true;
+        @Config.Comment({"Enable the MinecraftServer mixin to redirect error logging for crash debugging [Default=true]"})
+        public boolean enableErrorLoggingRedirect = true;
     }
 }

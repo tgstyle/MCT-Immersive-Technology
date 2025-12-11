@@ -27,15 +27,17 @@ public class MCTMixin {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         Mixins.addConfiguration("mixins.immersiveengineering.json");
-        LOGGER.info("Loaded config: enableAdditionsLogging={}, enablePotentialsLogging={}, enableDevSided={}", MCTMixinConfig.mixinSettings.enableAdditionsLogging, MCTMixinConfig.mixinSettings.enablePotentialsLogging, MCTMixinConfig.mixinSettings.enableDevSided);
+        Mixins.addConfiguration("mixins.immersivetechnology.json");
+        LOGGER.info("Loaded config: enableAdditionsLogging={}, enablePotentialsLogging={}, enableDevSided={}, enableWorldMixin={}, replace_IE_pipes={}, enableErrorLoggingRedirect={}",
+                MCTMixinConfig.mixinSettings.enableAdditionsLogging, MCTMixinConfig.mixinSettings.enablePotentialsLogging, MCTMixinConfig.mixinSettings.enableDevSided,
+                MCTMixinConfig.mixinSettings.enableWorldMixin, MCTMixinConfig.mixinSettings.replace_IE_pipes, MCTMixinConfig.mixinSettings.enableErrorLoggingRedirect);
         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         Configuration config = ctx.getConfiguration();
         org.apache.logging.log4j.core.Appender app = config.getAppenders().get("File");
         if (app instanceof RollingRandomAccessFileAppender) {
             RollingRandomAccessFileAppender oldApp = (RollingRandomAccessFileAppender) app;
             PatternLayout oldLayout = (PatternLayout) oldApp.getLayout();
-            String oldPattern = oldLayout.getConversionPattern();
-            String newPattern = oldPattern.replace("%msg%n", "%msg %ex{short}%n");
+            String newPattern = oldLayout.getConversionPattern();
             PatternSelector patternSelector = null;
             try { Field f = PatternLayout.class.getDeclaredField("patternSelector"); f.setAccessible(true); patternSelector = (PatternSelector) f.get(oldLayout); } catch (Exception e) { LOGGER.error("Error getting patternSelector", e); }
             PatternLayout.Builder layoutBuilder = PatternLayout.newBuilder();
