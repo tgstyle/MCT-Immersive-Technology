@@ -33,18 +33,14 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
     private static final int maxSpeed = Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max;
     private static final double workingHeatLevel = Multiblocks.boiler.boiler_heat_workingLevel;
 
-    @Override
-    public void preInit() { FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", this.getClass().getName()); }
+    @Override public void preInit() { FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", this.getClass().getName()); }
 
-    @Override
-    public void init() { }
+    @Override public void init() { }
 
-    @Override
-    public void postInit() { }
+    @Override public void postInit() { }
 
     @Nullable
-    @Override
-    public Void apply(@Nullable ITheOneProbe input) {
+    @Override public Void apply(@Nullable ITheOneProbe input) {
         assert input != null;
         input.registerProvider(new MechanicalEnergyProvider());
         input.registerProvider(new MiscProvider());
@@ -54,11 +50,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
     }
 
     public static class MiscProvider implements IProbeInfoProvider {
-        @Override
-        public String getID() { return ImmersiveTechnology.MODID + ":" + "MiscInfo"; }
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "MiscInfo"; }
 
-        @Override
-        public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             if (te instanceof TileEntityBoilerSlave) {
                 TileEntityBoilerMaster master = ((TileEntityBoilerSlave)te).master();
@@ -71,38 +65,29 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
     }
 
     public static class MechanicalEnergyProvider implements IProbeInfoProvider {
-        @Override
-        public String getID() { return ImmersiveTechnology.MODID + ":" + "MechanicalEnergyInfo"; }
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "MechanicalEnergyInfo"; }
 
-        @Override
-        public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             if (te instanceof IMechanicalEnergy) {
                 TileEntityMultiblockPart<?> master = ((TileEntityMultiblockPart<?>)te).master();
                 if (master == null) return;
                 int current = ((IMechanicalEnergy)master).getSpeed();
                 probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .text("{*keyword.immersivetech.speed*}")
-                        .progress(current, maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL))
+                        .text("{*keyword.immersivetech.speed*}").progress(current, maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL))
                         .text("{*keyword.immersivetech.rotations_per_minute*}");
             }
         }
     }
 
     public static class GasTurbineProvider implements IProbeInfoProvider {
-        @Override
-        public String getID() { return ImmersiveTechnology.MODID + ":" + "GasTurbineInfo"; }
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "GasTurbineInfo"; }
 
-        @Override
-        public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             if (!(te instanceof TileEntityGasTurbineSlave)) return;
             TileEntityGasTurbineMaster master = ((TileEntityGasTurbineSlave)te).master();
             if (master == null) return;
-            int speed = master.speed;
-            probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                    .text("{*keyword.immersivetech.speed*}")
-                    .progress(speed, maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix(" RPM"));
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
             IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
@@ -117,8 +102,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 else if (master.isFluidOutputPosition(facing, pos)) { label = "{*keyword.immersivetech.fluid_output*}"; }
                 else return;
                 probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .text(label)
-                        .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0x00000000))
+                        .text(label).progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0x00000000))
                         .text(fluidName);
             } else {
                 addTankInfo(probeInfo, master.tanks[0], "{*keyword.immersivetech.fluid_input*}");
@@ -132,8 +116,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 IEnergyStorage storage = master.getEnergyAtPosition(facing, pos);
                 if (storage == null) return;
                 probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .text(label)
-                        .progress(storage.getEnergyStored(), storage.getMaxEnergyStored(), probeInfo.defaultProgressStyle().suffix(" RF").numberFormat(NumberFormat.COMPACT));
+                        .text(label).progress(storage.getEnergyStored(), storage.getMaxEnergyStored(), probeInfo.defaultProgressStyle().suffix(" RF").numberFormat(NumberFormat.COMPACT));
             } else {
                 addEnergyInfo(probeInfo, master.starterStorage, "{*keyword.immersivetech.starter_energy*}");
                 addEnergyInfo(probeInfo, master.sparkplugStorage, "{*keyword.immersivetech.sparkplug_energy*}");
@@ -159,24 +142,20 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
             int color = getFluidColor(fluid);
             probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                    .text(label)
-                    .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0x00000000))
+                    .text(label).progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0x00000000))
                     .text(fluidName);
         }
 
         private void addEnergyInfo(IProbeInfo probeInfo, IEnergyStorage storage, String label) {
             probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                    .text(label)
-                    .progress(storage.getEnergyStored(), storage.getMaxEnergyStored(), probeInfo.defaultProgressStyle().suffix(" RF").numberFormat(NumberFormat.COMPACT));
+                    .text(label).progress(storage.getEnergyStored(), storage.getMaxEnergyStored(), probeInfo.defaultProgressStyle().suffix(" RF").numberFormat(NumberFormat.COMPACT));
         }
     }
 
     public static class CoolingTowerProvider implements IProbeInfoProvider {
-        @Override
-        public String getID() { return ImmersiveTechnology.MODID + ":" + "CoolingTowerInfo"; }
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "CoolingTowerInfo"; }
 
-        @Override
-        public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             if (!(te instanceof TileEntityCoolingTowerSlave)) return;
             TileEntityCoolingTowerMaster master = ((TileEntityCoolingTowerSlave)te).master();
@@ -192,8 +171,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 int color = getFluidColor(fluid);
                 String label = (tank == master.tanks[0] || tank == master.tanks[1]) ? "{*keyword.immersivetech.fluid_input*}" : "{*keyword.immersivetech.fluid_output*}";
                 probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .text(label)
-                        .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0x00000000))
+                        .text(label).progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0x00000000))
                         .text(fluidName);
             } else {
                 addTankInfo(probeInfo, master.tanks[0], "{*keyword.immersivetech.fluid_input*}");
@@ -223,8 +201,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
             int color = getFluidColor(fluid);
             probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                    .text(label)
-                    .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0x00000000))
+                    .text(label).progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0x00000000))
                     .text(fluidName);
         }
     }

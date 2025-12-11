@@ -8,6 +8,7 @@
     "MixinMCTNetworkRegistry",
     "MixinMCTMinecraftServer",
     "MixinMCTWorldCMEFix",
-    "MixinMCTWorldCMELog"
+    "MixinMCTWorldCMELog",
+    "MixinMCTTileEntity"
   ]
 }

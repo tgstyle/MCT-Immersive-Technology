@@ -142,10 +142,13 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     public boolean isValidAlternator() {
-        TileEntity tile = world.getTileEntity(mechanicalOutputFront0);
-        if (tile instanceof IMechanicalEnergy) {
-            IMechanicalEnergy possibleAlternator = (IMechanicalEnergy) tile;
-            if (possibleAlternator.isValid() && possibleAlternator.isMechanicalEnergyReceiver(facing.getOpposite())) alternator = possibleAlternator;
+        if (mechanicalOutput0 == null) InitializePoIs();
+        if (alternator == null || !alternator.isValid()) {
+            TileEntity tile = world.getTileEntity(mechanicalOutputFront0);
+            if (tile instanceof IMechanicalEnergy) {
+                IMechanicalEnergy possibleAlternator = (IMechanicalEnergy) tile;
+                if (possibleAlternator.isValid() && possibleAlternator.isMechanicalEnergyReceiver(mechanicalOutput0.facing.getOpposite())) alternator = possibleAlternator;
+            }
         }
         return alternator != null && alternator.isValid();
     }

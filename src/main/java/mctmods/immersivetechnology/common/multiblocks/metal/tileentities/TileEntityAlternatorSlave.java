@@ -41,13 +41,23 @@ import java.util.List;
 
 @SuppressWarnings("NullableProblems")
 public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntityAlternatorSlave, IMultiblockRecipe, TileEntityAlternatorMaster> implements ITBlockInterfaces.IMechanicalEnergy, IFluxProvider, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+    private int loadGrace = 0;
+    private boolean needsBlockUpdate = false;
     public TileEntityAlternatorSlave() { super(TileEntityITMultiblockPartAlternator.instance, 0, false); }
 
-    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+        super.readCustomNBT(nbt, descPacket);
+        if (!descPacket && !world.isRemote) needsBlockUpdate = true;
+    }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
-    @Override public void update() { if (isDummy()) ITUtils.RemoveDummyFromTicking(this); super.update(); }
+    @Override public void update() {
+        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (formed && master() == null) { if (loadGrace++ > 20) { invalidate(); return; } } else loadGrace = 0;
+        super.update();
+        if (needsBlockUpdate) { needsBlockUpdate = false; this.markContainingBlockForUpdate(null); }
+    }
 
     @Override public boolean isDummy() { return true; }
 

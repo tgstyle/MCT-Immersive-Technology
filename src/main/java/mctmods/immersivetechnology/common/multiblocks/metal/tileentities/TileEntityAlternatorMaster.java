@@ -64,12 +64,13 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     private BlockPos energyOutputPos0, energyOutputPos1, energyOutputPos2, energyOutputPos3, energyOutputPos4, energyOutputPos5;
     private boolean needsPoIInit = false;
     private boolean needsNotify = false;
+    private boolean needsBlockUpdate = false;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         energyStorage.readFromNBT(nbt);
         animation.readFromNBT(nbt);
-        if (!descPacket && !world.isRemote && formed) { needsPoIInit = true; needsNotify = true; }
+        if (!descPacket && !world.isRemote && formed) { needsPoIInit = true; needsNotify = true; needsBlockUpdate = true; }
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -126,7 +127,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             TileEntity tile = world.getTileEntity(mechanicalInputFront);
             if (tile instanceof ITBlockInterfaces.IMechanicalEnergy) {
                 ITBlockInterfaces.IMechanicalEnergy possibleProvider = (ITBlockInterfaces.IMechanicalEnergy) tile;
-                if (possibleProvider.isValid() && possibleProvider.isMechanicalEnergyTransmitter(this.facing.getOpposite())) provider = possibleProvider;
+                if (possibleProvider.isValid() && possibleProvider.isMechanicalEnergyTransmitter(mechanicalInput.facing.getOpposite())) provider = possibleProvider;
             }
         }
         return provider != null && provider.isValid();
@@ -140,6 +141,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     }
 
     @Override public void update() {
+        if (needsBlockUpdate) { needsBlockUpdate = false; this.markContainingBlockForUpdate(null); }
         if (!formed) return;
         if (world.isRemote) {
             float rotationSpeed = speed == 0 ? 0f : ((float) speed / (float) maxSpeed) * maxRotationSpeed;
@@ -315,12 +317,12 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
                     energyOutput5 = new PoICache(this.facing, poi, this.mirrored);
                     energyOutputPos5 = getBlockPosForPos(energyOutput5.position).offset(energyOutput5.facing);
                     break;
-                case "redstone": redstone = new PoICache(this.facing, poi, this.mirrored); break;
-                case "mechanical_input":
+                case "redstone0": redstone = new PoICache(this.facing, poi, this.mirrored); break;
+                case "mechanical_input0":
                     mechanicalInput = new PoICache(this.facing, poi, this.mirrored);
                     mechanicalInputFront = getBlockPosForPos(mechanicalInput.position).offset(mechanicalInput.facing);
                     break;
-                case "sound": soundOrigin = getBlockPosForPos(poi.position); break;
+                case "sound0": soundOrigin = getBlockPosForPos(poi.position); break;
             }
         }
     }
