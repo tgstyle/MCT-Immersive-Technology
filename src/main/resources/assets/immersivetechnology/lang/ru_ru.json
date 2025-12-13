@@ -11,6 +11,8 @@
   "block.immersivetechnology.barrel_creative": "Творческая бочка для жидкостей",
   "block.immersivetechnology.barrel_open": "Открытая металлическая бочка",
   "block.immersivetechnology.barrel_steel": "Стальная металлическая бочка",
+  "block.immersivetechnology.crate_creative": "Креативный ящик",
+  "block.immersivetechnology.heat_creative": "Креативный нагреватель",
   "block.immersivetechnology.reinforced_coke_brick": "Армированный коксовый кирпич",
   "block.immersivetechnology.rotor_creative": "Творческий ротор",
   "block.immersivetechnology.slab_reinforced_coke_brick": "Плита из армированного коксового кирпича",
@@ -64,7 +66,8 @@
 
   "gui.immersivetechnology.apply": "Применить",
   "gui.immersivetechnology.boiler.heat_per_tick": "%1$s тепла за тик",
-  "gui.immersivetechnology.boiler.total_heat": "Общее тепло: %s",
+  "gui.immersivetechnology.boiler.total_heat": "%s общее тепло",
+  "gui.immersivetechnology.crate_creative": "Креативный ящик",
   "gui.immersivetechnology.direction_east": "В",
   "gui.immersivetechnology.direction_north": "С",
   "gui.immersivetechnology.direction_south": "Ю",
