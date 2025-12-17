@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.integration.jei.category;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.common.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mezz.jei.api.constants.VanillaTypes;
@@ -48,14 +49,19 @@ public class ITBoilerSolidCategory extends ITRecipeCategory<BoilerSolidRecipe> {
 
     @Override public void draw(@NotNull BoilerSolidRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
-        ItemStack exampleStack = recipe.input.getMatchingStacks()[0].copy();
-        exampleStack.setCount(recipe.input.getCount());
-        int burnTime = ForgeHooks.getBurnTime(exampleStack, null);
-        Component timeComponent = Component.translatable(TranslationKey.CATEGORY_BOILER_SOLID_TIME.getLocation(), burnTime, recipe.input.getCount()).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
+        int divider = ITCommonConfig.burnTimeDivider;
+        ItemStack singleStack = recipe.input.getMatchingStacks()[0].copy();
+        singleStack.setCount(1);
+        int burnTimePerItem = ForgeHooks.getBurnTime(singleStack, null);
+        if (burnTimePerItem <= 0) { burnTimePerItem = 200; }
+        int totalBurnTime = burnTimePerItem * recipe.input.getCount();
+        int effectiveTime = totalBurnTime / divider;
+        double effectiveHeat = recipe.getHeatPerTick() * divider;
+        Component timeComponent = Component.translatable(TranslationKey.CATEGORY_BOILER_SOLID_TIME.getLocation(), effectiveTime, recipe.input.getCount()).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
         int timeWidth = font.width(timeComponent);
         int timeX = 90 - timeWidth / 2;
         guiGraphics.drawString(font, timeComponent, timeX, 0, 0xAAAAAA, true);
-        Component heatComponent = Component.translatable(TranslationKey.CATEGORY_BOILER_SOLID_HEAT.getLocation(), String.format("%.2f", recipe.getHeatPerTick())).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
+        Component heatComponent = Component.translatable(TranslationKey.CATEGORY_BOILER_SOLID_HEAT.getLocation(), String.format("%.2f", effectiveHeat)).withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
         int heatWidth = font.width(heatComponent);
         int heatX = 90 - heatWidth / 2;
         guiGraphics.drawString(font, heatComponent, heatX, 9, 0xAAAAAA, true);
