@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks;
 
-import mctmods.immersivetechnology.common.tileentities.TileEntityITSlab;
+import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITSlab;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;

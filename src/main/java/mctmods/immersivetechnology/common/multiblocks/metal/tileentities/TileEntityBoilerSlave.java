@@ -7,9 +7,9 @@ import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 
-import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoiler;
-import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.multiblocks.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerShape;
 
 import mctmods.immersivetechnology.common.util.shapes.*;

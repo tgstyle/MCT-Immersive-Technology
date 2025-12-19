@@ -1,11 +1,14 @@
-package mctmods.immersivetechnology.common.blocks;
+package mctmods.immersivetechnology.common.multiblocks;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
-import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
+import mctmods.immersivetechnology.common.blocks.BlockITBase;
+import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
+import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;

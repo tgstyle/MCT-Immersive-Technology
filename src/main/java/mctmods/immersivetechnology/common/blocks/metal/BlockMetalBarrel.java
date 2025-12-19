@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import mctmods.immersivetechnology.common.blocks.BlockITTileProvider;
+import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrel;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;

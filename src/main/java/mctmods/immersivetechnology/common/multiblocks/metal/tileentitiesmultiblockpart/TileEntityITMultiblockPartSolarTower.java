@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.types.BlockType_MetalMultiblock;
-import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblockPart;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarTowerShape;
 import mctmods.immersivetechnology.common.util.multiblock.*;

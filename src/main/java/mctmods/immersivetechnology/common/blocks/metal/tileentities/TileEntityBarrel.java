@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop
 import blusunrize.immersiveengineering.common.util.Utils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITIPipe;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;

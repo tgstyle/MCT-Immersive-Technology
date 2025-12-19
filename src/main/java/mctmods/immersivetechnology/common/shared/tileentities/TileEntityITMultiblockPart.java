@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.tileentities;
+package mctmods.immersivetechnology.common.shared.tileentities;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.Lib;

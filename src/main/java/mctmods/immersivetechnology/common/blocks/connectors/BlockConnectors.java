@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
 import blusunrize.immersiveengineering.client.models.IOBJModelCallback;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConnectorRedstone;
-import mctmods.immersivetechnology.common.blocks.BlockITTileProvider;
+import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Connectors;

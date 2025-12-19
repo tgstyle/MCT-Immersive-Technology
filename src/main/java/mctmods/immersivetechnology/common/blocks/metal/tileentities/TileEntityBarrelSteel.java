@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.Config.ITConfig.Blocks;
-import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.block.state.IBlockState;

@@ -8,11 +8,11 @@ import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
-import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteelSheetmetalTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 
-import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.multiblocks.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
 import mctmods.immersivetechnology.common.util.shapes.*;
 import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;

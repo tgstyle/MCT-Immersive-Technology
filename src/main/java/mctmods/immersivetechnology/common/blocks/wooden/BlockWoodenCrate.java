@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.wooden;
 
-import mctmods.immersivetechnology.common.blocks.BlockITTileProvider;
+import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityCrate;
 import mctmods.immersivetechnology.common.blocks.wooden.types.BlockType_WoodenCrate;

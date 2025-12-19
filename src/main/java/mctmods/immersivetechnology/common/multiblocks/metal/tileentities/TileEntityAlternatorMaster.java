@@ -12,7 +12,7 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.multiblocks.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;

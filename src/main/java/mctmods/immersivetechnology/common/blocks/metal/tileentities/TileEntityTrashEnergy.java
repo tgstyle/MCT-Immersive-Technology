@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
-import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITrashCanBounds;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.util.EnumFacing;

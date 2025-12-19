@@ -3,9 +3,9 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
 import blusunrize.immersiveengineering.common.util.Utils;
 
-import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.multiblocks.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.tileentities.TileEntityITMultiblock;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarReflector;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
 

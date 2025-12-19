@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import mcjty.theoneprobe.api.*;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
+import mctmods.immersivetechnology.common.multiblocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityCoolingTowerMaster;

@@ -24,7 +24,7 @@ import mctmods.immersivetechnology.common.multiblocks.BlockMetalMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.BlockMetalMultiblock1;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.*;
-import mctmods.immersivetechnology.common.tileentities.TileEntityITSlab;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITSlab;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityLoadController;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityStackLimiter;
 import mctmods.immersivetechnology.common.util.ITLogger;

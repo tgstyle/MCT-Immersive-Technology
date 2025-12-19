@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.client.gui.GuiFluidValve;
-import mctmods.immersivetechnology.common.tileentities.TileEntityCommonValve;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonValve;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.BlockITTileProvider;
+import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashFluid;

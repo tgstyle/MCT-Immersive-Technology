@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.blocks;
+package mctmods.immersivetechnology.common.multiblocks;
 
 import java.util.List;
 

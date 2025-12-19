@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks;
 
-import mctmods.immersivetechnology.common.tileentities.TileEntityITSlab;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITSlab;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;

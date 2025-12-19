@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.client.gui.GuiLoadController;
-import mctmods.immersivetechnology.common.tileentities.TileEntityCommonValve;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonValve;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;

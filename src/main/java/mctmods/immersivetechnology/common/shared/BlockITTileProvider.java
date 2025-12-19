@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.blocks;
+package mctmods.immersivetechnology.common.shared;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.DimensionBlockPos;
@@ -17,6 +17,8 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import mctmods.immersivetechnology.common.CommonProxy;
+import mctmods.immersivetechnology.common.blocks.BlockITBase;
+import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;

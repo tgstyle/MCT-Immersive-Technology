@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.api.IEProperties;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidValve;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityLoadController;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityStackLimiter;
+import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;

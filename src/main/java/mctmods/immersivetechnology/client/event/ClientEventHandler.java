@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.client.event;
 
 import java.util.List;
 
-import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IAdvancedSelectionBounds;
+import mctmods.immersivetechnology.common.multiblocks.ITBlockInterfaces.IAdvancedSelectionBounds;
 import mctmods.immersivetechnology.common.util.shapes.BooleanOp;
 import mctmods.immersivetechnology.common.util.shapes.Shapes;
 import mctmods.immersivetechnology.common.util.shapes.VoxelShape;
