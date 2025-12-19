@@ -285,8 +285,8 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     protected void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartBoiler.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "fuel_input0": waterInput0 = new PoICache(this.facing, poi, this.mirrored); break;
-                case "water_input0": fuelInput0 = new PoICache(this.facing, poi, this.mirrored); break;
+                case "fuel_input0": fuelInput0 = new PoICache(this.facing, poi, this.mirrored); break;
+                case "water_input0": waterInput0 = new PoICache(this.facing, poi, this.mirrored); break;
                 case "steam_output0":
                     steamOutput0 = new PoICache(this.facing, poi, this.mirrored);
                     steamOutputFront0 = getBlockPosForPos(steamOutput0.position).offset(steamOutput0.facing);
