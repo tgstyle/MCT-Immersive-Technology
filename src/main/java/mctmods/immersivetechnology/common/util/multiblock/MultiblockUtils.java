@@ -84,17 +84,19 @@ public class MultiblockUtils {
     }
 
     public static IRefComparable[][][] GetStructure(MultiblockJSONSchema data, int width, int length, int height) {
+        if (data.structure == null) throw new IllegalArgumentException("Missing structure array in multiblock JSON");
+        if (data.structure.length != height * length) throw new IllegalArgumentException("Invalid number of structure lines: " + data.structure.length + ", expected " + (height * length));
         HashMap<Character, IRefComparable> palette = GetPalette(data);
         IRefComparable[][][] structure = new IRefComparable[height][length][width];
         for (int rowIndex = 0; rowIndex < data.structure.length; rowIndex++) {
             char[] characters = data.structure[rowIndex].toCharArray();
+            if (characters.length != width) throw new IllegalArgumentException("Invalid line length in structure row " + rowIndex + ": " + characters.length + ", expected " + width);
             for (int x = 0; x < characters.length; x++) {
                 if (characters[x] == ' ') {
                     structure[Math.floorDiv(rowIndex, length)][rowIndex % length][x] = AirRef.instance;
                     continue;
                 }
-                ItemStack itemstack = palette.get(characters[x]).toItemStack();
-                if (itemstack == null) throw new IllegalArgumentException(String.format("Invalid palette entry %s", characters[x]));
+                if (!palette.containsKey(characters[x])) throw new IllegalArgumentException(String.format("Invalid palette entry %s in row %d, column %d", characters[x], rowIndex, x));
                 structure[Math.floorDiv(rowIndex, length)][rowIndex % length][x] = palette.get(characters[x]);
             }
         }
