@@ -122,6 +122,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
     private void pumpOutputOut() {
         if (tanks[2].getFluidAmount() == 0) return;
+        if (steamOutput0 == null) InitializePoIs();
         IFluidHandler output = FluidUtil.getFluidHandler(world, steamOutputFront0, steamOutput0.facing.getOpposite());
         if (output == null) return;
         FluidStack out = tanks[2].getFluid();
@@ -281,11 +282,11 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
     @Override public int getComparatorInputOverride() { return (int)(15 * (heatLevel / workingHeatLevel)); }
 
-    private void InitializePoIs() {
+    protected void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartBoiler.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "fuel_input0": fuelInput0 = new PoICache(this.facing, poi, this.mirrored); break;
-                case "water_input0": waterInput0 = new PoICache(this.facing, poi, this.mirrored); break;
+                case "fuel_input0": waterInput0 = new PoICache(this.facing, poi, this.mirrored); break;
+                case "water_input0": fuelInput0 = new PoICache(this.facing, poi, this.mirrored); break;
                 case "steam_output0":
                     steamOutput0 = new PoICache(this.facing, poi, this.mirrored);
                     steamOutputFront0 = getBlockPosForPos(steamOutput0.position).offset(steamOutput0.facing);
@@ -305,7 +306,9 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
-    @Override protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override
+    public @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+        if (side == null) return tanks;
         if (redstone0 == null) InitializePoIs();
         if (fuelInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
         if (waterInput0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
@@ -313,12 +316,14 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) {
-        if (fuelInput0.isPoI(side, position) && iTank == 0) {
+    @Override
+    public boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+        if (redstone0 == null) InitializePoIs();
+        if (fuelInput0.isPoI(side, position)) {
             if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
             if (tanks[0].getFluid() == null) return BoilerRecipe.findFuel(resource) != null;
             return resource.isFluidEqual(tanks[0].getFluid());
-        } else if (waterInput0.isPoI(side, position) && iTank == 1) {
+        } else if (waterInput0.isPoI(side, position)) {
             if (tanks[1].getFluidAmount() >= tanks[1].getCapacity()) return false;
             if (tanks[1].getFluid() == null) return BoilerRecipe.findRecipe(resource) != null;
             return resource.isFluidEqual(tanks[1].getFluid());
@@ -326,10 +331,14 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         return false;
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, EnumFacing side, int position) { return steamOutput0.isPoI(side, position) && iTank == 2; }
+    @Override
+    public boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+        if (redstone0 == null) InitializePoIs();
+        return steamOutput0.isPoI(side, position);
+    }
 
     @Override public @Nonnull int[] getRedstonePos() {
-        if (!formed) return new int[0];
+        if (redstone0 == null) InitializePoIs();
         return new int[] {redstone0.position};
     }
 }

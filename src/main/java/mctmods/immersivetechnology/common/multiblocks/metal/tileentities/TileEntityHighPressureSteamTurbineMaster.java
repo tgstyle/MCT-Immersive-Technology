@@ -73,7 +73,10 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         speed = nbt.getInteger("speed");
         animation.readFromNBT(nbt);
         burnRemaining = nbt.getInteger("burnRemaining");
-        if (!descPacket && formed && redstone0 == null) InitializePoIs();
+        if (world.isRemote) {
+            targetLevel = (float)speed / maxSpeed;
+            soundVolume = targetLevel;
+        }
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -141,17 +144,18 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         if (formed && redstone0 == null) InitializePoIs();
         super.update();
         if (!formed) return;
+        float rotationSpeed = speed == 0 ? 0f : ((float) speed / (float) maxSpeed) * maxRotationSpeed;
+        float oldMomentum = animation.getAnimationMomentum();
+        animation.setAnimationMomentum(rotationSpeed);
+        animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
+        boolean changed = oldMomentum != rotationSpeed;
         if (world.isRemote) {
-            float rotationSpeed = speed == 0 ? 0f : ((float) speed / (float) maxSpeed) * maxRotationSpeed;
-            float oldMomentum = animation.getAnimationMomentum();
-            animation.setAnimationMomentum(rotationSpeed);
-            animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
             if (soundVolume < targetLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetLevel); }
             else if (soundVolume > targetLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetLevel); }
             handleSounds();
             return;
         }
-        boolean update = false;
+        boolean update = changed;
         int prevSpeed = speed;
         int prevBurn = burnRemaining;
         if (burnRemaining > 0) {
@@ -245,17 +249,22 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
 
     @Override public @Nonnull int[] getRedstonePos() {
         if (!formed) return new int[0];
+        if (redstone0 == null) InitializePoIs();
         return new int[] {redstone0.position};
     }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override
+    @Nonnull
+    public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
-        if (input0.isPoI(side, position) ) return new IFluidTank[] {tanks[0]};
-        if (output0.isPoI(side, position) ) return new IFluidTank[] {tanks[1]};
+        if (input0 == null) InitializePoIs();
+        if (input0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
+        if (output0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+        if (input0 == null) InitializePoIs();
         if (input0.isPoI(side, position) && iTank == 0) {
             if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
             FluidStack current = tanks[0].getFluid();
@@ -266,6 +275,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+        if (output0 == null) InitializePoIs();
         return output0.isPoI(side, position) && iTank == 1;
     }
 }

@@ -1,19 +1,17 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.api.ITGUI;
+import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoiler;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerShape;
 
 import mctmods.immersivetechnology.common.util.shapes.*;
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -33,11 +31,15 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoilerSlave, BoilerRecipe, TileEntityBoilerMaster> implements IEBlockInterfaces.IGuiTile, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntityBoilerSlave() { super(TileEntityITMultiblockPartBoiler.instance, 0, false); }
@@ -80,22 +82,22 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
 
     @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        TileEntityBoilerMaster master = master();
-        if (master == null) return ITUtils.emptyIFluidTankList;
-        return master.getAccessibleFluidTanks(side, position);
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+        TileEntityBoilerMaster m = master();
+        if (m == null) return ITUtils.emptyIFluidTankList;
+        return m.getAccessibleFluidTanks(side, position);
     }
 
     @Override protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) {
-        TileEntityBoilerMaster master = master();
-        if (master == null) return false;
-        return master.canFillTankFrom(iTank, side, resource, position);
+        TileEntityBoilerMaster m = master();
+        if (m == null) return false;
+        return m.canFillTankFrom(iTank, side, resource, position);
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, EnumFacing side, int position) {
-        TileEntityBoilerMaster master = master();
-        if (master == null) return false;
-        return master.canDrainTankFrom(iTank, side, position);
+        TileEntityBoilerMaster m = master();
+        if (m == null) return false;
+        return m.canDrainTankFrom(iTank, side, position);
     }
 
     @Override public boolean canOpenGui() { return formed; }
