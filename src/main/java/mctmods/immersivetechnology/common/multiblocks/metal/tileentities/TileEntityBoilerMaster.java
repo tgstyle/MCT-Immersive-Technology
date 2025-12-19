@@ -306,6 +306,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
     @Override protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+        if (redstone0 == null) InitializePoIs();
         if (fuelInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
         if (waterInput0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
         if (steamOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[2]};

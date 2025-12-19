@@ -6,6 +6,7 @@ import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.multiblocks.types.BlockType_MetalMultiblock1;
 
+import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;

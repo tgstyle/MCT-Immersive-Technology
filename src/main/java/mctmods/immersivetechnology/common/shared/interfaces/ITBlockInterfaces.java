@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.multiblocks;
+package mctmods.immersivetechnology.common.shared.interfaces;
 
 import java.util.List;
 
