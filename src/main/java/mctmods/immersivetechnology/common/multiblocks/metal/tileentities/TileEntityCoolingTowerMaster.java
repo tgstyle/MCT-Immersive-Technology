@@ -178,13 +178,27 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     private void InitializePoIs() {
         for(PoIJSONSchema poi : TileEntityITMultiblockPartCoolingTower.instance.pointsOfInterest) {
             switch(poi.name) {
-                case "input0": input0 = new PoICache(this.facing, poi, this.mirrored); break;
-                case "input1": input1 = new PoICache(this.facing, poi, this.mirrored); break;
-                case "output0": output0 = new PoICache(this.facing, poi, this.mirrored); outputFront0 = getBlockPosForPos(output0.position).offset(output0.facing); break;
-                case "output1": output1 = new PoICache(this.facing, poi, this.mirrored); outputFront1 = getBlockPosForPos(output1.position).offset(output1.facing); break;
-                case "output2": output2 = new PoICache(this.facing, poi, this.mirrored); outputFront2 = getBlockPosForPos(output2.position).offset(output2.facing); break;
-                case "particle": particlePos0 = getBlockPosForPos(poi.position); break;
-                case "sound": soundPos0 = getBlockPosForPos(poi.position); break;
+                case "input0":
+                    input0 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
+                case "input1":
+                    input1 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
+                case "output0":
+                    output0 = new PoICache(this.facing, poi, this.mirrored); outputFront0 = getBlockPosForPos(output0.position).offset(output0.facing);
+                    break;
+                case "output1":
+                    output1 = new PoICache(this.facing, poi, this.mirrored); outputFront1 = getBlockPosForPos(output1.position).offset(output1.facing);
+                    break;
+                case "output2":
+                    output2 = new PoICache(this.facing, poi, this.mirrored); outputFront2 = getBlockPosForPos(output2.position).offset(output2.facing);
+                    break;
+                case "particle":
+                    particlePos0 = getBlockPosForPos(poi.position);
+                    break;
+                case "sound":
+                    soundPos0 = getBlockPosForPos(poi.position);
+                    break;
             }
         }
         if(!world.isRemote) notifyIONeighbors();
