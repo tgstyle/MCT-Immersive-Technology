@@ -36,6 +36,10 @@ public abstract class MixinMCTWorldCMEFix {
     @Shadow(remap = false)
     public abstract void notifyBlockUpdate(net.minecraft.util.math.BlockPos pos, IBlockState oldState, IBlockState newState, int flags);
 
+    @Final
+    @Shadow(remap = false)
+    public boolean isRemote;
+
     @Inject(method = "addTileEntities(Ljava/util/Collection;)V", at = @At("HEAD"), cancellable = true, remap = false)
     private void injectAddTileEntities(Collection<TileEntity> collection, CallbackInfo ci) {
         if (!MCTMixinConfig.mixinSettings.enableWorldMixin) { return; }
@@ -60,7 +64,7 @@ public abstract class MixinMCTWorldCMEFix {
                 int sizeBefore = loadedTileEntityList.size();
                 loadedTileEntityList.add(tile);
                 if (tile instanceof ITickable) { tickableTileEntities.add(tile); }
-                if (world.isRemote) {
+                if (isRemote) {
                     IBlockState state = world.getBlockState(tile.getPos());
                     notifyBlockUpdate(tile.getPos(), state, state, 2);
                 }
