@@ -2,12 +2,15 @@ package mctmods.immersivetechnology.common.shared.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
 import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,7 +24,9 @@ public abstract class TileEntityCommonOSD extends TileEntityIEBase implements IT
     public long lastAcceptedAmount = 0;
     public int secondCounter = 0;
 
-    public void efficientMarkDirty() { world.getChunk(this.getPos()).markDirty(); }
+    public void efficientMarkDirty() {
+        if (world != null) world.getChunk(this.getPos()).markDirty();
+    }
 
     @Override
     public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { lastAcceptedAmount = nbt.getLong("lastAcceptedAmount"); }

@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal;
 import blusunrize.immersiveengineering.api.IEProperties;
 import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrel;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelCreative;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelSteel;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalBarrel;
@@ -48,7 +48,7 @@ public class BlockMetalBarrel extends BlockITTileProvider<BlockType_MetalBarrel>
 	public TileEntity createBasicTE(World worldIn, BlockType_MetalBarrel type) {
 		switch(type) {
 		case BARREL:
-			return new TileEntityBarrel();
+			return new TileEntityBarrelCreative();
 		case BARREL_OPEN:
 			return new TileEntityBarrelOpen();
 		case BARREL_STEEL:
