@@ -47,21 +47,18 @@ public class ElectrolyticCrucibleBatteryRecipeCategory extends ITRecipeCategory<
         guiFluidStacks.init(tankIndex, false, 12, 12, 16, 47, tankSize, true, tankOverlay);
         guiFluidStacks.set(tankIndex, inputs.get(0));
 
-        if (!outputs.isEmpty()) {
-            tankIndex++;
-            guiFluidStacks.init(tankIndex, false, 102, 12, 16, 47, tankSize, true, tankOverlay);
-            guiFluidStacks.set(tankIndex, outputs.get(0));
-            if (outputs.size() >= 2) {
-                tankIndex++;
-                guiFluidStacks.init(tankIndex, false, 125, 12, 16, 47, tankSize, true, tankOverlay);
-                guiFluidStacks.set(tankIndex, outputs.get(1));
-            }
-            if (outputs.size() == 3) {
-                tankIndex++;
-                guiFluidStacks.init(tankIndex, false, 148, 12, 16, 47, tankSize, true, tankOverlay);
-                guiFluidStacks.set(tankIndex, outputs.get(2));
-            }
-        }
+        tankIndex++;
+        guiFluidStacks.init(tankIndex, false, 102, 12, 16, 47, tankSize, true, tankOverlay);
+        guiFluidStacks.set(tankIndex, outputs.isEmpty() ? null : outputs.get(0));
+
+        tankIndex++;
+        guiFluidStacks.init(tankIndex, false, 125, 12, 16, 47, tankSize, true, tankOverlay);
+        guiFluidStacks.set(tankIndex, outputs.size() < 2 ? null : outputs.get(1));
+
+        tankIndex++;
+        guiFluidStacks.init(tankIndex, false, 148, 12, 16, 47, tankSize, true, tankOverlay);
+        guiFluidStacks.set(tankIndex, outputs.size() < 3 ? null : outputs.get(2));
+
         guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
     }
 
