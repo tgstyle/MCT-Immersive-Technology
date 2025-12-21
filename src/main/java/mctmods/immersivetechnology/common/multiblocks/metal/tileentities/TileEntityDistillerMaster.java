@@ -7,6 +7,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IMirrorAb
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IUsesBooleanProperty;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
@@ -33,6 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -46,7 +48,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class TileEntityDistillerMaster extends TileEntityDistillerSlave implements ITFluidTank.TankListener, IMirrorAble {
+public class TileEntityDistillerMaster extends TileEntityDistillerSlave implements ITFluidTank.TankListener, IMirrorAble, IIEInventory {
     private static final int inputTankSize = Multiblocks.distiller.distiller_input_tankSize;
     private static final int outputTankSize = Multiblocks.distiller.distiller_output_tankSize;
     private static final int energyCapacity = 16000;
@@ -366,4 +368,15 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         process.setInputTanks(tag.getIntArray("process_inputTanks"));
         return process;
     }
+
+    @Override public NonNullList<ItemStack> getInventory() { return inventory; }
+
+    @Override public boolean isStackValid(int slot, ItemStack stack) {
+        if (slot == 0 || slot == 2) return stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        return false;
+    }
+
+    @Override public int getSlotLimit(int slot) { return 64; }
+
+    @Override public void doGraphicalUpdates(int slot) { efficientMarkDirty(); markContainingBlockForUpdate(null); }
 }

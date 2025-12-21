@@ -10,6 +10,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IUsesBool
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.common.util.ITUtils;
@@ -40,15 +41,12 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IMirrorAble, IUsesBooleanProperty, IFluxReceiver, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntityDistillerSlave() { super(TileEntityITMultiblockPartDistiller.instance, 16000, true); }
@@ -110,7 +108,7 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
             if (m == null) return false;
             return m.itemOutput0.isPoI(facing, pos);
         }
-        if(capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.isEnergyPosition(facing, pos)) return true;
+        if (capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.isEnergyPosition(facing, pos)) return true;
         return super.hasCapability(capability, facing);
     }
 
@@ -124,10 +122,12 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
             TileEntityDistillerMaster m = master();
             if (m == null || !m.itemOutput0.isPoI(facing, pos)) return null;
-            return (T) new DistillerItemHandler(this);
+            boolean[] canInsert = new boolean[5];
+            boolean[] canExtract = new boolean[]{false, true, false, true, true};
+            return (T) new IEInventoryHandler(5, m, 0, canInsert, canExtract);
         }
-        if(capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.isEnergyPosition(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
-        return Objects.requireNonNull(super.getCapability(capability, facing));
+        if (capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.isEnergyPosition(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+        return super.getCapability(capability, facing);
     }
 
     @Override public @Nonnull FluxStorage getFluxStorage() { return master() == null ? new FluxStorage(0) : master.energyStorage; }
@@ -256,32 +256,5 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
             }
             return null;
         }
-    }
-
-    public static class DistillerItemHandler implements IItemHandler {
-        TileEntityDistillerSlave te;
-
-        public DistillerItemHandler(TileEntityDistillerSlave te) { this.te = te; }
-
-        @Override public int getSlots() { return 3; }
-
-        @Override @Nonnull public ItemStack getStackInSlot(int slot) {
-            NonNullList<ItemStack> inv = te.getInventory();
-            if (slot == 0) return inv.get(1);
-            if (slot == 1) return inv.get(3);
-            if (slot == 2) return inv.get(4);
-            return ItemStack.EMPTY;
-        }
-
-        @Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) { return stack; }
-
-        @Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            ItemStack stack = getStackInSlot(slot);
-            if (stack.isEmpty() || amount <= 0) return ItemStack.EMPTY;
-            if (simulate) return ItemHandlerHelper.copyStackWithSize(stack, Math.min(stack.getCount(), amount));
-            return stack.splitStack(Math.min(stack.getCount(), amount));
-        }
-
-        @Override public int getSlotLimit(int slot) { return 64; }
     }
 }
