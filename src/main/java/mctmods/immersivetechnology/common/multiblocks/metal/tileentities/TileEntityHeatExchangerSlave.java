@@ -113,16 +113,13 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
         return vs.optimize();
     }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
 
     @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
 
-    @Nonnull
-    @Override public float[] getBlockBounds() {
+    @Override @Nonnull public float[] getBlockBounds() {
         VoxelShape vs = getVoxelShape();
         if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
         AxisAlignedBB bb = vs.bounds();

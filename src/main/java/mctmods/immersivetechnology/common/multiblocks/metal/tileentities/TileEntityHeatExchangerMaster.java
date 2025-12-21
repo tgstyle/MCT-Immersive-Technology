@@ -57,7 +57,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     private double distanceSqToTE;
     private int playerDimension;
     private boolean isRunning;
-    private int gracePeriod = 60;
+    private int gracePeriod = 0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -213,7 +213,9 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
+    @Override
+    @Nonnull
+    public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (side == null) return tanks;
         if (input0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};

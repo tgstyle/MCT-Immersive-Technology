@@ -48,26 +48,17 @@ public class HeatExchangerRecipeCategory extends ITRecipeCategory<HeatExchangerR
 
         int tankIndex = 0;
         IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-        if (!inputs.isEmpty()) {
-            guiFluidStacks.init(tankIndex, true, 35, 12, 16, 47, tankSize, true, tankOverlay);
-            guiFluidStacks.set(tankIndex, inputs.get(0));
-            if (inputs.size() == 2) {
-                tankIndex++;
-                guiFluidStacks.init(tankIndex, true, 12, 12, 16, 47, tankSize, true, tankOverlay);
-                guiFluidStacks.set(tankIndex, inputs.get(1));
-            }
-        }
-
-        if (!outputs.isEmpty()) {
-            tankIndex++;
-            guiFluidStacks.init(tankIndex, false, 125, 12, 16, 47, tankSize, true, tankOverlay);
-            guiFluidStacks.set(tankIndex, outputs.get(0));
-            if (outputs.size() == 2) {
-                tankIndex++;
-                guiFluidStacks.init(tankIndex, false, 148, 12, 16, 47, tankSize, true, tankOverlay);
-                guiFluidStacks.set(tankIndex, outputs.get(1));
-            }
-        }
+        guiFluidStacks.init(tankIndex, true, 35, 12, 16, 47, tankSize, true, tankOverlay);
+        guiFluidStacks.set(tankIndex, !inputs.isEmpty() ? inputs.get(0) : null);
+        tankIndex++;
+        guiFluidStacks.init(tankIndex, true, 12, 12, 16, 47, tankSize, true, tankOverlay);
+        guiFluidStacks.set(tankIndex, inputs.size() > 1 ? inputs.get(1) : null);
+        tankIndex++;
+        guiFluidStacks.init(tankIndex, false, 125, 12, 16, 47, tankSize, true, tankOverlay);
+        guiFluidStacks.set(tankIndex, !outputs.isEmpty() ? outputs.get(0) : null);
+        tankIndex++;
+        guiFluidStacks.init(tankIndex, false, 148, 12, 16, 47, tankSize, true, tankOverlay);
+        guiFluidStacks.set(tankIndex, outputs.size() > 1 ? outputs.get(1) : null);
         guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
     }
 
