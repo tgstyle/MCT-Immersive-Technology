@@ -249,7 +249,9 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         }
     }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override
+    @Nonnull
+    public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (side == null) return tanks;
         if (input0.isPoI(side, position)) return new FluidTank[]{tanks[0]};

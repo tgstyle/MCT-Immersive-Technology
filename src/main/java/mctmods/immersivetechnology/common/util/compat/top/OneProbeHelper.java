@@ -12,6 +12,8 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEnt
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityCoolingTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityElectrolyticCrucibleBatteryMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityElectrolyticCrucibleBatterySlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityGasTurbineMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityGasTurbineSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHighPressureSteamTurbineMaster;
@@ -49,44 +51,16 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
     @Nullable
     @Override public Void apply(@Nullable ITheOneProbe input) {
         assert input != null;
+        input.registerProvider(new BoilerProvider());
+        input.registerProvider(new CoolingTowerProvider());
+        input.registerProvider(new DistillerProvider());
+        input.registerProvider(new ElectrolyticCrucibleBatteryProvider());
+        input.registerProvider(new GasTurbineProvider());
+        input.registerProvider(new HighPressureSteamTurbineProvider());
         input.registerProvider(new MechanicalEnergyProvider());
         input.registerProvider(new MiscProvider());
-        input.registerProvider(new GasTurbineProvider());
-        input.registerProvider(new CoolingTowerProvider());
         input.registerProvider(new SteamTurbineProvider());
-        input.registerProvider(new BoilerProvider());
-        input.registerProvider(new DistillerProvider());
         return null;
-    }
-
-    public static class MiscProvider implements IProbeInfoProvider {
-        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "MiscInfo"; }
-
-        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
-            TileEntity te = world.getTileEntity(data.getPos());
-            if (te instanceof TileEntityBoilerSlave) {
-                TileEntityBoilerMaster master = ((TileEntityBoilerSlave)te).master();
-                if (master == null) return;
-                int current = (int)(master.heatLevel / workingHeatLevel * 100);
-                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .progress(current, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
-            }
-        }
-    }
-
-    public static class MechanicalEnergyProvider implements IProbeInfoProvider {
-        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "MechanicalEnergyInfo"; }
-
-        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
-            TileEntity te = world.getTileEntity(data.getPos());
-            if (te instanceof IMechanicalEnergy) {
-                TileEntityMultiblockPart<?> master = ((TileEntityMultiblockPart<?>)te).master();
-                if (master == null) return;
-                int current = ((IMechanicalEnergy)master).getSpeed();
-                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .progress(current, maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix(" RPM"));
-            }
-        }
     }
 
     public static class BoilerProvider implements IProbeInfoProvider {
@@ -113,6 +87,161 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 addTankInfo(probeInfo, master.tanks[0]);
                 addTankInfo(probeInfo, master.tanks[1]);
                 addTankInfo(probeInfo, master.tanks[2]);
+            }
+        }
+
+        private static int getFluidColor(@Nullable FluidStack fluid) {
+            if (fluid == null) return 0xff555555;
+            int tint = fluid.getFluid().getColor(fluid);
+            ResourceLocation still = fluid.getFluid().getStill(fluid);
+            TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(still.toString());
+            int[] pixels = sprite.getFrameTextureData(0)[0];
+            int textureColor = getTextureColor(pixels);
+            int r = ((textureColor >> 16 & 0xff) * (tint >> 16 & 0xff)) / 255;
+            int g = ((textureColor >> 8 & 0xff) * (tint >> 8 & 0xff)) / 255;
+            int b = ((textureColor & 0xff) * (tint & 0xff)) / 255;
+            return 0xff000000 | r << 16 | g << 8 | b;
+        }
+
+        private void addTankInfo(IProbeInfo probeInfo, FluidTank tank) {
+            FluidStack fluid = tank.getFluid();
+            int amount = fluid != null ? fluid.amount : 0;
+            String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
+            int color = getFluidColor(fluid);
+            probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                    .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
+                    .text(fluidName);
+        }
+    }
+
+    public static class CoolingTowerProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "CoolingTowerInfo"; }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+            TileEntity te = world.getTileEntity(data.getPos());
+            if (!(te instanceof TileEntityCoolingTowerSlave)) return;
+            TileEntityCoolingTowerMaster master = ((TileEntityCoolingTowerSlave)te).master();
+            if (master == null) return;
+            EnumFacing facing = data.getSideHit();
+            int pos = ((TileEntityMultiblockPart<?>)te).pos;
+            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
+            if (accessible.length > 0) {
+                IFluidTank tank = accessible[0];
+                FluidStack fluid = tank.getFluid();
+                int amount = fluid != null ? fluid.amount : 0;
+                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
+                int color = getFluidColor(fluid);
+                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                        .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
+                        .text(fluidName);
+            } else {
+                addTankInfo(probeInfo, master.tanks[0]);
+                addTankInfo(probeInfo, master.tanks[1]);
+                addTankInfo(probeInfo, master.tanks[2]);
+                addTankInfo(probeInfo, master.tanks[3]);
+                addTankInfo(probeInfo, master.tanks[4]);
+            }
+        }
+
+        private static int getFluidColor(@Nullable FluidStack fluid) {
+            if (fluid == null) return 0xff555555;
+            int tint = fluid.getFluid().getColor(fluid);
+            ResourceLocation still = fluid.getFluid().getStill(fluid);
+            TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(still.toString());
+            int[] pixels = sprite.getFrameTextureData(0)[0];
+            int textureColor = getTextureColor(pixels);
+            int r = ((textureColor >> 16 & 0xff) * (tint >> 16 & 0xff)) / 255;
+            int g = ((textureColor >> 8 & 0xff) * (tint >> 8 & 0xff)) / 255;
+            int b = ((textureColor & 0xff) * (tint & 0xff)) / 255;
+            return 0xff000000 | r << 16 | g << 8 | b;
+        }
+
+        private void addTankInfo(IProbeInfo probeInfo, FluidTank tank) {
+            FluidStack fluid = tank.getFluid();
+            int amount = fluid != null ? fluid.amount : 0;
+            String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
+            int color = getFluidColor(fluid);
+            probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                    .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
+                    .text(fluidName);
+        }
+    }
+
+    public static class DistillerProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "DistillerInfo"; }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+            TileEntity te = world.getTileEntity(data.getPos());
+            if (!(te instanceof TileEntityDistillerSlave)) return;
+            TileEntityDistillerMaster master = ((TileEntityDistillerSlave)te).master();
+            if (master == null) return;
+            EnumFacing facing = data.getSideHit();
+            int pos = ((TileEntityMultiblockPart<?>)te).pos;
+            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
+            if (accessible.length > 0) {
+                IFluidTank tank = accessible[0];
+                FluidStack fluid = tank.getFluid();
+                int amount = fluid != null ? fluid.amount : 0;
+                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
+                int color = getFluidColor(fluid);
+                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                        .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
+                        .text(fluidName);
+            } else {
+                addTankInfo(probeInfo, master.tanks[0]);
+                addTankInfo(probeInfo, master.tanks[1]);
+            }
+        }
+
+        private static int getFluidColor(@Nullable FluidStack fluid) {
+            if (fluid == null) return 0xff555555;
+            int tint = fluid.getFluid().getColor(fluid);
+            ResourceLocation still = fluid.getFluid().getStill(fluid);
+            TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(still.toString());
+            int[] pixels = sprite.getFrameTextureData(0)[0];
+            int textureColor = getTextureColor(pixels);
+            int r = ((textureColor >> 16 & 0xff) * (tint >> 16 & 0xff)) / 255;
+            int g = ((textureColor >> 8 & 0xff) * (tint >> 8 & 0xff)) / 255;
+            int b = ((textureColor & 0xff) * (tint & 0xff)) / 255;
+            return 0xff000000 | r << 16 | g << 8 | b;
+        }
+
+        private void addTankInfo(IProbeInfo probeInfo, FluidTank tank) {
+            FluidStack fluid = tank.getFluid();
+            int amount = fluid != null ? fluid.amount : 0;
+            String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
+            int color = getFluidColor(fluid);
+            probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                    .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
+                    .text(fluidName);
+        }
+    }
+
+    public static class ElectrolyticCrucibleBatteryProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "ElectrolyticCrucibleBatteryInfo"; }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+            TileEntity te = world.getTileEntity(data.getPos());
+            if (!(te instanceof TileEntityElectrolyticCrucibleBatterySlave)) return;
+            TileEntityElectrolyticCrucibleBatteryMaster master = ((TileEntityElectrolyticCrucibleBatterySlave)te).master();
+            if (master == null) return;
+            EnumFacing facing = data.getSideHit();
+            int pos = ((TileEntityMultiblockPart<?>)te).pos;
+            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
+            if (accessible.length > 0) {
+                IFluidTank tank = accessible[0];
+                FluidStack fluid = tank.getFluid();
+                int amount = fluid != null ? fluid.amount : 0;
+                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
+                int color = getFluidColor(fluid);
+                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                        .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
+                        .text(fluidName);
+            } else {
+                addTankInfo(probeInfo, master.tanks[0]);
+                addTankInfo(probeInfo, master.tanks[1]);
+                addTankInfo(probeInfo, master.tanks[2]);
+                addTankInfo(probeInfo, master.tanks[3]);
             }
         }
 
@@ -206,13 +335,13 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         }
     }
 
-    public static class CoolingTowerProvider implements IProbeInfoProvider {
-        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "CoolingTowerInfo"; }
+    public static class HighPressureSteamTurbineProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "HighPressureSteamTurbineInfo"; }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityCoolingTowerSlave)) return;
-            TileEntityCoolingTowerMaster master = ((TileEntityCoolingTowerSlave)te).master();
+            if (!(te instanceof TileEntityHighPressureSteamTurbineSlave)) return;
+            TileEntityHighPressureSteamTurbineMaster master = ((TileEntityHighPressureSteamTurbineSlave)te).master();
             if (master == null) return;
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
@@ -229,9 +358,6 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             } else {
                 addTankInfo(probeInfo, master.tanks[0]);
                 addTankInfo(probeInfo, master.tanks[1]);
-                addTankInfo(probeInfo, master.tanks[2]);
-                addTankInfo(probeInfo, master.tanks[3]);
-                addTankInfo(probeInfo, master.tanks[4]);
             }
         }
 
@@ -256,6 +382,36 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
                     .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
                     .text(fluidName);
+        }
+    }
+
+    public static class MechanicalEnergyProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "MechanicalEnergyInfo"; }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+            TileEntity te = world.getTileEntity(data.getPos());
+            if (te instanceof IMechanicalEnergy) {
+                TileEntityMultiblockPart<?> master = ((TileEntityMultiblockPart<?>)te).master();
+                if (master == null) return;
+                int current = ((IMechanicalEnergy)master).getSpeed();
+                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                        .progress(current, maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix(" RPM"));
+            }
+        }
+    }
+
+    public static class MiscProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "MiscInfo"; }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+            TileEntity te = world.getTileEntity(data.getPos());
+            if (te instanceof TileEntityBoilerSlave) {
+                TileEntityBoilerMaster master = ((TileEntityBoilerSlave)te).master();
+                if (master == null) return;
+                int current = (int)(master.heatLevel / workingHeatLevel * 100);
+                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                        .progress(current, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
+            }
         }
     }
 
@@ -264,71 +420,8 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            Object slave = null;
-            if (te instanceof TileEntitySteamTurbineSlave) { slave = te; }
-            else if (te instanceof TileEntityHighPressureSteamTurbineSlave) { slave = te; }
-            if (slave == null) return;
-            Object master = null;
-            if (slave instanceof TileEntitySteamTurbineSlave) { master = ((TileEntitySteamTurbineSlave)slave).master(); }
-            else if (slave instanceof TileEntityHighPressureSteamTurbineSlave) { master = ((TileEntityHighPressureSteamTurbineSlave)slave).master(); }
-            if (master == null) return;
-            EnumFacing facing = data.getSideHit();
-            int pos = ((TileEntityMultiblockPart<?>)te).pos;
-            IFluidTank[] accessible = null;
-            FluidTank[] tanks = null;
-            if (master instanceof TileEntitySteamTurbineMaster) {
-                accessible = ((TileEntitySteamTurbineMaster)master).getAccessibleFluidTanks(facing, pos);
-                tanks = ((TileEntitySteamTurbineMaster)master).tanks;
-            } else if (master instanceof TileEntityHighPressureSteamTurbineMaster) {
-                accessible = ((TileEntityHighPressureSteamTurbineMaster)master).getAccessibleFluidTanks(facing, pos);
-                tanks = ((TileEntityHighPressureSteamTurbineMaster)master).tanks;
-            }
-            if (accessible.length > 0) {
-                IFluidTank tank = accessible[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = getFluidColor(fluid);
-                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                        .text(fluidName);
-            } else {
-                addTankInfo(probeInfo, tanks[0]);
-                addTankInfo(probeInfo, tanks[1]);
-            }
-        }
-
-        private static int getFluidColor(@Nullable FluidStack fluid) {
-            if (fluid == null) return 0xff555555;
-            int tint = fluid.getFluid().getColor(fluid);
-            ResourceLocation still = fluid.getFluid().getStill(fluid);
-            TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(still.toString());
-            int[] pixels = sprite.getFrameTextureData(0)[0];
-            int textureColor = getTextureColor(pixels);
-            int r = ((textureColor >> 16 & 0xff) * (tint >> 16 & 0xff)) / 255;
-            int g = ((textureColor >> 8 & 0xff) * (tint >> 8 & 0xff)) / 255;
-            int b = ((textureColor & 0xff) * (tint & 0xff)) / 255;
-            return 0xff000000 | r << 16 | g << 8 | b;
-        }
-
-        private void addTankInfo(IProbeInfo probeInfo, FluidTank tank) {
-            FluidStack fluid = tank.getFluid();
-            int amount = fluid != null ? fluid.amount : 0;
-            String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-            int color = getFluidColor(fluid);
-            probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                    .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                    .text(fluidName);
-        }
-    }
-
-    public static class DistillerProvider implements IProbeInfoProvider {
-        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "DistillerInfo"; }
-
-        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
-            TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityDistillerSlave)) return;
-            TileEntityDistillerMaster master = ((TileEntityDistillerSlave)te).master();
+            if (!(te instanceof TileEntitySteamTurbineSlave)) return;
+            TileEntitySteamTurbineMaster master = ((TileEntitySteamTurbineSlave)te).master();
             if (master == null) return;
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
