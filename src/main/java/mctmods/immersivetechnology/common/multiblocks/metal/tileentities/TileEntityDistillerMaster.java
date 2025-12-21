@@ -138,7 +138,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
         private int getEnergyPerTick() { return this.recipe.getTotalProcessEnergy() / this.recipe.getTotalProcessTime(); }
 
-        @Override public DistillerProcess setInputTanks(int... tanks) { super.setInputTanks(tanks); return this; }
+        @Override @Nonnull public DistillerProcess setInputTanks(@Nonnull int... tanks) { super.setInputTanks(tanks); return this; }
 
         @Override public boolean canProcess(TileEntityMultiblockMetal multiblock) {
             int energyPerTick = getEnergyPerTick();
@@ -188,7 +188,6 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override public void update() {
         if (formed && redstone0 == null) InitializePoIs();
         if (!formed) return;
@@ -273,13 +272,19 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartDistiller.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "energy_input0": energyInput0 = new PoICache(this.facing, poi, this.mirrored); break;
-                case "redstone0": redstone0 = new PoICache(this.facing, poi, this.mirrored); break;
+                case "energy_input0":
+                    energyInput0 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
+                case "redstone0":
+                    redstone0 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
                 case "fluid_output0":
                     fluidOutput0 = new PoICache(this.facing, poi, this.mirrored);
                     fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
                     break;
-                case "fluid_input0": fluidInput0 = new PoICache(this.facing, poi, this.mirrored); break;
+                case "fluid_input0":
+                    fluidInput0 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
                 case "item_output0":
                     itemOutput0 = new PoICache(this.facing, poi, this.mirrored);
                     itemOutputFront0 = getBlockPosForPos(itemOutput0.position).offset(itemOutput0.facing.getOpposite());

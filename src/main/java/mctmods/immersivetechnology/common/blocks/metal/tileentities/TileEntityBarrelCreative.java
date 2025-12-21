@@ -30,34 +30,29 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPlayerInteraction, ITileDrop, IFluidHandler, IFluidTank, IFluidTankProperties {
-    @Nullable
-    private FluidStack selectedFluid;
+    @Nullable private FluidStack selectedFluid;
 
     public TileEntityBarrelCreative() {}
 
     private FluidStack getInfiniteStack(boolean pressurized) {
-        if (selectedFluid == null) return null;
+        if (selectedFluid == null) { return null; }
         FluidStack stack = Utils.copyFluidStackWithAmount(selectedFluid, Integer.MAX_VALUE, true);
         if (pressurized) {
-            if (stack.tag == null) stack.tag = new NBTTagCompound();
+            if (stack.tag == null) { stack.tag = new NBTTagCompound(); }
             stack.tag.setBoolean("pressurized", true);
         }
         return stack;
     }
 
     public void setSelectedFluid(@Nullable FluidStack stack) {
-        if (stack != null && stack.amount != 1) {
-            stack = Utils.copyFluidStackWithAmount(stack, 1, true);
-        }
-        boolean changed = (selectedFluid != null && stack != null && !selectedFluid.isFluidStackIdentical(stack)) ||
-                (selectedFluid != null && stack == null) ||
-                (selectedFluid == null && stack != null);
-        if (!changed) return;
+        if (stack != null && stack.amount != 1) { stack = Utils.copyFluidStackWithAmount(stack, 1, true); }
+        boolean changed = (selectedFluid != null && stack != null && !selectedFluid.isFluidStackIdentical(stack)) || (selectedFluid != null && stack == null) || (selectedFluid == null && stack != null);
+        if (!changed) { return; }
         selectedFluid = stack;
         if (world != null) {
             this.markDirty();
             markContainingBlockForUpdate(null);
-            if (!world.isRemote) world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+            if (!world.isRemote) { world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true); }
         }
     }
 
@@ -65,11 +60,10 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
     public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         FluidStack loaded = null;
-        if (nbt.hasKey("tank")) {
-            loaded = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("tank"));
-        } else if (nbt.hasKey("fluid")) {
+        if (nbt.hasKey("tank")) { loaded = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("tank")); }
+        else if (nbt.hasKey("fluid")) {
             Fluid fluid = FluidRegistry.getFluid(nbt.getString("fluid"));
-            if (fluid != null) loaded = new FluidStack(fluid, 1);
+            if (fluid != null) { loaded = new FluidStack(fluid, 1); }
         }
         setSelectedFluid(loaded);
     }
@@ -85,22 +79,19 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
-        if (!world.isRemote) world.addTileEntity(this);
-    }
+    public void onLoad() { super.onLoad(); }
 
     @Override
     public void update() {
         super.update();
-        if (world.isRemote || selectedFluid == null) return;
+        if (world.isRemote || selectedFluid == null) { return; }
         for (int index = 0; index < 6; index++) {
             EnumFacing face = EnumFacing.byIndex(index);
             IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
             if (output != null) {
                 TileEntity tile = Utils.getExistingTileEntity(world, getPos().offset(face));
                 FluidStack toFill = getInfiniteStack(tile instanceof ITIPipe);
-                if (toFill == null) continue;
+                if (toFill == null) { continue; }
                 acceptedAmount += output.fill(toFill, true);
             }
         }
@@ -108,14 +99,14 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return true;
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) { return true; }
         return super.hasCapability(capability, facing);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public @Nonnull <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return (T) this;
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) { return (T) this; }
         return super.getCapability(capability, facing);
     }
 
@@ -128,15 +119,15 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
     @Nullable
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain) {
-        if (selectedFluid == null || resource == null || !resource.isFluidEqual(selectedFluid)) return null;
-        if (doDrain) acceptedAmount += resource.amount;
+        if (selectedFluid == null || resource == null || !resource.isFluidEqual(selectedFluid)) { return null; }
+        if (doDrain) { acceptedAmount += resource.amount; }
         return Utils.copyFluidStackWithAmount(selectedFluid, resource.amount, true);
     }
 
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain) {
-        if (selectedFluid == null) return null;
-        if (doDrain) acceptedAmount += maxDrain;
+        if (selectedFluid == null) { return null; }
+        if (doDrain) { acceptedAmount += maxDrain; }
         return Utils.copyFluidStackWithAmount(selectedFluid, maxDrain, true);
     }
 
@@ -201,11 +192,10 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
             NBTTagCompound tag = stack.getTagCompound();
             assert tag != null;
             FluidStack loaded = null;
-            if (tag.hasKey("tank")) {
-                loaded = FluidStack.loadFluidStackFromNBT(tag.getCompoundTag("tank"));
-            } else if (tag.hasKey("fluid")) {
+            if (tag.hasKey("tank")) { loaded = FluidStack.loadFluidStackFromNBT(tag.getCompoundTag("tank")); }
+            else if (tag.hasKey("fluid")) {
                 Fluid fluid = FluidRegistry.getFluid(tag.getString("fluid"));
-                if (fluid != null) loaded = new FluidStack(fluid, 1);
+                if (fluid != null) { loaded = new FluidStack(fluid, 1); }
             }
             setSelectedFluid(loaded);
         }
@@ -218,9 +208,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
             BinaryMessageTileSync.sendToServer(getPos(), message);
             requestCooldown = 20;
         }
-        if (selectedFluid != null) {
-            return new String[]{ text().format(selectedFluid.getLocalizedName(), lastAcceptedAmount) };
-        }
+        if (selectedFluid != null) { return new String[]{ text().format(selectedFluid.getLocalizedName(), lastAcceptedAmount) }; }
         return new String[]{ TranslationKey.GUI_EMPTY.text() };
     }
 
@@ -229,7 +217,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
         ByteBuf message = Unpooled.buffer();
         message.writeLong(lastAcceptedAmount);
         message.writeBoolean(selectedFluid != null);
-        if (selectedFluid != null) ByteBufUtils.writeUTF8String(message, selectedFluid.getFluid().getName());
+        if (selectedFluid != null) { ByteBufUtils.writeUTF8String(message, selectedFluid.getFluid().getName()); }
         BinaryMessageTileSync.sendToPlayer(player, getPos(), message);
     }
 
@@ -240,9 +228,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
         if (hasFluid) {
             Fluid fluid = FluidRegistry.getFluid(ByteBufUtils.readUTF8String(buf));
             setSelectedFluid(fluid == null ? null : new FluidStack(fluid, 1));
-        } else {
-            setSelectedFluid(null);
-        }
+        } else { setSelectedFluid(null); }
     }
 
     @Override
