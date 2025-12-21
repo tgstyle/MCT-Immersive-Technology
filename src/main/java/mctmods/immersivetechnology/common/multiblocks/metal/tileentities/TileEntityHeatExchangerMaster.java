@@ -184,10 +184,18 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartHeatExchanger.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "redstone0": redstone0 = new PoICache(this.facing, poi, this.mirrored); break;
-                case "energy_input0": energyInput0 = new PoICache(this.facing, poi, this.mirrored); break;
-                case "input0": input0 = new PoICache(this.facing, poi, this.mirrored); break;
-                case "input1": input1 = new PoICache(this.facing, poi, this.mirrored); break;
+                case "redstone0":
+                    redstone0 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
+                case "energy_input0":
+                    energyInput0 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
+                case "input0":
+                    input0 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
+                case "input1":
+                    input1 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
                 case "output0":
                     output0 = new PoICache(this.facing, poi, this.mirrored);
                     outputFront0 = getBlockPosForPos(output0.position).offset(output0.facing);
@@ -196,7 +204,9 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
                     output1 = new PoICache(this.facing, poi, this.mirrored);
                     outputFront1 = getBlockPosForPos(output1.position).offset(output1.facing);
                     break;
-                case "sound0": soundPos0 = getBlockPosForPos(poi.position); break;
+                case "sound0":
+                    soundPos0 = getBlockPosForPos(poi.position);
+                    break;
             }
         }
         if (!world.isRemote) notifyIONeighbors();
@@ -217,6 +227,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     @Nonnull
     public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
+        if (redstone0 == null) InitializePoIs();
         if (side == null) return tanks;
         if (input0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
         if (input1.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
@@ -277,11 +288,13 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
 
     @Override public @Nonnull int[] getRedstonePos() {
         if (!formed) return new int[0];
+        if (redstone0 == null) InitializePoIs();
         return new int[] {redstone0.position};
     }
 
     @Override public @Nonnull int[] getEnergyPos() {
         if (!formed) return new int[0];
+        if (energyInput0 == null) InitializePoIs();
         return new int[] {energyInput0.position};
     }
 }
