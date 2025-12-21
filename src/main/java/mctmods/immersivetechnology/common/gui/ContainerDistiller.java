@@ -23,8 +23,8 @@ public class ContainerDistiller extends ContainerIEBase<TileEntityDistillerMaste
 				if (h == null || h.getTankProperties().length == 0) return false;
 				FluidStack fs = h.getTankProperties()[0].getContents();
 				if (fs == null) return false;
-                return tileF.tanks[0].getFluidAmount() <= 0 || fs.isFluidEqual(tileF.tanks[0].getFluid());
-            }
+				return tileF.tanks[0].getFluidAmount() <= 0 || fs.isFluidEqual(tileF.tanks[0].getFluid());
+			}
 		});
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 1, 26, 53));
 		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 2, 134, 17, 0) {
@@ -34,10 +34,9 @@ public class ContainerDistiller extends ContainerIEBase<TileEntityDistillerMaste
 			}
 		});
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 3, 134, 53));
+		this.addSlotToContainer(new IESlot.Output(this, this.inv, 4, 80, 35));
 
-		for (int i = 0 ; i < 3 ; i++) {
-			for (int j = 0 ; j < 9 ; j++) { addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18)); }
-		}
-		for (int i = 0 ; i < 9 ; i++) { addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 143)); }
+		for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++) { addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18)); }
+		for (int i = 0; i < 9; i++) { addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 143)); }
 	}
 }

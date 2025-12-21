@@ -192,7 +192,7 @@ public class ITContent {
         registerTile(TileEntityTrashItem.class);
         registerTile(TileEntityTrashFluid.class);
         registerTile(TileEntityTrashEnergy.class);
-        registerTile(TileEntityBarrel.class);
+        registerTile(TileEntityBarrelCreative.class);
         registerTile(TileEntityBarrelOpen.class);
         registerTile(TileEntityBarrelSteel.class);
         registerTile(TileEntityCrate.class);

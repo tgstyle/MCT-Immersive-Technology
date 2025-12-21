@@ -10,6 +10,8 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEnt
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityCoolingTowerMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityCoolingTowerSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityGasTurbineMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityGasTurbineSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHighPressureSteamTurbineMaster;
@@ -53,6 +55,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         input.registerProvider(new CoolingTowerProvider());
         input.registerProvider(new SteamTurbineProvider());
         input.registerProvider(new BoilerProvider());
+        input.registerProvider(new DistillerProvider());
         return null;
     }
 
@@ -292,6 +295,56 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             } else {
                 addTankInfo(probeInfo, tanks[0]);
                 addTankInfo(probeInfo, tanks[1]);
+            }
+        }
+
+        private static int getFluidColor(@Nullable FluidStack fluid) {
+            if (fluid == null) return 0xff555555;
+            int tint = fluid.getFluid().getColor(fluid);
+            ResourceLocation still = fluid.getFluid().getStill(fluid);
+            TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(still.toString());
+            int[] pixels = sprite.getFrameTextureData(0)[0];
+            int textureColor = getTextureColor(pixels);
+            int r = ((textureColor >> 16 & 0xff) * (tint >> 16 & 0xff)) / 255;
+            int g = ((textureColor >> 8 & 0xff) * (tint >> 8 & 0xff)) / 255;
+            int b = ((textureColor & 0xff) * (tint & 0xff)) / 255;
+            return 0xff000000 | r << 16 | g << 8 | b;
+        }
+
+        private void addTankInfo(IProbeInfo probeInfo, FluidTank tank) {
+            FluidStack fluid = tank.getFluid();
+            int amount = fluid != null ? fluid.amount : 0;
+            String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
+            int color = getFluidColor(fluid);
+            probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                    .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
+                    .text(fluidName);
+        }
+    }
+
+    public static class DistillerProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "DistillerInfo"; }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+            TileEntity te = world.getTileEntity(data.getPos());
+            if (!(te instanceof TileEntityDistillerSlave)) return;
+            TileEntityDistillerMaster master = ((TileEntityDistillerSlave)te).master();
+            if (master == null) return;
+            EnumFacing facing = data.getSideHit();
+            int pos = ((TileEntityMultiblockPart<?>)te).pos;
+            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
+            if (accessible.length > 0) {
+                IFluidTank tank = accessible[0];
+                FluidStack fluid = tank.getFluid();
+                int amount = fluid != null ? fluid.amount : 0;
+                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
+                int color = getFluidColor(fluid);
+                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                        .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
+                        .text(fluidName);
+            } else {
+                addTankInfo(probeInfo, master.tanks[0]);
+                addTankInfo(probeInfo, master.tanks[1]);
             }
         }
 
