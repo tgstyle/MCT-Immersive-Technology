@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -52,7 +53,13 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
         if (world != null) {
             this.markDirty();
             markContainingBlockForUpdate(null);
-            if (!world.isRemote) { world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true); }
+            if (!world.isRemote) {
+                world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+                SPacketUpdateTileEntity packet = this.getUpdatePacket();
+                for (EntityPlayerMP player : world.getPlayers(EntityPlayerMP.class, p -> p.getDistanceSq(getPos()) < 64 * 64)) {
+                    player.connection.sendPacket(packet);
+                }
+            }
         }
     }
 
