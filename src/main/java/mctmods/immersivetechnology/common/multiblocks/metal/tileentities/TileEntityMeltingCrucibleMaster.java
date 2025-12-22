@@ -66,9 +66,8 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     private PoICache redstone0;
     private PoICache energyInput0;
     private float soundVolume;
-    private float targetVolume;
-    private double distanceSqToTE;
-    private int playerDimension;
+    private double distanceSqToTE = Double.MAX_VALUE;
+    private int playerDimension = Integer.MIN_VALUE;
     private boolean isRunning;
     private boolean needsNeighborNotify = false;
     protected boolean redstoneControlInverted = false;
@@ -101,15 +100,16 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { BinaryMessageTileSync.sendToPlayer(player, getPos(), Unpooled.copyBoolean(isRunning)); }
 
-    @Override public void receiveMessageFromServer(ByteBuf message) { targetVolume = message.readBoolean() ? 1f : 0f; }
+    @Override public void receiveMessageFromServer(ByteBuf message) { isRunning = message.readBoolean(); }
 
     public void handleSounds() {
-        if (soundVolume < targetVolume) { soundVolume = Math.min(soundVolume + 0.02f, targetVolume); }
-        else if (soundVolume > targetVolume) { soundVolume = Math.max(soundVolume - 0.02f, targetVolume); }
+        if (distanceSqToTE > 4096) { ITSoundHandler.StopSound(soundPos0); soundVolume = 0; return; }
+        if (isRunning) { if (soundVolume < 1) soundVolume += 0.01f; }
+        else { if (soundVolume > 0) soundVolume -= 0.01f; }
         if (soundVolume == 0) { ITSoundHandler.StopSound(soundPos0); }
         else {
-            float attenuation = Math.max((float) Math.sqrt(distanceSqToTE) / 8, 1);
-            ITSounds.heatExchanger.PlayRepeating(soundPos0, (10 * soundVolume) / attenuation, 1);
+            float attenuation = Math.max((float) distanceSqToTE / 64f, 1f);
+            ITSounds.heatExchanger.PlayRepeating(soundPos0, soundVolume / (4 * attenuation), 1);
         }
     }
 
