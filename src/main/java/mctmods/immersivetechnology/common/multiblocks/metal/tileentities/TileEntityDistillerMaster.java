@@ -51,8 +51,8 @@ import java.util.List;
 public class TileEntityDistillerMaster extends TileEntityDistillerSlave implements ITFluidTank.TankListener, IMirrorAble, IIEInventory {
     private static final int inputTankSize = Multiblocks.distiller.distiller_input_tankSize;
     private static final int outputTankSize = Multiblocks.distiller.distiller_output_tankSize;
-    private static final int energyCapacity = 16000;
-    private static final int energyMaxInput = 512;
+    private static final int energyCapacity = Multiblocks.distiller.distiller_energy_size;
+    private static final int energyMaxInput = Multiblocks.distiller.distiller_energy_maxInput;
 
     public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxInput);
 

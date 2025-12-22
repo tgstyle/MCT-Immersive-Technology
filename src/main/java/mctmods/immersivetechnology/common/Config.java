@@ -88,10 +88,16 @@ public class Config {
                 public int distiller_output_itemMeta = 0;
                 @Comment({"The capacity of the output tank for the Distiller [Default=24000]"})
                 public int distiller_output_tankSize = 24000;
+                @Comment({"The maximum energy a Distiller can store [Default=16000]"})
+                public int distiller_energy_size = 16000;
+                @Comment({"The maximum energy input per tick per port for the Distiller [Default=512]"})
+                public int distiller_energy_maxInput = 512;
             }
             public static class ElectrolyticCrucibleBattery {
-                @Comment({"The maximum energy an Electrolytic Crucible Battery can store [Default=16384]"})
-                public int electrolyticCrucibleBattery_energy_size = 16384;
+                @Comment({"The maximum energy an Electrolytic Crucible Battery can store [Default=16000]"})
+                public int electrolyticCrucibleBattery_energy_size = 16000;
+                @Comment({"The maximum energy input per tick per port for the Electrolytic Crucible Battery [Default=4096]"})
+                public int electrolyticCrucibleBattery_energy_maxInput = 4096;
                 @Comment({"The capacity of the input tanks for the Electrolytic Crucible Battery [Default=10000]"})
                 public int electrolyticCrucibleBattery_input_tankSize = 10000;
                 @Comment({"The capacity of the output tanks for the Electrolytic Crucible Battery [Default=10000]"})
@@ -148,6 +154,8 @@ public class Config {
             public static class HeatExchanger {
                 @Comment({"The maximum energy a Heat Exchanger can store [Default=2048]"})
                 public int heatExchanger_energy_size = 2048;
+                @Comment({"The maximum energy input per tick per port for the Heat Exchanger [Default=1024]"})
+                public int heatExchanger_energy_maxInput = 1024;
                 @Comment({"The capacity of the input tanks for the Heat Exchanger [Default=10000]"})
                 public int heatExchanger_input_tankSize = 10000;
                 @Comment({"The capacity of the output tanks for the Heat Exchanger [Default=10000]"})
@@ -172,9 +180,11 @@ public class Config {
                 public int mechanicalEnergy_speed_max = 1800;
             }
             public static class MeltingCrucible {
-                @Comment({"The maximum energy a Heat Exchanger can store [Default=8000]"})
-                public int meltingCrucible_energy_size = 8000;
-                @Comment({"The capacity of the output tanks for the Heat Exchanger [Default=10000]"})
+                @Comment({"The maximum energy a Melting Crucible can store [Default=50000]"})
+                public int meltingCrucible_energy_size = 50000;
+                @Comment({"The maximum energy input per tick per port for the Melting Crucible [Default=1024]"})
+                public int meltingCrucible_energy_maxInput = 1024;
+                @Comment({"The capacity of the output tank for the Melting Crucible [Default=10000]"})
                 public int meltingCrucible_output_tankSize = 10000;
             }
             public static class Radiator {

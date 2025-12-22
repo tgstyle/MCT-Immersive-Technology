@@ -61,6 +61,7 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
 
     @Override protected @Nonnull CoolingTowerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return CoolingTowerRecipe.loadFromNBT(tag); }
 
+    @SuppressWarnings("ConstantConditions")
     @Override public @Nonnull int[] getRedstonePos() { return null; }
 
     @Override public @Nonnull int[] getOutputTanks() { return new int[]{2, 3, 4}; }

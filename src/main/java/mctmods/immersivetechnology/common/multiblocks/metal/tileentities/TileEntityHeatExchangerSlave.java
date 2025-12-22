@@ -1,5 +1,10 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
+import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
+import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
+import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxReceiver;
+import blusunrize.immersiveengineering.common.util.EnergyHelper;
+import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.common.util.ITUtils;
@@ -22,15 +27,18 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEntityHeatExchangerSlave, HeatExchangerRecipe, TileEntityHeatExchangerMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEntityHeatExchangerSlave, HeatExchangerRecipe, TileEntityHeatExchangerMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IFluxReceiver, IIEInternalFluxHandler {
     public TileEntityHeatExchangerSlave() { super(TileEntityITMultiblockPartHeatExchanger.instance, Multiblocks.heatExchanger.heatExchanger_energy_size, true); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
@@ -124,5 +132,36 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
         if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
         AxisAlignedBB bb = vs.bounds();
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
+    }
+
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.energyInput0.isPoI(facing, pos)) return true;
+        return super.hasCapability(capability, facing);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.energyInput0.isPoI(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+        return super.getCapability(capability, facing);
+    }
+
+    @Override @Nonnull public FluxStorage getFluxStorage() {
+        TileEntityHeatExchangerMaster m = master();
+        return m == null ? new FluxStorage(0) : m.energyStorage;
+    }
+
+    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) {
+        return formed && master() != null && master.energyInput0.isPoI(facing, pos) ? SideConfig.INPUT : SideConfig.NONE;
+    }
+
+    @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
+        TileEntityHeatExchangerMaster m = master();
+        if (!formed || m == null) return 0;
+        int received = m.energyStorage.receiveEnergy(energy, simulate);
+        if (!simulate && received > 0) {
+            m.efficientMarkDirty();
+            m.markContainingBlockForUpdate(null);
+        }
+        return received;
     }
 }

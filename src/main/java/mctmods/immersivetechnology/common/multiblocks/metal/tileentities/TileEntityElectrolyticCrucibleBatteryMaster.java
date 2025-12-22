@@ -48,13 +48,12 @@ import javax.annotation.Nullable;
 public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElectrolyticCrucibleBatterySlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IMirrorAble, IUsesBooleanProperty {
     private static final int inputTankSize = Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_input_tankSize;
     private static final int outputTankSize = Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_output_tankSize;
-    private static final int energyCapacity = 32000;
-    private static final int energyMaxInput = 4096;
-    private static final int energyMaxOutput = 4096;
+    private static final int energyCapacity = Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_energy_size;
+    private static final int energyMaxInput = Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_energy_maxInput;
 
     public TileEntityElectrolyticCrucibleBatteryMaster() { super(); }
 
-    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxOutput);
+    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxInput);
 
     public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(inputTankSize, this), new ITFluidTank(outputTankSize, this), new ITFluidTank(outputTankSize, this), new ITFluidTank(outputTankSize, this)};
 
@@ -221,12 +220,24 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "redstone0": redstone0 = new PoICache(this.facing, poi, this.mirrored); break;
-                case "sound": soundPos0 = getBlockPosForPos(poi.position); break;
-                case "input0": input0 = new PoICache(this.facing, poi, this.mirrored); break;
-                case "energy_input0": energyInput0 = new PoICache(this.facing, poi, this.mirrored); break;
-                case "energy_input1": energyInput1 = new PoICache(this.facing, poi, this.mirrored); break;
-                case "energy_input2": energyInput2 = new PoICache(this.facing, poi, this.mirrored); break;
+                case "redstone0":
+                    redstone0 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
+                case "sound":
+                    soundPos0 = getBlockPosForPos(poi.position);
+                    break;
+                case "input0":
+                    input0 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
+                case "energy_input0":
+                    energyInput0 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
+                case "energy_input1":
+                    energyInput1 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
+                case "energy_input2":
+                    energyInput2 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
                 case "output0":
                     output0 = new PoICache(this.facing, poi, this.mirrored);
                     outputFront0 = getBlockPosForPos(output0.position).offset(output0.facing);

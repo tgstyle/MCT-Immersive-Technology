@@ -1,5 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
+import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
+import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
+import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.common.util.ITUtils;
@@ -13,6 +16,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.MeltingCrucib
 import mctmods.immersivetechnology.common.util.shapes.*;
 import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -21,11 +25,11 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.entity.player.EntityPlayer;
 
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
@@ -58,15 +62,47 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
         return master;
     }
 
-    @Override public NonNullList<ItemStack> getInventory() { return master() == null ? NonNullList.withSize(1, ItemStack.EMPTY) : master.inventory; }
+    @Override public NonNullList<ItemStack> getInventory() {
+        TileEntityMeltingCrucibleMaster m = master();
+        return m == null ? NonNullList.withSize(1, ItemStack.EMPTY) : m.inventory;
+    }
 
-    @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
+    @Override public boolean isStackValid(int slot, ItemStack stack) {
+        TileEntityMeltingCrucibleMaster m = master();
+        return m != null && m.isStackValid(slot, stack);
+    }
 
-    @Override public int getSlotLimit(int slot) { return 64; }
+    @Override public int getSlotLimit(int slot) {
+        TileEntityMeltingCrucibleMaster m = master();
+        return m != null ? m.getSlotLimit(slot) : 64;
+    }
 
-    @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
+    @Override public void doGraphicalUpdates(int slot) {
+        TileEntityMeltingCrucibleMaster m = master();
+        if (m != null) m.doGraphicalUpdates(slot);
+    }
 
-    @Override protected @Nullable MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return MeltingCrucibleRecipe.loadFromNBT(tag); }
+    @Override public NonNullList<ItemStack> getDroppedItems() {
+        TileEntityMeltingCrucibleMaster m = master();
+        return m != null ? m.getDroppedItems() : NonNullList.create();
+    }
+
+    @Override public int getComparatedSize() {
+        TileEntityMeltingCrucibleMaster m = master();
+        return m != null ? m.getComparatedSize() : 0;
+    }
+
+    @Override public @Nonnull IFluidTank[] getInternalTanks() {
+        TileEntityMeltingCrucibleMaster m = master();
+        if (m == null) return new IFluidTank[0];
+        return m.tanks;
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    protected @Nonnull MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) {
+        return MeltingCrucibleRecipe.loadFromNBT(tag);
+    }
 
     @Override public @Nullable MeltingCrucibleRecipe findRecipeForInsertion(@Nonnull ItemStack inserting) { return MeltingCrucibleRecipe.findRecipe(inserting); }
 
@@ -100,23 +136,43 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
         return m.canDrainTankFrom(iTank, side, position);
     }
 
-    @Override public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             TileEntityMeltingCrucibleMaster master = master();
             if (master == null) return false;
-            return master.itemInput0.isPoI(facing, pos);
+            return master.isItemInputPosition(facing, pos);
         }
+        if (capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.isEnergyPosition(facing, pos)) return true;
         return super.hasCapability(capability, facing);
     }
 
     @SuppressWarnings("unchecked")
-    @Override public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+    @Override public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             TileEntityMeltingCrucibleMaster master = master();
             if (master == null) return null;
-            if (master.itemInput0.isPoI(facing, pos)) return (T)master.insertionHandler;
+            if (master.isItemInputPosition(facing, pos)) return (T)master.insertionHandler;
         }
+        if (capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.isEnergyPosition(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
         return super.getCapability(capability, facing);
+    }
+
+    @Override public @Nonnull FluxStorage getFluxStorage() {
+        TileEntityMeltingCrucibleMaster m = master();
+        return m == null ? new FluxStorage(0) : m.energyStorage;
+    }
+
+    @Override public @Nonnull SideConfig getEnergySideConfig(@Nullable EnumFacing facing) { return formed && master() != null && master.isEnergyPosition(facing, pos) ? SideConfig.INPUT : SideConfig.NONE; }
+
+    @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
+        TileEntityMeltingCrucibleMaster m = master();
+        if (!formed || m == null) return 0;
+        int received = m.energyStorage.receiveEnergy(energy, simulate);
+        if (!simulate && received > 0) {
+            m.efficientMarkDirty();
+            m.markContainingBlockForUpdate(null);
+        }
+        return received;
     }
 
     public BlockPos posToMultiblock() {

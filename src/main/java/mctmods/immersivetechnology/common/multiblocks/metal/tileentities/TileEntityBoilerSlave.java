@@ -70,7 +70,10 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
 
     @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
 
-    @Override protected @Nullable BoilerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return BoilerRecipe.loadFromNBT(tag); }
+    @Override
+    protected @Nonnull BoilerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) {
+        return BoilerRecipe.loadFromNBT(tag);
+    }
 
     @Override public @Nonnull int[] getRedstonePos() { return new int[0]; }
 
