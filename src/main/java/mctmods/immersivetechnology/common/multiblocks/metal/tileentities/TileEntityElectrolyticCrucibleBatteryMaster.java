@@ -1,8 +1,16 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
+import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
+import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorageAdvanced;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IMirrorAble;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IUsesBooleanProperty;
+import blusunrize.immersiveengineering.api.IEProperties;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.ElectrolyticCrucibleBatteryRecipe;
@@ -16,6 +24,7 @@ import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -36,40 +45,46 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElectrolyticCrucibleBatterySlave implements ITFluidTank.TankListener, IBinaryMessageReceiver {
+public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElectrolyticCrucibleBatterySlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IMirrorAble, IUsesBooleanProperty {
     private static final int inputTankSize = Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_input_tankSize;
     private static final int outputTankSize = Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_output_tankSize;
+    private static final int energyCapacity = 32000;
+    private static final int energyMaxInput = 4096;
+    private static final int energyMaxOutput = 4096;
+
+    public TileEntityElectrolyticCrucibleBatteryMaster() { super(); }
+
+    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxOutput);
 
     public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(inputTankSize, this), new ITFluidTank(outputTankSize, this), new ITFluidTank(outputTankSize, this), new ITFluidTank(outputTankSize, this)};
-
-    ElectrolyticCrucibleBatteryRecipe recipe;
-    private ElectrolyticCrucibleBatteryRecipe cachedRecipe;
 
     private PoICache energyInput0, energyInput1, energyInput2, redstone0, input0, output0, output1, output2, itemOutput0;
     private BlockPos soundPos0;
     private BlockPos outputFront0, outputFront1, outputFront2, itemOutputFront0;
 
     private float soundVolume;
-    private int clientUpdateCooldown = 20;
     private double distanceToTE = 0;
     private int playerDimension;
     private boolean isRunning;
-    private boolean notify;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
+        energyStorage.readFromNBT(nbt.getCompoundTag("energy"));
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
         tanks[2].readFromNBT(nbt.getCompoundTag("tank2"));
         tanks[3].readFromNBT(nbt.getCompoundTag("tank3"));
+        isRunning = nbt.getBoolean("running");
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
+        nbt.setTag("energy", energyStorage.writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank3", tanks[3].writeToNBT(new NBTTagCompound()));
+        nbt.setBoolean("running", isRunning);
     }
 
     public void requestUpdate() {
@@ -79,11 +94,6 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     }
 
     public void notifyNearbyClients() {
-        if (clientUpdateCooldown > 0) {
-            notify = true;
-            return;
-        }
-        clientUpdateCooldown = 20;
         ByteBuf buffer = Unpooled.copyBoolean(isRunning);
         BlockPos center = getPos();
         ImmersiveTechnology.packetHandler.sendToAllAround(new BinaryMessageTileSync(center, buffer), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 40));
@@ -125,52 +135,84 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         handleSounds();
     }
 
-    private void serverUpdate() {
+    public static class ElectrolyticCrucibleBatteryProcess extends MultiblockProcessInMachine<ElectrolyticCrucibleBatteryRecipe> {
+        public ElectrolyticCrucibleBatteryProcess(ElectrolyticCrucibleBatteryRecipe recipe, int... inputSlots) { super(recipe, inputSlots); }
+
+        private int getEnergyPerTick() { return this.recipe.getTotalProcessEnergy() / this.recipe.getTotalProcessTime(); }
+
+        @Override @Nonnull public ElectrolyticCrucibleBatteryProcess setInputTanks(@Nonnull int... tanks) { super.setInputTanks(tanks); return this; }
+
+        @Override public boolean canProcess(@Nonnull TileEntityMultiblockMetal multiblock) {
+            int energyPerTick = getEnergyPerTick();
+            if (energyPerTick <= 0) return true;
+            int simulated = multiblock.getFluxStorage().extractEnergy(energyPerTick, true);
+            if (simulated < energyPerTick) return false;
+            TileEntityElectrolyticCrucibleBatteryMaster master = (TileEntityElectrolyticCrucibleBatteryMaster) multiblock;
+            int fill0 = master.tanks[1].fill(this.recipe.fluidOutput0, false);
+            if (fill0 != this.recipe.fluidOutput0.amount) return false;
+            if (this.recipe.fluidOutput1 != null) {
+                int fill1 = master.tanks[2].fill(this.recipe.fluidOutput1, false);
+                if (fill1 != this.recipe.fluidOutput1.amount) return false;
+            }
+            if (this.recipe.fluidOutput2 != null) {
+                int fill2 = master.tanks[3].fill(this.recipe.fluidOutput2, false);
+                return fill2 == this.recipe.fluidOutput2.amount;
+            }
+            return true;
+        }
+
+        @Override public void doProcessTick(@Nonnull TileEntityMultiblockMetal multiblock) {
+            int energyPerTick = getEnergyPerTick();
+            if (energyPerTick > 0) multiblock.getFluxStorage().extractEnergy(energyPerTick, false);
+            super.doProcessTick(multiblock);
+        }
+    }
+
+    @Override @Nonnull protected MultiblockProcess<ElectrolyticCrucibleBatteryRecipe> loadProcessFromNBT(@Nonnull NBTTagCompound tag) {
+        ElectrolyticCrucibleBatteryRecipe recipe = ElectrolyticCrucibleBatteryRecipe.loadFromNBT(tag);
+        int[] inputSlots = tag.getIntArray("process_inputSlots");
+        int[] inputTanks = tag.getIntArray("process_inputTanks");
+        ElectrolyticCrucibleBatteryProcess process = new ElectrolyticCrucibleBatteryProcess(recipe, inputSlots);
+        if (inputTanks.length > 0) process.setInputTanks(inputTanks);
+        return process;
+    }
+
+    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<ElectrolyticCrucibleBatteryRecipe> process) { return true; }
+
+    @Override public void update() {
+        if (formed && redstone0 == null) InitializePoIs();
+        if (world.isRemote) { clientUpdate(); return; }
+        super.update();
         pumpOutputOut();
         boolean update = false;
         if (processQueue.size() < this.getProcessQueueMaxLength()) {
-            if (tanks[0].getFluidAmount() > 0) {
-                if (cachedRecipe == null) cachedRecipe = ElectrolyticCrucibleBatteryRecipe.findRecipe(tanks[0].getFluid());
-                recipe = cachedRecipe;
-                if (recipe != null && tanks[1].fill(recipe.fluidOutput0, false) == recipe.fluidOutput0.amount &&
-                        (recipe.fluidOutput1 == null || tanks[2].fill(recipe.fluidOutput1, false) == recipe.fluidOutput1.amount) &&
-                        (recipe.fluidOutput2 == null || tanks[3].fill(recipe.fluidOutput2, false) == recipe.fluidOutput2.amount)) {
-                    @SuppressWarnings("unchecked")
-                    MultiblockProcessInMachine<ElectrolyticCrucibleBatteryRecipe> process = new MultiblockProcessInMachine<>(recipe).setInputTanks(0);
-                    if (this.addProcessToQueue(process, true)) {
+            FluidStack input = tanks[0].getFluid();
+            if (input != null && input.amount > 0) {
+                ElectrolyticCrucibleBatteryRecipe recipe = ElectrolyticCrucibleBatteryRecipe.findRecipe(input);
+                if (recipe != null) {
+                    ElectrolyticCrucibleBatteryProcess process = new ElectrolyticCrucibleBatteryProcess(recipe).setInputTanks(0);
+                    if (process.canProcess(this) && this.addProcessToQueue(process, true)) {
+                        tanks[0].drain(recipe.fluidInput0.amount, true);
                         this.addProcessToQueue(process, false);
                         update = true;
                     }
                 }
             }
         }
-        if (tickedProcesses > 0) {
-            if (!isRunning) {
-                isRunning = true;
-                notifyNearbyClients();
-            }
-        } else if (isRunning) {
-            isRunning = false;
+        boolean shouldRun = tickedProcesses > 0 && !isRSDisabled();
+        if (isRunning != shouldRun) {
+            isRunning = shouldRun;
             notifyNearbyClients();
         }
-        if (clientUpdateCooldown > 0) clientUpdateCooldown--;
-        if (notify) notifyNearbyClients();
         if (update) {
             efficientMarkDirty();
             this.markContainingBlockForUpdate(null);
         }
     }
 
-    @Override public void update() {
-        if (formed && redstone0 == null) InitializePoIs();
-        super.update();
-        if (world.isRemote) { clientUpdate(); return; }
-        serverUpdate();
-    }
-
     public void efficientMarkDirty() { world.getChunk(this.getPos()).markDirty(); }
 
-    @Override public void TankContentsChanged() { cachedRecipe = null; this.markContainingBlockForUpdate(null); }
+    @Override public void TankContentsChanged() { this.markContainingBlockForUpdate(null); }
 
     @Override public boolean isDummy() { return false; }
 
@@ -218,27 +260,48 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         notifyNeighbor(getBlockPosForPos(itemOutput0.position));
     }
 
-    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
+    private void notifyNeighbor(BlockPos pos) {
+        world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false);
+    }
 
-    @Override public @Nonnull int[] getRedstonePos() {
+    @Override public boolean isRSDisabled() {
+        if (computerOn.isPresent()) { boolean on = computerOn.get(); return !on; }
+        int[] rsPositions = getRedstonePos();
+        if (rsPositions.length < 1) return false;
+        for (int rsPos : rsPositions) {
+            TileEntity tile = world.getTileEntity(getBlockPosForPos(rsPos));
+            if (tile != null) {
+                int power = world.getRedstonePowerFromNeighbors(tile.getPos());
+                boolean b = power > 0;
+                return redstoneControlInverted != b;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public @Nonnull int[] getRedstonePos() {
         if (!formed) return new int[0];
         return new int[]{redstone0.position};
     }
 
-    @Override public @Nonnull int[] getEnergyPos() {
+    @Override
+    public @Nonnull int[] getEnergyPos() {
         if (!formed) return new int[0];
         return new int[]{energyInput0.position, energyInput1.position, energyInput2.position};
     }
 
     public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
         if (!formed) return false;
+        if (redstone0 == null) InitializePoIs();
         if (facing == null) return false;
         if (energyInput0.isPoI(facing, position)) return true;
         if (energyInput1.isPoI(facing, position)) return true;
         return energyInput2.isPoI(facing, position);
     }
 
-    @Override public void onProcessFinish(@Nonnull MultiblockProcess<ElectrolyticCrucibleBatteryRecipe> process) {
+    @Override
+    public void onProcessFinish(@Nonnull MultiblockProcess<ElectrolyticCrucibleBatteryRecipe> process) {
         tanks[1].fill(process.recipe.fluidOutput0, true);
         if (process.recipe.fluidOutput1 != null) tanks[2].fill(process.recipe.fluidOutput1, true);
         if (process.recipe.fluidOutput2 != null) tanks[3].fill(process.recipe.fluidOutput2, true);
@@ -253,11 +316,12 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     @Nonnull
     public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
+        if (redstone0 == null) InitializePoIs();
         if (side == null) return tanks;
-        if (input0.isPoI(side, position)) return new FluidTank[]{tanks[0]};
-        if (output0.isPoI(side, position)) return new FluidTank[]{tanks[1]};
-        if (output1.isPoI(side, position)) return new FluidTank[]{tanks[2]};
-        if (output2.isPoI(side, position)) return new FluidTank[]{tanks[3]};
+        if (input0.isPoI(side, position)) return new IFluidTank[]{tanks[0]};
+        if (output0.isPoI(side, position)) return new IFluidTank[]{tanks[1]};
+        if (output1.isPoI(side, position)) return new IFluidTank[]{tanks[2]};
+        if (output2.isPoI(side, position)) return new IFluidTank[]{tanks[3]};
         return ITUtils.emptyIFluidTankList;
     }
 
@@ -314,4 +378,10 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
             }
         }
     }
+
+    @Override @Nonnull public FluxStorage getFluxStorage() { return energyStorage; }
+
+    @Override public boolean getIsMirrored() { return mirrored; }
+
+    @Override public @Nonnull IEProperties.PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
 }
