@@ -59,8 +59,8 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     public BoilerRecipe.BoilerFuelRecipe lastFuel;
     public BoilerRecipe lastRecipe;
 
-    private PoICache fuelInput0, waterInput0, steamOutput0, redstone0;
-    private BlockPos steamOutputFront0;
+    private PoICache fluidInput0, fluidInput1, fluidOutput0, redstone0;
+    private BlockPos fluidOutputFront0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -122,8 +122,8 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
     private void pumpOutputOut() {
         if (tanks[2].getFluidAmount() == 0) return;
-        if (steamOutput0 == null) InitializePoIs();
-        IFluidHandler output = FluidUtil.getFluidHandler(world, steamOutputFront0, steamOutput0.facing.getOpposite());
+        if (fluidOutput0 == null) InitializePoIs();
+        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputFront0, fluidOutput0.facing.getOpposite());
         if (output == null) return;
         FluidStack out = tanks[2].getFluid();
         int accepted = output.fill(out, false);
@@ -285,15 +285,15 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     protected void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartBoiler.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "fuel_input0":
-                    fuelInput0 = new PoICache(this.facing, poi, this.mirrored);
+                case "fluid_input0":
+                    fluidInput0 = new PoICache(this.facing, poi, this.mirrored);
                     break;
-                case "water_input0":
-                    waterInput0 = new PoICache(this.facing, poi, this.mirrored);
+                case "fluid_input1":
+                    fluidInput1 = new PoICache(this.facing, poi, this.mirrored);
                     break;
-                case "steam_output0":
-                    steamOutput0 = new PoICache(this.facing, poi, this.mirrored);
-                    steamOutputFront0 = getBlockPosForPos(steamOutput0.position).offset(steamOutput0.facing);
+                case "fluid_output0":
+                    fluidOutput0 = new PoICache(this.facing, poi, this.mirrored);
+                    fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
                     break;
                 case "redstone0":
                     redstone0 = new PoICache(this.facing, poi, this.mirrored);
@@ -304,9 +304,9 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     }
 
     private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(fuelInput0.position));
-        notifyNeighbor(getBlockPosForPos(waterInput0.position));
-        notifyNeighbor(getBlockPosForPos(steamOutput0.position));
+        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
+        notifyNeighbor(getBlockPosForPos(fluidInput1.position));
+        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
         notifyNeighbor(getBlockPosForPos(redstone0.position));
     }
 
@@ -316,20 +316,20 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     public @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if (side == null) return tanks;
         if (redstone0 == null) InitializePoIs();
-        if (fuelInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
-        if (waterInput0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
-        if (steamOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[2]};
+        if (fluidInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
+        if (fluidInput1.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
+        if (fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[2]};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override
     public boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
         if (redstone0 == null) InitializePoIs();
-        if (fuelInput0.isPoI(side, position)) {
+        if (fluidInput0.isPoI(side, position)) {
             if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
             if (tanks[0].getFluid() == null) return BoilerRecipe.findFuel(resource) != null;
             return resource.isFluidEqual(tanks[0].getFluid());
-        } else if (waterInput0.isPoI(side, position)) {
+        } else if (fluidInput1.isPoI(side, position)) {
             if (tanks[1].getFluidAmount() >= tanks[1].getCapacity()) return false;
             if (tanks[1].getFluid() == null) return BoilerRecipe.findRecipe(resource) != null;
             return resource.isFluidEqual(tanks[1].getFluid());
@@ -340,7 +340,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     @Override
     public boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
         if (redstone0 == null) InitializePoIs();
-        return steamOutput0.isPoI(side, position);
+        return fluidOutput0.isPoI(side, position);
     }
 
     @Override public @Nonnull int[] getRedstonePos() {

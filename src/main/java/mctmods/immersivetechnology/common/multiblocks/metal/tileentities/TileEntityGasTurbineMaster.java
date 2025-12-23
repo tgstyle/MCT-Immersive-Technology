@@ -72,10 +72,11 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private GasTurbineRecipe cachedRecipe;
     MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
     IMechanicalEnergy alternator;
-    private PoICache input0, output0;
+    private PoICache fluidInput0, fluidOutput0;
     private PoICache energyInput0, energyInput1;
     private PoICache redstone0, mechanicalOutput0;
-    private BlockPos particle0, runningSound0, arcSound0, ignitionSound0, starterSound0, outputFront0, mechanicalOutputFront0;
+    private BlockPos particle0, sound0, sound1, sound2, sound3;
+    private BlockPos outputFront0, mechanicalOutputPos0;
     private boolean lastStarterRunning = false;
     private int clientUpdateCooldown = 1;
 
@@ -96,34 +97,34 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        float att = Math.max((float) player.getDistanceSq(runningSound0.getX(), runningSound0.getY(), runningSound0.getZ()) / 64, 1);
+        float att = Math.max((float) player.getDistanceSq(sound0.getX(), sound0.getY(), sound0.getZ()) / 64, 1);
         float level = ITUtils.remapRange(0, maxSpeed, 0.5f, 1.5f, speed);
-        if (speed == 0) ITSoundHandler.StopSound(runningSound0);
-        else ITSounds.gasTurbineRunning.PlayRepeating(runningSound0, (level - 0.5f) / (4 * att), level);
+        if (speed == 0) ITSoundHandler.StopSound(sound0);
+        else ITSounds.gasTurbineRunning.PlayRepeating(sound0, (level - 0.5f) / (4 * att), level);
         if (starterRunning) {
-            ITSounds.gasTurbineStarter.PlayRepeating(starterSound0, Math.min((level - .5f) / att, .2f), 1);
-            if (speed >= maxSpeed / 4) ITSounds.gasTurbineArc.PlayRepeating(arcSound0, Math.min((level - .5f) / att, .2f), 1);
+            ITSounds.gasTurbineStarter.PlayRepeating(sound3, Math.min((level - .5f) / att, .2f), 1);
+            if (speed >= maxSpeed / 4) ITSounds.gasTurbineArc.PlayRepeating(sound1, Math.min((level - .5f) / att, .2f), 1);
         } else {
-            ITSoundHandler.StopSound(starterSound0);
-            ITSoundHandler.StopSound(arcSound0);
+            ITSoundHandler.StopSound(sound3);
+            ITSoundHandler.StopSound(sound1);
         }
     }
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        ITSoundHandler.StopSound(runningSound0);
-        ITSoundHandler.StopSound(arcSound0);
-        ITSoundHandler.StopSound(ignitionSound0);
-        ITSoundHandler.StopSound(starterSound0);
+        ITSoundHandler.StopSound(sound0);
+        ITSoundHandler.StopSound(sound1);
+        ITSoundHandler.StopSound(sound2);
+        ITSoundHandler.StopSound(sound3);
         super.onChunkUnload();
     }
 
     @Override public void disassemble() {
         super.disassemble();
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(runningSound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), runningSound0.getX(), runningSound0.getY(), runningSound0.getZ(), 0));
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(arcSound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), arcSound0.getX(), arcSound0.getY(), arcSound0.getZ(), 0));
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(ignitionSound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), ignitionSound0.getX(), ignitionSound0.getY(), ignitionSound0.getZ(), 0));
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(starterSound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), starterSound0.getX(), starterSound0.getY(), starterSound0.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound0.getX(), sound0.getY(), sound0.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound1), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound1.getX(), sound1.getY(), sound1.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound2), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound2.getX(), sound2.getY(), sound2.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound3), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound3.getX(), sound3.getY(), sound3.getZ(), 0));
     }
 
     private void speedUp() {
@@ -144,7 +145,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     public boolean isValidAlternator() {
         if (mechanicalOutput0 == null) InitializePoIs();
         if (alternator == null || !alternator.isValid()) {
-            TileEntity tile = world.getTileEntity(mechanicalOutputFront0);
+            TileEntity tile = world.getTileEntity(mechanicalOutputPos0);
             if (tile instanceof IMechanicalEnergy) {
                 IMechanicalEnergy possibleAlternator = (IMechanicalEnergy) tile;
                 if (possibleAlternator.isValid() && possibleAlternator.isMechanicalEnergyReceiver(mechanicalOutput0.facing.getOpposite())) alternator = possibleAlternator;
@@ -168,8 +169,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     @Override public void receiveMessageFromServer(ByteBuf buf) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        float attenuation = Math.max((float) player.getDistanceSq(runningSound0.getX(), runningSound0.getY(), runningSound0.getZ()) / 8, 1);
-        ITSounds.gasTurbineSpark.PlayOnce(ignitionSound0, 1 / attenuation, 1);
+        float attenuation = Math.max((float) player.getDistanceSq(sound0.getX(), sound0.getY(), sound0.getZ()) / 8, 1);
+        ITSounds.gasTurbineSpark.PlayOnce(sound2, 1 / attenuation, 1);
     }
 
     @Override public void update() {
@@ -281,21 +282,21 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartGasTurbine.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "input0": input0 = new PoICache(this.facing, poi, this.mirrored); break;
-                case "output0":
-                    output0 = new PoICache(this.facing, poi, this.mirrored);
-                    outputFront0 = getBlockPosForPos(output0.position).offset(output0.facing);
+                case "fluidInput0": fluidInput0 = new PoICache(this.facing, poi, this.mirrored); break;
+                case "fluidOutput0":
+                    fluidOutput0 = new PoICache(this.facing, poi, this.mirrored);
+                    outputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
                     break;
                 case "particle0": particle0 = getBlockPosForPos(poi.position); break;
-                case "running_sound0": runningSound0 = getBlockPosForPos(poi.position); break;
-                case "arc_sound0": arcSound0 = getBlockPosForPos(poi.position); break;
-                case "ignition_sound0": ignitionSound0 = getBlockPosForPos(poi.position); break;
-                case "starter_sound0": starterSound0 = getBlockPosForPos(poi.position); break;
+                case "sound0": sound0 = getBlockPosForPos(poi.position); break;
+                case "sound1": sound1 = getBlockPosForPos(poi.position); break;
+                case "sound2": sound2 = getBlockPosForPos(poi.position); break;
+                case "sound3": sound3 = getBlockPosForPos(poi.position); break;
                 case "energy_input0": energyInput0 = new PoICache(this.facing, poi, this.mirrored); break;
                 case "energy_input1": energyInput1 = new PoICache(this.facing, poi, this.mirrored); break;
                 case "mechanical_output0":
                     mechanicalOutput0 = new PoICache(this.facing, poi, this.mirrored);
-                    mechanicalOutputFront0 = getBlockPosForPos(mechanicalOutput0.position).offset(mechanicalOutput0.facing);
+                    mechanicalOutputPos0 = getBlockPosForPos(mechanicalOutput0.position).offset(mechanicalOutput0.facing);
                     break;
                 case "redstone0": redstone0 = new PoICache(this.facing, poi, this.mirrored); break;
             }
@@ -304,8 +305,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(input0.position));
-        notifyNeighbor(getBlockPosForPos(output0.position));
+        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
+        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
         notifyNeighbor(getBlockPosForPos(energyInput0.position));
         notifyNeighbor(getBlockPosForPos(energyInput1.position));
     }
@@ -319,27 +320,27 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     public @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if (side == null) return tanks;
-        if (input0.isPoI(side, position)) return new FluidTank[] {tanks[0]};
-        else if (output0.isPoI(side, position)) return new FluidTank[] {tanks[1]};
+        if (fluidInput0.isPoI(side, position)) return new FluidTank[] {tanks[0]};
+        else if (fluidOutput0.isPoI(side, position)) return new FluidTank[] {tanks[1]};
         return ITUtils.emptyIFluidTankList;
     }
 
     public boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if (!input0.isPoI(side, position)) return false;
+        if (!fluidInput0.isPoI(side, position)) return false;
         if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
         if (tanks[0].getFluid() == null) return GasTurbineRecipe.findFuelByFluid(resource.getFluid()) != null;
         else return resource.getFluid() == tanks[0].getFluid().getFluid();
     }
 
     public boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (output0.isPoI(side, position)) return tanks[1].getFluidAmount() > 0;
+        if (fluidOutput0.isPoI(side, position)) return tanks[1].getFluidAmount() > 0;
         return false;
     }
 
     private void pumpOutputOut() {
         if (tanks[1].getFluidAmount() == 0) return;
         IFluidHandler output;
-        if ((output = FluidUtil.getFluidHandler(world, outputFront0, output0.facing.getOpposite())) != null) {
+        if ((output = FluidUtil.getFluidHandler(world, outputFront0, fluidOutput0.facing.getOpposite())) != null) {
             FluidStack out = tanks[1].getFluid();
             int accepted = output.fill(out, false);
             if (accepted == 0) return;
@@ -371,12 +372,12 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     public boolean isFluidInputPosition(@Nullable EnumFacing facing, int position) {
         if (!formed) return false;
-        return input0.isPoI(facing, position);
+        return fluidInput0.isPoI(facing, position);
     }
 
     public boolean isFluidOutputPosition(@Nullable EnumFacing facing, int position) {
         if (!formed) return false;
-        return output0.isPoI(facing, position);
+        return fluidOutput0.isPoI(facing, position);
     }
 
     public boolean isStarterPosition(@Nullable EnumFacing facing, int position) {

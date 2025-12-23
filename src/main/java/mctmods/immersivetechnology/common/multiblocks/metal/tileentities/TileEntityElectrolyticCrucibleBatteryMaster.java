@@ -57,9 +57,9 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
 
     public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(inputTankSize, this), new ITFluidTank(outputTankSize, this), new ITFluidTank(outputTankSize, this), new ITFluidTank(outputTankSize, this)};
 
-    private PoICache energyInput0, energyInput1, energyInput2, redstone0, input0, output0, output1, output2, itemOutput0;
-    private BlockPos soundPos0;
-    private BlockPos outputFront0, outputFront1, outputFront2, itemOutputFront0;
+    private PoICache energyInput0, energyInput1, energyInput2, redstone0, fluidInput0, fluidOutput0, fluidOutput1, fluidOutput2, itemOutput0;
+    private BlockPos sound0;
+    private BlockPos fluidOutputPos0, fluidOutputPos1, fluidOutputPos2, itemOutputPos0;
 
     private float soundVolume;
     private double distanceToTE = 0;
@@ -109,24 +109,24 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     public void handleSounds() {
         if (isRunning) { if (soundVolume < 1) soundVolume += 0.02f; }
         else { if (soundVolume > 0) soundVolume -= 0.02f; }
-        if (soundVolume == 0) ITSoundHandler.StopSound(soundPos0);
+        if (soundVolume == 0) ITSoundHandler.StopSound(sound0);
         else {
             float attenuation = Math.max((float) distanceToTE / 16f, 1);
-            ITSounds.gasTurbineArc.PlayRepeating(soundPos0, soundVolume / attenuation, 1);
+            ITSounds.gasTurbineArc.PlayRepeating(sound0, soundVolume / attenuation, 1);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() { ITSoundHandler.StopSound(soundPos0); super.onChunkUnload(); }
+    @Override public void onChunkUnload() { ITSoundHandler.StopSound(sound0); super.onChunkUnload(); }
 
     @Override public void disassemble() {
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound0.getX(), sound0.getY(), sound0.getZ(), 0));
         super.disassemble();
     }
 
     private void clientUpdate() {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double currentDistance = player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ());
+        double currentDistance = player.getDistanceSq(sound0.getX(), sound0.getY(), sound0.getZ());
         if (getWorld().provider.getDimension() == player.dimension && currentDistance < 400 &&
                 (distanceToTE > 400 || playerDimension != player.dimension)) requestUpdate();
         distanceToTE = currentDistance;
@@ -223,11 +223,11 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
                 case "redstone0":
                     redstone0 = new PoICache(this.facing, poi, this.mirrored);
                     break;
-                case "sound":
-                    soundPos0 = getBlockPosForPos(poi.position);
+                case "sound0":
+                    sound0 = getBlockPosForPos(poi.position);
                     break;
-                case "input0":
-                    input0 = new PoICache(this.facing, poi, this.mirrored);
+                case "fluid_input0":
+                    fluidInput0 = new PoICache(this.facing, poi, this.mirrored);
                     break;
                 case "energy_input0":
                     energyInput0 = new PoICache(this.facing, poi, this.mirrored);
@@ -238,21 +238,21 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
                 case "energy_input2":
                     energyInput2 = new PoICache(this.facing, poi, this.mirrored);
                     break;
-                case "output0":
-                    output0 = new PoICache(this.facing, poi, this.mirrored);
-                    outputFront0 = getBlockPosForPos(output0.position).offset(output0.facing);
+                case "fluid_output0":
+                    fluidOutput0 = new PoICache(this.facing, poi, this.mirrored);
+                    fluidOutputPos0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
                     break;
-                case "output1":
-                    output1 = new PoICache(this.facing, poi, this.mirrored);
-                    outputFront1 = getBlockPosForPos(output1.position).offset(output1.facing);
+                case "fluid_output1":
+                    fluidOutput1 = new PoICache(this.facing, poi, this.mirrored);
+                    fluidOutputPos1 = getBlockPosForPos(fluidOutput1.position).offset(fluidOutput1.facing);
                     break;
-                case "output2":
-                    output2 = new PoICache(this.facing, poi, this.mirrored);
-                    outputFront2 = getBlockPosForPos(output2.position).offset(output2.facing);
+                case "fluid_output2":
+                    fluidOutput2 = new PoICache(this.facing, poi, this.mirrored);
+                    fluidOutputPos2 = getBlockPosForPos(fluidOutput2.position).offset(fluidOutput2.facing);
                     break;
                 case "item_output0":
                     itemOutput0 = new PoICache(this.facing, poi, this.mirrored);
-                    itemOutputFront0 = getBlockPosForPos(itemOutput0.position).offset(itemOutput0.facing);
+                    itemOutputPos0 = getBlockPosForPos(itemOutput0.position).offset(itemOutput0.facing);
                     break;
             }
         }
@@ -261,13 +261,13 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
 
     private void notifyIONeighbors() {
         notifyNeighbor(getBlockPosForPos(redstone0.position));
-        notifyNeighbor(getBlockPosForPos(input0.position));
+        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
         notifyNeighbor(getBlockPosForPos(energyInput0.position));
         notifyNeighbor(getBlockPosForPos(energyInput1.position));
         notifyNeighbor(getBlockPosForPos(energyInput2.position));
-        notifyNeighbor(getBlockPosForPos(output0.position));
-        notifyNeighbor(getBlockPosForPos(output1.position));
-        notifyNeighbor(getBlockPosForPos(output2.position));
+        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
+        notifyNeighbor(getBlockPosForPos(fluidOutput1.position));
+        notifyNeighbor(getBlockPosForPos(fluidOutput2.position));
         notifyNeighbor(getBlockPosForPos(itemOutput0.position));
     }
 
@@ -317,9 +317,9 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         if (process.recipe.fluidOutput1 != null) tanks[2].fill(process.recipe.fluidOutput1, true);
         if (process.recipe.fluidOutput2 != null) tanks[3].fill(process.recipe.fluidOutput2, true);
         if (process.recipe.itemOutput != null && !process.recipe.itemOutput.isEmpty()) {
-            TileEntity inventoryTile = world.getTileEntity(itemOutputFront0);
+            TileEntity inventoryTile = world.getTileEntity(itemOutputPos0);
             ItemStack output = Utils.insertStackIntoInventory(inventoryTile, process.recipe.itemOutput.copy(), itemOutput0.facing.getOpposite());
-            if (output != null && !output.isEmpty()) Utils.dropStackAtPos(world, itemOutputFront0, output, itemOutput0.facing);
+            if (output != null && !output.isEmpty()) Utils.dropStackAtPos(world, itemOutputPos0, output, itemOutput0.facing);
         }
     }
 
@@ -329,31 +329,31 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (redstone0 == null) InitializePoIs();
         if (side == null) return tanks;
-        if (input0.isPoI(side, position)) return new IFluidTank[]{tanks[0]};
-        if (output0.isPoI(side, position)) return new IFluidTank[]{tanks[1]};
-        if (output1.isPoI(side, position)) return new IFluidTank[]{tanks[2]};
-        if (output2.isPoI(side, position)) return new IFluidTank[]{tanks[3]};
+        if (fluidInput0.isPoI(side, position)) return new IFluidTank[]{tanks[0]};
+        if (fluidOutput0.isPoI(side, position)) return new IFluidTank[]{tanks[1]};
+        if (fluidOutput1.isPoI(side, position)) return new IFluidTank[]{tanks[2]};
+        if (fluidOutput2.isPoI(side, position)) return new IFluidTank[]{tanks[3]};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if (!input0.isPoI(side, position)) return false;
+        if (!fluidInput0.isPoI(side, position)) return false;
         if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
         if (tanks[0].getFluid() == null) return ElectrolyticCrucibleBatteryRecipe.findRecipeFluid(resource.getFluid()) != null;
         return resource.getFluid() == tanks[0].getFluid().getFluid();
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (output0.isPoI(side, position)) return tanks[1].getFluidAmount() > 0;
-        if (output1.isPoI(side, position)) return tanks[2].getFluidAmount() > 0;
-        if (output2.isPoI(side, position)) return tanks[3].getFluidAmount() > 0;
+        if (fluidOutput0.isPoI(side, position)) return tanks[1].getFluidAmount() > 0;
+        if (fluidOutput1.isPoI(side, position)) return tanks[2].getFluidAmount() > 0;
+        if (fluidOutput2.isPoI(side, position)) return tanks[3].getFluidAmount() > 0;
         return false;
     }
 
     private void pumpOutputOut() {
         IFluidHandler output;
         if (tanks[1].getFluidAmount() > 0) {
-            output = FluidUtil.getFluidHandler(world, outputFront0, output0.facing.getOpposite());
+            output = FluidUtil.getFluidHandler(world, fluidOutputPos0, fluidOutput0.facing.getOpposite());
             if (output != null) {
                 FluidStack out = tanks[1].getFluid();
                 int accepted = output.fill(out, false);
@@ -365,7 +365,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
             }
         }
         if (tanks[2].getFluidAmount() > 0) {
-            output = FluidUtil.getFluidHandler(world, outputFront1, output1.facing.getOpposite());
+            output = FluidUtil.getFluidHandler(world, fluidOutputPos1, fluidOutput1.facing.getOpposite());
             if (output != null) {
                 FluidStack out = tanks[2].getFluid();
                 int accepted = output.fill(out, false);
@@ -377,7 +377,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
             }
         }
         if (tanks[3].getFluidAmount() > 0) {
-            output = FluidUtil.getFluidHandler(world, outputFront2, output2.facing.getOpposite());
+            output = FluidUtil.getFluidHandler(world, fluidOutputPos2, fluidOutput2.facing.getOpposite());
             if (output != null) {
                 FluidStack out = tanks[3].getFluid();
                 int accepted = output.fill(out, false);

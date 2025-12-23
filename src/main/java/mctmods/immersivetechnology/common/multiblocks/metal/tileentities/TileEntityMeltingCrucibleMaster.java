@@ -62,7 +62,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     IItemHandler insertionHandler = new IEInventoryHandler(slotCount, this, 0, new boolean[]{true}, new boolean[]{false});
     PoICache itemInput0;
     PoICache fluidOutput0;
-    private BlockPos soundPos0, fluidOutputFront0;
+    private BlockPos sound0, fluidOutputPos0;
     private PoICache redstone0;
     private PoICache energyInput0;
     private float soundVolume;
@@ -103,32 +103,32 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     @Override public void receiveMessageFromServer(ByteBuf message) { isRunning = message.readBoolean(); }
 
     public void handleSounds() {
-        if (distanceSqToTE > 4096) { ITSoundHandler.StopSound(soundPos0); soundVolume = 0; return; }
+        if (distanceSqToTE > 4096) { ITSoundHandler.StopSound(sound0); soundVolume = 0; return; }
         if (isRunning) { if (soundVolume < 1) soundVolume += 0.01f; }
         else { if (soundVolume > 0) soundVolume -= 0.01f; }
-        if (soundVolume == 0) { ITSoundHandler.StopSound(soundPos0); }
+        if (soundVolume == 0) { ITSoundHandler.StopSound(sound0); }
         else {
             float attenuation = Math.max((float) distanceSqToTE / 64f, 1f);
-            ITSounds.heatExchanger.PlayRepeating(soundPos0, soundVolume / (4 * attenuation), 1);
+            ITSounds.heatExchanger.PlayRepeating(sound0, soundVolume / (4 * attenuation), 1);
         }
     }
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        ITSoundHandler.StopSound(soundPos0);
+        ITSoundHandler.StopSound(sound0);
         super.onChunkUnload();
     }
 
     @Override public void disassemble() {
-        if (soundPos0 == null) InitializePoIs();
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        if (sound0 == null) InitializePoIs();
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound0.getX(), sound0.getY(), sound0.getZ(), 0));
         super.disassemble();
     }
 
     private void clientUpdate() {
-        if (soundPos0 == null) InitializePoIs();
+        if (sound0 == null) InitializePoIs();
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double currentDistance = player.getDistanceSq(soundPos0.getX() + 0.5, soundPos0.getY() + 0.5, soundPos0.getZ() + 0.5);
+        double currentDistance = player.getDistanceSq(sound0.getX() + 0.5, sound0.getY() + 0.5, sound0.getZ() + 0.5);
         if (getWorld().provider.getDimension() == player.dimension && currentDistance < 400 && (distanceSqToTE > 400 || playerDimension != player.dimension)) { requestUpdate(); }
         distanceSqToTE = currentDistance;
         playerDimension = player.dimension;
@@ -236,14 +236,14 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartMeltingCrucible.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "redstone": redstone0 = new PoICache(facing, poi, mirrored); break;
-                case "energy_input": energyInput0 = new PoICache(facing, poi, mirrored); break;
-                case "item_input": itemInput0 = new PoICache(facing, poi, mirrored); break;
-                case "fluid_output":
+                case "redstone0": redstone0 = new PoICache(facing, poi, mirrored); break;
+                case "energy_input0": energyInput0 = new PoICache(facing, poi, mirrored); break;
+                case "item_input0": itemInput0 = new PoICache(facing, poi, mirrored); break;
+                case "fluid_output0":
                     fluidOutput0 = new PoICache(facing, poi, mirrored);
-                    fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    fluidOutputPos0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
                     break;
-                case "sound": soundPos0 = getBlockPosForPos(poi.position); break;
+                case "sound0": sound0 = getBlockPosForPos(poi.position); break;
             }
         }
     }
@@ -271,7 +271,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     private void pumpOutputOut() {
         if (tanks[0].getFluidAmount() == 0) return;
         if (fluidOutput0 == null) InitializePoIs();
-        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputFront0, fluidOutput0.facing.getOpposite());
+        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos0, fluidOutput0.facing.getOpposite());
         if (output == null) return;
         FluidStack out = tanks[0].getFluid();
         int accepted = output.fill(out, false);

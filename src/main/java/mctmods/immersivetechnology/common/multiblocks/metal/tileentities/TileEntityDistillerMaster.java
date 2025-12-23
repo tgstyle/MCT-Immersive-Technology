@@ -70,7 +70,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     private PoICache fluidInput0;
     private PoICache fluidOutput0;
     PoICache itemOutput0;
-    private BlockPos fluidOutputFront0, itemOutputFront0;
+    private BlockPos fluidOutputPos0, itemOutputPos0;
 
     public TileEntityDistillerMaster() { super(); }
 
@@ -96,7 +96,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     private void pumpOutputOut() {
         if (tanks[1].getFluidAmount() == 0) return;
-        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputFront0, fluidOutput0.facing.getOpposite());
+        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos0, fluidOutput0.facing.getOpposite());
         if (output == null) return;
         FluidStack out = tanks[1].getFluid();
         int accepted = output.fill(out, false);
@@ -231,7 +231,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
             ItemStack stack = inventory.get(slot);
             if (stack.isEmpty()) continue;
             if (itemOutput0 == null) InitializePoIs();
-            TileEntity te = world.getTileEntity(itemOutputFront0);
+            TileEntity te = world.getTileEntity(itemOutputPos0);
             if (te != null) {
                 IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutput0.facing);
                 if (handler != null) stack = ItemHandlerHelper.insertItemStacked(handler, stack, false);
@@ -282,14 +282,14 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
                     break;
                 case "fluid_output0":
                     fluidOutput0 = new PoICache(this.facing, poi, this.mirrored);
-                    fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    fluidOutputPos0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
                     break;
                 case "fluid_input0":
                     fluidInput0 = new PoICache(this.facing, poi, this.mirrored);
                     break;
                 case "item_output0":
                     itemOutput0 = new PoICache(this.facing, poi, this.mirrored);
-                    itemOutputFront0 = getBlockPosForPos(itemOutput0.position).offset(itemOutput0.facing.getOpposite());
+                    itemOutputPos0 = getBlockPosForPos(itemOutput0.position).offset(itemOutput0.facing.getOpposite());
                     break;
             }
         }

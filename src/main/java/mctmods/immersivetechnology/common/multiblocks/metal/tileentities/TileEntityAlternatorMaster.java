@@ -59,8 +59,8 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     private int cachedGenerated = 0;
     MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
     private PoICache energyOutput0, energyOutput1, energyOutput2, energyOutput3, energyOutput4, energyOutput5;
-    private PoICache redstone, mechanicalInput;
-    private BlockPos soundOrigin, mechanicalInputFront;
+    private PoICache redstone, mechanicalInput0;
+    private BlockPos soundOrigin, mechanicalInputPos0;
     private BlockPos energyOutputPos0, energyOutputPos1, energyOutputPos2, energyOutputPos3, energyOutputPos4, energyOutputPos5;
     private boolean needsPoIInit = false;
     private boolean needsNotify = false;
@@ -122,12 +122,12 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     public void efficientMarkDirty() { world.getChunk(this.getPos()).markDirty(); }
 
     public boolean isValidProvider() {
-        if (mechanicalInput == null) InitializePoIs();
+        if (mechanicalInput0 == null) InitializePoIs();
         if (provider == null || !provider.isValid()) {
-            TileEntity tile = world.getTileEntity(mechanicalInputFront);
+            TileEntity tile = world.getTileEntity(mechanicalInputPos0);
             if (tile instanceof ITBlockInterfaces.IMechanicalEnergy) {
                 ITBlockInterfaces.IMechanicalEnergy possibleProvider = (ITBlockInterfaces.IMechanicalEnergy) tile;
-                if (possibleProvider.isValid() && possibleProvider.isMechanicalEnergyTransmitter(mechanicalInput.facing.getOpposite())) provider = possibleProvider;
+                if (possibleProvider.isValid() && possibleProvider.isMechanicalEnergyTransmitter(mechanicalInput0.facing.getOpposite())) provider = possibleProvider;
             }
         }
         return provider != null && provider.isValid();
@@ -273,8 +273,8 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     }
 
     public boolean isMechanicalEnergyReceiver(@Nullable EnumFacing facing, int position) {
-        if (mechanicalInput == null) InitializePoIs();
-        return facing != null && mechanicalInput.isPoI(facing, position);
+        if (mechanicalInput0 == null) InitializePoIs();
+        return facing != null && mechanicalInput0.isPoI(facing, position);
     }
 
     public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
@@ -319,8 +319,8 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
                     break;
                 case "redstone0": redstone = new PoICache(this.facing, poi, this.mirrored); break;
                 case "mechanical_input0":
-                    mechanicalInput = new PoICache(this.facing, poi, this.mirrored);
-                    mechanicalInputFront = getBlockPosForPos(mechanicalInput.position).offset(mechanicalInput.facing);
+                    mechanicalInput0 = new PoICache(this.facing, poi, this.mirrored);
+                    mechanicalInputPos0 = getBlockPosForPos(mechanicalInput0.position).offset(mechanicalInput0.facing);
                     break;
                 case "sound0": soundOrigin = getBlockPosForPos(poi.position); break;
             }
