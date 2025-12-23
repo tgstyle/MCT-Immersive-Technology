@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.common.util.ITUtils;
@@ -11,11 +10,9 @@ import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteelSheetmetalTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
 import mctmods.immersivetechnology.common.util.shapes.*;
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -27,16 +24,18 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<TileEntitySteelSheetmetalTankSlave, DummyRecipe, TileEntitySteelSheetmetalTankMaster> implements IBlockOverlayText, IPlayerInteraction, IComparatorOverride, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntitySteelSheetmetalTankSlave() { super(TileEntityITMultiblockPartSteelSheetmetalTank.instance, 0, true); }
@@ -45,7 +44,7 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
-    @Override public void update() { ITUtils.RemoveDummyFromTicking(this); super.update(); }
+    @Override public void update() { if (isDummy()) ITUtils.RemoveDummyFromTicking(this); super.update(); }
 
     @Override public boolean isDummy() { return true; }
 
@@ -55,16 +54,17 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
         if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntitySteelSheetmetalTankMaster ? (TileEntitySteelSheetmetalTankMaster)te : null;
+        if (te instanceof TileEntitySteelSheetmetalTankMaster) { master = (TileEntitySteelSheetmetalTankMaster)te; }
+        else master = null;
         return master;
     }
 
     @Override public @Nullable String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
         if (Utils.isFluidRelatedItemStack(player.getHeldItem(EnumHand.MAIN_HAND))) {
-            FluidStack fs = master() != null ? master.tank.getFluid() : null;
-            return (fs != null) ?
-                    new String[]{TranslationKey.OVERLAY_STEEL_TANK_NORMAL_FIRST_LINE.format(fs.getLocalizedName(), fs.amount)} :
-                    new String[]{TranslationKey.GUI_EMPTY.text()};
+            TileEntitySteelSheetmetalTankMaster m = master();
+            FluidStack fs = (m != null && m.tank != null) ? m.tank.getFluid() : null;
+            if (fs == null || fs.getFluid() == null) { return new String[]{TranslationKey.GUI_EMPTY.text()}; }
+            else { return new String[]{TranslationKey.OVERLAY_STEEL_TANK_NORMAL_FIRST_LINE.format(fs.getLocalizedName(), fs.amount)}; }
         }
         return null;
     }
@@ -95,7 +95,7 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<DummyRecipe> process) { return true; }
 
-    @Override public void onProcessFinish(@Nonnull MultiblockProcess<DummyRecipe> process) {super.onProcessFinish(process);}
+    @Override public void onProcessFinish(@Nonnull MultiblockProcess<DummyRecipe> process) { super.onProcessFinish(process); }
 
     @Override public int getMaxProcessPerTick() { return 1; }
 
@@ -105,26 +105,36 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
 
     @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         TileEntitySteelSheetmetalTankMaster m = master();
-        return m != null ? m.getAccessibleFluidTanks(side, position) : ITUtils.emptyIFluidTankList;
+        if (m != null) return m.getAccessibleFluidTanks(side, position);
+        return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
         TileEntitySteelSheetmetalTankMaster m = master();
-        return m != null && m.canFillTankFrom(iTank, side, resource, position);
+        if (m == null) return false;
+        return m.canFillTankFrom(iTank, side, resource, position);
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
         TileEntitySteelSheetmetalTankMaster m = master();
-        return m != null && m.canDrainTankFrom(iTank, side, position);
+        if (m == null) return false;
+        return m.canDrainTankFrom(iTank, side, position);
     }
 
     @Override public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         TileEntitySteelSheetmetalTankMaster m = master();
-        if (m != null && m.getAccessibleFluidTanks(side, pos).length > 0) {
-            if (FluidUtil.interactWithFluidHandler(player, hand, m.tank)) {
-                this.updateMasterBlock(world.getBlockState(getPos()), true);
-                return true;
-            }
+        if (m != null && m.tank != null && m.getAccessibleFluidTanks(side, pos).length > 0) {
+            boolean isInput = m.isInputPoI(side, pos);
+            boolean isOutput = m.isOutputPoI(side, pos);
+            IFluidHandler proxy = new IFluidHandler() {
+                @Override public IFluidTankProperties[] getTankProperties() { return m.tank.getTankProperties(); }
+                @Override public int fill(FluidStack resource, boolean doFill) { return isInput ? m.tank.fill(resource, doFill) : 0; }
+                @Override @Nullable public FluidStack drain(FluidStack resource, boolean doDrain) { return isOutput ? m.tank.drain(resource, doDrain) : null; }
+                @Override @Nullable public FluidStack drain(int maxDrain, boolean doDrain) { return isOutput ? m.tank.drain(maxDrain, doDrain) : null; }
+            };
+            boolean interacted = FluidUtil.interactWithFluidHandler(player, hand, proxy);
+            if (interacted) this.updateMasterBlock(world.getBlockState(getPos()), true);
+            return interacted;
         }
         return false;
     }
