@@ -288,9 +288,10 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         return fluidOutput0 != null && fluidOutput0.isPoI(side, position);
     }
 
-    @Override public @Nonnull int[] getRedstonePos() {
+    @Override @Nonnull public int[] getRedstonePos() {
+        if (!formed) return new int[0];
         if (redstone0 == null) InitializePoIs();
-        return new int[]{redstone0.position};
+        return new int[] {redstone0.position};
     }
 
     @Override public boolean isRSDisabled() {

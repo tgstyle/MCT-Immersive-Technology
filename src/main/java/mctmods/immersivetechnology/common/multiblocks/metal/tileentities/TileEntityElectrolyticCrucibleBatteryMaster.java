@@ -290,10 +290,10 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         return false;
     }
 
-    @Override
-    public @Nonnull int[] getRedstonePos() {
+    @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
-        return new int[]{redstone0.position};
+        if (redstone0 == null) InitializePoIs();
+        return new int[] {redstone0.position};
     }
 
     @Override

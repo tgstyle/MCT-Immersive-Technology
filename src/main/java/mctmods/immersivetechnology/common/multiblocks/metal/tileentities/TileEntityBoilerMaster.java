@@ -343,7 +343,8 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         return fluidOutput0.isPoI(side, position);
     }
 
-    @Override public @Nonnull int[] getRedstonePos() {
+    @Override @Nonnull public int[] getRedstonePos() {
+        if (!formed) return new int[0];
         if (redstone0 == null) InitializePoIs();
         return new int[] {redstone0.position};
     }
