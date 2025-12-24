@@ -379,4 +379,8 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     @Override public int getSlotLimit(int slot) { return 64; }
 
     @Override public void doGraphicalUpdates(int slot) { efficientMarkDirty(); markContainingBlockForUpdate(null); }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 }

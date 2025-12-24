@@ -308,4 +308,8 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
             tanks[4].fill(process.recipe.fluidOutput2.copy(), true);
         }
     }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 }

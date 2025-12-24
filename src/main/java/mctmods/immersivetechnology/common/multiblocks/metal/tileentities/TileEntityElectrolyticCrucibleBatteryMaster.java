@@ -395,4 +395,8 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     @Override public boolean getIsMirrored() { return mirrored; }
 
     @Override public @Nonnull IEProperties.PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 }

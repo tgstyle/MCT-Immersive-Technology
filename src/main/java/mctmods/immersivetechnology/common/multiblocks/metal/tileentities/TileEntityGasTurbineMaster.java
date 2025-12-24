@@ -390,4 +390,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         if (!formed) return false;
         return energyInput1.isPoI(facing, position);
     }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 }

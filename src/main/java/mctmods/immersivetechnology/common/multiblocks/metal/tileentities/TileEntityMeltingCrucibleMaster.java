@@ -319,4 +319,8 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         this.markDirty();
         this.markContainingBlockForUpdate(null);
     }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 }

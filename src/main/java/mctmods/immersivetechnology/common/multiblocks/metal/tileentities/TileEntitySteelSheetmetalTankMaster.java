@@ -147,7 +147,8 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
         return false;
     }
 
-    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override @Nonnull
+    public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if (fluidInputs.isEmpty()) InitializePoIs();
         boolean isInput = isInputPoI(side, position);
         boolean isOutput = isOutputPoI(side, position);
@@ -164,4 +165,8 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
         if (fluidOutputs.isEmpty()) InitializePoIs();
         return isOutputPoI(side, position);
     }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 }

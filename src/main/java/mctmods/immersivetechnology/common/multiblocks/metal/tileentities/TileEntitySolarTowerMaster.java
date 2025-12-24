@@ -27,17 +27,22 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Objects;
 
@@ -62,7 +67,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     private float soundVolume;
     private boolean isRunning;
     private int gracePeriod = 60;
-    private SolarTowerRecipe cachedRecipe;
+    public SolarTowerRecipe cachedRecipe;
     private PoICache redstone0, fluidInput0, fluidOutput0;
     private BlockPos soundPos0, fluidOutputFront0;
 
@@ -295,19 +300,19 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     private void InitializePoIs() {
         for(PoIJSONSchema poi : TileEntityITMultiblockPartSolarTower.instance.pointsOfInterest) {
             switch(poi.name) {
-                case "redstone": redstone0 = new PoICache(facing, poi, mirrored); break;
-                case "fluid_input": fluidInput0 = new PoICache(facing, poi, mirrored); break;
-                case "fluid_output": fluidOutput0 = new PoICache(facing, poi, mirrored); fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing); break;
-                case "sound": soundPos0 = getBlockPosForPos(poi.position); break;
+                case "redstone0": redstone0 = new PoICache(facing, poi, mirrored); break;
+                case "fluid_input0": fluidInput0 = new PoICache(facing, poi, mirrored); break;
+                case "fluid_output0": fluidOutput0 = new PoICache(facing, poi, mirrored); fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing); break;
+                case "sound0": soundPos0 = getBlockPosForPos(poi.position); break;
             }
         }
-        if(!world.isRemote) notifyIONeighbors();
+        if(!world.isRemote && formed) notifyIONeighbors();
     }
 
     private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
-        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        notifyNeighbor(getBlockPosForPos(redstone0.position));
+        if (fluidInput0 != null) notifyNeighbor(getBlockPosForPos(fluidInput0.position));
+        if (fluidOutput0 != null) notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
+        if (redstone0 != null) notifyNeighbor(getBlockPosForPos(redstone0.position));
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
@@ -318,15 +323,40 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         return new int[]{redstone0.position};
     }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && formed) {
+            if(fluidInput0 == null || fluidOutput0 == null) InitializePoIs();
+            if(fluidInput0 != null && fluidInput0.isPoI(facing, pos)) return true;
+            if(fluidOutput0 != null && fluidOutput0.isPoI(facing, pos)) return true;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && formed) {
+            if(fluidInput0 == null || fluidOutput0 == null) InitializePoIs();
+            IFluidTank[] accessible = getAccessibleFluidTanks(facing, pos);
+            if (accessible.length > 0) return (T) new SolarTowerFluidHandler(accessible, this, facing, pos);
+        }
+        return super.getCapability(capability, facing);
+    }
+
+    @Override
+    @Nonnull
+    public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if(!formed) return ITUtils.emptyIFluidTankList;
-        if(fluidInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
-        if(fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
+        if(fluidInput0 == null || fluidOutput0 == null) InitializePoIs();
+        if(fluidInput0 != null && fluidInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
+        if(fluidOutput0 != null && fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if(fluidInput0.isPoI(side, position) && iTank == 0) {
+        if(fluidInput0 == null) InitializePoIs();
+        if(fluidInput0 != null && fluidInput0.isPoI(side, position)) {
             if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
             FluidStack current = tanks[0].getFluid();
             if (current == null) return SolarTowerRecipe.findRecipeByFluid(resource.getFluid()) != null;
@@ -335,7 +365,10 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         return false;
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { return fluidOutput0.isPoI(side, position) && iTank == 1; }
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+        if(fluidOutput0 == null) InitializePoIs();
+        return fluidOutput0 != null && fluidOutput0.isPoI(side, position);
+    }
 
     private int computeSolarIncidenceAngleSection() {
         int light = world.getSkylightSubtracted();
@@ -345,4 +378,69 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         else if (light == 0) { return 4; }
         return 0;
     }
+
+    public static class SolarTowerFluidHandler implements IFluidHandler {
+        private final IFluidTank[] tanks;
+        private final TileEntitySolarTowerMaster te;
+        private final EnumFacing side;
+        private final int position;
+
+        public SolarTowerFluidHandler(IFluidTank[] tanks, TileEntitySolarTowerMaster te, EnumFacing side, int position) {
+            this.tanks = tanks;
+            this.te = te;
+            this.side = side;
+            this.position = position;
+        }
+
+        @Override public IFluidTankProperties[] getTankProperties() {
+            IFluidTankProperties[] props = new IFluidTankProperties[tanks.length];
+            for (int i = 0; i < tanks.length; i++) {
+                props[i] = new FluidTankProperties(tanks[i].getFluid(), tanks[i].getCapacity());
+            }
+            return props;
+        }
+
+        @Override public int fill(FluidStack resource, boolean doFill) {
+            if (resource == null) return 0;
+            for (int i = 0; i < tanks.length; i++) {
+                if (te.canFillTankFrom(i, side, resource, position)) {
+                    int filled = tanks[i].fill(resource, doFill);
+                    if (filled > 0 && doFill) te.TankContentsChanged();
+                    return filled;
+                }
+            }
+            return 0;
+        }
+
+        @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
+            if (resource == null) return null;
+            for (int i = 0; i < tanks.length; i++) {
+                if (te.canDrainTankFrom(i, side, position)) {
+                    FluidStack tankFluid = tanks[i].getFluid();
+                    if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
+                        FluidStack drained = tanks[i].drain(resource.amount, doDrain);
+                        if (drained != null && doDrain) te.TankContentsChanged();
+                        return drained;
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override public FluidStack drain(int maxDrain, boolean doDrain) {
+            if (maxDrain <= 0) return null;
+            for (int i = 0; i < tanks.length; i++) {
+                if (te.canDrainTankFrom(i, side, position)) {
+                    FluidStack drained = tanks[i].drain(maxDrain, doDrain);
+                    if (drained != null && doDrain) te.TankContentsChanged();
+                    return drained;
+                }
+            }
+            return null;
+        }
+    }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 }

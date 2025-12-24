@@ -312,4 +312,8 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     @Override public NonNullList<ItemStack> getDroppedItems() { return getInventory(); }
 
     @Override public int getComparatedSize() { return getInventory().size(); }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 }

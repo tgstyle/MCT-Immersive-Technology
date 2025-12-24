@@ -343,4 +343,8 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         if (redstone == null) InitializePoIs();
         return new int[] {redstone.position};
     }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 }

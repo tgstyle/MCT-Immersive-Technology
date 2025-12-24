@@ -24,10 +24,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +45,7 @@ public class TileEntitySolarTowerSlave extends TileEntityITMultiblock<TileEntity
     @Override public void update() {
         if(isDummy()) ITUtils.RemoveDummyFromTicking(this);
         super.update();
+        if (!formed || master() == null) { formed = false; return; }
     }
 
     @Override public boolean isDummy() { return true; }
@@ -51,12 +55,17 @@ public class TileEntitySolarTowerSlave extends TileEntityITMultiblock<TileEntity
     public TileEntitySolarTowerMaster master() {
         if(master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
+        if (!world.isBlockLoaded(masterPos)) return null;
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
         master = te instanceof TileEntitySolarTowerMaster ? (TileEntitySolarTowerMaster)te : null;
         return master;
     }
 
-    @Override public NonNullList<ItemStack> getInventory() { return master() == null ? NonNullList.withSize(4, ItemStack.EMPTY) : master.inventory; }
+    @Override public NonNullList<ItemStack> getInventory() {
+        TileEntitySolarTowerMaster master = master();
+        if (master == null || !formed) { return NonNullList.withSize(4, ItemStack.EMPTY); }
+        return master.inventory;
+    }
 
     @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
 
@@ -82,19 +91,19 @@ public class TileEntitySolarTowerSlave extends TileEntityITMultiblock<TileEntity
         return m.getAccessibleFluidTanks(side, position);
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) {
         TileEntitySolarTowerMaster m = master();
         if (m == null) return false;
         return m.canFillTankFrom(iTank, side, resource, position);
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, EnumFacing side, int position) {
         TileEntitySolarTowerMaster m = master();
         if (m == null) return false;
         return m.canDrainTankFrom(iTank, side, position);
     }
 
-    @Override public boolean canOpenGui() { return formed; }
+    @Override public boolean canOpenGui() { return formed && master() != null; }
 
     @Override public int getGuiID() { return ITGUI.GUIID_Solar_Tower; }
 
@@ -136,5 +145,25 @@ public class TileEntitySolarTowerSlave extends TileEntityITMultiblock<TileEntity
         if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
         AxisAlignedBB bb = vs.bounds();
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
+    }
+
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            TileEntitySolarTowerMaster m = master();
+            if (m != null && formed) return m.getAccessibleFluidTanks(facing, pos).length > 0;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            TileEntitySolarTowerMaster m = master();
+            if (m != null && formed) {
+                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos);
+                if (accessible.length > 0) return (T) new TileEntitySolarTowerMaster.SolarTowerFluidHandler(accessible, m, facing, pos);
+            }
+        }
+        return super.getCapability(capability, facing);
     }
 }

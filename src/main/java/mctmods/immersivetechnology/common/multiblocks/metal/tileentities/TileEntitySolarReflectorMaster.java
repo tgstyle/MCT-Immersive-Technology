@@ -96,4 +96,8 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         nbt.setFloat("rotation0", animationRotations[0]);
         nbt.setFloat("rotation1", animationRotations[1]);
     }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 }

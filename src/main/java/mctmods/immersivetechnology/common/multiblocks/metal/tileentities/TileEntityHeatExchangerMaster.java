@@ -361,4 +361,8 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         process.setInputTanks(tag.getIntArray("process_inputTanks"));
         return process;
     }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 }

@@ -278,4 +278,8 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         if (fluidOutput0 == null) InitializePoIs();
         return fluidOutput0.isPoI(side, position) && iTank == 1;
     }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 }
