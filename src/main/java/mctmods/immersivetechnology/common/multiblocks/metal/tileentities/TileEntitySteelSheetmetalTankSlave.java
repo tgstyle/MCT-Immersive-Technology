@@ -89,6 +89,8 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
 
     @Override public @Nonnull IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
 
+    @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
+
     @Override protected @Nonnull DummyRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
 
     @Override public @Nonnull int[] getOutputTanks() { return new int[0]; }

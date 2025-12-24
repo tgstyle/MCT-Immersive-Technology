@@ -79,7 +79,7 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
 
     @Override protected @Nonnull DistillerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DistillerRecipe.loadFromNBT(tag); }
 
-    @Override public @Nonnull int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
+    @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
 
     @Override public @Nonnull int[] getOutputTanks() { return new int[]{1}; }
 

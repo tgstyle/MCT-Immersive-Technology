@@ -75,7 +75,7 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
         return BoilerRecipe.loadFromNBT(tag);
     }
 
-    @Override public @Nonnull int[] getRedstonePos() { return new int[0]; }
+    @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
 
     @Override public @Nonnull int[] getOutputTanks() { return new int[]{2}; }
 

@@ -108,7 +108,7 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
 
     @Override public @Nonnull int[] getEnergyPos() { return master() == null ? new int[0] : master.getEnergyPos(); }
 
-    @Override public @Nonnull int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
+    @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
 
     @Override public @Nonnull int[] getOutputTanks() { return new int[]{0}; }
 
