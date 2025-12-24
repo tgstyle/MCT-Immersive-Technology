@@ -11,7 +11,6 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
@@ -22,6 +21,7 @@ import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -63,7 +63,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private boolean isRunning;
     private int gracePeriod = 60;
     private int clientUpdateCooldown = 1;
-    private MeltingCrucibleRecipe cachedRecipe;
+    public MeltingCrucibleRecipe cachedRecipe;
     private PoICache redstone0;
     private PoICache fluidOutput0;
     private PoICache itemInput0;
@@ -198,7 +198,11 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         if(world.getTotalWorldTime() % 600 == 0) checkReflectorPositions();
         if(solarIncidenceAngleSection != 0) if(recipeLogic()) update = true;
         if(pumpOutputOut()) update = true;
-        if(recipeEnergyRemaining > 0) { isRunning = true; gracePeriod = 60; } else { if(gracePeriod == 0) isRunning = false; else gracePeriod--; }
+        BlockPos redstonePos = getBlockPosForPos(redstone0.position);
+        int power = world.getStrongPower(redstonePos);
+        boolean rsDisabled = power > 0;
+        boolean shouldRun = recipeEnergyRemaining > 0 && !rsDisabled;
+        if(shouldRun) { isRunning = true; gracePeriod = 60; } else { if(gracePeriod == 0) isRunning = false; else gracePeriod--; }
         clientUpdateCooldown--;
         if(clientUpdateCooldown <= 0) { notifyNearbyClients(); clientUpdateCooldown = 20; }
         if(update) {
@@ -223,17 +227,17 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private void InitializePoIs() {
         for(PoIJSONSchema poi : TileEntityITMultiblockPartSolarMelter.instance.pointsOfInterest) {
             switch(poi.name) {
-                case "redstone":
+                case "redstone0":
                     redstone0 = new PoICache(facing, poi, mirrored);
                     break;
-                case "fluid_output":
+                case "fluid_output0":
                     fluidOutput0 = new PoICache(facing, poi, mirrored);
                     fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
                     break;
-                case "item_input":
+                case "item_input0":
                     itemInput0 = new PoICache(facing, poi, mirrored);
                     break;
-                case "sound":
+                case "sound0":
                     soundPos0 = getBlockPosForPos(poi.position);
                     break;
             }
@@ -249,10 +253,10 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
-    @Override public @Nonnull int[] getRedstonePos() {
+    @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
-        if(redstone0 == null) InitializePoIs();
-        return new int[]{redstone0.position};
+        if (redstone0 == null) InitializePoIs();
+        return new int[] {redstone0.position};
     }
 
     @Override
@@ -276,7 +280,10 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private boolean recipeLogic() {
         boolean update = false;
         if(cachedRecipe != null && !cachedRecipe.itemInput.matches(inventory.get(0))) { cachedRecipe = null; recipeEnergyRemaining = 0; update = true; }
-        if(!isRSDisabled()) {
+        BlockPos redstonePos = getBlockPosForPos(redstone0.position);
+        int power = world.getStrongPower(redstonePos);
+        boolean rsDisabled = power > 0;
+        if(!rsDisabled) {
             if(recipeEnergyRemaining > 0) { update |= gainProgress(); }
             else if(!inventory.get(0).isEmpty()) {
                 MeltingCrucibleRecipe recipe = cachedRecipe;

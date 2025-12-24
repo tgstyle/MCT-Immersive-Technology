@@ -70,7 +70,7 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
 
     @Override public @Nullable MeltingCrucibleRecipe findRecipeForInsertion(@Nonnull ItemStack inserting) { return MeltingCrucibleRecipe.findRecipe(inserting); }
 
-    @Override public @Nonnull int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
+    @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
 
     @Override public @Nonnull int[] getOutputTanks() { return new int[] {0}; }
 
