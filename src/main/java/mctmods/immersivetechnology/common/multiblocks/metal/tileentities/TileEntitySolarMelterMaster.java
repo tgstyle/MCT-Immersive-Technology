@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
+import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -9,7 +10,6 @@ import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
-import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
@@ -44,7 +44,9 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver {
+import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
+
+public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IIEInventory {
     private static final int outputTankSize = Multiblocks.solarMelter.solarMelter_output_tankSize;
     private static final int solarMaxRange = Multiblocks.solarReflector.solarReflector_maxRange;
     private static final int solarMinRange = Multiblocks.solarReflector.solarReflector_minRange;
@@ -221,10 +223,19 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private void InitializePoIs() {
         for(PoIJSONSchema poi : TileEntityITMultiblockPartSolarMelter.instance.pointsOfInterest) {
             switch(poi.name) {
-                case "redstone": redstone0 = new PoICache(facing, poi, mirrored); break;
-                case "fluid_output": fluidOutput0 = new PoICache(facing, poi, mirrored); fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing); break;
-                case "item_input": itemInput0 = new PoICache(facing, poi, mirrored); break;
-                case "sound": soundPos0 = getBlockPosForPos(poi.position); break;
+                case "redstone":
+                    redstone0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "fluid_output":
+                    fluidOutput0 = new PoICache(facing, poi, mirrored);
+                    fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    break;
+                case "item_input":
+                    itemInput0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "sound":
+                    soundPos0 = getBlockPosForPos(poi.position);
+                    break;
             }
         }
         if(!world.isRemote) notifyIONeighbors();
@@ -244,7 +255,9 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         return new int[]{redstone0.position};
     }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override
+    @Nonnull
+    public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if(!formed) return ITUtils.emptyIFluidTankList;
         if(fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
         return ITUtils.emptyIFluidTankList;
@@ -277,4 +290,19 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         } else if(recipeEnergyRemaining > 0) { update |= loseProgress(); }
         return update;
     }
+
+    @Override public NonNullList<ItemStack> getInventory() { return inventory; }
+
+    @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
+
+    @Override public int getSlotLimit(int slot) { return 64; }
+
+    @Override public void doGraphicalUpdates(int slot) {
+        this.markDirty();
+        this.markContainingBlockForUpdate(null);
+    }
+
+    @Override public NonNullList<ItemStack> getDroppedItems() { return getInventory(); }
+
+    @Override public int getComparatedSize() { return getInventory().size(); }
 }
