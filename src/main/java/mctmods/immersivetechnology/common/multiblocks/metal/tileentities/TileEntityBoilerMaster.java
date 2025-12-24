@@ -61,6 +61,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
     private PoICache fluidInput0, fluidInput1, fluidOutput0, redstone0;
     private BlockPos fluidOutputFront0;
+    private BlockPos soundPos;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -134,7 +135,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     }
 
     public void handleSounds() {
-        BlockPos center = getPos();
+        BlockPos center = soundPos;
         float level = (float) (heatLevel / workingHeatLevel);
         if (level == 0) ITSoundHandler.StopSound(center);
         else {
@@ -145,10 +146,10 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     }
 
     @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() { ITSoundHandler.StopSound(getPos()); super.onChunkUnload(); }
+    @Override public void onChunkUnload() { ITSoundHandler.StopSound(soundPos); super.onChunkUnload(); }
 
     @Override public void disassemble() {
-        BlockPos center = getPos();
+        BlockPos center = soundPos;
         ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
         super.disassemble();
     }
@@ -297,6 +298,9 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
                     break;
                 case "redstone0":
                     redstone0 = new PoICache(this.facing, poi, this.mirrored);
+                    break;
+                case "sound0":
+                    soundPos = getBlockPosForPos(poi.position);
                     break;
             }
         }
