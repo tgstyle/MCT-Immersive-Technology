@@ -64,8 +64,9 @@ dependencies {
 
     implementation fg.deobf("${common.mjei_version}")
     implementation fg.deobf("curse.maven:${common.imme_version}")
+	implementation fg.deobf("curse.maven:${common.mtop_version}")
     implementation fg.deobf("curse.maven:${common.woed_version}")
-    implementation fg.deobf("curse.maven:${common.mtop_version}")
+	implementation fg.deobf("curse.maven:${common.wcui_version}")
 
     compileOnly fg.deobf("curse.maven:${common.hwya_version}")
     compileOnly fg.deobf("curse.maven:${common.advr_version}")
