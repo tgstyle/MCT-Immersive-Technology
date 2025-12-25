@@ -176,7 +176,6 @@ jar {
             'FMLCorePluginContainsFMLMod': 'true'
         )
     }
-    exclude 'META-INF/it_at.cfg'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
