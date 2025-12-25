@@ -55,6 +55,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
     private static final int maxSpeed = Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max;
     private static final double boilerWorkingHeatLevel = Multiblocks.boiler.boiler_heat_workingLevel;
     private static final double solarWorkingHeatLevel = Multiblocks.solarTower.solarTower_heat_workingLevel;
+    private static final double solarMelterWorkingHeatLevel = Multiblocks.solarMelter.solarMelter_heat_workingLevel;
 
     @Override public void preInit() { FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", this.getClass().getName()); }
 
@@ -526,6 +527,16 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                             .text(fluidName);
                 }
             }
+            double displayHeat = master.heatLevel / 20 + 30;
+            double displayMax = solarMelterWorkingHeatLevel / 20 + 30;
+            int currentTemp = (int)displayHeat;
+            int maxTemp = (int)displayMax;
+            probeInfo.progress(currentTemp, maxTemp, probeInfo.defaultProgressStyle()
+                    .suffix("/" + maxTemp + "°C")
+                    .filledColor(0xffcc0000)
+                    .alternateFilledColor(0xffcc0000)
+                    .borderColor(0xffff6666)
+                    .numberFormat(NumberFormat.FULL));
             int currentProg = (master.recipeEnergyRemaining > 0 && master.cachedRecipe != null) ? (master.cachedRecipe.getTotalProcessEnergy() - master.recipeEnergyRemaining) * 100 / master.cachedRecipe.getTotalProcessEnergy() : 0;
             if (currentProg > 0) {
                 probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))

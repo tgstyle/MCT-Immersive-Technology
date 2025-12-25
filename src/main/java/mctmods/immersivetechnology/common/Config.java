@@ -220,6 +220,8 @@ public class Config {
                 public boolean register_steamTurbine_recipes = true;
             }
             public static class SolarMelter {
+                @Comment({"A Solar Melter can only start processing recipes once it reaches this heat level [Default=19400.0]"})
+                public double solarMelter_heat_workingLevel = 19400.0;
                 @Comment({"The maximum strength of the reflectors. Decreasing this reduces the amount of reflectors needed to achieve max processing speed. [Default=227.5]"})
                 public double solarMelter_maximum_reflector_strength = 227.5;
                 @Comment({"The capacity of the output tank for the Solar Melter [Default=10000]"})

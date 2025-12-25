@@ -7,6 +7,7 @@ import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarMelterMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerMaster;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
 import mctmods.immersivetechnology.common.gui.*;
@@ -69,6 +70,7 @@ public class CommonProxy implements IGuiHandler {
 			Object gui = null;
 			if(ID == ITGUI.GUIID_Boiler && tile instanceof TileEntityBoilerMaster) gui = new ContainerBoiler(player.inventory, (TileEntityBoilerMaster) tile);
 			if(ID == ITGUI.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) gui = new ContainerDistiller(player.inventory, (TileEntityDistillerMaster) tile);
+			if(ID == ITGUI.GUIID_Solar_Melter && tile instanceof TileEntitySolarMelterMaster) gui = new ContainerSolarMelter(player.inventory, (TileEntitySolarMelterMaster) tile);
 			if(ID == ITGUI.GUIID_Solar_Tower && tile instanceof TileEntitySolarTowerMaster) gui = new ContainerSolarTower(player.inventory, (TileEntitySolarTowerMaster) tile);
 			if(ID == ITGUI.GUIID_Timer && tile instanceof TileEntityTimer) gui = new ContainerTimer(player.inventory, (TileEntityTimer) tile);
 			if(ID == ITGUI.GUIID_Trash_Item && tile instanceof TileEntityTrashItem) gui = new ContainerTrashItem(player.inventory, (TileEntityTrashItem) tile);

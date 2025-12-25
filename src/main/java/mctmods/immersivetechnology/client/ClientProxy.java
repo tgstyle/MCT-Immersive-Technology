@@ -335,12 +335,13 @@ public class ClientProxy extends CommonProxy {
         if (tile instanceof IGuiTile) {
             if (ID == ITGUI.GUIID_Boiler && tile instanceof TileEntityBoilerMaster) { return new GuiBoiler(player.inventory, (TileEntityBoilerMaster)tile); }
             if (ID == ITGUI.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) { return new GuiDistiller(player.inventory, (TileEntityDistillerMaster)tile); }
-            if (ID == ITGUI.GUIID_Solar_Tower && tile instanceof TileEntitySolarTowerMaster) { return new GuiSolarTower(player.inventory, (TileEntitySolarTowerMaster)tile); }
-            if (ID == ITGUI.GUIID_Timer && tile instanceof TileEntityTimer) { return new GuiTimer(player.inventory, (TileEntityTimer)tile); }
-            if (ID == ITGUI.GUIID_Trash_Item && tile instanceof TileEntityTrashItem) { return new GuiTrashItem(player.inventory, (TileEntityTrashItem)tile); }
             if (ID == ITGUI.GUIID_Fluid_Valve && tile instanceof TileEntityFluidValve) { return new GuiFluidValve((TileEntityFluidValve)tile); }
             if (ID == ITGUI.GUIID_Load_Controller && tile instanceof TileEntityLoadController) { return new GuiLoadController((TileEntityLoadController)tile); }
+            if (ID == ITGUI.GUIID_Solar_Melter && tile instanceof TileEntitySolarMelterMaster) { return new GuiSolarMelter(player.inventory, (TileEntitySolarMelterMaster)tile); }
+            if (ID == ITGUI.GUIID_Solar_Tower && tile instanceof TileEntitySolarTowerMaster) { return new GuiSolarTower(player.inventory, (TileEntitySolarTowerMaster)tile); }
             if (ID == ITGUI.GUIID_Stack_Limiter && tile instanceof TileEntityStackLimiter) { return new GuiStackLimiter((TileEntityStackLimiter)tile); }
+            if (ID == ITGUI.GUIID_Timer && tile instanceof TileEntityTimer) { return new GuiTimer(player.inventory, (TileEntityTimer)tile); }
+            if (ID == ITGUI.GUIID_Trash_Item && tile instanceof TileEntityTrashItem) { return new GuiTrashItem(player.inventory, (TileEntityTrashItem)tile); }
         }
         return null;
     }

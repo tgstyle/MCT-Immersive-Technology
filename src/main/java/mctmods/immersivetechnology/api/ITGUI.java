@@ -12,5 +12,5 @@ public class ITGUI {
 	public static final int GUIID_Fluid_Valve = 6;
 	public static final int GUIID_Load_Controller = 7;
 	public static final int GUIID_Stack_Limiter = 8;
-
+	public static final int GUIID_Solar_Melter = 9;
 }
