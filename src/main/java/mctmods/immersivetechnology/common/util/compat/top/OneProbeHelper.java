@@ -123,7 +123,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             probeInfo.progress(currentTemp, maxTemp, probeInfo.defaultProgressStyle()
                     .suffix("/" + maxTemp + "°C")
                     .filledColor(0xffcc0000)
-                    .alternateFilledColor(0xff990000)
+                    .alternateFilledColor(0xffcc0000)
                     .borderColor(0xffff6666)
                     .numberFormat(NumberFormat.FULL));
             int currentProg = (master.recipeTimeRemaining > 0 && master.lastRecipe != null) ? (master.lastRecipe.getTotalProcessTime() - master.recipeTimeRemaining) * 100 / master.lastRecipe.getTotalProcessTime() : 0;
@@ -576,7 +576,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             probeInfo.progress(currentTemp, maxTemp, probeInfo.defaultProgressStyle()
                     .suffix("/" + maxTemp + "°C")
                     .filledColor(0xffcc0000)
-                    .alternateFilledColor(0xff990000)
+                    .alternateFilledColor(0xffcc0000)
                     .borderColor(0xffff6666)
                     .numberFormat(NumberFormat.FULL));
             int currentProg = (master.recipeTimeRemaining > 0 && master.cachedRecipe != null) ? (master.cachedRecipe.getTotalProcessTime() - master.recipeTimeRemaining) * 100 / master.cachedRecipe.getTotalProcessTime() : 0;
