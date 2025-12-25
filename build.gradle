@@ -62,11 +62,10 @@ if (gradle.startParameter.taskNames.any { it == 'jar' || it == 'build' }) {
 dependencies {
     minecraft "net.minecraftforge:forge:${common.mcversion}-${common.forgeversion}"
 
+    implementation fg.deobf("${common.mjei_version}")
     implementation fg.deobf("curse.maven:${common.imme_version}")
-
-    implementation fg.deobf("${common.jei_version}")
-
-    implementation fg.deobf("curse.maven:${common.top_version}")
+    implementation fg.deobf("curse.maven:${common.woed_version}")
+    implementation fg.deobf("curse.maven:${common.mtop_version}")
 
     compileOnly fg.deobf("curse.maven:${common.hwya_version}")
     compileOnly fg.deobf("curse.maven:${common.advr_version}")
