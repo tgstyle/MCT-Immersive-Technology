@@ -12,7 +12,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockL
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.common.multiblocks.helper.*;
@@ -46,10 +45,8 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.HashSet;
 import java.util.List;
@@ -85,7 +82,6 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
     public static final BlockPos SUN_POI = getPosList("sun").get(0);
     public static final CapabilityPosition INPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_input").get(0), getFacing("fluid_input"));
     public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_output").get(0), getFacing("fluid_output"));
-    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(getFacing("item_output"), getPosList("item_output").get(0));
     public static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
     private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
 
@@ -216,11 +212,6 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             }
         }
         pumpOutputs(ctx);
-        IItemHandlerModifiable inventory = state.inventory;
-        ItemStack drainedContainer = inventory.getStackInSlot(SLOT_INPUT_EMPTY);
-        if (!drainedContainer.isEmpty()) { int origCount = drainedContainer.getCount(); drainedContainer = Utils.insertStackIntoInventory(state.outputRef, drainedContainer, false); if (drainedContainer.getCount() < origCount) { update = true; } inventory.setStackInSlot(SLOT_INPUT_EMPTY, drainedContainer); }
-        ItemStack filledContainer = inventory.getStackInSlot(SLOT_OUTPUT_FILLED);
-        if (!filledContainer.isEmpty()) { int origCount = filledContainer.getCount(); filledContainer = Utils.insertStackIntoInventory(state.outputRef, filledContainer, false); if (filledContainer.getCount() < origCount) { update = true; } inventory.setStackInSlot(SLOT_OUTPUT_FILLED, filledContainer); }
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -339,7 +330,6 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             if (position.equals(INPUT_FLUID_POI)) { return state.inputCap.cast(); }
             if (position.equals(OUTPUT_FLUID_POI)) { return state.outputCap.cast(); }
         }
-        if (cap == ForgeCapabilities.ITEM_HANDLER) { if (position.posInMultiblock().equals(ITEM_OUTPUT_POI.posInMultiblock())) { return state.itemOutputCap.cast(ctx); } return state.invCap.cast(ctx); }
         return LazyOptional.empty();
     }
 
@@ -354,10 +344,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
         public final ITSolarTank tanks;
         public final LazyOptional<IFluidHandler> inputCap;
         public final LazyOptional<IFluidHandler> outputCap;
-        public final StoredCapability<IItemHandler> invCap;
         public final CapabilityReference<IFluidHandler> fluidOutput;
-        public final StoredCapability<IItemHandler> itemOutputCap;
-        public final CapabilityReference<IItemHandler> outputRef;
         public final ITSlotwiseItemHandler inventory;
         public double heatLevel = 0;
         public double reflectorStrength = 0;
@@ -390,13 +377,10 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             inventory = new ITSlotwiseItemHandler(Lists.newArrayList(ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT, ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT), onChanged);
             this.inputCap = LazyOptional.of(() -> new ITArrayFluidHandler(tanks.input(), false, true, onChanged));
             this.outputCap = LazyOptional.of(() -> new ITArrayFluidHandler(tanks.output(), true, false, onChanged));
-            this.invCap = new StoredCapability<>(inventory);
             MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FACING, FLUID_OUTPUT_POIS.get(0));
             CapabilityPosition oppCp = CapabilityPosition.opposing(outputMBFace);
             MultiblockFace oppMbf = new MultiblockFace(oppCp.side(), oppCp.posInMultiblock());
             this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, oppMbf);
-            this.itemOutputCap = new StoredCapability<>(new ITWrappingItemHandler(inventory, false, true, Lists.newArrayList(new ITWrappingItemHandler.IntRange(SLOT_INPUT_EMPTY, SLOT_INPUT_EMPTY + 1), new ITWrappingItemHandler.IntRange(SLOT_OUTPUT_FILLED, SLOT_OUTPUT_FILLED + 1))));
-            this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, ITEM_OUTPUT_POI);
             InitialMultiblockContext<State> initialContext = (InitialMultiblockContext<State>) ctx;
             MultiblockOrientation orientation = initialContext.orientation();
             BlockPos masterOffset = initialContext.masterOffset();
