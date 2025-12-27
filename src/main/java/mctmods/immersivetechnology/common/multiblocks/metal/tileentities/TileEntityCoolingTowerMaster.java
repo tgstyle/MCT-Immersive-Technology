@@ -25,6 +25,7 @@ import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -103,6 +104,8 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     }
 
     @Override public void receiveMessageFromServer(ByteBuf message) { isRunning = message.readBoolean(); }
+
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { }
 
     public void handleSounds() {
         if(soundPos0 == null) InitializePoIs();

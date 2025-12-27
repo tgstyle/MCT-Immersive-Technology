@@ -15,10 +15,8 @@ import mctmods.immersivetechnology.common.util.shapes.Shapes;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -61,8 +59,8 @@ public abstract class TileEntityITMultiblockPart<T extends TileEntityMultiblockP
             if (data == null) { ITLogger.error("Missing multiblock JSON: " + structurePath); return; }
             this.uniqueName = data.uniqueName;
             this.width = data.width;
-            this.length = data.length;
             this.height = data.height;
+            this.length = data.length;
             this.pointsOfInterest = data.pointsOfInterest != null ? data.pointsOfInterest : new PoIJSONSchema[0];
             this.masterX = data.master.x;
             this.masterY = data.master.y;
@@ -119,7 +117,7 @@ public abstract class TileEntityITMultiblockPart<T extends TileEntityMultiblockP
         BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? width-1-masterX : -masterX).offset(EnumFacing.DOWN, masterY);
         BlockPos masterPos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? (width - 1 - masterX) : masterX, masterY, masterZ, side);
         ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
-        if (MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer).isCanceled()) return false;
+        if (MultiblockHandler.fireMultiblockFormationEventPre(player, this, pos, hammer).isCanceled()) return false;
         IBlockState masterState = masterBlockState.withProperty(IEProperties.FACING_HORIZONTAL, side).withProperty(IEProperties.MULTIBLOCKSLAVE, false);
         IBlockState slaveState = slaveBlockState.withProperty(IEProperties.FACING_HORIZONTAL, side).withProperty(IEProperties.MULTIBLOCKSLAVE, true);
         for (int h = 0; h < height; h++) for (int l = 0; l < length; l++) for (int w = 0; w < width; w++) {
@@ -138,18 +136,13 @@ public abstract class TileEntityITMultiblockPart<T extends TileEntityMultiblockP
                 tile.markDirty();
                 tile.markContainingBlockForUpdate(null);
                 world.addBlockEvent(pos2, slaveBlockState.getBlock(), 255, 0);
-                if (!world.isRemote) {
-                    SPacketUpdateTileEntity packet = tile.getUpdatePacket();
-                    for (EntityPlayer p : world.playerEntities) {
-                        if (p instanceof EntityPlayerMP && p.getDistanceSq(pos2.getX() + 0.5, pos2.getY() + 0.5, pos2.getZ() + 0.5) < 1024.0D) ((EntityPlayerMP) p).connection.sendPacket(packet);
-                    }
-                }
             }
         }
+        MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer);
         return true;
     }
 
-    boolean isInvalid(World world, BlockPos pos, EnumFacing side, boolean mirror) {
+    protected boolean isInvalid(World world, BlockPos pos, EnumFacing side, boolean mirror) {
         BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? width-1-masterX : -masterX).offset(EnumFacing.DOWN, masterY);
         for (int h = 0; h < height; h++) for (int l = 0; l < length; l++) for (int w = 0; w < width; w++) {
             if (structure[h][l][w] == AirRef.instance) continue;

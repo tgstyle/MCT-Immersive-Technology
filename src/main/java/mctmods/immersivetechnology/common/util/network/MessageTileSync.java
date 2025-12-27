@@ -54,12 +54,12 @@ public class MessageTileSync implements IMessage {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static class HandlerClient implements IMessageHandler<MessageTileSync, IMessage>	{
+	public static class HandlerClient implements IMessageHandler<MessageTileSync, IMessage> {
 		@Override
 		public IMessage onMessage(MessageTileSync message, MessageContext ctx) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
 				World world = Minecraft.getMinecraft().world;
-				if (world!=null) {
+				if (world != null) {
 					TileEntity tile = world.getTileEntity(message.pos);
 					if (tile instanceof TileEntityIEBase)
 						((TileEntityIEBase)tile).receiveMessageFromServer(message.nbt);

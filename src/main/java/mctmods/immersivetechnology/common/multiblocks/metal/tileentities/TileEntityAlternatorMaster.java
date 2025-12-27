@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
 
@@ -12,7 +12,7 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
@@ -24,6 +24,7 @@ import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -49,7 +50,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     public FluxStorage energyStorage = new FluxStorage(Multiblocks.alternator.alternator_energy_capacitorSize, rfPerTick, rfPerTickPerPort);
     public int speed;
     public float torqueMult = 1;
-    public ITBlockInterfaces.IMechanicalEnergy provider;
+    public IMechanicalEnergy provider;
     private int clientUpdateCooldown = 20;
     private float targetEnergyPercentage;
     private float soundVolume;
@@ -106,7 +107,6 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        if (soundOrigin == null) InitializePoIs();
         ITSoundHandler.StopSound(soundOrigin);
         super.onChunkUnload();
     }
@@ -125,8 +125,8 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         if (mechanicalInput0 == null) InitializePoIs();
         if (provider == null || !provider.isValid()) {
             TileEntity tile = world.getTileEntity(mechanicalInputPos0);
-            if (tile instanceof ITBlockInterfaces.IMechanicalEnergy) {
-                ITBlockInterfaces.IMechanicalEnergy possibleProvider = (ITBlockInterfaces.IMechanicalEnergy) tile;
+            if (tile instanceof IMechanicalEnergy) {
+                IMechanicalEnergy possibleProvider = (IMechanicalEnergy) tile;
                 if (possibleProvider.isValid() && possibleProvider.isMechanicalEnergyTransmitter(mechanicalInput0.facing.getOpposite())) provider = possibleProvider;
             }
         }
@@ -271,6 +271,8 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         int speed = buf.readInt();
         targetEnergyPercentage = (!soundRPM) ? (float)energy / energyStorage.getMaxEnergyStored() : (float)speed / maxSpeed;
     }
+
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { }
 
     public boolean isMechanicalEnergyReceiver(@Nullable EnumFacing facing, int position) {
         if (mechanicalInput0 == null) InitializePoIs();

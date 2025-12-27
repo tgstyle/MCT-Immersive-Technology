@@ -165,6 +165,9 @@ desc.immersiveengineering.info.multiblock.IT:meltingCrucible=Melting Crucible
 desc.immersiveengineering.info.multiblock.IT:Radiator=Radiator
 desc.immersiveengineering.info.multiblock.IT:SolarMelter=Solar Melting Crucible
 
+#SOLAR
+chat.immersivetech.solar_tower_vertical_fail=Solar Towers Cannot Be Stacked Vertically
+chat.immersivetech.solar_tower_too_close=Solar Tower Too Close To Another - Move At Least %s Blocks Away
 
 #CONNECTORS
 tile.immersivetech.connectors.connectors_timer.name=Redstone Timer

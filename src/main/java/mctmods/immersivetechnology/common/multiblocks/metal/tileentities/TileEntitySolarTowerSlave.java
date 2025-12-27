@@ -45,7 +45,7 @@ public class TileEntitySolarTowerSlave extends TileEntityITMultiblock<TileEntity
     @Override public void update() {
         if(isDummy()) ITUtils.RemoveDummyFromTicking(this);
         super.update();
-        if (!formed || master() == null) { formed = false; return; }
+        if (!formed || master() == null) { formed = false;}
     }
 
     @Override public boolean isDummy() { return true; }

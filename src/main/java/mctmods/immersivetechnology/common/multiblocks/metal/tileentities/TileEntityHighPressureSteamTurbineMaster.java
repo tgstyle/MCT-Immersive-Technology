@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import io.netty.buffer.ByteBuf;
@@ -23,6 +23,7 @@ import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -92,7 +93,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
 
     private void speedDown() { speed = Math.max(0, speed - speedLossPerTick); }
 
-    private boolean pumpOutputOutOut() {
+    private boolean pumpOutputOut() {
         if (tanks[1].getFluidAmount() == 0) return false;
         IFluidHandler handler = FluidUtil.getFluidHandler(world, outputFront0, fluidOutput0.facing.getOpposite());
         if (handler == null) return false;
@@ -130,11 +131,12 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     public void efficientMarkDirty() { world.getChunk(this.getPos()).markDirty(); }
 
     public boolean isValidAlternator() {
+        if (mechanicalOutput0 == null) InitializePoIs();
         if (alternator == null || !alternator.isValid()) {
             TileEntity tile = world.getTileEntity(mechanicalOutputPos0);
             if (tile instanceof IMechanicalEnergy) {
                 IMechanicalEnergy possibleAlternator = (IMechanicalEnergy) tile;
-                if (possibleAlternator.isValid() && possibleAlternator.isMechanicalEnergyReceiver(facing.getOpposite())) alternator = possibleAlternator;
+                if (possibleAlternator.isValid() && possibleAlternator.isMechanicalEnergyReceiver(mechanicalOutput0.facing.getOpposite())) alternator = possibleAlternator;
             }
         }
         return alternator != null && alternator.isValid();
@@ -179,7 +181,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
             speedDown();
         }
         if (prevSpeed != speed) update = true;
-        if (pumpOutputOutOut()) update = true;
+        if (pumpOutputOut()) update = true;
         clientUpdateCooldown--;
         if (update && clientUpdateCooldown <= 0) {
             efficientMarkDirty();
@@ -213,6 +215,8 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         speed = buf.readInt();
         targetLevel = (float)speed / maxSpeed;
     }
+
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { }
 
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartHighPressureSteamTurbine.instance.pointsOfInterest) {

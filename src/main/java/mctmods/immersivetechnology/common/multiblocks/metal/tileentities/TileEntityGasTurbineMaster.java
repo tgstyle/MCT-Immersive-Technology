@@ -29,6 +29,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleSmokeNormal;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -172,6 +173,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         float attenuation = Math.max((float) player.getDistanceSq(sound0.getX(), sound0.getY(), sound0.getZ()) / 8, 1);
         ITSounds.gasTurbineSpark.PlayOnce(sound2, 1 / attenuation, 1);
     }
+
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { }
 
     @Override public void update() {
         if (formed && redstone0 == null) InitializePoIs();

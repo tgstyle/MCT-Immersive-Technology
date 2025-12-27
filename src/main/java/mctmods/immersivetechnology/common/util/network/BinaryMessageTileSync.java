@@ -71,12 +71,12 @@ public class BinaryMessageTileSync implements IMessage {
     }
 
     @SideOnly(Side.CLIENT)
-    public static class HandlerClient implements IMessageHandler<BinaryMessageTileSync, IMessage>	{
+    public static class HandlerClient implements IMessageHandler<BinaryMessageTileSync, IMessage> {
         @Override
         public IMessage onMessage(BinaryMessageTileSync message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 World world = Minecraft.getMinecraft().world;
-                if (world!=null) {
+                if (world != null) {
                     TileEntity tile = world.getTileEntity(message.pos);
                     if (tile instanceof IBinaryMessageReceiver)
                         ((IBinaryMessageReceiver)tile).receiveMessageFromServer(message.buffer);

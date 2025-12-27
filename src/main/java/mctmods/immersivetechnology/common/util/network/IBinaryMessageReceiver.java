@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 public interface IBinaryMessageReceiver {
-    default void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {}
-    default void receiveMessageFromServer(ByteBuf buf) {}
+    void receiveMessageFromServer(ByteBuf message);
+
+    void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player);
 }
