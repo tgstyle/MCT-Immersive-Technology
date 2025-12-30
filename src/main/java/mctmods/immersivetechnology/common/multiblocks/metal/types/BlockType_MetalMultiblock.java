@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.multiblocks.types;
+package mctmods.immersivetechnology.common.multiblocks.metal.types;
 
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import net.minecraft.util.IStringSerializable;
@@ -28,15 +28,11 @@ public enum BlockType_MetalMultiblock implements IStringSerializable, BlockITBas
 
     BlockType_MetalMultiblock(boolean needsCustomState) { this.needsCustomState = needsCustomState; }
 
-    @Override
-    public int getMeta() { return ordinal(); }
+    @Override public int getMeta() { return ordinal(); }
 
-    @Override
-    public boolean listForCreative() { return false; }
+    @Override public boolean listForCreative() { return false; }
 
-    @Nonnull
-    @Override
-    public String getName() { return this.toString().toLowerCase(Locale.ENGLISH); }
+    @Override @Nonnull public String getName() { return this.toString().toLowerCase(Locale.ENGLISH); }
 
     public boolean needsCustomState() { return this.needsCustomState; }
 

@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteelSheetmetalTankSlave;
-import mctmods.immersivetechnology.common.multiblocks.types.BlockType_MetalMultiblock;
+import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;

@@ -17,9 +17,25 @@ import blusunrize.lib.manual.ManualPages;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.client.event.ClientEventHandler;
-import mctmods.immersivetechnology.client.gui.*;
+import mctmods.immersivetechnology.client.gui.GuiAdvancedCokeOven;
+import mctmods.immersivetechnology.client.gui.GuiBoiler;
+import mctmods.immersivetechnology.client.gui.GuiDistiller;
+import mctmods.immersivetechnology.client.gui.GuiFluidValve;
+import mctmods.immersivetechnology.client.gui.GuiLoadController;
+import mctmods.immersivetechnology.client.gui.GuiSolarMelter;
+import mctmods.immersivetechnology.client.gui.GuiSolarTower;
+import mctmods.immersivetechnology.client.gui.GuiStackLimiter;
+import mctmods.immersivetechnology.client.gui.GuiTimer;
+import mctmods.immersivetechnology.client.gui.GuiTrashItem;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
-import mctmods.immersivetechnology.client.render.*;
+import mctmods.immersivetechnology.client.render.TileRenderBarrelOpen;
+import mctmods.immersivetechnology.client.render.TileRenderHighPressureSteamTurbine;
+import mctmods.immersivetechnology.client.render.TileRenderSolarReflector;
+import mctmods.immersivetechnology.client.render.TileRenderSteelSheetmetalTank;
+import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
+import mctmods.immersivetechnology.client.render.TileRendererGasTurbine;
+import mctmods.immersivetechnology.client.render.TileRenderMultiblockSlave;
+import mctmods.immersivetechnology.client.render.TileRenderAdvancedCokeOvenBaseheater;
 import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.ITContent;
@@ -27,14 +43,33 @@ import mctmods.immersivetechnology.common.blocks.BlockITFluid;
 import mctmods.immersivetechnology.common.blocks.BlockValve.BlockType_Valve;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Connectors;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
-import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalBarrel;
-import mctmods.immersivetechnology.common.items.ItemITBase;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidValve;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityLoadController;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityStackLimiter;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAdvancedCokeOvenBaseheater;
+import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalBarrel;
+import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
+import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.*;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoiler;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartElectrolyticCrucibleBattery;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartGasTurbine;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartHeatExchanger;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartHighPressureSteamTurbine;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartMeltingCrucible;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartRadiator;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarReflector;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarTower;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteamTurbine;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteelSheetmetalTank;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
@@ -84,8 +119,7 @@ public class ClientProxy extends CommonProxy {
     public static final String CAT_POWER = "it_power";
     public static final String CAT_IT = "it";
 
-    @Override
-    public void preInit() {
+    @Override public void preInit() {
         ClientUtils.mc().getFramebuffer().enableStencil();
         ModelLoaderRegistry.registerLoader(IEOBJLoader.instance);
         OBJLoader.INSTANCE.addDomain(ImmersiveTechnology.MODID);
@@ -94,18 +128,14 @@ public class ClientProxy extends CommonProxy {
         ModelLoaderRegistry.registerLoader(new ModelConfigurableSides.Loader());
     }
 
-    @SubscribeEvent
-    public void PlayerChangedDimensions(PlayerEvent.PlayerChangedDimensionEvent e) { ITSoundHandler.DeleteAllSounds(); }
+    @SubscribeEvent public void PlayerChangedDimensions(PlayerEvent.PlayerChangedDimensionEvent e) { ITSoundHandler.DeleteAllSounds(); }
 
-    @SubscribeEvent
-    public void PlayerLeftSession(PlayerEvent.PlayerLoggedOutEvent e) { ITSoundHandler.DeleteAllSounds(); }
+    @SubscribeEvent public void PlayerLeftSession(PlayerEvent.PlayerLoggedOutEvent e) { ITSoundHandler.DeleteAllSounds(); }
 
-    @SubscribeEvent
-    public void PlayerDisconnected(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) { ITSoundHandler.DeleteAllSounds(); }
+    @SubscribeEvent public void PlayerDisconnected(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) { ITSoundHandler.DeleteAllSounds(); }
 
-    @SubscribeEvent
-    public void onClientTick(TickEvent.ClientTickEvent event) {
-        if(event.phase == TickEvent.Phase.END) {
+    @SubscribeEvent public void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
             if (!ITUtils.REMOVE_FROM_TICKING.isEmpty()) {
                 World world = Minecraft.getMinecraft().world;
                 if (world == null) { ITLogger.warn("ClientProxy has tried to access null world! This shouldn't normally happen..."); }
@@ -131,14 +161,15 @@ public class ClientProxy extends CommonProxy {
                 stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");
                 if (!stack.isEmpty() && IEContent.itemEarmuffs.equals(stack.getItem())) { volumeAdjustment = ItemEarmuffs.getVolumeMod(stack); }
                 else { volumeAdjustment = 1; }
-            } else { volumeAdjustment = 1; }
-        } else { volumeAdjustment = 1; }
+            }
+            else { volumeAdjustment = 1; }
+        }
+        else { volumeAdjustment = 1; }
         if (prevVolume != volumeAdjustment) { ITSoundHandler.UpdateAllVolumes(); }
     }
 
     @SuppressWarnings("deprecation")
-    @SubscribeEvent
-    public static void registerModels(ModelRegistryEvent evt) {
+    @SubscribeEvent public static void registerModels(ModelRegistryEvent evt) {
         WireApi.registerConnectorForRender("conn_timer", new ResourceLocation("immersivetech:block/connector/connectors_timer.obj.ie"), null);
         WireApi.registerConnectorForRender("conn_con_net", new ResourceLocation("immersivetech:block/connector/connectors_con_net.obj.ie"), null);
         for (Block block : ITContent.registeredITBlocks) {
@@ -158,7 +189,8 @@ public class ClientProxy extends CommonProxy {
                     try { ModelLoader.setCustomModelResourceLocation(blockItem, meta, new ModelResourceLocation(location, prop)); }
                     catch (NullPointerException npe) { throw new RuntimeException("WELP! apparently " + ieMetaBlock + " lacks an item!", npe); }
                 }
-            } else if (block instanceof BlockITFluid) { mapFluidState(block, ((BlockITFluid)block).getFluid()); }
+            }
+            else if (block instanceof BlockITFluid) { mapFluidState(block, ((BlockITFluid)block).getFluid()); }
             else { ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(loc, "inventory")); }
         }
         for (Item item : ITContent.registeredITItems) {
@@ -171,12 +203,14 @@ public class ClientProxy extends CommonProxy {
                         ModelBakery.registerItemVariants(ipMetaItem, loc);
                         ModelLoader.setCustomModelResourceLocation(ipMetaItem, meta, new ModelResourceLocation(loc, "inventory"));
                     }
-                } else {
+                }
+                else {
                     final ResourceLocation loc = new ResourceLocation(ImmersiveTechnology.MODID, ipMetaItem.itemName);
                     ModelBakery.registerItemVariants(ipMetaItem, loc);
                     ModelLoader.setCustomMeshDefinition(ipMetaItem, stack -> new ModelResourceLocation(loc, "inventory"));
                 }
-            } else {
+            }
+            else {
                 final ResourceLocation loc = Item.REGISTRY.getNameForObject(item);
                 ModelBakery.registerItemVariants(item, loc);
                 ModelLoader.setCustomMeshDefinition(item, stack -> {
@@ -187,9 +221,9 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    @Override
-    public void init() {
+    @Override public void init() {
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAdvancedCokeOvenBaseheater.class, new TileRenderAdvancedCokeOvenBaseheater());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBarrelOpen.class, new TileRenderBarrelOpen());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGasTurbineMaster.class, new TileRendererGasTurbine());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHighPressureSteamTurbineMaster.class, new TileRenderHighPressureSteamTurbine());
@@ -204,11 +238,15 @@ public class ClientProxy extends CommonProxy {
         ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerServer.class, BinaryMessageTileSync.class, 3, Side.SERVER);
     }
 
-    @SubscribeEvent
-    public void onRenderWorldLast(RenderWorldLastEvent event) { TileRenderMultiblockSlave.clearRenderedThisFrame(); }
+    @SubscribeEvent public void onRenderWorldLast(RenderWorldLastEvent event) { TileRenderMultiblockSlave.clearRenderedThisFrame(); }
 
-    @Override
-    public void postInit() {
+    @Override public void postInit() {
+        if (Multiblocks.enable.enable_advancedCokeOven) {
+            ManualHelper.addEntry("advancedCokeOven", CAT_IT,
+                    new ManualPageMultiblock(ManualHelper.getManual(), "advancedCokeOven0", TileEntityITMultiblockPartAdvancedCokeOven.instance),
+                    new ManualPages.Text(ManualHelper.getManual(), "advancedCokeOven1"),
+                    new ManualPages.Crafting(ManualHelper.getManual(), "advancedCokeOven2", new ItemStack(ITContent.blockMetalDevice, 1, BlockType_MetalDevice.ADVANCED_COKE_OVEN_BASEHEATER.getMeta())));
+        }
         if (Multiblocks.enable.enable_boiler) {
             ManualHelper.addEntry("boiler", CAT_POWER,
                     new ManualPageMultiblock(ManualHelper.getManual(), "boiler0", TileEntityITMultiblockPartBoiler.instance),
@@ -313,26 +351,21 @@ public class ClientProxy extends CommonProxy {
 
         public FluidStateMapper(Fluid fluid) { this.location = new ModelResourceLocation(ImmersiveTechnology.MODID + ":fluid_block", fluid.getName()); }
 
-        @Nonnull
-        @Override
-        protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) { return location; }
+        @Nonnull @Override protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) { return location; }
 
-        @Nonnull
-        @Override
-        public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) { return location; }
+        @Nonnull @Override public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) { return location; }
     }
 
     static { IEApi.renderCacheClearers.add(ModelConfigurableSides.modelCache::clear); }
 
-    @Override
-    public void clearRenderCaches() {
+    @Override public void clearRenderCaches() {
         for (Runnable r : IEApi.renderCacheClearers) { r.run(); }
     }
 
-    @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    @Override public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
         if (tile instanceof IGuiTile) {
+            if (ID == ITGUI.GUIID_Advanced_coke_oven && tile instanceof TileEntityAdvancedCokeOvenMaster) { return new GuiAdvancedCokeOven(player.inventory, (TileEntityAdvancedCokeOvenMaster)tile); }
             if (ID == ITGUI.GUIID_Boiler && tile instanceof TileEntityBoilerMaster) { return new GuiBoiler(player.inventory, (TileEntityBoilerMaster)tile); }
             if (ID == ITGUI.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) { return new GuiDistiller(player.inventory, (TileEntityDistillerMaster)tile); }
             if (ID == ITGUI.GUIID_Fluid_Valve && tile instanceof TileEntityFluidValve) { return new GuiFluidValve((TileEntityFluidValve)tile); }

@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.IEProperties;
 
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
-import mctmods.immersivetechnology.common.multiblocks.types.BlockType_MetalMultiblock1;
+import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
 
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import net.minecraft.block.material.Material;

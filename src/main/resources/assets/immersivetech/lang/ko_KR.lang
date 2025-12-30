@@ -1,29 +1,73 @@
 #CREATIVE TAB
-itemGroup.immersivetech=이머시브 테크
-
+itemGroup.immersivetech=이머시브 테크놀로지
 
 #BLOCKS
 #STONE
 tile.immersivetech.stone_decoration.cokebrick_reinforced.name=강화 코크스 벽돌
 
-
 #ITEMS
 item.immersivetech.material.salt.name=소금
-
+item.immersivetech.material.formation_tool.name=형성 도구
 
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=증류수
 tile.immersivetech.fluidSteam.name=증기
-tile.immersivetech.fluidSlime.name=액체 슬라임
+tile.immersivetech.fluidExhaustSteam.name=배출 증기
+tile.immersivetech.fluidFlueGas.name=연도 가스
+tile.immersivetech.fluidHighPressureSteam.name=고압 증기
+tile.immersivetech.fluidHotWater.name=온천수
+tile.immersivetech.fluidMoltenSalt.name=용융 소금
+tile.immersivetech.fluidMoltenSodium.name=용융 나트륨
+tile.immersivetech.fluidSuperheatedMoltenSodium.name=과열된 용융 나트륨
+tile.immersivetech.fluidChlorine.name=염소
 fluid.distwater=증류수
 fluid.steam=증기
-fluid.slime=액체 슬라임
+fluid.exhauststeam=배출 증기
+fluid.fluegas=연도 가스
+fluid.highpressuresteam=고압 증기
+fluid.hotwater=뜨거운 물
+fluid.moltensalt=용융 소금
+fluid.moltensodium=용융 나트륨
+fluid.superheatedmoltensodium=과열된 용융 나트륨
+fluid.chlorine=염소
 
+#KEYWORDS
+keyword.immersivetech.generate=생성
+keyword.immersivetech.heat_level=온도
+keyword.immersivetech.rotations_per_minute=RPM
+keyword.immersivetech.speed=속도
+keyword.immersivetech.fluid_input=유체 입력
+keyword.immersivetech.fluid_output=유체 출력
+keyword.immersivetech.starter_energy=시동 에너지
+keyword.immersivetech.sparkplug_energy=점화 플러그 에너지
+
+#JEI
+category.immersivetech.metal_multiblock.boilerRecipe=보일러
+category.immersivetech.metal_multiblock.boilerFuel=보일러 연료
+category.immersivetech.metal_multiblock.distillerChance=확률: %s
+
+#chat
+chat.immersivetech.fluid_pump.fill_first_mode=펌프가 내부 탱크를 먼저 채운 후 내용을 밀어냅니다
+chat.immersivetech.fluid_pump.push_only_mode=펌프가 내용물을 밀어내기만 합니다
 
 #TILE ENTITYS
 #METAL
-tile.immersivetech.metal_device.coke_oven_preheater.name=코크스 오븐 예열기
+tile.immersivetech.metal_device.advanced_coke_oven_baseheater.name=고급 코크스 오븐 베이스히터
+tile.immersivetech.metal_trash.trash_item.name=쓰레기통
+tile.immersivetech.metal_trash.trash_fluid.name=유체 쓰레기통
+tile.immersivetech.metal_trash.trash_energy.name=에너지 쓰레기통
+tile.immersivetech.metal_barrel.barrel.name=크리에이티브 금속 배럴
+tile.immersivetech.metal_barrel.barrel_open.name=개방형 금속 배럴
+tile.immersivetech.metal_barrel.barrel_steel.name=강철 금속 배럴
+tile.immersivetech.valve.fluid_valve.name=유체 밸브
+tile.immersivetech.valve.load_controller.name=부하 컨트롤러
+tile.immersivetech.valve.stack_limiter.name=스택 제한기
 
+#STONE
+tile.immersivetech.stone_decoration_slab.cokebrick_reinforced.name=강화 코크스 벽돌 슬래브
+
+#WOODEN
+tile.immersivetech.wooden_crate.crate.name=크리에이티브 저장 상자
 
 #METAL MULTIBLOCKS
 tile.immersivetech.metal_multiblock.distiller.name=증류기
@@ -32,11 +76,76 @@ tile.immersivetech.metal_multiblock.solar_reflector.name=태양광 반사기
 tile.immersivetech.metal_multiblock.steam_turbine.name=증기 터빈
 tile.immersivetech.metal_multiblock.boiler.name=보일러
 tile.immersivetech.metal_multiblock.alternator.name=교류 발전기
-
+tile.immersivetech.metal_multiblock.distiller_slave.name=증류기
+tile.immersivetech.metal_multiblock.solar_tower_slave.name=태양탑
+tile.immersivetech.metal_multiblock.solar_reflector_slave.name=태양광 반사기
+tile.immersivetech.metal_multiblock.steam_turbine_slave.name=증기 터빈
+tile.immersivetech.metal_multiblock.boiler_slave.name=보일러
+tile.immersivetech.metal_multiblock.alternator_slave.name=교류 발전기
+tile.immersivetech.metal_multiblock.steel_tank.name=강철 유체 탱크
+tile.immersivetech.metal_multiblock.steel_tank_slave.name=강철 유체 탱크
+tile.immersivetech.metal_multiblock.cooling_tower.name=냉각탑
+tile.immersivetech.metal_multiblock.cooling_tower_slave.name=냉각탑
+tile.immersivetech.metal_multiblock1.gas_turbine.name=가스 터빈
+tile.immersivetech.metal_multiblock1.gas_turbine_slave.name=가스 터빈
+tile.immersivetech.metal_multiblock1.heat_exchanger.name=열 교환기
+tile.immersivetech.metal_multiblock1.heat_exchanger_slave.name=열 교환기
+tile.immersivetech.metal_multiblock1.high_pressure_steam_turbine.name=고압 증기 터빈
+tile.immersivetech.metal_multiblock1.high_pressure_steam_turbine_slave.name=고압 증기 터빈
+tile.immersivetech.metal_multiblock1.electrolytic_crucible_battery.name=전해 도가니 배터리
+tile.immersivetech.metal_multiblock1.electrolytic_crucible_battery_slave.name=전해 도가니 배터리
+tile.immersivetech.metal_multiblock1.melting_crucible.name=용융 도가니
+tile.immersivetech.metal_multiblock1.melting_crucible_slave.name=용융 도가니
+tile.immersivetech.metal_multiblock1.radiator.name=방열기
+tile.immersivetech.metal_multiblock1.radiator_slave.name=방열기
+tile.immersivetech.metal_multiblock1.solar_melter.name=태양 용융 도가니
+tile.immersivetech.metal_multiblock1.solar_melter_slave.name=태양 용융 도가니
 
 #STONE MULTIBLOCKS
-tile.immersivetech.stone_multiblock.coke_oven_advanced.name=고급 코크스 오븐
+tile.immersivetech.stone_multiblock.advanced_coke_oven.name=고급 코크스 오븐
+tile.immersivetech.stone_multiblock.advanced_coke_oven_slave.name=고급 코크스 오븐
 
+#OVERLAY
+overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s mB
+overlay.immersivetech.osd.fluid_valve.normal.firstline=마지막 초에 %s mB 허용
+overlay.immersivetech.osd.fluid_valve.sneaking.firstline=평균 %s mB/t 허용
+overlay.immersivetech.osd.fluid_valve.sneaking.secondline=마지막 분 동안 %s 패킷에서
+overlay.immersivetech.osd.load_controller.normal.firstline=마지막 초에 %s IF 허용
+overlay.immersivetech.osd.load_controller.sneaking.firstline=평균 %s IF/t 허용
+overlay.immersivetech.osd.load_controller.sneaking.secondline=마지막 분 동안 %s 패킷에서
+overlay.immersivetech.osd.stack_limiter.normal.firstline=마지막 초에 %s 아이템 허용
+overlay.immersivetech.osd.stack_limiter.sneaking.firstline=평균 %s 아이템/t 허용
+overlay.immersivetech.osd.stack_limiter.sneaking.secondline=마지막 분 동안 %s 패킷에서
+overlay.immersivetech.osd.barrel.normal.firstline=%s : %s mB
+overlay.immersivetech.osd.creative_crate.normal.firstline=%s : 마지막 초에 %s 아이템 제공
+overlay.immersivetech.osd.trash_item.normal.firstline=마지막 초에 %s 아이템
+overlay.immersivetech.osd.trash_fluid.normal.firstline=마지막 초에 %s mB
+overlay.immersivetech.osd.trash_energy.normal.firstline=마지막 초에 %s IF
+overlay.immersivetech.osd.trash_item.normal.alternative=마지막 초에 %s 아이템/t
+overlay.immersivetech.osd.trash_fluid.normal.alternative=마지막 초에 %s mB/t
+overlay.immersivetech.osd.trash_energy.normal.alternative=마지막 초에 %s IF/t
+overlay.immersivetech.redstone_off=레드스톤 모드 꺼짐
+overlay.immersivetech.redstone_normal=레드스톤 모드 일반
+overlay.immersivetech.redstone_inverted=레드스톤 모드 반전
+
+#GUI
+gui.immersivetech.empty=비어 있음
+gui.immersivetech.ticks=%st
+gui.immersivetech.seconds=%ss
+gui.immersivetech.if_per_tick=%s IF/t
+gui.immersivetech.boiler.heat_per_tick=틱당 %1$s 열
+gui.immersivetech.boiler.total_heat=총 %s 열
+gui.immersivetech.fluid_valve.firstline=제한 (비활성화하려면 비워두세요)...
+gui.immersivetech.fluid_valve.limitpacket=패킷당 mB
+gui.immersivetech.fluid_valve.limittime=초당 mB
+gui.immersivetech.fluid_valve.limitdestination=출력 탱크에 mB
+gui.immersivetech.load_controller.limitpacket=패킷당 IF
+gui.immersivetech.load_controller.limittime=초당 IF
+gui.immersivetech.load_controller.limitdestination=출력 저장소에 IF
+gui.immersivetech.stack_limiter.limitpacket=패킷당 아이템
+gui.immersivetech.stack_limiter.limittime=초당 아이템
+gui.immersivetech.stack_limiter.limitdestination=출력 저장소에 아이템
+gui.immersivetech.generic_multiblock_jei_tooltip=엔지니어 매뉴얼을 확인하여 건설하세요
 
 #METAL MULTIBLOCKS
 desc.immersiveengineering.info.multiblock.IT:Distiller=증류기
@@ -45,55 +154,158 @@ desc.immersiveengineering.info.multiblock.IT:SolarReflector=태양광 반사기
 desc.immersiveengineering.info.multiblock.IT:SteamTurbine=증기 터빈
 desc.immersiveengineering.info.multiblock.IT:Boiler=보일러
 desc.immersiveengineering.info.multiblock.IT:Alternator=교류 발전기
-
+desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank=강철 유체 탱크
+desc.immersiveengineering.info.multiblock.IT:CoolingTower=냉각탑
+desc.immersiveengineering.info.multiblock.IT:GasTurbine=가스 터빈
+desc.immersiveengineering.info.multiblock.IT:HeatExchanger=열 교환기
+desc.immersiveengineering.info.multiblock.IT:HighPressureSteamTurbine=고압 증기 터빈
+desc.immersiveengineering.info.multiblock.IT:electrolyticCrucibleBattery=전해 도가니 배터리
+desc.immersiveengineering.info.multiblock.IT:meltingCrucible=용융 도가니
+desc.immersiveengineering.info.multiblock.IT:Radiator=방열기
+desc.immersiveengineering.info.multiblock.IT:SolarMelter=태양 용융 도가니
 
 #STONE MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:CokeOvenAdvanced=고급 코크스 오븐
+desc.immersiveengineering.info.multiblock.IT:AdvancedCokeOven=고급 코크스 오븐
 
+#SOLAR
+chat.immersivetech.solar_tower_vertical_fail=태양탑은 수직으로 쌓을 수 없습니다
+chat.immersivetech.solar_tower_too_close=태양탑이 다른 것과 너무 가깝습니다 - 최소 %s 블록 떨어지게 이동하세요
 
 #CONNECTORS
 tile.immersivetech.connectors.connectors_timer.name=레드스톤 타이머
 
-
 #MANUAL
-ie.manual.category.it.name=이머시브 테크
+ie.manual.category.it_power.name=터빈 전력 시스템
+ie.manual.category.it.name=이머시브 테크놀로지
 
 ie.manual.entry.advancedCokeOven.name=고급 코크스 오븐
-ie.manual.entry.advancedCokeOven.subtext=빠릅니다.
-ie.manual.entry.advancedCokeOven0=고급 코크스 오븐은 코크스 석탄과 크레오소트유를 더 빨리 생산할 수 있게 해 주는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 강화 코크스 블록의 엔지니어의 망치를 사용하여 형성됩니다.
-ie.manual.entry.advancedCokeOven1=또한 입력 및 출력을 자동화할 수 있으며, 고온 공기를 추가하여 공정을 가속화할 수 있습니다.<br>용광로는 보강된 벽돌로 만들어졌기 때문에 이번 업그레이드에는 처음으로 강철을 사용하는 것이 좋습니다.<br>강화 용광로와 마찬가지로 코크스 석탄은 전면에, 크레오소트유는 후면에 생산됩니다. 석탄은 위를 통해 공급됩니다.
-ie.manual.entry.advancedCokeOven2=코크스 오븐 예열기는 석탄의 정제 과정을 가속화하는데 사용됩니다. 오븐마다 양쪽에 있는 포트에 최대 2개의 예열기가 연결될 수 있으며, 각 예열기를 작동하기 위해 <config;i;cokeOvenPreheater_consumption> Flux/t가 필요합니다.
+ie.manual.entry.advancedCokeOven.subtext=이제 빠릅니다
+ie.manual.entry.advancedCokeOven0=고급 코크스 오븐은 코크스 석탄과 크레오소트유를 더 빨리 생산할 수 있게 해 주는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 강화 코크스 벽돌 블록의 엔지니어의 망치를 사용하여 형성됩니다.
+ie.manual.entry.advancedCokeOven1=입력 및 출력 아이템의 자동화를 허용하며, 뜨거운 공기를 추가하여 베이스히터로 프로세스를 가속화할 수도 있습니다.<br>용광로는 강화 벽돌로 만들어지므로 첫 번째 강철 배치를 이 업그레이드에 사용하는 것이 좋습니다.<br>개선된 용광로와 유사하게 코크스 석탄은 전면에 출력되고 크레오소트유는 후면에 출력됩니다. 석탄은 상단을 통해 공급됩니다.
+ie.manual.entry.advancedCokeOven2=코크스 오븐 베이스히터는 석탄의 정제 과정을 가속화하는 데 사용됩니다. 각 오븐은 양측 포트에 최대 두 개의 베이스히터를 연결할 수 있으며, 각 베이스히터는 작동하기 위해 <config;i;cokeOvenBaseheater_consumption> Flux/t가 필요합니다.
 
 ie.manual.entry.alternator.name=교류 발전기
-ie.manual.entry.alternator.subtext=변환 가즈아
-ie.manual.entry.alternator0=교류 발전기는 전기의 운동 에너지를 변환하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며, 중앙 중형 엔지니어링 블록(짧은 쪽)의 엔지니어의 망치를 사용하여 제작됩니다.
-ie.manual.entry.alternator1=작동하려면 측면에 운동 에너지 발전기가 필요합니다(<link;steamTurbine;§n§o증기 터빈§r>). 운동 에너지 입력은 기계의 후면에 있고 플럭스 출력은 전면 왼쪽과 전면 오른쪽에 있습니다. 이 기계는(속도*토크)/<config;i;alternator_energyPerTick> Flux/t을 생성합니다.<br>교류 발전기는 <config;i;alternator_energyStorage> Flux을 저장합니다.
-ie.manual.entry.alternator2=증기 터빈과 교류 발전기
+ie.manual.entry.alternator.subtext=변환합시다
+ie.manual.entry.alternator0=교류 발전기는 운동 에너지를 전기로 변환하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 중형 엔지니어링 블록(짧은 쪽)의 엔지니어의 망치를 사용하여 형성됩니다.
+ie.manual.entry.alternator1=작동하려면 운동 에너지 발전기가 연결되어 있어야 합니다(<link;steamTurbine;§n§o증기 터빈§r>). 운동 에너지 입력은 기계의 후면(판금 블록이 있는 곳)에 있으며 플럭스 출력은 전면 왼쪽과 전면 오른쪽에 있습니다. 기계는 속도에 따라 최대 <config;i;alternator_energyPerTick> Flux/t를 생산합니다.<br>교류 발전기는 <config;i;alternator_energyStorage> Flux를 저장하며, 포트당 <config;i;alternator_energyPerTickPerPort> Flux/t를 출력합니다. 중앙 블록에 비교기를 놓아 현재 에너지 레벨을 출력할 수 있으며, 0은 비어 있고 15는 가득 찬 상태입니다.
+ie.manual.entry.alternator2=교류 발전기와 함께 증기 터빈
 
 ie.manual.entry.boiler.name=보일러
-ie.manual.entry.boiler.subtext=디젤 방법
-ie.manual.entry.boiler0=보일러는 <link;biodiesel;§o§n정유§r>와 물을 사용하여 증기를 생성하는 멀티블록 구조입니다.<br>이 구조물은 위 그림과 같이 제작되며, 중앙의 철 판금 블록(긴 쪽)에 있는 엔지니어의 망치를 사용하여 제작됩니다.
-ie.manual.entry.boiler1=전면의 조작반에 레드스톤 신호를 부착하면 기계의 공정이 정지되며, 엔지니어의 망치를 사용하면 이러한 동작이 반전될 수 있습니다.<br>물은 파란색 점으로 표시된 왼쪽 해치를 통해 보일러에 입력할 수 있습니다. 기계 우측에서 정유를 입력할 수 있습니다. 상단에 주황색 점이 있는 해치가 유체 출력으로 사용됩니다.<br>한 물 양동이는 증기 500 mB를 생산하고, 한 <link;distiller;§n§o증류수§r> 양동이는 증기 750 mB를 정유 를 소비하면서, 생산합니다.면서 
-ie.manual.entry.boiler2=
+ie.manual.entry.boiler.subtext=유체 연료 방법
+ie.manual.entry.boiler0=보일러는 유체 연료와 물을 사용하여 증기를 생산하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 철 판금 블록(긴 쪽)의 엔지니어의 망치를 사용하여 형성됩니다.
+ie.manual.entry.boiler1=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다.<br>물과 <link;distiller;§n§o증류수§r>는 파란색 점으로 표시된 왼쪽 해치를 통해 보일러에 입력할 수 있습니다. 연료는 오른쪽 파란색 점이 있는 해치에 입력할 수 있습니다. 상단 주황색 점이 있는 해치는 유체 출력으로 사용됩니다.
+ie.manual.entry.boiler2=물을 끓이기 전에 구조물이 먼저 가열되어야 하며, 이는 연료를 필요로 합니다. 비활성화되거나 충분한 연료가 공급되지 않으면 구조물이 천천히 식으며, 작업 온도에서 완전히 식는 데 약 <config;d;boiler_cooldownTime> 초가 걸립니다. 기본 연료는 디젤입니다.
 
 ie.manual.entry.distiller.name=증류기
-ie.manual.entry.distiller.subtext=물보가 깨끗합니다.
-ie.manual.entry.distiller0=증류기는 소금물을 증류수와 소금으로 바꾸는 멀티블록 기계입니다.<br>구조물은 위에서 볼 수 있는 것과 같이 건설되며, 중앙의 철 판금의 엔지니어의 망치를 사용하여 제작됩니다.
-ie.manual.entry.distiller1=전면의 조작반에 레드스톤 신호를 부착하면 기계의 공정이 정지되며, 엔지니어의 망치를 사용하면 이러한 동작이 반전될 수 있습니다.<br>물은 파란색 점으로 표시된 왼쪽 해치를 통해 증류기에 주입될 수 있습니다. 오른쪽에 주황색 점이 있는 해치는 유체 출력으로, 뒤쪽에 있는 다른 해치는 아이템 출력으로 사용됩니다.<br>증류수와 소금을 생산하려면 에너지가 필요합니다.<br>한 물 양동이는 증류수 500mB을 생산합니다.
+ie.manual.entry.distiller.subtext=물보다 맑음
+ie.manual.entry.distiller0=증류기는 물을 증류수와 소금으로 바꾸는 멀티블록 기계입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 철 판금의 엔지니어의 망치를 사용하여 형성됩니다.
+ie.manual.entry.distiller1=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다.<br>물은 오른쪽 파란색 점으로 표시된 해치를 통해 증류기에 입력할 수 있습니다. 왼쪽 주황색 점이 있는 해치는 유체 출력으로, 후면 다른 해치는 아이템 출력으로 사용됩니다.<br>증류수와 소금을 생산하려면 에너지가 필요합니다.<br>물 한 양동이는 500 mB의 증류수를 생산합니다.
+
+ie.manual.entry.openBarrel.name=개방형 금속 배럴
+ie.manual.entry.openBarrel.subtext=태양이나 구름에 열린?
+ie.manual.entry.openBarrel0=§6개방형 금속 배럴§r은 금속 배럴과 같은 단일 블록 탱크이지만 상단이 열려 있습니다. 유체를 손으로 넣을 수 있습니다. 상단은 입력 전용이고 하단은 출력 전용입니다. 비에 노출시키면 채워지는 것을 지켜보세요! 뇌우에서는 두 배로 빠릅니다! 그러나 따뜻한 환경에 두지 마세요, 물이 증발할 수 있습니다.
 
 ie.manual.entry.solarTower.name=태양탑
-ie.manual.entry.solarTower.subtext=태양의 힘
-ie.manual.entry.solarTower0=태양탑은 태양광을 이용해 증기로 물을 변화시키는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며, 중앙 레드스톤 엔지니어링 블록의 엔지니어의 블록을 사용하여 제작됩니다.
-ie.manual.entry.solarTower1=<br>태양탑은 물과 <link;distiller;§n§o증류수§r>로부터 증기를 만듭니다.<br>한 증류수 양동이는 증기 750mB를 생산합니다.<br>한 물 양동이는 증기 500mB를 생산합니다.<br>물은 파란색 점으로 표시된 왼쪽과 오른쪽에 있는 해치 두개를 통해 태양탑으로 들어갈 수 있습니다. 뒤쪽에 주황색 점이 있는 해치가 유체 출력으로 사용됩니다.<br>태양탑이 작동하려면 태양광 반사기가 하나 이상 필요합니다.
-ie.manual.entry.solarTower2=태양광 반사기는 태양광을 태양탑 중앙에 반사시키는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 제작되며, 중앙 은 블록의 엔지니어의 망치를 사용하여 형성됩니다.
-ie.manual.entry.solarTower3=작동하려면 태양탑과 태양탑, 반사기의 상단(중앙에만 있음) 사이에 블록이 없어야 하고 반사기의 상단, 반사기의 수치는 태양탑의 중심과 거리에 맞아야 합니다. 반사기와 태양탑 사이의 거리는 <config;i;solarTower_minRange>과 <config;i;solarTower_maxRange>사이에 있어야 합니다. 확실히, 그것은 낮에만 작동합니다.
+ie.manual.entry.solarTower.subtext=자동 새 구이 기계 2056
+ie.manual.entry.solarTower0=태양탑은 태양의 빛을 사용하여 물을 증기로 가열하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 가벼운 엔지니어링 블록의 엔지니어의 망치를 사용하여 형성됩니다.
+ie.manual.entry.solarTower1=태양탑은 물과 <link;distiller;§n§o증류수§r>로부터 증기를 생산할 수 있습니다. 물은 파란색 점으로 표시된 해치를 통해 태양탑에 입력할 수 있습니다. 주황색 점이 있는 해치는 유체 출력으로 사용됩니다. 태양탑은 작동하려면 최소 하나의 태양광 반사기가 필요하며, 전체 효율을 위해 많은 반사기가 필요합니다. 최대 반사기 수 중 반사기의 비율이 레시피 처리 비율입니다. 오버월드에서 전체 출력에 도달하려면 약 230개의 반사기가 필요합니다.
+ie.manual.entry.solarTower2=태양광 반사기는 태양의 빛을 태양탑 중앙으로 반사하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 은 블록의 엔지니어의 망치를 사용하여 형성됩니다. 탑/용융기의 콘크리트 기초 층 위에 배치되어야 합니다. 너무 낮거나 높으면 연결되지 않습니다.
+ie.manual.entry.solarTower3=태양탑으로부터의 반사기 거리는 <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> 블록 사이여야 합니다. 반사기는 밤이나 뇌우 동안 작동하지 않으며, 비 동안 효율이 감소합니다. 효율은 새벽과 황혼에 태양광 입사각이 너무 낮아 쉽게 수집되지 않을 때도 감소하며, 높은 주변 습도에 의해서도 감소합니다. 전체 반사기 효율은 전체 하늘 접근에 따라 달라집니다. §lAdvanced Rocketry§r가 존재하면 반사기 강도는 행성당 수신된 태양광 양에 따라 달라집니다.
+
+ie.manual.entry.controlBlocks.name=제한기 및 제어 장치
+ie.manual.entry.controlBlocks.subtext=처리량은 과대평가됨
+ie.manual.entry.controlBlocks0=§6스택 제한기§r는 그것을 통과하는 아이템을 제한할 수 있습니다. GUI에서 특정 매개변수를 지정하거나 레드스톤 신호 강도로 제어할 수 있습니다. 신호 15의 레드스톤은 꺼짐입니다. 망치로 웅크리며 레드스톤 모드를 활성화하세요.
+ie.manual.entry.controlBlocks1=§6부하 컨트롤러§r는 그것을 통과하는 에너지를 제한할 수 있습니다. GUI에서 특정 매개변수를 지정하거나 레드스톤 신호 강도로 제어할 수 있습니다. 신호 15의 레드스톤은 꺼짐입니다. 망치로 웅크리며 레드스톤 모드를 활성화하세요.
+ie.manual.entry.controlBlocks2=§6유체 밸브§r는 그것을 통과하는 유체를 제한할 수 있습니다. GUI에서 특정 매개변수를 지정하거나 레드스톤 신호 강도로 제어할 수 있습니다. 신호 15의 레드스톤은 꺼짐입니다. 망치로 웅크리며 레드스톤 모드를 활성화하세요.
 
 ie.manual.entry.steamTurbine.name=증기 터빈
 ie.manual.entry.steamTurbine.subtext=끓는 숨결
-ie.manual.entry.steamTurbine0=증기 터빈은 증기를 사용하여 운동 에너지를 생성하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 제작되며, 중앙 강철 블록(짧은 쪽)의 엔지니어의 망치를 사용하여 제작됩니다.
-ie.manual.entry.steamTurbine1=전면의 조작반에 레드스톤 신호를 부착하면 기계의 공정이 정지되며, 엔지니어의 망치를 사용하면 이러한 동작이 반전될 수 있습니다.<br>기계 앞에 있는 유체 파이프는 증기의 입력을 나타냅니다. 운동 에너지 출력은 기계 후면(강철 블록)에 있습니다. 최대 속도가 의 토크를 생성합니다.<br>작동하려면 <link;alternator;§o§n교류 발전기§r>가 필요합니다.
-ie.manual.entry.steamTurbine2=
+ie.manual.entry.steamTurbine0=증기 터빈은 증기를 사용하여 운동 에너지를 생산하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 강철 블록(짧은 쪽)의 엔지니어의 망치를 사용하여 형성됩니다.
+ie.manual.entry.steamTurbine1=증기가 공급되면 터빈은 <config;i;steamTurbine_timeToMax> 초 후 최대 속도에 도달할 때까지 천천히 속도가 올라가며, 지속적으로 공급되는 한 유지됩니다. 끄거나 충분한 증기를 제공하지 못하면 터빈이 느려지고 출력이 감소합니다.<br>작동하려면 <link;alternator;§o§n교류 발전기§r>가 필요합니다.
+ie.manual.entry.steamTurbine2=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다.<br>기계 앞의 유체 파이프는 입력입니다. 운동 에너지 출력은 기계 후면(강철 블록)에 있습니다. 선택적으로 유체는 기계적 에너지 출력 바로 아래 출력 파이프를 통해 회수할 수 있습니다.
 
-ie.manual.entry.redstone.name=레드스톤
-ie.manual.entry.redstone.subtext=틱톡
-ie.manual.entry.redstone0=§6레드스톤 타이머§r는 그에게 부과된 지연에 따라 레드 스톤 신호를 출력하는 기능을 가지고 있습니다. 지연 시간은 타이머 GUI에서 설정할 수 있으며, 지연 시간은 10초 전과 1초 후의 정확도가 0.5초입니다. 타이머는 레드스톤 신호로 중지할 수 있습니다.
+ie.manual.entry.highPressureSteamTurbine.name=고압 증기 터빈
+ie.manual.entry.highPressureSteamTurbine.subtext=더블 랭킨
+ie.manual.entry.highPressureSteamTurbine0=고압 증기 터빈은 고압 증기를 사용하여 운동 에너지를 생산하는 멀티블록 구조입니다. 구조물은 위 그림과 같이 건설되며 중앙 블록(짧은 쪽)의 엔지니어의 망치를 사용하여 형성됩니다.
+ie.manual.entry.highPressureSteamTurbine1=증기가 공급되면 터빈은 <config;i;highPressureSteamTurbine_timeToMax> 초 후 최대 속도에 도달할 때까지 천천히 속도가 올라가며, 지속적으로 공급되는 한 유지됩니다. 끄거나 충분한 증기를 제공하지 못하면 터빈이 느려지고 출력이 감소합니다.<br>작동하려면 <link;alternator;§o§n교류 발전기§r>가 필요합니다.
+ie.manual.entry.highPressureSteamTurbine2=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다.<br>기계 앞의 유체 파이프는 입력입니다. 운동 에너지 출력은 기계 후면에 있습니다. 선택적으로 유체는 기계적 에너지 출력 바로 아래 출력 파이프를 통해 회수할 수 있습니다.
+
+ie.manual.entry.gasTurbine.name=가스 터빈
+ie.manual.entry.gasTurbine.subtext=747의 일부가 아님
+ie.manual.entry.gasTurbine0=가스 터빈은 가연성 연료를 사용하여 운동 에너지를 생산하는 멀티블록 구조입니다. 구조물은 위 그림과 같이 건설되며 중앙 강철 블록(짧은 쪽)의 엔지니어의 망치를 사용하여 형성됩니다. 작동하려면 터빈에 <link;alternator;§o§n교류 발전기§r>가 필요합니다.
+ie.manual.entry.gasTurbine1=터빈에 충분한 연료가 공급되면 터빈은 스핀업 프로세스 30초 후 최대 속도와 효율에 도달할 때까지 천천히 속도가 올라갑니다. 일부 연료는 압축된 운송을 필요로 할 만큼 큰 양이 필요할 수 있으며, 터빈에 연료가 없으면 느려지기 시작합니다. 속도에서 꺼지면 천천히 속도를 잃습니다. 1/4 속도 아래로 느려지면 다시 사용하기 전에 다시 스핀업해야 합니다.
+ie.manual.entry.gasTurbine2=터빈 앞의 유체 파이프는 입력이며, 터빈 측면의 두 전원 플러그는 다른 입력 목적을 수행합니다. HV 플러그는 터빈을 1/4 속도로 시작하기 위해 4096 IF/t를 소비하며, 그 이상의 플럭스 입력은 터빈을 멈추게 하고 1/4 속도를 초과하지 못하게 합니다. MV 플러그는 터빈이 현재 연료를 연소하지 않을 때 연료를 점화하기 위해 1024 IF를 사용합니다 - 이는 시작 시와 터빈에 3초 이상 연료가 없을 때 발생합니다.
+ie.manual.entry.gasTurbine3=터빈은 후면에서 운동 에너지를 출력하며, 운동 에너지 출력 바로 아래에서 결과 가스를 출력합니다. 이 가스는 터빈의 효율을 높이기 위해 연소될 수 있는 특별한 위치를 가집니다. 보통 디젤 발전기보다 나쁘지만, 더 큰 전력 출력과 복잡성을 위해 이는 가스 터빈이 정말 빛나는 곳입니다. CCGT(또는 해군을 위한 COGAS)는 증기 전력을 위한 보일러에서 사용될 때 가연성 연료에 대한 더 큰 수익을 허용합니다.
+
+ie.manual.entry.steelBarrel.name=강철 금속 배럴
+ie.manual.entry.steelBarrel.subtext=최대 가득!
+ie.manual.entry.steelBarrel0=§6강철 금속 배럴§r은 금속 배럴보다 두 배의 유체 공간을 제공하는 단일 블록 탱크입니다. 유체를 손으로 넣을 수 있습니다. 상단과 하단 측면은 망치로 입력 또는 출력으로 구성할 수 있습니다.
+
+ie.manual.entry.steelTank.name=강철 유체 탱크
+ie.manual.entry.steelTank.subtext=최대 가득!
+ie.manual.entry.steelTank0=강철 유체 탱크는 더 큰 양의 유체를 위한 공간을 제공하는 멀티블록입니다. 모든 유체의 <config;i;steelTank_tankSize> mB를 저장하며, 상단 또는 하단 블록을 통해 파이프 인할 수 있습니다. 유체는 하단 중앙 블록에서만 추출할 수 있습니다.
+ie.manual.entry.steelTank1=하단 중앙 블록에 레드스톤 신호를 적용하면 탱크가 자동으로 출력되며, 거기에 배치된 비교기는 탱크가 얼마나 찼는지 비례한 레드스톤 신호를 방출합니다. 상단 4개 층 중 하나에 비교기를 부착하면 비교기의 높이에 비례한 신호가 결과됩니다. 예를 들어, 탱크의 두 번째 층에 부착된 비교기는 탱크가 1/4 찰 때까지 신호를 방출하지 않고 탱크가 반 이상 차면 신호 강도 15를 가집니다.
+
+ie.manual.entry.redstone.name=레드스톤 타이머
+ie.manual.entry.redstone.subtext=틱-톡
+ie.manual.entry.redstone0=§6레드스톤 타이머§r는 부과된 지연에 따라 짧은 레드스톤 신호를 출력합니다. 지연 시간은 타이머의 GUI에서 설정할 수 있으며 0.5초의 정밀도를 가지며 0.5에서 10초 사이로 조정할 수 있습니다. 타이머는 레드스톤 신호로 중지할 수 있습니다.
+
+ie.manual.entry.coolingTower.name=냉각탑
+ie.manual.entry.coolingTower.subtext=차갑게 유지하세요!
+ie.manual.entry.coolingTower0=냉각탑은 배출 증기를 물로 변환하는 멀티블록 구조입니다. 구조물은 위 그림과 같이 건설되며 중형 엔지니어링 블록의 엔지니어의 망치를 사용하여 형성됩니다.
+ie.manual.entry.coolingTower1=따뜻한 유체는 빨간색 표시기가 있는 측면으로 들어가고 차가운 유체는 파란색 표시기가 있는 측면으로 들어갑니다. §lAdvanced Rocketry§r가 존재하면 냉각탑의 처리 시간은 대기로 열을 배출하는 능력에 따라 달라지며, 대기 압력에 의존하며, 유체를 대기로 배출하여 즉시 증발시키거나 인공 대기에서 잃을 경우 냉각탑이 꺼집니다.
+
+ie.manual.entry.heatExchanger.name=열 교환기
+ie.manual.entry.heatExchanger.subtext=엔트로피가 인사합니다
+ie.manual.entry.heatExchanger0=열 교환기는 한 유체에서 다른 유체로 열을 빠르게 이동시키는 멀티블록 구조입니다. <br>구조물은 위 그림과 같이 건설되며 레드스톤 엔지니어링 블록 옆 중앙 철 판금의 엔지니어의 망치를 사용하여 형성됩니다.
+ie.manual.entry.heatExchanger1=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다. 열 교환기는 뜨거운 에너지 운반 유체를 §l물§r이나 §l증류수§r 같은 차가운 유체와 처리하여 더 유용한 형태로 가열합니다. 열 교환기는 역류 열 교환기이므로 뜨거운 유체는 뜨거운 유체가 입력된 측면에서 출력되고 차가운 유체에 대해서도 마찬가지입니다.
+
+ie.manual.entry.electrolyticCrucibleBattery.name=전해 도가니 배터리
+ie.manual.entry.electrolyticCrucibleBattery.subtext=전기의 힘으로 당신을 강제합니다!
+ie.manual.entry.electrolyticCrucibleBattery0=전해 도가니 배터리는 지속적인 전류를 사용하여 유체를 구성 요소로 분리하고 액체에서 금속을 도금하는 멀티블록입니다.
+ie.manual.entry.electrolyticCrucibleBattery1=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다. 단일 파란색 해치는 유체 입력이며, 분리된 두 유체는 후면 상단 포트에서 출력되며 아이템과 소비된 전해질은 하단에서 출력됩니다.
+ie.manual.entry.electrolyticCrucibleBattery2=멀티블록은 가장 일반적으로 용융 소금을 전기분해하여 <link;solarTower;§n§o태양탑§r>을 위한 용융 나트륨을 제공하는 데 사용됩니다. 엔지니어의 망치로 아이템 출력인 블록을 치면 형성할 수 있습니다.
+
+ie.manual.entry.meltingCrucible.name=용융 도가니
+ie.manual.entry.meltingCrucible.subtext=펄스 제트가 아님. 용광로가 아님.
+ie.manual.entry.meltingCrucible0=용융 도가니는 전기를 사용하여 고체를 액체로 가열하는 멀티블록입니다. 전원 입력과 레드스톤 입력 사이 블록을 엔지니어의 망치로 치면 형성할 수 있습니다.
+ie.manual.entry.meltingCrucible1=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다. 아이템은 후면 파란색 포트로 입력되며 액체는 전면 하단 주황색 포트에서 출력됩니다. 멀티블록은 가장 일반적으로 용융 소금을 <link;electrolyticCrucibleBattery;§n§o전해 도가니 배터리§r>에 제공하여 <link;solarTower;§n§o태양탑§r>을 위한 용융 나트륨으로 전기분해하는 데 사용됩니다.
+
+ie.manual.entry.solarMelter.name=태양 용융 도가니
+ie.manual.entry.solarMelter.subtext=코르타스 대 맥켄지
+ie.manual.entry.solarMelter0=태양 용융 도가니는 태양 에너지를 사용하여 고체를 액체로 가열하는 멀티블록입니다. 구조물은 위 그림과 같이 건설되며 중앙 은 판금의 엔지니어의 망치를 사용하여 형성됩니다.
+ie.manual.entry.solarMelter1=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다. 아이템은 후면 파란색 포트로 입력되며 액체는 전면 하단 주황색 포트에서 출력됩니다. 멀티블록은 가장 일반적으로 용융 소금을 <link;electrolyticCrucibleBattery;§n§o전해 도가니 배터리§r>에 제공하여 <link;solarTower;§n§o태양탑§r>을 위한 용융 나트륨으로 전기분해하는 데 사용됩니다.
+
+ie.manual.entry.radiator.name=방열기
+ie.manual.entry.radiator.subtext=방사 위상 이동
+ie.manual.entry.radiator0=방열기는 뜨거운 유체와 가스를 냉각탑과 유사하게 방사 냉각(가능하다면 전도 냉각)하는 멀티블록입니다. 엔지니어의 망치로 가벼운 엔지니어링 블록을 치면 형성할 수 있습니다. 수평으로 만들 수도 있습니다.
+ie.manual.entry.radiator1=냉각량은 뜨거운 유체와 환경 사이의 온도 차이에 따라 달라지며 유체를 가열하지 않습니다. 효율은 가까운 장애물 수에 따라 달라집니다. §lAdvanced Rocketry§r가 존재하면 처리량은 대기 압력과 방열기의 흑체 등가 온도에 따라 달라집니다. 방열기는 냉각탑에 비해 극도로 비효율적이지만 냉각탑과 달리 진공에서 작동할 수 있습니다. 방열기는 인공 대기에서 작동하지 않습니다.
+
+ie.manual.entry.computer.steamTurbine.name=증기 터빈 ☎
+ie.manual.entry.computer.steamTurbine.subtext=끓는 숨결
+ie.manual.entry.computer.boiler.name=보일러 ☎
+ie.manual.entry.computer.boiler.subtext=유체 연료 방법
+ie.manual.entry.computer.distiller.name=증류기 ☎
+ie.manual.entry.computer.distiller.subtext=물보다 맑음
+ie.manual.entry.computer.solarTower.name=태양탑 ☎
+ie.manual.entry.computer.solarTower.subtext=태양의 힘
+ie.manual.entry.computer.gasTurbine.name=가스 터빈 ☎
+ie.manual.entry.computer.gasTurbine.subtext=747의 일부가 아님
+ie.manual.entry.computer.heatExchanger.name=열 교환기 ☎
+ie.manual.entry.computer.heatExchanger.subtext=엔트로피가 인사합니다
+ie.manual.entry.computer.highPressureSteamTurbine.name=고압 증기 터빈 ☎
+ie.manual.entry.computer.highPressureSteamTurbine.subtext=더블 랭킨
+
+ie.manual.entry.computer.steamTurbine0=§lgetSpeed()§r: 터빈의 속도를 RPM으로 반환합니다.<br>§lgetTankInfo()§r: 터빈의 증기 탱크에 대한 정보를 반환합니다.<br>§lgetOutputTankInfo()§r: 터빈의 출력 탱크에 대한 정보를 반환합니다.
+ie.manual.entry.computer.boiler0=§lgetHeat()§r: 보일러의 열 레벨을 반환합니다.<br>§lgetFuelTankInfo()§r: 보일러의 연료 탱크에 대한 정보를 반환합니다.<br>§lgetInputTankInfo()§r: 보일러의 입력 탱크에 대한 정보를 반환합니다.<br>§lgetOutputTankInfo()§r: 보일러의 출력 탱크에 대한 정보를 반환합니다.
+ie.manual.entry.computer.boiler1=§lgetFullCanisters()§r: 기계의 가득 찬 유체 캐니스터에 대한 정보를 테이블로 반환하며, "input"과 "output" 키가 각 탱크를 가리킵니다.<br>§lgetEmptyCanisters()§r: 기계의 빈 유체 캐니스터에 대한 정보를 테이블로 반환하며, "input"과 "output" 키가 각 탱크를 가리킵니다.
+ie.manual.entry.computer.distiller0=§lgetEnergyStored()§r: 증류기의 내부 버퍼에 저장된 에너지를 반환합니다.<br>§lgetMaxEnergyStored()§r: 증류기의 내부 에너지 버퍼의 최대 용량을 반환합니다<br>§lgetInputTankInfo()§r: 증류기의 입력 탱크에 대한 정보를 반환합니다.<br>§lgetOutputTankInfo()§r: 증류기의 출력 탱크에 대한 정보를 반환합니다.
+ie.manual.entry.computer.distiller1=§lgetFullCanisters()§r: 기계의 가득 찬 유체 캐니스터에 대한 정보를 테이블로 반환하며, "input"과 "output" 키가 각 탱크를 가리킵니다.<br>§lgetEmptyCanisters()§r: 기계의 빈 유체 캐니스터에 대한 정보를 테이블로 반환하며, "input"과 "output" 키가 각 탱크를 가리킵니다.
+ie.manual.entry.computer.solarTower0=§lgetReflectors()§r: 태양탑에 연결된 유효 반사기의 테이블을 반환합니다.<br>§lgetInputTankInfo()§r: 탑의 입력 탱크에 대한 정보를 반환합니다.<br>§lgetOutputTankInfo()§r: 탑의 출력 탱크에 대한 정보를 반환합니다.
+ie.manual.entry.computer.solarTower1=§lgetFullCanisters()§r: 기계의 가득 찬 유체 캐니스터에 대한 정보를 테이블로 반환하며, "input"과 "output" 키가 각 탱크를 가리킵니다.<br>§lgetEmptyCanisters()§r: 기계의 빈 유체 캐니스터에 대한 정보를 테이블로 반환하며, "input"과 "output" 키가 각 탱크를 가리킵니다.
+ie.manual.entry.computer.gasTurbine0=§lgetSpeed()§r: 터빈의 속도를 RPM으로 반환합니다.<br>§lgetInputTankInfo()§r: 터빈의 연료 탱크에 대한 정보를 반환합니다.<br>§lgetOutputTankInfo()§r: 터빈의 출력 탱크에 대한 정보를 반환합니다.
+ie.manual.entry.computer.heatExchanger0=§lgetFirstInputTankInfo()§r: 열 교환기의 첫 번째 입력 탱크(상단 루프)에 대한 테이블을 반환합니다.<br>§lgetSecondInputTankInfo()§r: 열 교환기의 두 번째 입력 탱크(하단 루프)에 대한 테이블을 반환합니다.
+ie.manual.entry.computer.heatExchanger1=§lgetFirstOutputTankInfo()§r: 열 교환기의 첫 번째 출력 탱크(상단 루프)에 대한 테이블을 반환합니다.<br>§lgetSecondOutputTankInfo()§r: 열 교환기의 두 번째 출력 탱크(하단 루프)에 대한 테이블을 반환합니다.
+ie.manual.entry.computer.highPressureSteamTurbine0=§lgetSpeed()§r: 터빈의 속도를 RPM으로 반환합니다.<br>§lgetTankInfo()§r: 터빈의 증기 탱크에 대한 정보를 반환합니다.<br>§lgetOutputTankInfo()§r: 터빈의 출력 탱크에 대한 정보를 반환합니다.
+
+ie.manual.entry.fluidPipes3=펌프가 유체 블록을 집으려면 상단에 전원 입력과 레드스톤 신호가 필요합니다. 펌프는 자동 출력이 없는 탱크 및 기타 유체 용기로부터 추출하는 데도 사용할 수 있습니다. 이는 레드스톤 신호를 필요로 하지만 전력을 소비하지 않습니다.<br><br>펌프에 새로운 모드가 있습니다! 유체 펌프의 작동 모드는 엔지니어의 와이어 커터로 오른쪽 클릭하여 변경할 수 있습니다. 예상대로 작동하지 않으면 모드를 전환하세요.

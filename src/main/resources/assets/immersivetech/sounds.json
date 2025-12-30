@@ -1,10 +1,17 @@
 {
-	"turbine": {
+	"advancedCokeOven": {
 		"category": "block",
 		"sounds": [
-			"immersivetech:turbine"
+			"immersivetech:advanced_coke_oven"
 		],
-		"subtitle": "subtitle.immersivetech.turbine"
+		"subtitle": "subtitle.immersivetech.advancedCokeOven"
+	},
+	"advancedCokeOvenFan": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:advanced_coke_oven_fan"
+		],
+		"subtitle": "subtitle.immersivetech.advancedCokeOvenFan"
 	},
 	"alternator": {
 		"category": "block",
@@ -20,27 +27,6 @@
 		],
 		"subtitle": "subtitle.immersivetech.boiler"
 	},
-	"distiller": {
-		"category": "block",
-		"sounds": [
-			"immersivetech:distiller"
-		],
-		"subtitle": "subtitle.immersivetech.distiller"
-	},
-	"advCokeOven": {
-		"category": "block",
-		"sounds": [
-			"immersivetech:adv_coke_oven"
-		],
-		"subtitle": "subtitle.immersivetech.advCokeOven"
-	},
-	"solarTower": {
-		"category": "block",
-		"sounds": [
-			"immersivetech:solar_tower"
-		],
-		"subtitle": "subtitle.immersivetech.solarTower"
-	},
 	"coolingTower": {
 		"category": "block",
 		"sounds": [
@@ -48,19 +34,12 @@
 		],
 		"subtitle": "subtitle.immersivetech.coolingTower"
 	},
-	"gasTurbineRunning": {
+	"distiller": {
 		"category": "block",
 		"sounds": [
-			"immersivetech:gas_running"
+			"immersivetech:distiller"
 		],
-		"subtitle": "subtitle.immersivetech.gasTurbineRunning"
-	},
-	"gasTurbineStarter": {
-		"category": "block",
-		"sounds": [
-			"immersivetech:gas_starter"
-		],
-		"subtitle": "subtitle.immersivetech.gasTurbineStarter"
+		"subtitle": "subtitle.immersivetech.distiller"
 	},
 	"gasTurbineArc": {
 		"category": "block",
@@ -69,6 +48,13 @@
 		],
 		"subtitle": "subtitle.immersivetech.gasTurbineArc"
 	},
+	"gasTurbineRunning": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:gas_running"
+		],
+		"subtitle": "subtitle.immersivetech.gasTurbineRunning"
+	},
 	"gasTurbineSpark": {
 		"category": "block",
 		"sounds": [
@@ -76,11 +62,32 @@
 		],
 		"subtitle": "subtitle.immersivetech.gasTurbineSpark"
 	},
+	"gasTurbineStarter": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:gas_starter"
+		],
+		"subtitle": "subtitle.immersivetech.gasTurbineStarter"
+	},
 	"heatExchanger": {
 		"category": "block",
 		"sounds": [
 			"immersivetech:heat_exchanger"
 		],
 		"subtitle": "subtitle.immersivetech.heatExchanger"
+	},
+	"solarTower": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:solar_tower"
+		],
+		"subtitle": "subtitle.immersivetech.solarTower"
+	},
+	"turbine": {
+		"category": "block",
+		"sounds": [
+			"immersivetech:turbine"
+		],
+		"subtitle": "subtitle.immersivetech.turbine"
 	}
 }

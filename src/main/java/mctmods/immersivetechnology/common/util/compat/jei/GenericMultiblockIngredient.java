@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.util.compat.jei;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.multiblocks.types.BlockType_MetalMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.types.BlockType_MetalMultiblock1;
+import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
+import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;

@@ -12,18 +12,19 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class ITSounds {
 	static Set<ITSoundEvent> registeredEvents = new HashSet<>();
-	public static ITSoundEvent turbine = registerSound("turbine");
+	public static ITSoundEvent advancedCokeOven = registerSound("advancedCokeOven");
+	public static ITSoundEvent advancedCokeOvenFan = registerSound("advancedCokeOvenFan");
 	public static ITSoundEvent alternator = registerSound("alternator");
 	public static ITSoundEvent boiler = registerSound("boiler");
-	public static ITSoundEvent distiller = registerSound("distiller");
-	public static ITSoundEvent advCokeOven = registerSound("advCokeOven");
-	public static ITSoundEvent solarTower = registerSound("solarTower");
 	public static ITSoundEvent coolingTower = registerSound("coolingTower");
-	public static ITSoundEvent gasTurbineRunning = registerSound("gasTurbineRunning");
-	public static ITSoundEvent gasTurbineStarter = registerSound("gasTurbineStarter");
+	public static ITSoundEvent distiller = registerSound("distiller");
 	public static ITSoundEvent gasTurbineArc = registerSound("gasTurbineArc");
+	public static ITSoundEvent gasTurbineRunning = registerSound("gasTurbineRunning");
 	public static ITSoundEvent gasTurbineSpark = registerSound("gasTurbineSpark");
+	public static ITSoundEvent gasTurbineStarter = registerSound("gasTurbineStarter");
 	public static ITSoundEvent heatExchanger = registerSound("heatExchanger");
+	public static ITSoundEvent solarTower = registerSound("solarTower");
+	public static ITSoundEvent turbine = registerSound("turbine");
 
 	private static ITSoundEvent registerSound(String name) {
 		ResourceLocation location = new ResourceLocation(ImmersiveTechnology.MODID, name);

@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.multiblocks.types;
+package mctmods.immersivetechnology.common.multiblocks.metal.types;
 
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import net.minecraft.util.IStringSerializable;

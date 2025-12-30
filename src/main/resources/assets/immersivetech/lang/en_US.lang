@@ -1,11 +1,9 @@
 #CREATIVE TAB
 itemGroup.immersivetech=Immersive Technology
 
-
 #BLOCKS
 #STONE
 tile.immersivetech.stone_decoration.cokebrick_reinforced.name=Reinforced Coke Brick
-
 
 #ITEMS
 item.immersivetech.material.salt.name=Salt
@@ -52,9 +50,9 @@ category.immersivetech.metal_multiblock.distillerChance=Chance: %s
 chat.immersivetech.fluid_pump.fill_first_mode=Pump will fill internal tank first, then push out contents
 chat.immersivetech.fluid_pump.push_only_mode=Pump will only push out contents
 
-
 #TILE ENTITYS
 #METAL
+tile.immersivetech.metal_device.advanced_coke_oven_baseheater.name=Advanced Coke Oven Baseheater
 tile.immersivetech.metal_trash.trash_item.name=Trash Can
 tile.immersivetech.metal_trash.trash_fluid.name=Fluid Trash Can
 tile.immersivetech.metal_trash.trash_energy.name=Energy Trash Can
@@ -103,6 +101,9 @@ tile.immersivetech.metal_multiblock1.radiator_slave.name=Radiator
 tile.immersivetech.metal_multiblock1.solar_melter.name=Solar Melting Crucible
 tile.immersivetech.metal_multiblock1.solar_melter_slave.name=Solar Melting Crucible
 
+#STONE MULTIBLOCKS
+tile.immersivetech.stone_multiblock.advanced_coke_oven.name=Advanced Coke Oven
+tile.immersivetech.stone_multiblock.advanced_coke_oven_slave.name=Advanced Coke Oven
 
 #OVERLAY
 overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s mB
@@ -127,7 +128,6 @@ overlay.immersivetech.redstone_off=Redstone Mode Off
 overlay.immersivetech.redstone_normal=Redstone Mode Normal
 overlay.immersivetech.redstone_inverted=Redstone Mode Inverted
 
-
 #GUI
 gui.immersivetech.empty=Empty
 gui.immersivetech.ticks=%st
@@ -147,7 +147,6 @@ gui.immersivetech.stack_limiter.limittime=Items per second
 gui.immersivetech.stack_limiter.limitdestination=Items in output storage
 gui.immersivetech.generic_multiblock_jei_tooltip=Check Engineer's Manual to Build
 
-
 #METAL MULTIBLOCKS
 desc.immersiveengineering.info.multiblock.IT:Distiller=Distiller
 desc.immersiveengineering.info.multiblock.IT:SolarTower=Solar Tower
@@ -165,6 +164,9 @@ desc.immersiveengineering.info.multiblock.IT:meltingCrucible=Melting Crucible
 desc.immersiveengineering.info.multiblock.IT:Radiator=Radiator
 desc.immersiveengineering.info.multiblock.IT:SolarMelter=Solar Melting Crucible
 
+#STONE MULTIBLOCKS
+desc.immersiveengineering.info.multiblock.IT:AdvancedCokeOven=Advanced Coke Oven
+
 #SOLAR
 chat.immersivetech.solar_tower_vertical_fail=Solar Towers Cannot Be Stacked Vertically
 chat.immersivetech.solar_tower_too_close=Solar Tower Too Close To Another - Move At Least %s Blocks Away
@@ -175,6 +177,12 @@ tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
 #MANUAL
 ie.manual.category.it_power.name=Turbine Power Systems
 ie.manual.category.it.name=Immersive Technology
+
+ie.manual.entry.advancedCokeOven.name=Advanced Coke Oven
+ie.manual.entry.advancedCokeOven.subtext=It's fast now
+ie.manual.entry.advancedCokeOven0=The Advanced Coke Oven is a multiblock structure that allows faster production of Coal Coke and Creosote Oil.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Reinforced Coke Brick Block.
+ie.manual.entry.advancedCokeOven1=It allows the automation of input and output of items, it can also be outfitted with baseheaters to speed up the process by addition of hot air.<br>The furnace is made from reinforced bricks, so you'd be advised to spend your first batches of steel on this upgrade.<br>Similar to the Improved Blast Furnace, Coal Coke is output at the front and Creosote Oil at the back. Coal is fed in through the top.
+ie.manual.entry.advancedCokeOven2=Coke Oven Baseheaters are used to speed up the refinement process of coal. Each oven can have up to two baseheaters connected to the ports on each side, and each baseheater requires <config;i;cokeOvenBaseheater_consumption> Flux/t to operate.
 
 ie.manual.entry.alternator.name=Alternator
 ie.manual.entry.alternator.subtext=Let's transform

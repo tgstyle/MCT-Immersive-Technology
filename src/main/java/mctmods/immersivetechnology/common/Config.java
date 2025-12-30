@@ -27,6 +27,8 @@ public class Config {
         }
         public static class Multiblocks {
             public static Alternator alternator = new Alternator();
+            public static AdvancedCokeOven advancedCokeOven = new AdvancedCokeOven();
+            public static AdvancedCokeOvenBaseheater advancedCokeOvenBaseheater = new AdvancedCokeOvenBaseheater();
             public static Boiler boiler = new Boiler();
             public static CoolingTower coolingTower = new CoolingTower();
             public static Distiller distiller = new Distiller();
@@ -56,6 +58,20 @@ public class Config {
                 public boolean alternator_sound_RPM = true;
                 @Comment({"Alternator generation threshold (fraction of speed below which it will not produce power, to emulate grid syncing) [Default=0.0]"})
                 public double alternator_threshold = 0.0;
+            }
+            public static class AdvancedCokeOven {
+                @Comment({"The capacity of the tank for the Advanced Coke Oven [Default=24000]"})
+                public int advancedCokeOven_tankSize = 24000;
+                @Comment({"How fast the Advanced Coke Oven (with no baseheaters) is when compared to the basic Coke Oven. A value of 1 means same speed. [Default=1]"})
+                public float advancedCokeOven_speed_base = 1;
+                @Comment({"This value gets added per baseheater, to the speed of the Advanced Coke Oven [Default=1]"})
+                public float advancedCokeOven_baseheater_speed_increase = 1;
+                @Comment({"The speed of the Advanced Coke Oven gets multiplied by this value per baseheater [Default=1]"})
+                public float advancedCokeOven_baseheater_speed_multiplier = 1;
+            }
+            public static class AdvancedCokeOvenBaseheater {
+                @Comment({"The energy per tick the Coke Oven Baseheater consumes while processing [Default=32]"})
+                public int advancedCokeOvenBaseheater_energy_consumption = 32;
             }
             public static class Boiler {
                 @Comment({"The capacity of the fuel tank for the Boiler [Default=2000]"})
@@ -104,6 +120,8 @@ public class Config {
                 public int electrolyticCrucibleBattery_output_tankSize = 10000;
             }
             public static class Enable {
+                @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Baseheater be built ? [Default=true]"})
+                public boolean enable_advancedCokeOven = true;
                 @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Boiler Multiblock structure be built ? [Default=true]"})
                 public boolean enable_boiler = true;
                 @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Cooling Tower Multiblock structures be built ? [Default=true]"})
