@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 public abstract class MixinMCTTileEntity {
 
     /**
-     * @author MCTMods
+     * @author tgstyle
      * @reason Redirect error logging to stderr for debugging early loading issues
      */
     @SuppressWarnings("all") @Inject(method = "create", at = @At("HEAD"), cancellable = true, remap = false)
@@ -29,12 +29,13 @@ public abstract class MixinMCTTileEntity {
         String s = p_190200_1_.getString("id");
         Class<? extends TileEntity> oclass = null;
         Logger LOGGER = null;
-        RegistryNamespaced<ResourceLocation, Class<? extends TileEntity>> REGISTRY;
 
         try {
             Field regField = TileEntity.class.getDeclaredField("REGISTRY");
             regField.setAccessible(true);
-            REGISTRY = (RegistryNamespaced<ResourceLocation, Class<? extends TileEntity>>) regField.get(null);
+            Object regObj = regField.get(null);
+            @SuppressWarnings("unchecked")
+            RegistryNamespaced<ResourceLocation, Class<? extends TileEntity>> REGISTRY = (RegistryNamespaced<ResourceLocation, Class<? extends TileEntity>>) regObj;
 
             Field logField = TileEntity.class.getDeclaredField("LOGGER");
             logField.setAccessible(true);
