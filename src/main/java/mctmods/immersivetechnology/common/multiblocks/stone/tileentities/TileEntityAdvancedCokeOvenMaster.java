@@ -212,6 +212,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
                         active = true;
                         update = true;
                         notifyNearbyClients();
+                        notifyProcessUpdate();
                     }
                 }
             }
@@ -227,15 +228,21 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
                     else { inventory.set(1, processing.output.copy()); }
                     this.tank.fill(new FluidStack(IEContent.fluidCreosote, processing.creosoteOutput), true);
                     this.markContainingBlockForUpdate(null);
-                    active = false;
+                    processing = getRecipe();
+                    if (processing != null) {
+                        process = processing.time;
+                        processMax = processing.time;
+                        active = true;
+                        notifyProcessUpdate();
+                    } else {
+                        active = false;
+                        process = 0;
+                        processMax = 0;
+                    }
                     update = true;
-                    process = 0;
-                    processMax = 0;
-                    processing = null;
                     notifyNearbyClients();
-                    setHeatersActive();
-                }
-                else {
+                    if (!active) setHeatersActive();
+                } else {
                     if (active) {
                         update = true;
                         active = false;
