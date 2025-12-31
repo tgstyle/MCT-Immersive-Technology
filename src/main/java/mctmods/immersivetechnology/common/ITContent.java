@@ -21,8 +21,8 @@ import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityC
 import mctmods.immersivetechnology.common.fluid.FluidColored;
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidValve;
-import mctmods.immersivetechnology.common.multiblocks.BlockMetalMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.BlockMetalMultiblock1;
+import mctmods.immersivetechnology.common.multiblocks.metal.BlockMetalMultiblock;
+import mctmods.immersivetechnology.common.multiblocks.metal.BlockMetalMultiblock1;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.BlockStoneMultiblock;

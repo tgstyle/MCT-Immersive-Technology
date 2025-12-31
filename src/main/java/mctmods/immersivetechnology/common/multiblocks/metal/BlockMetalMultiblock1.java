@@ -1,8 +1,9 @@
-package mctmods.immersivetechnology.common.multiblocks;
+package mctmods.immersivetechnology.common.multiblocks.metal;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
+import mctmods.immersivetechnology.common.multiblocks.BlockITMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
 
