@@ -14,6 +14,7 @@ import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxH
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenSlave;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
@@ -201,6 +202,15 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
     @Override @Nonnull public PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
 
     @Override public void update() {
+        if (!world.isRemote && !dummy && active) {
+            BlockPos attachedPos = getPos().offset(facing);
+            TileEntity te = world.getTileEntity(attachedPos);
+            if (!(te instanceof TileEntityAdvancedCokeOvenSlave) || !((TileEntityAdvancedCokeOvenSlave)te).formed) {
+                active = false;
+                markContainingBlockForUpdate(null);
+                updateDummies();
+            }
+        }
         if (world.isRemote && !dummy) {
             prevFanRotation = fanRotation;
             if (active) {

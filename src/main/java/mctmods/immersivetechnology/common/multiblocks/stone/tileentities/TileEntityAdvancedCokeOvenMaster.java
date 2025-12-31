@@ -176,7 +176,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     }
 
     @Override public void receiveMessageFromServer(NBTTagCompound message) {
-        if (message.hasKey("active")) { active = message.getBoolean("active"); }
+        if (message.hasKey("active") ) { active = message.getBoolean("active"); }
         else if (message.hasKey("process")) {
             process = message.getFloat("process");
             processMax = message.getInteger("processMax");
@@ -301,8 +301,6 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         return null;
     }
 
-    @Override public boolean isDummy() { return false; }
-
     @Override public TileEntityAdvancedCokeOvenMaster master() { return this; }
 
     @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[]{Math.round(processMax - process)}; }
@@ -324,7 +322,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         return (baseSpeed + activeBaseheaters * baseheaterAdd) * (1 + activeBaseheaters * (baseheaterMult - 1));
     }
 
-    private void setHeatersActive() {
+    void setHeatersActive() {
         if (baseheater0 == null) { InitializePoIs(); }
         PoICache[] heaters = {baseheater0, baseheater1};
         for (PoICache poi : heaters) {
@@ -345,15 +343,15 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     @Override public NonNullList<ItemStack> getInventory() { return inventory; }
 
-    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
+    @Override protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if (fluidOutput0 == null) { InitializePoIs(); }
-        if (fluidOutput0.isPoI(side, this.pos)) { return new IFluidTank[]{tank}; }
+        if (fluidOutput0.isPoI(side, position)) { return new IFluidTank[]{tank}; }
         return new IFluidTank[0];
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
         if (fluidOutput0 == null) { InitializePoIs(); }
-        return fluidOutput0.isPoI(side, this.pos) && iTank == 0;
+        return fluidOutput0.isPoI(side, position) && iTank == 0;
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
@@ -368,8 +366,10 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         return super.hasCapability(capability, facing);
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
             if (itemInput0 == null) { InitializePoIs(); }
             if (itemInput0.isPoI(facing, this.pos)) { return (T)inputHandler; }
