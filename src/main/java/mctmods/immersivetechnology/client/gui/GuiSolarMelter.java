@@ -23,7 +23,7 @@ public class GuiSolarMelter extends GuiIEContainerBase {
 
     public GuiSolarMelter(InventoryPlayer invPlayer, TileEntitySolarMelterMaster tile) {
         super(new ContainerSolarMelter(invPlayer, tile));
-        this.tile=tile;
+        this.tile = tile;
     }
 
     @Override public void drawScreen(int mx, int my, float partial) {
@@ -32,10 +32,9 @@ public class GuiSolarMelter extends GuiIEContainerBase {
         ArrayList<String> tooltip = new ArrayList<>();
         ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_solar_melter.png", tooltip);
         if (mx >= guiLeft + 16 && mx < guiLeft + 58 && my >= guiTop + 9 && my < guiTop + 17) {
-            DecimalFormat df = new DecimalFormat("#.##");
-            double heatLevel = Double.parseDouble(df.format(tile.heatLevel));
+            DecimalFormat df = new DecimalFormat("0.00");
             tooltip.add("Temperature");
-            tooltip.add(TextFormatting.RED + "" + ((heatLevel/20) + 30) + "/" +  ((workingHeatLevel/20) + 30) + "C");
+            tooltip.add(TextFormatting.RED + df.format(tile.heatLevel / 20 + 30) + "/" + df.format(workingHeatLevel / 20 + 30) + "C");
         }
         if (!tooltip.isEmpty()) {
             ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
@@ -49,21 +48,12 @@ public class GuiSolarMelter extends GuiIEContainerBase {
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
         int heatBarSize = (int)Math.round(42 * (tile.heatLevel / workingHeatLevel));
-
         this.drawTexturedModalRect(guiLeft + 16, guiTop + 9, 176, 0, heatBarSize, 9);
 
-        if (tile.solarIncidenceAngleSection > 0) {
-            this.drawTexturedModalRect(guiLeft + 32, guiTop + 24, 198, 31, 10, 10);
-        }
-        if (tile.solarIncidenceAngleSection > 1) {
-            this.drawTexturedModalRect(guiLeft + 16, guiTop + 40, 198, 31, 10, 10);
-        }
-        if (tile.solarIncidenceAngleSection > 3) {
-            this.drawTexturedModalRect(guiLeft + 32, guiTop + 56, 198, 31, 10, 10);
-        }
-        if (tile.solarIncidenceAngleSection > 2) {
-            this.drawTexturedModalRect(guiLeft + 48, guiTop + 40, 198, 31, 10, 10);
-        }
+        if (tile.solarIncidenceAngleSection > 0) { this.drawTexturedModalRect(guiLeft + 32, guiTop + 24, 198, 31, 10, 10); }
+        if (tile.solarIncidenceAngleSection > 1) { this.drawTexturedModalRect(guiLeft + 16, guiTop + 40, 198, 31, 10, 10); }
+        if (tile.solarIncidenceAngleSection > 3) { this.drawTexturedModalRect(guiLeft + 32, guiTop + 56, 198, 31, 10, 10); }
+        if (tile.solarIncidenceAngleSection > 2) { this.drawTexturedModalRect(guiLeft + 48, guiTop + 40, 198, 31, 10, 10); }
         ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_solar_melter.png", null);
     }
 }

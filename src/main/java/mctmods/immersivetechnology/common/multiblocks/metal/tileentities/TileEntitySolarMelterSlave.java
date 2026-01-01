@@ -27,6 +27,10 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -37,6 +41,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntitySolarMelterSlave, MeltingCrucibleRecipe, TileEntitySolarMelterMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IGuiTile {
+
+    private int loadGrace = 0;
+
     public TileEntitySolarMelterSlave() { super(TileEntityITMultiblockPartSolarMelter.instance, 0, false); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
@@ -44,7 +51,8 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
     @Override public void update() {
-        if(isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (formed && master() == null) { if (loadGrace++ > 20) { invalidate(); return; } } else loadGrace = 0;
         super.update();
     }
 
@@ -53,10 +61,10 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
     TileEntitySolarMelterMaster master;
 
     public TileEntitySolarMelterMaster master() {
-        if(master != null && !master.tileEntityInvalid) return master;
+        if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntitySolarMelterMaster?(TileEntitySolarMelterMaster) te: null;
+        master = te instanceof TileEntitySolarMelterMaster ? (TileEntitySolarMelterMaster)te : null;
         return master;
     }
 
@@ -68,10 +76,7 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
 
     @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
 
-    @Override protected @Nullable MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return MeltingCrucibleRecipe.loadFromNBT(tag); }
-
-    @Nonnull
-    @Override public MeltingCrucibleRecipe findRecipeForInsertion(@Nonnull ItemStack inserting) { return MeltingCrucibleRecipe.findRecipe(inserting); }
+    @Override @Nonnull protected MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return MeltingCrucibleRecipe.loadFromNBT(tag); }
 
     @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
 
@@ -85,42 +90,117 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
 
     @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         TileEntitySolarMelterMaster m = master();
-        if (m == null) return ITUtils.emptyIFluidTankList;
-        return m.getAccessibleFluidTanks(side, position);
+        return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position);
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
         TileEntitySolarMelterMaster m = master();
-        if (m == null) return false;
-        return m.canFillTankFrom(iTank, side, resource, position);
+        return m != null && m.canFillTankFrom(iTank, side, resource, position);
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
         TileEntitySolarMelterMaster m = master();
-        if (m == null) return false;
-        return m.canDrainTankFrom(iTank, side, position);
+        return m != null && m.canDrainTankFrom(iTank, side, position);
     }
 
-    @Override public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            TileEntitySolarMelterMaster master = master();
-            if (master == null) return false;
-            IItemHandler[] handlers = master.getAccessibleItemHandlers(facing, pos);
-            return handlers.length > 0;
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
+            TileEntitySolarMelterMaster m = master();
+            if (m != null && formed) return m.getAccessibleItemHandlers(facing, pos).length > 0;
+        }
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            TileEntitySolarMelterMaster m = master();
+            if (m != null && formed) return m.getAccessibleFluidTanks(facing, pos).length > 0;
         }
         return super.hasCapability(capability, facing);
     }
 
-    @Nonnull
     @SuppressWarnings("unchecked")
-    @Override public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            TileEntitySolarMelterMaster master = master();
-            if (master == null) return null;
-            IItemHandler[] handlers = master.getAccessibleItemHandlers(facing, pos);
-            if (handlers.length > 0) return (T)handlers[0];
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
+            TileEntitySolarMelterMaster m = master();
+            if (m != null && formed) {
+                IItemHandler[] handlers = m.getAccessibleItemHandlers(facing, pos);
+                if (handlers.length > 0) return (T)handlers[0];
+            }
+        }
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            TileEntitySolarMelterMaster m = master();
+            if (m != null && formed && m.getAccessibleFluidTanks(facing, pos).length > 0) {
+                return (T)new SolarMelterFluidHandler(this, facing);
+            }
         }
         return super.getCapability(capability, facing);
+    }
+
+    @Override public boolean canOpenGui() { return formed && master() != null; }
+
+    @Override public int getGuiID() { return ITGUI.GUIID_Solar_Melter; }
+
+    @Override public TileEntity getGuiMaster() { return master(); }
+
+    public static class SolarMelterFluidHandler implements IFluidHandler {
+        private final TileEntitySolarMelterSlave te;
+        private final EnumFacing facing;
+        private final IFluidTank[] tanks;
+
+        public SolarMelterFluidHandler(TileEntitySolarMelterSlave te, EnumFacing facing) {
+            this.te = te;
+            this.facing = facing;
+            TileEntitySolarMelterMaster master = te.master();
+            tanks = master != null ? master.getAccessibleFluidTanks(facing, te.pos) : new IFluidTank[0];
+        }
+
+        @Override public IFluidTankProperties[] getTankProperties() {
+            List<IFluidTankProperties> props = new ArrayList<>();
+            for (IFluidTank tank : tanks) props.add(new FluidTankProperties(tank.getFluid(), tank.getCapacity()));
+            return props.toArray(new IFluidTankProperties[0]);
+        }
+
+        @Override public int fill(FluidStack resource, boolean doFill) {
+            if (resource == null || resource.amount <= 0) return 0;
+            TileEntitySolarMelterMaster master = te.master();
+            if (master == null) return 0;
+            for (int i = 0; i < tanks.length; i++) {
+                if (master.canFillTankFrom(i, facing, resource, te.pos)) {
+                    int filled = tanks[i].fill(resource, doFill);
+                    if (filled > 0 && doFill) master.markDirty();
+                    return filled;
+                }
+            }
+            return 0;
+        }
+
+        @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
+            if (resource == null || resource.amount <= 0) return null;
+            TileEntitySolarMelterMaster master = te.master();
+            if (master == null) return null;
+            for (int i = 0; i < tanks.length; i++) {
+                if (master.canDrainTankFrom(i, facing, te.pos)) {
+                    FluidStack tankFluid = tanks[i].getFluid();
+                    if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
+                        FluidStack drained = tanks[i].drain(resource.amount, doDrain);
+                        if (drained != null && doDrain) master.markDirty();
+                        return drained;
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override public FluidStack drain(int maxDrain, boolean doDrain) {
+            if (maxDrain <= 0) return null;
+            TileEntitySolarMelterMaster master = te.master();
+            if (master == null) return null;
+            for (int i = 0; i < tanks.length; i++) {
+                if (master.canDrainTankFrom(i, facing, te.pos)) {
+                    FluidStack drained = tanks[i].drain(maxDrain, doDrain);
+                    if (drained != null && doDrain) master.markDirty();
+                    return drained;
+                }
+            }
+            return null;
+        }
     }
 
     public BlockPos posToMultiblock() {
@@ -160,10 +240,4 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
         AxisAlignedBB bb = vs.bounds();
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
     }
-
-    @Override public boolean canOpenGui() { return formed && master() != null; }
-
-    @Override public int getGuiID() { return ITGUI.GUIID_Solar_Melter; }
-
-    @Override public TileEntity getGuiMaster() { return master(); }
 }

@@ -87,8 +87,13 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         recipeEnergyRemaining = nbt.getInteger("recipeEnergyRemaining");
         heatLevel = nbt.getDouble("heatLevel");
         reflectorStrength = nbt.getDouble("reflectorStrength");
-        solarIncidenceAngleSection = nbt.getInteger("solarIncidenceAngleSection");
-        if (!descPacket) { inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount); }
+        if (!descPacket) {
+            inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+            if (recipeEnergyRemaining > 0 && !inventory.get(0).isEmpty()) {
+                cachedRecipe = MeltingCrucibleRecipe.findRecipe(inventory.get(0));
+                if (cachedRecipe == null) recipeEnergyRemaining = 0;
+            }
+        }
         registered = nbt.getBoolean("registered");
         savedRegistered = nbt.getBoolean("savedRegistered");
         reCheckOnLoad = nbt.getBoolean("reCheckOnLoad");
@@ -101,7 +106,6 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         nbt.setInteger("recipeEnergyRemaining", recipeEnergyRemaining);
         nbt.setDouble("heatLevel", heatLevel);
         nbt.setDouble("reflectorStrength", reflectorStrength);
-        nbt.setInteger("solarIncidenceAngleSection", solarIncidenceAngleSection);
         if (!descPacket) { nbt.setTag("inventory", Utils.writeInventory(inventory)); }
         nbt.setBoolean("registered", registered);
         nbt.setBoolean("savedRegistered", savedRegistered);
@@ -131,6 +135,17 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         super.disassemble();
     }
 
+    private void detachMirrors() {
+        Set<BlockPos> reflectors = SolarRegistry.getReflectorsInRange(world, basePos0, solarMinRange, solarMaxRange);
+        for (BlockPos pos : reflectors) {
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile instanceof TileEntitySolarReflectorSlave) {
+                TileEntitySolarReflectorMaster ref = ((TileEntitySolarReflectorSlave)tile).master();
+                if (ref != null) ref.detachTower();
+            }
+        }
+    }
+
     public void notifyNearbyClients() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeDouble(heatLevel);
@@ -150,29 +165,34 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     private void checkReflectorPositions() {
-        double totalMirrorStrength = 0;
         Set<BlockPos> reflectors = SolarRegistry.getReflectorsInRange(world, basePos0, solarMinRange, solarMaxRange);
+
         for (BlockPos pos : reflectors) {
             TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileEntitySolarReflectorMaster) {
-                TileEntitySolarReflectorMaster master = (TileEntitySolarReflectorMaster)tile;
-                if (master.setTowerCollectorPosition(collectorPos0)) { totalMirrorStrength += master.getSolarCollectorStrength(); }
+            if (tile instanceof TileEntitySolarReflectorSlave) {
+                TileEntitySolarReflectorMaster ref = ((TileEntitySolarReflectorSlave)tile).master();
+                if (ref != null && ref.isMirrorTaken) ref.detachTower();
             }
         }
+
+        double totalMirrorStrength = 0;
+        for (BlockPos pos : reflectors) {
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile instanceof TileEntitySolarReflectorSlave) {
+                TileEntitySolarReflectorMaster ref = ((TileEntitySolarReflectorSlave)tile).master();
+                if (ref != null && ref.setTowerCollectorPosition(collectorPos0)) {
+                    totalMirrorStrength += ref.getSolarCollectorStrength();
+                }
+            }
+        }
+
         totalMirrorStrength *= world.isRaining() ? 0.4 : 1;
         if (ITCompatModule.isAdvancedRocketryLoaded) { totalMirrorStrength *= AdvancedRocketryHelper.getInsolation(world, getPos()); }
         double humidityBonus = 0.075 * totalMirrorStrength * -((world.getBiome(getPos()).getRainfall() - 0.5) / 0.5);
         if (ITCompatModule.isAdvancedRocketryLoaded) { humidityBonus *= AdvancedRocketryHelper.getWaterPartialPressureMultiplier(world, getPos()); }
         totalMirrorStrength += humidityBonus;
-        reflectorStrength = totalMirrorStrength;
-    }
 
-    private void detachMirrors() {
-        Set<BlockPos> reflectors = SolarRegistry.getReflectorsInRange(world, basePos0, solarMinRange, solarMaxRange);
-        for (BlockPos pos : reflectors) {
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileEntitySolarReflectorMaster) { ((TileEntitySolarReflectorMaster)tile).detachTower(collectorPos0); }
-        }
+        reflectorStrength = totalMirrorStrength;
     }
 
     private boolean heatUp() {
@@ -217,12 +237,12 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     }
 
     private boolean pumpOutputOut() {
-        if (tanks[0].getFluidAmount() == 0) { return false; }
+        if (tanks[0].getFluidAmount() == 0) return false;
         IFluidHandler handler = FluidUtil.getFluidHandler(world, fluidOutputFront0, fluidOutput0.facing.getOpposite());
-        if (handler == null) { return false; }
+        if (handler == null) return false;
         FluidStack out = tanks[0].getFluid();
         int accepted = handler.fill(out, false);
-        if (accepted == 0) { return false; }
+        if (accepted == 0) return false;
         assert out != null;
         int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
         tanks[0].drain(drained, true);
@@ -234,14 +254,14 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         if (tanks[0].getFluidAmount() > 0) {
             ItemStack filled = Utils.fillFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
             if (!filled.isEmpty()) {
-                if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), filled, true)) { inventory.get(2).grow(filled.getCount()); }
-                else if (inventory.get(2).isEmpty()) { inventory.set(2, filled.copy()); }
+                if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), filled, true)) inventory.get(2).grow(filled.getCount());
+                else if (inventory.get(2).isEmpty()) inventory.set(2, filled.copy());
                 inventory.get(1).shrink(1);
-                if (inventory.get(1).getCount() <= 0) { inventory.set(1, ItemStack.EMPTY); }
+                if (inventory.get(1).getCount() <= 0) inventory.set(1, ItemStack.EMPTY);
                 markContainingBlockForUpdate(null);
                 update = true;
             }
-            if (pumpOutputOut()) { update = true; }
+            if (pumpOutputOut()) update = true;
         }
         return update;
     }
@@ -259,11 +279,11 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
             if (recipeEnergyRemaining > 0) { if (gainProgress()) update = true; }
             else if (!inventory.get(0).isEmpty()) {
                 MeltingCrucibleRecipe recipe = cachedRecipe;
-                if (recipe == null || !recipe.itemInput.matches(inventory.get(0))) { recipe = MeltingCrucibleRecipe.findRecipe(inventory.get(0)); }
+                if (recipe == null || !recipe.itemInput.matches(inventory.get(0))) recipe = MeltingCrucibleRecipe.findRecipe(inventory.get(0));
                 if (recipe != null && recipe.fluidOutput.amount <= tanks[0].getCapacity() - tanks[0].getFluidAmount()) {
                     cachedRecipe = recipe;
                     recipeEnergyRemaining = recipe.getTotalProcessEnergy();
-                    if (gainProgress()) { update = true; }
+                    if (gainProgress()) update = true;
                 }
             }
         } else if (recipeEnergyRemaining > 0) { if (loseProgress()) update = true; }
@@ -271,9 +291,9 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     }
 
     @Override public void update() {
-        if (formed && redstone0 == null) { InitializePoIs(); }
+        if (formed && redstone0 == null) InitializePoIs();
         super.update();
-        if (!formed) { return; }
+        if (!formed) return;
         if (world.isRemote) { handleSounds(); return; }
         if (!isLoaded) {
             isLoaded = true;
@@ -287,24 +307,24 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
                 SolarRegistry.getData(world).markDirty();
                 registered = true;
             }
-            if (registered) { checkReflectorPositions(); }
+            if (registered) checkReflectorPositions();
         }
         if (reCheckOnLoad) {
             reCheckOnLoad = false;
-            if (registered) { checkReflectorPositions(); }
+            if (registered) checkReflectorPositions();
         }
         solarIncidenceAngleSection = computeSolarIncidenceAngleSection();
         boolean update = false;
-        if (world.getTotalWorldTime() % 600 == 0) { checkReflectorPositions(); }
-        if (heatLogic()) { update = true; }
-        if (solarIncidenceAngleSection != 0 && recipeLogic()) { update = true; }
-        if (outputTankLogic()) { update = true; }
+        if (world.getTotalWorldTime() % 600 == 0) checkReflectorPositions();
+        if (heatLogic()) update = true;
+        if (solarIncidenceAngleSection != 0 && recipeLogic()) update = true;
+        if (outputTankLogic()) update = true;
         if (recipeEnergyRemaining > 0) {
             isRunning = true;
             gracePeriod = 60;
         } else {
-            if (gracePeriod > 0) { gracePeriod--; }
-            else { isRunning = false; }
+            if (gracePeriod > 0) gracePeriod--;
+            else isRunning = false;
         }
         clientUpdateCooldown--;
         if (clientUpdateCooldown <= 0) {
@@ -324,38 +344,38 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     @Override public TileEntitySolarMelterMaster master() { return this; }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
-        if (!formed) { return ITUtils.emptyIFluidTankList; }
-        if (redstone0 == null) { InitializePoIs(); }
-        if (side == null) { return tanks; }
-        if (fluidOutput0.isPoI(side, position)) { return new IFluidTank[] {tanks[0]}; }
+        if (!formed) return ITUtils.emptyIFluidTankList;
+        if (redstone0 == null) InitializePoIs();
+        if (side == null) return tanks;
+        if (fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (!formed || redstone0 == null) { InitializePoIs(); }
+        if (!formed || redstone0 == null) InitializePoIs();
         return fluidOutput0.isPoI(side, position) && tanks[0].getFluidAmount() > 0;
     }
 
-    protected @Nonnull IItemHandler[] getAccessibleItemHandlers(@Nullable EnumFacing side, int position) {
-        if (!formed) { return new IItemHandler[0]; }
-        if (redstone0 == null) { InitializePoIs(); }
-        if (side != null && itemInput0.isPoI(side, position)) { return new IItemHandler[] {insertionHandler}; }
+    @Nonnull protected IItemHandler[] getAccessibleItemHandlers(@Nullable EnumFacing side, int position) {
+        if (!formed) return new IItemHandler[0];
+        if (redstone0 == null) InitializePoIs();
+        if (side != null && itemInput0.isPoI(side, position)) return new IItemHandler[] {insertionHandler};
         return new IItemHandler[0];
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) { return new int[0]; }
-        if (redstone0 == null) { InitializePoIs(); }
+        if (!formed) return new int[0];
+        if (redstone0 == null) InitializePoIs();
         return new int[] {redstone0.position};
     }
 
     public NonNullList<ItemStack> getInventory() { return inventory; }
 
     public boolean isStackValid(int slot, ItemStack stack) {
-        if (slot == 0) { return MeltingCrucibleRecipe.findRecipe(stack) != null; }
-        if (slot == 1) { return Utils.isFluidRelatedItemStack(stack); }
+        if (slot == 0) return MeltingCrucibleRecipe.findRecipe(stack) != null;
+        if (slot == 1) return Utils.isFluidRelatedItemStack(stack);
         return false;
     }
 
@@ -365,10 +385,10 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     private int computeSolarIncidenceAngleSection() {
         int light = world.getSkylightSubtracted();
-        if (light == 3) { return 1; }
-        if (light == 2) { return 2; }
-        if (light == 1) { return 3; }
-        if (light == 0) { return 4; }
+        if (light == 3) return 1;
+        if (light == 2) return 2;
+        if (light == 1) return 3;
+        if (light == 0) return 4;
         return 0;
     }
 
@@ -396,7 +416,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
                     break;
             }
         }
-        if (!world.isRemote) { notifyIONeighbors(); }
+        if (!world.isRemote) notifyIONeighbors();
     }
 
     private void notifyIONeighbors() {

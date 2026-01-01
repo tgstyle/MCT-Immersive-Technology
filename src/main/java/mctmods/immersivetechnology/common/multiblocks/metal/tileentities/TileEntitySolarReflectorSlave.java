@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
@@ -26,7 +27,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +63,7 @@ public class TileEntitySolarReflectorSlave extends TileEntityITMultiblock<TileEn
 
     @Override public @Nonnull IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
 
-    @Override protected @Nullable IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return null; }
+    @Override @Nonnull protected IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
 
     @Override public @Nonnull int[] getRedstonePos() { return new int[0]; }
 

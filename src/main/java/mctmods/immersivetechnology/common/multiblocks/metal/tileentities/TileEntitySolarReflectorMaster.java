@@ -20,11 +20,10 @@ import javax.annotation.Nonnull;
 
 public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlave implements IBinaryMessageReceiver {
 
-    private boolean isMirrorTaken = false;
+    boolean isMirrorTaken = false;
     private BlockPos collectorPosition0;
     private float[] animationRotations = new float[2];
     private boolean initialized = false;
-    private boolean reAttachOnLoad = false;
     private PoICache link0;
 
     private BlockPos getCollectorPosition() { return collectorPosition0 != null ? collectorPosition0 : getPos(); }
@@ -40,7 +39,6 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         animationRotations[0] = nbt.getFloat("rotation0");
         animationRotations[1] = nbt.getFloat("rotation1");
         initialized = nbt.getBoolean("initialized");
-        reAttachOnLoad = nbt.getBoolean("reAttachOnLoad");
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -50,11 +48,11 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         nbt.setFloat("rotation0", animationRotations[0]);
         nbt.setFloat("rotation1", animationRotations[1]);
         nbt.setBoolean("initialized", initialized);
-        nbt.setBoolean("reAttachOnLoad", reAttachOnLoad);
     }
 
     @Override public void disassemble() {
         super.disassemble();
+        detachTower();
         InitializePoIs();
         SolarRegistry.unregisterReflector(world, getBlockPosForPos(link0.position));
     }
@@ -95,18 +93,19 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     }
 
     public boolean setTowerCollectorPosition(BlockPos position) {
-        if (isMirrorTaken) { return false; }
         collectorPosition0 = position;
-        isMirrorTaken = true;
-        SolarRegistry.notifyTaken(world, getPos(), true);
+        if (!isMirrorTaken) {
+            isMirrorTaken = true;
+            SolarRegistry.notifyTaken(world, getPos(), true);
+        }
         calculateAnimationRotations();
         notifyNearbyClients();
         markDirty();
         return true;
     }
 
-    public void detachTower(BlockPos position) {
-        if (!getCollectorPosition().equals(position)) { return; }
+    public void detachTower() {
+        if (!isMirrorTaken) { return; }
         isMirrorTaken = false;
         collectorPosition0 = getPos();
         SolarRegistry.notifyTaken(world, getPos(), false);
@@ -130,25 +129,31 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
 
     @Override public void update() {
         super.update();
-        if (!initialized && formed && !world.isRemote) {
-            InitializePoIs();
-            SolarRegistry.registerReflector(world, getBlockPosForPos(link0.position));
-            initialized = true;
-        }
-        if (reAttachOnLoad && !world.isRemote) {
-            reAttachOnLoad = false;
-            if (world.isBlockLoaded(collectorPosition0)) {
-                TileEntity tile = world.getTileEntity(collectorPosition0);
-                boolean isValid = tile instanceof TileEntitySolarTowerMaster || tile instanceof TileEntitySolarMelterMaster;
-                if (isValid) {
-                    setTowerCollectorPosition(collectorPosition0);
-                } else {
-                    isMirrorTaken = false;
-                    collectorPosition0 = getPos();
-                    SolarRegistry.notifyTaken(world, getPos(), false);
-                    calculateAnimationRotations();
-                    notifyNearbyClients();
-                    markDirty();
+        if (!formed) { return; }
+
+        if (!world.isRemote) {
+            if (!initialized) {
+                InitializePoIs();
+                SolarRegistry.registerReflector(world, getBlockPosForPos(link0.position));
+                initialized = true;
+            }
+
+            if (isMirrorTaken) {
+                if (collectorPosition0 == null) {
+                    detachTower();
+                } else if (world.isBlockLoaded(collectorPosition0)) {
+                    TileEntity te = world.getTileEntity(collectorPosition0);
+                    boolean valid = false;
+                    if (te != null && !te.isInvalid()) {
+                        if (te instanceof TileEntitySolarMelterSlave) {
+                            TileEntitySolarMelterMaster m = ((TileEntitySolarMelterSlave)te).master();
+                            valid = m != null && m.formed;
+                        } else if (te instanceof TileEntitySolarTowerSlave) {
+                            TileEntitySolarTowerMaster m = ((TileEntitySolarTowerSlave)te).master();
+                            valid = m != null && m.formed;
+                        }
+                    }
+                    if (!valid) { detachTower(); }
                 }
             }
         }

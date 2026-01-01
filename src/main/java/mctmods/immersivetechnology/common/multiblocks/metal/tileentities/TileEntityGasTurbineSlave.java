@@ -38,12 +38,13 @@ import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IMechanicalEnergy, IIEInventory, IBlockBounds, IAdvancedCollisionBounds, IAdvancedSelectionBounds {
+
     private static final float outputtorque = Multiblocks.gasTurbine.gasTurbine_torque;
-    public TileEntityGasTurbineSlave() { super(TileEntityITMultiblockPartGasTurbine.instance, 0, true); }
     private int loadGrace = 0;
+
+    public TileEntityGasTurbineSlave() { super(TileEntityITMultiblockPartGasTurbine.instance, 0, true); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 
@@ -58,6 +59,7 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
     @Override public boolean isDummy() { return true; }
 
     TileEntityGasTurbineMaster master;
+
     public TileEntityGasTurbineMaster master() {
         if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
@@ -83,59 +85,54 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
     @Override public @Nonnull int[] getOutputTanks() { return new int[] {1}; }
 
     @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        TileEntityGasTurbineMaster master = master();
-        if (master == null) return ITUtils.emptyIFluidTankList;
-        return master.getAccessibleFluidTanks(side, position);
+        TileEntityGasTurbineMaster m = master();
+        return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position);
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        TileEntityGasTurbineMaster master = master();
-        if (master == null) return false;
-        return master.canFillTankFrom(iTank, side, resource, position);
+        TileEntityGasTurbineMaster m = master();
+        return m != null && m.canFillTankFrom(iTank, side, resource, position);
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        TileEntityGasTurbineMaster master = master();
-        if (master == null) return false;
-        return master.canDrainTankFrom(iTank, side, position);
+        TileEntityGasTurbineMaster m = master();
+        return m != null && m.canDrainTankFrom(iTank, side, position);
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityGasTurbineMaster m = master();
-            if (m == null) return false;
-            return m.getAccessibleFluidTanks(facing, pos).length > 0;
+            if (m != null && formed) return m.getAccessibleFluidTanks(facing, pos).length > 0;
         }
-        if (capability == CapabilityEnergy.ENERGY) {
+        if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityGasTurbineMaster m = master();
-            if (m == null) return false;
-            return m.isEnergyPosition(facing, pos);
+            if (m != null && formed) return m.isEnergyPosition(facing, pos);
         }
         return super.hasCapability(capability, facing);
     }
 
-    @Nonnull
     @SuppressWarnings("unchecked")
-    @Override public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityGasTurbineMaster m = master();
-            if (m == null || m.getAccessibleFluidTanks(facing, pos).length == 0) return null;
-            return (T) new GasTurbineFluidHandler(this, facing);
+            if (m != null && formed && m.getAccessibleFluidTanks(facing, pos).length > 0) {
+                return (T) new GasTurbineFluidHandler(this, facing);
+            }
         }
-        if (capability == CapabilityEnergy.ENERGY) {
+        if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityGasTurbineMaster m = master();
-            if (m == null) return null;
-            return (T)m.getEnergyAtPosition(facing, pos);
+            if (m != null && formed && m.isEnergyPosition(facing, pos)) {
+                return (T) m.getEnergyAtPosition(facing, pos);
+            }
         }
-        return Objects.requireNonNull(super.getCapability(capability, facing));
+        return super.getCapability(capability, facing);
     }
 
     @Override public boolean isValid() { return formed; }
 
     @Override public boolean isMechanicalEnergyTransmitter(EnumFacing facing) {
-        TileEntityGasTurbineMaster master = master();
-        if (master == null) return false;
-        return master.isMechanicalEnergyTransmitter(facing, pos);
+        TileEntityGasTurbineMaster m = master();
+        return m != null && m.isMechanicalEnergyTransmitter(facing, pos);
     }
 
     @Override public boolean isMechanicalEnergyReceiver(EnumFacing facing) { return false; }
@@ -155,8 +152,7 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
             this.te = te;
             this.facing = facing;
             TileEntityGasTurbineMaster master = te.master();
-            if (master != null) tanks = master.getAccessibleFluidTanks(facing, te.pos);
-            else tanks = new IFluidTank[0];
+            tanks = master != null ? master.getAccessibleFluidTanks(facing, te.pos) : new IFluidTank[0];
         }
 
         @Override public IFluidTankProperties[] getTankProperties() {

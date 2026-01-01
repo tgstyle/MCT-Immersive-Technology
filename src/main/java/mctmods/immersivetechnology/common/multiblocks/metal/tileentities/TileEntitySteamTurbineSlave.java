@@ -28,7 +28,6 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

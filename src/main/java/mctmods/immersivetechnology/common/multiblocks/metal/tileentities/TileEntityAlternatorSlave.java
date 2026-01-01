@@ -41,8 +41,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntityAlternatorSlave, IMultiblockRecipe, TileEntityAlternatorMaster> implements ITBlockInterfaces.IMechanicalEnergy, IFluxProvider, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+
     private int loadGrace = 0;
     private boolean needsBlockUpdate = false;
+
     public TileEntityAlternatorSlave() { super(TileEntityITMultiblockPartAlternator.instance, 0, false); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -96,26 +98,25 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityAlternatorMaster m = master();
-            if (m == null) return false;
-            return m.isEnergyPosition(facing, pos);
+            if (m != null && formed) return m.isEnergyPosition(facing, pos);
         }
         return super.hasCapability(capability, facing);
     }
 
-    @Nonnull
     @SuppressWarnings("unchecked")
-    @Override public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityAlternatorMaster m = master();
-            if (m == null) return null;
-            if (m.isEnergyPosition(facing, pos)) return (T) new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+            if (m != null && formed && m.isEnergyPosition(facing, pos)) {
+                return (T) new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+            }
         }
         return super.getCapability(capability, facing);
     }
 
     @Override public @Nonnull FluxStorage getFluxStorage() { return master() == null ? new FluxStorage(0) : master.energyStorage; }
 
-    @Override public @Nonnull SideConfig getEnergySideConfig(@Nullable EnumFacing enumFacing) { return formed && master() != null && master.isEnergyPosition(enumFacing, pos) ? SideConfig.OUTPUT : SideConfig.NONE; }
+    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing enumFacing) { return formed && master() != null && master.isEnergyPosition(enumFacing, pos) ? SideConfig.OUTPUT : SideConfig.NONE; }
 
     @Override public boolean isValid() { return formed; }
 
@@ -159,8 +160,7 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
 
     @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
 
-    @Nonnull
-    @Override public float[] getBlockBounds() {
+    @Override @Nonnull public float[] getBlockBounds() {
         VoxelShape vs = getVoxelShape();
         if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
         AxisAlignedBB bb = vs.bounds();
