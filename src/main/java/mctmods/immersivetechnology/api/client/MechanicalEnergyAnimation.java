@@ -11,11 +11,6 @@ public class MechanicalEnergyAnimation {
 		this.animationMomentum = 0;
 	}
 
-	public MechanicalEnergyAnimation(float rotation, float momentum) {
-		this.animationRotation = rotation;
-		this.animationMomentum = momentum;
-	}
-
 	public MechanicalEnergyAnimation readFromNBT(NBTTagCompound nbt) {
 		this.animationRotation = nbt.getFloat("animationRotation");
 		this.animationMomentum = nbt.getFloat("animationMomentum");
@@ -28,19 +23,11 @@ public class MechanicalEnergyAnimation {
 		return nbt;
 	}
 
-	public float getAnimationRotation() {
-		return animationRotation;
-	}
+	public float getAnimationRotation() { return animationRotation; }
 
-	public void setAnimationRotation(float animationRotation) {
-		this.animationRotation = animationRotation;
-	}
+	public void setAnimationRotation(float animationRotation) { this.animationRotation = animationRotation; }
 
-	public float getAnimationMomentum() {
-		return animationMomentum;
-	}
+	public float getAnimationMomentum() { return animationMomentum; }
 
-	public void setAnimationMomentum(float animationMomentum) {
-		this.animationMomentum = animationMomentum;
-	}
+	public void setAnimationMomentum(float animationMomentum) { this.animationMomentum = animationMomentum; }
 }

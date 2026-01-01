@@ -70,7 +70,8 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
 
     @Override protected @Nullable MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return MeltingCrucibleRecipe.loadFromNBT(tag); }
 
-    @Override public @Nullable MeltingCrucibleRecipe findRecipeForInsertion(@Nonnull ItemStack inserting) { return MeltingCrucibleRecipe.findRecipe(inserting); }
+    @Nonnull
+    @Override public MeltingCrucibleRecipe findRecipeForInsertion(@Nonnull ItemStack inserting) { return MeltingCrucibleRecipe.findRecipe(inserting); }
 
     @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
 
@@ -110,6 +111,7 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
         return super.hasCapability(capability, facing);
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
     @Override public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {

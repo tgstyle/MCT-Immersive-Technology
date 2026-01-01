@@ -21,6 +21,7 @@ import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -155,6 +156,15 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     }
 
     @Override public void disassemble() {
+        if (!world.isRemote) {
+            for (ItemStack stack : inventory) {
+                if (!stack.isEmpty()) {
+                    world.spawnEntity(new EntityItem(world, getPos().getX() + .5, getPos().getY() + .5, getPos().getZ() + .5, stack.copy()));
+                }
+            }
+            inventory.clear();
+            tank.drain(tank.getFluidAmount(), true);
+        }
         BlockPos center = getPos();
         ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
         super.disassemble();
@@ -366,7 +376,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         return super.hasCapability(capability, facing);
     }
 
-    @Nullable
+    @Nonnull
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {

@@ -2,38 +2,12 @@ package mctmods.immersivetechnology.common.util.compat.top;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
-
 import mcjty.theoneprobe.api.*;
-
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IMechanicalEnergy;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerSlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityCoolingTowerMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityCoolingTowerSlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerSlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityElectrolyticCrucibleBatteryMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityElectrolyticCrucibleBatterySlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityGasTurbineMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityGasTurbineSlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHeatExchangerMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHeatExchangerSlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHighPressureSteamTurbineMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHighPressureSteamTurbineSlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityMeltingCrucibleMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityMeltingCrucibleSlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityRadiatorMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityRadiatorSlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarMelterMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarMelterSlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerSlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteamTurbineMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteamTurbineSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -63,8 +37,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
     @Override public void postInit() { }
 
-    @Nullable
-    @Override public Void apply(@Nullable ITheOneProbe input) {
+    @Override @Nullable public Void apply(@Nullable ITheOneProbe input) {
         assert input != null;
         input.registerProvider(new BoilerProvider());
         input.registerProvider(new CoolingTowerProvider());
@@ -87,9 +60,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityBoilerSlave)) return;
+            if (!(te instanceof TileEntityBoilerSlave)) { return; }
             TileEntityBoilerMaster master = ((TileEntityBoilerSlave)te).master();
-            if (master == null) return;
+            if (master == null) { return; }
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
             IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
@@ -140,9 +113,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityCoolingTowerSlave)) return;
+            if (!(te instanceof TileEntityCoolingTowerSlave)) { return; }
             TileEntityCoolingTowerMaster master = ((TileEntityCoolingTowerSlave)te).master();
-            if (master == null) return;
+            if (master == null) { return; }
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
             IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
@@ -183,9 +156,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityDistillerSlave)) return;
+            if (!(te instanceof TileEntityDistillerSlave)) { return; }
             TileEntityDistillerMaster master = ((TileEntityDistillerSlave)te).master();
-            if (master == null) return;
+            if (master == null) { return; }
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
             IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
@@ -221,9 +194,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityElectrolyticCrucibleBatterySlave)) return;
+            if (!(te instanceof TileEntityElectrolyticCrucibleBatterySlave)) { return; }
             TileEntityElectrolyticCrucibleBatteryMaster master = ((TileEntityElectrolyticCrucibleBatterySlave)te).master();
-            if (master == null) return;
+            if (master == null) { return; }
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
             IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
@@ -259,9 +232,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityGasTurbineSlave)) return;
+            if (!(te instanceof TileEntityGasTurbineSlave)) { return; }
             TileEntityGasTurbineMaster master = ((TileEntityGasTurbineSlave)te).master();
-            if (master == null) return;
+            if (master == null) { return; }
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
             IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
@@ -271,7 +244,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 int amount = fluid != null ? fluid.amount : 0;
                 String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
                 int color = OneProbeHelper.getFluidColor(fluid);
-                if (!master.isFluidInputPosition(facing, pos) && !master.isFluidOutputPosition(facing, pos)) return;
+                if (!master.isFluidInputPosition(facing, pos) && !master.isFluidOutputPosition(facing, pos)) { return; }
                 if (amount > 0) {
                     probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
                             .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
@@ -291,9 +264,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 }
             }
             if (master.isEnergyPosition(facing, pos)) {
-                if (!master.isStarterPosition(facing, pos) && !master.isSparkplugPosition(facing, pos)) return;
+                if (!master.isStarterPosition(facing, pos) && !master.isSparkplugPosition(facing, pos)) { return; }
                 IEnergyStorage storage = master.getEnergyAtPosition(facing, pos);
-                if (storage == null) return;
+                if (storage == null) { return; }
                 probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
                         .progress(storage.getEnergyStored(), storage.getMaxEnergyStored(), probeInfo.defaultProgressStyle().suffix(" IF").filledColor(Lib.COLOUR_I_ImmersiveOrange).alternateFilledColor(0xff994f20).borderColor(Lib.COLOUR_I_ImmersiveOrangeShadow).numberFormat(NumberFormat.COMPACT));
             } else {
@@ -314,9 +287,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityHeatExchangerSlave)) return;
+            if (!(te instanceof TileEntityHeatExchangerSlave)) { return; }
             TileEntityHeatExchangerMaster master = ((TileEntityHeatExchangerSlave)te).master();
-            if (master == null) return;
+            if (master == null) { return; }
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
             IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
@@ -357,9 +330,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityHighPressureSteamTurbineSlave)) return;
+            if (!(te instanceof TileEntityHighPressureSteamTurbineSlave)) { return; }
             TileEntityHighPressureSteamTurbineMaster master = ((TileEntityHighPressureSteamTurbineSlave)te).master();
-            if (master == null) return;
+            if (master == null) { return; }
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
             IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
@@ -396,9 +369,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             if (te instanceof IMechanicalEnergy) {
-                TileEntityMultiblockPart<?> multiblock = ((TileEntityMultiblockPart<?>)te);
+                TileEntityMultiblockPart<?> multiblock = (TileEntityMultiblockPart<?>)te;
                 TileEntity master = multiblock.master();
-                if (master == null) return;
+                if (master == null) { return; }
                 int current = ((IMechanicalEnergy)master).getSpeed();
                 if (current > 0) {
                     probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
@@ -413,9 +386,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityMeltingCrucibleSlave)) return;
+            if (!(te instanceof TileEntityMeltingCrucibleSlave)) { return; }
             TileEntityMeltingCrucibleMaster master = ((TileEntityMeltingCrucibleSlave)te).master();
-            if (master == null) return;
+            if (master == null) { return; }
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
             IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
@@ -455,9 +428,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityRadiatorSlave)) return;
+            if (!(te instanceof TileEntityRadiatorSlave)) { return; }
             TileEntityRadiatorMaster master = ((TileEntityRadiatorSlave)te).master();
-            if (master == null) return;
+            if (master == null) { return; }
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
             IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
@@ -498,9 +471,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntitySolarMelterSlave)) return;
+            if (!(te instanceof TileEntitySolarMelterSlave)) { return; }
             TileEntitySolarMelterMaster master = ((TileEntitySolarMelterSlave)te).master();
-            if (master == null) return;
+            if (master == null) { return; }
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
             IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
@@ -550,9 +523,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntitySolarTowerSlave)) return;
+            if (!(te instanceof TileEntitySolarTowerSlave)) { return; }
             TileEntitySolarTowerMaster master = ((TileEntitySolarTowerSlave)te).master();
-            if (master == null) return;
+            if (master == null) { return; }
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
             IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
@@ -603,9 +576,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntitySteamTurbineSlave)) return;
+            if (!(te instanceof TileEntitySteamTurbineSlave)) { return; }
             TileEntitySteamTurbineMaster master = ((TileEntitySteamTurbineSlave)te).master();
-            if (master == null) return;
+            if (master == null) { return; }
             EnumFacing facing = data.getSideHit();
             int pos = ((TileEntityMultiblockPart<?>)te).pos;
             IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
@@ -637,7 +610,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
     }
 
     private static int getFluidColor(@Nullable FluidStack fluid) {
-        if (fluid == null) return 0xff555555;
+        if (fluid == null) { return 0xff555555; }
         int tint = fluid.getFluid().getColor(fluid);
         ResourceLocation still = fluid.getFluid().getStill(fluid);
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(still.toString());

@@ -52,8 +52,7 @@ public abstract class GuiCommonValve extends GuiScreen {
 		}
 	}
 
-	@Override
-	public void onGuiClosed() {
+	@Override public void onGuiClosed() {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("packetLimit", !limitPacket.getText().isEmpty() ? safeStringToInt(limitPacket.getText()) : -1);
 		tag.setInteger("timeLimit", !limitTime.getText().isEmpty() ? safeStringToInt(limitTime.getText()) : -1);
@@ -61,21 +60,18 @@ public abstract class GuiCommonValve extends GuiScreen {
 		ImmersiveTechnology.packetHandler.sendToServer(new MessageTileSync(tile, tag));
 	}
 
-	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+	@Override protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		limitPacket.mouseClicked(mouseX, mouseY, mouseButton);
 		limitTime.mouseClicked(mouseX, mouseY, mouseButton);
 		destinationKeep.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
-	@Override
-	public boolean doesGuiPauseGame() {
+	@Override public boolean doesGuiPauseGame() {
 		return false;
 	}
 
-	@Override
-	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+	@Override protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		if (keyCode == Keyboard.KEY_TAB) {
 			if (limitPacket.isFocused()) {
 				limitPacket.setFocused(false);

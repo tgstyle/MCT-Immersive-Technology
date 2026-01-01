@@ -27,25 +27,20 @@ public class BlockMetalBarrel extends BlockITTileProvider<BlockType_MetalBarrel>
 		this.setAllNotNormalBlock();
 	}
 
-	@Override
-	protected EnumFacing getDefaultFacing() {
+	@Override protected EnumFacing getDefaultFacing() {
 		return EnumFacing.UP;
 	}
 
-    @Nonnull
-	@Override
-	public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+	@Override @Nonnull public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		return state;
 	}
 
-	@Override
-	public boolean allowHammerHarvest(IBlockState state) {
+	@Override public boolean allowHammerHarvest(IBlockState state) {
 		return true;
 	}
 
-	@Override
-	public TileEntity createBasicTE(World worldIn, BlockType_MetalBarrel type) {
+	@Override public TileEntity createBasicTE(World worldIn, BlockType_MetalBarrel type) {
 		switch(type) {
 		case BARREL:
 			return new TileEntityBarrelCreative();

@@ -24,20 +24,16 @@ public class BlockWoodenCrate extends BlockITTileProvider<BlockType_WoodenCrate>
 		this.setAllNotNormalBlock();
 	}
 
-	@Nonnull
-    @Override
-	public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+	@Override @Nonnull public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		return state;
 	}
 
-	@Override
-	public boolean allowHammerHarvest(IBlockState state) {
+	@Override public boolean allowHammerHarvest(IBlockState state) {
 		return true;
 	}
 
-	@Override
-	public TileEntity createBasicTE(World worldIn, BlockType_WoodenCrate type) {
+	@Override public TileEntity createBasicTE(World worldIn, BlockType_WoodenCrate type) {
         if (Objects.requireNonNull(type) == BlockType_WoodenCrate.CRATE) {
             return new TileEntityCrate();
         }

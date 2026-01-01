@@ -14,48 +14,32 @@ public class PressurizedFluid {
     @ZenMethod
     public static void add(ILiquidStack fluid) {
         Fluid actualFluid = CraftTweakerHelper.toFluidStack(fluid).getFluid();
-        if (ITContent.normallyPressurized.contains(actualFluid)) return;
+        if (ITContent.normallyPressurized.contains(actualFluid)) { return; }
         CraftTweakerAPI.apply(new Add(actualFluid));
     }
 
     @ZenMethod
     public static void remove(ILiquidStack fluid) {
         Fluid actualFluid = CraftTweakerHelper.toFluidStack(fluid).getFluid();
-        if (!ITContent.normallyPressurized.contains(actualFluid)) return;
+        if (!ITContent.normallyPressurized.contains(actualFluid)) { return; }
         CraftTweakerAPI.apply(new Remove(actualFluid));
     }
 
     private static class Add implements IAction {
         public Fluid fluid;
-        public Add(Fluid fluid) {
-            this.fluid = fluid;
-        }
+        public Add(Fluid fluid) { this.fluid = fluid; }
 
-        @Override
-        public void apply() {
-            ITContent.normallyPressurized.add(fluid);
-        }
+        @Override public void apply() { ITContent.normallyPressurized.add(fluid); }
 
-        @Override
-        public String describe() {
-            return "Adding Naturally Pressurized Fluid " + fluid.getName();
-        }
+        @Override public String describe() { return "Adding Naturally Pressurized Fluid " + fluid.getName(); }
     }
 
     private static class Remove implements IAction {
         public Fluid fluid;
-        public Remove(Fluid fluid) {
-            this.fluid = fluid;
-        }
+        public Remove(Fluid fluid) { this.fluid = fluid; }
 
-        @Override
-        public void apply() {
-            ITContent.normallyPressurized.remove(fluid);
-        }
+        @Override public void apply() { ITContent.normallyPressurized.remove(fluid); }
 
-        @Override
-        public String describe() {
-            return "Removing Naturally Pressurized Fluid " + fluid.getName();
-        }
+        @Override public String describe() { return "Removing Naturally Pressurized Fluid " + fluid.getName(); }
     }
 }

@@ -20,8 +20,7 @@ public class ContainerTimer extends Container {
 		for (int i = 0; i < 9; i++) { addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 143)); }
 	}
 
-	@Override
-	public boolean canInteractWith(@Nonnull EntityPlayer player) {
+	@Override public boolean canInteractWith(@Nonnull EntityPlayer player) {
 		return tile != null && tile.getWorld().getTileEntity(tile.getPos()) == tile && player.getDistanceSq(tile.getPos().getX() + .5, tile.getPos().getY() + .5, tile.getPos().getZ() + .5) <= 64;
 	}
 }

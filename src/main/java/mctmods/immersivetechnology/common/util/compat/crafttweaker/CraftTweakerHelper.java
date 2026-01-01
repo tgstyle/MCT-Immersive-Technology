@@ -1,22 +1,23 @@
 package mctmods.immersivetechnology.common.util.compat.crafttweaker;
 
-import crafttweaker.CraftTweakerAPI;
 import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.item.IngredientStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.oredict.IOreDictEntry;
-import mctmods.immersivetechnology.common.Config.ITConfig.*;
+import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import mctmods.immersivetechnology.core.MCTMixinConfig;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
+import crafttweaker.CraftTweakerAPI;
+
 @SuppressWarnings({"unused", "deprecation"})
 public class CraftTweakerHelper extends ITCompatModule {
-    @Override
-    public void preInit() {
+
+    @Override public void preInit() {
         if (Multiblocks.enable.enable_boiler) { CraftTweakerAPI.registerClass(Boiler.class); }
         if (Multiblocks.enable.enable_distiller) { CraftTweakerAPI.registerClass(Distiller.class); }
         if (Multiblocks.enable.enable_solarTower) { CraftTweakerAPI.registerClass(SolarTower.class); }
@@ -31,11 +32,9 @@ public class CraftTweakerHelper extends ITCompatModule {
         if (MCTMixinConfig.mixinSettings.replace_IE_pipes) { CraftTweakerAPI.registerClass(PressurizedFluid.class); }
     }
 
-    @Override
-    public void init() {}
+    @Override public void init() { }
 
-    @Override
-    public void postInit() {}
+    @Override public void postInit() { }
 
     public static ItemStack toStack(IItemStack iStack) {
         if (iStack == null) { return ItemStack.EMPTY; }

@@ -11,20 +11,15 @@ public enum BlockType_MetalTrash implements IStringSerializable, BlockITBase.IBl
 	TRASH_FLUID,
 	TRASH_ENERGY;
 
-    @Nonnull
-	@Override
-	public String getName() {
+	@Override @Nonnull public String getName() {
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
 
-	@Override
-	public int getMeta() {
+	@Override public int getMeta() {
 		return ordinal();
 	}
 
-	@Override
-	public boolean listForCreative() {
+	@Override public boolean listForCreative() {
 		return true;
 	}
-
 }

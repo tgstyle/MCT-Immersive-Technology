@@ -3,12 +3,9 @@ package mctmods.immersivetechnology.api.crafting;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import com.google.common.collect.Lists;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SolarTowerRecipe extends MultiblockRecipe {
     public static float timeModifier = 1;
@@ -28,26 +25,16 @@ public class SolarTowerRecipe extends MultiblockRecipe {
 
     public static ArrayList<SolarTowerRecipe> recipeList = new ArrayList<>();
 
-    private static final Map<Fluid, SolarTowerRecipe> recipeMap = new HashMap<>();
-
     public static SolarTowerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
         SolarTowerRecipe recipe = new SolarTowerRecipe(fluidOutput, fluidInput, time);
         recipeList.add(recipe);
-        recipeMap.put(fluidInput.getFluid(), recipe);
         return recipe;
     }
 
     public static SolarTowerRecipe findRecipe(FluidStack fluidInput) {
         if (fluidInput == null) return null;
-        SolarTowerRecipe recipe = recipeMap.get(fluidInput.getFluid());
-        if (recipe != null && fluidInput.containsFluid(recipe.fluidInput)) return recipe;
         for (SolarTowerRecipe r : recipeList) { if (fluidInput.containsFluid(r.fluidInput)) return r; }
         return null;
-    }
-
-    public static SolarTowerRecipe findRecipeByFluid(Fluid fluidInput) {
-        if (fluidInput == null) return null;
-        return recipeMap.get(fluidInput);
     }
 
     @Override

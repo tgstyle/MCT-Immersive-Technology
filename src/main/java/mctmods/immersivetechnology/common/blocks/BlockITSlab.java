@@ -28,25 +28,20 @@ public class BlockITSlab<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		this.useNeighborBrightness = true;
 	}
 
-	@Override
-	public @Nonnull IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+	@Override @Nonnull public IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
 		state = super.getActualState(state, world, pos);
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof TileEntityITSlab) return state.withProperty(prop_SlabType, ((TileEntityITSlab)tile).slabType);
 		return state;
 	}
 
-	@Override
-	public TileEntity createBasicTE(World worldIn, E meta) {
+	@Override public TileEntity createBasicTE(World worldIn, E meta) {
 		return new TileEntityITSlab();
 	}
 
-	@Override
-	public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
-	}
+	@Override public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {}
 
-	@Override
-	public void harvestBlock(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState state, TileEntity tile, @Nonnull ItemStack stack) {
+	@Override public void harvestBlock(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState state, TileEntity tile, @Nonnull ItemStack stack) {
 		if (tile instanceof TileEntityITSlab && !player.capabilities.isCreativeMode) {
 			spawnAsEntity(world, pos, new ItemStack(this, ((TileEntityITSlab)tile).slabType == 2 ? 2 : 1, this.getMetaFromState(state)));
 			return;
@@ -55,8 +50,7 @@ public class BlockITSlab<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
     @SuppressWarnings("deprecation")
-	@Override
-	public boolean isSideSolid(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+	@Override public boolean isSideSolid(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
 		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof TileEntityITSlab) {
 			int type = ((TileEntityITSlab)te).slabType;
@@ -68,8 +62,7 @@ public class BlockITSlab<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
     @SuppressWarnings("deprecation")
-	@Override
-	public @Nonnull BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess world, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+	@Override @Nonnull public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess world, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
 		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof TileEntityITSlab) {
 			int type = ((TileEntityITSlab)te).slabType;
@@ -80,8 +73,7 @@ public class BlockITSlab<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return BlockFaceShape.SOLID;
 	}
 
-	@Override
-	public @Nonnull AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+	@Override @Nonnull public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof TileEntityITSlab) {
 			int type = ((TileEntityITSlab)te).slabType;

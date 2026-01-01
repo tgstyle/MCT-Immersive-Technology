@@ -22,8 +22,7 @@ public class GuiBoiler extends GuiIEContainerBase {
 		this.tile=tile;
 	}
 
-	@Override
-	public void drawScreen(int mx, int my, float partial) {
+	@Override public void drawScreen(int mx, int my, float partial) {
 		super.drawScreen(mx, my, partial);
 
 		ArrayList<String> tooltip = new ArrayList<>();
@@ -40,8 +39,7 @@ public class GuiBoiler extends GuiIEContainerBase {
 		}
 	}
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int mx, int my) {
+	@Override protected void drawGuiContainerBackgroundLayer(float f, int mx, int my) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		ClientUtils.bindTexture("immersivetech:textures/gui/gui_boiler.png");
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);

@@ -11,8 +11,7 @@ import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
 
 public class TileRenderSteelSheetmetalTank extends TileEntitySpecialRenderer<TileEntitySteelSheetmetalTankMaster> {
-	@Override
-	public void render(TileEntitySteelSheetmetalTankMaster tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+	@Override public void render(TileEntitySteelSheetmetalTankMaster tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		if (!tile.formed || tile.pos != 4 || !tile.getWorld().isBlockLoaded(tile.getPos(), false)) return;
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x+.5, y, z+.5);

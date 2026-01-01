@@ -27,8 +27,7 @@ public class BoilerRecipeCategory extends ITRecipeCategory<BoilerRecipe, BoilerR
 	}
 
 	@SuppressWarnings("deprecation")
-	@Override
-	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull BoilerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull BoilerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
 
@@ -51,6 +50,5 @@ public class BoilerRecipeCategory extends ITRecipeCategory<BoilerRecipe, BoilerR
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
 	}
 
-	@Override
-	public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull BoilerRecipe recipe) { return new BoilerRecipeWrapper(recipe); }
+	@Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull BoilerRecipe recipe) { return new BoilerRecipeWrapper(recipe); }
 }

@@ -22,50 +22,37 @@ public class MeltingCrucible {
         FluidStack fluidOut = CraftTweakerHelper.toFluidStack(outputFluid);
         IngredientStack itemIn = CraftTweakerHelper.toIEIngredientStack(inputItem);
 
-        if (inputItem.getItems().isEmpty() || fluidOut == null) return;
+        if (inputItem.getItems().isEmpty() || fluidOut == null) { return; }
 
         MeltingCrucibleRecipe recipe = new MeltingCrucibleRecipe(fluidOut, itemIn, energy, time);
-        CraftTweakerAPI.apply(new MeltingCrucible.Add(recipe));
+        CraftTweakerAPI.apply(new Add(recipe));
     }
 
     private static class Add implements IAction {
         public MeltingCrucibleRecipe recipe;
-        public Add(MeltingCrucibleRecipe recipe) {
-            this.recipe = recipe;
-        }
+        public Add(MeltingCrucibleRecipe recipe) { this.recipe = recipe; }
 
-        @Override
-        public void apply() {
-            MeltingCrucibleRecipe.recipeList.add(recipe);
-        }
+        @Override public void apply() { MeltingCrucibleRecipe.recipeList.add(recipe); }
 
-        @Override
-        public String describe() { return "Adding Melting Crucible recipe for " + recipe.itemInput.toString(); }
+        @Override public String describe() { return "Adding Melting Crucible recipe for " + recipe.itemInput.toString(); }
     }
 
     @ZenMethod
     public static void removeRecipe(IItemStack inputItem) {
         ItemStack itemIn = CraftTweakerHelper.toStack(inputItem);
-        if (itemIn != null)
-            CraftTweakerAPI.apply(new MeltingCrucible.Remove(itemIn));
+        if (itemIn != null) { CraftTweakerAPI.apply(new Remove(itemIn)); }
     }
 
     private static class Remove implements IAction {
         private final ItemStack itemIn;
 
-        public Remove(ItemStack inputItem) {
-            this.itemIn = inputItem;
-        }
+        public Remove(ItemStack inputItem) { this.itemIn = inputItem; }
 
-        @Override
-        public void apply() {
+        @Override public void apply() {
             MeltingCrucibleRecipe.recipeList.removeIf(recipe -> recipe != null &&
                     OreDictionary.itemMatches(recipe.itemInput.stack, itemIn, false));
         }
 
-        @Override
-        public String describe() {
-            return  "Removing Melting Crucible Recipe for " + itemIn.toString();
-        }
+        @Override public String describe() { return "Removing Melting Crucible Recipe for " + itemIn.toString(); }
     }
 }

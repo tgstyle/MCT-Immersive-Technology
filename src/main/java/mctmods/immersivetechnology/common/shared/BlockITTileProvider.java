@@ -68,15 +68,13 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         super(name, material, mainProperty, itemBlock, additionalProperties);
     }
 
-    @SubscribeEvent
-    public static void onTick(TickEvent.ServerTickEvent ev) { if (ev.phase == TickEvent.Phase.END) { tempTile.clear(); } }
+    @SubscribeEvent public static void onTick(TickEvent.ServerTickEvent ev) {
+        if (ev.phase == TickEvent.Phase.END) { tempTile.clear(); }
+    }
 
-    @Override
-    public boolean hasTileEntity(@Nonnull IBlockState state) { return true; }
+    @Override public boolean hasTileEntity(@Nonnull IBlockState state) { return true; }
 
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
+    @Override @Nullable public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
         TileEntity basic = createBasicTE(world, state.getValue(property));
         Collection<IProperty<?>> keys = state.getPropertyKeys();
         if (basic instanceof IDirectionalTile) {
@@ -110,19 +108,16 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         return basic;
     }
 
-    @Override
-    protected IBlockState getInitDefaultState() {
+    @Override protected IBlockState getInitDefaultState() {
         IBlockState ret = super.getInitDefaultState();
         if (ret.getPropertyKeys().contains(IEProperties.FACING_ALL)) { ret = ret.withProperty(IEProperties.FACING_ALL, getDefaultFacing()); }
         else if (ret.getPropertyKeys().contains(IEProperties.FACING_HORIZONTAL)) { ret = ret.withProperty(IEProperties.FACING_HORIZONTAL, getDefaultFacing()); }
         return ret;
     }
 
-    @Nullable
-    public abstract TileEntity createBasicTE(World worldIn, E type);
+    @Nullable public abstract TileEntity createBasicTE(World worldIn, E type);
 
-    @Override
-    public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
+    @Override public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
         TileEntity tile = world.getTileEntity(pos);
         DimensionBlockPos dpos = new DimensionBlockPos(pos, world instanceof World ? ((World)world).provider.getDimension() : 0);
         if (tile == null && tempTile.containsKey(dpos)) { tile = tempTile.get(dpos); }
@@ -148,8 +143,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         tempTile.remove(dpos);
     }
 
-    @Override
-    public void breakBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+    @Override public void breakBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof IHasDummyBlocks) { ((IHasDummyBlocks)tile).breakDummies(pos, state); }
         if (tile instanceof IImmersiveConnectable && !world.isRemote) { ImmersiveNetHandler.INSTANCE.clearAllConnectionsFor(Utils.toCC(tile), world, world.getGameRules().getBoolean("doTileDrops")); }
@@ -158,8 +152,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         world.removeTileEntity(pos);
     }
 
-    @Override
-    public void harvestBlock(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState state, TileEntity tile, @Nonnull ItemStack stack) {
+    @Override public void harvestBlock(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nullable TileEntity tile, @Nonnull ItemStack stack) {
         if (tile instanceof ITileDrop) {
             ItemStack s = ((ITileDrop)tile).getTileDrop(player, state);
             if (!s.isEmpty()) { spawnAsEntity(world, pos, s); return; }
@@ -173,15 +166,13 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         super.harvestBlock(world, player, pos, state, tile, stack);
     }
 
-    @Override
-    public boolean canEntityDestroy(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull Entity entity) {
+    @Override public boolean canEntityDestroy(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull Entity entity) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof IEntityProof) { return ((IEntityProof)tile).canEntityDestroy(entity); }
         return super.canEntityDestroy(state, world, pos, entity);
     }
 
-    @Override
-    public @Nonnull ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+    @Override @Nonnull public ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof ITileDrop) {
             ItemStack s = ((ITileDrop)tile).getTileDrop(player, world.getBlockState(pos));
@@ -191,8 +182,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         return item == Items.AIR ? ItemStack.EMPTY : new ItemStack(item, 1, this.damageDropped(world.getBlockState(pos)));
     }
 
-    @Override
-    public boolean eventReceived(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, int eventID, int eventParam) {
+    @Override public boolean eventReceived(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, int eventID, int eventParam) {
         super.eventReceived(state, worldIn, pos, eventID, eventParam);
         TileEntity tileentity = worldIn.getTileEntity(pos);
         return tileentity != null && tileentity.receiveClientEvent(eventID, eventParam);
@@ -200,8 +190,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 
     protected EnumFacing getDefaultFacing() { return EnumFacing.NORTH; }
 
-    @Override
-    public @Nonnull IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+    @Override @Nonnull public IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
         state = super.getActualState(state, world, pos);
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof IAttachedIntegerProperies) {
@@ -228,8 +217,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         return state;
     }
 
-    @Override
-    public boolean rotateBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing axis) {
+    @Override public boolean rotateBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing axis) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof IDirectionalTile) {
             if (!((IDirectionalTile)tile).canRotate(axis)) { return false; }
@@ -253,8 +241,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         return false;
     }
 
-    @Override
-    public @Nonnull IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+    @Override @Nonnull public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
         state = super.getExtendedState(state, world, pos);
         if (state instanceof IExtendedBlockState) {
             IExtendedBlockState extended = (IExtendedBlockState)state;
@@ -280,8 +267,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         return state;
     }
 
-    @Override
-    public void onITBlockPlacedBy(World world, BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase placer, ItemStack stack) {
+    @Override public void onITBlockPlacedBy(World world, BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase placer, ItemStack stack) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof IDirectionalTile) {
             EnumFacing f = ((IDirectionalTile)tile).getFacingForPlacement(placer, pos, side, hitX, hitY, hitZ);
@@ -293,8 +279,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         if (tile instanceof IPlacementInteraction) { ((IPlacementInteraction)tile).onTilePlaced(world, pos, state, side, hitX, hitY, hitZ, placer, stack); }
     }
 
-    @Override
-    public boolean onBlockActivated(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ) {
+    @Override public boolean onBlockActivated(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ) {
         ItemStack heldItem = player.getHeldItem(hand);
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof IConfigurableSides && Utils.isHammer(heldItem) && !world.isRemote) {
@@ -331,8 +316,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         return false;
     }
 
-    @Override
-    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockPos fromPos) {
+    @Override public void neighborChanged(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockPos fromPos) {
         if (!world.isRemote) {
             Chunk posChunk = world.getChunk(pos);
             ApiUtils.addFutureServerTask(world, () -> {
@@ -344,16 +328,13 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         }
     }
 
-    @Override
-    public int getLightValue(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+    @Override public int getLightValue(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ILightValue) { return ((ILightValue)te).getLightValue(); }
         return 0;
     }
 
-
-    @Override
-    public @Nonnull AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+    @Override @Nonnull public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
         if (world.getBlockState(pos).getBlock() != this) { return FULL_BLOCK_AABB; }
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IBlockBounds) {
@@ -363,8 +344,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         return super.getBoundingBox(state, world, pos);
     }
 
-    @Override
-    public void addCollisionBoxToList(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB mask, @Nonnull List<AxisAlignedBB> list, @Nullable Entity ent, boolean p_185477_7_) {
+    @Override public void addCollisionBoxToList(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB mask, @Nonnull List<AxisAlignedBB> list, @Nullable Entity ent, boolean p_185477_7_) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IAdvancedCollisionBounds) {
             List<AxisAlignedBB> bounds = ((IAdvancedCollisionBounds)te).getAdvancedColisionBounds();
@@ -376,8 +356,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         super.addCollisionBoxToList(state, world, pos, mask, list, ent, p_185477_7_);
     }
 
-    @Override
-    public RayTraceResult collisionRayTrace(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
+    @Override public RayTraceResult collisionRayTrace(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IAdvancedSelectionBounds) {
             List<AxisAlignedBB> list = ((IAdvancedSelectionBounds)te).getAdvancedSelectionBounds();
@@ -397,46 +376,41 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
         return super.collisionRayTrace(state, world, pos, start, end);
     }
 
-    @Override
-    public boolean hasComparatorInputOverride(@Nonnull IBlockState state) { return true; }
+    @Override public boolean hasComparatorInputOverride(@Nonnull IBlockState state) { return true; }
 
-    @Override
-    public int getComparatorInputOverride(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
+    @Override public int getComparatorInputOverride(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IEBlockInterfaces.IComparatorOverride) { return ((IEBlockInterfaces.IComparatorOverride)te).getComparatorInputOverride(); }
         return 0;
     }
 
-    @Override
-    public int getWeakPower(@Nonnull IBlockState blockState, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+    @Override public int getWeakPower(@Nonnull IBlockState blockState, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IEBlockInterfaces.IRedstoneOutput) { return ((IEBlockInterfaces.IRedstoneOutput)te).getWeakRSOutput(blockState, side); }
         return 0;
     }
 
-    @Override
-    public int getStrongPower(@Nonnull IBlockState blockState, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+    @Override public int getStrongPower(@Nonnull IBlockState blockState, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IEBlockInterfaces.IRedstoneOutput) { return ((IEBlockInterfaces.IRedstoneOutput)te).getStrongRSOutput(blockState, side); }
         return 0;
     }
 
-    @Override
-    public boolean canProvidePower(@Nonnull IBlockState state) { return true; }
+    @Override public boolean canProvidePower(@Nonnull IBlockState state) { return true; }
 
-    @Override
-    public boolean canConnectRedstone(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) {
+    @Override public boolean canConnectRedstone(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileEntityMultiblockMetal) {
             TileEntityMultiblockMetal<?, ?> multiblockTE = (TileEntityMultiblockMetal<?, ?>)te;
             for (int tePos : multiblockTE.getRedstonePos()) { if (tePos == multiblockTE.pos) { return true; } }
         }
-        if (te instanceof IEBlockInterfaces.IRedstoneOutput) { return ((IEBlockInterfaces.IRedstoneOutput)te).canConnectRedstone(state, side); }
+        if (te instanceof IEBlockInterfaces.IRedstoneOutput) {
+            assert side != null;
+            return ((IEBlockInterfaces.IRedstoneOutput)te).canConnectRedstone(state, side); }
         return false;
     }
 
-    @Override
-    public void onEntityCollision(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entity) {
+    @Override public void onEntityCollision(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entity) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileEntityIEBase) { ((TileEntityIEBase)te).onEntityCollision(world, entity); }
     }

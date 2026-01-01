@@ -38,14 +38,12 @@ public class JEIHelper implements IModPlugin {
     public static ITooltipCallback<FluidStack> fluidTooltipCallback = new ITFluidTooltipCallback();
 
     @SuppressWarnings("deprecation")
-    @Override
-    public void registerIngredients(@Nonnull IModIngredientRegistration registry) { registry.register(GenericMultiblockIngredient.class, GenericMultiblockIngredient.list, new GenericMultiblockHelper(), new GenericMultiblockRenderer()); }
+    @Override public void registerIngredients(@Nonnull IModIngredientRegistration registry) { registry.register(GenericMultiblockIngredient.class, GenericMultiblockIngredient.list, new GenericMultiblockHelper(), new GenericMultiblockRenderer()); }
 
     @SuppressWarnings("rawtypes")
     Map<Class, ITRecipeCategory> categories = new LinkedHashMap<>();
 
-    @Override
-    public void registerCategories(@Nonnull IRecipeCategoryRegistration registry) {
+    @Override public void registerCategories(@Nonnull IRecipeCategoryRegistration registry) {
         jeiHelpers = registry.getJeiHelpers();
         IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
         slotDrawable = guiHelper.getSlotDrawable();
@@ -67,8 +65,7 @@ public class JEIHelper implements IModPlugin {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public void register(@Nonnull IModRegistry registryIn) {
+    @Override public void register(@Nonnull IModRegistry registryIn) {
         modRegistry = registryIn;
         for (ITRecipeCategory<Object, IRecipeWrapper> cat : categories.values()) {
             cat.addCatalysts(registryIn);
@@ -91,8 +88,7 @@ public class JEIHelper implements IModPlugin {
     }
 
     @SuppressWarnings("deprecation")
-    @Override
-    public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
+    @Override public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
         final IRecipeRegistry registry = jeiRuntime.getRecipeRegistry();
         ITCompatModule.jeiAddFunc = recipe -> {
             ITRecipeCategory<Object, ?> factory = getFactory(recipe.getClass());

@@ -26,21 +26,18 @@ public class MessageTileSync implements IMessage {
 
 	public MessageTileSync() { }
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
+	@Override public void fromBytes(ByteBuf buf) {
 		this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
 		this.nbt = ByteBufUtils.readTag(buf);
 	}
 
-	@Override
-	public void toBytes(ByteBuf buf) {
+	@Override public void toBytes(ByteBuf buf) {
 		buf.writeInt(pos.getX()).writeInt(pos.getY()).writeInt(pos.getZ());
 		ByteBufUtils.writeTag(buf, this.nbt);
 	}
 
 	public static class HandlerServer implements IMessageHandler<MessageTileSync, IMessage> {
-		@Override
-		public IMessage onMessage(MessageTileSync message, MessageContext ctx) {
+		@Override public IMessage onMessage(MessageTileSync message, MessageContext ctx) {
 			WorldServer world = ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
 				if (world.isBlockLoaded(message.pos)) {
@@ -55,8 +52,7 @@ public class MessageTileSync implements IMessage {
 
 	@SideOnly(Side.CLIENT)
 	public static class HandlerClient implements IMessageHandler<MessageTileSync, IMessage> {
-		@Override
-		public IMessage onMessage(MessageTileSync message, MessageContext ctx) {
+		@Override public IMessage onMessage(MessageTileSync message, MessageContext ctx) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
 				World world = Minecraft.getMinecraft().world;
 				if (world != null) {

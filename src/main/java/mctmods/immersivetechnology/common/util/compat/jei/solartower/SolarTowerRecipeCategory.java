@@ -35,8 +35,7 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 	}
 
 	@SuppressWarnings("deprecation")
-	@Override
-	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull SolarTowerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull SolarTowerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		int tankCapacity = 0;
 		for (List<FluidStack> stacks : inputs) {
@@ -62,9 +61,8 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 		recipeWrapper.timer = timer;
 	}
 
-	@Override
 	@SideOnly(Side.CLIENT)
-	public void drawExtras(@Nonnull Minecraft minecraft) {
+	@Override public void drawExtras(@Nonnull Minecraft minecraft) {
 		int reflectors = timer.getValue();
 		reflectorOverlay.draw(minecraft, 32, 24);
 		if (reflectors >= 1) reflectorOverlay.draw(minecraft, 16, 40);
@@ -72,8 +70,7 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 		if (reflectors == 3) reflectorOverlay.draw(minecraft, 32, 56);
 	}
 
-	@Override
-	public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull SolarTowerRecipe recipe) {
+	@Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull SolarTowerRecipe recipe) {
 		return new SolarTowerRecipeWrapper(recipe);
 	}
 }

@@ -15,8 +15,7 @@ import java.util.Objects;
 
 @Mixin(MinecraftServer.class)
 public abstract class MixinMCTMinecraftServer {
-    @Unique
-    private static String formatStackTrace$helper(Throwable t) {
+    @Unique private static String formatStackTrace$helper(Throwable t) {
         StringBuilder sb = new StringBuilder();
         sb.append(Objects.toString(t.getMessage(), "No message")).append("\n");
         for (StackTraceElement ste : t.getStackTrace()) { sb.append("\tat ").append(ste).append("\n"); }
@@ -28,8 +27,7 @@ public abstract class MixinMCTMinecraftServer {
     }
 
     @Redirect(method = "run", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;error(Ljava/lang/String;Ljava/lang/Throwable;)V", remap = false), remap = false)
-    @Unique
-    private void redirectErrorLog$helper(Logger logger, String message, Throwable t) {
+    @Unique private void redirectErrorLog$helper(Logger logger, String message, Throwable t) {
         if (MCTMixinConfig.mixinSettings.enableErrorLoggingRedirect) {
             String full = message + ": " + formatStackTrace$helper(t);
             System.err.print(full);

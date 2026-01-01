@@ -15,15 +15,19 @@ import stanhebben.zenscript.annotations.ZenMethod;
 @SuppressWarnings("unused")
 @ZenClass("mods.immersivetechnology.Distiller")
 public class Distiller {
+
     @ZenMethod
     public static void addRecipe(ILiquidStack outputFluid, ILiquidStack inputFluid, IItemStack outputItem, Integer energy, Integer time, Float chance) {
         FluidStack fluidOut = CraftTweakerHelper.toFluidStack(outputFluid);
         FluidStack fluidIn = CraftTweakerHelper.toFluidStack(inputFluid);
         ItemStack itemOut = CraftTweakerHelper.toStack(outputItem);
-        if (fluidIn == null || fluidOut == null || itemOut.isEmpty()) return;
-        if (energy == null) energy = 10000;
-        if (time == null) time = 20;
-        if (chance == null) chance = 0.01F;
+
+        if (fluidIn == null || fluidOut == null || itemOut.isEmpty()) { return; }
+
+        if (energy == null) { energy = 10000; }
+        if (time == null) { time = 20; }
+        if (chance == null) { chance = 0.01F; }
+
         DistillerRecipe recipe = new DistillerRecipe(fluidOut, fluidIn, itemOut, energy, time, chance);
         CraftTweakerAPI.apply(new Add(recipe));
     }
@@ -33,42 +37,45 @@ public class Distiller {
         FluidStack fluidOut = CraftTweakerHelper.toFluidStack(outputFluid);
         FluidStack fluidIn = CraftTweakerHelper.toFluidStack(inputFluid);
         ItemStack itemOut = CraftTweakerHelper.toStack(outputItem);
-        if (fluidIn == null || fluidOut == null || itemOut.isEmpty()) return;
-        int energy = 10000;
-        int time = 20;
-        float chance = 0.01F;
-        DistillerRecipe recipe = new DistillerRecipe(fluidOut, fluidIn, itemOut, energy, time, chance);
+
+        if (fluidIn == null || fluidOut == null || itemOut.isEmpty()) { return; }
+
+        DistillerRecipe recipe = new DistillerRecipe(fluidOut, fluidIn, itemOut, 10000, 20, 0.01F);
         CraftTweakerAPI.apply(new Add(recipe));
     }
 
     private static class Add implements IAction {
         public DistillerRecipe recipe;
         public Add(DistillerRecipe recipe) { this.recipe = recipe; }
-        @Override
-        public void apply() { DistillerRecipe.recipeList.add(recipe); }
-        @Override
-        public String describe() { return "Adding Distiller Recipe for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName(); }
+
+        @Override public void apply() { DistillerRecipe.recipeList.add(recipe); }
+
+        @Override public String describe() { return "Adding Distiller Recipe for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName(); }
     }
 
     @ZenMethod
     public static void removeRecipe(ILiquidStack inputFluid, @Optional IItemStack outputItem) {
-        if (CraftTweakerHelper.toFluidStack(inputFluid) != null) CraftTweakerAPI.apply(new Remove(CraftTweakerHelper.toFluidStack(inputFluid), CraftTweakerHelper.toStack(outputItem)));
+        FluidStack fluidIn = CraftTweakerHelper.toFluidStack(inputFluid);
+        ItemStack itemOut = CraftTweakerHelper.toStack(outputItem);
+
+        if (fluidIn != null) { CraftTweakerAPI.apply(new Remove(fluidIn, itemOut)); }
     }
 
     private static class Remove implements IAction {
         private final FluidStack inputFluid;
         private final ItemStack outputItem;
+
         public Remove(FluidStack inputFluid, ItemStack outputItem) {
             this.inputFluid = inputFluid;
             this.outputItem = outputItem;
         }
-        @Override
-        public void apply() {
+
+        @Override public void apply() {
             DistillerRecipe.recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(inputFluid));
         }
-        @Override
-        public String describe() {
-            if (this.outputItem.getItem() == Items.AIR) return "Removing Distiller Input Recipe for " + inputFluid.getLocalizedName();
+
+        @Override public String describe() {
+            if (this.outputItem.getItem() == Items.AIR) { return "Removing Distiller Input Recipe for " + inputFluid.getLocalizedName(); }
             return "Removing Distiller Input Recipe for " + inputFluid.getLocalizedName() + " -> " + outputItem.getDisplayName();
         }
     }

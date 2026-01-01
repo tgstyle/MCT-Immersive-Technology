@@ -28,7 +28,7 @@ import java.util.Arrays;
 
 public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
     public BlockConnectors() {
-        super("connectors", Material.IRON, PropertyEnum.create("type", BlockType_Connectors.class), ItemBlockITBase.class, IEProperties.FACING_ALL, IEProperties.BOOLEANS[0], IEProperties.BOOLEANS[1], IEProperties.MULTIBLOCKSLAVE, IOBJModelCallback.PROPERTY);
+        super("connectors", Material.IRON, PropertyEnum.create("type", BlockType_Connectors.class), ItemBlockITBase.class, IEProperties.FACING_ALL, IEProperties.BOOLEANS[0], IEProperties.BOOLEANS[1], IOBJModelCallback.PROPERTY);
         setHardness(3.0F);
         setResistance(15.0F);
         lightOpacity = 0;

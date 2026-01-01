@@ -28,19 +28,15 @@ public enum BlockType_MetalMultiblock1 implements IStringSerializable, BlockITBa
         this.needsCustomState = needsCustomState;
     }
 
-    @Override
-    public int getMeta() {
+    @Override public int getMeta() {
         return ordinal();
     }
 
-    @Override
-    public boolean listForCreative() {
+    @Override public boolean listForCreative() {
         return false;
     }
 
-    @Nonnull
-    @Override
-    public String getName() {
+    @Override @Nonnull public String getName() {
         return this.toString().toLowerCase(Locale.ENGLISH);
     }
 
@@ -50,5 +46,4 @@ public enum BlockType_MetalMultiblock1 implements IStringSerializable, BlockITBa
     public String getCustomState() {
         return getName().toLowerCase();
     }
-
 }

@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ITFluidTooltipCallback implements ITooltipCallback<FluidStack> {
-    @Override
-    public void onTooltip(int slotIndex, boolean input, @Nonnull FluidStack ingredient, @Nonnull List<String> tooltip) {
+    @Override public void onTooltip(int slotIndex, boolean input, @Nonnull FluidStack ingredient, @Nonnull List<String> tooltip) {
         if (ingredient.getFluid() != null) {
             ArrayList<String> fluidInfo = new ArrayList<>();
             Fluid f = ingredient.getFluid();

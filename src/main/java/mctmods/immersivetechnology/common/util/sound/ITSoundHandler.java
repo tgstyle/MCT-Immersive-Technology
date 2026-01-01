@@ -57,13 +57,11 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
 		Minecraft.getMinecraft().getSoundHandler().playSound(this);
 	}
 
-	@Override
-	public boolean isDonePlaying() { return !playingSounds.containsValue(this); }
+	@Override public boolean isDonePlaying() { return !playingSounds.containsValue(this); }
 
 	public static boolean isPlaying(BlockPos posIn) { return playingSounds.get(posIn) != null; }
 
-	@Override
-	public void update() {}
+	@Override public void update() {}
 
 	private void stopSound(boolean keepOnList) {
 		if (!keepOnList) playingSounds.remove(pos);

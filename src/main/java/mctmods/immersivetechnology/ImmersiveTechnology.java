@@ -39,13 +39,11 @@ public class ImmersiveTechnology {
     public static CommonProxy proxy;
     public static final SimpleNetworkWrapper packetHandler = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
 
-    @Instance(MODID)
-    public static ImmersiveTechnology instance;
+    @Instance(MODID) public static ImmersiveTechnology instance;
 
     static { FluidRegistry.enableUniversalBucket(); }
 
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
+    @EventHandler public void preInit(FMLPreInitializationEvent event) {
         ITLogger.logger = event.getModLog();
         Config.preInit(event);
         ITContent.preInit();
@@ -53,8 +51,7 @@ public class ImmersiveTechnology {
         ITCompatModule.doModulesPreInit();
     }
 
-    @EventHandler
-    public void init(FMLInitializationEvent event) {
+    @EventHandler public void init(FMLInitializationEvent event) {
         ITContent.init();
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
         proxy.preInitEnd();
@@ -64,24 +61,19 @@ public class ImmersiveTechnology {
         proxy.initEnd();
     }
 
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
+    @EventHandler public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit();
         ITCompatModule.doModulesPostInit();
         proxy.postInitEnd();
     }
 
-    @EventHandler
-    public void loadComplete(FMLLoadCompleteEvent event) { ITCompatModule.doModulesLoadComplete(); }
+    @EventHandler public void loadComplete(FMLLoadCompleteEvent event) { ITCompatModule.doModulesLoadComplete(); }
 
-    @EventHandler
-    public void serverStarted(FMLServerStartedEvent event) { }
+    @EventHandler public void serverStarted(FMLServerStartedEvent event) { }
 
-    @EventHandler
-    public void serverStopping(FMLServerStoppingEvent event) { TileEntityFluidPipeAlternative.indirectConnections.clear(); }
+    @EventHandler public void serverStopping(FMLServerStoppingEvent event) { TileEntityFluidPipeAlternative.indirectConnections.clear(); }
 
     public static CreativeTabs creativeTab = new CreativeTabs(MODID) {
-        @Override
-        public @Nonnull ItemStack createIcon() { return new ItemStack(ITContent.blockValve, 1, 0); }
+        @Override @Nonnull public ItemStack createIcon() { return new ItemStack(ITContent.blockValve, 1, 0); }
     };
 }

@@ -1,25 +1,30 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import javax.annotation.Nonnull;
+
+import java.util.Random;
+
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
+
 import mctmods.immersivetechnology.common.Config.ITConfig.Blocks;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
+
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-import javax.annotation.Nonnull;
-import java.util.Random;
-
 public class TileEntityBarrelOpen extends TileEntityBarrelSteel implements IPlayerInteraction {
+
     private static final int tankSize = Blocks.barrels.barrel_open_tankSize;
     private static final int transferSpeed = Blocks.barrels.barrel_open_transferSpeed;
 
@@ -46,7 +51,9 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel implements IPlay
                         int amount = 100;
                         if (world.isThundering()) { amount = 200; }
                         tank.fill(new FluidStack(FluidRegistry.WATER, amount), true);
-                    } else if (temp >= 2.0F) { tank.drain(Math.min(100, tank.getFluidAmount()), true); }
+                    } else if (temp >= 2.0F) {
+                        tank.drain(Math.min(100, tank.getFluidAmount()), true);
+                    }
                 }
             }
             lastRandom = random;

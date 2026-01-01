@@ -30,8 +30,7 @@ public class DistillerRecipeCategory extends ITRecipeCategory<DistillerRecipe, D
 	}
 
 	@SuppressWarnings("deprecation")
-	@Override
-	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull DistillerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull DistillerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
 
@@ -60,8 +59,7 @@ public class DistillerRecipeCategory extends ITRecipeCategory<DistillerRecipe, D
 		}
 	}
 	
-	@Override
-	public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull DistillerRecipe recipe) {
+	@Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull DistillerRecipe recipe) {
 		return new DistillerRecipeWrapper(recipe);
 	}
 }

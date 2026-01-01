@@ -27,8 +27,7 @@ public class BoilerFuelRecipeCategory extends ITRecipeCategory<BoilerFuelRecipe,
 	}
 
 	@SuppressWarnings("deprecation")
-	@Override
-	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull BoilerFuelRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull BoilerFuelRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		int tankSize = 0;
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		for (List<FluidStack> lists : inputs) {
@@ -40,8 +39,7 @@ public class BoilerFuelRecipeCategory extends ITRecipeCategory<BoilerFuelRecipe,
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
 	}
 	
-	@Override
-	public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull BoilerFuelRecipe recipe) {
+	@Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull BoilerFuelRecipe recipe) {
 		return new BoilerFuelRecipeWrapper(recipe);
 	}
 }

@@ -17,8 +17,7 @@ public class ContainerBoiler extends ContainerIEBase<TileEntityBoilerMaster> {
 		slotCount = TileEntityBoilerMaster.slotCount;
 		final TileEntityBoilerMaster tileF = tile;
 		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 0, 37, 15, 2) {
-			@Override
-			public boolean isItemValid(ItemStack itemStack) {
+			@Override public boolean isItemValid(ItemStack itemStack) {
 				IFluidHandler h = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
 				if (h == null || h.getTankProperties().length == 0) return false;
 				FluidStack fs = h.getTankProperties()[0].getContents();
@@ -30,8 +29,7 @@ public class ContainerBoiler extends ContainerIEBase<TileEntityBoilerMaster> {
 		});
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 1, 37, 54));
 		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 2, 76, 15, 2) {
-			@Override
-			public boolean isItemValid(ItemStack itemStack) {
+			@Override public boolean isItemValid(ItemStack itemStack) {
 				IFluidHandler h = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
 				if (h == null || h.getTankProperties().length == 0) return false;
 				FluidStack fs = h.getTankProperties()[0].getContents();
@@ -43,8 +41,7 @@ public class ContainerBoiler extends ContainerIEBase<TileEntityBoilerMaster> {
 		});
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 3, 76, 54));
 		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 4, 149, 15, 0) {
-			@Override
-			public boolean isItemValid(ItemStack itemStack) {
+			@Override public boolean isItemValid(ItemStack itemStack) {
 				return super.isItemValid(itemStack) || (!itemStack.isEmpty() && itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null));
 			}
 		});

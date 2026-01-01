@@ -16,18 +16,15 @@ public class MessageStopSound implements IMessage {
 
 	public MessageStopSound() { }
 
-	@Override
-	public void fromBytes(ByteBuf buf) { this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt()); }
+	@Override public void fromBytes(ByteBuf buf) { this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt()); }
 
-	@Override
-	public void toBytes(ByteBuf buf) {
+	@Override public void toBytes(ByteBuf buf) {
 		buf.writeInt(pos.getX()).writeInt(pos.getY()).writeInt(pos.getZ());
 	}
 
 	@SideOnly(Side.CLIENT)
 	public static class HandlerClient implements IMessageHandler<MessageStopSound, IMessage>	{
-		@Override
-		public IMessage onMessage(MessageStopSound message, MessageContext ctx) {
+		@Override public IMessage onMessage(MessageStopSound message, MessageContext ctx) {
 			ITSoundHandler.StopSound(message.pos);
 			return null;
 		}
@@ -35,7 +32,6 @@ public class MessageStopSound implements IMessage {
 
 	@SideOnly(Side.SERVER)
 	public static class HandlerServer implements IMessageHandler<MessageStopSound, IMessage>	{
-		@Override
-		public IMessage onMessage(MessageStopSound message, MessageContext ctx) { return null; }
+		@Override public IMessage onMessage(MessageStopSound message, MessageContext ctx) { return null; }
 	}
 }

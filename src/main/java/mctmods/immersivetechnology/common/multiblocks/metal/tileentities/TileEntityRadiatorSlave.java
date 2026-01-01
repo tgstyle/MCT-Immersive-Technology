@@ -22,15 +22,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.entity.player.EntityPlayer;
 
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRadiatorSlave, RadiatorRecipe, TileEntityRadiatorMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+
     public TileEntityRadiatorSlave() { super(TileEntityITMultiblockPartRadiator.instance, 0, false); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
@@ -38,7 +42,7 @@ public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRa
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
     @Override public void update() {
-        if(isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
         super.update();
     }
 
@@ -66,7 +70,7 @@ public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRa
 
     @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
 
-    @Override public @Nonnull int[] getOutputTanks() { return new int[] {1}; }
+    @Override @Nonnull public int[] getOutputTanks() { return new int[] {1}; }
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<RadiatorRecipe> process) { return true; }
 
@@ -128,5 +132,26 @@ public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRa
         if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
         AxisAlignedBB bb = vs.bounds();
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
+    }
+
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            TileEntityRadiatorMaster m = master();
+            if (m == null || !formed) return false;
+            return m.getAccessibleFluidTanks(facing, pos).length > 0;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            TileEntityRadiatorMaster m = master();
+            if (m != null && formed) {
+                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos);
+                if (accessible.length > 0) return (T)new TileEntityRadiatorMaster.RadiatorFluidHandler(accessible, m, facing, pos);
+            }
+        }
+        return super.getCapability(capability, facing);
     }
 }

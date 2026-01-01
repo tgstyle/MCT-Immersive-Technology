@@ -22,24 +22,21 @@ public class GuiTimer extends GuiIEContainerBase {
 		this.tile=tile;
 	}
 
-	@Override
-	public void initGui() {
+	@Override public void initGui() {
 		super.initGui();
 		this.buttonList.clear();
 		this.buttonList.add(new GuiButtonIE(0, guiLeft + 39, guiTop + 35, 16, 16, "+", "immersivetech:textures/gui/gui_timer.png", 176, 0));
 		this.buttonList.add(new GuiButtonIE(1, guiLeft + 120, guiTop + 35, 16, 16, "-", "immersivetech:textures/gui/gui_timer.png", 176, 16));
 	}
 
-	@Override
-	protected void actionPerformed(@Nonnull GuiButton button) {
+	@Override protected void actionPerformed(@Nonnull GuiButton button) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("buttonId", button.id);
 		ImmersiveTechnology.packetHandler.sendToServer(new MessageTileSync(tile, tag));
 		this.initGui();
 	}
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+	@Override protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		ClientUtils.bindTexture("immersivetech:textures/gui/gui_timer.png");
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);

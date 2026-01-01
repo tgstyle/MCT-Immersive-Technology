@@ -18,13 +18,11 @@ public class ITFluxStorage extends FluxStorage implements IEnergyStorage {
         if (!canReceive) limitReceive = 0;
     }
 
-    @Override
-    public boolean canExtract() {
+    @Override public boolean canExtract() {
         return canExtract;
     }
 
-    @Override
-    public boolean canReceive() {
+    @Override public boolean canReceive() {
         return canReceive;
     }
 }

@@ -1,26 +1,21 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxReceiver;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IMirrorAble;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IUsesBooleanProperty;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
-import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 
 import mctmods.immersivetechnology.api.ITGUI;
+import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.DistillerShape;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
 import mctmods.immersivetechnology.common.util.shapes.*;
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -37,9 +32,6 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
@@ -48,20 +40,26 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IMirrorAble, IUsesBooleanProperty, IFluxReceiver, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
+
+public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IFluxReceiver, EnergyHelper.IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+
     public TileEntityDistillerSlave() { super(TileEntityITMultiblockPartDistiller.instance, 16000, true); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
-    @Override public void update() { if(isDummy()) ITUtils.RemoveDummyFromTicking(this); super.update(); }
+    @Override public void update() {
+        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        super.update();
+    }
 
     @Override public boolean isDummy() { return true; }
 
-    TileEntityDistillerMaster master;
+    private TileEntityDistillerMaster master;
 
-    public TileEntityDistillerMaster master() {
+    @Override public TileEntityDistillerMaster master() {
         if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
@@ -69,21 +67,33 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
         return master;
     }
 
-    @Override public NonNullList<ItemStack> getInventory() { return master() == null ? NonNullList.withSize(5, ItemStack.EMPTY) : master.inventory; }
+    @Override public NonNullList<ItemStack> getInventory() {
+        TileEntityDistillerMaster m = master();
+        return m == null || !formed ? NonNullList.withSize(5, ItemStack.EMPTY) : m.inventory;
+    }
 
     @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
 
     @Override public int getSlotLimit(int slot) { return 64; }
 
-    @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
+    @Override @Nonnull public IFluidTank[] getInternalTanks() {
+        TileEntityDistillerMaster m = master();
+        return m == null ? new IFluidTank[0] : m.tanks;
+    }
 
-    @Override protected @Nonnull DistillerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DistillerRecipe.loadFromNBT(tag); }
+    @Override @Nonnull protected DistillerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DistillerRecipe.loadFromNBT(tag); }
 
-    @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
+    @Override @Nonnull public int[] getRedstonePos() {
+        TileEntityDistillerMaster m = master();
+        return m == null ? new int[0] : m.getRedstonePos();
+    }
 
-    @Override public @Nonnull int[] getOutputTanks() { return new int[]{1}; }
+    @Override @Nonnull public int[] getOutputTanks() { return new int[]{1}; }
 
-    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<DistillerRecipe> process) { return master() != null && master.additionalCanProcessCheck(process); }
+    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<DistillerRecipe> process) {
+        TileEntityDistillerMaster m = master();
+        return m != null && m.additionalCanProcessCheck(process);
+    }
 
     @Override public int getMaxProcessPerTick() { return 1; }
 
@@ -91,52 +101,43 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
 
     @Override public float getMinProcessDistance(@Nonnull MultiblockProcess<DistillerRecipe> process) { return 1f; }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { return master() != null ? master.getAccessibleFluidTanks(side, position) : ITUtils.emptyIFluidTankList; }
-
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return master() != null && master.canFillTankFrom(iTank, side, resource, position); }
-
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { return master() != null && master.canDrainTankFrom(iTank, side, position); }
-
-    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityDistillerMaster m = master();
-            if (m == null) return false;
-            return m.getAccessibleFluidTanks(facing, pos).length > 0;
-        }
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
-            TileEntityDistillerMaster m = master();
-            if (m == null) return false;
-            return m.itemOutput0.isPoI(facing, pos);
-        }
-        if (capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.isEnergyPosition(facing, pos)) return true;
-        return super.hasCapability(capability, facing);
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+        TileEntityDistillerMaster m = master();
+        return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityDistillerMaster m = master();
-            if (m == null || m.getAccessibleFluidTanks(facing, pos).length == 0) return null;
-            return (T) new DistillerFluidHandler(this, facing);
-        }
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
-            TileEntityDistillerMaster m = master();
-            if (m == null || !m.itemOutput0.isPoI(facing, pos)) return null;
-            boolean[] canInsert = new boolean[5];
-            boolean[] canExtract = new boolean[]{false, true, false, true, true};
-            return (T) new IEInventoryHandler(5, m, 0, canInsert, canExtract);
-        }
-        if (capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.isEnergyPosition(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
-        return super.getCapability(capability, facing);
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+        TileEntityDistillerMaster m = master();
+        return m != null && m.canFillTankFrom(iTank, side, resource, position);
     }
 
-    @Override public @Nonnull FluxStorage getFluxStorage() { return master() == null ? new FluxStorage(0) : master.energyStorage; }
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+        TileEntityDistillerMaster m = master();
+        return m != null && m.canDrainTankFrom(iTank, side, position);
+    }
 
-    @Override public @Nonnull SideConfig getEnergySideConfig(@Nullable EnumFacing facing) { return formed && master() != null && master.isEnergyPosition(facing, pos) ? SideConfig.INPUT : SideConfig.NONE; }
+    @Override public boolean canOpenGui() { return formed; }
+
+    @Override public int getGuiID() { return ITGUI.GUIID_Distiller; }
+
+    @Override public TileEntity getGuiMaster() {
+        TileEntityDistillerMaster m = master();
+        return m == null ? this : m;
+    }
+
+    @Override @Nonnull public FluxStorage getFluxStorage() {
+        TileEntityDistillerMaster m = master();
+        return m == null ? new FluxStorage(0) : m.energyStorage;
+    }
+
+    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) {
+        TileEntityDistillerMaster m = master();
+        return formed && m != null && m.isEnergyPosition(facing, pos) ? SideConfig.INPUT : SideConfig.NONE;
+    }
 
     @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
         TileEntityDistillerMaster m = master();
-        if (!formed || m == null) return 0;
+        if (!formed || m == null || !m.isEnergyPosition(from, pos)) return 0;
         int received = m.energyStorage.receiveEnergy(energy, simulate);
         if (!simulate && received > 0) {
             m.efficientMarkDirty();
@@ -145,24 +146,54 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
         return received;
     }
 
-    @Override public boolean canOpenGui() { return formed; }
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            TileEntityDistillerMaster m = master();
+            if (m != null && formed) return m.getAccessibleFluidTanks(facing, pos).length > 0;
+        }
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
+            TileEntityDistillerMaster m = master();
+            if (m != null && formed) return m.itemOutput0 != null && m.itemOutput0.isPoI(facing, pos);
+        }
+        if (capability == CapabilityEnergy.ENERGY && facing != null) {
+            TileEntityDistillerMaster m = master();
+            if (m != null && formed) return m.isEnergyPosition(facing, pos);
+        }
+        return super.hasCapability(capability, facing);
+    }
 
-    @Override public int getGuiID() { return ITGUI.GUIID_Distiller; }
+    @SuppressWarnings("unchecked")
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            TileEntityDistillerMaster m = master();
+            if (m != null && formed) {
+                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos);
+                if (accessible.length > 0) return (T)new TileEntityDistillerMaster.DistillerFluidHandler(accessible, m, facing, pos);
+            }
+        }
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
+            TileEntityDistillerMaster m = master();
+            if (m != null && formed && m.itemOutput0 != null && m.itemOutput0.isPoI(facing, pos)) {
+                boolean[] insert = new boolean[5];
+                boolean[] extract = new boolean[]{false, true, false, true, true};
+                return (T)new IEInventoryHandler(5, this, 0, insert, extract);
+            }
+        }
+        if (capability == CapabilityEnergy.ENERGY && facing != null) {
+            TileEntityDistillerMaster m = master();
+            if (m != null && formed && m.isEnergyPosition(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+        }
+        return super.getCapability(capability, facing);
+    }
 
-    @Override public TileEntity getGuiMaster() { return master(); }
-
-    @Override public boolean getIsMirrored() { return mirrored; }
-
-    @Override public @Nonnull IEProperties.PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
-
-    private BlockPos posToMultiblock() {
+    public BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartDistiller.instance.width;
         int length = TileEntityITMultiblockPartDistiller.instance.length;
         int y = pos / (length * width);
         int rem = pos % (length * width);
         int z = rem / width;
         int x = rem % width;
-        if (this.mirrored) x = width - 1 - x;
+        if (mirrored) x = width - 1 - x;
         return new BlockPos(x, y, z);
     }
 
@@ -171,90 +202,22 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
         List<AxisAlignedBB> list = DistillerShape.GETTER.getShape(posInMultiblock);
         if (list.isEmpty()) return Shapes.empty();
         List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, this.facing, this.mirrored));
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
         VoxelShape vs = Shapes.empty();
         for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
         return vs.optimize();
     }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
 
     @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
 
-    @Nonnull
-    @Override public float[] getBlockBounds() {
+    @Override @Nonnull public float[] getBlockBounds() {
         VoxelShape vs = getVoxelShape();
         if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
         AxisAlignedBB bb = vs.bounds();
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
-    }
-
-    public static class DistillerFluidHandler implements IFluidHandler {
-        TileEntityDistillerSlave te;
-        EnumFacing facing;
-        IFluidTank[] tanks;
-
-        public DistillerFluidHandler(TileEntityDistillerSlave te, EnumFacing facing) {
-            this.te = te;
-            this.facing = facing;
-            TileEntityDistillerMaster master = te.master();
-            if (master != null) tanks = master.getAccessibleFluidTanks(facing, te.pos);
-            else tanks = new IFluidTank[0];
-        }
-
-        @Override public IFluidTankProperties[] getTankProperties() {
-            List<IFluidTankProperties> props = new ArrayList<>();
-            for (IFluidTank tank : tanks) props.add(new FluidTankProperties(tank.getFluid(), tank.getCapacity()));
-            return props.toArray(new IFluidTankProperties[0]);
-        }
-
-        @Override public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null || resource.amount <= 0) return 0;
-            TileEntityDistillerMaster master = te.master();
-            if (master == null) return 0;
-            for (int i = 0; i < tanks.length; i++) {
-                if (master.canFillTankFrom(i, facing, resource, te.pos)) {
-                    int filled = tanks[i].fill(resource, doFill);
-                    if (filled > 0 && doFill) master.TankContentsChanged();
-                    return filled;
-                }
-            }
-            return 0;
-        }
-
-        @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null || resource.amount <= 0) return null;
-            TileEntityDistillerMaster master = te.master();
-            if (master == null) return null;
-            for (int i = 0; i < tanks.length; i++) {
-                if (master.canDrainTankFrom(i, facing, te.pos)) {
-                    FluidStack tankFluid = tanks[i].getFluid();
-                    if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
-                        FluidStack drained = tanks[i].drain(resource.amount, doDrain);
-                        if (drained != null && doDrain) master.TankContentsChanged();
-                        return drained;
-                    }
-                }
-            }
-            return null;
-        }
-
-        @Override public FluidStack drain(int maxDrain, boolean doDrain) {
-            if (maxDrain <= 0) return null;
-            TileEntityDistillerMaster master = te.master();
-            if (master == null) return null;
-            for (int i = 0; i < tanks.length; i++) {
-                if (master.canDrainTankFrom(i, facing, te.pos)) {
-                    FluidStack drained = tanks[i].drain(maxDrain, doDrain);
-                    if (drained != null && doDrain) master.TankContentsChanged();
-                    return drained;
-                }
-            }
-            return null;
-        }
     }
 }

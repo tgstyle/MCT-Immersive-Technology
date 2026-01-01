@@ -25,20 +25,16 @@ public class BlockMetalTrash extends BlockITTileProvider<BlockType_MetalTrash> {
 		this.setAllNotNormalBlock();
 	}
 
-    @Nonnull
-	@Override
-	public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+	@Override @Nonnull public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		return state;
 	}
 
-	@Override
-	public boolean allowHammerHarvest(IBlockState state) {
+	@Override public boolean allowHammerHarvest(IBlockState state) {
 		return true;
 	}
 
-	@Override
-	public TileEntity createBasicTE(World worldIn, BlockType_MetalTrash type) {
+	@Override public TileEntity createBasicTE(World worldIn, BlockType_MetalTrash type) {
 		switch(type) {
 		case TRASH_ITEM:
 			return new TileEntityTrashItem();

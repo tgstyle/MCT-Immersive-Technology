@@ -15,8 +15,7 @@ import net.minecraft.world.World;
 
 @SuppressWarnings("unused")
 public class GasTurbineDriver extends DriverSidedTileEntity {
-    @Override
-    public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
+    @Override public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
         TileEntity tile = world.getTileEntity(pos);
 
         if (tile instanceof TileEntityGasTurbineSlave) {
@@ -29,8 +28,7 @@ public class GasTurbineDriver extends DriverSidedTileEntity {
         return null;
     }
 
-    @Override
-    public Class<?> getTileEntityClass() {
+    @Override public Class<?> getTileEntityClass() {
         return TileEntityGasTurbineSlave.class;
     }
 
@@ -64,13 +62,11 @@ public class GasTurbineDriver extends DriverSidedTileEntity {
             return super.setEnabled(context, args);
         }
 
-        @Override
-        public String preferredName() {
+        @Override public String preferredName() {
             return "it_gas_turbine";
         }
 
-        @Override
-        public int priority() {
+        @Override public int priority() {
             return 1000;
         }
     }

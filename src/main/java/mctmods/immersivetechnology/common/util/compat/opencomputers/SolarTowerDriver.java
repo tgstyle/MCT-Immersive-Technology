@@ -18,8 +18,7 @@ import java.util.HashMap;
 
 @SuppressWarnings("unused")
 public class SolarTowerDriver extends DriverSidedTileEntity {
-	@Override
-	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
+	@Override public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
 		if (tile instanceof TileEntitySolarTowerSlave) {
@@ -32,8 +31,7 @@ public class SolarTowerDriver extends DriverSidedTileEntity {
 		return null;
 	}
 
-	@Override
-	public Class<?> getTileEntityClass() {
+	@Override public Class<?> getTileEntityClass() {
 		return TileEntitySolarTowerSlave.class;
 	}
 
@@ -83,13 +81,11 @@ public class SolarTowerDriver extends DriverSidedTileEntity {
 			return super.setEnabled(context, args);
 		}
 
-		@Override
-		public String preferredName() {
+		@Override public String preferredName() {
 			return "it_solar_tower";
 		}
 
-		@Override
-		public int priority() {
+		@Override public int priority() {
 			return 1000;
 		}
 	}

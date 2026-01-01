@@ -14,8 +14,7 @@ public class GuiLoadController extends GuiCommonValve {
 		this.tile = tile;
 	}
 
-	@Override
-	public void initGui() {
+	@Override public void initGui() {
 		super.initGui();
 		limitPacket = new GuiTextField(0, this.fontRenderer, width / 2 - 85, height / 2 - 13, 50, 8);
 		limitPacket.setText(tile.packetLimit >= 0? String.valueOf(tile.packetLimit) : "");
@@ -26,8 +25,7 @@ public class GuiLoadController extends GuiCommonValve {
 		destinationKeep.setText(tile.keepSize >= 0? String.valueOf(tile.keepSize) : "");
 	}
 
-	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+	@Override public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
 		drawDefaultBackground();
 		ClientUtils.bindTexture("immersivetech:textures/gui/gui_fluid_valve.png");

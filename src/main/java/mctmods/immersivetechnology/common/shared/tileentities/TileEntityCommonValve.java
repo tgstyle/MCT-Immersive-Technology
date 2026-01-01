@@ -4,13 +4,16 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,8 +33,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
-public abstract class TileEntityCommonValve extends TileEntityIEBase implements IEBlockInterfaces.IDirectionalTile, ITickable,
-		IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IGuiTile, IBinaryMessageReceiver {
+public abstract class TileEntityCommonValve extends TileEntityIEBase implements IEBlockInterfaces.IDirectionalTile, ITickable, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IGuiTile, IBinaryMessageReceiver {
 
 	final TranslationKey overlayNormal;
 	final TranslationKey overlaySneakingFirstLine;
@@ -65,29 +67,28 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	public long[] averages = new long[60];
 	public long[] packetTotals = new long[60];
 
-	public void efficientMarkDirty() {//!!!!!!! only use it within update() function !!!!!!!
-		world.getChunk(this.getPos()).markDirty();
+	public void efficientMarkDirty() { // only use within update()!
+		world.getChunk(getPos()).markDirty();
 	}
 
 	public void calculateAverages() {
 		long sum = 0;
-		for (long avg : averages) sum += avg;
+		for (long avg : averages) { sum += avg; }
 		average = sum / 60;
 		sum = 0;
-		for (long avg : packetTotals) sum += avg;
+		for (long total : packetTotals) { sum += total; }
 		packetAverage = (int)sum;
 	}
 
-	@Override
-	public void update() {
+	@Override public void update() {
 		if (world.isRemote) {
-			if (requestCooldown > 0) requestCooldown--;
+			if (requestCooldown > 0) { requestCooldown--; }
 			return;
 		}
 		efficientMarkDirty();
-		if (++secondCounter < 20) return;
-		if (average == 0 && acceptedAmount > 0) {//pre-populate averages to avoid slow build up
-			for (int i = 0; i < 60; i++) averages[i] = acceptedAmount;
+		if (++secondCounter < 20) { return; }
+		if (average == 0 && acceptedAmount > 0) { // pre-populate averages to avoid slow build-up
+			for (int i = 0; i < 60; i++) { averages[i] = acceptedAmount; }
 			packetTotals[minuteCounter] = packets;
 			calculateAverages();
 		}
@@ -107,22 +108,28 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 		}
 	}
 
-	@Override
-	public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
+	@Override public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote && !Utils.isHammer(heldItem)) {
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setInteger("packetLimit", packetLimit);
 			tag.setInteger("timeLimit", timeLimit);
 			tag.setInteger("keepSize", keepSize);
-			ImmersiveTechnology.packetHandler.sendTo(new MessageTileSync(this, tag), (EntityPlayerMP) player);
+			ImmersiveTechnology.packetHandler.sendTo(new MessageTileSync(this, tag), (EntityPlayerMP)player);
 			return true;
-		} else if (player.isSneaking() && Utils.isHammer(heldItem)) {
-			if (++redstoneMode > 2) redstoneMode = 0;
+		}
+		else if (player.isSneaking() && Utils.isHammer(heldItem)) {
+			if (++redstoneMode > 2) { redstoneMode = 0; }
 			String translationKey;
-			switch(redstoneMode) {
-				case 1: translationKey = TranslationKey.OVERLAY_REDSTONE_NORMAL.location; break;
-				case 2: translationKey = TranslationKey.OVERLAY_REDSTONE_INVERTED.location; break;
-				default: translationKey = TranslationKey.OVERLAY_REDSTONE_OFF.location;
+			switch (redstoneMode) {
+				case 1:
+					translationKey = TranslationKey.OVERLAY_REDSTONE_NORMAL.location;
+					break;
+				case 2:
+					translationKey = TranslationKey.OVERLAY_REDSTONE_INVERTED.location;
+					break;
+				default:
+					translationKey = TranslationKey.OVERLAY_REDSTONE_OFF.location;
+					break;
 			}
 			ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(translationKey));
 			efficientMarkDirty();
@@ -133,82 +140,72 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 
 	int requestCooldown = 0;
 
-	@Override
-	public @Nonnull String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
+	@Override @Nonnull public String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
 		if (requestCooldown == 0) {
 			ByteBuf message = Unpooled.copyBoolean(true);
 			BinaryMessageTileSync.sendToServer(getPos(), message);
 			requestCooldown = 20;
 		}
-		return player.isSneaking()? new String[] { overlaySneakingFirstLine.format((double)average / 20), overlaySneakingSecondLine.format(packetAverage)} : new String[]{ overlayNormal.format(lastAcceptedAmount) };
+		if (player.isSneaking()) {
+			return new String[]{
+					overlaySneakingFirstLine.format((double)average / 20),
+					overlaySneakingSecondLine.format(packetAverage)
+			};
+		}
+		return new String[]{ overlayNormal.format(lastAcceptedAmount) };
 	}
 
-	@Override
-	public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
+	@Override public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
 		ByteBuf message = Unpooled.copyInt(Math.max(packets, packetAverage));
 		message.writeLong(average);
 		message.writeLong(lastAcceptedAmount);
 		BinaryMessageTileSync.sendToPlayer(player, getPos(), message);
 	}
 
-	@Override
-	public void receiveMessageFromServer(ByteBuf buf) {
+	@Override public void receiveMessageFromServer(ByteBuf buf) {
 		packetAverage = buf.readInt();
 		average = buf.readLong();
 		lastAcceptedAmount = buf.readLong();
 	}
 
-	@Override
-	public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+	@Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
 		facing = EnumFacing.byIndex(nbt.getByte("facing"));
 		packetLimit = nbt.getInteger("packetLimit");
 		timeLimit = nbt.getInteger("timeLimit");
 		keepSize = nbt.getInteger("keepSize");
 		redstoneMode = nbt.getByte("redstoneMode");
-		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return;
+		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) { return; }
 		lastAcceptedAmount = acceptedAmount = nbt.getLong("acceptedAmount");
 		secondCounter = nbt.getInteger("secondCounter");
 		long avg = nbt.getLong("averages");
-		for (int i = 0; i < 60; i++) averages[i] = avg;
+		for (int i = 0; i < 60; i++) { averages[i] = avg; }
 		calculateAverages();
 	}
 
-	@Override
-	public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+	@Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
 		nbt.setByte("facing", (byte)facing.getIndex());
 		nbt.setInteger("packetLimit", packetLimit);
 		nbt.setInteger("timeLimit", timeLimit);
 		nbt.setInteger("keepSize", keepSize);
 		nbt.setByte("redstoneMode", redstoneMode);
-		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return;
+		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) { return; }
 		nbt.setLong("acceptedAmount", acceptedAmount);
 		nbt.setInteger("secondCounter", secondCounter);
 		calculateAverages();
 		nbt.setLong("averages", average);
 	}
 
-	@Override
-	public boolean canOpenGui() {
-		return true;
-	}
+	@Override public boolean canOpenGui() { return true; }
 
-	@Override
-	public int getGuiID() {
-		return GuiID;
-	}
+	@Override public int getGuiID() { return GuiID; }
 
-	@Nullable
-	@Override
-	public TileEntity getGuiMaster() {
-		return this;
-	}
+	@Nullable @Override public TileEntity getGuiMaster() { return this; }
 
 	@SideOnly(Side.CLIENT)
 	public abstract void showGui();
 
 	@SideOnly(Side.CLIENT)
-	@Override
-	public void receiveMessageFromServer(@Nonnull NBTTagCompound message) {
+	@Override public void receiveMessageFromServer(@Nonnull NBTTagCompound message) {
 		if (message.hasKey("packetLimit")) {
 			packetLimit = message.getInteger("packetLimit");
 			timeLimit = message.getInteger("timeLimit");
@@ -217,58 +214,38 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 		}
 	}
 
-	@Override
-	public void receiveMessageFromClient(@Nonnull NBTTagCompound message) {
+	@Override public void receiveMessageFromClient(@Nonnull NBTTagCompound message) {
 		packetLimit = message.getInteger("packetLimit");
 		timeLimit = message.getInteger("timeLimit");
 		keepSize = message.getInteger("keepSize");
 		efficientMarkDirty();
 	}
 
-	@Override
-	public boolean useNixieFont(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop) {
-		return false;
-	}
+	@Override public boolean useNixieFont(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop) { return false; }
 
-	@Override
-	public @Nonnull EnumFacing getFacing() {
-		return this.facing;
-	}
+	@Override @Nonnull public EnumFacing getFacing() { return facing; }
 
-	@Override
-	public void setFacing(@Nonnull EnumFacing facing) {
-		this.facing = facing;
-	}
+	@Override public void setFacing(@Nonnull EnumFacing facing) { this.facing = facing; }
 
-	@Override
-	public int getFacingLimitation() {
-		return 0;
-	}
+	@Override public int getFacingLimitation() { return 0; }
 
-	@Override
-	public boolean mirrorFacingOnPlacement(@Nonnull EntityLivingBase placer) {
-		return false;
-	}
+	@Override public boolean mirrorFacingOnPlacement(@Nonnull EntityLivingBase placer) { return false; }
 
-	@Override
-	public boolean canHammerRotate(@Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EntityLivingBase entity) {
-		return !entity.isSneaking();
-	}
+	@Override public boolean canHammerRotate(@Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EntityLivingBase entity) { return !entity.isSneaking(); }
 
-	@Override
-	public boolean canRotate(@Nonnull EnumFacing axis) {
-		return true;
-	}
+	@Override public boolean canRotate(@Nonnull EnumFacing axis) { return true; }
 
 	public int getRSPower() {
-		int toReturn = 0;
-		for (EnumFacing directions : EnumSet.complementOf(EnumSet.of(facing, facing.getOpposite()))) {
-			toReturn = Math.max(world.getRedstonePower(pos.offset(directions,-1), directions), toReturn);
+		int power = 0;
+		for (EnumFacing dir : EnumSet.complementOf(EnumSet.of(facing, facing.getOpposite()))) {
+			power = Math.max(world.getRedstonePower(pos.offset(dir, -1), dir), power);
 		}
-		return toReturn;
+		return power;
 	}
 
 	public static int longToInt(long value) {
-		return value > Integer.MAX_VALUE? Integer.MAX_VALUE : value < Integer.MIN_VALUE? Integer.MIN_VALUE : (int) value;
+		if (value > Integer.MAX_VALUE) { return Integer.MAX_VALUE; }
+		if (value < Integer.MIN_VALUE) { return Integer.MIN_VALUE; }
+		return (int)value;
 	}
 }

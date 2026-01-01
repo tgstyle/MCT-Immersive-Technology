@@ -30,8 +30,7 @@ public class BoilerDriver extends DriverSidedTileEntity {
 		return null;
 	}
 
-	@Override
-	public Class<?> getTileEntityClass() {
+	@Override public Class<?> getTileEntityClass() {
 		return TileEntityBoilerSlave.class;
 	}
 
@@ -88,13 +87,11 @@ public class BoilerDriver extends DriverSidedTileEntity {
 			return super.setEnabled(context, args);
 		}
 
-		@Override
-		public String preferredName() {
+		@Override public String preferredName() {
 			return "it_boiler";
 		}
 
-		@Override
-		public int priority() {
+		@Override public int priority() {
 			return 1000;
 		}
 	}

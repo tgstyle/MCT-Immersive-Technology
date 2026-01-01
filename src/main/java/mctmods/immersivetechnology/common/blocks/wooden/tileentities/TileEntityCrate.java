@@ -21,7 +21,6 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 
 public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler, IPlayerInteraction {
-
 	public ItemStack visibleItemStack = ItemStack.EMPTY;
 	public ItemStack interactiveItemStack = ItemStack.EMPTY;
 
@@ -32,50 +31,39 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 		visibleItemStack.setCount(visibleItemStack.getMaxStackSize());
 	}
 
-	@Override
-	public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+	@Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 		setItemStack(new ItemStack(nbt.getCompoundTag("item")));
 	}
 
-	@Override
-	public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+	@Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.setTag("item", interactiveItemStack.writeToNBT(new NBTTagCompound()));
 	}
 
-	@Override
-	public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+	@Override public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
     }
 
 	@SuppressWarnings("unchecked")
-	@Override
-	public @Nonnull <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+	@Override public @Nonnull <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)this;
 		return super.getCapability(capability, facing);
 	}
 
-	@Override
-	public int getSlots() {
+	@Override public int getSlots() {
 		return 1;
 	}
 
-	@Nonnull
-	@Override
-	public ItemStack getStackInSlot(int i) {
+	@Override @Nonnull public ItemStack getStackInSlot(int i) {
 		return visibleItemStack;
 	}
 
-	@Nonnull
-	@Override
-	public ItemStack insertItem(int i, @Nonnull ItemStack itemStack, boolean simulate) {
+	@Override @Nonnull public ItemStack insertItem(int i, @Nonnull ItemStack itemStack, boolean simulate) {
 		return itemStack;
 	}
 
-	@Nonnull
-	@Override
-	public ItemStack extractItem(int slot, int amount, boolean simulate) {
+	@Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) {
 		if (interactiveItemStack.isEmpty()) return ItemStack.EMPTY;
 		ItemStack toReturn = interactiveItemStack.copy();
 		toReturn.setCount(amount);
@@ -111,8 +99,7 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 		return false;
 	}
 
-	@Override
-	public @Nonnull String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
+	@Override @Nonnull public String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
 		if (requestCooldown == 0) {
 			ByteBuf message = Unpooled.copyBoolean(true);
 			BinaryMessageTileSync.sendToServer(getPos(), message);
@@ -121,21 +108,18 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 		return new String[]{ !interactiveItemStack.isEmpty()? text().format(interactiveItemStack.getDisplayName(), lastAcceptedAmount) : TranslationKey.GUI_EMPTY.text() };
 	}
 
-	@Override
-	public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
+	@Override public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
 		ByteBuf message = Unpooled.copyLong(lastAcceptedAmount);
 		ByteBufUtils.writeItemStack(message, interactiveItemStack);
 		BinaryMessageTileSync.sendToPlayer(player, getPos(), message);
 	}
 
-	@Override
-	public void receiveMessageFromServer(ByteBuf buf) {
+	@Override public void receiveMessageFromServer(ByteBuf buf) {
 		lastAcceptedAmount = buf.readLong();
 		setItemStack(ByteBufUtils.readItemStack(buf));
 	}
 	
-	@Override
-	public TranslationKey text() {
+	@Override public TranslationKey text() {
 		return TranslationKey.OVERLAY_OSD_CREATIVE_CRATE_NORMAL_FIRST_LINE;
 	}
 }

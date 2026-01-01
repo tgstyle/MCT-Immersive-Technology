@@ -11,11 +11,14 @@ import stanhebben.zenscript.annotations.ZenMethod;
 @SuppressWarnings("unused")
 @ZenClass("mods.immersivetechnology.Radiator")
 public class Radiator {
+
     @ZenMethod
     public static void addRecipe(ILiquidStack outputFluid, ILiquidStack inputFluid, int time) {
         FluidStack fluidOut = CraftTweakerHelper.toFluidStack(outputFluid);
         FluidStack fluidIn = CraftTweakerHelper.toFluidStack(inputFluid);
-        if (fluidOut == null || fluidIn == null) return;
+
+        if (fluidOut == null || fluidIn == null) { return; }
+
         RadiatorRecipe recipe = new RadiatorRecipe(fluidOut, fluidIn, time);
         CraftTweakerAPI.apply(new Add(recipe));
     }
@@ -23,25 +26,25 @@ public class Radiator {
     private static class Add implements IAction {
         public RadiatorRecipe recipe;
         public Add(RadiatorRecipe recipe) { this.recipe = recipe; }
-        @Override
-        public void apply() { RadiatorRecipe.recipeList.add(recipe); }
-        @Override
-        public String describe() { return "Adding Radiator Recipe for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName(); }
+
+        @Override public void apply() { RadiatorRecipe.recipeList.add(recipe); }
+
+        @Override public String describe() { return "Adding Radiator Recipe for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName(); }
     }
 
     @ZenMethod
     public static void removeRecipe(ILiquidStack inputFluid) {
-        if (CraftTweakerHelper.toFluidStack(inputFluid) != null) CraftTweakerAPI.apply(new Remove(CraftTweakerHelper.toFluidStack(inputFluid)));
+        FluidStack fluidIn = CraftTweakerHelper.toFluidStack(inputFluid);
+        if (fluidIn != null) { CraftTweakerAPI.apply(new Remove(fluidIn)); }
     }
 
     private static class Remove implements IAction {
         private final FluidStack inputFluid;
+
         public Remove(FluidStack inputFluid) { this.inputFluid = inputFluid; }
-        @Override
-        public void apply() {
-            RadiatorRecipe.recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(inputFluid));
-        }
-        @Override
-        public String describe() { return "Removing Radiator Input Recipe for " + inputFluid.getLocalizedName(); }
+
+        @Override public void apply() { RadiatorRecipe.recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(inputFluid)); }
+
+        @Override public String describe() { return "Removing Radiator Input Recipe for " + inputFluid.getLocalizedName(); }
     }
 }

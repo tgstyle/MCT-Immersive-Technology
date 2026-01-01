@@ -22,8 +22,7 @@ public class TileRenderMultiblockSlave extends TileEntitySpecialRenderer<TileEnt
 
     public static void clearRenderedThisFrame() { renderedThisFrame.clear(); }
 
-    @Override
-    public void render(@Nonnull TileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    @Override public void render(@Nonnull TileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         try {
             Method masterMethod = te.getClass().getMethod("master");
             Object masterObj = masterMethod.invoke(te);

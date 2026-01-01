@@ -1,12 +1,20 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IConfigurableSides;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import blusunrize.immersiveengineering.common.util.Utils;
+
 import mctmods.immersivetechnology.common.Config.ITConfig.Blocks;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,6 +24,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
+
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -23,10 +32,8 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IConfigurableSides, IPlayerInteraction, ITileDrop, IComparatorOverride, ITFluidTank.TankListener {
 
-public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IEBlockInterfaces.IConfigurableSides, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.ITileDrop, IEBlockInterfaces.IComparatorOverride, ITFluidTank.TankListener {
     private static final int tankSize = Blocks.barrels.barrel_steel_tankSize;
     private static final int transferSpeed = Blocks.barrels.barrel_steel_transferSpeed;
 
@@ -48,7 +55,7 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IEBloc
         super.readCustomNBT(nbt, descPacket);
         sideConfig = nbt.getIntArray("sideConfig");
         if (sideConfig.length < 2) { sideConfig = new int[]{-1, 0}; }
-        this.readTank(nbt);
+        readTank(nbt);
     }
 
     public void readTank(NBTTagCompound nbt) { tank.readFromNBT(nbt.getCompoundTag("tank")); }
@@ -57,7 +64,7 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IEBloc
     public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
         nbt.setIntArray("sideConfig", sideConfig);
-        this.writeTank(nbt, false);
+        writeTank(nbt, false);
     }
 
     public void writeTank(NBTTagCompound nbt, boolean toItem) {
@@ -104,20 +111,24 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IEBloc
     public void TankContentsChanged() { this.markContainingBlockForUpdate(null); }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) { return (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing.getAxis() == Axis.Y)) || super.hasCapability(capability, facing); }
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        return (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing.getAxis() == Axis.Y)) || super.hasCapability(capability, facing);
+    }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public @Nonnull <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing.getAxis() == Axis.Y)) { return (T)(facing == null ? nullsideFluidHandler : sidedFluidHandler[facing.ordinal()]); }
+    @Override @Nonnull
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing.getAxis() == Axis.Y)) {
+            return (T)(facing == null ? nullsideFluidHandler : sidedFluidHandler[facing.ordinal()]);
+        }
         return super.getCapability(capability, facing);
     }
 
     @Override
     public int getComparatorInputOverride() { return (int)(15 * (tank.getFluidAmount() / (float)tank.getCapacity())); }
 
-    @Override
-    public @Nonnull SideConfig getSideConfig(int side) { return (side > 1)? SideConfig.NONE : SideConfig.values()[this.sideConfig[side] + 1]; }
+    @Override @Nonnull
+    public SideConfig getSideConfig(int side) { return (side > 1) ? SideConfig.NONE : SideConfig.values()[this.sideConfig[side] + 1]; }
 
     @Override
     public boolean toggleSide(int side, @Nonnull EntityPlayer p) {
@@ -139,10 +150,12 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IEBloc
     public boolean isFluidInvalid(FluidStack fluid) { return fluid == null || fluid.getFluid() == null; }
 
     @Override
-    public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) { return FluidUtil.interactWithFluidHandler(player, hand, tank); }
+    public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
+        return FluidUtil.interactWithFluidHandler(player, hand, tank);
+    }
 
-    @Override
-    public @Nonnull ItemStack getTileDrop(EntityPlayer player, @Nonnull IBlockState state) {
+    @Override @Nonnull
+    public ItemStack getTileDrop(EntityPlayer player, @Nonnull IBlockState state) {
         ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
         NBTTagCompound tag = new NBTTagCompound();
         writeTank(tag, true);
@@ -158,17 +171,18 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IEBloc
         }
     }
 
-    @Override
-    public @Nonnull String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
+    @Override @Nonnull
+    public String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
         FluidStack fluid = tank.getFluid();
         int amount = (fluid != null) ? fluid.amount : 0;
-        return new String[]{ (fluid != null) ? text().format(fluid.getLocalizedName(), amount) : TranslationKey.GUI_EMPTY.text() };
+        return new String[] { (fluid != null) ? text().format(fluid.getLocalizedName(), amount) : TranslationKey.GUI_EMPTY.text() };
     }
 
     @Override
     public TranslationKey text() { return TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE; }
 
     public static class SidedFluidHandler implements IFluidHandler {
+
         public TileEntityBarrelSteel barrel;
         EnumFacing facing;
 
@@ -178,13 +192,19 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IEBloc
         }
 
         @Override
-        public int fill(FluidStack resource, boolean doFill) { return (resource == null || (facing != null && barrel.sideConfig[facing.ordinal()] != 0) || barrel.isFluidInvalid(resource))? 0 : barrel.tank.fill(resource, doFill); }
+        public int fill(FluidStack resource, boolean doFill) {
+            return (resource == null || (facing != null && barrel.sideConfig[facing.ordinal()] != 0) || barrel.isFluidInvalid(resource)) ? 0 : barrel.tank.fill(resource, doFill);
+        }
 
-        @Override
-        public FluidStack drain(FluidStack resource, boolean doDrain) { return (resource == null)? null : this.drain(resource.amount, doDrain); }
+        @Override @Nullable
+        public FluidStack drain(FluidStack resource, boolean doDrain) {
+            return (resource == null) ? null : this.drain(resource.amount, doDrain);
+        }
 
-        @Override
-        public FluidStack drain(int maxDrain, boolean doDrain) { return (facing != null && barrel.sideConfig[facing.ordinal()] != 1)? null : barrel.tank.drain(maxDrain, doDrain); }
+        @Override @Nullable
+        public FluidStack drain(int maxDrain, boolean doDrain) {
+            return (facing != null && barrel.sideConfig[facing.ordinal()] != 1) ? null : barrel.tank.drain(maxDrain, doDrain);
+        }
 
         @Override
         public IFluidTankProperties[] getTankProperties() { return barrel.tank.getTankProperties(); }

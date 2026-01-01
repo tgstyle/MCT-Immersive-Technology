@@ -38,9 +38,7 @@ public class BlockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
 
     @Override public boolean useCustomStateMapper() { return true; }
 
-    @Override public @Nonnull String getCustomStateMapping(int meta, boolean itemBlock) {
-        return BlockType_MetalMultiblock1.values()[meta].needsCustomState() ? BlockType_MetalMultiblock1.values()[meta].getCustomState() : "";
-    }
+    @Override @Nonnull public String getCustomStateMapping(int meta, boolean itemBlock) { return BlockType_MetalMultiblock1.values()[meta].needsCustomState() ? BlockType_MetalMultiblock1.values()[meta].getCustomState() : ""; }
 
     @Override public boolean allowHammerHarvest(IBlockState state) { return true; }
 
@@ -64,7 +62,7 @@ public class BlockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
         return null;
     }
 
-    @Override public @Nonnull AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
+    @Override @Nonnull public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
         TileEntity te = source.getTileEntity(pos);
         if (te instanceof ITBlockInterfaces.IBlockBounds) {
             float[] bounds = ((ITBlockInterfaces.IBlockBounds) te).getBlockBounds();
@@ -74,20 +72,16 @@ public class BlockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
     }
 
     @SideOnly(Side.CLIENT)
-    @Override
-    public @Nonnull AxisAlignedBB getSelectedBoundingBox(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
+    @Override @Nonnull public AxisAlignedBB getSelectedBoundingBox(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ITBlockInterfaces.IAdvancedSelectionBounds) {
             List<AxisAlignedBB> list = ((ITBlockInterfaces.IAdvancedSelectionBounds) te).getAdvancedSelectionBounds();
-            if (!list.isEmpty()) {
-                return new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
-            }
+            if (!list.isEmpty()) { return new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D); }
         }
         return getBoundingBox(state, world, pos).offset(pos);
     }
 
-    @Override
-    public RayTraceResult collisionRayTrace(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
+    @Override public RayTraceResult collisionRayTrace(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ITBlockInterfaces.IAdvancedSelectionBounds) {
             List<AxisAlignedBB> list = ((ITBlockInterfaces.IAdvancedSelectionBounds) te).getAdvancedSelectionBounds();
@@ -112,20 +106,17 @@ public class BlockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
         return super.collisionRayTrace(state, world, pos, start, end);
     }
 
-    @Override
-    public void addCollisionBoxToList(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
+    @Override public void addCollisionBoxToList(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
         TileEntity te = world.getTileEntity(pos);
         boolean hasAdvanced = false;
         if (te instanceof ITBlockInterfaces.IAdvancedCollisionBounds) {
             List<AxisAlignedBB> list = ((ITBlockInterfaces.IAdvancedCollisionBounds) te).getAdvancedCollisionBounds();
             for (AxisAlignedBB aabb : list) {
                 AxisAlignedBB worldAABB = aabb.offset(pos);
-                if (worldAABB.intersects(entityBox)) {
-                    collidingBoxes.add(worldAABB);
-                }
+                if (worldAABB.intersects(entityBox)) { collidingBoxes.add(worldAABB); }
             }
             hasAdvanced = !list.isEmpty();
         }
-        if (!hasAdvanced) super.addCollisionBoxToList(state, world, pos, entityBox, collidingBoxes, entityIn, isActualState);
+        if (!hasAdvanced) { super.addCollisionBoxToList(state, world, pos, entityBox, collidingBoxes, entityIn, isActualState); }
     }
 }

@@ -30,8 +30,7 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 		this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
 	}
 
-	@Override
-	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull MeltingCrucibleRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull MeltingCrucibleRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
 		int tankSize = 0;
@@ -52,11 +51,9 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
 	}
 	
-	@Override
-	public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull MeltingCrucibleRecipe recipe) { return new MeltingCrucibleRecipeWrapper(recipe); }
+	@Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull MeltingCrucibleRecipe recipe) { return new MeltingCrucibleRecipeWrapper(recipe); }
 
-	@Override
-	public void drawExtras(@Nonnull Minecraft minecraft) {
+	@Override public void drawExtras(@Nonnull Minecraft minecraft) {
 		arrow.draw(minecraft, 57, 39);
 	}
 }

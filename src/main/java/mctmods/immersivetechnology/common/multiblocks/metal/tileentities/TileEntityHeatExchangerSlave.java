@@ -31,6 +31,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -135,13 +136,32 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.energyInput0.isPoI(facing, pos)) return true;
+        if (capability == CapabilityEnergy.ENERGY && facing != null) {
+            TileEntityHeatExchangerMaster m = master();
+            if (m == null || !formed) return false;
+            return m.energyInput0.isPoI(facing, pos);
+        }
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            TileEntityHeatExchangerMaster m = master();
+            if (m == null || !formed) return false;
+            return m.getAccessibleFluidTanks(facing, pos).length > 0;
+        }
         return super.hasCapability(capability, facing);
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityEnergy.ENERGY && facing != null && master() != null && master.energyInput0.isPoI(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY && facing != null) {
+            TileEntityHeatExchangerMaster m = master();
+            if (m != null && formed && m.energyInput0.isPoI(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+        }
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            TileEntityHeatExchangerMaster m = master();
+            if (m != null && formed) {
+                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos);
+                if (accessible.length > 0) return (T)new TileEntityHeatExchangerMaster.HeatExchangerFluidHandler(accessible, m, facing, pos);
+            }
+        }
         return super.getCapability(capability, facing);
     }
 

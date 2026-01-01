@@ -1,14 +1,22 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IColouredTile;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlacementInteraction;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe;
 import blusunrize.immersiveengineering.common.util.Utils;
 
-import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.util.ITIPipe;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.mixin.MixinIETileEntityFluidPipe;
 
 import net.minecraft.block.state.IBlockState;
@@ -42,13 +50,8 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implements ITIPipe, IPlacementInteraction, ITileDrop, IColouredTile {
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implements ITIPipe, IEBlockInterfaces.IPlacementInteraction, IEBlockInterfaces.ITileDrop, IEBlockInterfaces.IColouredTile {
     private EnumDyeColor color = null;
     private final int transferRate = Settings.experimental.pipe_transfer_rate;
     private final int transferRatePressurized = Settings.experimental.pipe_pressurized_transfer_rate;
@@ -59,14 +62,12 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
     public void setColor(EnumDyeColor color) { this.color = color; }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public @Nonnull <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && (sideConfig[facing.ordinal()] == 0 || sideConfig[facing.ordinal()] == 1)) { return (T) sidedHandlers[facing.ordinal()]; }
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && (sideConfig[facing.ordinal()] == 0 || sideConfig[facing.ordinal()] == 1)) { return (T)sidedHandlers[facing.ordinal()]; }
         return super.getCapability(capability, facing);
     }
 
-    @Override
-    public void onLoad() {
+    @Override public void onLoad() {
         boolean changed = false;
         for (EnumFacing f : EnumFacing.VALUES) { if (world.isBlockLoaded(pos.offset(f))) { changed |= updateConnectionByte(f); } }
         if (changed || world.isRemote) { markContainingBlockForUpdate(null); }
@@ -86,14 +87,12 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
         }
     }
 
-    @Override
-    public void invalidate() {
+    @Override public void invalidate() {
         super.invalidate();
         if (!world.isRemote) { invalidateNetworkCache(pos); }
     }
 
-    @Override
-    public void onNeighborBlockChange(@Nonnull BlockPos otherPos) {
+    @Override public void onNeighborBlockChange(@Nonnull BlockPos otherPos) {
         EnumFacing dir = EnumFacing.getFacingFromVector(otherPos.getX() - pos.getX(), otherPos.getY() - pos.getY(), otherPos.getZ() - pos.getZ());
         boolean changed = updateConnectionByte(dir);
         if (changed) {
@@ -119,7 +118,7 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
             TileEntity pipeTile = Utils.getExistingTileEntity(world, next);
             if (pipeTile instanceof TileEntityFluidPipeAlternative) { indirectConnections.remove(next); }
             if (pipeTile instanceof TileEntityFluidPipe) {
-                MixinIETileEntityFluidPipe mixin = (MixinIETileEntityFluidPipe) pipeTile;
+                MixinIETileEntityFluidPipe mixin = (MixinIETileEntityFluidPipe)pipeTile;
                 for (int i = 0; i < 6; i++) {
                     EnumFacing fd = EnumFacing.byIndex(i);
                     if ((mixin.getConnections() & (1 << i)) != 0) {
@@ -135,23 +134,23 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
         }
     }
 
-    @Override
-    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         if (nbt.hasKey("color")) { color = EnumDyeColor.byMetadata(nbt.getInteger("color")); }
         else { color = null; }
     }
 
-    @Override
-    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
         if (color != null) { nbt.setInteger("color", color.getMetadata()); }
     }
 
-    @Override
-    public void readOnPlacement(@Nullable EntityLivingBase placer, ItemStack stack) {
+    @Override public void readOnPlacement(@Nullable EntityLivingBase placer, ItemStack stack) {
         color = null;
-        if (stack.hasTagCompound()) { assert stack.getTagCompound() != null; color = EnumDyeColor.byMetadata(stack.getTagCompound().getInteger("color")); }
+        if (stack.hasTagCompound()) {
+            assert stack.getTagCompound() != null;
+            color = EnumDyeColor.byMetadata(stack.getTagCompound().getInteger("color"));
+        }
         boolean changed = false;
         for (EnumFacing f : EnumFacing.VALUES) { changed |= updateConnectionByte(f); }
         if (changed) { invalidateNetworkCache(pos); }
@@ -171,19 +170,14 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
         }
     }
 
-    @Override
-    public void onTilePlaced(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {
-        // Removed toggle loop to prevent forced connections on placement for dissimilar colors/plain pipes
-    }
+    @Override public void onTilePlaced(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {}
 
-    @Override
-    public void onDataPacket(@Nonnull NetworkManager net, @Nonnull SPacketUpdateTileEntity pkt) {
+    @Override public void onDataPacket(@Nonnull NetworkManager net, @Nonnull SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         if (world.isRemote) { world.markBlockRangeForRenderUpdate(pos, pos); }
     }
 
-    @Override
-    public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
+    @Override public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         int heldDye = Utils.getDye(heldItem);
         if (heldDye != -1) {
             EnumDyeColor newColor = EnumDyeColor.byDyeDamage(heldDye);
@@ -217,8 +211,7 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
         return super.interact(side, player, hand, heldItem, hitX, hitY, hitZ);
     }
 
-    @Override
-    public void toggleSide(int side) {
+    @Override public void toggleSide(int side) {
         EnumFacing fd = EnumFacing.byIndex(side);
         BlockPos otherPos = pos.offset(fd);
         TileEntity te = world.getTileEntity(otherPos);
@@ -227,7 +220,7 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
         if (te instanceof TileEntityFluidPipe) {
             if (sideConfig[side] > 1) { sideConfig[side] = -1; }
             EnumFacing opp = fd.getOpposite();
-            TileEntityFluidPipe other = (TileEntityFluidPipe) te;
+            TileEntityFluidPipe other = (TileEntityFluidPipe)te;
             other.sideConfig[opp.ordinal()] = sideConfig[side];
             other.markDirty();
             boolean otherChanged = other.updateConnectionByte(opp);
@@ -241,19 +234,15 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
         world.addBlockEvent(getPos(), getBlockType(), 0, 0);
     }
 
-    @Override
-    public boolean receiveClientEvent(int id, int arg) { return super.receiveClientEvent(id, arg); }
+    @Override public boolean receiveClientEvent(int id, int arg) { return super.receiveClientEvent(id, arg); }
 
-    @Override
-    public void onEntityCollision(@Nonnull World world, @Nonnull Entity entity) { super.onEntityCollision(world, entity); }
+    @Override public void onEntityCollision(@Nonnull World world, @Nonnull Entity entity) { super.onEntityCollision(world, entity); }
 
     public void neighborPipeRemoved(EnumFacing direction) { onNeighborBlockChange(pos.offset(direction)); }
 
-    @Override
-    public boolean hasCover() { return !pipeCover.isEmpty(); }
+    @Override public boolean hasCover() { return !pipeCover.isEmpty(); }
 
-    @Override
-    public @Nonnull ItemStack getTileDrop(@Nullable EntityPlayer player, IBlockState state) {
+    @Override @Nonnull public ItemStack getTileDrop(@Nullable EntityPlayer player, IBlockState state) {
         ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().damageDropped(state));
         if (color != null) {
             NBTTagCompound nbt = stack.getTagCompound();
@@ -264,47 +253,41 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
         return stack;
     }
 
-    @Override
-    public boolean canOutputPressurized(boolean consumePower) { return true; }
+    @Override public boolean canOutputPressurized(boolean consumePower) { return true; }
 
-    @Override
-    public int[] getSideConfig() { return sideConfig; }
+    @Override public int[] getSideConfig() { return sideConfig; }
 
     protected boolean isFluidRelated(TileEntity te, EnumFacing side) {
         if (te instanceof TileEntityFluidPipe) {
-            EnumDyeColor other = (te instanceof TileEntityFluidPipeAlternative) ? ((TileEntityFluidPipeAlternative) te).getColor() : null;
+            EnumDyeColor other = (te instanceof TileEntityFluidPipeAlternative) ? ((TileEntityFluidPipeAlternative)te).getColor() : null;
             return color == other;
         }
         return te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite()) || te instanceof IFluidPipe;
     }
 
-    @Override
-    public boolean updateConnectionByte(@Nonnull EnumFacing side) {
+    @Override public boolean updateConnectionByte(@Nonnull EnumFacing side) {
         if (world.isRemote) { return false; }
-        MixinIETileEntityFluidPipe mixin = (MixinIETileEntityFluidPipe) this;
+        MixinIETileEntityFluidPipe mixin = (MixinIETileEntityFluidPipe)this;
         byte old = mixin.getConnections();
         int i = side.ordinal();
-        if (sideConfig[i] == -1) { mixin.setConnections((byte) (old & ~(1 << i))); }
+        if (sideConfig[i] == -1) { mixin.setConnections((byte)(old & ~(1 << i))); }
         else {
             TileEntity con = Utils.getExistingTileEntity(world, getPos().offset(side));
             boolean related = con != null && isFluidRelated(con, side);
-            if (related || sideConfig[i] == 1) { mixin.setConnections((byte) (old | (1 << i))); }
-            else { mixin.setConnections((byte) (old & ~(1 << i))); }
+            if (related || sideConfig[i] == 1) { mixin.setConnections((byte)(old | (1 << i))); }
+            else { mixin.setConnections((byte)(old & ~(1 << i))); }
         }
         return old != mixin.getConnections();
     }
 
-    @Override
-    public boolean hasOutputConnection(EnumFacing side) {
+    @Override public boolean hasOutputConnection(EnumFacing side) {
         int i = side.ordinal();
         return sideConfig[i] == 0 || sideConfig[i] == 1;
     }
 
-    @Override
-    public byte getAvailableConnectionByte() { return ((MixinIETileEntityFluidPipe)this).getConnections(); }
+    @Override public byte getAvailableConnectionByte() { return ((MixinIETileEntityFluidPipe)this).getConnections(); }
 
-    @Override
-    public int getConnectionStyle(int connection) {
+    @Override public int getConnectionStyle(int connection) {
         if (sideConfig[connection] == -1) { return 0; }
         byte conns = getAvailableConnectionByte();
         if ((conns & (1 << connection)) == 0) { return 0; }
@@ -313,7 +296,7 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
         if (con instanceof TileEntityFluidPipe) {
             EnumDyeColor neighborColor = (con instanceof TileEntityFluidPipeAlternative) ? ((TileEntityFluidPipeAlternative)con).color : null;
             if (color != neighborColor) { return 1; }
-            byte tileConns = ((TileEntityFluidPipe) con).getAvailableConnectionByte();
+            byte tileConns = ((TileEntityFluidPipe)con).getAvailableConnectionByte();
             if (conns == tileConns) { return 0; }
         }
         return 1;
@@ -347,15 +330,19 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
             int currentDist = pipeDist.get(next);
             TileEntity pipeTile = Utils.getExistingTileEntity(world, next);
             if (pipeTile instanceof TileEntityFluidPipe) {
-                MixinIETileEntityFluidPipe mixin = (MixinIETileEntityFluidPipe) pipeTile;
+                MixinIETileEntityFluidPipe mixin = (MixinIETileEntityFluidPipe)pipeTile;
                 for (int i = 0; i < 6; i++) {
                     EnumFacing fd = EnumFacing.byIndex(i);
                     if ((mixin.getConnections() & (1 << i)) != 0) {
                         BlockPos nextPos = next.offset(fd);
                         TileEntity adjacentTile = Utils.getExistingTileEntity(world, nextPos);
                         if (adjacentTile != null) {
-                            if (adjacentTile instanceof TileEntityFluidPipe) { if (visited.add(nextPos)) { openList.addLast(nextPos); pipeDist.put(nextPos, currentDist + 1); } }
-                            else if (adjacentTile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, fd.getOpposite())) {
+                            if (adjacentTile instanceof TileEntityFluidPipe) {
+                                if (visited.add(nextPos)) {
+                                    openList.addLast(nextPos);
+                                    pipeDist.put(nextPos, currentDist + 1);
+                                }
+                            } else if (adjacentTile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, fd.getOpposite())) {
                                 IFluidHandler handler = adjacentTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, fd.getOpposite());
                                 if (handler != null) {
                                     IFluidTankProperties[] tankInfo = handler.getTankProperties();
@@ -382,8 +369,7 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
     }
 
     @SideOnly(Side.CLIENT)
-    @Override
-    public @Nonnull List<BakedQuad> modifyQuads(@Nonnull IBlockState object, @Nonnull List<BakedQuad> quads) {
+    @Override @Nonnull public List<BakedQuad> modifyQuads(@Nonnull IBlockState object, @Nonnull List<BakedQuad> quads) {
         List<BakedQuad> modified = super.modifyQuads(object, quads);
         List<BakedQuad> newQuads = new ArrayList<>();
         for (BakedQuad quad : modified) {
@@ -395,38 +381,35 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
     }
 
     @SideOnly(Side.CLIENT)
-    @Override
-    public @Nonnull String getCacheKey(@Nonnull IBlockState object) { return getRenderCacheKey(); }
+    @Override @Nonnull public String getCacheKey(@Nonnull IBlockState object) { return getRenderCacheKey(); }
 
     @SideOnly(Side.CLIENT)
-    @Override
-    public @Nonnull Optional<TRSRTransformation> applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nonnull Optional<TRSRTransformation> transform) { return super.applyTransformations(object, group, transform); }
+    @Override @Nonnull public Optional<TRSRTransformation> applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nonnull Optional<TRSRTransformation> transform) { return super.applyTransformations(object, group, transform); }
 
     @SideOnly(Side.CLIENT)
-    @Override
-    public int getRenderColour(int tintIndex) { return color != null ? (color == EnumDyeColor.WHITE ? 0xffffffff : color.getColorValue() | 0xff000000) : 0xffffffff; }
+    @Override public int getRenderColour(int tintIndex) { return color != null ? (color == EnumDyeColor.WHITE ? 0xffffffff : color.getColorValue() | 0xff000000) : 0xffffffff; }
 
     @SideOnly(Side.CLIENT)
-    @Override
-    public int getRenderColour(@Nonnull IBlockState object, @Nonnull String group) { return color != null ? (color == EnumDyeColor.WHITE ? 0xffffffff : color.getColorValue() | 0xff000000) : 0xffffffff; }
+    @Override public int getRenderColour(@Nonnull IBlockState object, @Nonnull String group) { return color != null ? (color == EnumDyeColor.WHITE ? 0xffffffff : color.getColorValue() | 0xff000000) : 0xffffffff; }
 
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
-    @Override
-    public @Nonnull OBJModel.OBJState getOBJState() { return getStateFromKey(getRenderCacheKey()); }
+    @Override @Nonnull public OBJModel.OBJState getOBJState() { return getStateFromKey(getRenderCacheKey()); }
 
     protected String getRenderCacheKey() {
         StringBuilder key = new StringBuilder();
         byte conns = getAvailableConnectionByte();
-        for (int i = 0; i < 6; i++) { if ((conns & (1 << i)) != 0) { key.append(getConnectionStyle(i) == 1 ? "2" : "1"); } else { key.append("0"); } }
+        for (int i = 0; i < 6; i++) {
+            if ((conns & (1 << i)) != 0) { key.append(getConnectionStyle(i) == 1 ? "2" : "1"); }
+            else { key.append("0"); }
+        }
         if (!pipeCover.isEmpty()) { key.append("scaf:").append(pipeCover); }
         key.append(color);
         return key.toString();
     }
 
     @SideOnly(Side.CLIENT)
-    @Override
-    public @Nonnull AxisAlignedBB getRenderBoundingBox() {
+    @Override @Nonnull public AxisAlignedBB getRenderBoundingBox() {
         if (!pipeCover.isEmpty()) { return new AxisAlignedBB(pos); }
         double minX = 0.25, maxX = 0.75, minY = 0.25, maxY = 0.75, minZ = 0.25, maxZ = 0.75;
         byte conns = getAvailableConnectionByte();
@@ -445,14 +428,11 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
         return new AxisAlignedBB(pos.getX() + minX, pos.getY() + minY, pos.getZ() + minZ, pos.getX() + maxX, pos.getY() + maxY, pos.getZ() + maxZ);
     }
 
-    @Override
-    public @Nonnull List<AxisAlignedBB> getAdvancedColisionBounds() { return super.getAdvancedColisionBounds(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedColisionBounds() { return super.getAdvancedColisionBounds(); }
 
-    @Override
-    public @Nonnull List<AxisAlignedBB> getAdvancedSelectionBounds() { return super.getAdvancedSelectionBounds(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return super.getAdvancedSelectionBounds(); }
 
-    @Override
-    public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull ArrayList<AxisAlignedBB> list) { return super.isOverrideBox(box, player, mop, list); }
+    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull ArrayList<AxisAlignedBB> list) { return super.isOverrideBox(box, player, mop, list); }
 
     static class DistOutput {
         ITDirectionalFluidOutput out;
@@ -471,16 +451,14 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
             this.containingTile = containingTile;
         }
 
-        @Override
-        public boolean equals(Object o) {
+        @Override public boolean equals(Object o) {
             if (this == o) { return true; }
             if (!(o instanceof ITDirectionalFluidOutput)) { return false; }
-            ITDirectionalFluidOutput other = (ITDirectionalFluidOutput) o;
+            ITDirectionalFluidOutput other = (ITDirectionalFluidOutput)o;
             return containingTile.getPos().equals(other.containingTile.getPos()) && direction == other.direction;
         }
 
-        @Override
-        public int hashCode() { return containingTile.getPos().hashCode() * 31 + direction.hashCode(); }
+        @Override public int hashCode() { return containingTile.getPos().hashCode() * 31 + direction.hashCode(); }
     }
 
     class PipeFluidHandler implements IFluidHandler {
@@ -489,8 +467,7 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
 
         public PipeFluidHandler(EnumFacing facing) { this.origin = facing; }
 
-        @Override
-        public IFluidTankProperties[] getTankProperties() { return new IFluidTankProperties[]{new FluidTankProperties(null, transferRatePressurized, true, false)}; }
+        @Override public IFluidTankProperties[] getTankProperties() { return new IFluidTankProperties[] { new FluidTankProperties(null, transferRatePressurized, true, false) }; }
 
         private int fastFill(FluidStack resource, boolean doFill) {
             int remaining = resource.amount;
@@ -504,7 +481,12 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
                 if (!cc.equals(ccFrom) && world.isBlockLoaded(cc) && !TileEntityFluidPipeAlternative.this.equals(output.containingTile)) {
                     fillStack.amount = remaining;
                     FluidStack tempStack = fillStack.copy();
-                    if (!(output.containingTile instanceof IFluidPipe)) { if (tempStack.tag != null) { tempStack.tag.removeTag("pressurized"); if (tempStack.tag.isEmpty()) { tempStack.tag = null; } } }
+                    if (!(output.containingTile instanceof IFluidPipe)) {
+                        if (tempStack.tag != null) {
+                            tempStack.tag.removeTag("pressurized");
+                            if (tempStack.tag.isEmpty()) { tempStack.tag = null; }
+                        }
+                    }
                     int temp = output.output.fill(tempStack, false);
                     if (temp > 0) { candidates.add(output); }
                 }
@@ -520,7 +502,12 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
                 for (ITDirectionalFluidOutput output : toTry) {
                     fillStack.amount = remaining;
                     FluidStack tempStack = fillStack.copy();
-                    if (!(output.containingTile instanceof IFluidPipe)) { if (tempStack.tag != null) { tempStack.tag.removeTag("pressurized"); if (tempStack.tag.isEmpty()) { tempStack.tag = null; } } }
+                    if (!(output.containingTile instanceof IFluidPipe)) {
+                        if (tempStack.tag != null) {
+                            tempStack.tag.removeTag("pressurized");
+                            if (tempStack.tag.isEmpty()) { tempStack.tag = null; }
+                        }
+                    }
                     int r = output.output.fill(tempStack, doFill);
                     if (r > 0 && doFill) { lastSuccessfulOutput = output; }
                     f += r;
@@ -543,7 +530,12 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
                         }
                         FluidStack tempStack = fillStack.copy();
                         tempStack.amount = offer;
-                        if (!(output.containingTile instanceof IFluidPipe)) { if (tempStack.tag != null) { tempStack.tag.removeTag("pressurized"); if (tempStack.tag.isEmpty()) { tempStack.tag = null; } } }
+                        if (!(output.containingTile instanceof IFluidPipe)) {
+                            if (tempStack.tag != null) {
+                                tempStack.tag.removeTag("pressurized");
+                                if (tempStack.tag.isEmpty()) { tempStack.tag = null; }
+                            }
+                        }
                         int r = output.output.fill(tempStack, doFill);
                         f += r;
                         remaining -= r;
@@ -556,8 +548,7 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
             return f;
         }
 
-        @Override
-        public int fill(FluidStack resource, boolean doFill) {
+        @Override public int fill(FluidStack resource, boolean doFill) {
             if (resource == null || resource.amount == 0) { return 0; }
             boolean isPressurized = resource.tag != null && resource.tag.hasKey("pressurized") || ITContent.normallyPressurized.contains(resource.getFluid());
             int transferable = isPressurized ? transferRatePressurized : transferRate;
@@ -567,19 +558,14 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
             return fastFill(limited, doFill);
         }
 
-        @Nullable
-        @Override
-        public FluidStack drain(FluidStack resource, boolean doDrain) { return null; }
+        @Nullable @Override public FluidStack drain(FluidStack resource, boolean doDrain) { return null; }
 
-        @Nullable
-        @Override
-        public FluidStack drain(int maxDrain, boolean doDrain) { return null; }
+        @Nullable @Override public FluidStack drain(int maxDrain, boolean doDrain) { return null; }
     }
 
     @SideOnly(Side.CLIENT)
     @SuppressWarnings({"deprecation", "unused"})
-    @Nullable
-    public Object getCacheKey(IBlockState ownerState, OBJModel.OBJState modelState) { return new PipeCacheKey(((MixinIETileEntityFluidPipe)this).getConnections(), color); }
+    @Nullable public Object getCacheKey(IBlockState ownerState, OBJModel.OBJState modelState) { return new PipeCacheKey(((MixinIETileEntityFluidPipe)this).getConnections(), color); }
 
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("unused")
@@ -592,15 +578,13 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
             this.color = color;
         }
 
-        @Override
-        public boolean equals(Object obj) {
+        @Override public boolean equals(Object obj) {
             if (this == obj) { return true; }
             if (obj == null || getClass() != obj.getClass()) { return false; }
             PipeCacheKey other = (PipeCacheKey)obj;
             return connections == other.connections && color == other.color;
         }
 
-        @Override
-        public int hashCode() { return Objects.hash(connections, color); }
+        @Override public int hashCode() { return Objects.hash(connections, color); }
     }
 }

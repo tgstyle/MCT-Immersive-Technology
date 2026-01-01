@@ -11,13 +11,11 @@ public class OreDictRef implements IRefComparable {
         this.name = name;
     }
 
-    @Override
-    public boolean isEquals(ItemStack toCompare) {
+    @Override public boolean isEquals(ItemStack toCompare) {
         return Utils.compareToOreName(toCompare, name);
     }
 
-    @Override
-    public ItemStack toItemStack() {
+    @Override public ItemStack toItemStack() {
         return OreDictionary.getOres(name).get(0);
     }
 }

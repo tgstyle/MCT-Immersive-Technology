@@ -21,14 +21,12 @@ public class ContainerSolarMelter extends ContainerIEBase<TileEntitySolarMelterM
 
         slotCount = TileEntitySolarMelterMaster.slotCount;
         this.addSlotToContainer(new Slot(Objects.requireNonNull(this.inv), 0, 80, 17) {
-            @Override
-            public boolean isItemValid(@Nonnull ItemStack itemStack) {
+            @Override public boolean isItemValid(@Nonnull ItemStack itemStack) {
                 return MeltingCrucibleRecipe.findRecipe(itemStack) != null;
             }
         });
         this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 1, 148, 17, 0) {
-            @Override
-            public boolean isItemValid(ItemStack itemStack) {
+            @Override public boolean isItemValid(ItemStack itemStack) {
                 return itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) || FluidUtil.getFluidHandler(itemStack) != null;
             }
         });

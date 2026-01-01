@@ -17,8 +17,7 @@ public class ContainerDistiller extends ContainerIEBase<TileEntityDistillerMaste
 		slotCount = TileEntityDistillerMaster.slotCount;
 		final TileEntityDistillerMaster tileF = tile;
 		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 0, 26, 17, 2) {
-			@Override
-			public boolean isItemValid(ItemStack itemStack) {
+			@Override public boolean isItemValid(ItemStack itemStack) {
 				IFluidHandler h = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
 				if (h == null || h.getTankProperties().length == 0) return false;
 				FluidStack fs = h.getTankProperties()[0].getContents();
@@ -28,8 +27,7 @@ public class ContainerDistiller extends ContainerIEBase<TileEntityDistillerMaste
 		});
 		this.addSlotToContainer(new IESlot.Output(this, this.inv, 1, 26, 53));
 		this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 2, 134, 17, 0) {
-			@Override
-			public boolean isItemValid(ItemStack itemStack) {
+			@Override public boolean isItemValid(ItemStack itemStack) {
 				return super.isItemValid(itemStack) || itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
 			}
 		});

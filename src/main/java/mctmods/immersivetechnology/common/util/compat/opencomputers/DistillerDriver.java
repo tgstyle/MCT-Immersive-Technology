@@ -18,8 +18,7 @@ import java.util.HashMap;
 
 @SuppressWarnings("unused")
 public class DistillerDriver extends DriverSidedTileEntity {
-	@Override
-	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
+	@Override public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
 		if (tile instanceof TileEntityDistillerSlave) {
@@ -32,8 +31,7 @@ public class DistillerDriver extends DriverSidedTileEntity {
 		return null;
 	}
 
-	@Override
-	public Class<?> getTileEntityClass() {
+	@Override public Class<?> getTileEntityClass() {
 		return TileEntityDistillerSlave.class;
 	}
 
@@ -88,13 +86,11 @@ public class DistillerDriver extends DriverSidedTileEntity {
 			return super.setEnabled(context, args);
 		}
 
-		@Override
-		public String preferredName() {
+		@Override public String preferredName() {
 			return "it_distiller";
 		}
 
-		@Override
-		public int priority() {
+		@Override public int priority() {
 			return 1000;
 		}
 	}

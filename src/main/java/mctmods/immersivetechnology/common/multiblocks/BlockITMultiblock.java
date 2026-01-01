@@ -1,14 +1,15 @@
 package mctmods.immersivetechnology.common.multiblocks;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
+
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -26,18 +27,21 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+
 import java.util.Arrays;
+import java.util.Locale;
 
 public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEnum> extends BlockITTileProvider<E> {
+
     protected final boolean[] hasMultiblockTile;
 
     public BlockITMultiblock(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockITBase> itemBlock, Object... additionalProperties) {
-        super(name, material, mainProperty, itemBlock, combineProperties(additionalProperties, IEProperties.FACING_HORIZONTAL, IEProperties.MULTIBLOCKSLAVE));
+        super(name, material, mainProperty, itemBlock, combineProperties(additionalProperties));
         this.hasMultiblockTile = new boolean[this.enumValues.length];
         Arrays.fill(this.hasMultiblockTile, true);
     }
 
-    @Override public @Nonnull IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) { return super.getActualState(state, world, pos); }
+    @Override @Nonnull public IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) { return super.getActualState(state, world, pos); }
 
     @Override public boolean removedByPlayer(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player, boolean willHarvest) {
         if (!willHarvest) {
@@ -58,10 +62,10 @@ public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEn
             if (tile.formed && tile.shouldDropInventory) {
                 IIEInventory master = tile.master();
                 if (master != null && (!(master instanceof ITileDrop) || !((ITileDrop) master).preventInventoryDrop()) && master.getDroppedItems() != null) {
-                    for (ItemStack s : master.getDroppedItems()) { if (!s.isEmpty()) world.spawnEntity(new EntityItem(world, pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5, s.copy())); }
+                    for (ItemStack s : master.getDroppedItems()) if (!s.isEmpty()) world.spawnEntity(new EntityItem(world, pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5, s.copy()));
                 }
             }
-            if (world.getGameRules().getBoolean("doTileDrops") && tile.shouldDropOriginal) { if (!tile.formed && tile.pos == -1 && !tile.getOriginalBlock().isEmpty()) world.spawnEntity(new EntityItem(world, pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5, tile.getOriginalBlock().copy())); }
+            if (world.getGameRules().getBoolean("doTileDrops") && tile.shouldDropOriginal) if (!tile.formed && tile.pos == -1 && !tile.getOriginalBlock().isEmpty()) world.spawnEntity(new EntityItem(world, pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5, tile.getOriginalBlock().copy()));
         }
         if (tileEntity instanceof TileEntityMultiblockPart) ((TileEntityMultiblockPart<?>) tileEntity).disassemble();
         super.breakBlock(world, pos, state);
@@ -72,7 +76,7 @@ public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEn
         if (meta >= 0 && meta < this.hasMultiblockTile.length && !this.hasMultiblockTile[meta]) super.getDrops(drops, world, pos, state, fortune);
     }
 
-    @Override public @Nonnull ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+    @Override @Nonnull public ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
         ItemStack stack = getOriginalBlock(world, pos);
         if (!stack.isEmpty()) return stack;
         return super.getPickBlock(state, target, world, pos, player);
@@ -84,8 +88,7 @@ public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEn
         return ItemStack.EMPTY;
     }
 
-    @Override
-    public @Nonnull AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
+    @Override @Nonnull public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
         TileEntity te = source.getTileEntity(pos);
         if (te instanceof IBlockBounds) {
             float[] bounds = ((IBlockBounds) te).getBlockBounds();
@@ -96,8 +99,10 @@ public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEn
 
     @SuppressWarnings("deprecation")
     @SideOnly(Side.CLIENT)
-    @Override
-    public @Nonnull AxisAlignedBB getSelectedBoundingBox(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
-        return getBoundingBox(state, world, pos);
+    @Override @Nonnull public AxisAlignedBB getSelectedBoundingBox(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) { return getBoundingBox(state, world, pos); }
+
+    @Override @Nonnull public String getCustomStateMapping(int meta, boolean itemBlock) {
+        if (!itemBlock && enumValues[meta].name().toLowerCase(Locale.US).endsWith("_slave")) return "multiblockSlave";
+        return "";
     }
 }

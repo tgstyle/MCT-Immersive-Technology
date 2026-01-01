@@ -15,7 +15,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.ElectrolyticC
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartElectrolyticCrucibleBattery;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.shapes.*;
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -32,16 +31,14 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityITMultiblock<TileEntityElectrolyticCrucibleBatterySlave, ElectrolyticCrucibleBatteryRecipe, TileEntityElectrolyticCrucibleBatteryMaster> implements IFluxReceiver, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntityElectrolyticCrucibleBatterySlave() { super(TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance, Config.ITConfig.Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_energy_size, true); }
@@ -106,30 +103,31 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityITMult
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityElectrolyticCrucibleBatteryMaster m = master();
-            if (m == null) return false;
+            if (m == null || !formed) return false;
             return m.isEnergyPosition(facing, pos);
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityElectrolyticCrucibleBatteryMaster m = master();
-            if (m == null) return false;
+            if (m == null || !formed) return false;
             return m.getAccessibleFluidTanks(facing, pos).length > 0;
         }
         return super.hasCapability(capability, facing);
     }
 
     @SuppressWarnings("unchecked")
-    @Override public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityElectrolyticCrucibleBatteryMaster m = master();
-            if (m == null) return null;
-            if (m.isEnergyPosition(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+            if (m != null && formed && m.isEnergyPosition(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityElectrolyticCrucibleBatteryMaster m = master();
-            if (m == null || m.getAccessibleFluidTanks(facing, pos).length == 0) return null;
-            return (T) new ElectrolyticCrucibleBatteryFluidHandler(this, facing);
+            if (m != null && formed) {
+                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos);
+                if (accessible.length > 0) return (T)new TileEntityElectrolyticCrucibleBatteryMaster.ElectrolyticCrucibleBatteryFluidHandler(accessible, m, facing, pos);
+            }
         }
-        return Objects.requireNonNull(super.getCapability(capability, facing));
+        return super.getCapability(capability, facing);
     }
 
     @Override public @Nonnull FluxStorage getFluxStorage() { return master() == null ? new FluxStorage(0) : master.energyStorage; }
@@ -184,70 +182,5 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityITMult
         if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
         AxisAlignedBB bb = vs.bounds();
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
-    }
-
-    public static class ElectrolyticCrucibleBatteryFluidHandler implements IFluidHandler {
-        TileEntityElectrolyticCrucibleBatterySlave te;
-        EnumFacing facing;
-        IFluidTank[] tanks;
-
-        public ElectrolyticCrucibleBatteryFluidHandler(TileEntityElectrolyticCrucibleBatterySlave te, EnumFacing facing) {
-            this.te = te;
-            this.facing = facing;
-            TileEntityElectrolyticCrucibleBatteryMaster master = te.master();
-            if (master != null) tanks = master.getAccessibleFluidTanks(facing, te.pos);
-            else tanks = new IFluidTank[0];
-        }
-
-        @Override public IFluidTankProperties[] getTankProperties() {
-            List<IFluidTankProperties> props = new ArrayList<>();
-            for (IFluidTank tank : tanks) props.add(new FluidTankProperties(tank.getFluid(), tank.getCapacity()));
-            return props.toArray(new IFluidTankProperties[0]);
-        }
-
-        @Override public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null || resource.amount <= 0) return 0;
-            TileEntityElectrolyticCrucibleBatteryMaster master = te.master();
-            if (master == null) return 0;
-            for (int i = 0; i < tanks.length; i++) {
-                if (master.canFillTankFrom(i, facing, resource, te.pos)) {
-                    int filled = tanks[i].fill(resource, doFill);
-                    if (filled > 0 && doFill) master.TankContentsChanged();
-                    return filled;
-                }
-            }
-            return 0;
-        }
-
-        @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null || resource.amount <= 0) return null;
-            TileEntityElectrolyticCrucibleBatteryMaster master = te.master();
-            if (master == null) return null;
-            for (int i = 0; i < tanks.length; i++) {
-                if (master.canDrainTankFrom(i, facing, te.pos)) {
-                    FluidStack tankFluid = tanks[i].getFluid();
-                    if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
-                        FluidStack drained = tanks[i].drain(resource.amount, doDrain);
-                        if (drained != null && doDrain) master.TankContentsChanged();
-                        return drained;
-                    }
-                }
-            }
-            return null;
-        }
-
-        @Override public FluidStack drain(int maxDrain, boolean doDrain) {
-            if (maxDrain <= 0) return null;
-            TileEntityElectrolyticCrucibleBatteryMaster master = te.master();
-            if (master == null) return null;
-            for (int i = 0; i < tanks.length; i++) {
-                if (master.canDrainTankFrom(i, facing, te.pos)) {
-                    FluidStack drained = tanks[i].drain(maxDrain, doDrain);
-                    if (drained != null && doDrain) master.TankContentsChanged();
-                    return drained;
-                }
-            }
-            return null;
-        }
     }
 }

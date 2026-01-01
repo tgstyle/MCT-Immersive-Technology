@@ -42,21 +42,18 @@ public class BinaryMessageTileSync implements IMessage {
     public BinaryMessageTileSync() {
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
+    @Override public void fromBytes(ByteBuf buf) {
         this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
         this.buffer = buf.readBytes(buf.readableBytes());
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
+    @Override public void toBytes(ByteBuf buf) {
         buf.writeInt(pos.getX()).writeInt(pos.getY()).writeInt(pos.getZ());
         buf.writeBytes(buffer);
     }
 
     public static class HandlerServer implements IMessageHandler<BinaryMessageTileSync, IMessage> {
-        @Override
-        public IMessage onMessage(BinaryMessageTileSync message, MessageContext ctx) {
+        @Override public IMessage onMessage(BinaryMessageTileSync message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().player;
             WorldServer world = player.getServerWorld();
             world.addScheduledTask(() -> {
@@ -72,8 +69,7 @@ public class BinaryMessageTileSync implements IMessage {
 
     @SideOnly(Side.CLIENT)
     public static class HandlerClient implements IMessageHandler<BinaryMessageTileSync, IMessage> {
-        @Override
-        public IMessage onMessage(BinaryMessageTileSync message, MessageContext ctx) {
+        @Override public IMessage onMessage(BinaryMessageTileSync message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 World world = Minecraft.getMinecraft().world;
                 if (world != null) {

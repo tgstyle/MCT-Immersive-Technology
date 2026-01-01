@@ -11,11 +11,14 @@ import stanhebben.zenscript.annotations.ZenMethod;
 @SuppressWarnings("unused")
 @ZenClass("mods.immersivetechnology.HighPressureSteamTurbine")
 public class HighPressureSteamTurbine {
+
     @ZenMethod
     public static void addFuel(ILiquidStack outputFluid, ILiquidStack inputFluid, int time) {
         FluidStack fluidOut = CraftTweakerHelper.toFluidStack(outputFluid);
         FluidStack fluidIn = CraftTweakerHelper.toFluidStack(inputFluid);
-        if (fluidIn == null) return;
+
+        if (fluidIn == null) { return; }
+
         HighPressureSteamTurbineRecipe recipe = new HighPressureSteamTurbineRecipe(fluidOut, fluidIn, time);
         CraftTweakerAPI.apply(new Add(recipe));
     }
@@ -23,28 +26,28 @@ public class HighPressureSteamTurbine {
     private static class Add implements IAction {
         public HighPressureSteamTurbineRecipe recipe;
         public Add(HighPressureSteamTurbineRecipe recipe) { this.recipe = recipe; }
-        @Override
-        public void apply() { HighPressureSteamTurbineRecipe.recipeList.add(recipe); }
-        @Override
-        public String describe() {
-            if (recipe.fluidOutput == null) return "Adding High Pressure Steam Turbine Fuel for " + recipe.fluidInput.getLocalizedName();
+
+        @Override public void apply() { HighPressureSteamTurbineRecipe.recipeList.add(recipe); }
+
+        @Override public String describe() {
+            if (recipe.fluidOutput == null) { return "Adding High Pressure Steam Turbine Fuel for " + recipe.fluidInput.getLocalizedName(); }
             return "Adding High Pressure Steam Turbine Fuel for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName();
         }
     }
 
     @ZenMethod
     public static void removeFuel(ILiquidStack inputFluid) {
-        if (CraftTweakerHelper.toFluidStack(inputFluid) != null) CraftTweakerAPI.apply(new Remove(CraftTweakerHelper.toFluidStack(inputFluid)));
+        FluidStack fluidIn = CraftTweakerHelper.toFluidStack(inputFluid);
+        if (fluidIn != null) { CraftTweakerAPI.apply(new Remove(fluidIn)); }
     }
 
     private static class Remove implements IAction {
         private final FluidStack inputFluid;
+
         public Remove(FluidStack inputFluid) { this.inputFluid = inputFluid; }
-        @Override
-        public void apply() {
-            HighPressureSteamTurbineRecipe.recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(inputFluid));
-        }
-        @Override
-        public String describe() { return "Removing High Pressure Steam Turbine Fuel for " + inputFluid.getLocalizedName(); }
+
+        @Override public void apply() { HighPressureSteamTurbineRecipe.recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(inputFluid)); }
+
+        @Override public String describe() { return "Removing High Pressure Steam Turbine Fuel for " + inputFluid.getLocalizedName(); }
     }
 }

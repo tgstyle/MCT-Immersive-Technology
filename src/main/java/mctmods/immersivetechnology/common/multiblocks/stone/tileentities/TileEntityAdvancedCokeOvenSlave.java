@@ -9,6 +9,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
 import mctmods.immersivetechnology.api.ITGUI;
+import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.AdvancedCokeOvenShape;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
@@ -32,6 +33,7 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -82,7 +84,7 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
 
     @Override public void doGraphicalUpdates(int slot) {}
 
-    private TileEntityAdvancedCokeOvenMaster master;
+    protected TileEntityAdvancedCokeOvenMaster master;
 
     @Override public TileEntityAdvancedCokeOvenMaster master() {
         if (master != null && !master.isInvalid()) { return master; }
@@ -106,18 +108,17 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
         return super.hasCapability(capability, facing);
     }
 
-    @Nullable
     @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         TileEntityAdvancedCokeOvenMaster m = master();
-        if (m == null) { return null; }
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
+            if (m == null) { return (T)DUMMY_ITEM_HANDLER; }
             if (m.itemInput0 == null) { m.InitializePoIs(); }
             if (m.itemInput0.isPoI(facing, pos)) { return (T)m.inputHandler; }
             if (m.itemOutput0.isPoI(facing, pos)) { return (T)m.outputHandler; }
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            if (m == null) { return (T)DUMMY_FLUID_HANDLER; }
             if (m.fluidOutput0 == null) { m.InitializePoIs(); }
             if (m.fluidOutput0.isPoI(facing, pos)) { return (T)new AdvancedCokeOvenFluidHandler(this, facing); }
         }
@@ -220,9 +221,33 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
         }
     }
 
+    private static final IItemHandler DUMMY_ITEM_HANDLER = new IItemHandler() {
+        @Override public int getSlots() { return 0; }
+
+        @Override @Nonnull public ItemStack getStackInSlot(int slot) { return ItemStack.EMPTY; }
+
+        @Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) { return stack; }
+
+        @Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
+
+        @Override public int getSlotLimit(int slot) { return 0; }
+
+        @Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return false; }
+    };
+
+    private static final IFluidHandler DUMMY_FLUID_HANDLER = new IFluidHandler() {
+        @Override public IFluidTankProperties[] getTankProperties() { return new FluidTankProperties[0]; }
+
+        @Override public int fill(FluidStack resource, boolean doFill) { return 0; }
+
+        @Override public FluidStack drain(FluidStack resource, boolean doDrain) { return null; }
+
+        @Override public FluidStack drain(int maxDrain, boolean doDrain) { return null; }
+    };
+
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
 
-    @Override @Nonnull protected IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return null; }
+    @Override @Nonnull protected IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
 
     @Override @Nonnull public int[] getRedstonePos() { return new int[0]; }
 

@@ -25,8 +25,7 @@ import javax.annotation.Nonnull;
 public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntitySteamTurbineMaster> {
 
     @SuppressWarnings("deprecation")
-    @Override
-    public void render(@Nonnull TileEntitySteamTurbineMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    @Override public void render(@Nonnull TileEntitySteamTurbineMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         if (!te.formed || te.isDummy() || !te.getWorld().isBlockLoaded(te.getPos(), false)) { return; }
         final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
         BlockPos blockPos = te.getPos();

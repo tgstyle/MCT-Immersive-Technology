@@ -16,8 +16,7 @@ import org.lwjgl.opengl.GL11;
 public class TileRenderSolarReflector extends TileEntitySpecialRenderer<TileEntitySolarReflectorMaster> {
 
 	@SuppressWarnings("deprecation")
-	@Override
-	public void render(TileEntitySolarReflectorMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+	@Override public void render(TileEntitySolarReflectorMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		if (!te.formed || te.isDummy() || !te.getWorld().isBlockLoaded(te.getPos(), false)) {
 			return;
 		}

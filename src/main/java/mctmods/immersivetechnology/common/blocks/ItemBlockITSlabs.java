@@ -26,14 +26,12 @@ public class ItemBlockITSlabs extends ItemBlockITBase {
 		super(b);
 	}
 
-	@Override
-	public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag tooltipFlag) {
+	@Override public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag tooltipFlag) {
 		super.addInformation(stack, world, tooltip, tooltipFlag);
 	}
 
     @SuppressWarnings("deprecation")
-	@Override
-	public @Nonnull EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ) {
+	@Override @Nonnull public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ) {
 		ItemStack stack = player.getHeldItem(hand);
 		IBlockState iblockstate = world.getBlockState(pos);
 		Block localBlock = iblockstate.getBlock();
@@ -68,14 +66,13 @@ public class ItemBlockITSlabs extends ItemBlockITBase {
 			return super.onItemUse(player, world, pos, hand, side, hitX, hitY, hitZ);
 	}
 
-	@Override
+
 	@SideOnly(Side.CLIENT)
-	public boolean canPlaceBlockOnSide(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull ItemStack stack) {
+	@Override public boolean canPlaceBlockOnSide(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull ItemStack stack) {
 		return true;
 	}
 
-	@Override
-	public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState newState) {
+	@Override public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState newState) {
 		boolean ret = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
 		if (ret) {
 			TileEntity tileEntity = world.getTileEntity(pos);

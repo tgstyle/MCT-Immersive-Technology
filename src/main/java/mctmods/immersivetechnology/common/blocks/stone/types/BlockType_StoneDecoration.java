@@ -9,19 +9,15 @@ import java.util.Locale;
 public enum BlockType_StoneDecoration implements IStringSerializable, BlockITBase.IBlockEnum {
 	COKEBRICK_REINFORCED;
 
-	@Nonnull
-    @Override
-	public String getName() {
+	@Override @Nonnull public String getName() {
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
 
-	@Override
-	public int getMeta() {
+	@Override public int getMeta() {
 		return ordinal();
 	}
 
-	@Override
-	public boolean listForCreative() {
+	@Override public boolean listForCreative() {
 		return true;
 	}
 }

@@ -6,11 +6,9 @@ import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 
 public class OCHelper extends ITCompatModule {
 
-	@Override
-	public void preInit() { }
+	@Override public void preInit() { }
 
-	@Override
-	public void init() {
+	@Override public void init() {
 		if (Multiblocks.enable.enable_boiler) API.driver.add(new BoilerDriver());
 		if (Multiblocks.enable.enable_steamTurbine) API.driver.add(new SteamTurbineDriver());
 		if (Multiblocks.enable.enable_distiller) API.driver.add(new DistillerDriver());
@@ -19,8 +17,7 @@ public class OCHelper extends ITCompatModule {
 		if (Multiblocks.enable.enable_heatExchanger) API.driver.add(new HeatExchangerDriver());
 	}
 
-	@Override
-	public void postInit() {
+	@Override public void postInit() {
 		ComputerManualHelper.addManualContent();
 	}
 }

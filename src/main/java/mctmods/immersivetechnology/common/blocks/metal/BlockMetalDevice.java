@@ -23,6 +23,7 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import javax.annotation.Nonnull;
 
 public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice> {
+
     public BlockMetalDevice() {
         super("metal_device", Material.IRON, PropertyEnum.create("type", BlockType_MetalDevice.class), ItemBlockITBase.class, IEProperties.FACING_ALL, IEProperties.MULTIBLOCKSLAVE, IEProperties.BOOLEANS[0], IEProperties.DYNAMICRENDER, IEProperties.TILEENTITY_PASSTHROUGH);
         this.setHardness(3.0F);
@@ -35,17 +36,18 @@ public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice>
 
     @Override @Nonnull public String getCustomStateMapping(int meta, boolean itemBlock) {
         if (BlockType_MetalDevice.values()[meta] == BlockType_MetalDevice.ADVANCED_COKE_OVEN_BASEHEATER) { return "advanced_coke_oven_baseheater"; }
-        return null;
+        return "";
     }
 
     @Override public boolean canITBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack) {
         if (stack.getItemDamage() == BlockType_MetalDevice.ADVANCED_COKE_OVEN_BASEHEATER.getMeta()) {
             EnumFacing f = EnumFacing.fromAngle(player.rotationYaw);
             if (f.getAxis() == Axis.Z) {
-                return world.getBlockState(pos.add(1, 0, 0)).getBlock().isReplaceable(world, pos.add(1, 0, 0)) && world.getBlockState(pos.add(-1, 0, 0)).getBlock().isReplaceable(world, pos.add(-1, 0, 0));
-            } else {
-                return world.getBlockState(pos.add(0, 0, 1)).getBlock().isReplaceable(world, pos.add(0, 0, 1)) && world.getBlockState(pos.add(0, 0, -1)).getBlock().isReplaceable(world, pos.add(0, 0, -1));
+                return world.getBlockState(pos.add(1, 0, 0)).getBlock().isReplaceable(world, pos.add(1, 0, 0))
+                        && world.getBlockState(pos.add(-1, 0, 0)).getBlock().isReplaceable(world, pos.add(-1, 0, 0));
             }
+            return world.getBlockState(pos.add(0, 0, 1)).getBlock().isReplaceable(world, pos.add(0, 0, 1))
+                    && world.getBlockState(pos.add(0, 0, -1)).getBlock().isReplaceable(world, pos.add(0, 0, -1));
         }
         return true;
     }

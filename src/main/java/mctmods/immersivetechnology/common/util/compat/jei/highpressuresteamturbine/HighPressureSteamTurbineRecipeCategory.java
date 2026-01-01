@@ -30,8 +30,7 @@ public class HighPressureSteamTurbineRecipeCategory extends ITRecipeCategory<Hig
 	}
 
 	@SuppressWarnings("deprecation")
-	@Override
-	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull HighPressureSteamTurbineRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull HighPressureSteamTurbineRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
 
@@ -53,13 +52,11 @@ public class HighPressureSteamTurbineRecipeCategory extends ITRecipeCategory<Hig
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
 	}
 
-	@Override
-	public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull HighPressureSteamTurbineRecipe recipe) {
+	@Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull HighPressureSteamTurbineRecipe recipe) {
 		return new HighPressureSteamTurbineRecipeWrapper(recipe);
 	}
 
-	@Override
-	public void drawExtras(@Nonnull Minecraft minecraft) {
+	@Override public void drawExtras(@Nonnull Minecraft minecraft) {
 		turbineAndArrow.draw(minecraft, 42, 18);
 	}
 }

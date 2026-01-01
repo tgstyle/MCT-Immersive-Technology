@@ -20,8 +20,7 @@ public class RadiatorRecipeWrapper extends MultiblockRecipeWrapper {
 		this.recipe = recipe;
 	}
 
-	@Override
-	public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+	@Override public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
 		float time = recipe.getTotalProcessTime() / (speedMult);
 		String text = (GuiScreen.isShiftKeyDown())?
 				TranslationKey.GUI_TICKS.format(Math.round(time)) :

@@ -59,14 +59,14 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
         return master;
     }
 
-    @Override public @Nullable String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
+    @Override @Nonnull public String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
         if (Utils.isFluidRelatedItemStack(player.getHeldItem(EnumHand.MAIN_HAND))) {
             TileEntitySteelSheetmetalTankMaster m = master();
             FluidStack fs = (m != null && m.tank != null) ? m.tank.getFluid() : null;
             if (fs == null || fs.getFluid() == null) { return new String[]{TranslationKey.GUI_EMPTY.text()}; }
             else { return new String[]{TranslationKey.OVERLAY_STEEL_TANK_NORMAL_FIRST_LINE.format(fs.getLocalizedName(), fs.amount)}; }
         }
-        return null;
+        return new String[0];
     }
 
     @Override public boolean useNixieFont(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop) { return false; }

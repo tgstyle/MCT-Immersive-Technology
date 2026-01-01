@@ -18,7 +18,7 @@ public enum BlockType_StoneMultiblock implements IStringSerializable, BlockITBas
 
     @Override public boolean listForCreative() { return false; }
 
-    @Nonnull @Override public String getName() { return this.toString().toLowerCase(Locale.ENGLISH); }
+    @Override @Nonnull public String getName() { return this.toString().toLowerCase(Locale.ENGLISH); }
 
     public boolean needsCustomState() { return this.needsCustomState; }
 

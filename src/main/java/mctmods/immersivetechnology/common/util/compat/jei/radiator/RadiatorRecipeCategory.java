@@ -32,8 +32,7 @@ public class RadiatorRecipeCategory extends ITRecipeCategory<RadiatorRecipe, Rad
 	}
 
 	@SuppressWarnings("deprecation")
-	@Override
-	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull RadiatorRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull RadiatorRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		int tankCapacity = 0;
 		for (List<FluidStack> stacks : inputs) {
@@ -58,14 +57,11 @@ public class RadiatorRecipeCategory extends ITRecipeCategory<RadiatorRecipe, Rad
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
 	}
 
-	@Nonnull
-    @Override
-	public IRecipeWrapper getRecipeWrapper(@Nonnull RadiatorRecipe recipe) {
+    @Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull RadiatorRecipe recipe) {
 		return new RadiatorRecipeWrapper(recipe);
 	}
 
-	@Override
-	public void drawExtras(@Nonnull Minecraft minecraft) {
+	@Override public void drawExtras(@Nonnull Minecraft minecraft) {
 		arrow.draw(minecraft, 52, 51);
 		drops.draw(minecraft, 55, 32);
 	}

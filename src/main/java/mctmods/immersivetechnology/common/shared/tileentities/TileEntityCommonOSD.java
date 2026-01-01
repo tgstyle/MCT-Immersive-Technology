@@ -28,19 +28,15 @@ public abstract class TileEntityCommonOSD extends TileEntityIEBase implements IT
         if (world != null) world.getChunk(this.getPos()).markDirty();
     }
 
-    @Override
-    public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { lastAcceptedAmount = nbt.getLong("lastAcceptedAmount"); }
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { lastAcceptedAmount = nbt.getLong("lastAcceptedAmount"); }
 
-    @Override
-    public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { nbt.setLong("lastAcceptedAmount", lastAcceptedAmount); }
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { nbt.setLong("lastAcceptedAmount", lastAcceptedAmount); }
 
-    @Override
-    public void onLoad() {
+    @Override public void onLoad() {
         if (!world.isRemote) this.markContainingBlockForUpdate(null);
     }
 
-    @Override
-    public void update() {
+    @Override public void update() {
         if (world.isRemote) {
             if (requestCooldown > 0) { requestCooldown--; }
             return;
@@ -57,8 +53,7 @@ public abstract class TileEntityCommonOSD extends TileEntityIEBase implements IT
 
     public int requestCooldown = 0;
 
-    @Override
-    public @Nonnull String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
+    @Override @Nonnull public String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
         if (requestCooldown == 0) {
             ByteBuf message = Unpooled.copyBoolean(true);
             BinaryMessageTileSync.sendToServer(getPos(), message);
@@ -69,15 +64,12 @@ public abstract class TileEntityCommonOSD extends TileEntityIEBase implements IT
         return new String[]{ text().format(formattedValue) };
     }
 
-    @Override
-    public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
+    @Override public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
         ByteBuf message = Unpooled.copyLong(lastAcceptedAmount);
         BinaryMessageTileSync.sendToPlayer(player, getPos(), message);
     }
 
-    @Override
-    public void receiveMessageFromServer(ByteBuf buf) { lastAcceptedAmount = buf.readLong(); }
+    @Override public void receiveMessageFromServer(ByteBuf buf) { lastAcceptedAmount = buf.readLong(); }
 
-    @Override
-    public boolean useNixieFont(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop) { return false; }
+    @Override public boolean useNixieFont(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop) { return false; }
 }

@@ -25,8 +25,7 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
         return Shapes.create(aabb);
     }
 
-    @Override
-    public VoxelShape apply(BlockPos posInMultiblock) {
+    @Override public VoxelShape apply(BlockPos posInMultiblock) {
         List<AxisAlignedBB> list = getShape(posInMultiblock);
         if (list.isEmpty()) { return Shapes.empty(); }
         VoxelShape base = toVoxelShape(list.get(0));

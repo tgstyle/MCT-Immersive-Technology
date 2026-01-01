@@ -31,9 +31,8 @@ public class ItemITBase extends Item implements IColouredItem {
 
     public String[] getSubNames() { return subNames; }
 
-    @Override
     @SideOnly(Side.CLIENT)
-    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
+    @Override public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
         if (this.isInCreativeTab(tab)) {
             if (getSubNames() != null) {
                 for (int i = 0; i < getSubNames().length; i++) { if (!isMetaHidden(i)) { list.add(new ItemStack(this, 1, i)); } }
@@ -41,8 +40,7 @@ public class ItemITBase extends Item implements IColouredItem {
         }
     }
 
-    @Override
-    public @Nonnull String getTranslationKey(@Nonnull ItemStack stack) {
+    @Override @Nonnull public String getTranslationKey(@Nonnull ItemStack stack) {
         if (getSubNames() != null) {
             String subName = stack.getItemDamage() < getSubNames().length ? getSubNames()[stack.getItemDamage()] : "";
             return this.getTranslationKey() + "." + subName;
@@ -70,10 +68,7 @@ public class ItemITBase extends Item implements IColouredItem {
         return this;
     }
 
-    @Override
-    public boolean hasCustomItemColours() { return false; }
+    @Override public boolean hasCustomItemColours() { return false; }
 
-    @Override
-    public int getColourForIEItem(ItemStack stack, int pass) { return 0xffffff; }
-
+    @Override public int getColourForIEItem(ItemStack stack, int pass) { return 0xffffff; }
 }

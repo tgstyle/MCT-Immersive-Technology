@@ -21,8 +21,7 @@ public class TileRenderBarrelOpen extends TileEntitySpecialRenderer<TileEntityBa
 	int lightx, lighty;
 	double minU, minV, maxU, maxV, diffU, diffV;
 
-	@Override
-	public void render(TileEntityBarrelOpen te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+	@Override public void render(TileEntityBarrelOpen te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		final FluidTank tank = te.tank;
 		final int amount = tank.getFluidAmount();
 		final int capacity = tank.getCapacity();

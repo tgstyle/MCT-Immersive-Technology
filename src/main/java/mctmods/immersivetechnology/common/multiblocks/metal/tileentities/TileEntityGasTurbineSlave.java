@@ -114,6 +114,7 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
         return super.hasCapability(capability, facing);
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
     @Override public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {

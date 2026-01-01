@@ -21,8 +21,7 @@ public class SolarRegistryData extends WorldSavedData {
         super(name);
     }
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    @Override public void readFromNBT(NBTTagCompound nbt) {
         for (String key : nbt.getKeySet()) {
             if (key.startsWith("towers_")) {
                 int y = Integer.parseInt(key.substring(7));
@@ -52,8 +51,7 @@ public class SolarRegistryData extends WorldSavedData {
         }
     }
 
-    @Override
-    public @Nonnull NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
+    @Override @Nonnull public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
         for (Map.Entry<Integer, Set<BlockPos>> entry : towerBasesByY.entrySet()) {
             if (entry.getValue().isEmpty()) continue;
             NBTTagList list = new NBTTagList();

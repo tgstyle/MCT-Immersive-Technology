@@ -21,9 +21,7 @@ import java.util.Locale;
 
 public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> {
 
-	@Nullable
-	@Override
-	public TileEntity createBasicTE(World worldIn, BlockType_Valve type) {
+	@Override @Nullable public TileEntity createBasicTE(World worldIn, BlockType_Valve type) {
 		switch(type) {
 			case FLUID_VALVE: return new TileEntityFluidValve();
 			case LOAD_CONTROLLER: return new TileEntityLoadController();
@@ -37,18 +35,15 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 		LOAD_CONTROLLER,
 		STACK_LIMITER;
 
-		@Override
-		public @Nonnull String getName() {
+		@Override @Nonnull public String getName() {
 			return this.toString().toLowerCase(Locale.ENGLISH);
 		}
 
-		@Override
-		public int getMeta() {
+		@Override public int getMeta() {
 			return ordinal();
 		}
 
-		@Override
-		public boolean listForCreative() {
+		@Override public boolean listForCreative() {
 			return true;
 		}
 	}
@@ -61,8 +56,7 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 		this.setAllNotNormalBlock();
 	}
 
-	@Override
-	public boolean canConnectRedstone(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) {
+	@Override public boolean canConnectRedstone(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) {
 		return true;
 	}
 }

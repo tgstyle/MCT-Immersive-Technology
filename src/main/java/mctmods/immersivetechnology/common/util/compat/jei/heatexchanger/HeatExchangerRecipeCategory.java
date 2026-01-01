@@ -33,8 +33,7 @@ public class HeatExchangerRecipeCategory extends ITRecipeCategory<HeatExchangerR
         this.drops = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.BOTTOM, false);
     }
 
-    @Override
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull HeatExchangerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+    @Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull HeatExchangerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
         List<List<FluidStack>> inputs = ingredients.getInputs(VanillaTypes.FLUID);
         List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
@@ -62,11 +61,9 @@ public class HeatExchangerRecipeCategory extends ITRecipeCategory<HeatExchangerR
         guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
     }
 
-    @Override
-    public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull HeatExchangerRecipe recipe) { return new HeatExchangerRecipeWrapper(recipe); }
+    @Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull HeatExchangerRecipe recipe) { return new HeatExchangerRecipeWrapper(recipe); }
 
-    @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    @Override public void drawExtras(@Nonnull Minecraft minecraft) {
         arrow.draw(minecraft, 73, 50);
         drops.draw(minecraft, 73, 40);
     }

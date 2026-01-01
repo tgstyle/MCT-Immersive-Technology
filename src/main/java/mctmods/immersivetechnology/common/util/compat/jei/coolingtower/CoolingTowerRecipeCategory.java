@@ -32,8 +32,7 @@ public class CoolingTowerRecipeCategory extends ITRecipeCategory<CoolingTowerRec
     }
 
     @SuppressWarnings("deprecation")
-    @Override
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull CoolingTowerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+    @Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull CoolingTowerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
         List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
         List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
 
@@ -78,13 +77,11 @@ public class CoolingTowerRecipeCategory extends ITRecipeCategory<CoolingTowerRec
         guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
     }
 
-    @Override
-    public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull CoolingTowerRecipe recipe) {
+    @Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull CoolingTowerRecipe recipe) {
         return new CoolingTowerRecipeWrapper(recipe);
     }
 
-    @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    @Override public void drawExtras(@Nonnull Minecraft minecraft) {
         arrow.draw(minecraft, 52, 51);
         drops.draw(minecraft, 55, 32);
     }

@@ -42,8 +42,8 @@ public class GuiAdvancedCokeOven extends GuiIEContainerBase {
         ClientUtils.bindTexture("immersiveengineering:textures/gui/coke_oven.png");
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
-        if (tile.processMax > 0 && tile.process > 0) {
-            int h = (int)(12 * (tile.process / (float)tile.processMax));
+        if (tile.processMax > 0 && (tile.processMax - tile.process) > 0) {
+            int h = (int)(12 * ((tile.processMax - tile.process) / (float)tile.processMax));
             this.drawTexturedModalRect(guiLeft + 59, guiTop + 37 + 12 - h, 179, 1 + 12 - h, 9, h);
         }
 

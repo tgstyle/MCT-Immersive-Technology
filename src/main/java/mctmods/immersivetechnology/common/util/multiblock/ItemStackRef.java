@@ -9,13 +9,11 @@ public class ItemStackRef implements IRefComparable {
         this.itemStack = itemStack;
     }
 
-    @Override
-    public boolean isEquals(ItemStack toCompare) {
+    @Override public boolean isEquals(ItemStack toCompare) {
         return toCompare.isItemEqual(itemStack);
     }
 
-    @Override
-    public ItemStack toItemStack() {
+    @Override public ItemStack toItemStack() {
         return itemStack;
     }
 }

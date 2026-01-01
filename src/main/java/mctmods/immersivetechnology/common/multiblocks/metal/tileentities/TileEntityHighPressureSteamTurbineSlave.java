@@ -78,7 +78,7 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityITMultibl
 
     @Override public @Nonnull IFluidTank[] getInternalTanks() { TileEntityHighPressureSteamTurbineMaster m = master(); return m == null ? new IFluidTank[0] : m.tanks; }
 
-    @Override protected @Nullable HighPressureSteamTurbineRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return null; }
+    @Override @Nonnull protected HighPressureSteamTurbineRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return HighPressureSteamTurbineRecipe.loadFromNBT(tag); }
 
     @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
 

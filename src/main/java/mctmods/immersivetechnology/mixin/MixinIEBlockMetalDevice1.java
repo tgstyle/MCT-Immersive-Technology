@@ -43,8 +43,7 @@ public abstract class MixinIEBlockMetalDevice1 extends BlockIETileProvider<Block
      * @author tgstyle
      * @reason Handle pipe break logic conditionally
      */
-    @Overwrite
-    public void breakBlock(@Nonnull World world, @Nonnull BlockPos pos, IBlockState state) {
+    @Overwrite public void breakBlock(@Nonnull World world, @Nonnull BlockPos pos, IBlockState state) {
         if (state.getBlock().getMetaFromState(state) == BlockTypes_MetalDevice1.FLUID_PIPE.getMeta()) {
             TileEntity te = world.getTileEntity(pos);
             if (!MCTMixinConfig.mixinSettings.replace_IE_pipes && te instanceof TileEntityFluidPipe) {

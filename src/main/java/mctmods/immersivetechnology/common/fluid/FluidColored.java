@@ -50,8 +50,7 @@ public class FluidColored extends Fluid {
 		}
 	}
 
-	@Override
-	public int getColor() {
+	@Override public int getColor() {
 		return color|0xff000000;
 	}
 }

@@ -1,14 +1,20 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
+import blusunrize.immersiveengineering.common.util.Utils;
+
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITIPipe;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
+
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -27,11 +34,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPlayerInteraction, ITileDrop, IFluidHandler, IFluidTank, IFluidTankProperties {
-    @Nullable private FluidStack selectedFluid;
+
+    @Nullable
+    private FluidStack selectedFluid;
 
     public TileEntityBarrelCreative() {}
 
@@ -47,7 +53,9 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
 
     public void setSelectedFluid(@Nullable FluidStack stack) {
         if (stack != null && stack.amount != 1) { stack = Utils.copyFluidStackWithAmount(stack, 1, true); }
-        boolean changed = (selectedFluid != null && stack != null && !selectedFluid.isFluidStackIdentical(stack)) || (selectedFluid != null && stack == null) || (selectedFluid == null && stack != null);
+        boolean changed = (selectedFluid != null && stack != null && !selectedFluid.isFluidStackIdentical(stack))
+                || (selectedFluid != null && stack == null)
+                || (selectedFluid == null && stack != null);
         if (!changed) { return; }
         selectedFluid = stack;
         if (world != null) {
@@ -56,7 +64,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
             if (!world.isRemote) {
                 world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
                 SPacketUpdateTileEntity packet = this.getUpdatePacket();
-                for (EntityPlayerMP player : world.getPlayers(EntityPlayerMP.class, p -> p.getDistanceSq(getPos()) < 64 * 64)) {
+                for (EntityPlayerMP player : world.getPlayers(EntityPlayerMP.class, p -> p.getDistanceSq(getPos()) < 64*64)) {
                     player.connection.sendPacket(packet);
                 }
             }
@@ -111,27 +119,26 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public @Nonnull <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) { return (T) this; }
+    @Override @Nonnull
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) { return (T)this; }
         return super.getCapability(capability, facing);
     }
 
     @Override
-    public IFluidTankProperties[] getTankProperties() { return new IFluidTankProperties[]{this}; }
+    public IFluidTankProperties[] getTankProperties() { return new IFluidTankProperties[] { this }; }
 
     @Override
     public int fill(FluidStack resource, boolean doFill) { return 0; }
 
-    @Nullable
-    @Override
+    @Override @Nullable
     public FluidStack drain(FluidStack resource, boolean doDrain) {
         if (selectedFluid == null || resource == null || !resource.isFluidEqual(selectedFluid)) { return null; }
         if (doDrain) { acceptedAmount += resource.amount; }
         return Utils.copyFluidStackWithAmount(selectedFluid, resource.amount, true);
     }
 
-    @Override
+    @Override @Nullable
     public FluidStack drain(int maxDrain, boolean doDrain) {
         if (selectedFluid == null) { return null; }
         if (doDrain) { acceptedAmount += maxDrain; }
@@ -150,8 +157,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
     @Override
     public FluidTankInfo getInfo() { return new FluidTankInfo(getFluid(), getCapacity()); }
 
-    @Nullable
-    @Override
+    @Override @Nullable
     public FluidStack getContents() { return getFluid(); }
 
     @Override
@@ -180,8 +186,8 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
         return FluidUtil.interactWithFluidHandler(player, hand, this);
     }
 
-    @Override
-    public @Nonnull ItemStack getTileDrop(EntityPlayer player, @Nonnull IBlockState state) {
+    @Override @Nonnull
+    public ItemStack getTileDrop(EntityPlayer player, @Nonnull IBlockState state) {
         ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
         if (selectedFluid != null) {
             NBTTagCompound tag = new NBTTagCompound();
@@ -208,15 +214,15 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
         }
     }
 
-    @Override
-    public @Nonnull String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
+    @Override @Nonnull
+    public String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
         if (requestCooldown == 0) {
             ByteBuf message = Unpooled.copyBoolean(true);
             BinaryMessageTileSync.sendToServer(getPos(), message);
             requestCooldown = 20;
         }
-        if (selectedFluid != null) { return new String[]{ text().format(selectedFluid.getLocalizedName(), lastAcceptedAmount) }; }
-        return new String[]{ TranslationKey.GUI_EMPTY.text() };
+        if (selectedFluid != null) { return new String[] { text().format(selectedFluid.getLocalizedName(), lastAcceptedAmount) }; }
+        return new String[] { TranslationKey.GUI_EMPTY.text() };
     }
 
     @Override

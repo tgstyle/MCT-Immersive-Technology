@@ -29,8 +29,7 @@ public class ElectrolyticCrucibleBatteryRecipeCategory extends ITRecipeCategory<
         this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
     }
 
-    @Override
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull ElectrolyticCrucibleBatteryWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+    @Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull ElectrolyticCrucibleBatteryWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
         List<List<FluidStack>> inputs = ingredients.getInputs(VanillaTypes.FLUID);
         List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
@@ -62,13 +61,11 @@ public class ElectrolyticCrucibleBatteryRecipeCategory extends ITRecipeCategory<
         guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
     }
 
-    @Override
-    public @Nonnull IRecipeWrapper getRecipeWrapper(@Nonnull ElectrolyticCrucibleBatteryRecipe recipe) {
+    @Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull ElectrolyticCrucibleBatteryRecipe recipe) {
         return new ElectrolyticCrucibleBatteryWrapper(recipe);
     }
 
-    @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    @Override public void drawExtras(@Nonnull Minecraft minecraft) {
         arrow.draw(minecraft, 50, 39);
     }
 }

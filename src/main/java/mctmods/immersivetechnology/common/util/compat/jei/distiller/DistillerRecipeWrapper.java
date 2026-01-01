@@ -18,9 +18,8 @@ public class DistillerRecipeWrapper extends MultiblockRecipeWrapper {
 		this.recipe = recipe;
 	}
 
-	@Override
 	@SideOnly(Side.CLIENT)
-	public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+	@Override public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
 		String text = (GuiScreen.isShiftKeyDown())?
 				TranslationKey.GUI_TICKS.format(recipe.getTotalProcessTime()) :
 				TranslationKey.GUI_SECONDS.format(((float)recipe.getTotalProcessTime()) / 20);

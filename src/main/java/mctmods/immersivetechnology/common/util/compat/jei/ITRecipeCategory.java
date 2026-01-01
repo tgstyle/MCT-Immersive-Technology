@@ -31,50 +31,26 @@ public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements I
 	}
 
 	public void addCatalysts(IModRegistry registry) {
-		for (GenericMultiblockIngredient stack : displayStacks) {
-			if (stack!=null) registry.addRecipeCatalyst(stack, getUid());
-		}
+		for (GenericMultiblockIngredient stack : displayStacks) if (stack != null) registry.addRecipeCatalyst(stack, getUid());
 	}
 
-	@Nullable
-	@Override
-	public IDrawable getIcon() { return null; }
+	@Override @Nullable public IDrawable getIcon() { return null; }
 
-	@Override
-	public @Nonnull String getUid() {
-		return "it."+uniqueName;
-	}
+	@Override @Nonnull public String getUid() { return "it." + uniqueName; }
 
-	@Override
-	public @Nonnull String getTitle() {
-		return localizedName;
-	}
+	@Override @Nonnull public String getTitle() { return localizedName; }
 
-	@Override
-	public @Nonnull IDrawable getBackground() {
-		return background;
-	}
+	@Override @Nonnull public IDrawable getBackground() { return background; }
 
-	@Override
-	public void drawExtras(@Nonnull Minecraft minecraft) { }
+	@Override public void drawExtras(@Nonnull Minecraft minecraft) { }
 
-	@Override
-	public @Nonnull List<String> getTooltipStrings(int mouseX, int mouseY) {
-		return Collections.emptyList();
-	}
+	@Override @Nonnull public List<String> getTooltipStrings(int mouseX, int mouseY) { return Collections.emptyList(); }
 
-	public Class<T> getRecipeClass() {
-		return this.recipeClass;
-	}
+	public Class<T> getRecipeClass() { return this.recipeClass; }
 
-	public String getRecipeCategoryUid() {
-		return "it."+uniqueName;
-	}
+	public String getRecipeCategoryUid() { return "it." + uniqueName; }
 
 	public boolean isRecipeValid(T recipe) { return true; }
 
-	@Override
-	public @Nonnull String getModName() {
-		return ImmersiveTechnology.NAME;
-	}
+	@Override @Nonnull public String getModName() { return ImmersiveTechnology.NAME; }
 }

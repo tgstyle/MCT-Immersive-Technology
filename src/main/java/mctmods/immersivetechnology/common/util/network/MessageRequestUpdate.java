@@ -17,20 +17,17 @@ public class MessageRequestUpdate implements IMessage {
 
 	public MessageRequestUpdate() { }
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
+	@Override public void fromBytes(ByteBuf buf) {
 		this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
 	}
 
-	@Override
-	public void toBytes(ByteBuf buf) {
+	@Override public void toBytes(ByteBuf buf) {
 		buf.writeInt(pos.getX()).writeInt(pos.getY()).writeInt(pos.getZ());
 	}
 
 	@SideOnly(Side.CLIENT)
 	public static class HandlerClient implements IMessageHandler<MessageRequestUpdate, IMessage> {
-		@Override
-		public IMessage onMessage(MessageRequestUpdate message, MessageContext ctx) {
+		@Override public IMessage onMessage(MessageRequestUpdate message, MessageContext ctx) {
 			return null;
 		}
 	}

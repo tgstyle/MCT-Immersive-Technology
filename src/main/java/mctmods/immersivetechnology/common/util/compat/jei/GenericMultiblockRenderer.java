@@ -15,8 +15,7 @@ import java.util.List;
 public class GenericMultiblockRenderer implements IIngredientRenderer<GenericMultiblockIngredient> {
     public static GenericMultiblockRenderer INSTANCE = new GenericMultiblockRenderer();
 
-    @Override
-    public void render(@Nonnull Minecraft minecraft, int xPosition, int yPosition, @Nullable GenericMultiblockIngredient genericMultiblockIngredient) {
+    @Override public void render(@Nonnull Minecraft minecraft, int xPosition, int yPosition, @Nullable GenericMultiblockIngredient genericMultiblockIngredient) {
         RenderHelper.enableGUIStandardItemLighting();
         assert genericMultiblockIngredient != null;
         minecraft.getRenderItem().renderItemAndEffectIntoGUI(null, genericMultiblockIngredient.renderStack, xPosition, yPosition);
@@ -25,8 +24,7 @@ public class GenericMultiblockRenderer implements IIngredientRenderer<GenericMul
         GlStateManager.color(1, 1, 1, 1);
     }
 
-    @Override
-    public @Nonnull List<String> getTooltip(@Nonnull Minecraft minecraft, @Nonnull GenericMultiblockIngredient ingredient, @Nonnull ITooltipFlag tooltipFlag) {
+    @Override @Nonnull public List<String> getTooltip(@Nonnull Minecraft minecraft, @Nonnull GenericMultiblockIngredient ingredient, @Nonnull ITooltipFlag tooltipFlag) {
         return Arrays.asList(ingredient.renderStack.getDisplayName(), TranslationKey.GUI_GENERIC_MULTIBLOCK_TOOLTIP.text());
     }
 }
