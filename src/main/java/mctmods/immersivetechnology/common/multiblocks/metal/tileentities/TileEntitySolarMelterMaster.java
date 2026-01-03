@@ -129,7 +129,17 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     @Override public void onChunkUnload() { ITSoundHandler.StopSound(soundPos0); super.onChunkUnload(); }
 
     @Override public void disassemble() {
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        if (soundPos0 != null) {
+            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        }
+        if (!world.isRemote) {
+            for (ItemStack stack : inventory) {
+                if (!stack.isEmpty()) {
+                    Utils.dropStackAtPos(world, getPos(), stack);
+                }
+            }
+            inventory.clear();
+        }
         detachMirrors();
         SolarRegistry.unregisterTower(world, basePos0);
         super.disassemble();
@@ -157,7 +167,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     @Override public void receiveMessageFromServer(ByteBuf message) {
         heatLevel = message.readDouble();
         solarIncidenceAngleSection = message.readInt();
-        isRunning = message.readBoolean();
+        isRunning = message.getBoolean(0);
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
@@ -258,7 +268,6 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
                 else if (inventory.get(2).isEmpty()) inventory.set(2, filled.copy());
                 inventory.get(1).shrink(1);
                 if (inventory.get(1).getCount() <= 0) inventory.set(1, ItemStack.EMPTY);
-                markContainingBlockForUpdate(null);
                 update = true;
             }
             if (pumpOutputOut()) update = true;
@@ -370,18 +379,6 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         if (redstone0 == null) InitializePoIs();
         return new int[] {redstone0.position};
     }
-
-    public NonNullList<ItemStack> getInventory() { return inventory; }
-
-    public boolean isStackValid(int slot, ItemStack stack) {
-        if (slot == 0) return MeltingCrucibleRecipe.findRecipe(stack) != null;
-        if (slot == 1) return Utils.isFluidRelatedItemStack(stack);
-        return false;
-    }
-
-    public NonNullList<ItemStack> getDroppedItems() { return inventory; }
-
-    public int getComparatedSize() { return inventory.size(); }
 
     private int computeSolarIncidenceAngleSection() {
         int light = world.getSkylightSubtracted();

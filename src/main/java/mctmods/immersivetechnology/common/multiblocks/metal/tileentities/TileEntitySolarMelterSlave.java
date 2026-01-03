@@ -34,13 +34,15 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntitySolarMelterSlave, MeltingCrucibleRecipe, TileEntitySolarMelterMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IGuiTile {
+public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntitySolarMelterSlave, MeltingCrucibleRecipe, TileEntitySolarMelterMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IGuiTile, IIEInventory {
 
     private int loadGrace = 0;
 
@@ -68,13 +70,21 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
         return master;
     }
 
-    @Override public NonNullList<ItemStack> getInventory() { return master() == null ? NonNullList.withSize(1, ItemStack.EMPTY) : master.inventory; }
+    @Override public NonNullList<ItemStack> getInventory() {
+        TileEntitySolarMelterMaster m = master();
+        return m == null ? NonNullList.withSize(3, ItemStack.EMPTY) : m.inventory;
+    }
 
     @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
 
     @Override public int getSlotLimit(int slot) { return 64; }
 
-    @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
+    @Override public void doGraphicalUpdates(int slot) { this.markDirty(); this.markContainingBlockForUpdate(null); }
+
+    @Override @Nonnull public IFluidTank[] getInternalTanks() {
+        TileEntitySolarMelterMaster m = master();
+        return m == null ? new IFluidTank[0] : m.tanks;
+    }
 
     @Override @Nonnull protected MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return MeltingCrucibleRecipe.loadFromNBT(tag); }
 

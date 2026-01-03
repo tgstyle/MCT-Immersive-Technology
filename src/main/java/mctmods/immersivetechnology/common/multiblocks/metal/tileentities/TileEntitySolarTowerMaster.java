@@ -36,8 +36,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -47,11 +47,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver {
 
@@ -143,7 +139,17 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     @Override public void onChunkUnload() { ITSoundHandler.StopSound(soundPos0); super.onChunkUnload(); }
 
     @Override public void disassemble() {
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        if (soundPos0 != null) {
+            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        }
+        if (!world.isRemote) {
+            for (ItemStack stack : inventory) {
+                if (!stack.isEmpty()) {
+                    Utils.dropStackAtPos(world, getPos(), stack.copy());
+                }
+            }
+            inventory.clear();
+        }
         detachMirrors();
         SolarRegistry.unregisterTower(world, basePos0);
         super.disassemble();
@@ -370,15 +376,15 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         }
     }
 
-    @Override public boolean isDummy() { return false; }
-
-    @Override public TileEntitySolarTowerMaster master() { return this; }
-
     @Override public void TankContentsChanged() {
         FluidStack input = tanks[0].getFluid();
         cachedRecipe = input != null && input.amount > 0 ? SolarTowerRecipe.findRecipe(input) : null;
         markContainingBlockForUpdate(null);
     }
+
+    @Override public boolean isDummy() { return false; }
+
+    @Override public TileEntitySolarTowerMaster master() { return this; }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;

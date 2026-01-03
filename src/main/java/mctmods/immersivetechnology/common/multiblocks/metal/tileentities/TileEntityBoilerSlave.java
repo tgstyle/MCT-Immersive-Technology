@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
@@ -35,7 +36,7 @@ import java.util.List;
 
 import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
-public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoilerSlave, BoilerRecipe, TileEntityBoilerMaster> implements IEBlockInterfaces.IGuiTile, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoilerSlave, BoilerRecipe, TileEntityBoilerMaster> implements IEBlockInterfaces.IGuiTile, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IIEInventory {
 
     public TileEntityBoilerSlave() { super(TileEntityITMultiblockPartBoiler.instance, 0, false); }
 
@@ -59,13 +60,17 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
 
     @Override public NonNullList<ItemStack> getInventory() {
         TileEntityBoilerMaster m = master();
-        if (m == null || !formed) { return NonNullList.withSize(6, ItemStack.EMPTY); }
-        return m.inventory;
+        return m == null || !formed ? NonNullList.withSize(6, ItemStack.EMPTY) : m.inventory;
     }
 
     @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
 
     @Override public int getSlotLimit(int slot) { return 64; }
+
+    @Override public void doGraphicalUpdates(int slot) {
+        TileEntityBoilerMaster m = master();
+        if (m != null) m.doGraphicalUpdates(slot);
+    }
 
     @Override public @Nonnull IFluidTank[] getInternalTanks() {
         TileEntityBoilerMaster m = master();

@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.common.util.ITUtils;
@@ -35,7 +36,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntitySolarTowerSlave extends TileEntityITMultiblock<TileEntitySolarTowerSlave, SolarTowerRecipe, TileEntitySolarTowerMaster> implements IEBlockInterfaces.IGuiTile, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+public class TileEntitySolarTowerSlave extends TileEntityITMultiblock<TileEntitySolarTowerSlave, SolarTowerRecipe, TileEntitySolarTowerMaster> implements IEBlockInterfaces.IGuiTile, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IIEInventory {
+
     public TileEntitySolarTowerSlave() { super(TileEntityITMultiblockPartSolarTower.instance, 0, true); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
@@ -62,16 +64,23 @@ public class TileEntitySolarTowerSlave extends TileEntityITMultiblock<TileEntity
     }
 
     @Override public NonNullList<ItemStack> getInventory() {
-        TileEntitySolarTowerMaster master = master();
-        if (master == null || !formed) { return NonNullList.withSize(4, ItemStack.EMPTY); }
-        return master.inventory;
+        TileEntitySolarTowerMaster m = master();
+        return m == null ? NonNullList.withSize(4, ItemStack.EMPTY) : m.inventory;
     }
 
     @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
 
     @Override public int getSlotLimit(int slot) { return 64; }
 
-    @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
+    @Override public void doGraphicalUpdates(int slot) {
+        TileEntitySolarTowerMaster m = master();
+        if (m != null) {
+            m.efficientMarkDirty();
+            m.markContainingBlockForUpdate(null);
+        }
+    }
+
+    @Override @Nonnull public IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
 
     @Override protected @Nonnull SolarTowerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return SolarTowerRecipe.loadFromNBT(tag); }
 

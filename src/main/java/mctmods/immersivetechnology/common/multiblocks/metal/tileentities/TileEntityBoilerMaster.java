@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
@@ -30,8 +31,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -45,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITFluidTank.TankListener, IComparatorOverride {
+public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITFluidTank.TankListener, IComparatorOverride, IIEInventory {
 
     private static final int inputTankSize = Multiblocks.boiler.boiler_input_tankSize;
     private static final int outputTankSize = Multiblocks.boiler.boiler_output_tankSize;
@@ -70,6 +71,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     public BoilerRecipe lastRecipe;
     protected PoICache fluidInput0, fluidInput1, fluidOutput0, redstone0;
     private BlockPos fluidOutputFront0, soundPos0;
+    private boolean needsNeighborNotify = false;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -79,7 +81,9 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         heatLevel = nbt.getDouble("heatLevel");
         burnRemaining = nbt.getInteger("burnRemaining");
         recipeTimeRemaining = nbt.getInteger("recipeTimeRemaining");
-        if (!descPacket) { inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount); }
+        needsNeighborNotify = nbt.getBoolean("needsNeighborNotify");
+        if (!descPacket && formed) needsNeighborNotify = true;
+        if (!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -90,14 +94,15 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         nbt.setDouble("heatLevel", heatLevel);
         nbt.setInteger("burnRemaining", burnRemaining);
         nbt.setInteger("recipeTimeRemaining", recipeTimeRemaining);
-        if (!descPacket) { nbt.setTag("inventory", Utils.writeInventory(inventory)); }
+        nbt.setBoolean("needsNeighborNotify", needsNeighborNotify);
+        if (!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
     }
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
-        if (soundPos0 == null) { InitializePoIs(); }
+        if (soundPos0 == null) InitializePoIs();
         float level = (float)(heatLevel / workingHeatLevel);
-        if (level <= 0) { ITSoundHandler.StopSound(soundPos0); }
+        if (level <= 0) ITSoundHandler.StopSound(soundPos0);
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 8, 1);
@@ -109,7 +114,16 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     @Override public void onChunkUnload() { ITSoundHandler.StopSound(soundPos0); super.onChunkUnload(); }
 
     @Override public void disassemble() {
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        if (soundPos0 == null) InitializePoIs();
+        if (soundPos0 != null) {
+            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        }
+        if (!world.isRemote) {
+            for (ItemStack stack : inventory) {
+                if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack.copy());
+            }
+            inventory.clear();
+        }
         super.disassemble();
     }
 
@@ -255,15 +269,16 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     }
 
     @Override public void update() {
-        if (formed && redstone0 == null) { InitializePoIs(); }
+        if (formed && redstone0 == null) InitializePoIs();
         super.update();
-        if (!formed) { return; }
+        if (!formed) return;
         if (world.isRemote) { handleSounds(); return; }
+        if (needsNeighborNotify) { notifyIONeighbors(); needsNeighborNotify = false; }
         boolean update = heatLogic();
-        if (recipeLogic()) { update = true; }
-        if (outputTankLogic()) { update = true; }
-        if (fuelTankLogic()) { update = true; }
-        if (inputTankLogic()) { update = true; }
+        if (recipeLogic()) update = true;
+        if (outputTankLogic()) update = true;
+        if (fuelTankLogic()) update = true;
+        if (inputTankLogic()) update = true;
         clientUpdateCooldown--;
         if (clientUpdateCooldown <= 0) {
             notifyNearbyClients();
@@ -283,39 +298,44 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
     @Override public int getComparatorInputOverride() { return (int)(15 * (heatLevel / workingHeatLevel)); }
 
+    @Override public void doGraphicalUpdates(int slot) {
+        this.markDirty();
+        this.markContainingBlockForUpdate(null);
+    }
+
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
-        if (!formed) { return ITUtils.emptyIFluidTankList; }
-        if (redstone0 == null) { InitializePoIs(); }
-        if (side == null) { return tanks; }
-        if (fluidInput0.isPoI(side, position)) { return new IFluidTank[] {tanks[0]}; }
-        if (fluidInput1.isPoI(side, position)) { return new IFluidTank[] {tanks[1]}; }
-        if (fluidOutput0.isPoI(side, position)) { return new IFluidTank[] {tanks[2]}; }
+        if (!formed) return ITUtils.emptyIFluidTankList;
+        if (redstone0 == null) InitializePoIs();
+        if (side == null) return tanks;
+        if (fluidInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
+        if (fluidInput1.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
+        if (fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[2]};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if (!formed || redstone0 == null) { InitializePoIs(); }
+        if (!formed || redstone0 == null) InitializePoIs();
         if (iTank == 0 && fluidInput0.isPoI(side, position)) {
-            if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) { return false; }
-            if (tanks[0].getFluid() == null) { return BoilerRecipe.findFuel(resource) != null; }
+            if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
+            if (tanks[0].getFluid() == null) return BoilerRecipe.findFuel(resource) != null;
             return resource.isFluidEqual(tanks[0].getFluid());
         }
         if (iTank == 1 && fluidInput1.isPoI(side, position)) {
-            if (tanks[1].getFluidAmount() >= tanks[1].getCapacity()) { return false; }
-            if (tanks[1].getFluid() == null) { return BoilerRecipe.findRecipe(resource) != null; }
+            if (tanks[1].getFluidAmount() >= tanks[1].getCapacity()) return false;
+            if (tanks[1].getFluid() == null) return BoilerRecipe.findRecipe(resource) != null;
             return resource.isFluidEqual(tanks[1].getFluid());
         }
         return false;
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (!formed || redstone0 == null) { InitializePoIs(); }
+        if (!formed || redstone0 == null) InitializePoIs();
         return iTank == 2 && fluidOutput0.isPoI(side, position) && tanks[2].getFluidAmount() > 0;
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) { return new int[0]; }
-        if (redstone0 == null) { InitializePoIs(); }
+        if (!formed) return new int[0];
+        if (redstone0 == null) InitializePoIs();
         return new int[] {redstone0.position};
     }
 
@@ -344,14 +364,14 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
                     break;
             }
         }
-        if (!world.isRemote) { notifyIONeighbors(); }
+        if (!world.isRemote) notifyIONeighbors();
     }
 
     private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
-        notifyNeighbor(getBlockPosForPos(fluidInput1.position));
-        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        notifyNeighbor(getBlockPosForPos(redstone0.position));
+        if (fluidInput0 != null) notifyNeighbor(getBlockPosForPos(fluidInput0.position));
+        if (fluidInput1 != null) notifyNeighbor(getBlockPosForPos(fluidInput1.position));
+        if (fluidOutput0 != null) notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
+        if (redstone0 != null) notifyNeighbor(getBlockPosForPos(redstone0.position));
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
@@ -371,7 +391,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
         private int getTankIndex(IFluidTank tank) {
             for (int i = 0; i < master.tanks.length; i++) {
-                if (master.tanks[i] == tank) { return i; }
+                if (master.tanks[i] == tank) return i;
             }
             return -1;
         }
@@ -388,7 +408,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         }
 
         @Override public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null) { return 0; }
+            if (resource == null) return 0;
             resource = resource.copy();
             int filled = 0;
             for (IFluidTank accessible : accessibleTanks) {
@@ -397,15 +417,15 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
                     int f = accessible.fill(resource, doFill);
                     filled += f;
                     resource.amount -= f;
-                    if (doFill && f > 0) { master.TankContentsChanged(); }
-                    if (resource.amount <= 0) { return filled; }
+                    if (doFill && f > 0) master.TankContentsChanged();
+                    if (resource.amount <= 0) return filled;
                 }
             }
             return filled;
         }
 
         @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null) { return null; }
+            if (resource == null) return null;
             resource = resource.copy();
             FluidStack drained = null;
             for (IFluidTank accessible : accessibleTanks) {
@@ -416,11 +436,11 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
                         int amount = Math.min(resource.amount, tankFluid.amount);
                         FluidStack d = accessible.drain(amount, doDrain);
                         if (d != null) {
-                            if (drained == null) { drained = d.copy(); }
-                            else { drained.amount += d.amount; }
+                            if (drained == null) drained = d.copy();
+                            else drained.amount += d.amount;
                             resource.amount -= d.amount;
-                            if (doDrain && d.amount > 0) { master.TankContentsChanged(); }
-                            if (resource.amount <= 0) { return drained; }
+                            if (doDrain && d.amount > 0) master.TankContentsChanged();
+                            if (resource.amount <= 0) return drained;
                         }
                     }
                 }
@@ -436,11 +456,11 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
                 if (iTank != -1 && master.canDrainTankFrom(iTank, side, position)) {
                     FluidStack d = accessible.drain(toDrain, doDrain);
                     if (d != null) {
-                        if (drained == null) { drained = d.copy(); }
-                        else if (drained.isFluidEqual(d)) { drained.amount += d.amount; }
+                        if (drained == null) drained = d.copy();
+                        else if (drained.isFluidEqual(d)) drained.amount += d.amount;
                         toDrain -= d.amount;
-                        if (doDrain && d.amount > 0) { master.TankContentsChanged(); }
-                        if (toDrain <= 0) { return drained; }
+                        if (doDrain && d.amount > 0) master.TankContentsChanged();
+                        if (toDrain <= 0) return drained;
                     }
                 }
             }
