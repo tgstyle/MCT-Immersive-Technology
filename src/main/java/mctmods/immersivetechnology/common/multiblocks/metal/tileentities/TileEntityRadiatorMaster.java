@@ -52,11 +52,16 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     private static final int outputTankSize = Multiblocks.radiator.radiator_output_tankSize;
     private static final float speedMult = Multiblocks.radiator.radiator_speed_multiplier;
 
-    public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(inputTankSize, this), new ITFluidTank(outputTankSize, this)};
-    public int recipeTimeRemaining = 0;
-    public int recipeTimeTotal = 0;
+    public FluidTank[] tanks = new FluidTank[] {
+            new ITFluidTank(inputTankSize, this),
+            new ITFluidTank(outputTankSize, this)
+    };
+
     public RadiatorRecipe lastRecipe;
     private RadiatorRecipe cachedRecipe;
+
+    public int recipeTimeRemaining = 0;
+    public int recipeTimeTotal = 0;
     private double radiationEfficiency = 0;
     private int clientUpdateCooldown = 20;
     protected PoICache fluidInput0, fluidOutput0, redstone0;

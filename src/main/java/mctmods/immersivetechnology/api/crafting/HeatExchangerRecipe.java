@@ -9,6 +9,7 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class HeatExchangerRecipe extends MultiblockRecipe {
     public static float timeModifier = 1;
@@ -135,14 +136,12 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
                 return false;
             }
             FluidPair that = (FluidPair) o;
-            return fluid0 == that.fluid0 && fluid1 == that.fluid1;
+            return Objects.equals(fluid0, that.fluid0) && Objects.equals(fluid1, that.fluid1);
         }
 
         @Override
         public int hashCode() {
-            int result = fluid0 != null ? fluid0.hashCode() : 0;
-            result = 31 * result + (fluid1 != null ? fluid1.hashCode() : 0);
-            return result;
+            return Objects.hash(fluid0, fluid1);
         }
     }
 }

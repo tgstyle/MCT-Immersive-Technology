@@ -56,8 +56,12 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     public TileEntityElectrolyticCrucibleBatteryMaster() { super(); }
 
     public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxInput);
-
-    public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(inputTankSize, this), new ITFluidTank(outputTankSize, this), new ITFluidTank(outputTankSize, this), new ITFluidTank(outputTankSize, this)};
+    public FluidTank[] tanks = new FluidTank[] {
+            new ITFluidTank(inputTankSize, this),
+            new ITFluidTank(outputTankSize, this),
+            new ITFluidTank(outputTankSize, this),
+            new ITFluidTank(outputTankSize, this)
+    };
 
     protected PoICache energyInput0, energyInput1, energyInput2, fluidInput0, fluidOutput0, fluidOutput1, fluidOutput2, itemOutput0, redstone0;
     private BlockPos fluidOutputPos0, fluidOutputPos1, fluidOutputPos2, itemOutputPos0, sound0;

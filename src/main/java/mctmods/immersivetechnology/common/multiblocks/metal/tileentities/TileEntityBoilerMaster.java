@@ -63,6 +63,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
     public static int slotCount = 6;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
+
     public int burnRemaining = 0;
     public int recipeTimeRemaining = 0;
     public double heatLevel = 0;
@@ -71,7 +72,6 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     public BoilerRecipe lastRecipe;
     protected PoICache fluidInput0, fluidInput1, fluidOutput0, redstone0;
     private BlockPos fluidOutputFront0, soundPos0;
-    private boolean needsNeighborNotify = false;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -81,8 +81,6 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         heatLevel = nbt.getDouble("heatLevel");
         burnRemaining = nbt.getInteger("burnRemaining");
         recipeTimeRemaining = nbt.getInteger("recipeTimeRemaining");
-        needsNeighborNotify = nbt.getBoolean("needsNeighborNotify");
-        if (!descPacket && formed) needsNeighborNotify = true;
         if (!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
     }
 
@@ -94,7 +92,6 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         nbt.setDouble("heatLevel", heatLevel);
         nbt.setInteger("burnRemaining", burnRemaining);
         nbt.setInteger("recipeTimeRemaining", recipeTimeRemaining);
-        nbt.setBoolean("needsNeighborNotify", needsNeighborNotify);
         if (!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
     }
 
@@ -273,7 +270,6 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         super.update();
         if (!formed) return;
         if (world.isRemote) { handleSounds(); return; }
-        if (needsNeighborNotify) { notifyIONeighbors(); needsNeighborNotify = false; }
         boolean update = heatLogic();
         if (recipeLogic()) update = true;
         if (outputTankLogic()) update = true;
@@ -368,10 +364,10 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     }
 
     private void notifyIONeighbors() {
-        if (fluidInput0 != null) notifyNeighbor(getBlockPosForPos(fluidInput0.position));
-        if (fluidInput1 != null) notifyNeighbor(getBlockPosForPos(fluidInput1.position));
-        if (fluidOutput0 != null) notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        if (redstone0 != null) notifyNeighbor(getBlockPosForPos(redstone0.position));
+        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
+        notifyNeighbor(getBlockPosForPos(fluidInput1.position));
+        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
+        notifyNeighbor(getBlockPosForPos(redstone0.position));
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }

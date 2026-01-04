@@ -51,10 +51,15 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     private static final int speedLossPerTick = Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_lossPerTick;
     private static final float maxRotationSpeed = Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_maxRotation;
 
-    public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(inputTankSize, this), new ITFluidTank(outputTankSize, this)};
+    public FluidTank[] tanks = new FluidTank[] {
+            new ITFluidTank(inputTankSize, this),
+            new ITFluidTank(outputTankSize, this)
+    };
+
+    private HighPressureSteamTurbineRecipe cachedRecipe;
+
     public int burnRemaining = 0;
     public int speed;
-    private HighPressureSteamTurbineRecipe cachedRecipe;
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
     private IMechanicalEnergy alternator;
     private int clientUpdateCooldown = 1;

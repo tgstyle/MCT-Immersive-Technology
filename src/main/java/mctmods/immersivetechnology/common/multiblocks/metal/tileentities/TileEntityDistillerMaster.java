@@ -56,7 +56,11 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     private static final int energyMaxInput = Multiblocks.distiller.distiller_energy_maxInput;
 
     public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxInput);
-    public ITFluidTank[] tanks = new ITFluidTank[] {new ITFluidTank(inputTankSize, this), new ITFluidTank(outputTankSize, this)};
+    public ITFluidTank[] tanks = new ITFluidTank[] {
+            new ITFluidTank(inputTankSize, this),
+            new ITFluidTank(outputTankSize, this)
+    };
+
     public static int slotCount = 5;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 

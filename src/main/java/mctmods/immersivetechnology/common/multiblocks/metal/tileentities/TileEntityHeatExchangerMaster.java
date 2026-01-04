@@ -52,8 +52,12 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     private static final int energyMaxInput = Multiblocks.heatExchanger.heatExchanger_energy_maxInput;
 
     public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxInput);
-
-    public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(inputTankSize, this), new ITFluidTank(inputTankSize, this), new ITFluidTank(outputTankSize, this), new ITFluidTank(outputTankSize, this)};
+    public FluidTank[] tanks = new FluidTank[] {
+            new ITFluidTank(inputTankSize, this),
+            new ITFluidTank(inputTankSize, this),
+            new ITFluidTank(outputTankSize, this),
+            new ITFluidTank(outputTankSize, this)
+    };
 
     protected PoICache fluidInput0, fluidInput1, fluidOutput0, fluidOutput1;
     protected PoICache redstone0;

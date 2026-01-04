@@ -74,6 +74,18 @@ public class MeltingCrucibleRecipe extends MultiblockRecipe {
         return null;
     }
 
+    public static MeltingCrucibleRecipe findRecipe(IngredientStack itemInput) {
+        if (itemInput == null) {
+            return null;
+        }
+        for (MeltingCrucibleRecipe r : recipeList) {
+            if (r.itemInput.equals(itemInput)) {
+                return r;
+            }
+        }
+        return null;
+    }
+
     @Override
     public int getMultipleProcessTicks() {
         return 0;
@@ -92,12 +104,7 @@ public class MeltingCrucibleRecipe extends MultiblockRecipe {
 
     public static MeltingCrucibleRecipe loadFromNBT(NBTTagCompound nbt) {
         IngredientStack itemInput = IngredientStack.readFromNBT(nbt.getCompoundTag("input"));
-        for (MeltingCrucibleRecipe recipe : recipeList) {
-            if (recipe.itemInput.equals(itemInput)) {
-                return recipe;
-            }
-        }
-        return null;
+        return findRecipe(itemInput);
     }
 
     @Override

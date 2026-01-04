@@ -63,16 +63,22 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private static final int electricStarterSize = Multiblocks.gasTurbine.gasTurbine_electric_starter_size;
     private static final int sparkplugSize = Multiblocks.gasTurbine.gasTurbine_sparkplug_size;
 
-    public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(inputTankSize, this), new ITFluidTank(outputTankSize, this)};
     public ITFluxStorage starterStorage = new ITFluxStorage(electricStarterSize, false, true);
     public ITFluxStorage sparkplugStorage = new ITFluxStorage(sparkplugSize, false, true);
+    public FluidTank[] tanks = new FluidTank[] {
+            new ITFluidTank(inputTankSize, this),
+            new ITFluidTank(outputTankSize, this)
+    };
+
+    public GasTurbineRecipe lastRecipe;
+    private GasTurbineRecipe cachedRecipe;
+
     public int burnRemaining = 0;
     public int speed;
     public int ignitionGracePeriod = 0;
     public boolean ignited;
     public boolean starterRunning = false;
-    public GasTurbineRecipe lastRecipe;
-    private GasTurbineRecipe cachedRecipe;
+
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
     private IMechanicalEnergy alternator;
     protected PoICache energyInput0, energyInput1, fluidInput0, fluidOutput0, mechanicalOutput0, redstone0;

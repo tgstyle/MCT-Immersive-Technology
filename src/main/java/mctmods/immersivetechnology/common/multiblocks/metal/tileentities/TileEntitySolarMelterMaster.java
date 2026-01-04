@@ -61,10 +61,15 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private static final double workingHeatLevel = Multiblocks.solarMelter.solarMelter_heat_workingLevel;
     private static final double maximumReflectorStrength = Multiblocks.solarMelter.solarMelter_maximum_reflector_strength;
 
-    public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(outputTankSize, this)};
+    public FluidTank[] tanks = new FluidTank[] {
+            new ITFluidTank(outputTankSize, this)
+    };
+    public IItemHandler insertionHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
+
+    public MeltingCrucibleRecipe cachedRecipe;
+
     public static int slotCount = 3;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
-    public IItemHandler insertionHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
     public int recipeEnergyRemaining = 0;
     public double heatLevel = 0;
     public double reflectorStrength = 0;
@@ -73,7 +78,6 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private float soundVolume;
     private boolean isRunning;
     private int gracePeriod = 60;
-    public MeltingCrucibleRecipe cachedRecipe;
     private PoICache fluidOutput0, itemInput0, redstone0;
     private BlockPos basePos0, collectorPos0, fluidOutputFront0, soundPos0;
     private boolean isLoaded = false;

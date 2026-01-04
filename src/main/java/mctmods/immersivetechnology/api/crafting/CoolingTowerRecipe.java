@@ -34,21 +34,21 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
     public static ArrayList<CoolingTowerRecipe> recipeList = new ArrayList<>();
 
     private static final Map<FluidPair, CoolingTowerRecipe> recipeMap = new HashMap<>();
+    private static final Map<Fluid, CoolingTowerRecipe> input0Map = new HashMap<>();
+    private static final Map<Fluid, CoolingTowerRecipe> input1Map = new HashMap<>();
 
     public static CoolingTowerRecipe addRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, FluidStack fluidInput0, FluidStack fluidInput1, int time) {
         CoolingTowerRecipe recipe = new CoolingTowerRecipe(fluidOutput0, fluidOutput1, fluidOutput2, fluidInput0, fluidInput1, time);
         recipeList.add(recipe);
-        String input0Name = recipe.fluidInput0 != null ? recipe.fluidInput0.getFluid().getName() : null;
-        String input1Name = recipe.fluidInput1 != null ? recipe.fluidInput1.getFluid().getName() : null;
-        recipeMap.put(new FluidPair(input0Name, input1Name), recipe);
+        recipeMap.put(new FluidPair(fluidInput0.getFluid(), fluidInput1.getFluid()), recipe);
+        input0Map.put(fluidInput0.getFluid(), recipe);
+        input1Map.put(fluidInput1.getFluid(), recipe);
         return recipe;
     }
 
     public static CoolingTowerRecipe findRecipe(FluidStack fluidInput0, FluidStack fluidInput1) {
         if (fluidInput0 == null || fluidInput1 == null) return null;
-        String input0Name = fluidInput0.getFluid().getName();
-        String input1Name = fluidInput1.getFluid().getName();
-        CoolingTowerRecipe recipe = recipeMap.get(new FluidPair(input0Name, input1Name));
+        CoolingTowerRecipe recipe = recipeMap.get(new FluidPair(fluidInput0.getFluid(), fluidInput1.getFluid()));
         if (recipe != null && fluidInput0.containsFluid(recipe.fluidInput0) && fluidInput1.containsFluid(recipe.fluidInput1)) return recipe;
         for (CoolingTowerRecipe r : recipeList) {
             if (r.fluidInput0 != null && fluidInput0.containsFluid(r.fluidInput0) && r.fluidInput1 != null && fluidInput1.containsFluid(r.fluidInput1)) return r;
@@ -58,20 +58,12 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
 
     public static CoolingTowerRecipe findRecipeByFluid0(Fluid fluidInput0) {
         if (fluidInput0 == null) return null;
-        String name = fluidInput0.getName();
-        for (CoolingTowerRecipe r : recipeList) {
-            if (r.fluidInput0 != null && r.fluidInput0.getFluid().getName().equals(name)) return r;
-        }
-        return null;
+        return input0Map.get(fluidInput0);
     }
 
     public static CoolingTowerRecipe findRecipeByFluid1(Fluid fluidInput1) {
         if (fluidInput1 == null) return null;
-        String name = fluidInput1.getName();
-        for (CoolingTowerRecipe r : recipeList) {
-            if (r.fluidInput1 != null && r.fluidInput1.getFluid().getName().equals(name)) return r;
-        }
-        return null;
+        return input1Map.get(fluidInput1);
     }
 
     @Override
@@ -94,11 +86,11 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
     public int getTotalProcessTime() { return this.totalProcessTime; }
 
     static class FluidPair {
-        private final String fluid0Name;
-        private final String fluid1Name;
-        FluidPair(String f0, String f1) {
-            fluid0Name = f0;
-            fluid1Name = f1;
+        private final Fluid fluid0;
+        private final Fluid fluid1;
+        FluidPair(Fluid f0, Fluid f1) {
+            fluid0 = f0;
+            fluid1 = f1;
         }
 
         @Override
@@ -106,12 +98,12 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             FluidPair that = (FluidPair) o;
-            return Objects.equals(fluid0Name, that.fluid0Name) && Objects.equals(fluid1Name, that.fluid1Name);
+            return Objects.equals(fluid0, that.fluid0) && Objects.equals(fluid1, that.fluid1);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(fluid0Name, fluid1Name);
+            return Objects.hash(fluid0, fluid1);
         }
     }
 }

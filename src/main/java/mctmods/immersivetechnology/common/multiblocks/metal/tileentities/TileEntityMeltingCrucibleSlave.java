@@ -107,8 +107,7 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
         return m == null ? new IFluidTank[0] : m.tanks;
     }
 
-    @Override
-    protected MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return MeltingCrucibleRecipe.loadFromNBT(tag); }
+    @Override @Nonnull protected MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return MeltingCrucibleRecipe.loadFromNBT(tag); }
 
     @Override public @Nonnull int[] getEnergyPos() { return master() == null ? new int[0] : master.getEnergyPos(); }
 

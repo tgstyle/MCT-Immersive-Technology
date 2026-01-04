@@ -66,6 +66,8 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
             new ITFluidTank(outputTankSize, this)
     };
 
+    public SolarTowerRecipe cachedRecipe;
+
     public static int slotCount = 4;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
     public int recipeTimeRemaining = 0;
@@ -76,7 +78,6 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     private float soundVolume = 0;
     private boolean isRunning;
     private int gracePeriod = 60;
-    public SolarTowerRecipe cachedRecipe;
     private PoICache redstone0, fluidInput0, fluidOutput0;
     private BlockPos basePos0, collectorPos0, fluidOutputFront0, soundPos0;
     private boolean isLoaded = false;

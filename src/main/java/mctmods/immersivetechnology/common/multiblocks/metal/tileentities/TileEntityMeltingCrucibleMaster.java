@@ -56,10 +56,13 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     private static final int energyMaxInput = Multiblocks.meltingCrucible.meltingCrucible_energy_maxInput;
 
     public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxInput);
-    public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(outputTankSize, this)};
+    public FluidTank[] tanks = new FluidTank[] {
+            new ITFluidTank(outputTankSize, this)
+    };
+    public IItemHandler insertionHandler = new IEInventoryHandler(slotCount, this, 0, new boolean[]{true}, new boolean[]{false});
+
     public static int slotCount = 1;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
-    public IItemHandler insertionHandler = new IEInventoryHandler(slotCount, this, 0, new boolean[]{true}, new boolean[]{false});
     private PoICache energyInput0, fluidOutput0, itemInput0, redstone0;
     private BlockPos sound0, fluidOutputPos0;
     private float soundVolume;

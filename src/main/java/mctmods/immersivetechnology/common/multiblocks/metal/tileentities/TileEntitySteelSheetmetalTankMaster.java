@@ -32,6 +32,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     private static final int transferSpeed = Multiblocks.steelTank.steelTank_transferSpeed;
 
     public ITFluidTank tank = new ITFluidTank(tankSize, this);
+
     private final int[] oldComps = new int[4];
     private int masterCompOld;
     private final List<PoICache> fluidInputs = new ArrayList<>();

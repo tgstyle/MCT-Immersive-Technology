@@ -49,7 +49,10 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
     public static ElectrolyticCrucibleBatteryRecipe findRecipe(FluidStack fluidInput0) {
         if (fluidInput0 == null || fluidInput0.getFluid() == null) return null;
         ElectrolyticCrucibleBatteryRecipe recipe = recipeMap.get(fluidInput0.getFluid());
-        if (recipe != null && fluidInput0.amount >= recipe.fluidInput0.amount) return recipe;
+        if (recipe != null && fluidInput0.containsFluid(recipe.fluidInput0)) return recipe;
+        for (ElectrolyticCrucibleBatteryRecipe r : recipeList) {
+            if (r.fluidInput0 != null && fluidInput0.containsFluid(r.fluidInput0)) return r;
+        }
         return null;
     }
 

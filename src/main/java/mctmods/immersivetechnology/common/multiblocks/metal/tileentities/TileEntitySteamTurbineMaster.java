@@ -51,10 +51,15 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
     private static final int speedLossPerTick = Multiblocks.steamTurbine.steamTurbine_speed_lossPerTick;
     private static final float maxRotationSpeed = Multiblocks.steamTurbine.steamTurbine_speed_maxRotation;
 
-    public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(inputTankSize, this), new ITFluidTank(outputTankSize, this)};
+    public FluidTank[] tanks = new FluidTank[] {
+            new ITFluidTank(inputTankSize, this),
+            new ITFluidTank(outputTankSize, this)
+    };
+
+    private SteamTurbineRecipe cachedRecipe;
+
     public int burnRemaining = 0;
     public int speed;
-    private SteamTurbineRecipe cachedRecipe;
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
     private IMechanicalEnergy alternator;
     private int clientUpdateCooldown = 1;

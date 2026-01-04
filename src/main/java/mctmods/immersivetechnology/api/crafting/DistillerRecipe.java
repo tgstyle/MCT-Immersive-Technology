@@ -7,9 +7,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DistillerRecipe extends MultiblockRecipe {
     public static float energyModifier = 1;
@@ -37,14 +40,19 @@ public class DistillerRecipe extends MultiblockRecipe {
 
     public static ArrayList<DistillerRecipe> recipeList = new ArrayList<>();
 
+    private static final Map<Fluid, DistillerRecipe> recipeMap = new HashMap<>();
+
     public static DistillerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, ItemStack itemOutput, int energy, int time, float chance) {
         DistillerRecipe r = new DistillerRecipe(fluidOutput, fluidInput, itemOutput, energy, time, chance);
         recipeList.add(r);
+        recipeMap.put(fluidInput.getFluid(), r);
         return r;
     }
 
     public static DistillerRecipe findRecipe(FluidStack fluidInput) {
         if (fluidInput == null) return null;
+        DistillerRecipe recipe = recipeMap.get(fluidInput.getFluid());
+        if (recipe != null && fluidInput.containsFluid(recipe.fluidInput)) return recipe;
         for (DistillerRecipe r : recipeList) {
             if (r.fluidInput != null && fluidInput.containsFluid(r.fluidInput)) return r;
         }
