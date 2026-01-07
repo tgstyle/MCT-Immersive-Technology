@@ -60,6 +60,11 @@ public class ITFluids {
             props -> props.density(-100).viscosity(500).temperature(500), 0xFFC1C1C5
     );
 
+    public static final ITFluids.FluidEntry GRAVEL_SLURRY = FluidEntry.make(
+            "gravel_slurry", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            props -> props.density(1000).viscosity(1000), 0xFF6D6565
+    );
+
     public static final ITFluids.FluidEntry DISTILLED_WATER = FluidEntry.make(
             "distilled_water", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
             props -> props.density(1000).viscosity(1000), 0xFF7079E0
@@ -68,6 +73,11 @@ public class ITFluids {
     public static final ITFluids.FluidEntry FLUE_GAS = FluidEntry.make(
             "flue_gas", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
             props -> props.density(-100).viscosity(500), 0xFFFFFFFF
+    );
+
+    public static final ITFluids.FluidEntry HEATED_GRAVEL = FluidEntry.make(
+            "heated_gravel_slurry", 0, rl("block/fluid/molten_still"), rl("block/fluid/molten_flowing"),
+            props -> props.density(930).viscosity(10000).temperature(400), 0xFFA8A6A6
     );
 
     public static final ITFluids.FluidEntry HEATED_SALT = FluidEntry.make(
@@ -95,6 +105,7 @@ public class ITFluids {
         FLUID_REGISTRY_MAP.put("distilled_water", DISTILLED_WATER.getStillGetter());
         FLUID_REGISTRY_MAP.put("exhaust_steam", EXHAUST_STEAM.getStillGetter());
         FLUID_REGISTRY_MAP.put("flue_gas", FLUE_GAS.getStillGetter());
+        FLUID_REGISTRY_MAP.put("gravel_slurry", GRAVEL_SLURRY.getStillGetter());
         FLUID_REGISTRY_MAP.put("heated_salt_slurry", HEATED_SALT.getStillGetter());
         FLUID_REGISTRY_MAP.put("molten_salt", MOLTEN_SALT.getStillGetter());
         FLUID_REGISTRY_MAP.put("salt_slurry", SALT_SLURRY.getStillGetter());

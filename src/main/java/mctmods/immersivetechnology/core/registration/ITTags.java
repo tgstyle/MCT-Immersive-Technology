@@ -14,6 +14,8 @@ public class ITTags {
     public static final TagKey<Fluid> fluidDistilledWaterForge = FluidTags.create(forgeLoc("distilled_water"));
     public static final TagKey<Fluid> fluidExhaustSteam = FluidTags.create(modLoc("exhaust_steam"));
     public static final TagKey<Fluid> fluidFlueGas = FluidTags.create(modLoc("flue_gas"));
+    public static final TagKey<Fluid> fluidGravelSlurry = FluidTags.create(modLoc("gravel_slurry"));
+    public static final TagKey<Fluid> fluidHeatedGravelSlurry = FluidTags.create(modLoc("heated_gravel_slurry"));
     public static final TagKey<Fluid> fluidHeatedSaltSlurry = FluidTags.create(modLoc("heated_salt_slurry"));
     public static final TagKey<Fluid> fluidMoltenSalt = FluidTags.create(modLoc("molten_salt"));
     public static final TagKey<Fluid> fluidSaltSlurry = FluidTags.create(modLoc("salt_slurry"));

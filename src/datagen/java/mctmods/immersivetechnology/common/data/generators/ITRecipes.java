@@ -104,6 +104,7 @@ public class ITRecipes extends RecipeProvider {
 
     private void recipesMixer(@Nonnull Consumer<FinishedRecipe> out) {
         MixerRecipeBuilder.builder(ITFluids.SALT_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(new IngredientWithSize(ITTags.saltForge, 4)).setEnergy(3200).build(out, toResourceLocation("mixer/salt_slurry"));
+        MixerRecipeBuilder.builder(ITFluids.GRAVEL_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(new IngredientWithSize(Tags.Items.GRAVEL, 4)).setEnergy(3200).build(out, toResourceLocation("mixer/gravel_slurry"));
     }
 
     private void recipesTurbine(@Nonnull Consumer<FinishedRecipe> out) {
@@ -117,12 +118,14 @@ public class ITRecipes extends RecipeProvider {
 
     private void recipesSolarMelter(@Nonnull Consumer<FinishedRecipe> out) {
         SolarMelterRecipeBuilder.builder().addInput(ITTags.fluidHeatedSaltSlurry, 1000).addOutput(ITFluids.MOLTEN_SALT.getStill(), 500).setTime(20).setRequiredTemp(1000.0).build(out, toResourceLocation("solar_melter/heated_salt"));
+        SolarMelterRecipeBuilder.builder().addInput(ITTags.fluidHeatedGravelSlurry, 1000).addOutput(Fluids.LAVA, 500).setTime(20).setRequiredTemp(1000.0).build(out, toResourceLocation("solar_melter/heated_gravel_slurry"));
     }
 
     private void recipesSolarTower(@Nonnull Consumer<FinishedRecipe> out) {
         SolarTowerRecipeBuilder.builder().addInput(FluidTags.WATER, 250).addOutput(ITFluids.STEAM.getStill(), 450).setTime(10).setRequiredTemp(100.0).build(out, toResourceLocation("solar_tower/water"));
         SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidDistilledWater, 250).addOutput(ITFluids.STEAM.getStill(), 500).setTime(10).setRequiredTemp(100.0).build(out, toResourceLocation("solar_tower/distilled_water"));
         SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidSaltSlurry, 1000).addOutput(ITFluids.HEATED_SALT.getStill(), 500).setTime(10).setRequiredTemp(400.0).build(out, toResourceLocation("solar_tower/salt_slurry"));
+        SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidGravelSlurry, 1000).addOutput(ITFluids.HEATED_GRAVEL.getStill(), 500).setTime(10).setRequiredTemp(400.0).build(out, toResourceLocation("solar_tower/gravel_slurry"));
     }
 
     private ResourceLocation toResourceLocation(String resourceLocation) {

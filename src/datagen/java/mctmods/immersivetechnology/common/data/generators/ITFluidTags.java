@@ -22,6 +22,8 @@ public class ITFluidTags extends FluidTagsProvider {
         tag(ITTags.fluidDistilledWaterForge).add(ITFluids.DISTILLED_WATER.getStill());
         tag(ITTags.fluidExhaustSteam).add(ITFluids.EXHAUST_STEAM.getStill());
         tag(ITTags.fluidFlueGas).add(ITFluids.FLUE_GAS.getStill());
+        tag(ITTags.fluidGravelSlurry).add(ITFluids.GRAVEL_SLURRY.getStill());
+        tag(ITTags.fluidHeatedGravelSlurry).add(ITFluids.HEATED_GRAVEL.getStill());
         tag(ITTags.fluidHeatedSaltSlurry).add(ITFluids.HEATED_SALT.getStill());
         tag(ITTags.fluidMoltenSalt).add(ITFluids.MOLTEN_SALT.getStill());
         tag(ITTags.fluidSaltSlurry).add(ITFluids.SALT_SLURRY.getStill());
