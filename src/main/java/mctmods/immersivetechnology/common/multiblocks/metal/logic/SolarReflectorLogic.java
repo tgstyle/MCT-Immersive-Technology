@@ -59,6 +59,39 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         state.formedTicks++;
+        boolean specialRender = ITClientConfig.doSpecialRenderSolarReflector;
+        if (!specialRender) {
+            if (state.isMirrorTaken) {
+                state.animation_supportRotation = state.computeTargetSupportRotation();
+                state.animation_mirrorTilt = state.computeTargetMirrorTilt();
+            } else {
+                state.animation_supportRotation = 0;
+                state.animation_mirrorTilt = 0;
+            }
+            state.animationTicks = 0;
+            state.animationPhase = state.isMirrorTaken ? 2 : -4;
+            if (state.isMirrorTaken && state.getSolarCollectorStrength() > 0) {
+                Level level = ctx.getLevel().getRawLevel();
+                if (level.random.nextFloat() < 0.04f) {
+                    Vec3 start = ctx.getLevel().toAbsolute(Vec3.atCenterOf(BEAM_POI));
+                    Vec3 end = Vec3.atCenterOf(state.getTowerCollectorPosition());
+                    Vec3 diff = end.subtract(start);
+                    double dist = diff.length();
+                    double distSq = dist * dist;
+                    if (distSq > 64 * 64) { return; }
+                    Vec3 dir = diff.normalize();
+                    double rdist = level.random.nextDouble() * dist * 0.9;
+                    Vec3 pos = start.add(dir.scale(rdist));
+                    double speed = 0.08 + level.random.nextDouble() * 0.05;
+                    Vec3 vel = dir.scale(speed);
+                    Vec3 perp1 = dir.cross(new Vec3(0, 1, 0)).normalize().scale(level.random.nextGaussian() * 0.005);
+                    Vec3 perp2 = dir.cross(perp1).normalize().scale(level.random.nextGaussian() * 0.005);
+                    vel = vel.add(perp1).add(perp2);
+                    level.addParticle(ParticleTypes.END_ROD, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z);
+                }
+            }
+            return;
+        }
         boolean isDisabled = ITClientConfig.disableReflectorDance;
         boolean isLoop = ITClientConfig.loopReflectorDance;
         long gameTime = ctx.getLevel().getRawLevel().getGameTime();

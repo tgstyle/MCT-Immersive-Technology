@@ -14,6 +14,7 @@ public class ITClientConfig {
     public static final ForgeConfigSpec.DoubleValue CONFIG_MULTIBLOCK_SPECIAL_RENDER_DISTANCE_MODIFIER;
     public static final ForgeConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_GAS_TURBINE;
     public static final ForgeConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_STEAM_TURBINE;
+    public static final ForgeConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_SOLAR_REFLECTOR;
     public static final ForgeConfigSpec.BooleanValue CONFIG_DISABLE_REFLECTOR_DANCE;
     public static final ForgeConfigSpec.BooleanValue CONFIG_LOOP_REFLECTOR_DANCE;
     public static final ForgeConfigSpec.BooleanValue CONFIG_PER_TICK_TRASH_CANS;
@@ -25,6 +26,7 @@ public class ITClientConfig {
     public static double multiblockSpecialRenderDistanceModifier;
     public static boolean doSpecialRenderGasTurbine;
     public static boolean doSpecialRenderSteamTurbine;
+    public static boolean doSpecialRenderSolarReflector;
     public static boolean disableReflectorDance;
     public static boolean loopReflectorDance;
     public static boolean perTickTrashCans;
@@ -38,6 +40,7 @@ public class ITClientConfig {
         CONFIG_MULTIBLOCK_SPECIAL_RENDER_DISTANCE_MODIFIER = BUILDER.comment("This modifies the distance a special multiblock renderer is visible from (Default: 2.5).").defineInRange("multiblockSpecialRenderDistanceModifier", 2.5, 0, Double.MAX_VALUE);
         CONFIG_DO_SPECIAL_RENDER_GAS_TURBINE = BUILDER.comment("This controls if the animations and special client rendering applies to the Gas Turbine (Default: true).").define("gas_turbine_renderer", true);
         CONFIG_DO_SPECIAL_RENDER_STEAM_TURBINE = BUILDER.comment("This controls if the animations and special client rendering applies to the Steam Turbine (Default: true).").define("steam_turbine_renderer", true);
+        CONFIG_DO_SPECIAL_RENDER_SOLAR_REFLECTOR = BUILDER.comment("This controls if the animations and special client rendering applies to the Solar Reflector (Default: true).").define("solar_reflector_renderer", true);
         CONFIG_DISABLE_FANCY_TESR = BUILDER.comment("Disables most lighting code for certain models that are rendered dynamically (TESR). May improve FPS. Affects various multiblocks.").define("disableFancyTESR", false);
         BUILDER.pop();
         BUILDER.comment("Solar Reflector options").push("solar_reflector");
@@ -61,6 +64,7 @@ public class ITClientConfig {
             multiblockSpecialRenderDistanceModifier = CONFIG_MULTIBLOCK_SPECIAL_RENDER_DISTANCE_MODIFIER.get();
             doSpecialRenderGasTurbine = CONFIG_DO_SPECIAL_RENDER_GAS_TURBINE.get();
             doSpecialRenderSteamTurbine = CONFIG_DO_SPECIAL_RENDER_STEAM_TURBINE.get();
+            doSpecialRenderSolarReflector = CONFIG_DO_SPECIAL_RENDER_SOLAR_REFLECTOR.get();
             disableReflectorDance = CONFIG_DISABLE_REFLECTOR_DANCE.get();
             loopReflectorDance = CONFIG_LOOP_REFLECTOR_DANCE.get();
             perTickTrashCans = CONFIG_PER_TICK_TRASH_CANS.get();
