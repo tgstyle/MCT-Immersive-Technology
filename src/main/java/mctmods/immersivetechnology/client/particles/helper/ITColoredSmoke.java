@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.client.particles.helper;
 
+import mctmods.immersivetechnology.core.ITClientConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
@@ -10,11 +11,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
+
 import java.util.List;
 
 public class ITColoredSmoke extends TextureSheetParticle {
-    private final boolean collideHorizontal;
-    private final boolean collideVertical;
+    private boolean collideHorizontal;
+    private boolean collideVertical;
 
     public ITColoredSmoke(ClientLevel level, double x, double y, double z, double velX, double velY, double velZ, Vector3f color, boolean collideHorizontal, boolean collideVertical, SpriteSet sprites) {
         super(level, x, y, z);
@@ -28,6 +30,7 @@ public class ITColoredSmoke extends TextureSheetParticle {
         this.hasPhysics = true;
         this.collideHorizontal = collideHorizontal;
         this.collideVertical = collideVertical;
+        if (ITClientConfig.particleCollide) { this.collideHorizontal = true; this.collideVertical = true; }
         this.xd = velX + (Math.random() * 2.0D - 1.0D) * 0.015D;
         this.yd = velY + (Math.random() * 2.0D - 1.0D) * 0.015D;
         this.zd = velZ + (Math.random() * 2.0D - 1.0D) * 0.015D;
@@ -43,8 +46,9 @@ public class ITColoredSmoke extends TextureSheetParticle {
         this.zo = this.z;
         if (this.age++ >= this.lifetime) { this.remove(); }
         else {
+            double scale = ITClientConfig.coloredSmokeHeight / 3.0D;
             this.xd += (Math.random() * 2.0D - 1.0D) * 0.001D;
-            this.yd += (Math.random() * 2.0D - 1.0D) * 0.001D + 0.002D;
+            this.yd += (Math.random() * 2.0D - 1.0D) * 0.001D + 0.002D * scale;
             this.zd += (Math.random() * 2.0D - 1.0D) * 0.001D;
             this.xd *= this.friction;
             this.yd *= this.friction;
