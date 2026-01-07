@@ -19,6 +19,7 @@ import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
@@ -47,8 +48,7 @@ import java.util.function.Function;
 public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>, IServerTickableComponent<AlternatorLogic.State>, IClientTickableComponent<AlternatorLogic.State> {
     public static final int ENERGY_CAPACITY = 1200000;
     private static final double BASE_MASS = 2;
-    private static final double FRICTION = 12;
-    private static final int POWER_DIVIDER = 2;
+    private static final double FRICTION = 0;
     private static final int MAX_OUTPUT = 12288;
     private static final int MAX_SPEED = MechanicalCapabilities.MAX_RPM;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AlternatorShape.DATA.pointsOfInterest);
@@ -73,25 +73,20 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) { return; }
         Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
-        float att = Math.max((float) player.distanceToSqr(soundPos) / 8, 1);
-        float vol = 20f / att;
-        if (state.active && state.speed >= state.effectiveMaxSpeed / POWER_DIVIDER && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
+        float att = (float) Math.max(player.distanceToSqr(soundPos) / 32, 1);
+        float vol = 11f / att;
+        if (state.active && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
             state.isSoundPlaying = ITSound.startSound(
-                    () -> state.active && state.speed >= state.effectiveMaxSpeed / POWER_DIVIDER,
+                    () -> state.active,
                     ctx.isValid(),
                     soundPos,
                     ITSounds.alternator,
                     () -> {
                         LocalPlayer p = Minecraft.getInstance().player;
                         if (p == null) { return 0f; }
-                        return 20f / Math.max((float) p.distanceToSqr(soundPos) / 8, 1);
+                        return 11f / (float) Math.max(p.distanceToSqr(soundPos) / 32, 1);
                     },
-                    () -> {
-                        float half = (float) state.effectiveMaxSpeed / POWER_DIVIDER;
-                        if (state.speed <= half) { return 0.75f; }
-                        float normalized = (state.speed - half) / half;
-                        return 0.75f + (0.25f * normalized);
-                    }
+                    () -> ITLib.remapRange(0, state.effectiveMaxSpeed, 0.5f, 1.25f, state.speed)
             );
         }
     }
@@ -131,8 +126,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             state.speed = Math.min(turbineSpeed, effectiveMax);
             state.torqueMultiplier = turbineTorque;
         } else if (state.speed > 0) {
-            int speedDownRate = (int) Math.round(FRICTION / BASE_MASS);
-            state.speed = Math.max(state.speed - speedDownRate, 0);
+            state.speed = Math.max(state.speed - 6, 0);
             if (state.speed > 0) { state.active = true; }
         }
         generateAndPushEnergy(state, ctx, level);
@@ -146,7 +140,6 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     }
 
     private void generateAndPushEnergy(State state, IMultiblockContext<State> ctx, Level level) {
-        if (state.speed < state.effectiveMaxSpeed / POWER_DIVIDER) { return; }
         double ratio = (double) state.speed / MAX_SPEED;
         int generatedThisTick = (int) Math.round(ratio * state.torqueMultiplier * MAX_OUTPUT);
         List<IEnergyStorage> connected = getConnectedHandlers(ctx, level);

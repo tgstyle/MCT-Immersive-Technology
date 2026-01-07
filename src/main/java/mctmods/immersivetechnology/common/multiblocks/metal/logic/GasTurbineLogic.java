@@ -127,7 +127,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         Vec3 sparkPos = ctx.getLevel().toAbsolute(new Vec3(SPARK_SOUND_POI.getX() + 0.5, SPARK_SOUND_POI.getY() + 0.5, SPARK_SOUND_POI.getZ() + 0.5));
         Vec3 ignitePos = ctx.getLevel().toAbsolute(new Vec3(IGNITE_SOUND_POI.getX() + 0.5, IGNITE_SOUND_POI.getY() + 0.5, IGNITE_SOUND_POI.getZ() + 0.5));
         float runningAtt = (float) Math.max(player.distanceToSqr(runningPos) / 32, 1);
-        float runningVol = (11 * (smoothedLevel - 0.2f)) / runningAtt;
+        float runningVol = (8 * (smoothedLevel - 0.2f)) / runningAtt;
         if (state.speed > 0 && ((state.everIgnited && !state.starterRunning) || (state.stall && state.ignited)) && runningVol > 0.01f && !state.runningSoundPlaying.getAsBoolean()) {
             state.runningSoundId++;
             int thisId = state.runningSoundId;
@@ -140,7 +140,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                         LocalPlayer p = Minecraft.getInstance().player;
                         if (p == null) { return 0f; }
                         float a = (float) Math.max(p.distanceToSqr(runningPos) / 32, 1);
-                        return (11 * (smoothedLevel - 0.2f)) / a;
+                        return (8 * (smoothedLevel - 0.2f)) / a;
                     },
                     () -> state.currentPitch
             );
@@ -263,7 +263,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         if (additionalMass != state.connectedMass || additionalFriction != state.connectedFriction) {
             state.connectedMass = additionalMass;
             state.connectedFriction = additionalFriction;
-            state.inertia = new RotationInertiaProcess(BASE_MASS + state.connectedMass, DRIVE_TORQUE, FRICTION + state.connectedFriction);
+            state.inertia = new RotationInertiaProcess(BASE_MASS + state.connectedMass, DRIVE_TORQUE, FRICTION + state.connectedFriction, effectiveMax);
         }
         boolean isRSEnabled = state.rsState.isEnabled(ctx);
         state.ignited = state.ignitionGracePeriod > 0;
@@ -437,7 +437,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             CapabilityPosition mvOpposingCP = CapabilityPosition.opposing(mvInputMBFace);
             MultiblockFace mvOpposingMBFace = new MultiblockFace(mvOpposingCP.side(), mvOpposingCP.posInMultiblock());
             this.mvInput = ctx.getCapabilityAt(ForgeCapabilities.ENERGY, mvOpposingMBFace);
-            this.inertia = new RotationInertiaProcess(BASE_MASS, DRIVE_TORQUE, FRICTION);
+            this.inertia = new RotationInertiaProcess(BASE_MASS, DRIVE_TORQUE, FRICTION, MAX_SPEED);
         }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {

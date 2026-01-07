@@ -58,8 +58,8 @@ import java.util.function.Function;
 public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.State>, IServerTickableComponent<SteamTurbineLogic.State>, IClientTickableComponent<SteamTurbineLogic.State>, ITPressurizedFluidOutput<SteamTurbineLogic.State> {
     public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
     private static final double BASE_MASS = 10;
-    private static final double DRIVE_TORQUE = 30;
-    private static final double FRICTION = 60;
+    private static final double DRIVE_TORQUE = 360;
+    private static final double FRICTION = 0;
     private static final int MAX_SPEED = MechanicalCapabilities.MAX_RPM;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SteamTurbineShape.DATA.pointsOfInterest);
 
@@ -69,7 +69,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     public static final CapabilityPosition INPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_input").get(0), getFacing("fluid_input"));
     public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_output").get(0), getFacing("fluid_output"));
     public static final CapabilityPosition ROTATIONAL_OUTPUT_POI = new CapabilityPosition(getPosList("mech_output").get(0), getFacing("mech_output"));
-    public static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
+    private static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
     private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
 
     private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
@@ -151,7 +151,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override public void tickServer(IMultiblockContext<State> ctx) {
         pumpOutputs(ctx);
         State state = ctx.getState();
@@ -183,36 +182,48 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         if (additionalMass != state.connectedMass || additionalFriction != state.connectedFriction) {
             state.connectedMass = additionalMass;
             state.connectedFriction = additionalFriction;
-            state.inertia = new RotationInertiaProcess(BASE_MASS + state.connectedMass, DRIVE_TORQUE, FRICTION + state.connectedFriction);
+            state.inertia = new RotationInertiaProcess(BASE_MASS + state.connectedMass, DRIVE_TORQUE, FRICTION + state.connectedFriction, effectiveMax);
         }
         boolean canRun = currentlyEnabled && hasConsumer;
-        boolean prevBurnRemaining = state.burnRemaining > 0;
-        if (!canRun) {
-            state.burnRemaining = 0;
-            state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate());
-        } else {
-            if (state.burnRemaining > 0) {
-                state.burnRemaining--;
-                state.speed = Math.min(effectiveMax, state.speed + state.inertia.getSpeedUpRate());
-                state.active = true;
-            } else {
-                FluidStack fluid = state.tanks.input.getFluid();
-                SteamTurbineRecipe recipe = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fluid);
-                if (recipe != null && fluid.getAmount() >= recipe.input.getAmount()) {
-                    state.tanks.input.drain(recipe.input.getAmount(), FluidAction.EXECUTE);
-                    if (recipe.fluidOutput != null) {
-                        int filled = state.tanks.output.fill(recipe.fluidOutput, FluidAction.EXECUTE);
-                        if (filled < recipe.fluidOutput.getAmount()) {}
+        float ratio = 0f;
+        if (canRun) {
+            FluidStack fluid = state.tanks.input.getFluid();
+            if (fluid.getAmount() > 0) {
+                SteamTurbineRecipe recipe = state.recipeGetter.apply(level, fluid);
+                if (recipe != null) {
+                    float fluidPerTick = (float) recipe.input.getAmount() / recipe.getTotalProcessTime();
+                    state.accumConsume += fluidPerTick;
+                    int toDrain = (int) state.accumConsume;
+                    if (toDrain > 0) {
+                        FluidStack drainedStack = state.tanks.input.drain(toDrain, FluidAction.EXECUTE);
+                        int drained = drainedStack.getAmount();
+                        state.accumConsume -= drained;
+                        ratio = (float) drained / fluidPerTick;
+                        if (recipe.fluidOutput != null) {
+                            float outputPerTick = (float) recipe.fluidOutput.getAmount() / recipe.getTotalProcessTime();
+                            state.outAccum += ratio * outputPerTick;
+                            if (state.outAccum >= 1) {
+                                FluidStack out = recipe.fluidOutput.copy();
+                                out.setAmount((int) state.outAccum);
+                                int filled = state.tanks.output.fill(out, FluidAction.EXECUTE);
+                                state.outAccum -= filled;
+                            }
+                        }
                     }
-                    state.burnRemaining = recipe.getTotalProcessTime() - 1;
-                    state.speed = Math.min(effectiveMax, state.speed + state.inertia.getSpeedUpRate());
-                    state.active = true;
-                } else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
+                }
             }
         }
+        state.effectiveRatio = state.effectiveRatio * 0.9f + ratio * 0.1f;
+        double alpha = state.inertia.getAlpha(canRun ? state.effectiveRatio : 0f, state.speed);
+        state.accumDelta += alpha;
+        int delta = (int) Math.round(state.accumDelta);
+        state.accumDelta -= delta;
+        state.speed += delta;
+        if (state.speed > effectiveMax) { state.speed = effectiveMax; }
+        if (state.speed < 0) { state.speed = 0; }
+        state.active = state.effectiveRatio > 0.001f;
         if (state.pressureReleaseCooldown > 0) { state.pressureReleaseCooldown--; }
-        boolean triggerRelease = !state.wasEnabled && currentlyEnabled;
-        if (!prevBurnRemaining && state.burnRemaining > 0) { triggerRelease = true; }
+        boolean triggerRelease = (!previouslyActive && state.active) || (!state.wasEnabled && currentlyEnabled);
         if (triggerRelease && state.pressureReleaseCooldown <= 0) {
             BlockPos soundPos = ctx.getLevel().toAbsolute(RUNNING_SOUND_POI);
             level.playSound(null, soundPos, ITSounds.pressure_release.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
@@ -261,7 +272,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         private final BiFunction<Level, FluidStack, SteamTurbineRecipe> recipeGetter;
         public int speed = 0;
         public boolean active = false;
-        private int burnRemaining = 0;
         public BooleanSupplier isSoundPlaying = () -> false;
         public float animation_fanRotationStep = 0;
         public float animation_fanRotation = 0;
@@ -274,6 +284,10 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         private int pressureReleaseCooldown = 0;
         private boolean wasEnabled = false;
         public int effectiveMaxSpeed = MAX_SPEED;
+        private float accumConsume = 0f;
+        private float outAccum = 0f;
+        private double accumDelta = 0.0;
+        private float effectiveRatio = 0f;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -287,27 +301,37 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             CapabilityPosition oppCp = CapabilityPosition.opposing(outputMBFace);
             MultiblockFace oppMbf = new MultiblockFace(oppCp.side(), oppCp.posInMultiblock());
             this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, oppMbf);
-            this.inertia = new RotationInertiaProcess(BASE_MASS, DRIVE_TORQUE, FRICTION);
+            this.inertia = new RotationInertiaProcess(BASE_MASS, DRIVE_TORQUE, FRICTION, MAX_SPEED);
+            this.accumConsume = 0f;
+            this.outAccum = 0f;
+            this.accumDelta = 0.0;
+            this.effectiveRatio = 0f;
         }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.putInt("speed", speed);
             nbt.putBoolean("active", active);
-            nbt.putInt("burnRemaining", burnRemaining);
             nbt.put("tanks", tanks.toNBT());
             nbt.putInt("pressureReleaseCooldown", pressureReleaseCooldown);
             nbt.putBoolean("wasEnabled", wasEnabled);
             nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
+            nbt.putFloat("accumConsume", accumConsume);
+            nbt.putFloat("outAccum", outAccum);
+            nbt.putDouble("accumDelta", accumDelta);
+            nbt.putFloat("effectiveRatio", effectiveRatio);
         }
 
         @Override public void readSaveNBT(CompoundTag nbt) {
             speed = nbt.getInt("speed");
             active = nbt.getBoolean("active");
-            burnRemaining = nbt.getInt("burnRemaining");
             tanks.readNBT(nbt.getCompound("tanks"));
             pressureReleaseCooldown = nbt.getInt("pressureReleaseCooldown");
             wasEnabled = nbt.getBoolean("wasEnabled");
             effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
+            accumConsume = nbt.getFloat("accumConsume");
+            outAccum = nbt.getFloat("outAccum");
+            accumDelta = nbt.getDouble("accumDelta");
+            effectiveRatio = nbt.getFloat("effectiveRatio");
         }
 
         @Override public void writeSyncNBT(CompoundTag nbt) {
