@@ -63,6 +63,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerSolidShape.DATA.pointsOfInterest);
     private static final int WIDTH = BoilerSolidShape.WIDTH;
     private static final int LENGTH = BoilerSolidShape.LENGTH;
+    private static final int HEIGHT = BoilerSolidShape.HEIGHT;
 
     public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
     public static final List<BlockPos> IGNITION_POI = getPosList("ignition");
@@ -124,30 +125,21 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             float r = 0.2F, g = 0.2F, b = 0.2F;
             level.addAlwaysVisibleParticle(new ColoredSmoke(r, g, b), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ);
         }
-        if (state.needClientBlockUpdate) {
-            updateAllBlocks(ctx, level, state.active);
-            state.needClientBlockUpdate = false;
-        }
     }
 
     @Override public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         final Level level = ctx.getLevel().getRawLevel();
-        if (!state.isInitialServerUpdateDone) {
-            updateAllBlocks(ctx, level, state.active);
-            state.isInitialServerUpdateDone = true;
-        }
         boolean update = false;
         double previousHeatLevel = state.heatLevel;
         boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
         boolean fullMode = state.rsState.isEnabled(ctx) && hasWater;
-        boolean isActive = state.pilotLit && fullMode && state.heatLevel >= state.getWorkingHeatLevel();
-        if (!ctx.isValid().getAsBoolean()) { state.active = false; isActive = false; update = true; }
+        boolean valid = ctx.isValid().getAsBoolean();
+        boolean isActive = state.pilotLit && fullMode && state.heatLevel >= state.getWorkingHeatLevel() && valid;
         if (state.active != isActive) {
             state.active = isActive;
             update = true;
             updateAllBlocks(ctx, level, state.active);
-            state.needClientBlockUpdate = true;
         }
         if (!state.pilotLit) {
             state.heatLevel = Math.max(state.heatLevel - HEAT_LOSS_PER_TICK, 0);
@@ -202,20 +194,17 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     }
 
     private void updateAllBlocks(IMultiblockContext<State> ctx, Level level, boolean active) {
+        if (level.isClientSide) { return; }
         ResourceLocation boilerRL = ITLib.rl("boiler_solid");
-        final Block boilerBlock = ForgeRegistries.BLOCKS.getValue(boilerRL);
+        Block boilerBlock = ForgeRegistries.BLOCKS.getValue(boilerRL);
         if (boilerBlock == null) { return; }
-        for (int y = 0; y < BoilerSolidShape.HEIGHT; y++) for (int z = 0; z < LENGTH; z++) for (int x = 0; x < WIDTH; x++) {
+        for (int y = 0; y < HEIGHT; y++) for (int z = 0; z < LENGTH; z++) for (int x = 0; x < WIDTH; x++) {
             BlockPos relPos = new BlockPos(x, y, z);
             BlockPos absPos = ctx.getLevel().toAbsolute(relPos);
             BlockState curr = level.getBlockState(absPos);
             if (curr.getBlock() == boilerBlock && curr.hasProperty(ITProperties.ACTIVE)) {
                 BlockState newState = curr.setValue(ITProperties.ACTIVE, active);
-                if (!curr.equals(newState)) {
-                    level.setBlock(absPos, newState, 19);
-                    level.updateNeighborsAt(absPos, boilerBlock);
-                    if (level.isClientSide) { Minecraft.getInstance().levelRenderer.setBlockDirty(absPos, curr, newState); }
-                }
+                if (!curr.equals(newState)) { level.setBlock(absPos, newState, 3); }
             }
         }
     }
@@ -275,8 +264,6 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         public boolean pilotLit = false;
         public boolean active = false;
         public BooleanSupplier isSoundPlaying = () -> false;
-        public boolean isInitialServerUpdateDone = false;
-        public boolean needClientBlockUpdate = true;
 
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -334,9 +321,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             nbt.putInt("burnRemaining", burnRemaining);
             nbt.putInt("totalBurnTime", totalBurnTime);
             nbt.put("inventory", inventory.serializeNBT());
-            nbt.putBoolean("needClientBlockUpdate", needClientBlockUpdate);
             nbt.putDouble("workingHeatLevel", getWorkingHeatLevel());
-            needClientBlockUpdate = false;
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
@@ -346,7 +331,6 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             burnRemaining = nbt.getInt("burnRemaining");
             totalBurnTime = nbt.getInt("totalBurnTime");
             inventory.deserializeNBT(nbt.getCompound("inventory"));
-            needClientBlockUpdate = nbt.getBoolean("needClientBlockUpdate");
         }
     }
 
