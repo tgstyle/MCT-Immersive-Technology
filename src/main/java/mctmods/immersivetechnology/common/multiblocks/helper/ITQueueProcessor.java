@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ThreadedLevelLightEngine;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -80,6 +81,8 @@ public class ITQueueProcessor {
         }
 
         if (fakePlayer == null) { fakePlayer = ITFakePlayerUtil.getFakePlayer(serverLevel, owner); }
+
+        fakePlayer.setGameMode(GameType.CREATIVE);
 
         int blocksPerTick = ITTemplateMultiblock.DISASSEMBLE_QUEUE_SIZE;
 

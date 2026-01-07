@@ -24,6 +24,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
@@ -33,6 +34,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -90,41 +92,46 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             boolean doTileDrops = serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
             BlockPos masterPos = withSettingsAndOffset(origin, masterFromOrigin, mirror, rot);
             ServerPlayer breakingPlayer = (ServerPlayer) serverLevel.getNearestPlayer(masterPos.getX() + 0.5, masterPos.getY() + 0.5, masterPos.getZ() + 0.5, -1.0, e -> true);
+            boolean dropItems = doTileDrops;
+            if (breakingPlayer != null && breakingPlayer.gameMode.getGameModeForPlayer() == GameType.CREATIVE) { dropItems = false; }
             IMultiblockBEHelperMaster<?> masterHelper = null;
             BlockEntity masterBE = world.getBlockEntity(masterPos);
             if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof IMultiblockBEHelperMaster<?> h) { masterHelper = h; }
-            if (masterHelper != null) { dropInventory(masterHelper, addToDrops); }
+            if (masterHelper != null && dropItems) { dropInventory(masterHelper, addToDrops); }
             for (StructureBlockInfo block : getStructure(world)) { prepareBlockForDisassembly(world, withSettingsAndOffset(origin, block.pos(), mirror, rot)); }
-            List<StructureTemplate.StructureBlockInfo> structure = new ArrayList<>(getStructure(world));
+            List<StructureBlockInfo> structure = new ArrayList<>(getTemplate(world).template().palettes.get(0).blocks());
             structure.sort(Comparator.comparingInt(a -> -a.pos().getY()));
-            List<AbstractMap.SimpleEntry<BlockPos, BlockState>> toBreak = new ArrayList<>();
-            for (StructureTemplate.StructureBlockInfo info : structure) {
-                BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
-                BlockState stateAfterMirror = info.state().mirror(mirror);
-                BlockState templateState = stateAfterMirror.rotate(serverLevel, actualPos, rot);
-                List<ItemStack> drops = List.of();
-                if (doTileDrops) {
-                    if (breakingPlayer != null) { drops = Block.getDrops(templateState, serverLevel, actualPos, null, breakingPlayer, breakingPlayer.getMainHandItem()); }
-                    else { drops = Block.getDrops(templateState, serverLevel, actualPos, null); }
-                }
-                for (ItemStack s : drops) { addToDrops.accept(s); }
-                toBreak.add(new AbstractMap.SimpleEntry<>(actualPos, templateState));
-            }
-            BlockPos dropPos = breakingPlayer != null ? breakingPlayer.blockPosition() : origin;
+            BlockPos brokenPos = origin;
             if (breakingPlayer != null) {
-                BlockPos playerPos = breakingPlayer.blockPosition();
+                Vec3 playerEyePos = breakingPlayer.getEyePosition();
                 double minDist = Double.MAX_VALUE;
                 BlockPos closest = null;
-                for (AbstractMap.SimpleEntry<BlockPos, BlockState> entry : toBreak) {
-                    BlockPos actual = entry.getKey();
-                    double dist = actual.distSqr(playerPos);
+                for (StructureBlockInfo info : structure) {
+                    BlockPos actual = withSettingsAndOffset(origin, info.pos(), mirror, rot);
+                    double dist = Vec3.atCenterOf(actual).distanceToSqr(playerEyePos);
                     if (dist < minDist) {
                         minDist = dist;
                         closest = actual;
                     }
                 }
-                if (closest != null) { dropPos = closest; }
+                if (closest != null) { brokenPos = closest; }
             }
+            List<AbstractMap.SimpleEntry<BlockPos, BlockState>> toBreak = new ArrayList<>();
+            for (StructureBlockInfo info : structure) {
+                BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
+                BlockState stateAfterMirror = info.state().mirror(mirror);
+                BlockState template = stateAfterMirror.rotate(serverLevel, actualPos, rot);
+                if (dropItems && !actualPos.equals(brokenPos)) {
+                    BlockEntity be = serverLevel.getBlockEntity(actualPos);
+                    ItemStack tool = breakingPlayer != null ? breakingPlayer.getMainHandItem() : ItemStack.EMPTY;
+                    List<ItemStack> drops = Block.getDrops(template, serverLevel, actualPos, be, breakingPlayer, tool);
+                    allDrops.addAll(drops);
+                }
+                if (!actualPos.equals(brokenPos)) {
+                    toBreak.add(new AbstractMap.SimpleEntry<>(actualPos, template));
+                }
+            }
+            BlockPos dropPos = brokenPos;
             for (ItemStack s : allDrops) { ITUtils.dropStackAtPos(world, dropPos, s); }
             pendingQueues.add(new ITQueueProcessor(world, toBreak, breakingPlayer));
         }
