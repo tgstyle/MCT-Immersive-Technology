@@ -30,7 +30,6 @@ public class SteamTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBl
     public SteamTurbineRenderer() {}
 
     @Override public void render(@NotNull MultiblockBlockEntityMaster<SteamTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        if (!ITClientConfig.doSpecialRenderSteamTurbine) { return; }
         IMultiblockBEHelperMaster<SteamTurbineLogic.State> helper = tile.getHelper();
         IMultiblockContext<SteamTurbineLogic.State> context = helper.getContext();
         SteamTurbineLogic.State state = context.getState();
@@ -40,6 +39,7 @@ public class SteamTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBl
         Direction dir = orientation.front();
         Vec3 axisVec = Vec3.atLowerCornerOf(dir.getNormal());
         double angle = state.animation_fanRotation + state.animation_fanRotationStep * partialTicks;
+        if (!ITClientConfig.doSpecialRenderSteamTurbine) { angle = 0; }
         ITDynamicModel selectedModel = (dir == Direction.EAST || dir == Direction.WEST) ? RotorModels.ROTOR_EAST_WEST : RotorModels.ROTOR;
         Vec3 rotorStart1 = Vec3.atLowerCornerOf(context.getLevel().toAbsolute(new BlockPos(1, 1, 0)).subtract(pos));
         Vec3 delta1 = rotorStart1.add(axisVec.scale(0));

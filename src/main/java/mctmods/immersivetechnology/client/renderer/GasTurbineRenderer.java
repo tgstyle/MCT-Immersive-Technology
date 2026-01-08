@@ -30,7 +30,6 @@ public class GasTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBloc
     public GasTurbineRenderer() {}
 
     @Override public void render(@NotNull MultiblockBlockEntityMaster<GasTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        if (!ITClientConfig.doSpecialRenderGasTurbine) { return; }
         IMultiblockBEHelperMaster<GasTurbineLogic.State> helper = tile.getHelper();
         IMultiblockContext<GasTurbineLogic.State> context = helper.getContext();
         GasTurbineLogic.State state = context.getState();
@@ -40,6 +39,7 @@ public class GasTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBloc
         Direction dir = orientation.front();
         Vec3 axisVec = Vec3.atLowerCornerOf(dir.getNormal());
         double angle = state.animation_fanRotation + state.animation_fanRotationStep * partialTicks;
+        if (!ITClientConfig.doSpecialRenderGasTurbine) { angle = 0; }
         Vec3 rotorStart = Vec3.atLowerCornerOf(context.getLevel().toAbsolute(new BlockPos(1, 1, 0)).subtract(pos));
         Vec3 delta = rotorStart.add(axisVec.scale(0));
         poseStack.pushPose();
