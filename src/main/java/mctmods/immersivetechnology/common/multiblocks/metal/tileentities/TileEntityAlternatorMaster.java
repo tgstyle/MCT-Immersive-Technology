@@ -153,6 +153,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             handleSounds();
             return;
         }
+        super.update();
         if (needsPoIInit) { needsPoIInit = false; InitializePoIs(); }
         if (needsNotify) { needsNotify = false; notifyIONeighbors(); }
         checkProvider();

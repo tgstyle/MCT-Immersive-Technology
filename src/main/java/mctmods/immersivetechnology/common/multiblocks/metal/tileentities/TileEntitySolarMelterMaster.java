@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
+
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
-
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
+import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
@@ -110,7 +110,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         nbt.setInteger("recipeEnergyRemaining", recipeEnergyRemaining);
         nbt.setDouble("heatLevel", heatLevel);
         nbt.setDouble("reflectorStrength", reflectorStrength);
-        if (!descPacket) { nbt.setTag("inventory", Utils.writeInventory(inventory)); }
+        if (!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
         nbt.setBoolean("registered", registered);
         nbt.setBoolean("savedRegistered", savedRegistered);
         nbt.setBoolean("reCheckOnLoad", reCheckOnLoad);
@@ -119,8 +119,9 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
-        if (isRunning) { if (soundVolume < 1) soundVolume += 0.02f; }
-        else { if (soundVolume > 0) soundVolume -= 0.02f; }
+        if (soundPos0 == null) InitializePoIs();
+        if (isRunning) { if (soundVolume < 1) soundVolume += 0.01f; }
+        else { if (soundVolume > 0) soundVolume -= 0.01f; }
         if (soundVolume == 0) { ITSoundHandler.StopSound(soundPos0); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -133,14 +134,13 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     @Override public void onChunkUnload() { ITSoundHandler.StopSound(soundPos0); super.onChunkUnload(); }
 
     @Override public void disassemble() {
+        if (soundPos0 == null) InitializePoIs();
         if (soundPos0 != null) {
             ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         }
         if (!world.isRemote) {
             for (ItemStack stack : inventory) {
-                if (!stack.isEmpty()) {
-                    Utils.dropStackAtPos(world, getPos(), stack);
-                }
+                if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack);
             }
             inventory.clear();
         }
@@ -171,10 +171,10 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     @Override public void receiveMessageFromServer(ByteBuf message) {
         heatLevel = message.readDouble();
         solarIncidenceAngleSection = message.readInt();
-        isRunning = message.getBoolean(0);
+        isRunning = message.readBoolean();
     }
 
-    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { }
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
@@ -221,7 +221,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         double previous = heatLevel;
         double heatLost = world.getBiomeProvider().getTemperatureAtHeight(world.getBiome(getPos()).getTemperature(getPos()), getPos().getY());
         double conduction = 1.0;
-        if (ITCompatModule.isAdvancedRocketryLoaded) { conduction *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos().add(0, 19, 0)); }
+        if (ITCompatModule.isAdvancedRocketryLoaded) { conduction *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos()); }
         heatLevel = Math.max(heatLevel - ((world.isRaining() ? 2 : 1 * (1 / heatLost)) * heatLossMultiplier * conduction), 0);
         return previous != heatLevel;
     }
@@ -350,7 +350,10 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         }
     }
 
-    @Override public void TankContentsChanged() { markContainingBlockForUpdate(null); }
+    @Override public void TankContentsChanged() {
+        markContainingBlockForUpdate(null);
+        efficientMarkDirty();
+    }
 
     @Override public boolean isDummy() { return false; }
 

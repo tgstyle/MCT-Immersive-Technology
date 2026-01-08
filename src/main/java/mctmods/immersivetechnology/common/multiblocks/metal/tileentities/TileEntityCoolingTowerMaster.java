@@ -66,7 +66,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     protected PoICache fluidInput0, fluidInput1, fluidOutput0, fluidOutput1, fluidOutput2;
     private BlockPos outputFrontPos0, outputFrontPos1, outputFrontPos2, particlePos0, soundPos0;
 
-    private float soundVolume = 0;
+    private float soundVolume;
     private int gracePeriod = 60;
     private int clientUpdateCooldown = 20;
     private boolean isRunning;
@@ -113,7 +113,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         if (soundPos0 == null) { InitializePoIs(); }
         if (isRunning) { if (soundVolume < 1) soundVolume += 0.01f; }
         else { if (soundVolume > 0) soundVolume -= 0.01f; }
-        if (soundVolume <= 0) { ITSoundHandler.StopSound(soundPos0); }
+        if (soundVolume == 0) { ITSoundHandler.StopSound(soundPos0); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 8, 1);
@@ -162,9 +162,9 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     }
 
     @Override public void update() {
-        if (formed && fluidInput0 == null) { InitializePoIs(); }
-        super.update();
         if (!formed) { return; }
+        if (fluidInput0 == null) { InitializePoIs(); }
+        super.update();
         if (world.isRemote) {
             handleSounds();
             spawnParticles();
@@ -237,7 +237,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override public boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
         if (!formed || fluidInput0 == null) { InitializePoIs(); }
         if (iTank == 0 && fluidInput0.isPoI(side, position)) {
             FluidTank tank = tanks[0];
@@ -254,7 +254,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         return false;
     }
 
-    @Override public boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
         if (!formed || fluidInput0 == null) { InitializePoIs(); }
         if (iTank == 2 && fluidOutput0.isPoI(side, position)) { return tanks[2].getFluidAmount() > 0; }
         if (iTank == 3 && fluidOutput1.isPoI(side, position)) { return tanks[3].getFluidAmount() > 0; }

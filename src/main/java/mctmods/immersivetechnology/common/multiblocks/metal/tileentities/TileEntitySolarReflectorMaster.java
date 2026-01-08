@@ -100,7 +100,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         }
         calculateAnimationRotations();
         notifyNearbyClients();
-        markDirty();
+        efficientMarkDirty();
         return true;
     }
 
@@ -111,7 +111,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         SolarRegistry.notifyTaken(world, getPos(), false);
         calculateAnimationRotations();
         notifyNearbyClients();
-        markDirty();
+        efficientMarkDirty();
     }
 
     public double getSolarCollectorStrength() {
@@ -171,6 +171,8 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
             }
         }
     }
+
+    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
 

@@ -4,6 +4,9 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparat
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
@@ -15,12 +18,14 @@ import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import mctmods.immersivetechnology.common.util.compat.advancedrocketry.AdvancedRocketryHelper;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
+import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -46,7 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITFluidTank.TankListener, IComparatorOverride, IIEInventory {
+public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITFluidTank.TankListener, IComparatorOverride, IIEInventory, IBinaryMessageReceiver {
 
     private static final int inputTankSize = Multiblocks.boiler.boiler_input_tankSize;
     private static final int outputTankSize = Multiblocks.boiler.boiler_output_tankSize;
@@ -125,12 +130,17 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     }
 
     public void notifyNearbyClients() {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setDouble("heat", heatLevel);
-        ImmersiveTechnology.packetHandler.sendToAllAround(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 40));
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeDouble(heatLevel);
+        BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
     }
 
-    @Override public void receiveMessageFromServer(@Nonnull NBTTagCompound message) { heatLevel = message.getDouble("heat"); }
+    @Override public void receiveMessageFromServer(ByteBuf message) {
+        heatLevel = message.readDouble();
+    }
+
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {
+    }
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
@@ -404,63 +414,48 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         }
 
         @Override public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null) return 0;
-            resource = resource.copy();
-            int filled = 0;
-            for (IFluidTank accessible : accessibleTanks) {
-                int iTank = getTankIndex(accessible);
-                if (iTank != -1 && master.canFillTankFrom(iTank, side, resource, position)) {
-                    int f = accessible.fill(resource, doFill);
-                    filled += f;
-                    resource.amount -= f;
-                    if (doFill && f > 0) master.TankContentsChanged();
-                    if (resource.amount <= 0) return filled;
+            if (resource == null || resource.amount <= 0) return 0;
+            TileEntityBoilerMaster master = this.master;
+            if (master == null) return 0;
+            for (int i = 0; i < master.tanks.length; i++) {
+                if (master.canFillTankFrom(i, side, resource, position)) {
+                    int filled = master.tanks[i].fill(resource, doFill);
+                    if (filled > 0 && doFill) master.markDirty();
+                    return filled;
                 }
             }
-            return filled;
+            return 0;
         }
 
         @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null) return null;
-            resource = resource.copy();
-            FluidStack drained = null;
-            for (IFluidTank accessible : accessibleTanks) {
-                int iTank = getTankIndex(accessible);
-                if (iTank != -1 && master.canDrainTankFrom(iTank, side, position)) {
-                    FluidStack tankFluid = accessible.getFluid();
+            if (resource == null || resource.amount <= 0) return null;
+            TileEntityBoilerMaster master = this.master;
+            if (master == null) return null;
+            for (int i = 0; i < master.tanks.length; i++) {
+                if (master.canDrainTankFrom(i, side, position)) {
+                    FluidStack tankFluid = master.tanks[i].getFluid();
                     if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
-                        int amount = Math.min(resource.amount, tankFluid.amount);
-                        FluidStack d = accessible.drain(amount, doDrain);
-                        if (d != null) {
-                            if (drained == null) drained = d.copy();
-                            else drained.amount += d.amount;
-                            resource.amount -= d.amount;
-                            if (doDrain && d.amount > 0) master.TankContentsChanged();
-                            if (resource.amount <= 0) return drained;
-                        }
+                        FluidStack drained = master.tanks[i].drain(resource.amount, doDrain);
+                        if (drained != null && doDrain) master.markDirty();
+                        return drained;
                     }
                 }
             }
-            return drained;
+            return null;
         }
 
         @Override public FluidStack drain(int maxDrain, boolean doDrain) {
-            int toDrain = maxDrain;
-            FluidStack drained = null;
-            for (IFluidTank accessible : accessibleTanks) {
-                int iTank = getTankIndex(accessible);
-                if (iTank != -1 && master.canDrainTankFrom(iTank, side, position)) {
-                    FluidStack d = accessible.drain(toDrain, doDrain);
-                    if (d != null) {
-                        if (drained == null) drained = d.copy();
-                        else if (drained.isFluidEqual(d)) drained.amount += d.amount;
-                        toDrain -= d.amount;
-                        if (doDrain && d.amount > 0) master.TankContentsChanged();
-                        if (toDrain <= 0) return drained;
-                    }
+            if (maxDrain <= 0) return null;
+            TileEntityBoilerMaster master = this.master;
+            if (master == null) return null;
+            for (int i = 0; i < master.tanks.length; i++) {
+                if (master.canDrainTankFrom(i, side, position)) {
+                    FluidStack drained = master.tanks[i].drain(maxDrain, doDrain);
+                    if (drained != null && doDrain) master.markDirty();
+                    return drained;
                 }
             }
-            return drained;
+            return null;
         }
     }
 }

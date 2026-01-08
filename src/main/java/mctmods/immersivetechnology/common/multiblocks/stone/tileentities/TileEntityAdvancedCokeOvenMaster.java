@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 
+import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAdvancedCokeOvenBaseheater;
@@ -50,7 +51,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOvenSlave implements ITFluidTank.TankListener {
+public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOvenSlave implements ITFluidTank.TankListener, IIEInventory {
     private static final int tankSize = Multiblocks.advancedCokeOven.advancedCokeOven_tankSize;
     public static float baseSpeed = Multiblocks.advancedCokeOven.advancedCokeOven_speed_base;
     public static float baseheaterAdd = Multiblocks.advancedCokeOven.advancedCokeOven_baseheater_speed_increase;
@@ -163,7 +164,6 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
                 }
             }
             inventory.clear();
-            tank.drain(tank.getFluidAmount(), true);
         }
         BlockPos center = getPos();
         ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
@@ -352,6 +352,15 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     @Override public void TankContentsChanged() { this.markContainingBlockForUpdate(null); }
 
     @Override public NonNullList<ItemStack> getInventory() { return inventory; }
+
+    @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
+
+    @Override public int getSlotLimit(int slot) { return 64; }
+
+    @Override public void doGraphicalUpdates(int slot) {
+        this.markDirty();
+        this.markContainingBlockForUpdate(null);
+    }
 
     @Override protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if (fluidOutput0 == null) { InitializePoIs(); }
