@@ -1,13 +1,11 @@
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import net.minecraftforge.gradle.common.tasks.SignJar
-import net.minecraftforge.gradle.userdev.tasks.RenameJarInPlace
 
 plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '6.0.+'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'org.spongepowered.mixin' version '0.7.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.6'
@@ -36,7 +34,6 @@ group = 'mctmods.immersivetechnology'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-jar.enabled = true
 tasks.withType(Jar).configureEach {
     zip64 true
 }
@@ -220,7 +217,6 @@ dependencies {
 
     implementation fg.deobf("curse.maven:immersive-engineering-231951:6206989")
     implementation fg.deobf("curse.maven:engineered-schematics-1207780:6560826")
-    //implementation fg.deobf("curse.maven:immersive-fixes-1326199:6880681")
 
     implementation fg.deobf("curse.maven:jade-324717:6855440")
 
@@ -261,14 +257,14 @@ tasks.register('signJar', SignJar) {
         alias = project.storeAlias
         storePass = project.storePass
         keyPass = project.storePass
-        inputFile = shadowJar.archiveFile
-        outputFile = shadowJar.archiveFile
+        inputFile = jar.archiveFile.get().asFile
+        outputFile = jar.archiveFile.get().asFile
     } else {
         logger.warn("No key store found, not signing the output jar\n")
     }
 }
 
-build.dependsOn bumpVersion, signJar, shadowJar
+build.dependsOn bumpVersion, signJar
 
 tasks.register('datagenJar', Jar) {
     dependsOn datagenClasses
@@ -349,18 +345,11 @@ tasks.withType(Task).configureEach {
 }
 
 processResources.dependsOn bumpVersion
-shadowJar.dependsOn bumpVersion
 jar.dependsOn bumpVersion
 datagenJar.dependsOn bumpVersion
 sourcesJar.dependsOn bumpVersion
 
-jar.enabled = false
-
-shadowJar {
+jar {
     archiveBaseName.set("MCTImmersiveTechnology-${version_minecraft}")
     archiveClassifier.set('')
-}
-
-tasks.withType(RenameJarInPlace).configureEach {
-    enabled = false
 }
