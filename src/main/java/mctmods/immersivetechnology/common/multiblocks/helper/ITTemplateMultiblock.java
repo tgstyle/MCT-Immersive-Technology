@@ -81,18 +81,16 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         world.markAndNotifyBlock(actualPos, chunk, oldState, newState, 3, 512);
     }
 
+    @SuppressWarnings("deprecation")
     @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
         if (world.isClientSide) { return; }
-        if (ITServerConfig.DISASSEMBLY_MODE.get() == ITServerConfig.DisassemblyMode.TEMPLATE_BLOCKS) {
-            super.disassemble(world, origin, mirrored, clickDirectionAtCreation);
-            return;
-        }
         Mirror mirror = mirrored ? Mirror.FRONT_BACK : Mirror.NONE;
         Rotation rot = DirectionUtils.getRotationBetweenFacings(Direction.NORTH, clickDirectionAtCreation);
         Preconditions.checkNotNull(rot);
         List<ItemStack> allDrops = new ArrayList<>();
         Consumer<ItemStack> addToDrops = stack -> { if (!stack.isEmpty()) { allDrops.add(stack); } };
         if (world instanceof ServerLevel serverLevel) {
+            boolean templateMode = ITServerConfig.DISASSEMBLY_MODE.get() == ITServerConfig.DisassemblyMode.TEMPLATE_BLOCKS;
             boolean doTileDrops = serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
             BlockPos masterPos = withSettingsAndOffset(origin, masterFromOrigin, mirror, rot);
             ServerPlayer breakingPlayer = (ServerPlayer) serverLevel.getNearestPlayer(masterPos.getX() + 0.5, masterPos.getY() + 0.5, masterPos.getZ() + 0.5, -1.0, e -> true);
@@ -137,20 +135,28 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                     if (closest != null) { brokenPos = closest; }
                 }
             }
-            List<AbstractMap.SimpleEntry<BlockPos, BlockState>> toBreak = new ArrayList<>();
             ItemStack tool = breakingPlayer != null ? breakingPlayer.getMainHandItem() : ItemStack.EMPTY;
+            List<AbstractMap.SimpleEntry<BlockPos, BlockState>> toBreak = new ArrayList<>();
             for (StructureBlockInfo info : structure) {
                 BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
                 BlockState stateAfterMirror = info.state().mirror(mirror);
-                BlockState template = stateAfterMirror.rotate(serverLevel, actualPos, rot);
-                if (dropItems) {
-                    List<ItemStack> drops = Block.getDrops(template, serverLevel, actualPos, null, breakingPlayer, tool);
-                    allDrops.addAll(drops);
+                BlockState template = stateAfterMirror.rotate(rot);
+                if (templateMode) {
+                    if (dropItems && actualPos.equals(brokenPos)) {
+                        List<ItemStack> drops = Block.getDrops(template, serverLevel, actualPos, null, breakingPlayer, tool);
+                        allDrops.addAll(drops);
+                    }
+                    if (!actualPos.equals(brokenPos)) { world.setBlockAndUpdate(actualPos, template); }
+                } else {
+                    if (dropItems) {
+                        List<ItemStack> drops = Block.getDrops(template, serverLevel, actualPos, null, breakingPlayer, tool);
+                        allDrops.addAll(drops);
+                    }
+                    if (!actualPos.equals(brokenPos)) { toBreak.add(new AbstractMap.SimpleEntry<>(actualPos, template)); }
                 }
-                toBreak.add(new AbstractMap.SimpleEntry<>(actualPos, template));
             }
             for (ItemStack s : allDrops) { ITUtils.dropStackAtPos(world, brokenPos, s); }
-            pendingQueues.add(new ITQueueProcessor(world, toBreak, breakingPlayer));
+            if (!templateMode) { pendingQueues.add(new ITQueueProcessor(world, toBreak, breakingPlayer)); }
         }
     }
 
