@@ -73,6 +73,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     private int playerDimension;
     public Optional<Boolean> computerOn = Optional.empty();
     public boolean redstoneControlInverted = false;
+    private boolean needsPoIInit = true;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -82,6 +83,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         recipeTimeTotal = nbt.getInteger("recipeTimeTotal");
         radiationEfficiency = nbt.getDouble("radiationEfficiency");
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
+        if (!descPacket && formed) needsPoIInit = true;
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -136,7 +138,6 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
             int[] fluidAmounts = getProcessedFluidAmounts(lastRecipe);
             tanks[0].drain(fluidAmounts[0], true);
             tanks[1].fillInternal(new FluidStack(lastRecipe.fluidOutput.getFluid(), fluidAmounts[1]), true);
-            markContainingBlockForUpdate(null);
             return true;
         }
         return false;
@@ -190,16 +191,17 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         return ITCompatModule.isAdvancedRocketryLoaded ? AdvancedRocketryHelper.getRadiatorHeatTransferCoefficient(world, getPos(), inputFluidTemperature, radiationEfficiency) : radiationEfficiency;
     }
 
-    private void pumpOutputOut() {
-        if (tanks[1].getFluidAmount() == 0) { return; }
+    private boolean pumpOutputOut() {
+        if (tanks[1].getFluidAmount() == 0) { return false; }
         IFluidHandler handler = FluidUtil.getFluidHandler(world, fluidOutputPos0, fluidOutput0.facing.getOpposite());
-        if (handler == null) { return; }
+        if (handler == null) { return false; }
         FluidStack out = tanks[1].getFluid();
+        if (out == null) { return false; }
         int accepted = handler.fill(out, false);
-        if (accepted == 0) { return; }
-        assert out != null;
+        if (accepted == 0) { return false; }
         int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
         tanks[1].drain(drained, true);
+        return drained > 0;
     }
 
     public int[] getProcessedFluidAmounts(RadiatorRecipe recipe) {
@@ -247,24 +249,34 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     }
 
     @Override public void update() {
-        if (formed && fluidInput0 == null) { InitializePoIs(); }
+        if (world.isRemote) {
+            clientUpdate();
+            return;
+        }
+        if (formed && (needsPoIInit || fluidInput0 == null)) {
+            InitializePoIs();
+            needsPoIInit = false;
+        }
         super.update();
-        if (world.isRemote) { clientUpdate(); return; }
+        if (!formed) return;
+        boolean update = false;
+        double oldEfficiency = radiationEfficiency;
         if (world.getTotalWorldTime() % 600 == 0) { checkReflectorEfficiency(); }
-        boolean update = recipeLogic();
-        pumpOutputOut();
+        if (radiationEfficiency != oldEfficiency) update = true;
+        update |= recipeLogic();
+        if (pumpOutputOut()) update = true;
         boolean wasRunning = isRunning;
         boolean active = recipeTimeRemaining > 0 && !isRSDisabled();
-        if (active) { gracePeriod = 60; }
-        else if (gracePeriod > 0) { gracePeriod--; }
+        if (active) gracePeriod = 60;
+        else if (gracePeriod > 0) gracePeriod--;
         isRunning = gracePeriod > 0;
-        if (isRunning != wasRunning) { notifyNearbyClients(); }
+        if (isRunning != wasRunning) notifyNearbyClients();
         clientUpdateCooldown--;
         if (clientUpdateCooldown <= 0) {
             notifyNearbyClients();
             clientUpdateCooldown = 20;
         }
-        if (update) {
+        if (update || (isRunning != wasRunning)) {
             efficientMarkDirty();
             markContainingBlockForUpdate(null);
         }

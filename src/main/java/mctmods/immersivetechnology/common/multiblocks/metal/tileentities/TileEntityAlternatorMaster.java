@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
+import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorageAdvanced;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
@@ -47,17 +48,15 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     private static final int speedLossPerTick = Multiblocks.steamTurbine.steamTurbine_speed_lossPerTick;
     private static final boolean soundRPM = Multiblocks.alternator.alternator_sound_RPM;
 
-    public FluxStorage energyStorage = new FluxStorage(Multiblocks.alternator.alternator_energy_capacitorSize, rfPerTick, rfPerTickPerPort);
+    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(Multiblocks.alternator.alternator_energy_capacitorSize, rfPerTick, rfPerTickPerPort);
     public int speed;
     public float torqueMult = 1;
     public IMechanicalEnergy provider;
-    private int clientUpdateCooldown = 20;
+    private int clientUpdateCooldown = 5;
     private float targetEnergyPercentage;
     private float soundVolume;
     private int oldEnergy = energyStorage.getEnergyStored();
     private int oldSpeed = maxSpeed;
-    private float oldTorqueMult = 1;
-    private int cachedGenerated = 0;
     MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
     private final PoICache[] energyOutputs = new PoICache[6];
     private final BlockPos[] energyOutputPositions = new BlockPos[6];
@@ -142,7 +141,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
     @Override public void update() {
         if (needsBlockUpdate) { needsBlockUpdate = false; markContainingBlockForUpdate(null); }
-        if (!formed) return;
+        if (!formed) { return; }
         if (world.isRemote) {
             float rotationSpeed = speed == 0 ? 0f : ((float)speed / (float)maxSpeed) * maxRotationSpeed;
             float oldMomentum = animation.getAnimationMomentum();
@@ -158,14 +157,13 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         if (needsNotify) { needsNotify = false; notifyIONeighbors(); }
         checkProvider();
         if (speed > 0) {
-            if (oldSpeed != speed || oldTorqueMult != torqueMult) { cachedGenerated = energyGenerated(); }
-            energyStorage.modifyEnergyStored(cachedGenerated);
+            energyStorage.modifyEnergyStored(energyGenerated());
         }
         int currentEnergy = energyStorage.getEnergyStored();
         if (currentEnergy > 0) {
             int transferRate = (int)Math.ceil(rfPerTickPerPort * torqueMult);
             for (int i = 0; i < 6; i++) {
-                if (currentEnergy <= 0) break;
+                if (currentEnergy <= 0) { break; }
                 TileEntity tileEntity = Utils.getExistingTileEntity(world, energyOutputPositions[i]);
                 if (tileEntity != null) {
                     EnumFacing energyFacing = energyOutputs[i].facing.getOpposite();
@@ -180,17 +178,16 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
                 }
             }
         }
-        boolean changed = oldSpeed != speed;
+        boolean changed = oldSpeed != speed || oldEnergy != currentEnergy;
         clientUpdateCooldown--;
         if (changed && clientUpdateCooldown <= 0) {
+            notifyNearbyClients();
             efficientMarkDirty();
             markContainingBlockForUpdate(null);
             clientUpdateCooldown = 5;
         }
-        if (oldEnergy != currentEnergy || oldSpeed != speed) { notifyNearbyClients(); }
         oldEnergy = currentEnergy;
         oldSpeed = speed;
-        oldTorqueMult = torqueMult;
     }
 
     @Override public boolean isDummy() { return false; }
@@ -212,9 +209,9 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
     public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
         if (energyOutputs[0] == null) { InitializePoIs(); }
-        if (facing == null) return false;
+        if (facing == null) { return false; }
         for (int i = 0; i < 6; i++) {
-            if (energyOutputs[i].isPoI(facing, position)) return true;
+            if (energyOutputs[i].isPoI(facing, position)) { return true; }
         }
         return false;
     }
@@ -256,6 +253,13 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         if (redstone0 == null) { InitializePoIs(); }
         return new int[] {redstone0.position};
     }
+
+    @Override @Nonnull public int[] getEnergyPos() {
+        if (energyOutputs[0] == null) { InitializePoIs(); }
+        return new int[] {energyOutputs[0].position, energyOutputs[1].position, energyOutputs[2].position, energyOutputs[3].position, energyOutputs[4].position, energyOutputs[5].position};
+    }
+
+    @Override @Nonnull public FluxStorage getFluxStorage() { return energyStorage; }
 
     @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
 

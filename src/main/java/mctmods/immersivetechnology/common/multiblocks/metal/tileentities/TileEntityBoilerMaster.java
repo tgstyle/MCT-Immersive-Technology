@@ -28,14 +28,17 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -77,6 +80,8 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     public BoilerRecipe lastRecipe;
     protected PoICache fluidInput0, fluidInput1, fluidOutput0, redstone0;
     private BlockPos fluidOutputFront0, soundPos0;
+    public boolean redstoneControlInverted = false;
+    private boolean needsPoIInit = false;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -86,7 +91,9 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         heatLevel = nbt.getDouble("heatLevel");
         burnRemaining = nbt.getInteger("burnRemaining");
         recipeTimeRemaining = nbt.getInteger("recipeTimeRemaining");
+        redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         if (!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+        if (!descPacket && formed) needsPoIInit = true;
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -97,6 +104,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         nbt.setDouble("heatLevel", heatLevel);
         nbt.setInteger("burnRemaining", burnRemaining);
         nbt.setInteger("recipeTimeRemaining", recipeTimeRemaining);
+        nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
         if (!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
     }
 
@@ -172,24 +180,23 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         if (recipeTimeRemaining == 0) {
             tanks[1].drain(lastRecipe.fluidInput.amount, true);
             tanks[2].fillInternal(lastRecipe.fluidOutput, true);
-            markContainingBlockForUpdate(null);
             return true;
         }
         return false;
     }
 
-    private void pumpOutputOut() {
-        if (tanks[2].getFluidAmount() == 0) { return; }
-        if (fluidOutput0 == null) { InitializePoIs(); }
+    private boolean pumpOutputOut() {
+        if (tanks[2].getFluidAmount() == 0) return false;
+        if (fluidOutput0 == null) InitializePoIs();
         IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputFront0, fluidOutput0.facing.getOpposite());
-        if (output == null) { return; }
+        if (output == null) return false;
         FluidStack out = tanks[2].getFluid();
         int accepted = output.fill(out, false);
-        if (accepted > 0) {
-            assert out != null;
-            int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-            tanks[2].drain(drained, true);
-        }
+        if (accepted <= 0) return false;
+        assert out != null;
+        int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+        tanks[2].drain(drained, true);
+        return drained > 0;
     }
 
     private boolean heatLogic() {
@@ -199,34 +206,37 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         if (canCombust) {
             if (burnRemaining > 0) {
                 burnRemaining--;
-                if (heatUp()) { update = true; }
+                if (heatUp()) update = true;
             } else if (!isRSDisabled() && tanks[0].getFluidAmount() > 0) {
                 BoilerRecipe.BoilerFuelRecipe fuel = (lastFuel != null && Objects.requireNonNull(tanks[0].getFluid()).isFluidEqual(lastFuel.fluidInput)) ? lastFuel : BoilerRecipe.findFuel(tanks[0].getFluid());
                 if (fuel != null && fuel.fluidInput.amount <= tanks[0].getFluidAmount()) {
                     lastFuel = fuel;
                     tanks[0].drain(fuel.fluidInput.amount, true);
                     burnRemaining = fuel.getTotalProcessTime() - 1;
-                    markContainingBlockForUpdate(null);
-                    if (heatUp()) { update = true; }
-                } else if (cooldown()) { update = true; }
-            } else if (cooldown()) { update = true; }
-        } else if (cooldown()) { update = true; }
+                    heatUp();
+                    update = true;
+                } else if (cooldown()) update = true;
+            } else if (cooldown()) update = true;
+        } else if (cooldown()) update = true;
         return update;
     }
 
     private boolean recipeLogic() {
         boolean update = false;
         if (heatLevel >= workingHeatLevel) {
-            if (recipeTimeRemaining > 0) { if (gainProgress()) update = true; }
-            else if (tanks[1].getFluidAmount() > 0) {
+            if (recipeTimeRemaining > 0) {
+                if (gainProgress()) update = true;
+            } else if (tanks[1].getFluidAmount() > 0) {
                 BoilerRecipe recipe = (lastRecipe != null && Objects.requireNonNull(tanks[1].getFluid()).isFluidEqual(lastRecipe.fluidInput)) ? lastRecipe : BoilerRecipe.findRecipe(tanks[1].getFluid());
                 if (recipe != null && recipe.fluidInput.amount <= tanks[1].getFluidAmount() && recipe.fluidOutput.amount == tanks[2].fillInternal(recipe.fluidOutput, false)) {
                     lastRecipe = recipe;
                     recipeTimeRemaining = recipe.getTotalProcessTime();
-                    if (gainProgress()) { update = true; }
+                    if (gainProgress()) update = true;
                 }
             }
-        } else if (recipeTimeRemaining > 0) { if (loseProgress()) update = true; }
+        } else if (recipeTimeRemaining > 0) {
+            if (loseProgress()) update = true;
+        }
         return update;
     }
 
@@ -235,14 +245,13 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         if (tanks[2].getFluidAmount() > 0) {
             ItemStack filled = Utils.fillFluidContainer(tanks[2], inventory.get(4), inventory.get(5), null);
             if (!filled.isEmpty()) {
-                if (!inventory.get(5).isEmpty() && OreDictionary.itemMatches(inventory.get(5), filled, true)) { inventory.get(5).grow(filled.getCount()); }
-                else if (inventory.get(5).isEmpty()) { inventory.set(5, filled.copy()); }
+                if (!inventory.get(5).isEmpty() && OreDictionary.itemMatches(inventory.get(5), filled, true)) inventory.get(5).grow(filled.getCount());
+                else if (inventory.get(5).isEmpty()) inventory.set(5, filled.copy());
                 inventory.get(4).shrink(1);
-                if (inventory.get(4).getCount() <= 0) { inventory.set(4, ItemStack.EMPTY); }
-                markContainingBlockForUpdate(null);
+                if (inventory.get(4).getCount() <= 0) inventory.set(4, ItemStack.EMPTY);
                 update = true;
             }
-            pumpOutputOut();
+            if (pumpOutputOut()) update = true;
         }
         return update;
     }
@@ -251,11 +260,10 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         int prev = tanks[0].getFluidAmount();
         ItemStack empty = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
         if (prev != tanks[0].getFluidAmount()) {
-            if (!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), empty, true)) { inventory.get(1).grow(empty.getCount()); }
-            else if (inventory.get(1).isEmpty()) { inventory.set(1, empty.copy()); }
+            if (!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), empty, true)) inventory.get(1).grow(empty.getCount());
+            else if (inventory.get(1).isEmpty()) inventory.set(1, empty.copy());
             inventory.get(0).shrink(1);
-            if (inventory.get(0).getCount() <= 0) { inventory.set(0, ItemStack.EMPTY); }
-            markContainingBlockForUpdate(null);
+            if (inventory.get(0).getCount() <= 0) inventory.set(0, ItemStack.EMPTY);
             return true;
         }
         return false;
@@ -265,28 +273,33 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         int prev = tanks[1].getFluidAmount();
         ItemStack empty = Utils.drainFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
         if (prev != tanks[1].getFluidAmount()) {
-            if (!inventory.get(3).isEmpty() && OreDictionary.itemMatches(inventory.get(3), empty, true)) { inventory.get(3).grow(empty.getCount()); }
-            else if (inventory.get(3).isEmpty()) { inventory.set(3, empty.copy()); }
+            if (!inventory.get(3).isEmpty() && OreDictionary.itemMatches(inventory.get(3), empty, true)) inventory.get(3).grow(empty.getCount());
+            else if (inventory.get(3).isEmpty()) inventory.set(3, empty.copy());
             inventory.get(2).shrink(1);
-            if (inventory.get(2).getCount() <= 0) { inventory.set(2, ItemStack.EMPTY); }
-            markContainingBlockForUpdate(null);
+            if (inventory.get(2).getCount() <= 0) inventory.set(2, ItemStack.EMPTY);
             return true;
         }
         return false;
     }
 
     @Override public void update() {
-        if (formed && redstone0 == null) InitializePoIs();
         super.update();
         if (!formed) return;
-        if (world.isRemote) { handleSounds(); return; }
+        if (needsPoIInit || fluidInput0 == null) {
+            InitializePoIs();
+            needsPoIInit = false;
+        }
+        if (world.isRemote) {
+            handleSounds();
+            return;
+        }
         boolean update = heatLogic();
         if (recipeLogic()) update = true;
         if (outputTankLogic()) update = true;
         if (fuelTankLogic()) update = true;
         if (inputTankLogic()) update = true;
         clientUpdateCooldown--;
-        if (clientUpdateCooldown <= 0) {
+        if (update && clientUpdateCooldown <= 0) {
             notifyNearbyClients();
             clientUpdateCooldown = 20;
         }
@@ -304,14 +317,24 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
     @Override public int getComparatorInputOverride() { return (int)(15 * (heatLevel / workingHeatLevel)); }
 
+    @Override @Nonnull public NonNullList<ItemStack> getInventory() { return inventory; }
+
+    @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
+
+    @Override public int getSlotLimit(int slot) { return 64; }
+
     @Override public void doGraphicalUpdates(int slot) {
         this.markDirty();
         this.markContainingBlockForUpdate(null);
     }
 
+    @Override @Nonnull public NonNullList<ItemStack> getDroppedItems() { return getInventory(); }
+
+    @Override public int getComparatedSize() { return slotCount; }
+
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
-        if (redstone0 == null) InitializePoIs();
+        if (fluidInput0 == null) InitializePoIs();
         if (side == null) return tanks;
         if (fluidInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
         if (fluidInput1.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
@@ -320,7 +343,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if (!formed || redstone0 == null) InitializePoIs();
+        if (fluidInput0 == null) InitializePoIs();
         if (iTank == 0 && fluidInput0.isPoI(side, position)) {
             if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
             if (tanks[0].getFluid() == null) return BoilerRecipe.findFuel(resource) != null;
@@ -335,14 +358,47 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (!formed || redstone0 == null) InitializePoIs();
+        if (fluidOutput0 == null) InitializePoIs();
         return iTank == 2 && fluidOutput0.isPoI(side, position) && tanks[2].getFluidAmount() > 0;
+    }
+
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            if (fluidInput0 == null) InitializePoIs();
+            return fluidInput0.isPoI(facing, pos) || fluidInput1.isPoI(facing, pos) || fluidOutput0.isPoI(facing, pos);
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            if (fluidInput0.isPoI(facing, pos) || fluidInput1.isPoI(facing, pos) || fluidOutput0.isPoI(facing, pos)) {
+                return (T) new BoilerFluidHandler(getAccessibleFluidTanks(facing, pos), this, facing, pos);
+            }
+        }
+        return super.getCapability(capability, facing);
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
         if (redstone0 == null) InitializePoIs();
         return new int[] {redstone0.position};
+    }
+
+    @Override public boolean isRSDisabled() {
+        if (redstone0 == null) InitializePoIs();
+        int[] rsPositions = getRedstonePos();
+        if (rsPositions.length < 1) return false;
+        for (int rsPos : rsPositions) {
+            TileEntity tile = world.getTileEntity(getBlockPosForPos(rsPos));
+            if (tile != null) {
+                int power = world.getRedstonePowerFromNeighbors(tile.getPos());
+                boolean b = power > 0;
+                return redstoneControlInverted != b;
+            }
+        }
+        return false;
     }
 
     @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
@@ -414,48 +470,63 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         }
 
         @Override public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null || resource.amount <= 0) return 0;
-            TileEntityBoilerMaster master = this.master;
-            if (master == null) return 0;
-            for (int i = 0; i < master.tanks.length; i++) {
-                if (master.canFillTankFrom(i, side, resource, position)) {
-                    int filled = master.tanks[i].fill(resource, doFill);
-                    if (filled > 0 && doFill) master.markDirty();
-                    return filled;
+            if (resource == null) return 0;
+            resource = resource.copy();
+            int filled = 0;
+            for (IFluidTank accessible : accessibleTanks) {
+                int iTank = getTankIndex(accessible);
+                if (iTank != -1 && master.canFillTankFrom(iTank, side, resource, position)) {
+                    int f = accessible.fill(resource, doFill);
+                    filled += f;
+                    resource.amount -= f;
+                    if (doFill && f > 0) master.TankContentsChanged();
+                    if (resource.amount <= 0) return filled;
                 }
             }
-            return 0;
+            return filled;
         }
 
         @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null || resource.amount <= 0) return null;
-            TileEntityBoilerMaster master = this.master;
-            if (master == null) return null;
-            for (int i = 0; i < master.tanks.length; i++) {
-                if (master.canDrainTankFrom(i, side, position)) {
-                    FluidStack tankFluid = master.tanks[i].getFluid();
+            if (resource == null) return null;
+            resource = resource.copy();
+            FluidStack drained = null;
+            for (IFluidTank accessible : accessibleTanks) {
+                int iTank = getTankIndex(accessible);
+                if (iTank != -1 && master.canDrainTankFrom(iTank, side, position)) {
+                    FluidStack tankFluid = accessible.getFluid();
                     if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
-                        FluidStack drained = master.tanks[i].drain(resource.amount, doDrain);
-                        if (drained != null && doDrain) master.markDirty();
-                        return drained;
+                        int amount = Math.min(resource.amount, tankFluid.amount);
+                        FluidStack d = accessible.drain(amount, doDrain);
+                        if (d != null) {
+                            if (drained == null) drained = d.copy();
+                            else drained.amount += d.amount;
+                            resource.amount -= d.amount;
+                            if (doDrain && d.amount > 0) master.TankContentsChanged();
+                            if (resource.amount <= 0) return drained;
+                        }
                     }
                 }
             }
-            return null;
+            return drained;
         }
 
         @Override public FluidStack drain(int maxDrain, boolean doDrain) {
-            if (maxDrain <= 0) return null;
-            TileEntityBoilerMaster master = this.master;
-            if (master == null) return null;
-            for (int i = 0; i < master.tanks.length; i++) {
-                if (master.canDrainTankFrom(i, side, position)) {
-                    FluidStack drained = master.tanks[i].drain(maxDrain, doDrain);
-                    if (drained != null && doDrain) master.markDirty();
-                    return drained;
+            int toDrain = maxDrain;
+            FluidStack drained = null;
+            for (IFluidTank accessible : accessibleTanks) {
+                int iTank = getTankIndex(accessible);
+                if (iTank != -1 && master.canDrainTankFrom(iTank, side, position)) {
+                    FluidStack d = accessible.drain(toDrain, doDrain);
+                    if (d != null) {
+                        if (drained == null) drained = d.copy();
+                        else if (drained.isFluidEqual(d)) drained.amount += d.amount;
+                        toDrain -= d.amount;
+                        if (doDrain && d.amount > 0) master.TankContentsChanged();
+                        if (toDrain <= 0) return drained;
+                    }
                 }
             }
-            return null;
+            return drained;
         }
     }
 }

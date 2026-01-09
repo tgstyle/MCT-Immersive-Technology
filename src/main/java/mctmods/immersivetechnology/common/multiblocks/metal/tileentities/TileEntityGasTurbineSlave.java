@@ -1,16 +1,14 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
-
-import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
-import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.*;
+import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.GasTurbineShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartGasTurbine;
+import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.shapes.*;
 import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
@@ -39,9 +37,9 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IMechanicalEnergy, IIEInventory, IBlockBounds, IAdvancedCollisionBounds, IAdvancedSelectionBounds {
+public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements ITBlockInterfaces.IMechanicalEnergy, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
 
-    private static final float outputtorque = Multiblocks.gasTurbine.gasTurbine_torque;
+    private static final float outputtorque = Config.ITConfig.Multiblocks.gasTurbine.gasTurbine_torque;
     private int loadGrace = 0;
 
     public TileEntityGasTurbineSlave() { super(TileEntityITMultiblockPartGasTurbine.instance, 0, true); }
@@ -73,8 +71,6 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
     @Override public boolean isStackValid(int slot, ItemStack stack) { return false; }
 
     @Override public int getSlotLimit(int slot) { return 0; }
-
-    @Override public void doGraphicalUpdates(int slot) { this.markDirty(); this.markContainingBlockForUpdate(null); }
 
     @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
 

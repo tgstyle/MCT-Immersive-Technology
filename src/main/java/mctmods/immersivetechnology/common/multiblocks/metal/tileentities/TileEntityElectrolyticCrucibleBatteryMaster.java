@@ -46,6 +46,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import java.util.Optional;
+
 public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElectrolyticCrucibleBatterySlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IEBlockInterfaces.IMirrorAble, IEBlockInterfaces.IUsesBooleanProperty {
 
     private static final int inputTankSize = Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_input_tankSize;
@@ -70,6 +72,8 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     private double distanceToTE = 0;
     private int playerDimension;
     private boolean isRunning;
+    public boolean redstoneControlInverted = false;
+    public Optional<Boolean> computerOn = Optional.empty();
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -78,6 +82,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
         tanks[2].readFromNBT(nbt.getCompoundTag("tank2"));
         tanks[3].readFromNBT(nbt.getCompoundTag("tank3"));
+        redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         isRunning = nbt.getBoolean("running");
     }
 
@@ -88,6 +93,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank3", tanks[3].writeToNBT(new NBTTagCompound()));
+        nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
         nbt.setBoolean("running", isRunning);
     }
 
@@ -149,15 +155,15 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
 
         @Override public boolean canProcess(@Nonnull TileEntityMultiblockMetal multiblock) {
             int energyPerTick = getEnergyPerTick();
-            if (energyPerTick <= 0) return true;
+            if (energyPerTick <= 0) { return true; }
             int simulated = multiblock.getFluxStorage().extractEnergy(energyPerTick, true);
-            if (simulated < energyPerTick) return false;
+            if (simulated < energyPerTick) { return false; }
             TileEntityElectrolyticCrucibleBatteryMaster master = (TileEntityElectrolyticCrucibleBatteryMaster)multiblock;
             int fill0 = master.tanks[1].fill(recipe.fluidOutput0, false);
-            if (fill0 != recipe.fluidOutput0.amount) return false;
+            if (fill0 != recipe.fluidOutput0.amount) { return false; }
             if (recipe.fluidOutput1 != null) {
                 int fill1 = master.tanks[2].fill(recipe.fluidOutput1, false);
-                if (fill1 != recipe.fluidOutput1.amount) return false;
+                if (fill1 != recipe.fluidOutput1.amount) { return false; }
             }
             if (recipe.fluidOutput2 != null) {
                 int fill2 = master.tanks[3].fill(recipe.fluidOutput2, false);
@@ -277,14 +283,12 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         notifyNeighbor(getBlockPosForPos(itemOutput0.position));
     }
 
-    private void notifyNeighbor(BlockPos pos) {
-        world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false);
-    }
+    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
     @Override public boolean isRSDisabled() {
         if (computerOn.isPresent()) { boolean on = computerOn.get(); return !on; }
         int[] rsPositions = getRedstonePos();
-        if (rsPositions.length < 1) return false;
+        if (rsPositions.length < 1) { return false; }
         for (int rsPos : rsPositions) {
             TileEntity tile = world.getTileEntity(getBlockPosForPos(rsPos));
             if (tile != null) {
@@ -297,22 +301,22 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return new int[0];
+        if (!formed) { return new int[0]; }
         if (redstone0 == null) { InitializePoIs(); }
         return new int[] {redstone0.position};
     }
 
     @Override public @Nonnull int[] getEnergyPos() {
-        if (!formed) return new int[0];
+        if (!formed) { return new int[0]; }
         return new int[] {energyInput0.position, energyInput1.position, energyInput2.position};
     }
 
     public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
-        if (!formed) return false;
+        if (!formed) { return false; }
         if (redstone0 == null) { InitializePoIs(); }
-        if (facing == null) return false;
-        if (energyInput0.isPoI(facing, position)) return true;
-        if (energyInput1.isPoI(facing, position)) return true;
+        if (facing == null) { return false; }
+        if (energyInput0.isPoI(facing, position)) { return true; }
+        if (energyInput1.isPoI(facing, position)) { return true; }
         return energyInput2.isPoI(facing, position);
     }
 
@@ -328,27 +332,27 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        if (!formed) return ITUtils.emptyIFluidTankList;
+        if (!formed) { return ITUtils.emptyIFluidTankList; }
         if (redstone0 == null) { InitializePoIs(); }
-        if (side == null) return tanks;
-        if (fluidInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
-        if (fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
-        if (fluidOutput1.isPoI(side, position)) return new IFluidTank[] {tanks[2]};
-        if (fluidOutput2.isPoI(side, position)) return new IFluidTank[] {tanks[3]};
+        if (side == null) { return tanks; }
+        if (fluidInput0.isPoI(side, position)) { return new IFluidTank[] {tanks[0]}; }
+        if (fluidOutput0.isPoI(side, position)) { return new IFluidTank[] {tanks[1]}; }
+        if (fluidOutput1.isPoI(side, position)) { return new IFluidTank[] {tanks[2]}; }
+        if (fluidOutput2.isPoI(side, position)) { return new IFluidTank[] {tanks[3]}; }
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if (!fluidInput0.isPoI(side, position)) return false;
-        if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
-        if (tanks[0].getFluid() == null) return ElectrolyticCrucibleBatteryRecipe.findRecipeFluid(resource.getFluid()) != null;
+        if (!fluidInput0.isPoI(side, position)) { return false; }
+        if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) { return false; }
+        if (tanks[0].getFluid() == null) { return ElectrolyticCrucibleBatteryRecipe.findRecipeFluid(resource.getFluid()) != null; }
         return resource.getFluid() == tanks[0].getFluid().getFluid();
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (fluidOutput0.isPoI(side, position)) return tanks[1].getFluidAmount() > 0;
-        if (fluidOutput1.isPoI(side, position)) return tanks[2].getFluidAmount() > 0;
-        if (fluidOutput2.isPoI(side, position)) return tanks[3].getFluidAmount() > 0;
+        if (fluidOutput0.isPoI(side, position)) { return tanks[1].getFluidAmount() > 0; }
+        if (fluidOutput1.isPoI(side, position)) { return tanks[2].getFluidAmount() > 0; }
+        if (fluidOutput2.isPoI(side, position)) { return tanks[3].getFluidAmount() > 0; }
         return false;
     }
 
@@ -402,6 +406,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
 
     @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 
+
     @SuppressWarnings("unused")
     static class ElectrolyticCrucibleBatteryFluidHandler implements IFluidHandler {
         private final IFluidTank[] tanks;
@@ -417,8 +422,8 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         }
 
         private int getTankIndex(IFluidTank tank) {
-            if (master == null) return -1;
-            for (int i = 0; i < master.tanks.length; i++) if (master.tanks[i] == tank) return i;
+            if (master == null) { return -1; }
+            for (int i = 0; i < master.tanks.length; i++) { if (master.tanks[i] == tank) { return i; } }
             return -1;
         }
 
@@ -435,33 +440,33 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         }
 
         @Override public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null || resource.amount <= 0 || tanks.length == 0 || master == null) return 0;
+            if (resource == null || resource.amount <= 0 || tanks.length == 0 || master == null) { return 0; }
             int filled = 0;
             for (IFluidTank tank : tanks) {
                 int idx = getTankIndex(tank);
-                if (idx == -1) continue;
+                if (idx == -1) { continue; }
                 if (master.canFillTankFrom(idx, side, resource, position)) {
                     FluidStack copy = Utils.copyFluidStackWithAmount(resource, resource.amount - filled, false);
-                    if (copy.amount <= 0) break;
+                    if (copy.amount <= 0) { break; }
                     int f = tank.fill(copy, doFill);
                     filled += f;
-                    if (doFill && f > 0) master.TankContentsChanged();
+                    if (doFill && f > 0) { master.TankContentsChanged(); }
                 }
             }
             return filled;
         }
 
         @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null || resource.amount <= 0 || tanks.length == 0 || master == null) return null;
+            if (resource == null || resource.amount <= 0 || tanks.length == 0 || master == null) { return null; }
             for (IFluidTank tank : tanks) {
                 int idx = getTankIndex(tank);
-                if (idx == -1) continue;
+                if (idx == -1) { continue; }
                 if (master.canDrainTankFrom(idx, side, position)) {
                     FluidStack tankFluid = tank.getFluid();
                     if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
                         int drainAmt = Math.min(resource.amount, tankFluid.amount);
                         FluidStack drained = tank.drain(drainAmt, doDrain);
-                        if (drained != null && drained.amount > 0 && doDrain) master.TankContentsChanged();
+                        if (drained != null && drained.amount > 0 && doDrain) { master.TankContentsChanged(); }
                         return drained;
                     }
                 }
@@ -470,13 +475,13 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         }
 
         @Override public FluidStack drain(int maxDrain, boolean doDrain) {
-            if (maxDrain <= 0 || tanks.length == 0 || master == null) return null;
+            if (maxDrain <= 0 || tanks.length == 0 || master == null) { return null; }
             for (IFluidTank tank : tanks) {
                 int idx = getTankIndex(tank);
-                if (idx == -1) continue;
+                if (idx == -1) { continue; }
                 if (master.canDrainTankFrom(idx, side, position)) {
                     FluidStack drained = tank.drain(maxDrain, doDrain);
-                    if (drained != null && drained.amount > 0 && doDrain) master.TankContentsChanged();
+                    if (drained != null && drained.amount > 0 && doDrain) { master.TankContentsChanged(); }
                     return drained;
                 }
             }
