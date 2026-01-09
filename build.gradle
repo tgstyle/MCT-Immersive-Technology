@@ -1,6 +1,7 @@
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import net.minecraftforge.gradle.common.tasks.SignJar
+import net.minecraftforge.gradle.userdev.tasks.RenameJarInPlace
 
 plugins {
     id 'idea'
@@ -32,7 +33,6 @@ ext.stage = versionProps.getProperty('stage') ?: ''
 println "-> build.gradle applying version: $version (build ${version_buildnumber})"
 
 group = 'mctmods.immersivetechnology'
-archivesBaseName = "MCTImmersiveTechnology-${versionProps.getProperty('version_mc')}"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -118,20 +118,20 @@ minecraft {
     mappings channel: 'parchment', version: version_parchment + '-' + version_minecraft
     accessTransformer { file('src/main/resources/META-INF/accesstransformer.cfg') }
     runs {
-		client {
-			workingDirectory = project.file('run')
-			property 'forge.logging.markers', ''
-			property 'forge.enabledGameTestNamespaces', mod_id
-			ideaModule project.name + ".main"
-			mods {
-				immersivetechnology {
-					source(sourceSets.main)
-				}
-			}
-			args '--username', 'tgstyle'
-			args '--width', '1920'
-			args '--height', '1080'
-		}
+        client {
+            workingDirectory = project.file('run')
+            property 'forge.logging.markers', ''
+            property 'forge.enabledGameTestNamespaces', mod_id
+            ideaModule project.name + ".main"
+            mods {
+                immersivetechnology {
+                    source(sourceSets.main as SourceSet)
+                }
+            }
+            args '--username', 'tgstyle'
+            args '--width', '1920'
+            args '--height', '1080'
+        }
         server {
             workingDirectory = project.file('run')
             property 'forge.logging.markers', ''
@@ -139,7 +139,7 @@ minecraft {
             arg '-nogui'
             mods {
                 immersivetechnology {
-                    source(sourceSets.main)
+                    source(sourceSets.main as SourceSet)
                 }
             }
         }
@@ -152,8 +152,8 @@ minecraft {
             ideaModule project.name + ".datagen"
             mods {
                 immersivetechnology {
-                    source(sourceSets.main)
-                    source(sourceSets.datagen)
+                    source(sourceSets.main as SourceSet)
+                    source(sourceSets.datagen as SourceSet)
                 }
             }
         }
@@ -164,8 +164,8 @@ minecraft {
             ideaModule project.name + ".gametest"
             mods {
                 immersivetechnology {
-                    source(sourceSets.main)
-                    source(sourceSets.gametest)
+                    source(sourceSets.main as SourceSet)
+                    source(sourceSets.gametest as SourceSet)
                 }
             }
         }
@@ -220,7 +220,7 @@ dependencies {
 
     implementation fg.deobf("curse.maven:immersive-engineering-231951:6206989")
     implementation fg.deobf("curse.maven:engineered-schematics-1207780:6560826")
-	//implementation fg.deobf("curse.maven:immersive-fixes-1326199:6880681")
+    //implementation fg.deobf("curse.maven:immersive-fixes-1326199:6880681")
 
     implementation fg.deobf("curse.maven:jade-324717:6855440")
 
@@ -268,7 +268,7 @@ tasks.register('signJar', SignJar) {
     }
 }
 
-build.dependsOn bumpVersion, signJar
+build.dependsOn bumpVersion, signJar, shadowJar
 
 tasks.register('datagenJar', Jar) {
     dependsOn datagenClasses
@@ -293,9 +293,10 @@ artifacts {
 
 void minimizePNGFile(File file) {
     long size = file.length()
-    exec {
-        executable "optipng"
-        args "-q", "-o7", "-zm1-9", "-strip", "all", file
+    ExecOperations execOps = project.services.get(ExecOperations)
+    execOps.exec {
+        executable 'optipng'
+        args '-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath
     }
     long newSize = file.length()
     if (newSize < size) {
@@ -347,12 +348,19 @@ tasks.withType(Task).configureEach {
     }
 }
 
-idea.project.settings.taskTriggers {
-    afterSync genIntellijRunsDummy
-}
-
 processResources.dependsOn bumpVersion
 shadowJar.dependsOn bumpVersion
 jar.dependsOn bumpVersion
 datagenJar.dependsOn bumpVersion
 sourcesJar.dependsOn bumpVersion
+
+jar.enabled = false
+
+shadowJar {
+    archiveBaseName.set("MCTImmersiveTechnology-${version_minecraft}")
+    archiveClassifier.set('')
+}
+
+tasks.withType(RenameJarInPlace).configureEach {
+    enabled = false
+}
