@@ -20,6 +20,6 @@ def propsFile = file('version.properties')
 def props = new Properties()
 props.load(new FileInputStream(propsFile))
 
-def version_minecraft = props['mc_version']
+def version_minecraft = props['version_mc']
 def baseVersion = props['version']
-rootProject.name = "MCTImmersiveTechnology-${version_minecraft}-${baseVersion}"
+rootProject.name = "MCT-ImmersiveTechnology-${version_minecraft}-${baseVersion}"
