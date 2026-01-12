@@ -2,9 +2,14 @@ package mctmods.immersivetechnology.common.util.compat.top;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import mcjty.theoneprobe.api.*;
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
+import mctmods.immersivetechnology.api.crafting.ElectrolyticCrucibleBatteryRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenSlave;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
@@ -19,7 +24,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 
 import javax.annotation.Nullable;
@@ -39,6 +43,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
     @Override @Nullable public Void apply(@Nullable ITheOneProbe input) {
         assert input != null;
+        input.registerProvider(new MechanicalEnergyProvider());
+        input.registerProvider(new AdvancedCokeOvenProvider());
+        input.registerProvider(new AlternatorProvider());
         input.registerProvider(new BoilerProvider());
         input.registerProvider(new CoolingTowerProvider());
         input.registerProvider(new DistillerProvider());
@@ -46,13 +53,100 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         input.registerProvider(new GasTurbineProvider());
         input.registerProvider(new HeatExchangerProvider());
         input.registerProvider(new HighPressureSteamTurbineProvider());
-        input.registerProvider(new MechanicalEnergyProvider());
         input.registerProvider(new MeltingCrucibleProvider());
         input.registerProvider(new RadiatorProvider());
         input.registerProvider(new SolarMelterProvider());
         input.registerProvider(new SolarTowerProvider());
         input.registerProvider(new SteamTurbineProvider());
+        input.registerProvider(new SteelSheetmetalTankProvider());
         return null;
+    }
+
+    private static void addFluidTankDisplay(IProbeInfo probeInfo, FluidTank tank) {
+        FluidStack fluid = tank.getFluid();
+        int amount = fluid != null ? fluid.amount : 0;
+        String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
+        int color = getFluidColor(fluid);
+        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
+                .text(fluidName);
+    }
+
+    private static void addEnergyDisplay(IProbeInfo probeInfo, int stored, int max) {
+        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                .progress(stored, max, probeInfo.defaultProgressStyle().suffix(" IF").filledColor(Lib.COLOUR_I_ImmersiveOrange).alternateFilledColor(0xff994f20).borderColor(Lib.COLOUR_I_ImmersiveOrangeShadow).numberFormat(NumberFormat.COMPACT));
+    }
+
+    private static void addRPMDisplay(IProbeInfo probeInfo, int speed) {
+        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                .progress(speed, maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix(" RPM"));
+    }
+
+    private static void addProcessPercent(IProbeInfo probeInfo, int percent) {
+        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                .progress(percent, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
+    }
+
+    private static void addTemperature(IProbeInfo probeInfo, double heatLevel, double workingLevel) {
+        double displayHeat = heatLevel / 20.0 + 30;
+        double displayMax = workingLevel / 20.0 + 30;
+        int current = (int)displayHeat;
+        int max = (int)displayMax;
+        probeInfo.progress(current, max, probeInfo.defaultProgressStyle()
+                .suffix("/" + max + "°C")
+                .filledColor(0xffcc0000)
+                .alternateFilledColor(0xffcc0000)
+                .borderColor(0xffff6666)
+                .numberFormat(NumberFormat.FULL));
+    }
+
+    public static class MechanicalEnergyProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "MechanicalEnergyInfo"; }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+            TileEntity te = world.getTileEntity(data.getPos());
+            if (te instanceof IMechanicalEnergy) {
+                TileEntityMultiblockPart<?> part = (TileEntityMultiblockPart<?>)te;
+                TileEntity master = part.master();
+                if (master == null) return;
+                int speed = ((IMechanicalEnergy)master).getSpeed();
+                addRPMDisplay(probeInfo, speed);
+            }
+        }
+    }
+
+    public static class AdvancedCokeOvenProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "AdvancedCokeOvenInfo"; }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+            TileEntity te = world.getTileEntity(data.getPos());
+            TileEntityAdvancedCokeOvenMaster master;
+            if (te instanceof TileEntityAdvancedCokeOvenMaster) {
+                master = (TileEntityAdvancedCokeOvenMaster)te;
+            } else if (te instanceof TileEntityAdvancedCokeOvenSlave) {
+                master = ((TileEntityAdvancedCokeOvenSlave)te).master();
+                if (master == null) return;
+            } else return;
+            addFluidTankDisplay(probeInfo, master.tank);
+            int currentProg = (master.processTimeRemaining > 0) ? (master.processTimeMax - master.processTimeRemaining) * 100 / master.processTimeMax : 0;
+            addProcessPercent(probeInfo, currentProg);
+        }
+    }
+
+    public static class AlternatorProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "AlternatorInfo"; }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+            TileEntity te = world.getTileEntity(data.getPos());
+            TileEntityAlternatorMaster master;
+            if (te instanceof TileEntityAlternatorMaster) {
+                master = (TileEntityAlternatorMaster)te;
+            } else if (te instanceof TileEntityAlternatorSlave) {
+                master = ((TileEntityAlternatorSlave)te).master();
+                if (master == null) return;
+            } else return;
+            if (mode == ProbeMode.EXTENDED) addEnergyDisplay(probeInfo, master.energyStorage.getEnergyStored(), master.energyStorage.getMaxEnergyStored());
+        }
     }
 
     public static class BoilerProvider implements IProbeInfoProvider {
@@ -60,51 +154,17 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityBoilerSlave)) { return; }
-            TileEntityBoilerMaster master = ((TileEntityBoilerSlave)te).master();
-            if (master == null) { return; }
-            EnumFacing facing = data.getSideHit();
-            int pos = ((TileEntityMultiblockPart<?>)te).pos;
-            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
-            if (accessible.length > 0) {
-                IFluidTank tank = accessible[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            } else {
-                for (FluidTank tank : master.tanks) {
-                    FluidStack fluid = tank.getFluid();
-                    int amount = fluid != null ? fluid.amount : 0;
-                    String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                    int color = OneProbeHelper.getFluidColor(fluid);
-                    if (amount > 0) {
-                        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                                .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                                .text(fluidName);
-                    }
-                }
-            }
-            double displayHeat = master.heatLevel / 20 + 30;
-            double displayMax = boilerWorkingHeatLevel / 20 + 30;
-            int currentTemp = (int)displayHeat;
-            int maxTemp = (int)displayMax;
-            probeInfo.progress(currentTemp, maxTemp, probeInfo.defaultProgressStyle()
-                    .suffix("/" + maxTemp + "°C")
-                    .filledColor(0xffcc0000)
-                    .alternateFilledColor(0xffcc0000)
-                    .borderColor(0xffff6666)
-                    .numberFormat(NumberFormat.FULL));
-            int currentProg = (master.recipeTimeRemaining > 0 && master.lastRecipe != null) ? (master.lastRecipe.getTotalProcessTime() - master.recipeTimeRemaining) * 100 / master.lastRecipe.getTotalProcessTime() : 0;
-            if (currentProg > 0) {
-                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .progress(currentProg, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
-            }
+            TileEntityBoilerMaster master;
+            if (te instanceof TileEntityBoilerMaster) {
+                master = (TileEntityBoilerMaster)te;
+            } else if (te instanceof TileEntityBoilerSlave) {
+                master = ((TileEntityBoilerSlave)te).master();
+                if (master == null) return;
+            } else return;
+            for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
+            addTemperature(probeInfo, master.heatLevel, boilerWorkingHeatLevel);
+            int currentProg = (master.processTimeRemaining > 0 && master.cachedBoilerRecipe != null) ? (master.cachedBoilerRecipe.getTotalProcessTime() - master.processTimeRemaining) * 100 / master.cachedBoilerRecipe.getTotalProcessTime() : 0;
+            addProcessPercent(probeInfo, currentProg);
         }
     }
 
@@ -113,40 +173,17 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityCoolingTowerSlave)) { return; }
-            TileEntityCoolingTowerMaster master = ((TileEntityCoolingTowerSlave)te).master();
-            if (master == null) { return; }
-            EnumFacing facing = data.getSideHit();
-            int pos = ((TileEntityMultiblockPart<?>)te).pos;
-            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
-            if (accessible.length > 0) {
-                IFluidTank tank = accessible[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            } else {
-                for (FluidTank tank : master.tanks) {
-                    FluidStack fluid = tank.getFluid();
-                    int amount = fluid != null ? fluid.amount : 0;
-                    String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                    int color = OneProbeHelper.getFluidColor(fluid);
-                    if (amount > 0) {
-                        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                                .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                                .text(fluidName);
-                    }
-                }
-            }
-            int currentProg = (!master.processQueue.isEmpty()) ? master.processQueue.get(0).processTick * 100 / master.processQueue.get(0).maxTicks : 0;
-            if (currentProg > 0) {
-                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .progress(currentProg, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
+            TileEntityCoolingTowerMaster master;
+            if (te instanceof TileEntityCoolingTowerMaster) {
+                master = (TileEntityCoolingTowerMaster)te;
+            } else if (te instanceof TileEntityCoolingTowerSlave) {
+                master = ((TileEntityCoolingTowerSlave)te).master();
+                if (master == null) return;
+            } else return;
+            for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
+            for (TileEntityMultiblockMetal.MultiblockProcess<CoolingTowerRecipe> process : master.processQueue) {
+                int currentProg = process.processTick * 100 / process.maxTicks;
+                addProcessPercent(probeInfo, currentProg);
             }
         }
     }
@@ -156,36 +193,16 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityDistillerSlave)) { return; }
-            TileEntityDistillerMaster master = ((TileEntityDistillerSlave)te).master();
-            if (master == null) { return; }
-            EnumFacing facing = data.getSideHit();
-            int pos = ((TileEntityMultiblockPart<?>)te).pos;
-            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
-            if (accessible.length > 0) {
-                IFluidTank tank = accessible[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            } else {
-                for (FluidTank tank : master.tanks) {
-                    FluidStack fluid = tank.getFluid();
-                    int amount = fluid != null ? fluid.amount : 0;
-                    String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                    int color = OneProbeHelper.getFluidColor(fluid);
-                    if (amount > 0) {
-                        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                                .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                                .text(fluidName);
-                    }
-                }
-            }
+            TileEntityDistillerMaster master;
+            if (te instanceof TileEntityDistillerMaster) {
+                master = (TileEntityDistillerMaster)te;
+            } else if (te instanceof TileEntityDistillerSlave) {
+                master = ((TileEntityDistillerSlave)te).master();
+                if (master == null) return;
+            } else return;
+            for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
+            int currentProg = (master.processTimeRemaining > 0 && master.cachedDistillerRecipe != null) ? (master.cachedDistillerRecipe.getTotalProcessTime() - master.processTimeRemaining) * 100 / master.cachedDistillerRecipe.getTotalProcessTime() : 0;
+            addProcessPercent(probeInfo, currentProg);
         }
     }
 
@@ -194,35 +211,24 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityElectrolyticCrucibleBatterySlave)) { return; }
-            TileEntityElectrolyticCrucibleBatteryMaster master = ((TileEntityElectrolyticCrucibleBatterySlave)te).master();
-            if (master == null) { return; }
+            TileEntityElectrolyticCrucibleBatteryMaster master;
+            int pos;
+            if (te instanceof TileEntityElectrolyticCrucibleBatteryMaster) {
+                master = (TileEntityElectrolyticCrucibleBatteryMaster)te;
+                pos = ((TileEntityMultiblockPart<?>)te).pos;
+            } else if (te instanceof TileEntityElectrolyticCrucibleBatterySlave) {
+                TileEntityElectrolyticCrucibleBatterySlave slave = (TileEntityElectrolyticCrucibleBatterySlave)te;
+                master = slave.master();
+                if (master == null) return;
+                pos = slave.pos;
+            } else return;
             EnumFacing facing = data.getSideHit();
-            int pos = ((TileEntityMultiblockPart<?>)te).pos;
-            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
-            if (accessible.length > 0) {
-                IFluidTank tank = accessible[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            } else {
-                for (FluidTank tank : master.tanks) {
-                    FluidStack fluid = tank.getFluid();
-                    int amount = fluid != null ? fluid.amount : 0;
-                    String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                    int color = OneProbeHelper.getFluidColor(fluid);
-                    if (amount > 0) {
-                        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                                .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                                .text(fluidName);
-                    }
-                }
+            for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
+            boolean showEnergy = mode == ProbeMode.EXTENDED || master.isEnergyPosition(facing, pos);
+            if (showEnergy) addEnergyDisplay(probeInfo, master.energyStorage.getEnergyStored(), master.energyStorage.getMaxEnergyStored());
+            for (TileEntityMultiblockMetal.MultiblockProcess<ElectrolyticCrucibleBatteryRecipe> process : master.processQueue) {
+                int currentProg = process.processTick * 100 / process.maxTicks;
+                addProcessPercent(probeInfo, currentProg);
             }
         }
     }
@@ -232,52 +238,25 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityGasTurbineSlave)) { return; }
-            TileEntityGasTurbineMaster master = ((TileEntityGasTurbineSlave)te).master();
-            if (master == null) { return; }
+            TileEntityGasTurbineMaster master;
+            int pos;
+            if (te instanceof TileEntityGasTurbineMaster) {
+                master = (TileEntityGasTurbineMaster)te;
+                pos = ((TileEntityMultiblockPart<?>)te).pos;
+            } else if (te instanceof TileEntityGasTurbineSlave) {
+                master = ((TileEntityGasTurbineSlave)te).master();
+                if (master == null) return;
+                pos = ((TileEntityMultiblockPart<?>)te).pos;
+            } else return;
             EnumFacing facing = data.getSideHit();
-            int pos = ((TileEntityMultiblockPart<?>)te).pos;
-            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
-            if (accessible.length > 0) {
-                IFluidTank tank = accessible[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (!master.isFluidInputPosition(facing, pos) && !master.isFluidOutputPosition(facing, pos)) { return; }
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            } else {
-                for (FluidTank tank : master.tanks) {
-                    FluidStack fluid = tank.getFluid();
-                    int amount = fluid != null ? fluid.amount : 0;
-                    String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                    int color = OneProbeHelper.getFluidColor(fluid);
-                    if (amount > 0) {
-                        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                                .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                                .text(fluidName);
-                    }
-                }
-            }
-            if (master.isEnergyPosition(facing, pos)) {
-                if (!master.isStarterPosition(facing, pos) && !master.isSparkplugPosition(facing, pos)) { return; }
+            for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
+            boolean showAllEnergy = mode == ProbeMode.EXTENDED;
+            if (showAllEnergy) {
+                addEnergyDisplay(probeInfo, master.starterStorage.getEnergyStored(), master.starterStorage.getMaxEnergyStored());
+                addEnergyDisplay(probeInfo, master.sparkplugStorage.getEnergyStored(), master.sparkplugStorage.getMaxEnergyStored());
+            } else if (master.isEnergyPosition(facing, pos)) {
                 IEnergyStorage storage = master.getEnergyAtPosition(facing, pos);
-                if (storage == null) { return; }
-                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .progress(storage.getEnergyStored(), storage.getMaxEnergyStored(), probeInfo.defaultProgressStyle().suffix(" IF").filledColor(Lib.COLOUR_I_ImmersiveOrange).alternateFilledColor(0xff994f20).borderColor(Lib.COLOUR_I_ImmersiveOrangeShadow).numberFormat(NumberFormat.COMPACT));
-            } else {
-                if (master.starterStorage.getEnergyStored() > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(master.starterStorage.getEnergyStored(), master.starterStorage.getMaxEnergyStored(), probeInfo.defaultProgressStyle().suffix(" IF").filledColor(Lib.COLOUR_I_ImmersiveOrange).alternateFilledColor(0xff994f20).borderColor(Lib.COLOUR_I_ImmersiveOrangeShadow).numberFormat(NumberFormat.COMPACT));
-                }
-                if (master.sparkplugStorage.getEnergyStored() > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(master.sparkplugStorage.getEnergyStored(), master.sparkplugStorage.getMaxEnergyStored(), probeInfo.defaultProgressStyle().suffix(" IF").filledColor(Lib.COLOUR_I_ImmersiveOrange).alternateFilledColor(0xff994f20).borderColor(Lib.COLOUR_I_ImmersiveOrangeShadow).numberFormat(NumberFormat.COMPACT));
-                }
+                if (storage != null) addEnergyDisplay(probeInfo, storage.getEnergyStored(), storage.getMaxEnergyStored());
             }
         }
     }
@@ -287,41 +266,22 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityHeatExchangerSlave)) { return; }
-            TileEntityHeatExchangerMaster master = ((TileEntityHeatExchangerSlave)te).master();
-            if (master == null) { return; }
+            TileEntityHeatExchangerMaster master;
+            int pos;
+            if (te instanceof TileEntityHeatExchangerMaster) {
+                master = (TileEntityHeatExchangerMaster)te;
+                pos = ((TileEntityMultiblockPart<?>)te).pos;
+            } else if (te instanceof TileEntityHeatExchangerSlave) {
+                master = ((TileEntityHeatExchangerSlave)te).master();
+                if (master == null) return;
+                pos = ((TileEntityHeatExchangerSlave)te).pos;
+            } else return;
             EnumFacing facing = data.getSideHit();
-            int pos = ((TileEntityMultiblockPart<?>)te).pos;
-            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
-            if (accessible.length > 0) {
-                IFluidTank tank = accessible[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            } else {
-                for (FluidTank tank : master.tanks) {
-                    FluidStack fluid = tank.getFluid();
-                    int amount = fluid != null ? fluid.amount : 0;
-                    String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                    int color = OneProbeHelper.getFluidColor(fluid);
-                    if (amount > 0) {
-                        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                                .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                                .text(fluidName);
-                    }
-                }
-            }
-            int currentProg = (!master.processQueue.isEmpty()) ? master.processQueue.get(0).processTick * 100 / master.processQueue.get(0).maxTicks : 0;
-            if (currentProg > 0) {
-                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .progress(currentProg, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
-            }
+            for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
+            boolean showEnergy = mode == ProbeMode.EXTENDED || master.isEnergyPosition(facing, pos);
+            if (showEnergy) addEnergyDisplay(probeInfo, master.energyStorage.getEnergyStored(), master.energyStorage.getMaxEnergyStored());
+            int currentProg = (master.processTimeRemaining > 0 && master.cachedExchangeRecipe != null) ? (master.cachedExchangeRecipe.getTotalProcessTime() - master.processTimeRemaining) * 100 / master.cachedExchangeRecipe.getTotalProcessTime() : 0;
+            addProcessPercent(probeInfo, currentProg);
         }
     }
 
@@ -330,54 +290,14 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityHighPressureSteamTurbineSlave)) { return; }
-            TileEntityHighPressureSteamTurbineMaster master = ((TileEntityHighPressureSteamTurbineSlave)te).master();
-            if (master == null) { return; }
-            EnumFacing facing = data.getSideHit();
-            int pos = ((TileEntityMultiblockPart<?>)te).pos;
-            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
-            if (accessible.length > 0) {
-                IFluidTank tank = accessible[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            } else {
-                for (FluidTank tank : master.tanks) {
-                    FluidStack fluid = tank.getFluid();
-                    int amount = fluid != null ? fluid.amount : 0;
-                    String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                    int color = OneProbeHelper.getFluidColor(fluid);
-                    if (amount > 0) {
-                        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                                .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                                .text(fluidName);
-                    }
-                }
-            }
-        }
-    }
-
-    public static class MechanicalEnergyProvider implements IProbeInfoProvider {
-        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "MechanicalEnergyInfo"; }
-
-        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
-            TileEntity te = world.getTileEntity(data.getPos());
-            if (te instanceof IMechanicalEnergy) {
-                TileEntityMultiblockPart<?> multiblock = (TileEntityMultiblockPart<?>)te;
-                TileEntity master = multiblock.master();
-                if (master == null) { return; }
-                int current = ((IMechanicalEnergy)master).getSpeed();
-                if (current > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(current, maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix(" RPM"));
-                }
-            }
+            TileEntityHighPressureSteamTurbineMaster master;
+            if (te instanceof TileEntityHighPressureSteamTurbineMaster) {
+                master = (TileEntityHighPressureSteamTurbineMaster)te;
+            } else if (te instanceof TileEntityHighPressureSteamTurbineSlave) {
+                master = ((TileEntityHighPressureSteamTurbineSlave)te).master();
+                if (master == null) return;
+            } else return;
+            for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
         }
     }
 
@@ -386,40 +306,17 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityMeltingCrucibleSlave)) { return; }
-            TileEntityMeltingCrucibleMaster master = ((TileEntityMeltingCrucibleSlave)te).master();
-            if (master == null) { return; }
-            EnumFacing facing = data.getSideHit();
-            int pos = ((TileEntityMultiblockPart<?>)te).pos;
-            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
-            if (accessible.length > 0) {
-                IFluidTank tank = accessible[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            } else {
-                FluidTank tank = master.tanks[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            }
-            int currentProg = (!master.processQueue.isEmpty()) ? master.processQueue.get(0).processTick * 100 / master.processQueue.get(0).maxTicks : 0;
-            if (currentProg > 0) {
-                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .progress(currentProg, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
-            }
+            TileEntityMeltingCrucibleMaster master;
+            if (te instanceof TileEntityMeltingCrucibleMaster) {
+                master = (TileEntityMeltingCrucibleMaster)te;
+            } else if (te instanceof TileEntityMeltingCrucibleSlave) {
+                master = ((TileEntityMeltingCrucibleSlave)te).master();
+                if (master == null) return;
+            } else return;
+            for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
+            if (mode == ProbeMode.EXTENDED) addEnergyDisplay(probeInfo, master.energyStorage.getEnergyStored(), master.energyStorage.getMaxEnergyStored());
+            int currentProg = (master.processEnergyRemaining > 0 && master.cachedMeltingRecipe != null) ? (master.cachedMeltingRecipe.getTotalProcessEnergy() - master.processEnergyRemaining) * 100 / master.cachedMeltingRecipe.getTotalProcessEnergy() : 0;
+            addProcessPercent(probeInfo, currentProg);
         }
     }
 
@@ -428,41 +325,16 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntityRadiatorSlave)) { return; }
-            TileEntityRadiatorMaster master = ((TileEntityRadiatorSlave)te).master();
-            if (master == null) { return; }
-            EnumFacing facing = data.getSideHit();
-            int pos = ((TileEntityMultiblockPart<?>)te).pos;
-            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
-            if (accessible.length > 0) {
-                IFluidTank tank = accessible[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            } else {
-                for (FluidTank tank : master.tanks) {
-                    FluidStack fluid = tank.getFluid();
-                    int amount = fluid != null ? fluid.amount : 0;
-                    String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                    int color = OneProbeHelper.getFluidColor(fluid);
-                    if (amount > 0) {
-                        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                                .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                                .text(fluidName);
-                    }
-                }
-            }
-            int currentProg = (master.recipeTimeTotal > 0) ? (master.recipeTimeTotal - master.recipeTimeRemaining) * 100 / master.recipeTimeTotal : 0;
-            if (currentProg > 0) {
-                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .progress(currentProg, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
-            }
+            TileEntityRadiatorMaster master;
+            if (te instanceof TileEntityRadiatorMaster) {
+                master = (TileEntityRadiatorMaster)te;
+            } else if (te instanceof TileEntityRadiatorSlave) {
+                master = ((TileEntityRadiatorSlave)te).master();
+                if (master == null) return;
+            } else return;
+            for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
+            int currentProg = (master.processTimeRemaining > 0) ? (master.processTimeTotal - master.processTimeRemaining) * 100 / master.processTimeTotal : 0;
+            addProcessPercent(probeInfo, currentProg);
         }
     }
 
@@ -471,50 +343,17 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntitySolarMelterSlave)) { return; }
-            TileEntitySolarMelterMaster master = ((TileEntitySolarMelterSlave)te).master();
-            if (master == null) { return; }
-            EnumFacing facing = data.getSideHit();
-            int pos = ((TileEntityMultiblockPart<?>)te).pos;
-            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
-            if (accessible.length > 0) {
-                IFluidTank tank = accessible[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            } else {
-                FluidTank tank = master.tanks[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            }
-            double displayHeat = master.heatLevel / 20 + 30;
-            double displayMax = solarMelterWorkingHeatLevel / 20 + 30;
-            int currentTemp = (int)displayHeat;
-            int maxTemp = (int)displayMax;
-            probeInfo.progress(currentTemp, maxTemp, probeInfo.defaultProgressStyle()
-                    .suffix("/" + maxTemp + "°C")
-                    .filledColor(0xffcc0000)
-                    .alternateFilledColor(0xffcc0000)
-                    .borderColor(0xffff6666)
-                    .numberFormat(NumberFormat.FULL));
-            int currentProg = (master.recipeEnergyRemaining > 0 && master.cachedRecipe != null) ? (master.cachedRecipe.getTotalProcessEnergy() - master.recipeEnergyRemaining) * 100 / master.cachedRecipe.getTotalProcessEnergy() : 0;
-            if (currentProg > 0) {
-                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .progress(currentProg, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
-            }
+            TileEntitySolarMelterMaster master;
+            if (te instanceof TileEntitySolarMelterMaster) {
+                master = (TileEntitySolarMelterMaster)te;
+            } else if (te instanceof TileEntitySolarMelterSlave) {
+                master = ((TileEntitySolarMelterSlave)te).master();
+                if (master == null) return;
+            } else return;
+            for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
+            addTemperature(probeInfo, master.heatLevel, solarMelterWorkingHeatLevel);
+            int currentProg = (master.processEnergyRemaining > 0 && master.cachedSolarMelterRecipe != null) ? (master.cachedSolarMelterRecipe.getTotalProcessEnergy() - master.processEnergyRemaining) * 100 / master.cachedSolarMelterRecipe.getTotalProcessEnergy() : 0;
+            addProcessPercent(probeInfo, currentProg);
         }
     }
 
@@ -523,51 +362,17 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntitySolarTowerSlave)) { return; }
-            TileEntitySolarTowerMaster master = ((TileEntitySolarTowerSlave)te).master();
-            if (master == null) { return; }
-            EnumFacing facing = data.getSideHit();
-            int pos = ((TileEntityMultiblockPart<?>)te).pos;
-            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
-            if (accessible.length > 0) {
-                IFluidTank tank = accessible[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            } else {
-                for (FluidTank tank : master.tanks) {
-                    FluidStack fluid = tank.getFluid();
-                    int amount = fluid != null ? fluid.amount : 0;
-                    String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                    int color = OneProbeHelper.getFluidColor(fluid);
-                    if (amount > 0) {
-                        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                                .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                                .text(fluidName);
-                    }
-                }
-            }
-            double displayHeat = master.heatLevel / 20 + 30;
-            double displayMax = solarWorkingHeatLevel / 20 + 30;
-            int currentTemp = (int)displayHeat;
-            int maxTemp = (int)displayMax;
-            probeInfo.progress(currentTemp, maxTemp, probeInfo.defaultProgressStyle()
-                    .suffix("/" + maxTemp + "°C")
-                    .filledColor(0xffcc0000)
-                    .alternateFilledColor(0xffcc0000)
-                    .borderColor(0xffff6666)
-                    .numberFormat(NumberFormat.FULL));
-            int currentProg = (master.recipeTimeRemaining > 0 && master.cachedRecipe != null) ? (master.cachedRecipe.getTotalProcessTime() - master.recipeTimeRemaining) * 100 / master.cachedRecipe.getTotalProcessTime() : 0;
-            if (currentProg > 0) {
-                probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                        .progress(currentProg, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
-            }
+            TileEntitySolarTowerMaster master;
+            if (te instanceof TileEntitySolarTowerMaster) {
+                master = (TileEntitySolarTowerMaster)te;
+            } else if (te instanceof TileEntitySolarTowerSlave) {
+                master = ((TileEntitySolarTowerSlave)te).master();
+                if (master == null) return;
+            } else return;
+            for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
+            addTemperature(probeInfo, master.heatLevel, solarWorkingHeatLevel);
+            int currentProg = (master.processTimeRemaining > 0 && master.cachedSolarTowerRecipe != null) ? (master.cachedSolarTowerRecipe.getTotalProcessTime() - master.processTimeRemaining) * 100 / master.cachedSolarTowerRecipe.getTotalProcessTime() : 0;
+            addProcessPercent(probeInfo, currentProg);
         }
     }
 
@@ -576,41 +381,35 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (!(te instanceof TileEntitySteamTurbineSlave)) { return; }
-            TileEntitySteamTurbineMaster master = ((TileEntitySteamTurbineSlave)te).master();
-            if (master == null) { return; }
-            EnumFacing facing = data.getSideHit();
-            int pos = ((TileEntityMultiblockPart<?>)te).pos;
-            IFluidTank[] accessible = master.getAccessibleFluidTanks(facing, pos);
-            if (accessible.length > 0) {
-                IFluidTank tank = accessible[0];
-                FluidStack fluid = tank.getFluid();
-                int amount = fluid != null ? fluid.amount : 0;
-                String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                int color = OneProbeHelper.getFluidColor(fluid);
-                if (amount > 0) {
-                    probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                            .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                            .text(fluidName);
-                }
-            } else {
-                for (FluidTank tank : master.tanks) {
-                    FluidStack fluid = tank.getFluid();
-                    int amount = fluid != null ? fluid.amount : 0;
-                    String fluidName = fluid != null ? fluid.getLocalizedName() : "Empty";
-                    int color = OneProbeHelper.getFluidColor(fluid);
-                    if (amount > 0) {
-                        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                                .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
-                                .text(fluidName);
-                    }
-                }
-            }
+            TileEntitySteamTurbineMaster master;
+            if (te instanceof TileEntitySteamTurbineMaster) {
+                master = (TileEntitySteamTurbineMaster)te;
+            } else if (te instanceof TileEntitySteamTurbineSlave) {
+                master = ((TileEntitySteamTurbineSlave)te).master();
+                if (master == null) return;
+            } else return;
+            for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
+        }
+    }
+
+    public static class SteelSheetmetalTankProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "SteelSheetmetalTankInfo"; }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+            TileEntity te = world.getTileEntity(data.getPos());
+            TileEntitySteelSheetmetalTankMaster master;
+            if (te instanceof TileEntitySteelSheetmetalTankMaster) {
+                master = (TileEntitySteelSheetmetalTankMaster)te;
+            } else if (te instanceof TileEntitySteelSheetmetalTankSlave) {
+                master = ((TileEntitySteelSheetmetalTankSlave)te).master();
+                if (master == null) return;
+            } else return;
+            addFluidTankDisplay(probeInfo, master.tank);
         }
     }
 
     private static int getFluidColor(@Nullable FluidStack fluid) {
-        if (fluid == null) { return 0xff555555; }
+        if (fluid == null) return 0xff555555;
         int tint = fluid.getFluid().getColor(fluid);
         ResourceLocation still = fluid.getFluid().getStill(fluid);
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(still.toString());
