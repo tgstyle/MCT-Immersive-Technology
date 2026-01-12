@@ -14,8 +14,8 @@ import mctmods.immersivetechnology.common.multiblocks.stone.shapes.AdvancedCokeO
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
-import mctmods.immersivetechnology.common.util.ITUtils;
 
+import mctmods.immersivetechnology.common.util.ITUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<TileEntityAdvancedCokeOvenSlave, IMultiblockRecipe, TileEntityAdvancedCokeOvenMaster> implements IEBlockInterfaces.IActiveState, IEBlockInterfaces.IProcessTile, IIEInventory, IEBlockInterfaces.IGuiTile, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<TileEntityAdvancedCokeOvenSlave, IMultiblockRecipe, TileEntityAdvancedCokeOvenMaster> implements IEBlockInterfaces.IActiveState, IIEInventory, IEBlockInterfaces.IGuiTile, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
     public TileEntityAdvancedCokeOvenSlave() { super(TileEntityITMultiblockPartAdvancedCokeOven.instance, 0, false); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
@@ -50,16 +50,6 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
     @Override public void update() { ITUtils.RemoveDummyFromTicking(this); }
-
-    @Override @Nonnull public int[] getCurrentProcessesStep() {
-        TileEntityAdvancedCokeOvenMaster m = master();
-        return m != null ? m.getCurrentProcessesStep() : new int[0];
-    }
-
-    @Override @Nonnull public int[] getCurrentProcessesMax() {
-        TileEntityAdvancedCokeOvenMaster m = master();
-        return m != null ? m.getCurrentProcessesMax() : new int[0];
-    }
 
     @Override public boolean getIsActive() {
         TileEntityAdvancedCokeOvenMaster m = master();

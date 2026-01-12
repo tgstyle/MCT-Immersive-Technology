@@ -25,7 +25,7 @@ public class GuiAdvancedCokeOven extends GuiIEContainerBase {
         super.drawScreen(mx, my, partial);
 
         ArrayList<String> tooltip = new ArrayList<>();
-        ClientUtils.handleGuiTank(tile.tank, guiLeft + 129, guiTop + 20, 16, 47, 176, 31, 20, 51, mx, my, "immersiveengineering:textures/gui/advanced_coke_oven.png", tooltip);
+        ClientUtils.handleGuiTank(tile.tank, guiLeft + 129, guiTop + 20, 16, 47, 176, 31, 20, 51, mx, my, "immersiveengineering:textures/gui/coke_oven.png", tooltip);
         if (!tooltip.isEmpty()) {
             ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
             RenderHelper.enableGUIStandardItemLighting();
@@ -42,8 +42,8 @@ public class GuiAdvancedCokeOven extends GuiIEContainerBase {
         ClientUtils.bindTexture("immersiveengineering:textures/gui/coke_oven.png");
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
-        if (tile.processMax > 0 && (tile.processMax - tile.process) > 0) {
-            int h = (int)(12 * ((tile.processMax - tile.process) / (float)tile.processMax));
+        if (tile.processTimeMax > 0 && (tile.processTimeMax - tile.processTimeRemaining) > 0) {
+            int h = (int)(12 * ((tile.processTimeMax - tile.processTimeRemaining) / (float)tile.processTimeMax));
             this.drawTexturedModalRect(guiLeft + 59, guiTop + 37 + 12 - h, 179, 1 + 12 - h, 9, h);
         }
 

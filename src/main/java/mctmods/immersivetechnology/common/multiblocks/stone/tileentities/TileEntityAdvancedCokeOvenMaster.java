@@ -4,8 +4,8 @@ import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
-
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAdvancedCokeOvenBaseheater;
@@ -48,6 +48,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,11 +60,13 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     public ITFluidTank tank = new ITFluidTank(tankSize, this);
     public static int slotCount = 4;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
-    public float process = 0;
-    public int processMax = 0;
+    public int processTimeRemaining = 0;
+    public int processTimeMax = 0;
     public boolean active = false;
     private float soundVolume;
-    private CokeOvenRecipe processing;
+    private CokeOvenRecipe cachedCokeRecipe;
+    private int soundGracePeriod = 0;
+    private boolean isRunning;
     PoICache itemInput0;
     PoICache itemOutput0;
     PoICache fluidOutput0;
@@ -76,8 +79,8 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
-        process = nbt.getFloat("process");
-        processMax = nbt.getInteger("processMax");
+        processTimeRemaining = nbt.getInteger("processTimeRemaining");
+        processTimeMax = nbt.getInteger("processTimeMax");
         active = nbt.getBoolean("active");
         tank.readFromNBT(nbt.getCompoundTag("tank"));
         if (!descPacket) { inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount); }
@@ -85,8 +88,8 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
-        nbt.setFloat("process", process);
-        nbt.setInteger("processMax", processMax);
+        nbt.setInteger("processTimeRemaining", processTimeRemaining);
+        nbt.setInteger("processTimeMax", processTimeMax);
         nbt.setBoolean("active", active);
         NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
         nbt.setTag("tank", tankTag);
@@ -138,7 +141,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     }
 
     @SideOnly(Side.CLIENT) public void handleSounds() {
-        if (active) {
+        if (isRunning) {
             if (soundVolume < 1) { soundVolume += 0.01f; }
         }
         else if (soundVolume > 0) { soundVolume -= 0.01f; }
@@ -146,7 +149,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         if (soundVolume == 0) { ITSoundHandler.StopSound(center); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
+            float attenuation = Math.max((float)player.getDistanceSq(center.getX() + .5, center.getY() + .5, center.getZ() + .5) / 8, 1);
             ITSounds.advancedCokeOven.PlayRepeating(center, soundVolume / attenuation, 1);
         }
     }
@@ -173,23 +176,25 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     public void notifyNearbyClients() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setBoolean("active", active);
+        tag.setBoolean("isRunning", isRunning);
         BlockPos center = getPos();
         ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
     }
 
     private void notifyProcessUpdate() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setFloat("process", process);
-        tag.setInteger("processMax", processMax);
+        tag.setInteger("processTimeRemaining", processTimeRemaining);
+        tag.setInteger("processTimeMax", processTimeMax);
         BlockPos center = getPos();
         ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
     }
 
     @Override public void receiveMessageFromServer(NBTTagCompound message) {
         if (message.hasKey("active") ) { active = message.getBoolean("active"); }
-        else if (message.hasKey("process")) {
-            process = message.getFloat("process");
-            processMax = message.getInteger("processMax");
+        if (message.hasKey("isRunning") ) { isRunning = message.getBoolean("isRunning"); }
+        else if (message.hasKey("processTimeRemaining")) {
+            processTimeRemaining = message.getInteger("processTimeRemaining");
+            processTimeMax = message.getInteger("processTimeMax");
         }
     }
 
@@ -204,12 +209,12 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         }
         boolean update = false;
         if (!inventory.get(0).isEmpty()) {
-            if (processing == null) {
-                processing = getRecipe();
-                if (processing == null) {
+            if (cachedCokeRecipe == null) {
+                cachedCokeRecipe = getRecipe();
+                if (cachedCokeRecipe == null) {
                     if (active) {
-                        process = 0;
-                        processMax = 0;
+                        processTimeRemaining = 0;
+                        processTimeMax = 0;
                         active = false;
                         update = true;
                         notifyNearbyClients();
@@ -218,7 +223,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
                 }
                 else {
                     if (!active) {
-                        this.process = this.processMax = processing.time;
+                        this.processTimeRemaining = this.processTimeMax = cachedCokeRecipe.time;
                         active = true;
                         update = true;
                         notifyNearbyClients();
@@ -226,28 +231,28 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
                     }
                 }
             }
-            if (active && process > 0) {
-                process -= getProcessSpeed();
+            if (active && processTimeRemaining > 0) {
+                processTimeRemaining -= (int)getProcessSpeed();
                 update = true;
                 if (world.getTotalWorldTime() % 8 == 0) { notifyProcessUpdate(); }
             }
-            if (processing != null && process <= 0) {
-                if (tank.getFluidAmount() + processing.creosoteOutput <= tank.getCapacity() && inventory.get(1).getCount() + processing.output.getCount() <= inventory.get(1).getMaxStackSize()) {
+            if (cachedCokeRecipe != null && processTimeRemaining <= 0) {
+                if (tank.getFluidAmount() + cachedCokeRecipe.creosoteOutput <= tank.getCapacity() && inventory.get(1).getCount() + cachedCokeRecipe.output.getCount() <= inventory.get(1).getMaxStackSize()) {
                     Utils.modifyInvStackSize(inventory, 0, -1);
-                    if (!inventory.get(1).isEmpty()) { inventory.get(1).grow(processing.output.copy().getCount()); }
-                    else { inventory.set(1, processing.output.copy()); }
-                    this.tank.fill(new FluidStack(IEContent.fluidCreosote, processing.creosoteOutput), true);
+                    if (!inventory.get(1).isEmpty()) { inventory.get(1).grow(cachedCokeRecipe.output.copy().getCount()); }
+                    else { inventory.set(1, cachedCokeRecipe.output.copy()); }
+                    this.tank.fill(new FluidStack(IEContent.fluidCreosote, cachedCokeRecipe.creosoteOutput), true);
                     this.markContainingBlockForUpdate(null);
-                    processing = getRecipe();
-                    if (processing != null) {
-                        process = processing.time;
-                        processMax = processing.time;
+                    cachedCokeRecipe = getRecipe();
+                    if (cachedCokeRecipe != null) {
+                        processTimeRemaining = cachedCokeRecipe.time;
+                        processTimeMax = cachedCokeRecipe.time;
                         active = true;
                         notifyProcessUpdate();
                     } else {
                         active = false;
-                        process = 0;
-                        processMax = 0;
+                        processTimeRemaining = 0;
+                        processTimeMax = 0;
                     }
                     update = true;
                     notifyNearbyClients();
@@ -266,9 +271,9 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             if (active) {
                 active = false;
                 update = true;
-                process = 0;
-                processMax = 0;
-                processing = null;
+                processTimeRemaining = 0;
+                processTimeMax = 0;
+                cachedCokeRecipe = null;
                 notifyNearbyClients();
                 setHeatersActive();
             }
@@ -300,7 +305,15 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             this.inventory.set(1, stack);
         }
         pumpOutputOut();
-        if (update) { efficientMarkDirty(); }
+        boolean wasRunning = isRunning;
+        if (active) soundGracePeriod = 60;
+        else if (soundGracePeriod > 0) soundGracePeriod--;
+        isRunning = soundGracePeriod > 0;
+        if (isRunning != wasRunning) notifyNearbyClients();
+        if (update || (isRunning != wasRunning)) {
+            efficientMarkDirty();
+            markContainingBlockForUpdate(null);
+        }
     }
 
     public CokeOvenRecipe getRecipe() {
@@ -311,11 +324,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         return null;
     }
 
-    @Override public TileEntityAdvancedCokeOvenMaster master() { return this; }
-
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[]{Math.round(processMax - process)}; }
-
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[]{processMax}; }
+    @Override @Nonnull public TileEntityAdvancedCokeOvenMaster master() { return this; }
 
     private float getProcessSpeed() {
         if (baseheater0 == null) { InitializePoIs(); }
@@ -362,7 +371,8 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         this.markContainingBlockForUpdate(null);
     }
 
-    @Override protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override
+    public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if (fluidOutput0 == null) { InitializePoIs(); }
         if (fluidOutput0.isPoI(side, position)) { return new IFluidTank[]{tank}; }
         return new IFluidTank[0];
@@ -470,5 +480,10 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             if (drained != null && doDrain) { master.TankContentsChanged(); }
             return drained;
         }
+    }
+
+    @Override public int getComparatorInputOverride() {
+        if (!formed || processTimeMax <= 0) return 0;
+        return 15 * (processTimeMax - processTimeRemaining) / processTimeMax;
     }
 }

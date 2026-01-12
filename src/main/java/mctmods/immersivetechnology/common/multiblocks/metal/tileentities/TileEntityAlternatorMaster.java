@@ -52,9 +52,10 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     public int speed;
     public float torqueMult = 1;
     public IMechanicalEnergy provider;
-    private int clientUpdateCooldown = 5;
-    private float targetEnergyPercentage;
+    private int tickCountdown = 5;
+    private float targetSoundLevel;
     private float soundVolume;
+    private int soundGracePeriod;
     private int oldEnergy = energyStorage.getEnergyStored();
     private int oldSpeed = maxSpeed;
     MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
@@ -147,8 +148,11 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             float oldMomentum = animation.getAnimationMomentum();
             animation.setAnimationMomentum(rotationSpeed);
             animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
-            if (soundVolume < targetEnergyPercentage) { soundVolume = Math.min(soundVolume + 0.01f, targetEnergyPercentage); }
-            else if (soundVolume > targetEnergyPercentage) { soundVolume = Math.max(soundVolume - 0.01f, targetEnergyPercentage); }
+            if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); soundGracePeriod = 60; }
+            else if (soundVolume > targetSoundLevel) {
+                if (soundGracePeriod > 0) { soundGracePeriod--; }
+                else { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
+            }
             handleSounds();
             return;
         }
@@ -179,12 +183,12 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             }
         }
         boolean changed = oldSpeed != speed || oldEnergy != currentEnergy;
-        clientUpdateCooldown--;
-        if (changed && clientUpdateCooldown <= 0) {
+        tickCountdown--;
+        if (changed && tickCountdown <= 0) {
             notifyNearbyClients();
             efficientMarkDirty();
             markContainingBlockForUpdate(null);
-            clientUpdateCooldown = 5;
+            tickCountdown = 5;
         }
         oldEnergy = currentEnergy;
         oldSpeed = speed;
@@ -197,7 +201,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     @Override public void receiveMessageFromServer(ByteBuf buf) {
         int energy = buf.readInt();
         int speed = buf.readInt();
-        targetEnergyPercentage = (!soundRPM) ? (float)energy / energyStorage.getMaxEnergyStored() : (float)speed / maxSpeed;
+        targetSoundLevel = (!soundRPM) ? (float)energy / energyStorage.getMaxEnergyStored() : (float)speed / maxSpeed;
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { }

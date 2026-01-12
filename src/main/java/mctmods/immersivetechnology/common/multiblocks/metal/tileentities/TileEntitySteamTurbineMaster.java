@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import io.netty.buffer.ByteBuf;
@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IEBlockInterfaces.IComparatorOverride {
+public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IComparatorOverride {
 
     private static final int inputTankSize = Multiblocks.steamTurbine.steamTurbine_input_tankSize;
     private static final int outputTankSize = Multiblocks.steamTurbine.steamTurbine_output_tankSize;
@@ -64,18 +64,20 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
             new ITFluidTank(outputTankSize, this)
     };
 
-    private SteamTurbineRecipe cachedRecipe;
+    private SteamTurbineRecipe cachedTurbineRecipe;
 
-    public int burnRemaining = 0;
+    public int fuelBurnRemaining = 0;
     public int speed;
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
     private IMechanicalEnergy alternator;
-    private int clientUpdateCooldown = 5;
-    private float targetLevel;
+    private int tickCountdown = 5;
+    private float targetSoundLevel;
     private float soundVolume = 0f;
+    private int soundGracePeriod;
     private PoICache fluidInput0, fluidOutput0, mechanicalOutput0, redstone0;
     private BlockPos outputFront0, mechanicalOutputPos0, sound0;
     private boolean needsPoIInit = false;
+    private int oldComparatorOutput;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -83,11 +85,13 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
         speed = nbt.getInteger("speed");
         animation.readFromNBT(nbt);
-        burnRemaining = nbt.getInteger("burnRemaining");
+        fuelBurnRemaining = nbt.getInteger("fuelBurnRemaining");
+        oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         if (!descPacket && formed) { needsPoIInit = true; }
         if (world.isRemote) {
-            targetLevel = (float)speed / maxSpeed;
-            soundVolume = targetLevel;
+            targetSoundLevel = (float)speed / maxSpeed;
+            soundVolume = targetSoundLevel;
+            soundGracePeriod = 60;
         }
     }
 
@@ -97,7 +101,8 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
         nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
         nbt.setInteger("speed", speed);
         animation.writeToNBT(nbt);
-        nbt.setInteger("burnRemaining", burnRemaining);
+        nbt.setInteger("fuelBurnRemaining", fuelBurnRemaining);
+        nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
     }
 
     @SideOnly(Side.CLIENT)
@@ -130,7 +135,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
 
     @Override public void receiveMessageFromServer(ByteBuf buf) {
         speed = buf.readInt();
-        targetLevel = (float)speed / maxSpeed;
+        targetSoundLevel = (float)speed / maxSpeed;
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { }
@@ -179,23 +184,26 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
         animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
         animation.setAnimationMomentum(rotationSpeed);
         if (world.isRemote) {
-            if (soundVolume < targetLevel) { soundVolume = Math.min(targetLevel, soundVolume + 0.01f); }
-            else if (soundVolume > targetLevel) { soundVolume = Math.max(targetLevel, soundVolume - 0.01f); }
+            if (soundVolume < targetSoundLevel) { soundVolume = Math.min(targetSoundLevel, soundVolume + 0.01f); soundGracePeriod = 60; }
+            else if (soundVolume > targetSoundLevel) {
+                if (soundGracePeriod > 0) { soundGracePeriod--; }
+                else { soundVolume = Math.max(targetSoundLevel, soundVolume - 0.01f); }
+            }
             handleSounds();
             return;
         }
         boolean update = false;
         int prevSpeed = speed;
-        int prevBurn = burnRemaining;
-        if (burnRemaining > 0) {
-            burnRemaining--;
+        int prevBurn = fuelBurnRemaining;
+        if (fuelBurnRemaining > 0) {
+            fuelBurnRemaining--;
             speedUp();
-            if (burnRemaining != prevBurn) { update = true; }
+            if (fuelBurnRemaining != prevBurn) { update = true; }
         } else if (!isRSDisabled() && tanks[0].getFluidAmount() > 0 && isValidAlternator()) {
-            if (cachedRecipe == null || !Objects.requireNonNull(tanks[0].getFluid()).isFluidEqual(cachedRecipe.fluidInput)) { cachedRecipe = SteamTurbineRecipe.findFuel(tanks[0].getFluid()); }
-            SteamTurbineRecipe recipe = cachedRecipe;
+            if (cachedTurbineRecipe == null || !Objects.requireNonNull(tanks[0].getFluid()).isFluidEqual(cachedTurbineRecipe.fluidInput)) { cachedTurbineRecipe = SteamTurbineRecipe.findFuel(tanks[0].getFluid()); }
+            SteamTurbineRecipe recipe = cachedTurbineRecipe;
             if (recipe != null && recipe.fluidInput.amount <= tanks[0].getFluidAmount()) {
-                burnRemaining = recipe.getTotalProcessTime() - 1;
+                fuelBurnRemaining = recipe.getTotalProcessTime() - 1;
                 tanks[0].drain(recipe.fluidInput.amount, true);
                 update = true;
                 if (recipe.fluidOutput != null) {
@@ -206,19 +214,29 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
         } else { speedDown(); }
         if (prevSpeed != speed) { update = true; }
         if (pumpOutputOut()) { update = true; }
-        clientUpdateCooldown--;
+        tickCountdown--;
         if (update) {
             efficientMarkDirty();
             markContainingBlockForUpdate(null);
         }
-        if (update && clientUpdateCooldown <= 0) {
+        if (update && tickCountdown <= 0) {
             notifyNearbyClients();
-            clientUpdateCooldown = 5;
+            tickCountdown = 5;
+        }
+        int comp = getComparatorInputOverride();
+        if (comp != oldComparatorOutput) {
+            notifyRedstoneNeighbor();
+            oldComparatorOutput = comp;
         }
     }
 
+    private void notifyRedstoneNeighbor() {
+        BlockPos rsPos = getBlockPosForPos(redstone0.position);
+        world.notifyNeighborsOfStateChange(rsPos, world.getBlockState(rsPos).getBlock(), false);
+    }
+
     @Override public void TankContentsChanged() {
-        cachedRecipe = null;
+        cachedTurbineRecipe = null;
         efficientMarkDirty();
         markContainingBlockForUpdate(null);
     }

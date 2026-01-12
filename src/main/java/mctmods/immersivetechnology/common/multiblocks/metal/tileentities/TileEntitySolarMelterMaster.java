@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
@@ -51,7 +52,7 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IIEInventory {
+public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IIEInventory, IComparatorOverride {
 
     private static final int outputTankSize = Multiblocks.solarMelter.solarMelter_output_tankSize;
     private static final int solarMaxRange = Multiblocks.solarReflector.solarReflector_maxRange;
@@ -67,39 +68,44 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     };
     public IItemHandler insertionHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
 
-    public MeltingCrucibleRecipe cachedRecipe;
+    public MeltingCrucibleRecipe cachedSolarMelterRecipe;
 
     public static int slotCount = 3;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
-    public int recipeEnergyRemaining = 0;
+    public int processEnergyRemaining = 0;
     public double heatLevel = 0;
     public double reflectorStrength = 0;
     public int solarIncidenceAngleSection = 0;
-    private int clientUpdateCooldown = 20;
-    private float soundVolume;
-    private boolean isRunning;
-    private int gracePeriod = 60;
+
+    private float soundVolume = 0f;
+    private int soundGracePeriod = 60;
+    private boolean isRunning = false;
+
     private PoICache fluidOutput0, itemInput0, redstone0;
     private BlockPos basePos0, collectorPos0, fluidOutputFront0, soundPos0;
+
     private boolean isLoaded = false;
     private boolean registered = false;
     private boolean reCheckOnLoad = false;
     private boolean savedRegistered = false;
     private boolean needsPoIInit = true;
+
     private double distanceSqToTE;
     private int playerDimension;
+
+    private int oldComparatorOutput = 0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
-        recipeEnergyRemaining = nbt.getInteger("recipeEnergyRemaining");
+        processEnergyRemaining = nbt.getInteger("processEnergyRemaining");
         heatLevel = nbt.getDouble("heatLevel");
         reflectorStrength = nbt.getDouble("reflectorStrength");
         if (!descPacket) {
             inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
-            if (recipeEnergyRemaining > 0 && !inventory.get(0).isEmpty()) {
-                cachedRecipe = MeltingCrucibleRecipe.findRecipe(inventory.get(0));
-                if (cachedRecipe == null) recipeEnergyRemaining = 0;
+            if (processEnergyRemaining > 0 && !inventory.get(0).isEmpty()) {
+                cachedSolarMelterRecipe = MeltingCrucibleRecipe.findRecipe(inventory.get(0));
+                if (cachedSolarMelterRecipe == null) processEnergyRemaining = 0;
             }
             if (formed) needsPoIInit = true;
         }
@@ -112,7 +118,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
-        nbt.setInteger("recipeEnergyRemaining", recipeEnergyRemaining);
+        nbt.setInteger("processEnergyRemaining", processEnergyRemaining);
         nbt.setDouble("heatLevel", heatLevel);
         nbt.setDouble("reflectorStrength", reflectorStrength);
         if (!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
@@ -124,18 +130,35 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
-        if (isRunning) { if (soundVolume < 1) soundVolume += 0.01f; }
-        else { if (soundVolume > 0) soundVolume -= 0.01f; }
-        if (soundVolume == 0) { ITSoundHandler.StopSound(soundPos0); }
-        else {
-            EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 8, 1);
-            ITSounds.heatExchanger.PlayRepeating(soundPos0, soundVolume / attenuation, 1);
+        if (distanceSqToTE > 4096) {
+            ITSoundHandler.StopSound(soundPos0);
+            soundVolume = 0f;
+            return;
+        }
+
+        float targetSoundLevel = isRunning ? 1f : 0f;
+        if (soundVolume < targetSoundLevel) {
+            soundVolume = Math.min(soundVolume + 0.02f, targetSoundLevel);
+            soundGracePeriod = 60;
+        } else if (soundVolume > targetSoundLevel) {
+            if (soundGracePeriod > 0) soundGracePeriod--;
+            else soundVolume = Math.max(soundVolume - 0.02f, targetSoundLevel);
+        }
+
+        if (soundVolume <= 0f) {
+            ITSoundHandler.StopSound(soundPos0);
+        } else {
+            double distance = Math.sqrt(distanceSqToTE);
+            float attenuation = Math.max((float)distance / 16f, 1f);
+            ITSounds.heatExchanger.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() { if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0); super.onChunkUnload(); }
+    @Override public void onChunkUnload() {
+        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        super.onChunkUnload();
+    }
 
     @Override public void disassemble() {
         if (soundPos0 == null) InitializePoIs();
@@ -164,14 +187,16 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         }
     }
 
-    public void requestUpdate() { BinaryMessageTileSync.sendToServer(getPos(), Unpooled.buffer()); }
+    public void requestUpdate() {
+        ImmersiveTechnology.packetHandler.sendToServer(new BinaryMessageTileSync(getPos(), Unpooled.buffer()));
+    }
 
     public void notifyNearbyClients() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeDouble(heatLevel);
         buf.writeInt(solarIncidenceAngleSection);
         buf.writeBoolean(isRunning);
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
+        ImmersiveTechnology.packetHandler.sendToAllAround(new BinaryMessageTileSync(getPos(), buf), new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 40));
     }
 
     @Override public void receiveMessageFromServer(ByteBuf message) {
@@ -185,7 +210,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         buf.writeDouble(heatLevel);
         buf.writeInt(solarIncidenceAngleSection);
         buf.writeBoolean(isRunning);
-        BinaryMessageTileSync.sendToPlayer(player, getPos(), buf);
+        ImmersiveTechnology.packetHandler.sendTo(new BinaryMessageTileSync(getPos(), buf), player);
     }
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
@@ -213,9 +238,9 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         }
 
         totalMirrorStrength *= world.isRaining() ? 0.4 : 1;
-        if (ITCompatModule.isAdvancedRocketryLoaded) { totalMirrorStrength *= AdvancedRocketryHelper.getInsolation(world, getPos()); }
+        if (ITCompatModule.isAdvancedRocketryLoaded) totalMirrorStrength *= AdvancedRocketryHelper.getInsolation(world, getPos());
         double humidityBonus = 0.075 * totalMirrorStrength * -((world.getBiome(getPos()).getRainfall() - 0.5) / 0.5);
-        if (ITCompatModule.isAdvancedRocketryLoaded) { humidityBonus *= AdvancedRocketryHelper.getWaterPartialPressureMultiplier(world, getPos()); }
+        if (ITCompatModule.isAdvancedRocketryLoaded) humidityBonus *= AdvancedRocketryHelper.getWaterPartialPressureMultiplier(world, getPos());
         totalMirrorStrength += humidityBonus;
 
         reflectorStrength = totalMirrorStrength;
@@ -227,57 +252,74 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         return previous != heatLevel;
     }
 
-    private float getTemperatureIncrease() { return speedMult * (1 + (solarIncidenceAngleSection - 1)) * 10 * (float)(reflectorStrength / maximumReflectorStrength) * (world.isRaining() ? 0.1f : world.isThundering() ? 0.05f : 1f); }
+    private float getTemperatureIncrease() {
+        return speedMult * (1 + (solarIncidenceAngleSection - 1)) * 10 * (float)(reflectorStrength / maximumReflectorStrength) * (world.isRaining() ? 0.1f : world.isThundering() ? 0.05f : 1f);
+    }
 
     private boolean cooldown() {
         double previous = heatLevel;
         double heatLost = world.getBiomeProvider().getTemperatureAtHeight(world.getBiome(getPos()).getTemperature(getPos()), getPos().getY());
         double conduction = 1.0;
-        if (ITCompatModule.isAdvancedRocketryLoaded) { conduction *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos()); }
-        heatLevel = Math.max(heatLevel - ((world.isRaining() ? 2 : 1 * (1 / heatLost)) * heatLossMultiplier * conduction), 0);
+        if (ITCompatModule.isAdvancedRocketryLoaded) conduction *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos());
+        heatLevel = Math.max(heatLevel - ((world.isRaining() ? 2 : 1) * (1 / heatLost) * heatLossMultiplier * conduction), 0);
         return previous != heatLevel;
     }
 
     private boolean loseProgress() {
-        if (cachedRecipe == null || !cachedRecipe.itemInput.matches(inventory.get(0))) { cachedRecipe = null; recipeEnergyRemaining = 0; return true; }
-        int previous = recipeEnergyRemaining;
-        recipeEnergyRemaining = (int)Math.min(recipeEnergyRemaining + energyLossPerTick * (ITCompatModule.isAdvancedRocketryLoaded ? AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos()) : 1), cachedRecipe.getTotalProcessEnergy());
-        return previous != recipeEnergyRemaining;
+        if (cachedSolarMelterRecipe == null || !cachedSolarMelterRecipe.itemInput.matches(inventory.get(0))) {
+            cachedSolarMelterRecipe = null;
+            processEnergyRemaining = 0;
+            return true;
+        }
+        int previous = processEnergyRemaining;
+        double coeff = ITCompatModule.isAdvancedRocketryLoaded ? AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos()) : 1;
+        processEnergyRemaining = (int)Math.min(processEnergyRemaining + energyLossPerTick * coeff, cachedSolarMelterRecipe.getTotalProcessEnergy());
+        return previous != processEnergyRemaining;
     }
 
     private boolean gainProgress() {
-        if (cachedRecipe == null || !cachedRecipe.itemInput.matches(inventory.get(0))) { cachedRecipe = null; recipeEnergyRemaining = 0; return true; }
-        int previous = recipeEnergyRemaining;
-        recipeEnergyRemaining -= (int)(solarIncidenceAngleSection * 7680 * (reflectorStrength / maximumReflectorStrength));
-        boolean changed = previous != recipeEnergyRemaining;
-        if (recipeEnergyRemaining <= 0) {
-            inventory.get(0).shrink(cachedRecipe.itemInput.inputSize);
-            if (inventory.get(0).getCount() <= 0) { inventory.set(0, ItemStack.EMPTY); }
-            tanks[0].fillInternal(new FluidStack(cachedRecipe.fluidOutput.getFluid(), cachedRecipe.fluidOutput.amount), true);
-            cachedRecipe = null;
-            recipeEnergyRemaining = 0;
-            markContainingBlockForUpdate(null);
+        if (cachedSolarMelterRecipe == null || !cachedSolarMelterRecipe.itemInput.matches(inventory.get(0))) {
+            cachedSolarMelterRecipe = null;
+            processEnergyRemaining = 0;
+            return true;
+        }
+        int previous = processEnergyRemaining;
+        processEnergyRemaining -= (int)(solarIncidenceAngleSection * 7680 * (reflectorStrength / maximumReflectorStrength));
+        boolean changed = previous != processEnergyRemaining;
+        if (processEnergyRemaining <= 0) {
+            inventory.get(0).shrink(cachedSolarMelterRecipe.itemInput.inputSize);
+            if (inventory.get(0).getCount() <= 0) inventory.set(0, ItemStack.EMPTY);
+            tanks[0].fill(new FluidStack(cachedSolarMelterRecipe.fluidOutput.getFluid(), cachedSolarMelterRecipe.fluidOutput.amount), true);
+            cachedSolarMelterRecipe = null;
+            processEnergyRemaining = 0;
             changed = true;
         }
         return changed;
     }
 
     private boolean pumpOutputOut() {
-        if (tanks[0].getFluidAmount() == 0) return false;
-        IFluidHandler handler = FluidUtil.getFluidHandler(world, fluidOutputFront0, fluidOutput0.facing.getOpposite());
-        if (handler == null) return false;
+        boolean changed = false;
         FluidStack out = tanks[0].getFluid();
-        if (out == null) return false;
-        int accepted = handler.fill(out, false);
-        if (accepted == 0) return false;
-        int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-        tanks[0].drain(drained, true);
-        return drained > 0;
+        if (out != null && out.amount > 0 && fluidOutputFront0 != null) {
+            IFluidHandler handler = FluidUtil.getFluidHandler(world, fluidOutputFront0, fluidOutput0.facing.getOpposite());
+            if (handler != null) {
+                FluidStack sim = out.copy();
+                int accepted = handler.fill(sim, false);
+                if (accepted > 0) {
+                    FluidStack push = Utils.copyFluidStackWithAmount(out, accepted, false);
+                    int pushed = handler.fill(push, true);
+                    tanks[0].drain(pushed, true);
+                    changed = true;
+                }
+            }
+        }
+        return changed;
     }
 
     private boolean outputTankLogic() {
         boolean update = false;
-        if (tanks[0].getFluidAmount() > 0) {
+        FluidStack fluid = tanks[0].getFluid();
+        if (fluid != null && fluid.amount > 0) {
             ItemStack filled = Utils.fillFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
             if (!filled.isEmpty()) {
                 if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), filled, true)) inventory.get(2).grow(filled.getCount());
@@ -293,36 +335,54 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     private boolean heatLogic() {
         boolean update = false;
-        if (solarIncidenceAngleSection != 0) { if (heatUp()) update = true; }
-        else { if (cooldown()) update = true; }
+        if (solarIncidenceAngleSection != 0) {
+            if (heatUp()) update = true;
+        } else {
+            if (cooldown()) update = true;
+        }
         return update;
     }
 
     private boolean recipeLogic() {
         boolean update = false;
         if (heatLevel >= workingHeatLevel && !isRSDisabled()) {
-            if (recipeEnergyRemaining > 0) { if (gainProgress()) update = true; }
-            else if (!inventory.get(0).isEmpty()) {
-                MeltingCrucibleRecipe recipe = cachedRecipe;
-                if (recipe == null || !recipe.itemInput.matches(inventory.get(0))) recipe = MeltingCrucibleRecipe.findRecipe(inventory.get(0));
+            if (processEnergyRemaining > 0) {
+                if (gainProgress()) update = true;
+            } else if (!inventory.get(0).isEmpty()) {
+                MeltingCrucibleRecipe recipe = cachedSolarMelterRecipe;
+                if (recipe == null || !recipe.itemInput.matches(inventory.get(0))) {
+                    recipe = MeltingCrucibleRecipe.findRecipe(inventory.get(0));
+                }
                 if (recipe != null && recipe.fluidOutput.amount <= tanks[0].getCapacity() - tanks[0].getFluidAmount()) {
-                    cachedRecipe = recipe;
-                    recipeEnergyRemaining = recipe.getTotalProcessEnergy();
+                    cachedSolarMelterRecipe = recipe;
+                    processEnergyRemaining = recipe.getTotalProcessEnergy();
                     if (gainProgress()) update = true;
                 }
             }
-        } else if (recipeEnergyRemaining > 0) { if (loseProgress()) update = true; }
+        } else if (processEnergyRemaining > 0) {
+            if (loseProgress()) update = true;
+        }
         return update;
     }
 
+    @SideOnly(Side.CLIENT)
     private void clientUpdate() {
         if (soundPos0 == null) InitializePoIs();
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double distSq = player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ());
-        if (world.provider.getDimension() == player.dimension && distSq < 400 && (distanceSqToTE > 400 || playerDimension != player.dimension)) { requestUpdate(); }
+        double distSq = player.getDistanceSq(soundPos0.getX() + 0.5, soundPos0.getY() + 0.5, soundPos0.getZ() + 0.5);
+        if (world.provider.getDimension() == player.dimension && distSq < 400 && (distanceSqToTE > 400 || playerDimension != player.dimension)) requestUpdate();
         distanceSqToTE = distSq;
         playerDimension = player.dimension;
         handleSounds();
+    }
+
+    private int computeSolarIncidenceAngleSection() {
+        int light = world.getSkylightSubtracted();
+        if (light == 3) return 1;
+        if (light == 2) return 2;
+        if (light == 1) return 3;
+        if (light == 0) return 4;
+        return 0;
     }
 
     @Override public void update() {
@@ -356,18 +416,22 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         update |= heatLogic();
         if (solarIncidenceAngleSection != 0) update |= recipeLogic();
         update |= outputTankLogic();
+
+        boolean active = processEnergyRemaining > 0;
+        if (active) soundGracePeriod = 60;
+        else if (soundGracePeriod > 0) soundGracePeriod--;
         boolean wasRunning = isRunning;
-        boolean active = recipeEnergyRemaining > 0;
-        if (active) gracePeriod = 60;
-        else if (gracePeriod > 0) gracePeriod--;
-        isRunning = gracePeriod > 0;
+        isRunning = soundGracePeriod > 0;
         if (isRunning != wasRunning) notifyNearbyClients();
-        clientUpdateCooldown--;
-        if (clientUpdateCooldown <= 0) {
-            notifyNearbyClients();
-            clientUpdateCooldown = 20;
+
+        int comp = getComparatorInputOverride();
+        if (comp != oldComparatorOutput) {
+            oldComparatorOutput = comp;
+            world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+            update = true;
         }
-        if (update || (isRunning != wasRunning)) {
+
+        if (update || isRunning != wasRunning) {
             efficientMarkDirty();
             markContainingBlockForUpdate(null);
         }
@@ -393,8 +457,8 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (!formed || redstone0 == null) InitializePoIs();
-        return fluidOutput0.isPoI(side, position) && tanks[0].getFluidAmount() > 0;
+        if (fluidOutput0 == null) InitializePoIs();
+        return iTank == 0 && fluidOutput0.isPoI(side, position) && tanks[0].getFluidAmount() > 0;
     }
 
     @Nonnull protected IItemHandler[] getAccessibleItemHandlers(@Nullable EnumFacing side, int position) {
@@ -410,14 +474,9 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         return new int[] {redstone0.position};
     }
 
-    private int computeSolarIncidenceAngleSection() {
-        int light = world.getSkylightSubtracted();
-        if (light == 3) return 1;
-        if (light == 2) return 2;
-        if (light == 1) return 3;
-        if (light == 0) return 4;
-        return 0;
-    }
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartSolarMelter.instance.pointsOfInterest) {
@@ -454,10 +513,6 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
-
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
-
     @Override @Nonnull public NonNullList<ItemStack> getInventory() { return inventory; }
 
     @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
@@ -465,11 +520,15 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     @Override public int getSlotLimit(int slot) { return 64; }
 
     @Override public void doGraphicalUpdates(int slot) {
-        this.markDirty();
-        this.markContainingBlockForUpdate(null);
+        markDirty();
+        markContainingBlockForUpdate(null);
     }
 
     @Override @Nonnull public NonNullList<ItemStack> getDroppedItems() { return getInventory(); }
 
     @Override public int getComparatedSize() { return slotCount; }
+
+    @Override public int getComparatorInputOverride() {
+        return (int)(15 * heatLevel / workingHeatLevel);
+    }
 }

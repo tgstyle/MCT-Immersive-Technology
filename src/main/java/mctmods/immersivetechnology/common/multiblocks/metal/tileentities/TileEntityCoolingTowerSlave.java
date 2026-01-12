@@ -78,7 +78,9 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
 
     @Override public float getMinProcessDistance(@Nonnull MultiblockProcess<CoolingTowerRecipe> process) { return 1; }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override
+    @Nonnull
+    public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         TileEntityCoolingTowerMaster m = master();
         if (m == null) { return ITUtils.emptyIFluidTankList; }
         return m.getAccessibleFluidTanks(side, position);

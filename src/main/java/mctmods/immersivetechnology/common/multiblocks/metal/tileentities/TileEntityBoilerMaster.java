@@ -72,16 +72,20 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     public static int slotCount = 6;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
-    public int burnRemaining = 0;
-    public int recipeTimeRemaining = 0;
+    public int fuelBurnRemaining = 0;
+    public int processTimeRemaining = 0;
     public double heatLevel = 0;
-    private int clientUpdateCooldown = 20;
-    public BoilerRecipe.BoilerFuelRecipe lastFuel;
-    public BoilerRecipe lastRecipe;
+    private int tickCountdown = 20;
+    public BoilerRecipe.BoilerFuelRecipe cachedFuelRecipe;
+    public BoilerRecipe cachedBoilerRecipe;
     protected PoICache fluidInput0, fluidInput1, fluidOutput0, redstone0;
     private BlockPos fluidOutputFront0, soundPos0;
     public boolean redstoneControlInverted = false;
     private boolean needsPoIInit = false;
+    private int oldComparatorOutput;
+
+    private float soundVolume;
+    private int soundGracePeriod = 60;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -89,9 +93,10 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
         tanks[2].readFromNBT(nbt.getCompoundTag("tank2"));
         heatLevel = nbt.getDouble("heatLevel");
-        burnRemaining = nbt.getInteger("burnRemaining");
-        recipeTimeRemaining = nbt.getInteger("recipeTimeRemaining");
+        fuelBurnRemaining = nbt.getInteger("fuelBurnRemaining");
+        processTimeRemaining = nbt.getInteger("processTimeRemaining");
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
+        oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         if (!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         if (!descPacket && formed) needsPoIInit = true;
     }
@@ -102,21 +107,21 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound()));
         nbt.setDouble("heatLevel", heatLevel);
-        nbt.setInteger("burnRemaining", burnRemaining);
-        nbt.setInteger("recipeTimeRemaining", recipeTimeRemaining);
+        nbt.setInteger("fuelBurnRemaining", fuelBurnRemaining);
+        nbt.setInteger("processTimeRemaining", processTimeRemaining);
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
+        nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         if (!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
     }
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
         if (soundPos0 == null) InitializePoIs();
-        float level = (float)(heatLevel / workingHeatLevel);
-        if (level <= 0) ITSoundHandler.StopSound(soundPos0);
+        if (soundVolume == 0) ITSoundHandler.StopSound(soundPos0);
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 8, 1);
-            ITSounds.boiler.PlayRepeating(soundPos0, (2 * level) / attenuation, level);
+            ITSounds.boiler.PlayRepeating(soundPos0, (2 * soundVolume) / attenuation, soundVolume);
         }
     }
 
@@ -154,8 +159,8 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
     private boolean heatUp() {
         double previous = heatLevel;
-        if (lastFuel == null) { burnRemaining = 0; return true; }
-        heatLevel = Math.min(heatLevel + lastFuel.getHeat(), workingHeatLevel);
+        if (cachedFuelRecipe == null) { fuelBurnRemaining = 0; return true; }
+        heatLevel = Math.min(heatLevel + cachedFuelRecipe.getHeat(), workingHeatLevel);
         return previous != heatLevel;
     }
 
@@ -168,18 +173,18 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     }
 
     private boolean loseProgress() {
-        if (lastRecipe == null) { recipeTimeRemaining = 0; return true; }
-        int previous = recipeTimeRemaining;
-        recipeTimeRemaining = Math.min(recipeTimeRemaining + progressLossPerTick, lastRecipe.getTotalProcessTime());
-        return previous != recipeTimeRemaining;
+        if (cachedBoilerRecipe == null) { processTimeRemaining = 0; return true; }
+        int previous = processTimeRemaining;
+        processTimeRemaining = Math.min(processTimeRemaining + progressLossPerTick, cachedBoilerRecipe.getTotalProcessTime());
+        return previous != processTimeRemaining;
     }
 
     private boolean gainProgress() {
-        if (lastRecipe == null) { recipeTimeRemaining = 0; return true; }
-        recipeTimeRemaining--;
-        if (recipeTimeRemaining == 0) {
-            tanks[1].drain(lastRecipe.fluidInput.amount, true);
-            tanks[2].fillInternal(lastRecipe.fluidOutput, true);
+        if (cachedBoilerRecipe == null) { processTimeRemaining = 0; return true; }
+        processTimeRemaining--;
+        if (processTimeRemaining == 0) {
+            tanks[1].drain(cachedBoilerRecipe.fluidInput.amount, true);
+            tanks[2].fillInternal(cachedBoilerRecipe.fluidOutput, true);
             return true;
         }
         return false;
@@ -204,15 +209,14 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         boolean canCombust = true;
         if (ITCompatModule.isAdvancedRocketryLoaded) { canCombust = AdvancedRocketryHelper.isAtmosphereSuitableForCombustion(world, ITUtils.LocalOffsetToWorldBlockPos(getPos(), 3, 0, 1, facing, mirrored)); }
         if (canCombust) {
-            if (burnRemaining > 0) {
-                burnRemaining--;
+            if (fuelBurnRemaining > 0) {
+                fuelBurnRemaining--;
                 if (heatUp()) update = true;
             } else if (!isRSDisabled() && tanks[0].getFluidAmount() > 0) {
-                BoilerRecipe.BoilerFuelRecipe fuel = (lastFuel != null && Objects.requireNonNull(tanks[0].getFluid()).isFluidEqual(lastFuel.fluidInput)) ? lastFuel : BoilerRecipe.findFuel(tanks[0].getFluid());
-                if (fuel != null && fuel.fluidInput.amount <= tanks[0].getFluidAmount()) {
-                    lastFuel = fuel;
-                    tanks[0].drain(fuel.fluidInput.amount, true);
-                    burnRemaining = fuel.getTotalProcessTime() - 1;
+                cachedFuelRecipe = (cachedFuelRecipe != null && Objects.requireNonNull(tanks[0].getFluid()).isFluidEqual(cachedFuelRecipe.fluidInput)) ? cachedFuelRecipe : BoilerRecipe.findFuel(tanks[0].getFluid());
+                if (cachedFuelRecipe != null && cachedFuelRecipe.fluidInput.amount <= tanks[0].getFluidAmount()) {
+                    tanks[0].drain(cachedFuelRecipe.fluidInput.amount, true);
+                    fuelBurnRemaining = cachedFuelRecipe.getTotalProcessTime() - 1;
                     heatUp();
                     update = true;
                 } else if (cooldown()) update = true;
@@ -224,17 +228,16 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     private boolean recipeLogic() {
         boolean update = false;
         if (heatLevel >= workingHeatLevel) {
-            if (recipeTimeRemaining > 0) {
+            if (processTimeRemaining > 0) {
                 if (gainProgress()) update = true;
             } else if (tanks[1].getFluidAmount() > 0) {
-                BoilerRecipe recipe = (lastRecipe != null && Objects.requireNonNull(tanks[1].getFluid()).isFluidEqual(lastRecipe.fluidInput)) ? lastRecipe : BoilerRecipe.findRecipe(tanks[1].getFluid());
-                if (recipe != null && recipe.fluidInput.amount <= tanks[1].getFluidAmount() && recipe.fluidOutput.amount == tanks[2].fillInternal(recipe.fluidOutput, false)) {
-                    lastRecipe = recipe;
-                    recipeTimeRemaining = recipe.getTotalProcessTime();
+                cachedBoilerRecipe = (cachedBoilerRecipe != null && Objects.requireNonNull(tanks[1].getFluid()).isFluidEqual(cachedBoilerRecipe.fluidInput)) ? cachedBoilerRecipe : BoilerRecipe.findRecipe(tanks[1].getFluid());
+                if (cachedBoilerRecipe != null && cachedBoilerRecipe.fluidInput.amount <= tanks[1].getFluidAmount() && cachedBoilerRecipe.fluidOutput.amount == tanks[2].fillInternal(cachedBoilerRecipe.fluidOutput, false)) {
+                    processTimeRemaining = cachedBoilerRecipe.getTotalProcessTime();
                     if (gainProgress()) update = true;
                 }
             }
-        } else if (recipeTimeRemaining > 0) {
+        } else if (processTimeRemaining > 0) {
             if (loseProgress()) update = true;
         }
         return update;
@@ -290,6 +293,12 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
             needsPoIInit = false;
         }
         if (world.isRemote) {
+            float targetSoundLevel = (float) (heatLevel / workingHeatLevel);
+            if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); soundGracePeriod = 60; }
+            else if (soundVolume > targetSoundLevel) {
+                if (soundGracePeriod > 0) soundGracePeriod--;
+                else soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel);
+            }
             handleSounds();
             return;
         }
@@ -298,14 +307,19 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         if (outputTankLogic()) update = true;
         if (fuelTankLogic()) update = true;
         if (inputTankLogic()) update = true;
-        clientUpdateCooldown--;
-        if (update && clientUpdateCooldown <= 0) {
+        tickCountdown--;
+        if (update && tickCountdown <= 0) {
             notifyNearbyClients();
-            clientUpdateCooldown = 20;
+            tickCountdown = 20;
         }
         if (update) {
             efficientMarkDirty();
             markContainingBlockForUpdate(null);
+        }
+        int comp = getComparatorInputOverride();
+        if (comp != oldComparatorOutput) {
+            oldComparatorOutput = comp;
+            world.notifyNeighborsOfStateChange(getBlockPosForPos(redstone0.position), world.getBlockState(getBlockPosForPos(redstone0.position)).getBlock(), false);
         }
     }
 
@@ -387,7 +401,6 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     }
 
     @Override public boolean isRSDisabled() {
-        if (redstone0 == null) InitializePoIs();
         int[] rsPositions = getRedstonePos();
         if (rsPositions.length < 1) return false;
         for (int rsPos : rsPositions) {

@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 
+import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteelSheetmetalTank;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
@@ -26,15 +27,14 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmetalTankSlave implements ITFluidTank.TankListener {
+public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmetalTankSlave implements ITFluidTank.TankListener, IComparatorOverride {
 
     private static final int tankSize = Multiblocks.steelTank.steelTank_tankSize;
     private static final int transferSpeed = Multiblocks.steelTank.steelTank_transferSpeed;
 
     public ITFluidTank tank = new ITFluidTank(tankSize, this);
 
-    private final int[] oldComps = new int[4];
-    private int masterCompOld;
+    private int oldComparatorOutput = 0;
     private final List<PoICache> fluidInputs = new ArrayList<>();
     private final List<PoICache> fluidOutputs = new ArrayList<>();
     private PoICache redstone0;
@@ -59,55 +59,41 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
             for (PoICache output : fluidOutputs) {
                 BlockPos outPos = getBlockPosForPos(output.position).offset(output.facing);
                 IFluidHandler handler = FluidUtil.getFluidHandler(world, outPos, output.facing.getOpposite());
-                if (handler == null) { continue; }
+                if (handler == null) continue;
                 FluidStack drainable = tank.drain(Math.min(transferSpeed, tank.getFluidAmount()), false);
-                if (drainable == null || drainable.amount <= 0) { continue; }
-                TileEntity tile = Utils.getExistingTileEntity(world, outPos);
+                if (drainable == null || drainable.amount <= 0) continue;
+                TileEntity tile = world.getTileEntity(outPos);
                 boolean isITPipe = tile instanceof ITIPipe;
                 if (isITPipe) {
                     drainable.tag = new NBTTagCompound();
                     drainable.tag.setBoolean("pressurized", true);
                 }
                 int accepted = handler.fill(drainable, false);
-                if (accepted <= 0) { continue; }
+                if (accepted <= 0) continue;
                 FluidStack toDrain = Utils.copyFluidStackWithAmount(drainable, accepted, false);
                 if (isITPipe) {
                     toDrain.tag = new NBTTagCompound();
                     toDrain.tag.setBoolean("pressurized", true);
                 }
                 int filled = handler.fill(toDrain, true);
-                if (filled > 0) { tank.drain(filled, true); }
+                if (filled > 0) tank.drain(filled, true);
             }
         }
     }
 
     @Override public void TankContentsChanged() {
-        updateComparatorValues();
+        int comp = getComparatorInputOverride();
+        if (comp != oldComparatorOutput) {
+            oldComparatorOutput = comp;
+            world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+        }
         efficientMarkDirty();
         markContainingBlockForUpdate(null);
     }
 
-    private void updateComparatorValues() {
-        int vol = tank.getCapacity() / 4;
-        int currentValue = (15 * tank.getFluidAmount()) / tank.getCapacity();
-        if (currentValue != masterCompOld) { world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true); }
-        masterCompOld = currentValue;
-        for (int i = 0; i < 4; i++) {
-            int filled = tank.getFluidAmount() - i * vol;
-            int now = Math.min(15, Math.max((15 * filled) / vol, 0));
-            if (now != oldComps[i]) {
-                for (int x = -1; x <= 1; x++) {
-                    for (int z = -1; z <= 1; z++) {
-                        BlockPos pos = getPos().add(-offset[0] + x, -offset[1] + i + 1, -offset[2] + z);
-                        world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
-                    }
-                }
-            }
-            oldComps[i] = now;
-        }
+    @Override public int getComparatorInputOverride() {
+        return 15 * tank.getFluidAmount() / tank.getCapacity();
     }
-
-    @Override public int getComparatorInputOverride() { return (15 * tank.getFluidAmount()) / tank.getCapacity(); }
 
     @Override public boolean isDummy() { return false; }
 
@@ -141,14 +127,14 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 
     boolean isInputPoI(@Nullable EnumFacing side, int position) {
         for (PoICache p : fluidInputs) {
-            if (p.isPoI(side, position)) { return true; }
+            if (p.isPoI(side, position)) return true;
         }
         return false;
     }
 
     boolean isOutputPoI(@Nullable EnumFacing side, int position) {
         for (PoICache p : fluidOutputs) {
-            if (p.isPoI(side, position)) { return true; }
+            if (p.isPoI(side, position)) return true;
         }
         return false;
     }
@@ -175,13 +161,13 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     }
 
     private void notifyIONeighbors() {
-        for (PoICache input : fluidInputs) { notifyNeighbor(getBlockPosForPos(input.position)); }
-        for (PoICache output : fluidOutputs) { notifyNeighbor(getBlockPosForPos(output.position)); }
+        for (PoICache input : fluidInputs) notifyNeighbor(getBlockPosForPos(input.position));
+        for (PoICache output : fluidOutputs) notifyNeighbor(getBlockPosForPos(output.position));
         notifyNeighbor(getBlockPosForPos(redstone0.position));
     }
 
     private void notifyNeighbor(BlockPos pos) {
-        if (pos != null) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
+        if (pos != null) world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false);
     }
 
     @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
