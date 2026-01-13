@@ -198,12 +198,22 @@ public class Config {
                 public int mechanicalEnergy_speed_max = 1800;
             }
             public static class MeltingCrucible {
+                @Comment({"Heat loss multiplier for the Melting Crucible. Higher values = faster cooling when unpowered. [Default: 1.0]"})
+                public double meltingCrucible_heat_loss_multiplier = 1.0;
+                @Comment({"Base heat gain per tick when consuming full heating energy. Actual gain is proportional to energy consumed. [Default=4.5]"})
+                public double meltingCrucible_heat_gain_base = 4.5;
                 @Comment({"The maximum energy a Melting Crucible can store [Default=50000]"})
                 public int meltingCrucible_energy_size = 50000;
                 @Comment({"The maximum energy input per tick per port for the Melting Crucible [Default=1024]"})
                 public int meltingCrucible_energy_maxInput = 1024;
+                @Comment({"A Melting Crucible can only start processing recipes once it reaches this heat level [Default=19400.0]"})
+                public double meltingCrucible_heat_workingLevel = 19400.0;
                 @Comment({"The capacity of the output tank for the Melting Crucible [Default=10000]"})
                 public int meltingCrucible_output_tankSize = 10000;
+                @Comment({"RF per tick consumed while heating the crucible to working temperature [Default: 1000]"})
+                public int meltingCrucible_energy_per_tick_heating = 1000;
+                @Comment({"RF per tick consumed to maintain temperature when at max heat and not processing [Default: 512]"})
+                public int meltingCrucible_energy_per_tick_maintain = 512;
             }
             public static class Radiator {
                 @Comment({"The capacity of the input tank for the Radiator [Default=8000]"})
@@ -238,6 +248,8 @@ public class Config {
                 public boolean register_steamTurbine_recipes = true;
             }
             public static class SolarMelter {
+                @Comment({"How fast the Solar Tower cools down per tick when turned off or at night [Default=1.0]"})
+                public double solarMelter_heat_loss_multiplier = 1.0;
                 @Comment({"A Solar Melter can only start processing recipes once it reaches this heat level [Default=19400.0]"})
                 public double solarMelter_heat_workingLevel = 19400.0;
                 @Comment({"The maximum strength of the reflectors. Decreasing this reduces the amount of reflectors needed to achieve max processing speed. [Default=227.5]"})
@@ -246,6 +258,8 @@ public class Config {
                 public int solarMelter_output_tankSize = 10000;
                 @Comment({"Default amount of energy per tick the solar melter loses when not processing. Maximum energy input per tick by mirrors is ~30720  [Default=80]"})
                 public int solarMelter_progress_lossEnergy = 80;
+                @Comment({"The heat speed multiplier applied to all Solar Tower recipes (with a single reflector) [Default=1]"})
+                public float solarMelter_speed_multiplier = 1;
             }
             public static class SolarReflector {
                 @Comment({"The maximum distance between the Solar Reflectors and the Solar Tower **WARNING** The tower's ability to produce steam will be severely hampered if this number is small!!! [Default=48]"})

@@ -5,7 +5,9 @@ import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 
+import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
@@ -33,8 +35,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
@@ -44,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileEntityMeltingCrucibleSlave, MeltingCrucibleRecipe, TileEntityMeltingCrucibleMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IIEInventory {
+public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileEntityMeltingCrucibleSlave, MeltingCrucibleRecipe, TileEntityMeltingCrucibleMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IIEInventory, IGuiTile {
 
     public TileEntityMeltingCrucibleSlave() { super(TileEntityITMultiblockPartMeltingCrucible.instance, Multiblocks.meltingCrucible.meltingCrucible_energy_size, true); }
 
@@ -72,7 +74,7 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
 
     @Override public NonNullList<ItemStack> getInventory() {
         TileEntityMeltingCrucibleMaster m = master();
-        return m == null ? NonNullList.withSize(1, ItemStack.EMPTY) : m.inventory;
+        return m == null ? NonNullList.withSize(2, ItemStack.EMPTY) : m.inventory;
     }
 
     @Override public boolean isStackValid(int slot, ItemStack stack) {
@@ -327,4 +329,10 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
         AxisAlignedBB bb = vs.bounds();
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
     }
+
+    @Override public boolean canOpenGui() { return formed; }
+
+    @Override public int getGuiID() { return ITGUI.GUIID_Melting_Crucible; }
+
+    @Override public TileEntity getGuiMaster() { return master(); }
 }

@@ -24,7 +24,7 @@ public class MeltingCrucible {
 
         if (inputItem.getItems().isEmpty() || fluidOut == null) { return; }
 
-        MeltingCrucibleRecipe recipe = new MeltingCrucibleRecipe(fluidOut, itemIn, energy, time);
+        MeltingCrucibleRecipe recipe = new MeltingCrucibleRecipe(fluidOut, itemIn, time);
         CraftTweakerAPI.apply(new Add(recipe));
     }
 

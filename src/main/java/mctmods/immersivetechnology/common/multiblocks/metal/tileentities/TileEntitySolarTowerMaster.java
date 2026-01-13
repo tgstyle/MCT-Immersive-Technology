@@ -93,6 +93,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 
     private double distanceSqToTE;
     private int playerDimension;
+    private int clientSyncTimer = 0;
 
     private int oldComparatorOutput = 0;
 
@@ -115,6 +116,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
                 }
             }
             if (formed) needsPoIInit = true;
+            reCheckOnLoad = true;
         }
         registered = nbt.getBoolean("registered");
         savedRegistered = nbt.getBoolean("savedRegistered");
@@ -231,7 +233,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileEntitySolarReflectorSlave) {
                 TileEntitySolarReflectorMaster ref = ((TileEntitySolarReflectorSlave)tile).master();
-                if (ref != null && ref.isMirrorTaken) ref.detachTower();
+                if (ref != null && ref.isMirrorTaken && !ref.getCollectorPosition().equals(collectorPos0)) ref.detachTower();
             }
         }
 
@@ -255,6 +257,8 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         reflectorStrength = totalMirrorStrength;
     }
 
+    public void forceReflectorCheck() { checkReflectorPositions(); }
+
     private boolean heatUp() {
         double previous = heatLevel;
         heatLevel = Math.min(heatLevel + getTemperatureIncrease(), workingHeatLevel);
@@ -267,9 +271,10 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 
     private boolean cooldown() {
         double previous = heatLevel;
-        double heatLost = world.getBiomeProvider().getTemperatureAtHeight(world.getBiome(getPos()).getTemperature(getPos()), getPos().getY());
+        double heatLost = world.getBiomeProvider().getTemperatureAtHeight(world.getBiome(collectorPos0).getTemperature(collectorPos0), collectorPos0.getY());
+        if (heatLost <= 0) heatLost = 0.1;
         double conduction = 1.0;
-        if (ITCompatModule.isAdvancedRocketryLoaded) conduction *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos().add(0, 19, 0));
+        if (ITCompatModule.isAdvancedRocketryLoaded) conduction *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, collectorPos0);
         heatLevel = Math.max(heatLevel - ((world.isRaining() ? 2 : 1) * (1 / heatLost) * heatLossMultiplier * conduction), 0);
         return previous != heatLevel;
     }
@@ -343,19 +348,19 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 
     private boolean heatLogic() {
         boolean update = false;
-        if (solarIncidenceAngleSection != 0) {
-            if (heatUp()) update = true;
-        } else {
-            if (cooldown()) update = true;
-        }
+        float increase = getTemperatureIncrease();
+        if (increase > 0) { if (heatUp()) update = true; }
+        else { if (cooldown()) update = true; }
         return update;
     }
 
     private boolean recipeLogic() {
         boolean update = false;
+        boolean didWork = false;
         if (heatLevel >= workingHeatLevel && !isRSDisabled()) {
             if (processTimeRemaining > 0) {
                 if (gainProgress()) update = true;
+                didWork = true;
             } else if (tanks[0].getFluidAmount() > 0) {
                 SolarTowerRecipe recipe = cachedSolarTowerRecipe;
                 FluidStack current = tanks[0].getFluid();
@@ -366,11 +371,14 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
                     cachedSolarTowerRecipe = recipe;
                     processTimeRemaining = (int)(recipe.getTotalProcessTime() / (speedMult * solarIncidenceAngleSection));
                     if (gainProgress()) update = true;
+                    didWork = true;
                 }
             }
         } else if (processTimeRemaining > 0) {
             if (loseProgress()) update = true;
         }
+        if (didWork) soundGracePeriod = 60;
+        else if (soundGracePeriod > 0) soundGracePeriod--;
         return update;
     }
 
@@ -382,6 +390,15 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         if (world.provider.getDimension() == player.dimension && distSq < 400 && (distanceSqToTE > 400 || playerDimension != player.dimension)) requestUpdate();
         distanceSqToTE = distSq;
         playerDimension = player.dimension;
+
+        if (distSq < 4096) {
+            clientSyncTimer++;
+            if (clientSyncTimer >= 40) {
+                clientSyncTimer = 0;
+                requestUpdate();
+            }
+        }
+
         handleSounds();
     }
 
@@ -396,6 +413,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 
     @Override public void update() {
         super.update();
+        solarIncidenceAngleSection = computeSolarIncidenceAngleSection();
         if (world.isRemote) { clientUpdate(); return; }
         if (!formed) return;
         if (needsPoIInit || redstone0 == null) { InitializePoIs(); needsPoIInit = false; }
@@ -417,19 +435,25 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
             reCheckOnLoad = false;
             if (registered) checkReflectorPositions();
         }
-        solarIncidenceAngleSection = computeSolarIncidenceAngleSection();
+
         boolean update = false;
+        boolean enabled = !isRSDisabled();
+        if (!enabled && reflectorStrength > 0) {
+            detachMirrors();
+            reflectorStrength = 0;
+            update = true;
+        }
         double oldRef = reflectorStrength;
-        if (world.getTotalWorldTime() % 600 == 0) checkReflectorPositions();
-        if (reflectorStrength != oldRef) update = true;
+        if (enabled && (world.getTotalWorldTime() % 60 == 0 || reflectorStrength == 0)) checkReflectorPositions();
+        if (reflectorStrength != oldRef) {
+            update = true;
+            notifyNearbyClients();
+        }
         update |= heatLogic();
         if (solarIncidenceAngleSection != 0) update |= recipeLogic();
         update |= outputTankLogic();
         update |= inputTankLogic();
 
-        boolean active = processTimeRemaining > 0;
-        if (active) soundGracePeriod = 60;
-        else if (soundGracePeriod > 0) soundGracePeriod--;
         boolean wasRunning = isRunning;
         isRunning = soundGracePeriod > 0;
         if (isRunning != wasRunning) notifyNearbyClients();

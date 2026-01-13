@@ -120,15 +120,12 @@ public class SolarRegistry {
         SolarRegistryData data = getData(world);
         int y = base.getY();
         Set<BlockPos> inRange = new HashSet<>();
-        int rad = max + 1;
         double minSq = min * min;
         double maxSq = max * max;
-        for (int cy = y - rad; cy <= y + rad; cy++) {
-            Set<BlockPos> set = data.reflectorPOIsByY.getOrDefault(cy, new HashSet<>());
-            for (BlockPos p : set) {
-                double dsq = base.distanceSq(p);
-                if (dsq >= minSq && dsq <= maxSq) inRange.add(p);
-            }
+        Set<BlockPos> set = data.reflectorPOIsByY.getOrDefault(y, new HashSet<>());
+        for (BlockPos p : set) {
+            double dsq = base.distanceSq(p);
+            if (dsq >= minSq && dsq <= maxSq) inRange.add(p);
         }
         return inRange;
     }

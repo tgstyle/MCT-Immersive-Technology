@@ -26,7 +26,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     private boolean initialized = false;
     private PoICache link0;
 
-    private BlockPos getCollectorPosition() { return collectorPosition0 != null ? collectorPosition0 : getPos(); }
+    public BlockPos getCollectorPosition() { return collectorPosition0 != null ? collectorPosition0 : getPos(); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -51,10 +51,10 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     }
 
     @Override public void disassemble() {
-        super.disassemble();
-        detachTower();
         InitializePoIs();
         SolarRegistry.unregisterReflector(world, getBlockPosForPos(link0.position));
+        detachTower();
+        super.disassemble();
     }
 
     public void notifyNearbyClients() {
@@ -106,12 +106,25 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
 
     public void detachTower() {
         if (!isMirrorTaken) { return; }
+        BlockPos oldCollector = getCollectorPosition();
         isMirrorTaken = false;
         collectorPosition0 = getPos();
         SolarRegistry.notifyTaken(world, getPos(), false);
         calculateAnimationRotations();
         notifyNearbyClients();
         efficientMarkDirty();
+        if (!world.isRemote && oldCollector != null && !oldCollector.equals(getPos())) {
+            if (world.isBlockLoaded(oldCollector)) {
+                TileEntity te = world.getTileEntity(oldCollector);
+                if (te instanceof TileEntitySolarMelterSlave) {
+                    TileEntitySolarMelterMaster m = ((TileEntitySolarMelterSlave)te).master();
+                    if (m != null) m.forceReflectorCheck();
+                } else if (te instanceof TileEntitySolarTowerSlave) {
+                    TileEntitySolarTowerMaster m = ((TileEntitySolarTowerSlave)te).master();
+                    if (m != null) m.forceReflectorCheck();
+                }
+            }
+        }
     }
 
     public double getSolarCollectorStrength() {

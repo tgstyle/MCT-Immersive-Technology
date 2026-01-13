@@ -383,8 +383,8 @@ public class ITContent {
             ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("chlorine"), 1000), new FluidStack(FluidRegistry.getFluid("moltensodium"), 1000), null, null, new FluidStack(FluidRegistry.getFluid("moltensalt"), 1000), 512000, 250);
         }
         if ((ITConfig.Multiblocks.enable.enable_meltingCrucible && ITConfig.Multiblocks.recipes.register_meltingCrucible_recipes) || (ITConfig.Multiblocks.enable.enable_solarMelter && ITConfig.Multiblocks.recipes.register_meltingCrucible_recipes)) {
-            MeltingCrucibleRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("lava"), 1000), new OreIngredient("cobblestone"), 40960, 80);
-            MeltingCrucibleRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("moltensalt"), 100), new OreIngredient("dustSalt"), 4096, 8);
+            MeltingCrucibleRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("lava"), 1000), new OreIngredient("cobblestone"), 80);
+            MeltingCrucibleRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("moltensalt"), 100), new OreIngredient("dustSalt"), 8);
         }
         if (ITConfig.Multiblocks.enable.enable_radiator && ITConfig.Multiblocks.recipes.register_radiator_recipes) {
             RadiatorRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 250), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 500), 80);

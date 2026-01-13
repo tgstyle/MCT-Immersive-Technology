@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.gui;
 
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;

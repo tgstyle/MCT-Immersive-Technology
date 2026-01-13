@@ -33,6 +33,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
     private static final int maxSpeed = Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max;
     private static final double boilerWorkingHeatLevel = Multiblocks.boiler.boiler_heat_workingLevel;
     private static final double solarWorkingHeatLevel = Multiblocks.solarTower.solarTower_heat_workingLevel;
+    private static final double meltingCrucibleWorkingHeatLevel = Multiblocks.meltingCrucible.meltingCrucible_heat_workingLevel;
     private static final double solarMelterWorkingHeatLevel = Multiblocks.solarMelter.solarMelter_heat_workingLevel;
 
     @Override public void preInit() { FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", this.getClass().getName()); }
@@ -302,9 +303,11 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
     }
 
     public static class MeltingCrucibleProvider implements IProbeInfoProvider {
-        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "MeltingCrucibleInfo"; }
+        @Override
+        public String getID() { return ImmersiveTechnology.MODID + ":" + "MeltingCrucibleInfo"; }
 
-        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        @Override
+        public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             TileEntityMeltingCrucibleMaster master;
             if (te instanceof TileEntityMeltingCrucibleMaster) {
@@ -314,9 +317,11 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            if (mode == ProbeMode.EXTENDED) addEnergyDisplay(probeInfo, master.energyStorage.getEnergyStored(), master.energyStorage.getMaxEnergyStored());
-            int currentProg = (master.processEnergyRemaining > 0 && master.cachedMeltingRecipe != null) ? (master.cachedMeltingRecipe.getTotalProcessEnergy() - master.processEnergyRemaining) * 100 / master.cachedMeltingRecipe.getTotalProcessEnergy() : 0;
-            addProcessPercent(probeInfo, currentProg);
+            addTemperature(probeInfo, master.heatLevel, meltingCrucibleWorkingHeatLevel);
+            int maxProg = (master.processTimeRemaining > 0 && master.cachedMeltingRecipe != null) ? master.cachedMeltingRecipe.getTotalProcessTime() * 64 : 0;
+            int currentProg = maxProg - master.processTimeRemaining;
+            int percent = maxProg > 0 ? currentProg * 100 / maxProg : 0;
+            addProcessPercent(probeInfo, percent);
         }
     }
 
@@ -339,9 +344,11 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
     }
 
     public static class SolarMelterProvider implements IProbeInfoProvider {
-        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "SolarMelterInfo"; }
+        @Override
+        public String getID() { return ImmersiveTechnology.MODID + ":" + "SolarMelterInfo"; }
 
-        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        @Override
+        public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             TileEntitySolarMelterMaster master;
             if (te instanceof TileEntitySolarMelterMaster) {
@@ -352,8 +359,10 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
             addTemperature(probeInfo, master.heatLevel, solarMelterWorkingHeatLevel);
-            int currentProg = (master.processEnergyRemaining > 0 && master.cachedSolarMelterRecipe != null) ? (master.cachedSolarMelterRecipe.getTotalProcessEnergy() - master.processEnergyRemaining) * 100 / master.cachedSolarMelterRecipe.getTotalProcessEnergy() : 0;
-            addProcessPercent(probeInfo, currentProg);
+            int maxProg = (master.processTimeRemaining > 0 && master.cachedSolarMelterRecipe != null) ? master.cachedSolarMelterRecipe.getTotalProcessTime() * 64 : 0;
+            int currentProg = maxProg - master.processTimeRemaining;
+            int percent = maxProg > 0 ? currentProg * 100 / maxProg : 0;
+            addProcessPercent(probeInfo, percent);
         }
     }
 

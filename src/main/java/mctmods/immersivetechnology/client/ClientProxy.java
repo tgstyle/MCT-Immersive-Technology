@@ -17,16 +17,7 @@ import blusunrize.lib.manual.ManualPages;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.client.event.ClientEventHandler;
-import mctmods.immersivetechnology.client.gui.GuiAdvancedCokeOven;
-import mctmods.immersivetechnology.client.gui.GuiBoiler;
-import mctmods.immersivetechnology.client.gui.GuiDistiller;
-import mctmods.immersivetechnology.client.gui.GuiFluidValve;
-import mctmods.immersivetechnology.client.gui.GuiLoadController;
-import mctmods.immersivetechnology.client.gui.GuiSolarMelter;
-import mctmods.immersivetechnology.client.gui.GuiSolarTower;
-import mctmods.immersivetechnology.client.gui.GuiStackLimiter;
-import mctmods.immersivetechnology.client.gui.GuiTimer;
-import mctmods.immersivetechnology.client.gui.GuiTrashItem;
+import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
 import mctmods.immersivetechnology.client.render.TileRenderBarrelOpen;
 import mctmods.immersivetechnology.client.render.TileRenderHighPressureSteamTurbine;
@@ -370,6 +361,7 @@ public class ClientProxy extends CommonProxy {
             if (ID == ITGUI.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) { return new GuiDistiller(player.inventory, (TileEntityDistillerMaster)tile); }
             if (ID == ITGUI.GUIID_Fluid_Valve && tile instanceof TileEntityFluidValve) { return new GuiFluidValve((TileEntityFluidValve)tile); }
             if (ID == ITGUI.GUIID_Load_Controller && tile instanceof TileEntityLoadController) { return new GuiLoadController((TileEntityLoadController)tile); }
+            if (ID == ITGUI.GUIID_Melting_Crucible && tile instanceof TileEntityMeltingCrucibleMaster) { return new GuiMeltingCrucible(player.inventory, (TileEntityMeltingCrucibleMaster)tile); }
             if (ID == ITGUI.GUIID_Solar_Melter && tile instanceof TileEntitySolarMelterMaster) { return new GuiSolarMelter(player.inventory, (TileEntitySolarMelterMaster)tile); }
             if (ID == ITGUI.GUIID_Solar_Tower && tile instanceof TileEntitySolarTowerMaster) { return new GuiSolarTower(player.inventory, (TileEntitySolarTowerMaster)tile); }
             if (ID == ITGUI.GUIID_Stack_Limiter && tile instanceof TileEntityStackLimiter) { return new GuiStackLimiter((TileEntityStackLimiter)tile); }

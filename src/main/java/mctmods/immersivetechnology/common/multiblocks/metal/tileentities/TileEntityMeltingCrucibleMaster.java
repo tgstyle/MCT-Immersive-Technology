@@ -42,6 +42,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,14 +54,18 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     private static final int outputTankSize = Multiblocks.meltingCrucible.meltingCrucible_output_tankSize;
     private static final int energyCapacity = Multiblocks.meltingCrucible.meltingCrucible_energy_size;
     private static final int energyMaxInput = Multiblocks.meltingCrucible.meltingCrucible_energy_maxInput;
+    private static final double workingHeatLevel = Multiblocks.meltingCrucible.meltingCrucible_heat_workingLevel;
+    private static final double heatLossMultiplier = Multiblocks.meltingCrucible.meltingCrucible_heat_loss_multiplier;
+    private static final double heatGainBase = Multiblocks.meltingCrucible.meltingCrucible_heat_gain_base;
+    private static final int energyPerTickToHeat = Multiblocks.meltingCrucible.meltingCrucible_energy_per_tick_heating;
+    private static final int energyPerTickToMaintain = Multiblocks.meltingCrucible.meltingCrucible_energy_per_tick_maintain;
+    private static final int progressResolution = 64;
 
     public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxInput);
-    public FluidTank[] tanks = new FluidTank[] {
-            new ITFluidTank(outputTankSize, this)
-    };
-    public IItemHandler insertionHandler = new IEInventoryHandler(slotCount, this, 0, new boolean[]{true}, new boolean[]{false});
+    public FluidTank[] tanks = new FluidTank[] { new ITFluidTank(outputTankSize, this) };
+    public IItemHandler insertionHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
 
-    public static int slotCount = 1;
+    public static int slotCount = 3;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
     private PoICache energyInput0, fluidOutput0, itemInput0, redstone0;
     private BlockPos sound0, fluidOutputPos0;
@@ -74,7 +79,8 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     private boolean needsPoIInit = false;
 
     public MeltingCrucibleRecipe cachedMeltingRecipe;
-    public int processEnergyRemaining = 0;
+    public int processTimeRemaining = 0;
+    public double heatLevel = 0;
     private int oldComparatorOutput = 0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -82,7 +88,8 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         energyStorage.readFromNBT(nbt.getCompoundTag("energy"));
-        processEnergyRemaining = nbt.getInteger("processEnergyRemaining");
+        processTimeRemaining = nbt.getInteger("processTimeRemaining");
+        heatLevel = nbt.getDouble("heatLevel");
         if (!descPacket && formed) needsPoIInit = true;
     }
 
@@ -91,7 +98,8 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
         nbt.setTag("inventory", Utils.writeInventory(inventory));
         nbt.setTag("energy", energyStorage.writeToNBT(new NBTTagCompound()));
-        nbt.setInteger("processEnergyRemaining", processEnergyRemaining);
+        nbt.setInteger("processTimeRemaining", processTimeRemaining);
+        nbt.setDouble("heatLevel", heatLevel);
     }
 
     @SideOnly(Side.CLIENT)
@@ -172,6 +180,84 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         return drained > 0;
     }
 
+    private boolean heatLogic(boolean heating, int energyUsed) {
+        boolean changed = false;
+        double prev = heatLevel;
+        heatLevel -= getCooldownAmount();
+        heatLevel = Math.max(heatLevel, 0D);
+        if (heating) heatLevel += getTemperatureIncrease(energyUsed);
+        heatLevel = Math.min(heatLevel, workingHeatLevel);
+        if (prev != heatLevel) changed = true;
+        return changed;
+    }
+
+    private double getTemperatureIncrease(int energyUsed) {
+        return (energyUsed / (double)energyPerTickToHeat) * heatGainBase;
+    }
+
+    private double getCooldownAmount() {
+        double heatLost = world.getBiome(getPos()).getTemperature(getPos());
+        if (heatLost <= 0) heatLost = 0.1;
+        double conduction = 1.0;
+        return (1 / heatLost) * heatLossMultiplier * conduction;
+    }
+
+    private boolean recipeLogic(boolean shouldRun) {
+        boolean update = false;
+        if (processTimeRemaining == 0 && shouldRun && heatLevel >= workingHeatLevel) {
+            ItemStack inputStack = inventory.get(0);
+            if (!inputStack.isEmpty()) {
+                MeltingCrucibleRecipe recipe = MeltingCrucibleRecipe.findRecipe(inputStack);
+                if (recipe != null && inputStack.getCount() >= recipe.itemInput.inputSize && tanks[0].fill(recipe.fluidOutput, false) == recipe.fluidOutput.amount) {
+                    cachedMeltingRecipe = recipe;
+                    inputStack.shrink(recipe.itemInput.inputSize);
+                    if (inputStack.getCount() <= 0) inventory.set(0, ItemStack.EMPTY);
+                    processTimeRemaining = recipe.getTotalProcessTime() * progressResolution;
+                    update = true;
+                }
+            }
+        }
+        if (processTimeRemaining > 0 && shouldRun) {
+            if (cachedMeltingRecipe != null) {
+                int prev = processTimeRemaining;
+                if (heatLevel >= workingHeatLevel) {
+                    processTimeRemaining -= progressResolution;
+                }
+                if (prev != processTimeRemaining) update = true;
+                if (processTimeRemaining <= 0) {
+                    processTimeRemaining = 0;
+                    tanks[0].fill(cachedMeltingRecipe.fluidOutput, true);
+                    cachedMeltingRecipe = null;
+                }
+            } else {
+                processTimeRemaining = 0;
+            }
+        }
+        return update;
+    }
+
+    private boolean outputTankLogic() {
+        boolean update = false;
+        ItemStack filled = Utils.fillFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
+        if (!filled.isEmpty()) {
+            if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), filled, true)) inventory.get(2).grow(filled.getCount());
+            else if (inventory.get(2).isEmpty()) inventory.set(2, filled.copy());
+            inventory.get(1).shrink(1);
+            if (inventory.get(1).getCount() <= 0) inventory.set(1, ItemStack.EMPTY);
+            update = true;
+        }
+        ItemStack empty = Utils.drainFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
+        if (!empty.isEmpty()) {
+            if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), empty, true)) inventory.get(2).grow(empty.getCount());
+            else if (inventory.get(2).isEmpty()) inventory.set(2, empty.copy());
+            inventory.get(1).shrink(1);
+            if (inventory.get(1).getCount() <= 0) inventory.set(1, ItemStack.EMPTY);
+            update = true;
+        }
+        if (pumpOutputOut()) update = true;
+        return update;
+    }
+
     @Override public void update() {
         super.update();
         if (!formed) return;
@@ -184,46 +270,28 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
             return;
         }
 
-        boolean update = pumpOutputOut();
+        boolean update = false;
 
         boolean shouldRun = !isRSDisabled();
 
-        if (processEnergyRemaining == 0 && shouldRun) {
-            ItemStack inputStack = inventory.get(0);
-            if (!inputStack.isEmpty()) {
-                MeltingCrucibleRecipe recipe = MeltingCrucibleRecipe.findRecipe(inputStack);
-                if (recipe != null && inputStack.getCount() >= recipe.itemInput.inputSize && tanks[0].fill(recipe.fluidOutput, false) == recipe.fluidOutput.amount) {
-                    cachedMeltingRecipe = recipe;
-                    inputStack.shrink(recipe.itemInput.inputSize);
-                    if (inputStack.getCount() <= 0) inventory.set(0, ItemStack.EMPTY);
-                    processEnergyRemaining = recipe.getTotalProcessEnergy();
-                    update = true;
-                }
-            }
+        int energyThisTick = (heatLevel >= workingHeatLevel && processTimeRemaining <= 0) ? energyPerTickToMaintain : energyPerTickToHeat;
+
+        boolean heating = false;
+        if (shouldRun && energyStorage.getEnergyStored() >= energyThisTick) {
+            energyStorage.extractEnergy(energyThisTick, false);
+            heating = true;
         }
 
-        if (processEnergyRemaining > 0 && shouldRun) {
-            if (cachedMeltingRecipe != null) {
-                int energyPerTick = cachedMeltingRecipe.getTotalProcessEnergy() / cachedMeltingRecipe.getTotalProcessTime();
-                int consume = Math.min(energyPerTick, processEnergyRemaining);
-                int extracted = energyStorage.extractEnergy(consume, true);
-                if (extracted >= consume) {
-                    energyStorage.extractEnergy(consume, false);
-                    processEnergyRemaining -= consume;
-                    update = true;
-                    if (processEnergyRemaining <= 0) {
-                        processEnergyRemaining = 0;
-                        tanks[0].fill(cachedMeltingRecipe.fluidOutput, true);
-                        cachedMeltingRecipe = null;
-                    }
-                }
-            } else {
-                processEnergyRemaining = 0;
-            }
-        }
+        update |= heatLogic(heating, heating ? energyThisTick : 0);
+        update |= recipeLogic(shouldRun);
+        update |= outputTankLogic();
+
+        boolean active = processTimeRemaining > 0 && shouldRun;
+        if (active) soundGracePeriod = 60;
+        else if (soundGracePeriod > 0) soundGracePeriod--;
 
         boolean wasRunning = isRunning;
-        isRunning = processEnergyRemaining > 0 && shouldRun;
+        isRunning = soundGracePeriod > 0;
         if (isRunning != wasRunning) {
             notifyNearbyClients();
             update = true;
@@ -260,6 +328,12 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
         if (fluidOutput0 == null) InitializePoIs();
         return iTank == 0 && fluidOutput0.isPoI(side, position) && tanks[0].getFluidAmount() > 0;
+    }
+
+    public boolean isItemInputPosition(@Nullable EnumFacing facing, int position) {
+        if (!formed) return false;
+        if (itemInput0 == null) InitializePoIs();
+        return facing != null && itemInput0.isPoI(facing, position);
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
@@ -312,12 +386,6 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         return facing != null && energyInput0.isPoI(facing, position);
     }
 
-    public boolean isItemInputPosition(@Nullable EnumFacing facing, int position) {
-        if (!formed) return false;
-        if (itemInput0 == null) InitializePoIs();
-        return facing != null && itemInput0.isPoI(facing, position);
-    }
-
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartMeltingCrucible.instance.pointsOfInterest) {
             switch (poi.name) {
@@ -356,6 +424,6 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 
     @Override public int getComparatorInputOverride() {
-        return 15 * tanks[0].getFluidAmount() / tanks[0].getCapacity();
+        return (int)(15 * heatLevel / workingHeatLevel);
     }
 }

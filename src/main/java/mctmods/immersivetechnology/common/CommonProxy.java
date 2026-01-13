@@ -6,17 +6,8 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
-import mctmods.immersivetechnology.common.gui.ContainerAdvancedCokeOven;
-import mctmods.immersivetechnology.common.gui.ContainerBoiler;
-import mctmods.immersivetechnology.common.gui.ContainerDistiller;
-import mctmods.immersivetechnology.common.gui.ContainerSolarMelter;
-import mctmods.immersivetechnology.common.gui.ContainerSolarTower;
-import mctmods.immersivetechnology.common.gui.ContainerTimer;
-import mctmods.immersivetechnology.common.gui.ContainerTrashItem;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarMelterMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerMaster;
+import mctmods.immersivetechnology.common.gui.*;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
@@ -75,6 +66,7 @@ public class CommonProxy implements IGuiHandler {
 			if (ID == ITGUI.GUIID_Advanced_coke_oven && tile instanceof TileEntityAdvancedCokeOvenMaster) { gui = new ContainerAdvancedCokeOven(player.inventory, (TileEntityAdvancedCokeOvenMaster)tile); }
 			if (ID == ITGUI.GUIID_Boiler && tile instanceof TileEntityBoilerMaster) { gui = new ContainerBoiler(player.inventory, (TileEntityBoilerMaster)tile); }
 			if (ID == ITGUI.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) { gui = new ContainerDistiller(player.inventory, (TileEntityDistillerMaster)tile); }
+			if (ID == ITGUI.GUIID_Melting_Crucible && tile instanceof TileEntityMeltingCrucibleMaster) { gui = new ContainerMeltingCrucible(player.inventory, (TileEntityMeltingCrucibleMaster) tile); }
 			if (ID == ITGUI.GUIID_Solar_Melter && tile instanceof TileEntitySolarMelterMaster) { gui = new ContainerSolarMelter(player.inventory, (TileEntitySolarMelterMaster)tile); }
 			if (ID == ITGUI.GUIID_Solar_Tower && tile instanceof TileEntitySolarTowerMaster) { gui = new ContainerSolarTower(player.inventory, (TileEntitySolarTowerMaster)tile); }
 			if (ID == ITGUI.GUIID_Timer && tile instanceof TileEntityTimer) { gui = new ContainerTimer(player.inventory, (TileEntityTimer)tile); }
