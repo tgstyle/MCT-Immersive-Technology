@@ -125,14 +125,12 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
 
     @Override public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         TileEntitySteelSheetmetalTankMaster m = master();
-        if (m != null && m.tank != null && m.getAccessibleFluidTanks(side, pos).length > 0) {
-            boolean isInput = m.isInputPoI(side, pos);
-            boolean isOutput = m.isOutputPoI(side, pos);
+        if (m != null && m.tank != null) {
             IFluidHandler proxy = new IFluidHandler() {
                 @Override public IFluidTankProperties[] getTankProperties() { return m.tank.getTankProperties(); }
-                @Override public int fill(FluidStack resource, boolean doFill) { return isInput ? m.tank.fill(resource, doFill) : 0; }
-                @Override @Nullable public FluidStack drain(FluidStack resource, boolean doDrain) { return isOutput ? m.tank.drain(resource, doDrain) : null; }
-                @Override @Nullable public FluidStack drain(int maxDrain, boolean doDrain) { return isOutput ? m.tank.drain(maxDrain, doDrain) : null; }
+                @Override public int fill(FluidStack resource, boolean doFill) { return m.tank.fill(resource, doFill); }
+                @Override @Nullable public FluidStack drain(FluidStack resource, boolean doDrain) { return m.tank.drain(resource, doDrain); }
+                @Override @Nullable public FluidStack drain(int maxDrain, boolean doDrain) { return m.tank.drain(maxDrain, doDrain); }
             };
             boolean interacted = FluidUtil.interactWithFluidHandler(player, hand, proxy);
             if (interacted) this.updateMasterBlock(world.getBlockState(getPos()), true);
