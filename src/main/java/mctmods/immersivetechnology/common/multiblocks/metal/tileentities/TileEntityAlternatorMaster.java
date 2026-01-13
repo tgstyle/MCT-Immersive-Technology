@@ -10,12 +10,12 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
+import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
 import mctmods.immersivetechnology.common.util.ITSounds;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
@@ -52,20 +52,23 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     public int speed;
     public float torqueMult = 1;
     public IMechanicalEnergy provider;
-    private int tickCountdown = 5;
+    public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
+
     private float targetSoundLevel;
     private float soundVolume;
     private int soundGracePeriod;
     private int oldEnergy = energyStorage.getEnergyStored();
     private int oldSpeed = maxSpeed;
-    MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
+    private int tickCountdown = 5;
+
+    private boolean needsPoIInit = false;
+    private boolean needsNotify = false;
+    private boolean needsBlockUpdate = false;
+
     private final PoICache[] energyOutputs = new PoICache[6];
     private final BlockPos[] energyOutputPositions = new BlockPos[6];
     protected PoICache mechanicalInput0, redstone0;
     private BlockPos mechanicalInputPos0, soundPos0;
-    private boolean needsPoIInit = false;
-    private boolean needsNotify = false;
-    private boolean needsBlockUpdate = false;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -90,8 +93,6 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         super.readFromNBT(nbt);
         animation.setAnimationRotation(nbt.getFloat("animationRotation"));
     }
-
-    public int energyGenerated() { return ((double)speed / (double)maxSpeed > rfThreshold) ? (int)Math.round(Math.pow((double)speed / (double)maxSpeed, rfExponent) * torqueMult * rfPerTick) : 0; }
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
@@ -121,24 +122,13 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
-    public boolean isValidProvider() {
-        if (mechanicalInput0 == null) { InitializePoIs(); }
-        if (provider == null || !provider.isValid()) {
-            TileEntity tile = world.getTileEntity(mechanicalInputPos0);
-            if (tile instanceof IMechanicalEnergy) {
-                IMechanicalEnergy possibleProvider = (IMechanicalEnergy)tile;
-                if (possibleProvider.isValid() && possibleProvider.isMechanicalEnergyTransmitter(mechanicalInput0.facing.getOpposite())) { provider = possibleProvider; }
-            }
-        }
-        return provider != null && provider.isValid();
+    @Override public void receiveMessageFromServer(ByteBuf buf) {
+        int energy = buf.readInt();
+        int speed = buf.readInt();
+        targetSoundLevel = (!soundRPM) ? (float)energy / energyStorage.getMaxEnergyStored() : (float)speed / maxSpeed;
     }
 
-    public void checkProvider() {
-        if (isValidProvider()) {
-            speed = provider.getSpeed();
-            torqueMult = provider.getTorqueMultiplier();
-        } else if (speed > 0) { speed = Math.max(speed - speedLossPerTick, 0); }
-    }
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { }
 
     @Override public void update() {
         if (needsBlockUpdate) { needsBlockUpdate = false; markContainingBlockForUpdate(null); }
@@ -194,33 +184,26 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         oldSpeed = speed;
     }
 
-    @Override public boolean isDummy() { return false; }
+    private int energyGenerated() { return ((double)speed / (double)maxSpeed > rfThreshold) ? (int)Math.round(Math.pow((double)speed / (double)maxSpeed, rfExponent) * torqueMult * rfPerTick) : 0; }
 
-    @Override public TileEntityAlternatorMaster master() { master = this; return this; }
-
-    @Override public void receiveMessageFromServer(ByteBuf buf) {
-        int energy = buf.readInt();
-        int speed = buf.readInt();
-        targetSoundLevel = (!soundRPM) ? (float)energy / energyStorage.getMaxEnergyStored() : (float)speed / maxSpeed;
+    private void checkProvider() {
+        if (isValidProvider()) {
+            speed = provider.getSpeed();
+            torqueMult = provider.getTorqueMultiplier();
+        } else if (speed > 0) { speed = Math.max(speed - speedLossPerTick, 0); }
     }
 
-    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { }
-
-    public boolean isMechanicalEnergyReceiver(@Nullable EnumFacing facing, int position) {
+    private boolean isValidProvider() {
         if (mechanicalInput0 == null) { InitializePoIs(); }
-        return facing != null && mechanicalInput0.isPoI(facing, position);
-    }
-
-    public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
-        if (energyOutputs[0] == null) { InitializePoIs(); }
-        if (facing == null) { return false; }
-        for (int i = 0; i < 6; i++) {
-            if (energyOutputs[i].isPoI(facing, position)) { return true; }
+        if (provider == null || !provider.isValid()) {
+            TileEntity tile = world.getTileEntity(mechanicalInputPos0);
+            if (tile instanceof IMechanicalEnergy) {
+                IMechanicalEnergy possibleProvider = (IMechanicalEnergy)tile;
+                if (possibleProvider.isValid() && possibleProvider.isMechanicalEnergyTransmitter(mechanicalInput0.facing.getOpposite())) { provider = possibleProvider; }
+            }
         }
-        return false;
+        return provider != null && provider.isValid();
     }
-
-    @Override public int getComparatorInputOverride() { return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored(); }
 
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartAlternator.instance.pointsOfInterest) {
@@ -252,6 +235,26 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
+
+    @Override public int getComparatorInputOverride() { return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored(); }
+
+    @Override public boolean isDummy() { return false; }
+
+    @Override public TileEntityAlternatorMaster master() { master = this; return this; }
+
+    public boolean isMechanicalEnergyReceiver(@Nullable EnumFacing facing, int position) {
+        if (mechanicalInput0 == null) { InitializePoIs(); }
+        return facing != null && mechanicalInput0.isPoI(facing, position);
+    }
+
+    public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
+        if (energyOutputs[0] == null) { InitializePoIs(); }
+        if (facing == null) { return false; }
+        for (int i = 0; i < 6; i++) {
+            if (energyOutputs[i].isPoI(facing, position)) { return true; }
+        }
+        return false;
+    }
 
     @Override @Nonnull public int[] getRedstonePos() {
         if (redstone0 == null) { InitializePoIs(); }

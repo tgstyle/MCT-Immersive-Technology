@@ -38,6 +38,8 @@ import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoilerSlave, BoilerRecipe, TileEntityBoilerMaster> implements IEBlockInterfaces.IGuiTile, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IIEInventory {
 
+    private TileEntityBoilerMaster master;
+
     public TileEntityBoilerSlave() { super(TileEntityITMultiblockPartBoiler.instance, 0, false); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
@@ -48,9 +50,7 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
 
     @Override public boolean isDummy() { return true; }
 
-    private TileEntityBoilerMaster master;
-
-    @Override public TileEntityBoilerMaster master() {
+    public TileEntityBoilerMaster master() {
         if (master != null && !master.tileEntityInvalid) { return master; }
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
@@ -72,19 +72,19 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
         if (m != null) m.doGraphicalUpdates(slot);
     }
 
-    @Override public @Nonnull IFluidTank[] getInternalTanks() {
+    @Override @Nonnull public IFluidTank[] getInternalTanks() {
         TileEntityBoilerMaster m = master();
         return m == null ? new IFluidTank[0] : m.tanks;
     }
 
-    @Override protected @Nonnull BoilerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return BoilerRecipe.loadFromNBT(tag); }
+    @Override @Nonnull protected BoilerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return BoilerRecipe.loadFromNBT(tag); }
 
-    @Override public @Nonnull int[] getRedstonePos() {
+    @Override @Nonnull public int[] getRedstonePos() {
         TileEntityBoilerMaster m = master();
         return m == null ? new int[0] : m.getRedstonePos();
     }
 
-    @Override public @Nonnull int[] getOutputTanks() { return new int[] {2}; }
+    @Override @Nonnull public int[] getOutputTanks() { return new int[] {2}; }
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<BoilerRecipe> process) { return true; }
 
@@ -92,7 +92,7 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
 
     @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         TileEntityBoilerMaster m = master();
         if (m == null) { return ITUtils.emptyIFluidTankList; }
         return m.getAccessibleFluidTanks(side, position);
@@ -139,7 +139,7 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
         return super.getCapability(capability, facing);
     }
 
-    public BlockPos posToMultiblock() {
+    private BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartBoiler.instance.width;
         int length = TileEntityITMultiblockPartBoiler.instance.length;
         int y = pos / (length * width);
@@ -161,16 +161,13 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
         return vs.optimize();
     }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
 
     @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
 
-    @Nonnull
-    @Override public float[] getBlockBounds() {
+    @Override @Nonnull public float[] getBlockBounds() {
         VoxelShape vs = getVoxelShape();
         if (vs.isEmpty()) { return new float[]{0f, 0f, 0f, 1f, 1f, 1f}; }
         AxisAlignedBB bb = vs.bounds();

@@ -44,6 +44,7 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
 
     private int loadGrace = 0;
     private boolean needsBlockUpdate = false;
+    TileEntityAlternatorMaster master;
 
     public TileEntityAlternatorSlave() { super(TileEntityITMultiblockPartAlternator.instance, 0, false); }
 
@@ -63,8 +64,6 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
 
     @Override public boolean isDummy() { return true; }
 
-    TileEntityAlternatorMaster master;
-
     public TileEntityAlternatorMaster master() {
         if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
@@ -79,17 +78,17 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
 
     @Override public int getSlotLimit(int slot) { return 0; }
 
-    @Override public @Nonnull IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
+    @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
 
     @Override @Nonnull protected IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
 
-    @Override public @Nonnull int[] getRedstonePos() { return new int[0]; }
+    @Override @Nonnull public int[] getRedstonePos() { return new int[0]; }
 
-    @Override public @Nonnull int[] getOutputTanks() { return new int[0]; }
+    @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
 
     @Override public float getMinProcessDistance(@Nonnull MultiblockProcess process) { return 0; }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { return ITUtils.emptyIFluidTankList; }
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { return ITUtils.emptyIFluidTankList; }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
 
@@ -114,7 +113,7 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
         return super.getCapability(capability, facing);
     }
 
-    @Override public @Nonnull FluxStorage getFluxStorage() { return master() == null ? new FluxStorage(0) : master.energyStorage; }
+    @Override @Nonnull public FluxStorage getFluxStorage() { return master() == null ? new FluxStorage(0) : master.energyStorage; }
 
     @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing enumFacing) { return formed && master() != null && master.isEnergyPosition(enumFacing, pos) ? SideConfig.OUTPUT : SideConfig.NONE; }
 
@@ -152,11 +151,9 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
         return vs.optimize();
     }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
 
     @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
 

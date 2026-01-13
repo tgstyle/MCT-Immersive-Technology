@@ -26,6 +26,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -149,9 +152,73 @@ public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRa
             TileEntityRadiatorMaster m = master();
             if (m != null && formed) {
                 IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos);
-                if (accessible.length > 0) return (T)new TileEntityRadiatorMaster.RadiatorFluidHandler(accessible, m, facing, pos);
+                if (accessible.length > 0) return (T)new RadiatorFluidHandler(this, facing);
             }
         }
         return super.getCapability(capability, facing);
+    }
+
+    public static class RadiatorFluidHandler implements IFluidHandler {
+        TileEntityRadiatorSlave te;
+        EnumFacing facing;
+        IFluidTank[] tanks;
+
+        public RadiatorFluidHandler(TileEntityRadiatorSlave te, EnumFacing facing) {
+            this.te = te;
+            this.facing = facing;
+            TileEntityRadiatorMaster master = te.master();
+            tanks = master != null ? master.getAccessibleFluidTanks(facing, te.pos) : new IFluidTank[0];
+        }
+
+        @Override public IFluidTankProperties[] getTankProperties() {
+            List<IFluidTankProperties> props = new ArrayList<>();
+            for (IFluidTank tank : tanks) props.add(new FluidTankProperties(tank.getFluid(), tank.getCapacity()));
+            return props.toArray(new IFluidTankProperties[0]);
+        }
+
+        @Override public int fill(FluidStack resource, boolean doFill) {
+            if (resource == null || resource.amount <= 0) return 0;
+            TileEntityRadiatorMaster master = te.master();
+            if (master == null) return 0;
+            for (int i = 0; i < tanks.length; i++) {
+                if (master.canFillTankFrom(i, facing, resource, te.pos)) {
+                    int filled = tanks[i].fill(resource, doFill);
+                    if (filled > 0 && doFill) master.efficientMarkDirty();
+                    return filled;
+                }
+            }
+            return 0;
+        }
+
+        @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
+            if (resource == null || resource.amount <= 0) return null;
+            TileEntityRadiatorMaster master = te.master();
+            if (master == null) return null;
+            for (int i = 0; i < tanks.length; i++) {
+                if (master.canDrainTankFrom(i, facing, te.pos)) {
+                    FluidStack tankFluid = tanks[i].getFluid();
+                    if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
+                        FluidStack drained = tanks[i].drain(resource.amount, doDrain);
+                        if (drained != null && doDrain) master.efficientMarkDirty();
+                        return drained;
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override public FluidStack drain(int maxDrain, boolean doDrain) {
+            if (maxDrain <= 0) return null;
+            TileEntityRadiatorMaster master = te.master();
+            if (master == null) return null;
+            for (int i = 0; i < tanks.length; i++) {
+                if (master.canDrainTankFrom(i, facing, te.pos)) {
+                    FluidStack drained = tanks[i].drain(maxDrain, doDrain);
+                    if (drained != null && doDrain) master.efficientMarkDirty();
+                    return drained;
+                }
+            }
+            return null;
+        }
     }
 }

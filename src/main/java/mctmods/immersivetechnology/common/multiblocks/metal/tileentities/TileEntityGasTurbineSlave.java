@@ -39,8 +39,10 @@ import java.util.List;
 
 public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements ITBlockInterfaces.IMechanicalEnergy, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
 
-    private static final float outputtorque = Config.ITConfig.Multiblocks.gasTurbine.gasTurbine_torque;
     private int loadGrace = 0;
+    TileEntityGasTurbineMaster master;
+
+    private static final float outputtorque = Config.ITConfig.Multiblocks.gasTurbine.gasTurbine_torque;
 
     public TileEntityGasTurbineSlave() { super(TileEntityITMultiblockPartGasTurbine.instance, 0, true); }
 
@@ -56,8 +58,6 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
 
     @Override public boolean isDummy() { return true; }
 
-    TileEntityGasTurbineMaster master;
-
     public TileEntityGasTurbineMaster master() {
         if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
@@ -72,38 +72,23 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
 
     @Override public int getSlotLimit(int slot) { return 0; }
 
-    @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
+    @Override @Nonnull public IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
 
     @Override protected @Nonnull GasTurbineRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return GasTurbineRecipe.loadFromNBT(tag); }
 
     @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
 
-    @Override public @Nonnull int[] getOutputTanks() { return new int[] {1}; }
+    @Override @Nonnull public int[] getOutputTanks() { return new int[]{1}; }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        TileEntityGasTurbineMaster m = master();
-        return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position);
-    }
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { TileEntityGasTurbineMaster m = master(); return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position); }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        TileEntityGasTurbineMaster m = master();
-        return m != null && m.canFillTankFrom(iTank, side, resource, position);
-    }
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { TileEntityGasTurbineMaster m = master(); return m != null && m.canFillTankFrom(iTank, side, resource, position); }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        TileEntityGasTurbineMaster m = master();
-        return m != null && m.canDrainTankFrom(iTank, side, position);
-    }
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { TileEntityGasTurbineMaster m = master(); return m != null && m.canDrainTankFrom(iTank, side, position); }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityGasTurbineMaster m = master();
-            if (m != null && formed) return m.getAccessibleFluidTanks(facing, pos).length > 0;
-        }
-        if (capability == CapabilityEnergy.ENERGY && facing != null) {
-            TileEntityGasTurbineMaster m = master();
-            if (m != null && formed) return m.isEnergyPosition(facing, pos);
-        }
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) { TileEntityGasTurbineMaster m = master(); if (m != null && formed) return m.getAccessibleFluidTanks(facing, pos).length > 0; }
+        if (capability == CapabilityEnergy.ENERGY && facing != null) { TileEntityGasTurbineMaster m = master(); if (m != null && formed) return m.isEnergyPosition(facing, pos); }
         return super.hasCapability(capability, facing);
     }
 
@@ -111,25 +96,18 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityGasTurbineMaster m = master();
-            if (m != null && formed && m.getAccessibleFluidTanks(facing, pos).length > 0) {
-                return (T) new GasTurbineFluidHandler(this, facing);
-            }
+            if (m != null && formed && m.getAccessibleFluidTanks(facing, pos).length > 0) return (T)new GasTurbineFluidHandler(this, facing);
         }
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityGasTurbineMaster m = master();
-            if (m != null && formed && m.isEnergyPosition(facing, pos)) {
-                return (T) m.getEnergyAtPosition(facing, pos);
-            }
+            if (m != null && formed && m.isEnergyPosition(facing, pos)) return (T)m.getEnergyAtPosition(facing, pos);
         }
         return super.getCapability(capability, facing);
     }
 
     @Override public boolean isValid() { return formed; }
 
-    @Override public boolean isMechanicalEnergyTransmitter(EnumFacing facing) {
-        TileEntityGasTurbineMaster m = master();
-        return m != null && m.isMechanicalEnergyTransmitter(facing, pos);
-    }
+    @Override public boolean isMechanicalEnergyTransmitter(EnumFacing facing) { TileEntityGasTurbineMaster m = master(); return m != null && m.isMechanicalEnergyTransmitter(facing, pos); }
 
     @Override public boolean isMechanicalEnergyReceiver(EnumFacing facing) { return false; }
 
@@ -138,6 +116,40 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
     @Override public float getTorqueMultiplier() { return outputtorque; }
 
     public MechanicalEnergyAnimation getAnimation() { return master() == null ? null : master.animation; }
+
+    public BlockPos posToMultiblock() {
+        int width = TileEntityITMultiblockPartGasTurbine.instance.width;
+        int length = TileEntityITMultiblockPartGasTurbine.instance.length;
+        int y = pos / (length * width);
+        int rem = pos % (length * width);
+        int z = rem / width;
+        int x = rem % width;
+        if (this.mirrored) x = width - 1 - x;
+        return new BlockPos(x, y, z);
+    }
+
+    private VoxelShape getVoxelShape() {
+        BlockPos posInMultiblock = posToMultiblock();
+        List<AxisAlignedBB> list = GasTurbineShape.GETTER.getShape(posInMultiblock);
+        if (list.isEmpty()) return Shapes.create(0, 0, 0, 1, 1, 1);
+        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, this.facing, this.mirrored));
+        VoxelShape vs = Shapes.empty();
+        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
+        return vs.optimize();
+    }
+
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
+
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+
+    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
+
+    @Override @Nonnull public float[] getBlockBounds() {
+        VoxelShape vs = getVoxelShape();
+        AxisAlignedBB bb = vs.bounds();
+        return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
+    }
 
     public static class GasTurbineFluidHandler implements IFluidHandler {
         TileEntityGasTurbineSlave te;
@@ -201,42 +213,5 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
             }
             return null;
         }
-    }
-
-    public BlockPos posToMultiblock() {
-        int width = TileEntityITMultiblockPartGasTurbine.instance.width;
-        int length = TileEntityITMultiblockPartGasTurbine.instance.length;
-        int y = pos / (length * width);
-        int rem = pos % (length * width);
-        int z = rem / width;
-        int x = rem % width;
-        if (this.mirrored) x = width - 1 - x;
-        return new BlockPos(x, y, z);
-    }
-
-    private VoxelShape getVoxelShape() {
-        BlockPos posInMultiblock = posToMultiblock();
-        List<AxisAlignedBB> list = GasTurbineShape.GETTER.getShape(posInMultiblock);
-        if (list.isEmpty()) return Shapes.create(0, 0, 0, 1, 1, 1);
-        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, this.facing, this.mirrored));
-        VoxelShape vs = Shapes.empty();
-        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
-        return vs.optimize();
-    }
-
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
-
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
-
-    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
-
-    @Nonnull
-    @Override public float[] getBlockBounds() {
-        VoxelShape vs = getVoxelShape();
-        AxisAlignedBB bb = vs.bounds();
-        return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
     }
 }

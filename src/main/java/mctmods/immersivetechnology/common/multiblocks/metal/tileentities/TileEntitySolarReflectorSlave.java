@@ -3,12 +3,12 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
 import blusunrize.immersiveengineering.common.util.Utils;
 
-import mctmods.immersivetechnology.api.crafting.DummyRecipe;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.util.ITUtils;
+import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarReflector;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
+import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.util.ITUtils;
+import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 
 import mctmods.immersivetechnology.common.util.shapes.*;
 import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TileEntitySolarReflectorSlave extends TileEntityITMultiblock<TileEntitySolarReflectorSlave, IMultiblockRecipe, TileEntitySolarReflectorMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+
     public TileEntitySolarReflectorSlave() { super(TileEntityITMultiblockPartSolarReflector.instance, 0, false); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
@@ -39,7 +40,7 @@ public class TileEntitySolarReflectorSlave extends TileEntityITMultiblock<TileEn
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
     @Override public void update() {
-        if(isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
         super.update();
     }
 
@@ -48,10 +49,10 @@ public class TileEntitySolarReflectorSlave extends TileEntityITMultiblock<TileEn
     TileEntitySolarReflectorMaster master;
 
     public TileEntitySolarReflectorMaster master() {
-        if(master != null && !master.tileEntityInvalid) return master;
+        if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntitySolarReflectorMaster?(TileEntitySolarReflectorMaster) te: null;
+        master = te instanceof TileEntitySolarReflectorMaster ? (TileEntitySolarReflectorMaster)te : null;
         return master;
     }
 
@@ -61,13 +62,13 @@ public class TileEntitySolarReflectorSlave extends TileEntityITMultiblock<TileEn
 
     @Override public int getSlotLimit(int slot) { return 0; }
 
-    @Override public @Nonnull IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
+    @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
 
-    @Override @Nonnull protected IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
+    @Override protected @Nonnull IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
 
-    @Override public @Nonnull int[] getRedstonePos() { return new int[0]; }
+    @Override @Nonnull public int[] getRedstonePos() { return new int[0]; }
 
-    @Override public @Nonnull int[] getOutputTanks() { return new int[0]; }
+    @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<IMultiblockRecipe> process) { return true; }
 
@@ -103,16 +104,13 @@ public class TileEntitySolarReflectorSlave extends TileEntityITMultiblock<TileEn
         return vs.optimize();
     }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
 
     @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
 
-    @Nonnull
-    @Override public float[] getBlockBounds() {
+    @Override @Nonnull public float[] getBlockBounds() {
         VoxelShape vs = getVoxelShape();
         if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
         AxisAlignedBB bb = vs.bounds();

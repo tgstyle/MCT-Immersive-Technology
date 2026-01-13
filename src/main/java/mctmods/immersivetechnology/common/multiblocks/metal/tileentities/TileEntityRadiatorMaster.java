@@ -56,22 +56,23 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
             new ITFluidTank(outputTankSize, this)
     };
 
-    private RadiatorRecipe cachedRadiatorRecipe;
-
     public int processTimeRemaining = 0;
     public int processTimeTotal = 0;
-    private double radiationEfficiency = 0;
-    private int clientUpdateCooldown = 20;
-    protected PoICache fluidInput0, fluidOutput0, redstone0;
-    private BlockPos soundPos0, fluidOutputPos0;
+
+    private RadiatorRecipe cachedRadiatorRecipe;
     private float soundVolume = 0f;
     private int soundGracePeriod = 60;
     private boolean isRunning;
+    private double radiationEfficiency = 0;
+    private int clientUpdateCooldown = 20;
     private double distanceSqToTE;
     private int playerDimension;
     public Optional<Boolean> computerOn = Optional.empty();
     public boolean redstoneControlInverted = false;
     private boolean needsPoIInit = true;
+
+    protected PoICache fluidInput0, fluidOutput0, redstone0;
+    private BlockPos soundPos0, fluidOutputPos0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -144,6 +145,46 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     @Override public void receiveMessageFromServer(ByteBuf message) { isRunning = message.readBoolean(); }
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
+
+    @Override public void update() {
+        if (world.isRemote) {
+            clientUpdate();
+            return;
+        }
+        if (formed && (needsPoIInit || fluidInput0 == null)) {
+            InitializePoIs();
+            needsPoIInit = false;
+        }
+        super.update();
+        if (!formed) return;
+
+        boolean update = false;
+        double oldEff = radiationEfficiency;
+        if (radiationEfficiency == 0 || world.getTotalWorldTime() % 600 == 0) checkReflectorEfficiency();
+        if (radiationEfficiency != oldEff) update = true;
+
+        update |= recipeLogic();
+        if (pumpOutputOut()) update = true;
+
+        boolean wasRunning = isRunning;
+        boolean active = processTimeRemaining > 0 && !isRSDisabled();
+        if (active) soundGracePeriod = 60;
+        else if (soundGracePeriod > 0) soundGracePeriod--;
+        isRunning = soundGracePeriod > 0;
+
+        if (isRunning != wasRunning) notifyNearbyClients();
+
+        clientUpdateCooldown--;
+        if (clientUpdateCooldown <= 0) {
+            notifyNearbyClients();
+            clientUpdateCooldown = 20;
+        }
+
+        if (update || isRunning != wasRunning) {
+            efficientMarkDirty();
+            markContainingBlockForUpdate(null);
+        }
+    }
 
     private boolean gainProgress() {
         processTimeRemaining--;
@@ -279,50 +320,62 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         handleSounds();
     }
 
-    @Override public void update() {
-        if (world.isRemote) {
-            clientUpdate();
-            return;
+    private void InitializePoIs() {
+        for (PoIJSONSchema poi : TileEntityITMultiblockPartRadiator.instance.pointsOfInterest) {
+            switch (poi.name) {
+                case "fluid_input0":
+                    fluidInput0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "fluid_output0":
+                    fluidOutput0 = new PoICache(facing, poi, mirrored);
+                    fluidOutputPos0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    break;
+                case "redstone0":
+                    redstone0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "sound0":
+                    soundPos0 = getBlockPosForPos(poi.position);
+                    break;
+            }
         }
-        if (formed && (needsPoIInit || fluidInput0 == null)) {
-            InitializePoIs();
-            needsPoIInit = false;
-        }
-        super.update();
-        if (!formed) return;
-
-        boolean update = false;
-        double oldEff = radiationEfficiency;
-        if (radiationEfficiency == 0 || world.getTotalWorldTime() % 600 == 0) checkReflectorEfficiency();
-        if (radiationEfficiency != oldEff) update = true;
-
-        update |= recipeLogic();
-        if (pumpOutputOut()) update = true;
-
-        boolean wasRunning = isRunning;
-        boolean active = processTimeRemaining > 0 && !isRSDisabled();
-        if (active) soundGracePeriod = 60;
-        else if (soundGracePeriod > 0) soundGracePeriod--;
-        isRunning = soundGracePeriod > 0;
-
-        if (isRunning != wasRunning) notifyNearbyClients();
-
-        clientUpdateCooldown--;
-        if (clientUpdateCooldown <= 0) {
-            notifyNearbyClients();
-            clientUpdateCooldown = 20;
-        }
-
-        if (update || isRunning != wasRunning) {
-            efficientMarkDirty();
-            markContainingBlockForUpdate(null);
-        }
+        if (!world.isRemote) notifyIONeighbors();
     }
+
+    private void notifyIONeighbors() {
+        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
+        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
+        notifyNeighbor(getBlockPosForPos(redstone0.position));
+    }
+
+    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
     @Override public void TankContentsChanged() {
         cachedRadiatorRecipe = null;
         markContainingBlockForUpdate(null);
     }
+
+    @Override public boolean isRSDisabled() {
+        if (computerOn.isPresent()) return !computerOn.get();
+        int[] rs = getRedstonePos();
+        if (rs.length < 1) return false;
+        for (int p : rs) {
+            TileEntity te = getTileForPos(p);
+            if (te != null) {
+                int power = world.getRedstonePowerFromNeighbors(te.getPos());
+                return redstoneControlInverted != (power > 0);
+            }
+        }
+        return false;
+    }
+
+    @Override public int getComparatorInputOverride() {
+        if (!formed || processTimeTotal <= 0) return 0;
+        return 15 * (processTimeTotal - processTimeRemaining) / processTimeTotal;
+    }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 
     @Override public boolean isDummy() { return false; }
 
@@ -355,58 +408,6 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         if (!formed) return new int[0];
         if (redstone0 == null) InitializePoIs();
         return new int[] {redstone0.position};
-    }
-
-    @Override public boolean isRSDisabled() {
-        if (computerOn.isPresent()) return !computerOn.get();
-        int[] rs = getRedstonePos();
-        if (rs.length < 1) return false;
-        for (int p : rs) {
-            TileEntity te = getTileForPos(p);
-            if (te != null) {
-                int power = world.getRedstonePowerFromNeighbors(te.getPos());
-                return redstoneControlInverted != (power > 0);
-            }
-        }
-        return false;
-    }
-
-    private void InitializePoIs() {
-        for (PoIJSONSchema poi : TileEntityITMultiblockPartRadiator.instance.pointsOfInterest) {
-            switch (poi.name) {
-                case "fluid_input0":
-                    fluidInput0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "fluid_output0":
-                    fluidOutput0 = new PoICache(facing, poi, mirrored);
-                    fluidOutputPos0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
-                    break;
-                case "redstone0":
-                    redstone0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "sound0":
-                    soundPos0 = getBlockPosForPos(poi.position);
-                    break;
-            }
-        }
-        if (!world.isRemote) notifyIONeighbors();
-    }
-
-    private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
-        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        notifyNeighbor(getBlockPosForPos(redstone0.position));
-    }
-
-    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
-
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
-
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
-
-    @Override public int getComparatorInputOverride() {
-        if (!formed || processTimeTotal <= 0) return 0;
-        return 15 * (processTimeTotal - processTimeRemaining) / processTimeTotal;
     }
 
     static class RadiatorFluidHandler implements IFluidHandler {

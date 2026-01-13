@@ -31,13 +31,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -64,15 +63,17 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     private CoolingTowerRecipe cachedCoolingRecipe;
 
-    protected PoICache fluidInput0, fluidInput1, fluidOutput0, fluidOutput1, fluidOutput2;
-    private BlockPos outputFrontPos0, outputFrontPos1, outputFrontPos2, particlePos0, soundPos0;
-
     private float soundVolume;
     private int soundGracePeriod = 60;
-    private int tickCountdown = 20;
     private boolean isRunning;
-    private boolean needsPoIInit = false;
+
+    private int tickCountdown = 20;
     private int oldComparatorOutput;
+
+    private boolean needsPoIInit = false;
+
+    protected PoICache fluidInput0, fluidInput1, fluidOutput0, fluidOutput1, fluidOutput2;
+    private BlockPos outputFrontPos0, outputFrontPos1, outputFrontPos2, particlePos0, soundPos0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -147,29 +148,6 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
-    private boolean pumpOutputOut() {
-        boolean changed = false;
-        PoICache[] outputs = {fluidOutput0, fluidOutput1, fluidOutput2};
-        BlockPos[] fronts = {outputFrontPos0, outputFrontPos1, outputFrontPos2};
-        int[] indices = {2, 3, 4};
-        for (int i = 0; i < 3; i++) {
-            if (tanks[indices[i]].getFluidAmount() > 0) {
-                IFluidHandler output = FluidUtil.getFluidHandler(world, fronts[i], outputs[i].facing.getOpposite());
-                if (output != null) {
-                    FluidStack out = tanks[indices[i]].getFluid();
-                    int accepted = output.fill(out, false);
-                    if (accepted > 0) {
-                        assert out != null;
-                        int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-                        tanks[indices[i]].drain(drained, true);
-                        if (drained > 0) changed = true;
-                    }
-                }
-            }
-        }
-        return changed;
-    }
-
     @Override public void update() {
         super.update();
         if (!formed) return;
@@ -240,27 +218,28 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         }
     }
 
-    @Override public boolean isDummy() { return false; }
-
-    @Override public TileEntityCoolingTowerMaster master() { return this; }
-
-    @Override public void TankContentsChanged() {
-        cachedCoolingRecipe = null;
-        efficientMarkDirty();
-        markContainingBlockForUpdate(null);
+    private boolean pumpOutputOut() {
+        boolean changed = false;
+        PoICache[] outputs = {fluidOutput0, fluidOutput1, fluidOutput2};
+        BlockPos[] fronts = {outputFrontPos0, outputFrontPos1, outputFrontPos2};
+        int[] indices = {2, 3, 4};
+        for (int i = 0; i < 3; i++) {
+            if (tanks[indices[i]].getFluidAmount() > 0) {
+                IFluidHandler output = FluidUtil.getFluidHandler(world, fronts[i], outputs[i].facing.getOpposite());
+                if (output != null) {
+                    FluidStack out = tanks[indices[i]].getFluid();
+                    int accepted = output.fill(out, false);
+                    if (accepted > 0) {
+                        assert out != null;
+                        int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+                        tanks[indices[i]].drain(drained, true);
+                        if (drained > 0) changed = true;
+                    }
+                }
+            }
+        }
+        return changed;
     }
-
-    @Override public int getComparatorInputOverride() { return 15 * processQueue.size() / getProcessQueueMaxLength(); }
-
-    @Override public void onProcessFinish(@Nonnull MultiblockProcess<CoolingTowerRecipe> process) {
-        if (process.recipe.fluidOutput0 != null) tanks[2].fill(process.recipe.fluidOutput0.copy(), true);
-        if (process.recipe.fluidOutput1 != null) tanks[3].fill(process.recipe.fluidOutput1.copy(), true);
-        if (process.recipe.fluidOutput2 != null) tanks[4].fill(process.recipe.fluidOutput2.copy(), true);
-    }
-
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
-
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartCoolingTower.instance.pointsOfInterest) {
@@ -304,6 +283,18 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
+    @Override public void TankContentsChanged() {
+        cachedCoolingRecipe = null;
+        efficientMarkDirty();
+        markContainingBlockForUpdate(null);
+    }
+
+    @Override public int getComparatorInputOverride() { return 15 * processQueue.size() / getProcessQueueMaxLength(); }
+
+    @Override public boolean isDummy() { return false; }
+
+    @Override public TileEntityCoolingTowerMaster master() { return this; }
+
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return tanks; }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
@@ -324,10 +315,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         if (tanks[iTank].getFluidAmount() >= tanks[iTank].getCapacity()) return false;
         FluidStack current = tanks[iTank].getFluid();
         if (current != null) return resource.isFluidEqual(current);
-        Fluid fluid = resource.getFluid();
-        if (fluid == null) return false;
-        if (iTank == 0) return CoolingTowerRecipe.findRecipeByFluid0(fluid) != null;
-        else return CoolingTowerRecipe.findRecipeByFluid1(fluid) != null;
+        return iTank == 0 ? CoolingTowerRecipe.findRecipeByFluid0(resource.getFluid()) != null : CoolingTowerRecipe.findRecipeByFluid1(resource.getFluid()) != null;
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
@@ -338,6 +326,10 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         if (iTank == 4 && !fluidOutput2.isPoI(side, position)) return false;
         return tanks[iTank].getFluidAmount() > 0;
     }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 
     public static class CoolingTowerFluidHandler implements IFluidHandler {
         private final IFluidTank[] accessibleTanks;

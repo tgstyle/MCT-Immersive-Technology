@@ -40,6 +40,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEntityHeatExchangerSlave, HeatExchangerRecipe, TileEntityHeatExchangerMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IFluxReceiver, IIEInternalFluxHandler {
+
+    TileEntityHeatExchangerMaster master;
+
     public TileEntityHeatExchangerSlave() { super(TileEntityITMultiblockPartHeatExchanger.instance, Multiblocks.heatExchanger.heatExchanger_energy_size, true); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
@@ -49,8 +52,6 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
     @Override public void update() { if (isDummy()) ITUtils.RemoveDummyFromTicking(this); super.update(); }
 
     @Override public boolean isDummy() { return true; }
-
-    TileEntityHeatExchangerMaster master;
 
     public TileEntityHeatExchangerMaster master() {
         if (master != null && !master.tileEntityInvalid) return master;
@@ -66,15 +67,15 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
 
     @Override public int getSlotLimit(int slot) { return 0; }
 
-    @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
+    @Override @Nonnull public IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
 
     @Override protected @Nonnull HeatExchangerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return HeatExchangerRecipe.loadFromNBT(tag); }
 
-    @Override public @Nonnull int[] getEnergyPos() { return master() == null ? new int[0] : master.getEnergyPos(); }
-
     @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
 
-    @Override public @Nonnull int[] getOutputTanks() { return new int[]{2, 3}; }
+    @Override @Nonnull public int[] getOutputTanks() { return new int[]{2, 3}; }
+
+    @Override @Nonnull public int[] getEnergyPos() { return master() == null ? new int[0] : master.getEnergyPos(); }
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<HeatExchangerRecipe> process) { return true; }
 
@@ -82,22 +83,38 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
 
     @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        TileEntityHeatExchangerMaster master = master();
-        if (master == null) return ITUtils.emptyIFluidTankList;
-        return master.getAccessibleFluidTanks(side, position);
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { TileEntityHeatExchangerMaster master = master(); if (master == null) return ITUtils.emptyIFluidTankList; return master.getAccessibleFluidTanks(side, position); }
+
+    @Override protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) { TileEntityHeatExchangerMaster master = master(); if (master == null) return false; return master.canFillTankFrom(iTank, side, resource, position); }
+
+    @Override protected boolean canDrainTankFrom(int iTank, EnumFacing side, int position) { TileEntityHeatExchangerMaster master = master(); if (master == null) return false; return master.canDrainTankFrom(iTank, side, position); }
+
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY && facing != null) { TileEntityHeatExchangerMaster m = master(); if (m == null || !formed) return false; return m.energyInput0.isPoI(facing, pos); }
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) { TileEntityHeatExchangerMaster m = master(); if (m == null || !formed) return false; return m.getAccessibleFluidTanks(facing, pos).length > 0; }
+        return super.hasCapability(capability, facing);
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) {
-        TileEntityHeatExchangerMaster master = master();
-        if (master == null) return false;
-        return master.canFillTankFrom(iTank, side, resource, position);
+    @SuppressWarnings("unchecked")
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY && facing != null) { TileEntityHeatExchangerMaster m = master(); if (m != null && formed && m.energyInput0.isPoI(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing); }
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            TileEntityHeatExchangerMaster m = master();
+            if (m != null && formed) { IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos); if (accessible.length > 0) return (T)new TileEntityHeatExchangerMaster.HeatExchangerFluidHandler(accessible, m, facing, pos); }
+        }
+        return super.getCapability(capability, facing);
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, EnumFacing side, int position) {
-        TileEntityHeatExchangerMaster master = master();
-        if (master == null) return false;
-        return master.canDrainTankFrom(iTank, side, position);
+    @Override @Nonnull public FluxStorage getFluxStorage() { TileEntityHeatExchangerMaster m = master(); return m == null ? new FluxStorage(0) : m.energyStorage; }
+
+    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) { return formed && master() != null && master.energyInput0.isPoI(facing, pos) ? SideConfig.INPUT : SideConfig.NONE; }
+
+    @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
+        TileEntityHeatExchangerMaster m = master();
+        if (!formed || m == null) return 0;
+        int received = m.energyStorage.receiveEnergy(energy, simulate);
+        if (!simulate && received > 0) { m.efficientMarkDirty(); m.markContainingBlockForUpdate(null); }
+        return received;
     }
 
     public BlockPos posToMultiblock() {
@@ -133,55 +150,5 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
         if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
         AxisAlignedBB bb = vs.bounds();
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
-    }
-
-    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityEnergy.ENERGY && facing != null) {
-            TileEntityHeatExchangerMaster m = master();
-            if (m == null || !formed) return false;
-            return m.energyInput0.isPoI(facing, pos);
-        }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityHeatExchangerMaster m = master();
-            if (m == null || !formed) return false;
-            return m.getAccessibleFluidTanks(facing, pos).length > 0;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityEnergy.ENERGY && facing != null) {
-            TileEntityHeatExchangerMaster m = master();
-            if (m != null && formed && m.energyInput0.isPoI(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
-        }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityHeatExchangerMaster m = master();
-            if (m != null && formed) {
-                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos);
-                if (accessible.length > 0) return (T)new TileEntityHeatExchangerMaster.HeatExchangerFluidHandler(accessible, m, facing, pos);
-            }
-        }
-        return super.getCapability(capability, facing);
-    }
-
-    @Override @Nonnull public FluxStorage getFluxStorage() {
-        TileEntityHeatExchangerMaster m = master();
-        return m == null ? new FluxStorage(0) : m.energyStorage;
-    }
-
-    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) {
-        return formed && master() != null && master.energyInput0.isPoI(facing, pos) ? SideConfig.INPUT : SideConfig.NONE;
-    }
-
-    @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
-        TileEntityHeatExchangerMaster m = master();
-        if (!formed || m == null) return 0;
-        int received = m.energyStorage.receiveEnergy(energy, simulate);
-        if (!simulate && received > 0) {
-            m.efficientMarkDirty();
-            m.markContainingBlockForUpdate(null);
-        }
-        return received;
     }
 }

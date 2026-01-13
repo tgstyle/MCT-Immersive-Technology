@@ -1,12 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.tileentities;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
@@ -14,8 +11,12 @@ import mctmods.immersivetechnology.common.multiblocks.stone.shapes.AdvancedCokeO
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
-
+import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITUtils;
+
+import mctmods.immersivetechnology.common.util.shapes.*;
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,31 +26,46 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<TileEntityAdvancedCokeOvenSlave, IMultiblockRecipe, TileEntityAdvancedCokeOvenMaster> implements IEBlockInterfaces.IActiveState, IIEInventory, IEBlockInterfaces.IGuiTile, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<TileEntityAdvancedCokeOvenSlave, IMultiblockRecipe, TileEntityAdvancedCokeOvenMaster> implements IEBlockInterfaces.IActiveState, IEBlockInterfaces.IGuiTile, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+
     public TileEntityAdvancedCokeOvenSlave() { super(TileEntityITMultiblockPartAdvancedCokeOven.instance, 0, false); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
-    @Override public void update() { ITUtils.RemoveDummyFromTicking(this); }
+    @Override public void update() {
+        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        super.update();
+    }
+
+    @Override public boolean isDummy() { return true; }
+
+    TileEntityAdvancedCokeOvenMaster master;
+
+    public TileEntityAdvancedCokeOvenMaster master() {
+        if (master != null && !master.tileEntityInvalid) return master;
+        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
+        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
+        master = te instanceof TileEntityAdvancedCokeOvenMaster ? (TileEntityAdvancedCokeOvenMaster)te : null;
+        return master;
+    }
 
     @Override public boolean getIsActive() {
         TileEntityAdvancedCokeOvenMaster m = master();
@@ -63,203 +79,137 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
         return m != null ? m.inventory : NonNullList.withSize(4, ItemStack.EMPTY);
     }
 
-    @Override public boolean isStackValid(int slot, ItemStack stack) {
-        if (stack.isEmpty()) { return false; }
-        if (slot == 0) { return CokeOvenRecipe.findRecipe(stack) != null; }
-        if (slot == 2) { return Utils.isFluidRelatedItemStack(stack); }
-        return false;
-    }
+    @Override public boolean isStackValid(int slot, ItemStack stack) { return false; }
 
     @Override public int getSlotLimit(int slot) { return 64; }
 
     @Override public void doGraphicalUpdates(int slot) {}
 
-    protected TileEntityAdvancedCokeOvenMaster master;
+    @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
 
-    @Override public TileEntityAdvancedCokeOvenMaster master() {
-        if (master != null && !master.isInvalid()) { return master; }
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntityAdvancedCokeOvenMaster ? (TileEntityAdvancedCokeOvenMaster)te : null;
-        return master;
-    }
+    @Override protected @Nonnull IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
 
-    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    @Override @Nonnull public int[] getRedstonePos() { return new int[0]; }
+
+    @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
+
+    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<IMultiblockRecipe> process) { return true; }
+
+    @Override public int getMaxProcessPerTick() { return 1; }
+
+    @Override public int getProcessQueueMaxLength() { return 1; }
+
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         TileEntityAdvancedCokeOvenMaster m = master();
-        if (m == null) { return false; }
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
-            if (m.itemInput0 == null) { m.InitializePoIs(); }
-            return m.itemInput0.isPoI(facing, pos) || m.itemOutput0.isPoI(facing, pos);
-        }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            if (m.fluidOutput0 == null) { m.InitializePoIs(); }
-            return m.fluidOutput0.isPoI(facing, pos);
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        TileEntityAdvancedCokeOvenMaster m = master();
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
-            if (m == null) { return (T)DUMMY_ITEM_HANDLER; }
-            if (m.itemInput0 == null) { m.InitializePoIs(); }
-            if (m.itemInput0.isPoI(facing, pos)) { return (T)m.inputHandler; }
-            if (m.itemOutput0.isPoI(facing, pos)) { return (T)m.outputHandler; }
-        }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            if (m == null) { return (T)DUMMY_FLUID_HANDLER; }
-            if (m.fluidOutput0 == null) { m.InitializePoIs(); }
-            if (m.fluidOutput0.isPoI(facing, pos)) { return (T)new AdvancedCokeOvenFluidHandler(this, facing); }
-        }
-        return super.getCapability(capability, facing);
-    }
-
-    @Override protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        TileEntityAdvancedCokeOvenMaster m = master();
-        if (m == null) { return new IFluidTank[0]; }
-        if (m.fluidOutput0 == null) { m.InitializePoIs(); }
-        if (m.fluidOutput0.isPoI(side, position)) { return new IFluidTank[]{m.tank}; }
-        return new IFluidTank[0];
+        if (m == null) return ITUtils.emptyIFluidTankList;
+        if (m.fluidOutput0 == null) m.InitializePoIs();
+        return m.fluidOutput0.isPoI(side, position) ? new IFluidTank[]{m.tank} : ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
         TileEntityAdvancedCokeOvenMaster m = master();
-        if (m == null) { return false; }
-        if (m.fluidOutput0 == null) { m.InitializePoIs(); }
+        if (m == null) return false;
+        if (m.fluidOutput0 == null) m.InitializePoIs();
         return m.fluidOutput0.isPoI(side, position) && iTank == 0;
     }
 
-    @Override public boolean canOpenGui() { return formed; }
+    @Override public boolean canOpenGui() { return formed && master() != null; }
 
     @Override public int getGuiID() { return ITGUI.GUIID_Advanced_coke_oven; }
 
     @Override public TileEntity getGuiMaster() { return master(); }
 
-    @Override @Nonnull public ItemStack getOriginalBlock() {
-        if (pos < 0) { return ItemStack.EMPTY; }
-        ItemStack s = TileEntityITMultiblockPartAdvancedCokeOven.instance.getStructureManual()[pos/9][pos%9/3][pos%3];
-        return s.copy();
-    }
-
-    private List<AxisAlignedBB> getShape() {
+    public BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartAdvancedCokeOven.instance.width;
         int length = TileEntityITMultiblockPartAdvancedCokeOven.instance.length;
         int y = pos / (length * width);
         int rem = pos % (length * width);
         int z = rem / width;
         int x = rem % width;
-        BlockPos posInMultiblock = new BlockPos(x, y, z);
-        List<AxisAlignedBB> list = AdvancedCokeOvenShape.GETTER.getShape(posInMultiblock);
-        if (list.isEmpty()) { return new ArrayList<>(); }
-        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) { rotatedList.add(ITUtils.rotateAABB(aabb, this.facing, this.mirrored)); }
-        return rotatedList;
+        if (mirrored) x = width - 1 - x;
+        return new BlockPos(x, y, z);
     }
 
-    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getShape(); }
+    private VoxelShape getVoxelShape() {
+        BlockPos posInMultiblock = posToMultiblock();
+        List<AxisAlignedBB> list = AdvancedCokeOvenShape.GETTER.getShape(posInMultiblock);
+        if (list.isEmpty()) return Shapes.empty();
+        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        VoxelShape vs = Shapes.empty();
+        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
+        return vs.optimize();
+    }
 
-    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getShape(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
 
-    @Override public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, List<AxisAlignedBB> list) { return false; }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+
+    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
 
     @Override @Nonnull public float[] getBlockBounds() {
-        List<AxisAlignedBB> list = getShape();
-        if (list.isEmpty()) { return new float[]{0f, 0f, 0f, 1f, 1f, 1f}; }
-        AxisAlignedBB bb = list.get(0);
-        for (int i = 1; i < list.size(); i++) { bb = bb.union(list.get(i)); }
+        VoxelShape vs = getVoxelShape();
+        if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
+        AxisAlignedBB bb = vs.bounds();
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
     }
 
-    public static class AdvancedCokeOvenFluidHandler implements IFluidHandler {
-        TileEntityMultiblockPart<TileEntityAdvancedCokeOvenSlave> te;
-        EnumFacing facing;
-        IFluidTank tank;
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        TileEntityAdvancedCokeOvenMaster m = master();
+        if (m == null || facing == null) return super.hasCapability(capability, facing);
+        if (m.itemInput0 == null || m.itemOutput0 == null || m.fluidOutput0 == null) m.InitializePoIs();
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return m.itemInput0.isPoI(facing, pos) || m.itemOutput0.isPoI(facing, pos);
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return m.fluidOutput0.isPoI(facing, pos);
+        return super.hasCapability(capability, facing);
+    }
 
-        public AdvancedCokeOvenFluidHandler(TileEntityMultiblockPart<TileEntityAdvancedCokeOvenSlave> te, EnumFacing facing) {
-            this.te = te;
-            this.facing = facing;
-            TileEntityAdvancedCokeOvenMaster m = (TileEntityAdvancedCokeOvenMaster)te.master();
-            tank = m != null ? m.tank : null;
+    @SuppressWarnings("unchecked")
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        TileEntityAdvancedCokeOvenMaster m = master();
+        if (m == null || facing == null) return super.getCapability(capability, facing);
+        if (m.itemInput0 == null || m.itemOutput0 == null || m.fluidOutput0 == null) m.InitializePoIs();
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (m.itemInput0.isPoI(facing, pos)) return (T)m.inputHandler;
+            if (m.itemOutput0.isPoI(facing, pos)) return (T)m.outputHandler;
+        }
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && m.fluidOutput0.isPoI(facing, pos)) return (T)new AdvancedCokeOvenFluidHandler(this);
+        return super.getCapability(capability, facing);
+    }
+
+    public static class AdvancedCokeOvenFluidHandler implements IFluidHandler {
+        private final ITFluidTank tank;
+        private final TileEntityAdvancedCokeOvenMaster master;
+
+        public AdvancedCokeOvenFluidHandler(TileEntityAdvancedCokeOvenSlave te) {
+            this.master = te.master();
+            this.tank = master != null ? master.tank : null;
         }
 
         @Override public IFluidTankProperties[] getTankProperties() {
-            if (tank == null) { return new FluidTankProperties[0]; }
-            return new FluidTankProperties[]{new FluidTankProperties(tank.getFluid(), tank.getCapacity())};
+            if (tank == null) return new IFluidTankProperties[0];
+            return new IFluidTankProperties[]{new FluidTankProperties(tank.getFluid(), tank.getCapacity(), false, true)};
         }
 
         @Override public int fill(FluidStack resource, boolean doFill) { return 0; }
 
         @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null || resource.amount <= 0 || tank == null) { return null; }
+            if (resource == null || resource.amount <= 0 || tank == null) return null;
             FluidStack tankFluid = tank.getFluid();
             if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
                 FluidStack drained = tank.drain(resource.amount, doDrain);
-                if (drained != null && doDrain) { ((TileEntityAdvancedCokeOvenMaster)Objects.requireNonNull(te.master())).TankContentsChanged(); }
+                if (drained != null && drained.amount > 0 && doDrain) master.TankContentsChanged();
                 return drained;
             }
             return null;
         }
 
         @Override public FluidStack drain(int maxDrain, boolean doDrain) {
-            if (maxDrain <= 0 || tank == null) { return null; }
+            if (maxDrain <= 0 || tank == null) return null;
             FluidStack drained = tank.drain(maxDrain, doDrain);
-            if (drained != null && doDrain) { ((TileEntityAdvancedCokeOvenMaster)Objects.requireNonNull(te.master())).TankContentsChanged(); }
+            if (drained != null && drained.amount > 0 && doDrain) master.TankContentsChanged();
             return drained;
         }
-    }
-
-    private static final IItemHandler DUMMY_ITEM_HANDLER = new IItemHandler() {
-        @Override public int getSlots() { return 0; }
-
-        @Override @Nonnull public ItemStack getStackInSlot(int slot) { return ItemStack.EMPTY; }
-
-        @Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) { return stack; }
-
-        @Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
-
-        @Override public int getSlotLimit(int slot) { return 0; }
-
-        @Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return false; }
-    };
-
-    private static final IFluidHandler DUMMY_FLUID_HANDLER = new IFluidHandler() {
-        @Override public IFluidTankProperties[] getTankProperties() { return new FluidTankProperties[0]; }
-
-        @Override public int fill(FluidStack resource, boolean doFill) { return 0; }
-
-        @Override public FluidStack drain(FluidStack resource, boolean doDrain) { return null; }
-
-        @Override public FluidStack drain(int maxDrain, boolean doDrain) { return null; }
-    };
-
-    @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
-
-    @Override @Nonnull protected IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
-
-    @Override @Nonnull public int[] getRedstonePos() { return new int[0]; }
-
-    @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
-
-    @Override public float getMinProcessDistance(@Nonnull MultiblockProcess<IMultiblockRecipe> process) { return 0; }
-
-    @Override public int getMaxProcessPerTick() { return 1; }
-
-    @Override public int getProcessQueueMaxLength() { return 1; }
-
-    @Override
-    public void invalidate() {
-        if (!world.isRemote && formed) {
-            TileEntityAdvancedCokeOvenMaster m = master();
-            if (m != null) {
-                m.active = false;
-                m.setHeatersActive();
-                m.efficientMarkDirty();
-                m.notifyNearbyClients();
-            }
-        }
-        super.invalidate();
     }
 }

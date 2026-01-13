@@ -64,35 +64,34 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private static final int progressResolution = 64;
 
     public FluidTank[] tanks = new FluidTank[] { new ITFluidTank(outputTankSize, this) };
-    public IItemHandler insertionHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
-
-    public MeltingCrucibleRecipe cachedSolarMelterRecipe;
 
     public static int slotCount = 3;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
+
     public int processTimeRemaining = 0;
     public double heatLevel = 0;
     public double reflectorStrength = 0;
     public int solarIncidenceAngleSection = 0;
 
+    public MeltingCrucibleRecipe cachedSolarMelterRecipe;
     private float soundVolume = 0f;
     private int soundGracePeriod = 0;
     private boolean isRunning = false;
-
-    private PoICache fluidOutput0, itemInput0, redstone0;
-    private BlockPos basePos0, collectorPos0, fluidOutputFront0, soundPos0;
-
     private boolean isLoaded = false;
     private boolean registered = false;
     private boolean reCheckOnLoad = false;
     private boolean savedRegistered = false;
-    private boolean needsPoIInit = true;
-
     private double distanceSqToTE;
     private int playerDimension;
     private int clientSyncTimer = 0;
-
     private int oldComparatorOutput = 0;
+
+    private PoICache fluidOutput0, itemInput0, redstone0;
+    private BlockPos basePos0, collectorPos0, fluidOutputFront0, soundPos0;
+
+    private boolean needsPoIInit = true;
+
+    public IItemHandler insertionHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -132,12 +131,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
-        if (distanceSqToTE > 4096) {
-            ITSoundHandler.StopSound(soundPos0);
-            soundVolume = 0f;
-            return;
-        }
-
+        if (distanceSqToTE > 4096) { ITSoundHandler.StopSound(soundPos0); soundVolume = 0f; return; }
         float targetSoundLevel = isRunning ? 1f : 0f;
         if (soundVolume < targetSoundLevel) {
             soundVolume = Math.min(soundVolume + 0.02f, targetSoundLevel);
@@ -146,10 +140,8 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
             if (soundGracePeriod > 0) soundGracePeriod--;
             else soundVolume = Math.max(soundVolume - 0.02f, targetSoundLevel);
         }
-
-        if (soundVolume <= 0f) {
-            ITSoundHandler.StopSound(soundPos0);
-        } else {
+        if (soundVolume <= 0f) ITSoundHandler.StopSound(soundPos0);
+        else {
             double distance = Math.sqrt(distanceSqToTE);
             float attenuation = Math.max((float)distance / 16f, 1f);
             ITSounds.heatExchanger.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
@@ -157,10 +149,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     }
 
     @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() {
-        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
-        super.onChunkUnload();
-    }
+    @Override public void onChunkUnload() { if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0); super.onChunkUnload(); }
 
     @Override public void disassemble() {
         if (soundPos0 == null) InitializePoIs();
@@ -168,9 +157,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
             ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         }
         if (!world.isRemote) {
-            for (ItemStack stack : inventory) {
-                if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack.copy());
-            }
+            for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack.copy());
             inventory.clear();
         }
         detachMirrors();
@@ -178,20 +165,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         super.disassemble();
     }
 
-    private void detachMirrors() {
-        Set<BlockPos> reflectors = SolarRegistry.getReflectorsInRange(world, basePos0, solarMinRange, solarMaxRange);
-        for (BlockPos pos : reflectors) {
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileEntitySolarReflectorSlave) {
-                TileEntitySolarReflectorMaster ref = ((TileEntitySolarReflectorSlave)tile).master();
-                if (ref != null) ref.detachTower();
-            }
-        }
-    }
-
-    public void requestUpdate() {
-        ImmersiveTechnology.packetHandler.sendToServer(new BinaryMessageTileSync(getPos(), Unpooled.buffer()));
-    }
+    public void requestUpdate() { ImmersiveTechnology.packetHandler.sendToServer(new BinaryMessageTileSync(getPos(), Unpooled.buffer())); }
 
     public void notifyNearbyClients() {
         ByteBuf buf = Unpooled.buffer();
@@ -217,9 +191,71 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
+    @Override public void update() {
+        super.update();
+        solarIncidenceAngleSection = computeSolarIncidenceAngleSection();
+        if (world.isRemote) { clientUpdate(); return; }
+        if (!formed) return;
+        if (needsPoIInit || redstone0 == null) { InitializePoIs(); needsPoIInit = false; }
+        if (!isLoaded) {
+            isLoaded = true;
+            notifyIONeighbors();
+            SolarRegistry.RegisterResult result = SolarRegistry.registerTower(world, basePos0);
+            registered = result.success;
+            if (!registered && savedRegistered) {
+                int y = basePos0.getY();
+                Set<BlockPos> towersAtY = SolarRegistry.getData(world).towerBasesByY.computeIfAbsent(y, k -> new HashSet<>());
+                towersAtY.add(basePos0);
+                SolarRegistry.getData(world).markDirty();
+                registered = true;
+            }
+            if (registered) checkReflectorPositions();
+        }
+        if (reCheckOnLoad) {
+            reCheckOnLoad = false;
+            if (registered) checkReflectorPositions();
+        }
+        boolean update = false;
+        boolean enabled = !isRSDisabled();
+        if (!enabled && reflectorStrength > 0) {
+            detachMirrors();
+            reflectorStrength = 0;
+            update = true;
+        }
+        double oldRef = reflectorStrength;
+        if (enabled && (world.getTotalWorldTime() % 60 == 0 || reflectorStrength == 0)) checkReflectorPositions();
+        if (reflectorStrength != oldRef) { update = true; notifyNearbyClients(); }
+        update |= heatLogic();
+        update |= recipeLogic();
+        update |= outputTankLogic();
+        boolean wasRunning = isRunning;
+        isRunning = soundGracePeriod > 0;
+        if (isRunning != wasRunning) notifyNearbyClients();
+        int comp = getComparatorInputOverride();
+        if (comp != oldComparatorOutput) {
+            oldComparatorOutput = comp;
+            world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+            update = true;
+        }
+        if (update || isRunning != wasRunning) {
+            efficientMarkDirty();
+            markContainingBlockForUpdate(null);
+        }
+    }
+
+    private void detachMirrors() {
+        Set<BlockPos> reflectors = SolarRegistry.getReflectorsInRange(world, basePos0, solarMinRange, solarMaxRange);
+        for (BlockPos pos : reflectors) {
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile instanceof TileEntitySolarReflectorSlave) {
+                TileEntitySolarReflectorMaster ref = ((TileEntitySolarReflectorSlave)tile).master();
+                if (ref != null) ref.detachTower();
+            }
+        }
+    }
+
     private void checkReflectorPositions() {
         Set<BlockPos> reflectors = SolarRegistry.getReflectorsInRange(world, basePos0, solarMinRange, solarMaxRange);
-
         for (BlockPos pos : reflectors) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileEntitySolarReflectorSlave) {
@@ -227,24 +263,19 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
                 if (ref != null && ref.isMirrorTaken && !ref.getCollectorPosition().equals(collectorPos0)) ref.detachTower();
             }
         }
-
         double totalMirrorStrength = 0;
         for (BlockPos pos : reflectors) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileEntitySolarReflectorSlave) {
                 TileEntitySolarReflectorMaster ref = ((TileEntitySolarReflectorSlave)tile).master();
-                if (ref != null && ref.setTowerCollectorPosition(collectorPos0)) {
-                    totalMirrorStrength += ref.getSolarCollectorStrength();
-                }
+                if (ref != null && ref.setTowerCollectorPosition(collectorPos0)) totalMirrorStrength += ref.getSolarCollectorStrength();
             }
         }
-
         totalMirrorStrength *= world.isRaining() ? 0.4 : 1;
         if (ITCompatModule.isAdvancedRocketryLoaded) totalMirrorStrength *= AdvancedRocketryHelper.getInsolation(world, getPos());
         double humidityBonus = 0.075 * totalMirrorStrength * -((world.getBiome(getPos()).getRainfall() - 0.5) / 0.5);
         if (ITCompatModule.isAdvancedRocketryLoaded) humidityBonus *= AdvancedRocketryHelper.getWaterPartialPressureMultiplier(world, getPos());
         totalMirrorStrength += humidityBonus;
-
         reflectorStrength = totalMirrorStrength;
     }
 
@@ -293,22 +324,16 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         boolean update = false;
         ItemStack filled = Utils.fillFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
         if (!filled.isEmpty()) {
-            if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), filled, true)) {
-                inventory.get(2).grow(filled.getCount());
-            } else if (inventory.get(2).isEmpty()) {
-                inventory.set(2, filled.copy());
-            }
+            if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), filled, true)) inventory.get(2).grow(filled.getCount());
+            else if (inventory.get(2).isEmpty()) inventory.set(2, filled.copy());
             inventory.get(1).shrink(1);
             if (inventory.get(1).getCount() <= 0) inventory.set(1, ItemStack.EMPTY);
             update = true;
         }
         ItemStack drained = Utils.drainFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
         if (!drained.isEmpty()) {
-            if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), drained, true)) {
-                inventory.get(2).grow(drained.getCount());
-            } else if (inventory.get(2).isEmpty()) {
-                inventory.set(2, drained.copy());
-            }
+            if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), drained, true)) inventory.get(2).grow(drained.getCount());
+            else if (inventory.get(2).isEmpty()) inventory.set(2, drained.copy());
             inventory.get(1).shrink(1);
             if (inventory.get(1).getCount() <= 0) inventory.set(1, ItemStack.EMPTY);
             update = true;
@@ -355,9 +380,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
                     tanks[0].fill(cachedSolarMelterRecipe.fluidOutput, true);
                     cachedSolarMelterRecipe = null;
                 }
-            } else {
-                processTimeRemaining = 0;
-            }
+            } else processTimeRemaining = 0;
         }
         if (didWork) soundGracePeriod = 60;
         else if (soundGracePeriod > 0) soundGracePeriod--;
@@ -372,15 +395,10 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         if (world.provider.getDimension() == player.dimension && distSq < 400 && (distanceSqToTE > 400 || playerDimension != player.dimension)) requestUpdate();
         distanceSqToTE = distSq;
         playerDimension = player.dimension;
-
         if (distSq < 4096) {
             clientSyncTimer++;
-            if (clientSyncTimer >= 40) {
-                clientSyncTimer = 0;
-                requestUpdate();
-            }
+            if (clientSyncTimer >= 40) { clientSyncTimer = 0; requestUpdate(); }
         }
-
         handleSounds();
     }
 
@@ -393,69 +411,57 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         return 0;
     }
 
-    @Override public void update() {
-        super.update();
-        solarIncidenceAngleSection = computeSolarIncidenceAngleSection();
-        if (world.isRemote) { clientUpdate(); return; }
-        if (!formed) return;
-        if (needsPoIInit || redstone0 == null) { InitializePoIs(); needsPoIInit = false; }
-        if (!isLoaded) {
-            isLoaded = true;
-            notifyIONeighbors();
-            SolarRegistry.RegisterResult result = SolarRegistry.registerTower(world, basePos0);
-            registered = result.success;
-            if (!registered && savedRegistered) {
-                int y = basePos0.getY();
-                Set<BlockPos> towersAtY = SolarRegistry.getData(world).towerBasesByY.computeIfAbsent(y, k -> new HashSet<>());
-                towersAtY.add(basePos0);
-                SolarRegistry.getData(world).markDirty();
-                registered = true;
+    private void InitializePoIs() {
+        for (PoIJSONSchema poi : TileEntityITMultiblockPartSolarMelter.instance.pointsOfInterest) {
+            switch (poi.name) {
+                case "fluid_output0":
+                    fluidOutput0 = new PoICache(facing, poi, mirrored);
+                    fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    break;
+                case "item_input0":
+                    itemInput0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "redstone0":
+                    redstone0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "sound0":
+                    soundPos0 = getBlockPosForPos(poi.position);
+                    break;
+                case "link0":
+                    basePos0 = getBlockPosForPos(new PoICache(facing, poi, mirrored).position);
+                    break;
+                case "collector0":
+                    collectorPos0 = getBlockPosForPos(new PoICache(facing, poi, mirrored).position);
+                    break;
             }
-            if (registered) checkReflectorPositions();
         }
-        if (reCheckOnLoad) {
-            reCheckOnLoad = false;
-            if (registered) checkReflectorPositions();
-        }
-
-        boolean update = false;
-        boolean enabled = !isRSDisabled();
-        if (!enabled && reflectorStrength > 0) {
-            detachMirrors();
-            reflectorStrength = 0;
-            update = true;
-        }
-        double oldRef = reflectorStrength;
-        if (enabled && (world.getTotalWorldTime() % 60 == 0 || reflectorStrength == 0)) checkReflectorPositions();
-        if (reflectorStrength != oldRef) {
-            update = true;
-            notifyNearbyClients();
-        }
-        update |= heatLogic();
-        update |= recipeLogic();
-        update |= outputTankLogic();
-
-        boolean wasRunning = isRunning;
-        isRunning = soundGracePeriod > 0;
-        if (isRunning != wasRunning) notifyNearbyClients();
-
-        int comp = getComparatorInputOverride();
-        if (comp != oldComparatorOutput) {
-            oldComparatorOutput = comp;
-            world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
-            update = true;
-        }
-
-        if (update || isRunning != wasRunning) {
-            efficientMarkDirty();
-            markContainingBlockForUpdate(null);
-        }
+        if (!world.isRemote) notifyIONeighbors();
     }
 
-    @Override public void TankContentsChanged() {
-        markContainingBlockForUpdate(null);
-        efficientMarkDirty();
+    private void notifyIONeighbors() {
+        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
+        notifyNeighbor(getBlockPosForPos(itemInput0.position));
+        notifyNeighbor(getBlockPosForPos(redstone0.position));
     }
+
+    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
+
+    @Override public void TankContentsChanged() { markContainingBlockForUpdate(null); efficientMarkDirty(); }
+
+    @Override public boolean isRSDisabled() {
+        int[] rs = getRedstonePos();
+        if (rs.length < 1) return false;
+        for (int p : rs) {
+            TileEntity te = getTileForPos(p);
+            if (te != null) {
+                int power = world.getRedstonePowerFromNeighbors(te.getPos());
+                return redstoneControlInverted != (power > 0);
+            }
+        }
+        return false;
+    }
+
+    @Override public int getComparatorInputOverride() { return (int)(15 * heatLevel / workingHeatLevel); }
 
     @Override public boolean isDummy() { return false; }
 
@@ -493,57 +499,15 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 
-    private void InitializePoIs() {
-        for (PoIJSONSchema poi : TileEntityITMultiblockPartSolarMelter.instance.pointsOfInterest) {
-            switch (poi.name) {
-                case "fluid_output0":
-                    fluidOutput0 = new PoICache(facing, poi, mirrored);
-                    fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
-                    break;
-                case "item_input0":
-                    itemInput0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "redstone0":
-                    redstone0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "sound0":
-                    soundPos0 = getBlockPosForPos(poi.position);
-                    break;
-                case "link0":
-                    basePos0 = getBlockPosForPos(new PoICache(facing, poi, mirrored).position);
-                    break;
-                case "collector0":
-                    collectorPos0 = getBlockPosForPos(new PoICache(facing, poi, mirrored).position);
-                    break;
-            }
-        }
-        if (!world.isRemote) notifyIONeighbors();
-    }
-
-    private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        notifyNeighbor(getBlockPosForPos(itemInput0.position));
-        notifyNeighbor(getBlockPosForPos(redstone0.position));
-    }
-
-    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
-
     @Override @Nonnull public NonNullList<ItemStack> getInventory() { return inventory; }
 
     @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
 
     @Override public int getSlotLimit(int slot) { return 64; }
 
-    @Override public void doGraphicalUpdates(int slot) {
-        markDirty();
-        markContainingBlockForUpdate(null);
-    }
+    @Override public void doGraphicalUpdates(int slot) { markDirty(); markContainingBlockForUpdate(null); }
 
     @Override @Nonnull public NonNullList<ItemStack> getDroppedItems() { return getInventory(); }
 
     @Override public int getComparatedSize() { return slotCount; }
-
-    @Override public int getComparatorInputOverride() {
-        return (int)(15 * heatLevel / workingHeatLevel);
-    }
 }

@@ -53,8 +53,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -77,26 +75,27 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
             new ITFluidTank(inputTankSize, this),
             new ITFluidTank(outputTankSize, this)
     };
-
-    public GasTurbineRecipe lastRecipe;
-    private GasTurbineRecipe cachedFuelRecipe;
+    public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
     public int fuelBurnRemaining = 0;
     public int speed;
     public int ignitionGracePeriod = 0;
     public boolean ignited;
     public boolean starterRunning = false;
+
     private float targetSoundLevel;
     private float soundVolume = 0f;
     private int soundGracePeriod;
-
-    public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
-    private IMechanicalEnergy alternator;
-    protected PoICache energyInput0, energyInput1, fluidInput0, fluidOutput0, mechanicalOutput0, redstone0;
-    private BlockPos outputFront0, mechanicalOutputPos0, particle0, sound0, sound1, sound2, sound3;
     private int tickCountdown = 5;
     public boolean redstoneControlInverted = false;
     private int oldComparatorOutput;
+
+    public GasTurbineRecipe lastRecipe;
+    private GasTurbineRecipe cachedFuelRecipe;
+    private IMechanicalEnergy alternator;
+
+    protected PoICache energyInput0, energyInput1, fluidInput0, fluidOutput0, mechanicalOutput0, redstone0;
+    private BlockPos outputFront0, mechanicalOutputPos0, particle0, sound0, sound1, sound2, sound3;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -130,14 +129,13 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     @SideOnly(Side.CLIENT)
     public void spawnParticles() {
-        if (!starterRunning || speed < maxSpeed / 4) { return; }
+        if (!starterRunning || speed < maxSpeed / 4) return;
         Random rand = new Random();
-        if (rand.nextInt(40) == 0) { return; }
+        if (rand.nextInt(40) != 0) return;
         int lessParticleSetting = ClientUtils.mc().gameSettings.particleSetting;
-        if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) { return; }
+        if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double distanceLimit = 64;
-        if (particle0.distanceSq(player.posX, player.posY, player.posZ) > distanceLimit * distanceLimit) { return; }
+        if (particle0.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
         Particle particle = new ParticleSmokeNormal.Factory().createParticle(0, world, particle0.getX() + 2 - rand.nextFloat() * 3, particle0.getY() + 0.5f, particle0.getZ() + 2 - rand.nextFloat() * 3, 0, 0.02f, 0);
         ClientUtils.mc().effectRenderer.addEffect(particle);
     }
@@ -145,15 +143,14 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
         if (sound0 == null) InitializePoIs();
-        if (sound0 == null) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         float att = Math.max((float)player.getDistanceSq(sound0.getX(), sound0.getY(), sound0.getZ()) / 64, 1);
         float level = ITUtils.remapRange(0, 1, 0.5f, 1.5f, soundVolume);
-        if (speed == 0) { ITSoundHandler.StopSound(sound0); }
-        else { ITSounds.gasTurbineRunning.PlayRepeating(sound0, (level - 0.5f) / (4 * att), level); }
+        if (speed == 0) ITSoundHandler.StopSound(sound0);
+        else ITSounds.gasTurbineRunning.PlayRepeating(sound0, (level - 0.5f) / (4 * att), level);
         if (starterRunning) {
             ITSounds.gasTurbineStarter.PlayRepeating(sound3, Math.min((level - .5f) / att, .2f), 1);
-            if (speed >= maxSpeed / 4) { ITSounds.gasTurbineArc.PlayRepeating(sound1, Math.min((level - .5f) / att, .2f), 1); }
+            if (speed >= maxSpeed / 4) ITSounds.gasTurbineArc.PlayRepeating(sound1, Math.min((level - .5f) / att, .2f), 1);
         } else {
             ITSoundHandler.StopSound(sound3);
             ITSoundHandler.StopSound(sound1);
@@ -191,79 +188,36 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
 
+    public void notifyNearbyClients() {
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeInt(speed);
+        buf.writeBoolean(starterRunning);
+        BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
+    }
+
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
-    private void speedUp() {
-        if (starterRunning) {
-            if (speed >= maxSpeed / 4) { speed = Math.max(Math.min(maxSpeed, speed + speedGainPerTick - speedLossPerTick), maxSpeed / 4); }
-            else { speed = Math.min(maxSpeed / 4, speed + speedGainPerTick); }
-        } else {
-            if (speed >= maxSpeed / 4) { speed = Math.min(maxSpeed, speed + speedGainPerTick); }
-            else { speedDown(); }
-        }
-    }
-
-    private void speedDown() {
-        if (ignitionGracePeriod > 0) { ignitionGracePeriod--; }
-        speed = Math.max(0, speed - speedLossPerTick);
-    }
-
-    public boolean isValidAlternator() {
-        if (mechanicalOutput0 == null) { InitializePoIs(); }
-        if (alternator == null || !alternator.isValid()) {
-            TileEntity tile = world.getTileEntity(mechanicalOutputPos0);
-            if (tile instanceof IMechanicalEnergy) {
-                IMechanicalEnergy possibleAlternator = (IMechanicalEnergy)tile;
-                if (possibleAlternator.isValid() && possibleAlternator.isMechanicalEnergyReceiver(mechanicalOutput0.facing.getOpposite())) { alternator = possibleAlternator; }
-            }
-        }
-        return alternator != null && alternator.isValid();
-    }
-
-    public void ignite() {
-        sparkplugStorage.modifyEnergyStored(-sparkplugConsumption);
-        ignited = true;
-        ignitionGracePeriod = 60;
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.buffer());
-    }
-
-    public boolean canIgnite() {
-        boolean canFuelCombust = true;
-        if (ITCompatModule.isAdvancedRocketryLoaded) { canFuelCombust = AdvancedRocketryHelper.isAtmosphereSuitableForCombustion(world, ITUtils.LocalOffsetToWorldBlockPos(getPos(), 0, 0, -1, facing, mirrored)); }
-        return sparkplugConsumption <= sparkplugStorage.getEnergyStored() && canFuelCombust;
-    }
-
-    private boolean pumpOutputOut() {
-        if (tanks[1].getFluidAmount() == 0) { return false; }
-        IFluidHandler output = FluidUtil.getFluidHandler(world, outputFront0, fluidOutput0.facing.getOpposite());
-        if (output == null) { return false; }
-        FluidStack out = tanks[1].getFluid();
-        if (out == null) { return false; }
-        int accepted = output.fill(out, false);
-        if (accepted == 0) { return false; }
-        int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-        tanks[1].drain(drained, true);
-        return drained > 0;
-    }
-
     @Override public void update() {
-        if (formed && energyInput0 == null) { InitializePoIs(); }
+        if (formed && energyInput0 == null) InitializePoIs();
         super.update();
         if (!formed || world.isRemote) {
             if (world.isRemote) {
                 float rotationSpeed = speed == 0 ? 0f : ((float)speed / (float)maxSpeed) * maxRotationSpeed;
                 animation.setAnimationRotation(animation.getAnimationRotation() + animation.getAnimationMomentum());
                 animation.setAnimationMomentum(rotationSpeed);
-                if (soundVolume < targetSoundLevel) { soundVolume = Math.min(targetSoundLevel, soundVolume + 0.01f); soundGracePeriod = 60; }
-                else if (soundVolume > targetSoundLevel) {
-                    if (soundGracePeriod > 0) { soundGracePeriod--; }
-                    else { soundVolume = Math.max(targetSoundLevel, soundVolume - 0.01f); }
+                if (soundVolume < targetSoundLevel) {
+                    soundVolume = Math.min(targetSoundLevel, soundVolume + 0.01f);
+                    soundGracePeriod = 60;
+                } else if (soundVolume > targetSoundLevel) {
+                    if (soundGracePeriod > 0) soundGracePeriod--;
+                    else soundVolume = Math.max(targetSoundLevel, soundVolume - 0.01f);
                 }
                 handleSounds();
                 spawnParticles();
             }
             return;
         }
+
         boolean update = false;
         ignited = ignitionGracePeriod > 0;
         boolean prevStarterRunning = starterRunning;
@@ -271,36 +225,40 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         if (canRun && electricStarterConsumption <= starterStorage.getEnergyStored()) {
             starterRunning = true;
             starterStorage.modifyEnergyStored(-electricStarterConsumption);
-        } else { starterRunning = false; }
+        } else starterRunning = false;
         int prevSpeed = speed;
+
         if (speed < maxSpeed / 4) {
             if (canRun) {
-                if (ignitionGracePeriod > 0) { ignitionGracePeriod--; }
+                if (ignitionGracePeriod > 0) ignitionGracePeriod--;
                 speedUp();
-            } else { speedDown(); }
+            } else speedDown();
         } else {
             if (fuelBurnRemaining > 0 && (ignited || canIgnite())) {
                 fuelBurnRemaining--;
-                if (!ignited) { ignite(); }
+                if (!ignited) ignite();
                 speedUp();
             } else if (canRun && tanks[0].getFluidAmount() > 0 && (ignited || canIgnite())) {
-                if (lastRecipe == null || !Objects.requireNonNull(tanks[0].getFluid()).isFluidEqual(lastRecipe.fluidInput)) { cachedFuelRecipe = GasTurbineRecipe.findFuel(tanks[0].getFluid()); }
+                if (lastRecipe == null || !Objects.requireNonNull(tanks[0].getFluid()).isFluidEqual(lastRecipe.fluidInput)) cachedFuelRecipe = GasTurbineRecipe.findFuel(tanks[0].getFluid());
                 GasTurbineRecipe recipe = lastRecipe = cachedFuelRecipe;
                 if (recipe != null && recipe.fluidInput.amount <= tanks[0].getFluidAmount()) {
                     fuelBurnRemaining = recipe.getTotalProcessTime() - 1;
                     tanks[0].drain(recipe.fluidInput.amount, true);
-                    if (recipe.fluidOutput != null) { tanks[1].fill(recipe.fluidOutput, true); }
-                    if (!ignited) { ignite(); }
+                    if (recipe.fluidOutput != null) tanks[1].fill(recipe.fluidOutput, true);
+                    if (!ignited) ignite();
                     speedUp();
                     update = true;
-                } else { speedDown(); }
-            } else { speedDown(); }
+                } else speedDown();
+            } else speedDown();
         }
+
         if (pumpOutputOut()) update = true;
+
         float rotationSpeed = speed == 0 ? 0f : ((float)speed / (float)maxSpeed) * maxRotationSpeed;
         float oldMomentum = animation.getAnimationMomentum();
         animation.setAnimationMomentum(rotationSpeed);
         animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
+
         boolean changed = animation.getAnimationMomentum() != oldMomentum || starterRunning != prevStarterRunning || prevSpeed != speed;
         tickCountdown--;
         if (changed && tickCountdown <= 0) {
@@ -311,6 +269,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
             efficientMarkDirty();
             markContainingBlockForUpdate(null);
         }
+
         int comp = getComparatorInputOverride();
         if (comp != oldComparatorOutput) {
             notifyRedstoneNeighbor();
@@ -318,148 +277,63 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         }
     }
 
+    private void speedUp() {
+        if (starterRunning) {
+            if (speed >= maxSpeed / 4) speed = Math.max(Math.min(maxSpeed, speed + speedGainPerTick - speedLossPerTick), maxSpeed / 4);
+            else speed = Math.min(maxSpeed / 4, speed + speedGainPerTick);
+        } else {
+            if (speed >= maxSpeed / 4) speed = Math.min(maxSpeed, speed + speedGainPerTick);
+            else speedDown();
+        }
+    }
+
+    private void speedDown() {
+        if (ignitionGracePeriod > 0) ignitionGracePeriod--;
+        speed = Math.max(0, speed - speedLossPerTick);
+    }
+
+    private boolean isValidAlternator() {
+        if (mechanicalOutput0 == null) InitializePoIs();
+        if (alternator == null || !alternator.isValid()) {
+            TileEntity tile = world.getTileEntity(mechanicalOutputPos0);
+            if (tile instanceof IMechanicalEnergy) {
+                IMechanicalEnergy possible = (IMechanicalEnergy)tile;
+                if (possible.isValid() && possible.isMechanicalEnergyReceiver(mechanicalOutput0.facing.getOpposite())) alternator = possible;
+            }
+        }
+        return alternator != null && alternator.isValid();
+    }
+
+    private void ignite() {
+        sparkplugStorage.modifyEnergyStored(-sparkplugConsumption);
+        ignited = true;
+        ignitionGracePeriod = 60;
+        BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.buffer());
+    }
+
+    private boolean canIgnite() {
+        boolean canFuelCombust = true;
+        if (ITCompatModule.isAdvancedRocketryLoaded) canFuelCombust = AdvancedRocketryHelper.isAtmosphereSuitableForCombustion(world, ITUtils.LocalOffsetToWorldBlockPos(getPos(), 0, 0, -1, facing, mirrored));
+        return sparkplugConsumption <= sparkplugStorage.getEnergyStored() && canFuelCombust;
+    }
+
+    private boolean pumpOutputOut() {
+        if (tanks[1].getFluidAmount() == 0) return false;
+        IFluidHandler output = FluidUtil.getFluidHandler(world, outputFront0, fluidOutput0.facing.getOpposite());
+        if (output == null) return false;
+        FluidStack out = tanks[1].getFluid();
+        if (out == null) return false;
+        int accepted = output.fill(out, false);
+        if (accepted == 0) return false;
+        int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+        tanks[1].drain(drained, true);
+        return drained > 0;
+    }
+
     private void notifyRedstoneNeighbor() {
         BlockPos rsPos = getBlockPosForPos(redstone0.position);
         world.notifyNeighborsOfStateChange(rsPos, world.getBlockState(rsPos).getBlock(), false);
     }
-
-    public void notifyNearbyClients() {
-        ByteBuf buf = Unpooled.buffer();
-        buf.writeInt(speed);
-        buf.writeBoolean(starterRunning);
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
-    }
-
-    @Override public boolean isDummy() { return false; }
-
-    @Override public TileEntityGasTurbineMaster master() {
-        master = this;
-        return this;
-    }
-
-    @Override public void TankContentsChanged() {
-        lastRecipe = null;
-        markContainingBlockForUpdate(null);
-        tickCountdown = 0;
-    }
-
-    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
-        if (!formed) { return ITUtils.emptyIFluidTankList; }
-        if (fluidInput0 == null) { InitializePoIs(); }
-        if (side == null) { return tanks; }
-        if (fluidInput0.isPoI(side, position)) { return new IFluidTank[] {tanks[0]}; }
-        if (fluidOutput0.isPoI(side, position)) { return new IFluidTank[] {tanks[1]}; }
-        return ITUtils.emptyIFluidTankList;
-    }
-
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if (!formed || fluidInput0 == null) { InitializePoIs(); }
-        if (!fluidInput0.isPoI(side, position)) { return false; }
-        if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) { return false; }
-        if (tanks[0].getFluid() == null) { return GasTurbineRecipe.findFuelByFluid(resource.getFluid()) != null; }
-        return resource.getFluid() == tanks[0].getFluid().getFluid();
-    }
-
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (!formed || fluidOutput0 == null) { InitializePoIs(); }
-        return fluidOutput0.isPoI(side, position) && tanks[1].getFluidAmount() > 0;
-    }
-
-    @Override @Nonnull public int[] getEnergyPos() {
-        if (!formed) { return new int[0]; }
-        if (energyInput0 == null) { InitializePoIs(); }
-        return new int[] {energyInput0.position, energyInput1.position};
-    }
-
-    public boolean isMechanicalEnergyTransmitter(@Nullable EnumFacing facing, int position) {
-        if (!formed) { return false; }
-        if (mechanicalOutput0 == null) { InitializePoIs(); }
-        return facing != null && mechanicalOutput0.isPoI(facing, position);
-    }
-
-    public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
-        if (!formed) { return false; }
-        if (facing == null) { return false; }
-        if (energyInput0 == null) { InitializePoIs(); }
-        if (energyInput0.isPoI(facing, position)) { return true; }
-        return energyInput1.isPoI(facing, position);
-    }
-
-    public IEnergyStorage getEnergyAtPosition(@Nullable EnumFacing facing, int position) {
-        if (!formed) { return null; }
-        if (facing == null) { return null; }
-        if (energyInput0 == null) { InitializePoIs(); }
-        if (energyInput0.isPoI(facing, position)) { return starterStorage; }
-        if (energyInput1.isPoI(facing, position)) { return sparkplugStorage; }
-        return null;
-    }
-
-    public boolean isFluidInputPosition(@Nullable EnumFacing facing, int position) {
-        if (!formed) { return false; }
-        if (fluidInput0 == null) { InitializePoIs(); }
-        return facing != null && fluidInput0.isPoI(facing, position);
-    }
-
-    public boolean isFluidOutputPosition(@Nullable EnumFacing facing, int position) {
-        if (!formed) { return false; }
-        if (fluidOutput0 == null) { InitializePoIs(); }
-        return facing != null && fluidOutput0.isPoI(facing, position);
-    }
-
-    public boolean isStarterPosition(@Nullable EnumFacing facing, int position) {
-        if (!formed) { return false; }
-        if (energyInput0 == null) { InitializePoIs(); }
-        return facing != null && energyInput0.isPoI(facing, position);
-    }
-
-    public boolean isSparkplugPosition(@Nullable EnumFacing facing, int position) {
-        if (!formed) { return false; }
-        if (energyInput1 == null) { InitializePoIs(); }
-        return facing != null && energyInput1.isPoI(facing, position);
-    }
-
-    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            return isFluidInputPosition(facing, pos) || isFluidOutputPosition(facing, pos);
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            if (isFluidInputPosition(facing, pos) || isFluidOutputPosition(facing, pos)) {
-                return (T) new GasTurbineFluidHandler(getAccessibleFluidTanks(facing, pos), this, facing, pos);
-            }
-        }
-        return super.getCapability(capability, facing);
-    }
-
-    @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) { return new int[0]; }
-        if (redstone0 == null) { InitializePoIs(); }
-        return new int[] {redstone0.position};
-    }
-
-    @Override public boolean isRSDisabled() {
-        int[] rsPositions = getRedstonePos();
-        if (rsPositions.length < 1) return false;
-        for (int rsPos : rsPositions) {
-            TileEntity tile = world.getTileEntity(getBlockPosForPos(rsPos));
-            if (tile != null) {
-                int power = world.getRedstonePowerFromNeighbors(tile.getPos());
-                boolean b = power > 0;
-                return redstoneControlInverted != b;
-            }
-        }
-        return false;
-    }
-
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
-
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
-
-    @Override public int getComparatorInputOverride() { return 15 * speed / maxSpeed; }
 
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartGasTurbine.instance.pointsOfInterest) {
@@ -474,18 +348,10 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                 case "particle0":
                     particle0 = getBlockPosForPos(poi.position);
                     break;
-                case "sound0":
-                    sound0 = getBlockPosForPos(poi.position);
-                    break;
-                case "sound1":
-                    sound1 = getBlockPosForPos(poi.position);
-                    break;
-                case "sound2":
-                    sound2 = getBlockPosForPos(poi.position);
-                    break;
-                case "sound3":
-                    sound3 = getBlockPosForPos(poi.position);
-                    break;
+                case "sound0": sound0 = getBlockPosForPos(poi.position); break;
+                case "sound1": sound1 = getBlockPosForPos(poi.position); break;
+                case "sound2": sound2 = getBlockPosForPos(poi.position); break;
+                case "sound3": sound3 = getBlockPosForPos(poi.position); break;
                 case "energy_input0":
                     energyInput0 = new PoICache(facing, poi, mirrored);
                     break;
@@ -501,7 +367,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                     break;
             }
         }
-        if (!world.isRemote) { notifyIONeighbors(); }
+        if (!world.isRemote) notifyIONeighbors();
     }
 
     private void notifyIONeighbors() {
@@ -513,6 +379,112 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
+
+    @Override public void TankContentsChanged() {
+        lastRecipe = null;
+        markContainingBlockForUpdate(null);
+        tickCountdown = 0;
+    }
+
+    @Override public boolean isRSDisabled() {
+        int[] rsPositions = getRedstonePos();
+        if (rsPositions.length < 1) return false;
+        for (int rsPos : rsPositions) {
+            TileEntity tile = world.getTileEntity(getBlockPosForPos(rsPos));
+            if (tile != null) {
+                int power = world.getRedstonePowerFromNeighbors(tile.getPos());
+                return redstoneControlInverted != (power > 0);
+            }
+        }
+        return false;
+    }
+
+    @Override public int getComparatorInputOverride() { return 15 * speed / maxSpeed; }
+
+    @Override public boolean isDummy() { return false; }
+
+    @Override public TileEntityGasTurbineMaster master() {
+        master = this;
+        return this;
+    }
+
+    @Override @Nonnull public int[] getRedstonePos() {
+        if (!formed) return new int[0];
+        if (redstone0 == null) InitializePoIs();
+        return new int[] {redstone0.position};
+    }
+
+    @Override @Nonnull public int[] getEnergyPos() {
+        if (!formed) return new int[0];
+        if (energyInput0 == null) InitializePoIs();
+        return new int[] {energyInput0.position, energyInput1.position};
+    }
+
+    public boolean isMechanicalEnergyTransmitter(@Nullable EnumFacing facing, int position) {
+        if (!formed) return false;
+        if (mechanicalOutput0 == null) InitializePoIs();
+        return facing != null && mechanicalOutput0.isPoI(facing, position);
+    }
+
+    public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
+        if (!formed) return false;
+        if (facing == null) return false;
+        if (energyInput0 == null) InitializePoIs();
+        return energyInput0.isPoI(facing, position) || energyInput1.isPoI(facing, position);
+    }
+
+    public IEnergyStorage getEnergyAtPosition(@Nullable EnumFacing facing, int position) {
+        if (!formed || facing == null) return null;
+        if (energyInput0 == null) InitializePoIs();
+        if (energyInput0.isPoI(facing, position)) return starterStorage;
+        if (energyInput1.isPoI(facing, position)) return sparkplugStorage;
+        return null;
+    }
+
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
+        if (!formed) return ITUtils.emptyIFluidTankList;
+        if (fluidInput0 == null) InitializePoIs();
+        if (side == null) return tanks;
+        if (fluidInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
+        if (fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
+        return ITUtils.emptyIFluidTankList;
+    }
+
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+        if (!formed || fluidInput0 == null) InitializePoIs();
+        if (!fluidInput0.isPoI(side, position)) return false;
+        if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
+        if (tanks[0].getFluid() == null) return GasTurbineRecipe.findFuelByFluid(resource.getFluid()) != null;
+        return resource.getFluid() == tanks[0].getFluid().getFluid();
+    }
+
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+        if (!formed || fluidOutput0 == null) InitializePoIs();
+        return fluidOutput0.isPoI(side, position) && tanks[1].getFluidAmount() > 0;
+    }
+
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            if (fluidInput0 == null) InitializePoIs();
+            return fluidInput0.isPoI(facing, pos) || fluidOutput0.isPoI(facing, pos);
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            if (fluidInput0 == null) InitializePoIs();
+            if (fluidInput0.isPoI(facing, pos) || fluidOutput0.isPoI(facing, pos)) {
+                return (T) new GasTurbineFluidHandler(getAccessibleFluidTanks(facing, pos), this, facing, pos);
+            }
+        }
+        return super.getCapability(capability, facing);
+    }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 
     public static class GasTurbineFluidHandler implements IFluidHandler {
         private final IFluidTank[] accessibleTanks;
@@ -528,14 +500,12 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         }
 
         private int getTankIndex(IFluidTank tank) {
-            for (int i = 0; i < master.tanks.length; i++) {
-                if (master.tanks[i] == tank) { return i; }
-            }
+            for (int i = 0; i < master.tanks.length; i++) if (master.tanks[i] == tank) return i;
             return -1;
         }
 
         @Override public IFluidTankProperties[] getTankProperties() {
-            List<IFluidTankProperties> list = new ArrayList<>();
+            java.util.List<IFluidTankProperties> list = new java.util.ArrayList<>();
             for (IFluidTank tank : accessibleTanks) {
                 int index = getTankIndex(tank);
                 boolean canFill = index == 0;
@@ -546,7 +516,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         }
 
         @Override public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null) { return 0; }
+            if (resource == null) return 0;
             resource = resource.copy();
             int filled = 0;
             for (IFluidTank accessible : accessibleTanks) {
@@ -555,30 +525,30 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                     int f = accessible.fill(resource, doFill);
                     filled += f;
                     resource.amount -= f;
-                    if (doFill && f > 0) { master.TankContentsChanged(); }
-                    if (resource.amount <= 0) { return filled; }
+                    if (doFill && f > 0) master.TankContentsChanged();
+                    if (resource.amount <= 0) return filled;
                 }
             }
             return filled;
         }
 
         @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null) { return null; }
+            if (resource == null) return null;
             resource = resource.copy();
             FluidStack drained = null;
             for (IFluidTank accessible : accessibleTanks) {
                 int iTank = getTankIndex(accessible);
                 if (iTank != -1 && master.canDrainTankFrom(iTank, side, position)) {
-                    FluidStack tankFluid = accessible.getFluid();
-                    if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
-                        int amount = Math.min(resource.amount, tankFluid.amount);
+                    FluidStack tf = accessible.getFluid();
+                    if (tf != null && tf.isFluidEqual(resource)) {
+                        int amount = Math.min(resource.amount, tf.amount);
                         FluidStack d = accessible.drain(amount, doDrain);
                         if (d != null) {
-                            if (drained == null) { drained = d.copy(); }
-                            else { drained.amount += d.amount; }
+                            if (drained == null) drained = d.copy();
+                            else drained.amount += d.amount;
+                            if (doDrain && d.amount > 0) master.TankContentsChanged();
                             resource.amount -= d.amount;
-                            if (doDrain && d.amount > 0) { master.TankContentsChanged(); }
-                            if (resource.amount <= 0) { return drained; }
+                            if (resource.amount <= 0) return drained;
                         }
                     }
                 }
@@ -594,11 +564,11 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                 if (iTank != -1 && master.canDrainTankFrom(iTank, side, position)) {
                     FluidStack d = accessible.drain(toDrain, doDrain);
                     if (d != null) {
-                        if (drained == null) { drained = d.copy(); }
-                        else if (drained.isFluidEqual(d)) { drained.amount += d.amount; }
+                        if (drained == null) drained = d.copy();
+                        else if (drained.isFluidEqual(d)) drained.amount += d.amount;
                         toDrain -= d.amount;
-                        if (doDrain && d.amount > 0) { master.TankContentsChanged(); }
-                        if (toDrain <= 0) { return drained; }
+                        if (doDrain && d.amount > 0) master.TankContentsChanged();
+                        if (toDrain <= 0) return drained;
                     }
                 }
             }

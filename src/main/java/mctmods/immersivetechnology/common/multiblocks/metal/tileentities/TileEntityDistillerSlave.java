@@ -44,6 +44,8 @@ import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IFluxReceiver, EnergyHelper.IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
 
+    private TileEntityDistillerMaster master;
+
     public TileEntityDistillerSlave() { super(TileEntityITMultiblockPartDistiller.instance, 16000, true); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
@@ -57,9 +59,7 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
 
     @Override public boolean isDummy() { return true; }
 
-    private TileEntityDistillerMaster master;
-
-    @Override public TileEntityDistillerMaster master() {
+    public TileEntityDistillerMaster master() {
         if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
@@ -186,7 +186,7 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
         return super.getCapability(capability, facing);
     }
 
-    public BlockPos posToMultiblock() {
+    private BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartDistiller.instance.width;
         int length = TileEntityITMultiblockPartDistiller.instance.length;
         int y = pos / (length * width);

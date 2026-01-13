@@ -17,9 +17,9 @@ import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
+import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
@@ -68,21 +68,20 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     public static int slotCount = 5;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
+    public int processTimeRemaining = 0;
+
     private boolean running;
     private float soundVolume = 0f;
     private int soundGracePeriod = 60;
 
-    protected PoICache energyInput0, fluidInput0, fluidOutput0, itemOutput0, redstone0;
-    private BlockPos fluidOutputFront0, itemOutputFront0, soundPos0;
+    public DistillerRecipe cachedDistillerRecipe;
     public boolean redstoneControlInverted = false;
     private int oldComparatorOutput;
 
-    public DistillerRecipe cachedDistillerRecipe;
-    public int processTimeRemaining = 0;
-
     private boolean needsPoIInit = false;
 
-    public TileEntityDistillerMaster() { super(); }
+    protected PoICache energyInput0, fluidInput0, fluidOutput0, itemOutput0, redstone0;
+    private BlockPos fluidOutputFront0, itemOutputFront0, soundPos0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -95,9 +94,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
         if (!descPacket && nbt.hasKey("cachedRecipe")) cachedDistillerRecipe = DistillerRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
         if (!descPacket && formed) needsPoIInit = true;
-        if (!descPacket) {
-            inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
-        }
+        if (!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -110,9 +107,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
         if (!descPacket && cachedDistillerRecipe != null) nbt.setTag("cachedRecipe", cachedDistillerRecipe.writeToNBT(new NBTTagCompound()));
-        if (!descPacket) {
-            nbt.setTag("inventory", Utils.writeInventory(inventory));
-        }
+        if (!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
     }
 
     @SideOnly(Side.CLIENT)
@@ -157,40 +152,19 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
-    private void pumpOutputOut() {
-        if (tanks[1].getFluidAmount() == 0) return;
-        if (fluidOutput0 == null) InitializePoIs();
-        if (fluidOutput0 == null) return;
-        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputFront0, fluidOutput0.facing.getOpposite());
-        if (output == null) return;
-        FluidStack out = tanks[1].getFluid();
-        if (out == null) return;
-        int accepted = output.fill(out, false);
-        if (accepted > 0) {
-            int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-            tanks[1].drain(drained, true);
-        }
-    }
-
     @Override public void update() {
         if (!formed) return;
-
         if (needsPoIInit || energyInput0 == null || fluidInput0 == null || fluidOutput0 == null || itemOutput0 == null || redstone0 == null || soundPos0 == null) {
             InitializePoIs();
             needsPoIInit = false;
         }
-
         super.update();
-
         if (world.isRemote) {
             handleSounds();
             return;
         }
-
         boolean update = false;
-
         boolean shouldRun = !isRSDisabled();
-
         if (processTimeRemaining == 0 && shouldRun) {
             FluidStack input = tanks[0].getFluid();
             if (input != null && input.amount > 0) {
@@ -205,7 +179,6 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
                 }
             }
         }
-
         if (processTimeRemaining > 0 && shouldRun) {
             if (cachedDistillerRecipe == null) {
                 processTimeRemaining = 0;
@@ -226,7 +199,6 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
                 processTimeRemaining = 0;
             }
         }
-
         if (tanks[1].getFluidAmount() > 0) {
             ItemStack filled = Utils.fillFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
             if (!filled.isEmpty()) {
@@ -247,8 +219,6 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         }
         pumpOutputOut();
         if (!inventory.get(4).isEmpty()) {
-            if (itemOutput0 == null) InitializePoIs();
-            if (itemOutput0 == null) return;
             TileEntity te = world.getTileEntity(itemOutputFront0);
             if (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutput0.facing.getOpposite())) {
                 IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutput0.facing.getOpposite());
@@ -276,58 +246,18 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         }
     }
 
-    @Override @Nonnull public int[] getOutputSlots() { return new int[]{4}; }
-
-    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<DistillerRecipe> process) { return true; }
-
-    @Override public boolean isDummy() { return false; }
-
-    @Override public TileEntityDistillerMaster master() { return this; }
-
-    @Override public void TankContentsChanged() {
-        if (processTimeRemaining == 0) cachedDistillerRecipe = null;
-        efficientMarkDirty();
-        markContainingBlockForUpdate(null);
-    }
-
-    public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
-        if (!formed) return false;
-        if (energyInput0 == null) InitializePoIs();
-        return facing != null && energyInput0.isPoI(facing, position);
-    }
-
-    @Override @Nonnull public int[] getEnergyPos() {
-        if (!formed) return new int[0];
-        if (energyInput0 == null) InitializePoIs();
-        return new int[] {energyInput0.position};
-    }
-
-    @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return new int[0];
-        if (redstone0 == null) InitializePoIs();
-        return new int[] {redstone0.position};
-    }
-
-    @Override public boolean isRSDisabled() {
-        if (redstone0 == null) InitializePoIs();
-        int[] rsPositions = getRedstonePos();
-        if (rsPositions.length < 1) return false;
-        for (int rsPos : rsPositions) {
-            TileEntity tile = world.getTileEntity(getBlockPosForPos(rsPos));
-            if (tile != null) {
-                int power = world.getRedstonePowerFromNeighbors(tile.getPos());
-                boolean b = power > 0;
-                return redstoneControlInverted != b;
-            }
+    private void pumpOutputOut() {
+        if (tanks[1].getFluidAmount() == 0) return;
+        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputFront0, fluidOutput0.facing.getOpposite());
+        if (output == null) return;
+        FluidStack out = tanks[1].getFluid();
+        if (out == null) return;
+        int accepted = output.fill(out, false);
+        if (accepted > 0) {
+            int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+            tanks[1].drain(drained, true);
         }
-        return false;
     }
-
-    @Override public int getComparatorInputOverride() { return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored(); }
-
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
-
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartDistiller.instance.pointsOfInterest) {
@@ -366,6 +296,57 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
+
+    @Override public void TankContentsChanged() {
+        if (processTimeRemaining == 0) cachedDistillerRecipe = null;
+        efficientMarkDirty();
+        markContainingBlockForUpdate(null);
+    }
+
+    @Override public boolean isRSDisabled() {
+        int[] rsPositions = getRedstonePos();
+        if (rsPositions.length < 1) return false;
+        for (int rsPos : rsPositions) {
+            TileEntity tile = world.getTileEntity(getBlockPosForPos(rsPos));
+            if (tile != null) {
+                int power = world.getRedstonePowerFromNeighbors(tile.getPos());
+                return redstoneControlInverted != (power > 0);
+            }
+        }
+        return false;
+    }
+
+    @Override public int getComparatorInputOverride() { return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored(); }
+
+    @Override public boolean isDummy() { return false; }
+
+    @Override public TileEntityDistillerMaster master() { return this; }
+
+    public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
+        if (!formed) return false;
+        if (energyInput0 == null) InitializePoIs();
+        return facing != null && energyInput0.isPoI(facing, position);
+    }
+
+    @Override @Nonnull public int[] getEnergyPos() {
+        if (!formed) return new int[0];
+        if (energyInput0 == null) InitializePoIs();
+        return new int[] {energyInput0.position};
+    }
+
+    @Override @Nonnull public int[] getRedstonePos() {
+        if (!formed) return new int[0];
+        if (redstone0 == null) InitializePoIs();
+        return new int[] {redstone0.position};
+    }
+
+    @Override @Nonnull public int[] getOutputSlots() { return new int[]{4}; }
+
+    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<DistillerRecipe> process) { return true; }
+
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return tanks; }
 
@@ -489,7 +470,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
                     FluidStack d = accessible.drain(toDrain, doDrain);
                     if (d != null) {
                         if (drained == null) drained = d.copy();
-                        else drained.amount += d.amount;
+                        else if (drained.isFluidEqual(d)) drained.amount += d.amount;
                         toDrain -= d.amount;
                         if (doDrain && d.amount > 0) master.TankContentsChanged();
                         if (toDrain <= 0) return drained;

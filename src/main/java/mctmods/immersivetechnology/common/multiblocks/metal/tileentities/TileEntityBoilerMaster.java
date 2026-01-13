@@ -75,17 +75,19 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     public int fuelBurnRemaining = 0;
     public int processTimeRemaining = 0;
     public double heatLevel = 0;
-    private int tickCountdown = 20;
-    public BoilerRecipe.BoilerFuelRecipe cachedFuelRecipe;
-    public BoilerRecipe cachedBoilerRecipe;
-    protected PoICache fluidInput0, fluidInput1, fluidOutput0, redstone0;
-    private BlockPos fluidOutputFront0, soundPos0;
-    public boolean redstoneControlInverted = false;
-    private boolean needsPoIInit = false;
-    private int oldComparatorOutput;
 
     private float soundVolume;
     private int soundGracePeriod = 60;
+    public BoilerRecipe.BoilerFuelRecipe cachedFuelRecipe;
+    public BoilerRecipe cachedBoilerRecipe;
+    public boolean redstoneControlInverted = false;
+    private int oldComparatorOutput;
+    private int tickCountdown = 20;
+
+    private boolean needsPoIInit = false;
+
+    protected PoICache fluidInput0, fluidInput1, fluidOutput0, redstone0;
+    private BlockPos fluidOutputFront0, soundPos0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -148,6 +150,8 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
     }
 
+    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
+
     @Override public void receiveMessageFromServer(ByteBuf message) {
         heatLevel = message.readDouble();
     }
@@ -155,7 +159,43 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {
     }
 
-    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
+    @Override public void update() {
+        super.update();
+        if (!formed) return;
+        if (needsPoIInit || fluidInput0 == null) {
+            InitializePoIs();
+            needsPoIInit = false;
+        }
+        if (world.isRemote) {
+            float targetSoundLevel = (float) (heatLevel / workingHeatLevel);
+            if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); soundGracePeriod = 60; }
+            else if (soundVolume > targetSoundLevel) {
+                if (soundGracePeriod > 0) soundGracePeriod--;
+                else soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel);
+            }
+            handleSounds();
+            return;
+        }
+        boolean update = heatLogic();
+        if (recipeLogic()) update = true;
+        if (outputTankLogic()) update = true;
+        if (fuelTankLogic()) update = true;
+        if (inputTankLogic()) update = true;
+        tickCountdown--;
+        if (update && tickCountdown <= 0) {
+            notifyNearbyClients();
+            tickCountdown = 20;
+        }
+        if (update) {
+            efficientMarkDirty();
+            markContainingBlockForUpdate(null);
+        }
+        int comp = getComparatorInputOverride();
+        if (comp != oldComparatorOutput) {
+            oldComparatorOutput = comp;
+            world.notifyNeighborsOfStateChange(getBlockPosForPos(redstone0.position), world.getBlockState(getBlockPosForPos(redstone0.position)).getBlock(), false);
+        }
+    }
 
     private boolean heatUp() {
         double previous = heatLevel;
@@ -285,51 +325,60 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         return false;
     }
 
-    @Override public void update() {
-        super.update();
-        if (!formed) return;
-        if (needsPoIInit || fluidInput0 == null) {
-            InitializePoIs();
-            needsPoIInit = false;
-        }
-        if (world.isRemote) {
-            float targetSoundLevel = (float) (heatLevel / workingHeatLevel);
-            if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); soundGracePeriod = 60; }
-            else if (soundVolume > targetSoundLevel) {
-                if (soundGracePeriod > 0) soundGracePeriod--;
-                else soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel);
+    private void InitializePoIs() {
+        for (PoIJSONSchema poi : TileEntityITMultiblockPartBoiler.instance.pointsOfInterest) {
+            switch (poi.name) {
+                case "fluid_input0":
+                    fluidInput0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "fluid_input1":
+                    fluidInput1 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "fluid_output0":
+                    fluidOutput0 = new PoICache(facing, poi, mirrored);
+                    fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    break;
+                case "redstone0":
+                    redstone0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "sound0":
+                    soundPos0 = getBlockPosForPos(poi.position);
+                    break;
             }
-            handleSounds();
-            return;
         }
-        boolean update = heatLogic();
-        if (recipeLogic()) update = true;
-        if (outputTankLogic()) update = true;
-        if (fuelTankLogic()) update = true;
-        if (inputTankLogic()) update = true;
-        tickCountdown--;
-        if (update && tickCountdown <= 0) {
-            notifyNearbyClients();
-            tickCountdown = 20;
+        if (!world.isRemote) notifyIONeighbors();
+    }
+
+    private void notifyIONeighbors() {
+        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
+        notifyNeighbor(getBlockPosForPos(fluidInput1.position));
+        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
+        notifyNeighbor(getBlockPosForPos(redstone0.position));
+    }
+
+    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
+
+    @Override public void TankContentsChanged() { markContainingBlockForUpdate(null); }
+
+    @Override public int getComparatorInputOverride() { return (int)(15 * (heatLevel / workingHeatLevel)); }
+
+    @Override public boolean isRSDisabled() {
+        int[] rsPositions = getRedstonePos();
+        if (rsPositions.length < 1) return false;
+        for (int rsPos : rsPositions) {
+            TileEntity tile = world.getTileEntity(getBlockPosForPos(rsPos));
+            if (tile != null) {
+                int power = world.getRedstonePowerFromNeighbors(tile.getPos());
+                boolean b = power > 0;
+                return redstoneControlInverted != b;
+            }
         }
-        if (update) {
-            efficientMarkDirty();
-            markContainingBlockForUpdate(null);
-        }
-        int comp = getComparatorInputOverride();
-        if (comp != oldComparatorOutput) {
-            oldComparatorOutput = comp;
-            world.notifyNeighborsOfStateChange(getBlockPosForPos(redstone0.position), world.getBlockState(getBlockPosForPos(redstone0.position)).getBlock(), false);
-        }
+        return false;
     }
 
     @Override public boolean isDummy() { return false; }
 
     @Override public TileEntityBoilerMaster master() { return this; }
-
-    @Override public void TankContentsChanged() { markContainingBlockForUpdate(null); }
-
-    @Override public int getComparatorInputOverride() { return (int)(15 * (heatLevel / workingHeatLevel)); }
 
     @Override @Nonnull public NonNullList<ItemStack> getInventory() { return inventory; }
 
@@ -400,56 +449,9 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         return new int[] {redstone0.position};
     }
 
-    @Override public boolean isRSDisabled() {
-        int[] rsPositions = getRedstonePos();
-        if (rsPositions.length < 1) return false;
-        for (int rsPos : rsPositions) {
-            TileEntity tile = world.getTileEntity(getBlockPosForPos(rsPos));
-            if (tile != null) {
-                int power = world.getRedstonePowerFromNeighbors(tile.getPos());
-                boolean b = power > 0;
-                return redstoneControlInverted != b;
-            }
-        }
-        return false;
-    }
-
     @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
 
     @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
-
-    private void InitializePoIs() {
-        for (PoIJSONSchema poi : TileEntityITMultiblockPartBoiler.instance.pointsOfInterest) {
-            switch (poi.name) {
-                case "fluid_input0":
-                    fluidInput0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "fluid_input1":
-                    fluidInput1 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "fluid_output0":
-                    fluidOutput0 = new PoICache(facing, poi, mirrored);
-                    fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
-                    break;
-                case "redstone0":
-                    redstone0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "sound0":
-                    soundPos0 = getBlockPosForPos(poi.position);
-                    break;
-            }
-        }
-        if (!world.isRemote) notifyIONeighbors();
-    }
-
-    private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
-        notifyNeighbor(getBlockPosForPos(fluidInput1.position));
-        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        notifyNeighbor(getBlockPosForPos(redstone0.position));
-    }
-
-    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
     public static class BoilerFluidHandler implements IFluidHandler {
         private final IFluidTank[] accessibleTanks;

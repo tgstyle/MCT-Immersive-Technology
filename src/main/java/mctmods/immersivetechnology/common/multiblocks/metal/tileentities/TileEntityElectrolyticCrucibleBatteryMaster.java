@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import io.netty.buffer.ByteBuf;
@@ -43,7 +44,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorageAdvanced;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,17 +68,18 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
             new ITFluidTank(outputTankSize, this)
     };
 
-    protected PoICache energyInput0, energyInput1, energyInput2, fluidInput0, fluidOutput0, fluidOutput1, fluidOutput2, itemOutput0, redstone0;
-    private BlockPos fluidOutputPos0, fluidOutputPos1, fluidOutputPos2, itemOutputPos0, sound0;
-
     private float soundVolume;
     private int soundGracePeriod = 60;
+
     private double distanceToTE;
     private int playerDimension;
     private boolean isRunning;
     public boolean redstoneControlInverted = false;
     public Optional<Boolean> computerOn = Optional.empty();
     private int oldComparatorOutput;
+
+    protected PoICache energyInput0, energyInput1, energyInput2, fluidInput0, fluidOutput0, fluidOutput1, fluidOutput2, itemOutput0, redstone0;
+    private BlockPos fluidOutputPos0, fluidOutputPos1, fluidOutputPos2, itemOutputPos0, sound0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -114,14 +115,6 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         return process;
     }
 
-    public void requestUpdate() { BinaryMessageTileSync.sendToServer(getPos(), Unpooled.copyBoolean(true)); }
-
-    public void notifyNearbyClients() { BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.copyBoolean(isRunning)); }
-
-    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { BinaryMessageTileSync.sendToPlayer(player, getPos(), Unpooled.copyBoolean(isRunning)); }
-
-    @Override public void receiveMessageFromServer(ByteBuf message) { isRunning = message.readBoolean(); }
-
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
         if (sound0 == null) InitializePoIs();
@@ -131,20 +124,6 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
             float attenuation = Math.max((float)player.getDistanceSq(sound0.getX() + .5, sound0.getY() + .5, sound0.getZ() + .5) / 8, 1);
             ITSounds.gasTurbineArc.PlayRepeating(sound0, (2 * soundVolume) / attenuation, soundVolume);
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() {
-        if (sound0 != null) ITSoundHandler.StopSound(sound0);
-        super.onChunkUnload();
-    }
-
-    @Override public void disassemble() {
-        if (sound0 == null) InitializePoIs();
-        if (sound0 != null) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound0.getX(), sound0.getY(), sound0.getZ(), 0));
-        }
-        super.disassemble();
     }
 
     @SideOnly(Side.CLIENT)
@@ -166,14 +145,34 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         handleSounds();
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override public void onChunkUnload() {
+        if (sound0 != null) ITSoundHandler.StopSound(sound0);
+        super.onChunkUnload();
+    }
+
+    @Override public void disassemble() {
+        if (sound0 == null) InitializePoIs();
+        if (sound0 != null) {
+            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound0.getX(), sound0.getY(), sound0.getZ(), 0));
+        }
+        super.disassemble();
+    }
+
+    public void requestUpdate() { BinaryMessageTileSync.sendToServer(getPos(), Unpooled.copyBoolean(true)); }
+
+    public void notifyNearbyClients() { BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.copyBoolean(isRunning)); }
+
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { BinaryMessageTileSync.sendToPlayer(player, getPos(), Unpooled.copyBoolean(isRunning)); }
+
+    @Override public void receiveMessageFromServer(ByteBuf message) { isRunning = message.readBoolean(); }
+
     @Override public void update() {
         if (world.isRemote) {
             clientUpdate();
             return;
         }
-        if (formed && (redstone0 == null)) {
-            InitializePoIs();
-        }
+        if (formed && redstone0 == null) InitializePoIs();
         super.update();
         if (!formed) return;
 
@@ -215,11 +214,53 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
-    @Override public void TankContentsChanged() { markContainingBlockForUpdate(null); }
-
-    @Override public boolean isDummy() { return false; }
-
-    @Override public TileEntityElectrolyticCrucibleBatteryMaster master() { return this; }
+    private boolean pumpOutputOut() {
+        boolean update = false;
+        IFluidHandler handler;
+        if (tanks[1].getFluidAmount() > 0) {
+            handler = FluidUtil.getFluidHandler(world, fluidOutputPos0, fluidOutput0.facing.getOpposite());
+            if (handler != null) {
+                FluidStack out = tanks[1].getFluid();
+                if (out != null) {
+                    int accepted = handler.fill(out, false);
+                    if (accepted > 0) {
+                        int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+                        tanks[1].drain(drained, true);
+                        update |= drained > 0;
+                    }
+                }
+            }
+        }
+        if (tanks[2].getFluidAmount() > 0) {
+            handler = FluidUtil.getFluidHandler(world, fluidOutputPos1, fluidOutput1.facing.getOpposite());
+            if (handler != null) {
+                FluidStack out = tanks[2].getFluid();
+                if (out != null) {
+                    int accepted = handler.fill(out, false);
+                    if (accepted > 0) {
+                        int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+                        tanks[2].drain(drained, true);
+                        update |= drained > 0;
+                    }
+                }
+            }
+        }
+        if (tanks[3].getFluidAmount() > 0) {
+            handler = FluidUtil.getFluidHandler(world, fluidOutputPos2, fluidOutput2.facing.getOpposite());
+            if (handler != null) {
+                FluidStack out = tanks[3].getFluid();
+                if (out != null) {
+                    int accepted = handler.fill(out, false);
+                    if (accepted > 0) {
+                        int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+                        tanks[3].drain(drained, true);
+                        update |= drained > 0;
+                    }
+                }
+            }
+        }
+        return update;
+    }
 
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance.pointsOfInterest) {
@@ -277,6 +318,8 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
+    @Override public void TankContentsChanged() { markContainingBlockForUpdate(null); }
+
     @Override public boolean isRSDisabled() {
         if (computerOn.isPresent()) return !computerOn.get();
         int[] rs = getRedstonePos();
@@ -290,6 +333,15 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         }
         return false;
     }
+
+    @Override public int getComparatorInputOverride() {
+        if (!formed) return 0;
+        return 15 * tanks[1].getFluidAmount() / tanks[1].getCapacity();
+    }
+
+    @Override public boolean isDummy() { return false; }
+
+    @Override public TileEntityElectrolyticCrucibleBatteryMaster master() { return this; }
 
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
@@ -307,10 +359,14 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         if (!formed) return false;
         if (redstone0 == null) InitializePoIs();
         if (facing == null) return false;
-        if (energyInput0.isPoI(facing, position)) return true;
-        if (energyInput1.isPoI(facing, position)) return true;
-        return energyInput2.isPoI(facing, position);
+        return energyInput0.isPoI(facing, position) || energyInput1.isPoI(facing, position) || energyInput2.isPoI(facing, position);
     }
+
+    @Override @Nonnull public FluxStorageAdvanced getFluxStorage() { return energyStorage; }
+
+    @Override public boolean getIsMirrored() { return mirrored; }
+
+    @Override @Nonnull public IEProperties.PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IEBlockInterfaces.IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
 
     @Override public int getProcessQueueMaxLength() { return 3; }
 
@@ -354,69 +410,12 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         if (!formed || redstone0 == null) InitializePoIs();
         if (fluidOutput0.isPoI(side, position)) return tanks[1].getFluidAmount() > 0;
         if (fluidOutput1.isPoI(side, position)) return tanks[2].getFluidAmount() > 0;
-        if (fluidOutput2.isPoI(side, position)) return tanks[3].getFluidAmount() > 0;
-        return false;
+        return fluidOutput2.isPoI(side, position) && tanks[3].getFluidAmount() > 0;
     }
-
-    private boolean pumpOutputOut() {
-        boolean update = false;
-        IFluidHandler handler;
-        if (tanks[1].getFluidAmount() > 0) {
-            handler = FluidUtil.getFluidHandler(world, fluidOutputPos0, fluidOutput0.facing.getOpposite());
-            if (handler != null) {
-                FluidStack out = tanks[1].getFluid();
-                if (out == null) return false;
-                int accepted = handler.fill(out, false);
-                if (accepted > 0) {
-                    int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-                    tanks[1].drain(drained, true);
-                    update = drained > 0;
-                }
-            }
-        }
-        if (tanks[2].getFluidAmount() > 0) {
-            handler = FluidUtil.getFluidHandler(world, fluidOutputPos1, fluidOutput1.facing.getOpposite());
-            if (handler != null) {
-                FluidStack out = tanks[2].getFluid();
-                if (out == null) return false;
-                int accepted = handler.fill(out, false);
-                if (accepted > 0) {
-                    int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-                    tanks[2].drain(drained, true);
-                    update |= drained > 0;
-                }
-            }
-        }
-        if (tanks[3].getFluidAmount() > 0) {
-            handler = FluidUtil.getFluidHandler(world, fluidOutputPos2, fluidOutput2.facing.getOpposite());
-            if (handler != null) {
-                FluidStack out = tanks[3].getFluid();
-                if (out == null) return false;
-                int accepted = handler.fill(out, false);
-                if (accepted > 0) {
-                    int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-                    tanks[3].drain(drained, true);
-                    update |= drained > 0;
-                }
-            }
-        }
-        return update;
-    }
-
-    @Override @Nonnull public FluxStorageAdvanced getFluxStorage() { return energyStorage; }
-
-    @Override public boolean getIsMirrored() { return mirrored; }
-
-    @Override public @Nonnull IEProperties.PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IEBlockInterfaces.IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
 
     @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
 
     @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
-
-    @Override public int getComparatorInputOverride() {
-        if (!formed) return 0;
-        return 15 * tanks[1].getFluidAmount() / tanks[1].getCapacity();
-    }
 
     static class ElectrolyticCrucibleBatteryProcess extends MultiblockProcessInMachine<ElectrolyticCrucibleBatteryRecipe> {
         public ElectrolyticCrucibleBatteryProcess(ElectrolyticCrucibleBatteryRecipe recipe, int... inputSlots) { super(recipe, inputSlots); }
@@ -504,8 +503,8 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
                             if (drained == null) drained = d.copy();
                             else drained.amount += d.amount;
                             if (doDrain && d.amount > 0) master.TankContentsChanged();
-                            if (resource.amount <= d.amount) return drained;
                             resource.amount -= d.amount;
+                            if (resource.amount <= 0) return drained;
                         }
                     }
                 }

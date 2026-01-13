@@ -33,8 +33,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TileEntitySteamTurbineSlave extends TileEntityITMultiblock<TileEntitySteamTurbineSlave, SteamTurbineRecipe, TileEntitySteamTurbineMaster> implements IMechanicalEnergy, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
-    private static final float outputtorque = Multiblocks.steamTurbine.steamTurbine_torque;
+
     TileEntitySteamTurbineMaster master;
+
+    private static final float outputtorque = Multiblocks.steamTurbine.steamTurbine_torque;
 
     public TileEntitySteamTurbineSlave() { super(TileEntityITMultiblockPartSteamTurbine.instance, 0, true); }
 
@@ -42,20 +44,43 @@ public class TileEntitySteamTurbineSlave extends TileEntityITMultiblock<TileEnti
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
-    @Override public void update() {
-        if(isDummy()) ITUtils.RemoveDummyFromTicking(this);
-        super.update();
-    }
+    @Override public void update() { if (isDummy()) ITUtils.RemoveDummyFromTicking(this); super.update(); }
 
     @Override public boolean isDummy() { return true; }
 
-    @Override public TileEntitySteamTurbineMaster master() {
-        if(master != null && !master.tileEntityInvalid) return master;
+    public TileEntitySteamTurbineMaster master() {
+        if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntitySteamTurbineMaster?(TileEntitySteamTurbineMaster) te: null;
+        master = te instanceof TileEntitySteamTurbineMaster ? (TileEntitySteamTurbineMaster)te : null;
         return master;
     }
+
+    @Override public NonNullList<ItemStack> getInventory() { return null; }
+
+    @Override public boolean isStackValid(int slot, ItemStack stack) { return false; }
+
+    @Override public int getSlotLimit(int slot) { return 0; }
+
+    @Override @Nonnull public IFluidTank[] getInternalTanks() { TileEntitySteamTurbineMaster m = master(); return m == null ? new IFluidTank[0] : m.tanks; }
+
+    @Override protected @Nonnull SteamTurbineRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return SteamTurbineRecipe.loadFromNBT(tag); }
+
+    @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
+
+    @Override @Nonnull public int[] getOutputTanks() { return new int[]{1}; }
+
+    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<SteamTurbineRecipe> process) { return true; }
+
+    @Override public int getMaxProcessPerTick() { return 1; }
+
+    @Override public int getProcessQueueMaxLength() { return 1; }
+
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { TileEntitySteamTurbineMaster m = master(); if (m == null) return ITUtils.emptyIFluidTankList; return m.getAccessibleFluidTanks(side, position); }
+
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { TileEntitySteamTurbineMaster m = master(); if (m == null) return false; return m.canFillTankFrom(iTank, side, resource, position); }
+
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { TileEntitySteamTurbineMaster m = master(); if (m == null) return false; return m.canDrainTankFrom(iTank, side, position); }
 
     @Override public boolean isValid() { return formed; }
 
@@ -68,44 +93,6 @@ public class TileEntitySteamTurbineSlave extends TileEntityITMultiblock<TileEnti
     @Override public float getTorqueMultiplier() { return outputtorque; }
 
     public MechanicalEnergyAnimation getAnimation() { TileEntitySteamTurbineMaster m = master(); return m == null ? null : m.animation; }
-
-    @Override public NonNullList<ItemStack> getInventory() { return null; }
-
-    @Override public boolean isStackValid(int slot, ItemStack stack) { return false; }
-
-    @Override public int getSlotLimit(int slot) { return 0; }
-
-    @Override public @Nonnull IFluidTank[] getInternalTanks() { TileEntitySteamTurbineMaster m = master(); return m == null ? new IFluidTank[0] : m.tanks; }
-
-    @Override @Nonnull protected SteamTurbineRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return SteamTurbineRecipe.loadFromNBT(tag); }
-
-    @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
-
-    @Override public @Nonnull int[] getOutputTanks() { return new int[] { 1 }; }
-
-    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<SteamTurbineRecipe> process) { return true; }
-
-    @Override public int getMaxProcessPerTick() { return 1; }
-
-    @Override public int getProcessQueueMaxLength() { return 1; }
-
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        TileEntitySteamTurbineMaster m = master();
-        if (m == null) return ITUtils.emptyIFluidTankList;
-        return m.getAccessibleFluidTanks(side, position);
-    }
-
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        TileEntitySteamTurbineMaster m = master();
-        if (m == null) return false;
-        return m.canFillTankFrom(iTank, side, resource, position);
-    }
-
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        TileEntitySteamTurbineMaster m = master();
-        if (m == null) return false;
-        return m.canDrainTankFrom(iTank, side, position);
-    }
 
     private BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartSteamTurbine.instance.width;
@@ -129,16 +116,13 @@ public class TileEntitySteamTurbineSlave extends TileEntityITMultiblock<TileEnti
         return vs.optimize();
     }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
 
     @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
 
-    @Nonnull
-    @Override public float[] getBlockBounds() {
+    @Override @Nonnull public float[] getBlockBounds() {
         VoxelShape vs = getVoxelShape();
         if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
         AxisAlignedBB bb = vs.bounds();

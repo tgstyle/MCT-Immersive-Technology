@@ -64,20 +64,23 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
             new ITFluidTank(outputTankSize, this)
     };
 
-    private HighPressureSteamTurbineRecipe cachedTurbineRecipe;
-
     public int fuelBurnRemaining = 0;
     public int speed;
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
-    private IMechanicalEnergy alternator;
-    private int tickCountdown = 5;
+
     private float targetSoundLevel;
     private float soundVolume = 0f;
     private int soundGracePeriod;
-    private PoICache fluidInput0, fluidOutput0, mechanicalOutput0, redstone0;
-    private BlockPos outputFront0, mechanicalOutputPos0, sound0;
-    private boolean needsPoIInit = false;
+    private int tickCountdown = 5;
     private int oldComparatorOutput;
+
+    public HighPressureSteamTurbineRecipe cachedTurbineRecipe;
+    private IMechanicalEnergy alternator;
+
+    private boolean needsPoIInit = false;
+
+    protected PoICache fluidInput0, fluidOutput0, mechanicalOutput0, redstone0;
+    private BlockPos outputFront0, mechanicalOutputPos0, sound0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -129,9 +132,9 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound0.getX(), sound0.getY(), sound0.getZ(), 0));
     }
 
-    public void notifyNearbyClients() {
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.copyInt(speed));
-    }
+    public void notifyNearbyClients() { BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.copyInt(speed)); }
+
+    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     @Override public void receiveMessageFromServer(ByteBuf buf) {
         speed = buf.readInt();
@@ -139,38 +142,6 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { }
-
-    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
-
-    private void speedUp() { speed = Math.min(maxSpeed, speed + speedGainPerTick); }
-
-    private void speedDown() { speed = Math.max(0, speed - speedLossPerTick); }
-
-    private boolean pumpOutputOut() {
-        if (outputFront0 == null) { InitializePoIs(); }
-        if (tanks[1].getFluidAmount() == 0) { return false; }
-        IFluidHandler handler = FluidUtil.getFluidHandler(world, outputFront0, fluidOutput0.facing.getOpposite());
-        if (handler == null) { return false; }
-        FluidStack out = tanks[1].getFluid();
-        int accepted = handler.fill(out, false);
-        if (accepted == 0) { return false; }
-        assert out != null;
-        int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-        tanks[1].drain(drained, true);
-        return drained > 0;
-    }
-
-    public boolean isValidAlternator() {
-        if (mechanicalOutput0 == null) { InitializePoIs(); }
-        if (alternator == null || !alternator.isValid()) {
-            TileEntity tile = world.getTileEntity(mechanicalOutputPos0);
-            if (tile instanceof IMechanicalEnergy) {
-                IMechanicalEnergy possibleAlternator = (IMechanicalEnergy)tile;
-                if (possibleAlternator.isValid() && possibleAlternator.isMechanicalEnergyReceiver(mechanicalOutput0.facing.getOpposite())) { alternator = possibleAlternator; }
-            }
-        }
-        return alternator != null && alternator.isValid();
-    }
 
     @Override public void update() {
         super.update();
@@ -230,10 +201,73 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         }
     }
 
+    private void speedUp() { speed = Math.min(maxSpeed, speed + speedGainPerTick); }
+
+    private void speedDown() { speed = Math.max(0, speed - speedLossPerTick); }
+
+    private boolean pumpOutputOut() {
+        if (outputFront0 == null) { InitializePoIs(); }
+        if (tanks[1].getFluidAmount() == 0) { return false; }
+        IFluidHandler handler = FluidUtil.getFluidHandler(world, outputFront0, fluidOutput0.facing.getOpposite());
+        if (handler == null) { return false; }
+        FluidStack out = tanks[1].getFluid();
+        int accepted = handler.fill(out, false);
+        if (accepted == 0) { return false; }
+        assert out != null;
+        int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+        tanks[1].drain(drained, true);
+        return drained > 0;
+    }
+
+    private boolean isValidAlternator() {
+        if (mechanicalOutput0 == null) { InitializePoIs(); }
+        if (alternator == null || !alternator.isValid()) {
+            TileEntity tile = world.getTileEntity(mechanicalOutputPos0);
+            if (tile instanceof IMechanicalEnergy) {
+                IMechanicalEnergy possibleAlternator = (IMechanicalEnergy)tile;
+                if (possibleAlternator.isValid() && possibleAlternator.isMechanicalEnergyReceiver(mechanicalOutput0.facing.getOpposite())) { alternator = possibleAlternator; }
+            }
+        }
+        return alternator != null && alternator.isValid();
+    }
+
     private void notifyRedstoneNeighbor() {
         BlockPos rsPos = getBlockPosForPos(redstone0.position);
         world.notifyNeighborsOfStateChange(rsPos, world.getBlockState(rsPos).getBlock(), false);
     }
+
+    private void InitializePoIs() {
+        for (PoIJSONSchema poi : TileEntityITMultiblockPartHighPressureSteamTurbine.instance.pointsOfInterest) {
+            switch (poi.name) {
+                case "fluid_input0":
+                    fluidInput0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "fluid_output0":
+                    fluidOutput0 = new PoICache(facing, poi, mirrored);
+                    outputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    break;
+                case "redstone0":
+                    redstone0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "mechanical_output0":
+                    mechanicalOutput0 = new PoICache(facing, poi, mirrored);
+                    mechanicalOutputPos0 = getBlockPosForPos(mechanicalOutput0.position).offset(mechanicalOutput0.facing);
+                    break;
+                case "sound0":
+                    sound0 = getBlockPosForPos(poi.position);
+                    break;
+            }
+        }
+        if (!world.isRemote) { notifyIONeighbors(); }
+    }
+
+    private void notifyIONeighbors() {
+        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
+        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
+        notifyNeighbor(getBlockPosForPos(redstone0.position));
+    }
+
+    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
     @Override public void TankContentsChanged() {
         cachedTurbineRecipe = null;
@@ -241,9 +275,17 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         markContainingBlockForUpdate(null);
     }
 
+    @Override public int getComparatorInputOverride() { return 15 * speed / maxSpeed; }
+
     @Override public boolean isDummy() { return false; }
 
     @Override public TileEntityHighPressureSteamTurbineMaster master() { return this; }
+
+    @Override @Nonnull public int[] getRedstonePos() {
+        if (!formed) { return new int[0]; }
+        if (redstone0 == null) { InitializePoIs(); }
+        return new int[] {redstone0.position};
+    }
 
     public boolean isMechanicalEnergyTransmitter(@Nullable EnumFacing facing, int position) {
         if (!formed) { return false; }
@@ -291,50 +333,9 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         return super.getCapability(capability, facing);
     }
 
-    @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) { return new int[0]; }
-        if (redstone0 == null) { InitializePoIs(); }
-        return new int[] {redstone0.position};
-    }
-
     @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
 
     @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
-
-    @Override public int getComparatorInputOverride() { return 15 * speed / maxSpeed; }
-
-    private void InitializePoIs() {
-        for (PoIJSONSchema poi : TileEntityITMultiblockPartHighPressureSteamTurbine.instance.pointsOfInterest) {
-            switch (poi.name) {
-                case "fluid_input0":
-                    fluidInput0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "fluid_output0":
-                    fluidOutput0 = new PoICache(facing, poi, mirrored);
-                    outputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
-                    break;
-                case "redstone0":
-                    redstone0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "mechanical_output0":
-                    mechanicalOutput0 = new PoICache(facing, poi, mirrored);
-                    mechanicalOutputPos0 = getBlockPosForPos(mechanicalOutput0.position).offset(mechanicalOutput0.facing);
-                    break;
-                case "sound0":
-                    sound0 = getBlockPosForPos(poi.position);
-                    break;
-            }
-        }
-        if (!world.isRemote) { notifyIONeighbors(); }
-    }
-
-    private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
-        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        notifyNeighbor(getBlockPosForPos(redstone0.position));
-    }
-
-    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
 
     public static class HighPressureSteamTurbineFluidHandler implements IFluidHandler {
         private final IFluidTank[] accessibleTanks;

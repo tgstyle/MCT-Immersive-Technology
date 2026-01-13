@@ -36,6 +36,8 @@ import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEntityCoolingTowerSlave, CoolingTowerRecipe, TileEntityCoolingTowerMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
 
+    private TileEntityCoolingTowerMaster master;
+
     public TileEntityCoolingTowerSlave() { super(TileEntityITMultiblockPartCoolingTower.instance, 0, false); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
@@ -46,9 +48,7 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
 
     @Override public boolean isDummy() { return true; }
 
-    TileEntityCoolingTowerMaster master;
-
-    @Override public TileEntityCoolingTowerMaster master() {
+    public TileEntityCoolingTowerMaster master() {
         if (master != null && !master.tileEntityInvalid) { return master; }
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         TileEntity te = Utils.getExistingTileEntity(world, masterPos);
@@ -62,13 +62,13 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
 
     @Override public int getSlotLimit(int slot) { return 0; }
 
-    @Override public @Nonnull IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : Objects.requireNonNull(master()).tanks; }
+    @Override @Nonnull public IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : Objects.requireNonNull(master()).tanks; }
 
-    @Override protected @Nonnull CoolingTowerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return CoolingTowerRecipe.loadFromNBT(tag); }
+    @Override @Nonnull protected CoolingTowerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return CoolingTowerRecipe.loadFromNBT(tag); }
 
-    @Override public @Nonnull int[] getRedstonePos() { return new int[0]; }
+    @Override @Nonnull public int[] getRedstonePos() { return new int[0]; }
 
-    @Override public @Nonnull int[] getOutputTanks() { return new int[] {2, 3, 4}; }
+    @Override @Nonnull public int[] getOutputTanks() { return new int[] {2, 3, 4}; }
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<CoolingTowerRecipe> process) { return true; }
 
@@ -78,9 +78,7 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
 
     @Override public float getMinProcessDistance(@Nonnull MultiblockProcess<CoolingTowerRecipe> process) { return 1; }
 
-    @Override
-    @Nonnull
-    public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         TileEntityCoolingTowerMaster m = master();
         if (m == null) { return ITUtils.emptyIFluidTankList; }
         return m.getAccessibleFluidTanks(side, position);
@@ -118,7 +116,7 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
         return super.getCapability(capability, facing);
     }
 
-    public BlockPos posToMultiblock() {
+    private BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartCoolingTower.instance.width;
         int length = TileEntityITMultiblockPartCoolingTower.instance.length;
         int y = pos / (length * width);
@@ -140,16 +138,13 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
         return vs.optimize();
     }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
 
-    @Nonnull
-    @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+    @Override @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
 
     @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
 
-    @Nonnull
-    @Override public float[] getBlockBounds() {
+    @Override @Nonnull public float[] getBlockBounds() {
         VoxelShape vs = getVoxelShape();
         if (vs.isEmpty()) { return new float[]{0f, 0f, 0f, 1f, 1f, 1f}; }
         AxisAlignedBB bb = vs.bounds();
