@@ -60,13 +60,11 @@ public class RadiatorRecipe extends MultiblockRecipe {
         return recipeMap.get(fluidInput);
     }
 
-    @Override
-    public int getMultipleProcessTicks() {
+    @Override public int getMultipleProcessTicks() {
         return 0;
     }
 
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt.setTag("input", fluidInput.writeToNBT(new NBTTagCompound()));
         return nbt;
     }
@@ -76,8 +74,7 @@ public class RadiatorRecipe extends MultiblockRecipe {
         return findRecipe(fluidInput);
     }
 
-    @Override
-    public int getTotalProcessTime() {
+    @Override public int getTotalProcessTime() {
         return this.totalProcessTime;
     }
 }

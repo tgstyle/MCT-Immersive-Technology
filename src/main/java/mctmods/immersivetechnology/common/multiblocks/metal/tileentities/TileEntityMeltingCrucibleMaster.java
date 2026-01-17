@@ -19,8 +19,8 @@ import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
+import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
@@ -28,13 +28,10 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -47,8 +44,6 @@ import net.minecraftforge.oredict.OreDictionary;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import java.util.Optional;
-
 public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IIEInventory, IComparatorOverride {
 
     private static final int outputTankSize = Multiblocks.meltingCrucible.meltingCrucible_output_tankSize;
@@ -60,162 +55,174 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     private static final int energyPerTickToHeat = Multiblocks.meltingCrucible.meltingCrucible_energy_per_tick_heating;
     private static final int energyPerTickToMaintain = Multiblocks.meltingCrucible.meltingCrucible_energy_per_tick_maintain;
     private static final int progressResolution = 64;
+    public static final int slotCount = 3;
 
     public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxInput);
-    public FluidTank[] tanks = new FluidTank[] { new ITFluidTank(outputTankSize, this) };
-
-    public static int slotCount = 3;
+    public ITFluidTank[] tanks = new ITFluidTank[1];
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
+    public IItemHandler insertionHandler;
 
     public int processTimeRemaining = 0;
     public double heatLevel = 0;
-
     public MeltingCrucibleRecipe cachedMeltingRecipe;
+
     private float soundVolume = 0f;
-    private int soundGracePeriod = 60;
+    private int soundGracePeriod = 0;
     private boolean isRunning = false;
-    private double distanceSqToTE = Double.MAX_VALUE;
-    private int playerDimension = Integer.MIN_VALUE;
     public boolean redstoneControlInverted = false;
-    public Optional<Boolean> computerOn = Optional.empty();
     private int oldComparatorOutput = 0;
+    private int tickCountdown = 5;
 
-    private PoICache energyInput0, fluidOutput0, itemInput0, redstone0;
-    private BlockPos sound0, fluidOutputPos0;
+    private boolean needsPoIInit = true;
+    private boolean needsNotify = true;
 
-    private boolean needsPoIInit = false;
+    protected PoICache energyInput0, itemInput0, fluidOutput0, redstone0;
+    private BlockPos soundPos0, fluidOutputPos0;
 
-    public IItemHandler insertionHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
+    public TileEntityMeltingCrucibleMaster() {
+        tanks[0] = new ITFluidTank(outputTankSize, this);
+        insertionHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
+    }
+
+    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
-        tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
-        inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         energyStorage.readFromNBT(nbt.getCompoundTag("energy"));
+        tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
+        if (nbt.hasKey("inventory")) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
         heatLevel = nbt.getDouble("heatLevel");
-        if (!descPacket && formed) needsPoIInit = true;
+        redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
+        if (formed) {
+            needsPoIInit = true;
+            needsNotify = true;
+        }
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
+        nbt.setTag("energy", energyStorage.writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
         nbt.setTag("inventory", Utils.writeInventory(inventory));
-        nbt.setTag("energy", energyStorage.writeToNBT(new NBTTagCompound()));
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
         nbt.setDouble("heatLevel", heatLevel);
+        nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
     }
 
     @SideOnly(Side.CLIENT)
-    public void handleSounds() {
-        if (sound0 == null) InitializePoIs();
-        if (distanceSqToTE > 4096) { ITSoundHandler.StopSound(sound0); soundVolume = 0f; return; }
-        float targetSoundLevel = isRunning ? 1f : 0f;
-        if (soundVolume < targetSoundLevel) {
-            soundVolume = Math.min(soundVolume + 0.02f, targetSoundLevel);
-            soundGracePeriod = 60;
-        } else if (soundVolume > targetSoundLevel) {
-            if (soundGracePeriod > 0) soundGracePeriod--;
-            else soundVolume = Math.max(soundVolume - 0.02f, targetSoundLevel);
-        }
-        if (soundVolume <= 0f) ITSoundHandler.StopSound(sound0);
-        else {
-            double distance = Math.sqrt(distanceSqToTE);
-            float attenuation = Math.max((float)distance / 16f, 1f);
-            ITSounds.heatExchanger.PlayRepeating(sound0, soundVolume / attenuation, 1f);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() { if (sound0 != null) ITSoundHandler.StopSound(sound0); super.onChunkUnload(); }
-
-    @SideOnly(Side.CLIENT)
-    private void clientUpdate() {
-        if (sound0 == null) InitializePoIs();
+    private void handleSounds() {
+        if (soundPos0 == null) InitializePoIs();
+        if (soundPos0 == null) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double currentDistance = player.getDistanceSq(sound0.getX() + 0.5, sound0.getY() + 0.5, sound0.getZ() + 0.5);
-        if (world.provider.getDimension() == player.dimension && currentDistance < 400 && (distanceSqToTE > 400 || playerDimension != player.dimension)) requestUpdate();
-        distanceSqToTE = currentDistance;
-        playerDimension = player.dimension;
-        handleSounds();
+        double dSq = player.getDistanceSq(soundPos0.getX() + 0.5, soundPos0.getY() + 0.5, soundPos0.getZ() + 0.5);
+        if (dSq > 4096) {
+            ITSoundHandler.StopSound(soundPos0);
+            soundVolume = 0f;
+            return;
+        }
+        float target = isRunning ? 1f : 0f;
+        if (soundVolume < target) {
+            soundVolume = Math.min(soundVolume + 0.02f, target);
+            soundGracePeriod = 60;
+        } else if (soundVolume > target) {
+            if (soundGracePeriod > 0) soundGracePeriod--;
+            else soundVolume = Math.max(soundVolume - 0.02f, target);
+        }
+        if (soundVolume <= 0f) ITSoundHandler.StopSound(soundPos0);
+        else {
+            float distance = (float)Math.sqrt(dSq);
+            float attenuation = Math.max(distance / 16f, 1f);
+            ITSounds.heatExchanger.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override public void onChunkUnload() {
+        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        super.onChunkUnload();
     }
 
     @Override public void disassemble() {
-        if (sound0 == null) InitializePoIs();
-        if (sound0 != null) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound0.getX(), sound0.getY(), sound0.getZ(), 0));
+        if (soundPos0 == null) InitializePoIs();
+        if (!world.isRemote && soundPos0 != null) {
+            NetworkRegistry.TargetPoint tp = new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0);
+            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), tp);
         }
         if (!world.isRemote) {
-            for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack.copy());
+            for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack);
             inventory.clear();
         }
         super.disassemble();
     }
 
-    private void requestUpdate() { ImmersiveTechnology.packetHandler.sendToServer(new BinaryMessageTileSync(getPos(), Unpooled.buffer())); }
-
-    public void notifyNearbyClients() { ImmersiveTechnology.packetHandler.sendToAllAround(new BinaryMessageTileSync(getPos(), Unpooled.copyBoolean(isRunning)), new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 40)); }
-
-    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { ImmersiveTechnology.packetHandler.sendTo(new BinaryMessageTileSync(getPos(), Unpooled.copyBoolean(isRunning)), player); }
-
-    @Override public void receiveMessageFromServer(ByteBuf message) { isRunning = message.readBoolean(); }
-
-    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
 
     @Override public void update() {
         super.update();
-        if (!formed) return;
-        if (needsPoIInit || energyInput0 == null) { InitializePoIs(); needsPoIInit = false; }
-        if (world.isRemote) { clientUpdate(); return; }
+        if (!formed) {
+            if (world.isRemote && soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+            return;
+        }
+        if (needsPoIInit || energyInput0 == null) {
+            InitializePoIs();
+            needsPoIInit = false;
+        }
+        if (needsNotify) {
+            notifyIONeighbors();
+            needsNotify = false;
+        }
+        if (world.isRemote) {
+            handleSounds();
+            return;
+        }
+        int oldEnergy = energyStorage.getEnergyStored();
+        double oldHeat = heatLevel;
+        int oldProcess = processTimeRemaining;
+        boolean oldRunning = isRunning;
 
         boolean update = false;
         boolean shouldRun = !isRSDisabled();
-
-        int energyThisTick = (heatLevel >= workingHeatLevel && processTimeRemaining <= 0) ? energyPerTickToMaintain : energyPerTickToHeat;
+        int energyThisTick = heatLevel >= workingHeatLevel ? energyPerTickToMaintain : energyPerTickToHeat;
         boolean heating = shouldRun && energyStorage.extractEnergy(energyThisTick, true) >= energyThisTick;
         if (heating) energyStorage.extractEnergy(energyThisTick, false);
-
         update |= heatLogic(heating, heating ? energyThisTick : 0);
         update |= recipeLogic(shouldRun);
         update |= outputTankLogic();
-
         boolean active = processTimeRemaining > 0 && shouldRun;
         if (active) soundGracePeriod = 60;
         else if (soundGracePeriod > 0) soundGracePeriod--;
-
-        boolean wasRunning = isRunning;
         isRunning = soundGracePeriod > 0;
-        if (isRunning != wasRunning) { notifyNearbyClients(); update = true; }
+        if (isRunning != oldRunning) update = true;
 
-        int comp = getComparatorInputOverride();
-        if (comp != oldComparatorOutput) {
-            oldComparatorOutput = comp;
-            world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+        boolean changed = oldEnergy != energyStorage.getEnergyStored() || oldHeat != heatLevel || oldProcess != processTimeRemaining || oldRunning != isRunning;
+        if (changed && tickCountdown-- <= 0) {
+            tickCountdown = 5;
+            ByteBuf buf = Unpooled.buffer();
+            buf.writeInt(energyStorage.getEnergyStored());
+            buf.writeDouble(heatLevel);
+            buf.writeInt(processTimeRemaining);
+            buf.writeBoolean(isRunning);
+            BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
+            markContainingBlockForUpdate(null);
+        }
+        int comparator = getComparatorInputOverride();
+        if (comparator != oldComparatorOutput) {
+            oldComparatorOutput = comparator;
+            if (redstone0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstone0.position), getBlockType());
             update = true;
         }
-
-        if (update) { efficientMarkDirty(); markContainingBlockForUpdate(null); }
-    }
-
-    private boolean pumpOutputOut() {
-        if (tanks[0].getFluidAmount() == 0) return false;
-        if (fluidOutput0 == null) InitializePoIs();
-        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos0, fluidOutput0.facing.getOpposite());
-        if (output == null) return false;
-        FluidStack out = tanks[0].getFluid();
-        if (out == null || out.amount <= 0) return false;
-        int accepted = output.fill(out.copy(), false);
-        if (accepted == 0) return false;
-        int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
-        tanks[0].drain(drained, true);
-        return drained > 0;
+        if (update) {
+            efficientMarkDirty();
+            markContainingBlockForUpdate(null);
+        }
     }
 
     private boolean heatLogic(boolean heating, int energyUsed) {
         boolean changed = false;
         double prev = heatLevel;
         heatLevel -= getCooldownAmount();
-        heatLevel = Math.max(heatLevel, 0D);
+        heatLevel = Math.max(heatLevel, 0);
         if (heating) heatLevel += getTemperatureIncrease(energyUsed);
         heatLevel = Math.min(heatLevel, workingHeatLevel);
         if (prev != heatLevel) changed = true;
@@ -233,29 +240,32 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     private boolean recipeLogic(boolean shouldRun) {
         boolean update = false;
         if (processTimeRemaining == 0 && shouldRun && heatLevel >= workingHeatLevel) {
-            ItemStack inputStack = inventory.get(0);
-            if (!inputStack.isEmpty()) {
-                MeltingCrucibleRecipe recipe = MeltingCrucibleRecipe.findRecipe(inputStack);
-                if (recipe != null && inputStack.getCount() >= recipe.itemInput.inputSize && tanks[0].fill(recipe.fluidOutput, false) == recipe.fluidOutput.amount) {
+            ItemStack input = inventory.get(0);
+            if (!input.isEmpty()) {
+                MeltingCrucibleRecipe recipe = MeltingCrucibleRecipe.findRecipe(input);
+                if (recipe != null && input.getCount() >= recipe.itemInput.inputSize && tanks[0].fill(recipe.fluidOutput, false) == recipe.fluidOutput.amount) {
                     cachedMeltingRecipe = recipe;
-                    inputStack.shrink(recipe.itemInput.inputSize);
-                    if (inputStack.getCount() <= 0) inventory.set(0, ItemStack.EMPTY);
+                    input.shrink(recipe.itemInput.inputSize);
+                    if (input.getCount() <= 0) inventory.set(0, ItemStack.EMPTY);
+                    doGraphicalUpdates(0);
                     processTimeRemaining = recipe.getTotalProcessTime() * progressResolution;
+                    efficientMarkDirty();
                     update = true;
                 }
             }
         }
-        if (processTimeRemaining > 0 && shouldRun) {
-            if (cachedMeltingRecipe != null) {
-                int prev = processTimeRemaining;
-                if (heatLevel >= workingHeatLevel) processTimeRemaining -= progressResolution;
-                if (prev != processTimeRemaining) update = true;
-                if (processTimeRemaining <= 0) {
-                    processTimeRemaining = 0;
-                    tanks[0].fill(cachedMeltingRecipe.fluidOutput, true);
+        if (processTimeRemaining > 0 && shouldRun && heatLevel >= workingHeatLevel) {
+            int prev = processTimeRemaining;
+            processTimeRemaining -= progressResolution;
+            if (prev != processTimeRemaining) update = true;
+            if (processTimeRemaining <= 0) {
+                processTimeRemaining = 0;
+                if (cachedMeltingRecipe != null) {
+                    tanks[0].fill(cachedMeltingRecipe.fluidOutput.copy(), true);
                     cachedMeltingRecipe = null;
+                    efficientMarkDirty();
                 }
-            } else processTimeRemaining = 0;
+            }
         }
         return update;
     }
@@ -265,70 +275,88 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         ItemStack filled = Utils.fillFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
         if (!filled.isEmpty()) {
             if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), filled, true)) inventory.get(2).grow(filled.getCount());
-            else if (inventory.get(2).isEmpty()) inventory.set(2, filled.copy());
+            else if (inventory.get(2).isEmpty()) inventory.set(2, filled);
             inventory.get(1).shrink(1);
             if (inventory.get(1).getCount() <= 0) inventory.set(1, ItemStack.EMPTY);
+            doGraphicalUpdates(1);
+            doGraphicalUpdates(2);
+            efficientMarkDirty();
             update = true;
         }
         ItemStack empty = Utils.drainFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
         if (!empty.isEmpty()) {
             if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), empty, true)) inventory.get(2).grow(empty.getCount());
-            else if (inventory.get(2).isEmpty()) inventory.set(2, empty.copy());
+            else if (inventory.get(2).isEmpty()) inventory.set(2, empty);
             inventory.get(1).shrink(1);
             if (inventory.get(1).getCount() <= 0) inventory.set(1, ItemStack.EMPTY);
+            doGraphicalUpdates(1);
+            doGraphicalUpdates(2);
+            efficientMarkDirty();
             update = true;
         }
         if (pumpOutputOut()) update = true;
         return update;
     }
 
+    private boolean pumpOutputOut() {
+        if (tanks[0].getFluidAmount() == 0) return false;
+        if (fluidOutput0 == null) InitializePoIs();
+        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos0, fluidOutput0.facing.getOpposite());
+        if (output == null) return false;
+        FluidStack out = tanks[0].getFluid();
+        if (out == null) return false;
+        int accepted = output.fill(out.copy(), false);
+        if (accepted <= 0) return false;
+        int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+        if (drained > 0) tanks[0].drain(drained, true);
+        return drained > 0;
+    }
+
     private void InitializePoIs() {
+        energyInput0 = itemInput0 = fluidOutput0 = redstone0 = null;
+        soundPos0 = fluidOutputPos0 = null;
         for (PoIJSONSchema poi : TileEntityITMultiblockPartMeltingCrucible.instance.pointsOfInterest) {
+            PoICache cache = new PoICache(facing, poi, mirrored);
             switch (poi.name) {
-                case "redstone0":
-                    redstone0 = new PoICache(facing, poi, mirrored);
-                    break;
                 case "energy_input0":
-                    energyInput0 = new PoICache(facing, poi, mirrored);
+                    energyInput0 = cache;
                     break;
                 case "item_input0":
-                    itemInput0 = new PoICache(facing, poi, mirrored);
+                    itemInput0 = cache;
                     break;
                 case "fluid_output0":
-                    fluidOutput0 = new PoICache(facing, poi, mirrored);
-                    fluidOutputPos0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    fluidOutput0 = cache;
+                    fluidOutputPos0 = getBlockPosForPos(cache.position).offset(cache.facing);
+                    break;
+                case "redstone0":
+                    redstone0 = cache;
                     break;
                 case "sound0":
-                    sound0 = getBlockPosForPos(poi.position);
+                    soundPos0 = getBlockPosForPos(poi.position);
                     break;
             }
         }
-        if (!world.isRemote) notifyIONeighbors();
     }
 
     private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(itemInput0.position));
-        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        notifyNeighbor(getBlockPosForPos(redstone0.position));
-        notifyNeighbor(getBlockPosForPos(energyInput0.position));
+        if (energyInput0 != null) notifyPort(energyInput0);
+        if (itemInput0 != null) notifyPort(itemInput0);
+        if (fluidOutput0 != null) notifyPort(fluidOutput0);
+        if (redstone0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstone0.position), getBlockType());
     }
 
-    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
+    private void notifyPort(PoICache cache) { world.notifyNeighborsOfStateChange(getBlockPosForPos(cache.position), getBlockType(), true); }
 
-    @Override public void TankContentsChanged() { markContainingBlockForUpdate(null); }
+    @Override public void TankContentsChanged() {
+        efficientMarkDirty();
+        markContainingBlockForUpdate(null);
+    }
 
     @Override public boolean isRSDisabled() {
-        if (computerOn.isPresent()) return !computerOn.get();
-        int[] rsPositions = getRedstonePos();
-        if (rsPositions.length < 1) return false;
-        for (int rsPos : rsPositions) {
-            TileEntity tile = world.getTileEntity(getBlockPosForPos(rsPos));
-            if (tile != null) {
-                int power = world.getRedstonePowerFromNeighbors(tile.getPos());
-                return redstoneControlInverted != (power > 0);
-            }
-        }
-        return false;
+        int[] rsPos = getRedstonePos();
+        if (rsPos.length == 0) return false;
+        int power = world.getRedstonePowerFromNeighbors(getBlockPosForPos(rsPos[0]));
+        return redstoneControlInverted != (power > 0);
     }
 
     @Override public int getComparatorInputOverride() { return (int)(15 * heatLevel / workingHeatLevel); }
@@ -340,42 +368,28 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidOutput0 == null) InitializePoIs();
-        if (side == null || fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
+        if (fluidOutput0.isPoI(side, position)) return tanks;
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
-
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
         if (fluidOutput0 == null) InitializePoIs();
-        return iTank == 0 && fluidOutput0.isPoI(side, position) && tanks[0].getFluidAmount() > 0;
+        return iTank == 0 && fluidOutput0.isPoI(side, position);
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return new int[0];
-        if (redstone0 == null) InitializePoIs();
-        return new int[] {redstone0.position};
+        if (!formed || redstone0 == null) return new int[0];
+        return new int[]{redstone0.position};
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
-        if (!formed) return new int[0];
-        if (energyInput0 == null) InitializePoIs();
-        return new int[] {energyInput0.position};
+        if (!formed || energyInput0 == null) return new int[0];
+        return new int[]{energyInput0.position};
     }
+
+    @Override @Nonnull public int[] getOutputTanks() { return new int[]{0}; }
 
     @Override @Nonnull public FluxStorageAdvanced getFluxStorage() { return energyStorage; }
-
-    public boolean isItemInputPosition(@Nullable EnumFacing facing, int position) {
-        if (!formed) return false;
-        if (itemInput0 == null) InitializePoIs();
-        return facing != null && itemInput0.isPoI(facing, position);
-    }
-
-    public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
-        if (!formed) return false;
-        if (energyInput0 == null) InitializePoIs();
-        return facing != null && energyInput0.isPoI(facing, position);
-    }
 
     @Override @Nonnull public NonNullList<ItemStack> getInventory() { return inventory; }
 
@@ -383,13 +397,22 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
     @Override public int getSlotLimit(int slot) { return 64; }
 
-    @Override public void doGraphicalUpdates(int slot) { markDirty(); markContainingBlockForUpdate(null); }
+    @Override public void doGraphicalUpdates(int slot) {
+        efficientMarkDirty();
+        markContainingBlockForUpdate(null);
+    }
 
-    @Override @Nonnull public NonNullList<ItemStack> getDroppedItems() { return getInventory(); }
+    @Override @Nonnull public NonNullList<ItemStack> getDroppedItems() { return inventory; }
 
     @Override public int getComparatedSize() { return slotCount; }
 
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+    @Override @Nonnull public IFluidTank[] getInternalTanks() { return tanks; }
 
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
+    @Override public void receiveMessageFromServer(ByteBuf buf) {
+        int energy = buf.readInt();
+        energyStorage.modifyEnergyStored(energy - energyStorage.getEnergyStored());
+        heatLevel = buf.readDouble();
+        processTimeRemaining = buf.readInt();
+        isRunning = buf.readBoolean();
+    }
 }

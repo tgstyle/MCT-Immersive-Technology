@@ -190,6 +190,8 @@ public class Config {
                 public int highPressureSteamTurbine_speed_gainPerTick = 1;
                 @Comment({"How fast the Steam Turbine loses speed per tick when inactive [Default=6]"})
                 public int highPressureSteamTurbine_speed_lossPerTick = 6;
+                @Comment({"How much of the maximum alternator output power should the Steam Turbine generate [Default=1.0]"})
+                public float highPressureSteamTurbine_torque = 1.0f;
                 @Comment({"Should the steam turbine use tungsten, if it exists? Otherwise the turbine will use nickel [Default=true]"})
                 public boolean highPressureSteamTurbine_turbine_material = true;
             }

@@ -13,8 +13,8 @@ import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
-import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
+import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
@@ -31,7 +31,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
@@ -48,7 +47,6 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,13 +70,15 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     private boolean running;
     private float soundVolume = 0f;
-    private int soundGracePeriod = 60;
 
     public DistillerRecipe cachedDistillerRecipe;
     public boolean redstoneControlInverted = false;
     private int oldComparatorOutput;
 
     private boolean needsPoIInit = false;
+    private boolean needsNotify = false;
+
+    private int tickCountdown = 5;
 
     protected PoICache energyInput0, fluidInput0, fluidOutput0, itemOutput0, redstone0;
     private BlockPos fluidOutputFront0, itemOutputFront0, soundPos0;
@@ -92,9 +92,15 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
-        if (!descPacket && nbt.hasKey("cachedRecipe")) cachedDistillerRecipe = DistillerRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
-        if (!descPacket && formed) needsPoIInit = true;
-        if (!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+        if (!descPacket) {
+            if (nbt.hasKey("cachedRecipe")) cachedDistillerRecipe = DistillerRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
+            inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+            if (processTimeRemaining > 0 && cachedDistillerRecipe == null) processTimeRemaining = 0;
+            if (formed) {
+                needsPoIInit = true;
+                needsNotify = true;
+            }
+        }
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -106,32 +112,34 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
-        if (!descPacket && cachedDistillerRecipe != null) nbt.setTag("cachedRecipe", cachedDistillerRecipe.writeToNBT(new NBTTagCompound()));
-        if (!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
+        if (!descPacket) {
+            if (cachedDistillerRecipe != null) nbt.setTag("cachedRecipe", cachedDistillerRecipe.writeToNBT(new NBTTagCompound()));
+            nbt.setTag("inventory", Utils.writeInventory(inventory));
+        }
     }
 
     @SideOnly(Side.CLIENT)
-    public void handleSounds() {
+    private void handleSounds() {
         if (soundPos0 == null) InitializePoIs();
-        float targetSoundLevel = running ? 1f : 0f;
-        if (soundVolume < targetSoundLevel) {
-            soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel);
-            soundGracePeriod = 60;
-        } else if (soundVolume > targetSoundLevel) {
-            if (soundGracePeriod > 0) soundGracePeriod--;
-            else soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel);
+        float target = running ? 1f : 0f;
+        if (soundVolume < target) {
+            soundVolume = Math.min(soundVolume + 0.01f, target);
+        } else if (soundVolume > target) {
+            soundVolume = Math.max(soundVolume - 0.01f, target);
         }
-        if (soundVolume == 0) ITSoundHandler.StopSound(soundPos0);
-        else {
+        if (soundVolume <= 0f) {
+            ITSoundHandler.StopSound(soundPos0);
+            soundVolume = 0f;
+        } else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 8, 1);
-            ITSounds.distiller.PlayRepeating(soundPos0, soundVolume / attenuation, 1);
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 8f, 1f);
+            ITSounds.distiller.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
         }
     }
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        ITSoundHandler.StopSound(soundPos0);
+        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
         super.onChunkUnload();
     }
 
@@ -142,15 +150,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         super.disassemble();
     }
 
-    public void notifyNearbyClients() {
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.copyBoolean(running));
-    }
-
-    @Override public void receiveMessageFromServer(ByteBuf message) { running = message.readBoolean(); }
-
-    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
-
-    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
+    void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     @Override public void update() {
         if (!formed) return;
@@ -158,11 +158,18 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
             InitializePoIs();
             needsPoIInit = false;
         }
+        if (needsNotify) {
+            notifyIONeighbors();
+            needsNotify = false;
+        }
         super.update();
         if (world.isRemote) {
             handleSounds();
             return;
         }
+        int oldEnergy = energyStorage.getEnergyStored();
+        int oldProcess = processTimeRemaining;
+        boolean oldRunning = running;
         boolean update = false;
         boolean shouldRun = !isRSDisabled();
         if (processTimeRemaining == 0 && shouldRun) {
@@ -191,8 +198,34 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
                     processTimeRemaining--;
                     update = true;
                     if (processTimeRemaining <= 0) {
-                        if (cachedDistillerRecipe.fluidOutput != null) tanks[1].fill(cachedDistillerRecipe.fluidOutput, true);
+                        DistillerRecipe completingRecipe = cachedDistillerRecipe;
                         cachedDistillerRecipe = null;
+
+                        if (completingRecipe != null) {
+                            if (completingRecipe.fluidOutput != null) {
+                                tanks[1].fill(completingRecipe.fluidOutput.copy(), true);
+                            }
+                            if (completingRecipe.itemOutput != null && !completingRecipe.itemOutput.isEmpty()
+                                    && world.rand.nextFloat() < completingRecipe.chance) {
+                                ItemStack output = completingRecipe.itemOutput.copy();
+                                ItemStack slot = inventory.get(4);
+                                boolean inserted = false;
+                                if (slot.isEmpty()) {
+                                    inventory.set(4, output);
+                                    inserted = true;
+                                } else if (ItemHandlerHelper.canItemStacksStack(slot, output)) {
+                                    int space = getSlotLimit(4) - slot.getCount();
+                                    int add = Math.min(space, output.getCount());
+                                    if (add > 0) {
+                                        slot.grow(add);
+                                        inserted = true;
+                                    }
+                                }
+                                if (inserted) {
+                                    doGraphicalUpdates(4);
+                                }
+                            }
+                        }
                     }
                 }
             } else {
@@ -223,26 +256,38 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
             if (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutput0.facing.getOpposite())) {
                 IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutput0.facing.getOpposite());
                 if (handler != null) {
-                    ItemStack remaining = ItemHandlerHelper.insertItemStacked(handler, inventory.get(4), false);
+                    ItemStack current = inventory.get(4).copy();
+                    ItemStack remaining = ItemHandlerHelper.insertItemStacked(handler, current, false);
                     inventory.set(4, remaining);
-                    if (remaining.isEmpty()) update = true;
+                    if (remaining.getCount() < current.getCount()) update = true;
                 }
             }
         }
         boolean currentlyRunning = processTimeRemaining > 0 && shouldRun;
-        if (running != currentlyRunning) {
+        if (currentlyRunning != running) {
             running = currentlyRunning;
-            notifyNearbyClients();
             update = true;
         }
         if (update) {
             efficientMarkDirty();
             markContainingBlockForUpdate(null);
         }
+        boolean changed = oldEnergy != energyStorage.getEnergyStored() || oldProcess != processTimeRemaining || oldRunning != running;
+        if (changed && tickCountdown-- <= 0) {
+            ByteBuf buf = Unpooled.buffer();
+            buf.writeInt(energyStorage.getEnergyStored() - oldEnergy);
+            buf.writeInt(processTimeRemaining);
+            buf.writeBoolean(running);
+            BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
+            tickCountdown = 5;
+        }
         int comp = getComparatorInputOverride();
         if (comp != oldComparatorOutput) {
             oldComparatorOutput = comp;
-            world.updateComparatorOutputLevel(getPos(), getBlockType());
+            if (redstone0 != null) {
+                BlockPos rsPos = getBlockPosForPos(redstone0.position);
+                world.updateComparatorOutputLevel(rsPos, getBlockType());
+            }
         }
     }
 
@@ -284,18 +329,20 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
                     break;
             }
         }
-        if (!world.isRemote) notifyIONeighbors();
     }
 
     private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(energyInput0.position));
-        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
-        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        notifyNeighbor(getBlockPosForPos(itemOutput0.position));
-        notifyNeighbor(getBlockPosForPos(redstone0.position));
+        if (energyInput0 != null) notifyPort(getBlockPosForPos(energyInput0.position));
+        if (fluidInput0 != null) notifyPort(getBlockPosForPos(fluidInput0.position));
+        if (fluidOutput0 != null) notifyPort(getBlockPosForPos(fluidOutput0.position));
+        if (itemOutput0 != null) notifyPort(getBlockPosForPos(itemOutput0.position));
+        if (redstone0 != null) {
+            BlockPos rsPos = getBlockPosForPos(redstone0.position);
+            world.updateComparatorOutputLevel(rsPos, getBlockType());
+        }
     }
 
-    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
+    private void notifyPort(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, getBlockType(), true); }
 
     @Override public void TankContentsChanged() {
         if (processTimeRemaining == 0) cachedDistillerRecipe = null;
@@ -388,6 +435,15 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     @Override @Nonnull public NonNullList<ItemStack> getDroppedItems() { return inventory; }
 
     @Override public int getComparatedSize() { return slotCount; }
+
+    @Override public void receiveMessageFromServer(ByteBuf message) {
+        int delta = message.readInt();
+        energyStorage.modifyEnergyStored(delta);
+        processTimeRemaining = message.readInt();
+        running = message.readBoolean();
+    }
+
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
 
     public static class DistillerFluidHandler implements IFluidHandler {
         private final IFluidTank[] accessibleTanks;

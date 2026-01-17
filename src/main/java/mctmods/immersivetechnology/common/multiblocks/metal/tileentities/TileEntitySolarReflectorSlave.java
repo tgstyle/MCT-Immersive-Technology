@@ -1,12 +1,11 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
-import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarReflector;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 
@@ -33,6 +32,8 @@ import java.util.List;
 
 public class TileEntitySolarReflectorSlave extends TileEntityITMultiblock<TileEntitySolarReflectorSlave, IMultiblockRecipe, TileEntitySolarReflectorMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
 
+    private int loadGrace = 0;
+
     public TileEntitySolarReflectorSlave() { super(TileEntityITMultiblockPartSolarReflector.instance, 0, false); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
@@ -42,21 +43,27 @@ public class TileEntitySolarReflectorSlave extends TileEntityITMultiblock<TileEn
     @Override public void update() {
         if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
         super.update();
+        if (!formed) return;
+        if (world.isRemote) return;
+        if (master() == null) {
+            if (loadGrace++ > 100) invalidate();
+        } else loadGrace = 0;
     }
 
     @Override public boolean isDummy() { return true; }
 
     TileEntitySolarReflectorMaster master;
 
-    public TileEntitySolarReflectorMaster master() {
+    @Override public TileEntitySolarReflectorMaster master() {
         if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
+        if (!world.isBlockLoaded(masterPos)) return null;
+        TileEntity te = world.getTileEntity(masterPos);
         master = te instanceof TileEntitySolarReflectorMaster ? (TileEntitySolarReflectorMaster)te : null;
         return master;
     }
 
-    @Override public NonNullList<ItemStack> getInventory() { return null; }
+    @Override public NonNullList<ItemStack> getInventory() { return NonNullList.create(); }
 
     @Override public boolean isStackValid(int slot, ItemStack stack) { return false; }
 

@@ -35,7 +35,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
@@ -52,7 +51,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Objects;
 import java.util.Random;
 
@@ -110,6 +108,11 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         sparkplugStorage.readFromNBT(nbt.getCompoundTag("sparkplugStorage"));
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
+        if (world.isRemote) {
+            targetSoundLevel = (float)speed / maxSpeed;
+            soundVolume = targetSoundLevel;
+            soundGracePeriod = 60;
+        }
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -128,7 +131,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     @SideOnly(Side.CLIENT)
-    public void spawnParticles() {
+    private void spawnParticles() {
+        if (particle0 == null) InitializePoIs();
         if (!starterRunning || speed < maxSpeed / 4) return;
         Random rand = new Random();
         if (rand.nextInt(40) != 0) return;
@@ -136,12 +140,16 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (particle0.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
-        Particle particle = new ParticleSmokeNormal.Factory().createParticle(0, world, particle0.getX() + 2 - rand.nextFloat() * 3, particle0.getY() + 0.5f, particle0.getZ() + 2 - rand.nextFloat() * 3, 0, 0.02f, 0);
+        Particle particle = new ParticleSmokeNormal.Factory().createParticle(0, world,
+                particle0.getX() + 2 - rand.nextFloat() * 3,
+                particle0.getY() + 0.5f,
+                particle0.getZ() + 2 - rand.nextFloat() * 3,
+                0, 0.02f, 0);
         ClientUtils.mc().effectRenderer.addEffect(particle);
     }
 
     @SideOnly(Side.CLIENT)
-    public void handleSounds() {
+    private void handleSounds() {
         if (sound0 == null) InitializePoIs();
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         float att = Math.max((float)player.getDistanceSq(sound0.getX(), sound0.getY(), sound0.getZ()) / 64, 1);
@@ -176,6 +184,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     @Override public void receiveMessageFromServer(ByteBuf buf) {
         if (buf.readableBytes() == 0) {
+            if (sound2 == null) InitializePoIs();
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(sound2.getX(), sound2.getY(), sound2.getZ()) / 8, 1);
             ITSounds.gasTurbineSpark.PlayOnce(sound2, 1 / attenuation, 1);
@@ -188,14 +197,14 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
 
-    public void notifyNearbyClients() {
+    private void notifyNearbyClients() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeInt(speed);
         buf.writeBoolean(starterRunning);
         BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
     }
 
-    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
+    private void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     @Override public void update() {
         if (formed && energyInput0 == null) InitializePoIs();
@@ -260,8 +269,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
 
         boolean changed = animation.getAnimationMomentum() != oldMomentum || starterRunning != prevStarterRunning || prevSpeed != speed;
-        tickCountdown--;
-        if (changed && tickCountdown <= 0) {
+        if (changed && tickCountdown-- <= 0) {
             notifyNearbyClients();
             tickCountdown = 5;
         }
@@ -272,8 +280,11 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
         int comp = getComparatorInputOverride();
         if (comp != oldComparatorOutput) {
-            notifyRedstoneNeighbor();
             oldComparatorOutput = comp;
+            if (redstone0 != null) {
+                BlockPos rsPos = getBlockPosForPos(redstone0.position);
+                world.updateComparatorOutputLevel(rsPos, getBlockType());
+            }
         }
     }
 
@@ -328,11 +339,6 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
         tanks[1].drain(drained, true);
         return drained > 0;
-    }
-
-    private void notifyRedstoneNeighbor() {
-        BlockPos rsPos = getBlockPosForPos(redstone0.position);
-        world.notifyNeighborsOfStateChange(rsPos, world.getBlockState(rsPos).getBlock(), false);
     }
 
     private void InitializePoIs() {
@@ -403,10 +409,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     @Override public boolean isDummy() { return false; }
 
-    @Override public TileEntityGasTurbineMaster master() {
-        master = this;
-        return this;
-    }
+    @Override public TileEntityGasTurbineMaster master() { return this; }
 
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
@@ -476,7 +479,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             if (fluidInput0 == null) InitializePoIs();
             if (fluidInput0.isPoI(facing, pos) || fluidOutput0.isPoI(facing, pos)) {
-                return (T) new GasTurbineFluidHandler(getAccessibleFluidTanks(facing, pos), this, facing, pos);
+                return (T)new GasTurbineFluidHandler(getAccessibleFluidTanks(facing, pos), this, facing, pos);
             }
         }
         return super.getCapability(capability, facing);

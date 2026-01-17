@@ -12,9 +12,7 @@ import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-
 import mctmods.immersivetechnology.common.util.shapes.*;
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -26,7 +24,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
@@ -34,11 +31,15 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
-
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
+
 public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<TileEntitySteelSheetmetalTankSlave, DummyRecipe, TileEntitySteelSheetmetalTankMaster> implements IBlockOverlayText, IPlayerInteraction, IComparatorOverride, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+
+    private int loadGrace = 0;
 
     public TileEntitySteelSheetmetalTankSlave() { super(TileEntityITMultiblockPartSteelSheetmetalTank.instance, 0, true); }
 
@@ -49,16 +50,31 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
     @Override public void update() {
         if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
         super.update();
+        if (!world.isRemote) {
+            TileEntitySteelSheetmetalTankMaster m = master();
+            if (m != null) {
+                loadGrace = 0;
+            } else {
+                loadGrace++;
+                if (loadGrace > 100) {
+                    formed = false;
+                    offset = new int[]{0, 0, 0};
+                    world.getChunk(getPos()).markDirty();
+                    markContainingBlockForUpdate(null);
+                }
+            }
+        }
     }
 
     @Override public boolean isDummy() { return true; }
 
     TileEntitySteelSheetmetalTankMaster master;
 
-    public TileEntitySteelSheetmetalTankMaster master() {
+    @Override public TileEntitySteelSheetmetalTankMaster master() {
         if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
+        if (!world.isBlockLoaded(masterPos)) return null;
+        TileEntity te = world.getTileEntity(masterPos);
         master = te instanceof TileEntitySteelSheetmetalTankMaster ? (TileEntitySteelSheetmetalTankMaster)te : null;
         return master;
     }
@@ -77,16 +93,10 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
 
     @Override public int getComparatorInputOverride() {
         TileEntitySteelSheetmetalTankMaster m = master();
-        if (m != null && offset[1] >= 1 && offset[1] <= 4) {
-            int layer = offset[1] - 1;
-            int vol = m.tank.getCapacity() / 4;
-            int filled = m.tank.getFluidAmount() - layer * vol;
-            return Math.min(15, Math.max(0, (15 * filled) / vol));
-        }
-        return 0;
+        return m != null ? m.getComparatorInputOverride() : 0;
     }
 
-    @Override public NonNullList<ItemStack> getInventory() { return null; }
+    @Override public NonNullList<ItemStack> getInventory() { return NonNullList.create(); }
 
     @Override public boolean isStackValid(int slot, ItemStack stack) { return false; }
 
@@ -96,7 +106,10 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
 
     @Override protected @Nonnull DummyRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
 
-    @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
+    @Override @Nonnull public int[] getRedstonePos() {
+        TileEntitySteelSheetmetalTankMaster m = master();
+        return m != null ? m.getRedstonePos() : new int[0];
+    }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
 
@@ -106,7 +119,7 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
 
     @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(@Nonnull EnumFacing side, int position) {
         TileEntitySteelSheetmetalTankMaster m = master();
         return m != null ? m.getAccessibleFluidTanks(side, position) : ITUtils.emptyIFluidTankList;
     }
@@ -168,13 +181,13 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
                 return filled;
             }
 
-            @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
+            @Override public @Nullable FluidStack drain(FluidStack resource, boolean doDrain) {
                 FluidStack drained = m.tank.drain(resource, doDrain);
                 if (drained != null && drained.amount > 0 && doDrain) m.efficientMarkDirty();
                 return drained;
             }
 
-            @Override public FluidStack drain(int maxDrain, boolean doDrain) {
+            @Override public @Nullable FluidStack drain(int maxDrain, boolean doDrain) {
                 FluidStack drained = m.tank.drain(maxDrain, doDrain);
                 if (drained != null && drained.amount > 0 && doDrain) m.efficientMarkDirty();
                 return drained;

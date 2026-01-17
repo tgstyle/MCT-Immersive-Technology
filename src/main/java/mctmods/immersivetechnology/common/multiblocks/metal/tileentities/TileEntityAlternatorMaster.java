@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorageAdvanced;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
@@ -10,10 +9,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IMechanicalEnergy;
+import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
+import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
@@ -23,6 +22,7 @@ import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,7 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -49,32 +49,37 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     private static final boolean soundRPM = Multiblocks.alternator.alternator_sound_RPM;
 
     public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(Multiblocks.alternator.alternator_energy_capacitorSize, rfPerTick, rfPerTickPerPort);
-    public int speed;
-    public float torqueMult = 1;
+    public int speed = 0;
+    public float torqueMult = 1f;
     public IMechanicalEnergy provider;
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
-    private float targetSoundLevel;
-    private float soundVolume;
-    private int soundGracePeriod;
-    private int oldEnergy = energyStorage.getEnergyStored();
-    private int oldSpeed = maxSpeed;
+    private float soundVolume = 0f;
+    private int soundGracePeriod = 0;
+    private float targetSoundLevel = 0f;
+    private int oldEnergy = 0;
+    private int oldSpeed = 0;
+    private int oldComparatorOutput = 0;
     private int tickCountdown = 5;
 
-    private boolean needsPoIInit = false;
-    private boolean needsNotify = false;
-    private boolean needsBlockUpdate = false;
+    private boolean needsPoIInit = true;
+    private boolean needsNotify = true;
 
     private final PoICache[] energyOutputs = new PoICache[6];
+    private PoICache mechanicalInput0;
+    private PoICache redstone0;
+    private BlockPos mechanicalInputPos0;
+    private BlockPos soundPos0;
     private final BlockPos[] energyOutputPositions = new BlockPos[6];
-    protected PoICache mechanicalInput0, redstone0;
-    private BlockPos mechanicalInputPos0, soundPos0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         energyStorage.readFromNBT(nbt);
         animation.readFromNBT(nbt);
-        if (!descPacket && !world.isRemote && formed) { needsPoIInit = true; needsNotify = true; needsBlockUpdate = true; }
+        if (!descPacket && formed) {
+            needsPoIInit = true;
+            needsNotify = true;
+        }
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -83,126 +88,95 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         animation.writeToNBT(nbt);
     }
 
-    @Override @Nonnull public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
-        nbt = super.writeToNBT(nbt);
-        nbt.setFloat("animationRotation", animation.getAnimationRotation());
-        return nbt;
-    }
-
-    @Override public void readFromNBT(@Nonnull NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        animation.setAnimationRotation(nbt.getFloat("animationRotation"));
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void handleSounds() {
-        if (soundPos0 == null) { InitializePoIs(); }
-        if (soundVolume == 0) { ITSoundHandler.StopSound(soundPos0); }
-        else {
-            EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 8, 1);
-            float level = ITUtils.remapRange(0, 1, 0.5f, 1.0f, soundVolume);
-            ITSounds.alternator.PlayRepeating(soundPos0, (5 * soundVolume) / attenuation, level);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() {
-        ITSoundHandler.StopSound(soundPos0);
-        super.onChunkUnload();
-    }
-
-    @Override public void disassemble() {
-        super.disassemble();
-        if (soundPos0 == null) { InitializePoIs(); }
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
-    }
-
-    public void notifyNearbyClients() { BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.copyInt(energyStorage.getEnergyStored(), speed)); }
-
-    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
-
-    @Override public void receiveMessageFromServer(ByteBuf buf) {
-        int energy = buf.readInt();
-        int speed = buf.readInt();
-        targetSoundLevel = (!soundRPM) ? (float)energy / energyStorage.getMaxEnergyStored() : (float)speed / maxSpeed;
-    }
-
-    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) { }
-
     @Override public void update() {
-        if (needsBlockUpdate) { needsBlockUpdate = false; markContainingBlockForUpdate(null); }
-        if (!formed) { return; }
+        if (!formed) return;
+
+        if (needsPoIInit || mechanicalInput0 == null || energyOutputs[0] == null) {
+            InitializePoIs();
+            needsPoIInit = false;
+        }
+
+        if (needsNotify) {
+            notifyIONeighbors();
+            needsNotify = false;
+        }
+
         if (world.isRemote) {
-            float rotationSpeed = speed == 0 ? 0f : ((float)speed / (float)maxSpeed) * maxRotationSpeed;
             float oldMomentum = animation.getAnimationMomentum();
+            float rotationSpeed = speed == 0 ? 0f : ((float)speed / maxSpeed) * maxRotationSpeed;
             animation.setAnimationMomentum(rotationSpeed);
             animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
-            if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); soundGracePeriod = 60; }
-            else if (soundVolume > targetSoundLevel) {
-                if (soundGracePeriod > 0) { soundGracePeriod--; }
-                else { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
+
+            targetSoundLevel = soundRPM ? (float)speed / maxSpeed : (float)energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
+
+            if (soundVolume < targetSoundLevel) {
+                soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel);
+                soundGracePeriod = 60;
+            } else if (soundVolume > targetSoundLevel) {
+                if (soundGracePeriod > 0) soundGracePeriod--;
+                else soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel);
             }
-            handleSounds();
+
+            if (soundPos0 != null) {
+                if (soundVolume <= 0f) {
+                    ITSoundHandler.StopSound(soundPos0);
+                } else {
+                    EntityPlayerSP player = Minecraft.getMinecraft().player;
+                    float att = Math.max((float)player.getDistanceSq(soundPos0.getX() + 0.5, soundPos0.getY() + 0.5, soundPos0.getZ() + 0.5) / 8f, 1f);
+                    float level = ITUtils.remapRange(0f, 1f, 0.5f, 1.0f, soundVolume);
+                    ITSounds.alternator.PlayRepeating(soundPos0, 5f * soundVolume / att, level);
+                }
+            }
             return;
         }
+
         super.update();
-        if (needsPoIInit) { needsPoIInit = false; InitializePoIs(); }
-        if (needsNotify) { needsNotify = false; notifyIONeighbors(); }
+
         checkProvider();
-        if (speed > 0) {
-            energyStorage.modifyEnergyStored(energyGenerated());
-        }
+
+        if (speed > 0) energyStorage.modifyEnergyStored(energyGenerated());
+
         int currentEnergy = energyStorage.getEnergyStored();
         if (currentEnergy > 0) {
             int transferRate = (int)Math.ceil(rfPerTickPerPort * torqueMult);
             for (int i = 0; i < 6; i++) {
-                if (currentEnergy <= 0) { break; }
-                TileEntity tileEntity = Utils.getExistingTileEntity(world, energyOutputPositions[i]);
-                if (tileEntity != null) {
-                    EnumFacing energyFacing = energyOutputs[i].facing.getOpposite();
-                    if (EnergyHelper.isFluxReceiver(tileEntity, energyFacing)) {
-                        int canReceiveAmount = EnergyHelper.insertFlux(tileEntity, energyFacing, Math.min(currentEnergy, transferRate), true);
-                        if (canReceiveAmount > 0) {
-                            EnergyHelper.insertFlux(tileEntity, energyFacing, canReceiveAmount, false);
-                            energyStorage.modifyEnergyStored(-canReceiveAmount);
-                            currentEnergy -= canReceiveAmount;
-                        }
-                    }
+                if (currentEnergy <= 0) break;
+                BlockPos outPos = energyOutputPositions[i];
+                if (outPos == null) continue;
+                TileEntity te = Utils.getExistingTileEntity(world, outPos);
+                if (te == null) continue;
+                EnumFacing side = energyOutputs[i].facing.getOpposite();
+                int canReceive = EnergyHelper.insertFlux(te, side, Math.min(currentEnergy, transferRate), true);
+                if (canReceive > 0) {
+                    int inserted = EnergyHelper.insertFlux(te, side, canReceive, false);
+                    energyStorage.modifyEnergyStored(-inserted);
+                    currentEnergy -= inserted;
                 }
             }
         }
+
         boolean changed = oldSpeed != speed || oldEnergy != currentEnergy;
-        tickCountdown--;
-        if (changed && tickCountdown <= 0) {
-            notifyNearbyClients();
-            efficientMarkDirty();
-            markContainingBlockForUpdate(null);
+        if (changed && tickCountdown-- <= 0) {
+            ByteBuf buf = Unpooled.buffer();
+            buf.writeInt(energyStorage.getEnergyStored());
+            buf.writeInt(speed);
+            BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
             tickCountdown = 5;
+            world.markChunkDirty(getPos(), this);
+            markContainingBlockForUpdate(null);
         }
+
         oldEnergy = currentEnergy;
         oldSpeed = speed;
-    }
 
-    private int energyGenerated() { return ((double)speed / (double)maxSpeed > rfThreshold) ? (int)Math.round(Math.pow((double)speed / (double)maxSpeed, rfExponent) * torqueMult * rfPerTick) : 0; }
-
-    private void checkProvider() {
-        if (isValidProvider()) {
-            speed = provider.getSpeed();
-            torqueMult = provider.getTorqueMultiplier();
-        } else if (speed > 0) { speed = Math.max(speed - speedLossPerTick, 0); }
-    }
-
-    private boolean isValidProvider() {
-        if (mechanicalInput0 == null) { InitializePoIs(); }
-        if (provider == null || !provider.isValid()) {
-            TileEntity tile = world.getTileEntity(mechanicalInputPos0);
-            if (tile instanceof IMechanicalEnergy) {
-                IMechanicalEnergy possibleProvider = (IMechanicalEnergy)tile;
-                if (possibleProvider.isValid() && possibleProvider.isMechanicalEnergyTransmitter(mechanicalInput0.facing.getOpposite())) { provider = possibleProvider; }
+        int comparator = getComparatorInputOverride();
+        if (comparator != oldComparatorOutput) {
+            oldComparatorOutput = comparator;
+            if (redstone0 != null) {
+                BlockPos rsPos = getBlockPosForPos(redstone0.position);
+                world.updateComparatorOutputLevel(rsPos, getBlockType());
             }
         }
-        return provider != null && provider.isValid();
     }
 
     private void InitializePoIs() {
@@ -212,61 +186,120 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
                 int index = Integer.parseInt(name.substring(13));
                 energyOutputs[index] = new PoICache(facing, poi, mirrored);
                 energyOutputPositions[index] = getBlockPosForPos(energyOutputs[index].position).offset(energyOutputs[index].facing);
-            } else switch (name) {
-                case "redstone0":
-                    redstone0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "mechanical_input0":
-                    mechanicalInput0 = new PoICache(facing, poi, mirrored);
-                    mechanicalInputPos0 = getBlockPosForPos(mechanicalInput0.position).offset(mechanicalInput0.facing);
-                    break;
-                case "sound0":
-                    soundPos0 = getBlockPosForPos(poi.position);
-                    break;
+            } else if ("mechanical_input0".equals(name)) {
+                mechanicalInput0 = new PoICache(facing, poi, mirrored);
+                mechanicalInputPos0 = getBlockPosForPos(mechanicalInput0.position).offset(mechanicalInput0.facing);
+            } else if ("sound0".equals(name)) {
+                soundPos0 = getBlockPosForPos(poi.position);
+            } else if ("redstone0".equals(name)) {
+                redstone0 = new PoICache(facing, poi, mirrored);
             }
         }
     }
 
     private void notifyIONeighbors() {
+        Block block = getBlockType();
         for (int i = 0; i < 6; i++) {
-            notifyNeighbor(getBlockPosForPos(energyOutputs[i].position));
+            if (energyOutputs[i] != null) {
+                BlockPos p = getBlockPosForPos(energyOutputs[i].position);
+                world.notifyNeighborsOfStateChange(p, block, true);
+            }
         }
-        notifyNeighbor(getBlockPosForPos(redstone0.position));
+        if (redstone0 != null) {
+            BlockPos p = getBlockPosForPos(redstone0.position);
+            world.updateComparatorOutputLevel(p, block);
+        }
     }
 
-    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
+    @SideOnly(Side.CLIENT)
+    @Override public void onChunkUnload() {
+        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        super.onChunkUnload();
+    }
 
-    @Override public int getComparatorInputOverride() { return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored(); }
+    @Override public void receiveMessageFromServer(ByteBuf buf) {
+        int readEnergy = buf.readInt();
+        int readSpeed = buf.readInt();
+        energyStorage.modifyEnergyStored(readEnergy - energyStorage.getEnergyStored());
+        speed = readSpeed;
+        targetSoundLevel = soundRPM ? (float)readSpeed / maxSpeed : (float)readEnergy / energyStorage.getMaxEnergyStored();
+    }
+
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
 
     @Override public boolean isDummy() { return false; }
 
-    @Override public TileEntityAlternatorMaster master() { master = this; return this; }
+    @Override public TileEntityAlternatorMaster master() { return this; }
+
+    private int energyGenerated() {
+        if ((double)speed / maxSpeed <= rfThreshold) return 0;
+        return (int)Math.round(Math.pow((double)speed / maxSpeed, rfExponent) * rfPerTick * torqueMult);
+    }
+
+    private void checkProvider() {
+        if (isValidProvider()) {
+            speed = provider.getSpeed();
+            torqueMult = provider.getTorqueMultiplier();
+        } else if (speed > 0) {
+            speed = Math.max(speed - speedLossPerTick, 0);
+        }
+    }
+
+    private boolean isValidProvider() {
+        if (mechanicalInput0 == null) InitializePoIs();
+        if (provider == null || !provider.isValid()) {
+            TileEntity te = world.getTileEntity(mechanicalInputPos0);
+            if (te instanceof IMechanicalEnergy) {
+                IMechanicalEnergy poss = (IMechanicalEnergy)te;
+                if (poss.isValid() && poss.isMechanicalEnergyTransmitter(mechanicalInput0.facing.getOpposite())) {
+                    provider = poss;
+                    return true;
+                }
+            }
+            provider = null;
+            return false;
+        }
+        return true;
+    }
+
+    @Override public void disassemble() {
+        super.disassemble();
+        BlockPos sp = soundPos0;
+        if (sp == null) {
+            InitializePoIs();
+            sp = soundPos0;
+        }
+        if (sp != null && !world.isRemote) {
+            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sp), new TargetPoint(world.provider.getDimension(), sp.getX(), sp.getY(), sp.getZ(), 0));
+        }
+    }
+
+    @Override public int getComparatorInputOverride() { return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored(); }
 
     public boolean isMechanicalEnergyReceiver(@Nullable EnumFacing facing, int position) {
-        if (mechanicalInput0 == null) { InitializePoIs(); }
+        if (mechanicalInput0 == null) InitializePoIs();
         return facing != null && mechanicalInput0.isPoI(facing, position);
     }
 
     public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
-        if (energyOutputs[0] == null) { InitializePoIs(); }
-        if (facing == null) { return false; }
-        for (int i = 0; i < 6; i++) {
-            if (energyOutputs[i].isPoI(facing, position)) { return true; }
-        }
+        if (energyOutputs[0] == null) InitializePoIs();
+        if (facing == null) return false;
+        for (PoICache cache : energyOutputs) if (cache != null && cache.isPoI(facing, position)) return true;
         return false;
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (redstone0 == null) { InitializePoIs(); }
-        return new int[] {redstone0.position};
+        if (redstone0 == null) InitializePoIs();
+        return new int[]{redstone0.position};
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
-        if (energyOutputs[0] == null) { InitializePoIs(); }
-        return new int[] {energyOutputs[0].position, energyOutputs[1].position, energyOutputs[2].position, energyOutputs[3].position, energyOutputs[4].position, energyOutputs[5].position};
+        if (energyOutputs[0] == null) InitializePoIs();
+        return new int[]{energyOutputs[0].position, energyOutputs[1].position, energyOutputs[2].position,
+                energyOutputs[3].position, energyOutputs[4].position, energyOutputs[5].position};
     }
 
-    @Override @Nonnull public FluxStorage getFluxStorage() { return energyStorage; }
+    @Override @Nonnull public FluxStorageAdvanced getFluxStorage() { return energyStorage; }
 
     @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
 

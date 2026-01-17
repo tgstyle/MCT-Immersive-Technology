@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.Config;
@@ -10,7 +11,6 @@ import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.shapes.*;
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,26 +21,22 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
-public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements ITBlockInterfaces.IMechanicalEnergy, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements ITBlockInterfaces.IMechanicalEnergy, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IComparatorOverride {
 
-    private int loadGrace = 0;
-    TileEntityGasTurbineMaster master;
+    protected int loadGrace = 0;
+    protected TileEntityGasTurbineMaster master;
 
     private static final float outputtorque = Config.ITConfig.Multiblocks.gasTurbine.gasTurbine_torque;
 
@@ -51,17 +47,22 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
     @Override public void update() {
+        if (!formed) return;
         if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
-        if (formed && master() == null) { if (loadGrace++ > 20) { invalidate(); return; } } else loadGrace = 0;
+        TileEntityGasTurbineMaster m = master();
+        if (m == null) {
+            if (loadGrace++ > 20) invalidate();
+        } else loadGrace = 0;
+        if (world.isRemote) return;
         super.update();
     }
 
     @Override public boolean isDummy() { return true; }
 
     public TileEntityGasTurbineMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
+        if (master != null && !master.isInvalid()) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
+        TileEntity te = world.getTileEntity(masterPos);
         master = te instanceof TileEntityGasTurbineMaster ? (TileEntityGasTurbineMaster)te : null;
         return master;
     }
@@ -72,23 +73,44 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
 
     @Override public int getSlotLimit(int slot) { return 0; }
 
-    @Override @Nonnull public IFluidTank[] getInternalTanks() { return master() == null ? new IFluidTank[0] : master.tanks; }
+    @Override @Nonnull public IFluidTank[] getInternalTanks() {
+        TileEntityGasTurbineMaster m = master();
+        return m == null ? new IFluidTank[0] : m.tanks;
+    }
 
-    @Override protected @Nonnull GasTurbineRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return GasTurbineRecipe.loadFromNBT(tag); }
+    @Override @Nonnull protected GasTurbineRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return GasTurbineRecipe.loadFromNBT(tag); }
 
-    @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
+    @Override @Nonnull public int[] getRedstonePos() {
+        TileEntityGasTurbineMaster m = master();
+        return m == null ? new int[0] : m.getRedstonePos();
+    }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[]{1}; }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { TileEntityGasTurbineMaster m = master(); return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position); }
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+        TileEntityGasTurbineMaster m = master();
+        return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position);
+    }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { TileEntityGasTurbineMaster m = master(); return m != null && m.canFillTankFrom(iTank, side, resource, position); }
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+        TileEntityGasTurbineMaster m = master();
+        return m != null && m.canFillTankFrom(iTank, side, resource, position);
+    }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { TileEntityGasTurbineMaster m = master(); return m != null && m.canDrainTankFrom(iTank, side, position); }
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+        TileEntityGasTurbineMaster m = master();
+        return m != null && m.canDrainTankFrom(iTank, side, position);
+    }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) { TileEntityGasTurbineMaster m = master(); if (m != null && formed) return m.getAccessibleFluidTanks(facing, pos).length > 0; }
-        if (capability == CapabilityEnergy.ENERGY && facing != null) { TileEntityGasTurbineMaster m = master(); if (m != null && formed) return m.isEnergyPosition(facing, pos); }
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            TileEntityGasTurbineMaster m = master();
+            if (m != null && formed && m.getAccessibleFluidTanks(facing, pos).length > 0) return true;
+        }
+        if (capability == CapabilityEnergy.ENERGY && facing != null) {
+            TileEntityGasTurbineMaster m = master();
+            if (m != null && formed && m.isEnergyPosition(facing, pos)) return true;
+        }
         return super.hasCapability(capability, facing);
     }
 
@@ -96,7 +118,9 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityGasTurbineMaster m = master();
-            if (m != null && formed && m.getAccessibleFluidTanks(facing, pos).length > 0) return (T)new GasTurbineFluidHandler(this, facing);
+            if (m != null && formed && m.getAccessibleFluidTanks(facing, pos).length > 0) {
+                return (T)new TileEntityGasTurbineMaster.GasTurbineFluidHandler(m.getAccessibleFluidTanks(facing, pos), m, facing, pos);
+            }
         }
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityGasTurbineMaster m = master();
@@ -107,17 +131,31 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
 
     @Override public boolean isValid() { return formed; }
 
-    @Override public boolean isMechanicalEnergyTransmitter(EnumFacing facing) { TileEntityGasTurbineMaster m = master(); return m != null && m.isMechanicalEnergyTransmitter(facing, pos); }
+    @Override public boolean isMechanicalEnergyTransmitter(EnumFacing facing) {
+        TileEntityGasTurbineMaster m = master();
+        return m != null && m.isMechanicalEnergyTransmitter(facing, pos);
+    }
 
     @Override public boolean isMechanicalEnergyReceiver(EnumFacing facing) { return false; }
 
-    @Override public int getSpeed() { return master() == null ? 0 : master.speed; }
+    @Override public int getSpeed() {
+        TileEntityGasTurbineMaster m = master();
+        return m == null ? 0 : m.speed;
+    }
 
     @Override public float getTorqueMultiplier() { return outputtorque; }
 
-    public MechanicalEnergyAnimation getAnimation() { return master() == null ? null : master.animation; }
+    public MechanicalEnergyAnimation getAnimation() {
+        TileEntityGasTurbineMaster m = master();
+        return m == null ? null : m.animation;
+    }
 
-    public BlockPos posToMultiblock() {
+    @Override public int getComparatorInputOverride() {
+        TileEntityGasTurbineMaster m = master();
+        return m == null ? 0 : m.getComparatorInputOverride();
+    }
+
+    private BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartGasTurbine.instance.width;
         int length = TileEntityITMultiblockPartGasTurbine.instance.length;
         int y = pos / (length * width);
@@ -149,69 +187,5 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
         VoxelShape vs = getVoxelShape();
         AxisAlignedBB bb = vs.bounds();
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
-    }
-
-    public static class GasTurbineFluidHandler implements IFluidHandler {
-        TileEntityGasTurbineSlave te;
-        EnumFacing facing;
-        IFluidTank[] tanks;
-
-        public GasTurbineFluidHandler(TileEntityGasTurbineSlave te, EnumFacing facing) {
-            this.te = te;
-            this.facing = facing;
-            TileEntityGasTurbineMaster master = te.master();
-            tanks = master != null ? master.getAccessibleFluidTanks(facing, te.pos) : new IFluidTank[0];
-        }
-
-        @Override public IFluidTankProperties[] getTankProperties() {
-            List<IFluidTankProperties> props = new ArrayList<>();
-            for (IFluidTank tank : tanks) props.add(new FluidTankProperties(tank.getFluid(), tank.getCapacity()));
-            return props.toArray(new IFluidTankProperties[0]);
-        }
-
-        @Override public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null || resource.amount <= 0) return 0;
-            TileEntityGasTurbineMaster master = te.master();
-            if (master == null) return 0;
-            for (int i = 0; i < tanks.length; i++) {
-                if (master.canFillTankFrom(i, facing, resource, te.pos)) {
-                    int filled = tanks[i].fill(resource, doFill);
-                    if (filled > 0 && doFill) master.TankContentsChanged();
-                    return filled;
-                }
-            }
-            return 0;
-        }
-
-        @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null || resource.amount <= 0) return null;
-            TileEntityGasTurbineMaster master = te.master();
-            if (master == null) return null;
-            for (int i = 0; i < tanks.length; i++) {
-                if (master.canDrainTankFrom(i, facing, te.pos)) {
-                    FluidStack tankFluid = tanks[i].getFluid();
-                    if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
-                        FluidStack drained = tanks[i].drain(resource.amount, doDrain);
-                        if (drained != null && doDrain) master.TankContentsChanged();
-                        return drained;
-                    }
-                }
-            }
-            return null;
-        }
-
-        @Override public FluidStack drain(int maxDrain, boolean doDrain) {
-            if (maxDrain <= 0) return null;
-            TileEntityGasTurbineMaster master = te.master();
-            if (master == null) return null;
-            for (int i = 0; i < tanks.length; i++) {
-                if (master.canDrainTankFrom(i, facing, te.pos)) {
-                    FluidStack drained = tanks[i].drain(maxDrain, doDrain);
-                    if (drained != null && doDrain) master.TankContentsChanged();
-                    return drained;
-                }
-            }
-            return null;
-        }
     }
 }

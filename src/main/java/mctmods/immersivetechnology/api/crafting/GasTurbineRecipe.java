@@ -51,11 +51,9 @@ public class GasTurbineRecipe extends MultiblockRecipe {
         return fuelMap.get(fluidInput);
     }
 
-    @Override
-    public int getMultipleProcessTicks() { return 0; }
+    @Override public int getMultipleProcessTicks() { return 0; }
 
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt.setTag("input", fluidInput.writeToNBT(new NBTTagCompound()));
         return nbt;
     }
@@ -65,6 +63,5 @@ public class GasTurbineRecipe extends MultiblockRecipe {
         return findFuel(fluidInput);
     }
 
-    @Override
-    public int getTotalProcessTime() { return this.totalProcessTime; }
+    @Override public int getTotalProcessTime() { return this.totalProcessTime; }
 }

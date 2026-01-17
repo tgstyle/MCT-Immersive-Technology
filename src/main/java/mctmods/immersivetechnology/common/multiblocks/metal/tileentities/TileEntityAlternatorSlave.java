@@ -3,21 +3,19 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
-import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxProvider;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
-
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.shapes.*;
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -28,7 +26,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
@@ -39,27 +36,34 @@ import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntityAlternatorSlave, IMultiblockRecipe, TileEntityAlternatorMaster> implements ITBlockInterfaces.IMechanicalEnergy, IFluxProvider, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
+
+public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntityAlternatorSlave, IMultiblockRecipe, TileEntityAlternatorMaster>
+        implements ITBlockInterfaces.IMechanicalEnergy, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds,
+        ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IComparatorOverride {
 
     private int loadGrace = 0;
-    private boolean needsBlockUpdate = false;
-    TileEntityAlternatorMaster master;
+    private TileEntityAlternatorMaster master;
 
     public TileEntityAlternatorSlave() { super(TileEntityITMultiblockPartAlternator.instance, 0, false); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
-        if (!descPacket && !world.isRemote) needsBlockUpdate = true;
     }
 
-    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+        super.writeCustomNBT(nbt, descPacket);
+    }
 
     @Override public void update() {
+        if (!formed) return;
         if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
-        if (formed && master() == null) { if (loadGrace++ > 20) { invalidate(); return; } } else loadGrace = 0;
         super.update();
-        if (needsBlockUpdate) { needsBlockUpdate = false; this.markContainingBlockForUpdate(null); }
+        TileEntityAlternatorMaster m = master();
+        if (m == null) { if (loadGrace++ > 20) { invalidate(); }
+        } else loadGrace = 0;
     }
 
     @Override public boolean isDummy() { return true; }
@@ -80,19 +84,17 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
 
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
 
-    @Override @Nonnull protected IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
-
     @Override @Nonnull public int[] getRedstonePos() { return new int[0]; }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
 
-    @Override public float getMinProcessDistance(@Nonnull MultiblockProcess process) { return 0; }
-
-    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { return ITUtils.emptyIFluidTankList; }
-
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { return false; }
+
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { return new IFluidTank[0]; }
+
+    @Override @Nonnull protected IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
@@ -107,27 +109,31 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityAlternatorMaster m = master();
             if (m != null && formed && m.isEnergyPosition(facing, pos)) {
-                return (T) new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+                return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
             }
         }
         return super.getCapability(capability, facing);
     }
 
-    @Override @Nonnull public FluxStorage getFluxStorage() { return master() == null ? new FluxStorage(0) : master.energyStorage; }
+    @Override @Nonnull public FluxStorage getFluxStorage() { return master() == null ? new FluxStorage(0) : Objects.requireNonNull(master()).energyStorage; }
 
-    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing enumFacing) { return formed && master() != null && master.isEnergyPosition(enumFacing, pos) ? SideConfig.OUTPUT : SideConfig.NONE; }
+    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) {
+        return formed && master() != null && Objects.requireNonNull(master()).isEnergyPosition(facing, pos) ? SideConfig.OUTPUT : SideConfig.NONE;
+    }
 
     @Override public boolean isValid() { return formed; }
 
     @Override public boolean isMechanicalEnergyTransmitter(EnumFacing facing) { return false; }
 
-    @Override public boolean isMechanicalEnergyReceiver(EnumFacing facing) { return master() != null && master.isMechanicalEnergyReceiver(facing, pos); }
+    @Override public boolean isMechanicalEnergyReceiver(EnumFacing facing) { return master() != null && Objects.requireNonNull(master()).isMechanicalEnergyReceiver(facing, pos); }
 
-    @Override public int getSpeed() { return master() == null ? 0 : master.speed; }
+    @Override public int getSpeed() { return master() == null ? 0 : Objects.requireNonNull(master()).speed; }
 
-    @Override public float getTorqueMultiplier() { return master() == null ? 0 : master.torqueMult; }
+    @Override public float getTorqueMultiplier() { return master() == null ? 0f : Objects.requireNonNull(master()).torqueMult; }
 
-    public MechanicalEnergyAnimation getAnimation() { return master() == null ? null : master.animation; }
+    public MechanicalEnergyAnimation getAnimation() { return master() == null ? null : Objects.requireNonNull(master()).animation; }
+
+    @Override public int getComparatorInputOverride() { return master() == null ? 0 : Objects.requireNonNull(master()).getComparatorInputOverride(); }
 
     private BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartAlternator.instance.width;

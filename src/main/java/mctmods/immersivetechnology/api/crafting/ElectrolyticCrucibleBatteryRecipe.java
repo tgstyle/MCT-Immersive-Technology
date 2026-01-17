@@ -61,14 +61,11 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
         return recipeMap.get(fluidInput0);
     }
 
-    @Override
-    public int getMultipleProcessTicks() { return 0; }
+    @Override public int getMultipleProcessTicks() { return 0; }
 
-    @Override
-    public int getTotalProcessEnergy() { return this.totalProcessEnergy; }
+    @Override public int getTotalProcessEnergy() { return this.totalProcessEnergy; }
 
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt.setTag("input0", fluidInput0.writeToNBT(new NBTTagCompound()));
         return nbt;
     }
@@ -78,11 +75,9 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
         return findRecipe(fluidInput0);
     }
 
-    @Override
-    public int getTotalProcessTime() { return this.totalProcessTime; }
+    @Override public int getTotalProcessTime() { return this.totalProcessTime; }
 
-    @Override
-    public void setupJEI() {
+    @Override public void setupJEI() {
         super.setupJEI();
         jeiFluidOutputList = new ArrayList<>();
         jeiFluidOutputList.add(fluidOutput0.copy());

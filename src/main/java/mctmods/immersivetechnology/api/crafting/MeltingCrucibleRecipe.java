@@ -59,18 +59,15 @@ public class MeltingCrucibleRecipe extends MultiblockRecipe {
         return null;
     }
 
-    @Override
-    public int getMultipleProcessTicks() {
+    @Override public int getMultipleProcessTicks() {
         return 0;
     }
 
-    @Override
-    public int getTotalProcessTime() {
+    @Override public int getTotalProcessTime() {
         return this.totalProcessTime;
     }
 
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt.setTag("input", itemInput.writeToNBT(new NBTTagCompound()));
         return nbt;
     }
@@ -80,8 +77,7 @@ public class MeltingCrucibleRecipe extends MultiblockRecipe {
         return findRecipe(itemInput);
     }
 
-    @Override
-    public void setupJEI() {
+    @Override public void setupJEI() {
         super.setupJEI();
         jeiFluidOutputList = new ArrayList<>();
         jeiFluidOutputList.add(fluidOutput.copy());

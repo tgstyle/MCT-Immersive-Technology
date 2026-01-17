@@ -59,11 +59,9 @@ public class DistillerRecipe extends MultiblockRecipe {
         return null;
     }
 
-    @Override
-    public int getMultipleProcessTicks() { return 0; }
+    @Override public int getMultipleProcessTicks() { return 0; }
 
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt.setTag("input", fluidInput.writeToNBT(new NBTTagCompound()));
         return nbt;
     }
@@ -73,14 +71,11 @@ public class DistillerRecipe extends MultiblockRecipe {
         return findRecipe(fluidInput);
     }
 
-    @Override
-    public int getTotalProcessTime() { return this.totalProcessTime; }
+    @Override public int getTotalProcessTime() { return this.totalProcessTime; }
 
-    @Override
-    public int getTotalProcessEnergy() { return this.totalProcessEnergy; }
+    @Override public int getTotalProcessEnergy() { return this.totalProcessEnergy; }
 
-    @Override
-    public NonNullList<ItemStack> getActualItemOutputs(TileEntity tile) {
+    @Override public NonNullList<ItemStack> getActualItemOutputs(TileEntity tile) {
         if (tile.getWorld().rand.nextFloat() <= chance) return outputList;
         else return ListUtils.fromItems();
     }

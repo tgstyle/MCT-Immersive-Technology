@@ -66,11 +66,9 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
         return input1Map.get(fluidInput1);
     }
 
-    @Override
-    public int getMultipleProcessTicks() { return 0; }
+    @Override public int getMultipleProcessTicks() { return 0; }
 
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt.setTag("input0", fluidInput0.writeToNBT(new NBTTagCompound()));
         nbt.setTag("input1", fluidInput1.writeToNBT(new NBTTagCompound()));
         return nbt;
@@ -82,8 +80,7 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
         return findRecipe(fluidInput0, fluidInput1);
     }
 
-    @Override
-    public int getTotalProcessTime() { return this.totalProcessTime; }
+    @Override public int getTotalProcessTime() { return this.totalProcessTime; }
 
     static class FluidPair {
         private final Fluid fluid0;
@@ -93,16 +90,14 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
             fluid1 = f1;
         }
 
-        @Override
-        public boolean equals(Object o) {
+        @Override public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             FluidPair that = (FluidPair) o;
             return Objects.equals(fluid0, that.fluid0) && Objects.equals(fluid1, that.fluid1);
         }
 
-        @Override
-        public int hashCode() {
+        @Override public int hashCode() {
             return Objects.hash(fluid0, fluid1);
         }
     }

@@ -3,7 +3,9 @@ package mctmods.immersivetechnology.common.util.compat.top;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
+
 import mcjty.theoneprobe.api.*;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
 import mctmods.immersivetechnology.api.crafting.ElectrolyticCrucibleBatteryRecipe;
@@ -13,6 +15,7 @@ import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEnt
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -21,7 +24,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
@@ -240,25 +242,19 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             TileEntityGasTurbineMaster master;
-            int pos;
             if (te instanceof TileEntityGasTurbineMaster) {
                 master = (TileEntityGasTurbineMaster)te;
-                pos = ((TileEntityMultiblockPart<?>)te).pos;
             } else if (te instanceof TileEntityGasTurbineSlave) {
                 master = ((TileEntityGasTurbineSlave)te).master();
                 if (master == null) return;
-                pos = ((TileEntityMultiblockPart<?>)te).pos;
             } else return;
-            EnumFacing facing = data.getSideHit();
+
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            boolean showAllEnergy = mode == ProbeMode.EXTENDED;
-            if (showAllEnergy) {
-                addEnergyDisplay(probeInfo, master.starterStorage.getEnergyStored(), master.starterStorage.getMaxEnergyStored());
-                addEnergyDisplay(probeInfo, master.sparkplugStorage.getEnergyStored(), master.sparkplugStorage.getMaxEnergyStored());
-            } else if (master.isEnergyPosition(facing, pos)) {
-                IEnergyStorage storage = master.getEnergyAtPosition(facing, pos);
-                if (storage != null) addEnergyDisplay(probeInfo, storage.getEnergyStored(), storage.getMaxEnergyStored());
-            }
+
+            addEnergyDisplay(probeInfo, master.starterStorage.getEnergyStored(), master.starterStorage.getMaxEnergyStored());
+            addEnergyDisplay(probeInfo, master.sparkplugStorage.getEnergyStored(), master.sparkplugStorage.getMaxEnergyStored());
+
+            addRPMDisplay(probeInfo, master.speed);
         }
     }
 
@@ -303,11 +299,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
     }
 
     public static class MeltingCrucibleProvider implements IProbeInfoProvider {
-        @Override
-        public String getID() { return ImmersiveTechnology.MODID + ":" + "MeltingCrucibleInfo"; }
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "MeltingCrucibleInfo"; }
 
-        @Override
-        public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             TileEntityMeltingCrucibleMaster master;
             if (te instanceof TileEntityMeltingCrucibleMaster) {
@@ -344,11 +338,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
     }
 
     public static class SolarMelterProvider implements IProbeInfoProvider {
-        @Override
-        public String getID() { return ImmersiveTechnology.MODID + ":" + "SolarMelterInfo"; }
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "SolarMelterInfo"; }
 
-        @Override
-        public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             TileEntitySolarMelterMaster master;
             if (te instanceof TileEntitySolarMelterMaster) {
@@ -380,7 +372,11 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
             addTemperature(probeInfo, master.heatLevel, solarWorkingHeatLevel);
-            int currentProg = (master.processTimeRemaining > 0 && master.cachedSolarTowerRecipe != null) ? (master.cachedSolarTowerRecipe.getTotalProcessTime() - master.processTimeRemaining) * 100 / master.cachedSolarTowerRecipe.getTotalProcessTime() : 0;
+            int currentProg = 0;
+            if (master.processTimeRemaining > 0 && master.processTimeMax > 0) {
+                currentProg = (master.processTimeMax - master.processTimeRemaining) * 100 / master.processTimeMax;
+                currentProg = Math.max(0, Math.min(100, currentProg));
+            }
             addProcessPercent(probeInfo, currentProg);
         }
     }

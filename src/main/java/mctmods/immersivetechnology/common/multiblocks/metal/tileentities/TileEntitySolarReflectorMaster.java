@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarReflector;
 import mctmods.immersivetechnology.common.util.multiblock.PoICache;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
@@ -15,6 +16,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nonnull;
 
@@ -53,9 +56,11 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     }
 
     @Override public void disassemble() {
-        InitializePoIs();
-        SolarRegistry.unregisterReflector(world, getBlockPosForPos(link0.position));
-        detachTower();
+        if (!world.isRemote) {
+            InitializePoIs();
+            SolarRegistry.unregisterReflector(world, getBlockPosForPos(link0.position));
+            detachTower();
+        }
         super.disassemble();
     }
 
@@ -67,7 +72,8 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         buf.writeInt(getCollectorPosition().getZ());
         buf.writeFloat(animationRotations[0]);
         buf.writeFloat(animationRotations[1]);
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
+        NetworkRegistry.TargetPoint tp = new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 64);
+        ImmersiveTechnology.packetHandler.sendToAllAround(new BinaryMessageTileSync(getPos(), buf), tp);
     }
 
     @Override public void receiveMessageFromServer(ByteBuf message) {
@@ -85,28 +91,27 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     @Override public void update() {
         super.update();
         if (!formed) return;
-        if (!world.isRemote) {
-            if (!initialized) {
-                InitializePoIs();
-                SolarRegistry.registerReflector(world, getBlockPosForPos(link0.position));
-                initialized = true;
-            }
-            if (isMirrorTaken) {
-                if (collectorPosition0 == null) detachTower();
-                else if (world.isBlockLoaded(collectorPosition0)) {
-                    TileEntity te = world.getTileEntity(collectorPosition0);
-                    boolean valid = false;
-                    if (te != null && !te.isInvalid()) {
-                        if (te instanceof TileEntitySolarMelterSlave) {
-                            TileEntitySolarMelterMaster m = ((TileEntitySolarMelterSlave)te).master();
-                            valid = m != null && m.formed;
-                        } else if (te instanceof TileEntitySolarTowerSlave) {
-                            TileEntitySolarTowerMaster m = ((TileEntitySolarTowerSlave)te).master();
-                            valid = m != null && m.formed;
-                        }
+        if (world.isRemote) return;
+        if (!initialized) {
+            InitializePoIs();
+            SolarRegistry.registerReflector(world, getBlockPosForPos(link0.position));
+            initialized = true;
+        }
+        if (isMirrorTaken) {
+            if (collectorPosition0 == null) detachTower();
+            else if (world.isBlockLoaded(collectorPosition0)) {
+                TileEntity te = world.getTileEntity(collectorPosition0);
+                boolean valid = false;
+                if (te != null && !te.isInvalid()) {
+                    if (te instanceof TileEntitySolarMelterSlave) {
+                        TileEntitySolarMelterMaster m = ((TileEntitySolarMelterSlave)te).master();
+                        valid = m != null && m.formed;
+                    } else if (te instanceof TileEntitySolarTowerSlave) {
+                        TileEntitySolarTowerMaster m = ((TileEntitySolarTowerSlave)te).master();
+                        valid = m != null && m.formed;
                     }
-                    if (!valid) detachTower();
                 }
+                if (!valid) detachTower();
             }
         }
     }
@@ -144,16 +149,14 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         calculateAnimationRotations();
         notifyNearbyClients();
         efficientMarkDirty();
-        if (!world.isRemote && oldCollector != null && !oldCollector.equals(getPos())) {
-            if (world.isBlockLoaded(oldCollector)) {
-                TileEntity te = world.getTileEntity(oldCollector);
-                if (te instanceof TileEntitySolarMelterSlave) {
-                    TileEntitySolarMelterMaster m = ((TileEntitySolarMelterSlave)te).master();
-                    if (m != null) m.forceReflectorCheck();
-                } else if (te instanceof TileEntitySolarTowerSlave) {
-                    TileEntitySolarTowerMaster m = ((TileEntitySolarTowerSlave)te).master();
-                    if (m != null) m.forceReflectorCheck();
-                }
+        if (oldCollector != null && !oldCollector.equals(getPos()) && world.isBlockLoaded(oldCollector)) {
+            TileEntity te = world.getTileEntity(oldCollector);
+            if (te instanceof TileEntitySolarMelterSlave) {
+                TileEntitySolarMelterMaster m = ((TileEntitySolarMelterSlave)te).master();
+                if (m != null) m.forceReflectorCheck();
+            } else if (te instanceof TileEntitySolarTowerSlave) {
+                TileEntitySolarTowerMaster m = ((TileEntitySolarTowerSlave)te).master();
+                if (m != null) m.forceReflectorCheck();
             }
         }
     }
@@ -162,7 +165,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         int numClear = 0;
         for (int l = -1; l < 2; l++) {
             for (int w = -1; w < 2; w++) {
-                BlockPos pos = getPos().offset(EnumFacing.NORTH, l).offset(EnumFacing.EAST, w).add(0, 1, 0);
+                BlockPos pos = getPos().offset(EnumFacing.NORTH, l).offset(EnumFacing.EAST, w).up();
                 if (world.canBlockSeeSky(pos)) numClear++;
             }
         }
@@ -172,6 +175,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     public float[] getAnimationRotations() { return animationRotations; }
 
     private void InitializePoIs() {
+        link0 = null;
         for (PoIJSONSchema poi : TileEntityITMultiblockPartSolarReflector.instance.pointsOfInterest) {
             if (poi.name.equals("link0")) {
                 link0 = new PoICache(facing, poi, mirrored);

@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
+import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
+import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxReceiver;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
+import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
+import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
@@ -15,9 +16,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblo
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
-
 import mctmods.immersivetechnology.common.util.shapes.*;
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -28,63 +27,94 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileEntityMeltingCrucibleSlave, MeltingCrucibleRecipe, TileEntityMeltingCrucibleMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IIEInventory, IGuiTile {
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
-    public TileEntityMeltingCrucibleSlave() { super(TileEntityITMultiblockPartMeltingCrucible.instance, Multiblocks.meltingCrucible.meltingCrucible_energy_size, true); }
+public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileEntityMeltingCrucibleSlave, MeltingCrucibleRecipe, TileEntityMeltingCrucibleMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IGuiTile, IIEInventory, IFluxReceiver, IIEInternalFluxHandler {
+
+    protected TileEntityMeltingCrucibleMaster master;
+    private int loadGrace = 0;
+
+    public TileEntityMeltingCrucibleSlave() {
+        super(TileEntityITMultiblockPartMeltingCrucible.instance, Multiblocks.meltingCrucible.meltingCrucible_energy_size, true);
+    }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
     @Override public void update() {
+        if (!formed) return;
         if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
-        if (isDummy() || isRSDisabled()) return;
         super.update();
+        if (world.isRemote) return;
+        TileEntityMeltingCrucibleMaster m = master();
+        if (m == null) {
+            if (loadGrace++ > 20) invalidate();
+            return;
+        }
+        loadGrace = 0;
     }
 
-    @Override public boolean isDummy() { return true; }
-
-    TileEntityMeltingCrucibleMaster master;
-
-    public TileEntityMeltingCrucibleMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntityMeltingCrucibleMaster ? (TileEntityMeltingCrucibleMaster)te : null;
+    @Override public TileEntityMeltingCrucibleMaster master() {
+        if (offset[0] == 0 && offset[1] == 0 && offset[2] == 0) return (TileEntityMeltingCrucibleMaster)this;
+        if (master == null || master.tileEntityInvalid || !world.isBlockLoaded(master.getPos())) {
+            BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
+            TileEntity te = world.getTileEntity(masterPos);
+            master = te instanceof TileEntityMeltingCrucibleMaster ? (TileEntityMeltingCrucibleMaster)te : null;
+        }
         return master;
     }
 
-    @Override public NonNullList<ItemStack> getInventory() {
+    @Override
+    @Nonnull
+    public FluxStorage getFluxStorage() {
         TileEntityMeltingCrucibleMaster m = master();
-        return m == null ? NonNullList.withSize(2, ItemStack.EMPTY) : m.inventory;
+        return m != null ? m.energyStorage : new FluxStorage(0);
+    }
+
+    @Override protected @Nonnull MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return MeltingCrucibleRecipe.loadFromNBT(tag); }
+
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { return new IFluidTank[0]; }
+
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
+
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { return false; }
+
+    @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
+
+    @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
+
+    @Override public boolean canOpenGui() { return formed; }
+
+    @Override public int getGuiID() { return ITGUI.GUIID_Melting_Crucible; }
+
+    @Override public TileEntity getGuiMaster() { return master(); }
+
+    @Override @Nonnull public NonNullList<ItemStack> getInventory() {
+        TileEntityMeltingCrucibleMaster m = master();
+        return m == null ? NonNullList.withSize(TileEntityMeltingCrucibleMaster.slotCount, ItemStack.EMPTY) : m.getInventory();
     }
 
     @Override public boolean isStackValid(int slot, ItemStack stack) {
         TileEntityMeltingCrucibleMaster m = master();
-        return m != null && m.isStackValid(slot, stack);
+        return m == null || m.isStackValid(slot, stack);
     }
 
     @Override public int getSlotLimit(int slot) {
         TileEntityMeltingCrucibleMaster m = master();
-        return m != null ? m.getSlotLimit(slot) : 64;
+        return m == null ? 64 : m.getSlotLimit(slot);
     }
 
     @Override public void doGraphicalUpdates(int slot) {
@@ -92,51 +122,59 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
         if (m != null) m.doGraphicalUpdates(slot);
     }
 
-    @Override public NonNullList<ItemStack> getDroppedItems() {
+    @Override @Nonnull public NonNullList<ItemStack> getDroppedItems() {
         TileEntityMeltingCrucibleMaster m = master();
-        return m != null ? m.getDroppedItems() : NonNullList.create();
+        return m == null ? NonNullList.create() : m.getDroppedItems();
     }
 
     @Override public int getComparatedSize() {
         TileEntityMeltingCrucibleMaster m = master();
-        return m != null ? m.getComparatedSize() : 0;
+        return m == null ? 0 : m.getComparatedSize();
     }
 
-    @Override @Nonnull public IFluidTank[] getInternalTanks() {
+    @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
         TileEntityMeltingCrucibleMaster m = master();
-        return m == null ? new IFluidTank[0] : m.tanks;
+        if (m == null || !formed) return 0;
+        if (from != null && (m.energyInput0 == null || !m.energyInput0.isPoI(from, pos))) return 0;
+        int received = m.energyStorage.receiveEnergy(energy, simulate);
+        if (!simulate && received > 0) {
+            m.efficientMarkDirty();
+            m.markContainingBlockForUpdate(null);
+        }
+        return received;
     }
 
-    @Override protected @Nonnull MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return MeltingCrucibleRecipe.loadFromNBT(tag); }
-
-    @Override @Nonnull public int[] getEnergyPos() { return master() == null ? new int[0] : master.getEnergyPos(); }
-
-    @Override @Nonnull public int[] getRedstonePos() { return master() == null ? new int[0] : master.getRedstonePos(); }
-
-    @Override @Nonnull public int[] getOutputTanks() { return new int[]{0}; }
-
-    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<MeltingCrucibleRecipe> process) { return true; }
-
-    @Override public int getMaxProcessPerTick() { return 1; }
-
-    @Override public int getProcessQueueMaxLength() { return 1; }
-
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         TileEntityMeltingCrucibleMaster m = master();
-        return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position);
+        if (m == null || !formed) return false;
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null && m.itemInput0 != null) return m.itemInput0.isPoI(facing, pos);
+        if (capability == CapabilityEnergy.ENERGY && facing != null && m.energyInput0 != null) return m.energyInput0.isPoI(facing, pos);
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            IFluidTank[] tanks = m.getAccessibleFluidTanks(facing, pos);
+            return tanks.length > 0;
+        }
+        return super.hasCapability(capability, facing);
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @SuppressWarnings("unchecked")
+    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         TileEntityMeltingCrucibleMaster m = master();
-        return m != null && m.canFillTankFrom(iTank, side, resource, position);
+        if (m == null || !formed) return super.getCapability(capability, facing);
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null && m.itemInput0 != null && m.itemInput0.isPoI(facing, pos)) return (T)m.insertionHandler;
+        if (capability == CapabilityEnergy.ENERGY && facing != null && m.energyInput0 != null && m.energyInput0.isPoI(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
+            IFluidTank[] tanks = m.getAccessibleFluidTanks(facing, pos);
+            if (tanks.length > 0) return (T)tanks[0];
+        }
+        return super.getCapability(capability, facing);
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) {
         TileEntityMeltingCrucibleMaster m = master();
-        return m != null && m.canDrainTankFrom(iTank, side, position);
+        return formed && m != null && facing != null && m.energyInput0 != null && m.energyInput0.isPoI(facing, pos) ? SideConfig.INPUT : SideConfig.NONE;
     }
 
-    public BlockPos posToMultiblock() {
+    private BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartMeltingCrucible.instance.width;
         int length = TileEntityITMultiblockPartMeltingCrucible.instance.length;
         int y = pos / (length * width);
@@ -151,10 +189,10 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
         BlockPos posInMultiblock = posToMultiblock();
         List<AxisAlignedBB> list = MeltingCrucibleShape.GETTER.getShape(posInMultiblock);
         if (list.isEmpty()) return Shapes.empty();
-        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        List<AxisAlignedBB> rotated = new ArrayList<>(list.size());
+        for (AxisAlignedBB aabb : list) rotated.add(ITUtils.rotateAABB(aabb, facing, mirrored));
         VoxelShape vs = Shapes.empty();
-        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
+        for (AxisAlignedBB aabb : rotated) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
         return vs.optimize();
     }
 
@@ -169,175 +207,5 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
         if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
         AxisAlignedBB bb = vs.bounds();
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
-    }
-
-    @Override public boolean canOpenGui() { return formed && master() != null; }
-
-    @Override public int getGuiID() { return ITGUI.GUIID_Melting_Crucible; }
-
-    @Override public TileEntity getGuiMaster() { return master(); }
-
-    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
-            TileEntityMeltingCrucibleMaster m = master();
-            if (m != null && formed) return m.isItemInputPosition(facing, pos);
-        }
-        if (capability == CapabilityEnergy.ENERGY && facing != null) {
-            TileEntityMeltingCrucibleMaster m = master();
-            if (m != null && formed) return m.isEnergyPosition(facing, pos);
-        }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityMeltingCrucibleMaster m = master();
-            if (m != null && formed) return m.getAccessibleFluidTanks(facing, pos).length > 0;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
-            TileEntityMeltingCrucibleMaster m = master();
-            if (m != null && formed && m.isItemInputPosition(facing, pos)) return (T)m.insertionHandler;
-        }
-        if (capability == CapabilityEnergy.ENERGY && facing != null) {
-            TileEntityMeltingCrucibleMaster m = master();
-            if (m != null && formed && m.isEnergyPosition(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
-        }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityMeltingCrucibleMaster m = master();
-            if (m != null && formed) {
-                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos);
-                if (accessible.length > 0) return (T)new MeltingCrucibleFluidHandler(this, facing);
-            }
-        }
-        return super.getCapability(capability, facing);
-    }
-
-    @Override @Nonnull public FluxStorage getFluxStorage() {
-        TileEntityMeltingCrucibleMaster m = master();
-        return m == null ? new FluxStorage(0) : m.energyStorage;
-    }
-
-    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) {
-        return formed && master() != null && Objects.requireNonNull(master()).isEnergyPosition(facing, pos) ? SideConfig.INPUT : SideConfig.NONE;
-    }
-
-    @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
-        TileEntityMeltingCrucibleMaster m = master();
-        if (!formed || m == null) return 0;
-        int received = m.energyStorage.receiveEnergy(energy, simulate);
-        if (!simulate && received > 0) {
-            m.efficientMarkDirty();
-            m.markContainingBlockForUpdate(null);
-        }
-        return received;
-    }
-
-    public static class MeltingCrucibleFluidHandler implements IFluidHandler {
-        private final TileEntityMeltingCrucibleSlave te;
-        private final EnumFacing facing;
-        private final IFluidTank[] tanks;
-        private final int position;
-
-        public MeltingCrucibleFluidHandler(TileEntityMeltingCrucibleSlave te, EnumFacing facing) {
-            this.te = te;
-            this.facing = facing;
-            TileEntityMeltingCrucibleMaster master = te.master();
-            this.tanks = master != null ? master.getAccessibleFluidTanks(facing, te.pos) : new IFluidTank[0];
-            this.position = te.pos;
-        }
-
-        private int getTankIndex(IFluidTank tank) {
-            TileEntityMeltingCrucibleMaster master = te.master();
-            if (master == null) return -1;
-            for (int i = 0; i < master.tanks.length; i++) {
-                if (master.tanks[i] == tank) return i;
-            }
-            return -1;
-        }
-
-        @Override public IFluidTankProperties[] getTankProperties() {
-            IFluidTankProperties[] props = new IFluidTankProperties[tanks.length];
-            for (int i = 0; i < tanks.length; i++) {
-                FluidStack fs = tanks[i].getFluid();
-                props[i] = new FluidTankProperties(fs != null ? fs.copy() : null, tanks[i].getCapacity(), false, true);
-            }
-            return props;
-        }
-
-        @Override public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null || resource.amount <= 0) return 0;
-            TileEntityMeltingCrucibleMaster master = te.master();
-            if (master == null) return 0;
-            int filled = 0;
-            int remaining = resource.amount;
-            for (IFluidTank tank : tanks) {
-                int idx = getTankIndex(tank);
-                if (idx != -1 && master.canFillTankFrom(idx, facing, resource, position)) {
-                    FluidStack copy = Utils.copyFluidStackWithAmount(resource, remaining, false);
-                    if (copy.amount <= 0) break;
-                    int possible = tank.fill(copy, false);
-                    if (possible > 0) {
-                        FluidStack toFill = Utils.copyFluidStackWithAmount(resource, possible, false);
-                        int f = tank.fill(toFill, doFill);
-                        filled += f;
-                        remaining -= f;
-                        if (doFill && f > 0) master.efficientMarkDirty();
-                        if (remaining <= 0) break;
-                    }
-                }
-            }
-            return filled;
-        }
-
-        @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null || resource.amount <= 0) return null;
-            TileEntityMeltingCrucibleMaster master = te.master();
-            if (master == null) return null;
-            FluidStack drained = null;
-            int remaining = resource.amount;
-            for (IFluidTank tank : tanks) {
-                int idx = getTankIndex(tank);
-                if (idx != -1 && master.canDrainTankFrom(idx, facing, position)) {
-                    FluidStack tankFluid = tank.getFluid();
-                    if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
-                        int possible = Math.min(remaining, tankFluid.amount);
-                        if (possible > 0) {
-                            FluidStack thisDrained = tank.drain(possible, doDrain);
-                            if (thisDrained != null && thisDrained.amount > 0) {
-                                if (drained == null) drained = thisDrained.copy();
-                                else drained.amount += thisDrained.amount;
-                                remaining -= thisDrained.amount;
-                                if (doDrain && thisDrained.amount > 0) master.efficientMarkDirty();
-                                if (remaining <= 0) break;
-                            }
-                        }
-                    }
-                }
-            }
-            return drained;
-        }
-
-        @Override public FluidStack drain(int maxDrain, boolean doDrain) {
-            if (maxDrain <= 0) return null;
-            TileEntityMeltingCrucibleMaster master = te.master();
-            if (master == null) return null;
-            FluidStack drained = null;
-            int remaining = maxDrain;
-            for (IFluidTank tank : tanks) {
-                int idx = getTankIndex(tank);
-                if (idx != -1 && master.canDrainTankFrom(idx, facing, position)) {
-                    FluidStack thisDrained = tank.drain(remaining, doDrain);
-                    if (thisDrained != null && thisDrained.amount > 0) {
-                        if (drained == null) drained = thisDrained.copy();
-                        else drained.amount += thisDrained.amount;
-                        remaining -= thisDrained.amount;
-                        if (doDrain && thisDrained.amount > 0) master.efficientMarkDirty();
-                        if (remaining <= 0) break;
-                    }
-                }
-            }
-            return drained;
-        }
     }
 }

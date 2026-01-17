@@ -9,12 +9,12 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 
 import mctmods.immersivetechnology.api.ITGUI;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.DistillerShape;
+import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.shapes.*;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,7 +26,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
@@ -45,6 +44,7 @@ import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IFluxReceiver, EnergyHelper.IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
 
     private TileEntityDistillerMaster master;
+    private int loadGrace = 0;
 
     public TileEntityDistillerSlave() { super(TileEntityITMultiblockPartDistiller.instance, 16000, true); }
 
@@ -53,8 +53,18 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
     @Override public void update() {
+        if (!formed) {
+            loadGrace = 0;
+            return;
+        }
         if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
         super.update();
+        TileEntityDistillerMaster m = master();
+        if (m == null) {
+            if (loadGrace++ > 20) invalidate();
+        } else {
+            loadGrace = 0;
+        }
     }
 
     @Override public boolean isDummy() { return true; }

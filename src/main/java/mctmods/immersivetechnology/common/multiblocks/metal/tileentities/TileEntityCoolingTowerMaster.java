@@ -12,6 +12,7 @@ import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
+import mctmods.immersivetechnology.common.util.ITFluidTank.TankListener;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.api.particles.ParticleSmokeCustom;
 import mctmods.immersivetechnology.common.util.ITUtils;
@@ -48,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IComparatorOverride {
+public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave implements TankListener, IBinaryMessageReceiver, IComparatorOverride {
 
     private static final int inputTankSize = Multiblocks.coolingTower.coolingTower_input_tankSize;
     private static final int outputTankSize = Multiblocks.coolingTower.coolingTower_output_tankSize;
@@ -71,6 +72,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     private int oldComparatorOutput;
 
     private boolean needsPoIInit = false;
+    private boolean needsNotify = false;
 
     protected PoICache fluidInput0, fluidInput1, fluidOutput0, fluidOutput1, fluidOutput2;
     private BlockPos outputFrontPos0, outputFrontPos1, outputFrontPos2, particlePos0, soundPos0;
@@ -83,7 +85,10 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         tanks[3].readFromNBT(nbt.getCompoundTag("tank3"));
         tanks[4].readFromNBT(nbt.getCompoundTag("tank4"));
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
-        if (!descPacket && formed) needsPoIInit = true;
+        if (!descPacket && formed) {
+            needsPoIInit = true;
+            needsNotify = true;
+        }
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -121,14 +126,14 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         if (soundVolume == 0) ITSoundHandler.StopSound(soundPos0);
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 8, 1);
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
             ITSounds.coolingTower.PlayRepeating(soundPos0, (10 * soundVolume) / attenuation, 1);
         }
     }
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        ITSoundHandler.StopSound(soundPos0);
+        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
         super.onChunkUnload();
     }
 
@@ -149,24 +154,28 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     @Override public void update() {
-        super.update();
         if (!formed) return;
         if (needsPoIInit || fluidInput0 == null) {
             InitializePoIs();
             needsPoIInit = false;
         }
+        if (needsNotify) {
+            notifyIONeighbors();
+            needsNotify = false;
+        }
         if (world.isRemote) {
-            float targetSoundLevel = isRunning ? 1f : 0f;
-            if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); soundGracePeriod = 60; }
-            else if (soundVolume > targetSoundLevel) {
+            float target = isRunning ? 1f : 0f;
+            if (soundVolume < target) { soundVolume = Math.min(soundVolume + 0.01f, target); soundGracePeriod = 60; }
+            else if (soundVolume > target) {
                 if (soundGracePeriod > 0) soundGracePeriod--;
-                else soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel);
+                else soundVolume = Math.max(soundVolume - 0.01f, target);
             }
             handleSounds();
             spawnParticles();
             return;
         }
         if (ITCompatModule.isAdvancedRocketryLoaded && AdvancedRocketryHelper.isAtmosphereUnsuitableForCooling(world, getPos())) return;
+        super.update();
         boolean update = pumpOutputOut();
         boolean prevIsRunning = isRunning;
         if (processQueue.size() < getProcessQueueMaxLength() && (tanks[0].getFluidAmount() > 0 || tanks[1].getFluidAmount() > 0)) {
@@ -228,9 +237,9 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
                 IFluidHandler output = FluidUtil.getFluidHandler(world, fronts[i], outputs[i].facing.getOpposite());
                 if (output != null) {
                     FluidStack out = tanks[indices[i]].getFluid();
+                    if (out == null) continue;
                     int accepted = output.fill(out, false);
                     if (accepted > 0) {
-                        assert out != null;
                         int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
                         tanks[indices[i]].drain(drained, true);
                         if (drained > 0) changed = true;
@@ -270,18 +279,17 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
                     break;
             }
         }
-        if (!world.isRemote) notifyIONeighbors();
     }
 
     private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
-        notifyNeighbor(getBlockPosForPos(fluidInput1.position));
-        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        notifyNeighbor(getBlockPosForPos(fluidOutput1.position));
-        notifyNeighbor(getBlockPosForPos(fluidOutput2.position));
+        if (fluidInput0 != null) notifyNeighbor(getBlockPosForPos(fluidInput0.position));
+        if (fluidInput1 != null) notifyNeighbor(getBlockPosForPos(fluidInput1.position));
+        if (fluidOutput0 != null) notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
+        if (fluidOutput1 != null) notifyNeighbor(getBlockPosForPos(fluidOutput1.position));
+        if (fluidOutput2 != null) notifyNeighbor(getBlockPosForPos(fluidOutput2.position));
     }
 
-    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
+    private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, getBlockType(), true); }
 
     @Override public void TankContentsChanged() {
         cachedCoolingRecipe = null;
@@ -355,8 +363,8 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
             List<IFluidTankProperties> list = new ArrayList<>();
             for (IFluidTank tank : accessibleTanks) {
                 int index = getTankIndex(tank);
-                boolean canFill = index == 0 || index == 1;
-                boolean canDrain = index >= 2 && index <= 4;
+                boolean canFill = index < 2;
+                boolean canDrain = index >= 2;
                 list.add(new FluidTankProperties(tank.getFluid(), tank.getCapacity(), canFill, canDrain));
             }
             return list.toArray(new IFluidTankProperties[0]);
@@ -364,16 +372,16 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
         @Override public int fill(FluidStack resource, boolean doFill) {
             if (resource == null) return 0;
-            resource = resource.copy();
+            FluidStack resourceCopy = resource.copy();
             int filled = 0;
             for (IFluidTank accessible : accessibleTanks) {
                 int iTank = getTankIndex(accessible);
-                if (iTank != -1 && master.canFillTankFrom(iTank, side, resource, position)) {
-                    int f = accessible.fill(resource, doFill);
+                if (iTank != -1 && master.canFillTankFrom(iTank, side, resourceCopy, position)) {
+                    int f = accessible.fill(resourceCopy, doFill);
                     filled += f;
-                    resource.amount -= f;
+                    resourceCopy.amount -= f;
                     if (doFill && f > 0) master.TankContentsChanged();
-                    if (resource.amount <= 0) return filled;
+                    if (resourceCopy.amount <= 0) return filled;
                 }
             }
             return filled;
@@ -381,21 +389,21 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
         @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
             if (resource == null) return null;
-            resource = resource.copy();
+            FluidStack resourceCopy = resource.copy();
             FluidStack drained = null;
             for (IFluidTank accessible : accessibleTanks) {
                 int iTank = getTankIndex(accessible);
                 if (iTank != -1 && master.canDrainTankFrom(iTank, side, position)) {
                     FluidStack tankFluid = accessible.getFluid();
-                    if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
-                        int amount = Math.min(resource.amount, tankFluid.amount);
+                    if (tankFluid != null && tankFluid.isFluidEqual(resourceCopy)) {
+                        int amount = Math.min(resourceCopy.amount, tankFluid.amount);
                         FluidStack d = accessible.drain(amount, doDrain);
                         if (d != null) {
                             if (drained == null) drained = d.copy();
                             else drained.amount += d.amount;
-                            resource.amount -= d.amount;
+                            resourceCopy.amount -= d.amount;
                             if (doDrain && d.amount > 0) master.TankContentsChanged();
-                            if (resource.amount <= 0) return drained;
+                            if (resourceCopy.amount <= 0) return drained;
                         }
                     }
                 }

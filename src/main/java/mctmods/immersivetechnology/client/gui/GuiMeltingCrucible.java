@@ -52,7 +52,7 @@ public class GuiMeltingCrucible extends GuiIEContainerBase {
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
         int stored = (int)(46 * (tile.getEnergyStored(null) / (float)tile.getMaxEnergyStored(null)));
-        ClientUtils.drawGradientRect(guiLeft + 16, guiTop + 21 + (46 - stored), guiLeft + 23, guiTop + 68, 0xffb51500, 0xff600b00);
+        ClientUtils.drawGradientRect(guiLeft + 16, guiTop + 22 + (46 - stored), guiLeft + 23, guiTop + 68, 0xffb51500, 0xff600b00);
 
         int heatBarSize = (int)(51 * (tile.heatLevel / workingHeatLevel));
         this.drawTexturedModalRect(guiLeft + 30, guiTop + 9, 176, 0, heatBarSize, 9);

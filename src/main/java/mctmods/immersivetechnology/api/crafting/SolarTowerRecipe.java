@@ -47,11 +47,9 @@ public class SolarTowerRecipe extends MultiblockRecipe {
         return null;
     }
 
-    @Override
-    public int getMultipleProcessTicks() { return 0; }
+    @Override public int getMultipleProcessTicks() { return 0; }
 
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt.setTag("input", fluidInput.writeToNBT(new NBTTagCompound()));
         return nbt;
     }
@@ -61,6 +59,5 @@ public class SolarTowerRecipe extends MultiblockRecipe {
         return findRecipe(fluidInput);
     }
 
-    @Override
-    public int getTotalProcessTime() { return this.totalProcessTime; }
+    @Override public int getTotalProcessTime() { return this.totalProcessTime; }
 }

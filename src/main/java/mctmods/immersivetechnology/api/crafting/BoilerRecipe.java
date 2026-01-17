@@ -47,11 +47,9 @@ public class BoilerRecipe extends MultiblockRecipe {
         return null;
     }
 
-    @Override
-    public int getMultipleProcessTicks() { return 0; }
+    @Override public int getMultipleProcessTicks() { return 0; }
 
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt.setTag("input", fluidInput.writeToNBT(new NBTTagCompound()));
         return nbt;
     }
@@ -61,8 +59,7 @@ public class BoilerRecipe extends MultiblockRecipe {
         return findRecipe(fluidInput);
     }
 
-    @Override
-    public int getTotalProcessTime() { return this.totalProcessTime; }
+    @Override public int getTotalProcessTime() { return this.totalProcessTime; }
 
     public static ArrayList<BoilerFuelRecipe> fuelList = new ArrayList<>();
 
@@ -99,11 +96,9 @@ public class BoilerRecipe extends MultiblockRecipe {
             this.fluidInputList = Lists.newArrayList(this.fluidInput);
         }
 
-        @Override
-        public int getMultipleProcessTicks() { return 0; }
+        @Override public int getMultipleProcessTicks() { return 0; }
 
-        @Override
-        public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
             nbt.setTag("inputFuel", fluidInput.writeToNBT(new NBTTagCompound()));
             return nbt;
         }
@@ -113,8 +108,7 @@ public class BoilerRecipe extends MultiblockRecipe {
             return findFuel(fluidInput);
         }
 
-        @Override
-        public int getTotalProcessTime() { return this.totalProcessTime; }
+        @Override public int getTotalProcessTime() { return this.totalProcessTime; }
 
         public double getHeat() { return this.heat; }
     }
