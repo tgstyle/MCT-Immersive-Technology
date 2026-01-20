@@ -66,7 +66,6 @@ public abstract class MixerLogicDebounceMixin {
         } else {
             ext.it$setStableTicks(ext.it$getStableTicks() + 1);
 
-            // Update last to current (for cases where hopper refilled exactly mid-tick or consumption partial)
             for (int i = 0; i < MixerLogic.NUM_SLOTS; ++i) {
                 ItemStack stack = state.inventory.getStackInSlot(i);
                 last.set(i, stack.isEmpty() ? ItemStack.EMPTY : stack.copy());

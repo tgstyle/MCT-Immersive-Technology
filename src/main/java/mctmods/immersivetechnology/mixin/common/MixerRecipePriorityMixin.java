@@ -6,8 +6,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,8 +15,6 @@ import java.util.List;
 
 @Mixin(MixerRecipe.class)
 public abstract class MixerRecipePriorityMixin {
-
-    private static final Logger LOGGER = LogManager.getLogger("immersivetechnology/MixerPriority");
 
     @Inject(
             method = "findRecipe(Lnet/minecraft/world/level/Level;Lnet/minecraftforge/fluids/FluidStack;Lnet/minecraft/core/NonNullList;)Lblusunrize/immersiveengineering/api/crafting/MixerRecipe;",
@@ -35,8 +31,6 @@ public abstract class MixerRecipePriorityMixin {
             cir.setReturnValue(null);
             return;
         }
-
-        LOGGER.info("[MixerPriority] Found {} matching recipes for fluid {}", allMatching.size(), fluid.getFluid());
 
         MixerRecipe best = allMatching.stream()
                 .max((r1, r2) -> {
@@ -57,25 +51,6 @@ public abstract class MixerRecipePriorityMixin {
                     return cmp;
                 })
                 .orElse(allMatching.get(0));
-
-        int bestSum = 0;
-        for (IngredientWithSize ingr : best.itemInputs) {
-            if (ingr != null) bestSum += ingr.getCount();
-        }
-        int bestCount = (int) java.util.Arrays.stream(best.itemInputs).filter(ingr -> ingr != null).count();
-
-        LOGGER.info("[MixerPriority] Selected recipe {} (sum: {}, count: {})", best.getId(), bestSum, bestCount);
-
-        for (MixerRecipe r : allMatching) {
-            if (r != best) {
-                int sum = 0;
-                for (IngredientWithSize ingr : r.itemInputs) {
-                    if (ingr != null) sum += ingr.getCount();
-                }
-                int count = (int) java.util.Arrays.stream(r.itemInputs).filter(ingr -> ingr != null).count();
-                LOGGER.info("[MixerPriority] Other candidate {} (sum: {}, count: {})", r.getId(), sum, count);
-            }
-        }
 
         cir.setReturnValue(best);
     }
