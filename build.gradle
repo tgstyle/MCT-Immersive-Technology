@@ -57,6 +57,10 @@ sourceSets {
         resources {
             srcDirs = ["$rootDir/src/datagen/resources"]
         }
+        compileClasspath += main.compileClasspath
+        runtimeClasspath += main.runtimeClasspath
+        compileClasspath += main.output
+        runtimeClasspath += main.output
     }
     gametest {
         java {
@@ -65,6 +69,10 @@ sourceSets {
         resources {
             srcDirs = ["$rootDir/src/gametest/resources"]
         }
+        compileClasspath += main.compileClasspath
+        runtimeClasspath += main.runtimeClasspath
+        compileClasspath += main.output
+        runtimeClasspath += main.output
     }
 }
 
