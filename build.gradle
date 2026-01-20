@@ -40,6 +40,9 @@ tasks.withType(Jar).configureEach {
 
 sourceSets {
     main {
+        java {
+            srcDirs = ["$rootDir/src/main/java"]
+        }
         resources {
             srcDirs = [
                     "$rootDir/src/main/resources",
@@ -48,16 +51,20 @@ sourceSets {
         }
     }
     datagen {
-        compileClasspath += main.compileClasspath
-        runtimeClasspath += main.runtimeClasspath
-        compileClasspath += main.output
-        runtimeClasspath += main.output
+        java {
+            srcDirs = ["$rootDir/src/datagen/java"]
+        }
+        resources {
+            srcDirs = ["$rootDir/src/datagen/resources"]
+        }
     }
     gametest {
-        compileClasspath += main.compileClasspath
-        runtimeClasspath += main.runtimeClasspath
-        compileClasspath += main.output
-        runtimeClasspath += main.output
+        java {
+            srcDirs = ["$rootDir/src/gametest/java"]
+        }
+        resources {
+            srcDirs = ["$rootDir/src/gametest/resources"]
+        }
     }
 }
 
@@ -350,6 +357,6 @@ datagenJar.dependsOn bumpVersion
 sourcesJar.dependsOn bumpVersion
 
 jar {
-    archiveBaseName.set("MCTImmersiveTechnology-${version_minecraft}")
+    archiveBaseName.set("MCT-ImmersiveTechnology-${version_minecraft}")
     archiveClassifier.set('')
 }
