@@ -8,5 +8,6 @@
     "amount": 1000,
     "fluid": "immersivetechnology:flue_gas"
   },
-  "time": 10
+  "time": 10,
+  "torque": 1.0
 }

@@ -314,6 +314,8 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                         GasTurbineRecipe recipe = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fluid);
                         if (recipe != null && fluid.getAmount() >= recipe.input.getAmount()) {
                             state.tanks.input.drain(recipe.input.getAmount(), FluidAction.EXECUTE);
+                            // The recipe defines how much torque the turbine provides while burning.
+                            state.currentTorque = recipe.torque;
                             if (recipe.fluidOutput != null) {
                                 int filled = state.tanks.output.fill(recipe.fluidOutput, FluidAction.EXECUTE);
                                 if (filled < recipe.fluidOutput.getAmount()) {}
@@ -364,7 +366,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
     private record MechanicalEnergyProvider(State state) implements IMechanicalEnergyProvider {
         @Override public int getSpeed() { return state.speed; }
-        @Override public float getTorque() { return 1f; }
+        @Override public float getTorque() { return state.currentTorque; }
         @Override public int getMaxSpeed() { return MAX_SPEED; }
         @Override public double getBaseMass() { return BASE_MASS; }
         @Override public double getDriveTorque() { return DRIVE_TORQUE; }
@@ -388,6 +390,8 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         public final CapabilityReference<IEnergyStorage> mvInput;
         private final BiFunction<Level, FluidStack, GasTurbineRecipe> recipeGetter;
         public int speed = 0;
+        /** Current torque multiplier (recipe-controlled). Defaults to 1.0 for compatibility. */
+        public float currentTorque = 1.0f;
         public boolean active = false;
         public boolean starterRunning = false;
         public boolean ignited = false;
