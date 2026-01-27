@@ -5,9 +5,8 @@ import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.crafting.IngredientStack;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
-import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.ITLogger;
-
+import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.multiblock.*;
 import mctmods.immersivetechnology.common.util.shapes.BooleanOp;
 import mctmods.immersivetechnology.common.util.shapes.VoxelShape;
@@ -113,9 +112,12 @@ public abstract class TileEntityITMultiblockPart<T extends TileEntityMultiblockP
     @Override public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
         side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
         boolean mirror = false;
-        if (isInvalid(world, pos, side, false)) { mirror = true; if (isInvalid(world, pos, side, true)) return false; }
-        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? width-1-masterX : -masterX).offset(EnumFacing.DOWN, masterY);
-        BlockPos masterPos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? (width - 1 - masterX) : masterX, masterY, masterZ, side);
+        if (isInvalid(world, pos, side, false)) {
+            mirror = true;
+            if (isInvalid(world, pos, side, true)) return false;
+        }
+        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), -masterX).offset(EnumFacing.DOWN, masterY);
+        BlockPos masterPos = ITUtils.LocalOffsetToWorldBlockPos(origin, masterX, masterY, masterZ, side);
         ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
         if (MultiblockHandler.fireMultiblockFormationEventPre(player, this, pos, hammer).isCanceled()) return false;
         IBlockState masterState = masterBlockState.withProperty(IEProperties.FACING_HORIZONTAL, side).withProperty(IEProperties.MULTIBLOCKSLAVE, false);
@@ -143,12 +145,13 @@ public abstract class TileEntityITMultiblockPart<T extends TileEntityMultiblockP
     }
 
     protected boolean isInvalid(World world, BlockPos pos, EnumFacing side, boolean mirror) {
-        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? width-1-masterX : -masterX).offset(EnumFacing.DOWN, masterY);
+        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), -masterX).offset(EnumFacing.DOWN, masterY);
         for (int h = 0; h < height; h++) for (int l = 0; l < length; l++) for (int w = 0; w < width; w++) {
             if (structure[h][l][w] == AirRef.instance) continue;
             BlockPos blockPos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? (width - 1 - w) : w, h, l, side);
             IBlockState state = world.getBlockState(blockPos);
-            if (!structure[h][l][w].isEquals(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)))) return true;
+            IRefComparable expected = structure[h][l][w];
+            if (!expected.isEquals(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)))) return true;
         }
         return false;
     }

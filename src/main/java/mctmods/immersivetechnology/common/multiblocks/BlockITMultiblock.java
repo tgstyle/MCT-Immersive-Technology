@@ -17,6 +17,8 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +31,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 
 import java.util.Arrays;
-import java.util.Locale;
 
 public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEnum> extends BlockITTileProvider<E> {
 
@@ -102,7 +103,12 @@ public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEn
     @Override @Nonnull public AxisAlignedBB getSelectedBoundingBox(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) { return getBoundingBox(state, world, pos); }
 
     @Override @Nonnull public String getCustomStateMapping(int meta, boolean itemBlock) {
-        if (!itemBlock && enumValues[meta].name().toLowerCase(Locale.US).endsWith("_slave")) return "multiblockSlave";
+        if (!itemBlock && enumValues[meta].name().toLowerCase(java.util.Locale.US).endsWith("_slave")) return "multiblockSlave";
         return "";
+    }
+
+    @Override
+    public boolean onBlockActivated(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ) {
+        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 }

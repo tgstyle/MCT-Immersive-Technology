@@ -1,17 +1,14 @@
 package mctmods.immersivetechnology.common.util.multiblock;
 
 import blusunrize.immersiveengineering.api.crafting.IngredientStack;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
-
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.ITLogger;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.io.InputStreamReader;
@@ -20,19 +17,20 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class MultiblockUtils {
+
     public static MultiblockJSONSchema Load(String path) {
         MultiblockJSONSchema data;
         try {
-            InputStreamReader stream = new InputStreamReader(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream(String.format("assets/immersivetech/%s", path))));
+            InputStreamReader stream = new InputStreamReader(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream(String.format("assets/%s/%s", ImmersiveTechnology.MODID, path))));
             JsonReader reader = new JsonReader(stream);
             try {
                 data = new Gson().fromJson(reader, MultiblockJSONSchema.class);
             } catch (JsonSyntaxException i) {
-                ITLogger.error(String.format("Syntax error in file %s: %s", path, i.getMessage()));
+                ITLogger.error(String.format("Syntax error in file %s", path));
                 throw i;
             }
         } catch (Exception e) {
-            ITLogger.error(String.format("Couldn't load file %s: %s", path, e.getMessage()));
+            ITLogger.error(String.format("Couldn't load file %s", path));
             return null;
         }
         return data;
@@ -40,16 +38,16 @@ public class MultiblockUtils {
 
     public static IngredientStack[] GetMaterials(MultiblockJSONSchema data) {
         ArrayList<IngredientStack> ingredients = new ArrayList<>();
-        for (BlockJSONSchema blockData : data.palette) {
+        for(BlockJSONSchema blockData : data.palette) {
             long count = 0;
-            for (String row : data.structure) {
+            for(String row : data.structure) {
                 count += row.chars().filter(ch -> ch == blockData.character).count();
             }
-            if (count == 0) continue;
-            if (blockData.mod.equals("ore")) ingredients.add(new IngredientStack(blockData.name,(int)count));
+            if(count == 0) continue;
+            if(blockData.mod.equals("ore")) ingredients.add(new IngredientStack(blockData.name,(int)count));
             else {
                 Item item = Item.getByNameOrId(blockData.mod + ":" + blockData.name);
-                if (item == null) {
+                if(item == null) {
                     ITLogger.error(String.format("Invalid item %s:%s",blockData.mod, blockData.name));
                     continue;
                 }
@@ -62,10 +60,11 @@ public class MultiblockUtils {
 
     public static HashMap<Character, IRefComparable> GetPalette(MultiblockJSONSchema data) {
         HashMap<Character, IRefComparable> palette = new HashMap<>();
-        for (BlockJSONSchema blockData : data.palette) {
-            if (blockData.mod.equals("ore")) {
+        for(BlockJSONSchema blockData : data.palette) {
+
+            if(blockData.mod.equals("ore")) {
                 NonNullList<ItemStack> ores = OreDictionary.getOres(blockData.name);
-                if (ores.isEmpty()) {
+                if(ores.isEmpty()) {
                     ITLogger.error(String.format("Empty oreDictEntry %s", blockData.name));
                     continue;
                 }
@@ -73,7 +72,7 @@ public class MultiblockUtils {
             }
             else {
                 Item item = Item.getByNameOrId(blockData.mod + ":" + blockData.name);
-                if (item == null) {
+                if(item == null) {
                     ITLogger.error(String.format("Invalid item %s:%s",blockData.mod, blockData.name));
                     continue;
                 }
@@ -84,53 +83,49 @@ public class MultiblockUtils {
     }
 
     public static IRefComparable[][][] GetStructure(MultiblockJSONSchema data, int width, int length, int height) {
-        if (data.structure == null) throw new IllegalArgumentException("Missing structure array in multiblock JSON");
-        if (data.structure.length != height * length) throw new IllegalArgumentException("Invalid number of structure lines: " + data.structure.length + ", expected " + (height * length));
         HashMap<Character, IRefComparable> palette = GetPalette(data);
         IRefComparable[][][] structure = new IRefComparable[height][length][width];
-        for (int rowIndex = 0; rowIndex < data.structure.length; rowIndex++) {
+        for(int rowIndex = 0; rowIndex < data.structure.length; rowIndex++) {
             char[] characters = data.structure[rowIndex].toCharArray();
-            if (characters.length != width) throw new IllegalArgumentException("Invalid line length in structure row " + rowIndex + ": " + characters.length + ", expected " + width);
-            for (int x = 0; x < characters.length; x++) {
-                if (characters[x] == ' ') {
+            for(int x = 0; x < characters.length; x++) {
+                if(characters[x] == ' ') {
                     structure[Math.floorDiv(rowIndex, length)][rowIndex % length][x] = AirRef.instance;
                     continue;
                 }
-                if (!palette.containsKey(characters[x])) throw new IllegalArgumentException(String.format("Invalid palette entry %s in row %d, column %d", characters[x], rowIndex, x));
+                ItemStack itemstack = palette.get(characters[x]).toItemStack();
+                if(itemstack == null) throw new IllegalArgumentException(String.format("Invalid palette entry %s", characters[x]));
                 structure[Math.floorDiv(rowIndex, length)][rowIndex % length][x] = palette.get(characters[x]);
             }
         }
+        ITLogger.info("structure[0][1][0] = " + structure[0][1][0].toString());
+        ITLogger.info("structure[0][2][0] = " + structure[0][2][0].toString());
         return structure;
     }
 
     public static ItemStack GetItemStack(int position, ItemStack[][][] source) {
         if (position == -1) return ItemStack.EMPTY;
-        if (source == null || source.length == 0 || source[0] == null || source[0].length == 0 || source[0][0] == null || source[0][0].length == 0) return ItemStack.EMPTY;
         int length = source[0].length;
         int width = source[0][0].length;
         int height = position / (length * width);
-        if (height < 0 || height >= source.length) return ItemStack.EMPTY;
-        int l = (position % (length * width)) / width;
-        if (l < 0 || l >= length) return ItemStack.EMPTY;
-        int w = position % width;
-        if (w < 0 || w >= width) return ItemStack.EMPTY;
-        ItemStack stack = source[height][l][w];
-        return stack != null ? stack : ItemStack.EMPTY;
+        if (height >= source.length) return ItemStack.EMPTY;
+        return source   [height]
+                [(position - (position % width)) / width % length]
+                [position % width];
     }
 
-    @SuppressWarnings("unused")
     public static ItemStack[][][] Convert(IRefComparable[][][] source) {
         int height = source.length;
         int length = source[0].length;
         int width = source[0][0].length;
         ItemStack[][][] toReturn = new ItemStack[height][length][width];
-        for (int y = 0; y < height; y++) {
-            for (int z = 0; z < length; z++) {
-                for (int x = 0; x < width; x++) {
+        for(int y = 0; y < height; y++) {
+            for(int z = 0; z < length; z++) {
+                for(int x = 0; x < width; x++) {
                     toReturn[y][z][x] = source[y][z][x].toItemStack();
                 }
             }
         }
         return toReturn;
     }
+
 }
