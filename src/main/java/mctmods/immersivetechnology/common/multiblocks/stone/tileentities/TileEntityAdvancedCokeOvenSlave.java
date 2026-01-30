@@ -9,6 +9,8 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
+import mctmods.immersivetechnology.common.multiblocks.stone.shapes.AdvancedCokeOvenShape;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
@@ -38,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static mctmods.immersivetechnology.common.multiblocks.stone.shapes.AdvancedCokeOvenShape.GETTER;
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<TileEntityAdvancedCokeOvenSlave, IMultiblockRecipe, TileEntityAdvancedCokeOvenMaster> implements IActiveState, IGuiTile, IComparatorOverride, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
 
@@ -160,12 +163,12 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
     }
 
     private VoxelShape getVoxelShape() {
-        List<AxisAlignedBB> list = GETTER.getShape(posToMultiblock());
-        if (list.isEmpty()) return Shapes.empty();
-        List<AxisAlignedBB> rotated = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotated.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        BlockPos posInMultiblock = posToMultiblock();
+        List<AxisAlignedBB> list = AdvancedCokeOvenShape.GETTER.getShape(posInMultiblock);
+        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing));
         VoxelShape vs = Shapes.empty();
-        for (AxisAlignedBB aabb : rotated) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), BooleanOp.OR);
+        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
         return vs.optimize();
     }
 

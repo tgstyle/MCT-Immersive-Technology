@@ -27,6 +27,7 @@ public class HeatExchangerShape extends GenericShape {
 
     static {
         List<List<AxisAlignedBB>> rawShapes = new ArrayList<>();
+        String[] structure = new String[0];
         BlockPos masterPos = BlockPos.ORIGIN;
         MultiblockJSONSchema data;
         try {
@@ -40,14 +41,21 @@ public class HeatExchangerShape extends GenericShape {
                     WIDTH = data.width;
                     HEIGHT = data.height;
                     LENGTH = data.length;
-                    for (int i = 0; i < WIDTH * HEIGHT * LENGTH; i++) rawShapes.add(new ArrayList<>());
-                    if (data.shapeAABB != null && data.shapeAABB.isJsonArray()) {
-                        JsonArray shapeArray = data.shapeAABB.getAsJsonArray();
+                    if (data.structure != null) {
+                        structure = data.structure;
+                    }
+                    int totalPositions = WIDTH * HEIGHT * LENGTH;
+                    for (int i = 0; i < totalPositions; i++) rawShapes.add(new ArrayList<>());
+                    if (data.shapeAABB != null) {
+                        JsonArray shapeArray = data.shapeAABB;
                         int idx = 0;
                         for (JsonElement posElem : shapeArray) {
                             if (idx >= rawShapes.size()) break;
                             List<AxisAlignedBB> posShapes = rawShapes.get(idx);
-                            if (posElem.isJsonNull() || !posElem.isJsonArray()) { idx++; continue; }
+                            if (posElem.isJsonNull() || !posElem.isJsonArray()) {
+                                idx++;
+                                continue;
+                            }
                             JsonArray posArray = posElem.getAsJsonArray();
                             for (JsonElement aabbElem : posArray) {
                                 if (!aabbElem.isJsonArray()) continue;
@@ -61,6 +69,23 @@ public class HeatExchangerShape extends GenericShape {
                                 if (valid) posShapes.add(new AxisAlignedBB(vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]));
                             }
                             idx++;
+                        }
+                    }
+                    int structIdx = 0;
+                    for (int y = 0; y < HEIGHT; y++) {
+                        for (int z = 0; z < LENGTH; z++) {
+                            if (structIdx >= structure.length) break;
+                            String layer = structure[structIdx++];
+                            if (layer.length() != WIDTH) continue;
+                            for (int x = 0; x < WIDTH; x++) {
+                                int posIdx = x + z * WIDTH + y * WIDTH * LENGTH;
+                                if (posIdx >= rawShapes.size()) continue;
+                                List<AxisAlignedBB> posShapes = rawShapes.get(posIdx);
+                                char blockChar = layer.charAt(x);
+                                if (blockChar != ' ' && posShapes.isEmpty()) {
+                                    posShapes.add(new AxisAlignedBB(0,0,0,1,1,1));
+                                }
+                            }
                         }
                     }
                     masterPos = new BlockPos(data.master.x, data.master.y, data.master.z);

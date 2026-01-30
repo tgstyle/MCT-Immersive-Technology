@@ -26,6 +26,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -125,26 +126,23 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
         return super.getCapability(capability, facing);
     }
 
-    private BlockPos posToMultiblock(int position) {
+    private BlockPos posToMultiblock() {
         int width = TileEntityITMultiblockPartCoolingTower.instance.width;
         int length = TileEntityITMultiblockPartCoolingTower.instance.length;
-        int y = position / (length * width);
-        int rem = position % (length * width);
+        int y = pos / (length * width);
+        int rem = pos % (length * width);
         int z = rem / width;
         int x = rem % width;
-        if (mirrored) x = width - 1 - x;
         return new BlockPos(x, y, z);
     }
 
     private VoxelShape getVoxelShape() {
-        BlockPos local = posToMultiblock(this.pos);
-        List<AxisAlignedBB> list = CoolingTowerShape.GETTER.getShape(local);
-        if (list.isEmpty()) return Shapes.empty();
+        BlockPos posInMultiblock = posToMultiblock();
+        List<AxisAlignedBB> list = CoolingTowerShape.GETTER.getShape(posInMultiblock);
+        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing));
         VoxelShape vs = Shapes.empty();
-        for (AxisAlignedBB aabb : list) {
-            AxisAlignedBB rotated = ITUtils.rotateAABB(aabb, facing, mirrored);
-            vs = Shapes.joinUnoptimized(vs, Shapes.create(rotated), OR);
-        }
+        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
         return vs.optimize();
     }
 

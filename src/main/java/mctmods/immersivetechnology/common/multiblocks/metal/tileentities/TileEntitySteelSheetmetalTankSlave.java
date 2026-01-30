@@ -141,16 +141,14 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
         int rem = pos % (length * width);
         int z = rem / width;
         int x = rem % width;
-        if (mirrored) x = width - 1 - x;
         return new BlockPos(x, y, z);
     }
 
     private VoxelShape getVoxelShape() {
         BlockPos posInMultiblock = posToMultiblock();
         List<AxisAlignedBB> list = SteelSheetmetalTankShape.GETTER.getShape(posInMultiblock);
-        if (list.isEmpty()) return Shapes.empty();
         List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing));
         VoxelShape vs = Shapes.empty();
         for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
         return vs.optimize();

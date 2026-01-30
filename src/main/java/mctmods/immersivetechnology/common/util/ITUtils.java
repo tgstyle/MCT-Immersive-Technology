@@ -107,6 +107,10 @@ public class ITUtils {
         return pSupplier.get();
     }
 
+    public static AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing facing) {
+        return rotateAABB(aabb, facing, false);
+    }
+
     public static AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing facing, boolean mirrored) {
         double minX = aabb.minX;
         double minY = aabb.minY;
@@ -115,6 +119,7 @@ public class ITUtils {
         double maxY = aabb.maxY;
         double maxZ = aabb.maxZ;
         double temp;
+
         switch (facing) {
             case SOUTH:
                 temp = minX;
@@ -138,15 +143,22 @@ public class ITUtils {
                 maxX = 1 - minZ;
                 minZ = temp;
                 break;
-            default:
-                // NORTH, no rotation
+            default: // NORTH
                 break;
         }
+
         if (mirrored) {
-            temp = minX;
-            minX = 1 - maxX;
-            maxX = 1 - temp;
+            if (facing.getAxis() == EnumFacing.Axis.Z) {
+                temp = minX;
+                minX = 1 - maxX;
+                maxX = 1 - temp;
+            } else {
+                temp = minZ;
+                minZ = 1 - maxZ;
+                maxZ = 1 - temp;
+            }
         }
+
         return new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
     }
 }

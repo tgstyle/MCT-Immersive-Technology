@@ -162,14 +162,12 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
         int rem = pos % (length * width);
         int z = rem / width;
         int x = rem % width;
-        if (this.mirrored) x = width - 1 - x;
         return new BlockPos(x, y, z);
     }
 
     private VoxelShape getVoxelShape() {
         BlockPos posInMultiblock = posToMultiblock();
         List<AxisAlignedBB> list = GasTurbineShape.GETTER.getShape(posInMultiblock);
-        if (list.isEmpty()) return Shapes.create(0, 0, 0, 1, 1, 1);
         List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
         for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, this.facing, this.mirrored));
         VoxelShape vs = Shapes.empty();
@@ -185,6 +183,7 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
 
     @Override @Nonnull public float[] getBlockBounds() {
         VoxelShape vs = getVoxelShape();
+        if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
         AxisAlignedBB bb = vs.bounds();
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
     }
