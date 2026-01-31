@@ -21,9 +21,11 @@ import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -258,6 +260,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
         List<BlockPos> positions = new ArrayList<>();
         List<IBlockState> states = new ArrayList<>();
+        List<ItemStack> drops = new ArrayList<>();
 
         for (int eff_h = 0; eff_h < eff_height; eff_h++) {
             for (int l = 0; l < TileEntityITMultiblockPartRadiator.instance.length; l++) {
@@ -280,6 +283,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
                             if (originalState != null) {
                                 positions.add(pos2);
                                 states.add(originalState);
+                                drops.add(originalStack.copy());
                             }
                             part.formed = false;
                             part.onlyLocalDissassembly = time;
@@ -291,9 +295,24 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
         for (int i = 0; i < positions.size(); i++) {
             BlockPos pos = positions.get(i);
+            IBlockState state = states.get(i);
+            ItemStack drop = drops.get(i);
+
             world.removeTileEntity(pos);
-            if (!pos.equals(triggerPos)) {
-                world.setBlockState(pos, states.get(i), 3);
+
+            if (pos.equals(triggerPos)) {
+                if (!drop.isEmpty()) {
+                    float f = 0.7F;
+                    double dx = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
+                    double dy = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
+                    double dz = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
+                    EntityItem entityitem = new EntityItem(world, pos.getX() + dx, pos.getY() + dy, pos.getZ() + dz, drop);
+                    entityitem.setPickupDelay(10);
+                    world.spawnEntity(entityitem);
+                }
+                world.playEvent(2001, pos, Block.getStateId(state));
+            } else {
+                world.setBlockState(pos, state, 3);
             }
         }
     }
