@@ -32,7 +32,7 @@ def fill_gaps_along_axis(occupied_np, axis, threshold, is_excluded=None, max_int
                             intrude_count += 1
                         else:
                             intrude_count = 0
-                        if max_intrude >= 0 and intrude_count > max_intrude:
+                        if 0 <= max_intrude < intrude_count:
                             break
                         if occupied_np[check_x, y, z]:
                             left = check_x
@@ -48,7 +48,7 @@ def fill_gaps_along_axis(occupied_np, axis, threshold, is_excluded=None, max_int
                             intrude_count += 1
                         else:
                             intrude_count = 0
-                        if max_intrude >= 0 and intrude_count > max_intrude:
+                        if 0 <= max_intrude < intrude_count:
                             break
                         if occupied_np[check_x, y, z]:
                             right = check_x
@@ -80,7 +80,7 @@ def fill_gaps_along_axis(occupied_np, axis, threshold, is_excluded=None, max_int
                             intrude_count += 1
                         else:
                             intrude_count = 0
-                        if max_intrude >= 0 and intrude_count > max_intrude:
+                        if 0 <= max_intrude < intrude_count:
                             break
                         if occupied_np[x, check_y, z]:
                             floor_y = check_y
@@ -96,7 +96,7 @@ def fill_gaps_along_axis(occupied_np, axis, threshold, is_excluded=None, max_int
                             intrude_count += 1
                         else:
                             intrude_count = 0
-                        if max_intrude >= 0 and intrude_count > max_intrude:
+                        if 0 <= max_intrude < intrude_count:
                             break
                         if occupied_np[x, check_y, z]:
                             ceiling_y = check_y
@@ -128,7 +128,7 @@ def fill_gaps_along_axis(occupied_np, axis, threshold, is_excluded=None, max_int
                             intrude_count += 1
                         else:
                             intrude_count = 0
-                        if max_intrude >= 0 and intrude_count > max_intrude:
+                        if 0 <= max_intrude < intrude_count:
                             break
                         if occupied_np[x, y, check_z]:
                             front = check_z
@@ -144,7 +144,7 @@ def fill_gaps_along_axis(occupied_np, axis, threshold, is_excluded=None, max_int
                             intrude_count += 1
                         else:
                             intrude_count = 0
-                        if max_intrude >= 0 and intrude_count > max_intrude:
+                        if 0 <= max_intrude < intrude_count:
                             break
                         if occupied_np[x, y, check_z]:
                             back = check_z
@@ -156,7 +156,7 @@ def fill_gaps_along_axis(occupied_np, axis, threshold, is_excluded=None, max_int
     return occupied_np
 
 # Protrusion removal function
-def remove_protrusions(np_arr, is_excluded=None):
+def remove_protrusions(np_arr):
     shape = np_arr.shape
     directions = [(1,0,0), (-1,0,0), (0,1,0), (0,-1,0), (0,0,1), (0,0,-1)]
     
@@ -167,7 +167,7 @@ def remove_protrusions(np_arr, is_excluded=None):
     neigh_counts = ndimage.convolve(np_arr.astype(int), kernel, mode='constant', cval=0)
     
     # Candidates: occupied with 1-2 neighbors
-    candidates = np.where((np_arr) & (neigh_counts > 0) & (neigh_counts <= 2))
+    candidates = np.where(np_arr & (neigh_counts > 0) & (neigh_counts <= 2))
     
     for idx in range(len(candidates[0])):
         x, y, z = candidates[0][idx], candidates[1][idx], candidates[2][idx]

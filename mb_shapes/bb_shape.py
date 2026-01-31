@@ -1,31 +1,30 @@
 # bb_shape.py
-import sys
-import os
-import json
 import argparse
-import time
-import threading
+import json
 import multiprocessing as mp
+import os
+import time
 import numpy as np
 import torch
-from tqdm import tqdm
-from bb_voxelization import process_block
-from bb_postprocess import process_post, fill_gaps_along_axis, remove_protrusions, apply_postprocessing
-from bb_utils import find_max_box, merge_aabbs, merge_along_dim, parse_thresh_val, init_worker, extract_aabbs_from_occupied
+
 from bb_model_parser import parse_bbmodel, list_bbmodel_files, select_file, normalize_offsets
+from bb_postprocess import apply_postprocessing
+from bb_utils import parse_thresh_val, extract_aabbs_from_occupied
+
 try:
     import torch_directml
 except ImportError:
     torch_directml = None
+
 def main():
     start_time = time.time()
     parser = argparse.ArgumentParser()
-    
+
     # Input and output paths
     parser.add_argument('path', nargs='?', help='Path to bbmodel file or directory containing bbmodel files')
     parser.add_argument('--main', type=str, help='Specify the main model file (bypasses selection prompt)')
     parser.add_argument('--output', choices=['java', 'json'], help='Output format: java or json')
-    
+
     # Post-processing control flags
     parser.add_argument('--no-postprocess', action='store_true', help='Disable all post-processing steps')
     parser.add_argument('--no-gpp', action='store_true', help='Disable global post-processing on the full model (enabled by default)')
@@ -34,7 +33,7 @@ def main():
     parser.add_argument('--no-small-voids', action='store_true', help='Disable removal of small voids and occupied clusters')
     parser.add_argument('--fill-all-voids', action='store_true', help='Fill all internal voids regardless of size (useful for large hollow models)')
     parser.add_argument('--no-supplementary', action='store_true', help='Disable processing of supplementary models')
-    
+
     # Threshold and value settings
     parser.add_argument('--thresh', type=str, default='2,4,2', help='Comma-separated gap thresholds for x,y,z; use 0 for unlimited, d for default, x to disable (use quotes if needed, e.g., "2,4,2")')
     parser.add_argument('--ex-thresh', type=str, default='d,d,d', help='Comma-separated gap thresholds for excluded blocks along x,y,z; d uses --thresh value, x to disable (use quotes if needed, e.g., "d,d,d")')
@@ -42,7 +41,7 @@ def main():
     parser.add_argument('--gap-passes', type=int, default=3, help='Number of passes for gap filling per axis')
     parser.add_argument('--void-thresh', type=int, default=4, help='Max voxel count for small voids to fill (fills if size < threshold)')
     parser.add_argument('--occ-thresh', type=int, default=4, help='Max voxel count for small occupied clusters to remove (removes if size < threshold)')
-    
+
     # Block and region specifications
     parser.add_argument('--pbg', type=str, default='', help='Comma-separated axes for per-block gap filling (e.g., x,y,z; use quotes if needed, e.g., "x,y,z")')
     parser.add_argument('--rpp', action='append', default=[], help='Regional post-processing: "bx,by,bz bx,by,bz ... : x,y,z" where thresholds use d for main thresh, x to disable (use quotes if needed, e.g., "0,0,0 1,0,0 : d,d,d")')
@@ -51,28 +50,28 @@ def main():
     parser.add_argument('--exclude-global', type=str, default='', help='Space-separated bx,by,bz to exclude from global post-processing (e.g., "0,0,0 1,0,0"; use quotes if needed)')
     parser.add_argument('--sub-solid-block', action='append', default=[], help='Force sub-region solid in final shape: "bx,by,bz minX,minY,minZ,maxX,maxY,maxZ" (e.g., "0,0,0 0,0,0,16,16,16"; use quotes if needed)')
     parser.add_argument('--sub-empty-block', action='append', default=[], help='Force sub-region empty in final shape: "bx,by,bz minX,minY,minZ,maxX,maxY,maxZ" (e.g., "0,0,0 0,0,0,16,16,16"; use quotes if needed)')
-    
+
     # Order and configuration options
     parser.add_argument('--fill-order', type=str, default='x,z,y', help='Order of axes for gap filling (comma-separated x,y,z in any order; use quotes if needed, e.g., "x,z,y")')
     parser.add_argument('--pp-order', type=str, default='per-block,regional,global,per-block-gaps,protrusions,sub-blocks', help='Comma-separated order of main post-processing steps: per-block,regional,global,per-block-gaps,protrusions,sub-blocks (use quotes if needed)')
     parser.add_argument('--sub-pp-order', type=str, default='remove-small,fill-holes,fill-voids,fill-gaps', help='Comma-separated order of sub-post-processing steps: remove-small,fill-holes,fill-voids,fill-gaps (use quotes if needed)')
-    
+
     # Supplementary model configurations
     parser.add_argument('--supp-config', nargs='+', action='append', default=[], help='Supplementary model config: model.bbmodel num_times offset1 offset2... (e.g., model.bbmodel 2 0,0,0 1,0,0; use quotes if needed around the whole config)')
-    
+
     # Device and performance options
     parser.add_argument('--dml-index', type=int, default=None, help='DirectML device index to use (overrides automatic enumeration)')
     parser.add_argument('--single-thread', action='store_true', help='Force single-threaded processing even on CPU')
-    
+
     # Low-res merge option
     parser.add_argument('--low-res-merge', action='store_true', help='Enable low-res merge for angled faces')
-    
+
     # Copy AABB option
     parser.add_argument('--copy-aabb', action='append', default=[], help='Copy AABBs: "from_bx,from_by,from_bz to_bx,to_by,to_bz" (use quotes if needed)')
-    
+
     # Minecraft version option
     parser.add_argument('--mc-version', type=str, default='default', choices=['1.12.2', 'default'], help='Minecraft version for output adjustment')
-    
+
     args = parser.parse_args()
     solid_set = set()
     if args.solid_blocks:
@@ -134,27 +133,30 @@ def main():
                     best_index = i
             device = torch.device(f'cuda:{best_index}')
         print(f"Using CUDA device: {torch.cuda.get_device_name(device.index)}")
-    elif torch_directml is not None and torch_directml.is_available():
-        dml_index = 0
-        if args.dml_index is not None:
-            dml_index = args.dml_index
-            print(f"Using specified DirectML device index: {dml_index}")
+    elif torch_directml is not None:
+        dml = torch_directml
+        if dml.is_available():  # type: ignore[attr-defined]
+            dml_index = 0
+            if args.dml_index is not None:
+                dml_index = args.dml_index
+                print(f"Using specified DirectML device index: {dml_index}")
+            else:
+                try:
+                    num_devices = dml.device_count()  # type: ignore[attr-defined]
+                    dml_names = [dml.device_name(i) for i in range(num_devices)]  # type: ignore[attr-defined]
+                    for i, name in enumerate(dml_names):
+                        print(f"DML Device {i}: {name}")
+                    for i in range(num_devices):
+                        name = dml_names[i]
+                        if "(TM) Graphics" not in name:
+                            dml_index = i
+                            break
+                except Exception as e:
+                    print(f"Auto-selection failed: {e}. Using default device 0.")
+            device = dml.device(dml_index)  # type: ignore[attr-defined]
+            print(f"Using DirectML device: {dml.device_name(dml_index)}")  # type: ignore[attr-defined]
         else:
-            try:
-                num_devices = torch_directml.device_count()
-                dml_names = [torch_directml.device_name(i) for i in range(num_devices)]
-                for i, name in enumerate(dml_names):
-                    print(f"DML Device {i}: {name}")
-                dml_index = 0
-                for i in range(num_devices):
-                    name = dml_names[i]
-                    if "(TM) Graphics" not in name:
-                        dml_index = i
-                        break
-            except Exception as e:
-                print(f"Auto-selection failed: {e}. Using default device 0.")
-        device = torch_directml.device(dml_index)
-        print(f"Using DirectML device: {torch_directml.device_name(dml_index)}")
+            print("DirectML not available. Falling back to CPU.")
     else:
         print("Using CPU")
     thresh_parts = args.thresh.split(',')
@@ -198,7 +200,6 @@ def main():
         if not os.path.exists(main_path):
             raise ValueError(f"Main model {args.main} not found in {directory}")
     bbmodel_files = list_bbmodel_files(directory)
-    main_file = None
     if main_path:
         main_file = os.path.basename(main_path)
         if main_file in bbmodel_files:
@@ -259,8 +260,7 @@ def main():
     placements.sort(key=lambda p: p[3])
     overall_dict = {(bx, by, bz): occupied_np for bx, by, bz, occupied_np in overall_voxels}
     for s_voxels, off_bx, off_by, off_bz in placements:
-        current_min_bz = min(overall_dict, key=lambda k: k[2])[2] if overall_dict else 0
-        current_max_bz = max(overall_dict, key=lambda k: k[2])[2] if overall_dict else 0
+        current_min_bz = min(k[2] for k in overall_dict) if overall_dict else 0
         if off_bz < current_min_bz:
             shift = current_min_bz - off_bz
             new_dict = {}
@@ -306,7 +306,7 @@ def main():
         sub_order = args.sub_pp_order
         block_occupied = apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_order, pp_order_list, subs, do_global=global_postprocess, res=16)
     if args.mc_version == '1.12.2':
-        max_bz = max(bz for bx,by,bz in block_occupied) if block_occupied else 0
+        max_bz = max(k[2] for k in block_occupied) if block_occupied else 0
         new_dict = {}
         for bx,by,bz in list(block_occupied):
             new_bz = max_bz - bz
@@ -315,7 +315,7 @@ def main():
         block_occupied = new_dict
     # Extract AABBs
     overall_aabbs = []
-    for (bx, by, bz), occupied_np in sorted(block_occupied.items(), key=lambda k: k[0]):
+    for (bx, by, bz), occupied_np in sorted(block_occupied.items(), key=lambda item: item[0]):
         if args.low_res_merge:
             low_res = 8
             occupied_low = np.zeros((low_res, low_res, low_res), dtype=bool)
@@ -384,7 +384,7 @@ def main():
             if not block_aabbs: continue
             if len(block_aabbs) == 1:
                 minx, miny, minz, maxx, maxy, maxz = block_aabbs[0]
-                if (abs(minx) < 1e-5 and abs(miny) < 1e-5 and abs(minz) < 1e-5 and abs(maxx - 1) < 1e-5 and abs(maxy - 1) < 1e-5 and abs(maxz - 1) < 1e-5):
+                if abs(minx) < 1e-5 and abs(miny) < 1e-5 and abs(minz) < 1e-5 and abs(maxx - 1) < 1e-5 and abs(maxy - 1) < 1e-5 and abs(maxz - 1) < 1e-5:
                     aabb_json[index] = []
                     continue
             boxes = []
@@ -400,6 +400,7 @@ def main():
     print(f"Started: {time.ctime(start_time)}")
     print(f"Finished: {time.ctime(end_time)}")
     print(f"Duration: {duration:.2f} seconds")
+
 if __name__ == "__main__":
     mp.set_start_method('spawn', force=True)
     main()

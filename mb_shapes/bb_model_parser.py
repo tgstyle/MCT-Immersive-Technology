@@ -1,17 +1,18 @@
 # bb_model_parser.py
 import json
 import math
+import multiprocessing as mp
+import os
+import sys
+import threading
 import numpy as np
 import torch
-import sys
-import os
 from tqdm import tqdm
-import threading
-import multiprocessing as mp
-from bb_postprocess import process_post, fill_gaps_along_axis, remove_protrusions, apply_postprocessing
-from bb_utils import find_max_box, merge_aabbs, parse_thresh_val, extract_aabbs_from_occupied
-from bb_voxelization import process_block
+from bb_postprocess import apply_postprocessing
 from bb_utils import init_worker
+from bb_utils import parse_thresh_val, extract_aabbs_from_occupied
+from bb_voxelization import process_block
+
 try:
     import torch_directml
 except ImportError:
@@ -34,8 +35,18 @@ def center_in_block(occupied_np, res=16):
     return new_occupied
 
 # Main model parsing function
-def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=set(), empty_set=set(), fill_all_voids=False, exclude_set=set(), axis_order=[0,2,1], mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=[], return_voxels=False, pp_order='per-block,regional,global,per-block-gaps,protrusions', sub_order='remove-small,fill-holes,fill-voids,fill-gaps', do_center=False):
+def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=None, empty_set=None, fill_all_voids=False, exclude_set=None, axis_order=None, mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=None, return_voxels=False, pp_order='per-block,regional,global,per-block-gaps,protrusions', sub_order='remove-small,fill-holes,fill-voids,fill-gaps', do_center=False):
     # Parse thresholds and settings
+    if rpp_list is None:
+        rpp_list = []
+    if axis_order is None:
+        axis_order = [0, 2, 1]
+    if exclude_set is None:
+        exclude_set = set()
+    if empty_set is None:
+        empty_set = set()
+    if solid_set is None:
+        solid_set = set()
     thresh_parts = thresh_str.split(',')
     x_threshold = parse_thresh_val(thresh_parts[0], 2)
     y_threshold = parse_thresh_val(thresh_parts[1], 4)
@@ -49,7 +60,7 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
     ex_x_threshold = parse_thresh_val(ex_thresh_parts[0], x_threshold)
     ex_y_threshold = parse_thresh_val(ex_thresh_parts[1], y_threshold)
     ex_z_threshold = parse_thresh_val(ex_thresh_parts[2], z_threshold)
-    
+
     # Process regional post-processing arguments
     regions = []
     all_region_blocks = set()
@@ -67,7 +78,7 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
                 raise ValueError(f"Overlapping block {b} in regions")
             all_region_blocks.add(b)
         regions.append({'blocks': blocks, 'thresholds': (reg_x, reg_y, reg_z)})
-    
+
     # Load and validate BBModel data
     with open(file_path, 'r') as f:
         data = json.load(f)
@@ -85,7 +96,7 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
                     print(f" python bb_sterilize.py {file_path}")
                     print("This will create a sterilized version of the model with grid-aligned vertices.")
                     sys.exit(1)
-    
+
     # Process elements: vertices, triangles, edges
     all_verts = []
     all_triangles = []
@@ -135,7 +146,6 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
     verts = all_verts
     triangles = [(all_verts[a], all_verts[b], all_verts[c]) for a, b, c in all_triangles]
     edges = list(all_edges)
-    is_watertight = all(v == 2 for v in all_edge_freq.values())
     has_thin_features = has_fraction or min_feature_size < 0.5 if min_feature_size != float('inf') else False
     is_watertight = not has_thin_features
     minx = min(v[0] for v in verts)
@@ -169,9 +179,9 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
         for by in range(num_by):
             for bz in range(num_bz):
                 args_list.append((bx, by, bz, minx, miny, minz, verts, triangles, edges, res, x_threshold, y_threshold, z_threshold, is_watertight, has_thin_features, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, device, solid_set, empty_set, directions_t, offsets_t, fill_all_voids, axis_order))
-    def refresher(pbar, stop_event):
-        while not stop_event.wait(1):
-            pbar.refresh()
+    def refresher(refresher_pbar, refresher_stop_event):
+        while not refresher_stop_event.wait(1):
+            refresher_pbar.refresh()
     results = []
     stop_event = threading.Event()
     with tqdm(total=len(args_list), desc=os.path.basename(file_path)) as pbar:
@@ -191,8 +201,7 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
                 if result is not None:
                     results.append(result)
                 pbar.update(1)
-                if device.type == 'directml':
-                    torch_directml.gc()
+                # Removed invalid torch_directml.gc() call; DirectML backend does not support a direct gc/empty_cache method
         stop_event.set()
         thread.join()
     raw_results = [r for r in results if r is not None]

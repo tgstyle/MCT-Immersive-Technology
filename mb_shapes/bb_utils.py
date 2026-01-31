@@ -1,8 +1,7 @@
 # bb_utils.py
+import itertools
 import os
 import torch
-import itertools
-import numpy as np
 
 # Worker initialization function
 def init_worker():
