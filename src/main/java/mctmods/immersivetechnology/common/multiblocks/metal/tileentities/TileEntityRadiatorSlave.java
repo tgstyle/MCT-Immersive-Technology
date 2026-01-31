@@ -36,6 +36,8 @@ import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRadiatorSlave, RadiatorRecipe, TileEntityRadiatorMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
 
+    protected long onlyLocalDissassembly = -1;
+
     private int loadGrace = 0;
 
     public TileEntityRadiatorSlave() {
@@ -64,6 +66,13 @@ public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRa
         }
     }
 
+    @Override public void disassemble() {
+        if (formed && !world.isRemote) {
+            TileEntityRadiatorMaster m = master();
+            if (m != null) m.disassemble(getPos());
+        }
+    }
+
     @Override public boolean isDummy() { return true; }
 
     TileEntityRadiatorMaster master;
@@ -86,7 +95,7 @@ public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRa
 
     @Override public int getSlotLimit(int slot) { return 0; }
 
-    @Override public @Nonnull IFluidTank[] getInternalTanks() {
+    @Override @Nonnull public IFluidTank[] getInternalTanks() {
         TileEntityRadiatorMaster m = master();
         return m == null ? new IFluidTank[0] : m.tanks;
     }
@@ -106,7 +115,7 @@ public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRa
 
     @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         TileEntityRadiatorMaster m = master();
         return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position);
     }
@@ -132,12 +141,13 @@ public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRa
     }
 
     public BlockPos posToMultiblock() {
-        int width = TileEntityITMultiblockPartRadiator.instance.width;
-        int length = TileEntityITMultiblockPartRadiator.instance.length;
-        int y = pos / (length * width);
-        int rem = pos % (length * width);
-        int z = rem / width;
-        int x = rem % width;
+        int originalWidth = TileEntityITMultiblockPartRadiator.instance.width;
+        int originalLength = TileEntityITMultiblockPartRadiator.instance.length;
+        int posIdx = pos;
+        int y = posIdx / (originalLength * originalWidth);
+        int rem = posIdx % (originalLength * originalWidth);
+        int z = rem / originalWidth;
+        int x = rem % originalWidth;
         return new BlockPos(x, y, z);
     }
 
@@ -145,7 +155,12 @@ public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRa
         BlockPos posInMultiblock = posToMultiblock();
         List<AxisAlignedBB> list = RadiatorShape.GETTER.getShape(posInMultiblock);
         List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        for (AxisAlignedBB aabb : list) {
+            if (mirrored) {
+                aabb = new AxisAlignedBB(aabb.minY, aabb.minX, aabb.minZ, aabb.maxY, aabb.maxX, aabb.maxZ);
+            }
+            rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
+        }
         VoxelShape vs = Shapes.empty();
         for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
         return vs.optimize();
