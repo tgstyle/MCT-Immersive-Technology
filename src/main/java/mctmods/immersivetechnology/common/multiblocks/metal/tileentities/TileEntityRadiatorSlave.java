@@ -199,4 +199,7 @@ public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRa
         }
         return super.getCapability(capability, facing);
     }
+
+    @Override
+    public boolean canRenderBreaking() { return true; }
 }

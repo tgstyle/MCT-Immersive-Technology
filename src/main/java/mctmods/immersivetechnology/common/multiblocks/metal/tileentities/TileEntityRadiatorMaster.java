@@ -615,4 +615,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
             return drained;
         }
     }
+
+    @Override
+    public boolean canRenderBreaking() { return true; }
 }
