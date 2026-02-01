@@ -26,14 +26,7 @@ public abstract class MixinMCTMinecraftServer {
         return sb.toString();
     }
 
-    @Redirect(method = "run",
-            at = @At(
-                    value = "CONSTANT",
-                    args = "stringValue=Encountered an unexpected exception",
-                    shift = At.Shift.BY,
-                    by = 2
-            )
-    )
+    @Redirect(method = "run", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;error(Ljava/lang/String;Ljava/lang/Throwable;)V", ordinal = 0, remap = false))
     @Unique private void redirectErrorLog$helper(Logger logger, String message, Throwable t) {
         if (MCTMixinConfig.mixinSettings.enableErrorLoggingRedirect) {
             String full = message + ": " + formatStackTrace$helper(t);
