@@ -21,24 +21,19 @@ import java.util.List;
 
 @Mixin(World.class)
 public abstract class MixinMCTWorldCMEFix {
-    @Shadow(remap = false)
-    private boolean processingLoadedTiles;
+    @Shadow private boolean processingLoadedTiles;
 
-    @Shadow(remap = false) @Final
-    private List<TileEntity> addedTileEntityList;
+    @Shadow @Final private List<TileEntity> addedTileEntityList;
 
-    @Shadow(remap = false) @Final
-    public List<TileEntity> loadedTileEntityList;
+    @Shadow @Final public List<TileEntity> loadedTileEntityList;
 
-    @Shadow(remap = false) @Final
-    public List<TileEntity> tickableTileEntities;
+    @Shadow@Final public List<TileEntity> tickableTileEntities;
 
-    @Shadow(remap = false)
-    public abstract void notifyBlockUpdate(net.minecraft.util.math.BlockPos pos, IBlockState oldState, IBlockState newState, int flags);
+    @Shadow public abstract void notifyBlockUpdate(net.minecraft.util.math.BlockPos pos, IBlockState oldState, IBlockState newState, int flags);
 
-    @Final @Shadow(remap = false) public boolean isRemote;
+    @Final @Shadow public boolean isRemote;
 
-    @Inject(method = "addTileEntities(Ljava/util/Collection;)V", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "addTileEntities(Ljava/util/Collection;)V", at = @At("HEAD"), cancellable = true)
     private void injectAddTileEntities(Collection<TileEntity> collection, CallbackInfo ci) {
         if (!MCTMixinConfig.mixinSettings.enableWorldMixin) { return; }
         ci.cancel();

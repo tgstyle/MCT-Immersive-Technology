@@ -2,6 +2,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '5.1.72'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'wtf.gofancy.fancygradle' version '1.1.3-0'
+    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
 }
 
 ext.configFile = file '../common/common-1.12.properties'
@@ -21,20 +22,18 @@ compileJava {
 
 repositories {
     maven {
-        url "https://cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
+        url = "https://cursemaven.com"
+        content { includeGroup "curse.maven" }
     }
     maven { url = 'https://jitpack.io' }
     maven { url = 'https://maven.blamejared.com' }
-    maven { url = 'https://repo.spongepowered.org/maven' }
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     maven { url = 'https://maven.minecraftforge.net' }
     maven { url = 'https://maven.neoforged.net/releases' }
+    maven { url = 'https://maven.gofancy.wtf/releases' }
+    maven { url = 'https://maven.cleanroommc.com' }
     mavenCentral()
     gradlePluginPortal()
-    maven { url = 'https://maven.gofancy.wtf/releases' }
-    maven { url "https://maven.cleanroommc.com" }
 }
 
 version = "${common.mcversion}-${modversion}.${modsubversion}"
@@ -47,7 +46,7 @@ if (gradle.startParameter.taskNames.any { it == 'jar' || it == 'build' }) {
     def propsFile = file('gradle.properties')
     def props = new Properties()
     propsFile.withInputStream { props.load(it) }
-    def currentSub = Integer.parseInt(props['modsubversion'])
+    def currentSub = Integer.parseInt(props['modsubversion'] as String)
     def newSub = currentSub + 1
     modsubversion = newSub
     version = "${common.mcversion}-${modversion}.${modsubversion}"
@@ -79,7 +78,7 @@ dependencies {
     annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
     annotationProcessor 'com.google.guava:guava:32.1.2-jre'
     annotationProcessor 'com.google.code.gson:gson:2.8.9'
-    implementation('zone.rong:mixinbooter:10.7') { transitive = false }
+    implementation fg.deobf('zone.rong:mixinbooter:10.7') { transitive = false }
     annotationProcessor('zone.rong:mixinbooter:10.7') { transitive = false }
 }
 
@@ -93,11 +92,10 @@ minecraft {
             workingDirectory project.file('run')
             args '--width', '1920'
             args '--height', '1080'
-            args '--add-opens=java.base/java.lang=ALL-UNNAMED'
             args '--version', common.mcversion
             args '--username', 'tgstyle'
             property 'forge.logging.console.level', 'debug'
-            jvmArgs '-Dfml.coreMods.load=mctmods.immersivetechnology.core.MCTMixin'
+            property 'fml.coreMods.load', 'mctmods.immersivetechnology.core.MCTMixin'
             mods {
                 "${archivesBaseName}" {
                     source sourceSets.main
@@ -108,7 +106,7 @@ minecraft {
             workingDirectory project.file('run/server')
             args '--version', common.mcversion
             property 'forge.logging.console.level', 'debug'
-            jvmArgs '-Dfml.coreMods.load=mctmods.immersivetechnology.core.MCTMixin'
+            property 'fml.coreMods.load', 'mctmods.immersivetechnology.core.MCTMixin'
             mods {
                 "${archivesBaseName}" {
                     source sourceSets.main
@@ -132,6 +130,15 @@ tasks.withType(JavaExec).configureEach { task ->
     }
 }
 
+compileJava.doLast {
+    copy {
+        from "build/tmp/compileJava"
+        include "**/*-refmap.json"
+        into sourceSets.main.output.resourcesDir
+        rename { String fileName -> "mixins.immersivetech.refmap.json" }
+    }
+}
+
 processResources {
     inputs.property 'version', "${modversion}.${modsubversion}"
     inputs.property 'mcversion', common.mcversion
@@ -139,6 +146,13 @@ processResources {
         expand 'version': "${modversion}.${modsubversion}", 'mcversion': common.mcversion
     }
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+mixin {
+    config 'mixins.immersivetechnology.json'
+    add sourceSets.main, 'mixins.immersivetech.refmap.json'
+    config 'mixins.immersiveengineering.json'
+    add sourceSets.main, 'mixins.immersivetech.refmap.json'
 }
 
 fancyGradle {
@@ -152,11 +166,13 @@ fancyGradle {
 }
 
 jar {
-    manifest {
-        attributes 'FMLCorePlugin': 'mctmods.immersivetechnology.core.MCTMixin'
-        attributes 'FMLCorePluginContainsFMLMod': 'true'
-    }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes(
+            'FMLCorePlugin': 'mctmods.immersivetechnology.core.MCTMixin',
+            'FMLCorePluginContainsFMLMod': 'true'
+        )
+    }
 }
 
 sourceSets.configureEach { it.output.resourcesDir = it.output.classesDirs.getFiles().iterator().next() }

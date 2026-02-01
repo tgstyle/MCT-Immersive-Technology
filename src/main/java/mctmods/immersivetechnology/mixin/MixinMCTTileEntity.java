@@ -23,7 +23,7 @@ public abstract class MixinMCTTileEntity {
      * @author tgstyle
      * @reason Redirect error logging to stderr for debugging early loading issues
      */
-    @SuppressWarnings("all") @Inject(method = "create", at = @At("HEAD"), cancellable = true, remap = false)
+    @SuppressWarnings("all") @Inject(method = "create", at = @At("HEAD"), cancellable = true)
     private static void create(World p_190200_0_, NBTTagCompound p_190200_1_, CallbackInfoReturnable<TileEntity> cir) {
         TileEntity tileentity = null;
         String s = p_190200_1_.getString("id");

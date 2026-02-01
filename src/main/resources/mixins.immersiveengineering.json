@@ -1,8 +1,8 @@
 {
   "required": true,
-  "minVersion": "0.7",
+  "minVersion": "0.8",
   "package": "mctmods.immersivetechnology.mixin",
-  "refmap": "mixins.immersiveengineering.refmap.json",
+  "refmap": "mixins.immersivetech.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinIEBlockMetalDevice0",

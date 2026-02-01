@@ -67,8 +67,8 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
         loadGrace = 0;
     }
 
-    @Override public TileEntityMeltingCrucibleMaster master() {
-        if (offset[0] == 0 && offset[1] == 0 && offset[2] == 0) return (TileEntityMeltingCrucibleMaster)this;
+    @Override
+    public TileEntityMeltingCrucibleMaster master() {
         if (master == null || master.tileEntityInvalid || !world.isBlockLoaded(master.getPos())) {
             BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
             TileEntity te = world.getTileEntity(masterPos);

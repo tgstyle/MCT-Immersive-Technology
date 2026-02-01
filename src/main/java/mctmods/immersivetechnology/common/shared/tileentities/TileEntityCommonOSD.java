@@ -33,7 +33,9 @@ public abstract class TileEntityCommonOSD extends TileEntityIEBase implements IT
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { nbt.setLong("lastAcceptedAmount", lastAcceptedAmount); }
 
     @Override public void onLoad() {
-        if (!world.isRemote) this.markContainingBlockForUpdate(null);
+        if (world != null && world.isRemote) {
+            markContainingBlockForUpdate(null);
+        }
     }
 
     @Override public void update() {

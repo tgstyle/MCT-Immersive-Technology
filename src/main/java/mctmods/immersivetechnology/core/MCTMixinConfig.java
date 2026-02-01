@@ -17,7 +17,5 @@ public class MCTMixinConfig {
         public boolean replace_IE_pipes = true;
         @Config.Comment("Enable the MinecraftServer mixin to redirect error logging for crash debugging [Default=true]")
         public boolean enableErrorLoggingRedirect = true;
-        @Config.Comment("Enable the Chunk mixin to prevent CME during Chunk.onLoad by copying collections before iteration [Default=true]")
-        public boolean enableChunkCMEFix = true;
     }
 }

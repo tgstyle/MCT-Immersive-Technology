@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "mctmods.immersivetechnology.mixin",
-  "refmap": "mixins.mct_mixin.refmap.json",
+  "refmap": "mixins.immersivetech.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinMCTNetworkRegistry",
