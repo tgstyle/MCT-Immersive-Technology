@@ -170,12 +170,6 @@ fancyGradle {
 }
 
 jar {
-    manifest {
-        attributes(
-            'FMLCorePlugin': 'mctmods.immersivetechnology.mixin.MixinLoader',
-            'FMLCorePluginContainsFMLMod': 'true'
-        )
-    }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
