@@ -1,10 +1,9 @@
 {
   "required": true,
-  "minVersion": "0.7",
+  "minVersion": "0.8",
   "package": "mctmods.immersivetechnology.mixin",
   "refmap": "mixins.mct_mixin.refmap.json",
   "compatibilityLevel": "JAVA_8",
-  "priority": 2000,
   "mixins": [
     "MixinMCTNetworkRegistry",
     "MixinMCTMinecraftServer",
