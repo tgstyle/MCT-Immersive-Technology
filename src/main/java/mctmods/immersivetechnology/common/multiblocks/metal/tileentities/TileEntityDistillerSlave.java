@@ -163,7 +163,7 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
         }
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
             TileEntityDistillerMaster m = master();
-            if (m != null && formed) return m.itemOutput0 != null && m.itemOutput0.isPoI(facing, pos);
+            if (m != null && formed) return m.itemOutputPos0 != null && m.itemOutputPos0.isPoI(facing, pos);
         }
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityDistillerMaster m = master();
@@ -183,7 +183,7 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
         }
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
             TileEntityDistillerMaster m = master();
-            if (m != null && formed && m.itemOutput0 != null && m.itemOutput0.isPoI(facing, pos)) {
+            if (m != null && formed && m.itemOutputPos0 != null && m.itemOutputPos0.isPoI(facing, pos)) {
                 boolean[] insert = new boolean[5];
                 boolean[] extract = new boolean[]{false, true, false, true, true};
                 return (T)new IEInventoryHandler(5, this, 0, insert, extract);

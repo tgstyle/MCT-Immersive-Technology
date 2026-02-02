@@ -126,8 +126,8 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityBoilerMaster m = master();
             if (m != null && formed) {
-                if (m.fluidInput0 == null) m.InitializePoIs();
-                return m.fluidInput0.isPoI(facing, pos) || m.fluidInput1.isPoI(facing, pos) || m.fluidOutput0.isPoI(facing, pos);
+                if (m.fluidInputPos0 == null) m.InitializePoIs();
+                return m.fluidInputPos0.isPoI(facing, pos) || m.fluidInputPos1.isPoI(facing, pos) || m.fluidOutputPos0.isPoI(facing, pos);
             }
         }
         return super.hasCapability(capability, facing);
@@ -138,8 +138,8 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityBoilerMaster m = master();
             if (m != null && formed) {
-                if (m.fluidInput0 == null) m.InitializePoIs();
-                if (m.fluidInput0.isPoI(facing, pos) || m.fluidInput1.isPoI(facing, pos) || m.fluidOutput0.isPoI(facing, pos)) {
+                if (m.fluidInputPos0 == null) m.InitializePoIs();
+                if (m.fluidInputPos0.isPoI(facing, pos) || m.fluidInputPos1.isPoI(facing, pos) || m.fluidOutputPos0.isPoI(facing, pos)) {
                     return (T)new TileEntityBoilerMaster.BoilerFluidHandler(m.getAccessibleFluidTanks(facing, pos), m, facing, pos);
                 }
             }

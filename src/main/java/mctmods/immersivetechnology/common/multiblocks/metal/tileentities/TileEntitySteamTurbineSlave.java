@@ -176,8 +176,8 @@ public class TileEntitySteamTurbineSlave extends TileEntityITMultiblock<TileEnti
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntitySteamTurbineMaster m = master();
             if (m == null) return false;
-            if (m.fluidInput0 == null) m.InitializePoIs();
-            return m.fluidInput0.isPoI(facing, pos) || m.fluidOutput0.isPoI(facing, pos);
+            if (m.fluidInputPos0 == null) m.InitializePoIs();
+            return m.fluidInputPos0.isPoI(facing, pos) || m.fluidOutputPos0.isPoI(facing, pos);
         }
         return super.hasCapability(capability, facing);
     }
@@ -187,8 +187,8 @@ public class TileEntitySteamTurbineSlave extends TileEntityITMultiblock<TileEnti
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntitySteamTurbineMaster m = master();
             if (m == null) return super.getCapability(capability, facing);
-            if (m.fluidInput0 == null) m.InitializePoIs();
-            if (m.fluidInput0.isPoI(facing, pos) || m.fluidOutput0.isPoI(facing, pos)) {
+            if (m.fluidInputPos0 == null) m.InitializePoIs();
+            if (m.fluidInputPos0.isPoI(facing, pos) || m.fluidOutputPos0.isPoI(facing, pos)) {
                 return (T) new SteamTurbineFluidHandler(m.getAccessibleFluidTanks(facing, pos), m, facing, pos);
             }
         }
