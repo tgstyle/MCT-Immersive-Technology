@@ -1,15 +1,24 @@
 [
-{
-  "modid": "immersivetech",
-  "name": "Immersive Technology",
-  "description": "More Machines for Immersive Engineering",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "https://www.curseforge.com/minecraft/mc-mods/mct-immersive-technology",
-  "authorList": ["TGstyle", "Kurtchekov"],
-  "credits": "BluSunrize for Immersive Engineering, derived from Immersive Tech by FerroO2000",
-  "logoFile": "assets/immersivetech/ITlogo.png",
-  "screenshots": [],
-  "dependencies": ["immersiveengineering", "cofhcore", "redstoneflux"]
-}
+  {
+    "modid": "immersivetech",
+    "name": "Immersive Technology",
+    "description": "More Machines for Immersive Engineering",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/mct-immersive-technology",
+    "authorList": ["TGstyle", "Kurtchekov"],
+    "credits": "BluSunrize for Immersive Engineering, derived from Immersive Tech by FerroO2000",
+    "logoFile": "assets/immersivetech/ITlogo.png",
+    "screenshots": [],
+    "dependencies": ["immersiveengineering", "cofhcore", "redstoneflux"]
+  },
+  {
+    "modid": "mct_mixin",
+    "name": "MCT Mixin Loader",
+    "description": "Early mixin loader for Immersive Technology features",
+    "version": "1.0",
+    "mcversion": "${mcversion}",
+    "authorList": ["TGstyle"],
+    "dependencies": []
+  }
 ]

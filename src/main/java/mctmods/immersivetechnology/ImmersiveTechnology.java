@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 @Mod(
         modid = ImmersiveTechnology.MODID,
         name = ImmersiveTechnology.NAME,
-        version = ImmersiveTechnology.VERSION,
         acceptedMinecraftVersions = "[1.12.2,1.13)",
         dependencies =
                 "required-after:immersiveengineering@[0.12-92,);" +
@@ -33,7 +32,6 @@ public class ImmersiveTechnology {
 
     public static final String MODID = "immersivetech";
     public static final String NAME = "Immersive Technology";
-    public static final String VERSION = "${version}";
 
     @SidedProxy(clientSide = "mctmods.immersivetechnology.client.ClientProxy" , serverSide = "mctmods.immersivetechnology.common.CommonProxy")
     public static CommonProxy proxy;
