@@ -67,15 +67,15 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     private int soundGracePeriod = 0;
     private boolean isRunning;
 
-    PoICache itemInput0;
-    PoICache itemOutput0;
-    PoICache fluidOutput0;
-    PoICache baseheater0;
-    PoICache baseheater1;
+    PoICache itemInputPos0;
+    PoICache itemOutputPos0;
+    PoICache fluidOutputPos0;
+    PoICache baseheaterPos0;
+    PoICache baseheaterPos1;
     private BlockPos soundPos0;
 
-    BlockPos itemOutputPos;
-    BlockPos fluidOutputPos;
+    BlockPos itemOutputTEPos0;
+    BlockPos fluidOutputTEPos0;
 
     final IItemHandler inputHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
     final IItemHandler outputHandler = new IEInventoryHandler(1, this, 1, new boolean[]{false}, new boolean[]{true});
@@ -165,7 +165,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     @Override public void update() {
         if (!formed) return;
-        if (itemInput0 == null) InitializePoIs();
+        if (itemInputPos0 == null) InitializePoIs();
         if (world.isRemote) {
             handleSounds();
             return;
@@ -270,7 +270,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     private boolean pumpOutputOut() {
         if (tank.getFluidAmount() == 0) return false;
-        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, fluidOutput0.facing.getOpposite());
+        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputTEPos0, fluidOutputPos0.facing.getOpposite());
         if (output == null) return false;
         FluidStack available = tank.getFluid();
         if (available == null) return false;
@@ -292,7 +292,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     private float getProcessSpeed() {
         int activeBaseheaters = 0;
-        PoICache[] heaters = {baseheater0, baseheater1};
+        PoICache[] heaters = {baseheaterPos0, baseheaterPos1};
         for (PoICache poi : heaters) {
             if (poi == null) continue;
             BlockPos pos = getBlockPosForPos(poi.position).offset(poi.facing);
@@ -306,7 +306,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     }
 
     private void setHeatersActive() {
-        PoICache[] heaters = {baseheater0, baseheater1};
+        PoICache[] heaters = {baseheaterPos0, baseheaterPos1};
         for (PoICache poi : heaters) {
             if (poi == null) continue;
             BlockPos pos = getBlockPosForPos(poi.position).offset(poi.facing);
@@ -331,21 +331,21 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             PoICache cache = new PoICache(facing, poi, mirrored);
             switch (poi.name) {
                 case "item_input0":
-                    itemInput0 = cache;
+                    itemInputPos0 = cache;
                     break;
                 case "item_output0":
-                    itemOutput0 = cache;
-                    itemOutputPos = getBlockPosForPos(cache.position).offset(cache.facing);
+                    itemOutputPos0 = cache;
+                    itemOutputTEPos0 = getBlockPosForPos(cache.position).offset(cache.facing);
                     break;
                 case "fluid_output0":
-                    fluidOutput0 = cache;
-                    fluidOutputPos = getBlockPosForPos(cache.position).offset(cache.facing);
+                    fluidOutputPos0 = cache;
+                    fluidOutputTEPos0 = getBlockPosForPos(cache.position).offset(cache.facing);
                     break;
                 case "baseheater0":
-                    baseheater0 = cache;
+                    baseheaterPos0 = cache;
                     break;
                 case "baseheater1":
-                    baseheater1 = cache;
+                    baseheaterPos1 = cache;
                     break;
                 case "sound0":
                     soundPos0 = getBlockPosForPos(poi.position);
@@ -356,9 +356,9 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     }
 
     private void notifyIONeighbors() {
-        if (itemInput0 != null) notifyNeighbor(getBlockPosForPos(itemInput0.position));
-        if (itemOutput0 != null) notifyNeighbor(getBlockPosForPos(itemOutput0.position));
-        if (fluidOutput0 != null) notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
+        if (itemInputPos0 != null) notifyNeighbor(getBlockPosForPos(itemInputPos0.position));
+        if (itemOutputPos0 != null) notifyNeighbor(getBlockPosForPos(itemOutputPos0.position));
+        if (fluidOutputPos0 != null) notifyNeighbor(getBlockPosForPos(fluidOutputPos0.position));
     }
 
     @Override public void TankContentsChanged() {
@@ -377,24 +377,24 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
-        if (fluidOutput0 == null) InitializePoIs();
-        if (fluidOutput0.isPoI(side, position)) return new IFluidTank[]{tank};
+        if (fluidOutputPos0 == null) InitializePoIs();
+        if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[]{tank};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (!formed || fluidOutput0 == null) InitializePoIs();
-        return fluidOutput0.isPoI(side, position) && iTank == 0;
+        if (!formed || fluidOutputPos0 == null) InitializePoIs();
+        return fluidOutputPos0.isPoI(side, position) && iTank == 0;
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (!formed) return false;
-        if (itemInput0 == null) InitializePoIs();
+        if (itemInputPos0 == null) InitializePoIs();
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
-            return itemInput0.isPoI(facing, this.pos) || itemOutput0.isPoI(facing, this.pos);
+            return itemInputPos0.isPoI(facing, this.pos) || itemOutputPos0.isPoI(facing, this.pos);
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            return fluidOutput0.isPoI(facing, this.pos);
+            return fluidOutputPos0.isPoI(facing, this.pos);
         }
         return super.hasCapability(capability, facing);
     }
@@ -402,12 +402,12 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     @SuppressWarnings("unchecked")
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (!formed) return super.getCapability(capability, facing);
-        if (itemInput0 == null) InitializePoIs();
+        if (itemInputPos0 == null) InitializePoIs();
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
-            if (itemInput0.isPoI(facing, this.pos)) return (T)inputHandler;
-            if (itemOutput0.isPoI(facing, this.pos)) return (T)outputHandler;
+            if (itemInputPos0.isPoI(facing, this.pos)) return (T)inputHandler;
+            if (itemOutputPos0.isPoI(facing, this.pos)) return (T)outputHandler;
         }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && fluidOutput0.isPoI(facing, this.pos)) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && fluidOutputPos0.isPoI(facing, this.pos)) {
             return (T)new AdvancedCokeOvenFluidHandler(this);
         }
         return super.getCapability(capability, facing);

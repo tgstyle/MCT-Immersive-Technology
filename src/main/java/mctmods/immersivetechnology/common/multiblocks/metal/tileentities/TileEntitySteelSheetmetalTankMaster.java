@@ -33,9 +33,9 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     public ITFluidTank tank = new ITFluidTank(tankSize, this);
 
     private int oldComparatorOutput = 0;
-    private final List<PoICache> fluidInputs = new ArrayList<>();
-    private final List<PoICache> fluidOutputs = new ArrayList<>();
-    private PoICache redstone0;
+    private final List<PoICache> fluidInputs0 = new ArrayList<>();
+    private final List<PoICache> fluidOutputs0 = new ArrayList<>();
+    private PoICache redstonePos0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -51,11 +51,11 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 
     @Override public void update() {
         if (!formed) return;
-        if (redstone0 == null) InitializePoIs();
+        if (redstonePos0 == null) InitializePoIs();
         super.update();
         if (world.isRemote || tank.getFluidAmount() == 0) return;
-        if (world.getRedstonePowerFromNeighbors(getBlockPosForPos(redstone0.position)) > 0) {
-            for (PoICache output : fluidOutputs) {
+        if (world.getRedstonePowerFromNeighbors(getBlockPosForPos(redstonePos0.position)) > 0) {
+            for (PoICache output : fluidOutputs0) {
                 BlockPos outPos = getBlockPosForPos(output.position).offset(output.facing.getOpposite());
                 IFluidHandler handler = FluidUtil.getFluidHandler(world, outPos, output.facing);
                 if (handler == null) continue;
@@ -81,12 +81,12 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     }
 
     private boolean isInputPoI(@Nullable EnumFacing side, int position) {
-        for (PoICache p : fluidInputs) if (p.isPoI(side, position)) return true;
+        for (PoICache p : fluidInputs0) if (p.isPoI(side, position)) return true;
         return false;
     }
 
     private boolean isOutputPoI(@Nullable EnumFacing side, int position) {
-        for (PoICache p : fluidOutputs) if (p.isPoI(side, position)) return true;
+        for (PoICache p : fluidOutputs0) if (p.isPoI(side, position)) return true;
         return false;
     }
 
@@ -95,14 +95,14 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
             PoICache cache = new PoICache(facing, poi, mirrored);
             switch (poi.name) {
                 case "fluid_input0":
-                    fluidInputs.add(cache);
+                    fluidInputs0.add(cache);
                     break;
                 case "fluid_io0":
-                    fluidInputs.add(cache);
-                    fluidOutputs.add(cache);
+                    fluidInputs0.add(cache);
+                    fluidOutputs0.add(cache);
                     break;
                 case "redstone0":
-                    redstone0 = cache;
+                    redstonePos0 = cache;
                     break;
             }
         }
@@ -110,9 +110,9 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     }
 
     private void notifyIONeighbors() {
-        for (PoICache input : fluidInputs) notifyNeighbor(getBlockPosForPos(input.position));
-        for (PoICache output : fluidOutputs) notifyNeighbor(getBlockPosForPos(output.position));
-        notifyNeighbor(getBlockPosForPos(redstone0.position));
+        for (PoICache input : fluidInputs0) notifyNeighbor(getBlockPosForPos(input.position));
+        for (PoICache output : fluidOutputs0) notifyNeighbor(getBlockPosForPos(output.position));
+        notifyNeighbor(getBlockPosForPos(redstonePos0.position));
     }
 
     private void notifyNeighbor(BlockPos pos) {
@@ -136,8 +136,8 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
-        if (redstone0 == null) InitializePoIs();
-        return new int[]{redstone0.position};
+        if (redstonePos0 == null) InitializePoIs();
+        return new int[]{redstonePos0.position};
     }
 
     @Override public boolean isDummy() { return false; }
@@ -146,19 +146,19 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
-        if (fluidInputs.isEmpty() && fluidOutputs.isEmpty()) InitializePoIs();
+        if (fluidInputs0.isEmpty() && fluidOutputs0.isEmpty()) InitializePoIs();
         if (side == null) return new IFluidTank[]{tank};
         if (isInputPoI(side, position) || isOutputPoI(side, position)) return new IFluidTank[]{tank};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if (!formed || fluidInputs.isEmpty()) InitializePoIs();
+        if (!formed || fluidInputs0.isEmpty()) InitializePoIs();
         return isInputPoI(side, position);
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (!formed || fluidOutputs.isEmpty()) InitializePoIs();
+        if (!formed || fluidOutputs0.isEmpty()) InitializePoIs();
         return isOutputPoI(side, position);
     }
 

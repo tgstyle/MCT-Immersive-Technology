@@ -76,8 +76,8 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     public Optional<Boolean> computerOn = Optional.empty();
     private int oldComparatorOutput;
 
-    protected PoICache fluidInput0, fluidInput1, fluidOutput0, fluidOutput1, redstone0, energyInput0;
-    private BlockPos fluidOutputPos0, fluidOutputPos1, soundPos0;
+    protected PoICache fluidInputPos0, fluidInputPos1, fluidOutputPos0, fluidOutputPos1, redstonePos0, energyInputPos0;
+    private BlockPos fluidOutputTEPos0, fluidOutputTEPos1, soundPos0;
 
     private boolean needsPoIInit = true;
     private boolean needsNotify = true;
@@ -120,7 +120,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     @Override
     public void update() {
         if (!formed) return;
-        if (needsPoIInit || fluidInput0 == null) {
+        if (needsPoIInit || fluidInputPos0 == null) {
             InitializePoIs();
             needsPoIInit = false;
         }
@@ -192,8 +192,8 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         int comparator = getComparatorInputOverride();
         if (comparator != oldComparatorOutput) {
             oldComparatorOutput = comparator;
-            if (redstone0 != null) {
-                BlockPos rsPos = getBlockPosForPos(redstone0.position);
+            if (redstonePos0 != null) {
+                BlockPos rsPos = getBlockPosForPos(redstonePos0.position);
                 world.updateComparatorOutputLevel(rsPos, world.getBlockState(rsPos).getBlock());
             }
         }
@@ -209,24 +209,24 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         for (PoIJSONSchema poi : TileEntityITMultiblockPartHeatExchanger.instance.pointsOfInterest) {
             switch (poi.name) {
                 case "redstone0":
-                    redstone0 = new PoICache(facing, poi, mirrored);
+                    redstonePos0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "energy_input0":
-                    energyInput0 = new PoICache(facing, poi, mirrored);
+                    energyInputPos0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "fluid_input0":
-                    fluidInput0 = new PoICache(facing, poi, mirrored);
+                    fluidInputPos0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "fluid_input1":
-                    fluidInput1 = new PoICache(facing, poi, mirrored);
+                    fluidInputPos1 = new PoICache(facing, poi, mirrored);
                     break;
                 case "fluid_output0":
-                    fluidOutput0 = new PoICache(facing, poi, mirrored);
-                    fluidOutputPos0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    fluidOutputPos0 = new PoICache(facing, poi, mirrored);
+                    fluidOutputTEPos0 = getBlockPosForPos(fluidOutputPos0.position).offset(fluidOutputPos0.facing);
                     break;
                 case "fluid_output1":
-                    fluidOutput1 = new PoICache(facing, poi, mirrored);
-                    fluidOutputPos1 = getBlockPosForPos(fluidOutput1.position).offset(fluidOutput1.facing);
+                    fluidOutputPos1 = new PoICache(facing, poi, mirrored);
+                    fluidOutputTEPos1 = getBlockPosForPos(fluidOutputPos1.position).offset(fluidOutputPos1.facing);
                     break;
                 case "sound0":
                     soundPos0 = getBlockPosForPos(poi.position);
@@ -238,17 +238,17 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
 
     private void notifyIONeighbors() {
         BlockPos p;
-        p = getBlockPosForPos(energyInput0.position);
+        p = getBlockPosForPos(energyInputPos0.position);
         world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(fluidInput0.position);
+        p = getBlockPosForPos(fluidInputPos0.position);
         world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(fluidInput1.position);
+        p = getBlockPosForPos(fluidInputPos1.position);
         world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(fluidOutput0.position);
+        p = getBlockPosForPos(fluidOutputPos0.position);
         world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(fluidOutput1.position);
+        p = getBlockPosForPos(fluidOutputPos1.position);
         world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(redstone0.position);
+        p = getBlockPosForPos(redstonePos0.position);
         world.updateComparatorOutputLevel(p, world.getBlockState(p).getBlock());
     }
 
@@ -321,7 +321,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         boolean update = false;
         IFluidHandler handler;
         if (tanks[2].getFluidAmount() > 0) {
-            handler = FluidUtil.getFluidHandler(world, fluidOutputPos0, fluidOutput0.facing.getOpposite());
+            handler = FluidUtil.getFluidHandler(world, fluidOutputTEPos0, fluidOutputPos0.facing.getOpposite());
             if (handler != null) {
                 FluidStack out = tanks[2].getFluid();
                 if (out != null) {
@@ -335,7 +335,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
             }
         }
         if (tanks[3].getFluidAmount() > 0) {
-            handler = FluidUtil.getFluidHandler(world, fluidOutputPos1, fluidOutput1.facing.getOpposite());
+            handler = FluidUtil.getFluidHandler(world, fluidOutputTEPos1, fluidOutputPos1.facing.getOpposite());
             if (handler != null) {
                 FluidStack out = tanks[3].getFluid();
                 if (out != null) {
@@ -381,22 +381,22 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     @Override @Nonnull
     public int[] getRedstonePos() {
         if (!formed) return new int[0];
-        if (redstone0 == null) InitializePoIs();
-        return new int[]{redstone0.position};
+        if (redstonePos0 == null) InitializePoIs();
+        return new int[]{redstonePos0.position};
     }
 
     @Override @Nonnull
     public int[] getEnergyPos() {
         if (!formed) return new int[0];
-        if (energyInput0 == null) InitializePoIs();
-        return new int[]{energyInput0.position};
+        if (energyInputPos0 == null) InitializePoIs();
+        return new int[]{energyInputPos0.position};
     }
 
     public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
         if (!formed) return false;
-        if (energyInput0 == null) InitializePoIs();
+        if (energyInputPos0 == null) InitializePoIs();
         if (facing == null) return false;
-        return energyInput0.isPoI(facing, position);
+        return energyInputPos0.isPoI(facing, position);
     }
 
     @Override @Nonnull
@@ -411,26 +411,26 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     @Override @Nonnull
     public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
-        if (fluidInput0 == null) InitializePoIs();
+        if (fluidInputPos0 == null) InitializePoIs();
         if (side == null) return tanks;
-        if (fluidInput0.isPoI(side, position)) return new IFluidTank[]{tanks[0]};
-        if (fluidInput1.isPoI(side, position)) return new IFluidTank[]{tanks[1]};
-        if (fluidOutput0.isPoI(side, position)) return new IFluidTank[]{tanks[2]};
-        if (fluidOutput1.isPoI(side, position)) return new IFluidTank[]{tanks[3]};
+        if (fluidInputPos0.isPoI(side, position)) return new IFluidTank[]{tanks[0]};
+        if (fluidInputPos1.isPoI(side, position)) return new IFluidTank[]{tanks[1]};
+        if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[]{tanks[2]};
+        if (fluidOutputPos1.isPoI(side, position)) return new IFluidTank[]{tanks[3]};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override
     protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
         if (!formed) return false;
-        if (fluidInput0 == null) InitializePoIs();
-        if (iTank == 0 && fluidInput0.isPoI(side, position)) {
+        if (fluidInputPos0 == null) InitializePoIs();
+        if (iTank == 0 && fluidInputPos0.isPoI(side, position)) {
             if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
             FluidStack current = tanks[0].getFluid();
             if (current == null) return HeatExchangerRecipe.findRecipeByFluid0(resource.getFluid()) != null;
             return resource.isFluidEqual(current);
         }
-        if (iTank == 1 && fluidInput1.isPoI(side, position)) {
+        if (iTank == 1 && fluidInputPos1.isPoI(side, position)) {
             if (tanks[1].getFluidAmount() >= tanks[1].getCapacity()) return false;
             FluidStack current = tanks[1].getFluid();
             if (current == null) return HeatExchangerRecipe.findRecipeByFluid1(resource.getFluid()) != null;
@@ -442,9 +442,9 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     @Override
     protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
         if (!formed) return false;
-        if (fluidOutput0 == null) InitializePoIs();
-        if (fluidOutput0.isPoI(side, position)) return tanks[2].getFluidAmount() > 0;
-        if (fluidOutput1.isPoI(side, position)) return tanks[3].getFluidAmount() > 0;
+        if (fluidOutputPos0 == null) InitializePoIs();
+        if (fluidOutputPos0.isPoI(side, position)) return tanks[2].getFluidAmount() > 0;
+        if (fluidOutputPos1.isPoI(side, position)) return tanks[3].getFluidAmount() > 0;
         return false;
     }
 

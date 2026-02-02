@@ -92,8 +92,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private GasTurbineRecipe cachedFuelRecipe;
     private IMechanicalEnergy alternator;
 
-    protected PoICache energyInput0, energyInput1, fluidInput0, fluidOutput0, mechanicalOutput0, redstone0;
-    private BlockPos outputFront0, mechanicalOutputPos0, particle0, soundPos0, soundPos1, soundPos2, soundPos3;
+    protected PoICache energyInputPos0, energyInputPos1, fluidInputPos0, fluidOutputPos0, mechanicalOutputPos0, redstonePos0;
+    private BlockPos outputFront0, mechanicalOutputTEPos0, particle0, soundPos0, soundPos1, soundPos2, soundPos3;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -207,7 +207,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     @Override public void update() {
-        if (formed && energyInput0 == null) InitializePoIs();
+        if (formed && energyInputPos0 == null) InitializePoIs();
         super.update();
         if (!formed || world.isRemote) {
             if (world.isRemote) {
@@ -281,8 +281,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         int comp = getComparatorInputOverride();
         if (comp != oldComparatorOutput) {
             oldComparatorOutput = comp;
-            if (redstone0 != null) {
-                BlockPos rsPos = getBlockPosForPos(redstone0.position);
+            if (redstonePos0 != null) {
+                BlockPos rsPos = getBlockPosForPos(redstonePos0.position);
                 world.updateComparatorOutputLevel(rsPos, getBlockType());
             }
         }
@@ -304,12 +304,12 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     private boolean isValidAlternator() {
-        if (mechanicalOutput0 == null) InitializePoIs();
+        if (mechanicalOutputPos0 == null) InitializePoIs();
         if (alternator == null || !alternator.isValid()) {
-            TileEntity tile = world.getTileEntity(mechanicalOutputPos0);
+            TileEntity tile = world.getTileEntity(mechanicalOutputTEPos0);
             if (tile instanceof IMechanicalEnergy) {
                 IMechanicalEnergy possible = (IMechanicalEnergy)tile;
-                if (possible.isValid() && possible.isMechanicalEnergyReceiver(mechanicalOutput0.facing.getOpposite())) alternator = possible;
+                if (possible.isValid() && possible.isMechanicalEnergyReceiver(mechanicalOutputPos0.facing.getOpposite())) alternator = possible;
             }
         }
         return alternator != null && alternator.isValid();
@@ -330,7 +330,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     private boolean pumpOutputOut() {
         if (tanks[1].getFluidAmount() == 0) return false;
-        IFluidHandler output = FluidUtil.getFluidHandler(world, outputFront0, fluidOutput0.facing.getOpposite());
+        IFluidHandler output = FluidUtil.getFluidHandler(world, outputFront0, fluidOutputPos0.facing.getOpposite());
         if (output == null) return false;
         FluidStack out = tanks[1].getFluid();
         if (out == null) return false;
@@ -345,11 +345,11 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         for (PoIJSONSchema poi : TileEntityITMultiblockPartGasTurbine.instance.pointsOfInterest) {
             switch (poi.name) {
                 case "fluidInput0":
-                    fluidInput0 = new PoICache(facing, poi, mirrored);
+                    fluidInputPos0 = new PoICache(facing, poi, mirrored);
                     break;
-                case "fluidOutput0":
-                    fluidOutput0 = new PoICache(facing, poi, mirrored);
-                    outputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                case "fluidOutputPos0":
+                    fluidOutputPos0 = new PoICache(facing, poi, mirrored);
+                    outputFront0 = getBlockPosForPos(fluidOutputPos0.position).offset(fluidOutputPos0.facing);
                     break;
                 case "particle0":
                     particle0 = getBlockPosForPos(poi.position);
@@ -367,17 +367,17 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                     soundPos3 = getBlockPosForPos(poi.position);
                     break;
                 case "energy_input0":
-                    energyInput0 = new PoICache(facing, poi, mirrored);
+                    energyInputPos0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "energy_input1":
-                    energyInput1 = new PoICache(facing, poi, mirrored);
+                    energyInputPos1 = new PoICache(facing, poi, mirrored);
                     break;
                 case "mechanical_output0":
-                    mechanicalOutput0 = new PoICache(facing, poi, mirrored);
-                    mechanicalOutputPos0 = getBlockPosForPos(mechanicalOutput0.position).offset(mechanicalOutput0.facing);
+                    mechanicalOutputPos0 = new PoICache(facing, poi, mirrored);
+                    mechanicalOutputTEPos0 = getBlockPosForPos(mechanicalOutputPos0.position).offset(mechanicalOutputPos0.facing);
                     break;
                 case "redstone0":
-                    redstone0 = new PoICache(facing, poi, mirrored);
+                    redstonePos0 = new PoICache(facing, poi, mirrored);
                     break;
             }
         }
@@ -385,11 +385,11 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     private void notifyIONeighbors() {
-        notifyNeighbor(getBlockPosForPos(fluidInput0.position));
-        notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        notifyNeighbor(getBlockPosForPos(energyInput0.position));
-        notifyNeighbor(getBlockPosForPos(energyInput1.position));
-        notifyNeighbor(getBlockPosForPos(redstone0.position));
+        notifyNeighbor(getBlockPosForPos(fluidInputPos0.position));
+        notifyNeighbor(getBlockPosForPos(fluidOutputPos0.position));
+        notifyNeighbor(getBlockPosForPos(energyInputPos0.position));
+        notifyNeighbor(getBlockPosForPos(energyInputPos1.position));
+        notifyNeighbor(getBlockPosForPos(redstonePos0.position));
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
@@ -421,63 +421,63 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
-        if (redstone0 == null) InitializePoIs();
-        return new int[] {redstone0.position};
+        if (redstonePos0 == null) InitializePoIs();
+        return new int[] {redstonePos0.position};
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
         if (!formed) return new int[0];
-        if (energyInput0 == null) InitializePoIs();
-        return new int[] {energyInput0.position, energyInput1.position};
+        if (energyInputPos0 == null) InitializePoIs();
+        return new int[] {energyInputPos0.position, energyInputPos1.position};
     }
 
     public boolean isMechanicalEnergyTransmitter(@Nullable EnumFacing facing, int position) {
         if (!formed) return false;
-        if (mechanicalOutput0 == null) InitializePoIs();
-        return facing != null && mechanicalOutput0.isPoI(facing, position);
+        if (mechanicalOutputPos0 == null) InitializePoIs();
+        return facing != null && mechanicalOutputPos0.isPoI(facing, position);
     }
 
     public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
         if (!formed) return false;
         if (facing == null) return false;
-        if (energyInput0 == null) InitializePoIs();
-        return energyInput0.isPoI(facing, position) || energyInput1.isPoI(facing, position);
+        if (energyInputPos0 == null) InitializePoIs();
+        return energyInputPos0.isPoI(facing, position) || energyInputPos1.isPoI(facing, position);
     }
 
     public IEnergyStorage getEnergyAtPosition(@Nullable EnumFacing facing, int position) {
         if (!formed || facing == null) return null;
-        if (energyInput0 == null) InitializePoIs();
-        if (energyInput0.isPoI(facing, position)) return starterStorage;
-        if (energyInput1.isPoI(facing, position)) return sparkplugStorage;
+        if (energyInputPos0 == null) InitializePoIs();
+        if (energyInputPos0.isPoI(facing, position)) return starterStorage;
+        if (energyInputPos1.isPoI(facing, position)) return sparkplugStorage;
         return null;
     }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
-        if (fluidInput0 == null) InitializePoIs();
+        if (fluidInputPos0 == null) InitializePoIs();
         if (side == null) return tanks;
-        if (fluidInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
-        if (fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
+        if (fluidInputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
+        if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if (!formed || fluidInput0 == null) InitializePoIs();
-        if (!fluidInput0.isPoI(side, position)) return false;
+        if (!formed || fluidInputPos0 == null) InitializePoIs();
+        if (!fluidInputPos0.isPoI(side, position)) return false;
         if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
         if (tanks[0].getFluid() == null) return GasTurbineRecipe.findFuelByFluid(resource.getFluid()) != null;
         return resource.getFluid() == tanks[0].getFluid().getFluid();
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (!formed || fluidOutput0 == null) InitializePoIs();
-        return fluidOutput0.isPoI(side, position) && tanks[1].getFluidAmount() > 0;
+        if (!formed || fluidOutputPos0 == null) InitializePoIs();
+        return fluidOutputPos0.isPoI(side, position) && tanks[1].getFluidAmount() > 0;
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            if (fluidInput0 == null) InitializePoIs();
-            return fluidInput0.isPoI(facing, pos) || fluidOutput0.isPoI(facing, pos);
+            if (fluidInputPos0 == null) InitializePoIs();
+            return fluidInputPos0.isPoI(facing, pos) || fluidOutputPos0.isPoI(facing, pos);
         }
         return super.hasCapability(capability, facing);
     }
@@ -485,8 +485,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     @SuppressWarnings("unchecked")
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            if (fluidInput0 == null) InitializePoIs();
-            if (fluidInput0.isPoI(facing, pos) || fluidOutput0.isPoI(facing, pos)) {
+            if (fluidInputPos0 == null) InitializePoIs();
+            if (fluidInputPos0.isPoI(facing, pos) || fluidOutputPos0.isPoI(facing, pos)) {
                 return (T)new GasTurbineFluidHandler(getAccessibleFluidTanks(facing, pos), this, facing, pos);
             }
         }

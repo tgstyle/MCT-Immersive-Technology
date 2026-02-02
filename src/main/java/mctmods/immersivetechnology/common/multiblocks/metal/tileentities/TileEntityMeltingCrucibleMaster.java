@@ -76,8 +76,8 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     private boolean needsPoIInit = true;
     private boolean needsNotify = true;
 
-    protected PoICache energyInput0, itemInput0, fluidOutput0, redstone0;
-    private BlockPos soundPos0, fluidOutputPos0;
+    protected PoICache energyInputPos0, itemInputPos0, fluidOutputPos0, redstonePos0;
+    private BlockPos soundPos0, fluidOutputTEPos0;
 
     public TileEntityMeltingCrucibleMaster() {
         tanks[0] = new ITFluidTank(outputTankSize, this);
@@ -164,7 +164,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
             if (world.isRemote && soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
             return;
         }
-        if (needsPoIInit || energyInput0 == null) {
+        if (needsPoIInit || energyInputPos0 == null) {
             InitializePoIs();
             needsPoIInit = false;
         }
@@ -209,7 +209,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         int comparator = getComparatorInputOverride();
         if (comparator != oldComparatorOutput) {
             oldComparatorOutput = comparator;
-            if (redstone0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstone0.position), getBlockType());
+            if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
             update = true;
         }
         if (update) {
@@ -300,8 +300,8 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
     private boolean pumpOutputOut() {
         if (tanks[0].getFluidAmount() == 0) return false;
-        if (fluidOutput0 == null) InitializePoIs();
-        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos0, fluidOutput0.facing.getOpposite());
+        if (fluidOutputPos0 == null) InitializePoIs();
+        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputTEPos0, fluidOutputPos0.facing.getOpposite());
         if (output == null) return false;
         FluidStack out = tanks[0].getFluid();
         if (out == null) return false;
@@ -317,17 +317,17 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
             PoICache cache = new PoICache(facing, poi, mirrored);
             switch (poi.name) {
                 case "energy_input0":
-                    energyInput0 = cache;
+                    energyInputPos0 = cache;
                     break;
                 case "item_input0":
-                    itemInput0 = cache;
+                    itemInputPos0 = cache;
                     break;
                 case "fluid_output0":
-                    fluidOutput0 = cache;
-                    fluidOutputPos0 = getBlockPosForPos(cache.position).offset(cache.facing);
+                    fluidOutputPos0 = cache;
+                    fluidOutputTEPos0 = getBlockPosForPos(cache.position).offset(cache.facing);
                     break;
                 case "redstone0":
-                    redstone0 = cache;
+                    redstonePos0 = cache;
                     break;
                 case "sound0":
                     soundPos0 = getBlockPosForPos(poi.position);
@@ -337,10 +337,10 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     }
 
     private void notifyIONeighbors() {
-        if (energyInput0 != null) notifyPort(energyInput0);
-        if (itemInput0 != null) notifyPort(itemInput0);
-        if (fluidOutput0 != null) notifyPort(fluidOutput0);
-        if (redstone0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstone0.position), getBlockType());
+        if (energyInputPos0 != null) notifyPort(energyInputPos0);
+        if (itemInputPos0 != null) notifyPort(itemInputPos0);
+        if (fluidOutputPos0 != null) notifyPort(fluidOutputPos0);
+        if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
     }
 
     private void notifyPort(PoICache cache) { world.notifyNeighborsOfStateChange(getBlockPosForPos(cache.position), getBlockType(), true); }
@@ -365,24 +365,24 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
-        if (fluidOutput0 == null) InitializePoIs();
-        if (fluidOutput0.isPoI(side, position)) return tanks;
+        if (fluidOutputPos0 == null) InitializePoIs();
+        if (fluidOutputPos0.isPoI(side, position)) return tanks;
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (fluidOutput0 == null) InitializePoIs();
-        return iTank == 0 && fluidOutput0.isPoI(side, position);
+        if (fluidOutputPos0 == null) InitializePoIs();
+        return iTank == 0 && fluidOutputPos0.isPoI(side, position);
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed || redstone0 == null) return new int[0];
-        return new int[]{redstone0.position};
+        if (!formed || redstonePos0 == null) return new int[0];
+        return new int[]{redstonePos0.position};
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
-        if (!formed || energyInput0 == null) return new int[0];
-        return new int[]{energyInput0.position};
+        if (!formed || energyInputPos0 == null) return new int[0];
+        return new int[]{energyInputPos0.position};
     }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[]{0}; }

@@ -78,8 +78,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     private boolean needsPoIInit = true;
     private boolean needsNotify = false;
 
-    protected PoICache fluidInput0, fluidOutput0, redstone0;
-    private BlockPos soundPos0, fluidOutputPos0;
+    protected PoICache fluidInputPos0, fluidOutputPos0, redstonePos0;
+    private BlockPos soundPos0, fluidOutputTEPos0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -115,7 +115,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     @Override public void update() {
         if (!formed) return;
-        if (needsPoIInit || fluidInput0 == null || fluidOutput0 == null || redstone0 == null || soundPos0 == null) {
+        if (needsPoIInit || fluidInputPos0 == null || fluidOutputPos0 == null || redstonePos0 == null || soundPos0 == null) {
             InitializePoIs();
             needsPoIInit = false;
         }
@@ -161,14 +161,14 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         for (PoIJSONSchema poi : TileEntityITMultiblockPartRadiator.instance.pointsOfInterest) {
             switch (poi.name) {
                 case "fluid_input0":
-                    fluidInput0 = new PoICache(facing, poi, mirrored);
+                    fluidInputPos0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "fluid_output0":
-                    fluidOutput0 = new PoICache(facing, poi, mirrored);
-                    fluidOutputPos0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    fluidOutputPos0 = new PoICache(facing, poi, mirrored);
+                    fluidOutputTEPos0 = getBlockPosForPos(fluidOutputPos0.position).offset(fluidOutputPos0.facing);
                     break;
                 case "redstone0":
-                    redstone0 = new PoICache(facing, poi, mirrored);
+                    redstonePos0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "sound0":
                     soundPos0 = getBlockPosForPos(poi.position);
@@ -179,11 +179,11 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     private void notifyIONeighbors() {
         BlockPos pos;
-        pos = getBlockPosForPos(fluidInput0.position);
+        pos = getBlockPosForPos(fluidInputPos0.position);
         world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
-        pos = getBlockPosForPos(fluidOutput0.position);
+        pos = getBlockPosForPos(fluidOutputPos0.position);
         world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
-        pos = getBlockPosForPos(redstone0.position);
+        pos = getBlockPosForPos(redstonePos0.position);
         world.updateComparatorOutputLevel(pos, world.getBlockState(pos).getBlock());
     }
 
@@ -398,7 +398,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     private boolean pumpOutputOut() {
         if (tanks[1].getFluidAmount() == 0) return false;
-        IFluidHandler handler = FluidUtil.getFluidHandler(world, fluidOutputPos0, fluidOutput0.facing.getOpposite());
+        IFluidHandler handler = FluidUtil.getFluidHandler(world, fluidOutputTEPos0, fluidOutputPos0.facing.getOpposite());
         if (handler == null) return false;
         FluidStack out = tanks[1].getFluid();
         if (out == null) return false;
@@ -502,16 +502,16 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
-        if (redstone0 == null) InitializePoIs();
+        if (redstonePos0 == null) InitializePoIs();
         if (side == null) return tanks;
-        if (fluidInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
-        if (fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
+        if (fluidInputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
+        if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if (!formed || redstone0 == null) InitializePoIs();
-        if (!fluidInput0.isPoI(side, position)) return false;
+        if (!formed || redstonePos0 == null) InitializePoIs();
+        if (!fluidInputPos0.isPoI(side, position)) return false;
         if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
         FluidStack current = tanks[0].getFluid();
         if (current == null) return RadiatorRecipe.findRecipeByFluid(resource.getFluid()) != null;
@@ -519,14 +519,14 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (!formed || redstone0 == null) InitializePoIs();
-        return fluidOutput0.isPoI(side, position) && tanks[1].getFluidAmount() > 0;
+        if (!formed || redstonePos0 == null) InitializePoIs();
+        return fluidOutputPos0.isPoI(side, position) && tanks[1].getFluidAmount() > 0;
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
-        if (redstone0 == null) InitializePoIs();
-        return new int[] {redstone0.position};
+        if (redstonePos0 == null) InitializePoIs();
+        return new int[] {redstonePos0.position};
     }
 
     static class RadiatorFluidHandler implements IFluidHandler {
@@ -615,7 +615,4 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
             return drained;
         }
     }
-
-    @Override
-    public boolean canRenderBreaking() { return true; }
 }

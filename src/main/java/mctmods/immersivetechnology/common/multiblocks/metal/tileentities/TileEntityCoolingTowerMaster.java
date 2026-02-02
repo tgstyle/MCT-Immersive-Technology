@@ -74,8 +74,8 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     private boolean needsPoIInit = false;
     private boolean needsNotify = false;
 
-    protected PoICache fluidInput0, fluidInput1, fluidOutput0, fluidOutput1, fluidOutput2;
-    private BlockPos outputFrontPos0, outputFrontPos1, outputFrontPos2, particlePos0, soundPos0;
+    protected PoICache fluidInputPos0, fluidInputPos1, fluidOutputPos0, fluidOutputPos1, fluidOutputPos2;
+    private BlockPos fluidOutputTEPos0, outputFrontTEPos1, outputFrontTEPos3, particlePos0, soundPos0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -155,7 +155,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     @Override public void update() {
         if (!formed) return;
-        if (needsPoIInit || fluidInput0 == null) {
+        if (needsPoIInit || fluidInputPos0 == null) {
             InitializePoIs();
             needsPoIInit = false;
         }
@@ -229,8 +229,8 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     private boolean pumpOutputOut() {
         boolean changed = false;
-        PoICache[] outputs = {fluidOutput0, fluidOutput1, fluidOutput2};
-        BlockPos[] fronts = {outputFrontPos0, outputFrontPos1, outputFrontPos2};
+        PoICache[] outputs = {fluidOutputPos0, fluidOutputPos1, fluidOutputPos2};
+        BlockPos[] fronts = {fluidOutputTEPos0, outputFrontTEPos1, outputFrontTEPos3};
         int[] indices = {2, 3, 4};
         for (int i = 0; i < 3; i++) {
             if (tanks[indices[i]].getFluidAmount() > 0) {
@@ -254,22 +254,22 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         for (PoIJSONSchema poi : TileEntityITMultiblockPartCoolingTower.instance.pointsOfInterest) {
             switch (poi.name) {
                 case "fluid_input0":
-                    fluidInput0 = new PoICache(facing, poi, mirrored);
+                    fluidInputPos0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "fluid_input1":
-                    fluidInput1 = new PoICache(facing, poi, mirrored);
+                    fluidInputPos1 = new PoICache(facing, poi, mirrored);
                     break;
                 case "fluid_output0":
-                    fluidOutput0 = new PoICache(facing, poi, mirrored);
-                    outputFrontPos0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    fluidOutputPos0 = new PoICache(facing, poi, mirrored);
+                    fluidOutputTEPos0 = getBlockPosForPos(fluidOutputPos0.position).offset(fluidOutputPos0.facing);
                     break;
                 case "fluid_output1":
-                    fluidOutput1 = new PoICache(facing, poi, mirrored);
-                    outputFrontPos1 = getBlockPosForPos(fluidOutput1.position).offset(fluidOutput1.facing);
+                    fluidOutputPos1 = new PoICache(facing, poi, mirrored);
+                    outputFrontTEPos1 = getBlockPosForPos(fluidOutputPos1.position).offset(fluidOutputPos1.facing);
                     break;
                 case "fluid_output2":
-                    fluidOutput2 = new PoICache(facing, poi, mirrored);
-                    outputFrontPos2 = getBlockPosForPos(fluidOutput2.position).offset(fluidOutput2.facing);
+                    fluidOutputPos2 = new PoICache(facing, poi, mirrored);
+                    outputFrontTEPos3 = getBlockPosForPos(fluidOutputPos2.position).offset(fluidOutputPos2.facing);
                     break;
                 case "particle0":
                     particlePos0 = getBlockPosForPos(poi.position);
@@ -282,11 +282,11 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     }
 
     private void notifyIONeighbors() {
-        if (fluidInput0 != null) notifyNeighbor(getBlockPosForPos(fluidInput0.position));
-        if (fluidInput1 != null) notifyNeighbor(getBlockPosForPos(fluidInput1.position));
-        if (fluidOutput0 != null) notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        if (fluidOutput1 != null) notifyNeighbor(getBlockPosForPos(fluidOutput1.position));
-        if (fluidOutput2 != null) notifyNeighbor(getBlockPosForPos(fluidOutput2.position));
+        if (fluidInputPos0 != null) notifyNeighbor(getBlockPosForPos(fluidInputPos0.position));
+        if (fluidInputPos1 != null) notifyNeighbor(getBlockPosForPos(fluidInputPos1.position));
+        if (fluidOutputPos0 != null) notifyNeighbor(getBlockPosForPos(fluidOutputPos0.position));
+        if (fluidOutputPos1 != null) notifyNeighbor(getBlockPosForPos(fluidOutputPos1.position));
+        if (fluidOutputPos2 != null) notifyNeighbor(getBlockPosForPos(fluidOutputPos2.position));
     }
 
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, getBlockType(), true); }
@@ -306,20 +306,20 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return tanks; }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        if (fluidInput0 == null) InitializePoIs();
-        if (fluidInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
-        if (fluidInput1.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
-        if (fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[2]};
-        if (fluidOutput1.isPoI(side, position)) return new IFluidTank[] {tanks[3]};
-        if (fluidOutput2.isPoI(side, position)) return new IFluidTank[] {tanks[4]};
+        if (fluidInputPos0 == null) InitializePoIs();
+        if (fluidInputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
+        if (fluidInputPos1.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
+        if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[2]};
+        if (fluidOutputPos1.isPoI(side, position)) return new IFluidTank[] {tanks[3]};
+        if (fluidOutputPos2.isPoI(side, position)) return new IFluidTank[] {tanks[4]};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
         if (iTank > 1 || iTank < 0) return false;
-        if (fluidInput0 == null) InitializePoIs();
-        if (iTank == 0 && !fluidInput0.isPoI(side, position)) return false;
-        if (iTank == 1 && !fluidInput1.isPoI(side, position)) return false;
+        if (fluidInputPos0 == null) InitializePoIs();
+        if (iTank == 0 && !fluidInputPos0.isPoI(side, position)) return false;
+        if (iTank == 1 && !fluidInputPos1.isPoI(side, position)) return false;
         if (tanks[iTank].getFluidAmount() >= tanks[iTank].getCapacity()) return false;
         FluidStack current = tanks[iTank].getFluid();
         if (current != null) return resource.isFluidEqual(current);
@@ -328,10 +328,10 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
         if (iTank < 2) return false;
-        if (fluidInput0 == null) InitializePoIs();
-        if (iTank == 2 && !fluidOutput0.isPoI(side, position)) return false;
-        if (iTank == 3 && !fluidOutput1.isPoI(side, position)) return false;
-        if (iTank == 4 && !fluidOutput2.isPoI(side, position)) return false;
+        if (fluidInputPos0 == null) InitializePoIs();
+        if (iTank == 2 && !fluidOutputPos0.isPoI(side, position)) return false;
+        if (iTank == 3 && !fluidOutputPos1.isPoI(side, position)) return false;
+        if (iTank == 4 && !fluidOutputPos2.isPoI(side, position)) return false;
         return tanks[iTank].getFluidAmount() > 0;
     }
 

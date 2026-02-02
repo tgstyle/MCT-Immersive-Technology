@@ -185,9 +185,9 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         TileEntityAdvancedCokeOvenMaster m = master();
         if (m == null || facing == null) return super.hasCapability(capability, facing);
-        if (m.itemInput0 == null) m.InitializePoIs();
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return m.itemInput0.isPoI(facing, this.pos) || m.itemOutput0.isPoI(facing, this.pos);
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return m.fluidOutput0.isPoI(facing, this.pos);
+        if (m.itemInputPos0 == null) m.InitializePoIs();
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return m.itemInputPos0.isPoI(facing, this.pos) || m.itemOutputPos0.isPoI(facing, this.pos);
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return m.fluidOutputPos0.isPoI(facing, this.pos);
         return super.hasCapability(capability, facing);
     }
 
@@ -195,12 +195,12 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         TileEntityAdvancedCokeOvenMaster m = master();
         if (m == null || facing == null) return super.getCapability(capability, facing);
-        if (m.itemInput0 == null) m.InitializePoIs();
+        if (m.itemInputPos0 == null) m.InitializePoIs();
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (m.itemInput0.isPoI(facing, this.pos)) return (T)m.inputHandler;
-            if (m.itemOutput0.isPoI(facing, this.pos)) return (T)m.outputHandler;
+            if (m.itemInputPos0.isPoI(facing, this.pos)) return (T)m.inputHandler;
+            if (m.itemOutputPos0.isPoI(facing, this.pos)) return (T)m.outputHandler;
         }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && m.fluidOutput0.isPoI(facing, this.pos)) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && m.fluidOutputPos0.isPoI(facing, this.pos)) {
             return (T)new TileEntityAdvancedCokeOvenMaster.AdvancedCokeOvenFluidHandler(m);
         }
         return super.getCapability(capability, facing);

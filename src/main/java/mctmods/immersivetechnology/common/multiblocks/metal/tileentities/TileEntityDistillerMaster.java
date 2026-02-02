@@ -80,8 +80,8 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     private int tickCountdown = 5;
 
-    protected PoICache energyInput0, fluidInput0, fluidOutput0, itemOutput0, redstone0;
-    private BlockPos fluidOutputFront0, itemOutputFront0, soundPos0;
+    protected PoICache energyInputPos0, fluidInputPos0, fluidOutputPos0, itemOutputPos0, redstonePos0;
+    private BlockPos fluidOutputTEPos0, fluidOutputTEPos1, soundPos0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -154,7 +154,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     @Override public void update() {
         if (!formed) return;
-        if (needsPoIInit || energyInput0 == null || fluidInput0 == null || fluidOutput0 == null || itemOutput0 == null || redstone0 == null || soundPos0 == null) {
+        if (needsPoIInit || energyInputPos0 == null || fluidInputPos0 == null || fluidOutputPos0 == null || itemOutputPos0 == null || redstonePos0 == null || soundPos0 == null) {
             InitializePoIs();
             needsPoIInit = false;
         }
@@ -252,9 +252,9 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         }
         pumpOutputOut();
         if (!inventory.get(4).isEmpty()) {
-            TileEntity te = world.getTileEntity(itemOutputFront0);
-            if (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutput0.facing.getOpposite())) {
-                IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutput0.facing.getOpposite());
+            TileEntity te = world.getTileEntity(fluidOutputTEPos1);
+            if (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutputPos0.facing.getOpposite())) {
+                IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutputPos0.facing.getOpposite());
                 if (handler != null) {
                     ItemStack current = inventory.get(4).copy();
                     ItemStack remaining = ItemHandlerHelper.insertItemStacked(handler, current, false);
@@ -284,8 +284,8 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         int comp = getComparatorInputOverride();
         if (comp != oldComparatorOutput) {
             oldComparatorOutput = comp;
-            if (redstone0 != null) {
-                BlockPos rsPos = getBlockPosForPos(redstone0.position);
+            if (redstonePos0 != null) {
+                BlockPos rsPos = getBlockPosForPos(redstonePos0.position);
                 world.updateComparatorOutputLevel(rsPos, getBlockType());
             }
         }
@@ -293,7 +293,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     private void pumpOutputOut() {
         if (tanks[1].getFluidAmount() == 0) return;
-        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputFront0, fluidOutput0.facing.getOpposite());
+        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputTEPos0, fluidOutputPos0.facing.getOpposite());
         if (output == null) return;
         FluidStack out = tanks[1].getFluid();
         if (out == null) return;
@@ -308,21 +308,21 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         for (PoIJSONSchema poi : TileEntityITMultiblockPartDistiller.instance.pointsOfInterest) {
             switch (poi.name) {
                 case "energy_input0":
-                    energyInput0 = new PoICache(facing, poi, mirrored);
+                    energyInputPos0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "fluid_input0":
-                    fluidInput0 = new PoICache(facing, poi, mirrored);
+                    fluidInputPos0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "fluid_output0":
-                    fluidOutput0 = new PoICache(facing, poi, mirrored);
-                    fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    fluidOutputPos0 = new PoICache(facing, poi, mirrored);
+                    fluidOutputTEPos0 = getBlockPosForPos(fluidOutputPos0.position).offset(fluidOutputPos0.facing);
                     break;
                 case "item_output0":
-                    itemOutput0 = new PoICache(facing, poi, mirrored);
-                    itemOutputFront0 = getBlockPosForPos(itemOutput0.position).offset(itemOutput0.facing.getOpposite());
+                    itemOutputPos0 = new PoICache(facing, poi, mirrored);
+                    fluidOutputTEPos1 = getBlockPosForPos(itemOutputPos0.position).offset(itemOutputPos0.facing.getOpposite());
                     break;
                 case "redstone0":
-                    redstone0 = new PoICache(facing, poi, mirrored);
+                    redstonePos0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "sound0":
                     soundPos0 = getBlockPosForPos(poi.position);
@@ -332,12 +332,12 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     }
 
     private void notifyIONeighbors() {
-        if (energyInput0 != null) notifyPort(getBlockPosForPos(energyInput0.position));
-        if (fluidInput0 != null) notifyPort(getBlockPosForPos(fluidInput0.position));
-        if (fluidOutput0 != null) notifyPort(getBlockPosForPos(fluidOutput0.position));
-        if (itemOutput0 != null) notifyPort(getBlockPosForPos(itemOutput0.position));
-        if (redstone0 != null) {
-            BlockPos rsPos = getBlockPosForPos(redstone0.position);
+        if (energyInputPos0 != null) notifyPort(getBlockPosForPos(energyInputPos0.position));
+        if (fluidInputPos0 != null) notifyPort(getBlockPosForPos(fluidInputPos0.position));
+        if (fluidOutputPos0 != null) notifyPort(getBlockPosForPos(fluidOutputPos0.position));
+        if (itemOutputPos0 != null) notifyPort(getBlockPosForPos(itemOutputPos0.position));
+        if (redstonePos0 != null) {
+            BlockPos rsPos = getBlockPosForPos(redstonePos0.position);
             world.updateComparatorOutputLevel(rsPos, getBlockType());
         }
     }
@@ -371,20 +371,20 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
         if (!formed) return false;
-        if (energyInput0 == null) InitializePoIs();
-        return facing != null && energyInput0.isPoI(facing, position);
+        if (energyInputPos0 == null) InitializePoIs();
+        return facing != null && energyInputPos0.isPoI(facing, position);
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
         if (!formed) return new int[0];
-        if (energyInput0 == null) InitializePoIs();
-        return new int[] {energyInput0.position};
+        if (energyInputPos0 == null) InitializePoIs();
+        return new int[] {energyInputPos0.position};
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
-        if (redstone0 == null) InitializePoIs();
-        return new int[] {redstone0.position};
+        if (redstonePos0 == null) InitializePoIs();
+        return new int[] {redstonePos0.position};
     }
 
     @Override @Nonnull public int[] getOutputSlots() { return new int[]{4}; }
@@ -398,16 +398,16 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return tanks; }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
-        if (fluidInput0 == null) InitializePoIs();
-        if (fluidInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
-        if (fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
+        if (fluidInputPos0 == null) InitializePoIs();
+        if (fluidInputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
+        if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
         if (iTank != 0) return false;
-        if (fluidInput0 == null) InitializePoIs();
-        if (!fluidInput0.isPoI(side, position)) return false;
+        if (fluidInputPos0 == null) InitializePoIs();
+        if (!fluidInputPos0.isPoI(side, position)) return false;
         if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
         FluidStack current = tanks[0].getFluid();
         if (current != null) return resource.isFluidEqual(current);
@@ -416,8 +416,8 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
         if (iTank != 1) return false;
-        if (fluidOutput0 == null) InitializePoIs();
-        if (!fluidOutput0.isPoI(side, position)) return false;
+        if (fluidOutputPos0 == null) InitializePoIs();
+        if (!fluidOutputPos0.isPoI(side, position)) return false;
         return tanks[1].getFluidAmount() > 0;
     }
 

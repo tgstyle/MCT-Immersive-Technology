@@ -93,13 +93,13 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     private int clientSyncTimer = 0;
     private int oldComparatorOutput = 0;
 
-    PoICache redstone0;
-    PoICache fluidInput0;
-    PoICache fluidOutput0;
+    PoICache redstonePos0;
+    PoICache fluidInputPos0;
+    PoICache fluidOutputPos0;
 
     BlockPos basePos0;
     BlockPos collectorPos0;
-    BlockPos fluidOutputFront0;
+    BlockPos fluidOutputTEPos0;
     BlockPos soundPos0;
 
     private boolean needsPoIInit = true;
@@ -224,14 +224,14 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
             if (poi == null) continue;
             switch (poi.name) {
                 case "fluid_input0":
-                    fluidInput0 = new PoICache(facing, poi, mirrored);
+                    fluidInputPos0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "fluid_output0":
-                    fluidOutput0 = new PoICache(facing, poi, mirrored);
-                    fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
+                    fluidOutputPos0 = new PoICache(facing, poi, mirrored);
+                    fluidOutputTEPos0 = getBlockPosForPos(fluidOutputPos0.position).offset(fluidOutputPos0.facing);
                     break;
                 case "redstone0":
-                    redstone0 = new PoICache(facing, poi, mirrored);
+                    redstonePos0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "sound0":
                     soundPos0 = getBlockPosForPos(poi.position);
@@ -248,9 +248,9 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     }
 
     private void notifyIONeighbors() {
-        if (fluidInput0 != null) world.notifyNeighborsOfStateChange(getBlockPosForPos(fluidInput0.position), getBlockType(), true);
-        if (fluidOutput0 != null) world.notifyNeighborsOfStateChange(getBlockPosForPos(fluidOutput0.position), getBlockType(), true);
-        if (redstone0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstone0.position), getBlockType());
+        if (fluidInputPos0 != null) world.notifyNeighborsOfStateChange(getBlockPosForPos(fluidInputPos0.position), getBlockType(), true);
+        if (fluidOutputPos0 != null) world.notifyNeighborsOfStateChange(getBlockPosForPos(fluidOutputPos0.position), getBlockType(), true);
+        if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
         needsNotify = false;
     }
 
@@ -354,8 +354,8 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     private boolean pumpOutputOut() {
         boolean changed = false;
         FluidStack out = tanks[1].getFluid();
-        if (out != null && out.amount > 0 && fluidOutputFront0 != null && fluidOutput0 != null) {
-            IFluidHandler handler = FluidUtil.getFluidHandler(world, fluidOutputFront0, fluidOutput0.facing.getOpposite());
+        if (out != null && out.amount > 0 && fluidOutputTEPos0 != null && fluidOutputPos0 != null) {
+            IFluidHandler handler = FluidUtil.getFluidHandler(world, fluidOutputTEPos0, fluidOutputPos0.facing.getOpposite());
             if (handler != null) {
                 FluidStack sim = out.copy();
                 int accepted = handler.fill(sim, false);
@@ -457,7 +457,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     @Override public void update() {
         super.update();
         if (!formed) return;
-        if (needsPoIInit || redstone0 == null) {
+        if (needsPoIInit || redstonePos0 == null) {
             InitializePoIs();
             needsPoIInit = false;
         }
@@ -526,8 +526,8 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     }
 
     @Override public boolean isRSDisabled() {
-        if (redstone0 == null) return false;
-        int power = world.getRedstonePowerFromNeighbors(getBlockPosForPos(redstone0.position));
+        if (redstonePos0 == null) return false;
+        int power = world.getRedstonePowerFromNeighbors(getBlockPosForPos(redstonePos0.position));
         return power > 0;
     }
 
@@ -545,16 +545,16 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
-        if (redstone0 == null) InitializePoIs();
+        if (redstonePos0 == null) InitializePoIs();
         if (side == null) return tanks;
-        if (fluidInput0 != null && fluidInput0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
-        if (fluidOutput0 != null && fluidOutput0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
+        if (fluidInputPos0 != null && fluidInputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
+        if (fluidOutputPos0 != null && fluidOutputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if (fluidInput0 == null) InitializePoIs();
-        if (iTank == 0 && fluidInput0.isPoI(side, position)) {
+        if (fluidInputPos0 == null) InitializePoIs();
+        if (iTank == 0 && fluidInputPos0.isPoI(side, position)) {
             if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
             FluidStack current = tanks[0].getFluid();
             if (current == null) return SolarTowerRecipe.findRecipe(resource) != null;
@@ -564,13 +564,13 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (fluidOutput0 == null) InitializePoIs();
-        return iTank == 1 && fluidOutput0.isPoI(side, position) && tanks[1].getFluidAmount() > 0;
+        if (fluidOutputPos0 == null) InitializePoIs();
+        return iTank == 1 && fluidOutputPos0.isPoI(side, position) && tanks[1].getFluidAmount() > 0;
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (redstone0 == null) InitializePoIs();
-        return new int[] {redstone0.position};
+        if (redstonePos0 == null) InitializePoIs();
+        return new int[] {redstonePos0.position};
     }
 
     @Override @Nonnull public int[] getOutputTanks() {
