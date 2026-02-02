@@ -116,8 +116,8 @@ public abstract class TileEntityITMultiblockPart<T extends TileEntityMultiblockP
             mirror = true;
             if (isInvalid(world, pos, side, true)) return false;
         }
-        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), -masterX).offset(EnumFacing.DOWN, masterY);
-        BlockPos masterPos = ITUtils.LocalOffsetToWorldBlockPos(origin, masterX, masterY, masterZ, side);
+        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? -(width - 1 - masterX) : -masterX).offset(EnumFacing.DOWN, masterY);
+        BlockPos masterPos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? (width - 1 - masterX) : masterX, masterY, masterZ, side);
         ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
         if (MultiblockHandler.fireMultiblockFormationEventPre(player, this, pos, hammer).isCanceled()) return false;
         IBlockState masterState = masterBlockState.withProperty(IEProperties.FACING_HORIZONTAL, side).withProperty(IEProperties.MULTIBLOCKSLAVE, false);
@@ -145,7 +145,7 @@ public abstract class TileEntityITMultiblockPart<T extends TileEntityMultiblockP
     }
 
     protected boolean isInvalid(World world, BlockPos pos, EnumFacing side, boolean mirror) {
-        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), -masterX).offset(EnumFacing.DOWN, masterY);
+        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? -(width - 1 - masterX) : -masterX).offset(EnumFacing.DOWN, masterY);
         for (int h = 0; h < height; h++) for (int l = 0; l < length; l++) for (int w = 0; w < width; w++) {
             if (structure[h][l][w] == AirRef.instance) continue;
             BlockPos blockPos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? (width - 1 - w) : w, h, l, side);

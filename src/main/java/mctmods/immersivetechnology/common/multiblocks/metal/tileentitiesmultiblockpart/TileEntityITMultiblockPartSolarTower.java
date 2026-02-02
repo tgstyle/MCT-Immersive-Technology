@@ -78,7 +78,7 @@ public class TileEntityITMultiblockPartSolarTower extends TileEntityITMultiblock
         side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
         boolean mirror = false;
         if (isInvalid(world, pos, side, false)) { mirror = true; if (isInvalid(world, pos, side, true)) return false; }
-        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? width-1-masterX : -masterX).offset(EnumFacing.DOWN, masterY);
+        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? -(width - 1 - masterX) : -masterX).offset(EnumFacing.DOWN, masterY);
         int linkPosition = -1;
         for (PoIJSONSchema poi : pointsOfInterest) {
             if ("link0".equals(poi.name)) { linkPosition = poi.position; break; }
