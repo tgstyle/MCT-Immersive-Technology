@@ -95,12 +95,13 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         double displayMax = workingLevel / 20.0 + 30;
         int current = (int)displayHeat;
         int max = (int)displayMax;
-        probeInfo.progress(current, max, probeInfo.defaultProgressStyle()
-                .suffix("/" + max + "°C")
-                .filledColor(0xffcc0000)
-                .alternateFilledColor(0xffcc0000)
-                .borderColor(0xffff6666)
-                .numberFormat(NumberFormat.FULL));
+        probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
+                .progress(current, max, probeInfo.defaultProgressStyle()
+                        .suffix(" °C")
+                        .filledColor(0xffcc0000)
+                        .alternateFilledColor(0xffcc0000)
+                        .borderColor(0xffff6666)
+                        .numberFormat(NumberFormat.FULL));
     }
 
     public static class MechanicalEnergyProvider implements IProbeInfoProvider {
