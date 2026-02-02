@@ -347,7 +347,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                 case "fluidInput0":
                     fluidInputPos0 = new PoICache(facing, poi, mirrored);
                     break;
-                case "fluidOutputPos0":
+                case "fluidOutput0":
                     fluidOutputPos0 = new PoICache(facing, poi, mirrored);
                     outputFront0 = getBlockPosForPos(fluidOutputPos0.position).offset(fluidOutputPos0.facing);
                     break;
