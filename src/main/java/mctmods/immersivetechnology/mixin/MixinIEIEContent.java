@@ -29,7 +29,7 @@ public abstract class MixinIEIEContent {
             String s = tile.getSimpleName();
             s = s.substring("TileEntity".length()).toLowerCase(Locale.US);
             GameRegistry.registerTileEntity(alt, new ResourceLocation(ImmersiveEngineering.MODID, s));
-            MCTMixin.LOGGER.info("Replaced IE " + s + " registration with IT alternative");
+            MCTMixin.LOGGER.info("Replaced IE {} registration with IT alternative", s);
             ci.cancel();
         }
     }
