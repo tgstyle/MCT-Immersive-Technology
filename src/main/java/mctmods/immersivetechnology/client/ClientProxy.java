@@ -19,14 +19,14 @@ import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.client.event.ClientEventHandler;
 import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
-import mctmods.immersivetechnology.client.render.TileRenderBarrelOpen;
-import mctmods.immersivetechnology.client.render.TileRenderHighPressureSteamTurbine;
-import mctmods.immersivetechnology.client.render.TileRenderSolarReflector;
-import mctmods.immersivetechnology.client.render.TileRenderSteelSheetmetalTank;
-import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
-import mctmods.immersivetechnology.client.render.TileRendererGasTurbine;
-import mctmods.immersivetechnology.client.render.TileRenderMultiblockSlave;
-import mctmods.immersivetechnology.client.render.TileRenderAdvancedCokeOvenBaseheater;
+import mctmods.immersivetechnology.client.render.fluid.TileRenderBarrelOpen;
+import mctmods.immersivetechnology.client.render.multiblock.*;
+import mctmods.immersivetechnology.client.render.multiblock.withanimation.TileRenderHighPressureSteamTurbine;
+import mctmods.immersivetechnology.client.render.animation.TileRenderSolarReflector;
+import mctmods.immersivetechnology.client.render.multiblock.withanimation.TileRenderSteamTurbine;
+import mctmods.immersivetechnology.client.render.multiblock.withanimation.TileRendererGasTurbine;
+import mctmods.immersivetechnology.client.render.fluid.TileRenderSteelSheetmetalTank;
+import mctmods.immersivetechnology.client.render.animation.TileRenderAdvancedCokeOvenBaseheater;
 import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.ITContent;
@@ -212,15 +212,25 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    @Override public void init() {
+    @Override
+    public void init() {
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAdvancedCokeOvenBaseheater.class, new TileRenderAdvancedCokeOvenBaseheater());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBarrelOpen.class, new TileRenderBarrelOpen());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBoilerMaster.class, new TileRenderBoiler());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoolingTowerMaster.class, new TileRenderCoolingTower());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityElectrolyticCrucibleBatteryMaster.class, new TileRenderElectrolyticCrucibleBattery());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGasTurbineMaster.class, new TileRendererGasTurbine());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHeatExchangerMaster.class, new TileRenderHeatExchanger());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHighPressureSteamTurbineMaster.class, new TileRenderHighPressureSteamTurbine());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRadiatorMaster.class, new TileRenderRadiator());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySolarMelterMaster.class, new TileRenderSolarMelter());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySolarReflectorMaster.class, new TileRenderSolarReflector());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySolarTowerMaster.class, new TileRenderSolarTower());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTankMaster.class, new TileRenderSteelSheetmetalTank());
+
         ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
         ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
         ImmersiveTechnology.packetHandler.registerMessage(MessageStopSound.HandlerClient.class, MessageStopSound.class, 1, Side.CLIENT);

@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.client.render;
+package mctmods.immersivetechnology.client.render.multiblock;
 
 import mctmods.immersivetechnology.common.util.ITLogger;
 
@@ -49,6 +49,5 @@ public class TileRenderMultiblockSlave extends TileEntitySpecialRenderer<TileEnt
         } catch (Exception e) { ITLogger.error("Error in rendering multiblock slave", e); }
     }
 
-    @Override
-    public boolean isGlobalRenderer(@Nonnull TileEntity te) { return true; }
+    @Override public boolean isGlobalRenderer(@Nonnull TileEntity te) { return true; }
 }

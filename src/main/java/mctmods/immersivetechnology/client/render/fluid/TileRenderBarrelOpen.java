@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.client.render;
+package mctmods.immersivetechnology.client.render.fluid;
 
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
 import net.minecraft.client.Minecraft;

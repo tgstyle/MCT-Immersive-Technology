@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.client.render;
+package mctmods.immersivetechnology.client.render.animation;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;

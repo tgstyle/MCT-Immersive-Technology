@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.client.render;
+package mctmods.immersivetechnology.client.render.fluid;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
