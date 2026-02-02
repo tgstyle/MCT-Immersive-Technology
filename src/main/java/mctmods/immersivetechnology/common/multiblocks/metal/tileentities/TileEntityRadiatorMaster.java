@@ -26,6 +26,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -293,6 +294,18 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
             }
         }
 
+        final double maxDistSq = 400;
+        EntityPlayer closestPlayer = null;
+        double minDistSq = maxDistSq;
+        for (EntityPlayer p : world.playerEntities) {
+            double dSq = p.getDistanceSq(triggerPos.getX() + 0.5D, triggerPos.getY() + 0.5D, triggerPos.getZ() + 0.5D);
+            if (dSq < minDistSq) {
+                minDistSq = dSq;
+                closestPlayer = p;
+            }
+        }
+        boolean creativeBreak = closestPlayer != null && closestPlayer.capabilities.isCreativeMode;
+
         for (int i = 0; i < positions.size(); i++) {
             BlockPos pos = positions.get(i);
             IBlockState state = states.get(i);
@@ -301,7 +314,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
             world.removeTileEntity(pos);
 
             if (pos.equals(triggerPos)) {
-                if (!drop.isEmpty()) {
+                if (!creativeBreak && !drop.isEmpty()) {
                     float f = 0.7F;
                     double dx = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
                     double dy = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
