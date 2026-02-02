@@ -108,12 +108,13 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (te instanceof IMechanicalEnergy) {
+            if (te instanceof TileEntityMultiblockPart<?>) {
                 TileEntityMultiblockPart<?> part = (TileEntityMultiblockPart<?>)te;
                 TileEntity master = part.master();
-                if (master == null) return;
-                int speed = ((IMechanicalEnergy)master).getSpeed();
-                addRPMDisplay(probeInfo, speed);
+                if (master instanceof IMechanicalEnergy) {
+                    int speed = ((IMechanicalEnergy)master).getSpeed();
+                    addRPMDisplay(probeInfo, speed);
+                }
             }
         }
     }
@@ -253,8 +254,6 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
             addEnergyDisplay(probeInfo, master.starterStorage.getEnergyStored(), master.starterStorage.getMaxEnergyStored());
             addEnergyDisplay(probeInfo, master.sparkplugStorage.getEnergyStored(), master.sparkplugStorage.getMaxEnergyStored());
-
-            addRPMDisplay(probeInfo, master.speed);
         }
     }
 
