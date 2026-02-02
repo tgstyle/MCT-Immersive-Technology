@@ -275,7 +275,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
                     particlePos0 = getBlockPosForPos(poi.position);
                     break;
                 case "sound0":
-                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
+                    soundPos0 = getBlockPosForPos(poi.position);
                     break;
             }
         }

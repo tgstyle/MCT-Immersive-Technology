@@ -330,7 +330,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
                     redstone0 = cache;
                     break;
                 case "sound0":
-                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
+                    soundPos0 = getBlockPosForPos(poi.position);
                     break;
             }
         }

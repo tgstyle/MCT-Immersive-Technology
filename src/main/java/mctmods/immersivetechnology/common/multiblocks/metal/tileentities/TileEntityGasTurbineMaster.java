@@ -355,16 +355,16 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                     particle0 = getBlockPosForPos(poi.position);
                     break;
                 case "sound0":
-                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
+                    soundPos0 = getBlockPosForPos(poi.position);
                     break;
                 case "sound1":
-                    if (world.isRemote) soundPos1 = getBlockPosForPos(poi.position);
+                    soundPos1 = getBlockPosForPos(poi.position);
                     break;
                 case "sound2":
-                    if (world.isRemote) soundPos2 = getBlockPosForPos(poi.position);
+                    soundPos2 = getBlockPosForPos(poi.position);
                     break;
                 case "sound3":
-                    if (world.isRemote) soundPos3 = getBlockPosForPos(poi.position);
+                    soundPos3 = getBlockPosForPos(poi.position);
                     break;
                 case "energy_input0":
                     energyInput0 = new PoICache(facing, poi, mirrored);

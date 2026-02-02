@@ -190,7 +190,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
                 mechanicalInput0 = new PoICache(facing, poi, mirrored);
                 mechanicalInputPos0 = getBlockPosForPos(mechanicalInput0.position).offset(mechanicalInput0.facing);
             } else if ("sound0".equals(name)) {
-                if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
+                soundPos0 = getBlockPosForPos(poi.position);
             } else if ("redstone0".equals(name)) {
                 redstone0 = new PoICache(facing, poi, mirrored);
             }

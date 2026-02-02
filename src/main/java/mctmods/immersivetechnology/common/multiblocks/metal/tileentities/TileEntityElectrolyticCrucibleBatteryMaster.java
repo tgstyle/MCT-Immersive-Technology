@@ -184,7 +184,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
                     redstone0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "sound0":
-                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
+                    soundPos0 = getBlockPosForPos(poi.position);
                     break;
                 case "fluid_input0":
                     fluidInput0 = new PoICache(facing, poi, mirrored);

@@ -269,7 +269,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
                     mechanicalOutputPos0 = getBlockPosForPos(mechanicalOutput0.position).offset(mechanicalOutput0.facing);
                     break;
                 case "sound0":
-                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
+                    soundPos0 = getBlockPosForPos(poi.position);
                     break;
             }
         }

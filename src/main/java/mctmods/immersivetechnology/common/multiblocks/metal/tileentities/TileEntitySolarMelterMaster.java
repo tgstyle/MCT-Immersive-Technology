@@ -232,7 +232,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
                     redstone0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "sound0":
-                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
+                    soundPos0 = getBlockPosForPos(poi.position);
                     break;
                 case "link0":
                     basePos0 = getBlockPosForPos(new PoICache(facing, poi, mirrored).position);
