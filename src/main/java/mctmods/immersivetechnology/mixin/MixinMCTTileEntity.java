@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.mixin;
 
 import mctmods.immersivetechnology.core.MCTMixinConfig;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -21,10 +22,14 @@ public abstract class MixinMCTTileEntity {
 
     /**
      * @author tgstyle
-     * @reason Redirect error logging to stderr for debugging early loading issues
+     * @reason Redirect error logging to stderr for debugging early loading issues — only active in deobf/dev environment
      */
     @SuppressWarnings("all") @Inject(method = "create", at = @At("HEAD"), cancellable = true)
     private static void create(World p_190200_0_, NBTTagCompound p_190200_1_, CallbackInfoReturnable<TileEntity> cir) {
+        Object deobfObj = Launch.blackboard.get("fml.deobfuscatedEnvironment");
+        boolean isDeobf = deobfObj instanceof Boolean && (Boolean)deobfObj;
+        if (!isDeobf) { return; }
+
         TileEntity tileentity = null;
         String s = p_190200_1_.getString("id");
         Class<? extends TileEntity> oclass = null;

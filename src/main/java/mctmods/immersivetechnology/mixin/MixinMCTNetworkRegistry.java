@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(net.minecraftforge.fml.common.network.NetworkRegistry.class)
 public class MixinMCTNetworkRegistry {
+    // Only active in deobf/dev environment
     @Redirect(method = "newChannel(Ljava/lang/String;[Lio/netty/channel/ChannelHandler;)Ljava/util/EnumMap;", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/relauncher/Side;values()[Lnet/minecraftforge/fml/relauncher/Side;"), remap = false)
     private Side[] redirectNewChannel1() {
         Object isDeobf = Launch.blackboard.get("fml.deobfuscatedEnvironment");
