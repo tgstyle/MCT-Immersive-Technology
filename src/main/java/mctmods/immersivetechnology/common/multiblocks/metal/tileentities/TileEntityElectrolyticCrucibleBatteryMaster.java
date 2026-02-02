@@ -49,9 +49,7 @@ import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElectrolyticCrucibleBatterySlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IEBlockInterfaces.IMirrorAble, IEBlockInterfaces.IUsesBooleanProperty, IEBlockInterfaces.IComparatorOverride {
 
     private static final int inputTankSize = Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_input_tankSize;
@@ -73,7 +71,6 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     private int playerDimension;
     private boolean isRunning;
     public boolean redstoneControlInverted = false;
-    public Optional<Boolean> computerOn = Optional.empty();
     private int oldComparatorOutput;
 
     protected PoICache energyInputPos0, energyInputPos1, energyInputPos2, fluidInputPos0, fluidOutputPos0, fluidOutputPos1, fluidOutputPos2, itemOutputPos0, redstonePos0;

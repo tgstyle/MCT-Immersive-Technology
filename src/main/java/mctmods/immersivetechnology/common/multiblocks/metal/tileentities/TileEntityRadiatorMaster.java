@@ -47,9 +47,7 @@ import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver {
 
     protected long onlyLocalDissassembly = -1;
@@ -74,7 +72,6 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     private int clientUpdateCooldown = 20;
     private double distanceSqToTE;
     private int playerDimension;
-    public Optional<Boolean> computerOn = Optional.empty();
     public boolean redstoneControlInverted = false;
     private boolean needsPoIInit = true;
     private boolean needsNotify = false;
