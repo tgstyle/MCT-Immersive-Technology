@@ -93,7 +93,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private IMechanicalEnergy alternator;
 
     protected PoICache energyInput0, energyInput1, fluidInput0, fluidOutput0, mechanicalOutput0, redstone0;
-    private BlockPos outputFront0, mechanicalOutputPos0, particle0, sound0, sound1, sound2, sound3;
+    private BlockPos outputFront0, mechanicalOutputPos0, particle0, soundPos0, soundPos1, soundPos2, soundPos3;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -150,44 +150,44 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     @SideOnly(Side.CLIENT)
     private void handleSounds() {
-        if (sound0 == null) InitializePoIs();
+        if (soundPos0 == null) InitializePoIs();
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        float att = Math.max((float)player.getDistanceSq(sound0.getX(), sound0.getY(), sound0.getZ()) / 64, 1);
+        float att = Math.max((float)player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 64, 1);
         float level = ITUtils.remapRange(0, 1, 0.5f, 1.5f, soundVolume);
-        if (speed == 0) ITSoundHandler.StopSound(sound0);
-        else ITSounds.gasTurbineRunning.PlayRepeating(sound0, (level - 0.5f) / (4 * att), level);
+        if (speed == 0) ITSoundHandler.StopSound(soundPos0);
+        else ITSounds.gasTurbineRunning.PlayRepeating(soundPos0, (level - 0.5f) / (4 * att), level);
         if (starterRunning) {
-            ITSounds.gasTurbineStarter.PlayRepeating(sound3, Math.min((level - .5f) / att, .2f), 1);
-            if (speed >= maxSpeed / 4) ITSounds.gasTurbineArc.PlayRepeating(sound1, Math.min((level - .5f) / att, .2f), 1);
+            ITSounds.gasTurbineStarter.PlayRepeating(soundPos3, Math.min((level - .5f) / att, .2f), 1);
+            if (speed >= maxSpeed / 4) ITSounds.gasTurbineArc.PlayRepeating(soundPos1, Math.min((level - .5f) / att, .2f), 1);
         } else {
-            ITSoundHandler.StopSound(sound3);
-            ITSoundHandler.StopSound(sound1);
+            ITSoundHandler.StopSound(soundPos3);
+            ITSoundHandler.StopSound(soundPos1);
         }
     }
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        ITSoundHandler.StopSound(sound0);
-        ITSoundHandler.StopSound(sound1);
-        ITSoundHandler.StopSound(sound2);
-        ITSoundHandler.StopSound(sound3);
+        ITSoundHandler.StopSound(soundPos0);
+        ITSoundHandler.StopSound(soundPos1);
+        ITSoundHandler.StopSound(soundPos2);
+        ITSoundHandler.StopSound(soundPos3);
         super.onChunkUnload();
     }
 
     @Override public void disassemble() {
         super.disassemble();
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound0.getX(), sound0.getY(), sound0.getZ(), 0));
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound1), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound1.getX(), sound1.getY(), sound1.getZ(), 0));
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound2), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound2.getX(), sound2.getY(), sound2.getZ(), 0));
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound3), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound3.getX(), sound3.getY(), sound3.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos1), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos1.getX(), soundPos1.getY(), soundPos1.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos2), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos2.getX(), soundPos2.getY(), soundPos2.getZ(), 0));
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos3), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos3.getX(), soundPos3.getY(), soundPos3.getZ(), 0));
     }
 
     @Override public void receiveMessageFromServer(ByteBuf buf) {
         if (buf.readableBytes() == 0) {
-            if (sound2 == null) InitializePoIs();
+            if (soundPos2 == null) InitializePoIs();
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(sound2.getX(), sound2.getY(), sound2.getZ()) / 8, 1);
-            ITSounds.gasTurbineSpark.PlayOnce(sound2, 1 / attenuation, 1);
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos2.getX(), soundPos2.getY(), soundPos2.getZ()) / 8, 1);
+            ITSounds.gasTurbineSpark.PlayOnce(soundPos2, 1 / attenuation, 1);
         } else {
             speed = buf.readInt();
             starterRunning = buf.readBoolean();
@@ -354,10 +354,18 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                 case "particle0":
                     particle0 = getBlockPosForPos(poi.position);
                     break;
-                case "sound0": sound0 = getBlockPosForPos(poi.position); break;
-                case "sound1": sound1 = getBlockPosForPos(poi.position); break;
-                case "sound2": sound2 = getBlockPosForPos(poi.position); break;
-                case "sound3": sound3 = getBlockPosForPos(poi.position); break;
+                case "sound0":
+                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
+                    break;
+                case "sound1":
+                    if (world.isRemote) soundPos1 = getBlockPosForPos(poi.position);
+                    break;
+                case "sound2":
+                    if (world.isRemote) soundPos2 = getBlockPosForPos(poi.position);
+                    break;
+                case "sound3":
+                    if (world.isRemote) soundPos3 = getBlockPosForPos(poi.position);
+                    break;
                 case "energy_input0":
                     energyInput0 = new PoICache(facing, poi, mirrored);
                     break;

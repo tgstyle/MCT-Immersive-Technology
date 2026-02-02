@@ -71,7 +71,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     private boolean needsNotify = false;
 
     protected PoICache fluidInput0, fluidOutput0, mechanicalOutput0, redstone0;
-    private BlockPos outputFront0, mechanicalOutputPos0, sound0;
+    private BlockPos outputFront0, mechanicalOutputPos0, soundPos0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -104,28 +104,28 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
 
     @SideOnly(Side.CLIENT)
     private void handleSounds() {
-        if (sound0 == null) InitializePoIs();
-        if (soundVolume == 0f) ITSoundHandler.StopSound(sound0);
+        if (soundPos0 == null) InitializePoIs();
+        if (soundVolume == 0f) ITSoundHandler.StopSound(soundPos0);
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(sound0.getX() + .5, sound0.getY() + .5, sound0.getZ() + .5) / 8f, 1f);
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8f, 1f);
             float level = ITUtils.remapRange(0f, 1f, 0.5f, 1.0f, soundVolume);
-            ITSounds.turbine.PlayRepeating(sound0, (11f * (level - 0.5f)) / attenuation, level);
+            ITSounds.turbine.PlayRepeating(soundPos0, (11f * (level - 0.5f)) / attenuation, level);
         }
     }
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        if (sound0 != null) ITSoundHandler.StopSound(sound0);
+        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
         super.onChunkUnload();
     }
 
     @Override public void disassemble() {
         super.disassemble();
-        if (sound0 == null) InitializePoIs();
+        if (soundPos0 == null) InitializePoIs();
         if (!world.isRemote) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound0),
-                    new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound0.getX(), sound0.getY(), sound0.getZ(), 0));
+            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0),
+                    new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         }
     }
 
@@ -146,7 +146,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         super.update();
         if (!formed) return;
 
-        if (needsPoIInit || fluidInput0 == null || mechanicalOutput0 == null || redstone0 == null || sound0 == null) {
+        if (needsPoIInit || fluidInput0 == null || mechanicalOutput0 == null || redstone0 == null || soundPos0 == null) {
             InitializePoIs();
             needsPoIInit = false;
         }
@@ -271,7 +271,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
                     mechanicalOutputPos0 = getBlockPosForPos(mechanicalOutput0.position).offset(mechanicalOutput0.facing);
                     break;
                 case "sound0":
-                    sound0 = getBlockPosForPos(poi.position);
+                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
                     break;
             }
         }

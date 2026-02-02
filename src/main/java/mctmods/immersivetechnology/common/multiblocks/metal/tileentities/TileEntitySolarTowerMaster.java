@@ -220,8 +220,6 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     }
 
     private void InitializePoIs() {
-        redstone0 = fluidInput0 = fluidOutput0 = null;
-        basePos0 = collectorPos0 = fluidOutputFront0 = soundPos0 = null;
         for (PoIJSONSchema poi : TileEntityITMultiblockPartSolarTower.instance.pointsOfInterest) {
             if (poi == null) continue;
             switch (poi.name) {
@@ -236,7 +234,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
                     redstone0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "sound0":
-                    soundPos0 = getBlockPosForPos(poi.position);
+                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
                     break;
                 case "link0":
                     basePos0 = getBlockPosForPos(new PoICache(facing, poi, mirrored).position);

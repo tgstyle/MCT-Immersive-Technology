@@ -91,8 +91,6 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     }
 
     private void InitializePoIs() {
-        fluidInputs.clear();
-        fluidOutputs.clear();
         for (PoIJSONSchema poi : TileEntityITMultiblockPartSteelSheetmetalTank.instance.pointsOfInterest) {
             PoICache cache = new PoICache(facing, poi, mirrored);
             switch (poi.name) {

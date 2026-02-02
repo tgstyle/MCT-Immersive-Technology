@@ -77,7 +77,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     private int oldComparatorOutput;
 
     protected PoICache fluidInput0, fluidInput1, fluidOutput0, fluidOutput1, redstone0, energyInput0;
-    private BlockPos fluidOutputPos0, fluidOutputPos1, sound0;
+    private BlockPos fluidOutputPos0, fluidOutputPos1, soundPos0;
 
     private boolean needsPoIInit = true;
     private boolean needsNotify = true;
@@ -229,7 +229,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
                     fluidOutputPos1 = getBlockPosForPos(fluidOutput1.position).offset(fluidOutput1.facing);
                     break;
                 case "sound0":
-                    sound0 = getBlockPosForPos(poi.position);
+                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
                     break;
             }
         }
@@ -254,20 +254,20 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
-        if (sound0 == null) InitializePoIs();
-        if (soundVolume == 0) ITSoundHandler.StopSound(sound0);
+        if (soundPos0 == null) InitializePoIs();
+        if (soundVolume == 0) ITSoundHandler.StopSound(soundPos0);
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(sound0.getX() + .5, sound0.getY() + .5, sound0.getZ() + .5) / 8, 1);
-            ITSounds.heatExchanger.PlayRepeating(sound0, soundVolume / attenuation, 1f);
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
+            ITSounds.heatExchanger.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
         }
     }
 
     @SideOnly(Side.CLIENT)
     private void clientUpdate() {
-        if (sound0 == null) InitializePoIs();
+        if (soundPos0 == null) InitializePoIs();
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double distSq = player.getDistanceSq(sound0.getX() + .5, sound0.getY() + .5, sound0.getZ() + .5);
+        double distSq = player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5);
         if (world.provider.getDimension() == player.dimension && distSq < 400 && (distanceToTE > 400 || playerDimension != player.dimension)) requestUpdate();
         distanceToTE = distSq;
         playerDimension = player.dimension;
@@ -285,15 +285,15 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     @SideOnly(Side.CLIENT)
     @Override
     public void onChunkUnload() {
-        if (sound0 != null) ITSoundHandler.StopSound(sound0);
+        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
         super.onChunkUnload();
     }
 
     @Override
     public void disassemble() {
-        if (sound0 == null) InitializePoIs();
-        if (sound0 != null) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sound0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), sound0.getX(), sound0.getY(), sound0.getZ(), 0));
+        if (soundPos0 == null) InitializePoIs();
+        if (soundPos0 != null) {
+            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         }
         super.disassemble();
     }

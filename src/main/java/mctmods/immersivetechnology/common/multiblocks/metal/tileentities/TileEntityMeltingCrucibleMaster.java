@@ -313,8 +313,6 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     }
 
     private void InitializePoIs() {
-        energyInput0 = itemInput0 = fluidOutput0 = redstone0 = null;
-        soundPos0 = fluidOutputPos0 = null;
         for (PoIJSONSchema poi : TileEntityITMultiblockPartMeltingCrucible.instance.pointsOfInterest) {
             PoICache cache = new PoICache(facing, poi, mirrored);
             switch (poi.name) {
@@ -332,7 +330,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
                     redstone0 = cache;
                     break;
                 case "sound0":
-                    soundPos0 = getBlockPosForPos(poi.position);
+                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
                     break;
             }
         }

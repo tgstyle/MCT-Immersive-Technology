@@ -163,14 +163,22 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartBoiler.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "fluid_input0": fluidInput0 = new PoICache(facing, poi, mirrored); break;
-                case "fluid_input1": fluidInput1 = new PoICache(facing, poi, mirrored); break;
+                case "fluid_input0":
+                    fluidInput0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "fluid_input1":
+                    fluidInput1 = new PoICache(facing, poi, mirrored);
+                    break;
                 case "fluid_output0":
                     fluidOutput0 = new PoICache(facing, poi, mirrored);
                     fluidOutputFront0 = getBlockPosForPos(fluidOutput0.position).offset(fluidOutput0.facing);
                     break;
-                case "redstone0": redstone0 = new PoICache(facing, poi, mirrored); break;
-                case "sound0": soundPos0 = getBlockPosForPos(poi.position); break;
+                case "redstone0":
+                    redstone0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "sound0":
+                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
+                    break;
             }
         }
     }

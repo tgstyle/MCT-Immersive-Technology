@@ -325,7 +325,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
                     redstone0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "sound0":
-                    soundPos0 = getBlockPosForPos(poi.position);
+                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
                     break;
             }
         }

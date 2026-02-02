@@ -218,8 +218,6 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     }
 
     private void InitializePoIs() {
-        fluidOutput0 = itemInput0 = redstone0 = null;
-        basePos0 = collectorPos0 = fluidOutputFront0 = soundPos0 = null;
         for (PoIJSONSchema poi : TileEntityITMultiblockPartSolarMelter.instance.pointsOfInterest) {
             if (poi == null) continue;
             switch (poi.name) {
@@ -234,7 +232,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
                     redstone0 = new PoICache(facing, poi, mirrored);
                     break;
                 case "sound0":
-                    soundPos0 = getBlockPosForPos(poi.position);
+                    if (world.isRemote) soundPos0 = getBlockPosForPos(poi.position);
                     break;
                 case "link0":
                     basePos0 = getBlockPosForPos(new PoICache(facing, poi, mirrored).position);

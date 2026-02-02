@@ -72,7 +72,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     PoICache fluidOutput0;
     PoICache baseheater0;
     PoICache baseheater1;
-    PoICache redstone0;
+    private BlockPos soundPos0;
 
     BlockPos itemOutputPos;
     BlockPos fluidOutputPos;
@@ -100,25 +100,25 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     @SideOnly(Side.CLIENT)
     private void handleSounds() {
+        if (soundPos0 == null) InitializePoIs();
         if (isRunning) {
             if (soundVolume < 1) soundVolume += 0.01f;
         } else if (soundVolume > 0) {
             soundVolume -= 0.01f;
         }
-        BlockPos center = getPos();
         if (soundVolume <= 0) {
-            ITSoundHandler.StopSound(center);
+            ITSoundHandler.StopSound(soundPos0);
             soundVolume = 0;
         } else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(center.getX() + .5, center.getY() + .5, center.getZ() + .5) / 8, 1);
-            ITSounds.advancedCokeOven.PlayRepeating(center, soundVolume / attenuation, 1);
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
+            ITSounds.advancedCokeOven.PlayRepeating(soundPos0, soundVolume / attenuation, 1);
         }
     }
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        ITSoundHandler.StopSound(getPos());
+        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
         super.onChunkUnload();
     }
 
@@ -131,8 +131,8 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             }
             inventory.clear();
         }
-        BlockPos center = getPos();
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(center), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+        if (soundPos0 == null) InitializePoIs();
+        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         super.disassemble();
     }
 
@@ -327,8 +327,6 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     }
 
     void InitializePoIs() {
-        itemInput0 = itemOutput0 = fluidOutput0 = baseheater0 = baseheater1 = redstone0 = null;
-        itemOutputPos = fluidOutputPos = null;
         for (PoIJSONSchema poi : TileEntityITMultiblockPartAdvancedCokeOven.instance.pointsOfInterest) {
             PoICache cache = new PoICache(facing, poi, mirrored);
             switch (poi.name) {
@@ -349,8 +347,8 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
                 case "baseheater1":
                     baseheater1 = cache;
                     break;
-                case "redstone0":
-                    redstone0 = cache;
+                case "sound0":
+                    soundPos0 = getBlockPosForPos(poi.position);
                     break;
             }
         }
@@ -361,7 +359,6 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         if (itemInput0 != null) notifyNeighbor(getBlockPosForPos(itemInput0.position));
         if (itemOutput0 != null) notifyNeighbor(getBlockPosForPos(itemOutput0.position));
         if (fluidOutput0 != null) notifyNeighbor(getBlockPosForPos(fluidOutput0.position));
-        if (redstone0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstone0.position), getBlockType());
     }
 
     @Override public void TankContentsChanged() {

@@ -9,13 +9,11 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.AdvancedCokeOvenShape;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.shapes.BooleanOp;
 import mctmods.immersivetechnology.common.util.shapes.Shapes;
 import mctmods.immersivetechnology.common.util.shapes.VoxelShape;
 
@@ -39,7 +37,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static mctmods.immersivetechnology.common.multiblocks.stone.shapes.AdvancedCokeOvenShape.GETTER;
 import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<TileEntityAdvancedCokeOvenSlave, IMultiblockRecipe, TileEntityAdvancedCokeOvenMaster> implements IActiveState, IGuiTile, IComparatorOverride, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
