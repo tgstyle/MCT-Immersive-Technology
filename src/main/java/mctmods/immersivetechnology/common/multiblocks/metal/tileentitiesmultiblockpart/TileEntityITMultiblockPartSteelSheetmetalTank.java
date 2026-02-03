@@ -13,9 +13,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityITMultiblockPartSteelSheetmetalTank extends TileEntityITMultiblockPart<TileEntitySteelSheetmetalTankSlave> implements MultiblockHandler.IMultiblock {
+
     public static TileEntityITMultiblockPartSteelSheetmetalTank instance = new TileEntityITMultiblockPartSteelSheetmetalTank();
 
-    @SideOnly(Side.CLIENT)
     static ItemStack renderStack = ItemStack.EMPTY;
 
     public TileEntityITMultiblockPartSteelSheetmetalTank() {
@@ -30,8 +30,8 @@ public class TileEntityITMultiblockPartSteelSheetmetalTank extends TileEntityITM
 
     @Override public boolean canRenderFormedStructure() { return true; }
 
-    @Override
     @SideOnly(Side.CLIENT)
+    @Override
     public void renderFormedStructure() {
         if (renderStack.isEmpty()) renderStack = new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.STEEL_TANK.getMeta());
         GlStateManager.translate(1.875, 1.75, 1.125);
