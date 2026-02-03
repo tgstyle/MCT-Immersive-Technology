@@ -24,7 +24,8 @@ public class GasTurbineRecipeSerializer extends IERecipeSerializer<GasTurbineRec
         FluidStack fluidOutput = null;
         if (json.has("output")) fluidOutput = ApiUtils.jsonDeserializeFluidStack(json.getAsJsonObject("output"));
         int time = GsonHelper.getAsInt(json, "time");
-        return new GasTurbineRecipe(recipeId, input, fluidOutput, time);
+        float torque = json.has("torque") ? GsonHelper.getAsFloat(json, "torque") : 1.0f;
+        return new GasTurbineRecipe(recipeId, input, fluidOutput, time, torque);
     }
 
     @Override @Nullable public GasTurbineRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
@@ -32,7 +33,8 @@ public class GasTurbineRecipeSerializer extends IERecipeSerializer<GasTurbineRec
         boolean hasOutput = buffer.readBoolean();
         FluidStack fluidOutput = hasOutput ? buffer.readFluidStack() : null;
         int time = buffer.readInt();
-        return new GasTurbineRecipe(recipeId, input, fluidOutput, time);
+        float torque = buffer.readFloat();
+        return new GasTurbineRecipe(recipeId, input, fluidOutput, time, torque);
     }
 
     @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, GasTurbineRecipe recipe) {
@@ -41,5 +43,6 @@ public class GasTurbineRecipeSerializer extends IERecipeSerializer<GasTurbineRec
         buffer.writeBoolean(hasOutput);
         if (hasOutput) buffer.writeFluidStack(recipe.fluidOutput);
         buffer.writeInt(recipe.getTotalProcessTime());
+        buffer.writeFloat(recipe.torque);
     }
 }

@@ -187,10 +187,13 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         boolean canRun = currentlyEnabled && hasConsumer;
         float ratio = 0f;
         if (canRun) {
+            // Reset to default each tick; will be overwritten if a recipe is found.
+            state.currentTorque = 1.0f;
             FluidStack fluid = state.tanks.input.getFluid();
             if (fluid.getAmount() > 0) {
                 SteamTurbineRecipe recipe = state.recipeGetter.apply(level, fluid);
                 if (recipe != null) {
+                    state.currentTorque = recipe.torque;
                     float fluidPerTick = (float) recipe.input.getAmount() / recipe.getTotalProcessTime();
                     state.accumConsume += fluidPerTick;
                     int toDrain = (int) state.accumConsume;
@@ -252,7 +255,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
     private record MechanicalEnergyProvider(State state) implements IMechanicalEnergyProvider {
         @Override public int getSpeed() { return state.speed; }
-        @Override public float getTorque() { return 1f; }
+        @Override public float getTorque() { return state.currentTorque; }
         @Override public int getMaxSpeed() { return MAX_SPEED; }
         @Override public double getBaseMass() { return BASE_MASS; }
         @Override public double getDriveTorque() { return DRIVE_TORQUE; }
@@ -271,6 +274,8 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         public final CapabilityReference<IFluidHandler> fluidOutput;
         private final BiFunction<Level, FluidStack, SteamTurbineRecipe> recipeGetter;
         public int speed = 0;
+        /** Current torque multiplier (recipe-controlled). Defaults to 1.0 for compatibility. */
+        public float currentTorque = 1.0f;
         public boolean active = false;
         public BooleanSupplier isSoundPlaying = () -> false;
         public float animation_fanRotationStep = 0;
