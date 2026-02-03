@@ -19,6 +19,7 @@ import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
 import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
@@ -141,7 +142,8 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
     private void generateAndPushEnergy(State state, IMultiblockContext<State> ctx, Level level) {
         double ratio = (double) state.speed / MAX_SPEED;
-        int generatedThisTick = (int) Math.round(ratio * state.torqueMultiplier * MAX_OUTPUT);
+        double factor = Math.max(0D, ITServerConfig.alternatorPowerFactor);
+        int generatedThisTick = (int) Math.round(ratio * state.torqueMultiplier * MAX_OUTPUT * factor);
         List<IEnergyStorage> connected = getConnectedHandlers(ctx, level);
         if (connected.isEmpty()) { state.energy.receiveEnergy(generatedThisTick, false); return; }
         int pushed = distributeFluxProper(connected, generatedThisTick);

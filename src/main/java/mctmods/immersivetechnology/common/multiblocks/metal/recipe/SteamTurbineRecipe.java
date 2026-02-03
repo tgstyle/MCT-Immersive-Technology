@@ -22,14 +22,21 @@ public class SteamTurbineRecipe extends IESerializableRecipe {
 
     public final FluidTagInput input;
     @Nullable public final FluidStack fluidOutput;
+    /**
+     * Dimensionless torque multiplier applied to mechanical output while this recipe is used.
+     *
+     * <p>Defaults to {@code 1.0f} for backwards compatibility with older datapacks.</p>
+     */
+    public final float torque;
     private final int time;
     Lazy<Integer> totalProcessTime;
 
-    public SteamTurbineRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time) {
+    public SteamTurbineRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time, float torque) {
         super(LAZY_EMPTY, ITRecipeTypes.STEAM_TURBINE, id);
         this.input = input;
         this.fluidOutput = fluidOutput;
         this.time = time;
+        this.torque = torque;
         totalProcessTime = Lazy.of(() -> this.time);
     }
 

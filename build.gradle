@@ -329,7 +329,7 @@ tasks.register('genIntellijRunsDummy')
 
 tasks.register('speedUpPreRun') {
     doLast {
-        for (String s : new String[]{"Client", "Server", "Data"}) {
+        for (String s in ["Client", "Server", "Data"]) {
             def runConfigFile = file(".idea/runConfigurations/run${s}.xml")
             if (runConfigFile.exists()) {
                 ant.replace(
