@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei;
 
+import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
+
 import mctmods.immersivetechnology.api.crafting.*;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe.BoilerFuelRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.*;
@@ -16,6 +18,8 @@ import mctmods.immersivetechnology.common.util.compat.jei.meltingcrucible.Meltin
 import mctmods.immersivetechnology.common.util.compat.jei.radiator.RadiatorRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.solartower.SolarTowerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.steamturbine.SteamTurbineRecipeCategory;
+import mctmods.immersivetechnology.common.util.compat.jei.advancedcokeoven.AdvancedCokeOvenRecipeCategory;
+
 import mezz.jei.api.*;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.ITooltipCallback;
@@ -23,6 +27,7 @@ import mezz.jei.api.ingredients.IModIngredientRegistration;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.IRecipeWrapper;
+
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
@@ -61,6 +66,7 @@ public class JEIHelper implements IModPlugin {
         if (Multiblocks.enable.enable_electrolyticCrucibleBattery) { categories.put(ElectrolyticCrucibleBatteryRecipe.class, new ElectrolyticCrucibleBatteryRecipeCategory(guiHelper)); }
         if (Multiblocks.enable.enable_meltingCrucible || Multiblocks.enable.enable_solarMelter) { categories.put(MeltingCrucibleRecipe.class, new MeltingCrucibleRecipeCategory(guiHelper)); }
         if (Multiblocks.enable.enable_radiator) { categories.put(RadiatorRecipe.class, new RadiatorRecipeCategory(guiHelper)); }
+        if (Multiblocks.enable.enable_advancedCokeOven) { categories.put(CokeOvenRecipe.class, new AdvancedCokeOvenRecipeCategory(guiHelper)); }
         registry.addRecipeCategories(categories.values().toArray(new IRecipeCategory[0]));
     }
 
@@ -85,6 +91,7 @@ public class JEIHelper implements IModPlugin {
         if (Multiblocks.enable.enable_electrolyticCrucibleBattery) { modRegistry.addRecipes(new ArrayList<Object>((ElectrolyticCrucibleBatteryRecipe.recipeList)), "it.electrolyticCrucibleBattery"); }
         if (Multiblocks.enable.enable_meltingCrucible || Multiblocks.enable.enable_solarMelter) { modRegistry.addRecipes(new ArrayList<Object>((MeltingCrucibleRecipe.recipeList)), "it.meltingCrucible"); }
         if (Multiblocks.enable.enable_radiator) { modRegistry.addRecipes(new ArrayList<Object>((RadiatorRecipe.recipeList)), "it.radiator"); }
+        if (Multiblocks.enable.enable_advancedCokeOven) { modRegistry.addRecipes(CokeOvenRecipe.recipeList, "it.advancedCokeOven"); }
     }
 
     @SuppressWarnings("deprecation")

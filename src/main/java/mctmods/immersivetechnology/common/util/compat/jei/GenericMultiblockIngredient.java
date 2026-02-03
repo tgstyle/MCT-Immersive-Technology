@@ -4,6 +4,8 @@ import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
+import mctmods.immersivetechnology.common.multiblocks.stone.types.BlockType_StoneMultiblock;
+
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class GenericMultiblockIngredient {
     public static GenericMultiblockIngredient MELTING_CRUCIBLE;
     public static GenericMultiblockIngredient RADIATOR;
     public static GenericMultiblockIngredient SOLAR_MELTER;
+    public static GenericMultiblockIngredient ADVANCED_COKE_OVEN;
 
     static {
         if (Multiblocks.enable.enable_steamTurbine) STEAM_TURBINE = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.STEAM_TURBINE.getMeta()));
@@ -38,6 +41,7 @@ public class GenericMultiblockIngredient {
         if (Multiblocks.enable.enable_meltingCrucible) MELTING_CRUCIBLE = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.MELTING_CRUCIBLE.getMeta()));
         if (Multiblocks.enable.enable_radiator) RADIATOR = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.RADIATOR.getMeta()));
         if (Multiblocks.enable.enable_solarMelter) SOLAR_MELTER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.SOLAR_MELTER.getMeta()));
+        if (Multiblocks.enable.enable_advancedCokeOven) ADVANCED_COKE_OVEN = new GenericMultiblockIngredient(new ItemStack(ITContent.blockStoneMultiblock, 1, BlockType_StoneMultiblock.ADVANCED_COKE_OVEN.getMeta()));
     }
 
     public ItemStack renderStack;
