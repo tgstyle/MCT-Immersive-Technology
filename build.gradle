@@ -74,6 +74,9 @@ dependencies {
 
     compileOnly fg.deobf("${common.crft_version}")
     compileOnly fg.deobf("${common.zens_version}")
+	
+	implementation fg.deobf("curse.maven:${common.ppfx_version}")
+	implementation fg.deobf("curse.maven:${common.cfga_version}")
 
     annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
     annotationProcessor 'com.google.guava:guava:32.1.2-jre'
