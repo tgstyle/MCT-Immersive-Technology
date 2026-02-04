@@ -1,7 +1,9 @@
 package mctmods.immersivetechnology.mixin;
 
 import mctmods.immersivetechnology.core.MCTMixinConfig;
+
 import net.minecraft.server.MinecraftServer;
+
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -27,7 +29,7 @@ public abstract class MixinMCTMinecraftServer {
         return sb.toString();
     }
 
-    @Redirect(method = "run",
+    @Redirect(method = "run", remap = false,
             at = @At(value = "INVOKE",
                     target = "Lorg/apache/logging/log4j/Logger;error(Ljava/lang/String;Ljava/lang/Throwable;)V",
                     ordinal = 0))
