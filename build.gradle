@@ -151,13 +151,6 @@ processResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
-mixin {
-    config 'mixins.immersivetechnology.json'
-    add sourceSets.main, 'mixins.immersivetech.refmap.json'
-    config 'mixins.immersiveengineering.json'
-    add sourceSets.main, 'mixins.immersivetech.refmap.json'
-}
-
 fancyGradle {
     patches {
         resources
