@@ -159,19 +159,19 @@ def fill_gaps_along_axis(occupied_np, axis, threshold, is_excluded=None, max_int
 def remove_protrusions(np_arr):
     shape = np_arr.shape
     directions = [(1,0,0), (-1,0,0), (0,1,0), (0,-1,0), (0,0,1), (0,0,-1)]
-    
+
     # Neighbor counts via convolution
     kernel = np.array([[[0,0,0],[0,1,0],[0,0,0]],
                        [[0,1,0],[1,0,1],[0,1,0]],
                        [[0,0,0],[0,1,0],[0,0,0]]])
     neigh_counts = ndimage.convolve(np_arr.astype(int), kernel, mode='constant', cval=0)
-    
+
     # Candidates: occupied with 1-2 neighbors
     candidates = np.where(np_arr & (neigh_counts > 0) & (neigh_counts <= 2))
-    
+
     for idx in range(len(candidates[0])):
         x, y, z = candidates[0][idx], candidates[1][idx], candidates[2][idx]
-        
+
         # Get neighbor positions and directions
         neigh_pos_list = []
         neigh_dirs = []
@@ -180,25 +180,25 @@ def remove_protrusions(np_arr):
             if 0 <= nx < shape[0] and 0 <= ny < shape[1] and 0 <= nz < shape[2] and np_arr[nx, ny, nz]:
                 neigh_pos_list.append((nx, ny, nz))
                 neigh_dirs.append((dx, dy, dz))
-        
+
         num_neigh = len(neigh_dirs)
         if num_neigh == 0:
             continue  # Isolated, but shouldn't happen
-        
+
         # Get unique axes (0:x,1:y,2:z) for directions
         axes = []
         for d in neigh_dirs:
             axis = next(i for i, v in enumerate(map(abs, d)) if v > 0)
             axes.append(axis)
-        
-        # All unique axes? (different directions, no same-axis multiples/opposites)
+
+        # All unique axes? (different directions, no same same-axis multiples/opposites)
         if len(set(axes)) != num_neigh:
             continue  # Skip lines/sheets
-        
+
         # Check each neighbor well-connected (>3 neighbors)
         if all(neigh_counts[nx, ny, nz] > 3 for nx, ny, nz in neigh_pos_list):
             np_arr[x, y, z] = False
-    
+
     return np_arr
 
 # Sub-post-processing functions

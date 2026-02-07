@@ -1,4 +1,3 @@
-# bb_model_parser.py
 import json
 import math
 import multiprocessing as mp
@@ -18,6 +17,10 @@ try:
 except ImportError:
     torch_directml = None
 
+def log(message):
+    with open('log.txt', 'a', encoding='utf-8') as f:
+        print(message, file=f, flush=True)
+
 def center_in_block(occupied_np, res=16):
     if occupied_np.sum() == 0 or occupied_np.all():
         return occupied_np
@@ -35,7 +38,7 @@ def center_in_block(occupied_np, res=16):
     return new_occupied
 
 # Main model parsing function
-def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=None, empty_set=None, fill_all_voids=False, exclude_set=None, axis_order=None, mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=None, return_voxels=False, pp_order='per-block,regional,global,per-block-gaps,protrusions', sub_order='remove-small,fill-holes,fill-voids,fill-gaps', do_center=False):
+def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=None, empty_set=None, fill_all_voids=False, exclude_set=None, axis_order=None, mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=None, return_voxels=False, pp_order='per-block,regional,global,per-block-gaps,protrusions', sub_order='remove-small,fill-holes,fill-voids,fill-gaps', do_center=False, debug=False):
     # Parse thresholds and settings
     if rpp_list is None:
         rpp_list = []
@@ -157,6 +160,9 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
     num_bx = math.ceil((maxx - minx) / 16)
     num_by = math.ceil((maxy - miny) / 16)
     num_bz = math.ceil((maxz - minz) / 16)
+    if debug:
+        log(f"Model bounds: min=({minx},{miny},{minz}), max=({maxx},{maxy},{maxz})")
+        log(f"Model triangles: {len(triangles)}, blocks: {num_bx}x{num_by}x{num_bz}")
     res = 16
     dtype = torch.float32
     if is_watertight:
@@ -178,7 +184,7 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
     for bx in range(num_bx):
         for by in range(num_by):
             for bz in range(num_bz):
-                args_list.append((bx, by, bz, minx, miny, minz, verts, triangles, edges, res, x_threshold, y_threshold, z_threshold, is_watertight, has_thin_features, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, device, solid_set, empty_set, directions_t, offsets_t, fill_all_voids, axis_order))
+                args_list.append((bx, by, bz, minx, miny, minz, verts, triangles, edges, res, x_threshold, y_threshold, z_threshold, is_watertight, has_thin_features, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, device, solid_set, empty_set, directions_t, offsets_t, fill_all_voids, axis_order, debug))
     def refresher(refresher_pbar, refresher_stop_event):
         while not refresher_stop_event.wait(1):
             refresher_pbar.refresh()
@@ -206,6 +212,8 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
         thread.join()
     raw_results = [r for r in results if r is not None]
     block_occupied = {(bx, by, bz): occupied_np for bx, by, bz, occupied_np in raw_results}
+    if debug:
+        log(f"Post-voxelization block_occupied keys: {list((bx, by, bz) for bx, by, bz, _ in raw_results)}")
     if not no_postprocess:
         pp_order_list = [s.strip() for s in pp_order.split(',')]
         if not global_postprocess:
@@ -227,7 +235,9 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
                         occupied_np = block_occupied[b]
                         if occupied_np.sum() > 0:
                             overall_voxels.append((bx, by, bz, occupied_np))
-        return normalize_offsets(overall_voxels)
+        if debug:
+            log(f"Pre-normalize aabbs keys: {[(bx, by, bz) for bx, by, bz, _ in overall_voxels]}")
+        return normalize_offsets(overall_voxels, debug=debug)
     aabbs = []
     for bx in range(num_bx):
         for by in range(num_by):
@@ -237,6 +247,8 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
                     continue
                 occupied_np = block_occupied[b]
                 block_aabbs = extract_aabbs_from_occupied(occupied_np, res=res)
+                if debug:
+                    log(f"AABBs extracted for block: {len(block_aabbs)} boxes")
                 if block_aabbs:
                     aabbs.append((bx, by, bz, block_aabbs))
     if num_bx == 1 and num_by == 1 and num_bz == 1 and aabbs:
@@ -257,7 +269,9 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
         for minx, miny, minz, maxx, maxy, maxz in block_aabbs:
             shifted_aabbs.append((minx + shift_x, miny + shift_y, minz + shift_z, maxx + shift_x, maxy + shift_y, maxz + shift_z))
         aabbs[0] = (0, 0, 0, shifted_aabbs)
-    return normalize_offsets(aabbs)
+    if debug:
+        log(f"Pre-normalize aabbs keys: {[(bx, by, bz) for bx, by, bz, _ in aabbs]}")
+    return normalize_offsets(aabbs, debug=debug)
 
 # Utility functions for file handling and selection
 def list_bbmodel_files(directory):
@@ -275,11 +289,13 @@ def select_file(bbmodel_files, prompt="Select a file by number: "):
         except ValueError: print("Please enter a number.")
 
 # Normalization function
-def normalize_offsets(aabbs):
+def normalize_offsets(aabbs, debug=False):
     if not aabbs: return aabbs
     min_bx = min(bx for bx, _, _, _ in aabbs)
     min_by = min(by for _, by, _, _ in aabbs)
     min_bz = min(bz for _, _, bz, _ in aabbs)
+    if debug:
+        log(f"Normalization mins: bx={min_bx}, by={min_by}, bz={min_bz}")
     shift_bx = -min_bx
     shift_by = -min_by
     shift_bz = -min_bz

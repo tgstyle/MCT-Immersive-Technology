@@ -1,4 +1,3 @@
-# bb_shape.py
 import argparse
 import json
 import multiprocessing as mp
@@ -15,6 +14,10 @@ try:
     import torch_directml
 except ImportError:
     torch_directml = None
+
+def log(message):
+    with open('log.txt', 'a', encoding='utf-8') as f:
+        print(message, file=f, flush=True)
 
 def main():
     start_time = time.time()
@@ -72,7 +75,11 @@ def main():
     # Minecraft version option
     parser.add_argument('--mc-version', type=str, default='default', choices=['1.12.2', 'default'], help='Minecraft version for output adjustment')
 
+    # Debug logging
+    parser.add_argument('--debug-log', action='store_true', help='Enable detailed voxelization debug logging to log.txt (model stats + intersection path per block)')
+
     args = parser.parse_args()
+    debug = args.debug_log
     solid_set = set()
     if args.solid_blocks:
         for s in args.solid_blocks.split():
@@ -244,23 +251,30 @@ def main():
                     offsets.append((offset_bx, offset_by, offset_bz))
                 supp_list.append((supp_file, offsets))
     print("Processing main model...")
-    overall_voxels = parse_bbmodel(main_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=args.sub_pp_order, do_center=False)
+    overall_voxels = parse_bbmodel(main_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=args.sub_pp_order, do_center=False, debug=debug)
+    overall_dict = {(bx, by, bz): occupied_np for bx, by, bz, occupied_np in overall_voxels}
+    if debug:
+        log(f"Initial overall_dict keys: {list(overall_dict.keys())}")
     cache = {}
     unique_supps = set(s_file for s_file, _ in supp_list)
     for s_file in unique_supps:
         print(f"Processing supplementary model: {s_file}")
         s_path = os.path.join(directory, s_file)
-        s_voxels = parse_bbmodel(s_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=args.sub_pp_order, do_center=True)
+        s_voxels = parse_bbmodel(s_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=args.sub_pp_order, do_center=True, debug=debug)
         cache[s_file] = s_voxels
+        if debug:
+            log(f"Supplementary model {s_file} post-voxelization keys: {list((bx, by, bz) for bx, by, bz, _ in s_voxels)}")
+
     placements = []
     for s_file, offsets in supp_list:
         s_voxels = cache[s_file]
         for off_bx, off_by, off_bz in offsets:
             placements.append((s_voxels, off_bx, off_by, off_bz))
     placements.sort(key=lambda p: p[3])
-    overall_dict = {(bx, by, bz): occupied_np for bx, by, bz, occupied_np in overall_voxels}
     for s_voxels, off_bx, off_by, off_bz in placements:
         current_min_bz = min(k[2] for k in overall_dict) if overall_dict else 0
+        if debug:
+            log(f"Placement for off_bz={off_bz}, current_min_bz={current_min_bz}")
         if off_bz < current_min_bz:
             shift = current_min_bz - off_bz
             new_dict = {}
@@ -281,6 +295,8 @@ def main():
                 overall_dict[(new_bx, new_by, new_bz)] |= occupied_np  # merge if overlap
             else:
                 overall_dict[(new_bx, new_by, new_bz)] = occupied_np
+        if debug:
+            log(f"After placement, overall_dict keys: {list(overall_dict.keys())}")
     # Force solid and empty blocks after combining
     res = 16
     for b in solid_set:
@@ -305,6 +321,8 @@ def main():
         occ_thresh = args.occ_thresh
         sub_order = args.sub_pp_order
         block_occupied = apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_order, pp_order_list, subs, do_global=global_postprocess, res=16)
+    if debug:
+        log(f"Post-postprocess block_occupied keys: {list(block_occupied.keys())}")
     if args.mc_version == '1.12.2':
         max_bz = max(k[2] for k in block_occupied) if block_occupied else 0
         new_dict = {}
@@ -328,8 +346,12 @@ def main():
             block_aabbs = extract_aabbs_from_occupied(occupied_low, res=low_res, force_merge=True)
         else:
             block_aabbs = extract_aabbs_from_occupied(occupied_np, res=16)
+        if debug:
+            log(f"AABBs extracted for block: {len(block_aabbs)} boxes")
         if block_aabbs:
             overall_aabbs.append((bx, by, bz, block_aabbs))
+    if debug:
+        log(f"Extracted overall_aabbs keys: {[(bx, by, bz) for bx, by, bz, _ in overall_aabbs]}")
     # Apply AABB copies
     copies = []
     for c in args.copy_aabb:
@@ -356,7 +378,9 @@ def main():
                 break
         if not found:
             overall_aabbs.append((to_b[0], to_b[1], to_b[2], source_aabbs[:]))
-    overall_aabbs = normalize_offsets(overall_aabbs)
+    overall_aabbs = normalize_offsets(overall_aabbs, debug=debug)
+    if debug:
+        log(f"Post-normalize overall_aabbs keys: {[(bx, by, bz) for bx, by, bz, _ in overall_aabbs]}")
     base_name = os.path.splitext(main_file)[0]
     version_suffix = '_1.12.2' if args.mc_version == '1.12.2' else ''
     do_java = args.output != 'json'
@@ -378,9 +402,13 @@ def main():
         width = max_bx + 1
         height = max_by + 1
         length = max_bz + 1
+        if debug:
+            log(f"JSON dimensions: width={width}, height={height}, length={length}")
         aabb_json = [None] * (height * length * width)
         for bx, by, bz, block_aabbs in overall_aabbs:
             index = by * (width * length) + bz * width + bx
+            if debug:
+                log(f"AABB for ({bx},{by},{bz}) at index {index}")
             if not block_aabbs: continue
             if len(block_aabbs) == 1:
                 minx, miny, minz, maxx, maxy, maxz = block_aabbs[0]

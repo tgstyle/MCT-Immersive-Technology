@@ -2,10 +2,14 @@
 import numpy as np
 import torch
 
+def log(message):
+    with open('log.txt', 'a', encoding='utf-8') as f:
+        print(message, file=f, flush=True)
+
 # Main function to process a single block for voxelization
 def process_block(args):
     # Unpack input arguments
-    bx, by, bz, minx, miny, minz, verts, triangles, edges, res, x_threshold, y_threshold, z_threshold, is_watertight, has_thin_features, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, device, solid_set, empty_set, directions_t, offsets_t, fill_all_voids, axis_order = args
+    bx, by, bz, minx, miny, minz, verts, triangles, edges, res, x_threshold, y_threshold, z_threshold, is_watertight, has_thin_features, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, device, solid_set, empty_set, directions_t, offsets_t, fill_all_voids, axis_order, debug = args
 
     # Handle solid blocks directly
     if (bx, by, bz) in solid_set:
@@ -236,5 +240,15 @@ def process_block(args):
             occupied_np = np.ones((res, res, res), dtype=bool)
             return bx, by, bz, occupied_np
         return None
+
+    if debug:
+        log(f"Voxelized occupied for ({bx},{by},{bz}): sum={occupied_np.sum()}")
+        if occupied_np.sum() > 0:
+            occ_indices = np.nonzero(occupied_np)
+            for dim, name in enumerate(['X', 'Y', 'Z']):
+                if len(occ_indices[dim]) > 0:
+                    min_val = occ_indices[dim].min()
+                    max_val = occ_indices[dim].max()
+                    log(f"Block ({bx},{by},{bz}) {name} voxel range: min={min_val} (~{min_val / res:.3f}), max={max_val} (~{(max_val + 1) / res:.3f})")
 
     return bx, by, bz, occupied_np
