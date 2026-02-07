@@ -1,3 +1,4 @@
+# bb_model_parser.py
 import json
 import math
 import multiprocessing as mp
@@ -87,6 +88,12 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
         data = json.load(f)
     elements = data.get('elements', [])
     if not elements: raise ValueError("No elements found in BBModel file.")
+
+    if debug:
+        log("=== Pre-voxelization Debug Summary ===")
+        log(f"Model: {os.path.basename(file_path)}")
+        log(f"Number of elements: {len(elements)}")
+
     grid_size = 1/16
     for element in elements:
         vertices = element.get('vertices', {})
@@ -100,6 +107,9 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
                     print("This will create a sterilized version of the model with grid-aligned vertices.")
                     sys.exit(1)
 
+    if debug:
+        log("Grid alignment check: PASSED (all vertices on 1/16 grid)")
+
     # Process elements: vertices, triangles, edges
     all_verts = []
     all_triangles = []
@@ -108,9 +118,12 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
     vert_offset = 0
     min_feature_size = float('inf')
     has_fraction = False
+    original_faces = 0
+
     for element in elements:
         verts_dict = element.get('vertices', {})
         if not verts_dict: continue
+        original_faces += len(element.get('faces', {}))
         local_vert_keys = list(verts_dict.keys())
         local_verts = [verts_dict[k] for k in local_vert_keys]
         all_verts.extend(local_verts)
@@ -145,12 +158,31 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
                 if i1 > i2: i1, i2 = i2, i1
                 all_edges.add((i1, i2))
         vert_offset += len(local_verts)
+
+    if debug:
+        log(f"Total vertices (pre-deduplication): {len(all_verts)}")
+        log(f"Original faces (including quads/ngons): {original_faces}")
+        log(f"Triangulated triangles: {len(all_triangles)}")
+        log(f"Has fractional coordinates: {has_fraction}")
+        if min_feature_size != float('inf'):
+            log(f"Smallest detected feature size (vertex-to-vertex): {min_feature_size:.6f} units")
+        boundary = sum(1 for c in all_edge_freq.values() if c == 1)
+        internal = sum(1 for c in all_edge_freq.values() if c == 2)
+        non_manifold = sum(1 for c in all_edge_freq.values() if c > 2)
+        log(f"Mesh topology — boundary edges: {boundary}, internal edges: {internal}, non-manifold edges: {non_manifold}")
+        log(f"Total unique edges: {len(all_edge_freq)}")
+
     if not all_triangles: raise ValueError("No faces found.")
     verts = all_verts
     triangles = [(all_verts[a], all_verts[b], all_verts[c]) for a, b, c in all_triangles]
     edges = list(all_edges)
-    has_thin_features = has_fraction or min_feature_size < 0.5 if min_feature_size != float('inf') else False
+    has_thin_features = has_fraction or (min_feature_size < 0.5 if min_feature_size != float('inf') else False)
     is_watertight = not has_thin_features
+
+    if debug:
+        log(f"Thin/non-watertight features detected: {has_thin_features}")
+        log(f"Voxel sampling offsets selected: {27 if has_thin_features else 7}")
+
     minx = min(v[0] for v in verts)
     maxx = max(v[0] for v in verts)
     miny = min(v[1] for v in verts)
@@ -160,9 +192,22 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
     num_bx = math.ceil((maxx - minx) / 16)
     num_by = math.ceil((maxy - miny) / 16)
     num_bz = math.ceil((maxz - minz) / 16)
+
     if debug:
-        log(f"Model bounds: min=({minx},{miny},{minz}), max=({maxx},{maxy},{maxz})")
-        log(f"Model triangles: {len(triangles)}, blocks: {num_bx}x{num_by}x{num_bz}")
+        size_x = maxx - minx
+        size_y = maxy - miny
+        size_z = maxz - minz
+        log(f"Axis-aligned bounding box: [{minx:.3f}, {miny:.3f}, {minz:.3f}] → [{maxx:.3f}, {maxy:.3f}, {maxz:.3f}]")
+        log(f"Model dimensions (units): ΔX={size_x:.3f}, ΔY={size_y:.3f}, ΔZ={size_z:.3f}")
+        log(f"Model dimensions (blocks approx.): {size_x/16:.3f} × {size_y/16:.3f} × {size_z/16:.3f}")
+        log(f"Required block grid: {num_bx} × {num_by} × {num_bz}")
+        log(f"Final triangle count: {len(triangles)}")
+        center_x = (minx + maxx) / 2
+        center_y = (miny + maxy) / 2
+        center_z = (minz + maxz) / 2
+        log(f"Geometric center: ({center_x:.3f}, {center_y:.3f}, {center_z:.3f})")
+        log("--- End pre-voxelization summary ---\n")
+
     res = 16
     dtype = torch.float32
     if is_watertight:
@@ -207,7 +252,6 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
                 if result is not None:
                     results.append(result)
                 pbar.update(1)
-                # Removed invalid torch_directml.gc() call; DirectML backend does not support a direct gc/empty_cache method
         stop_event.set()
         thread.join()
     raw_results = [r for r in results if r is not None]
