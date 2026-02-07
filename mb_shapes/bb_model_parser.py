@@ -39,7 +39,7 @@ def center_in_block(occupied_np, res=16):
     return new_occupied
 
 # Main model parsing function
-def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=None, empty_set=None, fill_all_voids=False, exclude_set=None, axis_order=None, mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=None, return_voxels=False, pp_order='per-block,regional,global,per-block-gaps,protrusions', sub_order='remove-small,fill-holes,fill-voids,fill-gaps', do_center=False, debug=False):
+def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=None, empty_set=None, fill_all_voids=False, exclude_set=None, axis_order=None, mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=None, return_voxels=False, pp_order='per-block,regional,global,per-block-gaps,protrusions', sub_order='remove-small,fill-holes,fill-voids,fill-gaps', do_center=False, auto_center=False, debug=False):
     # Parse thresholds and settings
     if rpp_list is None:
         rpp_list = []
@@ -189,6 +189,21 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
     maxy = max(v[1] for v in verts)
     minz = min(v[2] for v in verts)
     maxz = max(v[2] for v in verts)
+
+    # Auto-center padding — only for main model, does not touch vertices
+    if auto_center:
+        for axis_idx, min_val, max_val in [(0, minx, maxx), (2, minz, maxz)]:
+            span = max_val - min_val
+            blocks = math.ceil(span / 16)
+            total = blocks * 16
+            overhang = (total - span) / 2
+            if axis_idx == 0:
+                minx -= overhang
+                maxx += overhang
+            else:
+                minz -= overhang
+                maxz += overhang
+
     num_bx = math.ceil((maxx - minx) / 16)
     num_by = math.ceil((maxy - miny) / 16)
     num_bz = math.ceil((maxz - minz) / 16)

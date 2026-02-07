@@ -79,6 +79,9 @@ def main():
     # Debug logging
     parser.add_argument('--debug-log', action='store_true', help='Enable detailed voxelization debug logging to log.txt (model stats + intersection path per block)')
 
+    # Auto-center option — applies ONLY to the main model
+    parser.add_argument('--auto-center', action='store_true', help='Pad X/Z overhang symmetrically so the occupied shape is centered in the block grid (main model only)')
+
     args = parser.parse_args()
     debug = args.debug_log
     solid_set = set()
@@ -252,7 +255,7 @@ def main():
                     offsets.append((offset_bx, offset_by, offset_bz))
                 supp_list.append((supp_file, offsets))
     print("Processing main model...")
-    overall_voxels = parse_bbmodel(main_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=args.sub_pp_order, do_center=False, debug=debug)
+    overall_voxels = parse_bbmodel(main_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=args.sub_pp_order, do_center=False, auto_center=args.auto_center, debug=debug)
     overall_dict = {(bx, by, bz): occupied_np for bx, by, bz, occupied_np in overall_voxels}
     if debug:
         log(f"Initial overall_dict keys: {list(overall_dict.keys())}")
@@ -261,7 +264,7 @@ def main():
     for s_file in unique_supps:
         print(f"Processing supplementary model: {s_file}")
         s_path = os.path.join(directory, s_file)
-        s_voxels = parse_bbmodel(s_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=args.sub_pp_order, do_center=True, debug=debug)
+        s_voxels = parse_bbmodel(s_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=args.sub_pp_order, do_center=True, auto_center=False, debug=debug)
         cache[s_file] = s_voxels
         if debug:
             log(f"Supplementary model {s_file} post-voxelization keys: {list((bx, by, bz) for bx, by, bz, _ in s_voxels)}")
