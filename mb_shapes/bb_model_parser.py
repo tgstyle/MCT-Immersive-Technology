@@ -24,8 +24,8 @@ def center_in_block(occupied_np, res=16):
     coords = np.nonzero(occupied_np)
     if len(coords[0]) == 0:
         return occupied_np
-    mins = [np.min(c) for c in coords]
-    maxs = [np.max(c) for c in coords]
+    mins = [int(np.min(c)) for c in coords]
+    maxs = [int(np.max(c)) for c in coords]
     widths = [maxs[d] - mins[d] + 1 for d in range(3)]
     pads = [(res - widths[d]) // 2 for d in range(3)]
     new_occupied = np.zeros_like(occupied_np)
