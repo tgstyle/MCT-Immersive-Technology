@@ -252,8 +252,82 @@ def fill_gaps(np_arr, gap_passes, axis_order, thresholds, is_excluded=None, max_
                     np_arr[is_excluded] = original[is_excluded]
     return np_arr
 
+def fill_outside_corner_indents(np_arr, is_excluded=None):
+    original = np.copy(np_arr) if is_excluded is not None else None
+    to_fill = set()
+    sx, sy, sz = np_arr.shape
+    for y in range(sy):
+        for x in range(sx - 1):
+            for z in range(sz - 1):
+                # Extract 2x2 XZ block at this height
+                p00 = np_arr[x, y, z]
+                p10 = np_arr[x+1, y, z]
+                p01 = np_arr[x, y, z+1]
+                p11 = np_arr[x+1, y, z+1]
+                count = int(p00) + int(p10) + int(p01) + int(p11)
+                if count == 3:
+                    # Relax full_adj for boundary Y (edge starts/ends); else require >=3/4 in adjacent slice
+                    is_boundary_y = (y == 0 or y == sy - 1)
+                    full_adj = is_boundary_y  # Assume valid for boundaries
+                    if not is_boundary_y:
+                        full_adj = False
+                        if y > 0:
+                            adj_count = int(np_arr[x, y-1, z]) + int(np_arr[x+1, y-1, z]) + int(np_arr[x, y-1, z+1]) + int(np_arr[x+1, y-1, z+1])
+                            if adj_count >= 3:
+                                full_adj = True
+                        if not full_adj and y < sy - 1:
+                            adj_count = int(np_arr[x, y+1, z]) + int(np_arr[x+1, y+1, z]) + int(np_arr[x, y+1, z+1]) + int(np_arr[x+1, y+1, z+1])
+                            if adj_count >= 3:
+                                full_adj = True
+                    # Exactly one missing → check if it's an outside (convex) corner indent
+                    if not p00 and full_adj:
+                        # Missing bottom-left: check outside left (-x) and down (-z)
+                        left_bottom_open = (x == 0 or not np_arr[x-1, y, z])
+                        left_top_open = (x == 0 or not np_arr[x-1, y, z+1])
+                        outside_left = left_bottom_open and left_top_open
+                        down_left_open = (z == 0 or not np_arr[x, y, z-1])
+                        down_right_open = (z == 0 or not np_arr[x+1, y, z-1])
+                        outside_down = down_left_open and down_right_open
+                        if outside_left and outside_down:
+                            to_fill.add((x, y, z))
+                    if not p10 and full_adj:
+                        # Missing bottom-right: check outside right (+x) and down (-z)
+                        right_bottom_open = (x + 2 >= sx or not np_arr[x+2, y, z])
+                        right_top_open = (x + 2 >= sx or not np_arr[x+2, y, z+1])
+                        outside_right = right_bottom_open and right_top_open
+                        down_left_open = (z == 0 or not np_arr[x, y, z-1])
+                        down_right_open = (z == 0 or not np_arr[x+1, y, z-1])
+                        outside_down = down_left_open and down_right_open
+                        if outside_right and outside_down:
+                            to_fill.add((x+1, y, z))
+                    if not p01 and full_adj:
+                        # Missing top-left: check outside left (-x) and up (+z)
+                        left_bottom_open = (x == 0 or not np_arr[x-1, y, z])
+                        left_top_open = (x == 0 or not np_arr[x-1, y, z+1])
+                        outside_left = left_bottom_open and left_top_open
+                        up_left_open = (z + 2 >= sz or not np_arr[x, y, z+2])
+                        up_right_open = (z + 2 >= sz or not np_arr[x+1, y, z+2])
+                        outside_up = up_left_open and up_right_open
+                        if outside_left and outside_up:
+                            to_fill.add((x, y, z+1))
+                    if not p11 and full_adj:
+                        # Missing top-right: check outside right (+x) and up (+z)
+                        right_bottom_open = (x + 2 >= sx or not np_arr[x+2, y, z])
+                        right_top_open = (x + 2 >= sx or not np_arr[x+2, y, z+1])
+                        outside_right = right_bottom_open and right_top_open
+                        up_left_open = (z + 2 >= sz or not np_arr[x, y, z+2])
+                        up_right_open = (z + 2 >= sz or not np_arr[x+1, y, z+2])
+                        outside_up = up_left_open and up_right_open
+                        if outside_right and outside_up:
+                            to_fill.add((x+1, y, z+1))
+    for px, py, pz in to_fill:
+        np_arr[px, py, pz] = True
+    if is_excluded is not None:
+        np_arr[is_excluded] = original[is_excluded]
+    return np_arr
+
 # Main post-processing function
-def process_post(np_arr, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, small_void_threshold, small_occupied_threshold, fill_all_voids, is_excluded=None, max_intrude_dict=None, ex_thresholds=None, sub_order='remove-small,fill-holes,fill-voids,fill-gaps'):
+def process_post(np_arr, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, small_void_threshold, small_occupied_threshold, fill_all_voids, is_excluded=None, max_intrude_dict=None, ex_thresholds=None, sub_order='remove-small,fill-holes,fill-voids,fill-gaps', y_corner_passes=0):
     sub_order_list = [s.strip() for s in sub_order.split(',')]
     for sub_step in sub_order_list:
         if sub_step == 'remove-small' and not no_small_voids:
@@ -264,16 +338,20 @@ def process_post(np_arr, no_holes, no_gaps, no_small_voids, gap_passes, axis_ord
             np_arr = fill_voids(np_arr, small_void_threshold, fill_all_voids, is_excluded)
         elif sub_step == 'fill-gaps' and not no_gaps:
             np_arr = fill_gaps(np_arr, gap_passes, axis_order, thresholds, is_excluded, max_intrude_dict, ex_thresholds)
+        # fill-y-corners removed from here; handled explicitly in apply_postprocessing per-block only
     return np_arr
 
-def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_order, pp_order_list, subs, do_global=True, res=16):
-    # Dynamically adjust pp_order_list to avoid double regional processing when global is enabled
+def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_order, pp_order_list, subs, do_global=True, res=16, y_corner_passes=0):
     if do_global:
         pp_order_list = [s for s in pp_order_list if s.strip() != 'regional']
     for step in pp_order_list:
         if step == 'per-block':
             for b in list(block_occupied):
-                block_occupied[b] = process_post(block_occupied[b], no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order)
+                # Run sub-post without y-corners
+                block_occupied[b] = process_post(block_occupied[b], no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order, y_corner_passes=0)
+                # Explicitly run y-corners only here, with full passes (per-block for vertical edges)
+                for _ in range(y_corner_passes):
+                    block_occupied[b] = fill_outside_corner_indents(block_occupied[b], None)
         elif step == 'regional':
             for region in regions:
                 reg_blocks = region['blocks']
@@ -294,7 +372,7 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                     off_y = (b[1] - min_by_r) * res
                     off_z = (b[2] - min_bz_r) * res
                     sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = block_occupied[b]
-                sub_occupied = process_post(sub_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, region['thresholds'], void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order)
+                sub_occupied = process_post(sub_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, region['thresholds'], void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order, y_corner_passes=0)
                 for b in reg_blocks:
                     off_x = (b[0] - min_bx_r) * res
                     off_y = (b[1] - min_by_r) * res
@@ -305,7 +383,6 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                     elif b in block_occupied:
                         del block_occupied[b]
         elif step == 'global':
-            # Pre-save state for regions before global processing
             pre_region_blocks = {}
             for region in regions:
                 for b in region['blocks']:
@@ -316,9 +393,8 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                 if ex_b not in block_occupied:
                     continue
                 occupied_np_copy = block_occupied[ex_b].copy()
-                occupied_np_copy = process_post(occupied_np_copy, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, ex_thresholds, void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order)
+                occupied_np_copy = process_post(occupied_np_copy, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, ex_thresholds, void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order, y_corner_passes=0)
                 excluded_processed[ex_b] = occupied_np_copy
-            # Compute overall bounds including regions and excludes
             all_bxs = [bx for bx, _, _ in block_occupied] if block_occupied else []
             all_bys = [by for _, by, _ in block_occupied] if block_occupied else []
             all_bzs = [bz for _, _, bz in block_occupied] if block_occupied else []
@@ -364,14 +440,13 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                     off_y = (by - min_by) * res
                     off_z = (bz - min_bz) * res
                     is_excluded_full[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = True
-            full_occupied = process_post(full_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, is_excluded=is_excluded_full, max_intrude_dict=max_intrude_dict, ex_thresholds=ex_thresholds, sub_order=sub_order)
+            full_occupied = process_post(full_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, is_excluded=is_excluded_full, max_intrude_dict=max_intrude_dict, ex_thresholds=ex_thresholds, sub_order=sub_order, y_corner_passes=0)
             for ex_b in excluded_processed:
                 bx, by, bz = ex_b
                 off_x = (bx - min_bx) * res
                 off_y = (by - min_by) * res
                 off_z = (bz - min_bz) * res
                 full_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = excluded_processed[ex_b]
-            # Now handle regions: restore pre-state and re-apply regional processing
             for region in regions:
                 reg_blocks = region['blocks']
                 if not reg_blocks:
@@ -390,7 +465,7 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                         off_y = (b[1] - min_by_r) * res
                         off_z = (b[2] - min_bz_r) * res
                         sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = pre_region_blocks[b]
-                sub_occupied = process_post(sub_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, region['thresholds'], void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order)
+                sub_occupied = process_post(sub_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, region['thresholds'], void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order, y_corner_passes=0)
                 for b in reg_blocks:
                     off_x = (b[0] - min_bx_r) * res
                     off_y = (b[1] - min_by_r) * res
@@ -474,7 +549,6 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                 end_x = (bx - min_bx) * res + maxx
                 end_y = (by - min_by) * res + maxy
                 end_z = (bz - min_bz) * res + maxz
-                # Clip to bounds
                 off_x = max(0, off_x)
                 off_y = max(0, off_y)
                 off_z = max(0, off_z)

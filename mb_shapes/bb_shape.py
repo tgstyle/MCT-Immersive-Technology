@@ -37,6 +37,8 @@ def main():
     parser.add_argument('--no-small-voids', action='store_true', help='Disable removal of small voids and occupied clusters')
     parser.add_argument('--fill-all-voids', action='store_true', help='Fill all internal voids regardless of size (useful for large hollow models)')
     parser.add_argument('--no-supplementary', action='store_true', help='Disable processing of supplementary models')
+    parser.add_argument('--fill-y-corners', action='store_true', help='Fill 1x1x1 outside corner indents to straighten vertical edges (disabled by default)')
+    parser.add_argument('--y-corners-passes', type=int, default=1, help='Number of passes for the fill-y-corners step (default: 1)')
 
     # Threshold and value settings
     parser.add_argument('--thresh', type=str, default='2,4,2', help='Comma-separated gap thresholds for x,y,z; use 0 for unlimited, d for default, x to disable (use quotes if needed, e.g., "2,4,2")')
@@ -83,6 +85,10 @@ def main():
     parser.add_argument('--auto-center', action='store_true', help='Pad X/Z overhang symmetrically so the occupied shape is centered in the block grid (main model only)')
 
     args = parser.parse_args()
+
+    sub_pp_order = args.sub_pp_order
+    # Do not append fill-y-corners here; handled explicitly in apply_postprocessing per-block stage only
+
     debug = args.debug_log
     solid_set = set()
     if args.solid_blocks:
@@ -255,7 +261,7 @@ def main():
                     offsets.append((offset_bx, offset_by, offset_bz))
                 supp_list.append((supp_file, offsets))
     print("Processing main model...")
-    overall_voxels = parse_bbmodel(main_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=args.sub_pp_order, do_center=False, auto_center=args.auto_center, debug=debug)
+    overall_voxels = parse_bbmodel(main_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=sub_pp_order, do_center=False, auto_center=args.auto_center, debug=debug)
     overall_dict = {(bx, by, bz): occupied_np for bx, by, bz, occupied_np in overall_voxels}
     if debug:
         log(f"Initial overall_dict keys: {list(overall_dict.keys())}")
@@ -264,7 +270,7 @@ def main():
     for s_file in unique_supps:
         print(f"Processing supplementary model: {s_file}")
         s_path = os.path.join(directory, s_file)
-        s_voxels = parse_bbmodel(s_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=args.sub_pp_order, do_center=True, auto_center=False, debug=debug)
+        s_voxels = parse_bbmodel(s_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=sub_pp_order, do_center=True, auto_center=False, debug=debug)
         cache[s_file] = s_voxels
         if debug:
             log(f"Supplementary model {s_file} post-voxelization keys: {list((bx, by, bz) for bx, by, bz, _ in s_voxels)}")
@@ -323,8 +329,8 @@ def main():
         gap_passes = args.gap_passes
         void_thresh = args.void_thresh
         occ_thresh = args.occ_thresh
-        sub_order = args.sub_pp_order
-        block_occupied = apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_order, pp_order_list, subs, do_global=global_postprocess, res=16)
+        y_corners_passes = args.y_corners_passes if args.fill_y_corners else 0
+        block_occupied = apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, regions, exclude_set, ex_thresholds, max_intrude_dict, per_block_gap_axes, sub_pp_order, pp_order_list, subs, do_global=global_postprocess, res=16, y_corner_passes=y_corners_passes)
     if debug:
         log(f"Post-postprocess block_occupied keys: {list(block_occupied.keys())}")
     if args.mc_version == '1.12.2':
