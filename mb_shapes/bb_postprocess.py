@@ -327,7 +327,7 @@ def fill_outside_corner_indents(np_arr, is_excluded=None):
     return np_arr
 
 # Main post-processing function
-def process_post(np_arr, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, small_void_threshold, small_occupied_threshold, fill_all_voids, is_excluded=None, max_intrude_dict=None, ex_thresholds=None, sub_order='remove-small,fill-holes,fill-voids,fill-gaps', y_corner_passes=0):
+def process_post(np_arr, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, small_void_threshold, small_occupied_threshold, fill_all_voids, is_excluded=None, max_intrude_dict=None, ex_thresholds=None, sub_order='remove-small,fill-holes,fill-voids,fill-gaps'):
     sub_order_list = [s.strip() for s in sub_order.split(',')]
     for sub_step in sub_order_list:
         if sub_step == 'remove-small' and not no_small_voids:
@@ -348,7 +348,7 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
         if step == 'per-block':
             for b in list(block_occupied):
                 # Run sub-post without y-corners
-                block_occupied[b] = process_post(block_occupied[b], no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order, y_corner_passes=0)
+                block_occupied[b] = process_post(block_occupied[b], no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order)
                 # Explicitly run y-corners only here, with full passes (per-block for vertical edges)
                 for _ in range(y_corner_passes):
                     block_occupied[b] = fill_outside_corner_indents(block_occupied[b], None)
@@ -372,7 +372,7 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                     off_y = (b[1] - min_by_r) * res
                     off_z = (b[2] - min_bz_r) * res
                     sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = block_occupied[b]
-                sub_occupied = process_post(sub_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, region['thresholds'], void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order, y_corner_passes=0)
+                sub_occupied = process_post(sub_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, region['thresholds'], void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order)
                 for b in reg_blocks:
                     off_x = (b[0] - min_bx_r) * res
                     off_y = (b[1] - min_by_r) * res
@@ -393,7 +393,7 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                 if ex_b not in block_occupied:
                     continue
                 occupied_np_copy = block_occupied[ex_b].copy()
-                occupied_np_copy = process_post(occupied_np_copy, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, ex_thresholds, void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order, y_corner_passes=0)
+                occupied_np_copy = process_post(occupied_np_copy, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, ex_thresholds, void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order)
                 excluded_processed[ex_b] = occupied_np_copy
             all_bxs = [bx for bx, _, _ in block_occupied] if block_occupied else []
             all_bys = [by for _, by, _ in block_occupied] if block_occupied else []
@@ -440,7 +440,7 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                     off_y = (by - min_by) * res
                     off_z = (bz - min_bz) * res
                     is_excluded_full[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = True
-            full_occupied = process_post(full_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, is_excluded=is_excluded_full, max_intrude_dict=max_intrude_dict, ex_thresholds=ex_thresholds, sub_order=sub_order, y_corner_passes=0)
+            full_occupied = process_post(full_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, thresholds, void_thresh, occ_thresh, fill_all_voids, is_excluded=is_excluded_full, max_intrude_dict=max_intrude_dict, ex_thresholds=ex_thresholds, sub_order=sub_order)
             for ex_b in excluded_processed:
                 bx, by, bz = ex_b
                 off_x = (bx - min_bx) * res
@@ -465,7 +465,7 @@ def apply_postprocessing(block_occupied, no_holes, no_gaps, no_small_voids, gap_
                         off_y = (b[1] - min_by_r) * res
                         off_z = (b[2] - min_bz_r) * res
                         sub_occupied[off_x:off_x + res, off_y:off_y + res, off_z:off_z + res] = pre_region_blocks[b]
-                sub_occupied = process_post(sub_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, region['thresholds'], void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order, y_corner_passes=0)
+                sub_occupied = process_post(sub_occupied, no_holes, no_gaps, no_small_voids, gap_passes, axis_order, region['thresholds'], void_thresh, occ_thresh, fill_all_voids, sub_order=sub_order)
                 for b in reg_blocks:
                     off_x = (b[0] - min_bx_r) * res
                     off_y = (b[1] - min_by_r) * res
