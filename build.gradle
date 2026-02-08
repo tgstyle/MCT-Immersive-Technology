@@ -1,15 +1,17 @@
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import net.minecraftforge.gradle.common.tasks.SignJar
 
 plugins {
-    id 'idea'
+    id 'java-library'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '6.0.+'
-    id 'org.spongepowered.mixin' version '0.7.+'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'net.neoforged.moddev' version '2.0.140'
+    id 'idea'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.6'
     id 'eclipse'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
 }
 
 configurations.configureEach {
@@ -32,43 +34,33 @@ println "-> build.gradle applying version: $version (build ${version_buildnumber
 
 group = 'mctmods.immersivetechnology'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 tasks.withType(Jar).configureEach {
-    zip64 true
+    zip64 = true
 }
 
 sourceSets {
     main {
-        java {
-            srcDirs = ["$rootDir/src/main/java"]
-        }
+        java { srcDirs = ["$rootDir/src/main/java"] }
         resources {
             srcDirs = [
-                    "$rootDir/src/main/resources",
-                    "$rootDir/src/generated/resources",
+                "$rootDir/src/main/resources",
+                "$rootDir/src/generated/resources",
             ]
         }
     }
     datagen {
-        java {
-            srcDirs = ["$rootDir/src/datagen/java"]
-        }
-        resources {
-            srcDirs = ["$rootDir/src/datagen/resources"]
-        }
+        java { srcDirs = ["$rootDir/src/datagen/java"] }
+        resources { srcDirs = ["$rootDir/src/datagen/resources"] }
         compileClasspath += main.compileClasspath
         runtimeClasspath += main.runtimeClasspath
         compileClasspath += main.output
         runtimeClasspath += main.output
     }
     gametest {
-        java {
-            srcDirs = ["$rootDir/src/gametest/java"]
-        }
-        resources {
-            srcDirs = ["$rootDir/src/gametest/resources"]
-        }
+        java { srcDirs = ["$rootDir/src/gametest/java"] }
+        resources { srcDirs = ["$rootDir/src/gametest/resources"] }
         compileClasspath += main.compileClasspath
         runtimeClasspath += main.runtimeClasspath
         compileClasspath += main.output
@@ -79,7 +71,7 @@ sourceSets {
 ext {
     mod_id = gradleProps['mod_id']
     version_minecraft = versionProps['version_mc']
-    version_forge = versionProps['version_forge']
+    version_neoforge = versionProps['version_neoforge']
     version_jei = versionProps['version_jei']
     version_parchment = versionProps['version_parchment']
     version_ie = versionProps['version_ie']
@@ -90,17 +82,17 @@ ext {
 }
 
 def version_replaces = { [
-        'version'      : project.version,
-        'build_number' : version_buildnumber,
-        'version_mc'   : version_minecraft,
-        'version_forge': version_forge,
-        'version_jei'  : version_jei,
-        'mod_license'  : mod_license,
-        'mod_name'     : mod_name,
-        'mod_authors'  : mod_authors,
-        'mod_description': mod_description,
-        'version_ie'   : version_ie,
-        'stage'        : stage,
+    'version'         : project.version,
+    'build_number'    : version_buildnumber,
+    'version_mc'      : version_minecraft,
+    'version_neoforge': version_neoforge,
+    'version_jei'     : version_jei,
+    'mod_license'     : mod_license,
+    'mod_name'        : mod_name,
+    'mod_authors'     : mod_authors,
+    'mod_description' : mod_description,
+    'version_ie'      : version_ie,
+    'stage'           : stage,
 ] as Map<String, Object> }
 
 def jsonPatterns = ["**/*.json", "**/*.mcmeta"]
@@ -113,8 +105,8 @@ processResources {
     }
     exclude ".cache"
     doLast {
-        fileTree(dir: getOutputs().getFiles().getAsPath(), includes: jsonPatterns).each {
-            File file -> file.setText(JsonOutput.toJson(new JsonSlurper().parse(file, 'UTF-8')))
+        fileTree(dir: getOutputs().getFiles().getAsPath(), includes: jsonPatterns).each { File file ->
+            file.setText(JsonOutput.toJson(new JsonSlurper().parse(file, 'UTF-8')))
         }
     }
 }
@@ -126,124 +118,84 @@ tasks.register('copyModsTomlForIntelliJ', Copy) {
     dependsOn processResources
 }
 
-minecraft {
-    mappings channel: 'parchment', version: version_parchment + '-' + version_minecraft
-    accessTransformer { file('src/main/resources/META-INF/accesstransformer.cfg') }
+neoForge {
+    version = project.version_neoforge
+
+    parchment {
+        mappingsVersion = project.version_parchment
+        minecraftVersion = project.version_minecraft
+    }
+
     runs {
         client {
-            workingDirectory = project.file('run')
-            property 'forge.logging.markers', ''
-            property 'forge.enabledGameTestNamespaces', mod_id
-            ideaModule project.name + ".main"
-            mods {
-                immersivetechnology {
-                    source(sourceSets.main as SourceSet)
-                }
-            }
-            args '--username', 'tgstyle'
-            args '--width', '1920'
-            args '--height', '1080'
+            client()
+            programArguments.addAll '--username', 'tgstyle', '--width', '1920', '--height', '1080'
         }
+
         server {
-            workingDirectory = project.file('run')
-            property 'forge.logging.markers', ''
-            property 'forge.enabledGameTestNamespaces', mod_id
-            arg '-nogui'
-            mods {
-                immersivetechnology {
-                    source(sourceSets.main as SourceSet)
-                }
-            }
+            server()
+            programArguments.addAll '--nogui'
         }
+
         data {
-            workingDirectory = project.file('run')
-            property 'forge.logging.markers', ''
-            property 'fml.earlyprogresswindow', 'false'
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--validate',
-                    '--existing', sourceSets.main.resources.srcDirs.first()
-            ideaModule project.name + ".datagen"
+            data()
+            programArguments.addAll '--mod', mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
             mods {
-                immersivetechnology {
-                    source(sourceSets.main as SourceSet)
-                    source(sourceSets.datagen as SourceSet)
+                "${mod_id}" {
+                    sourceSet sourceSets.datagen
                 }
             }
         }
+
         gameTestServer {
-            workingDirectory = project.file('run')
-            property 'forge.logging.markers', ''
-            property 'forge.enabledGameTestNamespaces', mod_id
-            ideaModule project.name + ".gametest"
+            type = "gameTestServer"
             mods {
-                immersivetechnology {
-                    source(sourceSets.main as SourceSet)
-                    source(sourceSets.gametest as SourceSet)
+                "${mod_id}" {
+                    sourceSet sourceSets.gametest
                 }
             }
+        }
+
+        configureEach {
+            gameDirectory = project.file('run')
+            systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
         }
     }
 }
 
 repositories {
-    maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
-    maven {
-        name 'Jared maven'
-        url 'https://maven.blamejared.com/'
-    }
-    maven {
-        url = 'https://www.cursemaven.com'
-        content {
-            includeGroup "curse.maven"
-        }
-    }
-    maven {
-        url "https://cfa2.cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
-    maven {
-        url 'https://squiddev.cc/maven/'
-        content {
-            includeGroup("cc.tweaked")
-            includeModule("org.squiddev", "Cobalt")
-        }
-    }
-    maven {
-        name 'ParchmentMC'
-        url 'https://ldtteam.jfrog.io/artifactory/parchmentmc-public/'
-    }
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+    maven { url = 'https://maven.blamejared.com' }                  // JEI
+    maven { url = 'https://www.cursemaven.com' ; content { includeGroup "curse.maven" } }
+    maven { url = "https://cfa2.cursemaven.com" ; content { includeGroup "curse.maven" } }
+    maven { url = 'https://squiddev.cc/maven/' ; content { includeGroup("cc.tweaked"); includeModule("org.squiddev", "Cobalt") } }
+    maven { name = 'ParchmentMC' ; url = 'https://ldtteam.jfrog.io/artifactory/parchmentmc-public/' }
 }
 
-mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
-    config "mixins.${mod_id}.json"
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
 }
 
-project.ext.lwjglVersion = "3.3.6"
-project.ext.lwjglNatives = "natives-linux"
 dependencies {
-    minecraft "net.minecraftforge:forge:${version_minecraft}-${version_forge}"
+    compileOnly "mezz.jei:jei-${version_minecraft}-common-api:${version_jei}"
+    compileOnly "mezz.jei:jei-${version_minecraft}-neoforge-api:${version_jei}"
+    localRuntime "mezz.jei:jei-${version_minecraft}-neoforge:${version_jei}"
 
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:${version_jei}")
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:${version_jei}")
+    implementation "curse.maven:immersive-engineering-231951:6733669"
 
-    implementation fg.deobf("mezz.jei:jei-1.20.1-forge:${version_jei}")
-
-    implementation fg.deobf("curse.maven:immersive-engineering-231951:6206989")
-    implementation fg.deobf("curse.maven:engineered-schematics-1207780:6560826")
-
-    implementation fg.deobf("curse.maven:jade-324717:6855440")
-
-    datagenImplementation("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
-
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    implementation "curse.maven:jade-324717:7545219"
 }
 
 def customGradle = rootProject.file('custom.gradle')
-if (customGradle.exists()) {
-    apply from: customGradle
-}
+if (customGradle.exists()) apply from: customGradle
 
 tasks.register('bumpVersion') {
     doLast {
@@ -257,37 +209,15 @@ tasks.register('bumpVersion') {
         def stage = props['stage']
         def newVersion = "${props['version']}-b${nextBuild}-${stage}"
         project.version = newVersion
-        tasks.withType(Jar).configureEach {
-            it.archiveVersion.set(newVersion)
-        }
+        tasks.withType(Jar).configureEach { it.archiveVersion.set(newVersion) }
     }
 }
-
-tasks.register('signJar', SignJar) {
-    onlyIf {
-        project.hasProperty('keyStore')
-    }
-    if (project.hasProperty('keyStore')) {
-        keyStore = project.keyStore
-        alias = project.storeAlias
-        storePass = project.storePass
-        keyPass = project.storePass
-        inputFile = jar.archiveFile.get().asFile
-        outputFile = jar.archiveFile.get().asFile
-    } else {
-        logger.warn("No key store found, not signing the output jar\n")
-    }
-}
-
-build.dependsOn bumpVersion, signJar
 
 tasks.register('datagenJar', Jar) {
     dependsOn datagenClasses
     archiveClassifier = 'datagen'
     from sourceSets.datagen.output
-    manifest {
-        attributes "FMLModType": "GAMELIBRARY"
-    }
+    manifest { attributes "FMLModType": "GAMELIBRARY" }
 }
 
 tasks.register('sourcesJar', Jar) {
@@ -325,40 +255,6 @@ tasks.register('optimizePng') {
     }
 }
 
-tasks.register('genIntellijRunsDummy')
-
-tasks.register('speedUpPreRun') {
-    doLast {
-        for (String s in ["Client", "Server", "Data"]) {
-            def runConfigFile = file(".idea/runConfigurations/run${s}.xml")
-            if (runConfigFile.exists()) {
-                ant.replace(
-                        file: runConfigFile,
-                        token: "prepareRun${s}",
-                        value: "prepareRuns"
-                )
-                def content = runConfigFile.text
-                if (!content.contains('-Dorg.gradle.logging.level=warn')) {
-                    ant.replace(
-                            file: runConfigFile,
-                            token: '<option name="VM_PARAMETERS" value="',
-                            value: '<option name="VM_PARAMETERS" value="-Dorg.gradle.logging.level=warn '
-                    )
-                }
-            }
-        }
-    }
-}
-
-tasks.withType(Task).configureEach {
-    if (it.name == "genIntellijRuns") {
-        it.finalizedBy speedUpPreRun
-        genIntellijRunsDummy.dependsOn it
-    } else if (it.name == "runServer") {
-        it.standardInput = System.in
-    }
-}
-
 processResources.dependsOn bumpVersion
 jar.dependsOn bumpVersion
 datagenJar.dependsOn bumpVersion
@@ -368,3 +264,14 @@ jar {
     archiveBaseName.set("MCT-ImmersiveTechnology-${version_minecraft}")
     archiveClassifier.set('')
 }
+
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+
+idea { module { downloadSources = true; downloadJavadoc = true } }
+
+publishing {
+    publications { register('mavenJava', MavenPublication) { from components.java } }
+    repositories { maven { url = "file://${project.projectDir}/repo" } }
+}
+
+build.dependsOn bumpVersion
