@@ -35,7 +35,7 @@ group = 'mctmods.immersivetechnology'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 tasks.withType(Jar).configureEach {
-    zip64 true
+    zip64 = true
 }
 
 sourceSets {
@@ -185,10 +185,10 @@ minecraft {
 }
 
 repositories {
-    maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     maven {
-        name 'Jared maven'
-        url 'https://maven.blamejared.com/'
+        name = 'Jared maven'
+        url = 'https://maven.blamejared.com/'
     }
     maven {
         url = 'https://www.cursemaven.com'
@@ -197,21 +197,21 @@ repositories {
         }
     }
     maven {
-        url "https://cfa2.cursemaven.com"
+        url = "https://cfa2.cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
     }
     maven {
-        url 'https://squiddev.cc/maven/'
+        url = 'https://squiddev.cc/maven/'
         content {
             includeGroup("cc.tweaked")
             includeModule("org.squiddev", "Cobalt")
         }
     }
     maven {
-        name 'ParchmentMC'
-        url 'https://ldtteam.jfrog.io/artifactory/parchmentmc-public/'
+        name = 'ParchmentMC'
+        url = 'https://ldtteam.jfrog.io/artifactory/parchmentmc-public/'
     }
 }
 
