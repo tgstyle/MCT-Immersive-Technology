@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import mctmods.immersivetechnology.common.blocks.helper.*;
-import mctmods.immersivetechnology.common.network.ITPacketHandler;
-import mctmods.immersivetechnology.common.network.ITOSDRequestMessage;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.network.ITPacketHandler;
+import mctmods.immersivetechnology.core.network.ITOSDRequestMessage;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

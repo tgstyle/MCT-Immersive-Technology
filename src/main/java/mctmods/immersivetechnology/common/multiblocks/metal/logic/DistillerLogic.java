@@ -20,7 +20,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerReci
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.DistillerShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;

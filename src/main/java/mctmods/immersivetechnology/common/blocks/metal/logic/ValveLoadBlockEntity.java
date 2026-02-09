@@ -10,7 +10,7 @@ import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.core.BlockPos;

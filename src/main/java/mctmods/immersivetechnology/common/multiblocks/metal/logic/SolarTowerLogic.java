@@ -21,8 +21,8 @@ import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRec
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarTowerShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
@@ -56,8 +56,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry.SOLAR_MAX_RANGE;
-import static mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
+import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MAX_RANGE;
+import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
 
 public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>, IServerTickableComponent<SolarTowerLogic.State>, IClientTickableComponent<SolarTowerLogic.State>, ITPressurizedFluidOutput<SolarTowerLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;

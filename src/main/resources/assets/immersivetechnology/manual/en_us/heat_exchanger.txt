@@ -1,0 +1,6 @@
+Heat Exchanger
+Is it hot or is it cool?
+<&multiblock>The Heat Exchanger is a multiblock machine used to transfer heat from hot fluids.
+
+§lOperation§r
+    - The §lHeat Exchanger§r needs hot fluids to make other fluids.

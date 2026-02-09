@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.core.registration;
 
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;

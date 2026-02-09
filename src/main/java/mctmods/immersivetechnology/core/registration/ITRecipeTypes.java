@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.registration;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeTypes.TypeWithClass;
+import mctmods.immersivetechnology.common.multiblocks.metal.HeatExchanger;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
@@ -24,6 +25,7 @@ public class ITRecipeTypes {
     public static final TypeWithClass<CoolingTowerRecipe> COOLING_TOWER = register("cooling_tower", CoolingTowerRecipe.class);
     public static final TypeWithClass<DistillerRecipe> DISTILLER = register("distiller", DistillerRecipe.class);
     public static final TypeWithClass<GasTurbineRecipe> GAS_TURBINE = register("gas_turbine", GasTurbineRecipe.class);
+    public static final TypeWithClass<HeatExchangerRecipe> HEAT_EXCHANGER = register("heat_exchanger", HeatExchangerRecipe.class);
     public static final TypeWithClass<SolarMelterRecipe> SOLAR_MELTER = register("solar_melter", SolarMelterRecipe.class);
     public static final TypeWithClass<SolarTowerRecipe> SOLAR_TOWER = register("solar_tower", SolarTowerRecipe.class);
     public static final TypeWithClass<SteamTurbineRecipe> STEAM_TURBINE = register("steam_turbine", SteamTurbineRecipe.class);
@@ -34,6 +36,7 @@ public class ITRecipeTypes {
         BoilerTankRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("boiler_tank", BoilerTankRecipeSerializer::new);
         CoolingTowerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("cooling_tower", CoolingTowerRecipeSerializer::new);
         GasTurbineRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("gas_turbine", GasTurbineRecipeSerializer::new);
+        HeatExchangerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("heat_exchanger", HeatExchangerRecipeSerializer::new);
         DistillerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("distiller", DistillerRecipeSerializer::new);
         SolarMelterRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("solar_melter", SolarMelterRecipeSerializer::new);
         SolarTowerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("solar_tower", SolarTowerRecipeSerializer::new);

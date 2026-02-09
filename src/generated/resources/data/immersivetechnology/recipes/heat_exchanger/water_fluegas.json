@@ -1,0 +1,17 @@
+{
+  "type": "immersivetechnology:heat_exchanger",
+  "energy": 640,
+  "input0": {
+    "amount": 250,
+    "tag": "minecraft:water"
+  },
+  "input1": {
+    "amount": 1000,
+    "tag": "immersivetechnology:flue_gas"
+  },
+  "output0": {
+    "amount": 450,
+    "fluid": "immersivetechnology:steam"
+  },
+  "time": 10
+}

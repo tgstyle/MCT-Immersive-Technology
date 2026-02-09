@@ -20,7 +20,7 @@ import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiBlockInvento
 import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerSolidShape;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;

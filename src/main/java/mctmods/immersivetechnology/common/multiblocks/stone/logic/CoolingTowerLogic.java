@@ -17,7 +17,7 @@ import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerR
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.CoolingTowerShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITParticles;
 import mctmods.immersivetechnology.core.registration.ITSounds;

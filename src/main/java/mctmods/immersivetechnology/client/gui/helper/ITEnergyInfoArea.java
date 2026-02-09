@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.gui.helper;
 
 import blusunrize.immersiveengineering.api.client.TextUtils;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;

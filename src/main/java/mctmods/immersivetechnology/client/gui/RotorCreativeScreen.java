@@ -2,9 +2,9 @@ package mctmods.immersivetechnology.client.gui;
 
 import mctmods.immersivetechnology.common.blocks.metal.gui.RotorCreativeMenu;
 import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;
-import mctmods.immersivetechnology.common.network.ITMessageTileSync;
-import mctmods.immersivetechnology.common.network.ITPacketHandler;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.network.ITMessageTileSync;
+import mctmods.immersivetechnology.core.network.ITPacketHandler;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

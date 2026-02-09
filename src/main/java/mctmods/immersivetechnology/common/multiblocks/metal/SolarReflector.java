@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.common.multiblocks.helper.ITClientMultiblockP
 import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
-import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
+import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;

@@ -48,6 +48,7 @@ public class ITRecipes extends RecipeProvider {
         recipesBoilerSolid(consumer);
         recipesCoolingTower(consumer);
         recipesDistiller(consumer);
+        recipesHeatExchanger(consumer);
         recipesMixer(consumer);
         recipesTurbine(consumer);
         recipesSolarMelter(consumer);
@@ -100,6 +101,13 @@ public class ITRecipes extends RecipeProvider {
     private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) {
         ItemStack salt = new ItemStack(ITItems.SALT.get(), 1);
         DistillerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 1000), new FluidStack(ITFluids.DISTILLED_WATER.getStill(), 500), 20, 10000).addItemOutput(salt, 0.5f).build(out, toResourceLocation("distiller/water"));
+    }
+
+    private void recipesHeatExchanger(@Nonnull Consumer<FinishedRecipe> out) {
+        HeatExchangerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 250), new FluidTagInput(ITTags.fluidFlueGas, 1000), new FluidStack(ITFluids.STEAM.getStill(), 450), null, 640, 10).build(out, toResourceLocation("heat_exchanger/water_fluegas"));
+        HeatExchangerRecipeBuilder.builder(new FluidTagInput(ITTags.fluidDistilledWater, 250), new FluidTagInput(ITTags.fluidFlueGas, 1000), new FluidStack(ITFluids.STEAM.getStill(), 500), null, 640, 10).build(out, toResourceLocation("heat_exchanger/distwater_fluegas"));
+        HeatExchangerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 250), new FluidTagInput(ITTags.fluidMoltenSalt, 80), new FluidStack(ITFluids.STEAM.getStill(), 450), new FluidStack(ITFluids.MOLTEN_SALT.getStill(), 80), 640, 10).build(out, toResourceLocation("heat_exchanger/water_moltensalt"));
+        HeatExchangerRecipeBuilder.builder(new FluidTagInput(ITTags.fluidDistilledWater, 250), new FluidTagInput(ITTags.fluidMoltenSalt, 80), new FluidStack(ITFluids.STEAM.getStill(), 500), new FluidStack(ITFluids.MOLTEN_SALT.getStill(), 80), 640, 10).build(out, toResourceLocation("heat_exchanger/distwater_moltensalt"));
     }
 
     private void recipesMixer(@Nonnull Consumer<FinishedRecipe> out) {

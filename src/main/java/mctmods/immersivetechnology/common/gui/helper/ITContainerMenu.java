@@ -5,8 +5,8 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import com.mojang.datafixers.util.Pair;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ITSlot;
-import mctmods.immersivetechnology.common.network.ITMessageContainerData;
-import mctmods.immersivetechnology.common.network.ITPacketHandler;
+import mctmods.immersivetechnology.core.network.ITMessageContainerData;
+import mctmods.immersivetechnology.core.network.ITPacketHandler;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

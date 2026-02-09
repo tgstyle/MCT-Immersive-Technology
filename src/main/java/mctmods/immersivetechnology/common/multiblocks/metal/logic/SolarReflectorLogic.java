@@ -15,8 +15,8 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.Initi
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;

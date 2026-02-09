@@ -7,10 +7,10 @@ import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultibloc
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarTowerShape;
-import mctmods.immersivetechnology.common.network.ITOSDSyncBlock;
-import mctmods.immersivetechnology.common.network.ITPacketHandler;
-import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.network.ITOSDSyncBlock;
+import mctmods.immersivetechnology.core.network.ITPacketHandler;
+import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;

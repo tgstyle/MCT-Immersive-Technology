@@ -6,7 +6,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.util.inventory.IITDropInventory;
+import mctmods.immersivetechnology.core.util.inventory.IITDropInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;

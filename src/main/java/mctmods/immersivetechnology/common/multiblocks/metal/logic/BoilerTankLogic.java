@@ -20,7 +20,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRec
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerTankShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

@@ -12,7 +12,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.Multibloc
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
 import com.google.common.base.Preconditions;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.util.ITUtils;
+import mctmods.immersivetechnology.core.util.ITUtils;
 import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;

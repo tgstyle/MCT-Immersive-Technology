@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.data.generators;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
-import mctmods.immersivetechnology.common.util.loot.ITBEDropLootEntry;
-import mctmods.immersivetechnology.common.util.loot.ITDropInventoryLootEntry;
-import mctmods.immersivetechnology.common.util.loot.ITMultiblockDropsLootContainer;
+import mctmods.immersivetechnology.core.util.loot.ITBEDropLootEntry;
+import mctmods.immersivetechnology.core.util.loot.ITDropInventoryLootEntry;
+import mctmods.immersivetechnology.core.util.loot.ITMultiblockDropsLootContainer;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
@@ -51,6 +51,7 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
         registerMultiblock(ITMultiblockProvider.COOLING_TOWER);
         registerMultiblock(ITMultiblockProvider.DISTILLER);
         registerMultiblock(ITMultiblockProvider.GAS_TURBINE);
+        registerMultiblock(ITMultiblockProvider.HEAT_EXCHANGER);
         registerMultiblock(ITMultiblockProvider.SOLAR_MELTER);
         registerMultiblock(ITMultiblockProvider.SOLAR_REFLECTOR);
         registerMultiblock(ITMultiblockProvider.SOLAR_TOWER);

@@ -56,6 +56,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -152,6 +153,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
         genericMultiblockMirror("distiller", "metal");
         genericMultiblockMirror("gas_turbine", "metal");
+        specialMultiblockMirrorNoCulling("heat_exchanger", "metal");
         genericMultiblockMirror("steam_turbine", "metal");
 
         createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("block/stone/reinforced_coke_brick", modLoc("block/stone/reinforced_coke_brick")));
@@ -372,6 +374,14 @@ public class ITBlockStateProvider extends BlockStateProvider {
     }
 
     @SuppressWarnings("SameParameterValue")
+    private void specialMultiblockMirrorNoCulling(String registry_name, String block_type) {
+        ITLib.IT_LOGGER.info("Generating [{}] with Custom Mirror Multiblock Model Data no culling", registry_name);
+        ITNongeneratedModel normal = innerObjNoCulling("multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj");
+        ITNongeneratedModel mirrored = innerObjNoCulling("multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + "_mirrored.obj");
+        createMirroredMultiblock(normal, mirrored, (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
+    }
+
+    @SuppressWarnings("SameParameterValue")
     private void specialActiveMultiblockNoMirror(String registry_name, String block_type, String baseTextureName) {
         ITLib.IT_LOGGER.info("Generating [{}] with Active Multiblock Model Data", registry_name);
         String objPath = "multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj";
@@ -461,14 +471,52 @@ public class ITBlockStateProvider extends BlockStateProvider {
         String name = loc.substring(0, loc.length() - 4);
         ResourceLocation model = modLoc(loc);
         Map<String, ResourceLocation> textures = ImmutableMap.of();
-        return obj(innerModels.withExistingParent(name, mcLoc("block")), model, textures);
+        ITNongeneratedModel base = innerModels.withExistingParent(name, mcLoc("block"));
+        ITObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ITObjModelBuilder::new);
+        loader.modelLocation(addModelsPrefix(model));
+        loader.flipV(true);
+        loader.automaticCulling(true);
+        loader.shadeQuads(true);
+        loader.emissiveAmbient(true);
+        ITNongeneratedModel ret = loader.end();
+        ret.ao(false);
+        String particleTex = ITDataGenUtils.getTextureFromObj(model, existingFileHelper);
+        if (particleTex.charAt(0) == '#') { particleTex = Objects.requireNonNull(textures.getOrDefault(particleTex.substring(1), modLoc("block/metal/technology_engineering"))).toString(); }
+        ret.texture("particle", particleTex);
+        generatedParticleTextures.put(ret.getLocation(), particleTex);
+        for (Map.Entry<String, ResourceLocation> e : textures.entrySet()) { ret.texture(e.getKey(), e.getValue()); }
+        return ret;
+    }
+
+    protected ITNongeneratedModel innerObjNoCulling(String loc) {
+        Preconditions.checkArgument(loc.endsWith(".obj"));
+        String name = loc.substring(0, loc.length() - 4);
+        ResourceLocation model = modLoc(loc);
+        Map<String, ResourceLocation> textures = ImmutableMap.of();
+        ITNongeneratedModel base = innerModels.withExistingParent(name, mcLoc("block"));
+        ITObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ITObjModelBuilder::new);
+        loader.modelLocation(addModelsPrefix(model));
+        loader.flipV(true);
+        loader.automaticCulling(false);
+        loader.shadeQuads(true);
+        loader.emissiveAmbient(true);
+        ITNongeneratedModel ret = loader.end();
+        ret.ao(false);
+        String particleTex = ITDataGenUtils.getTextureFromObj(model, existingFileHelper);
+        if (particleTex.charAt(0) == '#') { particleTex = Objects.requireNonNull(textures.getOrDefault(particleTex.substring(1), modLoc("block/metal/technology_engineering"))).toString(); }
+        ret.texture("particle", particleTex);
+        generatedParticleTextures.put(ret.getLocation(), particleTex);
+        for (Map.Entry<String, ResourceLocation> e : textures.entrySet()) { ret.texture(e.getKey(), e.getValue()); }
+        return ret;
     }
 
     protected <T extends ModelBuilder<T>> T obj(T base, ResourceLocation model, Map<String, ResourceLocation> textures) {
         ITObjModelBuilder<T> loader = base.customLoader(ITObjModelBuilder::new);
         loader.modelLocation(addModelsPrefix(model));
         loader.flipV(true);
-        loader.automaticCulling(false);
+        loader.automaticCulling(true);
+        loader.shadeQuads(true);
+        loader.emissiveAmbient(true);
         String path = model.getPath();
         ResourceLocation textureModel = model;
         if (path.endsWith("_mirrored.obj")) {

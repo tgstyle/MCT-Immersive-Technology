@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.wooden.logic;
 
 import mctmods.immersivetechnology.common.blocks.wooden.gui.CrateCreativeMenu;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.core.BlockPos;

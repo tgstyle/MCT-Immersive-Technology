@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.helper;
 
-import mctmods.immersivetechnology.common.util.ITFakePlayerUtil;
+import mctmods.immersivetechnology.core.util.ITFakePlayerUtil;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundForgetLevelChunkPacket;

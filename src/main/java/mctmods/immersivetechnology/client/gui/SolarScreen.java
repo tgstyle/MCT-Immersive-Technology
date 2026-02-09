@@ -9,7 +9,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLog
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarMelterRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.ChatFormatting;
