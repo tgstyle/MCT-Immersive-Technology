@@ -19,6 +19,7 @@ import mctmods.immersivetechnology.common.util.compat.jei.radiator.RadiatorRecip
 import mctmods.immersivetechnology.common.util.compat.jei.solartower.SolarTowerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.steamturbine.SteamTurbineRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.advancedcokeoven.AdvancedCokeOvenRecipeCategory;
+import mctmods.immersivetechnology.client.gui.GuiAdvancedCokeOven;
 
 import mezz.jei.api.*;
 import mezz.jei.api.gui.IDrawable;
@@ -92,6 +93,7 @@ public class JEIHelper implements IModPlugin {
         if (Multiblocks.enable.enable_meltingCrucible || Multiblocks.enable.enable_solarMelter) { modRegistry.addRecipes(new ArrayList<Object>((MeltingCrucibleRecipe.recipeList)), "it.meltingCrucible"); }
         if (Multiblocks.enable.enable_radiator) { modRegistry.addRecipes(new ArrayList<Object>((RadiatorRecipe.recipeList)), "it.radiator"); }
         if (Multiblocks.enable.enable_advancedCokeOven) { modRegistry.addRecipes(CokeOvenRecipe.recipeList, "it.advancedCokeOven"); }
+        if (Multiblocks.enable.enable_advancedCokeOven) { modRegistry.addRecipeClickArea(GuiAdvancedCokeOven.class, 58, 36, 11, 13, "it.advancedCokeOven"); }
     }
 
     @SuppressWarnings("deprecation")

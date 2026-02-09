@@ -67,7 +67,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	public long[] averages = new long[60];
 	public long[] packetTotals = new long[60];
 
-	public void efficientMarkDirty() { // only use within update()!
+	public void efficientMarkDirty() {
 		world.getChunk(getPos()).markDirty();
 	}
 
@@ -87,7 +87,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 		}
 		efficientMarkDirty();
 		if (++secondCounter < 20) { return; }
-		if (average == 0 && acceptedAmount > 0) { // pre-populate averages to avoid slow build-up
+		if (average == 0 && acceptedAmount > 0) {
 			for (int i = 0; i < 60; i++) { averages[i] = acceptedAmount; }
 			packetTotals[minuteCounter] = packets;
 			calculateAverages();

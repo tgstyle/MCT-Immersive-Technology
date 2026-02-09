@@ -250,11 +250,19 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             }
         }
         if (!inventory.get(1).isEmpty()) {
-            ItemStack stack = inventory.get(1).copy();
-            int prevCount = stack.getCount();
-            stack = ItemHandlerHelper.insertItemStacked(outputHandler, stack, false);
-            inventory.set(1, stack);
-            if (stack.getCount() < prevCount) doGraphicalUpdates(1);
+            TileEntity te = world.getTileEntity(itemOutputTEPos0);
+            if (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutputPos0.facing.getOpposite())) {
+                IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutputPos0.facing.getOpposite());
+                if (handler != null) {
+                    ItemStack current = inventory.get(1).copy();
+                    ItemStack remaining = ItemHandlerHelper.insertItemStacked(handler, current, false);
+                    if (remaining.getCount() < current.getCount()) {
+                        inventory.set(1, remaining);
+                        doGraphicalUpdates(1);
+                        update = true;
+                    }
+                }
+            }
         }
         if (pumpOutputOut()) update = true;
         boolean wasRunning = isRunning;
