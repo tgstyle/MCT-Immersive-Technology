@@ -37,9 +37,8 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
     }
 
     @Override
-    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, DistillerRecipe recipe, @NotNull IFocusGroup focuses) {
-        int tankCapacity = recipe.input.getAmount();
-        if (recipe.fluidOutput != null) tankCapacity = Math.max(tankCapacity, recipe.fluidOutput.getAmount());
+    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull DistillerRecipe recipe, @NotNull IFocusGroup focuses) {
+        int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
                 .map(fs -> {
@@ -64,7 +63,7 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
 
             outputSlot.addRichTooltipCallback((slotView, tooltip) ->
                     slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                            ITFluidInfoArea.fillTooltip(fs, fs.getAmount(), tooltip::add)));
+                            ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput.getAmount(), tooltip::add)));
         }
 
         if (!recipe.itemOutput.isEmpty()) {
@@ -78,13 +77,16 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
         }
     }
 
+    private int getTankCapacity(DistillerRecipe recipe) {
+        int tankCapacity = recipe.input.getAmount();
+        if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) tankCapacity = Math.max(tankCapacity, recipe.fluidOutput.getAmount());
+        return tankCapacity;
+    }
+
     @Override
     public void draw(@NotNull DistillerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
         tankOverlay.draw(guiGraphics, 55, 19);
-
-        if (recipe.fluidOutput != null) {
-            tankOverlay.draw(guiGraphics, 109, 19);
-        }
+        tankOverlay.draw(guiGraphics, 109, 19);
     }
 }

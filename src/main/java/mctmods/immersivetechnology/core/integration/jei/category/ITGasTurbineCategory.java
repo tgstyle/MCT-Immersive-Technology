@@ -37,8 +37,7 @@ public class ITGasTurbineCategory extends ITRecipeCategory<GasTurbineRecipe> {
     }
 
     @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull GasTurbineRecipe recipe, @NotNull IFocusGroup focuses) {
-        int tankCapacity = recipe.input.getAmount();
-        if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) tankCapacity = Math.max(tankCapacity, recipe.fluidOutput.getAmount());
+        int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
                 .map(fs -> {
@@ -63,10 +62,16 @@ public class ITGasTurbineCategory extends ITRecipeCategory<GasTurbineRecipe> {
         }
     }
 
+    private int getTankCapacity(@NotNull GasTurbineRecipe recipe) {
+        int tankCapacity = recipe.input.getAmount();
+        if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) tankCapacity = Math.max(tankCapacity, recipe.fluidOutput.getAmount());
+        return tankCapacity;
+    }
+
     @Override public void draw(@NotNull GasTurbineRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
         tankOverlay.draw(guiGraphics, 11, 11);
-        if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) tankOverlay.draw(guiGraphics, 89, 11);
+        tankOverlay.draw(guiGraphics, 89, 11);
         turbineAndArrow.draw(guiGraphics, 42, 18);
     }
 }

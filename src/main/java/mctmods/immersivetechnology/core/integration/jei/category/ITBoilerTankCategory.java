@@ -39,6 +39,8 @@ public class ITBoilerTankCategory extends ITRecipeCategory<BoilerTankRecipe> {
 
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull BoilerTankRecipe recipe, @NotNull IFocusGroup focuses) {
+        int tankCapacity = getTankCapacity(recipe);
+
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
                 .map(fs -> {
                     FluidStack copy = fs.copy();
@@ -49,7 +51,7 @@ public class ITBoilerTankCategory extends ITRecipeCategory<BoilerTankRecipe> {
 
         var inputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 67, 20)
                 .addIngredients(ForgeTypes.FLUID_STACK, inputs)
-                .setFluidRenderer(recipe.input.getAmount(), false, 16, 47);
+                .setFluidRenderer(tankCapacity, false, 16, 47);
 
         inputSlot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
@@ -57,11 +59,15 @@ public class ITBoilerTankCategory extends ITRecipeCategory<BoilerTankRecipe> {
 
         var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 92, 20)
                 .addIngredient(ForgeTypes.FLUID_STACK, recipe.output)
-                .setFluidRenderer(recipe.output.getAmount(), false, 16, 47);
+                .setFluidRenderer(tankCapacity, false, 16, 47);
 
         outputSlot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        ITFluidInfoArea.fillTooltip(fs, fs.getAmount(), tooltip::add)));
+                        ITFluidInfoArea.fillTooltip(fs, recipe.output.getAmount(), tooltip::add)));
+    }
+
+    private int getTankCapacity(@NotNull BoilerTankRecipe recipe) {
+        return Math.max(recipe.input.getAmount(), recipe.output.getAmount());
     }
 
     @Override

@@ -41,10 +41,12 @@ public class ITBoilerLiquidCategory extends ITRecipeCategory<BoilerLiquidRecipe>
 
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull BoilerLiquidRecipe recipe, @NotNull IFocusGroup focuses) {
+        int tankCapacity = getTankCapacity(recipe);
+
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
                 .map(fs -> {
                     FluidStack copy = fs.copy();
-                    copy.setAmount(recipe.input.getAmount());
+                    copy.setAmount(tankCapacity);
                     return copy;
                 })
                 .toList();
@@ -54,18 +56,22 @@ public class ITBoilerLiquidCategory extends ITRecipeCategory<BoilerLiquidRecipe>
             var biodieselFluid = ForgeRegistries.FLUIDS.getValue(biodieselRl);
             FluidStack dummy = new FluidStack(
                     biodieselFluid != null && biodieselFluid != Fluids.EMPTY ? biodieselFluid : Fluids.LAVA,
-                    recipe.input.getAmount()
+                    tankCapacity
             );
             inputs = List.of(dummy);
         }
 
         var inputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 80, 20)
                 .addIngredients(ForgeTypes.FLUID_STACK, inputs)
-                .setFluidRenderer(recipe.input.getAmount(), false, 16, 47);
+                .setFluidRenderer(tankCapacity, false, 16, 47);
 
         inputSlot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        ITFluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
+                        ITFluidInfoArea.fillTooltip(fs, tankCapacity, tooltip::add)));
+    }
+
+    private int getTankCapacity(@NotNull BoilerLiquidRecipe recipe) {
+        return recipe.input.getAmount();
     }
 
     @Override

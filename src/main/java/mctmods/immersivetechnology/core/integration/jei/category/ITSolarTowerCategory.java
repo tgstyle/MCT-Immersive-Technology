@@ -48,6 +48,8 @@ public class ITSolarTowerCategory extends ITRecipeCategory<SolarTowerRecipe> {
 
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SolarTowerRecipe recipe, @NotNull IFocusGroup focuses) {
+        int tankCapacity = getTankCapacity(recipe);
+
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
                 .map(fs -> {
                     FluidStack copy = fs.copy();
@@ -68,26 +70,35 @@ public class ITSolarTowerCategory extends ITRecipeCategory<SolarTowerRecipe> {
 
         builder.addSlot(RecipeIngredientRole.INPUT, 102, 21)
                 .addIngredients(ForgeTypes.FLUID_STACK, inputs)
-                .setFluidRenderer(recipe.input.getAmount(), false, 16, 47)
-                .setOverlay(tankOverlay, -2, -2)
+                .setFluidRenderer(tankCapacity, false, 16, 47)
                 .addRichTooltipCallback((slotView, tooltip) ->
                         slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
                                 ITFluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
 
-        if (recipe.fluidOutput != null) {
+        if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) {
             builder.addSlot(RecipeIngredientRole.OUTPUT, 126, 21)
                     .addIngredient(ForgeTypes.FLUID_STACK, recipe.fluidOutput)
-                    .setFluidRenderer(recipe.fluidOutput.getAmount(), false, 16, 47)
-                    .setOverlay(tankOverlay, -2, -2)
+                    .setFluidRenderer(tankCapacity, false, 16, 47)
                     .addRichTooltipCallback((slotView, tooltip) ->
                             slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                                    ITFluidInfoArea.fillTooltip(fs, fs.getAmount(), tooltip::add)));
+                                    ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput.getAmount(), tooltip::add)));
         }
+    }
+
+    private int getTankCapacity(@NotNull SolarTowerRecipe recipe) {
+        int tankCapacity = recipe.input.getAmount();
+        if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) {
+            tankCapacity = Math.max(tankCapacity, recipe.fluidOutput.getAmount());
+        }
+        return tankCapacity;
     }
 
     @Override
     public void draw(@NotNull SolarTowerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
+
+        tankOverlay.draw(guiGraphics, 100, 19);
+        tankOverlay.draw(guiGraphics, 124, 19);
 
         Font font = Minecraft.getInstance().font;
 

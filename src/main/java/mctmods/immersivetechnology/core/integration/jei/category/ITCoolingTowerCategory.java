@@ -45,16 +45,7 @@ public class ITCoolingTowerCategory extends ITRecipeCategory<CoolingTowerRecipe>
 
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull CoolingTowerRecipe recipe, @NotNull IFocusGroup focuses) {
-        int tankCapacity = Math.max(recipe.input0.getAmount(), recipe.input1.getAmount());
-        if (recipe.fluidOutput0 != null && !recipe.fluidOutput0.isEmpty()) {
-            tankCapacity = Math.max(tankCapacity, recipe.fluidOutput0.getAmount());
-        }
-        if (recipe.fluidOutput1 != null && !recipe.fluidOutput1.isEmpty()) {
-            tankCapacity = Math.max(tankCapacity, recipe.fluidOutput1.getAmount());
-        }
-        if (recipe.fluidOutput2 != null && !recipe.fluidOutput2.isEmpty()) {
-            tankCapacity = Math.max(tankCapacity, recipe.fluidOutput2.getAmount());
-        }
+        int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs0 = recipe.input0.getMatchingFluidStacks().stream()
                 .map(fs -> {
@@ -119,15 +110,23 @@ public class ITCoolingTowerCategory extends ITRecipeCategory<CoolingTowerRecipe>
         }
     }
 
+    private int getTankCapacity(@NotNull CoolingTowerRecipe recipe) {
+        int tankCapacity = Math.max(recipe.input0.getAmount(), recipe.input1.getAmount());
+        if (recipe.fluidOutput0 != null && !recipe.fluidOutput0.isEmpty()) { tankCapacity = Math.max(tankCapacity, recipe.fluidOutput0.getAmount()); }
+        if (recipe.fluidOutput1 != null && !recipe.fluidOutput1.isEmpty()) { tankCapacity = Math.max(tankCapacity, recipe.fluidOutput1.getAmount()); }
+        if (recipe.fluidOutput2 != null && !recipe.fluidOutput2.isEmpty()) { tankCapacity = Math.max(tankCapacity, recipe.fluidOutput2.getAmount()); }
+        return tankCapacity;
+    }
+
     @Override
     public void draw(@NotNull CoolingTowerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
 
         tankOverlay.draw(guiGraphics, 11, 11);
         tankOverlay.draw(guiGraphics, 34, 11);
-        if (recipe.fluidOutput0 != null && !recipe.fluidOutput0.isEmpty()) tankOverlay.draw(guiGraphics, 86, 11);
-        if (recipe.fluidOutput1 != null && !recipe.fluidOutput1.isEmpty()) tankOverlay.draw(guiGraphics, 109, 11);
-        if (recipe.fluidOutput2 != null && !recipe.fluidOutput2.isEmpty()) tankOverlay.draw(guiGraphics, 132, 11);
+        tankOverlay.draw(guiGraphics, 86, 11);
+        tankOverlay.draw(guiGraphics, 109, 11);
+        tankOverlay.draw(guiGraphics, 132, 11);
 
         arrow.draw(guiGraphics, 52, 51);
         drops.draw(guiGraphics, 55, 32);

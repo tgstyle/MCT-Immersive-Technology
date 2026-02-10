@@ -44,9 +44,7 @@ public class ITHeatExchangerCategory extends ITRecipeCategory<HeatExchangerRecip
 
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull HeatExchangerRecipe recipe, @NotNull IFocusGroup focuses) {
-        int tankCapacity = Math.max(recipe.input0.getAmount(), recipe.output0.getAmount());
-        if (recipe.input1 != null) tankCapacity = Math.max(tankCapacity, recipe.input1.getAmount());
-        if (recipe.output1 != null) tankCapacity = Math.max(tankCapacity, recipe.output1.getAmount());
+        int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> in0 = recipe.input0.getMatchingFluidStacks().stream()
                 .map(fs -> {
@@ -101,13 +99,20 @@ public class ITHeatExchangerCategory extends ITRecipeCategory<HeatExchangerRecip
         }
     }
 
+    private int getTankCapacity(@NotNull HeatExchangerRecipe recipe) {
+        int tankCapacity = Math.max(recipe.input0.getAmount(), recipe.output0.getAmount());
+        if (recipe.input1 != null) tankCapacity = Math.max(tankCapacity, recipe.input1.getAmount());
+        if (recipe.output1 != null && !recipe.output1.isEmpty()) tankCapacity = Math.max(tankCapacity, recipe.output1.getAmount());
+        return tankCapacity;
+    }
+
     @Override
     public void draw(@NotNull HeatExchangerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics graphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(graphics, 0, 0);
         tankOverlay.draw(graphics, 35, 12);
-        if (recipe.input1 != null) tankOverlay.draw(graphics, 12, 12);
+        tankOverlay.draw(graphics, 12, 12);
         tankOverlay.draw(graphics, 125, 12);
-        if (recipe.output1 != null) tankOverlay.draw(graphics, 148, 12);
+        tankOverlay.draw(graphics, 148, 12);
 
         arrow.draw(graphics, 73, 50);
         drops.draw(graphics, 73, 40);
