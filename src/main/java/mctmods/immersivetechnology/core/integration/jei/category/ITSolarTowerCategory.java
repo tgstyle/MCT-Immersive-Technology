@@ -47,11 +47,7 @@ public class ITSolarTowerCategory extends ITRecipeCategory<SolarTowerRecipe> {
     }
 
     @Override
-    public void setRecipe(
-            @NotNull IRecipeLayoutBuilder builder,
-            @NotNull SolarTowerRecipe recipe,
-            @NotNull IFocusGroup focuses
-    ) {
+    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SolarTowerRecipe recipe, @NotNull IFocusGroup focuses) {
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
                 .map(fs -> {
                     FluidStack copy = fs.copy();
@@ -90,13 +86,7 @@ public class ITSolarTowerCategory extends ITRecipeCategory<SolarTowerRecipe> {
     }
 
     @Override
-    public void draw(
-            @NotNull SolarTowerRecipe recipe,
-            @NotNull IRecipeSlotsView recipeSlotsView,
-            @NotNull GuiGraphics guiGraphics,
-            double mouseX,
-            double mouseY
-    ) {
+    public void draw(@NotNull SolarTowerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
 
         Font font = Minecraft.getInstance().font;
