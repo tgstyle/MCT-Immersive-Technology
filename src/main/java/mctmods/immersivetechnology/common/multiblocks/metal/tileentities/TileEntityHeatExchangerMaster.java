@@ -96,6 +96,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
+        isRunning = nbt.getBoolean("isRunning");
         if (formed && !descPacket) {
             needsPoIInit = true;
             needsNotify = true;
@@ -113,6 +114,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
+        nbt.setBoolean("isRunning", isRunning);
     }
 
     @Override
@@ -175,7 +177,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
             } else processTimeRemaining = 0;
         }
 
-        isRunning = processTimeRemaining > 0;
+        isRunning = processTimeRemaining > 0 && shouldRun;
         int currentEnergy = energyStorage.getEnergyStored();
         boolean changed = oldEnergy != currentEnergy || oldIsRunning != isRunning;
         if (changed && tickCountdown-- <= 0) {
@@ -535,7 +537,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
                     FluidStack d = tank.drain(remaining, doDrain);
                     if (d != null) {
                         if (drained == null) drained = d.copy();
-                        else if (drained.isFluidEqual(d)) drained.amount += d.amount;
+                        else drained.amount += d.amount;
                         remaining -= d.amount;
                         if (doDrain && d.amount > 0) master.TankContentsChanged();
                         if (remaining <= 0) return drained;
