@@ -84,6 +84,7 @@ import static mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea.fill
         registration.addRecipeCatalyst(ITMultiblockProvider.COOLING_TOWER.iconStack(), JEIRecipeTypes.COOLING_TOWER);
         registration.addRecipeCatalyst(ITMultiblockProvider.DISTILLER.iconStack(), JEIRecipeTypes.DISTILLER);
         registration.addRecipeCatalyst(ITMultiblockProvider.GAS_TURBINE.iconStack(), JEIRecipeTypes.GAS_TURBINE);
+        registration.addRecipeCatalyst(ITMultiblockProvider.HEAT_EXCHANGER.iconStack(), JEIRecipeTypes.HEAT_EXCHANGER);
         registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_MELTER.iconStack(), JEIRecipeTypes.SOLAR_MELTER);
         registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_TOWER.iconStack(), JEIRecipeTypes.SOLAR_TOWER);
         registration.addRecipeCatalyst(ITMultiblockProvider.STEAM_TURBINE.iconStack(), JEIRecipeTypes.STEAM_TURBINE);
