@@ -26,6 +26,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
+import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -119,9 +122,24 @@ public class ITRecipes extends RecipeProvider {
         SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteam, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).build(out, toResourceLocation("steam_turbine/steam"));
         SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteamForge, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).build(out, toResourceLocation("steam_turbine/steam_forge"));
         GasTurbineRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 160).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toResourceLocation("gas_turbine/biodiesel"));
-        GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 800).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toResourceLocation("gas_turbine/gasoline"));
-        GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "diesel")), 114).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toResourceLocation("gas_turbine/diesel"));
-        GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "kerosene")), 150).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toResourceLocation("gas_turbine/kerosene"));
+
+        var gasolineBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 800).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10);
+        ConditionalRecipe.builder()
+                .addCondition(modLoaded("immersivepetroleum"))
+                .addRecipe(inner -> gasolineBuilder.build(inner, toResourceLocation("gas_turbine/gasoline")))
+                .build(out, toResourceLocation("gas_turbine/gasoline"));
+
+        var dieselBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "diesel")), 114).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10);
+        ConditionalRecipe.builder()
+                .addCondition(modLoaded("immersivepetroleum"))
+                .addRecipe(inner -> dieselBuilder.build(inner, toResourceLocation("gas_turbine/diesel")))
+                .build(out, toResourceLocation("gas_turbine/diesel"));
+
+        var keroseneBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "kerosene")), 150).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10);
+        ConditionalRecipe.builder()
+                .addCondition(modLoaded("immersivepetroleum"))
+                .addRecipe(inner -> keroseneBuilder.build(inner, toResourceLocation("gas_turbine/kerosene")))
+                .build(out, toResourceLocation("gas_turbine/kerosene"));
     }
 
     private void recipesSolarMelter(@Nonnull Consumer<FinishedRecipe> out) {
@@ -146,4 +164,7 @@ public class ITRecipes extends RecipeProvider {
         PATH_COUNT.put(resourceLocation, 1);
         return ITLib.rl(resourceLocation);
     }
+
+    @SuppressWarnings("SameParameterValue")
+    private static ICondition modLoaded(String modId) { return new ModLoadedCondition(modId); }
 }

@@ -21,24 +21,29 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class ITHeatExchangerCategory extends ITRecipeCategory<HeatExchangerRecipe> {
+
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated arrow;
     private final IDrawableAnimated drops;
 
     public ITHeatExchangerCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.HEAT_EXCHANGER, "block.immersivetechnology.heat_exchanger");
+
         ResourceLocation background = ITLib.makeTextureLocation("heat_exchanger_jei");
-        setBackground(helper.createDrawable(background, 0, 0, 176, 64));
+        setRecipeBackground(helper.createDrawable(background, 0, 0, 176, 64));
         setIcon(ITMultiblockProvider.HEAT_EXCHANGER.iconStack());
 
         tankOverlay = helper.createDrawable(background, 178, 2, 16, 47);
+
         arrow = helper.drawableBuilder(background, 196, 0, 32, 9)
                 .buildAnimated(200, IDrawableAnimated.StartDirection.LEFT, false);
+
         drops = helper.drawableBuilder(background, 196, 9, 20, 15)
                 .buildAnimated(200, IDrawableAnimated.StartDirection.BOTTOM, false);
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull HeatExchangerRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override
+    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull HeatExchangerRecipe recipe, @NotNull IFocusGroup focuses) {
         int tankCapacity = Math.max(recipe.input0.getAmount(), recipe.output0.getAmount());
         if (recipe.input1 != null) tankCapacity = Math.max(tankCapacity, recipe.input1.getAmount());
         if (recipe.output1 != null) tankCapacity = Math.max(tankCapacity, recipe.output1.getAmount());
@@ -48,12 +53,16 @@ public class ITHeatExchangerCategory extends ITRecipeCategory<HeatExchangerRecip
                     FluidStack copy = fs.copy();
                     copy.setAmount(recipe.input0.getAmount());
                     return copy;
-                }).toList();
+                })
+                .toList();
+
         var slotIn0 = builder.addSlot(RecipeIngredientRole.INPUT, 35, 12)
                 .addIngredients(ForgeTypes.FLUID_STACK, in0)
                 .setFluidRenderer(tankCapacity, false, 16, 47);
-        slotIn0.addRichTooltipCallback((view, tt) -> view.getDisplayedIngredient(ForgeTypes.FLUID_STACK)
-                .ifPresent(fs -> ITFluidInfoArea.fillTooltip(fs, recipe.input0.getAmount(), tt::add)));
+
+        slotIn0.addRichTooltipCallback((view, tooltip) ->
+                view.getDisplayedIngredient(ForgeTypes.FLUID_STACK)
+                        .ifPresent(fs -> ITFluidInfoArea.fillTooltip(fs, recipe.input0.getAmount(), tooltip::add)));
 
         if (recipe.input1 != null) {
             List<FluidStack> in1 = recipe.input1.getMatchingFluidStacks().stream()
@@ -61,30 +70,40 @@ public class ITHeatExchangerCategory extends ITRecipeCategory<HeatExchangerRecip
                         FluidStack copy = fs.copy();
                         copy.setAmount(recipe.input1.getAmount());
                         return copy;
-                    }).toList();
+                    })
+                    .toList();
+
             var slotIn1 = builder.addSlot(RecipeIngredientRole.INPUT, 12, 12)
                     .addIngredients(ForgeTypes.FLUID_STACK, in1)
                     .setFluidRenderer(tankCapacity, false, 16, 47);
-            slotIn1.addRichTooltipCallback((view, tt) -> view.getDisplayedIngredient(ForgeTypes.FLUID_STACK)
-                    .ifPresent(fs -> ITFluidInfoArea.fillTooltip(fs, recipe.input1.getAmount(), tt::add)));
+
+            slotIn1.addRichTooltipCallback((view, tooltip) ->
+                    view.getDisplayedIngredient(ForgeTypes.FLUID_STACK)
+                            .ifPresent(fs -> ITFluidInfoArea.fillTooltip(fs, recipe.input1.getAmount(), tooltip::add)));
         }
 
         var slotOut0 = builder.addSlot(RecipeIngredientRole.OUTPUT, 125, 12)
                 .addIngredient(ForgeTypes.FLUID_STACK, recipe.output0)
                 .setFluidRenderer(tankCapacity, false, 16, 47);
-        slotOut0.addRichTooltipCallback((view, tt) -> view.getDisplayedIngredient(ForgeTypes.FLUID_STACK)
-                .ifPresent(fs -> ITFluidInfoArea.fillTooltip(fs, recipe.output0.getAmount(), tt::add)));
+
+        slotOut0.addRichTooltipCallback((view, tooltip) ->
+                view.getDisplayedIngredient(ForgeTypes.FLUID_STACK)
+                        .ifPresent(fs -> ITFluidInfoArea.fillTooltip(fs, recipe.output0.getAmount(), tooltip::add)));
 
         if (recipe.output1 != null) {
             var slotOut1 = builder.addSlot(RecipeIngredientRole.OUTPUT, 148, 12)
                     .addIngredient(ForgeTypes.FLUID_STACK, recipe.output1)
                     .setFluidRenderer(tankCapacity, false, 16, 47);
-            slotOut1.addRichTooltipCallback((view, tt) -> view.getDisplayedIngredient(ForgeTypes.FLUID_STACK)
-                    .ifPresent(fs -> ITFluidInfoArea.fillTooltip(fs, recipe.output1.getAmount(), tt::add)));
+
+            slotOut1.addRichTooltipCallback((view, tooltip) ->
+                    view.getDisplayedIngredient(ForgeTypes.FLUID_STACK)
+                            .ifPresent(fs -> ITFluidInfoArea.fillTooltip(fs, recipe.output1.getAmount(), tooltip::add)));
         }
     }
 
-    @Override public void draw(@NotNull HeatExchangerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics graphics, double mouseX, double mouseY) {
+    @Override
+    public void draw(@NotNull HeatExchangerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics graphics, double mouseX, double mouseY) {
+        getRecipeBackground().draw(graphics, 0, 0);
         tankOverlay.draw(graphics, 35, 12);
         if (recipe.input1 != null) tankOverlay.draw(graphics, 12, 12);
         tankOverlay.draw(graphics, 125, 12);

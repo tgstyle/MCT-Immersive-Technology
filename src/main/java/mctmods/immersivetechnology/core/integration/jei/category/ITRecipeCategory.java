@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.core.integration.jei.category;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
@@ -19,7 +18,7 @@ public abstract class ITRecipeCategory<T> implements IRecipeCategory<T> {
     protected final IGuiHelper guiHelper;
     private final RecipeType<T> type;
     public MutableComponent title;
-    private IDrawableStatic background;
+    private IDrawable recipeBackground;
     private IDrawable icon;
     protected final Font font;
 
@@ -30,7 +29,7 @@ public abstract class ITRecipeCategory<T> implements IRecipeCategory<T> {
         this.font = Minecraft.getInstance().font;
     }
 
-    protected void setBackground(IDrawableStatic background) { this.background = background; }
+    protected void setRecipeBackground(IDrawable background) { this.recipeBackground = background; }
 
     @Nullable @Override public IDrawable getIcon() { return this.icon; }
 
@@ -42,9 +41,9 @@ public abstract class ITRecipeCategory<T> implements IRecipeCategory<T> {
 
     @Override public final @NotNull RecipeType<T> getRecipeType() { return type; }
 
-    @Override public IDrawable getBackground() { return background; }
+    @Override public int getWidth() { return recipeBackground.getWidth(); }
 
-    @Override public int getWidth() { return background.getWidth(); }
+    @Override public int getHeight() { return recipeBackground.getHeight(); }
 
-    @Override public int getHeight() { return background.getHeight(); }
+    protected IDrawable getRecipeBackground() { return recipeBackground; }
 }

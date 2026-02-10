@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.core.integration.jei.category;
 
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
 import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
@@ -20,18 +20,25 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class ITBoilerTankCategory extends ITRecipeCategory<BoilerTankRecipe> {
+
     private final IDrawableStatic tankOverlay;
 
     public ITBoilerTankCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.BOILER_TANK, "block.immersivetechnology.boiler_tank");
+
         ResourceLocation background = ITLib.makeTextureLocation("boiler_tank");
-        IDrawableStatic back = guiHelper.drawableBuilder(background, 0, 0, 176, 74).setTextureSize(256, 256).build();
-        setBackground(back);
+        IDrawableStatic back = helper.drawableBuilder(background, 0, 0, 176, 77)
+                .setTextureSize(256, 256)
+                .build();
+
+        setRecipeBackground(back);
         setIcon(ITMultiblockProvider.BOILER_TANK.iconStack());
+
         tankOverlay = helper.createDrawable(background, 177, 31, 20, 51);
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull BoilerTankRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override
+    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull BoilerTankRecipe recipe, @NotNull IFocusGroup focuses) {
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
                 .map(fs -> {
                     FluidStack copy = fs.copy();
@@ -39,20 +46,28 @@ public class ITBoilerTankCategory extends ITRecipeCategory<BoilerTankRecipe> {
                     return copy;
                 })
                 .toList();
-        var inputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 67, 21)
+
+        var inputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 67, 20)
                 .addIngredients(ForgeTypes.FLUID_STACK, inputs)
                 .setFluidRenderer(recipe.input.getAmount(), false, 16, 47);
-        inputSlot.addRichTooltipCallback((slotView, tooltip) -> slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                ITFluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
-        var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 92, 21)
+
+        inputSlot.addRichTooltipCallback((slotView, tooltip) ->
+                slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                        ITFluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
+
+        var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 92, 20)
                 .addIngredient(ForgeTypes.FLUID_STACK, recipe.output)
                 .setFluidRenderer(recipe.output.getAmount(), false, 16, 47);
-        outputSlot.addRichTooltipCallback((slotView, tooltip) -> slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                ITFluidInfoArea.fillTooltip(fs, fs.getAmount(), tooltip::add)));
+
+        outputSlot.addRichTooltipCallback((slotView, tooltip) ->
+                slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                        ITFluidInfoArea.fillTooltip(fs, fs.getAmount(), tooltip::add)));
     }
 
-    @Override public void draw(@NotNull BoilerTankRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        tankOverlay.draw(guiGraphics, 65, 19);
-        tankOverlay.draw(guiGraphics, 90, 19);
+    @Override
+    public void draw(@NotNull BoilerTankRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        getRecipeBackground().draw(guiGraphics, 0, 0);
+        tankOverlay.draw(guiGraphics, 65, 18);
+        tankOverlay.draw(guiGraphics, 90, 18);
     }
 }
