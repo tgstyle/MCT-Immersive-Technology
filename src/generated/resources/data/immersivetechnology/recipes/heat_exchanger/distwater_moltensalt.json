@@ -15,7 +15,7 @@
   },
   "output1": {
     "amount": 80,
-    "fluid": "immersivetechnology:molten_salt"
+    "fluid": "immersivetechnology:heated_salt_slurry"
   },
   "time": 10
 }
