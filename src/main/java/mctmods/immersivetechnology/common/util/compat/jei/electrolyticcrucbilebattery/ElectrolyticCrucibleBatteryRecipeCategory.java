@@ -21,10 +21,9 @@ public class ElectrolyticCrucibleBatteryRecipeCategory extends ITRecipeCategory<
     private final IDrawable tankOverlay;
     private final IDrawableAnimated arrow;
 
-    @SuppressWarnings("deprecation")
     public ElectrolyticCrucibleBatteryRecipeCategory(IGuiHelper helper) {
         super("electrolyticCrucibleBattery", "tile.immersivetech.metal_multiblock1.electrolytic_crucible_battery.name", helper.createDrawable(background, 0, 0, 176, 64), ElectrolyticCrucibleBatteryRecipe.class, GenericMultiblockIngredient.ELECTROLYTIC_CRUCIBLE_BATTERY);
-        tankOverlay = helper.createDrawable(background, 178, 2, 16, 47, -2, 2, -2, 2);
+        tankOverlay = helper.drawableBuilder(background, 178, 2, 16, 47).addPadding(-2, 2, -2, 2).build();
         IDrawableStatic staticImage = helper.createDrawable(background, 196, 0, 32, 18);
         this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
     }

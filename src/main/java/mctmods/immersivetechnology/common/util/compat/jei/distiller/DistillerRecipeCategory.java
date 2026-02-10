@@ -11,6 +11,7 @@ import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -23,43 +24,39 @@ public class DistillerRecipeCategory extends ITRecipeCategory<DistillerRecipe, D
 	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_distiller.png");
 	private final IDrawable tankOverlay;
 
-	@SuppressWarnings("deprecation")
 	public DistillerRecipeCategory(IGuiHelper helper) {
-		super("distiller", "tile.immersivetech.metal_multiblock.distiller.name", helper.createDrawable(background, 0, 166, 176, 77), DistillerRecipe.class, GenericMultiblockIngredient.DISTILLER);
-		tankOverlay = helper.createDrawable(background, 177, 31, 16, 47, -2, 2, -2, 2);
+		super("distiller", "tile.immersivetech.metal_multiblock.distiller.name", helper.createDrawable(background, 8, 13, 168, 60), DistillerRecipe.class, GenericMultiblockIngredient.DISTILLER);
+		tankOverlay = helper.drawableBuilder(background, 177, 31, 16, 47).addPadding(-2, 2, -2, 2).build();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull DistillerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
-		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
-		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
+		List<List<FluidStack>> fluidInputs = ingredients.getInputs(VanillaTypes.FLUID);
+		List<List<FluidStack>> fluidOutputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
-		int tankSize = 0;
-		for (List<FluidStack> lists : inputs) {
-			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
+		int tankCapacity = 0;
+		for (List<FluidStack> list : fluidInputs) {
+			for (FluidStack fluid : list) if (fluid.amount > tankCapacity) tankCapacity = fluid.amount;
 		}
-		for (List<FluidStack> lists : outputs) {
-			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
+		for (List<FluidStack> list : fluidOutputs) {
+			for (FluidStack fluid : list) if (fluid.amount > tankCapacity) tankCapacity = fluid.amount;
 		}
+
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-		if (!inputs.isEmpty()) {
-			guiFluidStacks.init(0, true, 58, 21, 16, 47, tankSize, false, tankOverlay);
-			guiFluidStacks.set(0, inputs.get(0));
-		}
-		guiFluidStacks.init(1, false, 112, 21, 16, 47, tankSize, false, tankOverlay);
-		guiFluidStacks.set(1, outputs.get(0));
+		guiFluidStacks.init(0, true, 50, 8, 16, 47, tankCapacity, false, tankOverlay);
+		if (!fluidInputs.isEmpty()) guiFluidStacks.set(0, fluidInputs.get(0));
+
+		guiFluidStacks.init(1, false, 104, 8, 16, 47, tankCapacity, false, tankOverlay);
+		guiFluidStacks.set(1, fluidOutputs.get(0));
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
 
 		ItemStack itemOutput = recipeWrapper.recipe.itemOutput;
 		if (!itemOutput.isEmpty()) {
 			IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
-			guiItemStacks.init(0, false, 133, 52);
+			guiItemStacks.init(0, false, 71, 21);
 			guiItemStacks.set(0, itemOutput);
-			guiItemStacks.addTooltipCallback((slotIndex, input, ingredient, tooltip) -> tooltip.add(TranslationKey.CATEGORY_DISTILLER_CHANCE.format(recipeWrapper.recipe.chance*100) + "%"));
+			guiItemStacks.addTooltipCallback((slotIndex, input, ingredient, tooltip) -> tooltip.add(TranslationKey.CATEGORY_DISTILLER_CHANCE.format(recipeWrapper.recipe.chance * 100) + "%"));
 		}
 	}
-	
-	@Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull DistillerRecipe recipe) {
-		return new DistillerRecipeWrapper(recipe);
-	}
+
+	@Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull DistillerRecipe recipe) { return new DistillerRecipeWrapper(recipe); }
 }

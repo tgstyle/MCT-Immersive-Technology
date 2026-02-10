@@ -7,6 +7,7 @@ import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -21,26 +22,25 @@ public class RadiatorRecipeCategory extends ITRecipeCategory<RadiatorRecipe, Rad
 	private final IDrawableAnimated arrow;
 	private final IDrawableAnimated drops;
 
-	@SuppressWarnings("deprecation")
 	public RadiatorRecipeCategory(IGuiHelper helper) {
 		super("radiator", "tile.immersivetech.metal_multiblock1.radiator.name", helper.createDrawable(background, 0, 0, 159, 69), RadiatorRecipe.class, GenericMultiblockIngredient.RADIATOR);
-		tankOverlay = helper.createDrawable(background, 161, 2, 16, 47, -2, 2, -2, 2);
+		tankOverlay = helper.drawableBuilder(background, 161, 2, 16, 47).addPadding(-2, 2, -2, 2).build();
 		IDrawableStatic staticImage = helper.createDrawable(background, 17, 69, 32, 9);
 		this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
 		staticImage = helper.createDrawable(background, 0, 69, 17, 23);
 		this.drops = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.TOP, false);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull RadiatorRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
-		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
+		List<List<FluidStack>> inputs = ingredients.getOutputs(VanillaTypes.FLUID);
+		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
+
 		int tankCapacity = 0;
 		for (List<FluidStack> stacks : inputs) {
 			for (FluidStack stack : stacks) {
 				if (stack.amount > tankCapacity) tankCapacity = stack.amount;
 			}
 		}
-		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
 		for (List<FluidStack> stacks : outputs) {
 			for (FluidStack stack : stacks) {
 				if (stack.amount > tankCapacity) tankCapacity = stack.amount;

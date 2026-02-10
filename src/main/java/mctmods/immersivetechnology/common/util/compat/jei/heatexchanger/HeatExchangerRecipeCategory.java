@@ -18,15 +18,14 @@ import java.util.List;
 
 public class HeatExchangerRecipeCategory extends ITRecipeCategory<HeatExchangerRecipe, HeatExchangerRecipeWrapper> {
 
-    public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_heat_exchanger.png");
+    public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_heat_exchanger_jei.png");
     private final IDrawable tankOverlay;
     private final IDrawableAnimated arrow;
     private final IDrawableAnimated drops;
 
-    @SuppressWarnings("deprecation")
     public HeatExchangerRecipeCategory(IGuiHelper helper) {
         super("heatExchanger", "tile.immersivetech.metal_multiblock1.heat_exchanger.name", helper.createDrawable(background, 0, 0, 176, 64), HeatExchangerRecipe.class, GenericMultiblockIngredient.HEAT_EXCHANGER);
-        tankOverlay = helper.createDrawable(background, 178, 2, 16, 47, -2, 2, -2, 2);
+        tankOverlay = helper.drawableBuilder(background, 178, 2, 16, 47).addPadding(-2, 2, -2, 2).build();
         IDrawableStatic staticImage = helper.createDrawable(background, 196, 0, 32, 9);
         this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
         staticImage = helper.createDrawable(background, 196, 9, 20, 15);

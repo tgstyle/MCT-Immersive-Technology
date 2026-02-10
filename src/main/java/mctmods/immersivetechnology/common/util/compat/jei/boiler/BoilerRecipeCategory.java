@@ -9,6 +9,7 @@ import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
@@ -20,16 +21,14 @@ public class BoilerRecipeCategory extends ITRecipeCategory<BoilerRecipe, BoilerR
 	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_boiler_jei.png");
 	private final IDrawable tankOverlay;
 
-	@SuppressWarnings("deprecation")
 	public BoilerRecipeCategory(IGuiHelper helper) {
 		super("boiler", "tile.immersivetech.metal_multiblock.boiler.name", helper.createDrawable(background, 0, 77, 176, 77), BoilerRecipe.class, GenericMultiblockIngredient.BOILER);
-		tankOverlay = helper.createDrawable(background, 177, 31, 16, 47, -2, 2, -2, 2);
+		tankOverlay = helper.drawableBuilder(background, 177, 31, 16, 47).addPadding(-2, 2, -2, 2).build();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull BoilerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
-		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
-		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
+		List<List<FluidStack>> inputs = ingredients.getOutputs(VanillaTypes.FLUID);
+		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
 		int tankSize = 0;
 		for (List<FluidStack> lists : inputs) {

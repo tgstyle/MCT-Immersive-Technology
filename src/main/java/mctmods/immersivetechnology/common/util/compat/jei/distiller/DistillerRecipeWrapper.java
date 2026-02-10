@@ -23,6 +23,6 @@ public class DistillerRecipeWrapper extends MultiblockRecipeWrapper {
 		String text = (GuiScreen.isShiftKeyDown())?
 				TranslationKey.GUI_TICKS.format(recipe.getTotalProcessTime()) :
 				TranslationKey.GUI_SECONDS.format(((float)recipe.getTotalProcessTime()) / 20);
-		minecraft.fontRenderer.drawString(text, 16, 5, 0x8B8B8B, true);
+		minecraft.fontRenderer.drawString(text, 125, 25, 0x8B8B8B, true);
 	}
 }

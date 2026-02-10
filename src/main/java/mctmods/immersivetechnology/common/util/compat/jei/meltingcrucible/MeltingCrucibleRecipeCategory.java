@@ -22,10 +22,14 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 	private final IDrawable tankOverlay;
 	private final IDrawableAnimated arrow;
 
-	@SuppressWarnings("deprecation")
 	public MeltingCrucibleRecipeCategory(IGuiHelper helper) {
-		super("meltingCrucible", "tile.immersivetech.metal_multiblock1.melting_crucible.name", helper.createDrawable(background, 0, 0, 176, 64), MeltingCrucibleRecipe.class, Multiblocks.enable.enable_meltingCrucible ? GenericMultiblockIngredient.MELTING_CRUCIBLE :  null, Multiblocks.enable.enable_solarMelter ? GenericMultiblockIngredient.SOLAR_MELTER : null);
-		tankOverlay = helper.createDrawable(background, 178, 2, 16, 47, -2, 2, -2, 2);
+		super("meltingCrucible",
+				Multiblocks.enable.enable_meltingCrucible ? "tile.immersivetech.metal_multiblock1.melting_crucible.name" : "tile.immersivetech.metal_multiblock1.solar_melter.name",
+				helper.createDrawable(background, 0, 0, 176, 64),
+				MeltingCrucibleRecipe.class,
+				Multiblocks.enable.enable_meltingCrucible ? GenericMultiblockIngredient.MELTING_CRUCIBLE : (Multiblocks.enable.enable_solarMelter ? GenericMultiblockIngredient.SOLAR_MELTER : null),
+				Multiblocks.enable.enable_meltingCrucible && Multiblocks.enable.enable_solarMelter ? GenericMultiblockIngredient.SOLAR_MELTER : null);
+		tankOverlay = helper.drawableBuilder(background, 178, 2, 16, 47).addPadding(-2, 2, -2, 2).build();
 		IDrawableStatic staticImage = helper.createDrawable(background, 196, 0, 32, 18);
 		this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
 	}
@@ -34,7 +38,6 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
 		int tankSize = 0;
-
 		for (List<FluidStack> lists : outputs) {
 			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
 		}
@@ -50,7 +53,7 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 		}
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
 	}
-	
+
 	@Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull MeltingCrucibleRecipe recipe) { return new MeltingCrucibleRecipeWrapper(recipe); }
 
 	@Override public void drawExtras(@Nonnull Minecraft minecraft) {

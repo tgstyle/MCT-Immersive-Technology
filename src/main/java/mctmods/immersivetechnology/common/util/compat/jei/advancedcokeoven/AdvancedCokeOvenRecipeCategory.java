@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class AdvancedCokeOvenRecipeCategory extends ITRecipeCategory<CokeOvenRecipe, AdvancedCokeOvenRecipeWrapper> {
-
     public static ResourceLocation background = new ResourceLocation("immersiveengineering:textures/gui/coke_oven.png");
     private final IDrawable tankOverlay;
 

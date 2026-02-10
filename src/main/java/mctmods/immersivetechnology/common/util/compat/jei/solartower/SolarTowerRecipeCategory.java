@@ -10,6 +10,7 @@ import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ITickTimer;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -26,24 +27,23 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 	private final IDrawable reflectorOverlay;
 	private final ITickTimer timer;
 
-	@SuppressWarnings("deprecation")
 	public SolarTowerRecipeCategory(IGuiHelper helper) {
 		super("solarTower", "tile.immersivetech.metal_multiblock.solar_tower.name", helper.createDrawable(background, 0, 0, 176, 77), SolarTowerRecipe.class, GenericMultiblockIngredient.SOLAR_TOWER);
-		tankOverlay = helper.createDrawable(background, 177, 31, 16, 47, -2, 2, -2, 2);
-		reflectorOverlay = helper.createDrawable(background, 198, 31, 10, 10, 0,0,0,0);
+		tankOverlay = helper.drawableBuilder(background, 177, 31, 16, 47).addPadding(-2, 2, -2, 2).build();
+		reflectorOverlay = helper.drawableBuilder(background, 198, 31, 10, 10).addPadding(0,0,0,0).build();
 		timer = helper.createTickTimer(200, 3, false);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull SolarTowerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
-		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
+		List<List<FluidStack>> inputs = ingredients.getOutputs(VanillaTypes.FLUID);
+		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
+
 		int tankCapacity = 0;
 		for (List<FluidStack> stacks : inputs) {
 			for (FluidStack stack : stacks) {
 				if (stack.amount > tankCapacity) tankCapacity = stack.amount;
 			}
 		}
-		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
 		for (List<FluidStack> stacks : outputs) {
 			for (FluidStack stack : stacks) {
 				if (stack.amount > tankCapacity) tankCapacity = stack.amount;

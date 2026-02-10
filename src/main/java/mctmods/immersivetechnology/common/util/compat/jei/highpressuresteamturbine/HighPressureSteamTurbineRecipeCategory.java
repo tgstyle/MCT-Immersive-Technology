@@ -7,6 +7,7 @@ import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -17,22 +18,20 @@ import java.util.List;
 
 public class HighPressureSteamTurbineRecipeCategory extends ITRecipeCategory<HighPressureSteamTurbineRecipe, HighPressureSteamTurbineRecipeWrapper> {
 
-	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_steam_turbine.png");
+	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_steam_turbine_jei.png");
 	private final IDrawable tankOverlay;
 	private final IDrawableAnimated turbineAndArrow;
 
-	@SuppressWarnings("deprecation")
 	public HighPressureSteamTurbineRecipeCategory(IGuiHelper helper) {
 		super("highPressureSteamTurbine", "tile.immersivetech.metal_multiblock1.high_pressure_steam_turbine.name", helper.createDrawable(background, 0, 0, 116, 69), HighPressureSteamTurbineRecipe.class, GenericMultiblockIngredient.HIGH_PRESSURE_STEAM_TURBINE);
-		tankOverlay = helper.createDrawable(background, 118, 2, 16, 47, -2, 2, -2, 2);
+		tankOverlay = helper.drawableBuilder(background, 118, 2, 16, 47).addPadding(-2, 2, -2, 2).build();
 		IDrawableStatic staticImage = helper.createDrawable(background, 0, 78, 32, 42);
 		this.turbineAndArrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull HighPressureSteamTurbineRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
-		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
-		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
+		List<List<FluidStack>> inputs = ingredients.getOutputs(VanillaTypes.FLUID);
+		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
 		int tankSize = 0;
 		for (List<FluidStack> lists : inputs) {
