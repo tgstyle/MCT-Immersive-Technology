@@ -22,4 +22,6 @@ public class Distiller extends ITTemplateMultiblock {
     @Override public float getManualScale() { return DistillerShape.MANUAL_SCALE; }
 
     @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, DistillerShape.CLIENT_OFFSET.getX(), DistillerShape.CLIENT_OFFSET.getY(), DistillerShape.CLIENT_OFFSET.getZ())); }
+
+    @Override public boolean canBeMirrored() { return true; }
 }

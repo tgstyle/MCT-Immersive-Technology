@@ -25,5 +25,5 @@ public class HeatExchanger extends ITTemplateMultiblock {
 
     @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, HeatExchangerShape.CLIENT_OFFSET.getX(), HeatExchangerShape.CLIENT_OFFSET.getY(), HeatExchangerShape.CLIENT_OFFSET.getZ())); }
 
-    @Override public boolean canBeMirrored() { return true; }
+    @Override public boolean canBeMirrored() { return false; }
 }

@@ -22,4 +22,6 @@ public class SteamTurbine extends ITTemplateMultiblock {
     @Override public float getManualScale() { return SteamTurbineShape.MANUAL_SCALE; }
 
     @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, SteamTurbineShape.CLIENT_OFFSET.getX(), SteamTurbineShape.CLIENT_OFFSET.getY(), SteamTurbineShape.CLIENT_OFFSET.getZ())); }
+
+    @Override public boolean canBeMirrored() { return true; }
 }
