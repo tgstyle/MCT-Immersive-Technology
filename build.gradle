@@ -305,14 +305,18 @@ artifacts {
 void minimizePNGFile(File file) {
     long size = file.length()
     ExecOperations execOps = project.services.get(ExecOperations)
-    execOps.exec {
-        executable 'optipng'
-        args '-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath
-    }
-    long newSize = file.length()
-    if (newSize < size) {
-        System.out.format("Reduced File size of %s from %d bytes to %d bytes (reduced by %.2f%%)\n",
-                file, size, newSize, ((double) (size - newSize)) / ((double) size) * 100.0)
+    try {
+        execOps.exec {
+            executable 'optipng'
+            args '-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath
+        }
+        long newSize = file.length()
+        if (newSize < size) {
+            System.out.format("Reduced File size of %s from %d bytes to %d bytes (reduced by %.2f%%)\n",
+                    file, size, newSize, ((double) (size - newSize)) / ((double) size) * 100.0)
+        }
+    } catch (Exception e) {
+        System.out.println("optipng not found, skipping optimization for ${file}")
     }
 }
 
@@ -359,7 +363,7 @@ tasks.withType(Task).configureEach {
     }
 }
 
-processResources.dependsOn bumpVersion
+processResources.dependsOn bumpVersion, optimizePng
 jar.dependsOn bumpVersion
 datagenJar.dependsOn bumpVersion
 sourcesJar.dependsOn bumpVersion
