@@ -96,7 +96,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                     () -> state.heatLevel > 0,
                     ctx.isValid(),
                     soundPos,
-                    ITSounds.boiler_liquid,
+                    ITSounds.boiler_solid,
                     () -> {
                         LocalPlayer p = Minecraft.getInstance().player;
                         if (p == null) { return 0f; }

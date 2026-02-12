@@ -11,6 +11,12 @@
     ],
     "subtitle": "subtitles.immersivetechnology.boiler_liquid"
   },
+  "boiler_solid": {
+    "sounds": [
+      "immersivetechnology:boiler_solid"
+    ],
+    "subtitle": "subtitles.immersivetechnology.boiler_solid"
+  },
   "cooling_tower": {
     "sounds": [
       "immersivetechnology:cooling_tower"
@@ -76,6 +82,12 @@
       "immersivetechnology:melting_crucible"
     ],
     "subtitle": "subtitles.immersivetechnology.melting_crucible"
+  },
+  "pilot": {
+    "sounds": [
+      "immersivetechnology:pilot"
+    ],
+    "subtitle": "subtitles.immersivetechnology.pilot"
   },
   "pressure_release": {
     "sounds": [

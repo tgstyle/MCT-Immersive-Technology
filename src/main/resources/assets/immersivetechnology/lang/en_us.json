@@ -161,7 +161,8 @@
   "config.jade.plugin_immersivetechnology.display": "IT Multiblock Display",
 
   "subtitles.immersivetechnology.alternator": "Alternator humming",
-  "subtitles.immersivetechnology.boiler_liquid": "Boiler roaring",
+  "subtitles.immersivetechnology.boiler_liquid": "Boiler gas roaring",
+  "subtitles.immersivetechnology.boiler_solid": "Boiler fire roaring",
   "subtitles.immersivetechnology.cooling_tower": "Cooling Tower dripping",
   "subtitles.immersivetechnology.dance": "Party music playing",
   "subtitles.immersivetechnology.distiller": "Distiller bubbling",
@@ -173,6 +174,7 @@
   "subtitles.immersivetechnology.gas_starter": "Gas Turbine starting",
   "subtitles.immersivetechnology.heat_exchanger": "Heat Exchanger humming",
   "subtitles.immersivetechnology.melting_crucible": "Crucible melting",
+  "subtitles.immersivetechnology.pilot": "Gas pilot burning",
   "subtitles.immersivetechnology.pressure_release": "Pressure releasing",
   "subtitles.immersivetechnology.steam_turbine": "Steam Turbine spinning",
   "subtitles.immersivetechnology.solar_melter": "Solar Melting Crucible melting",

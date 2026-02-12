@@ -87,9 +87,10 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
         float currentLevel = (float) (state.heatLevel / state.getWorkingHeatLevel());
         float vol = (2 * currentLevel) / attenuation;
-        if (state.heatLevel > 0 && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
+        // Main sound for active, heating up, cooling down
+        if ((!state.pilotLit || state.heatLevel > PILOT_HEAT) && state.heatLevel > 0 && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
             state.isSoundPlaying = ITSound.startSound(
-                    () -> state.heatLevel > 0,
+                    () -> (!state.pilotLit || state.heatLevel > PILOT_HEAT) && state.heatLevel > 0,
                     ctx.isValid(),
                     soundPos,
                     ITSounds.boiler_liquid,
@@ -97,9 +98,25 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                         LocalPlayer p = Minecraft.getInstance().player;
                         if (p == null) { return 0f; }
                         float a = (float) Math.max(p.distanceToSqr(soundPos) / 8, 1);
-                        return (2 * (float) (state.heatLevel / state.getWorkingHeatLevel()) ) / a;
+                        return (2 * (float) (state.heatLevel / state.getWorkingHeatLevel())) / a;
                     },
                     () -> (float) (state.heatLevel / state.getWorkingHeatLevel())
+            );
+        }
+        // Pilot sound for pilot mode
+        if (state.pilotLit && state.heatLevel <= PILOT_HEAT && state.heatLevel > 0 && vol > 0.01f && !state.isPilotSoundPlaying.getAsBoolean()) {
+            state.isPilotSoundPlaying = ITSound.startSound(
+                    () -> state.pilotLit && state.heatLevel <= PILOT_HEAT && state.heatLevel > 0,
+                    ctx.isValid(),
+                    soundPos,
+                    ITSounds.pilot,
+                    () -> {
+                        LocalPlayer p = Minecraft.getInstance().player;
+                        if (p == null) { return 0f; }
+                        float a = (float) Math.max(p.distanceToSqr(soundPos) / 8, 1);
+                        return (2 * (float) (PILOT_HEAT / state.getWorkingHeatLevel())) / a;
+                    },
+                    () -> (float) (PILOT_HEAT / state.getWorkingHeatLevel())
             );
         }
         Level level = ctx.getLevel().getRawLevel();
@@ -235,6 +252,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         public boolean pilotLit = false;
         public boolean active = false;
         public BooleanSupplier isSoundPlaying = () -> false;
+        public BooleanSupplier isPilotSoundPlaying = () -> false;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
