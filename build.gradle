@@ -86,16 +86,15 @@ dependencies {
 }
 
 minecraft {
-    accessTransformers {
-        file('src/main/resources/META-INF/it_at.cfg')
-    }
+    accessTransformers { file('src/main/resources/META-INF/it_at.cfg') }
     mappings channel: 'stable', version: "${common.mcp_mappings}"
     runs {
         client {
             workingDirectory project.file('run')
             args '--width', '1920'
             args '--height', '1080'
-            args '--version', common.mcversion
+            args '--add-opens=java.base/java.lang=ALL-UNNAMED'
+			args '--version', common.mcversion			
             args '--username', 'tgstyle'
             property 'forge.logging.console.level', 'debug'
             property 'fml.coreMods.load', 'mctmods.immersivetechnology.core.MCTMixin'
