@@ -162,6 +162,7 @@
 
   "subtitles.immersivetechnology.alternator": "알터네이터 작동음",
   "subtitles.immersivetechnology.boiler_liquid": "보일러 연소음",
+  "subtitles.immersivetechnology.boiler_solid": "보일러 불꽃 타는 소리",
   "subtitles.immersivetechnology.cooling_tower": "냉각탑 물방울 소리",
   "subtitles.immersivetechnology.dance": "파티 음악 재생",
   "subtitles.immersivetechnology.distiller": "증류기 부글거림",
@@ -173,6 +174,7 @@
   "subtitles.immersivetechnology.gas_starter": "가스 터빈 시동음",
   "subtitles.immersivetechnology.heat_exchanger": "열교환기 작동음",
   "subtitles.immersivetechnology.melting_crucible": "도가니 용융음",
+  "subtitles.immersivetechnology.pilot": "파일럿 불꽃 연소음",
   "subtitles.immersivetechnology.pressure_release": "압력 배출음",
   "subtitles.immersivetechnology.steam_turbine": "증기 터빈 회전음",
   "subtitles.immersivetechnology.solar_melter": "태양 용융 도가니 용융음",

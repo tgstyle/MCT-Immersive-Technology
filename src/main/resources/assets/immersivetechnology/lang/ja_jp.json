@@ -162,6 +162,7 @@
 
   "subtitles.immersivetechnology.alternator": "オルタネーターのうなり",
   "subtitles.immersivetechnology.boiler_liquid": "ボイラーの燃焼音",
+  "subtitles.immersivetechnology.boiler_solid": "ボイラーの炎の燃え音",
   "subtitles.immersivetechnology.cooling_tower": "冷却塔の水滴音",
   "subtitles.immersivetechnology.dance": "パーティーミュージック",
   "subtitles.immersivetechnology.distiller": "蒸留装置の泡立つ音",
@@ -173,6 +174,7 @@
   "subtitles.immersivetechnology.gas_starter": "ガスタービンの始動音",
   "subtitles.immersivetechnology.heat_exchanger": "熱交換器のうなり",
   "subtitles.immersivetechnology.melting_crucible": "坩堝の溶解音",
+  "subtitles.immersivetechnology.pilot": "パイロット炎の燃焼音",
   "subtitles.immersivetechnology.pressure_release": "圧力解放音",
   "subtitles.immersivetechnology.steam_turbine": "蒸気タービンの回転音",
   "subtitles.immersivetechnology.solar_melter": "太陽溶解炉の溶解音",

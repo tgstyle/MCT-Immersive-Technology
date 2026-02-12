@@ -162,6 +162,7 @@
 
   "subtitles.immersivetechnology.alternator": "Alternator summt",
   "subtitles.immersivetechnology.boiler_liquid": "Kessel brüllt",
+  "subtitles.immersivetechnology.boiler_solid": "Kesselfeuer prasselt",
   "subtitles.immersivetechnology.cooling_tower": "Kühlturm tropft",
   "subtitles.immersivetechnology.dance": "Partymusik läuft",
   "subtitles.immersivetechnology.distiller": "Destillierer blubbert",
@@ -173,6 +174,7 @@
   "subtitles.immersivetechnology.gas_starter": "Gasturbine startet",
   "subtitles.immersivetechnology.heat_exchanger": "Wärmetauscher summt",
   "subtitles.immersivetechnology.melting_crucible": "Schmelztiegel schmilzt",
+  "subtitles.immersivetechnology.pilot": "Pilotflamme brennt",
   "subtitles.immersivetechnology.pressure_release": "Druck entweicht",
   "subtitles.immersivetechnology.steam_turbine": "Dampfturbine dreht sich",
   "subtitles.immersivetechnology.solar_melter": "Solar-Schmelztiegel schmilzt",

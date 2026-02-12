@@ -162,6 +162,7 @@
 
   "subtitles.immersivetechnology.alternator": "O alternador zumbindo",
   "subtitles.immersivetechnology.boiler_liquid": "A caldeira rugindo",
+  "subtitles.immersivetechnology.boiler_solid": "O fogo da caldeira crepitando",
   "subtitles.immersivetechnology.cooling_tower": "A torre de resfriamento pingando",
   "subtitles.immersivetechnology.dance": "Música de festa tocando",
   "subtitles.immersivetechnology.distiller": "O destilador borbulhando",
@@ -173,6 +174,7 @@
   "subtitles.immersivetechnology.gas_starter": "A turbina a gás iniciando",
   "subtitles.immersivetechnology.heat_exchanger": "O trocador de calor zumbindo",
   "subtitles.immersivetechnology.melting_crucible": "O cadinho derretendo",
+  "subtitles.immersivetechnology.pilot": "Chama piloto queimando",
   "subtitles.immersivetechnology.pressure_release": "Pressão sendo liberada",
   "subtitles.immersivetechnology.steam_turbine": "A turbina a vapor girando",
   "subtitles.immersivetechnology.solar_melter": "Cadinho solar derretendo",
