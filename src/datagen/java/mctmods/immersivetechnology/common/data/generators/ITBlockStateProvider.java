@@ -69,6 +69,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import mctmods.immersivetechnology.common.data.loaders.ITSplitModelBuilder;
+import org.jetbrains.annotations.NotNull;
 
 public class ITBlockStateProvider extends BlockStateProvider {
     public final Map<Block, ModelFile> unsplitModels = new HashMap<>();
@@ -84,17 +85,11 @@ public class ITBlockStateProvider extends BlockStateProvider {
             super(output, modid, existingFileHelper);
         }
 
-        @Override
-        protected void registerModels() {
-        }
+        @Override protected void registerModels() {}
 
-        public void clearModels() {
-            clear();
-        }
+        public void clearModels() { clear(); }
 
-        public CompletableFuture<?> genAll(CachedOutput cache) {
-            return generateAll(cache);
-        }
+        public CompletableFuture<?> genAll(CachedOutput cache) { return generateAll(cache); }
     }
 
     private static class ClearableItemModelProvider extends ItemModelProvider {
@@ -102,17 +97,11 @@ public class ITBlockStateProvider extends BlockStateProvider {
             super(output, modid, existingFileHelper);
         }
 
-        @Override
-        protected void registerModels() {
-        }
+        @Override protected void registerModels() {}
 
-        public void clearModels() {
-            clear();
-        }
+        public void clearModels() { clear(); }
 
-        public CompletableFuture<?> genAll(CachedOutput cache) {
-            return generateAll(cache);
-        }
+        public CompletableFuture<?> genAll(CachedOutput cache) { return generateAll(cache); }
     }
 
     public ITBlockStateProvider(DataGenerator generator, ExistingFileHelper helper) {
@@ -133,9 +122,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         private String mtlOverride;
         private final Map<String, Boolean> visibility = new HashMap<>();
 
-        public ITObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) {
-            super(ITLib.rl("obj"), parent, existingFileHelper);
-        }
+        public ITObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(ITLib.rl("obj"), parent, existingFileHelper); }
 
         public ITObjModelBuilder<T> modelLocation(ResourceLocation modelLocation) { this.modelLocation = modelLocation; return this; }
 
@@ -187,8 +174,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         return new int[]{xRot, yRot};
     }
 
-    @Override
-    public CompletableFuture<?> run(CachedOutput cache) {
+    @Override @NotNull public CompletableFuture<?> run(CachedOutput cache) {
         ((ClearableBlockModelProvider)models()).clearModels();
         ((ClearableItemModelProvider)itemModels()).clearModels();
         registeredBlocks.clear();
@@ -211,17 +197,13 @@ public class ITBlockStateProvider extends BlockStateProvider {
             try {
                 String jsonStr = GSON.toJson(stateJson);
                 byte[] bytes = jsonStr.getBytes(StandardCharsets.UTF_8);
-                com.google.common.hash.HashCode hash = Hashing.sha1().hashBytes(bytes);
+                com.google.common.hash.HashCode hash = Hashing.sha256().hashBytes(bytes);
                 cache.writeIfNeeded(path, bytes, hash);
-            } catch (IOException e) {
-                LOGGER.error("Couldn't save blockstate to {}", path, e);
-            }
+            } catch (IOException e) { LOGGER.error("Couldn't save blockstate to {}", path, e); }
         }, Util.backgroundExecutor());
     }
 
-    protected ResourceLocation extendWithFolder(ResourceLocation rl) {
-        return ResourceLocation.fromNamespaceAndPath(rl.getNamespace(), "blockstates/" + rl.getPath());
-    }
+    protected ResourceLocation extendWithFolder(ResourceLocation rl) { return ResourceLocation.fromNamespaceAndPath(rl.getNamespace(), "blockstates/" + rl.getPath()); }
 
     @Override protected void registerStatesAndModels() {
         ITLib.IT_LOGGER.info("Generating Multiblock Splits");
@@ -432,9 +414,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         ITNongeneratedModel ret = loader.end();
         ret.ao(false);
         String particleTex = ITDataGenUtils.getTextureFromObj(textureModel, existingFileHelper);
-        if (particleTex.charAt(0) == '#') {
-            particleTex = textures.getOrDefault(particleTex.substring(1), modLoc("block/metal/technology_engineering")).toString();
-        }
+        if (particleTex.charAt(0) == '#') { particleTex = textures.getOrDefault(particleTex.substring(1), modLoc("block/metal/technology_engineering")).toString(); }
         ret.texture("particle", particleTex);
         generatedParticleTextures.put(ret.getLocation(), particleTex);
         textures.forEach(ret::texture);
@@ -549,9 +529,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         });
     }
 
-    public static <T extends Comparable<T>> void forEach(PartialBlockstate base, Property<T> prop, List<Property<?>> remaining, Consumer<PartialBlockstate> out) {
-        for (T value : prop.getPossibleValues()) { forEachState(base.with(prop, value), remaining, out); }
-    }
+    public static <T extends Comparable<T>> void forEach(PartialBlockstate base, Property<T> prop, List<Property<?>> remaining, Consumer<PartialBlockstate> out) { for (T value : prop.getPossibleValues()) { forEachState(base.with(prop, value), remaining, out); } }
 
     public static void forEachState(PartialBlockstate base, List<Property<?>> props, Consumer<PartialBlockstate> out) {
         if (!props.isEmpty()) { List<Property<?>> remaining = props.subList(1, props.size()); Property<?> main = props.get(0); forEach(base, main, remaining, out); }
