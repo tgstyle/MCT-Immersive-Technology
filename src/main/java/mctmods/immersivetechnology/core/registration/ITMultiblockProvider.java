@@ -8,13 +8,13 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import mctmods.immersivetechnology.common.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.BoilerLiquidProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.BoilerSolidProcess;
-import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
+import mctmods.immersivetechnology.common.multiblocks.metal.shapes.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.CoolingTower;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.CoolingTowerLogic;
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.CoolingTowerShape;
+import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
@@ -161,9 +161,7 @@ public class ITMultiblockProvider {
                     .build();
 
     @SuppressWarnings("unused")
-    public static List<Class<? extends Block>> getAllBlockClasses() {
-        return List.of(ALTERNATOR.block().get().getClass(), BOILER_LIQUID.block().get().getClass(), BOILER_SOLID.block().get().getClass(), BOILER_TANK.block().get().getClass(), COOLING_TOWER.block().get().getClass(), DISTILLER.block().get().getClass(), GAS_TURBINE.block().get().getClass(), HEAT_EXCHANGER.block().get().getClass(), SOLAR_MELTER.block().get().getClass(), SOLAR_REFLECTOR.block().get().getClass(), SOLAR_TOWER.block().get().getClass(), STEAM_TURBINE.block().get().getClass(), STEEL_SHEETMETAL_TANK.block().get().getClass());
-    }
+    public static List<Class<? extends Block>> getAllBlockClasses() { return List.of(ALTERNATOR.block().get().getClass(), BOILER_LIQUID.block().get().getClass(), BOILER_SOLID.block().get().getClass(), BOILER_TANK.block().get().getClass(), COOLING_TOWER.block().get().getClass(), DISTILLER.block().get().getClass(), GAS_TURBINE.block().get().getClass(), HEAT_EXCHANGER.block().get().getClass(), SOLAR_MELTER.block().get().getClass(), SOLAR_REFLECTOR.block().get().getClass(), SOLAR_TOWER.block().get().getClass(), STEAM_TURBINE.block().get().getClass(), STEEL_SHEETMETAL_TANK.block().get().getClass()); }
 
     public static void init() {
         registerMB("alternator", Alternator.INSTANCE, ALTERNATOR);

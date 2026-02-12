@@ -8,7 +8,7 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -21,6 +21,7 @@ public class BoilerTankShape {
     public static BlockPos CLIENT_OFFSET;
     public static BlockPos DISASSEMBLY_POS;
     public static float MANUAL_SCALE;
+    public static final List<BlockPos> SYMMETRIC_TRIGGER_OFFSETS;
 
     static {
         int[] dims = GenericShape.loadDimensions("boiler_tank", "metal");
@@ -54,7 +55,8 @@ public class BoilerTankShape {
                 }
             }
         }
-        MANUAL_SCALE = DATA.manualScale;
+
+        List<BlockPos> symTriggers = new ArrayList<>();
         if (DATA.pointsOfInterest != null) {
             for (PoIJSONSchema poi : DATA.pointsOfInterest) {
                 switch (poi.name) {
@@ -63,7 +65,12 @@ public class BoilerTankShape {
                     case "client_offset" -> CLIENT_OFFSET = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
                     case "disassembly_ticker" -> DISASSEMBLY_POS = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
                 }
+                if ("symmetric_trigger".equals(poi.name)) {
+                    symTriggers.add(new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]));
+                }
             }
         }
+        SYMMETRIC_TRIGGER_OFFSETS = List.copyOf(symTriggers);
+        MANUAL_SCALE = DATA.manualScale;
     }
 }

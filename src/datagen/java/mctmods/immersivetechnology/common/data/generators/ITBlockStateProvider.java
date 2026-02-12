@@ -11,7 +11,6 @@ import mctmods.immersivetechnology.common.blocks.metal.ValveLimiterBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.data.ITDataGenUtils;
-import mctmods.immersivetechnology.common.data.models.ITMirroredModelBuilder;
 import mctmods.immersivetechnology.common.data.models.ITModelProviderUtils;
 import mctmods.immersivetechnology.common.data.models.ITNongeneratedModels;
 import mctmods.immersivetechnology.common.data.models.ITNongeneratedModels.ITNongeneratedModel;
@@ -45,7 +44,6 @@ import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -56,12 +54,11 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import com.google.gson.JsonObject;
@@ -74,7 +71,11 @@ public class ITBlockStateProvider extends BlockStateProvider {
     protected ExistingFileHelper existingFileHelper;
     protected ITNongeneratedModels innerModels;
 
-    public ITBlockStateProvider(DataGenerator generator, ExistingFileHelper helper) { super(generator.getPackOutput(), ITLib.MODID, helper); this.existingFileHelper = helper; this.innerModels = new ITNongeneratedModels(generator.getPackOutput(), existingFileHelper); }
+    public ITBlockStateProvider(DataGenerator generator, ExistingFileHelper helper) {
+        super(generator.getPackOutput(), ITLib.MODID, helper);
+        this.existingFileHelper = helper;
+        this.innerModels = new ITNongeneratedModels(generator.getPackOutput(), existingFileHelper);
+    }
 
     public static class ITObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
         private ResourceLocation modelLocation;
@@ -85,7 +86,9 @@ public class ITBlockStateProvider extends BlockStateProvider {
         private String mtlOverride;
         private final Map<String, Boolean> visibility = new HashMap<>();
 
-        public ITObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(ITLib.rl("obj"), parent, existingFileHelper); }
+        public ITObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) {
+            super(ITLib.rl("obj"), parent, existingFileHelper);
+        }
 
         public ITObjModelBuilder<T> modelLocation(ResourceLocation modelLocation) { this.modelLocation = modelLocation; return this; }
 
@@ -140,21 +143,19 @@ public class ITBlockStateProvider extends BlockStateProvider {
     @Override protected void registerStatesAndModels() {
         ITLib.IT_LOGGER.info("Generating Multiblock Splits");
 
-        genericMultiblock("alternator", "metal");
-        genericMultiblock("solar_reflector", "metal");
-        genericMultiblock("cooling_tower", "stone");
-        genericMultiblock("steel_sheetmetal_tank", "metal");
-        genericMultiblock("boiler_liquid", "metal");
-        genericMultiblock("boiler_tank", "metal");
-        genericMultiblock("solar_melter", "metal");
-        genericMultiblock("solar_tower", "metal");
-
-        specialActiveMultiblockNoMirror("boiler_solid", "metal", "boiler_solid");
-
-        genericMultiblockMirror("distiller", "metal");
-        genericMultiblockMirror("gas_turbine", "metal");
-        specialMultiblockMirrorNoCulling("heat_exchanger", "metal");
-        genericMultiblockMirror("steam_turbine", "metal");
+        generateMultiblockConfig("alternator", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("boiler_liquid", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("boiler_solid", "metal", false, true, ImmutableMap.of("cube_front", modLoc("multiblock/metal/boiler_solid")), ImmutableMap.of("cube_front", modLoc("multiblock/metal/boiler_solid_active")));
+        generateMultiblockConfig("boiler_tank", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("cooling_tower", "stone", false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("distiller", "metal", true, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("gas_turbine", "metal", true, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("heat_exchanger", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("solar_melter", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("solar_reflector", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("solar_tower", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("steam_turbine", "metal", true, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("steel_sheetmetal_tank", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
 
         createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("block/stone/reinforced_coke_brick", modLoc("block/stone/reinforced_coke_brick")));
         createSimpleBlock(ITBlocks.getBlock.apply("technology_engineering"), models().cubeAll("block/metal/technology_engineering", modLoc("block/metal/technology_engineering")));
@@ -301,6 +302,62 @@ public class ITBlockStateProvider extends BlockStateProvider {
         });
     }
 
+    private void generateMultiblockConfig(String registry_name, String block_type, boolean useSeparateMirror, boolean hasActive, Map<String, ResourceLocation> defaultTextures, Map<String, ResourceLocation> activeTextures) {
+        if (!hasActive) {
+            defaultTextures = ImmutableMap.of();
+            activeTextures = ImmutableMap.of();
+        }
+        ITLib.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
+        ITTemplateMultiblock multiblock = (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name);
+        boolean hasMirror = multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED);
+        boolean flipMirror = hasMirror && useSeparateMirror;
+        String baseObjPath = "multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj";
+        String mirroredObjPath = baseObjPath.replace(".obj", "_mirrored.obj");
+        ITNongeneratedModel defaultUnsplit = createUnsplitModel(registry_name, baseObjPath, defaultTextures);
+        ITNongeneratedModel activeUnsplit = hasActive ? createUnsplitModel(registry_name + "_active", baseObjPath, activeTextures) : null;
+        ITNongeneratedModel mirroredUnsplit = null;
+        ITNongeneratedModel activeMirroredUnsplit = null;
+        if (hasMirror) {
+            String useObjPath = flipMirror ? mirroredObjPath : baseObjPath;
+            mirroredUnsplit = createUnsplitModel(registry_name + "_mirrored", useObjPath, defaultTextures);
+            if (hasActive) activeMirroredUnsplit = createUnsplitModel(registry_name + "_active_mirrored", useObjPath, activeTextures);
+        }
+        ModelFile defaultMain = split(defaultUnsplit, multiblock, false, block_type);
+        ModelFile activeMain = hasActive ? split(activeUnsplit, multiblock, false, block_type) : null;
+        ModelFile defaultMirrored = hasMirror ? split(mirroredUnsplit, multiblock, flipMirror, block_type) : null;
+        ModelFile activeMirrored = hasActive && hasMirror ? split(activeMirroredUnsplit, multiblock, flipMirror, block_type) : null;
+        createMultiblockVariant(multiblock::getBlock, defaultMain, activeMain, defaultMirrored, activeMirrored, hasMirror ? ITProperties.MIRRORED : null, hasActive ? ITProperties.ACTIVE : null);
+    }
+
+    private ITNongeneratedModel createUnsplitModel(String name, String objPathStr, Map<String, ResourceLocation> textures) {
+        ResourceLocation objPath = modLoc(objPathStr);
+        ITNongeneratedModel base = innerModels.withExistingParent(name, mcLoc("block"));
+        ITObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ITObjModelBuilder::new);
+        loader.modelLocation(addModelsPrefix(objPath));
+        loader.flipV(true);
+        loader.automaticCulling(false);
+        loader.shadeQuads(true);
+        loader.emissiveAmbient(true);
+        String path = objPath.getPath();
+        ResourceLocation textureModel = objPath;
+        if (path.endsWith("_mirrored.obj")) {
+            textureModel = ResourceLocation.fromNamespaceAndPath(objPath.getNamespace(), path.replace("_mirrored.obj", ".obj"));
+            String fileName = path.substring(path.lastIndexOf('/') + 1);
+            String originalMtl = fileName.replace("_mirrored.obj", ".mtl");
+            loader.mtlOverride(originalMtl);
+        }
+        ITNongeneratedModel ret = loader.end();
+        ret.ao(false);
+        String particleTex = ITDataGenUtils.getTextureFromObj(textureModel, existingFileHelper);
+        if (particleTex.charAt(0) == '#') {
+            particleTex = textures.getOrDefault(particleTex.substring(1), modLoc("block/metal/technology_engineering")).toString();
+        }
+        ret.texture("particle", particleTex);
+        generatedParticleTextures.put(ret.getLocation(), particleTex);
+        textures.forEach(ret::texture);
+        return ret;
+    }
+
     private BlockModelBuilder createTrashModel(String subtype) {
         String base = "block/metal/trash_" + subtype;
         BlockModelBuilder model = models().getBuilder(base)
@@ -328,25 +385,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
         return model;
     }
 
-    private ModelFile createValveObjModel(String baseName, String objFolder, boolean isOpen, String baseVisibility) {
-        String modelName = "block/metal/" + baseName + (isOpen ? "_open" : "_closed");
-        BlockModelBuilder builder = models().getBuilder(modelName);
-        ITObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ITObjModelBuilder::new)
-                .modelLocation(modLoc("models/block/metal/obj/" + objFolder + "/" + objFolder + ".obj"))
-                .automaticCulling(true)
-                .shadeQuads(true)
-                .flipV(true)
-                .emissiveAmbient(true)
-                .mtlOverride(null)
-                .visibility(baseVisibility, true)
-                .visibility("Handle_Open", isOpen)
-                .visibility("Handle_Closed", !isOpen);
-        ModelFile model = loader.end();
-        String particleTex = ITDataGenUtils.getTextureFromObj(modLoc("block/metal/obj/" + objFolder + "/" + objFolder + ".obj"), existingFileHelper);
-        builder.texture("particle", particleTex);
-        return model;
-    }
-
     private void createSlabModels(Block block, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
         String baseName = "block/stone/slab_reinforced_coke_brick";
         ModelFile bottomModel = models().slab(baseName, side, bottom, top);
@@ -361,73 +399,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
     }
 
     private void createSimpleBlock(Block block, ModelFile model) { getVariantBuilder(block).partialState().setModels(new ConfiguredModel(model)); }
-
-    private void genericMultiblock(String registry_name, String block_type) {
-        ITLib.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
-        createMultiblock(innerObj("multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private void genericMultiblockMirror(String registry_name, String block_type) {
-        ITLib.IT_LOGGER.info("Generating [{}] with Custom Mirror Multiblock Model Data", registry_name);
-        createMirroredMultiblock(innerObj("multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj"), innerObj("multiblock/" + block_type + "/obj/" + registry_name  + "/" + registry_name + "_mirrored.obj"), (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private void specialMultiblockMirrorNoCulling(String registry_name, String block_type) {
-        ITLib.IT_LOGGER.info("Generating [{}] with Custom Mirror Multiblock Model Data no culling", registry_name);
-        ITNongeneratedModel normal = innerObjNoCulling("multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj");
-        ITNongeneratedModel mirrored = innerObjNoCulling("multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + "_mirrored.obj");
-        createMirroredMultiblock(normal, mirrored, (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name), block_type);
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private void specialActiveMultiblockNoMirror(String registry_name, String block_type, String baseTextureName) {
-        ITLib.IT_LOGGER.info("Generating [{}] with Active Multiblock Model Data", registry_name);
-        String objPath = "multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj";
-        Map<String, ResourceLocation> defaultTextures = ImmutableMap.of("cube_front", modLoc("multiblock/" + block_type + "/" + baseTextureName));
-        Map<String, ResourceLocation> activeTextures = ImmutableMap.of("cube_front", modLoc("multiblock/" + block_type + "/" + baseTextureName + "_active"));
-        ITNongeneratedModel defaultUnsplit = obj(registry_name, modLoc(objPath), defaultTextures, innerModels);
-        ITNongeneratedModel activeUnsplit = obj(registry_name + "_active", modLoc(objPath), activeTextures, innerModels);
-        ITTemplateMultiblock multiblock = (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name);
-        ModelFile defaultMain = split(defaultUnsplit, multiblock, false, block_type);
-        ModelFile activeMain = split(activeUnsplit, multiblock, false, block_type);
-        createMultiblockVariant(multiblock::getBlock, defaultMain, activeMain, null, null, null, ITProperties.ACTIVE);
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private void createMultiblockVariant(Supplier<? extends Block> b, ModelFile defaultMaster, @Nullable ModelFile activeMaster, @Nullable ModelFile defaultMirrored, @Nullable ModelFile activeMirrored, @Nullable Property<Boolean> mirroredState, @Nullable Property<Boolean> activeState) {
-        unsplitModels.put(b.get(), defaultMaster);
-        Preconditions.checkArgument((defaultMirrored == null) == (mirroredState == null));
-        Preconditions.checkArgument((activeMaster == null) == (activeState == null));
-        VariantBlockStateBuilder builder = getVariantBuilder(b.get());
-        EnumProperty<Direction> facing = ITProperties.FACING_HORIZONTAL;
-        builder.forAllStates(state -> {
-            Direction dir = state.getValue(facing);
-            int angleY = getAngle(dir);
-            int angleX = 0;
-            if (facing.getPossibleValues().contains(Direction.UP)) { angleX = -90 * dir.getStepY(); angleY = dir.getAxis() != Direction.Axis.Y ? getAngle(dir) : 0; }
-            boolean mirrored = (mirroredState != null) ? state.getValue(mirroredState) : false;
-            boolean active = (activeState != null) ? state.getValue(activeState) : false;
-            ModelFile baseModel = active ? activeMaster : defaultMaster;
-            ModelFile model = mirrored ? (active ? activeMirrored : defaultMirrored) : baseModel;
-            assert model != null;
-            return new ConfiguredModel[]{new ConfiguredModel(model, angleX, angleY, true)};
-        });
-    }
-
-    private void createMirroredMultiblock(ITNongeneratedModel unsplitModel, ITNongeneratedModel mirror_model, ITTemplateMultiblock multiblock, String block_type) {
-        final ModelFile mainModel = split(unsplitModel, multiblock, false, block_type);
-        final ModelFile mirrorModel = split(mirror_model, multiblock, true, block_type);
-        if (multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED)) { createMultiblockVariant(multiblock::getBlock, mainModel, null, mirrorModel, null, ITProperties.MIRRORED, null); }
-        else { createMultiblockVariant(multiblock::getBlock, mainModel, null, null, null, null, null); }
-    }
-
-    private void createMultiblock(ITNongeneratedModel unsplitModel, ITTemplateMultiblock multiblock, String block_type) {
-        final ModelFile mainModel = split(unsplitModel, multiblock, false, block_type);
-        if (multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED)) { createMultiblockVariant(multiblock::getBlock, mainModel, null, split(mirror(unsplitModel, innerModels), multiblock, true, block_type), null, ITProperties.MIRRORED, null); }
-        else { createMultiblockVariant(multiblock::getBlock, mainModel, null, null, null, null, null); }
-    }
 
     private void loadTemplateFor(ITTemplateMultiblock multiblock) {
         final ResourceLocation name = multiblock.getUniqueName();
@@ -466,80 +437,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
         return splitModel("multiblock/" + block_type + "/split/" + baseName + "_split", unsplit, partsStream.collect(Collectors.toList()));
     }
 
-    protected ITNongeneratedModel innerObj(String loc) {
-        Preconditions.checkArgument(loc.endsWith(".obj"));
-        String name = loc.substring(0, loc.length() - 4);
-        ResourceLocation model = modLoc(loc);
-        Map<String, ResourceLocation> textures = ImmutableMap.of();
-        ITNongeneratedModel base = innerModels.withExistingParent(name, mcLoc("block"));
-        ITObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ITObjModelBuilder::new);
-        loader.modelLocation(addModelsPrefix(model));
-        loader.flipV(true);
-        loader.automaticCulling(true);
-        loader.shadeQuads(true);
-        loader.emissiveAmbient(true);
-        ITNongeneratedModel ret = loader.end();
-        ret.ao(false);
-        String particleTex = ITDataGenUtils.getTextureFromObj(model, existingFileHelper);
-        if (particleTex.charAt(0) == '#') { particleTex = Objects.requireNonNull(textures.getOrDefault(particleTex.substring(1), modLoc("block/metal/technology_engineering"))).toString(); }
-        ret.texture("particle", particleTex);
-        generatedParticleTextures.put(ret.getLocation(), particleTex);
-        for (Map.Entry<String, ResourceLocation> e : textures.entrySet()) { ret.texture(e.getKey(), e.getValue()); }
-        return ret;
-    }
-
-    protected ITNongeneratedModel innerObjNoCulling(String loc) {
-        Preconditions.checkArgument(loc.endsWith(".obj"));
-        String name = loc.substring(0, loc.length() - 4);
-        ResourceLocation model = modLoc(loc);
-        Map<String, ResourceLocation> textures = ImmutableMap.of();
-        ITNongeneratedModel base = innerModels.withExistingParent(name, mcLoc("block"));
-        ITObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ITObjModelBuilder::new);
-        loader.modelLocation(addModelsPrefix(model));
-        loader.flipV(true);
-        loader.automaticCulling(false);
-        loader.shadeQuads(true);
-        loader.emissiveAmbient(true);
-        ITNongeneratedModel ret = loader.end();
-        ret.ao(false);
-        String particleTex = ITDataGenUtils.getTextureFromObj(model, existingFileHelper);
-        if (particleTex.charAt(0) == '#') { particleTex = Objects.requireNonNull(textures.getOrDefault(particleTex.substring(1), modLoc("block/metal/technology_engineering"))).toString(); }
-        ret.texture("particle", particleTex);
-        generatedParticleTextures.put(ret.getLocation(), particleTex);
-        for (Map.Entry<String, ResourceLocation> e : textures.entrySet()) { ret.texture(e.getKey(), e.getValue()); }
-        return ret;
-    }
-
-    protected <T extends ModelBuilder<T>> T obj(T base, ResourceLocation model, Map<String, ResourceLocation> textures) {
-        ITObjModelBuilder<T> loader = base.customLoader(ITObjModelBuilder::new);
-        loader.modelLocation(addModelsPrefix(model));
-        loader.flipV(true);
-        loader.automaticCulling(true);
-        loader.shadeQuads(true);
-        loader.emissiveAmbient(true);
-        String path = model.getPath();
-        ResourceLocation textureModel = model;
-        if (path.endsWith("_mirrored.obj")) {
-            textureModel = ResourceLocation.fromNamespaceAndPath(model.getNamespace(), path.replace("_mirrored.obj", ".obj"));
-            String fileName = path.substring(path.lastIndexOf('/') + 1);
-            String originalMtl = fileName.replace("_mirrored.obj", ".mtl");
-            loader.mtlOverride(originalMtl);
-        }
-        T ret = loader.end();
-        ret.ao(false);
-        String particleTex = ITDataGenUtils.getTextureFromObj(textureModel, existingFileHelper);
-        if (particleTex.charAt(0) == '#') { particleTex = textures.get(particleTex.substring(1)).toString(); }
-        ret.texture("particle", particleTex);
-        generatedParticleTextures.put(ret.getLocation(), particleTex);
-        for (Map.Entry<String, ResourceLocation> e : textures.entrySet()) { ret.texture(e.getKey(), e.getValue()); }
-        return ret;
-    }
-
-    protected ITNongeneratedModel obj(String name, ResourceLocation model, Map<String, ResourceLocation> textures, ITNongeneratedModels provider) {
-        ITNongeneratedModel base = provider.getBuilder(name);
-        return obj(base, model, textures);
-    }
-
     protected BlockModelBuilder splitModel(String name, ModelBuilder<?> model, List<Vec3i> parts) {
         BlockModelBuilder result = models().withExistingParent(name, mcLoc("block")).customLoader(ITSplitModelBuilder::begin).innerModel(model).parts(parts).dynamic(false).end();
         addParticleTextureFrom(result, model);
@@ -552,11 +449,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
             result.texture("particle", particles);
             generatedParticleTextures.put(result.getLocation(), particles);
         }
-    }
-
-    protected <T extends ModelBuilder<T>> T mirror(ITNongeneratedModel inner, ModelProvider<T> provider) {
-        String path = inner.getLocation().getPath() + "_mirrored";
-        return provider.getBuilder(path).customLoader(ITMirroredModelBuilder::begin).inner(inner).end();
     }
 
     protected int getAngle(Direction dir) { return (int) ((dir.toYRot() + 180) % 360); }
@@ -590,5 +482,74 @@ public class ITBlockStateProvider extends BlockStateProvider {
             final String typeName = ITModelProviderUtils.getName(type);
             for (final ModelBuilder<?> model : builders) { model.renderType(typeName); }
         }
+    }
+
+    protected <T extends ModelBuilder<T>> T obj(T base, ResourceLocation model, Map<String, ResourceLocation> textures) {
+        ITObjModelBuilder<T> loader = base.customLoader(ITObjModelBuilder::new);
+        loader.modelLocation(addModelsPrefix(model));
+        loader.flipV(true);
+        loader.automaticCulling(true);
+        loader.shadeQuads(true);
+        loader.emissiveAmbient(true);
+        String path = model.getPath();
+        ResourceLocation textureModel = model;
+        if (path.endsWith("_mirrored.obj")) {
+            textureModel = ResourceLocation.fromNamespaceAndPath(model.getNamespace(), path.replace("_mirrored.obj", ".obj"));
+            String fileName = path.substring(path.lastIndexOf('/') + 1);
+            String originalMtl = fileName.replace("_mirrored.obj", ".mtl");
+            loader.mtlOverride(originalMtl);
+        }
+        T ret = loader.end();
+        ret.ao(false);
+        String particleTex = ITDataGenUtils.getTextureFromObj(textureModel, existingFileHelper);
+        if (particleTex.charAt(0) == '#') { particleTex = textures.get(particleTex.substring(1)).toString(); }
+        ret.texture("particle", particleTex);
+        generatedParticleTextures.put(ret.getLocation(), particleTex);
+        for (Map.Entry<String, ResourceLocation> e : textures.entrySet()) { ret.texture(e.getKey(), e.getValue()); }
+        return ret;
+    }
+
+    protected ITNongeneratedModel obj(String name, ResourceLocation model, Map<String, ResourceLocation> textures, ITNongeneratedModels provider) {
+        ITNongeneratedModel base = provider.getBuilder(name);
+        return obj(base, model, textures);
+    }
+
+    protected ModelFile createValveObjModel(String baseName, String objFolder, boolean isOpen, String baseVisibility) {
+        String modelName = "block/metal/" + baseName + (isOpen ? "_open" : "_closed");
+        BlockModelBuilder builder = models().getBuilder(modelName);
+        ITObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ITObjModelBuilder::new)
+                .modelLocation(modLoc("models/block/metal/obj/" + objFolder + "/" + objFolder + ".obj"))
+                .automaticCulling(true)
+                .shadeQuads(true)
+                .flipV(true)
+                .emissiveAmbient(true)
+                .mtlOverride(null)
+                .visibility(baseVisibility, true)
+                .visibility("Handle_Open", isOpen)
+                .visibility("Handle_Closed", !isOpen);
+        ModelFile model = loader.end();
+        String particleTex = ITDataGenUtils.getTextureFromObj(modLoc("block/metal/obj/" + objFolder + "/" + objFolder + ".obj"), existingFileHelper);
+        builder.texture("particle", particleTex);
+        return model;
+    }
+
+    private void createMultiblockVariant(Supplier<? extends Block> b, ModelFile defaultMaster, @Nullable ModelFile activeMaster, @Nullable ModelFile defaultMirrored, @Nullable ModelFile activeMirrored, @Nullable Property<Boolean> mirroredState, @Nullable Property<Boolean> activeState) {
+        unsplitModels.put(b.get(), defaultMaster);
+        Preconditions.checkArgument((defaultMirrored == null) == (mirroredState == null));
+        Preconditions.checkArgument((activeMaster == null) == (activeState == null));
+        VariantBlockStateBuilder builder = getVariantBuilder(b.get());
+        EnumProperty<Direction> facing = ITProperties.FACING_HORIZONTAL;
+        builder.forAllStates(state -> {
+            Direction dir = state.getValue(facing);
+            int angleY = getAngle(dir);
+            int angleX = 0;
+            if (facing.getPossibleValues().contains(Direction.UP)) { angleX = -90 * dir.getStepY(); angleY = dir.getAxis() != Direction.Axis.Y ? getAngle(dir) : 0; }
+            boolean mirrored = (mirroredState != null) ? state.getValue(mirroredState) : false;
+            boolean active = (activeState != null) ? state.getValue(activeState) : false;
+            ModelFile baseModel = active ? activeMaster : defaultMaster;
+            ModelFile model = mirrored ? (active ? activeMirrored : defaultMirrored) : baseModel;
+            assert model != null;
+            return new ConfiguredModel[]{new ConfiguredModel(model, angleX, angleY, true)};
+        });
     }
 }

@@ -207,9 +207,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             heatSource = ctx.getCapabilityAt(HeatCapabilities.HEAT_PROVIDER_CAPABILITY, heatOpposingMBFace);
         }
 
-        public double getWorkingHeatLevel() {
-            return (lastRecipe != null) ? lastRecipe.requiredHeat : DEFAULT_WORKING_HEAT_LEVEL;
-        }
+        public double getWorkingHeatLevel() { return (lastRecipe != null) ? lastRecipe.requiredHeat : DEFAULT_WORKING_HEAT_LEVEL; }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tanks", tanks.toNBT());
