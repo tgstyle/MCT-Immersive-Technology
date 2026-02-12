@@ -2,6 +2,10 @@ package mctmods.immersivetechnology.common.data.generators;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.hash.Hashing;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.client.models.helper.ITModelConfigurableSides;
 import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
@@ -19,12 +23,15 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import net.minecraft.Util;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
@@ -38,30 +45,28 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
-import net.minecraftforge.client.model.generators.ModelBuilder;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
+import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-
-import com.google.gson.JsonObject;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import mctmods.immersivetechnology.common.data.loaders.ITSplitModelBuilder;
 
@@ -70,11 +75,53 @@ public class ITBlockStateProvider extends BlockStateProvider {
     protected static final Map<ResourceLocation, String> generatedParticleTextures = new HashMap<>();
     protected ExistingFileHelper existingFileHelper;
     protected ITNongeneratedModels innerModels;
+    private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final PackOutput packOutput;
+
+    private static class ClearableBlockModelProvider extends BlockModelProvider {
+        public ClearableBlockModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
+            super(output, modid, existingFileHelper);
+        }
+
+        @Override
+        protected void registerModels() {
+        }
+
+        public void clearModels() {
+            clear();
+        }
+
+        public CompletableFuture<?> genAll(CachedOutput cache) {
+            return generateAll(cache);
+        }
+    }
+
+    private static class ClearableItemModelProvider extends ItemModelProvider {
+        public ClearableItemModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
+            super(output, modid, existingFileHelper);
+        }
+
+        @Override
+        protected void registerModels() {
+        }
+
+        public void clearModels() {
+            clear();
+        }
+
+        public CompletableFuture<?> genAll(CachedOutput cache) {
+            return generateAll(cache);
+        }
+    }
 
     public ITBlockStateProvider(DataGenerator generator, ExistingFileHelper helper) {
         super(generator.getPackOutput(), ITLib.MODID, helper);
+        this.packOutput = generator.getPackOutput();
         this.existingFileHelper = helper;
         this.innerModels = new ITNongeneratedModels(generator.getPackOutput(), existingFileHelper);
+        this.blockModels = new ClearableBlockModelProvider(generator.getPackOutput(), ITLib.MODID, helper);
+        this.itemModels = new ClearableItemModelProvider(generator.getPackOutput(), ITLib.MODID, helper);
     }
 
     public static class ITObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
@@ -138,6 +185,42 @@ public class ITBlockStateProvider extends BlockStateProvider {
         }
         if (mirrored) { yRot = (yRot + 180) % 360; }
         return new int[]{xRot, yRot};
+    }
+
+    @Override
+    public CompletableFuture<?> run(CachedOutput cache) {
+        ((ClearableBlockModelProvider)models()).clearModels();
+        ((ClearableItemModelProvider)itemModels()).clearModels();
+        registeredBlocks.clear();
+        registerStatesAndModels();
+        CompletableFuture<?>[] futures = new CompletableFuture[registeredBlocks.size() + 2];
+        int i = 0;
+        futures[i++] = ((ClearableBlockModelProvider)models()).genAll(cache);
+        futures[i++] = ((ClearableItemModelProvider)itemModels()).genAll(cache);
+        for (Map.Entry<Block, IGeneratedBlockState> entry : registeredBlocks.entrySet()) {
+            futures[i++] = saveBlockState(entry.getKey(), entry.getValue().toJson(), cache);
+        }
+        return CompletableFuture.allOf(futures);
+    }
+
+    private CompletableFuture<?> saveBlockState(Block owner, JsonObject stateJson, CachedOutput cache) {
+        return CompletableFuture.runAsync(() -> {
+            ResourceLocation blockName = Preconditions.checkNotNull(ForgeRegistries.BLOCKS.getKey(owner));
+            ResourceLocation outputLocation = extendWithFolder(blockName);
+            Path path = packOutput.getOutputFolder().resolve("assets/" + outputLocation.getNamespace() + "/" + outputLocation.getPath() + ".json");
+            try {
+                String jsonStr = GSON.toJson(stateJson);
+                byte[] bytes = jsonStr.getBytes(StandardCharsets.UTF_8);
+                com.google.common.hash.HashCode hash = Hashing.sha1().hashBytes(bytes);
+                cache.writeIfNeeded(path, bytes, hash);
+            } catch (IOException e) {
+                LOGGER.error("Couldn't save blockstate to {}", path, e);
+            }
+        }, Util.backgroundExecutor());
+    }
+
+    protected ResourceLocation extendWithFolder(ResourceLocation rl) {
+        return ResourceLocation.fromNamespaceAndPath(rl.getNamespace(), "blockstates/" + rl.getPath());
     }
 
     @Override protected void registerStatesAndModels() {

@@ -1,7 +1,1 @@
-{
-  "variants": {
-    "": {
-      "model": "immersivetechnology:block/metal/technology_engineering"
-    }
-  }
-}
+{"variants":{"":{"model":"immersivetechnology:block/metal/technology_engineering"}}}

@@ -1,7 +1,1 @@
-{
-  "variants": {
-    "": {
-      "model": "immersivetechnology:block/metal/barrel_steel"
-    }
-  }
-}
+{"variants":{"":{"model":"immersivetechnology:block/metal/barrel_steel"}}}
