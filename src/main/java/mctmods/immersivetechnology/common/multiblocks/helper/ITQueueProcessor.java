@@ -34,6 +34,8 @@ public class ITQueueProcessor {
     private FakePlayer fakePlayer;
     private final Set<ChunkPos> affectedChunks = new HashSet<>();
     private boolean chunksMarked = false;
+    private int pass = 0;
+    private final Set<BlockPos> allPositions = new HashSet<>();
 
     public ITQueueProcessor(Level level, List<AbstractMap.SimpleEntry<BlockPos, BlockState>> sourceQueue, @Nullable ServerPlayer owner) {
         this.level = level;
@@ -42,6 +44,7 @@ public class ITQueueProcessor {
         queue.sort(Comparator.comparingInt(e -> -e.getKey().getY()));
 
         for (var entry : sourceQueue) {
+            allPositions.add(entry.getKey());
             ChunkPos cp = new ChunkPos(entry.getKey());
             for (int dx = -4; dx <= 4; dx++) for (int dz = -4; dz <= 4; dz++) { affectedChunks.add(new ChunkPos(cp.x + dx, cp.z + dz)); }
         }
@@ -59,25 +62,56 @@ public class ITQueueProcessor {
             chunksMarked = true;
         }
 
-        if (queue.isEmpty() && pendingBreaks.isEmpty()) {
-            if (fakePlayer != null) {
-                ChunkMap chunkMap = serverLevel.getChunkSource().chunkMap;
-                ThreadedLevelLightEngine lightEngine = serverLevel.getChunkSource().getLightEngine();
-                for (ChunkPos chunk : affectedChunks) {
-                    LevelChunk levelChunk = serverLevel.getChunk(chunk.x, chunk.z);
-                    levelChunk.setLightCorrect(false);
-                    levelChunk.setUnsaved(true);
-                    List<ServerPlayer> players = chunkMap.getPlayers(chunk, false);
-                    players.forEach(p -> p.connection.send(new ClientboundForgetLevelChunkPacket(chunk.x, chunk.z)));
-                    ClientboundLevelChunkWithLightPacket packet = new ClientboundLevelChunkWithLightPacket(levelChunk, lightEngine, null, null);
-                    players.forEach(p -> p.connection.send(packet));
-                    ChunkHolder holder = chunkMap.getUpdatingChunkIfPresent(chunk.toLong());
-                    if (holder != null) { holder.broadcastChanges(levelChunk); }
+        if (isEmpty()) {
+            if (pass == 0) {
+                boolean anyMissed = false;
+                for (BlockPos pos : allPositions) {
+                    if (!level.getBlockState(pos).isAir()) {
+                        pendingBreaks.add(pos);
+                        anyMissed = true;
+                    }
                 }
-                affectedChunks.clear();
-                fakePlayer = null;
+                if (anyMissed) { pass++; }
+                else {
+                    if (fakePlayer != null) {
+                        ChunkMap chunkMap = serverLevel.getChunkSource().chunkMap;
+                        ThreadedLevelLightEngine lightEngine = serverLevel.getChunkSource().getLightEngine();
+                        for (ChunkPos chunk : affectedChunks) {
+                            LevelChunk levelChunk = serverLevel.getChunk(chunk.x, chunk.z);
+                            levelChunk.setLightCorrect(false);
+                            levelChunk.setUnsaved(true);
+                            List<ServerPlayer> players = chunkMap.getPlayers(chunk, false);
+                            players.forEach(p -> p.connection.send(new ClientboundForgetLevelChunkPacket(chunk.x, chunk.z)));
+                            ClientboundLevelChunkWithLightPacket packet = new ClientboundLevelChunkWithLightPacket(levelChunk, lightEngine, null, null);
+                            players.forEach(p -> p.connection.send(packet));
+                            ChunkHolder holder = chunkMap.getUpdatingChunkIfPresent(chunk.toLong());
+                            if (holder != null) { holder.broadcastChanges(levelChunk); }
+                        }
+                        affectedChunks.clear();
+                        fakePlayer = null;
+                    }
+                    return;
+                }
+            } else {
+                if (fakePlayer != null) {
+                    ChunkMap chunkMap = serverLevel.getChunkSource().chunkMap;
+                    ThreadedLevelLightEngine lightEngine = serverLevel.getChunkSource().getLightEngine();
+                    for (ChunkPos chunk : affectedChunks) {
+                        LevelChunk levelChunk = serverLevel.getChunk(chunk.x, chunk.z);
+                        levelChunk.setLightCorrect(false);
+                        levelChunk.setUnsaved(true);
+                        List<ServerPlayer> players = chunkMap.getPlayers(chunk, false);
+                        players.forEach(p -> p.connection.send(new ClientboundForgetLevelChunkPacket(chunk.x, chunk.z)));
+                        ClientboundLevelChunkWithLightPacket packet = new ClientboundLevelChunkWithLightPacket(levelChunk, lightEngine, null, null);
+                        players.forEach(p -> p.connection.send(packet));
+                        ChunkHolder holder = chunkMap.getUpdatingChunkIfPresent(chunk.toLong());
+                        if (holder != null) { holder.broadcastChanges(levelChunk); }
+                    }
+                    affectedChunks.clear();
+                    fakePlayer = null;
+                }
+                return;
             }
-            return;
         }
 
         if (fakePlayer == null) { fakePlayer = ITFakePlayerUtil.getFakePlayer(serverLevel, owner); }
