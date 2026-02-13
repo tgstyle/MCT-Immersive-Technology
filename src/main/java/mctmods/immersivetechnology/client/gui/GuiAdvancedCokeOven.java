@@ -2,10 +2,8 @@ package mctmods.immersivetechnology.client.gui;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
-import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.gui.ContainerAdvancedCokeOven;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
-import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
 import org.lwjgl.opengl.GL11;
@@ -14,7 +12,6 @@ import java.util.ArrayList;
 
 public class GuiAdvancedCokeOven extends GuiIEContainerBase {
     TileEntityAdvancedCokeOvenMaster tile;
-    int time = 0;
 
     public GuiAdvancedCokeOven(InventoryPlayer inventoryPlayer, TileEntityAdvancedCokeOvenMaster tile) {
         super(new ContainerAdvancedCokeOven(inventoryPlayer, tile));
@@ -33,11 +30,6 @@ public class GuiAdvancedCokeOven extends GuiIEContainerBase {
     }
 
     @Override protected void drawGuiContainerBackgroundLayer(float f, int mx, int my) {
-        if (++time == 20) {
-            time = 0;
-            ImmersiveTechnology.packetHandler.sendToServer(new MessageRequestUpdate(tile));
-        }
-
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         ClientUtils.bindTexture("immersiveengineering:textures/gui/coke_oven.png");
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
