@@ -1,13 +1,14 @@
+// main/java/mctmods/immersivetechnology/mixin/MixinMCTWorldCMEFix.java
+
 package mctmods.immersivetechnology.mixin;
 
 import mctmods.immersivetechnology.core.MCTMixin;
 import mctmods.immersivetechnology.core.MCTMixinConfig;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,23 +16,23 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Mixin(World.class)
 public abstract class MixinMCTWorldCMEFix {
+
     @Shadow private boolean processingLoadedTiles;
 
     @Shadow @Final private List<TileEntity> addedTileEntityList;
 
     @Shadow @Final public List<TileEntity> loadedTileEntityList;
 
-    @Shadow@Final public List<TileEntity> tickableTileEntities;
+    @Shadow @Final public List<TileEntity> tickableTileEntities;
 
-    @Shadow public abstract void notifyBlockUpdate(net.minecraft.util.math.BlockPos pos, IBlockState oldState, IBlockState newState, int flags);
-
-    @Final @Shadow public boolean isRemote;
+    @Shadow @Final public boolean isRemote;
 
     @Inject(method = "addTileEntities(Ljava/util/Collection;)V", at = @At("HEAD"), cancellable = true)
     private void injectAddTileEntities(Collection<TileEntity> collection, CallbackInfo ci) {
@@ -59,7 +60,10 @@ public abstract class MixinMCTWorldCMEFix {
                 if (tile instanceof ITickable) { tickableTileEntities.add(tile); }
                 if (isRemote) {
                     IBlockState state = world.getBlockState(tile.getPos());
-                    notifyBlockUpdate(tile.getPos(), state, state, 2);
+                    try {
+                        Method m = World.class.getMethod("notifyBlockUpdate", BlockPos.class, IBlockState.class, IBlockState.class, int.class);
+                        m.invoke(world, tile.getPos(), state, state, 3);
+                    } catch (Throwable ignored) {}
                 }
                 int sizeAfter = loadedTileEntityList.size();
                 if (MCTMixinConfig.mixinSettings.enablePotentialsLogging && sizeAfter > sizeBefore + 1) { MCTMixin.LOGGER.warn("Potential CME detected: {} at {}", tile.getClass().getName(), tile.getPos()); }
