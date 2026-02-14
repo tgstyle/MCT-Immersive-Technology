@@ -97,6 +97,9 @@ public class ITServerConfig {
     public static final ForgeConfigSpec.IntValue STEEL_SHEETMETAL_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue STEEL_SHEETMETAL_TANK_TRANSFER_SPEED;
 
+    // Mechanical system global
+    public static final ForgeConfigSpec.IntValue MAX_RPM;
+
     public static DisassemblyMode disassemblyMode = DisassemblyMode.PROCESS_QUEUE;
     public static double alternatorPowerFactor = 1.0D;
     public static int alternatorEnergyCapacity = 1200000;
@@ -170,249 +173,169 @@ public class ITServerConfig {
     public static int steelSheetmetalTankCapacity = 2048000;
     public static int steelSheetmetalTankTransferSpeed = 1000;
 
+    public static int maxRpm = 7200;
+
     static {
         BUILDER.push("multiblocks");
-        DISASSEMBLY_MODE = BUILDER.comment("Mode for multiblock disassembly. PROCESS_QUEUE: Use gradual queue with fake player. TEMPLATE_BLOCKS: Revert to template blocks like IE.").defineEnum("disassemblyMode", DisassemblyMode.PROCESS_QUEUE);
+        DISASSEMBLY_MODE = BUILDER.comment("Controls multiblock disassembly behavior. PROCESS_QUEUE = gradual block removal using fake player actions. TEMPLATE_BLOCKS = reverts structure to placeholder blocks (like vanilla IE behavior).").defineEnum("disassemblyMode", DisassemblyMode.PROCESS_QUEUE);
 
         ALTERNATOR_POWER_FACTOR = BUILDER
-                .comment("Multiplier for Alternator power output. 1.0 = default output, 2.0 = double output, 0.5 = half output.")
+                .comment("Global multiplier applied to Alternator power generation (1.0 = default, 2.0 = double output, 0.5 = half).")
                 .defineInRange("alternator_power_factor", 1.0D, 0.0D, 1000.0D);
 
-        ALTERNATOR_ENERGY_CAPACITY = BUILDER.comment("Energy storage capacity for the Alternator.").defineInRange("alternator_energy_capacity", 1200000, 1, Integer.MAX_VALUE);
+        ALTERNATOR_ENERGY_CAPACITY = BUILDER.comment("Internal energy buffer capacity of the Alternator (in FE).").defineInRange("alternator_energy_capacity", 1200000, 1, Integer.MAX_VALUE);
 
-        ALTERNATOR_BASE_MASS = BUILDER.comment("Base mass for the Alternator's mechanical consumer.").defineInRange("alternator_base_mass", 2.0D, 0.0D, Double.MAX_VALUE);
+        ALTERNATOR_BASE_MASS = BUILDER.comment("Base inertia mass for the Alternator's mechanical consumer.").defineInRange("alternator_base_mass", 2.0D, 0.0D, Double.MAX_VALUE);
 
-        ALTERNATOR_FRICTION = BUILDER.comment("Friction for the Alternator's mechanical consumer.").defineInRange("alternator_friction", 0.0D, 0.0D, Double.MAX_VALUE);
+        ALTERNATOR_FRICTION = BUILDER.comment("Friction coefficient affecting rotational deceleration of the Alternator.").defineInRange("alternator_friction", 0.0D, 0.0D, Double.MAX_VALUE);
 
         ALTERNATOR_MAX_OUTPUT = BUILDER
-                .comment("Maximum FE/t output for the Alternator before ratios and power factor.")
+                .comment("Hard cap on FE/t output from the Alternator before power factor and other modifiers are applied.")
                 .defineInRange("alternator_max_output", 12288, 0, Integer.MAX_VALUE);
         BUILDER.pop();
 
-        BUILDER.comment("Shared Boiler options").push("boiler_shared");
+        BUILDER.comment("Options shared by all boiler types").push("boiler_shared");
         BOILER_DEFAULT_WORKING_HEAT = BUILDER
-                .comment("Default target heat level required for full boiler operation when no recipe specifies otherwise (used by all boiler types).")
+                .comment("Target heat level for full operation when a recipe does not specify its own requirement (applies to all boilers).")
                 .defineInRange("default_working_heat", 100.0D, 0.0D, Double.MAX_VALUE);
         BUILDER.pop();
 
-        BUILDER.comment("Solid Boiler options").push("boiler_solid");
-        CONFIG_BURN_TIME_DIVIDER = BUILDER.comment("Divider for burn time in solid boiler (Default: 10)").defineInRange("burnTimeDivider", 10, 1, Integer.MAX_VALUE);
+        BUILDER.comment("Solid Fuel Boiler settings").push("boiler_solid");
+        CONFIG_BURN_TIME_DIVIDER = BUILDER.comment("Divisor applied to fuel burn times (higher value = slower fuel consumption).").defineInRange("burnTimeDivider", 10, 1, Integer.MAX_VALUE);
 
-        BOILER_SOLID_HEAT_LOSS_PER_TICK = BUILDER.comment("Heat loss per server tick (Default: 0.2).").defineInRange("heat_loss_per_tick", 0.2D, 0.0D, Double.MAX_VALUE);
+        BOILER_SOLID_HEAT_LOSS_PER_TICK = BUILDER.comment("Passive heat loss per server tick.").defineInRange("heat_loss_per_tick", 0.2D, 0.0D, Double.MAX_VALUE);
 
-        BOILER_SOLID_PILOT_HEAT = BUILDER.comment("Pilot light minimum heat (Default: 20.0).").defineInRange("pilot_heat", 20.0D, 0.0D, Double.MAX_VALUE);
+        BOILER_SOLID_PILOT_HEAT = BUILDER.comment("Minimum heat maintained by the pilot light.").defineInRange("pilot_heat", 20.0D, 0.0D, Double.MAX_VALUE);
 
         BOILER_SOLID_PILOT_MULTIPLIER = BUILDER
-                .comment("Tick interval multiplier for pilot light fuel consumption (higher = slower) (Default: 15).")
+                .comment("Interval multiplier for pilot light fuel consumption (higher = less frequent usage).")
                 .defineInRange("pilot_multiplier", 15, 1, Integer.MAX_VALUE);
 
-        BOILER_SOLID_DEFAULT_HEAT_PER_TICK = BUILDER.comment("Default heat gain per tick from fuel when no recipe (Default: 0.1).").defineInRange("default_heat_per_tick", 0.1D, 0.0D, Double.MAX_VALUE);
+        BOILER_SOLID_DEFAULT_HEAT_PER_TICK = BUILDER.comment("Heat gain per tick from fuel when no recipe is active.").defineInRange("default_heat_per_tick", 0.1D, 0.0D, Double.MAX_VALUE);
         BUILDER.pop();
 
-        BUILDER.comment("Liquid Boiler options").push("boiler_liquid");
-        BOILER_LIQUID_TANK_CAPACITY = BUILDER.comment("Input fuel tank capacity in mB (Default: 24000).").defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
+        BUILDER.comment("Liquid Fuel Boiler settings").push("boiler_liquid");
+        BOILER_LIQUID_TANK_CAPACITY = BUILDER.comment("Input fuel tank size (mB).").defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
 
-        BOILER_LIQUID_HEAT_LOSS_PER_TICK = BUILDER.comment("Heat loss per server tick (Default: 0.2).").defineInRange("heat_loss_per_tick", 0.2D, 0.0D, Double.MAX_VALUE);
+        BOILER_LIQUID_HEAT_LOSS_PER_TICK = BUILDER.comment("Passive heat loss per server tick.").defineInRange("heat_loss_per_tick", 0.2D, 0.0D, Double.MAX_VALUE);
 
-        BOILER_LIQUID_PILOT_HEAT = BUILDER.comment("Pilot light minimum heat (Default: 20.0).").defineInRange("pilot_heat", 20.0D, 0.0D, Double.MAX_VALUE);
+        BOILER_LIQUID_PILOT_HEAT = BUILDER.comment("Minimum heat maintained by the pilot light.").defineInRange("pilot_heat", 20.0D, 0.0D, Double.MAX_VALUE);
         BUILDER.pop();
 
-        BUILDER.comment("Tank Boiler options").push("boiler_tank");
-        BOILER_TANK_CAPACITY = BUILDER
-                .comment("Input and output tank capacity in mB for the Tank Boiler (Default: 24000).")
-                .defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
+        BUILDER.comment("Tank Boiler settings").push("boiler_tank");
+        BOILER_TANK_CAPACITY = BUILDER.comment("Capacity of input and output fluid tanks (mB).").defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
 
-        BOILER_TANK_PROGRESS_LOSS_PER_TICK = BUILDER
-                .comment("Recipe progress loss per tick when insufficient heat (Default: 1).")
-                .defineInRange("progress_loss_per_tick", 1, 0, Integer.MAX_VALUE);
+        BOILER_TANK_PROGRESS_LOSS_PER_TICK = BUILDER.comment("Recipe progress lost per tick when below required heat.").defineInRange("progress_loss_per_tick", 1, 0, Integer.MAX_VALUE);
         BUILDER.pop();
 
-        BUILDER.comment("Distiller options").push("distiller");
-        DISTILLER_TANK_CAPACITY = BUILDER
-                .comment("Input and output tank capacity in mB for the Distiller (Default: 24000).")
-                .defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
+        BUILDER.comment("Distiller settings").push("distiller");
+        DISTILLER_TANK_CAPACITY = BUILDER.comment("Capacity of input and output fluid tanks (mB).").defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
 
-        DISTILLER_ENERGY_CAPACITY = BUILDER
-                .comment("Internal energy buffer capacity in FE for the Distiller (Default: 32000).")
-                .defineInRange("energy_capacity", 32000, 1000, Integer.MAX_VALUE);
+        DISTILLER_ENERGY_CAPACITY = BUILDER.comment("Internal energy buffer size (FE).").defineInRange("energy_capacity", 32000, 1000, Integer.MAX_VALUE);
         BUILDER.pop();
 
-        BUILDER.comment("Gas Turbine options").push("gas_turbine");
-        GAS_TURBINE_TANK_CAPACITY = BUILDER
-                .comment("Input and output tank capacity in mB for the Gas Turbine (Default: 12000).")
-                .defineInRange("tank_capacity", 12 * 1000, 1000, Integer.MAX_VALUE);
+        BUILDER.comment("Gas Turbine settings").push("gas_turbine");
+        GAS_TURBINE_TANK_CAPACITY = BUILDER.comment("Capacity of input and output fluid tanks (mB).").defineInRange("tank_capacity", 12000, 1000, Integer.MAX_VALUE);
 
-        GAS_TURBINE_ENERGY_CAPACITY_HV = BUILDER
-                .comment("HV energy buffer capacity in FE (Default: 8192).")
-                .defineInRange("energy_capacity_hv", 8192, 1000, Integer.MAX_VALUE);
+        GAS_TURBINE_ENERGY_CAPACITY_HV = BUILDER.comment("High-voltage energy buffer capacity (FE).").defineInRange("energy_capacity_hv", 8192, 1000, Integer.MAX_VALUE);
 
-        GAS_TURBINE_ENERGY_CAPACITY_MV = BUILDER
-                .comment("MV energy buffer capacity in FE for sparkplug/starter (Default: 2048).")
-                .defineInRange("energy_capacity_mv", 2048, 100, Integer.MAX_VALUE);
+        GAS_TURBINE_ENERGY_CAPACITY_MV = BUILDER.comment("Medium-voltage buffer for starter/sparkplug (FE).").defineInRange("energy_capacity_mv", 2048, 100, Integer.MAX_VALUE);
 
-        GAS_TURBINE_STARTER_CONSUMPTION = BUILDER
-                .comment("FE/t consumed by electric starter (Default: 4096).")
-                .defineInRange("starter_consumption", 4096, 0, Integer.MAX_VALUE);
+        GAS_TURBINE_STARTER_CONSUMPTION = BUILDER.comment("FE/t consumed by the electric starter motor.").defineInRange("starter_consumption", 4096, 0, Integer.MAX_VALUE);
 
-        GAS_TURBINE_SPARKPLUG_CONSUMPTION = BUILDER
-                .comment("FE per ignition attempt by sparkplug (Default: 1024).")
-                .defineInRange("sparkplug_consumption", 1024, 0, Integer.MAX_VALUE);
+        GAS_TURBINE_SPARKPLUG_CONSUMPTION = BUILDER.comment("FE per ignition attempt by the sparkplug.").defineInRange("sparkplug_consumption", 1024, 0, Integer.MAX_VALUE);
 
-        GAS_TURBINE_BASE_MASS = BUILDER
-                .comment("Base mass for inertia calculation (Default: 8.0).")
-                .defineInRange("base_mass", 8.0D, 0.0D, Double.MAX_VALUE);
+        GAS_TURBINE_BASE_MASS = BUILDER.comment("Base inertia mass for rotational dynamics.").defineInRange("base_mass", 8.0D, 0.0D, Double.MAX_VALUE);
 
-        GAS_TURBINE_DRIVE_TORQUE = BUILDER
-                .comment("Base drive torque provided by the turbine (Default: 30.0).")
-                .defineInRange("drive_torque", 30.0D, 0.0D, Double.MAX_VALUE);
+        GAS_TURBINE_DRIVE_TORQUE = BUILDER.comment("Base torque output from combustion (affects acceleration).").defineInRange("drive_torque", 30.0D, 0.0D, Double.MAX_VALUE);
 
-        GAS_TURBINE_FRICTION = BUILDER
-                .comment("Base friction for inertia calculation (Default: 60.0).")
-                .defineInRange("friction", 60.0D, 0.0D, Double.MAX_VALUE);
+        GAS_TURBINE_FRICTION = BUILDER.comment("Friction coefficient affecting rotational deceleration.").defineInRange("friction", 60.0D, 0.0D, Double.MAX_VALUE);
 
-        GAS_TURBINE_MAX_SPEED_FACTOR = BUILDER
-                .comment("Maximum speed as fraction of MechanicalCapabilities.MAX_RPM (Default: 0.5 = half max RPM).")
-                .defineInRange("max_speed_factor", 0.5D, 0.01D, 1.0D);
+        GAS_TURBINE_MAX_SPEED_FACTOR = BUILDER.comment("Maximum achievable speed as fraction of MechanicalCapabilities.MAX_RPM.").defineInRange("max_speed_factor", 0.5D, 0.01D, 1.0D);
         BUILDER.pop();
 
-        BUILDER.comment("Heat Exchanger options").push("heat_exchanger");
-        HEAT_EXCHANGER_INPUT_TANK_CAPACITY = BUILDER
-                .comment("Capacity in mB for each input tank (input0 and input1).")
-                .defineInRange("input_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
+        BUILDER.comment("Heat Exchanger settings").push("heat_exchanger");
+        HEAT_EXCHANGER_INPUT_TANK_CAPACITY = BUILDER.comment("Capacity per input tank (mB).").defineInRange("input_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
 
-        HEAT_EXCHANGER_OUTPUT_TANK_CAPACITY = BUILDER
-                .comment("Capacity in mB for each output tank (output0 and output1).")
-                .defineInRange("output_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
+        HEAT_EXCHANGER_OUTPUT_TANK_CAPACITY = BUILDER.comment("Capacity per output tank (mB).").defineInRange("output_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
 
-        HEAT_EXCHANGER_ENERGY_CAPACITY = BUILDER
-                .comment("Internal energy buffer capacity in FE.")
-                .defineInRange("energy_capacity", 2048, 1000, Integer.MAX_VALUE);
+        HEAT_EXCHANGER_ENERGY_CAPACITY = BUILDER.comment("Internal energy buffer capacity (FE).").defineInRange("energy_capacity", 2048, 1000, Integer.MAX_VALUE);
 
-        HEAT_EXCHANGER_ENERGY_MAX_IO = BUILDER
-                .comment("Maximum FE/t receive/extract for the energy buffer.")
-                .defineInRange("energy_max_io", 1024, 0, Integer.MAX_VALUE);
+        HEAT_EXCHANGER_ENERGY_MAX_IO = BUILDER.comment("Maximum FE/t that can be received or extracted.").defineInRange("energy_max_io", 1024, 0, Integer.MAX_VALUE);
         BUILDER.pop();
 
-        BUILDER.comment("Solar Melter options").push("solar_melter");
-        SOLAR_MELTER_WORKING_HEAT_LEVEL = BUILDER
-                .comment("Default target heat level required for full operation when no recipe specifies otherwise.")
-                .defineInRange("working_heat_level", 1000.0D, 100.0D, Double.MAX_VALUE);
+        BUILDER.comment("Solar Melter settings").push("solar_melter");
+        SOLAR_MELTER_WORKING_HEAT_LEVEL = BUILDER.comment("Default target heat for full-speed operation (when recipe unspecified).").defineInRange("working_heat_level", 1000.0D, 100.0D, Double.MAX_VALUE);
 
-        SOLAR_MELTER_DAY_MIN_HEAT_LOSS = BUILDER
-                .comment("Minimum heat loss per tick during daytime (base loss before other factors).")
-                .defineInRange("day_min_heat_loss", 0.0D, 0.0D, Double.MAX_VALUE);
+        SOLAR_MELTER_DAY_MIN_HEAT_LOSS = BUILDER.comment("Base heat loss per tick during daylight (before sky darkness penalties).").defineInRange("day_min_heat_loss", 0.0D, 0.0D, Double.MAX_VALUE);
 
-        SOLAR_MELTER_LOSS_PER_SECTION_DROP = BUILDER
-                .comment("Additional heat loss per sky darkness section drop (higher darkness = more loss).")
-                .defineInRange("loss_per_section_drop", 0.035D, 0.0D, Double.MAX_VALUE);
+        SOLAR_MELTER_LOSS_PER_SECTION_DROP = BUILDER.comment("Additional heat loss per unit of sky darkness.").defineInRange("loss_per_section_drop", 0.035D, 0.0D, Double.MAX_VALUE);
 
-        SOLAR_MELTER_TEMP_DEPENDENT_LOSS_FACTOR = BUILDER
-                .comment("Heat loss factor scaled by current temperature (higher temp = more loss).")
-                .defineInRange("temp_dependent_loss_factor", 0.00036D, 0.0D, Double.MAX_VALUE);
+        SOLAR_MELTER_TEMP_DEPENDENT_LOSS_FACTOR = BUILDER.comment("Temperature-scaled heat loss multiplier.").defineInRange("temp_dependent_loss_factor", 0.00036D, 0.0D, Double.MAX_VALUE);
 
-        SOLAR_MELTER_HEAT_INCREASE_FACTOR = BUILDER
-                .comment("Base heat gain factor per reflector strength unit under perfect sun.")
-                .defineInRange("heat_increase_factor", 0.00568D, 0.0D, Double.MAX_VALUE);
+        SOLAR_MELTER_HEAT_INCREASE_FACTOR = BUILDER.comment("Heat gain per reflector strength unit under ideal sunlight.").defineInRange("heat_increase_factor", 0.00568D, 0.0D, Double.MAX_VALUE);
 
-        SOLAR_MELTER_TEMP_TO_MIN_REFLECTORS_DIVISOR = BUILDER
-                .comment("Divisor to calculate minimum reflectors needed for a recipe's required temperature.")
-                .defineInRange("temp_to_min_reflectors_divisor", 25.0D, 1.0D, Double.MAX_VALUE);
+        SOLAR_MELTER_TEMP_TO_MIN_REFLECTORS_DIVISOR = BUILDER.comment("Divisor used to compute minimum reflectors needed for recipe temperature.").defineInRange("temp_to_min_reflectors_divisor", 25.0D, 1.0D, Double.MAX_VALUE);
 
-        SOLAR_MELTER_REFLECTOR_TIER_OFFSET = BUILDER
-                .comment("Offset added to min reflectors per tier difference in recipe temperature requirements.")
-                .defineInRange("reflector_tier_offset", 4.0D, 0.0D, Double.MAX_VALUE);
+        SOLAR_MELTER_REFLECTOR_TIER_OFFSET = BUILDER.comment("Additional reflectors required per tier difference in temperature demand.").defineInRange("reflector_tier_offset", 4.0D, 0.0D, Double.MAX_VALUE);
 
-        SOLAR_MELTER_PROGRESS_LOSS_OFF_TEMP = BUILDER
-                .comment("Recipe progress loss per tick when below required temperature.")
-                .defineInRange("progress_loss_off_temp", 2, 0, Integer.MAX_VALUE);
+        SOLAR_MELTER_PROGRESS_LOSS_OFF_TEMP = BUILDER.comment("Recipe progress lost per tick below required temperature.").defineInRange("progress_loss_off_temp", 2, 0, Integer.MAX_VALUE);
 
-        SOLAR_MELTER_SPEED_MULTIPLIER = BUILDER
-                .comment("Global speed multiplier for the melter process (1.0 = default).")
-                .defineInRange("speed_multiplier", 1.0D, 0.01D, 10.0D);
+        SOLAR_MELTER_SPEED_MULTIPLIER = BUILDER.comment("Global process speed multiplier (1.0 = default).").defineInRange("speed_multiplier", 1.0D, 0.01D, 10.0D);
         BUILDER.pop();
 
-        BUILDER.comment("Solar Tower options").push("solar_tower");
-        SOLAR_TOWER_WORKING_HEAT_LEVEL = BUILDER
-                .comment("Default target heat level required for full operation when no recipe specifies otherwise.")
-                .defineInRange("working_heat_level", 400.0D, 100.0D, Double.MAX_VALUE);
+        BUILDER.comment("Solar Tower settings").push("solar_tower");
+        SOLAR_TOWER_WORKING_HEAT_LEVEL = BUILDER.comment("Default target heat for full-speed operation (when recipe unspecified).").defineInRange("working_heat_level", 400.0D, 100.0D, Double.MAX_VALUE);
 
-        SOLAR_TOWER_DAY_MIN_HEAT_LOSS = BUILDER
-                .comment("Minimum heat loss per tick during daytime (base loss before other factors).")
-                .defineInRange("day_min_heat_loss", 0.0D, 0.0D, Double.MAX_VALUE);
+        SOLAR_TOWER_DAY_MIN_HEAT_LOSS = BUILDER.comment("Base heat loss per tick during daylight (before sky darkness penalties).").defineInRange("day_min_heat_loss", 0.0D, 0.0D, Double.MAX_VALUE);
 
-        SOLAR_TOWER_LOSS_PER_SECTION_DROP = BUILDER
-                .comment("Additional heat loss per sky darkness section drop (higher darkness = more loss).")
-                .defineInRange("loss_per_section_drop", 0.035D, 0.0D, Double.MAX_VALUE);
+        SOLAR_TOWER_LOSS_PER_SECTION_DROP = BUILDER.comment("Additional heat loss per unit of sky darkness.").defineInRange("loss_per_section_drop", 0.035D, 0.0D, Double.MAX_VALUE);
 
-        SOLAR_TOWER_TEMP_DEPENDENT_LOSS_FACTOR = BUILDER
-                .comment("Heat loss factor scaled by current temperature (higher temp = more loss).")
-                .defineInRange("temp_dependent_loss_factor", 0.0006D, 0.0D, Double.MAX_VALUE);
+        SOLAR_TOWER_TEMP_DEPENDENT_LOSS_FACTOR = BUILDER.comment("Temperature-scaled heat loss multiplier.").defineInRange("temp_dependent_loss_factor", 0.0006D, 0.0D, Double.MAX_VALUE);
 
-        SOLAR_TOWER_HEAT_INCREASE_FACTOR = BUILDER
-                .comment("Base heat gain factor per reflector strength unit under perfect sun.")
-                .defineInRange("heat_increase_factor", 0.00300D, 0.0D, Double.MAX_VALUE);
+        SOLAR_TOWER_HEAT_INCREASE_FACTOR = BUILDER.comment("Heat gain per reflector strength unit under ideal sunlight.").defineInRange("heat_increase_factor", 0.00300D, 0.0D, Double.MAX_VALUE);
 
-        SOLAR_TOWER_TEMP_TO_MIN_REFLECTORS_DIVISOR = BUILDER
-                .comment("Divisor to calculate minimum reflectors needed for a recipe's required temperature.")
-                .defineInRange("temp_to_min_reflectors_divisor", 25.0D, 1.0D, Double.MAX_VALUE);
+        SOLAR_TOWER_TEMP_TO_MIN_REFLECTORS_DIVISOR = BUILDER.comment("Divisor used to compute minimum reflectors needed for recipe temperature.").defineInRange("temp_to_min_reflectors_divisor", 25.0D, 1.0D, Double.MAX_VALUE);
 
-        SOLAR_TOWER_REFLECTOR_TIER_OFFSET = BUILDER
-                .comment("Offset added to min reflectors per tier difference in recipe temperature requirements.")
-                .defineInRange("reflector_tier_offset", 4.0D, 0.0D, Double.MAX_VALUE);
+        SOLAR_TOWER_REFLECTOR_TIER_OFFSET = BUILDER.comment("Additional reflectors required per tier difference in temperature demand.").defineInRange("reflector_tier_offset", 4.0D, 0.0D, Double.MAX_VALUE);
 
-        SOLAR_TOWER_PROGRESS_LOSS_OFF_TEMP = BUILDER
-                .comment("Recipe progress loss per tick when below required temperature.")
-                .defineInRange("progress_loss_off_temp", 2, 0, Integer.MAX_VALUE);
+        SOLAR_TOWER_PROGRESS_LOSS_OFF_TEMP = BUILDER.comment("Recipe progress lost per tick below required temperature.").defineInRange("progress_loss_off_temp", 2, 0, Integer.MAX_VALUE);
 
-        SOLAR_TOWER_SPEED_MULTIPLIER = BUILDER
-                .comment("Global speed multiplier for the tower process (1.0 = default).")
-                .defineInRange("speed_multiplier", 1.0D, 0.01D, 10.0D);
+        SOLAR_TOWER_SPEED_MULTIPLIER = BUILDER.comment("Global process speed multiplier (1.0 = default).").defineInRange("speed_multiplier", 1.0D, 0.01D, 10.0D);
         BUILDER.pop();
 
-        BUILDER.comment("Steam Turbine options").push("steam_turbine");
-        STEAM_TURBINE_TANK_CAPACITY = BUILDER
-                .comment("Input and output tank capacity in mB (Default: 12000).")
-                .defineInRange("tank_capacity", 12 * 1000, 1000, Integer.MAX_VALUE);
+        BUILDER.comment("Steam Turbine settings").push("steam_turbine");
+        STEAM_TURBINE_TANK_CAPACITY = BUILDER.comment("Capacity of input and output fluid tanks (mB).").defineInRange("tank_capacity", 12000, 1000, Integer.MAX_VALUE);
 
-        STEAM_TURBINE_BASE_MASS = BUILDER
-                .comment("Base mass for inertia calculation (Default: 10.0).")
-                .defineInRange("base_mass", 10.0D, 0.0D, Double.MAX_VALUE);
+        STEAM_TURBINE_BASE_MASS = BUILDER.comment("Base inertia mass for rotational dynamics.").defineInRange("base_mass", 10.0D, 0.0D, Double.MAX_VALUE);
 
-        STEAM_TURBINE_DRIVE_TORQUE = BUILDER
-                .comment("Base drive torque provided by the turbine (Default: 360.0).")
-                .defineInRange("drive_torque", 360.0D, 0.0D, Double.MAX_VALUE);
+        STEAM_TURBINE_DRIVE_TORQUE = BUILDER.comment("Base torque output from steam expansion.").defineInRange("drive_torque", 360.0D, 0.0D, Double.MAX_VALUE);
 
-        STEAM_TURBINE_FRICTION = BUILDER
-                .comment("Base friction for inertia calculation (Default: 0.0).")
-                .defineInRange("friction", 0.0D, 0.0D, Double.MAX_VALUE);
+        STEAM_TURBINE_FRICTION = BUILDER.comment("Friction coefficient affecting rotational deceleration.").defineInRange("friction", 0.0D, 0.0D, Double.MAX_VALUE);
 
-        STEAM_TURBINE_MAX_SPEED_FACTOR = BUILDER
-                .comment("Maximum speed as fraction of MechanicalCapabilities.MAX_RPM (Default: 1.0 = full max RPM).")
-                .defineInRange("max_speed_factor", 1.0D, 0.01D, 1.0D);
+        STEAM_TURBINE_MAX_SPEED_FACTOR = BUILDER.comment("Maximum achievable speed as fraction of global max RPM.").defineInRange("max_speed_factor", 1.0D, 0.01D, 1.0D);
         BUILDER.pop();
 
-        BUILDER.comment("Solar Reflector options").push("solar_reflector");
-        SOLAR_REFLECTOR_BASE_FREQUENCY = BUILDER
-                .comment("Base frequency for the dance animation sine waves (higher = faster movement).")
-                .defineInRange("base_frequency", 2.09D, 0.1D, 10.0D);
+        BUILDER.comment("Solar Reflector animation settings").push("solar_reflector");
+        SOLAR_REFLECTOR_BASE_FREQUENCY = BUILDER.comment("Base frequency for the sine-wave based 'dance' animation (higher = faster movement).").defineInRange("base_frequency", 2.09D, 0.1D, 10.0D);
 
-        SOLAR_REFLECTOR_DANCE_DURATION = BUILDER
-                .comment("Duration in seconds for one full dance cycle (used for timing and looping).")
-                .defineInRange("dance_duration", 63.0D, 10.0D, 300.0D);
+        SOLAR_REFLECTOR_DANCE_DURATION = BUILDER.comment("Full cycle duration of the dance animation in seconds.").defineInRange("dance_duration", 63.0D, 10.0D, 300.0D);
         BUILDER.pop();
 
-        BUILDER.comment("Creative Barrel options").push("barrel_creative");
-        CONFIG_CREATIVE_BARREL_OUTPUT_AMOUNT = BUILDER.comment("Maximum fluid amount to output per tick from the creative barrel (Default: 2147483647)").defineInRange("creativeBarrelOutputAmount", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
+        BUILDER.comment("Creative Barrel settings").push("barrel_creative");
+        CONFIG_CREATIVE_BARREL_OUTPUT_AMOUNT = BUILDER.comment("Maximum fluid output per tick (for creative/testing use).").defineInRange("creativeBarrelOutputAmount", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
         BUILDER.pop();
 
-        BUILDER.comment("Steel Sheetmetal Tank options").push("steel_sheetmetal_tank");
-        STEEL_SHEETMETAL_TANK_CAPACITY = BUILDER
-                .comment("Internal tank capacity in mB (Default: 2048 buckets).")
-                .defineInRange("capacity", 2048 * 1000, 1000, Integer.MAX_VALUE);
+        BUILDER.comment("Steel Sheetmetal Tank settings").push("steel_sheetmetal_tank");
+        STEEL_SHEETMETAL_TANK_CAPACITY = BUILDER.comment("Total fluid storage capacity (mB).").defineInRange("capacity", 2048000, 1000, Integer.MAX_VALUE);
 
-        STEEL_SHEETMETAL_TANK_TRANSFER_SPEED = BUILDER
-                .comment("Max fluid transfer speed per tick in mB (Default: 1 bucket).")
-                .defineInRange("transfer_speed", 1000, 1, Integer.MAX_VALUE);
+        STEEL_SHEETMETAL_TANK_TRANSFER_SPEED = BUILDER.comment("Maximum fluid transfer rate per tick (mB/t).").defineInRange("transfer_speed", 1000, 1, Integer.MAX_VALUE);
+        BUILDER.pop();
+
+        BUILDER.comment("Mechanical system global settings").push("mechanical");
+        MAX_RPM = BUILDER
+                .comment("Global maximum rotational speed in RPM for all mechanical devices (turbines, alternators, etc.). Default 7200 RPM. Changing this affects speed_factor calculations in turbines.")
+                .defineInRange("max_rpm", 7200, 1000, 50000);
         BUILDER.pop();
     }
 
@@ -493,6 +416,8 @@ public class ITServerConfig {
 
             steelSheetmetalTankCapacity = STEEL_SHEETMETAL_TANK_CAPACITY.get();
             steelSheetmetalTankTransferSpeed = STEEL_SHEETMETAL_TANK_TRANSFER_SPEED.get();
+
+            maxRpm = MAX_RPM.get();
         }
     }
 
