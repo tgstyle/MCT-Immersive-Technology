@@ -20,6 +20,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchanger
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.HeatExchangerShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
@@ -48,7 +49,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.State>, IServerTickableComponent<HeatExchangerLogic.State>, IClientTickableComponent<HeatExchangerLogic.State>, ITPressurizedFluidOutput<HeatExchangerLogic.State> {
-    public static final List<BlockPos> FLUID_INPUT_POIS;
     public static final BlockPos REDSTONE_POI = getPosList("redstone0").get(0);
 
     private static final List<BlockPos> FLUID_INPUT_0_POI = getPosList("fluid_input0");
@@ -58,18 +58,18 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
     private static final List<BlockPos> ENERGY_INPUT_POI = getPosList("energy_input0");
     private static final List<BlockPos> SOUND_POI = getPosList("sound");
 
+    public static final List<BlockPos> FLUID_INPUT_POIS = ImmutableList.<BlockPos>builder().addAll(FLUID_INPUT_0_POI).addAll(FLUID_INPUT_1_POI).build();
+
     private static final RelativeBlockFace FLUID_INPUT_0_FACING = getFacing("fluid_input0");
     private static final RelativeBlockFace FLUID_INPUT_1_FACING = getFacing("fluid_input1");
     private static final RelativeBlockFace FLUID_OUTPUT_0_FACING = getFacing("fluid_output0");
     private static final RelativeBlockFace FLUID_OUTPUT_1_FACING = getFacing("fluid_output1");
     private static final RelativeBlockFace ENERGY_INPUT_FACING = getFacing("energy_input0");
 
-    static {
-        ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
-        builder.addAll(FLUID_INPUT_0_POI);
-        builder.addAll(FLUID_INPUT_1_POI);
-        FLUID_INPUT_POIS = builder.build();
-    }
+    private static final int INPUT_TANK_CAPACITY = ITServerConfig.heatExchangerInputTankCapacity;
+    private static final int OUTPUT_TANK_CAPACITY = ITServerConfig.heatExchangerOutputTankCapacity;
+    private static final int ENERGY_CAPACITY = ITServerConfig.heatExchangerEnergyCapacity;
+    private static final int ENERGY_MAX_IO = ITServerConfig.heatExchangerEnergyMaxIO;
 
     private static List<BlockPos> getPosList(String name) { return Arrays.stream(HeatExchangerShape.DATA.pointsOfInterest).filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
 
@@ -78,11 +78,6 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
         return facings.get(0);
     }
-
-    private static final int INPUT_TANK_SIZE = 10000;
-    private static final int OUTPUT_TANK_SIZE = 10000;
-    private static final int ENERGY_CAPACITY = 2048;
-    private static final int ENERGY_MAX_IO = 1024;
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
@@ -214,7 +209,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            tanks = new HeatExchangerTanks(v -> onChanged.run());
+            tanks = new HeatExchangerTanks(onChanged);
             energy = new SyncEnergyStorage(ENERGY_CAPACITY, ENERGY_MAX_IO, onChanged);
             inputCap[0] = new StoredCapability<>(new ITArrayFluidHandler(tanks.input0, false, true, onChanged));
             inputCap[1] = new StoredCapability<>(new ITArrayFluidHandler(tanks.input1, false, true, onChanged));
@@ -310,12 +305,24 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
     }
 
     public record HeatExchangerTanks(ITMarkableFluidTank input0, ITMarkableFluidTank input1, ITMarkableFluidTank output0, ITMarkableFluidTank output1) {
-        public HeatExchangerTanks(Consumer<Void> markDirty) {
-            this(new ITMarkableFluidTank(INPUT_TANK_SIZE, markDirty), new ITMarkableFluidTank(INPUT_TANK_SIZE, markDirty),
-                    new ITMarkableFluidTank(OUTPUT_TANK_SIZE, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_SIZE, markDirty));
+
+        public HeatExchangerTanks(Runnable onChanged) {
+            this(
+                    new ITMarkableFluidTank(INPUT_TANK_CAPACITY, v -> onChanged.run()),
+                    new ITMarkableFluidTank(INPUT_TANK_CAPACITY, v -> onChanged.run()),
+                    new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, v -> onChanged.run()),
+                    new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, v -> onChanged.run())
+            );
         }
 
-        public static HeatExchangerTanks makeClient() { return new HeatExchangerTanks(v -> {}); }
+        public static HeatExchangerTanks makeClient() {
+            return new HeatExchangerTanks(
+                    new ITMarkableFluidTank(10000, v -> {}),
+                    new ITMarkableFluidTank(10000, v -> {}),
+                    new ITMarkableFluidTank(10000, v -> {}),
+                    new ITMarkableFluidTank(10000, v -> {})
+            );
+        }
 
         public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();

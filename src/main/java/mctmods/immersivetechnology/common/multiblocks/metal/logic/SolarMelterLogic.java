@@ -22,6 +22,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarMelterRe
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarMelterShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.lib.ITSound;
@@ -66,15 +67,17 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
     public static final int SLOT_OUTPUT_FILLED = 3;
-    public static final double WORKING_HEAT_LEVEL = 1000.0;
-    private static final double DAY_MIN_HEAT_LOSS = 0.0;
-    private static final double LOSS_PER_SECTION_DROP = 0.035;
-    private static final double TEMP_DEPENDENT_LOSS_FACTOR = 0.00036;
-    private static final double HEAT_INCREASE_FACTOR = 0.00568;
-    private static final double TEMP_TO_MIN_REFLECTORS_DIVISOR = 25.0;
-    private static final double REFLECTOR_TIER_OFFSET = 4.0;
-    public static final int PROGRESS_LOSS_OFF_TEMP = 2;
-    public static final float SPEED_MULTIPLIER = 1.0f;
+
+    public static final double WORKING_HEAT_LEVEL = ITServerConfig.solarMelterWorkingHeatLevel;
+    private static final double DAY_MIN_HEAT_LOSS = ITServerConfig.solarMelterDayMinHeatLoss;
+    private static final double LOSS_PER_SECTION_DROP = ITServerConfig.solarMelterLossPerSectionDrop;
+    private static final double TEMP_DEPENDENT_LOSS_FACTOR = ITServerConfig.solarMelterTempDependentLossFactor;
+    private static final double HEAT_INCREASE_FACTOR = ITServerConfig.solarMelterHeatIncreaseFactor;
+    private static final double TEMP_TO_MIN_REFLECTORS_DIVISOR = ITServerConfig.solarMelterTempToMinReflectorsDivisor;
+    private static final double REFLECTOR_TIER_OFFSET = ITServerConfig.solarMelterReflectorTierOffset;
+    public static final int PROGRESS_LOSS_OFF_TEMP = ITServerConfig.solarMelterProgressLossOffTemp;
+    public static final float SPEED_MULTIPLIER = (float) ITServerConfig.solarMelterSpeedMultiplier;
+
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SolarMelterShape.DATA.pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);

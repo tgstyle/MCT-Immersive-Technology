@@ -9,7 +9,7 @@ import mctmods.immersivetechnology.core.network.ITOSDRequestMessage;
 import mctmods.immersivetechnology.core.network.ITPacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.ITClientConfig;
-import mctmods.immersivetechnology.core.ITCommonConfig;
+import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -42,6 +42,8 @@ import java.util.function.Consumer;
 
 public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements ITBlockInterfaces.IBlockEntityDrop, ITBlockInterfaces.IPlayerInteraction, ITBlockInterfaces.IBlockOverlayText {
     private FluidStack selectedFluid = FluidStack.EMPTY;
+
+    private static final int CREATIVE_BARREL_OUTPUT_AMOUNT = ITServerConfig.creativeBarrelOutputAmount;
 
     private final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> new IFluidHandler() {
         @Override public int getTanks() { return 1; }
@@ -81,7 +83,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
                 BlockEntity neighbor = level.getBlockEntity(neighborPos);
                 boolean isPipe = neighbor instanceof FluidPipeBlockEntity;
                 FluidStack fs = selectedFluid.copy();
-                fs.setAmount(ITCommonConfig.creativeBarrelOutputAmount);
+                fs.setAmount(CREATIVE_BARREL_OUTPUT_AMOUNT);
                 boolean hadTag = fs.hasTag() && fs.getTag().contains(IFluidPipe.NBT_PRESSURIZED);
                 if (isPipe && !hadTag) { fs.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
                 LazyOptional<IFluidHandler> cap = FluidUtil.getFluidHandler(level, neighborPos, dir.getOpposite());

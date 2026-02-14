@@ -21,10 +21,10 @@ import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandl
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerSolidShape;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.ITServerConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -55,11 +55,13 @@ import java.util.function.Supplier;
 
 public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State>, IServerTickableComponent<BoilerSolidLogic.State>, IClientTickableComponent<BoilerSolidLogic.State> {
     public static final int INPUT_FUEL_SLOT = 0;
-    private static final double HEAT_LOSS_PER_TICK = 0.2;
-    public static final double DEFAULT_WORKING_HEAT_LEVEL = 100.0;
-    public static final double PILOT_HEAT = 20.0;
-    private static final int PILOT_MULTIPLIER = 15;
-    private static final double DEFAULT_HEAT_PER_TICK = 0.1;
+
+    public static final double HEAT_LOSS_PER_TICK = ITServerConfig.boilerSolidHeatLossPerTick;
+    public static final double DEFAULT_WORKING_HEAT_LEVEL = ITServerConfig.boilerDefaultWorkingHeat;
+    public static final double PILOT_HEAT = ITServerConfig.boilerSolidPilotHeat;
+    public static final int PILOT_MULTIPLIER = ITServerConfig.boilerSolidPilotMultiplier;
+    public static final double DEFAULT_HEAT_PER_TICK = ITServerConfig.boilerSolidDefaultHeatPerTick;
+
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerSolidShape.DATA.pointsOfInterest);
     private static final int WIDTH = BoilerSolidShape.WIDTH;
     private static final int LENGTH = BoilerSolidShape.LENGTH;
@@ -174,7 +176,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                 } else {
                     ItemStack consumed = state.inventory.getRawHandler().extractItem(INPUT_FUEL_SLOT, consumeAmount, false);
                     if (consumed.getCount() == consumeAmount) {
-                        state.burnRemaining = (burnTimePerItem * consumeAmount) / ITCommonConfig.burnTimeDivider;
+                        state.burnRemaining = (burnTimePerItem * consumeAmount) / ITServerConfig.burnTimeDivider;
                         state.totalBurnTime = state.burnRemaining;
                         state.heatPerTick = heatPerTick;
                         state.targetHeat = targetHeat;

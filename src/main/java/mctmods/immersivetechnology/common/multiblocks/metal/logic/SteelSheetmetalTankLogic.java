@@ -22,6 +22,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmet
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.ITServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -36,7 +37,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -54,8 +54,7 @@ import java.util.stream.Stream;
 import static mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape.DATA;
 
 public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelSheetmetalTankLogic.State>, MBOverlayText<SteelSheetmetalTankLogic.State>, ITPressurizedFluidOutput<SteelSheetmetalTankLogic.State> {
-    private static final int CAPACITY = 2048 * FluidType.BUCKET_VOLUME;
-    private static final int TRANSFER_SPEED = FluidType.BUCKET_VOLUME;
+
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(DATA.pointsOfInterest);
     public static final BlockPos REDSTONE_POI = getPosList().get(0);
     private static final List<CapabilityPosition> INPUT_POIS = getCapabilityPositions("fluid_input");
@@ -95,7 +94,7 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
 
     @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return state.outputs; }
 
-    @Override public int getTransferSpeed() { return TRANSFER_SPEED; }
+    @Override public int getTransferSpeed() { return ITServerConfig.steelSheetmetalTankTransferSpeed; }
 
     @Override public boolean shouldPumpOutputs(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
@@ -152,7 +151,7 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
             }
             this.outputs = outputBuilder.build();
             Runnable changedAndSync = () -> { capabilitySource.getSyncRunnable().run(); capabilitySource.getMarkDirtyRunnable().run(); };
-            this.tank = new ITMarkableFluidTank(CAPACITY, v -> changedAndSync.run());
+            this.tank = new ITMarkableFluidTank(ITServerConfig.steelSheetmetalTankCapacity, v -> changedAndSync.run());
             this.inputHandler = new StoredCapability<>(new ConditionalFluidHandler(tank, true, false, changedAndSync, () -> false));
             this.ioHandler = new StoredCapability<>(new ConditionalFluidHandler(tank, true, true, changedAndSync, () -> true));
             try {

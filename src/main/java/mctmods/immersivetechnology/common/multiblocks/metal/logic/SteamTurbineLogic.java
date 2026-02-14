@@ -23,6 +23,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteamTurbineS
 import mctmods.immersivetechnology.common.multiblocks.metal.process.RotationInertiaProcess;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;
@@ -56,11 +57,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.State>, IServerTickableComponent<SteamTurbineLogic.State>, IClientTickableComponent<SteamTurbineLogic.State>, ITPressurizedFluidOutput<SteamTurbineLogic.State> {
-    public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
-    private static final double BASE_MASS = 10;
-    private static final double DRIVE_TORQUE = 360;
-    private static final double FRICTION = 0;
-    private static final int MAX_SPEED = MechanicalCapabilities.MAX_RPM;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SteamTurbineShape.DATA.pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
@@ -71,6 +67,12 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     public static final CapabilityPosition ROTATIONAL_OUTPUT_POI = new CapabilityPosition(getPosList("mech_output").get(0), getFacing("mech_output"));
     private static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
     private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
+
+    private static final int TANK_CAPACITY = ITServerConfig.steamTurbineTankCapacity;
+    private static final double BASE_MASS = ITServerConfig.steamTurbineBaseMass;
+    private static final double DRIVE_TORQUE = ITServerConfig.steamTurbineDriveTorque;
+    private static final double FRICTION = ITServerConfig.steamTurbineFriction;
+    private static final int MAX_SPEED = (int) (MechanicalCapabilities.MAX_RPM * ITServerConfig.steamTurbineMaxSpeedFactor);
 
     private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
     private static RelativeBlockFace getFacing(String name) {
@@ -298,7 +300,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            this.tanks = new SteamTurbineTank(v -> onChanged.run());
+            this.tanks = new SteamTurbineTank(v -> onChanged.run(), TANK_CAPACITY);
             this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
             this.recipeGetter = CachedRecipe.cached(SteamTurbineRecipe::findRecipe);
@@ -306,7 +308,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             CapabilityPosition oppCp = CapabilityPosition.opposing(outputMBFace);
             MultiblockFace oppMbf = new MultiblockFace(oppCp.side(), oppCp.posInMultiblock());
             this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, oppMbf);
-            this.inertia = new RotationInertiaProcess(BASE_MASS, DRIVE_TORQUE, FRICTION, MAX_SPEED);
+            this.inertia = new RotationInertiaProcess(BASE_MASS + connectedMass, DRIVE_TORQUE, FRICTION + connectedFriction, effectiveMaxSpeed);
             this.accumConsume = 0f;
             this.outAccum = 0f;
             this.accumDelta = 0.0;
@@ -373,11 +375,11 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     }
 
     public record SteamTurbineTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
-        public SteamTurbineTank(Consumer<Void> markDirty) {
-            this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty));
+        public SteamTurbineTank(Consumer<Void> markDirty, int capacity) {
+            this(new ITMarkableFluidTank(capacity, markDirty), new ITMarkableFluidTank(capacity, markDirty));
         }
 
-        public static SteamTurbineTank makeClient() { return new SteamTurbineTank(v -> {}); }
+        public static SteamTurbineTank makeClient(int capacity) { return new SteamTurbineTank(v -> {}, capacity); }
 
         public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();
@@ -392,6 +394,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         }
 
         @SuppressWarnings("unused")
-        public int getCapacity() { return TANK_CAPACITY; }
+        public int getCapacity() { return input.getCapacity(); }
     }
 }

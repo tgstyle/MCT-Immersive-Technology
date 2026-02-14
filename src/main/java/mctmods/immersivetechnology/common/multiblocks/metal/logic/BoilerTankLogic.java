@@ -21,6 +21,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerTankSha
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.ITServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -49,9 +50,11 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     public static final int INPUT_SLOT_EMPTY = 1;
     public static final int OUTPUT_SLOT_EMPTY = 2;
     public static final int OUTPUT_SLOT_FILLED = 3;
-    public static final int TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
-    private static final int PROGRESS_LOSS_PER_TICK = 1;
-    public static final double DEFAULT_WORKING_HEAT_LEVEL = 100.0;
+
+    public static final int TANK_CAPACITY = ITServerConfig.boilerTankCapacity;
+    public static final int PROGRESS_LOSS_PER_TICK = ITServerConfig.boilerTankProgressLossPerTick;
+    public static final double DEFAULT_WORKING_HEAT_LEVEL = ITServerConfig.boilerDefaultWorkingHeat;
+
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerTankShape.DATA.pointsOfInterest);
 
     public static final List<BlockPos> FLUID_INPUT_POI = getPosList("fluid_input");

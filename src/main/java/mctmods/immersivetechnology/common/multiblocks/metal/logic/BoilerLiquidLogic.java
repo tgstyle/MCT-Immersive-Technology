@@ -25,6 +25,7 @@ import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.ITServerConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -55,10 +56,11 @@ import java.util.function.Function;
 public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.State>, IServerTickableComponent<BoilerLiquidLogic.State>, IClientTickableComponent<BoilerLiquidLogic.State> {
     public static final int INPUT_FUEL_SLOT_FILLED = 0;
     public static final int INPUT_FUEL_SLOT_EMPTY = 1;
-    public static final int TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
-    private static final double HEAT_LOSS_PER_TICK = 0.2;
-    public static final double DEFAULT_WORKING_HEAT_LEVEL = 100.0;
-    public static final double PILOT_HEAT = 20.0;
+
+    public static final double HEAT_LOSS_PER_TICK = ITServerConfig.boilerLiquidHeatLossPerTick;;
+    public static final double DEFAULT_WORKING_HEAT_LEVEL = ITServerConfig.boilerDefaultWorkingHeat;;
+    public static final double PILOT_HEAT = ITServerConfig.boilerLiquidPilotHeat;;
+
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerLiquidShape.DATA.pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
@@ -87,7 +89,6 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
         float currentLevel = (float) (state.heatLevel / state.getWorkingHeatLevel());
         float vol = (2 * currentLevel) / attenuation;
-        // Main sound for active, heating up, cooling down
         if ((!state.pilotLit || state.heatLevel > PILOT_HEAT) && state.heatLevel > 0 && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
             state.isSoundPlaying = ITSound.startSound(
                     () -> (!state.pilotLit || state.heatLevel > PILOT_HEAT) && state.heatLevel > 0,
@@ -103,7 +104,6 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                     () -> (float) (state.heatLevel / state.getWorkingHeatLevel())
             );
         }
-        // Pilot sound for pilot mode
         if (state.pilotLit && state.heatLevel <= PILOT_HEAT && state.heatLevel > 0 && vol > 0.01f && !state.isPilotSoundPlaying.getAsBoolean()) {
             state.isPilotSoundPlaying = ITSound.startSound(
                     () -> state.pilotLit && state.heatLevel <= PILOT_HEAT && state.heatLevel > 0,
@@ -335,7 +335,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     }
 
     public record BoilerTank(ITMarkableFluidTank input1) {
-        public BoilerTank(Consumer<Void> markDirty) { this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty)); }
+        public BoilerTank(Consumer<Void> markDirty) { this(new ITMarkableFluidTank(ITServerConfig.boilerLiquidTankCapacity, markDirty)); }
 
         public static BoilerTank makeClient() { return new BoilerTank(v -> {}); }
 
@@ -348,6 +348,6 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         public void readNBT(CompoundTag tag) { this.input1.readFromNBT(tag.getCompound("input1")); }
 
         @SuppressWarnings("unused")
-        public int getCapacity() { return TANK_CAPACITY; }
+        public int getCapacity() { return ITServerConfig.boilerLiquidTankCapacity; }
     }
 }
