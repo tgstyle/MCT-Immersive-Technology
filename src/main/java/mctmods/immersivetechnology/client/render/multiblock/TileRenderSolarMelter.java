@@ -50,9 +50,12 @@ public class TileRenderSolarMelter extends TileEntitySpecialRenderer<TileEntityS
             BlockPos pos = te.getBlockPosForPos(i);
             IBlockState state = te.getWorld().getBlockState(pos);
             if (state.getBlock() != ITContent.blockMetalMultiblock) { continue; }
-            state = state.getActualState(te.getWorld(), pos);
-            IBakedModel model = blockRenderer.getModelForState(state);
-            blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, pos, buffer, false, MathHelper.getCoordinateRandom(pos.getX(), pos.getY(), pos.getZ()));
+            IBlockState renderState = state;
+            try {
+                renderState = state.getActualState(te.getWorld(), pos);
+            } catch (IllegalArgumentException ignored) {}
+            IBakedModel model = blockRenderer.getModelForState(renderState);
+            blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, renderState, pos, buffer, false, MathHelper.getCoordinateRandom(pos.getX(), pos.getY(), pos.getZ()));
         }
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();
