@@ -89,10 +89,6 @@ public class ITServerConfig {
     public static final ForgeConfigSpec.DoubleValue STEAM_TURBINE_FRICTION;
     public static final ForgeConfigSpec.DoubleValue STEAM_TURBINE_MAX_SPEED_FACTOR;
 
-    // Solar Reflector
-    public static final ForgeConfigSpec.DoubleValue SOLAR_REFLECTOR_BASE_FREQUENCY;
-    public static final ForgeConfigSpec.DoubleValue SOLAR_REFLECTOR_DANCE_DURATION;
-
     // Steel Sheetmetal Tank
     public static final ForgeConfigSpec.IntValue STEEL_SHEETMETAL_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue STEEL_SHEETMETAL_TANK_TRANSFER_SPEED;
@@ -166,9 +162,6 @@ public class ITServerConfig {
     public static double steamTurbineDriveTorque = 360.0D;
     public static double steamTurbineFriction = 0.0D;
     public static double steamTurbineMaxSpeedFactor = 1.0D;
-
-    public static double solarReflectorBaseFrequency = 2.09D;
-    public static double solarReflectorDanceDuration = 63.0D;
 
     public static int steelSheetmetalTankCapacity = 2048000;
     public static int steelSheetmetalTankTransferSpeed = 1000;
@@ -316,12 +309,6 @@ public class ITServerConfig {
         STEAM_TURBINE_MAX_SPEED_FACTOR = BUILDER.comment("Maximum achievable speed as fraction of global max RPM.").defineInRange("max_speed_factor", 1.0D, 0.01D, 1.0D);
         BUILDER.pop();
 
-        BUILDER.comment("Solar Reflector animation settings").push("solar_reflector");
-        SOLAR_REFLECTOR_BASE_FREQUENCY = BUILDER.comment("Base frequency for the sine-wave based 'dance' animation (higher = faster movement).").defineInRange("base_frequency", 2.09D, 0.1D, 10.0D);
-
-        SOLAR_REFLECTOR_DANCE_DURATION = BUILDER.comment("Full cycle duration of the dance animation in seconds.").defineInRange("dance_duration", 63.0D, 10.0D, 300.0D);
-        BUILDER.pop();
-
         BUILDER.comment("Creative Barrel settings").push("barrel_creative");
         CONFIG_CREATIVE_BARREL_OUTPUT_AMOUNT = BUILDER.comment("Maximum fluid output per tick (for creative/testing use).").defineInRange("creativeBarrelOutputAmount", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
         BUILDER.pop();
@@ -410,9 +397,6 @@ public class ITServerConfig {
             steamTurbineDriveTorque = STEAM_TURBINE_DRIVE_TORQUE.get();
             steamTurbineFriction = STEAM_TURBINE_FRICTION.get();
             steamTurbineMaxSpeedFactor = STEAM_TURBINE_MAX_SPEED_FACTOR.get();
-
-            solarReflectorBaseFrequency = SOLAR_REFLECTOR_BASE_FREQUENCY.get();
-            solarReflectorDanceDuration = SOLAR_REFLECTOR_DANCE_DURATION.get();
 
             steelSheetmetalTankCapacity = STEEL_SHEETMETAL_TANK_CAPACITY.get();
             steelSheetmetalTankTransferSpeed = STEEL_SHEETMETAL_TANK_TRANSFER_SPEED.get();
