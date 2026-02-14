@@ -36,10 +36,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
@@ -156,30 +154,13 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
     @Override public List<BlockPos> getOutputPositions() { return ImmutableList.of(FLUID_OUTPUT_0_POI.get(0), FLUID_OUTPUT_1_POI.get(0)); }
 
-    @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(FLUID_OUTPUT_0_FACING); }
+    @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return null; }
+
+    @Override public List<RelativeBlockFace> getOutputFacings() { return ImmutableList.of(FLUID_OUTPUT_0_FACING, FLUID_OUTPUT_1_FACING); }
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1); }
 
     @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput[0], state.fluidOutput[1]); }
-
-    public boolean pumpOutputs(IMultiblockContext<State> ctx) {
-        State state = ctx.getState();
-        List<ITMarkableFluidTank> outputTanks = getOutputTanks(state);
-        List<CapabilityReference<IFluidHandler>> fluidOutputs = getFluidOutputs(state);
-        for (int i = 0; i < outputTanks.size(); i++) {
-            ITMarkableFluidTank tank = outputTanks.get(i);
-            if (tank.getFluidAmount() == 0) { continue; }
-            IFluidHandler handler = fluidOutputs.get(i).get();
-            FluidStack out = tank.getFluid();
-            int accepted = handler.fill(out, FluidAction.SIMULATE);
-            if (accepted <= 0) { continue; }
-            FluidStack drainedStack = out.copy();
-            drainedStack.setAmount(accepted);
-            int drained = handler.fill(drainedStack, FluidAction.EXECUTE);
-            tank.drain(drained, FluidAction.EXECUTE);
-        }
-        return false;
-    }
 
     @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         BlockPos localPos = position.posInMultiblock();
