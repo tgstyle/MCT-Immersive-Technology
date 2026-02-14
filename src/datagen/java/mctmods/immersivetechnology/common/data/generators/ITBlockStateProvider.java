@@ -208,19 +208,19 @@ public class ITBlockStateProvider extends BlockStateProvider {
     @Override protected void registerStatesAndModels() {
         ITLib.IT_LOGGER.info("Generating Multiblock Splits");
 
-        generateMultiblockConfig("alternator", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
-        generateMultiblockConfig("boiler_liquid", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
-        generateMultiblockConfig("boiler_solid", "metal", false, true, ImmutableMap.of("cube_front", modLoc("multiblock/metal/boiler_solid")), ImmutableMap.of("cube_front", modLoc("multiblock/metal/boiler_solid_active")));
-        generateMultiblockConfig("boiler_tank", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
-        generateMultiblockConfig("cooling_tower", "stone", false, false, ImmutableMap.of(), ImmutableMap.of());
-        generateMultiblockConfig("distiller", "metal", true, false, ImmutableMap.of(), ImmutableMap.of());
-        generateMultiblockConfig("gas_turbine", "metal", true, false, ImmutableMap.of(), ImmutableMap.of());
-        generateMultiblockConfig("heat_exchanger", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
-        generateMultiblockConfig("solar_melter", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
-        generateMultiblockConfig("solar_reflector", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
-        generateMultiblockConfig("solar_tower", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
-        generateMultiblockConfig("steam_turbine", "metal", true, false, ImmutableMap.of(), ImmutableMap.of());
-        generateMultiblockConfig("steel_sheetmetal_tank", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("alternator", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("boiler_liquid", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("boiler_solid", "metal", false, true, false, ImmutableMap.of("cube_front", modLoc("multiblock/metal/boiler_solid")), ImmutableMap.of("cube_front", modLoc("multiblock/metal/boiler_solid_active")));
+        generateMultiblockConfig("boiler_tank", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("cooling_tower", "stone", false, false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("distiller", "metal", true, false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("gas_turbine", "metal", true, false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("heat_exchanger", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("solar_melter", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("solar_reflector", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("solar_tower", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("steam_turbine", "metal", true, false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("steel_sheetmetal_tank", "metal", false, false, true, ImmutableMap.of(), ImmutableMap.of());
 
         createSimpleBlock(ITBlocks.getBlock.apply("reinforced_coke_brick"), models().cubeAll("block/stone/reinforced_coke_brick", modLoc("block/stone/reinforced_coke_brick")));
         createSimpleBlock(ITBlocks.getBlock.apply("technology_engineering"), models().cubeAll("block/metal/technology_engineering", modLoc("block/metal/technology_engineering")));
@@ -367,7 +367,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         });
     }
 
-    private void generateMultiblockConfig(String registry_name, String block_type, boolean useSeparateMirror, boolean hasActive, Map<String, ResourceLocation> defaultTextures, Map<String, ResourceLocation> activeTextures) {
+    private void generateMultiblockConfig(String registry_name, String block_type, boolean useSeparateMirror, boolean hasActive, boolean automaticCulling, Map<String, ResourceLocation> defaultTextures, Map<String, ResourceLocation> activeTextures) {
         if (!hasActive) {
             defaultTextures = ImmutableMap.of();
             activeTextures = ImmutableMap.of();
@@ -378,14 +378,14 @@ public class ITBlockStateProvider extends BlockStateProvider {
         boolean flipMirror = hasMirror && useSeparateMirror;
         String baseObjPath = "multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj";
         String mirroredObjPath = baseObjPath.replace(".obj", "_mirrored.obj");
-        ITNongeneratedModel defaultUnsplit = createUnsplitModel(registry_name, baseObjPath, defaultTextures);
-        ITNongeneratedModel activeUnsplit = hasActive ? createUnsplitModel(registry_name + "_active", baseObjPath, activeTextures) : null;
+        ITNongeneratedModel defaultUnsplit = createUnsplitModel(registry_name, baseObjPath, defaultTextures, automaticCulling);
+        ITNongeneratedModel activeUnsplit = hasActive ? createUnsplitModel(registry_name + "_active", baseObjPath, activeTextures, automaticCulling) : null;
         ITNongeneratedModel mirroredUnsplit = null;
         ITNongeneratedModel activeMirroredUnsplit = null;
         if (hasMirror) {
             String useObjPath = flipMirror ? mirroredObjPath : baseObjPath;
-            mirroredUnsplit = createUnsplitModel(registry_name + "_mirrored", useObjPath, defaultTextures);
-            if (hasActive) activeMirroredUnsplit = createUnsplitModel(registry_name + "_active_mirrored", useObjPath, activeTextures);
+            mirroredUnsplit = createUnsplitModel(registry_name + "_mirrored", useObjPath, defaultTextures, automaticCulling);
+            if (hasActive) activeMirroredUnsplit = createUnsplitModel(registry_name + "_active_mirrored", useObjPath, activeTextures, automaticCulling);
         }
         ModelFile defaultMain = split(defaultUnsplit, multiblock, false, block_type);
         ModelFile activeMain = hasActive ? split(activeUnsplit, multiblock, false, block_type) : null;
@@ -394,13 +394,13 @@ public class ITBlockStateProvider extends BlockStateProvider {
         createMultiblockVariant(multiblock::getBlock, defaultMain, activeMain, defaultMirrored, activeMirrored, hasMirror ? ITProperties.MIRRORED : null, hasActive ? ITProperties.ACTIVE : null);
     }
 
-    private ITNongeneratedModel createUnsplitModel(String name, String objPathStr, Map<String, ResourceLocation> textures) {
+    private ITNongeneratedModel createUnsplitModel(String name, String objPathStr, Map<String, ResourceLocation> textures, boolean automaticCulling) {
         ResourceLocation objPath = modLoc(objPathStr);
         ITNongeneratedModel base = innerModels.withExistingParent(name, mcLoc("block"));
         ITObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ITObjModelBuilder::new);
         loader.modelLocation(addModelsPrefix(objPath));
         loader.flipV(true);
-        loader.automaticCulling(false);
+        loader.automaticCulling(automaticCulling);
         loader.shadeQuads(true);
         loader.emissiveAmbient(true);
         String path = objPath.getPath();
