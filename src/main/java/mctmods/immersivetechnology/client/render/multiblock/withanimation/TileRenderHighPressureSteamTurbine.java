@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
@@ -50,9 +51,7 @@ public class TileRenderHighPressureSteamTurbine extends TileEntitySpecialRendere
         for (int i = 0; i < totalBlocks; i++) {
             BlockPos pos = te.getBlockPosForPos(i);
             IBlockState state = te.getWorld().getBlockState(pos);
-            if (state.getBlock() != ITContent.blockMetalMultiblock) {
-                continue;
-            }
+            if (state.getBlock() != ITContent.blockMetalMultiblock) { continue; }
             state = state.getActualState(te.getWorld(), pos);
             IBakedModel model = blockRenderer.getModelForState(state);
             blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, pos, buffer, false, MathHelper.getCoordinateRandom(pos.getX(), pos.getY(), pos.getZ()));
@@ -63,14 +62,18 @@ public class TileRenderHighPressureSteamTurbine extends TileEntitySpecialRendere
         // Animated rotor (dynamic part only, rotated, centered)
         GlStateManager.translate(0.5, 0.5, 0.5);
         float rotation = te.animation.getAnimationRotation() + te.animation.getAnimationMomentum() * partialTicks;
-        GlStateManager.rotate(rotation, te.facing.getXOffset(), 0, te.facing.getZOffset());
+        boolean validFacing = te.facing.getAxis() != EnumFacing.Axis.Y;
+        EnumFacing rotAxis = validFacing ? te.facing : EnumFacing.NORTH;
+        GlStateManager.rotate(rotation, rotAxis.getXOffset(), 0, rotAxis.getZOffset());
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         buffer.setTranslation(-0.5 - masterPos.getX(), -0.5 - masterPos.getY(), -0.5 - masterPos.getZ());
         IBlockState state = te.getWorld().getBlockState(masterPos);
-        state = state.getActualState(te.getWorld(), masterPos);
-        state = state.withProperty(IEProperties.DYNAMICRENDER, true);
-        IBakedModel model = blockRenderer.getModelForState(state);
-        blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, masterPos, buffer, true);
+        if (state.getBlock() == ITContent.blockMetalMultiblock) {
+            if (validFacing) { state = state.getActualState(te.getWorld(), masterPos); }
+            state = state.withProperty(IEProperties.DYNAMICRENDER, true);
+            IBakedModel model = blockRenderer.getModelForState(state);
+            blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, masterPos, buffer, true);
+        }
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();
 
