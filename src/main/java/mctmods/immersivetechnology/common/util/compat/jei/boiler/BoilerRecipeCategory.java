@@ -27,7 +27,7 @@ public class BoilerRecipeCategory extends ITRecipeCategory<BoilerRecipe, BoilerR
 	}
 
 	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull BoilerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
-		List<List<FluidStack>> inputs = ingredients.getOutputs(VanillaTypes.FLUID);
+		List<List<FluidStack>> inputs = ingredients.getInputs(VanillaTypes.FLUID);
 		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
 		int tankSize = 0;
@@ -39,10 +39,8 @@ public class BoilerRecipeCategory extends ITRecipeCategory<BoilerRecipe, BoilerR
 		}
 
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-		if (!inputs.isEmpty()) {
-			guiFluidStacks.init(0, true, 100, 20, 16, 47, tankSize, false, tankOverlay);
-			guiFluidStacks.set(0, inputs.get(0));
-		}
+		guiFluidStacks.init(0, true, 100, 20, 16, 47, tankSize, false, tankOverlay);
+		guiFluidStacks.set(0, inputs.get(0));
 		guiFluidStacks.init(1, false, 125, 20, 16, 47, tankSize, false, tankOverlay);
 		guiFluidStacks.set(1, outputs.get(0));
 

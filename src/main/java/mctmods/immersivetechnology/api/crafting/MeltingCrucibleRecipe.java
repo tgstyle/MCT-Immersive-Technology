@@ -76,10 +76,4 @@ public class MeltingCrucibleRecipe extends MultiblockRecipe {
         IngredientStack itemInput = IngredientStack.readFromNBT(nbt.getCompoundTag("input"));
         return findRecipe(itemInput);
     }
-
-    @Override public void setupJEI() {
-        super.setupJEI();
-        jeiFluidOutputList = new ArrayList<>();
-        jeiFluidOutputList.add(fluidOutput.copy());
-    }
 }

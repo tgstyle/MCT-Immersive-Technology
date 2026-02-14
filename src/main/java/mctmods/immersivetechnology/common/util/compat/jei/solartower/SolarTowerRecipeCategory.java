@@ -35,7 +35,7 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 	}
 
 	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull SolarTowerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
-		List<List<FluidStack>> inputs = ingredients.getOutputs(VanillaTypes.FLUID);
+		List<List<FluidStack>> inputs = ingredients.getInputs(VanillaTypes.FLUID);
 		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
 		int tankCapacity = 0;
@@ -51,10 +51,8 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 		}
 
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-		if (!inputs.isEmpty()) {
-			guiFluidStacks.init(0, true, 102, 21, 16, 47, tankCapacity, false, tankOverlay);
-			guiFluidStacks.set(0, inputs.get(0));
-		}
+		guiFluidStacks.init(0, true, 102, 21, 16, 47, tankCapacity, false, tankOverlay);
+		guiFluidStacks.set(0, inputs.get(0));
 		guiFluidStacks.init(1, false, 126, 21, 16, 47, tankCapacity, false, tankOverlay);
 		guiFluidStacks.set(1, outputs.get(0));
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
@@ -70,7 +68,5 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 		if (reflectors == 3) reflectorOverlay.draw(minecraft, 32, 56);
 	}
 
-	@Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull SolarTowerRecipe recipe) {
-		return new SolarTowerRecipeWrapper(recipe);
-	}
+	@Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull SolarTowerRecipe recipe) { return new SolarTowerRecipeWrapper(recipe); }
 }

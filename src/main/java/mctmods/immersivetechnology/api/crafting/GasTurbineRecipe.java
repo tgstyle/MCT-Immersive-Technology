@@ -23,7 +23,8 @@ public class GasTurbineRecipe extends MultiblockRecipe {
         this.fluidInput = fluidInput;
         this.totalProcessTime = (int) Math.floor(time * timeModifier);
         this.fluidInputList = Lists.newArrayList(this.fluidInput);
-        this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
+        this.fluidOutputList = Lists.newArrayList();
+        if (this.fluidOutput != null) this.fluidOutputList.add(this.fluidOutput);
     }
 
     public static ArrayList<GasTurbineRecipe> recipeList = new ArrayList<>();

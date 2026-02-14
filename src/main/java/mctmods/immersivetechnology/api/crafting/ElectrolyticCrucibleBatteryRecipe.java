@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.api.crafting;
 
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.common.util.ListUtils;
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,6 +34,10 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
         this.totalProcessTime = (int) Math.floor(time * timeModifier);
         this.totalProcessEnergy = (int) Math.floor(energy * energyModifier);
         this.fluidInputList = Lists.newArrayList(fluidInput0);
+        this.fluidOutputList = Lists.newArrayList(fluidOutput0);
+        if (fluidOutput1 != null) this.fluidOutputList.add(fluidOutput1);
+        if (fluidOutput2 != null) this.fluidOutputList.add(fluidOutput2);
+        this.outputList = ListUtils.fromItems(itemOutput);
     }
 
     public static ArrayList<ElectrolyticCrucibleBatteryRecipe> recipeList = new ArrayList<>();
@@ -56,11 +61,6 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
         return null;
     }
 
-    public static ElectrolyticCrucibleBatteryRecipe findRecipeFluid(Fluid fluidInput0) {
-        if (fluidInput0 == null) return null;
-        return recipeMap.get(fluidInput0);
-    }
-
     @Override public int getMultipleProcessTicks() { return 0; }
 
     @Override public int getTotalProcessEnergy() { return this.totalProcessEnergy; }
@@ -76,12 +76,4 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
     }
 
     @Override public int getTotalProcessTime() { return this.totalProcessTime; }
-
-    @Override public void setupJEI() {
-        super.setupJEI();
-        jeiFluidOutputList = new ArrayList<>();
-        jeiFluidOutputList.add(fluidOutput0.copy());
-        if (fluidOutput1 != null) jeiFluidOutputList.add(fluidOutput1.copy());
-        if (fluidOutput2 != null) jeiFluidOutputList.add(fluidOutput2.copy());
-    }
 }

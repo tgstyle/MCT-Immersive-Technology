@@ -42,7 +42,7 @@ public class SolarTowerRecipe extends MultiblockRecipe {
         SolarTowerRecipe recipe = recipeMap.get(fluidInput.getFluid());
         if (recipe != null && fluidInput.containsFluid(recipe.fluidInput)) return recipe;
         for (SolarTowerRecipe r : recipeList) {
-            if (fluidInput.containsFluid(r.fluidInput)) return r;
+            if (r.fluidInput != null && fluidInput.containsFluid(r.fluidInput)) return r;
         }
         return null;
     }

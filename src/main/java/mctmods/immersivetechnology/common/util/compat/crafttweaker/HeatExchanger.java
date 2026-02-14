@@ -5,6 +5,7 @@ import crafttweaker.IAction;
 import crafttweaker.api.liquid.ILiquidStack;
 import mctmods.immersivetechnology.api.crafting.HeatExchangerRecipe;
 import net.minecraftforge.fluids.FluidStack;
+import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -31,15 +32,21 @@ public class HeatExchanger {
 
         @Override public void apply() { HeatExchangerRecipe.recipeList.add(recipe); }
 
-        @Override public String describe() { return "Adding Heat Exchanger recipe for " + recipe.fluidInput0.getLocalizedName(); }
+        @Override public String describe() {
+            String desc = "Adding Heat Exchanger recipe: " + recipe.fluidInput0.getLocalizedName() + " + " + recipe.fluidInput1.getLocalizedName();
+            if (recipe.fluidOutput1 != null) {
+                return desc + " -> " + recipe.fluidOutput0.getLocalizedName() + " + " + recipe.fluidOutput1.getLocalizedName();
+            }
+            return desc + " -> " + recipe.fluidOutput0.getLocalizedName();
+        }
     }
 
     @ZenMethod
-    public static void removeRecipe(ILiquidStack inputFluid0, ILiquidStack inputFluid1) {
+    public static void removeRecipe(ILiquidStack inputFluid0, @Optional ILiquidStack inputFluid1) {
         FluidStack fluidIn0 = CraftTweakerHelper.toFluidStack(inputFluid0);
         FluidStack fluidIn1 = CraftTweakerHelper.toFluidStack(inputFluid1);
 
-        if (fluidIn0 != null && fluidIn1 != null) { CraftTweakerAPI.apply(new Remove(fluidIn0, fluidIn1)); }
+        if (fluidIn0 != null) { CraftTweakerAPI.apply(new Remove(fluidIn0, fluidIn1)); }
     }
 
     private static class Remove implements IAction {
@@ -54,12 +61,14 @@ public class HeatExchanger {
         @Override public void apply() {
             HeatExchangerRecipe.recipeList.removeIf(recipe -> recipe != null &&
                     recipe.fluidInput0.isFluidEqual(inputFluid0) &&
-                    recipe.fluidInput1.isFluidEqual(inputFluid1));
+                    (inputFluid1 == null || (recipe.fluidInput1 != null && recipe.fluidInput1.isFluidEqual(inputFluid1))));
         }
 
         @Override public String describe() {
-            return inputFluid1 == null ? "Removing Heat Exchanger Recipe for " + inputFluid0.getLocalizedName() :
-                    "Removing Heat Exchanger Recipe for " + inputFluid0.getLocalizedName() + " and " + inputFluid1.getLocalizedName();
+            if (inputFluid1 == null) {
+                return "Removing Heat Exchanger recipes matching input " + inputFluid0.getLocalizedName();
+            }
+            return "Removing Heat Exchanger recipe for inputs " + inputFluid0.getLocalizedName() + " and " + inputFluid1.getLocalizedName();
         }
     }
 }

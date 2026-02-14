@@ -30,7 +30,11 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
         this.fluidInput1 = fluidInput1;
         this.totalProcessTime = (int) Math.floor(time * timeModifier);
         this.totalProcessEnergy = (int) Math.floor(energy * energyModifier);
-        this.fluidInputList = Lists.newArrayList(fluidInput0, fluidInput1);
+
+        this.fluidInputList = Lists.newArrayList();
+        if (fluidInput0 != null) this.fluidInputList.add(fluidInput0);
+        if (fluidInput1 != null) this.fluidInputList.add(fluidInput1);
+
         this.fluidOutputList = Lists.newArrayList(fluidOutput0);
         if (fluidOutput1 != null) this.fluidOutputList.add(fluidOutput1);
     }
@@ -80,13 +84,9 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
         return input1Map.get(fluidInput1);
     }
 
-    @Override public int getMultipleProcessTicks() {
-        return 0;
-    }
+    @Override public int getMultipleProcessTicks() { return 0; }
 
-    @Override public int getTotalProcessEnergy() {
-        return this.totalProcessEnergy;
-    }
+    @Override public int getTotalProcessEnergy() { return this.totalProcessEnergy; }
 
     @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt.setTag("input0", fluidInput0.writeToNBT(new NBTTagCompound()));
@@ -100,18 +100,7 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
         return findRecipe(fluidInput0, fluidInput1);
     }
 
-    @Override public int getTotalProcessTime() {
-        return this.totalProcessTime;
-    }
-
-    @Override public void setupJEI() {
-        super.setupJEI();
-        jeiFluidOutputList = new ArrayList<>();
-        jeiFluidOutputList.add(fluidOutput0.copy());
-        if (fluidOutput1 != null) {
-            jeiFluidOutputList.add(fluidOutput1.copy());
-        }
-    }
+    @Override public int getTotalProcessTime() { return this.totalProcessTime; }
 
     static class FluidPair {
         private final Fluid fluid0;
@@ -123,18 +112,12 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
         }
 
         @Override public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             FluidPair that = (FluidPair) o;
             return Objects.equals(fluid0, that.fluid0) && Objects.equals(fluid1, that.fluid1);
         }
 
-        @Override public int hashCode() {
-            return Objects.hash(fluid0, fluid1);
-        }
+        @Override public int hashCode() { return Objects.hash(fluid0, fluid1); }
     }
 }

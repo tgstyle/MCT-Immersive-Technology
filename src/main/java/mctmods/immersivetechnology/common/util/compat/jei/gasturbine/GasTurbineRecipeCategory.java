@@ -29,7 +29,7 @@ public class GasTurbineRecipeCategory extends ITRecipeCategory<GasTurbineRecipe,
     }
 
     @Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull GasTurbineRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
-        List<List<FluidStack>> inputs = ingredients.getOutputs(VanillaTypes.FLUID);
+        List<List<FluidStack>> inputs = ingredients.getInputs(VanillaTypes.FLUID);
         List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
         int tankSize = 0;
@@ -52,7 +52,5 @@ public class GasTurbineRecipeCategory extends ITRecipeCategory<GasTurbineRecipe,
 
     @Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull GasTurbineRecipe recipe) { return new GasTurbineRecipeWrapper(recipe); }
 
-    @Override public void drawExtras(@Nonnull Minecraft minecraft) {
-        turbineAndArrow.draw(minecraft, 42, 18);
-    }
+    @Override public void drawExtras(@Nonnull Minecraft minecraft) { turbineAndArrow.draw(minecraft, 42, 18); }
 }

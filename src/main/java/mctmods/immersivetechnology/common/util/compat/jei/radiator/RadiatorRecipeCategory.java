@@ -32,7 +32,7 @@ public class RadiatorRecipeCategory extends ITRecipeCategory<RadiatorRecipe, Rad
 	}
 
 	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull RadiatorRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
-		List<List<FluidStack>> inputs = ingredients.getOutputs(VanillaTypes.FLUID);
+		List<List<FluidStack>> inputs = ingredients.getInputs(VanillaTypes.FLUID);
 		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
 		int tankCapacity = 0;
@@ -48,18 +48,14 @@ public class RadiatorRecipeCategory extends ITRecipeCategory<RadiatorRecipe, Rad
 		}
 
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
-		if (!inputs.isEmpty()) {
-			guiFluidStacks.init(0, true, 11, 11, 16, 47, tankCapacity, false, tankOverlay);
-			guiFluidStacks.set(0, inputs.get(0));
-		}
+		guiFluidStacks.init(0, true, 11, 11, 16, 47, tankCapacity, false, tankOverlay);
+		guiFluidStacks.set(0, inputs.get(0));
 		guiFluidStacks.init(1, false, 109, 11, 16, 47, tankCapacity, false, tankOverlay);
 		guiFluidStacks.set(1, outputs.get(0));
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
 	}
 
-    @Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull RadiatorRecipe recipe) {
-		return new RadiatorRecipeWrapper(recipe);
-	}
+	@Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull RadiatorRecipe recipe) { return new RadiatorRecipeWrapper(recipe); }
 
 	@Override public void drawExtras(@Nonnull Minecraft minecraft) {
 		arrow.draw(minecraft, 52, 51);

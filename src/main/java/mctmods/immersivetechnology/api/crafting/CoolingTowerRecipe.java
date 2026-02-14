@@ -27,8 +27,14 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
         this.fluidInput0 = fluidInput0;
         this.fluidInput1 = fluidInput1;
         this.totalProcessTime = (int) Math.floor(time * timeModifier);
-        this.fluidInputList = Lists.newArrayList(fluidInput0, fluidInput1);
-        this.fluidOutputList = Lists.newArrayList(fluidOutput0, fluidOutput1, fluidOutput2);
+
+        this.fluidInputList = Lists.newArrayList();
+        if (fluidInput0 != null) this.fluidInputList.add(fluidInput0);
+        if (fluidInput1 != null) this.fluidInputList.add(fluidInput1);
+
+        this.fluidOutputList = Lists.newArrayList(fluidOutput0);
+        if (fluidOutput1 != null) this.fluidOutputList.add(fluidOutput1);
+        if (fluidOutput2 != null) this.fluidOutputList.add(fluidOutput2);
     }
 
     public static ArrayList<CoolingTowerRecipe> recipeList = new ArrayList<>();
@@ -40,9 +46,11 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
     public static CoolingTowerRecipe addRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, FluidStack fluidInput0, FluidStack fluidInput1, int time) {
         CoolingTowerRecipe recipe = new CoolingTowerRecipe(fluidOutput0, fluidOutput1, fluidOutput2, fluidInput0, fluidInput1, time);
         recipeList.add(recipe);
-        recipeMap.put(new FluidPair(fluidInput0.getFluid(), fluidInput1.getFluid()), recipe);
-        input0Map.put(fluidInput0.getFluid(), recipe);
-        input1Map.put(fluidInput1.getFluid(), recipe);
+        Fluid f0 = fluidInput0 != null ? fluidInput0.getFluid() : null;
+        Fluid f1 = fluidInput1 != null ? fluidInput1.getFluid() : null;
+        recipeMap.put(new FluidPair(f0, f1), recipe);
+        if (f0 != null) input0Map.put(f0, recipe);
+        if (f1 != null) input1Map.put(f1, recipe);
         return recipe;
     }
 
