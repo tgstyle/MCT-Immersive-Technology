@@ -37,7 +37,10 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
     private TileEntityCoolingTowerMaster master;
     private int loadGrace;
 
-    public TileEntityCoolingTowerSlave() { super(TileEntityITMultiblockPartCoolingTower.instance, 0, false); }
+    public TileEntityCoolingTowerSlave() {
+        super(TileEntityITMultiblockPartCoolingTower.instance, 0, false);
+        this.shouldDropInventory = false;
+    }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 

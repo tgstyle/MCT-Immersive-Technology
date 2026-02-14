@@ -47,7 +47,10 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
     private int loadGrace = 0;
     private TileEntityAlternatorMaster master;
 
-    public TileEntityAlternatorSlave() { super(TileEntityITMultiblockPartAlternator.instance, 0, false); }
+    public TileEntityAlternatorSlave() {
+        super(TileEntityITMultiblockPartAlternator.instance, 0, false);
+        this.shouldDropInventory = false;
+    }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);

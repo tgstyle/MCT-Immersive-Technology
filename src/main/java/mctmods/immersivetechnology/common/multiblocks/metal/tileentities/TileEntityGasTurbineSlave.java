@@ -40,7 +40,10 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
 
     private static final float outputtorque = Config.ITConfig.Multiblocks.gasTurbine.gasTurbine_torque;
 
-    public TileEntityGasTurbineSlave() { super(TileEntityITMultiblockPartGasTurbine.instance, 0, true); }
+    public TileEntityGasTurbineSlave() {
+        super(TileEntityITMultiblockPartGasTurbine.instance, 0, true);
+        this.shouldDropInventory = false;
+    }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 

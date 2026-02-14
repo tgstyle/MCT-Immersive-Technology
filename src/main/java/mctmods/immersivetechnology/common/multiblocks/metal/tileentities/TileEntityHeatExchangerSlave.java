@@ -44,7 +44,10 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
     TileEntityHeatExchangerMaster master;
     private int loadGrace;
 
-    public TileEntityHeatExchangerSlave() { super(TileEntityITMultiblockPartHeatExchanger.instance, 0, false); }
+    public TileEntityHeatExchangerSlave() {
+        super(TileEntityITMultiblockPartHeatExchanger.instance, 0, false);
+        this.shouldDropInventory = false;
+    }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 

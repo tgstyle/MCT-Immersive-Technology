@@ -46,7 +46,10 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
     private TileEntityDistillerMaster master;
     private int loadGrace = 0;
 
-    public TileEntityDistillerSlave() { super(TileEntityITMultiblockPartDistiller.instance, 16000, true); }
+    public TileEntityDistillerSlave() {
+        super(TileEntityITMultiblockPartDistiller.instance, 16000, true);
+        this.shouldDropInventory = false;
+    }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 

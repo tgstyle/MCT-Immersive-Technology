@@ -47,6 +47,7 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
 
     public TileEntitySolarMelterSlave() {
         super(TileEntityITMultiblockPartSolarMelter.instance, 0, false);
+        this.shouldDropInventory = false;
     }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {

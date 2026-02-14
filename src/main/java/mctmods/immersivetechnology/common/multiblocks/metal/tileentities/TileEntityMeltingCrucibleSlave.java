@@ -48,6 +48,7 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityITMultiblock<TileE
 
     public TileEntityMeltingCrucibleSlave() {
         super(TileEntityITMultiblockPartMeltingCrucible.instance, Multiblocks.meltingCrucible.meltingCrucible_energy_size, true);
+        this.shouldDropInventory = false;
     }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }

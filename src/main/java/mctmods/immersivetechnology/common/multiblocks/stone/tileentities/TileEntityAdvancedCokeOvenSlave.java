@@ -43,7 +43,10 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
 
     private int loadGrace = 0;
 
-    public TileEntityAdvancedCokeOvenSlave() { super(TileEntityITMultiblockPartAdvancedCokeOven.instance, 0, false); }
+    public TileEntityAdvancedCokeOvenSlave() {
+        super(TileEntityITMultiblockPartAdvancedCokeOven.instance, 0, false);
+        this.shouldDropInventory = false;
+    }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 

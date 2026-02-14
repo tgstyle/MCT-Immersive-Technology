@@ -42,6 +42,7 @@ public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRa
 
     public TileEntityRadiatorSlave() {
         super(TileEntityITMultiblockPartRadiator.instance, 0, false);
+        this.shouldDropInventory = false;
     }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }

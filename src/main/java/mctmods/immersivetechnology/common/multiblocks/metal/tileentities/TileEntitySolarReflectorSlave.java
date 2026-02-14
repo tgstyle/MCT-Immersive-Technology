@@ -34,7 +34,10 @@ public class TileEntitySolarReflectorSlave extends TileEntityITMultiblock<TileEn
 
     private int loadGrace = 0;
 
-    public TileEntitySolarReflectorSlave() { super(TileEntityITMultiblockPartSolarReflector.instance, 0, false); }
+    public TileEntitySolarReflectorSlave() {
+        super(TileEntityITMultiblockPartSolarReflector.instance, 0, false);
+        this.shouldDropInventory = false;
+    }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 

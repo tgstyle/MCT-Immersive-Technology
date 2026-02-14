@@ -41,7 +41,10 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
 
     private int loadGrace = 0;
 
-    public TileEntitySteelSheetmetalTankSlave() { super(TileEntityITMultiblockPartSteelSheetmetalTank.instance, 0, true); }
+    public TileEntitySteelSheetmetalTankSlave() {
+        super(TileEntityITMultiblockPartSteelSheetmetalTank.instance, 0, true);
+        this.shouldDropInventory = false;
+    }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
 

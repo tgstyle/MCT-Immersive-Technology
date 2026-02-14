@@ -47,7 +47,10 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityITMult
     TileEntityElectrolyticCrucibleBatteryMaster master;
     private int loadGrace;
 
-    public TileEntityElectrolyticCrucibleBatterySlave() { super(TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance, 0, false); }
+    public TileEntityElectrolyticCrucibleBatterySlave() {
+        super(TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance, 0, false);
+        this.shouldDropInventory = false;
+    }
 
     @Override
     public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
