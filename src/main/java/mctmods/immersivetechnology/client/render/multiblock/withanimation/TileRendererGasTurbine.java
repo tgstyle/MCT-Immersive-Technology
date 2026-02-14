@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
 public class TileRendererGasTurbine extends TileEntitySpecialRenderer<TileEntityGasTurbineMaster> {
 
     @Override public void render(TileEntityGasTurbineMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        if(!te.formed || te.isDummy() || !te.getWorld().isBlockLoaded(te.getPos(), false)) { return; }
+        if(!te.formed || !te.getWorld().isBlockLoaded(te.getPos(), false)) { return; }
         final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
         BlockPos blockPos = te.getPos();
         IBlockState state = getWorld().getBlockState(blockPos);

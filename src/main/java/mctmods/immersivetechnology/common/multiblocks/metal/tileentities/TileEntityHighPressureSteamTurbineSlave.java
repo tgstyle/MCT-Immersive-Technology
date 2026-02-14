@@ -47,6 +47,7 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityITMultibl
 
     public TileEntityHighPressureSteamTurbineSlave() {
         super(TileEntityITMultiblockPartHighPressureSteamTurbine.instance, 0, true);
+        this.shouldDropInventory = false;
     }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
