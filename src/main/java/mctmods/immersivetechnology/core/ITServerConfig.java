@@ -21,9 +21,6 @@ public class ITServerConfig {
     public static final ForgeConfigSpec.IntValue CONFIG_BURN_TIME_DIVIDER;
     public static final ForgeConfigSpec.IntValue CONFIG_CREATIVE_BARREL_OUTPUT_AMOUNT;
 
-    // Shared across all boilers
-    public static final ForgeConfigSpec.DoubleValue BOILER_DEFAULT_WORKING_HEAT;
-
     // Liquid Boiler
     public static final ForgeConfigSpec.IntValue BOILER_LIQUID_TANK_CAPACITY;
     public static final ForgeConfigSpec.DoubleValue BOILER_LIQUID_HEAT_LOSS_PER_TICK;
@@ -61,7 +58,6 @@ public class ITServerConfig {
     public static final ForgeConfigSpec.IntValue HEAT_EXCHANGER_ENERGY_MAX_IO;
 
     // Solar Melter
-    public static final ForgeConfigSpec.DoubleValue SOLAR_MELTER_WORKING_HEAT_LEVEL;
     public static final ForgeConfigSpec.DoubleValue SOLAR_MELTER_DAY_MIN_HEAT_LOSS;
     public static final ForgeConfigSpec.DoubleValue SOLAR_MELTER_LOSS_PER_SECTION_DROP;
     public static final ForgeConfigSpec.DoubleValue SOLAR_MELTER_TEMP_DEPENDENT_LOSS_FACTOR;
@@ -72,7 +68,6 @@ public class ITServerConfig {
     public static final ForgeConfigSpec.DoubleValue SOLAR_MELTER_SPEED_MULTIPLIER;
 
     // Solar Tower
-    public static final ForgeConfigSpec.DoubleValue SOLAR_TOWER_WORKING_HEAT_LEVEL;
     public static final ForgeConfigSpec.DoubleValue SOLAR_TOWER_DAY_MIN_HEAT_LOSS;
     public static final ForgeConfigSpec.DoubleValue SOLAR_TOWER_LOSS_PER_SECTION_DROP;
     public static final ForgeConfigSpec.DoubleValue SOLAR_TOWER_TEMP_DEPENDENT_LOSS_FACTOR;
@@ -93,9 +88,6 @@ public class ITServerConfig {
     public static final ForgeConfigSpec.IntValue STEEL_SHEETMETAL_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue STEEL_SHEETMETAL_TANK_TRANSFER_SPEED;
 
-    // Mechanical system global
-    public static final ForgeConfigSpec.IntValue MAX_RPM;
-
     public static DisassemblyMode disassemblyMode = DisassemblyMode.PROCESS_QUEUE;
     public static double alternatorPowerFactor = 1.0D;
     public static int alternatorEnergyCapacity = 1200000;
@@ -104,8 +96,6 @@ public class ITServerConfig {
     public static int alternatorMaxOutput = 12288;
     public static int burnTimeDivider = 10;
     public static int creativeBarrelOutputAmount = Integer.MAX_VALUE;
-
-    public static double boilerDefaultWorkingHeat = 100.0D;
 
     public static int boilerLiquidTankCapacity = 24000;
     public static double boilerLiquidHeatLossPerTick = 0.2D;
@@ -137,7 +127,6 @@ public class ITServerConfig {
     public static int heatExchangerEnergyCapacity = 2048;
     public static int heatExchangerEnergyMaxIO = 1024;
 
-    public static double solarMelterWorkingHeatLevel = 1000.0D;
     public static double solarMelterDayMinHeatLoss = 0.0D;
     public static double solarMelterLossPerSectionDrop = 0.035D;
     public static double solarMelterTempDependentLossFactor = 0.00036D;
@@ -147,7 +136,6 @@ public class ITServerConfig {
     public static int solarMelterProgressLossOffTemp = 2;
     public static double solarMelterSpeedMultiplier = 1.0D;
 
-    public static double solarTowerWorkingHeatLevel = 400.0D;
     public static double solarTowerDayMinHeatLoss = 0.0D;
     public static double solarTowerLossPerSectionDrop = 0.035D;
     public static double solarTowerTempDependentLossFactor = 0.0006D;
@@ -166,8 +154,6 @@ public class ITServerConfig {
     public static int steelSheetmetalTankCapacity = 2048000;
     public static int steelSheetmetalTankTransferSpeed = 1000;
 
-    public static int maxRpm = 7200;
-
     static {
         BUILDER.push("multiblocks");
         DISASSEMBLY_MODE = BUILDER.comment("Controls multiblock disassembly behavior. PROCESS_QUEUE = gradual block removal using fake player actions. TEMPLATE_BLOCKS = reverts structure to placeholder blocks (like vanilla IE behavior).").defineEnum("disassemblyMode", DisassemblyMode.PROCESS_QUEUE);
@@ -185,12 +171,6 @@ public class ITServerConfig {
         ALTERNATOR_MAX_OUTPUT = BUILDER
                 .comment("Hard cap on FE/t output from the Alternator before power factor and other modifiers are applied.")
                 .defineInRange("alternator_max_output", 12288, 0, Integer.MAX_VALUE);
-        BUILDER.pop();
-
-        BUILDER.comment("Options shared by all boiler types").push("boiler_shared");
-        BOILER_DEFAULT_WORKING_HEAT = BUILDER
-                .comment("Target heat level for full operation when a recipe does not specify its own requirement (applies to all boilers).")
-                .defineInRange("default_working_heat", 100.0D, 0.0D, Double.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.comment("Solid Fuel Boiler settings").push("boiler_solid");
@@ -258,8 +238,6 @@ public class ITServerConfig {
         BUILDER.pop();
 
         BUILDER.comment("Solar Melter settings").push("solar_melter");
-        SOLAR_MELTER_WORKING_HEAT_LEVEL = BUILDER.comment("Default target heat for full-speed operation (when recipe unspecified).").defineInRange("working_heat_level", 1000.0D, 100.0D, Double.MAX_VALUE);
-
         SOLAR_MELTER_DAY_MIN_HEAT_LOSS = BUILDER.comment("Base heat loss per tick during daylight (before sky darkness penalties).").defineInRange("day_min_heat_loss", 0.0D, 0.0D, Double.MAX_VALUE);
 
         SOLAR_MELTER_LOSS_PER_SECTION_DROP = BUILDER.comment("Additional heat loss per unit of sky darkness.").defineInRange("loss_per_section_drop", 0.035D, 0.0D, Double.MAX_VALUE);
@@ -278,8 +256,6 @@ public class ITServerConfig {
         BUILDER.pop();
 
         BUILDER.comment("Solar Tower settings").push("solar_tower");
-        SOLAR_TOWER_WORKING_HEAT_LEVEL = BUILDER.comment("Default target heat for full-speed operation (when recipe unspecified).").defineInRange("working_heat_level", 400.0D, 100.0D, Double.MAX_VALUE);
-
         SOLAR_TOWER_DAY_MIN_HEAT_LOSS = BUILDER.comment("Base heat loss per tick during daylight (before sky darkness penalties).").defineInRange("day_min_heat_loss", 0.0D, 0.0D, Double.MAX_VALUE);
 
         SOLAR_TOWER_LOSS_PER_SECTION_DROP = BUILDER.comment("Additional heat loss per unit of sky darkness.").defineInRange("loss_per_section_drop", 0.035D, 0.0D, Double.MAX_VALUE);
@@ -318,12 +294,6 @@ public class ITServerConfig {
 
         STEEL_SHEETMETAL_TANK_TRANSFER_SPEED = BUILDER.comment("Maximum fluid transfer rate per tick (mB/t).").defineInRange("transfer_speed", 1000, 1, Integer.MAX_VALUE);
         BUILDER.pop();
-
-        BUILDER.comment("Mechanical system global settings").push("mechanical");
-        MAX_RPM = BUILDER
-                .comment("Global maximum rotational speed in RPM for all mechanical devices (turbines, alternators, etc.). Default 7200 RPM. Changing this affects speed_factor calculations in turbines.")
-                .defineInRange("max_rpm", 7200, 1000, 50000);
-        BUILDER.pop();
     }
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
@@ -339,8 +309,6 @@ public class ITServerConfig {
             alternatorMaxOutput = ALTERNATOR_MAX_OUTPUT.get();
             burnTimeDivider = CONFIG_BURN_TIME_DIVIDER.get();
             creativeBarrelOutputAmount = CONFIG_CREATIVE_BARREL_OUTPUT_AMOUNT.get();
-
-            boilerDefaultWorkingHeat = BOILER_DEFAULT_WORKING_HEAT.get();
 
             boilerLiquidTankCapacity = BOILER_LIQUID_TANK_CAPACITY.get();
             boilerLiquidHeatLossPerTick = BOILER_LIQUID_HEAT_LOSS_PER_TICK.get();
@@ -372,7 +340,6 @@ public class ITServerConfig {
             heatExchangerEnergyCapacity = HEAT_EXCHANGER_ENERGY_CAPACITY.get();
             heatExchangerEnergyMaxIO = HEAT_EXCHANGER_ENERGY_MAX_IO.get();
 
-            solarMelterWorkingHeatLevel = SOLAR_MELTER_WORKING_HEAT_LEVEL.get();
             solarMelterDayMinHeatLoss = SOLAR_MELTER_DAY_MIN_HEAT_LOSS.get();
             solarMelterLossPerSectionDrop = SOLAR_MELTER_LOSS_PER_SECTION_DROP.get();
             solarMelterTempDependentLossFactor = SOLAR_MELTER_TEMP_DEPENDENT_LOSS_FACTOR.get();
@@ -382,7 +349,6 @@ public class ITServerConfig {
             solarMelterProgressLossOffTemp = SOLAR_MELTER_PROGRESS_LOSS_OFF_TEMP.get();
             solarMelterSpeedMultiplier = SOLAR_MELTER_SPEED_MULTIPLIER.get();
 
-            solarTowerWorkingHeatLevel = SOLAR_TOWER_WORKING_HEAT_LEVEL.get();
             solarTowerDayMinHeatLoss = SOLAR_TOWER_DAY_MIN_HEAT_LOSS.get();
             solarTowerLossPerSectionDrop = SOLAR_TOWER_LOSS_PER_SECTION_DROP.get();
             solarTowerTempDependentLossFactor = SOLAR_TOWER_TEMP_DEPENDENT_LOSS_FACTOR.get();
@@ -400,8 +366,6 @@ public class ITServerConfig {
 
             steelSheetmetalTankCapacity = STEEL_SHEETMETAL_TANK_CAPACITY.get();
             steelSheetmetalTankTransferSpeed = STEEL_SHEETMETAL_TANK_TRANSFER_SPEED.get();
-
-            maxRpm = MAX_RPM.get();
         }
     }
 

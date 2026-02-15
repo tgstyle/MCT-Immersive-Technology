@@ -20,6 +20,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRec
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerTankShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.ITServerConfig;
 import net.minecraft.core.BlockPos;
@@ -53,7 +54,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
 
     public static final int TANK_CAPACITY = ITServerConfig.boilerTankCapacity;
     public static final int PROGRESS_LOSS_PER_TICK = ITServerConfig.boilerTankProgressLossPerTick;
-    public static final double DEFAULT_WORKING_HEAT_LEVEL = ITServerConfig.boilerDefaultWorkingHeat;
+    public static final double DEFAULT_WORKING_HEAT_LEVEL = ITCommonConfig.boilerDefaultWorkingHeat;
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerTankShape.DATA.pointsOfInterest);
 
@@ -99,6 +100,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
                     state.recipeTimeRemaining--;
                     if (state.recipeTimeRemaining == 0) {
                         state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE);
+                        state.totalProcessTime = 0;
                         update = true;
                     }
                 }
@@ -110,9 +112,11 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
                         FluidStack drained = state.tanks.input.drain(reqAmount, FluidAction.EXECUTE);
                         if (drained.getAmount() == reqAmount && state.lastRecipe.input.testIgnoringAmount(drained)) {
                             state.recipeTimeRemaining = state.lastRecipe.getTotalProcessTime();
+                            state.totalProcessTime = state.lastRecipe.getTotalProcessTime();
                             state.recipeTimeRemaining--;
                             if (state.recipeTimeRemaining == 0) {
                                 state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE);
+                                state.totalProcessTime = 0;
                             }
                             update = true;
                         }
@@ -179,8 +183,10 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         public CapabilityReference<IHeatProvider> heatSource;
         public ITSlotwiseItemHandler inventory;
         public int recipeTimeRemaining = 0;
+        public int totalProcessTime = 0;
         public BoilerTankRecipe lastRecipe;
         public double heatLevel = 0;
+        public double workingHeatLevel = DEFAULT_WORKING_HEAT_LEVEL;
         public boolean active = false;
 
         public State(IInitialMultiblockContext<State> ctx) {
@@ -210,17 +216,19 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             heatSource = ctx.getCapabilityAt(HeatCapabilities.HEAT_PROVIDER_CAPABILITY, heatOpposingMBFace);
         }
 
-        public double getWorkingHeatLevel() { return (lastRecipe != null) ? lastRecipe.requiredHeat : DEFAULT_WORKING_HEAT_LEVEL; }
+        public double getWorkingHeatLevel() { return workingHeatLevel; }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tanks", tanks.toNBT());
             nbt.putInt("recipeTimeRemaining", recipeTimeRemaining);
+            nbt.putInt("totalProcessTime", totalProcessTime);
             nbt.put("inventory", inventory.serializeNBT());
         }
 
         @Override public void readSaveNBT(CompoundTag nbt) {
             tanks.readNBT(nbt.getCompound("tanks"));
             recipeTimeRemaining = nbt.getInt("recipeTimeRemaining");
+            totalProcessTime = nbt.getInt("totalProcessTime");
             inventory.deserializeNBT(nbt.getCompound("inventory"));
         }
 
@@ -245,12 +253,16 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             nbt.putDouble("heatLevel", heatLevel);
             nbt.put("tanks", tanks.toNBT());
             nbt.putDouble("workingHeatLevel", getWorkingHeatLevel());
+            nbt.putInt("recipeTimeRemaining", recipeTimeRemaining);
+            nbt.putInt("totalProcessTime", totalProcessTime);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             heatLevel = nbt.getDouble("heatLevel");
             tanks.readNBT(nbt.getCompound("tanks"));
+            recipeTimeRemaining = nbt.getInt("recipeTimeRemaining");
+            totalProcessTime = nbt.getInt("totalProcessTime");
         }
     }
 

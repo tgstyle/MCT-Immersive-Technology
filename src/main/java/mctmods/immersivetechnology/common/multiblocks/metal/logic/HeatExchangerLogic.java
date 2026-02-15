@@ -120,6 +120,22 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         HeatExchangerRecipe recipe = HeatExchangerRecipe.findRecipe(level, state.tanks.input0.getFluid(), state.tanks.input1.getFluid());
         tryEnqueueProcess(state, level, recipe);
 
+        boolean progressChanged = false;
+        if (!state.processor.getQueue().isEmpty()) {
+            HeatExchangerProcess current = (HeatExchangerProcess) state.processor.getQueue().get(0);
+            int newProg = current.getCurrentTick();
+            int newTotal = current.getMaxTicks(level);
+            if (newProg != state.processProgress || newTotal != state.totalProcessTime) {
+                state.processProgress = newProg;
+                state.totalProcessTime = newTotal;
+                progressChanged = true;
+            }
+        } else if (state.processProgress > 0 || state.totalProcessTime > 0) {
+            state.processProgress = 0;
+            state.totalProcessTime = 0;
+            progressChanged = true;
+        }
+
         pumpOutputs(ctx);
 
         boolean activeChanged = wasActive != state.active;
@@ -127,7 +143,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         boolean energyChanged = prevEnergy != currentEnergy;
         CompoundTag currentTanksNBT = state.tanks.toNBT();
         boolean tanksChanged = !prevTanksNBT.equals(currentTanksNBT);
-        boolean update = activeChanged || energyChanged || tanksChanged;
+        boolean update = activeChanged || energyChanged || tanksChanged || progressChanged;
         if (update) {
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
@@ -194,6 +210,8 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         public RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final MultiblockProcessor.InMachineProcessor<HeatExchangerRecipe> processor;
         public BooleanSupplier isSoundPlaying = () -> false;
+        public int processProgress = 0;
+        public int totalProcessTime = 0;
 
         private static final IItemHandlerModifiable EMPTY_INVENTORY = new IItemHandlerModifiable() {
             @Override public int getSlots() { return 0; }
@@ -235,6 +253,8 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             nbt.put("tanks", tanks.toNBT());
             nbt.put("energy", energy.serializeNBT());
             nbt.put("processor", processor.toNBT());
+            nbt.putInt("processProgress", processProgress);
+            nbt.putInt("totalProcessTime", totalProcessTime);
             rsState.writeSaveNBT(nbt);
         }
 
@@ -242,6 +262,8 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             tanks.readNBT(nbt.getCompound("tanks"));
             energy.deserializeNBT(nbt.getCompound("energy"));
             processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), HeatExchangerProcess::new);
+            processProgress = nbt.getInt("processProgress");
+            totalProcessTime = nbt.getInt("totalProcessTime");
             rsState.readSaveNBT(nbt);
         }
 
@@ -263,6 +285,8 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT());
             nbt.put("energy", energy.serializeNBT());
+            nbt.putInt("processProgress", processProgress);
+            nbt.putInt("totalProcessTime", totalProcessTime);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
@@ -270,6 +294,8 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             tanks.readNBT(nbt.getCompound("tanks"));
             if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, ENERGY_MAX_IO, () -> {}); }
             energy.deserializeNBT(nbt.get("energy"));
+            processProgress = nbt.getInt("processProgress");
+            totalProcessTime = nbt.getInt("totalProcessTime");
         }
 
         @Override public AveragingEnergyStorage getEnergy() { return energy; }

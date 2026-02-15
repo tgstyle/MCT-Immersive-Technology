@@ -30,4 +30,6 @@ public class HeatExchangerProcess extends MultiblockProcessInMachine<HeatExchang
         if (recipe.output1 != null) { list.add(recipe.output1.copy()); }
         return list;
     }
+
+    public int getCurrentTick() { return processTick; }
 }

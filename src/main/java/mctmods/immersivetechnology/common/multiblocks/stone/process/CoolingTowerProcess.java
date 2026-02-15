@@ -36,4 +36,8 @@ public class CoolingTowerProcess {
     }
 
     public boolean isComplete() { return ticksProcessed >= recipe.totalProcessTime; }
+
+    public int getTicksProcessed() { return ticksProcessed; }
+
+    public CoolingTowerRecipe getRecipe() { return recipe; }
 }

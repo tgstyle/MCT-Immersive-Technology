@@ -44,7 +44,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
@@ -276,7 +275,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         public final CapabilityReference<IFluidHandler> fluidOutput;
         private final BiFunction<Level, FluidStack, SteamTurbineRecipe> recipeGetter;
         public int speed = 0;
-        /** Current torque multiplier (recipe-controlled). Defaults to 1.0 for compatibility. */
         public float currentTorque = 1.0f;
         public boolean active = false;
         public BooleanSupplier isSoundPlaying = () -> false;
@@ -291,10 +289,10 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         private int pressureReleaseCooldown = 0;
         private boolean wasEnabled = false;
         public int effectiveMaxSpeed = MAX_SPEED;
-        private float accumConsume = 0f;
-        private float outAccum = 0f;
-        private double accumDelta = 0.0;
-        private float effectiveRatio = 0f;
+        private float accumConsume;
+        private float outAccum;
+        private double accumDelta;
+        private float effectiveRatio;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
