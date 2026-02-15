@@ -9,6 +9,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockB
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityDummy;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
 import com.google.common.base.Preconditions;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
@@ -23,6 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
@@ -36,6 +38,8 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -116,8 +120,6 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         Rotation rot = DirectionUtils.getRotationBetweenFacings(Direction.NORTH, clickDirectionAtCreation);
         Preconditions.checkNotNull(rot);
         if (mirrored && compensateMirrorFacing()) { rot = rot.getRotated(Rotation.CLOCKWISE_180); }
-        List<ItemStack> allDrops = new ArrayList<>();
-        Consumer<ItemStack> addToDrops = stack -> { if (!stack.isEmpty()) { allDrops.add(stack); } };
         if (world instanceof ServerLevel serverLevel) {
             boolean templateMode = ITServerConfig.DISASSEMBLY_MODE.get() == ITServerConfig.DisassemblyMode.TEMPLATE_BLOCKS;
             boolean doTileDrops = serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
@@ -125,13 +127,28 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             ServerPlayer breakingPlayer = (ServerPlayer) serverLevel.getNearestPlayer(masterPos.getX() + 0.5, masterPos.getY() + 0.5, masterPos.getZ() + 0.5, -1.0, e -> true);
             boolean dropItems = doTileDrops;
             if (breakingPlayer != null && breakingPlayer.gameMode.getGameModeForPlayer() == GameType.CREATIVE) { dropItems = false; }
+            ItemStack tool = breakingPlayer != null ? breakingPlayer.getMainHandItem() : ItemStack.EMPTY;
+            ItemStack effectiveTool = tool.isEmpty() ? new ItemStack(Items.DIAMOND_PICKAXE) : tool;
             IMultiblockBEHelperMaster<?> masterHelper = null;
             BlockEntity masterBE = world.getBlockEntity(masterPos);
             if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof IMultiblockBEHelperMaster<?> h) { masterHelper = h; }
-            if (masterHelper != null && dropItems) { dropInventory(masterHelper, addToDrops); }
-            for (StructureBlockInfo block : getStructure(world)) { prepareBlockForDisassembly(world, withSettingsAndOffset(origin, block.pos(), mirror, rot)); }
-            List<StructureBlockInfo> structure = new ArrayList<>(getTemplate(world).template().palettes.get(0).blocks());
+
+            if (masterHelper != null && ((ITMultiblockBEHelper)masterHelper).it$isDisassembling()) { return; }
+
+            List<ItemStack> inventoryDrops = new ArrayList<>();
+            if (masterHelper != null && dropItems) { dropInventory(masterHelper, inventoryDrops::add); }
+
+            var templateData = getTemplate(world);
+            var rawBlocks = templateData.template().palettes.get(0).blocks();
+
+            for (StructureBlockInfo info : rawBlocks) {
+                BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
+                prepareBlockForDisassembly(serverLevel, actualPos);
+            }
+
+            List<StructureBlockInfo> structure = new ArrayList<>(rawBlocks);
             structure.sort(Comparator.comparingInt(a -> -a.pos().getY()));
+
             BlockPos brokenPos = masterPos;
             if (breakingPlayer != null) {
                 Vec3 eyePos = breakingPlayer.getEyePosition();
@@ -164,28 +181,49 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                     if (closest != null) { brokenPos = closest; }
                 }
             }
-            ItemStack tool = breakingPlayer != null ? breakingPlayer.getMainHandItem() : ItemStack.EMPTY;
-            List<AbstractMap.SimpleEntry<BlockPos, BlockState>> toBreak = new ArrayList<>();
-            for (StructureBlockInfo info : structure) {
-                BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
-                BlockState stateAfterMirror = info.state().mirror(mirror);
-                BlockState template = stateAfterMirror.rotate(rot);
-                if (templateMode) {
-                    if (dropItems && actualPos.equals(brokenPos)) {
-                        List<ItemStack> drops = Block.getDrops(template, serverLevel, actualPos, null, breakingPlayer, tool);
-                        allDrops.addAll(drops);
-                    }
-                    if (!actualPos.equals(brokenPos)) { world.setBlockAndUpdate(actualPos, template); }
-                } else {
+
+            List<ItemStack> allDrops = new ArrayList<>(inventoryDrops);
+            List<BlockPos> toBreak = new ArrayList<>();
+
+            if (templateMode) {
+                for (StructureBlockInfo info : structure) {
+                    BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
+                    BlockState stateAfterMirror = info.state().mirror(mirror);
+                    BlockState template = stateAfterMirror.rotate(rot);
+                    serverLevel.setBlockAndUpdate(actualPos, template);
+                }
+            } else {
+                for (StructureBlockInfo info : structure) {
+                    BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
+                    BlockState stateAfterMirror = info.state().mirror(mirror);
+                    BlockState template = stateAfterMirror.rotate(rot);
+                    toBreak.add(actualPos);
                     if (dropItems) {
-                        List<ItemStack> drops = Block.getDrops(template, serverLevel, actualPos, null, breakingPlayer, tool);
-                        allDrops.addAll(drops);
+                        LootParams.Builder params = new LootParams.Builder(serverLevel)
+                                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(actualPos))
+                                .withParameter(LootContextParams.TOOL, effectiveTool)
+                                .withOptionalParameter(LootContextParams.THIS_ENTITY, breakingPlayer)
+                                .withOptionalParameter(LootContextParams.BLOCK_ENTITY, null);
+                        allDrops.addAll(template.getDrops(params));
                     }
-                    if (!actualPos.equals(brokenPos)) { toBreak.add(new AbstractMap.SimpleEntry<>(actualPos, template)); }
                 }
             }
-            for (ItemStack s : allDrops) { ITUtils.dropStackAtPos(world, brokenPos, s); }
-            if (!templateMode) { pendingQueues.add(new ITQueueProcessor(world, toBreak, breakingPlayer)); }
+
+            if (templateMode) {
+                for (ItemStack s : allDrops) { ITUtils.dropStackAtPos(world, brokenPos, s); }
+            } else if (!toBreak.isEmpty()) {
+                pendingQueues.add(new ITQueueProcessor(serverLevel, toBreak, breakingPlayer, dropItems, brokenPos, allDrops));
+            }
+        }
+    }
+
+    protected void prepareBlockForDisassembly(Level world, BlockPos pos) {
+        BlockEntity be = world.getBlockEntity(pos);
+        if (be instanceof IMultiblockBE<?> multiblockBE) {
+            var helper = multiblockBE.getHelper();
+            if (helper instanceof ITMultiblockBEHelper itHelper) { itHelper.it$markDisassembling(); }
+        } else if (be != null) {
+            ITLib.IT_LOGGER.error("Expected multiblock BE at {}, got {}", pos, be);
         }
     }
 
@@ -278,7 +316,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
 
             boolean allMatch = true;
 
-            for (StructureTemplate.StructureBlockInfo info : structure) {
+            for (StructureBlockInfo info : structure) {
                 if (info.pos().equals(triggerOffset)) { continue; }
                 BlockPos realRelPos = StructureTemplate.calculateRelativePosition(new StructurePlaceSettings().setMirror(triedMirror).setRotation(rot), info.pos());
                 BlockPos here = origin.offset(realRelPos);
@@ -327,11 +365,5 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         Vec3i resultSize = result.template().getSize();
         Preconditions.checkState(resultSize.equals(this.size), "Wrong template size for multiblock %s, template size: %s", this.getTemplateLocation(), resultSize);
         return result;
-    }
-
-    protected void prepareBlockForDisassembly(Level world, BlockPos pos) {
-        BlockEntity be = world.getBlockEntity(pos);
-        if (be instanceof IMultiblockBE<?> multiblockBE) { multiblockBE.getHelper().markDisassembling(); }
-        else if (be != null) { ITLib.IT_LOGGER.error("Expected multiblock BE at {}, got {}", pos, be); }
     }
 }

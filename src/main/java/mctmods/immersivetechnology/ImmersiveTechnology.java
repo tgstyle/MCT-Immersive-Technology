@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 import mctmods.immersivetechnology.api.HeatCapabilities;
@@ -8,8 +10,8 @@ import mctmods.immersivetechnology.api.capability.IHeatConsumer;
 import mctmods.immersivetechnology.api.capability.IHeatProvider;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
 import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITQueueProcessor;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.core.integration.top.OneProbeHelper;
 import mctmods.immersivetechnology.core.network.ITMessageContainerData;
 import mctmods.immersivetechnology.core.network.ITMessageContainerUpdate;
@@ -104,9 +106,11 @@ public class ImmersiveTechnology {
         MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY = CapabilityManager.get(MECHANICAL_CONSUMER_TOKEN);
     }
 
-    @SubscribeEvent public static void onServerTick(TickEvent.ServerTickEvent event) {
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            ITTemplateMultiblock.pendingQueues.forEach(ITQueueProcessor::tick);
+            List<ITQueueProcessor> copy = new ArrayList<>(ITTemplateMultiblock.pendingQueues);
+            copy.forEach(ITQueueProcessor::tick);
             ITTemplateMultiblock.pendingQueues.removeIf(ITQueueProcessor::isEmpty);
         }
     }
