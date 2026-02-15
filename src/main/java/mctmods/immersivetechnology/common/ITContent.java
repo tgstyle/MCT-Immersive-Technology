@@ -417,6 +417,7 @@ public class ITContent {
     }
 
     public static void registerVariables() {
+        Config.manual_int.put("cokeOvenBaseheater_consumption", ITConfig.Multiblocks.advancedCokeOvenBaseheater.advancedCokeOvenBaseheater_energy_consumption);
         Config.manual_int.put("alternator_energyPerTickPerPort", (ITConfig.Multiblocks.alternator.alternator_energy_perTick / 6));
         Config.manual_int.put("alternator_energyStorage", ITConfig.Multiblocks.alternator.alternator_energy_capacitorSize);
         Config.manual_int.put("alternator_energyPerTick", ITConfig.Multiblocks.alternator.alternator_energy_perTick);
