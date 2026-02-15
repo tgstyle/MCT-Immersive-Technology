@@ -80,6 +80,9 @@ public class ITBlockStateProvider extends BlockStateProvider {
     private static final Logger LOGGER = LogManager.getLogger();
     private final PackOutput packOutput;
 
+    private final ClearableBlockModelProvider blockModels;
+    private final ClearableItemModelProvider itemModels;
+
     private static class ClearableBlockModelProvider extends BlockModelProvider {
         public ClearableBlockModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
             super(output, modid, existingFileHelper);
@@ -110,8 +113,13 @@ public class ITBlockStateProvider extends BlockStateProvider {
         this.existingFileHelper = helper;
         this.innerModels = new ITNongeneratedModels(generator.getPackOutput(), existingFileHelper);
         this.blockModels = new ClearableBlockModelProvider(generator.getPackOutput(), ITLib.MODID, helper);
-        this.itemModels = new ClearableItemModelProvider(generator.getPackOutput(), ITLib.MODID, helper);
+        this.itemModels = new ClearableItemModelProvider(generator.getPackOutput(), ITLib.MODID, this.blockModels.existingFileHelper);
     }
+
+    @Override
+    public BlockModelProvider models() { return blockModels; }
+
+    @Override public ItemModelProvider itemModels() { return itemModels; }
 
     public static class ITObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
         private ResourceLocation modelLocation;
