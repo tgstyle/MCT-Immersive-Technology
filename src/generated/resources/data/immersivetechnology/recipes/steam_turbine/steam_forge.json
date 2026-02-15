@@ -8,6 +8,5 @@
     "amount": 100,
     "fluid": "immersivetechnology:exhaust_steam"
   },
-  "time": 1,
-  "torque": 1.0
+  "time": 1
 }

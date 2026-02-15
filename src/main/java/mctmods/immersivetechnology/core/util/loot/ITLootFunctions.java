@@ -18,7 +18,6 @@ public class ITLootFunctions {
     private static final DeferredRegister<LootPoolEntryType> ENTRY_REGISTER;
     public static final RegistryObject<LootPoolEntryType> DROP_INVENTORY;
     public static final RegistryObject<LootPoolEntryType> TILE_DROP;
-    public static final RegistryObject<LootPoolEntryType> MULTIBLOCK_DROPS;
 
     public static void init(IEventBus bus) { ENTRY_REGISTER.register(bus); }
 
@@ -28,6 +27,5 @@ public class ITLootFunctions {
         ENTRY_REGISTER = DeferredRegister.create(BuiltInRegistries.LOOT_POOL_ENTRY_TYPE.key(), ITLib.MODID);
         DROP_INVENTORY = registerEntry("drop_inv", ITDropInventoryLootEntry.Serializer::new);
         TILE_DROP = registerEntry("tile_drop", ITBEDropLootEntry.Serializer::new);
-        MULTIBLOCK_DROPS = registerEntry("multiblock", ITMultiblockDropsLootContainer.Serializer::new);
     }
 }
