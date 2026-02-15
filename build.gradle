@@ -168,6 +168,41 @@ jar {
             'FMLCorePluginContainsFMLMod': 'true'
         )
     }
+    dependsOn 'optimizePng'
 }
 
 sourceSets.configureEach { it.output.resourcesDir = it.output.classesDirs.getFiles().iterator().next() }
+
+tasks.register('optimizePng') {
+    dependsOn processResources
+    onlyIf { gradle.taskGraph.hasTask(tasks.build) }
+    doLast {
+        File resourcesDir = sourceSets.main.output.resourcesDir
+        if (resourcesDir == null || !resourcesDir.exists()) {
+            println 'No processed resources directory – skipping PNG optimization.'
+            return
+        }
+
+        boolean optipngAvailable = true
+        fileTree(dir: resourcesDir, includes: ['**/*.png']).each { File file ->
+            if (!optipngAvailable) return
+
+            long size = file.length()
+            try {
+                exec {
+                    executable 'optipng'
+                    args '-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath
+                }
+                long newSize = file.length()
+                if (newSize < size) {
+                    double percent = 100.0 * (size - newSize) / size
+                    System.out.printf('Optimized %s: %d → %d bytes (%.2f%% reduction)%n',
+                            resourcesDir.toPath().relativize(file.toPath()), size, newSize, percent)
+                }
+            } catch (Exception e) {
+                System.out.println("optipng not found or failed (${e.message}). Skipping remaining PNG optimizations.")
+                optipngAvailable = false
+            }
+        }
+    }
+}
