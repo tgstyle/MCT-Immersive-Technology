@@ -22,8 +22,7 @@ public class ITMirroredModelBuilder<T extends ModelBuilder<T>> extends CustomLoa
         return this;
     }
 
-    @Override
-    public JsonObject toJson(JsonObject json) {
+    @Override public JsonObject toJson(JsonObject json) {
         JsonObject result = super.toJson(json);
         result.add(ITMirroredModelLoader.INNER_MODEL, inner.toJson());
         return result;

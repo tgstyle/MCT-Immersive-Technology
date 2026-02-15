@@ -188,7 +188,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         boolean canRun = currentlyEnabled && hasConsumer;
         float ratio = 0f;
         if (canRun) {
-            // Reset to default each tick; will be overwritten if a recipe is found.
             state.currentTorque = 1.0f;
             FluidStack fluid = state.tanks.input.getFluid();
             if (fluid.getAmount() > 0) {

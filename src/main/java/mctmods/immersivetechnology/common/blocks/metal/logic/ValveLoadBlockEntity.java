@@ -126,7 +126,6 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         } else if (outputWired) {
             extracted = inputStorage.extractEnergy(canAccept, false);
             bufferedEnergy += extracted;
-            // Do not add to acceptedAmount here; it will be added in extractEnergy when the wire pulls
         } else {
             extracted = inputStorage.extractEnergy(canAccept, true);
             int inserted = outputStorage.receiveEnergy(extracted, false);

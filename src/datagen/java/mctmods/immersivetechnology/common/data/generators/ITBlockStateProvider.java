@@ -116,8 +116,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         this.itemModels = new ClearableItemModelProvider(generator.getPackOutput(), ITLib.MODID, this.blockModels.existingFileHelper);
     }
 
-    @Override
-    public BlockModelProvider models() { return blockModels; }
+    @Override public BlockModelProvider models() { return blockModels; }
 
     @Override public ItemModelProvider itemModels() { return itemModels; }
 

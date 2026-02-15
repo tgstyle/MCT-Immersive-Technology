@@ -161,7 +161,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
 
     @Override public void setFacing(@NotNull Direction facing) {
         this.facing = facing;
-        invalidateCaps(); // Common cap invalidation
+        invalidateCaps();
         if (level != null && !level.isClientSide) {
             BlockState state = getBlockState();
             if (state.hasProperty(ITProperties.FACING_ALL)) level.setBlock(worldPosition, state.setValue(ITProperties.FACING_ALL, facing), 3);

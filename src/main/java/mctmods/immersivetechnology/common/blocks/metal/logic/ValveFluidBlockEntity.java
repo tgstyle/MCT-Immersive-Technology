@@ -113,7 +113,6 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
             }
             markContainingBlockForUpdate(null);
             level.updateNeighborsAt(worldPosition, state.getBlock());
-            // Trigger updates on adjacent blocks for general compatibility
             for (Direction d : Direction.values()) {
                 BlockPos adjPos = worldPosition.relative(d);
                 BlockEntity adj = level.getBlockEntity(adjPos);
