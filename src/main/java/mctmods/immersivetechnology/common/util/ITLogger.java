@@ -15,9 +15,7 @@ public class ITLogger {
 	public static void info(Object object) {
 		log(Level.INFO, object);
 	}
-	public static void warn(Object object) {
-		log(Level.WARN, object);
-	}
+	public static void warn(Object object) { log(Level.WARN, object); }
 	public static void error(String message, Object... params) {
 		logger.log(Level.ERROR, message, params);
 	}

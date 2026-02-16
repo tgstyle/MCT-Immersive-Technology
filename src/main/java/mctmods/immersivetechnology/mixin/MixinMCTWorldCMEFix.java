@@ -23,7 +23,6 @@ import java.util.List;
 
 @Mixin(World.class)
 public abstract class MixinMCTWorldCMEFix {
-
     @Shadow private boolean processingLoadedTiles;
 
     @Shadow @Final private List<TileEntity> addedTileEntityList;

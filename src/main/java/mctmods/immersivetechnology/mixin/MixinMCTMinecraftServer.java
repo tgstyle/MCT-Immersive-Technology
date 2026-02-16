@@ -14,18 +14,12 @@ import java.util.Objects;
 
 @Mixin(value = MinecraftServer.class, priority = 1500)
 public abstract class MixinMCTMinecraftServer {
-
-    @Unique
-    private static String formatStackTrace$helper(Throwable t) {
+    @Unique private static String formatStackTrace$helper(Throwable t) {
         StringBuilder sb = new StringBuilder();
         sb.append(Objects.toString(t.getMessage(), "No message")).append("\n");
-        for (StackTraceElement ste : t.getStackTrace()) {
-            sb.append("\tat ").append(ste).append("\n");
-        }
+        for (StackTraceElement ste : t.getStackTrace()) { sb.append("\tat ").append(ste).append("\n"); }
         Throwable cause = t.getCause();
-        if (cause != null) {
-            sb.append("Caused by: ").append(formatStackTrace$helper(cause));
-        }
+        if (cause != null) { sb.append("Caused by: ").append(formatStackTrace$helper(cause)); }
         return sb.toString();
     }
 

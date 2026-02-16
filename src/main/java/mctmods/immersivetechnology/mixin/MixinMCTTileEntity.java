@@ -19,7 +19,6 @@ import java.lang.reflect.Method;
 
 @Mixin(TileEntity.class)
 public abstract class MixinMCTTileEntity {
-
     /**
      * @author tgstyle
      * @reason Redirect error logging to stderr for debugging early loading issues — only active in deobf/dev environment
