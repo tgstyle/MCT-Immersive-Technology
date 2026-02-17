@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.conveyors;
+package mctmods.immersivetechnology.common.blocks.metal.conveyors;
 
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler.ConveyorDirection;
@@ -46,16 +46,15 @@ public class ConveyorVerticalAlternative extends ConveyorBasicAlternative {
     @Override public boolean setConveyorDirection(ConveyorDirection dir) { return false; }
 
     @Override public String getModelCacheKey(TileEntity tile, EnumFacing facing) {
-        String key = "immersiveengineering:vertical";
-        key += "f" + facing.ordinal();
-        key += "a" + (isActive(tile) ? 1 : 0);
-        key += "b" + (renderBottomBelt(tile, facing) ? "1" + (renderBottomWall(tile, facing, 0) ? "1" : "0") + (renderBottomWall(tile, facing, 1) ? "1" : "0") : "000");
-        key += "c" + getDyeColour();
-        key += "_it";
-        return key;
+        return "immersiveengineering:vertical" +
+                "f" + facing.ordinal() +
+                "a" + (isActive(tile) ? 1 : 0) +
+                "b" + (renderBottomBelt(tile, facing) ? "1" + (renderBottomWall(tile, facing, 0) ? "1" : "0") + (renderBottomWall(tile, facing, 1) ? "1" : "0") : "000") +
+                "c" + getDyeColour() +
+                "_it";
     }
 
-    boolean renderBottomBelt(TileEntity tile, EnumFacing facing) {
+    protected boolean renderBottomBelt(TileEntity tile, EnumFacing facing) {
         TileEntity te = tile.getWorld().getTileEntity(tile.getPos().down());
         if (te instanceof IConveyorTile && ((IConveyorTile)te).getConveyorSubtype() != null) {
             for (EnumFacing f : ((IConveyorTile)te).getConveyorSubtype().sigTransportDirections(te, ((IConveyorTile)te).getFacing())) {
@@ -68,7 +67,7 @@ public class ConveyorVerticalAlternative extends ConveyorBasicAlternative {
         return false;
     }
 
-    boolean isInwardConveyor(TileEntity tile, EnumFacing f) {
+    protected boolean isInwardConveyor(TileEntity tile, EnumFacing f) {
         TileEntity te = tile.getWorld().getTileEntity(tile.getPos().offset(f));
         if (te instanceof IConveyorTile) {
             ConveyorHandler.IConveyorBelt sub = ((IConveyorTile)te).getConveyorSubtype();
@@ -94,7 +93,7 @@ public class ConveyorVerticalAlternative extends ConveyorBasicAlternative {
         return false;
     }
 
-    boolean renderBottomWall(TileEntity tile, EnumFacing facing, int wall) { return super.renderWall(tile, facing, wall); }
+    protected boolean renderBottomWall(TileEntity tile, EnumFacing facing, int wall) { return super.renderWall(tile, facing, wall); }
 
     @Override public EnumFacing[] sigTransportDirections(TileEntity conveyorTile, EnumFacing facing) { return new EnumFacing[]{EnumFacing.UP, facing}; }
 

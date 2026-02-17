@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.conveyors;
+package mctmods.immersivetechnology.common.blocks.metal.conveyors;
 
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler.ConveyorDirection;
 import blusunrize.immersiveengineering.client.ClientUtils;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class ConveyorVerticalCoveredAlternative extends ConveyorVerticalAlternative {
-    public ItemStack cover = ItemStack.EMPTY;
+    private ItemStack cover = ItemStack.EMPTY;
 
     private static final List<AxisAlignedBB> selectionBoxes = Collections.singletonList(net.minecraft.block.Block.FULL_BLOCK_AABB);
 
@@ -51,14 +51,13 @@ public class ConveyorVerticalCoveredAlternative extends ConveyorVerticalAlternat
     };
 
     @Override public String getModelCacheKey(TileEntity tile, EnumFacing facing) {
-        String key = "immersiveengineering:verticalcovered";
-        key += "f" + facing.ordinal();
-        key += "a" + (isActive(tile) ? 1 : 0);
-        key += "b" + (renderBottomBelt(tile, facing) ? "1" + (isInwardConveyor(tile, facing.getOpposite()) ? "1" : "0") + (renderBottomWall(tile, facing, 0) ? "1" : "0") + (renderBottomWall(tile, facing, 1) ? "1" : "0") : "0000");
-        key += "c" + getDyeColour();
-        if (!cover.isEmpty()) key += "s" + cover.getItem().getRegistryName() + cover.getMetadata();
-        key += "_it";
-        return key;
+        return "immersiveengineering:verticalcovered" +
+                "f" + facing.ordinal() +
+                "a" + (isActive(tile) ? 1 : 0) +
+                "b" + (renderBottomBelt(tile, facing) ? "1" + (isInwardConveyor(tile, facing.getOpposite()) ? "1" : "0") + (renderBottomWall(tile, facing, 0) ? "1" : "0") + (renderBottomWall(tile, facing, 1) ? "1" : "0") : "0000") +
+                "c" + getDyeColour() +
+                (!cover.isEmpty() ? "s" + cover.getItem().getRegistryName() + cover.getMetadata() : "") +
+                "_it";
     }
 
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
@@ -71,7 +70,7 @@ public class ConveyorVerticalCoveredAlternative extends ConveyorVerticalAlternat
     }
 
     @Override public boolean playerInteraction(TileEntity tile, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ, EnumFacing side) {
-        return ConveyorCoveredHelper.handleCoverInteraction(tile, player, hand, heldItem, () -> cover, itemStack -> cover = itemStack);
+        return ConveyorCoveredHelper.handleCoverInteraction(tile, player, hand, heldItem, () -> cover, stack -> cover = stack);
     }
 
     @Override public List<AxisAlignedBB> getSelectionBoxes(TileEntity tile, EnumFacing facing) {
@@ -105,7 +104,7 @@ public class ConveyorVerticalCoveredAlternative extends ConveyorVerticalAlternat
         IBlockState state = b.getStateFromMeta(coverStack.getMetadata());
 
         IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(state);
-        TextureAtlasSprite sprite = model.getParticleTexture();
+        TextureAtlasSprite particle = model.getParticleTexture();
         HashMap<EnumFacing, TextureAtlasSprite> sprites = new HashMap<>();
         for (EnumFacing f : EnumFacing.VALUES) {
             for (BakedQuad q : model.getQuads(state, f, 0L)) {
@@ -116,7 +115,7 @@ public class ConveyorVerticalCoveredAlternative extends ConveyorVerticalAlternat
             if (q != null) sprites.put(q.getFace(), q.getSprite());
         }
 
-        Function<EnumFacing, TextureAtlasSprite> getSprite = fx -> sprites.getOrDefault(fx, sprite);
+        Function<EnumFacing, TextureAtlasSprite> getSprite = fx -> sprites.getOrDefault(fx, particle);
         float[] colour = {1.0F, 1.0F, 1.0F, 1.0F};
         Matrix4 matrix = new Matrix4(facing);
 

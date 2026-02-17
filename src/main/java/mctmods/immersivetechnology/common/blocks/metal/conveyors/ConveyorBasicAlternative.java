@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.conveyors;
+package mctmods.immersivetechnology.common.blocks.metal.conveyors;
 
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler.ConveyorDirection;
@@ -10,7 +10,6 @@ import blusunrize.immersiveengineering.client.models.ModelConveyor;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.Entity;
@@ -23,6 +22,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -30,8 +30,28 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class ConveyorBasicAlternative implements IConveyorBelt {
-    private ConveyorDirection direction = ConveyorDirection.HORIZONTAL;
-    private int dyeColour = -1;
+    protected ConveyorDirection direction = ConveyorDirection.HORIZONTAL;
+    protected int dyeColour = -1;
+    protected int runTimer = 0;
+    protected long lastUpdateTick = 0;
+
+    private static final ResourceLocation TEXTURE_ON = new ResourceLocation("immersiveengineering", "blocks/conveyor");
+    private static final ResourceLocation TEXTURE_OFF = new ResourceLocation("immersiveengineering", "blocks/conveyor_off");
+    private static final ResourceLocation TEXTURE_COLOURED = new ResourceLocation("immersiveengineering", "blocks/conveyor_colour");
+
+    private static final double BASE_SPEED = 1.15D;
+    private static final double LATERAL_SPEED = 0.1D * BASE_SPEED;
+    private static final double UP_SPEED = 0.17D * BASE_SPEED;
+    private static final double DOWN_SPEED = -0.07D * BASE_SPEED;
+    private static final double CENTER_HIGH = 0.55D;
+    private static final double CENTER_LOW = 0.45D;
+    protected static final float HORIZONTAL_HEIGHT_LIMIT = 0.25F;
+    protected static final float SLOPED_HEIGHT_LIMIT = 1.0F;
+    protected static final double CONTACT_DIST = 0.9D;
+    protected static final double UP_PUSH = 0.4D;
+    protected static final float MAX_FALL_RESET = 3.0F;
+
+    protected static final int IDLE_TIME_TICKS = 40;
 
     public ConveyorBasicAlternative() {}
 
@@ -42,7 +62,7 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
             Matrix4 mat = new Matrix4(itemFacing);
             TextureAtlasSprite sprite = ClientUtils.getSprite(isActive(null) ? getActiveTexture() : getInactiveTexture());
             TextureAtlasSprite spriteColour = ClientUtils.getSprite(getColouredStripesTexture());
-            boolean[] walls = {false, false};
+            boolean[] walls = {true, true};
             return ModelConveyor.getBaseConveyor(itemFacing, 0.875F, mat, ConveyorDirection.HORIZONTAL, sprite, walls, new boolean[]{true, false}, spriteColour, getDyeColour());
         }
         return baseModel;
@@ -50,7 +70,7 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
 
     @SuppressWarnings("unused")
     @SideOnly(Side.CLIENT)
-    public Matrix4f modifyBaseRotationMatrix(Matrix4f matrix, TileEntity tile, EnumFacing facing) { return matrix; }
+    public Matrix4 modifyBaseRotationMatrix(Matrix4 matrix, TileEntity tile, EnumFacing facing) { return matrix; }
 
     @Override public boolean changeConveyorDirection() {
         direction = direction == ConveyorDirection.HORIZONTAL ? ConveyorDirection.UP : direction == ConveyorDirection.UP ? ConveyorDirection.DOWN : ConveyorDirection.HORIZONTAL;
@@ -62,9 +82,28 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
         return true;
     }
 
+    protected boolean isPowered(TileEntity tile) {
+        return tile.getWorld().getRedstonePowerFromNeighbors(tile.getPos()) <= 0;
+    }
+
     @Override public boolean isActive(TileEntity tile) {
         if (tile == null) { return true; }
-        return tile.getWorld().getRedstonePowerFromNeighbors(tile.getPos()) <= 0;
+        return isPowered(tile) && runTimer > 0;
+    }
+
+    @Override public boolean isTicking(TileEntity tile) {
+        return runTimer > 0;
+    }
+
+    @Override public void onUpdate(TileEntity tile, EnumFacing facing) {
+        if (runTimer > 0) {
+            --runTimer;
+            if (runTimer == 0 && !tile.getWorld().isRemote) {
+                tile.markDirty();
+                IBlockState state = tile.getWorld().getBlockState(tile.getPos());
+                tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
+            }
+        }
     }
 
     @Override public boolean canBeDyed() { return true; }
@@ -83,22 +122,21 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setInteger("direction", direction.ordinal());
         nbt.setInteger("dyeColour", dyeColour);
+        nbt.setInteger("runTimer", runTimer);
         return nbt;
     }
 
     @Override public void readConveyorNBT(NBTTagCompound nbt) {
         direction = ConveyorDirection.values()[nbt.getInteger("direction")];
         dyeColour = nbt.hasKey("dyeColour") ? nbt.getInteger("dyeColour") : -1;
+        runTimer = nbt.getInteger("runTimer");
     }
 
-    static final ResourceLocation texture_on = new ResourceLocation("immersiveengineering", "blocks/conveyor");
-    static final ResourceLocation texture_off = new ResourceLocation("immersiveengineering", "blocks/conveyor_off");
+    @Override public ResourceLocation getActiveTexture() { return TEXTURE_ON; }
 
-    @Override public ResourceLocation getActiveTexture() { return texture_on; }
+    @Override public ResourceLocation getInactiveTexture() { return TEXTURE_OFF; }
 
-    @Override public ResourceLocation getInactiveTexture() { return texture_off; }
-
-    @Override public ResourceLocation getColouredStripesTexture() { return new ResourceLocation("immersiveengineering", "blocks/conveyor_colour"); }
+    @Override public ResourceLocation getColouredStripesTexture() { return TEXTURE_COLOURED; }
 
     @Override public boolean renderWall(TileEntity tile, EnumFacing facing, int wall) {
         if (tile == null) { return true; }
@@ -127,64 +165,83 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
     }
 
     @Override public String getModelCacheKey(TileEntity tile, EnumFacing facing) {
-        String key = "immersiveengineering:conveyor";
-        key += "f" + facing.ordinal();
-        key += "d" + getConveyorDirection().ordinal();
-        key += "a" + (isActive(tile) ? 1 : 0);
-        key += "w0" + (renderWall(tile, facing, 0) ? 1 : 0);
-        key += "w1" + (renderWall(tile, facing, 1) ? 1 : 0);
-        key += "c" + getDyeColour();
-        return key;
+        return "immersiveengineering:conveyor" +
+                "f" + facing.ordinal() +
+                "d" + getConveyorDirection().ordinal() +
+                "a" + (isActive(tile) ? 1 : 0) +
+                "w0" + (renderWall(tile, facing, 0) ? 1 : 0) +
+                "w1" + (renderWall(tile, facing, 1) ? 1 : 0) +
+                "c" + getDyeColour();
     }
 
     @Override public Vec3d getDirection(TileEntity conveyorTile, Entity entity, EnumFacing facing) {
         ConveyorDirection conveyorDirection = getConveyorDirection();
         BlockPos pos = conveyorTile.getPos();
-        double vBase = 1.15D;
-        double vX = 0.1D * vBase * facing.getXOffset();
+        double vX = LATERAL_SPEED * facing.getXOffset();
         double vY = entity.motionY;
-        double vZ = 0.1D * vBase * facing.getZOffset();
-        if (conveyorDirection == ConveyorDirection.UP) { vY = 0.17D * vBase; }
-        else if (conveyorDirection == ConveyorDirection.DOWN) { vY = -0.07D * vBase; }
+        double vZ = LATERAL_SPEED * facing.getZOffset();
+        if (conveyorDirection == ConveyorDirection.UP) { vY = UP_SPEED; }
+        else if (conveyorDirection == ConveyorDirection.DOWN) { vY = DOWN_SPEED; }
         if (conveyorDirection != ConveyorDirection.HORIZONTAL) { entity.onGround = false; }
-        if (facing != EnumFacing.WEST && facing != EnumFacing.EAST) {
-            if (entity.posX > pos.getX() + 0.55D) { vX = -0.1D * vBase; }
-            else if (entity.posX < pos.getX() + 0.45D) { vX = 0.1D * vBase; }
+
+        if (facing.getAxis() == Axis.X) {
+            if (entity.posZ > pos.getZ() + CENTER_HIGH) { vZ = -LATERAL_SPEED; }
+            else if (entity.posZ < pos.getZ() + CENTER_LOW) { vZ = LATERAL_SPEED; }
         } else {
-            if (entity.posZ > pos.getZ() + 0.55D) { vZ = -0.1D * vBase; }
-            else if (entity.posZ < pos.getZ() + 0.45D) { vZ = 0.1D * vBase; }
+            if (entity.posX > pos.getX() + CENTER_HIGH) { vX = -LATERAL_SPEED; }
+            else if (entity.posX < pos.getX() + CENTER_LOW) { vX = LATERAL_SPEED; }
         }
         return new Vec3d(vX, vY, vZ);
     }
 
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
-        if (!isActive(tile)) { return; }
+        if (!isPowered(tile)) { return; }
+
+        if (entity instanceof EntityItem) {
+            runTimer = IDLE_TIME_TICKS;
+            World world = tile.getWorld();
+            if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
+                tile.markDirty();
+                IBlockState state = world.getBlockState(tile.getPos());
+                world.notifyBlockUpdate(tile.getPos(), state, state, 3);
+                lastUpdateTick = world.getTotalWorldTime();
+            }
+        }
         BlockPos pos = tile.getPos();
         ConveyorDirection conveyorDirection = getConveyorDirection();
-        float heightLimit = conveyorDirection == ConveyorDirection.HORIZONTAL ? 0.25F : 1.0F;
+        float heightLimit = conveyorDirection == ConveyorDirection.HORIZONTAL ? HORIZONTAL_HEIGHT_LIMIT : SLOPED_HEIGHT_LIMIT;
         double height = entity.posY - pos.getY();
-        if (entity.isDead || height < 0D || height >= heightLimit || entity instanceof EntityPlayer && entity.isSneaking()) { return; }
+        if (entity.isDead || height < 0D || height >= heightLimit || (entity instanceof EntityPlayer && entity.isSneaking())) { return; }
+
         Vec3d vec = getDirection(tile, entity, facing);
         entity.motionX = vec.x;
         entity.motionY = vec.y;
         entity.motionZ = vec.z;
-        if (entity.fallDistance < 3.0F) { entity.fallDistance = 0.0F; }
-        double distX = Math.abs(pos.offset(facing).getX() + 0.5D - entity.posX);
-        double distZ = Math.abs(pos.offset(facing).getZ() + 0.5D - entity.posZ);
-        boolean contact = facing.getAxis() == Axis.Z ? distZ < 0.9D : distX < 0.9D;
-        if (contact && conveyorDirection == ConveyorDirection.UP) {
-            IBlockState state = tile.getWorld().getBlockState(pos.offset(facing).up());
-            if (!state.isFullBlock()) {
-                double move = 0.4D;
-                entity.setPosition(entity.posX + move * facing.getXOffset(), entity.posY + move, entity.posZ + move * facing.getZOffset());
+        if (entity.fallDistance < MAX_FALL_RESET) { entity.fallDistance = 0.0F; }
+
+        int offsetX = facing.getXOffset();
+        int offsetZ = facing.getZOffset();
+        double nextCenterX = pos.getX() + offsetX + 0.5D;
+        double nextCenterZ = pos.getZ() + offsetZ + 0.5D;
+        double distX = Math.abs(nextCenterX - entity.posX);
+        double distZ = Math.abs(nextCenterZ - entity.posZ);
+        boolean contact = facing.getAxis() == Axis.Z ? distZ < CONTACT_DIST : distX < CONTACT_DIST;
+
+        if (contact) {
+            if (conveyorDirection == ConveyorDirection.UP) {
+                IBlockState state = tile.getWorld().getBlockState(new BlockPos(pos.getX() + offsetX, pos.getY() + 1, pos.getZ() + offsetZ));
+                if (!state.isFullBlock()) {
+                    double move = UP_PUSH;
+                    entity.setPosition(entity.posX + move * offsetX, entity.posY + move, entity.posZ + move * offsetZ);
+                }
             }
-        }
-        if (!contact) { ConveyorHandler.applyMagnetSupression(entity, (IConveyorTile)tile); }
-        else {
-            BlockPos nextPos = pos.offset(facing);
+            BlockPos nextPos = new BlockPos(pos.getX() + offsetX, pos.getY(), pos.getZ() + offsetZ);
             TileEntity te = Utils.getExistingTileEntity(tile.getWorld(), nextPos);
             if (!(te instanceof IConveyorTile)) { ConveyorHandler.revertMagnetSupression(entity, (IConveyorTile)tile); }
+        } else {
+            ConveyorHandler.applyMagnetSupression(entity, (IConveyorTile)tile);
         }
+
         if (entity instanceof EntityItem && entity.ticksExisted > 1) {
             EntityItem item = (EntityItem)entity;
             if (!contact) { item.setNoDespawn(); }

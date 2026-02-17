@@ -1,15 +1,40 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.World;
+
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
 public class TileEntityConveyorVerticalAlternative extends TileEntityConveyorBeltAlternative {
 
+    private static final ResourceLocation DEFAULT_VERTICAL = new ResourceLocation("immersiveengineering", "vertical");
+
     public TileEntityConveyorVerticalAlternative() {}
+
+    @Override @Nonnull public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+        return super.writeToNBT(compound);
+    }
+
+    @Override public void readFromNBT(@Nonnull NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        if (getConveyorSubtype() == null) {
+            setConveyorSubtype(ConveyorHandler.getConveyor(DEFAULT_VERTICAL, this));
+        }
+    }
+
+    @Override public void onEntityCollision(@Nonnull World world, @Nonnull Entity entity) {
+        if (getConveyorSubtype() != null) {
+            getConveyorSubtype().onEntityCollision(this, entity, facing);
+        }
+    }
 
     @Override public boolean mirrorFacingOnPlacement(@Nonnull EntityLivingBase placer) { return false; }
 

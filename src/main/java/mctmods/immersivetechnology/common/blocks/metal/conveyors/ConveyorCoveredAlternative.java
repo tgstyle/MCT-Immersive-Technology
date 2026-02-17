@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.conveyors;
+package mctmods.immersivetechnology.common.blocks.metal.conveyors;
 
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler.ConveyorDirection;
 import blusunrize.immersiveengineering.client.ClientUtils;
@@ -43,14 +43,16 @@ public class ConveyorCoveredAlternative extends ConveyorBasicAlternative {
     }
 
     @Override public String getModelCacheKey(TileEntity tile, EnumFacing facing) {
-        String key = "immersivetech:covered_conveyor";
-        key += "f" + facing.ordinal();
-        key += "d" + getConveyorDirection().ordinal();
-        key += "a" + (isActive(tile) ? 1 : 0);
-        key += "w0" + (renderWall(tile, facing, 0) ? 1 : 0);
-        key += "w1" + (renderWall(tile, facing, 1) ? 1 : 0);
-        key += "c" + getDyeColour();
-        if (!cover.isEmpty()) { key += "s" + cover.getItem().getRegistryName() + cover.getMetadata(); }
+        String key = "immersivetech:covered_conveyor" +
+                "f" + facing.ordinal() +
+                "d" + getConveyorDirection().ordinal() +
+                "a" + (isActive(tile) ? 1 : 0) +
+                "w0" + (renderWall(tile, facing, 0) ? 1 : 0) +
+                "w1" + (renderWall(tile, facing, 1) ? 1 : 0) +
+                "c" + getDyeColour();
+        if (!cover.isEmpty()) {
+            key += "s" + cover.getItem().getRegistryName() + cover.getMetadata();
+        }
         return key;
     }
 
@@ -58,32 +60,39 @@ public class ConveyorCoveredAlternative extends ConveyorBasicAlternative {
         return ConveyorCoveredHelper.handleCoverInteraction(tile, player, hand, heldItem, () -> cover, stack -> cover = stack);
     }
 
-    @Override public List<AxisAlignedBB> getColisionBoxes(TileEntity tile, EnumFacing facing) {
-        List<AxisAlignedBB> list = new ArrayList<>(super.getColisionBoxes(tile, facing));
-        if (getConveyorDirection() == ConveyorDirection.HORIZONTAL) { list.add(TOP_BOX); }
-        else {
-            boolean up = getConveyorDirection() == ConveyorDirection.UP;
-            double minX = (facing == EnumFacing.WEST && !up) || (facing == EnumFacing.EAST && up) ? 0.5 : 0;
-            double maxX = (facing == EnumFacing.WEST && up) || (facing == EnumFacing.EAST && !up) ? 0.5 : 1;
-            double minZ = (facing == EnumFacing.NORTH && !up) || (facing == EnumFacing.SOUTH && up) ? 0.5 : 0;
-            double maxZ = (facing == EnumFacing.NORTH && up) || (facing == EnumFacing.SOUTH && !up) ? 0.5 : 1;
-            list.add(new AxisAlignedBB(minX, 1.75, minZ, maxX, 2, maxZ));
-            list.add(new AxisAlignedBB(minX, 1.25, minZ, maxX, 1.5, maxZ));
-        }
-        return list;
-    }
-
-    @Override public List<AxisAlignedBB> getSelectionBoxes(TileEntity tile, EnumFacing facing) {
-        if (getConveyorDirection() == ConveyorDirection.HORIZONTAL) { return com.google.common.collect.Lists.newArrayList(net.minecraft.block.Block.FULL_BLOCK_AABB); }
+    private List<AxisAlignedBB> getSlopedCoverBoxes(EnumFacing facing, boolean isCollision) {
         boolean up = getConveyorDirection() == ConveyorDirection.UP;
         double minX = (facing == EnumFacing.WEST && !up) || (facing == EnumFacing.EAST && up) ? 0.5 : 0;
         double maxX = (facing == EnumFacing.WEST && up) || (facing == EnumFacing.EAST && !up) ? 0.5 : 1;
         double minZ = (facing == EnumFacing.NORTH && !up) || (facing == EnumFacing.SOUTH && up) ? 0.5 : 0;
         double maxZ = (facing == EnumFacing.NORTH && up) || (facing == EnumFacing.SOUTH && !up) ? 0.5 : 1;
-        List<AxisAlignedBB> list = new ArrayList<>();
-        list.add(new AxisAlignedBB(minX, 0.5, minZ, maxX, 2, maxZ));
-        list.add(new AxisAlignedBB(minX, 0, minZ, maxX, 0.5, maxZ));
+
+        List<AxisAlignedBB> list = new ArrayList<>(2);
+        if (isCollision) {
+            list.add(new AxisAlignedBB(minX, 1.75, minZ, maxX, 2, maxZ));
+            list.add(new AxisAlignedBB(minX, 1.25, minZ, maxX, 1.5, maxZ));
+        } else {
+            list.add(new AxisAlignedBB(minX, 0.5, minZ, maxX, 2, maxZ));
+            list.add(new AxisAlignedBB(minX, 0, minZ, maxX, 0.5, maxZ));
+        }
         return list;
+    }
+
+    @Override public List<AxisAlignedBB> getColisionBoxes(TileEntity tile, EnumFacing facing) {
+        List<AxisAlignedBB> list = new ArrayList<>(super.getColisionBoxes(tile, facing));
+        if (getConveyorDirection() == ConveyorDirection.HORIZONTAL) {
+            list.add(TOP_BOX);
+        } else {
+            list.addAll(getSlopedCoverBoxes(facing, true));
+        }
+        return list;
+    }
+
+    @Override public List<AxisAlignedBB> getSelectionBoxes(TileEntity tile, EnumFacing facing) {
+        if (getConveyorDirection() == ConveyorDirection.HORIZONTAL) {
+            return com.google.common.collect.Lists.newArrayList(net.minecraft.block.Block.FULL_BLOCK_AABB);
+        }
+        return getSlopedCoverBoxes(facing, false);
     }
 
     @Override public NBTTagCompound writeConveyorNBT() {

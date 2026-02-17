@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.conveyors;
+package mctmods.immersivetechnology.common.blocks.metal.conveyors;
 
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler.ConveyorDirection;
@@ -39,26 +39,29 @@ public class ConveyorDropCoveredAlternative extends ConveyorDropAlternative {
         boolean w0 = tile == null || renderWall(tile, facing, 0);
         boolean w1 = tile == null || renderWall(tile, facing, 1);
         boolean[] corners = {true, true};
+
         List<BakedQuad> model = ModelConveyor.getBaseConveyor(renderFacing, 1.0F, mat, dir, sprite, new boolean[]{w0, w1}, corners, spriteColour, getDyeColour());
         ConveyorCoveredHelper.addCoverToQuads(model, renderFacing, () -> cover, dir, new boolean[]{w0, w1});
         return model;
     }
 
     @Override public String getModelCacheKey(TileEntity tile, EnumFacing facing) {
-        String key = "immersivetech:drop_covered_conveyor";
-        key += "f" + facing.ordinal();
-        key += "d" + getConveyorDirection().ordinal();
-        key += "a" + (isActive(tile) ? 1 : 0);
-        key += "w0" + (renderWall(tile, facing, 0) ? 1 : 0);
-        key += "w1" + (renderWall(tile, facing, 1) ? 1 : 0);
-        key += "c" + getDyeColour();
-        if (!cover.isEmpty()) { key += "s" + cover.getItem().getRegistryName() + cover.getMetadata(); }
+        String key = "immersivetech:drop_covered_conveyor" +
+                "f" + facing.ordinal() +
+                "d" + getConveyorDirection().ordinal() +
+                "a" + (isActive(tile) ? 1 : 0) +
+                "w0" + (renderWall(tile, facing, 0) ? 1 : 0) +
+                "w1" + (renderWall(tile, facing, 1) ? 1 : 0) +
+                "c" + getDyeColour();
+        if (!cover.isEmpty()) {
+            key += "s" + cover.getItem().getRegistryName() + cover.getMetadata();
+        }
         return key;
     }
 
     @Override public boolean playerInteraction(TileEntity tile, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ, EnumFacing side) {
         if (super.playerInteraction(tile, player, hand, heldItem, hitX, hitY, hitZ, side)) { return true; }
-        return ConveyorCoveredHelper.handleCoverInteraction(tile, player, hand, heldItem, () -> cover, itemStack -> cover = itemStack);
+        return ConveyorCoveredHelper.handleCoverInteraction(tile, player, hand, heldItem, () -> cover, stack -> cover = stack);
     }
 
     @Override public List<AxisAlignedBB> getColisionBoxes(TileEntity tile, EnumFacing facing) {
@@ -67,7 +70,9 @@ public class ConveyorDropCoveredAlternative extends ConveyorDropAlternative {
         return list;
     }
 
-    @Override public List<AxisAlignedBB> getSelectionBoxes(TileEntity tile, EnumFacing facing) { return Lists.newArrayList(net.minecraft.block.Block.FULL_BLOCK_AABB); }
+    @Override public List<AxisAlignedBB> getSelectionBoxes(TileEntity tile, EnumFacing facing) {
+        return Lists.newArrayList(net.minecraft.block.Block.FULL_BLOCK_AABB);
+    }
 
     @Override public NBTTagCompound writeConveyorNBT() {
         NBTTagCompound nbt = super.writeConveyorNBT();

@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.conveyors;
+package mctmods.immersivetechnology.common.blocks.metal.conveyors;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
@@ -22,40 +22,46 @@ public class ConveyorDropAlternative extends ConveyorBasicAlternative {
     @Override public ResourceLocation getInactiveTexture() { return texture_off; }
 
     @Override public String getModelCacheKey(TileEntity tile, EnumFacing facing) {
-        String key = "immersivetech:drop_conveyor";
-        key += "f" + facing.ordinal();
-        key += "a" + (isActive(tile) ? 1 : 0);
-        key += "c" + getDyeColour();
-        return key;
+        return "immersivetech:drop_conveyor" +
+                "f" + facing.ordinal() +
+                "a" + (isActive(tile) ? 1 : 0) +
+                "c" + getDyeColour();
     }
 
     @Override public void handleInsertion(TileEntity tile, EntityItem entity, EnumFacing facing, ConveyorHandler.ConveyorDirection conDir, double distX, double distZ) {
         BlockPos posDown = tile.getPos().down();
         TileEntity inventoryTile = tile.getWorld().getTileEntity(posDown);
-        boolean contact = Math.abs(facing.getAxis() == EnumFacing.Axis.Z ? tile.getPos().getZ() + 0.5 - entity.posZ : tile.getPos().getX() + 0.5 - entity.posX) < 0.2;
+        boolean contact = Math.abs((facing.getAxis() == EnumFacing.Axis.Z ? tile.getPos().getZ() : tile.getPos().getX()) + 0.5 -
+                (facing.getAxis() == EnumFacing.Axis.Z ? entity.posZ : entity.posX)) < 0.2;
+
         if (contact && inventoryTile != null && !(inventoryTile instanceof IConveyorTile)) {
             if (!tile.getWorld().isRemote) {
                 ItemStack stack = entity.getItem();
                 if (!stack.isEmpty()) {
                     ItemStack ret = ApiUtils.insertStackIntoInventory(inventoryTile, stack, EnumFacing.UP);
-                    if (ret.isEmpty()) { entity.setDead(); }
-                    else if (ret.getCount() < stack.getCount()) { entity.setItem(ret); }
+                    if (ret.isEmpty()) {
+                        entity.setDead();
+                    } else if (ret.getCount() < stack.getCount()) {
+                        entity.setItem(ret);
+                    }
                 }
             }
         } else if (contact && isEmptySpace(tile.getWorld(), posDown, inventoryTile)) {
             entity.motionX = 0;
             entity.motionZ = 0;
             entity.setPosition(tile.getPos().getX() + 0.5, tile.getPos().getY() - 0.5, tile.getPos().getZ() + 0.5);
-            if (inventoryTile == null) { ConveyorHandler.revertMagnetSupression(entity, (IConveyorTile)tile); }
-        } else { super.handleInsertion(tile, entity, facing, conDir, distX, distZ); }
+            if (inventoryTile == null) {
+                ConveyorHandler.revertMagnetSupression(entity, (IConveyorTile) tile);
+            }
+        } else {
+            super.handleInsertion(tile, entity, facing, conDir, distX, distZ);
+        }
     }
 
     private boolean isEmptySpace(World world, BlockPos pos, TileEntity tile) {
         if (world.isAirBlock(pos)) { return true; }
         if (tile instanceof IConveyorTile) { return true; }
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() instanceof BlockTrapDoor) { return state.getValue(BlockTrapDoor.OPEN); }
-        return false;
+        return state.getBlock() instanceof BlockTrapDoor && state.getValue(BlockTrapDoor.OPEN);
     }
-
 }
