@@ -60,11 +60,11 @@ public class ConveyorVerticalAlternative extends ConveyorBasicAlternative {
         TileEntity te = tile.getWorld().getTileEntity(tile.getPos().down());
         if (te instanceof IConveyorTile && ((IConveyorTile)te).getConveyorSubtype() != null) {
             for (EnumFacing f : ((IConveyorTile)te).getConveyorSubtype().sigTransportDirections(te, ((IConveyorTile)te).getFacing())) {
-                if (f == EnumFacing.UP) { return false; }
+                if (f == EnumFacing.UP) return false;
             }
         }
         for (EnumFacing f : EnumFacing.HORIZONTALS) {
-            if (f != facing && isInwardConveyor(tile, f)) { return true; }
+            if (f != facing && isInwardConveyor(tile, f)) return true;
         }
         return false;
     }
@@ -103,50 +103,56 @@ public class ConveyorVerticalAlternative extends ConveyorBasicAlternative {
         BlockPos posWall = conveyorTile.getPos().offset(facing);
         double d = 0.625 + entity.width;
         double distToWall = Math.abs((facing.getAxis() == EnumFacing.Axis.Z ? posWall.getZ() : posWall.getX()) + 0.5 - (facing.getAxis() == EnumFacing.Axis.Z ? entity.posZ : entity.posX));
-        if (distToWall > d) { return super.getDirection(conveyorTile, entity, facing); }
+        if (distToWall > d) return super.getDirection(conveyorTile, entity, facing);
+
         double vBase = entity instanceof EntityLivingBase ? 1.5 : 1.15;
         double distY = Math.abs(conveyorTile.getPos().up().getY() + 0.5 - entity.posY);
         boolean contact = distY < 0.9;
         double vX = entity.motionX;
         double vY = 0.1 * vBase;
         double vZ = entity.motionZ;
-        if (entity.motionY < 0) { vY += entity.motionY * 0.9; }
+        if (entity.motionY < 0) vY += entity.motionY * 0.9;
         if (!(entity instanceof EntityPlayer)) {
             vX = 0.05 * facing.getXOffset();
             vZ = 0.05 * facing.getZOffset();
             if (facing.getAxis() == EnumFacing.Axis.X) {
-                if (entity.posZ > conveyorTile.getPos().getZ() + 0.65) { vZ = -0.1 * vBase; }
-                else if (entity.posZ < conveyorTile.getPos().getZ() + 0.35) { vZ = 0.1 * vBase; }
+                if (entity.posZ > conveyorTile.getPos().getZ() + 0.65) vZ = -0.1 * vBase;
+                else if (entity.posZ < conveyorTile.getPos().getZ() + 0.35) vZ = 0.1 * vBase;
             } else {
-                if (entity.posX > conveyorTile.getPos().getX() + 0.65) { vX = -0.1 * vBase; }
-                else if (entity.posX < conveyorTile.getPos().getX() + 0.35) { vX = 0.1 * vBase; }
+                if (entity.posX > conveyorTile.getPos().getX() + 0.65) vX = -0.1 * vBase;
+                else if (entity.posX < conveyorTile.getPos().getX() + 0.35) vX = 0.1 * vBase;
             }
         }
         BlockPos upForward = conveyorTile.getPos().up();
-        if (contact && !(Utils.getExistingTileEntity(conveyorTile.getWorld(), upForward) instanceof IConveyorTile)) { vY *= 2.25; }
+        if (contact && !(Utils.getExistingTileEntity(conveyorTile.getWorld(), upForward) instanceof IConveyorTile)) vY *= 2.25;
         return new Vec3d(vX, vY, vZ);
     }
 
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
         if (!isPowered(tile)) return;
-        BlockPos posWall = tile.getPos().offset(facing);
-        double d = 0.625 + entity.width;
-        double distToWall = Math.abs((facing.getAxis() == EnumFacing.Axis.Z ? posWall.getZ() : posWall.getX()) + 0.5 - (facing.getAxis() == EnumFacing.Axis.Z ? entity.posZ : entity.posX));
-        if (distToWall > d) {
-            super.onEntityCollision(tile, entity, facing);
-            return;
+
+        int oldRun = runTimer;
+        runTimer = IDLE_TIME_TICKS;
+        if (oldRun <= 0 && tile.getWorld().isRemote) {
+            tile.getWorld().markBlockRangeForRenderUpdate(tile.getPos(), tile.getPos());
         }
-        if (entity instanceof EntityItem) {
-            runTimer = IDLE_TIME_TICKS;
-            World world = tile.getWorld();
-            if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
-                tile.markDirty();
-                IBlockState state = world.getBlockState(tile.getPos());
-                world.notifyBlockUpdate(tile.getPos(), state, state, 3);
-                lastUpdateTick = world.getTotalWorldTime();
-            }
+
+        World world = tile.getWorld();
+        if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
+            tile.markDirty();
+            IBlockState state = world.getBlockState(tile.getPos());
+            world.notifyBlockUpdate(tile.getPos(), state, state, 3);
+            lastUpdateTick = world.getTotalWorldTime();
         }
+
         if (!entity.isDead && (!(entity instanceof EntityPlayer) || !entity.isSneaking())) {
+            BlockPos posWall = tile.getPos().offset(facing);
+            double d = 0.625 + entity.width;
+            double distToWall = Math.abs((facing.getAxis() == EnumFacing.Axis.Z ? posWall.getZ() : posWall.getX()) + 0.5 - (facing.getAxis() == EnumFacing.Axis.Z ? entity.posZ : entity.posX));
+            if (distToWall > d) {
+                super.onEntityCollision(tile, entity, facing);
+                return;
+            }
             double distY = Math.abs(tile.getPos().up().getY() + 0.5 - entity.posY);
             boolean contact = distY < 0.9;
             entity.onGround = false;
@@ -191,7 +197,9 @@ public class ConveyorVerticalAlternative extends ConveyorBasicAlternative {
     @Override public List<AxisAlignedBB> getColisionBoxes(TileEntity tile, EnumFacing facing) { return getSelectionBoxes(tile, facing); }
 
     @SideOnly(Side.CLIENT)
-    @Override public Matrix4f modifyBaseRotationMatrix(Matrix4f matrix, TileEntity tile, EnumFacing facing) { return new Matrix4(matrix).translate(0.0, 1.0, 0.0).rotate(Math.PI / 2.0, 1.0, 0.0, 0.0).toMatrix4f(); }
+    @Override public Matrix4f modifyBaseRotationMatrix(Matrix4f matrix, TileEntity tile, EnumFacing facing) {
+        return new Matrix4(matrix).translate(0.0, 1.0, 0.0).rotate(Math.PI / 2.0, 1.0, 0.0, 0.0).toMatrix4f();
+    }
 
     @Override public ResourceLocation getActiveTexture() { return texture_on; }
 

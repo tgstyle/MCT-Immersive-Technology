@@ -60,7 +60,7 @@ public class ConveyorDropCoveredAlternative extends ConveyorDropAlternative {
     }
 
     @Override public boolean playerInteraction(TileEntity tile, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ, EnumFacing side) {
-        if (super.playerInteraction(tile, player, hand, heldItem, hitX, hitY, hitZ, side)) { return true; }
+        if (super.playerInteraction(tile, player, hand, heldItem, hitX, hitY, hitZ, side)) return true;
         return ConveyorCoveredHelper.handleCoverInteraction(tile, player, hand, heldItem, () -> cover, stack -> cover = stack);
     }
 
@@ -76,7 +76,7 @@ public class ConveyorDropCoveredAlternative extends ConveyorDropAlternative {
 
     @Override public NBTTagCompound writeConveyorNBT() {
         NBTTagCompound nbt = super.writeConveyorNBT();
-        if (!cover.isEmpty()) { nbt.setTag("cover", cover.writeToNBT(new NBTTagCompound())); }
+        if (!cover.isEmpty()) nbt.setTag("cover", cover.writeToNBT(new NBTTagCompound()));
         return nbt;
     }
 
@@ -87,7 +87,7 @@ public class ConveyorDropCoveredAlternative extends ConveyorDropAlternative {
 
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
         super.onEntityCollision(tile, entity, facing);
-        if (entity instanceof EntityItem) { ((EntityItem)entity).setPickupDelay(10); }
+        if (entity instanceof EntityItem) ((EntityItem)entity).setPickupDelay(10);
     }
 
     @Override public void onItemDeployed(TileEntity tile, EntityItem entity, EnumFacing facing) {

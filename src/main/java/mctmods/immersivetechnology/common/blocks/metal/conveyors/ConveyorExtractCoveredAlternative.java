@@ -60,7 +60,7 @@ public class ConveyorExtractCoveredAlternative extends ConveyorExtractAlternativ
 
         List<BakedQuad> model = ModelConveyor.getBaseConveyor(renderFacing, 1.0F, mat, dir, sprite, new boolean[]{w0, w1}, new boolean[]{true, true}, spriteColour, getDyeColour());
 
-        if (tile != null) { initializeDirection(tile, facing); }
+        if (tile != null) initializeDirection(tile, facing);
         EnumFacing armDirection = (tile == null) ? facing : this.extractDirection;
 
         TextureAtlasSprite textureSteel = ClientUtils.getSprite(new ResourceLocation("immersiveengineering", "blocks/storage_steel"));
@@ -148,14 +148,12 @@ public class ConveyorExtractCoveredAlternative extends ConveyorExtractAlternativ
         EnumFacing effectiveDir = (tile == null) ? facing : this.extractDirection;
         key += "e" + effectiveDir.ordinal();
         key += "ex" + getExtensionIntoBlock(tile);
-        if (!cover.isEmpty()) {
-            key += "s" + cover.getItem().getRegistryName() + cover.getMetadata();
-        }
+        if (!cover.isEmpty()) key += "s" + cover.getItem().getRegistryName() + cover.getMetadata();
         return key;
     }
 
     @Override public boolean playerInteraction(TileEntity tile, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ, EnumFacing side) {
-        if (super.playerInteraction(tile, player, hand, heldItem, hitX, hitY, hitZ, side)) { return true; }
+        if (super.playerInteraction(tile, player, hand, heldItem, hitX, hitY, hitZ, side)) return true;
         return ConveyorCoveredHelper.handleCoverInteraction(tile, player, hand, heldItem, () -> cover, stack -> cover = stack);
     }
 
@@ -171,7 +169,7 @@ public class ConveyorExtractCoveredAlternative extends ConveyorExtractAlternativ
 
     @Override public NBTTagCompound writeConveyorNBT() {
         NBTTagCompound nbt = super.writeConveyorNBT();
-        if (!cover.isEmpty()) { nbt.setTag("cover", cover.writeToNBT(new NBTTagCompound())); }
+        if (!cover.isEmpty()) nbt.setTag("cover", cover.writeToNBT(new NBTTagCompound()));
         return nbt;
     }
 
@@ -181,18 +179,24 @@ public class ConveyorExtractCoveredAlternative extends ConveyorExtractAlternativ
     }
 
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
+        int oldRun = runTimer;
+        runTimer = IDLE_TIME_TICKS;
+        if (oldRun <= 0 && tile.getWorld().isRemote) {
+            tile.getWorld().markBlockRangeForRenderUpdate(tile.getPos(), tile.getPos());
+        }
+
+        World world = tile.getWorld();
+        if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
+            tile.markDirty();
+            IBlockState state = world.getBlockState(tile.getPos());
+            world.notifyBlockUpdate(tile.getPos(), state, state, 3);
+            lastUpdateTick = world.getTotalWorldTime();
+        }
+
         double height = entity.posY - tile.getPos().getY();
         if (entity instanceof EntityItem) {
-            runTimer = IDLE_TIME_TICKS;
-            World world = tile.getWorld();
-            if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
-                tile.markDirty();
-                IBlockState state = world.getBlockState(tile.getPos());
-                world.notifyBlockUpdate(tile.getPos(), state, state, 3);
-                lastUpdateTick = world.getTotalWorldTime();
-            }
             ((EntityItem)entity).setPickupDelay(10);
-            if (height >= 0.75) { return; }
+            if (height >= 0.75) return;
         }
         super.onEntityCollision(tile, entity, facing);
     }

@@ -62,7 +62,7 @@ public class ConveyorExtractAlternative extends ConveyorBasicAlternative {
     }
 
     protected void initializeDirection(@Nullable TileEntity tile, EnumFacing facing) {
-        if (tile != null) { this.extractDirection = facing.getOpposite(); }
+        if (tile != null) this.extractDirection = facing.getOpposite();
     }
 
     protected float getExtensionIntoBlock(TileEntity tile) {
@@ -73,7 +73,8 @@ public class ConveyorExtractAlternative extends ConveyorBasicAlternative {
             if (!world.isAirBlock(neighbour)) {
                 IBlockState connected = world.getBlockState(neighbour);
                 TileEntity connectedTile = world.getTileEntity(neighbour);
-                if (connectedTile != null && connectedTile.hasCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.extractDirection.getOpposite()) && connected.getBlockFaceShape(world, neighbour, this.extractDirection.getOpposite()) != BlockFaceShape.SOLID) {
+                if (connectedTile != null && connectedTile.hasCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.extractDirection.getOpposite()) &&
+                        connected.getBlockFaceShape(world, neighbour, this.extractDirection.getOpposite()) != BlockFaceShape.SOLID) {
                     AxisAlignedBB aabb = connected.getBoundingBox(world, neighbour);
                     switch (this.extractDirection) {
                         case NORTH: extend = (float)(1.0 - aabb.maxZ); break;
@@ -191,7 +192,7 @@ public class ConveyorExtractAlternative extends ConveyorBasicAlternative {
     }
 
     @Override public boolean isActive(TileEntity tile) {
-        if (tile == null) { return true; }
+        if (tile == null) return true;
         return runTimer > 0;
     }
 
@@ -200,7 +201,7 @@ public class ConveyorExtractAlternative extends ConveyorBasicAlternative {
     @Override public void onUpdate(TileEntity tile, EnumFacing facing) {
         initializeDirection(tile, facing);
         if (!tile.getWorld().isRemote) {
-            if (this.transferCooldown > 0) { --this.transferCooldown; }
+            if (this.transferCooldown > 0) --this.transferCooldown;
             if (isPowered(tile) && this.transferCooldown <= 0) {
                 World world = tile.getWorld();
                 BlockPos neighbour = tile.getPos().offset(this.extractDirection);
@@ -244,14 +245,14 @@ public class ConveyorExtractAlternative extends ConveyorBasicAlternative {
         initializeDirection(tile, side);
         if (Utils.isHammer(heldItem) && player.isSneaking()) {
             EnumFacing dir = this.extractDirection.rotateY();
-            if (dir == ((ConveyorHandler.IConveyorTile)tile).getFacing()) { dir = dir.rotateY(); }
+            if (dir == ((ConveyorHandler.IConveyorTile)tile).getFacing()) dir = dir.rotateY();
             this.extractDirection = dir;
             return true;
         } else if (Utils.isWirecutter(heldItem)) {
-            if (this.transferTickrate == 4) { this.transferTickrate = 8; }
-            else if (this.transferTickrate == 8) { this.transferTickrate = 16; }
-            else if (this.transferTickrate == 16) { this.transferTickrate = 20; }
-            else if (this.transferTickrate == 20) { this.transferTickrate = 4; }
+            if (this.transferTickrate == 4) this.transferTickrate = 8;
+            else if (this.transferTickrate == 8) this.transferTickrate = 16;
+            else if (this.transferTickrate == 16) this.transferTickrate = 20;
+            else if (this.transferTickrate == 20) this.transferTickrate = 4;
             player.sendStatusMessage(new TextComponentTranslation("chat.immersiveengineering.info.tickrate", this.transferTickrate), true);
             return true;
         }
@@ -266,7 +267,7 @@ public class ConveyorExtractAlternative extends ConveyorBasicAlternative {
     @Override public List<AxisAlignedBB> getSelectionBoxes(TileEntity tile, EnumFacing facing) {
         initializeDirection(tile, facing);
         List<AxisAlignedBB> list = Lists.newArrayList(conveyorBounds);
-        if (this.extension < 0.0F) { this.extension = getExtensionIntoBlock(tile); }
+        if (this.extension < 0.0F) this.extension = getExtensionIntoBlock(tile);
         switch (this.extractDirection) {
             case NORTH: list.add(new AxisAlignedBB(PIXEL, PLATE_Y_LOW, -this.extension, 1.0F - PIXEL, PLATE_Y_HIGH, 0.375F - this.extension)); break;
             case SOUTH: list.add(new AxisAlignedBB(PIXEL, PLATE_Y_LOW, 0.625F + this.extension, 1.0F - PIXEL, PLATE_Y_HIGH, 1.0F + this.extension)); break;
@@ -292,27 +293,31 @@ public class ConveyorExtractAlternative extends ConveyorBasicAlternative {
     }
 
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
-        if (entity instanceof EntityItem) {
-            runTimer = IDLE_TIME_TICKS;
-            World world = tile.getWorld();
-            if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
-                tile.markDirty();
-                IBlockState state = world.getBlockState(tile.getPos());
-                world.notifyBlockUpdate(tile.getPos(), state, state, 3);
-                lastUpdateTick = world.getTotalWorldTime();
-            }
+        int oldRun = runTimer;
+        runTimer = IDLE_TIME_TICKS;
+        if (oldRun <= 0 && tile.getWorld().isRemote) {
+            tile.getWorld().markBlockRangeForRenderUpdate(tile.getPos(), tile.getPos());
         }
+
+        World world = tile.getWorld();
+        if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
+            tile.markDirty();
+            IBlockState state = world.getBlockState(tile.getPos());
+            world.notifyBlockUpdate(tile.getPos(), state, state, 3);
+            lastUpdateTick = world.getTotalWorldTime();
+        }
+
         BlockPos pos = tile.getPos();
         ConveyorDirection conveyorDirection = getConveyorDirection();
         float heightLimit = conveyorDirection == ConveyorDirection.HORIZONTAL ? HORIZONTAL_HEIGHT_LIMIT : SLOPED_HEIGHT_LIMIT;
         double height = entity.posY - pos.getY();
-        if (entity.isDead || height < 0D || height >= heightLimit || (entity instanceof EntityPlayer && entity.isSneaking())) { return; }
+        if (entity.isDead || height < 0D || height >= heightLimit || (entity instanceof EntityPlayer && entity.isSneaking())) return;
 
         Vec3d vec = getDirection(tile, entity, facing);
         entity.motionX = vec.x;
         entity.motionY = vec.y;
         entity.motionZ = vec.z;
-        if (entity.fallDistance < MAX_FALL_RESET) { entity.fallDistance = 0.0F; }
+        if (entity.fallDistance < MAX_FALL_RESET) entity.fallDistance = 0.0F;
 
         int offsetX = facing.getXOffset();
         int offsetZ = facing.getZOffset();
@@ -332,15 +337,15 @@ public class ConveyorExtractAlternative extends ConveyorBasicAlternative {
             }
             BlockPos nextPos = new BlockPos(pos.getX() + offsetX, pos.getY(), pos.getZ() + offsetZ);
             TileEntity te = Utils.getExistingTileEntity(tile.getWorld(), nextPos);
-            if (!(te instanceof IConveyorTile)) { ConveyorHandler.revertMagnetSupression(entity, (IConveyorTile)tile); }
+            if (!(te instanceof IConveyorTile)) ConveyorHandler.revertMagnetSupression(entity, (IConveyorTile)tile);
         } else {
             ConveyorHandler.applyMagnetSupression(entity, (IConveyorTile)tile);
         }
 
         if (entity instanceof EntityItem && entity.ticksExisted > 1) {
             EntityItem item = (EntityItem)entity;
-            if (!contact) { item.setNoDespawn(); }
-            else { handleInsertion(tile, item, facing, conveyorDirection, distX, distZ); }
+            if (!contact) item.setNoDespawn();
+            else handleInsertion(tile, item, facing, conveyorDirection, distX, distZ);
         }
     }
 }

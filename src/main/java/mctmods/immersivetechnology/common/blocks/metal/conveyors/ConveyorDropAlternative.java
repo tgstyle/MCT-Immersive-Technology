@@ -59,8 +59,8 @@ public class ConveyorDropAlternative extends ConveyorBasicAlternative {
     }
 
     private boolean isEmptySpace(World world, BlockPos pos, TileEntity tile) {
-        if (world.isAirBlock(pos)) { return true; }
-        if (tile instanceof IConveyorTile) { return true; }
+        if (world.isAirBlock(pos)) return true;
+        if (tile instanceof IConveyorTile) return true;
         IBlockState state = world.getBlockState(pos);
         return state.getBlock() instanceof BlockTrapDoor && state.getValue(BlockTrapDoor.OPEN);
     }

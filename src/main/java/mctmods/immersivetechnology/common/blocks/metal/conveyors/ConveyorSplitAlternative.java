@@ -51,7 +51,7 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
     public ConveyorSplitAlternative() {}
 
     private String getNBTKey(TileEntity tile) {
-        if (nbtKeyCache == null) { nbtKeyCache = "it_split_dir_" + Integer.toHexString(tile.getPos().hashCode()); }
+        if (nbtKeyCache == null) nbtKeyCache = "it_split_dir_" + Integer.toHexString(tile.getPos().hashCode());
         return nbtKeyCache;
     }
 
@@ -62,12 +62,12 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
     @Override public boolean setConveyorDirection(ConveyorDirection dir) { return false; }
 
     @Override public void afterRotation(EnumFacing oldDir, EnumFacing newDir) {
-        if (nextOutput != null) { nextOutput = nextOutput == oldDir.rotateY() ? newDir.rotateY() : newDir.rotateYCCW(); }
+        if (nextOutput != null) nextOutput = nextOutput == oldDir.rotateY() ? newDir.rotateY() : newDir.rotateYCCW();
         nbtKeyCache = null;
     }
 
     @Override public boolean isActive(TileEntity tile) {
-        if (tile == null) { return true; }
+        if (tile == null) return true;
         return runTimer > 0;
     }
 
@@ -84,23 +84,25 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
     }
 
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
-        if (tile == null || entity == null || entity.isDead) { return; }
+        if (tile == null || entity == null || entity.isDead) return;
+
+        int oldRun = runTimer;
+        runTimer = IDLE_TIME_TICKS;
+        if (oldRun <= 0 && tile.getWorld().isRemote) {
+            tile.getWorld().markBlockRangeForRenderUpdate(tile.getPos(), tile.getPos());
+        }
 
         World world = tile.getWorld();
-
-        if (entity instanceof EntityItem) {
-            runTimer = IDLE_TIME_TICKS;
-            if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
-                tile.markDirty();
-                IBlockState state = world.getBlockState(tile.getPos());
-                world.notifyBlockUpdate(tile.getPos(), state, state, 3);
-                lastUpdateTick = world.getTotalWorldTime();
-            }
+        if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
+            tile.markDirty();
+            IBlockState state = world.getBlockState(tile.getPos());
+            world.notifyBlockUpdate(tile.getPos(), state, state, 3);
+            lastUpdateTick = world.getTotalWorldTime();
         }
 
         BlockPos pos = tile.getPos();
         double height = entity.posY - pos.getY();
-        if (height < 0D || height >= HORIZONTAL_HEIGHT_LIMIT || (entity instanceof EntityPlayer && entity.isSneaking())) { return; }
+        if (height < 0D || height >= HORIZONTAL_HEIGHT_LIMIT || (entity instanceof EntityPlayer && entity.isSneaking())) return;
 
         String nbtKey = getNBTKey(tile);
         boolean hasRedirect = entity.getEntityData().hasKey(nbtKey);
@@ -108,7 +110,7 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
         if (!hasRedirect) {
             EnumFacing output;
             if (mode == SplitMode.SPLIT) {
-                if (nextOutput == null) { nextOutput = facing.rotateYCCW(); }
+                if (nextOutput == null) nextOutput = facing.rotateYCCW();
                 output = nextOutput;
                 nextOutput = nextOutput.getOpposite();
             } else if (mode == SplitMode.ALL_LEFT) {
@@ -124,7 +126,7 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
         entity.motionX = vec.x;
         entity.motionY = vec.y;
         entity.motionZ = vec.z;
-        if (entity.fallDistance < MAX_FALL_RESET) { entity.fallDistance = 0.0F; }
+        if (entity.fallDistance < MAX_FALL_RESET) entity.fallDistance = 0.0F;
         entity.onGround = false;
 
         double nextCenterX = pos.getX() + 0.5D + facing.getXOffset();
@@ -135,15 +137,15 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
 
         if (contact) {
             TileEntity te = Utils.getExistingTileEntity(world, pos.offset(facing));
-            if (!(te instanceof IConveyorTile)) { ConveyorHandler.revertMagnetSupression(entity, (IConveyorTile)tile); }
+            if (!(te instanceof IConveyorTile)) ConveyorHandler.revertMagnetSupression(entity, (IConveyorTile)tile);
         } else {
             ConveyorHandler.applyMagnetSupression(entity, (IConveyorTile)tile);
         }
 
         if (entity instanceof EntityItem && entity.ticksExisted > 1) {
             EntityItem item = (EntityItem)entity;
-            if (!contact) { item.setNoDespawn(); }
-            else { handleInsertion(tile, item, facing, getConveyorDirection(), distX, distZ); }
+            if (!contact) item.setNoDespawn();
+            else handleInsertion(tile, item, facing, getConveyorDirection(), distX, distZ);
         }
     }
 
@@ -154,7 +156,7 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
         if (!entity.getEntityData().hasKey(nbtKey)) {
             EnumFacing output;
             if (mode == SplitMode.SPLIT) {
-                if (nextOutput == null) { nextOutput = facing.rotateYCCW(); }
+                if (nextOutput == null) nextOutput = facing.rotateYCCW();
                 output = nextOutput;
                 nextOutput = nextOutput.getOpposite();
             } else if (mode == SplitMode.ALL_LEFT) {
@@ -215,7 +217,7 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
 
     @Override public NBTTagCompound writeConveyorNBT() {
         NBTTagCompound nbt = super.writeConveyorNBT();
-        if (nextOutput != null) { nbt.setInteger("nextOutput", nextOutput.ordinal()); }
+        if (nextOutput != null) nbt.setInteger("nextOutput", nextOutput.ordinal());
         nbt.setInteger("mode", mode.ordinal());
         nbt.setInteger("prevRedstone", prevRedstone);
         return nbt;

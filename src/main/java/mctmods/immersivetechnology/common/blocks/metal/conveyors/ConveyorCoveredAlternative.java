@@ -37,6 +37,7 @@ public class ConveyorCoveredAlternative extends ConveyorBasicAlternative {
         boolean w0 = tile == null || renderWall(tile, facing, 0);
         boolean w1 = tile == null || renderWall(tile, facing, 1);
         boolean[] corners = {true, true};
+
         List<BakedQuad> model = ModelConveyor.getBaseConveyor(renderFacing, 1.0F, mat, dir, sprite, new boolean[]{w0, w1}, corners, spriteColour, getDyeColour());
         ConveyorCoveredHelper.addCoverToQuads(model, renderFacing, () -> cover, dir, new boolean[]{w0, w1});
         return model;
@@ -50,9 +51,7 @@ public class ConveyorCoveredAlternative extends ConveyorBasicAlternative {
                 "w0" + (renderWall(tile, facing, 0) ? 1 : 0) +
                 "w1" + (renderWall(tile, facing, 1) ? 1 : 0) +
                 "c" + getDyeColour();
-        if (!cover.isEmpty()) {
-            key += "s" + cover.getItem().getRegistryName() + cover.getMetadata();
-        }
+        if (!cover.isEmpty()) key += "s" + cover.getItem().getRegistryName() + cover.getMetadata();
         return key;
     }
 
@@ -67,10 +66,9 @@ public class ConveyorCoveredAlternative extends ConveyorBasicAlternative {
         double minZ = (facing == EnumFacing.NORTH && !up) || (facing == EnumFacing.SOUTH && up) ? 0.5 : 0;
         double maxZ = (facing == EnumFacing.NORTH && up) || (facing == EnumFacing.SOUTH && !up) ? 0.5 : 1;
 
-        List<AxisAlignedBB> list = new ArrayList<>(2);
+        List<AxisAlignedBB> list = new ArrayList<>(1);
         if (isCollision) {
-            list.add(new AxisAlignedBB(minX, 1.75, minZ, maxX, 2, maxZ));
-            list.add(new AxisAlignedBB(minX, 1.25, minZ, maxX, 1.5, maxZ));
+            list.add(new AxisAlignedBB(minX, 0.75, minZ, maxX, 1.0, maxZ));
         } else {
             list.add(new AxisAlignedBB(minX, 0.5, minZ, maxX, 2, maxZ));
             list.add(new AxisAlignedBB(minX, 0, minZ, maxX, 0.5, maxZ));
@@ -80,24 +78,19 @@ public class ConveyorCoveredAlternative extends ConveyorBasicAlternative {
 
     @Override public List<AxisAlignedBB> getColisionBoxes(TileEntity tile, EnumFacing facing) {
         List<AxisAlignedBB> list = new ArrayList<>(super.getColisionBoxes(tile, facing));
-        if (getConveyorDirection() == ConveyorDirection.HORIZONTAL) {
-            list.add(TOP_BOX);
-        } else {
-            list.addAll(getSlopedCoverBoxes(facing, true));
-        }
+        if (getConveyorDirection() == ConveyorDirection.HORIZONTAL) list.add(TOP_BOX);
+        else list.addAll(getSlopedCoverBoxes(facing, true));
         return list;
     }
 
     @Override public List<AxisAlignedBB> getSelectionBoxes(TileEntity tile, EnumFacing facing) {
-        if (getConveyorDirection() == ConveyorDirection.HORIZONTAL) {
-            return com.google.common.collect.Lists.newArrayList(net.minecraft.block.Block.FULL_BLOCK_AABB);
-        }
+        if (getConveyorDirection() == ConveyorDirection.HORIZONTAL) return com.google.common.collect.Lists.newArrayList(net.minecraft.block.Block.FULL_BLOCK_AABB);
         return getSlopedCoverBoxes(facing, false);
     }
 
     @Override public NBTTagCompound writeConveyorNBT() {
         NBTTagCompound nbt = super.writeConveyorNBT();
-        if (!cover.isEmpty()) { nbt.setTag("cover", cover.writeToNBT(new NBTTagCompound())); }
+        if (!cover.isEmpty()) nbt.setTag("cover", cover.writeToNBT(new NBTTagCompound()));
         return nbt;
     }
 
@@ -108,7 +101,7 @@ public class ConveyorCoveredAlternative extends ConveyorBasicAlternative {
 
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
         super.onEntityCollision(tile, entity, facing);
-        if (entity instanceof EntityItem) { ((EntityItem)entity).setPickupDelay(10); }
+        if (entity instanceof EntityItem) ((EntityItem)entity).setPickupDelay(10);
     }
 
     @Override public void onItemDeployed(TileEntity tile, EntityItem entity, EnumFacing facing) {
