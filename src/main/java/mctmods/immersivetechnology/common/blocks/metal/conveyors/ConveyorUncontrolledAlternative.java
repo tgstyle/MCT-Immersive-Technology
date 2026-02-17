@@ -23,9 +23,23 @@ public class ConveyorUncontrolledAlternative extends ConveyorBasicAlternative {
     }
 
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
-        if (entity instanceof EntityItem) {
+        World world = tile.getWorld();
+        long now = world.getTotalWorldTime();
+
+        if (runTimer <= 0 || now - lastActivationTick >= ACTIVATION_CHECK_INTERVAL) {
+            lastActivationTick = now;
             runTimer = IDLE_TIME_TICKS;
-            World world = tile.getWorld();
+
+            if (!world.isRemote) {
+                tile.markDirty();
+                IBlockState state = world.getBlockState(tile.getPos());
+                world.notifyBlockUpdate(tile.getPos(), state, state, 3);
+            } else {
+                world.markBlockRangeForRenderUpdate(tile.getPos(), tile.getPos());
+            }
+        }
+
+        if (entity instanceof EntityItem) {
             if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
                 tile.markDirty();
                 IBlockState state = world.getBlockState(tile.getPos());
@@ -33,6 +47,7 @@ public class ConveyorUncontrolledAlternative extends ConveyorBasicAlternative {
                 lastUpdateTick = world.getTotalWorldTime();
             }
         }
+
         BlockPos pos = tile.getPos();
         ConveyorDirection conveyorDirection = getConveyorDirection();
         float heightLimit = conveyorDirection == ConveyorDirection.HORIZONTAL ? HORIZONTAL_HEIGHT_LIMIT : SLOPED_HEIGHT_LIMIT;

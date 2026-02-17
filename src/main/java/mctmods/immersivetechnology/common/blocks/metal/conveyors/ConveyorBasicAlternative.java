@@ -53,7 +53,7 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
     protected static final float MAX_FALL_RESET = 3.0F;
 
     protected static final int IDLE_TIME_TICKS = 40;
-    private static final int ACTIVATION_CHECK_INTERVAL = 10;
+    protected static final int ACTIVATION_CHECK_INTERVAL = 10;
 
     public ConveyorBasicAlternative() {}
 
@@ -208,7 +208,7 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
         World world = tile.getWorld();
         long now = world.getTotalWorldTime();
 
-        if (runTimer <= 0 && now - lastActivationTick >= ACTIVATION_CHECK_INTERVAL) {
+        if (runTimer <= 0 || now - lastActivationTick >= ACTIVATION_CHECK_INTERVAL) {
             lastActivationTick = now;
             runTimer = IDLE_TIME_TICKS;
 

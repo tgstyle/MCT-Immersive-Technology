@@ -8,7 +8,6 @@ import blusunrize.immersiveengineering.client.models.ModelConveyor;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import com.google.common.collect.Lists;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -22,7 +21,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.util.vector.Vector3f;
@@ -34,7 +32,6 @@ import java.util.function.Function;
 
 public class ConveyorExtractCoveredAlternative extends ConveyorExtractAlternative {
     private ItemStack cover = ItemStack.EMPTY;
-    private long lastUpdateTick = 0;
 
     private static final AxisAlignedBB TOP_BOX = new AxisAlignedBB(0, 0.75, 0, 1, 1, 1);
 
@@ -179,26 +176,9 @@ public class ConveyorExtractCoveredAlternative extends ConveyorExtractAlternativ
     }
 
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
-        int oldRun = runTimer;
-        runTimer = IDLE_TIME_TICKS;
-        if (oldRun <= 0 && tile.getWorld().isRemote) {
-            tile.getWorld().markBlockRangeForRenderUpdate(tile.getPos(), tile.getPos());
-        }
-
-        World world = tile.getWorld();
-        if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
-            tile.markDirty();
-            IBlockState state = world.getBlockState(tile.getPos());
-            world.notifyBlockUpdate(tile.getPos(), state, state, 3);
-            lastUpdateTick = world.getTotalWorldTime();
-        }
-
-        double height = entity.posY - tile.getPos().getY();
-        if (entity instanceof EntityItem) {
-            ((EntityItem)entity).setPickupDelay(10);
-            if (height >= 0.75) return;
-        }
         super.onEntityCollision(tile, entity, facing);
+
+        if (entity instanceof EntityItem) ((EntityItem)entity).setPickupDelay(10);
     }
 
     @Override public void onItemDeployed(TileEntity tile, EntityItem entity, EnumFacing facing) {
