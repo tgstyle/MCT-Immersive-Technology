@@ -7,8 +7,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Field;
-import java.util.Map;
 
 public class TileEntityConveyorBeltAlternative extends TileEntityConveyorBelt {
 
@@ -20,15 +18,9 @@ public class TileEntityConveyorBeltAlternative extends TileEntityConveyorBelt {
         IConveyorBelt conveyor = getConveyorSubtype();
         if (conveyor != null) {
             NBTTagCompound subNBT = conveyor.writeConveyorNBT();
-            if (!subNBT.isEmpty()) { compound.setTag("conveyorBeltSubtypeNBT", subNBT); }
-            try {
-                Field reverseField = ConveyorHandler.class.getDeclaredField("reverseClassRegistry");
-                reverseField.setAccessible(true);
-                @SuppressWarnings("unchecked")
-                Map<Class<?>, ResourceLocation> reverse = (Map<Class<?>, ResourceLocation>) reverseField.get(null);
-                ResourceLocation rl = reverse.get(conveyor.getClass());
-                if (rl != null) { compound.setString("conveyorBeltSubtype", rl.toString()); }
-            } catch (Exception ignored) {}
+            if (!subNBT.isEmpty()) compound.setTag("conveyorBeltSubtypeNBT", subNBT);
+            ResourceLocation rl = ConveyorHandler.reverseClassRegistry.get(conveyor.getClass());
+            if (rl != null) compound.setString("conveyorBeltSubtype", rl.toString());
         }
         return super.writeToNBT(compound);
     }

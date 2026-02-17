@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler.IConveyorBelt;
 import com.google.common.collect.Maps;
 import mctmods.immersivetechnology.common.blocks.metal.conveyors.*;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityConveyorBeltAlternative;
 import mctmods.immersivetechnology.core.MCTMixin;
 import mctmods.immersivetechnology.core.MCTMixinConfig;
 import net.minecraft.tileentity.TileEntity;
@@ -22,16 +23,16 @@ public abstract class MixinIEConveyorHandler {
     @Unique private static final Map<String, Class<? extends IConveyorBelt>> REPLACEMENT_CLASSES = Maps.newHashMap();
 
     static {
-        REPLACEMENT_CLASSES.put("conveyor", ConveyorBasicAlternative.class);
-        REPLACEMENT_CLASSES.put("uncontrolled", ConveyorUncontrolledAlternative.class);
-        REPLACEMENT_CLASSES.put("splitter", ConveyorSplitAlternative.class);
-        REPLACEMENT_CLASSES.put("covered", ConveyorCoveredAlternative.class);
-        REPLACEMENT_CLASSES.put("dropper", ConveyorDropAlternative.class);
-        REPLACEMENT_CLASSES.put("droppercovered", ConveyorDropCoveredAlternative.class);
-        REPLACEMENT_CLASSES.put("extract", ConveyorExtractAlternative.class);
-        REPLACEMENT_CLASSES.put("extractcovered", ConveyorExtractCoveredAlternative.class);
-        REPLACEMENT_CLASSES.put("vertical", ConveyorVerticalAlternative.class);
-        REPLACEMENT_CLASSES.put("verticalcovered", ConveyorVerticalCoveredAlternative.class);
+        REPLACEMENT_CLASSES.put("conveyor",         ConveyorBasicAlternative.class);
+        REPLACEMENT_CLASSES.put("uncontrolled",     ConveyorUncontrolledAlternative.class);
+        REPLACEMENT_CLASSES.put("splitter",         ConveyorSplitAlternative.class);
+        REPLACEMENT_CLASSES.put("covered",          ConveyorCoveredAlternative.class);
+        REPLACEMENT_CLASSES.put("dropper",          ConveyorDropAlternative.class);
+        REPLACEMENT_CLASSES.put("droppercovered",   ConveyorDropCoveredAlternative.class);
+        REPLACEMENT_CLASSES.put("extract",          ConveyorExtractAlternative.class);
+        REPLACEMENT_CLASSES.put("extractcovered",   ConveyorExtractCoveredAlternative.class);
+        REPLACEMENT_CLASSES.put("vertical",         ConveyorVerticalAlternative.class);
+        REPLACEMENT_CLASSES.put("verticalcovered",  ConveyorVerticalCoveredAlternative.class);
     }
 
     @Inject(
@@ -48,6 +49,14 @@ public abstract class MixinIEConveyorHandler {
         Class<? extends IConveyorBelt> clazz = REPLACEMENT_CLASSES.get(path);
 
         if (clazz != null) {
+            if (tile instanceof TileEntityConveyorBeltAlternative) {
+                IConveyorBelt existing = ((TileEntityConveyorBeltAlternative) tile).getConveyorSubtype();
+                if (existing != null && existing.getClass() == clazz) {
+                    cir.setReturnValue(existing);
+                    return;
+                }
+            }
+
             try {
                 IConveyorBelt freshInstance = clazz.newInstance();
                 MCTMixin.LOGGER.debug("IT created fresh conveyor instance: {}", key);
