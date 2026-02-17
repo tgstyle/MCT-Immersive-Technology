@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
+import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
 import blusunrize.immersiveengineering.common.Config;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
@@ -18,6 +19,7 @@ import mctmods.immersivetechnology.common.blocks.stone.BlockStoneDecoration;
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneDecoration;
 import mctmods.immersivetechnology.common.blocks.wooden.BlockWoodenCrate;
 import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityCrate;
+import mctmods.immersivetechnology.common.conveyors.*;
 import mctmods.immersivetechnology.common.fluid.FluidColored;
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.multiblocks.metal.BlockMetalMultiblock;
@@ -51,7 +53,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 @EventBusSubscriber(modid = ImmersiveTechnology.MODID)
@@ -130,6 +134,9 @@ public class ITContent {
     public static TileEntityITMultiblockPartSteelSheetmetalTank multiblockSteelSheetmetalTank;
 
     public static void preInit() {
+        /*CONVEYORS*/
+        registerConveyors();
+
         /*MULTIBLOCKS*/
         blockMetalMultiblock = new BlockMetalMultiblock();
         blockMetalMultiblock1 = new BlockMetalMultiblock1();
@@ -427,5 +434,50 @@ public class ITContent {
         Config.manual_int.put("steamTurbine_timeToMax", ((ITConfig.Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max / ITConfig.Multiblocks.steamTurbine.steamTurbine_speed_gainPerTick) / 20));
         Config.manual_int.put("highPressureSteamTurbine_timeToMax", ((ITConfig.Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max / ITConfig.Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_gainPerTick) / 20));
         Config.manual_int.put("steelTank_tankSize", ITConfig.Multiblocks.steelTank.steelTank_tankSize);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void registerConveyors() {
+        if (!MCTMixinConfig.mixinSettings.replace_IE_conveyors) { return; }
+
+        try {
+            Field classRegistryField = ConveyorHandler.class.getDeclaredField("classRegistry");
+            Field reverseClassRegistryField = ConveyorHandler.class.getDeclaredField("reverseClassRegistry");
+
+            classRegistryField.setAccessible(true);
+            reverseClassRegistryField.setAccessible(true);
+
+            Map<ResourceLocation, Class<?>> classRegistry = (Map<ResourceLocation, Class<?>>) classRegistryField.get(null);
+            Map<Class<?>, ResourceLocation> reverseClassRegistry = (Map<Class<?>, ResourceLocation>) reverseClassRegistryField.get(null);
+
+            registerBelt(classRegistry, reverseClassRegistry, "conveyor",         ConveyorBasicAlternative.class);
+            registerBelt(classRegistry, reverseClassRegistry, "uncontrolled",     ConveyorUncontrolledAlternative.class);
+            registerBelt(classRegistry, reverseClassRegistry, "splitter",         ConveyorSplitAlternative.class);
+            registerBelt(classRegistry, reverseClassRegistry, "covered",          ConveyorCoveredAlternative.class);
+            registerBelt(classRegistry, reverseClassRegistry, "dropper",          ConveyorDropAlternative.class);
+            registerBelt(classRegistry, reverseClassRegistry, "droppercovered",   ConveyorDropCoveredAlternative.class);
+            registerBelt(classRegistry, reverseClassRegistry, "extract",          ConveyorExtractAlternative.class);
+            registerBelt(classRegistry, reverseClassRegistry, "extractcovered",   ConveyorExtractCoveredAlternative.class);
+            registerBelt(classRegistry, reverseClassRegistry, "vertical",         ConveyorVerticalAlternative.class);
+            registerBelt(classRegistry, reverseClassRegistry, "verticalcovered",  ConveyorVerticalCoveredAlternative.class);
+
+            if (net.minecraftforge.fml.common.FMLCommonHandler.instance().getSide().isClient()) {
+                try {
+                    blusunrize.immersiveengineering.client.models.ModelConveyor.modelCache.clear();
+                    Field itemCacheField = blusunrize.immersiveengineering.client.models.ModelConveyor.class.getDeclaredField("itemModelCache");
+                    itemCacheField.setAccessible(true);
+                    ((java.util.HashMap<?, ?>) itemCacheField.get(null)).clear();
+                }
+                catch (Exception e) { ITLogger.error("Failed to clear ModelConveyor caches", e); }
+            }
+            ITLogger.info("IT Conveyor Override Active");
+        }
+        catch (Exception e) { ITLogger.error("Failed to register IT conveyor replacements!", e); }
+    }
+
+    private static void registerBelt(Map<ResourceLocation, Class<?>> classRegistry, Map<Class<?>, ResourceLocation> reverseClassRegistry, String path, Class<?> beltClass) {
+        ResourceLocation rl = new ResourceLocation("immersiveengineering", path);
+        classRegistry.put(rl, beltClass);
+        reverseClassRegistry.put(beltClass, rl);
     }
 }
