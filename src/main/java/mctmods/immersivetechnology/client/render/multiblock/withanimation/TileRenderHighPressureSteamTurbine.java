@@ -51,7 +51,7 @@ public class TileRenderHighPressureSteamTurbine extends TileEntitySpecialRendere
         for (int i = 0; i < totalBlocks; i++) {
             BlockPos pos = te.getBlockPosForPos(i);
             IBlockState state = te.getWorld().getBlockState(pos);
-            if (state.getBlock() != ITContent.blockMetalMultiblock) { continue; }
+            if (state.getBlock() != ITContent.blockMetalMultiblock1) { continue; }
             state = state.getActualState(te.getWorld(), pos);
             IBakedModel model = blockRenderer.getModelForState(state);
             blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, pos, buffer, false, MathHelper.getCoordinateRandom(pos.getX(), pos.getY(), pos.getZ()));
@@ -68,7 +68,7 @@ public class TileRenderHighPressureSteamTurbine extends TileEntitySpecialRendere
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         buffer.setTranslation(-0.5 - masterPos.getX(), -0.5 - masterPos.getY(), -0.5 - masterPos.getZ());
         IBlockState state = te.getWorld().getBlockState(masterPos);
-        if (state.getBlock() == ITContent.blockMetalMultiblock) {
+        if (state.getBlock() == ITContent.blockMetalMultiblock1) {
             if (validFacing) { state = state.getActualState(te.getWorld(), masterPos); }
             state = state.withProperty(IEProperties.DYNAMICRENDER, true);
             IBakedModel model = blockRenderer.getModelForState(state);
