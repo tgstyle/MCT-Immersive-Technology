@@ -7,6 +7,7 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.models.ModelConveyor;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.Entity;
@@ -20,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -126,13 +128,23 @@ public class ConveyorVerticalAlternative extends ConveyorBasicAlternative {
     }
 
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
-        if (!isActive(tile)) return;
+        if (!isPowered(tile)) return;
         BlockPos posWall = tile.getPos().offset(facing);
         double d = 0.625 + entity.width;
         double distToWall = Math.abs((facing.getAxis() == EnumFacing.Axis.Z ? posWall.getZ() : posWall.getX()) + 0.5 - (facing.getAxis() == EnumFacing.Axis.Z ? entity.posZ : entity.posX));
         if (distToWall > d) {
             super.onEntityCollision(tile, entity, facing);
             return;
+        }
+        if (entity instanceof EntityItem) {
+            runTimer = IDLE_TIME_TICKS;
+            World world = tile.getWorld();
+            if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
+                tile.markDirty();
+                IBlockState state = world.getBlockState(tile.getPos());
+                world.notifyBlockUpdate(tile.getPos(), state, state, 3);
+                lastUpdateTick = world.getTotalWorldTime();
+            }
         }
         if (!entity.isDead && (!(entity instanceof EntityPlayer) || !entity.isSneaking())) {
             double distY = Math.abs(tile.getPos().up().getY() + 0.5 - entity.posY);

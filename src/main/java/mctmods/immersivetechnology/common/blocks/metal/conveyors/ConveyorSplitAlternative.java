@@ -29,8 +29,11 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
+    private enum SplitMode { SPLIT, ALL_LEFT, ALL_RIGHT }
+    private SplitMode mode = SplitMode.SPLIT;
     private EnumFacing nextOutput = null;
     private transient String nbtKeyCache = null;
+    private int prevRedstone = 0;
     private long lastUpdateTick = 0;
 
     private static final ResourceLocation texture_on = new ResourceLocation("immersiveengineering", "blocks/conveyor_split");
@@ -68,6 +71,18 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
         return runTimer > 0;
     }
 
+    @Override public boolean isTicking(TileEntity tile) { return true; }
+
+    @Override public void onUpdate(TileEntity tile, EnumFacing facing) {
+        super.onUpdate(tile, facing);
+        int currentRedstone = tile.getWorld().getRedstonePowerFromNeighbors(tile.getPos());
+        if (currentRedstone > 0 && this.prevRedstone == 0) {
+            this.mode = this.mode == SplitMode.SPLIT ? SplitMode.ALL_LEFT : this.mode == SplitMode.ALL_LEFT ? SplitMode.ALL_RIGHT : SplitMode.SPLIT;
+            tile.markDirty();
+        }
+        this.prevRedstone = currentRedstone;
+    }
+
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
         if (tile == null || entity == null || entity.isDead) { return; }
 
@@ -91,9 +106,17 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
         boolean hasRedirect = entity.getEntityData().hasKey(nbtKey);
 
         if (!hasRedirect) {
-            if (nextOutput == null) { nextOutput = facing.rotateYCCW(); }
-            entity.getEntityData().setInteger(nbtKey, nextOutput.ordinal());
-            nextOutput = nextOutput.getOpposite();
+            EnumFacing output;
+            if (mode == SplitMode.SPLIT) {
+                if (nextOutput == null) { nextOutput = facing.rotateYCCW(); }
+                output = nextOutput;
+                nextOutput = nextOutput.getOpposite();
+            } else if (mode == SplitMode.ALL_LEFT) {
+                output = facing.rotateYCCW();
+            } else {
+                output = facing.rotateY();
+            }
+            entity.getEntityData().setInteger(nbtKey, output.ordinal());
             tile.markDirty();
         }
 
@@ -129,9 +152,17 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
 
         String nbtKey = getNBTKey(tile);
         if (!entity.getEntityData().hasKey(nbtKey)) {
-            if (nextOutput == null) { nextOutput = facing.rotateYCCW(); }
-            entity.getEntityData().setInteger(nbtKey, nextOutput.ordinal());
-            nextOutput = nextOutput.getOpposite();
+            EnumFacing output;
+            if (mode == SplitMode.SPLIT) {
+                if (nextOutput == null) { nextOutput = facing.rotateYCCW(); }
+                output = nextOutput;
+                nextOutput = nextOutput.getOpposite();
+            } else if (mode == SplitMode.ALL_LEFT) {
+                output = facing.rotateYCCW();
+            } else {
+                output = facing.rotateY();
+            }
+            entity.getEntityData().setInteger(nbtKey, output.ordinal());
             tile.markDirty();
         }
 
@@ -185,12 +216,16 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
     @Override public NBTTagCompound writeConveyorNBT() {
         NBTTagCompound nbt = super.writeConveyorNBT();
         if (nextOutput != null) { nbt.setInteger("nextOutput", nextOutput.ordinal()); }
+        nbt.setInteger("mode", mode.ordinal());
+        nbt.setInteger("prevRedstone", prevRedstone);
         return nbt;
     }
 
     @Override public void readConveyorNBT(NBTTagCompound nbt) {
         super.readConveyorNBT(nbt);
         nextOutput = nbt.hasKey("nextOutput") ? EnumFacing.values()[nbt.getInteger("nextOutput")] : null;
+        mode = SplitMode.values()[nbt.getInteger("mode")];
+        prevRedstone = nbt.getInteger("prevRedstone");
         nbtKeyCache = null;
     }
 

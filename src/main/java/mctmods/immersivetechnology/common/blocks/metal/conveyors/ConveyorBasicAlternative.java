@@ -98,10 +98,14 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
     @Override public void onUpdate(TileEntity tile, EnumFacing facing) {
         if (runTimer > 0) {
             --runTimer;
-            if (runTimer == 0 && !tile.getWorld().isRemote) {
-                tile.markDirty();
-                IBlockState state = tile.getWorld().getBlockState(tile.getPos());
-                tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
+            if (runTimer == 0) {
+                if (!tile.getWorld().isRemote) {
+                    tile.markDirty();
+                    IBlockState state = tile.getWorld().getBlockState(tile.getPos());
+                    tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
+                } else {
+                    tile.getWorld().markBlockRangeForRenderUpdate(tile.getPos(), tile.getPos());
+                }
             }
         }
     }
@@ -197,6 +201,7 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
         if (!isPowered(tile)) { return; }
 
+        int oldRun = runTimer;
         if (entity instanceof EntityItem) {
             runTimer = IDLE_TIME_TICKS;
             World world = tile.getWorld();
@@ -206,6 +211,9 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
                 world.notifyBlockUpdate(tile.getPos(), state, state, 3);
                 lastUpdateTick = world.getTotalWorldTime();
             }
+        }
+        if (oldRun <= 0 && runTimer > 0 && tile.getWorld().isRemote) {
+            tile.getWorld().markBlockRangeForRenderUpdate(tile.getPos(), tile.getPos());
         }
         BlockPos pos = tile.getPos();
         ConveyorDirection conveyorDirection = getConveyorDirection();
