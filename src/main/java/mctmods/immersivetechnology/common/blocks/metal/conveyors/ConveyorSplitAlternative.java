@@ -84,20 +84,17 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
     }
 
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
-        if (tile == null || entity == null || entity.isDead) return;
-
-        int oldRun = runTimer;
-        runTimer = IDLE_TIME_TICKS;
-        if (oldRun <= 0 && tile.getWorld().isRemote) {
-            tile.getWorld().markBlockRangeForRenderUpdate(tile.getPos(), tile.getPos());
-        }
+        super.onEntityCollision(tile, entity, facing);
 
         World world = tile.getWorld();
-        if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
-            tile.markDirty();
-            IBlockState state = world.getBlockState(tile.getPos());
-            world.notifyBlockUpdate(tile.getPos(), state, state, 3);
-            lastUpdateTick = world.getTotalWorldTime();
+
+        if (entity instanceof EntityItem) {
+            if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
+                tile.markDirty();
+                IBlockState state = world.getBlockState(tile.getPos());
+                world.notifyBlockUpdate(tile.getPos(), state, state, 3);
+                lastUpdateTick = world.getTotalWorldTime();
+            }
         }
 
         BlockPos pos = tile.getPos();

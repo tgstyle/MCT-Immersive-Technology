@@ -34,6 +34,7 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
     protected int dyeColour = -1;
     protected int runTimer = 0;
     protected long lastUpdateTick = 0;
+    protected long lastActivationTick = 0;
 
     private static final ResourceLocation TEXTURE_ON = new ResourceLocation("immersiveengineering", "blocks/conveyor");
     private static final ResourceLocation TEXTURE_OFF = new ResourceLocation("immersiveengineering", "blocks/conveyor_off");
@@ -52,6 +53,7 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
     protected static final float MAX_FALL_RESET = 3.0F;
 
     protected static final int IDLE_TIME_TICKS = 40;
+    private static final int ACTIVATION_CHECK_INTERVAL = 10;
 
     public ConveyorBasicAlternative() {}
 
@@ -131,6 +133,7 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
         direction = ConveyorDirection.values()[nbt.getInteger("direction")];
         dyeColour = nbt.hasKey("dyeColour") ? nbt.getInteger("dyeColour") : -1;
         runTimer = nbt.getInteger("runTimer");
+        lastActivationTick = 0;
     }
 
     @Override public ResourceLocation getActiveTexture() { return TEXTURE_ON; }
@@ -202,18 +205,20 @@ public class ConveyorBasicAlternative implements IConveyorBelt {
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
         if (!isPowered(tile)) return;
 
-        int oldRun = runTimer;
-        runTimer = IDLE_TIME_TICKS;
-        if (oldRun <= 0 && tile.getWorld().isRemote) {
-            tile.getWorld().markBlockRangeForRenderUpdate(tile.getPos(), tile.getPos());
-        }
-
         World world = tile.getWorld();
-        if (!world.isRemote && world.getTotalWorldTime() - lastUpdateTick > 4) {
-            tile.markDirty();
-            IBlockState state = world.getBlockState(tile.getPos());
-            world.notifyBlockUpdate(tile.getPos(), state, state, 3);
-            lastUpdateTick = world.getTotalWorldTime();
+        long now = world.getTotalWorldTime();
+
+        if (runTimer <= 0 && now - lastActivationTick >= ACTIVATION_CHECK_INTERVAL) {
+            lastActivationTick = now;
+            runTimer = IDLE_TIME_TICKS;
+
+            if (!world.isRemote) {
+                tile.markDirty();
+                IBlockState state = world.getBlockState(tile.getPos());
+                world.notifyBlockUpdate(tile.getPos(), state, state, 3);
+            } else {
+                world.markBlockRangeForRenderUpdate(tile.getPos(), tile.getPos());
+            }
         }
 
         BlockPos pos = tile.getPos();
