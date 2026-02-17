@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.mixin;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler.IConveyorBelt;
 import com.google.common.collect.Maps;
-import mctmods.immersivetechnology.common.conveyors.*;
+import mctmods.immersivetechnology.common.blocks.metal.conveyors.*;
 import mctmods.immersivetechnology.core.MCTMixin;
 import mctmods.immersivetechnology.core.MCTMixinConfig;
 import net.minecraft.tileentity.TileEntity;
@@ -24,7 +24,7 @@ public abstract class MixinIEConveyorHandler {
     static {
         REPLACEMENT_CLASSES.put("conveyor", ConveyorBasicAlternative.class);
         REPLACEMENT_CLASSES.put("uncontrolled", ConveyorUncontrolledAlternative.class);
-        REPLACEMENT_CLASSES.put("split", ConveyorSplitAlternative.class);
+        REPLACEMENT_CLASSES.put("splitter", ConveyorSplitAlternative.class);
         REPLACEMENT_CLASSES.put("covered", ConveyorCoveredAlternative.class);
         REPLACEMENT_CLASSES.put("dropper", ConveyorDropAlternative.class);
         REPLACEMENT_CLASSES.put("droppercovered", ConveyorDropCoveredAlternative.class);
