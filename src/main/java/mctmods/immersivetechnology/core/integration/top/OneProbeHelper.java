@@ -25,7 +25,6 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import javax.annotation.Nullable;
 
 public class OneProbeHelper {
-    private static final int maxSpeed = ITCommonConfig.maxRpm;
     private static final double solarWorkingHeatLevel = ITCommonConfig.solarTowerWorkingHeatLevel;
     private static final double solarMelterWorkingHeatLevel = ITCommonConfig.solarMelterWorkingHeatLevel;
 
@@ -59,9 +58,9 @@ public class OneProbeHelper {
                 .progress(stored, max, probeInfo.defaultProgressStyle().suffix(" IF").filledColor(Lib.COLOUR_I_ImmersiveOrange).alternateFilledColor(0xff994f20).borderColor(Lib.COLOUR_I_ImmersiveOrangeShadow).numberFormat(NumberFormat.COMPACT));
     }
 
-    private static void addRPMDisplay(IProbeInfo probeInfo, int speed) {
+    private static void addRPMDisplay(IProbeInfo probeInfo, int speed, int maxRpm) {
         probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                .progress(speed, maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix(" RPM"));
+                .progress(speed, maxRpm, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix(" RPM"));
     }
 
     private static void addProcessPercent(IProbeInfo probeInfo, int percent) {
@@ -97,7 +96,7 @@ public class OneProbeHelper {
             if (ctx == null) return;
             if (ctx.getState() instanceof AlternatorLogic.State state) {
                 addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
-                addRPMDisplay(probeInfo, state.speed);
+                addRPMDisplay(probeInfo, state.speed, state.effectiveMaxSpeed);
             }
         }
     }
@@ -195,7 +194,7 @@ public class OneProbeHelper {
             if (ctx.getState() instanceof GasTurbineLogic.State state) {
                 addFluidTankDisplay(probeInfo, state.tanks.input());
                 addFluidTankDisplay(probeInfo, state.tanks.output());
-                addRPMDisplay(probeInfo, state.speed);
+                addRPMDisplay(probeInfo, state.speed, state.effectiveMaxSpeed);
             }
         }
     }
@@ -273,7 +272,7 @@ public class OneProbeHelper {
             if (ctx.getState() instanceof SteamTurbineLogic.State state) {
                 addFluidTankDisplay(probeInfo, state.tanks.input());
                 addFluidTankDisplay(probeInfo, state.tanks.output());
-                addRPMDisplay(probeInfo, state.speed);
+                addRPMDisplay(probeInfo, state.speed, state.effectiveMaxSpeed);
             }
         }
     }
