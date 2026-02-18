@@ -75,7 +75,6 @@ ext {
     version_jei = versionProps['version_jei']
     version_parchment = versionProps['version_parchment']
     version_ie = versionProps['version_ie']
-    version_ic = versionProps['version_ic']
     mod_license = gradleProps['mod_license']
     mod_name = gradleProps['mod_name']
     mod_authors = gradleProps['mod_authors']
@@ -83,18 +82,17 @@ ext {
 }
 
 def version_replaces = { [
-        'version'      : project.version,
-        'build_number' : version_buildnumber,
-        'version_mc'   : version_minecraft,
-        'version_forge': version_forge,
-        'version_jei'  : version_jei,
-        'mod_license'  : mod_license,
-        'mod_name'     : mod_name,
-        'mod_authors'  : mod_authors,
-        'mod_description': mod_description,
-        'version_ie'   : version_ie,
-        'version_ic'   : version_ic,
-        'stage'        : stage,
+    'version'         : project.version,
+    'build_number'    : version_buildnumber,
+    'version_mc'      : version_minecraft,
+    'version_neoforge': version_neoforge,
+    'version_jei'     : version_jei,
+    'mod_license'     : mod_license,
+    'mod_name'        : mod_name,
+    'mod_authors'     : mod_authors,
+    'mod_description' : mod_description,
+    'version_ie'      : version_ie,
+    'stage'           : stage,
 ] as Map<String, Object> }
 
 def jsonPatterns = ["**/*.json", "**/*.mcmeta"]
@@ -120,23 +118,14 @@ tasks.register('copyModsTomlForIntelliJ', Copy) {
     dependsOn processResources
 }
 
-def icJar = null
-def icDir = file('../Immersive-Convergence/build/libs')
-def matchingJars = fileTree(icDir) {
-    include "ImmersiveConvergence-${version_minecraft}-*-dev.jar"
-    exclude "**/*-sources.jar"
-}.files
+neoForge {
+    version = project.version_neoforge
 
-if (!matchingJars.isEmpty()) {
-    icJar = matchingJars.sort { a, b -> b.lastModified() <=> a.lastModified() }.last()
-    logger.lifecycle("✅ Found IC deobf JAR: ${icJar.name}")
-} else {
-    logger.warn('⚠️  No IC deobf JAR found')
-}
+    parchment {
+        mappingsVersion = project.version_parchment
+        minecraftVersion = project.version_minecraft
+    }
 
-minecraft {
-    mappings channel: 'parchment', version: version_parchment + '-' + version_minecraft
-    accessTransformer { file('src/main/resources/META-INF/accesstransformer.cfg') }
     runs {
         client {
             client()
@@ -167,34 +156,16 @@ minecraft {
             }
         }
 
-repositories {
-    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
-    maven {
-        name = 'Jared maven'
-        url = 'https://maven.blamejared.com/'
-    }
-    maven {
-        url = 'https://www.cursemaven.com'
-        content {
-            includeGroup "curse.maven"
+        configureEach {
+            gameDirectory = project.file('run')
+            systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
         }
     }
-    maven {
-        url = "https://cfa2.cursemaven.com"
-        content {
-            includeGroup "curse.maven"
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
         }
-    }
-    maven {
-        url = 'https://squiddev.cc/maven/'
-        content {
-            includeGroup("cc.tweaked")
-            includeModule("org.squiddev", "Cobalt")
-        }
-    }
-    maven {
-        name = 'ParchmentMC'
-        url = 'https://ldtteam.jfrog.io/artifactory/parchmentmc-public/'
     }
 }
 
@@ -207,31 +178,20 @@ repositories {
     maven { name = 'ParchmentMC' ; url = 'https://ldtteam.jfrog.io/artifactory/parchmentmc-public/' }
 }
 
-project.ext.lwjglVersion = "3.3.6"
-project.ext.lwjglNatives = "natives-linux"
-
-dependencies {
-    minecraft "net.minecraftforge:forge:${version_minecraft}-${version_forge}"
-
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:${version_jei}")
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:${version_jei}")
-
-    implementation fg.deobf("mezz.jei:jei-1.20.1-forge:${version_jei}")
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
-    implementation fg.deobf("curse.maven:jade-324717:6855440")
-    implementation fg.deobf("curse.maven:the-one-probe-245211:6106996")
+dependencies {
+    compileOnly "mezz.jei:jei-${version_minecraft}-common-api:${version_jei}"
+    compileOnly "mezz.jei:jei-${version_minecraft}-neoforge-api:${version_jei}"
+    localRuntime "mezz.jei:jei-${version_minecraft}-neoforge:${version_jei}"
 
     implementation "curse.maven:immersive-engineering-231951:6733669"
 
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-
-    if (icJar != null) {
-        implementation files(icJar)
-    }
+    implementation "curse.maven:jade-324717:7545219"
 }
 
 def customGradle = rootProject.file('custom.gradle')
@@ -255,7 +215,6 @@ tasks.register('bumpVersion') {
 
 tasks.register('datagenJar', Jar) {
     dependsOn datagenClasses
-    archiveBaseName.set("MCT-ImmersiveTechnology-${version_minecraft}")
     archiveClassifier = 'datagen'
     from sourceSets.datagen.output
     manifest { attributes "FMLModType": "GAMELIBRARY" }
@@ -263,7 +222,6 @@ tasks.register('datagenJar', Jar) {
 
 tasks.register('sourcesJar', Jar) {
     dependsOn classes
-    archiveBaseName.set("MCT-ImmersiveTechnology-${version_minecraft}")
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
     from sourceSets.datagen.allSource
@@ -277,18 +235,14 @@ artifacts {
 void minimizePNGFile(File file) {
     long size = file.length()
     ExecOperations execOps = project.services.get(ExecOperations)
-    try {
-        execOps.exec {
-            executable 'optipng'
-            args '-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath
-        }
-        long newSize = file.length()
-        if (newSize < size) {
-            System.out.format("Reduced File size of %s from %d bytes to %d bytes (reduced by %.2f%%)\n",
-                    file, size, newSize, ((double) (size - newSize)) / ((double) size) * 100.0)
-        }
-    } catch (Exception ignored) {
-        System.out.println("optipng not found, skipping optimization for ${file}")
+    execOps.exec {
+        executable 'optipng'
+        args '-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath
+    }
+    long newSize = file.length()
+    if (newSize < size) {
+        System.out.format("Reduced File size of %s from %d bytes to %d bytes (reduced by %.2f%%)\n",
+                file, size, newSize, ((double) (size - newSize)) / ((double) size) * 100.0)
     }
 }
 
@@ -299,20 +253,9 @@ tasks.register('optimizePng') {
             fileTree(dir: dir, includes: pngPatterns).each { minimizePNGFile(it) }
         }
     }
-    onlyIf { gradle.taskGraph.hasTask(tasks.jar) }
 }
 
-tasks.register('genIntellijRunsDummy')
-
-tasks.withType(Task).configureEach {
-    if (it.name == "genIntellijRuns") {
-        genIntellijRunsDummy.dependsOn it
-    } else if (it.name == "runServer") {
-        it.standardInput = System.in
-    }
-}
-
-processResources.dependsOn bumpVersion, optimizePng
+processResources.dependsOn bumpVersion
 jar.dependsOn bumpVersion
 datagenJar.dependsOn bumpVersion
 sourcesJar.dependsOn bumpVersion
