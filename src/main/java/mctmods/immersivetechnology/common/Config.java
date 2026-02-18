@@ -37,6 +37,7 @@ public class Config {
             public static GasTurbine gasTurbine = new GasTurbine();
             public static HeatExchanger heatExchanger = new HeatExchanger();
             public static HighPressureSteamTurbine highPressureSteamTurbine = new HighPressureSteamTurbine();
+            public static JEI JEI = new JEI();
             public static MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
             public static MeltingCrucible meltingCrucible = new MeltingCrucible();
             public static Radiator radiator = new Radiator();
@@ -194,6 +195,10 @@ public class Config {
                 public float highPressureSteamTurbine_torque = 1.0f;
                 @Comment({"Should the steam turbine use tungsten, if it exists? Otherwise the turbine will use nickel [Default=true]"})
                 public boolean highPressureSteamTurbine_turbine_material = true;
+            }
+            public static class JEI {
+                @Comment({"Display IT Multiblocks in JEI [Default=true]"})
+                public boolean enableJEIMultiblocks = true;
             }
             public static class MechanicalEnergy {
                 @Comment({"The maximum speed that machines can tolerate in RPM [Default=1800]"})
