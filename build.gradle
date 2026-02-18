@@ -75,8 +75,8 @@ dependencies {
     compileOnly fg.deobf("${common.crft_version}")
     compileOnly fg.deobf("${common.zens_version}")
 
-	implementation fg.deobf("curse.maven:${common.ppfx_version}")
-	implementation fg.deobf("curse.maven:${common.cfga_version}")
+    implementation fg.deobf("curse.maven:${common.ppfx_version}")
+    implementation fg.deobf("curse.maven:${common.cfga_version}")
 
     annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
     annotationProcessor 'com.google.guava:guava:32.1.2-jre'
@@ -94,7 +94,7 @@ minecraft {
             args '--width', '1920'
             args '--height', '1080'
             args '--add-opens=java.base/java.lang=ALL-UNNAMED'
-			args '--version', common.mcversion
+            args '--version', common.mcversion
             args '--username', 'tgstyle'
             property 'forge.logging.console.level', 'debug'
             property 'fml.coreMods.load', 'mctmods.immersivetechnology.core.MCTMixin'
@@ -164,8 +164,8 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes(
-            'FMLCorePlugin': 'mctmods.immersivetechnology.core.MCTMixin',
-            'FMLCorePluginContainsFMLMod': 'true'
+                'FMLCorePlugin': 'mctmods.immersivetechnology.core.MCTMixin',
+                'FMLCorePluginContainsFMLMod': 'true'
         )
     }
     dependsOn 'optimizePng'
@@ -191,7 +191,7 @@ tasks.register('optimizePng') {
             try {
                 exec {
                     executable 'optipng'
-                    args '-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath
+                    args '-q', '-o7', '-zm1-9', file.absolutePath   // -strip all removed – this was turning JEI tank overlays black
                 }
                 long newSize = file.length()
                 if (newSize < size) {
