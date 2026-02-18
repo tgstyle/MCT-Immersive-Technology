@@ -13,12 +13,10 @@ public class ITCommonConfig {
     public static final ForgeConfigSpec.DoubleValue BOILER_DEFAULT_WORKING_HEAT;
     public static final ForgeConfigSpec.DoubleValue SOLAR_TOWER_WORKING_HEAT_LEVEL;
     public static final ForgeConfigSpec.DoubleValue SOLAR_MELTER_WORKING_HEAT_LEVEL;
-    public static final ForgeConfigSpec.IntValue MAX_RPM;
 
     public static double boilerDefaultWorkingHeat = 100.0D;
     public static double solarTowerWorkingHeatLevel = 400.0D;
     public static double solarMelterWorkingHeatLevel = 1000.0D;
-    public static int maxRpm = 7200;
 
     static {
         BUILDER.comment("Options shared by all boiler types").push("boiler_shared");
@@ -34,12 +32,6 @@ public class ITCommonConfig {
         BUILDER.comment("Solar Melter settings").push("solar_melter");
         SOLAR_MELTER_WORKING_HEAT_LEVEL = BUILDER.comment("Default target heat for full-speed operation (when recipe unspecified).").defineInRange("working_heat_level", 1000.0D, 100.0D, Double.MAX_VALUE);
         BUILDER.pop();
-
-        BUILDER.comment("Mechanical system global settings").push("mechanical");
-        MAX_RPM = BUILDER
-                .comment("Global maximum rotational speed in RPM for all mechanical devices (turbines, alternators, etc.). Default 7200 RPM. Changing this affects speed_factor calculations in turbines.")
-                .defineInRange("max_rpm", 7200, 1000, 50000);
-        BUILDER.pop();
     }
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
@@ -50,7 +42,6 @@ public class ITCommonConfig {
             boilerDefaultWorkingHeat = BOILER_DEFAULT_WORKING_HEAT.get();
             solarTowerWorkingHeatLevel = SOLAR_TOWER_WORKING_HEAT_LEVEL.get();
             solarMelterWorkingHeatLevel = SOLAR_MELTER_WORKING_HEAT_LEVEL.get();
-            maxRpm = MAX_RPM.get();
         }
     }
 }
