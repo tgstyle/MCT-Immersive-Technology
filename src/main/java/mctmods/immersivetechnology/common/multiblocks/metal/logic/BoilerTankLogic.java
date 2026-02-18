@@ -9,9 +9,9 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.api.HeatCapabilities;
-import mctmods.immersivetechnology.api.capability.IHeatConsumer;
-import mctmods.immersivetechnology.api.capability.IHeatProvider;
+import com.immersiveconvergence.api.HeatCapabilities;
+import com.immersiveconvergence.api.capability.IHeatConsumer;
+import com.immersiveconvergence.api.capability.IHeatProvider;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidOutput;

@@ -12,10 +12,10 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlock
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
 import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.MechanicalCapabilities;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.mojang.datafixers.util.Pair;
-import mctmods.immersivetechnology.api.MechanicalCapabilities;
-import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
-import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;

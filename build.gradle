@@ -83,6 +83,7 @@ ext {
     version_jei = versionProps['version_jei']
     version_parchment = versionProps['version_parchment']
     version_ie = versionProps['version_ie']
+    version_ic = versionProps['version_ic']
     mod_license = gradleProps['mod_license']
     mod_name = gradleProps['mod_name']
     mod_authors = gradleProps['mod_authors']
@@ -100,6 +101,7 @@ def version_replaces = { [
         'mod_authors'  : mod_authors,
         'mod_description': mod_description,
         'version_ie'   : version_ie,
+        'version_ic'   : version_ic,
         'stage'        : stage,
 ] as Map<String, Object> }
 
@@ -124,6 +126,20 @@ tasks.register('copyModsTomlForIntelliJ', Copy) {
     into "$projectDir/out/production/resources"
     include "META-INF/mods.toml"
     dependsOn processResources
+}
+
+def icJar = null
+def icDir = file('../Immersive-Convergence/build/libs')
+def matchingJars = fileTree(icDir) {
+    include "ImmersiveConvergence-${version_minecraft}-*-dev.jar"
+    exclude "**/*-sources.jar"
+}.files
+
+if (!matchingJars.isEmpty()) {
+    icJar = matchingJars.sort { a, b -> b.lastModified() <=> a.lastModified() }.last()
+    logger.lifecycle("✅ Found IC deobf JAR: ${icJar.name}")
+} else {
+    logger.warn('⚠️  No IC deobf JAR found')
 }
 
 minecraft {
@@ -222,6 +238,7 @@ mixin {
 
 project.ext.lwjglVersion = "3.3.6"
 project.ext.lwjglNatives = "natives-linux"
+
 dependencies {
     minecraft "net.minecraftforge:forge:${version_minecraft}-${version_forge}"
 
@@ -234,11 +251,15 @@ dependencies {
     implementation fg.deobf("curse.maven:engineered-schematics-1207780:6560826")
 
     implementation fg.deobf("curse.maven:jade-324717:6855440")
-	implementation fg.deobf("curse.maven:the-one-probe-245211:6106996")
+    implementation fg.deobf("curse.maven:the-one-probe-245211:6106996")
 
     datagenImplementation("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    if (icJar != null) {
+        implementation files(icJar)
+    }
 }
 
 def customGradle = rootProject.file('custom.gradle')
@@ -284,6 +305,7 @@ build.dependsOn bumpVersion, signJar
 
 tasks.register('datagenJar', Jar) {
     dependsOn datagenClasses
+    archiveBaseName.set("MCT-ImmersiveTechnology-${version_minecraft}")
     archiveClassifier = 'datagen'
     from sourceSets.datagen.output
     manifest {
@@ -293,6 +315,7 @@ tasks.register('datagenJar', Jar) {
 
 tasks.register('sourcesJar', Jar) {
     dependsOn classes
+    archiveBaseName.set("MCT-ImmersiveTechnology-${version_minecraft}")
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
     from sourceSets.datagen.allSource
@@ -316,7 +339,7 @@ void minimizePNGFile(File file) {
             System.out.format("Reduced File size of %s from %d bytes to %d bytes (reduced by %.2f%%)\n",
                     file, size, newSize, ((double) (size - newSize)) / ((double) size) * 100.0)
         }
-    } catch (Exception e) {
+    } catch (Exception ignored) {
         System.out.println("optipng not found, skipping optimization for ${file}")
     }
 }
@@ -333,32 +356,8 @@ tasks.register('optimizePng') {
 
 tasks.register('genIntellijRunsDummy')
 
-tasks.register('speedUpPreRun') {
-    doLast {
-        for (String s in ["Client", "Server", "Data"]) {
-            def runConfigFile = file(".idea/runConfigurations/run${s}.xml")
-            if (runConfigFile.exists()) {
-                ant.replace(
-                        file: runConfigFile,
-                        token: "prepareRun${s}",
-                        value: "prepareRuns"
-                )
-                def content = runConfigFile.text
-                if (!content.contains('-Dorg.gradle.logging.level=warn')) {
-                    ant.replace(
-                            file: runConfigFile,
-                            token: '<option name="VM_PARAMETERS" value="',
-                            value: '<option name="VM_PARAMETERS" value="-Dorg.gradle.logging.level=warn '
-                    )
-                }
-            }
-        }
-    }
-}
-
 tasks.withType(Task).configureEach {
     if (it.name == "genIntellijRuns") {
-        it.finalizedBy speedUpPreRun
         genIntellijRunsDummy.dependsOn it
     } else if (it.name == "runServer") {
         it.standardInput = System.in

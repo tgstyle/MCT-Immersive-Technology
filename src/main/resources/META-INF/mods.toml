@@ -33,5 +33,12 @@ versionRange="[${version_ie},]"
 ordering="NONE"
 side="BOTH"
 
+[[dependencies.immersivetechnology]]
+modId="immersiveconvergence"
+mandatory=true
+versionRange="[${version_ic},]"
+ordering="NONE"
+side="BOTH"
+
 [[mixins]]
 config="mixins.immersivetechnology.json"

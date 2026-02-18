@@ -4,12 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import mctmods.immersivetechnology.api.HeatCapabilities;
-import mctmods.immersivetechnology.api.MechanicalCapabilities;
-import mctmods.immersivetechnology.api.capability.IHeatConsumer;
-import mctmods.immersivetechnology.api.capability.IHeatProvider;
-import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
-import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITQueueProcessor;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.core.integration.top.OneProbeHelper;
@@ -26,9 +20,6 @@ import mctmods.immersivetechnology.core.proxy.CommonProxy;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -56,7 +47,6 @@ public class ImmersiveTechnology {
         IEventBus modEventBus = context.getModEventBus();
         ITLib.IT_LOGGER.info("IT Starting");
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::registerCapabilities);
         modEventBus.addListener(this::enqueueIMC);
         ITLib.IT_LOGGER.info("Starting Proxy Mod Construction");
         CommonProxy.modConstruction(modEventBus);
@@ -88,22 +78,6 @@ public class ImmersiveTechnology {
                 return null;
             });
         }
-    }
-
-    private static final CapabilityToken<IHeatProvider> HEAT_PROVIDER_TOKEN = new CapabilityToken<>() {};
-    private static final CapabilityToken<IHeatConsumer> HEAT_CONSUMER_TOKEN = new CapabilityToken<>() {};
-    private static final CapabilityToken<IMechanicalEnergyProvider> MECHANICAL_PROVIDER_TOKEN = new CapabilityToken<>() {};
-    private static final CapabilityToken<IMechanicalEnergyConsumer> MECHANICAL_CONSUMER_TOKEN = new CapabilityToken<>() {};
-
-    private void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.register(IHeatProvider.class);
-        event.register(IHeatConsumer.class);
-        event.register(IMechanicalEnergyProvider.class);
-        event.register(IMechanicalEnergyConsumer.class);
-        HeatCapabilities.HEAT_PROVIDER_CAPABILITY = CapabilityManager.get(HEAT_PROVIDER_TOKEN);
-        HeatCapabilities.HEAT_CONSUMER_CAPABILITY = CapabilityManager.get(HEAT_CONSUMER_TOKEN);
-        MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY = CapabilityManager.get(MECHANICAL_PROVIDER_TOKEN);
-        MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY = CapabilityManager.get(MECHANICAL_CONSUMER_TOKEN);
     }
 
     @SubscribeEvent
