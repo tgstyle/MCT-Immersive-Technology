@@ -12,10 +12,12 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,22 +25,46 @@ import java.util.List;
 
 @Mixin(World.class)
 public abstract class MixinMCTWorldCMEFix {
-    @Shadow private boolean processingLoadedTiles;
+    @Unique private static Field mct$processingLoadedTilesField = null;
+    @Unique private static boolean mct$fieldChecked = false;
 
     @Shadow @Final private List<TileEntity> addedTileEntityList;
-
     @Shadow @Final public List<TileEntity> loadedTileEntityList;
-
     @Shadow @Final public List<TileEntity> tickableTileEntities;
-
     @Shadow @Final public boolean isRemote;
 
     @Inject(method = "addTileEntities(Ljava/util/Collection;)V", at = @At("HEAD"), cancellable = true)
     private void injectAddTileEntities(Collection<TileEntity> collection, CallbackInfo ci) {
         if (!MCTMixinConfig.mixinSettings.enableWorldMixin) { return; }
         ci.cancel();
+        if (!mct$fieldChecked) {
+            mct$fieldChecked = true;
+            String[] names = {"processingLoadedTiles", "field_147481_N"};
+            for (String name : names) {
+                try {
+                    Field f = World.class.getDeclaredField(name);
+                    f.setAccessible(true);
+                    mct$processingLoadedTilesField = f;
+                    break;
+                } catch (NoSuchFieldException ignored) {
+                } catch (Exception e) {
+                    MCTMixin.LOGGER.error("Failed to access processingLoadedTiles field", e);
+                    break;
+                }
+            }
+            if (mct$processingLoadedTilesField == null) {
+                MCTMixin.LOGGER.info("processingLoadedTiles field not found in World (CleanroomMC compatibility mode). Using immediate add.");
+            }
+        }
+
         World world = (World)(Object)this;
         List<TileEntity> toAdd = new ArrayList<>(collection);
+        boolean processingLoadedTiles = false;
+        if (mct$processingLoadedTilesField != null) {
+            try {
+                processingLoadedTiles = mct$processingLoadedTilesField.getBoolean(world);
+            } catch (Exception ignored) {}
+        }
         if (MCTMixinConfig.mixinSettings.enableAdditionsLogging && !toAdd.isEmpty()) {
             String mode = processingLoadedTiles ? "delayed" : "immediate";
             MCTMixin.LOGGER.debug("Adding {} TEs ({} add)", toAdd.size(), mode);
@@ -46,10 +72,7 @@ public abstract class MixinMCTWorldCMEFix {
         if (processingLoadedTiles) {
             for (TileEntity tile : toAdd) {
                 if (tile.getWorld() != world) { tile.setWorld(world); }
-                int sizeBefore = addedTileEntityList.size();
                 addedTileEntityList.add(tile);
-                int sizeAfter = addedTileEntityList.size();
-                if (MCTMixinConfig.mixinSettings.enablePotentialsLogging && sizeAfter > sizeBefore + 1) { MCTMixin.LOGGER.warn("Potential CME in delayed add: {} at {}", tile.getClass().getName(), tile.getPos()); }
             }
         } else {
             for (TileEntity tile : toAdd) {
