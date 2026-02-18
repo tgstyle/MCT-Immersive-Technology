@@ -14,6 +14,10 @@ pluginManagement {
     }
 }
 
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.9.0'
+}
+
 // Load version.properties
 def propsFile = file('version.properties')
 def props = new Properties()
