@@ -27,6 +27,7 @@ public class ITBlockTags extends BlockTagsProvider {
             ITMultiblockProvider.COOLING_TOWER,
             ITMultiblockProvider.DISTILLER,
             ITMultiblockProvider.GAS_TURBINE,
+            ITMultiblockProvider.HEAT_EXCHANGER,
             ITMultiblockProvider.SOLAR_MELTER,
             ITMultiblockProvider.SOLAR_REFLECTOR,
             ITMultiblockProvider.SOLAR_TOWER,

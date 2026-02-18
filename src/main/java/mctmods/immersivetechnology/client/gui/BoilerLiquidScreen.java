@@ -5,7 +5,7 @@ import mctmods.immersivetechnology.client.gui.helper.ITContainerScreen;
 import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.client.gui.helper.ITInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.BoilerLiquidMenu;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;

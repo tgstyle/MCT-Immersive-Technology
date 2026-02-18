@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.core.BlockPos;
@@ -113,7 +113,6 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
             }
             markContainingBlockForUpdate(null);
             level.updateNeighborsAt(worldPosition, state.getBlock());
-            // Trigger updates on adjacent blocks for general compatibility
             for (Direction d : Direction.values()) {
                 BlockPos adjPos = worldPosition.relative(d);
                 BlockEntity adj = level.getBlockEntity(adjPos);

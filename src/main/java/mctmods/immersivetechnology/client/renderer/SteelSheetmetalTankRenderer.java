@@ -44,7 +44,7 @@ public class SteelSheetmetalTankRenderer extends ITBaseBlockEntityRenderer<Multi
             builder.vertex(mat, 10, 0, 0).color(0x22, 0x22, 0x22, 0xff).endVertex();
             if (!fs.isEmpty()) {
                 float h = fs.getAmount() / (float) state.tank.getCapacity();
-                matrixStack.translate(0, 0, .004f);
+                matrixStack.translate(0, 0, .0001f);
                 ITGuiHelper.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.solid()), matrixStack, fs, 6, 0 + (1 - h) * 16, 4, h * 16);
             }
             matrixStack.popPose();

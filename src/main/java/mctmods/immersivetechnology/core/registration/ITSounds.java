@@ -12,6 +12,7 @@ public class ITSounds {
 
     public static final RegistryObject<SoundEvent> alternator = registerSound("alternator");
     public static final RegistryObject<SoundEvent> boiler_liquid = registerSound("boiler_liquid");
+    public static final RegistryObject<SoundEvent> boiler_solid = registerSound("boiler_solid");
     public static final RegistryObject<SoundEvent> coolingTower = registerSound("cooling_tower");
     public static final RegistryObject<SoundEvent> dance = registerSound("dance");
     public static final RegistryObject<SoundEvent> distiller = registerSound("distiller");
@@ -23,6 +24,7 @@ public class ITSounds {
     public static final RegistryObject<SoundEvent> gasStarter = registerSound("gas_starter");
     public static final RegistryObject<SoundEvent> heatExchanger = registerSound("heat_exchanger");
     public static final RegistryObject<SoundEvent> meltingCrucible = registerSound("melting_crucible");
+    public static final RegistryObject<SoundEvent> pilot = registerSound("pilot");
     public static final RegistryObject<SoundEvent> pressure_release = registerSound("pressure_release");
     public static final RegistryObject<SoundEvent> steamTurbine = registerSound("steam_turbine");
     public static final RegistryObject<SoundEvent> solarMelter = registerSound("solar_melter");

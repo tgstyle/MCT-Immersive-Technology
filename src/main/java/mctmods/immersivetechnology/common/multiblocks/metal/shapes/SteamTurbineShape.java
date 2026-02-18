@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.shapes;
 
-import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
-import mctmods.immersivetechnology.common.util.multiblock.MultiblockData;
-import mctmods.immersivetechnology.common.util.multiblock.MultiblockDataLoader;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.multiblock.GenericShape;
+import mctmods.immersivetechnology.core.util.multiblock.MultiblockData;
+import mctmods.immersivetechnology.core.util.multiblock.MultiblockDataLoader;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;

@@ -17,9 +17,9 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.util.FakePlayer;
 
 import javax.annotation.Nonnull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,11 +36,15 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
     }
 
     @Override public void playerWillDestroy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull Player player) {
-        if (level.isClientSide) { super.playerWillDestroy(level, pos, state, player); return; }
+        if (level.isClientSide) { return; }
         BlockEntity te = level.getBlockEntity(pos);
         if (te instanceof IMultiblockBE<?> be) {
             var helper = be.getHelper();
-            if (helper.getContext() != null && ((ITMultiblockBEHelper)helper).isAssembled()) { helper.disassemble(); }
+            if (((ITMultiblockBEHelper)helper).it$isDisassembling()) {
+                super.playerWillDestroy(level, pos, state, player);
+                return;
+            }
+            if (helper.getContext() != null && ((ITMultiblockBEHelper)helper).it$isAssembled() && !(player instanceof FakePlayer)) { helper.disassemble(); }
         }
         super.playerWillDestroy(level, pos, state, player);
     }
@@ -50,7 +54,11 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
             BlockEntity te = level.getBlockEntity(pos);
             if (te instanceof IMultiblockBE<?> be) {
                 var helper = be.getHelper();
-                if (helper.getContext() != null && ((ITMultiblockBEHelper)helper).isAssembled()) { helper.disassemble(); }
+                if (((ITMultiblockBEHelper)helper).it$isDisassembling()) {
+                    super.onRemove(state, level, pos, newState, isMoving);
+                    return;
+                }
+                if (helper.getContext() != null && ((ITMultiblockBEHelper)helper).it$isAssembled()) { helper.disassemble(); }
             }
         }
         super.onRemove(state, level, pos, newState, isMoving);
@@ -61,7 +69,7 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
         BlockEntity te = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (te instanceof IMultiblockBE<?> be) {
             var helper = be.getHelper();
-            if (helper.getContext() != null && ((ITMultiblockBEHelper)helper).isAssembled()) { return new ArrayList<>(); }
+            if (helper.getContext() != null || ((ITMultiblockBEHelper)helper).it$isDisassembling()) { return new ArrayList<>(); }
         }
         return super.getDrops(state, builder);
     }

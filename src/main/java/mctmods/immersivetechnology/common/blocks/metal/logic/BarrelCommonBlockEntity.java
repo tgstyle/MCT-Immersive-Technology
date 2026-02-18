@@ -9,7 +9,7 @@ import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.helper.ITClientTickableBE;
 import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

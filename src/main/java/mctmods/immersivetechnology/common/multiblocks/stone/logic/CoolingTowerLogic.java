@@ -17,7 +17,7 @@ import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerR
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.CoolingTowerShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITParticles;
 import mctmods.immersivetechnology.core.registration.ITSounds;
@@ -143,7 +143,23 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             }
         }
         state.active = !state.processQueue.isEmpty();
-        boolean update = wasActive != state.active;
+        boolean activeChanged = wasActive != state.active;
+        boolean progressChanged = false;
+        if (!state.processQueue.isEmpty()) {
+            CoolingTowerProcess current = state.processQueue.get(0);
+            int newProg = current.getTicksProcessed();
+            int newTotal = current.getRecipe().totalProcessTime;
+            if (newProg != state.processProgress || newTotal != state.totalProcessTime) {
+                state.processProgress = newProg;
+                state.totalProcessTime = newTotal;
+                progressChanged = true;
+            }
+        } else if (state.processProgress > 0 || state.totalProcessTime > 0) {
+            state.processProgress = 0;
+            state.totalProcessTime = 0;
+            progressChanged = true;
+        }
+        boolean update = activeChanged || progressChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -186,6 +202,8 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         public int soundCooldown = 0;
         public List<CoolingTowerProcess> processQueue = new ArrayList<>();
         public BooleanSupplier isSoundPlaying = () -> false;
+        public int processProgress = 0;
+        public int totalProcessTime = 0;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -233,11 +251,15 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT());
+            nbt.putInt("processProgress", processProgress);
+            nbt.putInt("totalProcessTime", totalProcessTime);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
+            processProgress = nbt.getInt("processProgress");
+            totalProcessTime = nbt.getInt("totalProcessTime");
         }
     }
 

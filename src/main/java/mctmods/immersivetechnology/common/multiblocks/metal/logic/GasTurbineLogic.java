@@ -13,9 +13,9 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.CachedRecipe;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.api.MechanicalCapabilities;
-import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
-import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
+import com.immersiveconvergence.api.MechanicalCapabilities;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidOutput;
@@ -24,7 +24,8 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.GasTurbineSha
 import mctmods.immersivetechnology.common.multiblocks.metal.process.RotationInertiaProcess;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
@@ -46,7 +47,6 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
@@ -58,15 +58,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>, IServerTickableComponent<GasTurbineLogic.State>, IClientTickableComponent<GasTurbineLogic.State>, ITPressurizedFluidOutput<GasTurbineLogic.State> {
-    public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
-    public static final int ENERGY_CAPACITY = 8192;
-    private static final int ENERGY_CAPACITY_MV = 2048;
-    private static final int ELECTRIC_STARTER_CONSUMPTION = 4096;
-    private static final int SPARKPLUG_CONSUMPTION = 1024;
-    private static final double BASE_MASS = 8;
-    private static final double DRIVE_TORQUE = 30;
-    private static final double FRICTION = 60;
-    private static final int MAX_SPEED = MechanicalCapabilities.MAX_RPM / 2;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(GasTurbineShape.DATA.pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
@@ -84,6 +75,16 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     public static final CapabilityPosition ROTATIONAL_OUTPUT_POI = new CapabilityPosition(getPosList("mech_output").get(0), getFacing("mech_output"));
     public static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
     private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
+
+    private static final int TANK_CAPACITY = ITServerConfig.gasTurbineTankCapacity;
+    private static final int ENERGY_CAPACITY_HV = ITServerConfig.gasTurbineEnergyCapacityHV;
+    private static final int ENERGY_CAPACITY_MV = ITServerConfig.gasTurbineEnergyCapacityMV;
+    private static final int STARTER_CONSUMPTION = ITServerConfig.gasTurbineStarterConsumption;
+    private static final int SPARKPLUG_CONSUMPTION = ITServerConfig.gasTurbineSparkplugConsumption;
+    private static final double BASE_MASS = ITServerConfig.gasTurbineBaseMass;
+    private static final double DRIVE_TORQUE = ITServerConfig.gasTurbineDriveTorque;
+    private static final double FRICTION = ITServerConfig.gasTurbineFriction;
+    private static final int MAX_SPEED = (int) (MechanicalCapabilities.MAX_RPM * ITServerConfig.gasTurbineMaxSpeedFactor);
 
     private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
     private static RelativeBlockFace getFacing(String name) {
@@ -268,9 +269,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         boolean isRSEnabled = state.rsState.isEnabled(ctx);
         state.ignited = state.ignitionGracePeriod > 0;
         state.starterRunning = false;
-        if (isRSEnabled && ELECTRIC_STARTER_CONSUMPTION <= state.energyStorageHV.getEnergyStored()) {
+        if (isRSEnabled && STARTER_CONSUMPTION <= state.energyStorageHV.getEnergyStored()) {
             state.starterRunning = true;
-            state.energyStorageHV.extractEnergy(ELECTRIC_STARTER_CONSUMPTION, false);
+            state.energyStorageHV.extractEnergy(STARTER_CONSUMPTION, false);
         }
         if (state.speed <= 0) { state.speed = 0; state.isShutdown = false; state.stall = false; }
         if (!isRSEnabled || !hasConsumer) {
@@ -314,7 +315,6 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                         GasTurbineRecipe recipe = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fluid);
                         if (recipe != null && fluid.getAmount() >= recipe.input.getAmount()) {
                             state.tanks.input.drain(recipe.input.getAmount(), FluidAction.EXECUTE);
-                            // The recipe defines how much torque the turbine provides while burning.
                             state.currentTorque = recipe.torque;
                             if (recipe.fluidOutput != null) {
                                 int filled = state.tanks.output.fill(recipe.fluidOutput, FluidAction.EXECUTE);
@@ -352,7 +352,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         State state = ctx.getState();
         if (cap == ForgeCapabilities.ENERGY) {
             if (position.equals(ENERGY_INPUT_HV_POI)) { return state.energyCapHV.cast(ctx); }
-            if (position.equals(ENERGY_INPUT_MV_POI) ) { return state.energyCapMV.cast(ctx); }
+            if (position.equals(ENERGY_INPUT_MV_POI)) { return state.energyCapMV.cast(ctx); }
         }
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             if (position.equals(INPUT_FLUID_POI)) { return state.fluidCap.cast(ctx); }
@@ -390,7 +390,6 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         public final CapabilityReference<IEnergyStorage> mvInput;
         private final BiFunction<Level, FluidStack, GasTurbineRecipe> recipeGetter;
         public int speed = 0;
-        /** Current torque multiplier (recipe-controlled). Defaults to 1.0 for compatibility. */
         public float currentTorque = 1.0f;
         public boolean active = false;
         public boolean starterRunning = false;
@@ -425,10 +424,10 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            this.tanks = new GasTurbineTank(v -> onChanged.run());
+            this.tanks = new GasTurbineTank(v -> onChanged.run(), TANK_CAPACITY);
             this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
-            this.energyStorageHV = new AveragingEnergyStorage(ENERGY_CAPACITY);
+            this.energyStorageHV = new AveragingEnergyStorage(ENERGY_CAPACITY_HV);
             this.energyStorageMV = new AveragingEnergyStorage(ENERGY_CAPACITY_MV);
             this.energyCapHV = new StoredCapability<>(energyStorageHV);
             this.energyCapMV = new StoredCapability<>(energyStorageMV);
@@ -522,11 +521,11 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     }
 
     public record GasTurbineTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
-        public GasTurbineTank(Consumer<Void> markDirty) {
-            this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty));
+        public GasTurbineTank(Consumer<Void> markDirty, int capacity) {
+            this(new ITMarkableFluidTank(capacity, markDirty), new ITMarkableFluidTank(capacity, markDirty));
         }
 
-        public static GasTurbineTank makeClient() { return new GasTurbineTank(v -> {}); }
+        public static GasTurbineTank makeClient(int capacity) { return new GasTurbineTank(v -> {}, capacity); }
 
         public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();
@@ -541,6 +540,6 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         }
 
         @SuppressWarnings("unused")
-        public int getCapacity() { return TANK_CAPACITY; }
+        public int getCapacity() { return input.getCapacity(); }
     }
 }

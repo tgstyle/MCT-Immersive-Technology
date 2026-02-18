@@ -15,8 +15,8 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.Initi
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
@@ -45,8 +45,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic.State>, IServerTickableComponent<SolarReflectorLogic.State>, IClientTickableComponent<SolarReflectorLogic.State> {
-    private static final float BASE_FREQ = 2.09f;
-    public static final float DANCE_DURATION = 63f;
+    private static final float BASE_FREQ = (float) ITClientConfig.solarReflectorBaseFrequency;
+    public static final float DANCE_DURATION = (float) ITClientConfig.solarReflectorDanceDuration;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SolarReflectorShape.DATA.pointsOfInterest);
 
     public static BlockPos DANCE_SOUND_POI = getPosList("sound").get(0);

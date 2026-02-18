@@ -12,13 +12,13 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlock
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
 import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.MechanicalCapabilities;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.mojang.datafixers.util.Pair;
-import mctmods.immersivetechnology.api.MechanicalCapabilities;
-import mctmods.immersivetechnology.api.capability.IMechanicalEnergyConsumer;
-import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;
@@ -47,10 +47,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>, IServerTickableComponent<AlternatorLogic.State>, IClientTickableComponent<AlternatorLogic.State> {
-    public static final int ENERGY_CAPACITY = 1200000;
-    private static final double BASE_MASS = 2;
-    private static final double FRICTION = 0;
-    private static final int MAX_OUTPUT = 12288;
+
     private static final int MAX_SPEED = MechanicalCapabilities.MAX_RPM;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AlternatorShape.DATA.pointsOfInterest);
 
@@ -142,8 +139,8 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
     private void generateAndPushEnergy(State state, IMultiblockContext<State> ctx, Level level) {
         double ratio = (double) state.speed / MAX_SPEED;
-        double factor = Math.max(0D, ITServerConfig.alternatorPowerFactor);
-        int generatedThisTick = (int) Math.round(ratio * state.torqueMultiplier * MAX_OUTPUT * factor);
+        double powerFactor = Math.max(0.0D, ITServerConfig.alternatorPowerFactor);
+        int generatedThisTick = (int) Math.round(ratio * state.torqueMultiplier * ITServerConfig.alternatorMaxOutput * powerFactor);
         List<IEnergyStorage> connected = getConnectedHandlers(ctx, level);
         if (connected.isEmpty()) { state.energy.receiveEnergy(generatedThisTick, false); return; }
         int pushed = distributeFluxProper(connected, generatedThisTick);
@@ -222,8 +219,8 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AlternatorShape.GETTER; }
 
     private static class MechanicalEnergyConsumer implements IMechanicalEnergyConsumer {
-        @Override public double getMass() { return BASE_MASS; }
-        @Override public double getFriction() { return FRICTION; }
+        @Override public double getMass() { return ITServerConfig.alternatorBaseMass; }
+        @Override public double getFriction() { return ITServerConfig.alternatorFriction; }
         @Override public int getMaxSpeed() { return MechanicalCapabilities.MAX_RPM; }
     }
 
@@ -240,7 +237,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
+            this.energy = new SyncEnergyStorage(ITServerConfig.alternatorEnergyCapacity, onChanged);
             this.energyCap = new StoredCapability<>(this.energy);
         }
 
@@ -282,7 +279,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             torqueMultiplier = nbt.getFloat("torqueMultiplier");
-            if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); }
+            if (energy == null) { energy = new SyncEnergyStorage(ITServerConfig.alternatorEnergyCapacity, () -> {}); }
             energy.deserializeNBT(nbt.get("energy"));
             effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
         }

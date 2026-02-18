@@ -10,7 +10,7 @@ import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.core.BlockPos;
@@ -126,7 +126,6 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         } else if (outputWired) {
             extracted = inputStorage.extractEnergy(canAccept, false);
             bufferedEnergy += extracted;
-            // Do not add to acceptedAmount here; it will be added in extractEnergy when the wire pulls
         } else {
             extracted = inputStorage.extractEnergy(canAccept, true);
             int inserted = outputStorage.receiveEnergy(extracted, false);

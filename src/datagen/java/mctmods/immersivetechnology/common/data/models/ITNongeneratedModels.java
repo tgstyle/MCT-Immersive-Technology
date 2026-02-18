@@ -14,11 +14,9 @@ public class ITNongeneratedModels extends ModelProvider<ITNongeneratedModels.ITN
         super(output, MODID, "block", ITNongeneratedModels.ITNongeneratedModel::new, existingFileHelper);
     }
 
-    @Override
-    protected void registerModels() { }
+    @Override protected void registerModels() { }
 
-    @Override
-    public @NotNull String getName() {
+    @Override @NotNull public String getName() {
         return "Non-generated models";
     }
 

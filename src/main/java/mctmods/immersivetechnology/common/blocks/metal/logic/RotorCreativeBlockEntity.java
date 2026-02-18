@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.api.MechanicalCapabilities;
-import mctmods.immersivetechnology.api.capability.IMechanicalEnergyProvider;
+import com.immersiveconvergence.api.MechanicalCapabilities;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITClientTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.RotorCreativeBlock;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.core.BlockPos;

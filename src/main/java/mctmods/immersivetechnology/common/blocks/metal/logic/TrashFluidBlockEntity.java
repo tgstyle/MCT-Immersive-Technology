@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import mctmods.immersivetechnology.common.blocks.metal.shape.TrashCanShape;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import net.minecraft.core.BlockPos;

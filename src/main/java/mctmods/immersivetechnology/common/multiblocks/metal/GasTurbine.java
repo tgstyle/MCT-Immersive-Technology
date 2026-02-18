@@ -22,4 +22,6 @@ public class GasTurbine extends ITTemplateMultiblock {
     @Override public float getManualScale() { return GasTurbineShape.MANUAL_SCALE; }
 
     @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, GasTurbineShape.CLIENT_OFFSET.getX(), GasTurbineShape.CLIENT_OFFSET.getY(), GasTurbineShape.CLIENT_OFFSET.getZ())); }
+
+    @Override public boolean canBeMirrored() { return true; }
 }

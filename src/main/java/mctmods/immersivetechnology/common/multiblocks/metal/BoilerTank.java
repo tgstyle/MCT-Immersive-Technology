@@ -9,13 +9,15 @@ import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-
+import java.util.List;
 import java.util.function.Consumer;
 
 public class BoilerTank extends ITTemplateMultiblock {
     public static final BoilerTank INSTANCE = new BoilerTank();
 
-    public BoilerTank() { super(ITLib.rl("multiblocks/boiler_tank"), BoilerTankShape.MASTER_POS, BoilerTankShape.TRIGGER_POS, new BlockPos(BoilerTankShape.WIDTH,BoilerTankShape.HEIGHT,BoilerTankShape.LENGTH), ITMultiblockProvider.BOILER_TANK); }
+    public BoilerTank() {
+        super(ITLib.rl("multiblocks/boiler_tank"), BoilerTankShape.MASTER_POS, BoilerTankShape.TRIGGER_POS, new BlockPos(BoilerTankShape.WIDTH, BoilerTankShape.HEIGHT, BoilerTankShape.LENGTH), ITMultiblockProvider.BOILER_TANK);
+    }
 
     @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
@@ -24,4 +26,6 @@ public class BoilerTank extends ITTemplateMultiblock {
     @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, BoilerTankShape.CLIENT_OFFSET.getX(), BoilerTankShape.CLIENT_OFFSET.getY(), BoilerTankShape.CLIENT_OFFSET.getZ())); }
 
     @Override public boolean canBeMirrored() { return false; }
+
+    @Override protected List<BlockPos> symmetricMirror() { return BoilerTankShape.SYMMETRIC_TRIGGER_OFFSETS; }
 }

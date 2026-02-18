@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal.logic;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.core.BlockPos;

@@ -7,7 +7,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlock
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.common.util.ITUtils;
+import mctmods.immersivetechnology.core.util.ITUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -30,9 +30,9 @@ public interface ITPressurizedFluidOutput<State extends IMultiblockState> {
 
     default boolean shouldPumpOutputs(IMultiblockContext<State> ctx) { return true; }
 
-    default void pumpOutputs(IMultiblockContext<State> ctx) {
+    default boolean pumpOutputs(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
-        if (!shouldPumpOutputs(ctx)) return;
+        if (!shouldPumpOutputs(ctx)) return false;
         boolean dirty = false;
         Level level = ctx.getLevel().getRawLevel();
         List<BlockPos> outputPositions = getOutputPositions();
@@ -69,5 +69,6 @@ public interface ITPressurizedFluidOutput<State extends IMultiblockState> {
             dirty = true;
         }
         if (dirty) ctx.markMasterDirty();
+        return dirty;
     }
 }

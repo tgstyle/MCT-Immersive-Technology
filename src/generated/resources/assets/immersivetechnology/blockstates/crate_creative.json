@@ -1,7 +1,1 @@
-{
-  "variants": {
-    "": {
-      "model": "immersivetechnology:block/wooden/crate_creative"
-    }
-  }
-}
+{"variants":{"":{"model":"immersivetechnology:block/wooden/crate_creative"}}}

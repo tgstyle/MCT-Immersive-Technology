@@ -8,14 +8,14 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import mctmods.immersivetechnology.common.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.BoilerLiquidProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.BoilerSolidProcess;
-import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
+import mctmods.immersivetechnology.common.multiblocks.metal.shapes.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.CoolingTower;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.CoolingTowerLogic;
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.CoolingTowerShape;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -117,6 +117,14 @@ public class ITMultiblockProvider {
                     .component(new ITClearTank<>(ImmutableList.of(GasTurbineLogic.INPUT_FLUID_POI.posInMultiblock()), s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
                     .component(new ITDisassemblyTicker<>(GasTurbineShape.DISASSEMBLY_POS), state -> null)
                     .build();
+    public static final MultiblockRegistration<HeatExchangerLogic.State> HEAT_EXCHANGER =
+            metal(new HeatExchangerLogic(), "heat_exchanger")
+                    .structure(() -> getMBTemplate.apply("heat_exchanger"))
+                    .redstone(s -> s.rsState, HeatExchangerLogic.REDSTONE_POI)
+                    .component(new ITClearTank<>(HeatExchangerLogic.FLUID_INPUT_POIS, s -> { s.tanks.input0().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); }, Component.translatable(TranslationKey.GUI_INPUT_TANKS_CLEARED.getLocation())))
+                    .component(new ITDisassemblyTicker<>(HeatExchangerShape.DISASSEMBLY_POS), state -> null)
+                    .withComparator()
+                    .build();
     public static final MultiblockRegistration<SolarMelterLogic.State> SOLAR_MELTER =
             metalNoMirror(new SolarMelterLogic(), "solar_melter")
                     .structure(() -> getMBTemplate.apply("solar_melter"))
@@ -153,9 +161,7 @@ public class ITMultiblockProvider {
                     .build();
 
     @SuppressWarnings("unused")
-    public static List<Class<? extends Block>> getAllBlockClasses() {
-        return List.of(ALTERNATOR.block().get().getClass(), BOILER_LIQUID.block().get().getClass(), BOILER_SOLID.block().get().getClass(), BOILER_TANK.block().get().getClass(), COOLING_TOWER.block().get().getClass(), DISTILLER.block().get().getClass(), GAS_TURBINE.block().get().getClass(), SOLAR_MELTER.block().get().getClass(), SOLAR_REFLECTOR.block().get().getClass(), SOLAR_TOWER.block().get().getClass(), STEAM_TURBINE.block().get().getClass(), STEEL_SHEETMETAL_TANK.block().get().getClass());
-    }
+    public static List<Class<? extends Block>> getAllBlockClasses() { return List.of(ALTERNATOR.block().get().getClass(), BOILER_LIQUID.block().get().getClass(), BOILER_SOLID.block().get().getClass(), BOILER_TANK.block().get().getClass(), COOLING_TOWER.block().get().getClass(), DISTILLER.block().get().getClass(), GAS_TURBINE.block().get().getClass(), HEAT_EXCHANGER.block().get().getClass(), SOLAR_MELTER.block().get().getClass(), SOLAR_REFLECTOR.block().get().getClass(), SOLAR_TOWER.block().get().getClass(), STEAM_TURBINE.block().get().getClass(), STEEL_SHEETMETAL_TANK.block().get().getClass()); }
 
     public static void init() {
         registerMB("alternator", Alternator.INSTANCE, ALTERNATOR);
@@ -165,6 +171,7 @@ public class ITMultiblockProvider {
         registerMB("cooling_tower", CoolingTower.INSTANCE, COOLING_TOWER);
         registerMB("distiller", Distiller.INSTANCE, DISTILLER);
         registerMB("gas_turbine", GasTurbine.INSTANCE, GAS_TURBINE);
+        registerMB("heat_exchanger", HeatExchanger.INSTANCE, HEAT_EXCHANGER);
         registerMB("solar_melter", SolarMelter.INSTANCE, SOLAR_MELTER);
         registerMB("solar_reflector", SolarReflector.INSTANCE, SOLAR_REFLECTOR);
         registerMB("solar_tower", SolarTower.INSTANCE, SOLAR_TOWER);

@@ -107,6 +107,9 @@ public class ClientProxy extends CommonProxy {
             multiblock.readFromFile(ITLib.rl("gas_turbine"));
             instance.addEntry(multiblock_category, multiblock.create());
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ITLib.rl("heat_exchanger"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ITLib.rl("solar_melter"));
             instance.addEntry(multiblock_category, multiblock.create());
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());

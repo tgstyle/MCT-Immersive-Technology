@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import mctmods.immersivetechnology.common.blocks.helper.*;
-import mctmods.immersivetechnology.common.network.ITPacketHandler;
-import mctmods.immersivetechnology.common.network.ITOSDRequestMessage;
-import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.network.ITPacketHandler;
+import mctmods.immersivetechnology.core.network.ITOSDRequestMessage;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -161,7 +161,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
 
     @Override public void setFacing(@NotNull Direction facing) {
         this.facing = facing;
-        invalidateCaps(); // Common cap invalidation
+        invalidateCaps();
         if (level != null && !level.isClientSide) {
             BlockState state = getBlockState();
             if (state.hasProperty(ITProperties.FACING_ALL)) level.setBlock(worldPosition, state.setValue(ITProperties.FACING_ALL, facing), 3);

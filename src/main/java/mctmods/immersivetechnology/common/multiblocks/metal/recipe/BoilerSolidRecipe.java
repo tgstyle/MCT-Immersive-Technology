@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
-import mctmods.immersivetechnology.api.HeatCapabilities;
+import com.immersiveconvergence.api.HeatCapabilities;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;

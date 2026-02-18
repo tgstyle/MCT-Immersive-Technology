@@ -17,6 +17,8 @@ public class ITClientConfig {
     public static final ForgeConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_SOLAR_REFLECTOR;
     public static final ForgeConfigSpec.BooleanValue CONFIG_DISABLE_REFLECTOR_DANCE;
     public static final ForgeConfigSpec.BooleanValue CONFIG_LOOP_REFLECTOR_DANCE;
+    public static final ForgeConfigSpec.DoubleValue CONFIG_SOLAR_REFLECTOR_BASE_FREQUENCY;
+    public static final ForgeConfigSpec.DoubleValue CONFIG_SOLAR_REFLECTOR_DANCE_DURATION;
     public static final ForgeConfigSpec.BooleanValue CONFIG_PER_TICK_TRASH_CANS;
     public static final ForgeConfigSpec.BooleanValue CONFIG_DISABLE_FANCY_TESR;
     public static final ForgeConfigSpec.BooleanValue CONFIG_PARTICLE_COLLIDE;
@@ -29,6 +31,8 @@ public class ITClientConfig {
     public static boolean doSpecialRenderSolarReflector;
     public static boolean disableReflectorDance;
     public static boolean loopReflectorDance;
+    public static double solarReflectorBaseFrequency;
+    public static double solarReflectorDanceDuration;
     public static boolean perTickTrashCans;
     public static boolean disableFancyTESR;
     public static boolean particleCollide;
@@ -46,6 +50,8 @@ public class ITClientConfig {
         BUILDER.comment("Solar Reflector options").push("solar_reflector");
         CONFIG_DISABLE_REFLECTOR_DANCE = BUILDER.comment("Disable the dance animation and sound for untaken solar reflectors (Default: false).").define("disable_dance", false);
         CONFIG_LOOP_REFLECTOR_DANCE = BUILDER.comment("Loop the dance animation and sound for untaken solar reflectors (Default: false).").define("loop_dance", false);
+        CONFIG_SOLAR_REFLECTOR_BASE_FREQUENCY = BUILDER.comment("Base frequency for the sine-wave based 'dance' animation (higher = faster movement).").defineInRange("base_frequency", 2.09D, 0.1D, 10.0D);
+        CONFIG_SOLAR_REFLECTOR_DANCE_DURATION = BUILDER.comment("Full cycle duration of the dance animation in seconds.").defineInRange("dance_duration", 63.0D, 10.0D, 300.0D);
         BUILDER.pop();
         BUILDER.comment("Experimental options").push("experimental");
         CONFIG_PER_TICK_TRASH_CANS = BUILDER.comment("Display trash can OSD as per tick average instead of per second (Default: false).").define("per_tick_trash_cans", false);
@@ -67,6 +73,8 @@ public class ITClientConfig {
             doSpecialRenderSolarReflector = CONFIG_DO_SPECIAL_RENDER_SOLAR_REFLECTOR.get();
             disableReflectorDance = CONFIG_DISABLE_REFLECTOR_DANCE.get();
             loopReflectorDance = CONFIG_LOOP_REFLECTOR_DANCE.get();
+            solarReflectorBaseFrequency = CONFIG_SOLAR_REFLECTOR_BASE_FREQUENCY.get();
+            solarReflectorDanceDuration = CONFIG_SOLAR_REFLECTOR_DANCE_DURATION.get();
             perTickTrashCans = CONFIG_PER_TICK_TRASH_CANS.get();
             disableFancyTESR = CONFIG_DISABLE_FANCY_TESR.get();
             particleCollide = CONFIG_PARTICLE_COLLIDE.get();
