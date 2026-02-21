@@ -1,0 +1,7 @@
+Alternador
+Grande e poderoso!
+<&multiblock>O Alternador é uma máquina multibloc que gera uma enorme quantidade de energia, podendo alimentar muito mais máquinas do que o §lGerador a gasóleo§r!
+
+
+§lFuncionamento§r
+    - O §lAlternador§r precisa de entrada rotacional de uma fonte de energia mecânica, como a §lTurbina a vapor§r ou a §lTurbina a gás§r.

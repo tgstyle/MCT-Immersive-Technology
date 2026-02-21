@@ -1,0 +1,9 @@
+Distillateur
+Évaporation !
+<&multiblock>Le Distillateur évapore l'eau en §leau distillée§r avec du sel comme sous-produit.
+
+
+§lFonctionnement§r
+    - L'§lEau§r est introduite à gauche.
+    - L'§lEau distillée§r sort à droite.
+    - Le sel sort à l'arrière.

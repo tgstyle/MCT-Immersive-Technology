@@ -1,0 +1,15 @@
+Kotel na pevné palivo
+Uvnitř se vaří pára!
+<&multiblock>Kotel je multiblockový stroj, který slouží k §lvaření vody§r na páru.
+
+
+
+
+
+§lProvoz§r
+    - §lPevné palivo§r se vkládá dole pod spalovací komoru.
+    - Kotel zapalte pochodní nebo křesadlem a pazourkem na horní mřížkovaný výfuk.
+    - Kotel běží v pilotním režimu, když není aktivní, a spotřebovává malé množství paliva.
+    - §lVoda§r musí být v připojené §lNádrži kotle§r.
+
+§lTip:§r Kotel zvládne zpracovat slušné množství vody.

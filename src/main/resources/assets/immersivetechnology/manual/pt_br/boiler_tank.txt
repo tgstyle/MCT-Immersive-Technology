@@ -1,0 +1,13 @@
+Tanque de Caldeira
+Está ficando bem vaporoso aqui!
+<&multiblock>A Caldeira é uma máquina multibloc usada para §lfervurar água§r em vapor.
+
+
+
+
+§lFuncionamento§r
+    - A §lÁgua§r é inserida próximo ao tanque no §llado esquerdo§r.
+    - O §lVapor§r sai pela §lparte superior§r do multibloc.
+    - A §lÁgua§r deve estar no tanque para que o §lQueimador de caldeira§r conectado funcione.
+
+§lDica:§r A Caldeira consegue processar uma quantidade decente de água.

@@ -1,0 +1,10 @@
+Torre Solar de Fundição
+Derretendo!
+<&multiblock>A Torre solar de fundição derrete sólidos em sua forma líquida para processamento posterior.
+
+
+
+§lFuncionamento§r
+    - Os §lFluidos aquecidos§r são inseridos na frente.
+    - Os §lFluidos derretidos§r saem atrás.
+    - Deve estar a 44 blocos de distância de outras torres.

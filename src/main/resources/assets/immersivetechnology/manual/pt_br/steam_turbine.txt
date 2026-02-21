@@ -1,0 +1,10 @@
+Turbina a Vapor
+Gira gira!
+<&multiblock>A Turbina a vapor usa a pressão do vapor para girar as pás e gerar energia rotacional.
+
+
+
+§lFuncionamento§r
+    - O §lVapor§r é inserido por tubo.
+    - O §lVapor de escape§r sai abaixo do rotor.
+    - Você precisa conectar um multibloc que use energia mecânica ao rotor para que funcione.

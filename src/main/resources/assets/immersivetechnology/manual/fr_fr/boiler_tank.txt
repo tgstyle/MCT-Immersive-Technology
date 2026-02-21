@@ -1,0 +1,13 @@
+Réservoir de chaudière
+Ça devient très vapeur ici !
+<&multiblock>La Chaudière est une machine multibloc utilisée pour §lfaire bouillir l'eau§r en vapeur.
+
+
+
+
+§lFonctionnement§r
+    - L'§lEau§r est introduite près du réservoir sur le §lcôté gauche§r.
+    - La §lVapeur§r sort par le §lhaut§r du multibloc.
+    - L'§lEau§r doit être présente dans le réservoir pour que le §lBrûleur de chaudière§r connecté fonctionne.
+
+§lAstuce :§r La Chaudière peut traiter une quantité respectable d'eau.

@@ -1,0 +1,11 @@
+Stahltank
+Füll ihn auf!
+<&multiblock>Der Stahltank ist einfach eine größere Version des normalen Tanks.
+
+
+
+
+
+§lBetrieb§r
+    - §lDampf§r wird oben eingefüllt.
+    - §lAuspuffdampf§r wird unten ausgegeben.

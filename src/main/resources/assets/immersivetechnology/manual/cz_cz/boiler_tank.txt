@@ -1,0 +1,13 @@
+Nádrž kotle
+Uvnitř se vaří pára!
+<&multiblock>Kotel je multiblockový stroj, který slouží k §lvaření vody§r na páru.
+
+
+
+
+§lProvoz§r
+    - §lVoda§r se vkládá poblíž nádrže na §llevé straně§r.
+    - §lPára§r vychází z §lvrcholu§r multiblocku.
+    - §lVoda§r musí být v nádrži, aby připojený §lHořák kotle§r fungoval.
+
+§lTip:§r Kotel zvládne zpracovat slušné množství vody.

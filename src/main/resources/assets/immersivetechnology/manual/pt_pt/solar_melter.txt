@@ -1,0 +1,10 @@
+Torre Solar de Fusão
+Derretendo!
+<&multiblock>A Torre solar de fusão derrete sólidos na sua forma líquida para processamento posterior.
+
+
+
+§lFuncionamento§r
+    - Os §lFluidos aquecidos§r são inseridos à frente.
+    - Os §lFluidos derretidos§r saem atrás.
+    - Deve estar a 44 blocos de distância de outras torres.

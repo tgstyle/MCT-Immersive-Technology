@@ -1,0 +1,7 @@
+Alternátor
+Velký a silný!
+<&multiblock>Alternátor je multiblockový stroj, který generuje velké množství energie – napájí mnohem více strojů než §lDieselový generátor§r!
+
+
+§lProvoz§r
+    - Alternátor potřebuje rotační vstup z mechanického zdroje energie, jako je §lParní turbína§r nebo §lPlynová turbína§r.

@@ -1,0 +1,10 @@
+Turbine à vapeur
+Tourne tourne !
+<&multiblock>La Turbine à vapeur utilise la pression de la vapeur pour faire tourner les pales et générer de l'énergie rotative.
+
+
+
+§lFonctionnement§r
+    - La §lVapeur§r est introduite par tuyau.
+    - La §lVapeur d'échappement§r sort sous le rotor.
+    - Vous devez connecter un multibloc utilisant l'énergie mécanique au rotor pour que la turbine fonctionne.

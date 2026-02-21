@@ -1,0 +1,11 @@
+Plynová turbína
+PLYN PLYN PLYN!
+<&multiblock>Plynová turbína využívá palivo a zapalování z hořáků uvnitř turbíny k výrobě horkého plynu s vysokou rychlostí. Tento plyn roztáčí lopatky turbíny a vytváří rotační energii.
+
+
+§lProvoz§r
+    - §lKapalné palivo§r se vkládá trubkou.
+    - §lSpaliny§r vycházejí pod rotorem.
+    - Strana s MV vstupem energie je zapalovač – může být napájen neustále.
+    - Strana s HV vstupem je startér – potřebuje energii, dokud zapalovač nezapálí palivo. Po zapálení odpojte startér.
+    - K rotoru musíte připojit multiblock, který využívá mechanickou energii.

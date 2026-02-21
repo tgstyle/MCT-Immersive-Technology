@@ -1,0 +1,10 @@
+Solární věž
+Sluneční kotel!
+<&multiblock>Solární věž je multiblockový stroj, který přes den mění vodu na páru.
+
+
+
+§lProvoz§r
+    - §lKapaliny§r k ohřevu se vkládají zepředu.
+    - §lOhřáté kapaliny§r vycházejí zezadu.
+    - Musí být minimálně 44 bloků od jiných věží.

@@ -1,0 +1,9 @@
+Destillierer
+Verdampfung!
+<&multiblock>Der Destillierer verdampft Wasser zu §ldestilliertem Wasser§r, wobei Salz als Nebenprodukt entsteht.
+
+
+§lBetrieb§r
+    - §lWasser§r wird links eingefüllt.
+    - §lDestilliertes Wasser§r wird rechts ausgegeben.
+    - Salz wird hinten ausgegeben.
