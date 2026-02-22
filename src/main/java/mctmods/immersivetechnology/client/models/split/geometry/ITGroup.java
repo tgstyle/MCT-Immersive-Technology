@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.client.models.split.geometry;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -19,21 +18,21 @@ public record ITGroup<Texture>(List<ITPolygon<Texture>> faces) {
     }
 
     public Stream<Map.Entry<ITEpsilonMath.Sign, ITGroup<Texture>>> split(ITPlane p) {
-        Map<ITEpsilonMath.Sign, List<ITPolygon<Texture>>> splitFaces = new EnumMap<>(ITEpsilonMath.Sign.class);
+        Map<ITEpsilonMath.Sign, List<ITPolygon<Texture>>> splitFaces = new java.util.EnumMap<>(ITEpsilonMath.Sign.class);
         for (ITPolygon<Texture> f : this.getFaces()) {
             Map<ITEpsilonMath.Sign, ITPolygon<Texture>> splitResult = f.splitAlong(p);
             for (Map.Entry<ITEpsilonMath.Sign, ITPolygon<Texture>> e : splitResult.entrySet()) {
-                splitFaces.computeIfAbsent(e.getKey(), k -> new ArrayList<>()).add(e.getValue());
+                splitFaces.computeIfAbsent(e.getKey(), k -> new ArrayList<>(4)).add(e.getValue());
             }
         }
         return splitFaces.entrySet().stream().map(e -> Map.entry(e.getKey(), new ITGroup<>(e.getValue())));
     }
 
     public ITGroup<Texture> merge(ITGroup<Texture> other) {
-        return new ITGroup<>(ImmutableList.<ITPolygon<Texture>>builder()
-                .addAll(this.getFaces())
-                .addAll(other.getFaces())
-                .build());
+        ImmutableList.Builder<ITPolygon<Texture>> builder = ImmutableList.builderWithExpectedSize(this.faces.size() + other.faces.size());
+        builder.addAll(this.faces);
+        builder.addAll(other.faces);
+        return new ITGroup<>(builder.build());
     }
 
     public ITGroup<Texture> translate(int axis, double amount) {

@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.client.models.mirror;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -32,10 +33,13 @@ public class ITMirroredModelLoader implements IGeometryLoader<ITMirroredGeometry
     }
 
     public static List<BakedQuad> reversedQuads(List<BakedQuad> quads) {
+        if (quads.isEmpty()) return ImmutableList.of();
         BakedQuad[] arr = new BakedQuad[quads.size()];
         for (int i = 0; i < quads.size(); i++) { arr[i] = ITModelUtils.reverseOrder(quads.get(i)); }
         return List.of(arr);
     }
 
-    public static List<BakedQuad> getReversedQuads(SimpleBakedModel model, @Nullable Direction face) { return reversedQuads(model.getQuads(null, face, RandomSource.create(), ModelData.EMPTY, null)); }
+    public static List<BakedQuad> getReversedQuads(SimpleBakedModel model, @Nullable Direction face) {
+        return reversedQuads(model.getQuads(null, face, RandomSource.create(), ModelData.EMPTY, null));
+    }
 }

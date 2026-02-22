@@ -44,7 +44,7 @@ public class ITBakedSplitModel<T extends BakedModel> extends ITAbstractSplitMode
             }
             @SuppressWarnings("unchecked") ITICacheKeyProvider<Object> kp = (ITICacheKeyProvider<Object>) base;
             this.keyProvider = kp;
-            this.subModelCache = CacheBuilder.newBuilder().maximumSize(256).expireAfterAccess(5, TimeUnit.MINUTES).build(CacheLoader.from(key -> {
+            this.subModelCache = CacheBuilder.newBuilder().maximumSize(1024).expireAfterAccess(10, TimeUnit.MINUTES).build(CacheLoader.from(key -> {
                 List<BakedQuad> baseQuads = this.keyProvider.getQuads(key);
                 return split(baseQuads, parts, transform);
             }));

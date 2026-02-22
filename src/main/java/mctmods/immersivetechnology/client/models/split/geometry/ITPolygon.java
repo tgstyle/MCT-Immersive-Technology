@@ -60,12 +60,12 @@ public record ITPolygon<Texture>(List<ITVertex> points, Texture texture) {
                 ITVertex firstNewPoint = this.intersect(cyclicPoints.get(firstSignStart - 1), cyclicPoints.get(firstSignStart), p);
                 ITVertex otherNewPoint = this.intersect(cyclicPoints.get(otherSignStart - 1), cyclicPoints.get(otherSignStart), p);
 
-                List<ITVertex> poly1 = new ArrayList<>();
+                List<ITVertex> poly1 = new ArrayList<>(firstInnerPoints.size() + 2);
                 poly1.add(firstNewPoint);
                 poly1.addAll(firstInnerPoints);
                 poly1.add(otherNewPoint);
 
-                List<ITVertex> poly2 = new ArrayList<>();
+                List<ITVertex> poly2 = new ArrayList<>(otherInnerPoints.size() + 2);
                 poly2.add(otherNewPoint);
                 poly2.addAll(otherInnerPoints);
                 poly2.add(firstNewPoint);
@@ -102,7 +102,7 @@ public record ITPolygon<Texture>(List<ITVertex> points, Texture texture) {
     }
 
     public List<ITPolygon<Texture>> quadify() {
-        List<ITPolygon<Texture>> quads = new ArrayList<>();
+        List<ITPolygon<Texture>> quads = new ArrayList<>((this.points.size() / 2) + 1);
         int secondVertex;
         for (secondVertex = 1; secondVertex + 2 < this.points.size(); secondVertex += 2) {
             quads.add(new ITPolygon<>(List.of(

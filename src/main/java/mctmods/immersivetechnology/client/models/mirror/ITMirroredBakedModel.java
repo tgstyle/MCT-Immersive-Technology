@@ -37,7 +37,7 @@ public class ITMirroredBakedModel<T extends BakedModel> extends BakedModelWrappe
         if (isDynamic) {
             @SuppressWarnings("unchecked") ITICacheKeyProvider<Object> kp = (ITICacheKeyProvider<Object>) base;
             this.keyProvider = kp;
-            this.quadCache = CacheBuilder.newBuilder().expireAfterAccess(120L, TimeUnit.SECONDS).build(CacheLoader.from(k -> ITMirroredModelLoader.reversedQuads(kp.getQuads(k))));
+            this.quadCache = CacheBuilder.newBuilder().maximumSize(1024).expireAfterAccess(10, TimeUnit.MINUTES).build(CacheLoader.from(k -> ITMirroredModelLoader.reversedQuads(kp.getQuads(k))));
             this.unculledQuads = null;
             this.culledQuads = null;
         } else if (base instanceof SimpleBakedModel simple) {

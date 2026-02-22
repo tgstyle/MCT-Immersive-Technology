@@ -10,7 +10,7 @@ public class ITClumpedModel<Texture> {
     private final Map<ITModelSplitterVec3i, ITSplitObjModel<Texture>> clumpedParts;
 
     public ITClumpedModel(ITSplitModel<Texture> splitModel, Set<ITModelSplitterVec3i> parts) {
-        Map<ITModelSplitterVec3i, ITSplitObjModel<Texture>> clumped = new HashMap<>();
+        Map<ITModelSplitterVec3i, ITSplitObjModel<Texture>> clumped = new HashMap<>(parts.size());
         for (var entry : splitModel.getParts().entrySet()) {
             ITModelSplitterVec3i originalTarget = entry.getKey();
             ITSplitObjModel<Texture> translatedModel = entry.getValue();
@@ -28,28 +28,14 @@ public class ITClumpedModel<Texture> {
         if (model.isEmpty() || validParts.isEmpty()) {
             return fallback;
         }
-        double minX = Double.POSITIVE_INFINITY, maxX = Double.NEGATIVE_INFINITY;
-        double minY = Double.POSITIVE_INFINITY, maxY = Double.NEGATIVE_INFINITY;
-        double minZ = Double.POSITIVE_INFINITY, maxZ = Double.NEGATIVE_INFINITY;
-        for (ITPolygon<Texture> p : model.getFaces()) {
-            for (ITVertex v : p.getPoints()) {
-                ITVec3d pos = v.position();
-                minX = Math.min(minX, pos.x());
-                maxX = Math.max(maxX, pos.x());
-                minY = Math.min(minY, pos.y());
-                maxY = Math.max(maxY, pos.y());
-                minZ = Math.min(minZ, pos.z());
-                maxZ = Math.max(maxZ, pos.z());
-            }
-        }
-        int cx = (int) Math.round((minX + maxX) * 0.5);
-        int cy = (int) Math.round((minY + maxY) * 0.5);
-        int cz = (int) Math.round((minZ + maxZ) * 0.5);
-        ITModelSplitterVec3i centerKey = new ITModelSplitterVec3i(cx, cy, cz);
+        ITModelSplitterVec3i centerKey = new ITModelSplitterVec3i(
+                model.getCenterX(),
+                model.getCenterY(),
+                model.getCenterZ()
+        );
         if (validParts.contains(centerKey)) {
             return centerKey;
         }
-
         int bestDist = Integer.MAX_VALUE;
         ITModelSplitterVec3i best = fallback;
         for (ITModelSplitterVec3i candidate : validParts) {
