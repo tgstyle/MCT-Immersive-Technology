@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 
 public record ITGroup<Texture>(List<ITPolygon<Texture>> faces) {
 
-    // Canonical constructor with defensive immutable copy
     public ITGroup(List<ITPolygon<Texture>> faces) {
         this.faces = ImmutableList.copyOf(faces);
     }
