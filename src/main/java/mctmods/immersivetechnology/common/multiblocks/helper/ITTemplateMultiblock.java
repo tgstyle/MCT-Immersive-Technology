@@ -58,6 +58,9 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
 
     public static final List<ITQueueProcessor> pendingQueues = new ArrayList<>();
 
+    private List<StructureBlockInfo> sortedStructureBlocks;
+    private Map<BlockPos, BlockState> triggerStateMap;
+
     public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, MultiblockRegistration<?> logic) {
         super(loc, masterFromOrigin, triggerFromOrigin, size);
         this.logic = logic;
@@ -66,6 +69,31 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, List<BlockMatcher.MatcherPredicate> additionalPredicates, MultiblockRegistration<?> logic) {
         super(loc, masterFromOrigin, triggerFromOrigin, size, additionalPredicates);
         this.logic = logic;
+    }
+
+    private void ensureCaches(TemplateMultiblock.TemplateData data) {
+        if (sortedStructureBlocks != null) { return; }
+
+        List<StructureBlockInfo> structure = data.blocksWithoutAir();
+        sortedStructureBlocks = new ArrayList<>(structure);
+        sortedStructureBlocks.sort(Comparator.comparingInt(info -> -info.pos().getY()));
+
+        triggerStateMap = new HashMap<>();
+        BlockPos primary = getPrimaryTriggerOffset();
+        for (StructureBlockInfo info : structure) {
+            if (info.pos().equals(primary)) {
+                triggerStateMap.put(primary, info.state());
+                break;
+            }
+        }
+        for (BlockPos symPos : symmetricMirror()) {
+            for (StructureBlockInfo info : structure) {
+                if (info.pos().equals(symPos)) {
+                    triggerStateMap.put(symPos, info.state());
+                    break;
+                }
+            }
+        }
     }
 
     protected BlockPos getPrimaryTriggerOffset() { return this.triggerFromOrigin; }
@@ -138,16 +166,14 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             List<ItemStack> inventoryDrops = new ArrayList<>();
             if (masterHelper != null && dropItems) { dropInventory(masterHelper, inventoryDrops::add); }
 
-            var templateData = getTemplate(world);
-            var rawBlocks = templateData.template().palettes.get(0).blocks();
+            getTemplate(world);
 
-            for (StructureBlockInfo info : rawBlocks) {
+            List<StructureBlockInfo> structure = sortedStructureBlocks;
+
+            for (StructureBlockInfo info : structure) {
                 BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
                 prepareBlockForDisassembly(serverLevel, actualPos);
             }
-
-            List<StructureBlockInfo> structure = new ArrayList<>(rawBlocks);
-            structure.sort(Comparator.comparingInt(a -> -a.pos().getY()));
 
             BlockPos brokenPos = masterPos;
             if (breakingPlayer != null) {
@@ -185,6 +211,11 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             List<ItemStack> allDrops = new ArrayList<>(inventoryDrops);
             List<BlockPos> toBreak = new ArrayList<>();
 
+            LootParams.Builder baseLootBuilder = dropItems ? new LootParams.Builder(serverLevel)
+                    .withParameter(LootContextParams.TOOL, effectiveTool)
+                    .withOptionalParameter(LootContextParams.THIS_ENTITY, breakingPlayer)
+                    .withOptionalParameter(LootContextParams.BLOCK_ENTITY, null) : null;
+
             if (templateMode) {
                 for (StructureBlockInfo info : structure) {
                     BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
@@ -192,28 +223,22 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                     BlockState template = stateAfterMirror.rotate(rot);
                     serverLevel.setBlockAndUpdate(actualPos, template);
                 }
-            } else {
+            }
+            else {
                 for (StructureBlockInfo info : structure) {
                     BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
                     BlockState stateAfterMirror = info.state().mirror(mirror);
                     BlockState template = stateAfterMirror.rotate(rot);
                     toBreak.add(actualPos);
                     if (dropItems) {
-                        LootParams.Builder params = new LootParams.Builder(serverLevel)
-                                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(actualPos))
-                                .withParameter(LootContextParams.TOOL, effectiveTool)
-                                .withOptionalParameter(LootContextParams.THIS_ENTITY, breakingPlayer)
-                                .withOptionalParameter(LootContextParams.BLOCK_ENTITY, null);
+                        LootParams.Builder params = baseLootBuilder.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(actualPos));
                         allDrops.addAll(template.getDrops(params));
                     }
                 }
             }
 
-            if (templateMode) {
-                for (ItemStack s : allDrops) { ITUtils.dropStackAtPos(world, brokenPos, s); }
-            } else if (!toBreak.isEmpty()) {
-                pendingQueues.add(new ITQueueProcessor(serverLevel, toBreak, breakingPlayer, dropItems, brokenPos, allDrops));
-            }
+            if (templateMode) { for (ItemStack s : allDrops) { ITUtils.dropStackAtPos(world, brokenPos, s); } }
+            else if (!toBreak.isEmpty()) { pendingQueues.add(new ITQueueProcessor(serverLevel, toBreak, breakingPlayer, dropItems, brokenPos, allDrops)); }
         }
     }
 
@@ -222,9 +247,8 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         if (be instanceof IMultiblockBE<?> multiblockBE) {
             var helper = multiblockBE.getHelper();
             if (helper instanceof ITMultiblockBEHelper itHelper) { itHelper.it$markDisassembling(); }
-        } else if (be != null) {
-            ITLib.IT_LOGGER.error("Expected multiblock BE at {}, got {}", pos, be);
         }
+        else if (be != null) { ITLib.IT_LOGGER.error("Expected multiblock BE at {}, got {}", pos, be); }
     }
 
     @SuppressWarnings("deprecation")
@@ -235,26 +259,16 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
 
         if (!symmetricMirror().isEmpty()) {
             BlockPos primaryOffset = getPrimaryTriggerOffset();
-            BlockState baseTrigger = getStructure(world).stream()
-                    .filter(info -> info.pos().equals(primaryOffset))
-                    .map(StructureBlockInfo::state)
-                    .findFirst()
-                    .orElse(getTemplate(world).triggerState());
+            BlockState baseTrigger = triggerStateMap.getOrDefault(primaryOffset, getTemplate(world).triggerState());
             BlockState expected = baseTrigger.rotate(rot);
             return BlockMatcher.matches(expected, state, null, null, additionalPredicates).isAllow();
         }
 
         for (Mirror triedMirror : getMirrorsToTry()) {
             BlockPos triggerOffset = getTriggerOffset(triedMirror);
-            BlockState baseTrigger = getStructure(world).stream()
-                    .filter(info -> info.pos().equals(triggerOffset))
-                    .map(StructureBlockInfo::state)
-                    .findFirst()
-                    .orElse(getTemplate(world).triggerState());
+            BlockState baseTrigger = triggerStateMap.getOrDefault(triggerOffset, getTemplate(world).triggerState());
             BlockState expected = baseTrigger.mirror(triedMirror).rotate(rot);
-            if (BlockMatcher.matches(expected, state, null, null, additionalPredicates).isAllow()) {
-                return true;
-            }
+            if (BlockMatcher.matches(expected, state, null, null, additionalPredicates).isAllow()) { return true; }
         }
         return false;
     }
@@ -263,6 +277,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     @Override public boolean createStructure(Level world, BlockPos pos, Direction side, net.minecraft.world.entity.player.Player player) {
         Rotation baseRot = DirectionUtils.getRotationBetweenFacings(Direction.NORTH, side.getOpposite());
         if (baseRot == null) { return false; }
+        getTemplate(world);
         List<StructureTemplate.StructureBlockInfo> structure = getStructure(world);
 
         if (!symmetricMirror().isEmpty()) {
@@ -294,9 +309,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                 if (allMatch) {
                     Direction formSide = side;
                     if (isSymmetric) { formSide = side.getOpposite(); }
-                    if (!world.isClientSide) {
-                        form(world, origin, currentRot, Mirror.NONE, formSide);
-                    }
+                    if (!world.isClientSide) { form(world, origin, currentRot, Mirror.NONE, formSide); }
                     return true;
                 }
             }
@@ -329,9 +342,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             }
 
             if (allMatch) {
-                if (!world.isClientSide) {
-                    form(world, origin, rot, triedMirror, side);
-                }
+                if (!world.isClientSide) { form(world, origin, rot, triedMirror, side); }
                 return true;
             }
         }
@@ -364,6 +375,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         TemplateMultiblock.TemplateData result = super.getTemplate(world);
         Vec3i resultSize = result.template().getSize();
         Preconditions.checkState(resultSize.equals(this.size), "Wrong template size for multiblock %s, template size: %s", this.getTemplateLocation(), resultSize);
+        ensureCaches(result);
         return result;
     }
 }

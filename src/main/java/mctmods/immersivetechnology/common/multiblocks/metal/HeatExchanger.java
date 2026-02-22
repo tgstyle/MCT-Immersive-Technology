@@ -18,8 +18,6 @@ public class HeatExchanger extends ITTemplateMultiblock {
 
     public HeatExchanger() { super(ITLib.rl("multiblocks/heat_exchanger"), HeatExchangerShape.MASTER_POS, HeatExchangerShape.TRIGGER_POS, new BlockPos(HeatExchangerShape.WIDTH, HeatExchangerShape.HEIGHT, HeatExchangerShape.LENGTH), ITMultiblockProvider.HEAT_EXCHANGER); }
 
-    @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
-
     @Override public float getManualScale() { return HeatExchangerShape.MANUAL_SCALE; }
 
     @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, HeatExchangerShape.CLIENT_OFFSET.getX(), HeatExchangerShape.CLIENT_OFFSET.getY(), HeatExchangerShape.CLIENT_OFFSET.getZ())); }

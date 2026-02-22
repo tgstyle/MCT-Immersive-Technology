@@ -25,8 +25,6 @@ public class BoilerSolid extends ITTemplateMultiblock {
         }), ITMultiblockProvider.BOILER_SOLID);
     }
 
-    @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
-
     @Override public float getManualScale() { return BoilerSolidShape.MANUAL_SCALE; }
 
     @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, BoilerSolidShape.CLIENT_OFFSET.getX(), BoilerSolidShape.CLIENT_OFFSET.getY(), BoilerSolidShape.CLIENT_OFFSET.getZ())); }

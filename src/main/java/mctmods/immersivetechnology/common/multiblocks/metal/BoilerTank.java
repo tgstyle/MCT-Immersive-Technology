@@ -19,8 +19,6 @@ public class BoilerTank extends ITTemplateMultiblock {
         super(ITLib.rl("multiblocks/boiler_tank"), BoilerTankShape.MASTER_POS, BoilerTankShape.TRIGGER_POS, new BlockPos(BoilerTankShape.WIDTH, BoilerTankShape.HEIGHT, BoilerTankShape.LENGTH), ITMultiblockProvider.BOILER_TANK);
     }
 
-    @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
-
     @Override public float getManualScale() { return BoilerTankShape.MANUAL_SCALE; }
 
     @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, BoilerTankShape.CLIENT_OFFSET.getX(), BoilerTankShape.CLIENT_OFFSET.getY(), BoilerTankShape.CLIENT_OFFSET.getZ())); }
