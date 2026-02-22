@@ -182,7 +182,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         generateMultiblockConfig("heat_exchanger", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("solar_melter", "metal", true, false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("solar_reflector", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
-        generateMultiblockConfig("solar_tower", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("solar_tower", "metal", true, false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("steam_turbine", "metal", true, false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("steel_sheetmetal_tank", "metal", false, false, true, ImmutableMap.of(), ImmutableMap.of());
 

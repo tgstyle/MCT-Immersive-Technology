@@ -17,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Mirror;
 
 import java.util.function.Consumer;
 
@@ -57,5 +58,9 @@ public class SolarTower extends ITTemplateMultiblock {
 
     @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, SolarTowerShape.CLIENT_OFFSET.getX(), SolarTowerShape.CLIENT_OFFSET.getY(), SolarTowerShape.CLIENT_OFFSET.getZ())); }
 
-    @Override public boolean canBeMirrored() { return false; }
+    @Override public boolean canBeMirrored() { return true; }
+
+    @Override protected boolean compensateMirrorFacing() { return true; }
+
+    @Override protected Mirror getAlternateMirror() { return Mirror.LEFT_RIGHT; }
 }
