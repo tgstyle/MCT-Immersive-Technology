@@ -1,7 +1,6 @@
-package mctmods.immersivetechnology.client.models.helper;
+package mctmods.immersivetechnology.client.models;
 
 import mctmods.immersivetechnology.core.lib.ITLib;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.resources.model.BakedModel;

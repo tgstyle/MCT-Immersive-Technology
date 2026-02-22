@@ -6,19 +6,21 @@ import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.client.models.helper.ITModelConfigurableSides;
+import mctmods.immersivetechnology.client.models.ITModelConfigurableSides;
 import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLimiterBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
+import mctmods.immersivetechnology.common.data.loaders.ITObjModelBuilder;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.data.ITDataGenUtils;
 import mctmods.immersivetechnology.common.data.models.ITModelProviderUtils;
 import mctmods.immersivetechnology.common.data.models.ITNongeneratedModels;
 import mctmods.immersivetechnology.common.data.models.ITNongeneratedModels.ITNongeneratedModel;
 import mctmods.immersivetechnology.common.data.models.ITSideConfigBuilder;
+import mctmods.immersivetechnology.common.data.loaders.ITSplitModelBuilder;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
 import mctmods.immersivetechnology.core.registration.ITFluids;
@@ -51,6 +53,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -67,9 +70,6 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import mctmods.immersivetechnology.common.data.loaders.ITSplitModelBuilder;
-import org.jetbrains.annotations.NotNull;
 
 public class ITBlockStateProvider extends BlockStateProvider {
     public final Map<Block, ModelFile> unsplitModels = new HashMap<>();
@@ -119,49 +119,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
     @Override public BlockModelProvider models() { return blockModels; }
 
     @Override public ItemModelProvider itemModels() { return itemModels; }
-
-    public static class ITObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
-        private ResourceLocation modelLocation;
-        private boolean automaticCulling = true;
-        private boolean shadeQuads = true;
-        private boolean flipV = false;
-        private boolean emissiveAmbient = true;
-        private String mtlOverride;
-        private final Map<String, Boolean> visibility = new HashMap<>();
-
-        public ITObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(ITLib.rl("obj"), parent, existingFileHelper); }
-
-        public ITObjModelBuilder<T> modelLocation(ResourceLocation modelLocation) { this.modelLocation = modelLocation; return this; }
-
-        public ITObjModelBuilder<T> automaticCulling(boolean automaticCulling) { this.automaticCulling = automaticCulling; return this; }
-
-        public ITObjModelBuilder<T> shadeQuads(boolean shadeQuads) { this.shadeQuads = shadeQuads; return this; }
-
-        public ITObjModelBuilder<T> flipV(boolean flipV) { this.flipV = flipV; return this; }
-
-        public ITObjModelBuilder<T> emissiveAmbient(boolean emissiveAmbient) { this.emissiveAmbient = emissiveAmbient; return this; }
-
-        public ITObjModelBuilder<T> mtlOverride(String mtlOverride) { this.mtlOverride = mtlOverride; return this; }
-
-        public ITObjModelBuilder<T> visibility(String part, boolean show) { visibility.put(part, show); return this; }
-
-        @Override public JsonObject toJson(JsonObject json) {
-            json = super.toJson(json);
-            Preconditions.checkNotNull(modelLocation, "model must be set on obj model");
-            json.addProperty("model", modelLocation.toString());
-            json.addProperty("automatic_culling", automaticCulling);
-            json.addProperty("shade_quads", shadeQuads);
-            json.addProperty("flip_v", flipV);
-            json.addProperty("emissive_ambient", emissiveAmbient);
-            if (mtlOverride != null) { json.addProperty("mtl_override", mtlOverride); }
-            if (!visibility.isEmpty()) {
-                JsonObject visJson = new JsonObject();
-                visibility.forEach(visJson::addProperty);
-                json.add("visibility", visJson);
-            }
-            return json;
-        }
-    }
 
     private record ValveRotationConfig(int horizontalXRot, int verticalDownXRot, int verticalUpXRot, Function<Direction, Integer> yRotOffsetSupplier) {}
 
@@ -223,7 +180,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         generateMultiblockConfig("distiller", "metal", true, false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("gas_turbine", "metal", true, false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("heat_exchanger", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
-        generateMultiblockConfig("solar_melter", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("solar_melter", "metal", true, false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("solar_reflector", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("solar_tower", "metal", false, false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("steam_turbine", "metal", true, false, false, ImmutableMap.of(), ImmutableMap.of());
@@ -396,8 +353,8 @@ public class ITBlockStateProvider extends BlockStateProvider {
         }
         ModelFile defaultMain = split(defaultUnsplit, multiblock, false, block_type);
         ModelFile activeMain = hasActive ? split(activeUnsplit, multiblock, false, block_type) : null;
-        ModelFile defaultMirrored = hasMirror ? split(mirroredUnsplit, multiblock, flipMirror, block_type) : null;
-        ModelFile activeMirrored = hasActive && hasMirror ? split(activeMirroredUnsplit, multiblock, flipMirror, block_type) : null;
+        ModelFile defaultMirrored = hasMirror ? split(mirroredUnsplit, multiblock, true, block_type) : null;
+        ModelFile activeMirrored = hasActive && hasMirror ? split(activeMirroredUnsplit, multiblock, true, block_type) : null;
         createMultiblockVariant(multiblock::getBlock, defaultMain, activeMain, defaultMirrored, activeMirrored, hasMirror ? ITProperties.MIRRORED : null, hasActive ? ITProperties.ACTIVE : null);
     }
 
@@ -552,37 +509,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         }
     }
 
-    protected <T extends ModelBuilder<T>> T obj(T base, ResourceLocation model, Map<String, ResourceLocation> textures) {
-        ITObjModelBuilder<T> loader = base.customLoader(ITObjModelBuilder::new);
-        loader.modelLocation(addModelsPrefix(model));
-        loader.flipV(true);
-        loader.automaticCulling(true);
-        loader.shadeQuads(true);
-        loader.emissiveAmbient(true);
-        String path = model.getPath();
-        ResourceLocation textureModel = model;
-        if (path.endsWith("_mirrored.obj")) {
-            textureModel = ResourceLocation.fromNamespaceAndPath(model.getNamespace(), path.replace("_mirrored.obj", ".obj"));
-            String fileName = path.substring(path.lastIndexOf('/') + 1);
-            String originalMtl = fileName.replace("_mirrored.obj", ".mtl");
-            loader.mtlOverride(originalMtl);
-        }
-        T ret = loader.end();
-        ret.ao(false);
-        String particleTex = ITDataGenUtils.getTextureFromObj(textureModel, existingFileHelper);
-        if (particleTex.charAt(0) == '#') { particleTex = textures.get(particleTex.substring(1)).toString(); }
-        ret.texture("particle", particleTex);
-        generatedParticleTextures.put(ret.getLocation(), particleTex);
-        for (Map.Entry<String, ResourceLocation> e : textures.entrySet()) { ret.texture(e.getKey(), e.getValue()); }
-        return ret;
-    }
-
-    protected ITNongeneratedModel obj(String name, ResourceLocation model, Map<String, ResourceLocation> textures, ITNongeneratedModels provider) {
-        ITNongeneratedModel base = provider.getBuilder(name);
-        return obj(base, model, textures);
-    }
-
-    protected ModelFile createValveObjModel(String baseName, String objFolder, boolean isOpen, String baseVisibility) {
+    private ModelFile createValveObjModel(String baseName, String objFolder, boolean isOpen, String baseVisibility) {
         String modelName = "block/metal/" + baseName + (isOpen ? "_open" : "_closed");
         BlockModelBuilder builder = models().getBuilder(modelName);
         ITObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ITObjModelBuilder::new)

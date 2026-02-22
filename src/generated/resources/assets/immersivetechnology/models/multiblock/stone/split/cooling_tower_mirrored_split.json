@@ -2,20 +2,17 @@
   "parent": "minecraft:block/block",
   "dynamic": false,
   "inner_model": {
-    "inner_model": {
-      "parent": "minecraft:block/block",
-      "ambientocclusion": false,
-      "automatic_culling": false,
-      "emissive_ambient": true,
-      "flip_v": true,
-      "loader": "immersivetechnology:obj",
-      "model": "immersivetechnology:models/multiblock/stone/obj/cooling_tower/cooling_tower.obj",
-      "shade_quads": true,
-      "textures": {
-        "particle": "immersivetechnology:multiblock/stone/cooling_tower_top"
-      }
-    },
-    "loader": "immersivetechnology:mirror"
+    "parent": "minecraft:block/block",
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "immersivetechnology:obj",
+    "model": "immersivetechnology:models/multiblock/stone/obj/cooling_tower/cooling_tower.obj",
+    "shade_quads": true,
+    "textures": {
+      "particle": "immersivetechnology:multiblock/stone/cooling_tower_top"
+    }
   },
   "loader": "immersivetechnology:basic_split",
   "split_parts": [
@@ -1799,5 +1796,8 @@
       6,
       -3
     ]
-  ]
+  ],
+  "textures": {
+    "particle": "immersivetechnology:multiblock/stone/cooling_tower_top"
+  }
 }

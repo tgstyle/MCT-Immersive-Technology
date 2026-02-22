@@ -6,13 +6,13 @@ import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.Tree.InnerNode;
 import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.client.gui.helper.ITContainerScreen;
-import mctmods.immersivetechnology.client.models.RotorModels;
-import mctmods.immersivetechnology.client.models.SolarReflectorModels;
-import mctmods.immersivetechnology.client.models.helper.ITDynamicModel;
-import mctmods.immersivetechnology.client.models.helper.ITModelConfigurableSides;
-import mctmods.immersivetechnology.client.models.helper.ITObjLoader;
+import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
+import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
+import mctmods.immersivetechnology.client.models.ITDynamicModel;
+import mctmods.immersivetechnology.client.models.ITModelConfigurableSides;
+import mctmods.immersivetechnology.client.models.ITObjLoader;
 import mctmods.immersivetechnology.client.models.mirror.ITMirroredModelLoader;
-import mctmods.immersivetechnology.client.models.split.ITSplitModelLoader;
+import mctmods.immersivetechnology.client.models.ITSplitModelLoader;
 import mctmods.immersivetechnology.client.particles.helper.ITColoredSmokeProvider;
 import mctmods.immersivetechnology.client.particles.helper.ITSmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.*;
@@ -72,9 +72,7 @@ public class ClientProxy extends CommonProxy {
             MenuScreens.register(ITMenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
             MenuScreens.register(ITMenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
             MenuScreens.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
-
             MenuScreens.register(ITMenuTypes.ROTOR_CREATIVE.getType(), (RotorCreativeMenu menu, Inventory inv, Component title) -> new RotorCreativeScreen(menu, inv));
-
             MenuScreens.register(ITMenuTypes.VALVE_FLUID.getType(), (ValveFluidMenu menu, Inventory inv, Component title) -> new ValveFluidScreen(menu, inv));
             MenuScreens.register(ITMenuTypes.VALVE_LIMITER.getType(), (ValveLimiterMenu menu, Inventory inv, Component title) -> new ValveLimiterScreen(menu, inv));
             MenuScreens.register(ITMenuTypes.VALVE_LOAD.getType(), (ValveLoadMenu menu, Inventory inv, Component title) -> new ValveLoadScreen(menu, inv));
@@ -167,8 +165,9 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
         ev.register("obj", ITObjLoader.INSTANCE);
         ev.register(ITModelConfigurableSides.Loader.NAME.getPath(), new ITModelConfigurableSides.Loader());
-        ev.register(ITMirroredModelLoader.ID.getPath(), new ITMirroredModelLoader());
-        ev.register(ITSplitModelLoader.LOCATION.getPath(), new ITSplitModelLoader());
+        ev.register(ITMirroredModelLoader.ID.getPath(), ITMirroredModelLoader.INSTANCE);
+        ev.register(ITSplitModelLoader.LOCATION.getPath(), ITSplitModelLoader.INSTANCE);
+
         RotorModels.ROTOR = new ITDynamicModel("rotor");
         RotorModels.ROTOR_EAST_WEST = new ITDynamicModel("rotor_east_west");
         SolarReflectorModels.SUPPORT = new ITDynamicModel("solar_reflector_support");

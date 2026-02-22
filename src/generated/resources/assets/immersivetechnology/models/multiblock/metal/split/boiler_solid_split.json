@@ -2,6 +2,7 @@
   "parent": "minecraft:block/block",
   "dynamic": false,
   "inner_model": {
+    "parent": "minecraft:block/block",
     "ambientocclusion": false,
     "automatic_culling": false,
     "emissive_ambient": true,

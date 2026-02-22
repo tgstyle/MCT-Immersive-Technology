@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.client.models.helper;
+package mctmods.immersivetechnology.client.models;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -16,21 +16,21 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public abstract class ITBakedModel implements BakedModel, IForgeBakedModel {
-    @NotNull public abstract List<BakedQuad> getQuads(@Nullable BlockState var1, @Nullable Direction var2, @NotNull RandomSource var3, @NotNull ModelData var4, @Nullable RenderType var5);
+    @NotNull public abstract List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @Nullable RenderType renderType);
 
-    @NotNull public final List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand) { return this.getQuads(state, side, rand, ModelData.EMPTY, null); }
+    @Override @NotNull public final List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand) { return getQuads(state, side, rand, ModelData.EMPTY, null); }
 
     @NotNull public abstract TextureAtlasSprite getParticleIcon(@NotNull ModelData data);
 
     @Override @NotNull public TextureAtlasSprite getParticleIcon() { return getParticleIcon(ModelData.EMPTY); }
 
-    public boolean useAmbientOcclusion() { return true; }
+    @Override public boolean useAmbientOcclusion() { return true; }
 
-    public boolean isGui3d() { return true; }
+    @Override public boolean isGui3d() { return true; }
 
-    public boolean usesBlockLight() { return true; }
+    @Override public boolean usesBlockLight() { return true; }
 
-    public boolean isCustomRenderer() { return false; }
+    @Override public boolean isCustomRenderer() { return false; }
 
-    @NotNull public ItemOverrides getOverrides() { return ItemOverrides.EMPTY; }
+    @Override @NotNull public ItemOverrides getOverrides() { return ItemOverrides.EMPTY; }
 }
