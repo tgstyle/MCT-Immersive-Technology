@@ -8,6 +8,7 @@
   "manual.immersivetechnology.main": "Tecnologia Imersiva",
   "manual.immersivetechnology.it_multiblocks": "Multiblocos",
 
+  "block.immersivetechnology.advanced_coke_oven_baseheater": "Aquecedor base avançado da fornalha de coque",
   "block.immersivetechnology.barrel_creative": "Barril de Fluidos Criativo",
   "block.immersivetechnology.barrel_open": "Barril Metálico Aberto",
   "block.immersivetechnology.barrel_steel": "Barril Metálico de Aço",
@@ -160,6 +161,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "Exibição de Multiblocos IT",
 
+  "subtitles.immersivetechnology.advanced_coke_oven_fan": "Ventilador do aquecedor base girando",
   "subtitles.immersivetechnology.alternator": "O alternador zumbindo",
   "subtitles.immersivetechnology.boiler_liquid": "A caldeira rugindo",
   "subtitles.immersivetechnology.boiler_solid": "O fogo da caldeira crepitando",

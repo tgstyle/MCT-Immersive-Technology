@@ -4,9 +4,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
@@ -55,20 +53,9 @@ public class ITObjLoader implements IGeometryLoader<ITObjLoader.ITObjModel> {
     }
 
     public record ITObjModel(ObjModel inner, Map<String, Boolean> defaultVisibility) implements IUnbakedGeometry<ITObjModel> {
+
         @Override public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
-            IGeometryBakingContext wrappedContext = new IGeometryBakingContext() {
-                @Override public String getModelName() { return context.getModelName(); }
-                @Override public boolean hasMaterial(String name) { return context.hasMaterial(name); }
-                @Override public Material getMaterial(String name) { return context.getMaterial(name); }
-                @Override public boolean isComponentVisible(String part, boolean fallback) { return defaultVisibility.getOrDefault(part, context.isComponentVisible(part, fallback)); }
-                @Override public boolean isGui3d() { return context.isGui3d(); }
-                @Override public boolean useBlockLight() { return context.useBlockLight(); }
-                @Override public boolean useAmbientOcclusion() { return context.useAmbientOcclusion(); }
-                @Override public Transformation getRootTransform() { return context.getRootTransform(); }
-                @Override public ItemTransforms getTransforms() { return context.getTransforms(); }
-                @Override public ResourceLocation getRenderTypeHint() { return context.getRenderTypeHint(); }
-            };
-            return inner.bake(wrappedContext, baker, spriteGetter, modelState, overrides, modelLocation);
+            return inner.bake(context, baker, spriteGetter, modelState, overrides, modelLocation);
         }
     }
 }

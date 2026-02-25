@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "H": {
+      "item": "immersiveengineering:furnace_heater"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "S": {
+      "tag": "forge:sheetmetals/iron"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "HRH",
+    "SSS"
+  ],
+  "result": {
+    "item": "immersivetechnology:advanced_coke_oven_baseheater"
+  },
+  "show_notification": true
+}

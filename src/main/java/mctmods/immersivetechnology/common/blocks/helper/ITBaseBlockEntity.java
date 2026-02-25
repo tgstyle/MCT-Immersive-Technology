@@ -125,9 +125,9 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
         else if (getType().isValid(newState)) { setOverrideState(null); }
     }
 
-    @Override public void setState(BlockState state) { if (getLevelNonnull().getBlockState(worldPosition) == getState()) { getLevelNonnull().setBlockAndUpdate(worldPosition, state); } }
+    @Override public void setState(@NotNull BlockState state) { if (getLevelNonnull().getBlockState(worldPosition) == getState()) { getLevelNonnull().setBlockAndUpdate(worldPosition, state); } }
 
-    @Override public BlockState getState() { return getBlockState(); }
+    @Override @NotNull public BlockState getState() { return getBlockState(); }
 
     protected void markChunkDirty() { if (level != null && level.hasChunk(worldPosition.getX() >> 4, worldPosition.getZ() >> 4)) { level.getChunkAt(worldPosition).setUnsaved(true); } }
 

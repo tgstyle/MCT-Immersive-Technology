@@ -8,6 +8,7 @@
   "manual.immersivetechnology.main": "Imersivní technologie",
   "manual.immersivetechnology.it_multiblocks": "Multibloky",
 
+  "block.immersivetechnology.advanced_coke_oven_baseheater": "Pokročilý základní ohřívač koksárny",
   "block.immersivetechnology.barrel_creative": "Kreativní sud na tekutiny",
   "block.immersivetechnology.barrel_open": "Otevřený kovový sud",
   "block.immersivetechnology.barrel_steel": "Ocelový kovový sud",
@@ -160,6 +161,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "Zobrazení multibloků IT",
 
+  "subtitles.immersivetechnology.advanced_coke_oven_fan": "Točení ventilátoru základního ohřívače",
   "subtitles.immersivetechnology.alternator": "Alternátor hučí",
   "subtitles.immersivetechnology.boiler_liquid": "Kotel řve",
   "subtitles.immersivetechnology.boiler_solid": "Kotel plápolá",

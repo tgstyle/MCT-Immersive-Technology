@@ -172,6 +172,7 @@ public class ClientProxy extends CommonProxy {
         RotorModels.ROTOR_EAST_WEST = new ITDynamicModel("rotor_east_west");
         SolarReflectorModels.SUPPORT = new ITDynamicModel("solar_reflector_support");
         SolarReflectorModels.MIRROR = new ITDynamicModel("solar_reflector_mirror");
+        AdvancedCokeOvenBaseHeaterRenderer.FAN_MODEL = new ITDynamicModel("advanced_coke_oven_baseheater_fan");
     }
 
     @SubscribeEvent public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) { registerBERenders(event); }
@@ -179,6 +180,7 @@ public class ClientProxy extends CommonProxy {
     private static <T extends BlockEntity> void registerBERender(EntityRenderersEvent.RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, BlockEntityRendererProvider<T> provider) { event.registerBlockEntityRenderer(type.get(), provider); }
 
     public static void registerBERenders(EntityRenderersEvent.RegisterRenderers event) {
+        registerBERender(event, ITBlockEntities.ADVANCED_COKE_OVEN_BASEHEATER::get, ctx -> new AdvancedCokeOvenBaseHeaterRenderer());
         registerBERender(event, ITBlockEntities.BARREL_OPEN::get, ctx3 -> new OpenBarrelRenderer());
         registerBERender(event, ITBlockEntities.ROTOR_CREATIVE::get, context -> new RotorCreativeRenderer());
         registerBERender(event, ITMultiblockProvider.STEAM_TURBINE.masterBE(), ctx2 -> new SteamTurbineRenderer());

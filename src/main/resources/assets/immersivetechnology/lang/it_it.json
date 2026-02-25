@@ -8,6 +8,7 @@
   "manual.immersivetechnology.main": "Tecnologia Immersiva",
   "manual.immersivetechnology.it_multiblocks": "Multiblocchi",
 
+  "block.immersivetechnology.advanced_coke_oven_baseheater": "Riscaldatore base avanzato del forno a coke",
   "block.immersivetechnology.barrel_creative": "Barile di fluidi creativo",
   "block.immersivetechnology.barrel_open": "Barile metallico aperto",
   "block.immersivetechnology.barrel_steel": "Barile metallico in acciaio",
@@ -160,6 +161,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "Visualizzazione multiblocchi IT",
 
+  "subtitles.immersivetechnology.advanced_coke_oven_fan": "Ventola del riscaldatore base in rotazione",
   "subtitles.immersivetechnology.alternator": "Alternatore che ronza",
   "subtitles.immersivetechnology.boiler_liquid": "Caldaia che ruggisce",
   "subtitles.immersivetechnology.boiler_solid": "Fiamma della caldaia che crepita",

@@ -14,6 +14,7 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public class ITObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
     public static <T extends ModelBuilder<T>> ITObjModelBuilder<T> begin(T parent, ExistingFileHelper existingFileHelper) { return new ITObjModelBuilder<>(parent, existingFileHelper); }
+
     private ResourceLocation modelLocation;
     private boolean automaticCulling = true;
     private boolean shadeQuads = true;
@@ -21,14 +22,17 @@ public class ITObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBu
     private boolean emissiveAmbient = true;
     private String mtlOverride;
     private final Map<String, Boolean> visibility = new HashMap<>();
-    public ITObjModelBuilder<T> automaticCulling(boolean automaticCulling) { this.automaticCulling = automaticCulling; return this; }
+
     public ITObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(ITLib.rl("obj"), parent, existingFileHelper); }
+
     public ITObjModelBuilder<T> modelLocation(ResourceLocation modelLocation) { this.modelLocation = modelLocation; return this; }
+    public ITObjModelBuilder<T> automaticCulling(boolean automaticCulling) { this.automaticCulling = automaticCulling; return this; }
     public ITObjModelBuilder<T> shadeQuads(boolean shadeQuads) { this.shadeQuads = shadeQuads; return this; }
     public ITObjModelBuilder<T> flipV(boolean flipV) { this.flipV = flipV; return this; }
     public ITObjModelBuilder<T> emissiveAmbient(boolean emissiveAmbient) { this.emissiveAmbient = emissiveAmbient; return this; }
     public ITObjModelBuilder<T> mtlOverride(String mtlOverride) { this.mtlOverride = mtlOverride; return this; }
     public ITObjModelBuilder<T> visibility(String part, boolean show) { visibility.put(part, show); return this; }
+
     @Override public JsonObject toJson(JsonObject json) {
         json = super.toJson(json);
         Preconditions.checkNotNull(modelLocation, "model must be set on obj model");

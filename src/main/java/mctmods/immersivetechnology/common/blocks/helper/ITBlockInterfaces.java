@@ -124,9 +124,9 @@ public class ITBlockInterfaces {
     }
 
     public interface BlockStateProvider {
-        BlockState getState();
+        @NotNull BlockState getState();
 
-        void setState(BlockState var1);
+        void setState(@NotNull BlockState var1);
     }
 
     public interface IAdditionalDrops {

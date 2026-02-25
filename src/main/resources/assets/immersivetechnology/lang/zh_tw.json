@@ -8,6 +8,7 @@
   "manual.immersivetechnology.main": "沉浸式技術",
   "manual.immersivetechnology.it_multiblocks": "多方塊結構",
 
+  "block.immersivetechnology.advanced_coke_oven_baseheater": "進階焦炭爐底座加熱器",
   "block.immersivetechnology.barrel_creative": "創造模式流體桶",
   "block.immersivetechnology.barrel_open": "開放式金屬桶",
   "block.immersivetechnology.barrel_steel": "鋼製金屬桶",
@@ -160,6 +161,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "IT 多方塊結構顯示",
 
+  "subtitles.immersivetechnology.advanced_coke_oven_fan": "底座加熱器風扇旋轉中",
   "subtitles.immersivetechnology.alternator": "交流發電機嗡嗡作響",
   "subtitles.immersivetechnology.boiler_liquid": "鍋爐咆哮",
   "subtitles.immersivetechnology.boiler_solid": "鍋爐火焰劈啪作響",

@@ -8,6 +8,7 @@
   "manual.immersivetechnology.main": "Immersive Technologie",
   "manual.immersivetechnology.it_multiblocks": "Multiblöcke",
 
+  "block.immersivetechnology.advanced_coke_oven_baseheater": "Verbesserter Koksofen-Unterheizer",
   "block.immersivetechnology.barrel_creative": "Kreatives Flüssigkeitsfass",
   "block.immersivetechnology.barrel_open": "Offenes Metallfass",
   "block.immersivetechnology.barrel_steel": "Stahl-Metallfass",
@@ -160,6 +161,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "IT-Multiblock-Anzeige",
 
+  "subtitles.immersivetechnology.advanced_coke_oven_fan": "Unterheizer-Ventilator dreht sich",
   "subtitles.immersivetechnology.alternator": "Alternator summt",
   "subtitles.immersivetechnology.boiler_liquid": "Kessel brüllt",
   "subtitles.immersivetechnology.boiler_solid": "Kesselfeuer prasselt",

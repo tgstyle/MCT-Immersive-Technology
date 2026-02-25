@@ -8,6 +8,7 @@
   "manual.immersivetechnology.main": "Immersive Technology",
   "manual.immersivetechnology.it_multiblocks": "Мультиблоки",
 
+  "block.immersivetechnology.advanced_coke_oven_baseheater": "Улучшенный базовый нагреватель коксовой печи",
   "block.immersivetechnology.barrel_creative": "Творческая бочка для жидкостей",
   "block.immersivetechnology.barrel_open": "Открытая металлическая бочка",
   "block.immersivetechnology.barrel_steel": "Стальная металлическая бочка",
@@ -160,6 +161,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "Отображение мультиблоков IT",
 
+  "subtitles.immersivetechnology.advanced_coke_oven_fan": "Вентилятор базового нагревателя вращается",
   "subtitles.immersivetechnology.alternator": "Альтернатор гудит",
   "subtitles.immersivetechnology.boiler_liquid": "Котёл ревёт",
   "subtitles.immersivetechnology.boiler_solid": "Котёл трещит",

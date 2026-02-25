@@ -329,6 +329,46 @@ public class ITBlockStateProvider extends BlockStateProvider {
             if (facing == Direction.SOUTH || facing == Direction.WEST) yRot = 180;
             return ConfiguredModel.builder().modelFile(modelFile).rotationY(yRot).build();
         });
+
+        ModelFile baseHeaterNormal = createBaseHeaterObjModel(false);
+        ModelFile baseHeaterActive = createBaseHeaterObjModel(true);
+
+        ModelFile dummyHeaterModel = models().withExistingParent("dummy_advanced_coke_oven_baseheater", mcLoc("block/block"))
+                .texture("particle", modLoc("block/metal/advanced_coke_oven_baseheater"));
+
+        VariantBlockStateBuilder heaterBuilder = getVariantBuilder(ITBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get());
+        heaterBuilder.forAllStates(state -> {
+            Direction facing = state.getValue(ITProperties.FACING_HORIZONTAL);
+            boolean slave = state.getValue(ITProperties.MULTIBLOCKSLAVE);
+            boolean active = state.getValue(ITProperties.ACTIVE);
+            ModelFile modelFile = slave ? dummyHeaterModel : (active ? baseHeaterActive : baseHeaterNormal);
+            int yRot = ((int) facing.toYRot() + 270) % 360;
+            return ConfiguredModel.builder().modelFile(modelFile).rotationY(yRot).build();
+        });
+        setRenderType(RenderType.cutout(), (BlockModelBuilder) baseHeaterNormal, (BlockModelBuilder) baseHeaterActive);
+    }
+
+    private ModelFile createBaseHeaterObjModel(boolean active) {
+        String suffix = active ? "_active" : "";
+        String modelName = "block/metal/advanced_coke_oven_baseheater" + suffix;
+        BlockModelBuilder builder = models().getBuilder(modelName);
+
+        ResourceLocation frontTexture = active ? modLoc("block/metal/advanced_coke_oven_baseheater_active") : modLoc("block/metal/advanced_coke_oven_baseheater");
+
+        ITObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ITObjModelBuilder::new)
+                .modelLocation(modLoc("models/block/metal/obj/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater" + suffix + ".obj"))
+                .automaticCulling(false)
+                .shadeQuads(true)
+                .flipV(true)
+                .emissiveAmbient(active)
+                .visibility("Fan", false)
+                .visibility("fan", false)
+                .visibility("Rotor", false)
+                .visibility("rotor", false);
+
+        builder.texture("particle", frontTexture);
+
+        return loader.end();
     }
 
     private void generateMultiblockConfig(String registry_name, String block_type, boolean useSeparateMirror, boolean hasActive, boolean automaticCulling, Map<String, ResourceLocation> defaultTextures, Map<String, ResourceLocation> activeTextures) {

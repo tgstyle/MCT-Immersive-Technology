@@ -25,6 +25,7 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
         registerEntity(ITBlocks.Metal.BARREL_STEEL.getRegObject());
 
         dropSelf(ITBlocks.Wooden.CRATE_CREATIVE.get());
+        dropSelf(ITBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get());
         dropSelf(ITBlocks.Metal.HEAT_CREATIVE.get());
         dropSelf(ITBlocks.Metal.ROTOR_CREATIVE.get());
         dropSelf(ITBlocks.Metal.TRASH_ENERGY.get());
