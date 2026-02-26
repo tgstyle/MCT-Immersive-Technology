@@ -74,20 +74,20 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     private void ensureCaches(TemplateMultiblock.TemplateData data) {
         if (sortedStructureBlocks != null) { return; }
 
-        List<StructureBlockInfo> structure = data.blocksWithoutAir();
-        sortedStructureBlocks = new ArrayList<>(structure);
+        List<StructureBlockInfo> nonAir = data.blocksWithoutAir();
+        sortedStructureBlocks = new ArrayList<>(data.template().palettes.get(0).blocks());
         sortedStructureBlocks.sort(Comparator.comparingInt(info -> -info.pos().getY()));
 
         triggerStateMap = new HashMap<>();
         BlockPos primary = getPrimaryTriggerOffset();
-        for (StructureBlockInfo info : structure) {
+        for (StructureBlockInfo info : nonAir) {
             if (info.pos().equals(primary)) {
                 triggerStateMap.put(primary, info.state());
                 break;
             }
         }
         for (BlockPos symPos : symmetricMirror()) {
-            for (StructureBlockInfo info : structure) {
+            for (StructureBlockInfo info : nonAir) {
                 if (info.pos().equals(symPos)) {
                     triggerStateMap.put(symPos, info.state());
                     break;
