@@ -4,7 +4,7 @@
   "inner_model": {
     "parent": "minecraft:block/block",
     "ambientocclusion": false,
-    "automatic_culling": true,
+    "automatic_culling": false,
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",

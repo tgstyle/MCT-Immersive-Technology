@@ -1,0 +1,7 @@
+Advanced Coke Oven
+Better Coke
+<&multiblock>The Advanced Coke Oven is a multiblock machine used to §lproccess coal into coke§r, aiding in the §lproduction of coke§r and improving processing efficiency.
+
+§lOperation§r
+    - §lItems§r are inserted into the machine from the top §lside§r.
+    - §lOutputs§r are collected from the §lfront§r of the multiblock.

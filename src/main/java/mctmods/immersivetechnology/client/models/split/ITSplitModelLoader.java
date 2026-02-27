@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.client.models;
+package mctmods.immersivetechnology.client.models.split;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;

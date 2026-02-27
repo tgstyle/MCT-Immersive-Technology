@@ -1,13 +1,17 @@
 package mctmods.immersivetechnology.core.integration.jei;
 
+import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import blusunrize.immersiveengineering.api.crafting.IERecipeTypes;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.*;
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.world.item.crafting.Recipe;
 
 public class JEIRecipeTypes {
+    public static final RecipeType<CokeOvenRecipe> ADVANCED_COKE_OVEN = create(IERecipeTypes.COKE_OVEN);
+    public static final RecipeType<AdvancedCokeOvenRecipe> ADVANCED_COKE_OVEN_CUSTOM = create(ITRecipeTypes.ADVANCED_COKE_OVEN);
     public static final RecipeType<BoilerLiquidRecipe> BOILER_LIQUID = create(ITRecipeTypes.BOILER_LIQUID);
     public static final RecipeType<BoilerSolidRecipe> BOILER_SOLID = create(ITRecipeTypes.BOILER_SOLID);
     public static final RecipeType<BoilerTankRecipe> BOILER_TANK = create(ITRecipeTypes.BOILER_TANK);

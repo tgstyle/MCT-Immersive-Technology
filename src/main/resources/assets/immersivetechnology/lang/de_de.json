@@ -25,6 +25,7 @@
   "block.immersivetechnology.valve_limiter": "Stapelbegrenzer",
   "block.immersivetechnology.valve_load": "Lastregler",
 
+  "block.immersivetechnology.advanced_coke_oven": "Verbesserter Koksofen",
   "block.immersivetechnology.alternator": "Alternator",
   "block.immersivetechnology.boiler_liquid": "Flüssigbrennkammer (Kessel)",
   "block.immersivetechnology.boiler_tank": "Kesseltank",
@@ -118,10 +119,10 @@
   "gui.immersivetechnology.valve_load.limit_packet": "IF pro Paket",
   "gui.immersivetechnology.valve_load.limit_time": "IF pro Sekunde",
 
-  "overlay.immersivetechnology.metal_multiblock.steel_tank.normal.firstline": "%s: %s mB",
+  "overlay.immersivetechnology.metal_multiblock.steel_tank.normal.firstline": "%s : %s mB",
 
-  "overlay.immersivetechnology.osd.barrel.normal.firstline": "%s: %s mB",
-  "overlay.immersivetechnology.osd.creative_crate.normal.firstline": "%s: %s Gegenstände in der letzten Sekunde bereitgestellt",
+  "overlay.immersivetechnology.osd.barrel.normal.firstline": "%s : %s mB",
+  "overlay.immersivetechnology.osd.creative_crate.normal.firstline": "%s : %s Gegenstände in der letzten Sekunde bereitgestellt",
   "overlay.immersivetechnology.osd.valve_load.normal.firstline": "%s IF in der letzten Sekunde erlaubt",
   "overlay.immersivetechnology.osd.valve_load.sneaking.firstline": "Durchschnittlich %s IF/t",
   "overlay.immersivetechnology.osd.valve_load.sneaking.secondline": "in %s Paketen in der letzten Minute",
@@ -161,6 +162,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "IT-Multiblock-Anzeige",
 
+  "subtitles.immersivetechnology.advanced_coke_oven": "Verbesserter Koksofen brennt",
   "subtitles.immersivetechnology.advanced_coke_oven_fan": "Unterheizer-Ventilator dreht sich",
   "subtitles.immersivetechnology.alternator": "Alternator summt",
   "subtitles.immersivetechnology.boiler_liquid": "Kessel brüllt",

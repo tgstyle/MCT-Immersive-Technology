@@ -1,5 +1,5 @@
 {
-  "parent": "immersivetechnology:block/metal/advanced_coke_oven_baseheater",
+  "automatic_culling": false,
   "display": {
     "firstperson_lefthand": {
       "rotation": [
@@ -102,5 +102,16 @@
         0
       ]
     }
+  },
+  "emissive_ambient": false,
+  "flip_v": true,
+  "loader": "immersivetechnology:obj",
+  "model": "immersivetechnology:models/block/metal/obj/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater.obj",
+  "shade_quads": true,
+  "visibility": {
+    "Fan": false,
+    "Rotor": false,
+    "fan": false,
+    "rotor": false
   }
 }

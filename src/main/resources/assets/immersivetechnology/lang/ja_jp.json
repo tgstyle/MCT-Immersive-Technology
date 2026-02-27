@@ -25,6 +25,7 @@
   "block.immersivetechnology.valve_limiter": "スタック制限器",
   "block.immersivetechnology.valve_load": "負荷制御装置",
 
+  "block.immersivetechnology.advanced_coke_oven": "改良型コークス炉",
   "block.immersivetechnology.alternator": "オルタネーター",
   "block.immersivetechnology.boiler_liquid": "液体燃料ボイラー燃焼器",
   "block.immersivetechnology.boiler_tank": "ボイラータンク",
@@ -161,6 +162,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "ITマルチブロック表示",
 
+  "subtitles.immersivetechnology.advanced_coke_oven": "改良型コークス炉の燃焼音",
   "subtitles.immersivetechnology.advanced_coke_oven_fan": "ベースヒーターファンが回転中",
   "subtitles.immersivetechnology.alternator": "オルタネーターのうなり",
   "subtitles.immersivetechnology.boiler_liquid": "ボイラーの燃焼音",

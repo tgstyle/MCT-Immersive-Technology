@@ -30,12 +30,13 @@ public class AdvancedCokeOvenBaseHeaterRenderer extends ITBaseBlockEntityRendere
         BlockPos pos = tile.getBlockPos();
         Direction facing = tile.getFacing();
         float angle = tile.getFanRotation(partialTicks);
+
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);
-        float yRot = ((facing.toYRot() + 270) % 360);
-        poseStack.mulPose(new Quaternionf().rotateY(yRot * Mth.DEG_TO_RAD));
+        poseStack.mulPose(new Quaternionf().rotateY(facing.toYRot() * Mth.DEG_TO_RAD));
+        poseStack.mulPose(new Quaternionf().rotateX(angle * Mth.DEG_TO_RAD));
         poseStack.translate(-0.5, -0.5, -0.5);
-        poseStack.mulPose(new Quaternionf().rotateZ(angle * Mth.DEG_TO_RAD));
+
         renderDynamicModel(FAN_MODEL, poseStack, buffer, level, pos, packedLight);
         poseStack.popPose();
     }

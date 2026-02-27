@@ -20,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class ITBlockTags extends BlockTagsProvider {
     private static final MultiblockRegistration<?>[] MULTIBLOCKS = {
+            ITMultiblockProvider.ADVANCED_COKE_OVEN,
             ITMultiblockProvider.ALTERNATOR,
             ITMultiblockProvider.BOILER_LIQUID,
             ITMultiblockProvider.BOILER_SOLID,

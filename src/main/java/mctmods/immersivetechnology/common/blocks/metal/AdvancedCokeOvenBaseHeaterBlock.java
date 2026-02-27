@@ -24,6 +24,7 @@ import java.util.function.BiFunction;
 public class AdvancedCokeOvenBaseHeaterBlock extends ITEntityBlock<AdvancedCokeOvenBaseHeaterBlockEntity> {
 
     private static final VoxelShape SINGLE_SHAPE = Shapes.block();
+    private static final VoxelShape EMPTY_SHAPE = Shapes.empty();
 
     private static final VoxelShape SHAPE_X = Shapes.or(
             Shapes.block(),
@@ -51,19 +52,14 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ITEntityBlock<AdvancedCokeO
         builder.add(ITProperties.FACING_HORIZONTAL, ITProperties.MULTIBLOCKSLAVE, ITProperties.ACTIVE, BlockStateProperties.WATERLOGGED);
     }
 
-    @Override
-    @Nullable
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
+    @Override @Nullable public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction facing = context.getHorizontalDirection().getOpposite();
 
         BlockPos pos = context.getClickedPos();
         Direction side1 = facing.getClockWise();
         Direction side2 = facing.getCounterClockWise();
 
-        if (!context.getLevel().getBlockState(pos.relative(side1)).canBeReplaced(context) ||
-                !context.getLevel().getBlockState(pos.relative(side2)).canBeReplaced(context)) {
-            return null;
-        }
+        if (!context.getLevel().getBlockState(pos.relative(side1)).canBeReplaced(context) || !context.getLevel().getBlockState(pos.relative(side2)).canBeReplaced(context)) { return null; }
 
         return defaultBlockState()
                 .setValue(ITProperties.FACING_HORIZONTAL, facing)
@@ -72,8 +68,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ITEntityBlock<AdvancedCokeO
                 .setValue(BlockStateProperties.WATERLOGGED, context.getLevel().getFluidState(pos).getType() == net.minecraft.world.level.material.Fluids.WATER);
     }
 
-    @Override
-    public void onIEBlockPlacedBy(BlockPlaceContext context, BlockState state) {
+    @Override public void onIEBlockPlacedBy(BlockPlaceContext context, BlockState state) {
         Level level = context.getLevel();
         if (level.isClientSide || state.getValue(ITProperties.MULTIBLOCKSLAVE)) {
             return;
@@ -116,29 +111,13 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ITEntityBlock<AdvancedCokeO
         }
     }
 
-    @Override
-    @NotNull
-    public VoxelShape getShape(BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        if (state.getValue(ITProperties.MULTIBLOCKSLAVE)) return SINGLE_SHAPE;
+    @Override @NotNull public VoxelShape getShape(BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        if (state.getValue(ITProperties.MULTIBLOCKSLAVE)) return EMPTY_SHAPE;
         Direction facing = state.getValue(ITProperties.FACING_HORIZONTAL);
         return (facing.getAxis() == Direction.Axis.X) ? SHAPE_Z : SHAPE_X;
     }
 
-    @Override
-    @NotNull
-    public VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        return getShape(state, world, pos, context);
-    }
-
-    @Override
-    @NotNull
-    public VoxelShape getVisualShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        return getShape(state, world, pos, context);
-    }
-
-    @Override
-    @NotNull
-    public VoxelShape getInteractionShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos) {
-        return getShape(state, world, pos, CollisionContext.empty());
+    @Override @NotNull public VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        return SINGLE_SHAPE;
     }
 }

@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/block",
-  "textures": {
-    "particle": "immersivetechnology:block/metal/advanced_coke_oven_baseheater"
-  }
-}

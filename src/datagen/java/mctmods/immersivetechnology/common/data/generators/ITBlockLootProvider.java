@@ -49,6 +49,7 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
     }
 
     private void registerMultiblocksNoDrop() {
+        add(ITMultiblockProvider.ADVANCED_COKE_OVEN.block().get(), noDrop());
         add(ITMultiblockProvider.ALTERNATOR.block().get(), noDrop());
         add(ITMultiblockProvider.BOILER_LIQUID.block().get(), noDrop());
         add(ITMultiblockProvider.BOILER_SOLID.block().get(), noDrop());

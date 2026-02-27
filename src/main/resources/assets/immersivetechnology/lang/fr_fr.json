@@ -25,6 +25,7 @@
   "block.immersivetechnology.valve_limiter": "Limiteur de pile",
   "block.immersivetechnology.valve_load": "Contrôleur de charge",
 
+  "block.immersivetechnology.advanced_coke_oven": "Four à coke avancé",
   "block.immersivetechnology.alternator": "Alternateur",
   "block.immersivetechnology.boiler_liquid": "Brûleur à carburant liquide (chaudière)",
   "block.immersivetechnology.boiler_tank": "Réservoir de chaudière",
@@ -161,6 +162,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "Affichage des multiblocs IT",
 
+  "subtitles.immersivetechnology.advanced_coke_oven": "Four à coke avancé en combustion",
   "subtitles.immersivetechnology.advanced_coke_oven_fan": "Ventilateur du chauffage de base en rotation",
   "subtitles.immersivetechnology.alternator": "Alternateur qui bourdonne",
   "subtitles.immersivetechnology.boiler_liquid": "Chaudière qui rugit",

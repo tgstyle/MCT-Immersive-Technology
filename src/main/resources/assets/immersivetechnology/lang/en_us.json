@@ -25,6 +25,7 @@
   "block.immersivetechnology.valve_limiter": "Stack Limiter",
   "block.immersivetechnology.valve_load": "Load Controller",
 
+  "block.immersivetechnology.advanced_coke_oven": "Advanced Coke Oven",
   "block.immersivetechnology.alternator": "Alternator",
   "block.immersivetechnology.boiler_liquid": "Boiler Liquid Fuel Burner",
   "block.immersivetechnology.boiler_tank": "Boiler Tank",
@@ -161,6 +162,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "IT Multiblock Display",
 
+  "subtitles.immersivetechnology.advanced_coke_oven": "Advanced Coke Oven burning",
   "subtitles.immersivetechnology.advanced_coke_oven_fan": "Baseheater fan spinning",
   "subtitles.immersivetechnology.alternator": "Alternator humming",
   "subtitles.immersivetechnology.boiler_liquid": "Boiler gas roaring",

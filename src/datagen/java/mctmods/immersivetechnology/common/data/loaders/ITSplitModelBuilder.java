@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.data.loaders;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.client.models.ITSplitModelLoader;
+import mctmods.immersivetechnology.client.models.split.ITSplitModelLoader;
 import net.minecraft.core.Vec3i;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;

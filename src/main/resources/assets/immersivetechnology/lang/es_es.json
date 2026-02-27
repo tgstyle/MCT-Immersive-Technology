@@ -25,6 +25,7 @@
   "block.immersivetechnology.valve_limiter": "Limitador de pila",
   "block.immersivetechnology.valve_load": "Controlador de carga",
 
+  "block.immersivetechnology.advanced_coke_oven": "Horno de coque avanzado",
   "block.immersivetechnology.alternator": "Alternador",
   "block.immersivetechnology.boiler_liquid": "Quemador de combustible líquido (caldera)",
   "block.immersivetechnology.boiler_tank": "Tanque de caldera",
@@ -161,6 +162,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "Visualización de multibloques IT",
 
+  "subtitles.immersivetechnology.advanced_coke_oven": "Horno de coque avanzado quemando",
   "subtitles.immersivetechnology.advanced_coke_oven_fan": "Ventilador del calentador base girando",
   "subtitles.immersivetechnology.alternator": "El alternador zumba",
   "subtitles.immersivetechnology.boiler_liquid": "La caldera ruge",

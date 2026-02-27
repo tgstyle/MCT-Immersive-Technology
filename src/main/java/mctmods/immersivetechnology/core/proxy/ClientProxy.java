@@ -12,7 +12,7 @@ import mctmods.immersivetechnology.client.models.ITDynamicModel;
 import mctmods.immersivetechnology.client.models.ITModelConfigurableSides;
 import mctmods.immersivetechnology.client.models.ITObjLoader;
 import mctmods.immersivetechnology.client.models.mirror.ITMirroredModelLoader;
-import mctmods.immersivetechnology.client.models.ITSplitModelLoader;
+import mctmods.immersivetechnology.client.models.split.ITSplitModelLoader;
 import mctmods.immersivetechnology.client.particles.helper.ITColoredSmokeProvider;
 import mctmods.immersivetechnology.client.particles.helper.ITSmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.*;
@@ -64,6 +64,7 @@ public class ClientProxy extends CommonProxy {
                 ItemBlockRenderTypes.setRenderLayer(entry.getFlowing(), RenderType.translucent());
             }
 
+            MenuScreens.register(ITMenuTypes.ADVANCED_COKE_OVEN_MENU.getType(), AdvancedCokeOvenScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_LIQUID_MENU.getType(), BoilerLiquidScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_SOLID_MENU.getType(), BoilerSolidScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_TANK_MENU.getType(), BoilerTankScreen::new);
@@ -84,6 +85,9 @@ public class ClientProxy extends CommonProxy {
             instance.addEntry(parent_category, builder.create());
             InnerNode<ResourceLocation, ManualEntry> multiblock_category = parent_category.getOrCreateSubnode(ITLib.rl("it_multiblocks"), 0);
             ManualEntry.ManualEntryBuilder multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ITLib.rl("advanced_coke_oven"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ITLib.rl("alternator"));
             instance.addEntry(multiblock_category, multiblock.create());
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
