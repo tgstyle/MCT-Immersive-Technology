@@ -129,7 +129,7 @@ tasks.register('copyModsTomlForIntelliJ', Copy) {
 }
 
 def icJar = null
-def icDir = file('../Immersive-Convergence/build/libs')
+def icDir = file('../ImmersiveConvergence/build/libs')
 def matchingJars = fileTree(icDir) {
     include "ImmersiveConvergence-${version_minecraft}-*-dev.jar"
     exclude "**/*-sources.jar"
