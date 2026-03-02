@@ -1,6 +1,8 @@
 # Links
-- [Immersive Technology on CurseForge](https://www.curseforge.com/minecraft/mc-mods/immersive-technology)
 - [Official Discord](https://discord.gg/ujY2mV9)<br/>
+
+- [Immersive Technology on CurseForge](https://www.curseforge.com/minecraft/mc-mods/immersive-technology)
+- [Immersive Technology on Modrinth](https://modrinth.com/mod/mct-immersive-technology)
 
 # MCT Immersive Technology
 Energy Technology addon for Immersive Engineering, forked from Immersive Tech.<br/>
