@@ -1,8 +1,6 @@
 # Made in Blockbench 5.0.7
 newmtl m_239ef5c6-7580-b415-9c7c-6209c340fc4c
 map_Kd immersivetech:blocks/metal_device_advanced_coke_oven_baseheater
-newmtl m_239ef5c6-7580-b415-9c7c-6209c340fc4c
-map_Kd immersivetech:blocks/metal_device_advanced_coke_oven_baseheater
 newmtl m_ebf577a6-96da-35f8-2103-5b431c24494c
 map_Kd immersivetech:blocks/metal_device_advanced_coke_oven_baseheater
 newmtl none
