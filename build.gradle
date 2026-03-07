@@ -260,6 +260,8 @@ jar.dependsOn bumpVersion
 datagenJar.dependsOn bumpVersion
 sourcesJar.dependsOn bumpVersion
 
+tasks.register('genIntellijRunsDummy') {}
+
 jar {
     archiveBaseName.set("MCT-ImmersiveTechnology-${version_minecraft}")
     archiveClassifier.set('')
