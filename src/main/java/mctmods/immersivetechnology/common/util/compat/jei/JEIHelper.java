@@ -18,6 +18,9 @@ import mctmods.immersivetechnology.common.util.compat.jei.solartower.SolarTowerR
 import mctmods.immersivetechnology.common.util.compat.jei.steamturbine.SteamTurbineRecipeCategory;
 import mctmods.immersivetechnology.client.gui.GuiAdvancedCokeOven;
 
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.stone.BlockTypes_StoneDevices;
+
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.IJeiRuntime;
@@ -32,6 +35,7 @@ import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.IRecipeWrapper;
 
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
@@ -95,6 +99,7 @@ public class JEIHelper implements IModPlugin {
         if (Multiblocks.enable.enable_meltingCrucible || Multiblocks.enable.enable_solarMelter) { modRegistry.addRecipes(new ArrayList<Object>((MeltingCrucibleRecipe.recipeList)), "it.meltingCrucible"); }
         if (Multiblocks.enable.enable_radiator) { modRegistry.addRecipes(new ArrayList<Object>((RadiatorRecipe.recipeList)), "it.radiator"); }
         if (Multiblocks.enable.enable_advancedCokeOven) {
+            modRegistry.addRecipeCatalyst(new ItemStack(IEContent.blockStoneDevice, 1, BlockTypes_StoneDevices.COKE_OVEN.getMeta()), "ie.cokeoven");
             modRegistry.addRecipeCatalyst(GenericMultiblockIngredient.ADVANCED_COKE_OVEN, "ie.cokeoven");
             modRegistry.addRecipeClickArea(GuiAdvancedCokeOven.class, 58, 36, 11, 13, "ie.cokeoven");
         }

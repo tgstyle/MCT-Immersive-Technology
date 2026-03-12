@@ -11,6 +11,7 @@
     "MixinIEContentConveyors",
     "MixinIEConveyorHandler",
     "MixinIEIEContent",
+    "MixinIERecipeCategory",
     "MixinIETileEntityFluidPipe"
   ]
 }
