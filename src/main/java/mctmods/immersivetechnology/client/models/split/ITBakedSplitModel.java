@@ -59,10 +59,13 @@ public class ITBakedSplitModel<T extends BakedModel> extends ITAbstractSplitMode
         }
     }
 
-    @Override @Nonnull public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData data, @Nullable RenderType renderType) {
+    @Override @SuppressWarnings("ConstantConditions") @Nonnull public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData data, @Nullable RenderType renderType) {
         BlockPos offset = data.get(ITProperties.Model.SUBMODEL_OFFSET);
         if (offset == null) {
-            return super.getQuads(state, side, rand, data, renderType);
+            if (state == null) {
+                return super.getQuads(state, side, rand, data, renderType);
+            }
+            return ImmutableList.of();
         }
         if (dynamic) {
             Object key = this.keyProvider.getKey(state, side, rand, data, renderType);

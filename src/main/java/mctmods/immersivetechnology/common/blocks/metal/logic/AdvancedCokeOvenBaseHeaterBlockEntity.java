@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import blusunrize.immersiveengineering.api.client.IModelOffsetProvider;
 import mctmods.immersivetechnology.common.blocks.helper.*;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.ITServerConfig;
@@ -31,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.function.BooleanSupplier;
 
-public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity implements ITServerTickableBE, ITClientTickableBE, ITBlockInterfaces.IDirectionalBE, ITBlockInterfaces.IHasDummyBlocks, IEnergyStorage, IModelOffsetProvider {
+public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity implements ITServerTickableBE, ITClientTickableBE, ITBlockInterfaces.IDirectionalBE, ITBlockInterfaces.IHasDummyBlocks, IEnergyStorage, ITModelOffsetProvider {
 
     private static final int MAX_ENERGY = ITServerConfig.advancedCokeOvenBaseheaterMaxEnergy;
     private static final int ENERGY_CONSUMPTION = ITServerConfig.advancedCokeOvenBaseheaterEnergyConsumption;

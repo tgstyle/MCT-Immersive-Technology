@@ -111,7 +111,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ITEntityBlock<AdvancedCokeO
         }
     }
 
-    @Override @NotNull public VoxelShape getShape(BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+    @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         if (state.getValue(ITProperties.MULTIBLOCKSLAVE)) return EMPTY_SHAPE;
         Direction facing = state.getValue(ITProperties.FACING_HORIZONTAL);
         return (facing.getAxis() == Direction.Axis.X) ? SHAPE_Z : SHAPE_X;
