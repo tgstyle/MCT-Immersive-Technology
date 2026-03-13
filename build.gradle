@@ -191,7 +191,7 @@ tasks.register('optimizePng') {
             try {
                 exec {
                     executable 'optipng'
-                    args '-q', '-o7', '-zm1-9', file.absolutePath   // -strip all removed – this was turning JEI tank overlays black
+                    args '-q', '-o7', '-nx', '-zm1-9', file.absolutePath
                 }
                 long newSize = file.length()
                 if (newSize < size) {
