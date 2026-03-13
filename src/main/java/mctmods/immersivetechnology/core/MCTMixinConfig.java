@@ -24,5 +24,8 @@ public class MCTMixinConfig {
 
         @Config.Comment("Enable the MinecraftServer mixin to redirect error logging for crash debugging [Default=true]")
         public boolean enableErrorLoggingRedirect = true;
+
+        @Config.Comment("Fix IE wire rendering for vertical/near-vertical wires and chunk-border cases [Default=true]")
+        public boolean fix_IE_wires = true;
     }
 }

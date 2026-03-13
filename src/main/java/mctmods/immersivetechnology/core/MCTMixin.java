@@ -33,12 +33,14 @@ public class MCTMixin implements IFMLLoadingPlugin, IEarlyMixinLoader {
             t.printStackTrace(System.err);
         });
 
-        LOGGER.info("Loaded config: enableAdditionsLogging={}, enablePotentialsLogging={}, enableWorldMixin={}, replace_IE_pipes={}, enableErrorLoggingRedirect={}",
+        LOGGER.info("Loaded config: enableAdditionsLogging={}, enablePotentialsLogging={}, enableWorldMixin={}, replace_IE_pipes={}, replace_IE_conveyors={}, enableErrorLoggingRedirect={}, fix_IE_wires={}",
                 MCTMixinConfig.mixinSettings.enableAdditionsLogging,
                 MCTMixinConfig.mixinSettings.enablePotentialsLogging,
                 MCTMixinConfig.mixinSettings.enableWorldMixin,
                 MCTMixinConfig.mixinSettings.replace_IE_pipes,
-                MCTMixinConfig.mixinSettings.enableErrorLoggingRedirect);
+                MCTMixinConfig.mixinSettings.replace_IE_conveyors,
+                MCTMixinConfig.mixinSettings.enableErrorLoggingRedirect,
+                MCTMixinConfig.mixinSettings.fix_IE_wires);
     }
 
     @Override public String[] getASMTransformerClass() { return new String[0]; }
