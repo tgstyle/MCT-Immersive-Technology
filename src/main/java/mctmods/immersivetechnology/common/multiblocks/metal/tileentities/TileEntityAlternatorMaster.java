@@ -56,7 +56,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
     private float soundVolume = 0f;
     private int soundGracePeriod = 0;
-    private float targetSoundLevel = 0f;
+    private boolean isRunning = false;
     private int oldEnergy = 0;
     private int oldSpeed = 0;
     private int oldComparatorOutput = 0;
@@ -76,6 +76,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         super.readCustomNBT(nbt, descPacket);
         energyStorage.readFromNBT(nbt);
         animation.readFromNBT(nbt);
+        soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (!descPacket && formed) {
             needsPoIInit = true;
             needsNotify = true;
@@ -86,6 +87,36 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         super.writeCustomNBT(nbt, descPacket);
         energyStorage.writeToNBT(nbt);
         animation.writeToNBT(nbt);
+        nbt.setInteger("soundGracePeriod", soundGracePeriod);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void handleSounds() {
+        if (soundPos0 == null) return;
+        float targetSoundLevel = isRunning ? (soundRPM ? (float)speed / maxSpeed : (float)energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored()) : 0f;
+        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
+        else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
+        if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }
+        else {
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            float att = Math.max((float)player.getDistanceSq(soundPos0.getX() + 0.5, soundPos0.getY() + 0.5, soundPos0.getZ() + 0.5) / 8f, 1f);
+            float level = ITUtils.remapRange(0f, 1f, 0.5f, 1.0f, soundVolume);
+            ITSounds.alternator.PlayRepeating(soundPos0, 5f * soundVolume / att, level);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override public void onChunkUnload() {
+        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        super.onChunkUnload();
+    }
+
+    @Override public void disassemble() {
+        super.disassemble();
+        if (soundPos0 == null) InitializePoIs();
+        if (soundPos0 != null && !world.isRemote) {
+            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        }
     }
 
     @Override public void update() {
@@ -106,27 +137,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             float rotationSpeed = speed == 0 ? 0f : ((float)speed / maxSpeed) * maxRotationSpeed;
             animation.setAnimationMomentum(rotationSpeed);
             animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
-
-            targetSoundLevel = soundRPM ? (float)speed / maxSpeed : (float)energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
-
-            if (soundVolume < targetSoundLevel) {
-                soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel);
-                soundGracePeriod = 60;
-            } else if (soundVolume > targetSoundLevel) {
-                if (soundGracePeriod > 0) soundGracePeriod--;
-                else soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel);
-            }
-
-            if (soundPos0 != null) {
-                if (soundVolume <= 0f) {
-                    ITSoundHandler.StopSound(soundPos0);
-                } else {
-                    EntityPlayerSP player = Minecraft.getMinecraft().player;
-                    float att = Math.max((float)player.getDistanceSq(soundPos0.getX() + 0.5, soundPos0.getY() + 0.5, soundPos0.getZ() + 0.5) / 8f, 1f);
-                    float level = ITUtils.remapRange(0f, 1f, 0.5f, 1.0f, soundVolume);
-                    ITSounds.alternator.PlayRepeating(soundPos0, 5f * soundVolume / att, level);
-                }
-            }
+            handleSounds();
             return;
         }
 
@@ -155,11 +166,19 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             }
         }
 
-        boolean changed = oldSpeed != speed || oldEnergy != currentEnergy;
+        boolean didWork = speed > 0;
+        if (didWork) soundGracePeriod = 60;
+        else if (soundGracePeriod > 0) soundGracePeriod--;
+
+        boolean wasRunning = isRunning;
+        isRunning = soundGracePeriod > 0;
+
+        boolean changed = oldSpeed != speed || oldEnergy != currentEnergy || isRunning != wasRunning;
         if (changed && tickCountdown-- <= 0) {
             ByteBuf buf = Unpooled.buffer();
             buf.writeInt(energyStorage.getEnergyStored());
             buf.writeInt(speed);
+            buf.writeBoolean(isRunning);
             BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
             tickCountdown = 5;
             world.markChunkDirty(getPos(), this);
@@ -211,18 +230,12 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() {
-        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
-        super.onChunkUnload();
-    }
-
     @Override public void receiveMessageFromServer(ByteBuf buf) {
         int readEnergy = buf.readInt();
         int readSpeed = buf.readInt();
+        isRunning = buf.readBoolean();
         energyStorage.modifyEnergyStored(readEnergy - energyStorage.getEnergyStored());
         speed = readSpeed;
-        targetSoundLevel = soundRPM ? (float)readSpeed / maxSpeed : (float)readEnergy / energyStorage.getMaxEnergyStored();
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
@@ -260,18 +273,6 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             return false;
         }
         return true;
-    }
-
-    @Override public void disassemble() {
-        super.disassemble();
-        BlockPos sp = soundPos0;
-        if (sp == null) {
-            InitializePoIs();
-            sp = soundPos0;
-        }
-        if (sp != null && !world.isRemote) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(sp), new TargetPoint(world.provider.getDimension(), sp.getX(), sp.getY(), sp.getZ(), 0));
-        }
     }
 
     @Override public int getComparatorInputOverride() { return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored(); }

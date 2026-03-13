@@ -66,11 +66,11 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     public int processTimeRemaining;
     public HeatExchangerRecipe cachedExchangeRecipe;
 
-    private float soundVolume;
-    private int soundGracePeriod = 60;
+    private float soundVolume = 0f;
+    private int soundGracePeriod = 0;
+    private boolean isRunning = false;
     private double distanceToTE;
     private int playerDimension;
-    private boolean isRunning;
     public boolean redstoneControlInverted;
     private int oldComparatorOutput;
 
@@ -82,6 +82,8 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     private int tickCountdown = 5;
     private int oldEnergy;
     private boolean oldIsRunning;
+
+    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     public TileEntityHeatExchangerMaster() {}
 
@@ -96,6 +98,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         isRunning = nbt.getBoolean("isRunning");
+        soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (formed && !descPacket) {
             needsPoIInit = true;
             needsNotify = true;
@@ -113,6 +116,77 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         nbt.setBoolean("isRunning", isRunning);
+        nbt.setInteger("soundGracePeriod", soundGracePeriod);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void handleSounds() {
+        if (soundPos0 == null) InitializePoIs();
+        float targetSoundLevel = isRunning ? 1f : 0f;
+        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
+        else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
+        if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }
+        else {
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
+            ITSounds.heatExchanger.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void clientUpdate() {
+        if (soundPos0 == null) InitializePoIs();
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        double distSq = player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5);
+        if (world.provider.getDimension() == player.dimension && distSq < 400 && (distanceToTE > 400 || playerDimension != player.dimension)) requestUpdate();
+        distanceToTE = distSq;
+        playerDimension = player.dimension;
+        handleSounds();
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override public void onChunkUnload() {
+        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        super.onChunkUnload();
+    }
+
+    @Override public void disassemble() {
+        if (soundPos0 == null) InitializePoIs();
+        if (soundPos0 != null) {
+            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        }
+        super.disassemble();
+    }
+
+    public void requestUpdate() { BinaryMessageTileSync.sendToServer(getPos(), Unpooled.buffer()); }
+
+    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeInt(energyStorage.getEnergyStored());
+        buf.writeBoolean(isRunning);
+        BinaryMessageTileSync.sendToPlayer(player, getPos(), buf);
+    }
+
+    @Override public void receiveMessageFromServer(ByteBuf message) {
+        int readEnergy = message.readInt();
+        energyStorage.modifyEnergyStored(readEnergy - energyStorage.getEnergyStored());
+        isRunning = message.readBoolean();
+    }
+
+    private void notifyIONeighbors() {
+        BlockPos p;
+        p = getBlockPosForPos(energyInputPos0.position);
+        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
+        p = getBlockPosForPos(fluidInputPos0.position);
+        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
+        p = getBlockPosForPos(fluidInputPos1.position);
+        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
+        p = getBlockPosForPos(fluidOutputPos0.position);
+        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
+        p = getBlockPosForPos(fluidOutputPos1.position);
+        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
+        p = getBlockPosForPos(redstonePos0.position);
+        world.updateComparatorOutputLevel(p, world.getBlockState(p).getBlock());
     }
 
     @Override public void update() {
@@ -133,7 +207,6 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         boolean update = pumpOutputOut();
 
         boolean shouldRun = !isRSDisabled();
-        isRunning = false;
 
         if (processTimeRemaining == 0 && shouldRun) {
             FluidStack input0 = tanks[0].getFluid();
@@ -174,7 +247,12 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
                     }
                 }
             } else processTimeRemaining = 0;
-        }
+        } else isRunning = false;
+
+        boolean didWork = processTimeRemaining > 0 && shouldRun;
+        if (didWork) soundGracePeriod = 60;
+        else if (soundGracePeriod > 0) soundGracePeriod--;
+        isRunning = soundGracePeriod > 0;
 
         int currentEnergy = energyStorage.getEnergyStored();
         boolean changed = oldEnergy != currentEnergy || oldIsRunning != isRunning;
@@ -232,83 +310,6 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         }
         if (!world.isRemote) notifyIONeighbors();
     }
-
-    private void notifyIONeighbors() {
-        BlockPos p;
-        p = getBlockPosForPos(energyInputPos0.position);
-        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(fluidInputPos0.position);
-        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(fluidInputPos1.position);
-        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(fluidOutputPos0.position);
-        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(fluidOutputPos1.position);
-        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(redstonePos0.position);
-        world.updateComparatorOutputLevel(p, world.getBlockState(p).getBlock());
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void handleSounds() {
-        if (soundPos0 == null) InitializePoIs();
-        if (soundVolume == 0) ITSoundHandler.StopSound(soundPos0);
-        else {
-            EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
-            ITSounds.heatExchanger.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    private void clientUpdate() {
-        if (soundPos0 == null) InitializePoIs();
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double distSq = player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5);
-        if (world.provider.getDimension() == player.dimension && distSq < 400 && (distanceToTE > 400 || playerDimension != player.dimension)) requestUpdate();
-        distanceToTE = distSq;
-        playerDimension = player.dimension;
-        float targetSoundLevel = isRunning ? 1f : 0f;
-        if (soundVolume < targetSoundLevel) {
-            soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel);
-            soundGracePeriod = 60;
-        } else if (soundVolume > targetSoundLevel) {
-            if (soundGracePeriod > 0) soundGracePeriod--;
-            else soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel);
-        }
-        handleSounds();
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() {
-        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
-        super.onChunkUnload();
-    }
-
-    @Override public void disassemble() {
-        if (soundPos0 == null) InitializePoIs();
-        if (soundPos0 != null) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
-        }
-        super.disassemble();
-    }
-
-    public void requestUpdate() { BinaryMessageTileSync.sendToServer(getPos(), Unpooled.buffer()); }
-
-    @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {
-        ByteBuf buf = Unpooled.buffer();
-        buf.writeInt(energyStorage.getEnergyStored());
-        buf.writeBoolean(isRunning);
-        BinaryMessageTileSync.sendToPlayer(player, getPos(), buf);
-    }
-
-    @Override public void receiveMessageFromServer(ByteBuf message) {
-        int readEnergy = message.readInt();
-        energyStorage.modifyEnergyStored(readEnergy - energyStorage.getEnergyStored());
-        isRunning = message.readBoolean();
-    }
-
-    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     private boolean pumpOutputOut() {
         boolean update = false;

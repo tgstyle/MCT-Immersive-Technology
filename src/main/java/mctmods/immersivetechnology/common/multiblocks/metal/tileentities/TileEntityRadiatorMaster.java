@@ -66,8 +66,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     private RadiatorRecipe cachedRadiatorRecipe;
     private float soundVolume = 0f;
-    private int soundGracePeriod = 60;
-    private boolean isRunning;
+    private int soundGracePeriod = 0;
+    private boolean isRunning = false;
     private double radiationEfficiency = 0;
     private int clientUpdateCooldown = 20;
     private double distanceSqToTE;
@@ -79,6 +79,10 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     protected PoICache fluidInputPos0, fluidOutputPos0, redstonePos0;
     private BlockPos soundPos0, fluidOutputTEPos0;
 
+    public void efficientMarkDirty() {
+        world.getChunk(getPos()).markDirty();
+    }
+
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
@@ -87,6 +91,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         processTimeTotal = nbt.getInteger("processTimeTotal");
         radiationEfficiency = nbt.getDouble("radiationEfficiency");
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
+        isRunning = nbt.getBoolean("isRunning");
+        soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (!descPacket) {
             if (nbt.hasKey("cachedRecipe")) cachedRadiatorRecipe = RadiatorRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
             else if (processTimeRemaining > 0 && tanks[0].getFluid() != null && tanks[0].getFluidAmount() > 0) {
@@ -108,6 +114,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         nbt.setInteger("processTimeTotal", processTimeTotal);
         nbt.setDouble("radiationEfficiency", radiationEfficiency);
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
+        nbt.setBoolean("isRunning", isRunning);
+        nbt.setInteger("soundGracePeriod", soundGracePeriod);
         if (!descPacket && cachedRadiatorRecipe != null) nbt.setTag("cachedRecipe", cachedRadiatorRecipe.writeToNBT(new NBTTagCompound()));
     }
 
@@ -188,13 +196,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
         float targetSoundLevel = isRunning ? 1f : 0f;
-        if (soundVolume < targetSoundLevel) {
-            soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel);
-            soundGracePeriod = 60;
-        } else if (soundVolume > targetSoundLevel) {
-            if (soundGracePeriod > 0) soundGracePeriod--;
-            else soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel);
-        }
+        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
+        else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
         if (soundVolume == 0) ITSoundHandler.StopSound(soundPos0);
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -341,10 +344,6 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     @Override public void receiveMessageFromServer(ByteBuf message) {
         isRunning = message.readBoolean();
-    }
-
-    public void efficientMarkDirty() {
-        world.getChunk(getPos()).markDirty();
     }
 
     private boolean gainProgress() {

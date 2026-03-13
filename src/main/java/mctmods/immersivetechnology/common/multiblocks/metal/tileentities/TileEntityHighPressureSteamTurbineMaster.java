@@ -58,9 +58,9 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     public int speed = 0;
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
-    private float targetSoundLevel;
     private float soundVolume = 0f;
-    private int soundGracePeriod;
+    private int soundGracePeriod = 0;
+    private boolean isRunning = false;
     private int tickCountdown = 5;
     private int oldComparatorOutput = 0;
 
@@ -81,14 +81,10 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         if (!descPacket) animation.readFromNBT(nbt);
         fuelBurnRemaining = nbt.getInteger("fuelBurnRemaining");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
+        soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (!descPacket && formed) {
             needsPoIInit = true;
             needsNotify = true;
-        }
-        if (world.isRemote) {
-            targetSoundLevel = (float)speed / maxSpeed;
-            soundVolume = targetSoundLevel;
-            soundGracePeriod = 60;
         }
     }
 
@@ -100,13 +96,15 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         if (!descPacket) animation.writeToNBT(nbt);
         nbt.setInteger("fuelBurnRemaining", fuelBurnRemaining);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
+        nbt.setInteger("soundGracePeriod", soundGracePeriod);
     }
 
     @SideOnly(Side.CLIENT)
-    private void handleSounds() {
+    public void handleSounds() {
         if (soundPos0 == null) InitializePoIs();
-        if (soundVolume == 0f) ITSoundHandler.StopSound(soundPos0);
-        else {
+        float targetSoundLevel = isRunning ? (float)speed / maxSpeed : 0f;
+        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
+        if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8f, 1f);
             float level = ITUtils.remapRange(0f, 1f, 0.5f, 1.0f, soundVolume);
@@ -132,12 +130,13 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     private void notifyNearbyClients() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeInt(speed);
+        buf.writeBoolean(isRunning);
         BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
     }
 
     @Override public void receiveMessageFromServer(ByteBuf buf) {
         speed = buf.readInt();
-        targetSoundLevel = (float)speed / maxSpeed;
+        isRunning = buf.readBoolean();
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
@@ -160,14 +159,6 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
             float oldMomentum = animation.getAnimationMomentum();
             animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
             animation.setAnimationMomentum(rotationSpeed);
-
-            if (soundVolume < targetSoundLevel) {
-                soundVolume = Math.min(targetSoundLevel, soundVolume + 0.01f);
-                soundGracePeriod = 60;
-            } else if (soundVolume > targetSoundLevel) {
-                if (soundGracePeriod > 0) soundGracePeriod--;
-                else soundVolume = Math.max(targetSoundLevel, soundVolume - 0.01f);
-            }
             handleSounds();
             return;
         }
@@ -206,11 +197,17 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         if (speed != prevSpeed) changed = true;
         if (pumpOutputOut()) changed = true;
 
+        boolean didWork = speed > 0;
+        if (didWork) soundGracePeriod = 60;
+        else if (soundGracePeriod > 0) soundGracePeriod--;
+        boolean wasRunning = isRunning;
+        isRunning = soundGracePeriod > 0;
+
         if (changed) {
             this.markDirty();
             markContainingBlockForUpdate(null);
         }
-        if (changed && tickCountdown-- <= 0) {
+        if ((changed || isRunning != wasRunning) && tickCountdown-- <= 0) {
             notifyNearbyClients();
             tickCountdown = 5;
             this.markDirty();

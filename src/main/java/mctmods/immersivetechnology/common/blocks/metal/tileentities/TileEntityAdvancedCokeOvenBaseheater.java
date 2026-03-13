@@ -42,15 +42,23 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
     public boolean dummy = false;
     public boolean active = false;
     public BlockPos masterPos;
+
+    private float soundVolume = 0f;
+    private int soundGracePeriod = 0;
+    private boolean isRunning = false;
+
     @SideOnly(Side.CLIENT) private float fanRotation;
     @SideOnly(Side.CLIENT) private float prevFanRotation;
-    @SideOnly(Side.CLIENT) private float soundVolume;
+
+    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     @Override public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
         dummy = nbt.getBoolean("dummy");
         facing = EnumFacing.values()[nbt.getInteger("facing")];
         energyStorage.readFromNBT(nbt);
         active = nbt.getBoolean("active");
+        isRunning = nbt.getBoolean("isRunning");
+        soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (descPacket) { this.markContainingBlockForUpdate(null); }
     }
 
@@ -58,26 +66,37 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
         nbt.setBoolean("dummy", dummy);
         nbt.setInteger("facing", facing.ordinal());
         nbt.setBoolean("active", active);
+        nbt.setBoolean("isRunning", isRunning);
+        nbt.setInteger("soundGracePeriod", soundGracePeriod);
         energyStorage.writeToNBT(nbt);
     }
 
     public boolean doSpeedup() {
         if (dummy) { return false; }
         int consumed = cokeOvenConsumption;
+        boolean didWork = false;
         if (this.energyStorage.extractEnergy(consumed, true) == consumed) {
+            this.energyStorage.extractEnergy(consumed, false);
+            didWork = true;
             if (!active) {
                 active = true;
                 this.markContainingBlockForUpdate(null);
                 updateDummies();
             }
-            this.energyStorage.extractEnergy(consumed, false);
-            return true;
-        } else if (active) {
+        }
+        if (didWork) soundGracePeriod = 60;
+        else if (soundGracePeriod > 0) soundGracePeriod--;
+        if (!didWork && soundGracePeriod == 0 && active) {
             active = false;
             this.markContainingBlockForUpdate(null);
             updateDummies();
         }
-        return false;
+        boolean wasRunning = isRunning;
+        isRunning = soundGracePeriod > 0;
+        if (isRunning != wasRunning) {
+            markContainingBlockForUpdate(null);
+        }
+        return didWork;
     }
 
     public void updateDummies() {
@@ -207,6 +226,8 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
             TileEntity te = world.getTileEntity(attachedPos);
             if (!(te instanceof TileEntityAdvancedCokeOvenSlave) || !((TileEntityAdvancedCokeOvenSlave)te).formed) {
                 active = false;
+                soundGracePeriod = 0;
+                isRunning = false;
                 markContainingBlockForUpdate(null);
                 updateDummies();
             }
@@ -217,9 +238,6 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
                 fanRotation += 35f;
                 fanRotation %= 360;
             }
-            float target = active ? 1f : 0f;
-            if (soundVolume < target) { soundVolume = Math.min(soundVolume + 0.01f, target); }
-            else if (soundVolume > target) { soundVolume = Math.max(soundVolume - 0.01f, target); }
             handleSounds();
         }
     }
@@ -231,10 +249,13 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
-        if (soundVolume == 0) { ITSoundHandler.StopSound(getPos()); }
+        float targetSoundLevel = isRunning ? 1f : 0f;
+        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
+        else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
+        if (soundVolume <= 0f) { ITSoundHandler.StopSound(getPos()); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(getPos().getX(), getPos().getY(), getPos().getZ()) / 8, 1);
+            float attenuation = Math.max((float)player.getDistanceSq(getPos().getX() + .5, getPos().getY() + .5, getPos().getZ() + .5) / 8, 1);
             float level = ITUtils.remapRange(0, 1, 0.5f, 1.0f, soundVolume);
             ITSounds.advancedCokeOvenFan.PlayRepeating(getPos(), (5 * soundVolume) / attenuation, level);
         }

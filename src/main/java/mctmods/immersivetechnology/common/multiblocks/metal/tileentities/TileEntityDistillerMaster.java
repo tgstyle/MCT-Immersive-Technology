@@ -68,8 +68,9 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     public int processTimeRemaining = 0;
 
-    private boolean running;
+    private boolean isRunning = false;
     private float soundVolume = 0f;
+    private int soundGracePeriod = 0;
 
     public DistillerRecipe cachedDistillerRecipe;
     public boolean redstoneControlInverted = false;
@@ -88,10 +89,11 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
         energyStorage.readFromNBT(nbt.getCompoundTag("energy"));
-        running = nbt.getBoolean("running");
+        isRunning = nbt.getBoolean("isRunning");
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
+        soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (!descPacket) {
             if (nbt.hasKey("cachedRecipe")) cachedDistillerRecipe = DistillerRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
             inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
@@ -108,10 +110,11 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
         nbt.setTag("energy", energyStorage.writeToNBT(new NBTTagCompound()));
-        nbt.setBoolean("running", running);
+        nbt.setBoolean("isRunning", isRunning);
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
+        nbt.setInteger("soundGracePeriod", soundGracePeriod);
         if (!descPacket) {
             if (cachedDistillerRecipe != null) nbt.setTag("cachedRecipe", cachedDistillerRecipe.writeToNBT(new NBTTagCompound()));
             nbt.setTag("inventory", Utils.writeInventory(inventory));
@@ -121,12 +124,9 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     @SideOnly(Side.CLIENT)
     private void handleSounds() {
         if (soundPos0 == null) InitializePoIs();
-        float target = running ? 1f : 0f;
-        if (soundVolume < target) {
-            soundVolume = Math.min(soundVolume + 0.01f, target);
-        } else if (soundVolume > target) {
-            soundVolume = Math.max(soundVolume - 0.01f, target);
-        }
+        float target = isRunning ? 1f : 0f;
+        if (soundVolume < target) { soundVolume = Math.min(soundVolume + 0.01f, target); }
+        else if (soundVolume > target) { soundVolume = Math.max(soundVolume - 0.01f, target); }
         if (soundVolume <= 0f) {
             ITSoundHandler.StopSound(soundPos0);
             soundVolume = 0f;
@@ -169,7 +169,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         }
         int oldEnergy = energyStorage.getEnergyStored();
         int oldProcess = processTimeRemaining;
-        boolean oldRunning = running;
+        boolean oldRunning = isRunning;
         boolean update = false;
         boolean shouldRun = !isRSDisabled();
         if (processTimeRemaining == 0 && shouldRun) {
@@ -263,21 +263,24 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
                 }
             }
         }
-        boolean currentlyRunning = processTimeRemaining > 0 && shouldRun;
-        if (currentlyRunning != running) {
-            running = currentlyRunning;
+        boolean didWork = processTimeRemaining > 0 && shouldRun;
+        if (didWork) soundGracePeriod = 60;
+        else if (soundGracePeriod > 0) soundGracePeriod--;
+        boolean currentlyRunning = soundGracePeriod > 0;
+        if (currentlyRunning != isRunning) {
+            isRunning = currentlyRunning;
             update = true;
         }
         if (update) {
             efficientMarkDirty();
             markContainingBlockForUpdate(null);
         }
-        boolean changed = oldEnergy != energyStorage.getEnergyStored() || oldProcess != processTimeRemaining || oldRunning != running;
+        boolean changed = oldEnergy != energyStorage.getEnergyStored() || oldProcess != processTimeRemaining || oldRunning != isRunning;
         if (changed && tickCountdown-- <= 0) {
             ByteBuf buf = Unpooled.buffer();
             buf.writeInt(energyStorage.getEnergyStored() - oldEnergy);
             buf.writeInt(processTimeRemaining);
-            buf.writeBoolean(running);
+            buf.writeBoolean(isRunning);
             BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
             tickCountdown = 5;
         }
@@ -440,7 +443,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         int delta = message.readInt();
         energyStorage.modifyEnergyStored(delta);
         processTimeRemaining = message.readInt();
-        running = message.readBoolean();
+        isRunning = message.readBoolean();
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}

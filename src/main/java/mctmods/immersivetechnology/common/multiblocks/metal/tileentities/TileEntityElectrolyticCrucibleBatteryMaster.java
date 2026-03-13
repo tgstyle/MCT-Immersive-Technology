@@ -65,11 +65,11 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
             new ITFluidTank(outputTankSize, this)
     };
 
-    private float soundVolume;
-    private int soundGracePeriod = 60;
+    private float soundVolume = 0f;
+    private int soundGracePeriod = 0;
+    private boolean isRunning = false;
     private double distanceToTE;
     private int playerDimension;
-    private boolean isRunning;
     public boolean redstoneControlInverted = false;
     private int oldComparatorOutput;
 
@@ -82,6 +82,10 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     private int oldEnergy;
     private boolean oldIsRunning;
 
+    public void efficientMarkDirty() {
+        world.getChunk(getPos()).markDirty();
+    }
+
     @Override
     public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -91,7 +95,8 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         tanks[2].readFromNBT(nbt.getCompoundTag("tank2"));
         tanks[3].readFromNBT(nbt.getCompoundTag("tank3"));
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
-        isRunning = nbt.getBoolean("running");
+        isRunning = nbt.getBoolean("isRunning");
+        soundGracePeriod = nbt.getInteger("soundGracePeriod");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         if (formed && !descPacket) {
             needsPoIInit = true;
@@ -109,8 +114,72 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank3", tanks[3].writeToNBT(new NBTTagCompound()));
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
-        nbt.setBoolean("running", isRunning);
+        nbt.setBoolean("isRunning", isRunning);
+        nbt.setInteger("soundGracePeriod", soundGracePeriod);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void handleSounds() {
+        if (soundPos0 == null) InitializePoIs();
+        float targetSoundLevel = isRunning ? 1f : 0f;
+        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
+        else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
+        if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }
+        else {
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            float attenuation = Math.max((float) player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
+            ITSounds.gasTurbineArc.PlayRepeating(soundPos0, (2 * soundVolume) / attenuation, soundVolume);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void clientUpdate() {
+        if (soundPos0 == null) InitializePoIs();
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        double distSq = player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5);
+        if (world.provider.getDimension() == player.dimension && distSq < 400 && (distanceToTE > 400 || playerDimension != player.dimension)) requestUpdate();
+        distanceToTE = distSq;
+        playerDimension = player.dimension;
+        handleSounds();
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void onChunkUnload() {
+        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        super.onChunkUnload();
+    }
+
+    @Override
+    public void disassemble() {
+        if (soundPos0 == null) InitializePoIs();
+        if (soundPos0 != null) {
+            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        }
+        super.disassemble();
+    }
+
+    public void requestUpdate() {
+        BinaryMessageTileSync.sendToServer(getPos(), Unpooled.copyBoolean(true));
+    }
+
+    @Override
+    public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {
+        boolean request = message.readBoolean();
+        if (request) {
+            ByteBuf buf = Unpooled.buffer();
+            buf.writeInt(energyStorage.getEnergyStored());
+            buf.writeBoolean(isRunning);
+            BinaryMessageTileSync.sendToPlayer(player, getPos(), buf);
+        }
+    }
+
+    @Override
+    public void receiveMessageFromServer(ByteBuf message) {
+        int readEnergy = message.readInt();
+        energyStorage.modifyEnergyStored(readEnergy - energyStorage.getEnergyStored());
+        isRunning = message.readBoolean();
     }
 
     @Override
@@ -143,8 +212,8 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
                 }
             }
         }
-        boolean active = tickedProcesses > 0 && !isRSDisabled();
-        if (active) soundGracePeriod = 60;
+        boolean didWork = tickedProcesses > 0 && !isRSDisabled();
+        if (didWork) soundGracePeriod = 60;
         else if (soundGracePeriod > 0) soundGracePeriod--;
         isRunning = soundGracePeriod > 0;
         int currentEnergy = energyStorage.getEnergyStored();
@@ -235,78 +304,6 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
         p = getBlockPosForPos(redstonePos0.position);
         world.updateComparatorOutputLevel(p, world.getBlockState(p).getBlock());
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void handleSounds() {
-        if (soundPos0 == null) InitializePoIs();
-        if (soundVolume == 0) ITSoundHandler.StopSound(soundPos0);
-        else {
-            EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float) player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
-            ITSounds.gasTurbineArc.PlayRepeating(soundPos0, (2 * soundVolume) / attenuation, soundVolume);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    private void clientUpdate() {
-        if (soundPos0 == null) InitializePoIs();
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double distSq = player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5);
-        if (world.provider.getDimension() == player.dimension && distSq < 400 && (distanceToTE > 400 || playerDimension != player.dimension)) requestUpdate();
-        distanceToTE = distSq;
-        playerDimension = player.dimension;
-        float targetSoundLevel = isRunning ? 1f : 0f;
-        if (soundVolume < targetSoundLevel) {
-            soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel);
-            soundGracePeriod = 60;
-        } else if (soundVolume > targetSoundLevel) {
-            if (soundGracePeriod > 0) soundGracePeriod--;
-            else soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel);
-        }
-        handleSounds();
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void onChunkUnload() {
-        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
-        super.onChunkUnload();
-    }
-
-    @Override
-    public void disassemble() {
-        if (soundPos0 == null) InitializePoIs();
-        if (soundPos0 != null) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
-        }
-        super.disassemble();
-    }
-
-    public void requestUpdate() {
-        BinaryMessageTileSync.sendToServer(getPos(), Unpooled.copyBoolean(true));
-    }
-
-    @Override
-    public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {
-        boolean request = message.readBoolean();
-        if (request) {
-            ByteBuf buf = Unpooled.buffer();
-            buf.writeInt(energyStorage.getEnergyStored());
-            buf.writeBoolean(isRunning);
-            BinaryMessageTileSync.sendToPlayer(player, getPos(), buf);
-        }
-    }
-
-    @Override
-    public void receiveMessageFromServer(ByteBuf message) {
-        int readEnergy = message.readInt();
-        energyStorage.modifyEnergyStored(readEnergy - energyStorage.getEnergyStored());
-        isRunning = message.readBoolean();
-    }
-
-    public void efficientMarkDirty() {
-        world.getChunk(getPos()).markDirty();
     }
 
     private boolean pumpOutputOut() {

@@ -75,8 +75,9 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     public int processTimeRemaining = 0;
     public double heatLevel = 0;
 
-    private float soundVolume = 0;
-    private int soundGracePeriod = 60;
+    private float soundVolume = 0f;
+    private int soundGracePeriod = 0;
+    private boolean isRunning = false;
     public BoilerRecipe.BoilerFuelRecipe cachedFuelRecipe;
     public BoilerRecipe cachedBoilerRecipe;
     public boolean redstoneControlInverted = false;
@@ -99,6 +100,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
+        soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         if (formed && !descPacket) {
             needsPoIInit = true;
@@ -116,48 +118,40 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
+        nbt.setInteger("soundGracePeriod", soundGracePeriod);
         if (!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
     }
 
-    @Override public void update() {
-        super.update();
-        if (!formed) return;
-        if (needsPoIInit || fluidInputPos0 == null || fluidInputPos1 == null || fluidOutputPos0 == null || redstonePos0 == null || soundPos0 == null) {
-            InitializePoIs();
-            needsPoIInit = false;
+    @SideOnly(Side.CLIENT)
+    public void handleSounds() {
+        if (soundPos0 == null) InitializePoIs();
+        float targetSoundLevel = isRunning ? (float)(heatLevel / workingHeatLevel) : 0f;
+        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
+        else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
+        if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }
+        else {
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + 0.5, soundPos0.getY() + 0.5, soundPos0.getZ() + 0.5) / 8, 1);
+            ITSounds.boiler.PlayRepeating(soundPos0, (2 * soundVolume) / attenuation, soundVolume);
         }
-        if (needsNotify) {
-            notifyIONeighbors();
-            needsNotify = false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override public void onChunkUnload() {
+        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        super.onChunkUnload();
+    }
+
+    @Override public void disassemble() {
+        if (soundPos0 == null) InitializePoIs();
+        if (soundPos0 != null) {
+            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         }
-        if (world.isRemote) {
-            float targetSoundLevel = (float)(heatLevel / workingHeatLevel);
-            if (soundVolume < targetSoundLevel) {
-                soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel);
-                soundGracePeriod = 60;
-            } else if (soundVolume > targetSoundLevel) {
-                if (soundGracePeriod > 0) soundGracePeriod--;
-                else soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel);
-            }
-            handleSounds();
-            return;
+        if (!world.isRemote) {
+            for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack);
+            inventory.clear();
         }
-        boolean changed = heatLogic();
-        if (recipeLogic()) changed = true;
-        if (outputTankLogic()) changed = true;
-        if (fuelTankLogic()) changed = true;
-        if (inputTankLogic()) changed = true;
-        if (changed && tickCountdown-- <= 0) {
-            notifyNearbyClients();
-            tickCountdown = 5;
-            world.markChunkDirty(getPos(), this);
-        }
-        int comp = getComparatorInputOverride();
-        if (comp != oldComparatorOutput) {
-            oldComparatorOutput = comp;
-            if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
-        }
-        if (changed) markContainingBlockForUpdate(null);
+        super.disassemble();
     }
 
     void InitializePoIs() {
@@ -190,22 +184,12 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
     }
 
-    @SideOnly(Side.CLIENT)
-    private void handleSounds() {
-        if (soundPos0 == null) return;
-        if (soundVolume == 0) ITSoundHandler.StopSound(soundPos0);
-        else {
-            EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + 0.5, soundPos0.getY() + 0.5, soundPos0.getZ() + 0.5) / 8, 1);
-            ITSounds.boiler.PlayRepeating(soundPos0, (2 * soundVolume) / attenuation, soundVolume);
-        }
-    }
-
     private void notifyNearbyClients() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeDouble(heatLevel);
         buf.writeInt(fuelBurnRemaining);
         buf.writeInt(processTimeRemaining);
+        buf.writeBoolean(isRunning);
         BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
     }
 
@@ -213,9 +197,52 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         heatLevel = message.readDouble();
         fuelBurnRemaining = message.readInt();
         processTimeRemaining = message.readInt();
+        isRunning = message.readBoolean();
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
+
+    @Override public void update() {
+        super.update();
+        if (!formed) return;
+        if (needsPoIInit || fluidInputPos0 == null || fluidInputPos1 == null || fluidOutputPos0 == null || redstonePos0 == null || soundPos0 == null) {
+            InitializePoIs();
+            needsPoIInit = false;
+        }
+        if (needsNotify) {
+            notifyIONeighbors();
+            needsNotify = false;
+        }
+        if (world.isRemote) {
+            handleSounds();
+            return;
+        }
+        boolean changed = heatLogic();
+        if (recipeLogic()) changed = true;
+        if (outputTankLogic()) changed = true;
+        if (fuelTankLogic()) changed = true;
+        if (inputTankLogic()) changed = true;
+
+        boolean didWork = fuelBurnRemaining > 0 || processTimeRemaining > 0;
+        if (didWork) soundGracePeriod = 60;
+        else if (soundGracePeriod > 0) soundGracePeriod--;
+        boolean wasRunning = isRunning;
+        isRunning = soundGracePeriod > 0;
+
+        if (changed || isRunning != wasRunning) {
+            if (tickCountdown-- <= 0) {
+                notifyNearbyClients();
+                tickCountdown = 5;
+            }
+            world.markChunkDirty(getPos(), this);
+        }
+        int comp = getComparatorInputOverride();
+        if (comp != oldComparatorOutput) {
+            oldComparatorOutput = comp;
+            if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
+        }
+        if (changed) markContainingBlockForUpdate(null);
+    }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
@@ -377,24 +404,6 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
         tanks[2].drain(drained, true);
         return drained > 0;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() {
-        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
-        super.onChunkUnload();
-    }
-
-    @Override public void disassemble() {
-        if (soundPos0 == null) InitializePoIs();
-        if (soundPos0 != null) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
-        }
-        if (!world.isRemote) {
-            for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack);
-            inventory.clear();
-        }
-        super.disassemble();
     }
 
     @Override public void TankContentsChanged() { markContainingBlockForUpdate(null); }

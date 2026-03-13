@@ -81,7 +81,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     public SolarTowerRecipe cachedSolarTowerRecipe;
 
     private float soundVolume = 0f;
-    private int soundGracePeriod = 60;
+    private int soundGracePeriod = 0;
     private boolean isRunning = false;
     private boolean isLoaded = false;
     private boolean registered = false;
@@ -122,6 +122,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         savedRegistered = nbt.getBoolean("savedRegistered");
         reCheckOnLoad = nbt.getBoolean("reCheckOnLoad");
         isLoaded = nbt.getBoolean("isLoaded");
+        soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (!descPacket) {
             if (nbt.hasKey("cachedRecipe")) cachedSolarTowerRecipe = SolarTowerRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
             if (processTimeRemaining > 0 && cachedSolarTowerRecipe == null) processTimeRemaining = 0;
@@ -145,6 +146,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         nbt.setBoolean("savedRegistered", savedRegistered);
         nbt.setBoolean("reCheckOnLoad", reCheckOnLoad);
         nbt.setBoolean("isLoaded", isLoaded);
+        nbt.setInteger("soundGracePeriod", soundGracePeriod);
         if (!descPacket && cachedSolarTowerRecipe != null) nbt.setTag("cachedRecipe", cachedSolarTowerRecipe.writeToNBT(new NBTTagCompound()));
     }
 
@@ -157,15 +159,8 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
             return;
         }
         float targetSoundLevel = isRunning ? 1f : 0f;
-        if (soundVolume < targetSoundLevel) {
-            soundVolume = Math.min(soundVolume + 0.02f, targetSoundLevel);
-            soundGracePeriod = 60;
-        } else if (soundVolume > targetSoundLevel) {
-            if (soundGracePeriod > 0) soundGracePeriod--;
-            else soundVolume = Math.max(soundVolume - 0.02f, targetSoundLevel);
-        }
-        if (soundVolume <= 0f) ITSoundHandler.StopSound(soundPos0);
-        else {
+        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.02f, targetSoundLevel); }else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.02f, targetSoundLevel); }
+        if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }else {
             double distance = Math.sqrt(distanceSqToTE);
             float attenuation = Math.max((float)distance / 16f, 1f);
             ITSounds.solarTower.PlayRepeating(soundPos0, soundVolume / attenuation, soundVolume);

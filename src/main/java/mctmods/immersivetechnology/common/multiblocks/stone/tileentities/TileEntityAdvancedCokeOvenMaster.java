@@ -65,7 +65,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     private float soundVolume = 0;
     private CokeOvenRecipe cachedRecipe;
     private int soundGracePeriod = 0;
-    private boolean isRunning;
+    private boolean isRunning = false;
 
     PoICache itemInputPos0;
     PoICache itemOutputPos0;
@@ -80,6 +80,8 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     final IItemHandler inputHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
     final IItemHandler outputHandler = new IEInventoryHandler(1, this, 1, new boolean[]{false}, new boolean[]{true});
 
+    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
+
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
@@ -87,6 +89,8 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         active = nbt.getBoolean("active");
         tank.readFromNBT(nbt.getCompoundTag("tank"));
         inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+        isRunning = nbt.getBoolean("isRunning");
+        soundGracePeriod = nbt.getInteger("soundGracePeriod");
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -96,16 +100,16 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         nbt.setBoolean("active", active);
         nbt.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
         nbt.setTag("inventory", Utils.writeInventory(inventory));
+        nbt.setBoolean("isRunning", isRunning);
+        nbt.setInteger("soundGracePeriod", soundGracePeriod);
     }
 
     @SideOnly(Side.CLIENT)
-    private void handleSounds() {
+    public void handleSounds() {
         if (soundPos0 == null) InitializePoIs();
-        if (isRunning) {
-            if (soundVolume < 1) soundVolume += 0.01f;
-        } else if (soundVolume > 0) {
-            soundVolume -= 0.01f;
-        }
+        float targetSoundLevel = isRunning ? 1f : 0f;
+        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
+        else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
         if (soundVolume <= 0) {
             ITSoundHandler.StopSound(soundPos0);
             soundVolume = 0;
@@ -160,8 +164,6 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             processTimeMax = message.getInteger("processTimeMax");
         }
     }
-
-    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     @Override public void update() {
         if (!formed) return;

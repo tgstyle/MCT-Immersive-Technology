@@ -79,12 +79,12 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     protected PoICache energyInputPos0, itemInputPos0, fluidOutputPos0, redstonePos0;
     private BlockPos soundPos0, fluidOutputTEPos0;
 
+    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
+
     public TileEntityMeltingCrucibleMaster() {
         tanks[0] = new ITFluidTank(outputTankSize, this);
         insertionHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
     }
-
-    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -94,6 +94,8 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
         heatLevel = nbt.getDouble("heatLevel");
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
+        isRunning = nbt.getBoolean("isRunning");
+        soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (formed) {
             needsPoIInit = true;
             needsNotify = true;
@@ -108,10 +110,12 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
         nbt.setDouble("heatLevel", heatLevel);
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
+        nbt.setBoolean("isRunning", isRunning);
+        nbt.setInteger("soundGracePeriod", soundGracePeriod);
     }
 
     @SideOnly(Side.CLIENT)
-    private void handleSounds() {
+    public void handleSounds() {
         if (soundPos0 == null) InitializePoIs();
         if (soundPos0 == null) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -122,13 +126,8 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
             return;
         }
         float target = isRunning ? 1f : 0f;
-        if (soundVolume < target) {
-            soundVolume = Math.min(soundVolume + 0.02f, target);
-            soundGracePeriod = 60;
-        } else if (soundVolume > target) {
-            if (soundGracePeriod > 0) soundGracePeriod--;
-            else soundVolume = Math.max(soundVolume - 0.02f, target);
-        }
+        if (soundVolume < target) { soundVolume = Math.min(soundVolume + 0.02f, target); }
+        else if (soundVolume > target) { soundVolume = Math.max(soundVolume - 0.02f, target); }
         if (soundVolume <= 0f) ITSoundHandler.StopSound(soundPos0);
         else {
             float distance = (float)Math.sqrt(dSq);

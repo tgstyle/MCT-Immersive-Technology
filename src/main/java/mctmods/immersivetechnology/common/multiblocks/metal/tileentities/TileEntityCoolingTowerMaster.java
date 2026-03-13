@@ -64,9 +64,9 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     private CoolingTowerRecipe cachedCoolingRecipe;
 
-    private float soundVolume;
-    private int soundGracePeriod = 60;
-    private boolean isRunning;
+    private float soundVolume = 0f;
+    private int soundGracePeriod = 0;
+    private boolean isRunning = false;
 
     private int tickCountdown = 20;
     private int oldComparatorOutput;
@@ -85,6 +85,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         tanks[3].readFromNBT(nbt.getCompoundTag("tank3"));
         tanks[4].readFromNBT(nbt.getCompoundTag("tank4"));
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
+        soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (!descPacket && formed) {
             needsPoIInit = true;
             needsNotify = true;
@@ -99,6 +100,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         nbt.setTag("tank3", tanks[3].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank4", tanks[4].writeToNBT(new NBTTagCompound()));
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
+        nbt.setInteger("soundGracePeriod", soundGracePeriod);
     }
 
     @SideOnly(Side.CLIENT)
@@ -123,7 +125,10 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
         if (soundPos0 == null) InitializePoIs();
-        if (soundVolume == 0) ITSoundHandler.StopSound(soundPos0);
+        float targetSoundLevel = isRunning ? 1f : 0f;
+        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
+        else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
+        if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
@@ -148,7 +153,9 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
 
     public void notifyNearbyClients() {
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.copyBoolean(isRunning));
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeBoolean(isRunning);
+        BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
     }
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
@@ -164,12 +171,6 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
             needsNotify = false;
         }
         if (world.isRemote) {
-            float target = isRunning ? 1f : 0f;
-            if (soundVolume < target) { soundVolume = Math.min(soundVolume + 0.01f, target); soundGracePeriod = 60; }
-            else if (soundVolume > target) {
-                if (soundGracePeriod > 0) soundGracePeriod--;
-                else soundVolume = Math.max(soundVolume - 0.01f, target);
-            }
             handleSounds();
             spawnParticles();
             return;
@@ -203,16 +204,13 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
                 }
             }
         }
-        if (tickedProcesses > 0) {
-            soundGracePeriod = 60;
-            isRunning = true;
-        } else {
-            if (soundGracePeriod > 0) soundGracePeriod--;
-            else isRunning = false;
-        }
+        boolean didWork = tickedProcesses > 0;
+        if (didWork) soundGracePeriod = 60;
+        else if (soundGracePeriod > 0) soundGracePeriod--;
+        isRunning = soundGracePeriod > 0;
+
         if (prevIsRunning != isRunning) update = true;
-        tickCountdown--;
-        if (update && tickCountdown <= 0) {
+        if (update && tickCountdown-- <= 0) {
             notifyNearbyClients();
             tickCountdown = 20;
         }

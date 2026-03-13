@@ -83,10 +83,11 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     private float targetSoundLevel;
     private float soundVolume = 0f;
-    private int soundGracePeriod;
+    private int soundGracePeriod = 0;
     private int tickCountdown = 5;
     public boolean redstoneControlInverted = false;
     private int oldComparatorOutput;
+    private boolean isRunning = false;
 
     public GasTurbineRecipe lastRecipe;
     private GasTurbineRecipe cachedFuelRecipe;
@@ -94,6 +95,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     protected PoICache energyInputPos0, energyInputPos1, fluidInputPos0, fluidOutputPos0, mechanicalOutputPos0, redstonePos0;
     private BlockPos outputFront0, mechanicalOutputTEPos0, particle0, soundPos0, soundPos1, soundPos2, soundPos3;
+
+    public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -108,6 +111,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         sparkplugStorage.readFromNBT(nbt.getCompoundTag("sparkplugStorage"));
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
+        soundGracePeriod = nbt.getInteger("soundGracePeriod");
+        isRunning = nbt.getBoolean("isRunning");
         if (world.isRemote) {
             targetSoundLevel = (float)speed / maxSpeed;
             soundVolume = targetSoundLevel;
@@ -128,6 +133,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         nbt.setTag("sparkplugStorage", sparkplugStorage.writeToNBT(new NBTTagCompound()));
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
+        nbt.setInteger("soundGracePeriod", soundGracePeriod);
+        nbt.setBoolean("isRunning", isRunning);
     }
 
     @SideOnly(Side.CLIENT)
@@ -176,10 +183,10 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     @Override public void disassemble() {
         super.disassemble();
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos1), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos1.getX(), soundPos1.getY(), soundPos1.getZ(), 0));
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos2), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos2.getX(), soundPos2.getY(), soundPos2.getZ(), 0));
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos3), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos3.getX(), soundPos3.getY(), soundPos3.getZ(), 0));
+        if (soundPos0 != null) ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        if (soundPos1 != null) ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos1), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos1.getX(), soundPos1.getY(), soundPos1.getZ(), 0));
+        if (soundPos2 != null) ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos2), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos2.getX(), soundPos2.getY(), soundPos2.getZ(), 0));
+        if (soundPos3 != null) ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos3), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos3.getX(), soundPos3.getY(), soundPos3.getZ(), 0));
     }
 
     @Override public void receiveMessageFromServer(ByteBuf buf) {
@@ -192,6 +199,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
             speed = buf.readInt();
             starterRunning = buf.readBoolean();
             targetSoundLevel = (float)speed / maxSpeed;
+            isRunning = buf.readBoolean();
         }
     }
 
@@ -201,10 +209,9 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         ByteBuf buf = Unpooled.buffer();
         buf.writeInt(speed);
         buf.writeBoolean(starterRunning);
+        buf.writeBoolean(isRunning);
         BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
     }
-
-    private void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     @Override public void update() {
         if (formed && energyInputPos0 == null) InitializePoIs();
@@ -263,12 +270,17 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
         if (pumpOutputOut()) update = true;
 
+        boolean didWork = speed > 0;
+        if (didWork) soundGracePeriod = 60;
+        else if (soundGracePeriod > 0) soundGracePeriod--;
+        isRunning = soundGracePeriod > 0;
+
         float rotationSpeed = speed == 0 ? 0f : ((float)speed / (float)maxSpeed) * maxRotationSpeed;
         float oldMomentum = animation.getAnimationMomentum();
         animation.setAnimationMomentum(rotationSpeed);
         animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
 
-        boolean changed = animation.getAnimationMomentum() != oldMomentum || starterRunning != prevStarterRunning || prevSpeed != speed;
+        boolean changed = animation.getAnimationMomentum() != oldMomentum || starterRunning != prevStarterRunning || prevSpeed != speed || isRunning != (speed > 0);
         if (changed && tickCountdown-- <= 0) {
             notifyNearbyClients();
             tickCountdown = 5;
