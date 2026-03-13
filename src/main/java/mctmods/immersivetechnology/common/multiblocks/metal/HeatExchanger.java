@@ -7,8 +7,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.HeatExchanger
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Mirror;
 
 import java.util.function.Consumer;

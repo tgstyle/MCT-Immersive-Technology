@@ -7,8 +7,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerTankSha
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
+
 import java.util.List;
 import java.util.function.Consumer;
 
