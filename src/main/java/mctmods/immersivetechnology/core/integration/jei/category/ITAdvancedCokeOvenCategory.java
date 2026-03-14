@@ -16,6 +16,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,21 +44,19 @@ public class ITAdvancedCokeOvenCategory extends ITRecipeCategory<AdvancedCokeOve
     @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull AdvancedCokeOvenRecipe recipe, @NotNull IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 4, 19).addItemStacks(Arrays.asList(recipe.input.getMatchingStacks()));
 
-        if (!recipe.itemOutput.get().isEmpty()) {
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 59, 19).addItemStack(recipe.itemOutput.get());
-        }
+        ItemStack itemOut = recipe.itemOutput.get();
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 59, 19).addItemStack(itemOut.isEmpty() ? ItemStack.EMPTY : itemOut);
 
-        if (recipe.creosoteOutput > 0) {
-            int tankCapacity = Math.max(1000, recipe.creosoteOutput);
+        FluidStack fluidOut = (recipe.creosoteOutput > 0) ? new FluidStack(IEFluids.CREOSOTE.getStill(), recipe.creosoteOutput) : FluidStack.EMPTY;
+        int tankCapacity = Math.max(1000, recipe.creosoteOutput);
 
-            var fluidSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 103, 4)
-                    .addIngredient(ForgeTypes.FLUID_STACK, new FluidStack(IEFluids.CREOSOTE.getStill(), recipe.creosoteOutput))
-                    .setFluidRenderer(tankCapacity, false, 16, 47);
+        var fluidSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 103, 4)
+                .addIngredient(ForgeTypes.FLUID_STACK, fluidOut)
+                .setFluidRenderer(tankCapacity, false, 16, 47);
 
-            fluidSlot.addRichTooltipCallback((slotView, tooltip) ->
-                    slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                            ITFluidInfoArea.fillTooltip(fs, recipe.creosoteOutput, tooltip::add)));
-        }
+        fluidSlot.addRichTooltipCallback((slotView, tooltip) ->
+                slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                        ITFluidInfoArea.fillTooltip(fs, recipe.creosoteOutput, tooltip::add)));
     }
 
     @Override public void draw(@NotNull AdvancedCokeOvenRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
