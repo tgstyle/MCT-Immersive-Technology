@@ -10,7 +10,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLev
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
@@ -103,8 +102,6 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
-
-    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
@@ -389,7 +386,6 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         public final ITSolarTank tanks;
         public StoredCapability<IFluidHandler> inputCap;
         public StoredCapability<IFluidHandler> outputCap;
-        public CapabilityReference<IFluidHandler> fluidOutput;
         public ITSlotwiseItemHandler inventory;
         public double heatLevel = 0;
         public double reflectorStrength = 0;
@@ -431,10 +427,6 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             );
             inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input(), false, true, onChanged));
             outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output(), true, false, onChanged));
-            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FACING, FLUID_OUTPUT_POIS.get(0));
-            CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
-            MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
-            fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
             InitialMultiblockContext<State> initialContext = (InitialMultiblockContext<State>) ctx;
             MultiblockOrientation orientation = initialContext.orientation();
             BlockPos masterOffset = initialContext.masterOffset();

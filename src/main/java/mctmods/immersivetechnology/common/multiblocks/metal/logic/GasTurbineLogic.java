@@ -99,8 +99,6 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
 
-    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
-
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         Level level = ctx.getLevel().getRawLevel();
@@ -208,7 +206,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         if (state.active && ctx.getLevel().shouldTickModulo(2)) {
             Direction facing = ctx.getLevel().getOrientation().front();
             BlockPos outputAbs = ctx.getLevel().toAbsolute(SMOKE_POI2);
-            boolean connected = state.fluidOutput.isPresent();
+            boolean connected = isOutputConnected(ctx, 0);
             if (!connected) {
                 Vec3 smokePos = new Vec3(outputAbs.getX() + 0.5, outputAbs.getY() + 0.5, outputAbs.getZ() + 0.5);
                 float normSpeed = Math.max(0f, ITLib.remapRange(100, state.effectiveMaxSpeed, 0f, 1f, state.speed));
@@ -386,7 +384,6 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         public StoredCapability<IEnergyStorage> energyCapMV;
         public AveragingEnergyStorage energyStorageHV;
         public AveragingEnergyStorage energyStorageMV;
-        public final CapabilityReference<IFluidHandler> fluidOutput;
         public final CapabilityReference<IEnergyStorage> mvInput;
         private final BiFunction<Level, FluidStack, GasTurbineRecipe> recipeGetter;
         public int speed = 0;
@@ -432,10 +429,6 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             this.energyCapHV = new StoredCapability<>(energyStorageHV);
             this.energyCapMV = new StoredCapability<>(energyStorageMV);
             this.recipeGetter = CachedRecipe.cached(GasTurbineRecipe::findRecipe);
-            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FACING, FLUID_OUTPUT_POIS.get(0));
-            CapabilityPosition oppCp = CapabilityPosition.opposing(outputMBFace);
-            MultiblockFace oppMbf = new MultiblockFace(oppCp.side(), oppCp.posInMultiblock());
-            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, oppMbf);
             MultiblockFace mvInputMBFace = new MultiblockFace(ENERGY_INPUT_MV_POI.side(), ENERGY_INPUT_MV_POI.posInMultiblock());
             CapabilityPosition mvOpposingCP = CapabilityPosition.opposing(mvInputMBFace);
             MultiblockFace mvOpposingMBFace = new MultiblockFace(mvOpposingCP.side(), mvOpposingCP.posInMultiblock());

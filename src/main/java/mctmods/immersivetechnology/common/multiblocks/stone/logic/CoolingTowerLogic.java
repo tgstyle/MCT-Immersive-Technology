@@ -8,7 +8,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLev
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidOutput;
@@ -70,8 +69,6 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1, state.tanks.output2); }
-
-    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutputs[0], state.fluidOutputs[1], state.fluidOutputs[2]); }
 
     @Override public void tickClient(IMultiblockContext<CoolingTowerLogic.State> ctx) {
         CoolingTowerLogic.State state = ctx.getState();
@@ -196,8 +193,6 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         public final StoredCapability<IFluidHandler> output0Cap;
         public final StoredCapability<IFluidHandler> output1Cap;
         public final StoredCapability<IFluidHandler> output2Cap;
-        @SuppressWarnings("unchecked")
-        public final CapabilityReference<IFluidHandler>[] fluidOutputs = new CapabilityReference[3];
         public boolean active;
         public int soundCooldown = 0;
         public List<CoolingTowerProcess> processQueue = new ArrayList<>();
@@ -215,13 +210,6 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             this.output0Cap = new StoredCapability<>(ITArrayFluidHandler.drainOnly(tanks.output0, () -> onChanged.accept(null)));
             this.output1Cap = new StoredCapability<>(ITArrayFluidHandler.drainOnly(tanks.output1, () -> onChanged.accept(null)));
             this.output2Cap = new StoredCapability<>(ITArrayFluidHandler.drainOnly(tanks.output2, () -> onChanged.accept(null)));
-            BlockPos[] outputPositions = FLUID_OUTPUT_POIS.toArray(new BlockPos[0]);
-            for (int i = 0; i < 3; i++) {
-                MultiblockFace mbf = new MultiblockFace(OUTPUT_FACING, outputPositions[i]);
-                CapabilityPosition oppCp = CapabilityPosition.opposing(mbf);
-                MultiblockFace oppMbf = new MultiblockFace(oppCp.side(), oppCp.posInMultiblock());
-                fluidOutputs[i] = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, oppMbf);
-            }
         }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {

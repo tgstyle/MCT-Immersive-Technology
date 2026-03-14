@@ -9,7 +9,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import com.google.common.collect.ImmutableList;
@@ -171,8 +170,6 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1); }
 
-    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput[0], state.fluidOutput[1]); }
-
     @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         BlockPos localPos = position.posInMultiblock();
         RelativeBlockFace side = position.side();
@@ -201,9 +198,6 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         public final StoredCapability<IFluidHandler>[] outputCap = new StoredCapability[2];
 
         public final StoredCapability<IEnergyStorage> energyCap;
-
-        @SuppressWarnings("unchecked")
-        public final CapabilityReference<IFluidHandler>[] fluidOutput = new CapabilityReference[2];
 
         public AveragingEnergyStorage energy;
         public boolean active = false;
@@ -234,18 +228,6 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             outputCap[0] = new StoredCapability<>(new ITArrayFluidHandler(tanks.output0, true, false, onChanged));
             outputCap[1] = new StoredCapability<>(new ITArrayFluidHandler(tanks.output1, true, false, onChanged));
             energyCap = new StoredCapability<>(energy);
-            if (!FLUID_OUTPUT_0_POI.isEmpty()) {
-                MultiblockFace outputMBFace = new MultiblockFace(FLUID_OUTPUT_0_FACING, FLUID_OUTPUT_0_POI.get(0));
-                CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
-                MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
-                fluidOutput[0] = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
-            }
-            if (!FLUID_OUTPUT_1_POI.isEmpty()) {
-                MultiblockFace outputMBFace = new MultiblockFace(FLUID_OUTPUT_1_FACING, FLUID_OUTPUT_1_POI.get(0));
-                CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
-                MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
-                fluidOutput[1] = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
-            }
             processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, HeatExchangerRecipe.RECIPES::getById);
         }
 
