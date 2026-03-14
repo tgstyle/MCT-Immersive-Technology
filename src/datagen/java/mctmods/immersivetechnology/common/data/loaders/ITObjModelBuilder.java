@@ -21,6 +21,7 @@ public class ITObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBu
     private boolean flipV = false;
     private boolean emissiveAmbient = true;
     private String mtlOverride;
+    private String renderType;
     private final Map<String, Boolean> visibility = new HashMap<>();
 
     public ITObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(ITLib.rl("obj"), parent, existingFileHelper); }
@@ -32,6 +33,8 @@ public class ITObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBu
     public ITObjModelBuilder<T> emissiveAmbient(boolean emissiveAmbient) { this.emissiveAmbient = emissiveAmbient; return this; }
     public ITObjModelBuilder<T> mtlOverride(String mtlOverride) { this.mtlOverride = mtlOverride; return this; }
     public ITObjModelBuilder<T> visibility(String part, boolean show) { visibility.put(part, show); return this; }
+    @SuppressWarnings("UnusedReturnValue")
+    public ITObjModelBuilder<T> renderType(String renderType) { this.renderType = renderType; return this; }
 
     @Override public JsonObject toJson(JsonObject json) {
         json = super.toJson(json);
@@ -42,6 +45,7 @@ public class ITObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBu
         json.addProperty("flip_v", flipV);
         json.addProperty("emissive_ambient", emissiveAmbient);
         if (mtlOverride != null) { json.addProperty("mtl_override", mtlOverride); }
+        if (renderType != null) { json.addProperty("render_type", renderType); }
         if (!visibility.isEmpty()) {
             JsonObject visJson = new JsonObject();
             visibility.forEach(visJson::addProperty);

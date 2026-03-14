@@ -409,6 +409,9 @@ public class ITBlockStateProvider extends BlockStateProvider {
         ITNongeneratedModel base = innerModels.withExistingParent(name, mcLoc("block"));
         ITObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ITObjModelBuilder::new);
         loader.modelLocation(addModelsPrefix(objPath));
+        if (name.contains("steel_sheetmetal_tank")) {
+            loader.renderType("cutout_mipped");
+        }
         loader.flipV(true);
         loader.automaticCulling(false);
         loader.shadeQuads(true);
