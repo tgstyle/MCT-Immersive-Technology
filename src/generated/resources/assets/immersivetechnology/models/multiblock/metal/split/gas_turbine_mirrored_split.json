@@ -5,7 +5,7 @@
     "parent": "minecraft:block/block",
     "ambientocclusion": false,
     "automatic_culling": false,
-    "emissive_ambient": true,
+    "emissive_ambient": false,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
     "model": "immersivetechnology:models/multiblock/metal/obj/gas_turbine/gas_turbine_mirrored.obj",
