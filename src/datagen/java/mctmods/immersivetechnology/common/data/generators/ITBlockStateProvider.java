@@ -415,7 +415,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         loader.flipV(true);
         loader.automaticCulling(false);
         loader.shadeQuads(true);
-        loader.emissiveAmbient(false);
+        loader.emissiveAmbient(true);
         String path = objPath.getPath();
         ResourceLocation textureModel = objPath;
         if (path.endsWith("_mirrored.obj")) {

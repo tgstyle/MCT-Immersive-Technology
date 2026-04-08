@@ -5,7 +5,7 @@
     "parent": "minecraft:block/block",
     "ambientocclusion": false,
     "automatic_culling": false,
-    "emissive_ambient": false,
+    "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
     "model": "immersivetechnology:models/multiblock/metal/obj/solar_tower/solar_tower.obj",
