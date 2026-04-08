@@ -50,17 +50,17 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     @Override public void update() {
-        if (!formed) return;
-        if (redstonePos0 == null) InitializePoIs();
+        if (!formed) { return; }
+        if (redstonePos0 == null) { InitializePoIs(); }
         super.update();
-        if (world.isRemote || tank.getFluidAmount() == 0) return;
+        if (world.isRemote || tank.getFluidAmount() == 0) { return; }
         if (world.getRedstonePowerFromNeighbors(getBlockPosForPos(redstonePos0.position)) > 0) {
             for (PoICache output : fluidOutputs0) {
-                BlockPos outPos = getBlockPosForPos(output.position).offset(output.facing.getOpposite());
-                IFluidHandler handler = FluidUtil.getFluidHandler(world, outPos, output.facing);
-                if (handler == null) continue;
+                BlockPos outPos = getBlockPosForPos(output.position).offset(output.facing);
+                IFluidHandler handler = FluidUtil.getFluidHandler(world, outPos, output.facing.getOpposite());
+                if (handler == null) { continue; }
                 FluidStack drainable = tank.drain(Math.min(transferSpeed, tank.getFluidAmount()), false);
-                if (drainable == null || drainable.amount <= 0) continue;
+                if (drainable == null || drainable.amount <= 0) { continue; }
                 TileEntity tile = world.getTileEntity(outPos);
                 boolean isITPipe = tile instanceof ITIPipe;
                 if (isITPipe) {
@@ -68,25 +68,25 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
                     drainable.tag.setBoolean("pressurized", true);
                 }
                 int accepted = handler.fill(drainable, false);
-                if (accepted <= 0) continue;
+                if (accepted <= 0) { continue; }
                 FluidStack toDrain = Utils.copyFluidStackWithAmount(drainable, accepted, false);
                 if (isITPipe) {
                     toDrain.tag = new NBTTagCompound();
                     toDrain.tag.setBoolean("pressurized", true);
                 }
                 int filled = handler.fill(toDrain, true);
-                if (filled > 0) tank.drain(filled, true);
+                if (filled > 0) { tank.drain(filled, true); }
             }
         }
     }
 
     private boolean isInputPoI(@Nullable EnumFacing side, int position) {
-        for (PoICache p : fluidInputs0) if (p.isPoI(side, position)) return true;
+        for (PoICache p : fluidInputs0) { if (p.isPoI(side, position)) { return true; } }
         return false;
     }
 
     private boolean isOutputPoI(@Nullable EnumFacing side, int position) {
-        for (PoICache p : fluidOutputs0) if (p.isPoI(side, position)) return true;
+        for (PoICache p : fluidOutputs0) { if (p.isPoI(side, position)) { return true; } }
         return false;
     }
 
@@ -106,17 +106,17 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
                     break;
             }
         }
-        if (!world.isRemote) notifyIONeighbors();
+        if (!world.isRemote) { notifyIONeighbors(); }
     }
 
     private void notifyIONeighbors() {
-        for (PoICache input : fluidInputs0) notifyNeighbor(getBlockPosForPos(input.position));
-        for (PoICache output : fluidOutputs0) notifyNeighbor(getBlockPosForPos(output.position));
+        for (PoICache input : fluidInputs0) { notifyNeighbor(getBlockPosForPos(input.position)); }
+        for (PoICache output : fluidOutputs0) { notifyNeighbor(getBlockPosForPos(output.position)); }
         notifyNeighbor(getBlockPosForPos(redstonePos0.position));
     }
 
     private void notifyNeighbor(BlockPos pos) {
-        if (pos != null) world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false);
+        if (pos != null) { world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false); }
     }
 
     @Override public void TankContentsChanged() {
@@ -130,13 +130,13 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     }
 
     @Override public int getComparatorInputOverride() {
-        if (!formed) return 0;
+        if (!formed) { return 0; }
         return 15 * tank.getFluidAmount() / tank.getCapacity();
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return new int[0];
-        if (redstonePos0 == null) InitializePoIs();
+        if (!formed) { return new int[0]; }
+        if (redstonePos0 == null) { InitializePoIs(); }
         return new int[]{redstonePos0.position};
     }
 
@@ -145,20 +145,20 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     @Override public TileEntitySteelSheetmetalTankMaster master() { return this; }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
-        if (!formed) return ITUtils.emptyIFluidTankList;
-        if (fluidInputs0.isEmpty() && fluidOutputs0.isEmpty()) InitializePoIs();
-        if (side == null) return new IFluidTank[]{tank};
-        if (isInputPoI(side, position) || isOutputPoI(side, position)) return new IFluidTank[]{tank};
+        if (!formed) { return ITUtils.emptyIFluidTankList; }
+        if (fluidInputs0.isEmpty() && fluidOutputs0.isEmpty()) { InitializePoIs(); }
+        if (side == null) { return new IFluidTank[]{tank}; }
+        if (isInputPoI(side, position) || isOutputPoI(side, position)) { return new IFluidTank[]{tank}; }
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
-        if (!formed || fluidInputs0.isEmpty()) InitializePoIs();
+        if (!formed || fluidInputs0.isEmpty()) { InitializePoIs(); }
         return isInputPoI(side, position);
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
-        if (!formed || fluidOutputs0.isEmpty()) InitializePoIs();
+        if (!formed || fluidOutputs0.isEmpty()) { InitializePoIs(); }
         return isOutputPoI(side, position);
     }
 
