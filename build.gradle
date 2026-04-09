@@ -253,6 +253,10 @@ dependencies {
     implementation fg.deobf("curse.maven:jade-324717:6855440")
     implementation fg.deobf("curse.maven:the-one-probe-245211:6106996")
 
+    implementation fg.deobf("curse.maven:journeymap-32274:5789363")
+    implementation fg.deobf("curse.maven:puzzles-lib-495476:6918565")
+    implementation fg.deobf("curse.maven:held-item-tooltips-852671:4613438")
+
     datagenImplementation("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'

@@ -144,11 +144,11 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
             ITPacketHandler.sendToServer(new ITOSDRequestMessage(worldPosition));
             requestCooldown = 20;
         }
-        if (selectedFluid.isEmpty()) { return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.text())}; }
+        if (selectedFluid.isEmpty()) { return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.getLocation())}; }
         Component fluidName = selectedFluid.getDisplayName();
         double rawValue = ITClientConfig.perTickTrashCans ? (double)lastAcceptedAmount / 20.0 : lastAcceptedAmount;
         String value = NUMBER_FORMAT.format(rawValue);
-        return new Component[]{Component.translatable(text().text(), fluidName, value)};
+        return new Component[]{Component.translatable(text().getLocation(), fluidName, value)};
     }
 
     @Override public void getBlockEntityDrop(@NotNull LootContext context, @NotNull Consumer<ItemStack> drop) {
