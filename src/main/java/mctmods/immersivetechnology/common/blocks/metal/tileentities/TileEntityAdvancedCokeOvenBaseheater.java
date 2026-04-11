@@ -84,18 +84,7 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
                 updateDummies();
             }
         }
-        if (didWork) soundGracePeriod = 60;
-        else if (soundGracePeriod > 0) soundGracePeriod--;
-        if (!didWork && soundGracePeriod == 0 && active) {
-            active = false;
-            this.markContainingBlockForUpdate(null);
-            updateDummies();
-        }
-        boolean wasRunning = isRunning;
-        isRunning = soundGracePeriod > 0;
-        if (isRunning != wasRunning) {
-            markContainingBlockForUpdate(null);
-        }
+        if (didWork) { soundGracePeriod = 60; }
         return didWork;
     }
 
@@ -221,15 +210,28 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
     @Override @Nonnull public PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
 
     @Override public void update() {
-        if (!world.isRemote && !dummy && active) {
-            BlockPos attachedPos = getPos().offset(facing);
-            TileEntity te = world.getTileEntity(attachedPos);
-            if (!(te instanceof TileEntityAdvancedCokeOvenSlave) || !((TileEntityAdvancedCokeOvenSlave)te).formed) {
+        if (!world.isRemote && !dummy) {
+            if (soundGracePeriod > 0) { soundGracePeriod--; }
+            if (active) {
+                BlockPos attachedPos = getPos().offset(facing);
+                TileEntity te = world.getTileEntity(attachedPos);
+                if (!(te instanceof TileEntityAdvancedCokeOvenSlave) || !((TileEntityAdvancedCokeOvenSlave)te).formed) {
+                    active = false;
+                    soundGracePeriod = 0;
+                    isRunning = false;
+                    markContainingBlockForUpdate(null);
+                    updateDummies();
+                }
+            }
+            if (soundGracePeriod == 0 && active) {
                 active = false;
-                soundGracePeriod = 0;
-                isRunning = false;
-                markContainingBlockForUpdate(null);
+                this.markContainingBlockForUpdate(null);
                 updateDummies();
+            }
+            boolean wasRunning = isRunning;
+            isRunning = soundGracePeriod > 0;
+            if (isRunning != wasRunning) {
+                markContainingBlockForUpdate(null);
             }
         }
         if (world.isRemote && !dummy) {
@@ -250,8 +252,7 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
         float targetSoundLevel = isRunning ? 1f : 0f;
-        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
-        else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
+        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); } else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
         if (soundVolume <= 0f) { ITSoundHandler.StopSound(getPos()); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
