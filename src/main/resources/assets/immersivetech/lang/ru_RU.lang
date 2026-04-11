@@ -50,7 +50,7 @@ category.immersivetech.metal_multiblock.distillerChance=Шанс: %s
 chat.immersivetech.fluid_pump.fill_first_mode=Помпа сначала заполнит внутренний резервуар, а затем вытолкнет содержимое
 chat.immersivetech.fluid_pump.push_only_mode=Помпа будет только выталкивать содержимое
 
-#TILE ENTITYS
+#TILE ENTITIES
 #METAL
 tile.immersivetech.metal_device.advanced_coke_oven_baseheater.name=Базовый подогреватель улучшенной коксовой печи
 tile.immersivetech.metal_trash.trash_item.name=Корзина

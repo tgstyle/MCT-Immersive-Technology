@@ -50,7 +50,7 @@ category.immersivetech.metal_multiblock.distillerChance=產率: %s
 chat.immersivetech.fluid_pump.fill_first_mode=泵首先充滿其內部液罐，再進行輸出
 chat.immersivetech.fluid_pump.push_only_mode=泵直接輸出，而不是先充滿其內部液罐
 
-#TILE ENTITYS
+#TILE ENTITIES
 #METAL
 tile.immersivetech.metal_device.advanced_coke_oven_baseheater.name=高級焦爐基熱器
 tile.immersivetech.metal_trash.trash_item.name=垃圾桶

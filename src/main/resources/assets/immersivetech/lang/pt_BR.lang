@@ -50,11 +50,11 @@ category.immersivetech.metal_multiblock.distillerChance=Chance: %s
 chat.immersivetech.fluid_pump.fill_first_mode=A bomba encherá o tanque interno primeiro, depois expulsará o conteúdo
 chat.immersivetech.fluid_pump.push_only_mode=A bomba apenas expulsará o conteúdo
 
-#TILE ENTITYS
+#TILE ENTITIES
 #METAL
 tile.immersivetech.metal_device.advanced_coke_oven_baseheater.name=Aquecedor de Base do Forno de Coque Avançado
 tile.immersivetech.metal_trash.trash_item.name=Lixeira
-tile.immersivetech.metal_trash.trash_fluid.name=Lixeira de Fluídos
+tile.immersivetech.metal_trash.trash_fluid.name=Lixeira de Fluidos
 tile.immersivetech.metal_trash.trash_energy.name=Lixeira de Energia
 tile.immersivetech.metal_barrel.barrel.name=Barril de Metal Criativo
 tile.immersivetech.metal_barrel.barrel_open.name=Barril de Metal Aberto
@@ -181,7 +181,7 @@ ie.manual.category.it.name=Immersive Technology
 ie.manual.entry.advancedCokeOven.name=Forno de Coque Avançado
 ie.manual.entry.advancedCokeOven.subtext=Agora é rápido
 ie.manual.entry.advancedCokeOven0=O Forno de Coque Avançado é uma estrutura multibloco que permite uma produção mais rápida de Carvão de Coque e Óleo de Creosoto.<br>A estrutura é construída como mostrado acima e formada usando o Martelo do Engenheiro no bloco central de Tijolos de Coque Reforçados.
-ie.manual.entry.advancedCokeOven1=Permite a automação de entrada e saída de itens, também pode ser equipado com aquecedores de base para acelerar o processo pela adição de ar quente.<br>O forno é feito de tijolos reforçados, então é aconselhável gastar seus primeiros lotes de aço nesta atualização.<br>Semelhante ao Alto Forno Melhorado, o Carvão de Coque é saída na frente e o Óleo de Creosoto na trás. O carvão é alimentado pelo topo.
+ie.manual.entry.advancedCokeOven1=Permite a automação de entrada e saída de itens, também pode ser equipado com aquecedores de base para acelerar o processo pela adição de ar quente.<br>O forno é feito de tijolos reforçados, por isso é aconselhável gastar seus primeiros lotes de aço nesta atualização.<br>Semelhante ao Alto Forno Melhorado, o Carvão de Coque é saída na frente e o Óleo de Creosoto na trás. O carvão é alimentado pelo topo.
 ie.manual.entry.advancedCokeOven2=Aquecedores de Base do Forno de Coque são usados para acelerar o processo de refinamento do carvão. Cada forno pode ter até dois aquecedores de base conectados às portas em cada lado, e cada aquecedor de base requer <config;i;cokeOvenBaseheater_consumption> Flux/t para operar.
 
 ie.manual.entry.alternator.name=Alternador

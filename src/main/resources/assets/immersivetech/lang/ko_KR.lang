@@ -50,7 +50,7 @@ category.immersivetech.metal_multiblock.distillerChance=확률: %s
 chat.immersivetech.fluid_pump.fill_first_mode=펌프가 내부 탱크를 먼저 채운 후 내용을 밀어냅니다
 chat.immersivetech.fluid_pump.push_only_mode=펌프가 내용물을 밀어내기만 합니다
 
-#TILE ENTITYS
+#TILE ENTITIES
 #METAL
 tile.immersivetech.metal_device.advanced_coke_oven_baseheater.name=고급 코크스 오븐 베이스히터
 tile.immersivetech.metal_trash.trash_item.name=쓰레기통

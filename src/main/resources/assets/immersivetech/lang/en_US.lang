@@ -50,7 +50,7 @@ category.immersivetech.metal_multiblock.distillerChance=Chance: %s
 chat.immersivetech.fluid_pump.fill_first_mode=Pump will fill internal tank first, then push out contents
 chat.immersivetech.fluid_pump.push_only_mode=Pump will only push out contents
 
-#TILE ENTITYS
+#TILE ENTITIES
 #METAL
 tile.immersivetech.metal_device.advanced_coke_oven_baseheater.name=Advanced Coke Oven Baseheater
 tile.immersivetech.metal_trash.trash_item.name=Trash Can
@@ -203,7 +203,7 @@ ie.manual.entry.distiller1=Applying a redstone signal to the control panel at th
 
 ie.manual.entry.openBarrel.name=Open Metal Barrel
 ie.manual.entry.openBarrel.subtext=Open to the Sun or Clouds?
-ie.manual.entry.openBarrel0=The §6Open Metal Barrel§r is a single block tank like the Metal Barrel but with an open top. Fluid can be put in by hand. The Top is Input only and the Bottom is Output only. Leave it out in the Rain and watch it fill! In a Thunderstom Twice as fast! However, don't leave it out in warm environments, water just may evaporate.
+ie.manual.entry.openBarrel0=The §6Open Metal Barrel§r is a single block tank like the Metal Barrel but with an open top. Fluid can be put in by hand. The Top is Input only and the Bottom is Output only. Leave it out in the Rain and watch it fill! In a Thunderstorm Twice as fast! However, don't leave it out in warm environments, water just may evaporate.
 
 ie.manual.entry.solarTower.name=Solar Tower
 ie.manual.entry.solarTower.subtext=Automatic Bird Roaster 2056
@@ -214,9 +214,9 @@ ie.manual.entry.solarTower3=Reflector distance from the Solar Tower must be betw
 
 ie.manual.entry.controlBlocks.name=Limiter and Control Devices
 ie.manual.entry.controlBlocks.subtext=Throughput is overrated
-ie.manual.entry.controlBlocks0=The §6Stack Limiter§r can limit items moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
-ie.manual.entry.controlBlocks1=The §6Load Controller§r can limit energy moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
-ie.manual.entry.controlBlocks2=The §6Fluid Valve§r can limit fluids moving through it. You can specify in the GUI specific paramaters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
+ie.manual.entry.controlBlocks0=The §6Stack Limiter§r can limit items moving through it. You can specify in the GUI specific parameters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
+ie.manual.entry.controlBlocks1=The §6Load Controller§r can limit energy moving through it. You can specify in the GUI specific parameters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
+ie.manual.entry.controlBlocks2=The §6Fluid Valve§r can limit fluids moving through it. You can specify in the GUI specific parameters or it can be controlled by Redstone signal strength. Redstone with a signal of 15 is off. Enable Redstone Mode by sneaking with a Hammer.
 
 ie.manual.entry.steamTurbine.name=Steam Turbine
 ie.manual.entry.steamTurbine.subtext=Boiling breath
@@ -233,7 +233,7 @@ ie.manual.entry.highPressureSteamTurbine2=Applying a redstone signal to the cont
 ie.manual.entry.gasTurbine.name=Gas Turbine
 ie.manual.entry.gasTurbine.subtext=Not part of a 747
 ie.manual.entry.gasTurbine0=The Gas Turbine is a multiblock structure that uses combustible fuels to produce kinetic energy. The structure is built as shown, and formed by using the Engineer's hammer on the central steel block (short side). To work, the turbine needs an <link;alternator;§o§nAlternator§r>.
-ie.manual.entry.gasTurbine1=When the turbine is supplied with adequate fuel, the turbine will slowly speed up until it hits max speed and efficiency about 30 seconds into the spinup process. Some fuels may require large enough amounts to be fed into the turbine to require pressurized transport, and if the turbine runs out of fuel it willl begin to slow down. If the turbine is at speed while shut down, it will slowly lose speed. If it slows down to below 1/4 speed, it will need to be spun back up before it can be used again. 
+ie.manual.entry.gasTurbine1=When the turbine is supplied with adequate fuel, the turbine will slowly speed up until it hits max speed and efficiency about 30 seconds into the spinup process. Some fuels may require large enough amounts to be fed into the turbine to require pressurized transport, and if the turbine runs out of fuel it will begin to slow down. If the turbine is at speed while shut down, it will slowly lose speed. If it slows down to below 1/4 speed, it will need to be spun back up before it can be used again.
 ie.manual.entry.gasTurbine2=The fluid pipe on the front of the turbine is the input, and the two power plugs on the sides of the turbine each serve a different input purpose. The HV plug consumes 4096 IF/t to start the turbine up to 1/4 speed, at which point more flux input will cause the turbine to stall and not spin up past 1/4 speed. The MV plug uses 1024 IF to ignite the fuel if the turbine is not currently burning fuel - this happens on startup and any time the turbine has no fuel for 3 or more seconds.
 ie.manual.entry.gasTurbine3=The turbine outputs kinetic energy from the rear, and the result gasses just below the kinetic energy output. These gasses have a special place, in that they can be burned to increase the efficiency of the turbine.  While usually worse than the diesel generator, for a greater power output and complexity, this output is where the gas turbine really shines. CCGT (or COGAS for the mariners out there) allows even larger returns on combustible fuels when used in the boiler for steam power.
 
@@ -258,7 +258,7 @@ ie.manual.entry.coolingTower1=Warm fluids go into the side with the red indicato
 ie.manual.entry.heatExchanger.name=Heat Exchanger
 ie.manual.entry.heatExchanger.subtext=Entropy says hi
 ie.manual.entry.heatExchanger0=The Heat Exchanger is a multiblock structure that quickly moves heat from one fluid to another. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Iron Sheetmetal next to the Redstone Engineering Block.
-ie.manual.entry.heatExchanger1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. The heat exchanger processes hot, energy-bearing fluids with colder fluids like §lWater§r or §lDistilled Water§r to heat them up into more useable forms. The heat exchanger is a countercurrent heat exchanger, meaning the hot fluid is output from the side the hot fluid is input and vice versa for cold fluid.
+ie.manual.entry.heatExchanger1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. The heat exchanger processes hot, energy-bearing fluids with colder fluids like §lWater§r or §lDistilled Water§r to heat them up into more usable forms. The heat exchanger is a countercurrent heat exchanger, meaning the hot fluid is output from the side the hot fluid is input and vice versa for cold fluid.
 
 ie.manual.entry.electrolyticCrucibleBattery.name=Electrolytic Crucible Battery
 ie.manual.entry.electrolyticCrucibleBattery.subtext=The power of electricity compels you!
