@@ -6,14 +6,19 @@ import os
 import time
 import numpy as np
 import torch
+from typing import cast
 
 from bb_model_parser import parse_bbmodel, list_bbmodel_files, select_file, normalize_offsets
 from bb_postprocess import apply_postprocessing
 from bb_utils import parse_thresh_val, extract_aabbs_from_occupied
 
-try:
-    import torch_directml
-except ImportError:
+# DirectML Windows-only (clean Linux support)
+if os.name == 'nt':
+    try:
+        import torch_directml
+    except ImportError:
+        torch_directml = None
+else:
     torch_directml = None
 
 def log(message):
@@ -87,8 +92,6 @@ def main():
     args = parser.parse_args()
 
     sub_pp_order = args.sub_pp_order
-    # Do not append fill-y-corners here; handled explicitly in apply_postprocessing per-block stage only
-
     debug = args.debug_log
     solid_set = set()
     if args.solid_blocks:
@@ -137,45 +140,62 @@ def main():
         raise ValueError("--fill-order must specify unique x,y,z in comma-separated format")
     global_postprocess = not args.no_gpp
     fill_all_voids = args.fill_all_voids
+
+    # === DEVICE SELECTION ===
     device = torch.device('cpu')
+
+    # Shared keyword lists for discrete GPU detection (NVIDIA + AMD)
+    integrated_skip = ["Ryzen", "Processor", "UHD", "Iris", "Intel(R) Graphics", "HD Graphics",
+                       "AMD Radeon(TM) Graphics", "AMD Radeon Graphics", "(TM) Graphics"]
+    discrete_markers = ["GeForce", "Radeon", "RTX", "GTX", "RX ", "Quadro", "TITAN", "Tesla", "Arc"]
+
     if torch.cuda.is_available():
-        device = torch.device('cuda')
-        if torch.cuda.device_count() > 1:
-            best_index = 0
-            best_memory = 0
-            for i in range(torch.cuda.device_count()):
-                prop = torch.cuda.get_device_properties(i)
-                if prop.total_memory > best_memory:
-                    best_memory = prop.total_memory
-                    best_index = i
-            device = torch.device(f'cuda:{best_index}')
-        print(f"Using CUDA device: {torch.cuda.get_device_name(device.index)}")
+        print("Available CUDA devices:")
+        best_index = 0
+        for i in range(torch.cuda.device_count()):
+            name = torch.cuda.get_device_name(i)
+            mem_gb = torch.cuda.get_device_properties(i).total_memory / (1024**3)
+            print(f"  Device {i}: {name}  ({mem_gb:.1f} GB)")
+            # Skip integrated graphics
+            if any(skip in name for skip in integrated_skip):
+                continue
+            # Prefer real discrete GPUs
+            if any(dgpu in name for dgpu in discrete_markers):
+                best_index = i
+                break
+        device = torch.device(f'cuda:{best_index}')
+        print(f"Using CUDA device: {torch.cuda.get_device_name(best_index)}")
     elif torch_directml is not None:
-        dml = torch_directml
-        if dml.is_available():  # type: ignore[attr-defined]
+        # Extra defensive checks so PyCharm stops complaining about "class 'None'"
+        if hasattr(torch_directml, 'is_available') and torch_directml.is_available():
+            print("Available DirectML devices:")
             dml_index = 0
             if args.dml_index is not None:
                 dml_index = args.dml_index
                 print(f"Using specified DirectML device index: {dml_index}")
             else:
                 try:
-                    num_devices = dml.device_count()  # type: ignore[attr-defined]
-                    dml_names = [dml.device_name(i) for i in range(num_devices)]  # type: ignore[attr-defined]
+                    num_devices = torch_directml.device_count() if hasattr(torch_directml, 'device_count') else 1
+                    dml_names = [torch_directml.device_name(i) for i in range(num_devices)] if hasattr(torch_directml, 'device_name') else ["DirectML Device"]
                     for i, name in enumerate(dml_names):
-                        print(f"DML Device {i}: {name}")
+                        print(f"  DML Device {i}: {name}")
+                    # Same discrete GPU preference logic
                     for i in range(num_devices):
                         name = dml_names[i]
-                        if "(TM) Graphics" not in name:
+                        if any(skip in name for skip in integrated_skip):
+                            continue
+                        if any(dgpu in name for dgpu in discrete_markers):
                             dml_index = i
                             break
                 except Exception as e:
                     print(f"Auto-selection failed: {e}. Using default device 0.")
-            device = dml.device(dml_index)  # type: ignore[attr-defined]
-            print(f"Using DirectML device: {dml.device_name(dml_index)}")  # type: ignore[attr-defined]
+            device = torch_directml.device(dml_index) if hasattr(torch_directml, 'device') else torch.device('cpu')
+            print(f"Using DirectML device: {torch_directml.device_name(dml_index) if hasattr(torch_directml, 'device_name') else 'DirectML'}")
         else:
             print("DirectML not available. Falling back to CPU.")
     else:
         print("Using CPU")
+
     thresh_parts = args.thresh.split(',')
     x_threshold = parse_thresh_val(thresh_parts[0], 2)
     y_threshold = parse_thresh_val(thresh_parts[1], 4)
@@ -213,17 +233,17 @@ def main():
         elif os.path.isdir(args.path):
             directory = args.path
     if args.main:
-        main_path = os.path.join(directory, args.main)
+        main_path = os.path.join(str(directory), str(args.main))
         if not os.path.exists(main_path):
             raise ValueError(f"Main model {args.main} not found in {directory}")
     bbmodel_files = list_bbmodel_files(directory)
     if main_path:
-        main_file = os.path.basename(main_path)
+        main_file = os.path.basename(str(main_path))
         if main_file in bbmodel_files:
             bbmodel_files.remove(main_file)
     else:
         main_file = select_file(bbmodel_files, "Select the main model by number: ")
-        main_path = os.path.join(directory, main_file)
+        main_path = os.path.join(str(directory), str(main_file))
         bbmodel_files.remove(main_file)
     supp_list = []
     if not args.no_supplementary and bbmodel_files:
@@ -269,7 +289,7 @@ def main():
     unique_supps = set(s_file for s_file, _ in supp_list)
     for s_file in unique_supps:
         print(f"Processing supplementary model: {s_file}")
-        s_path = os.path.join(directory, s_file)
+        s_path = os.path.join(str(directory), str(s_file))
         s_voxels = parse_bbmodel(s_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=sub_pp_order, do_center=True, auto_center=False, debug=debug)
         cache[s_file] = s_voxels
         if debug:
@@ -302,18 +322,16 @@ def main():
             new_by = off_by + sy
             new_bz = off_bz + sz
             if (new_bx, new_by, new_bz) in overall_dict:
-                overall_dict[(new_bx, new_by, new_bz)] |= occupied_np  # merge if overlap
+                overall_dict[(new_bx, new_by, new_bz)] |= occupied_np
             else:
                 overall_dict[(new_bx, new_by, new_bz)] = occupied_np
         if debug:
             log(f"After placement, overall_dict keys: {list(overall_dict.keys())}")
-    # Force solid and empty blocks after combining
     res = 16
     for b in solid_set:
         overall_dict[b] = np.ones((res, res, res), dtype=bool)
     for b in empty_set:
         overall_dict[b] = np.zeros((res, res, res), dtype=bool)
-    # Apply post-processing to the combined model
     block_occupied = overall_dict
     if not args.no_postprocess:
         pp_order_list = [s.strip() for s in args.pp_order.split(',')]
@@ -341,7 +359,6 @@ def main():
             occupied_np = block_occupied[(bx,by,bz)]
             new_dict[(bx,by,new_bz)] = occupied_np
         block_occupied = new_dict
-    # Extract AABBs
     overall_aabbs = []
     for (bx, by, bz), occupied_np in sorted(block_occupied.items(), key=lambda item: item[0]):
         if args.low_res_merge:
@@ -356,13 +373,8 @@ def main():
             block_aabbs = extract_aabbs_from_occupied(occupied_low, res=low_res, force_merge=True)
         else:
             block_aabbs = extract_aabbs_from_occupied(occupied_np, res=16)
-        if debug:
-            log(f"AABBs extracted for block: {len(block_aabbs)} boxes")
         if block_aabbs:
             overall_aabbs.append((bx, by, bz, block_aabbs))
-    if debug:
-        log(f"Extracted overall_aabbs keys: {[(bx, by, bz) for bx, by, bz, _ in overall_aabbs]}")
-    # Apply AABB copies
     copies = []
     for c in args.copy_aabb:
         parts = c.split()
@@ -380,17 +392,17 @@ def main():
                 break
         if source_aabbs is None:
             raise ValueError(f"Source block {from_b} not found")
+        # explicit narrowing + cast for static type checkers (Pyright/Pylance)
+        source_copy = list(cast(list, source_aabbs))
         found = False
         for i, (bx, by, bz, block_aabbs) in enumerate(overall_aabbs):
             if (bx, by, bz) == to_b:
-                overall_aabbs[i] = (bx, by, bz, source_aabbs[:])
+                overall_aabbs[i] = (bx, by, bz, source_copy)
                 found = True
                 break
         if not found:
-            overall_aabbs.append((to_b[0], to_b[1], to_b[2], source_aabbs[:]))
+            overall_aabbs.append((to_b[0], to_b[1], to_b[2], source_copy))
     overall_aabbs = normalize_offsets(overall_aabbs, debug=debug)
-    if debug:
-        log(f"Post-normalize overall_aabbs keys: {[(bx, by, bz) for bx, by, bz, _ in overall_aabbs]}")
     base_name = os.path.splitext(main_file)[0]
     version_suffix = '_1.12.2' if args.mc_version == '1.12.2' else ''
     do_java = args.output != 'json'
@@ -412,13 +424,9 @@ def main():
         width = max_bx + 1
         height = max_by + 1
         length = max_bz + 1
-        if debug:
-            log(f"JSON dimensions: width={width}, height={height}, length={length}")
         aabb_json = [None] * (height * length * width)
         for bx, by, bz, block_aabbs in overall_aabbs:
             index = by * (width * length) + bz * width + bx
-            if debug:
-                log(f"AABB for ({bx},{by},{bz}) at index {index}")
             if not block_aabbs: continue
             if len(block_aabbs) == 1:
                 minx, miny, minz, maxx, maxy, maxz = block_aabbs[0]

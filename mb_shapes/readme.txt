@@ -1,14 +1,35 @@
-Pythyon setup:
-	Install python -
-		https://www.python.org/downloads/windows/
-		or Python from the MS Store
-	
-	Install needed addons -
-		pip install numpy
-		pip install scipy
-		pip install tqdm
-		pip install torch
-		pip install torch_directml
+Python setup:
+    Windows -
+        Install python:
+            https://www.python.org/downloads/windows/
+            or Python from the MS Store
+
+        Install needed addons:
+            pip install numpy
+            pip install scipy
+            pip install tqdm
+            pip install torch
+            pip install torch_directml
+    Linux -
+        Create dedicated venv with Python 3.12 (required for both ROCm and CUDA wheels):
+            python3.12 -m venv ~/mb_venv
+            source ~/mb_venv/bin/activate
+
+        Install required packages:
+            For AMD GPU (ROCm):
+                pip install numpy scipy tqdm
+                pip install torch --index-url https://download.pytorch.org/whl/rocm6.3
+            Optional for AMD GPU ids file/directory warning (Fedora):
+                sudo mkdir -p /opt/amdgpu/share/libdrm
+                sudo ln -sf /usr/share/libdrm/amdgpu.ids /opt/amdgpu/share/libdrm/amdgpu.ids
+
+            For NVIDIA GPU (CUDA):
+                pip install numpy scipy tqdm
+                pip install torch --index-url https://download.pytorch.org/whl/cu126
+
+        To run bb_shape.py in the future (always activate the venv first):
+            source ~/mb_venv/bin/activate
+            python bb_shape.py path/to/model.bbmodel [-flags]
 
 Script setup:
 	Place all blockbench models in the folder you want to generate a shape from -

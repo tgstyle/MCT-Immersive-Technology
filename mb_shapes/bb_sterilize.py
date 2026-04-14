@@ -1,6 +1,5 @@
 import json
 import sys
-import math
 import os
 
 def snap_to_grid(value, grid_size=1/16):

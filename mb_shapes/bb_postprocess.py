@@ -1,6 +1,7 @@
 # bb_postprocess.py
 from scipy import ndimage
 import numpy as np
+from typing import List, Optional, Tuple, cast
 
 # Gap filling along specific axis
 def fill_gaps_along_axis(occupied_np, axis, threshold, is_excluded=None, max_intrude=-1, ex_threshold=None):
@@ -211,14 +212,14 @@ def remove_small_occupied(np_arr, small_occupied_threshold, is_excluded=None):
         remove_mask = np.isin(labels, np.where(small_mask)[0] + 1)
         np_arr[remove_mask] = False
     if is_excluded is not None:
-        np_arr[is_excluded] = original[is_excluded]
+        np_arr[is_excluded] = cast(np.ndarray, original)[is_excluded]
     return np_arr
 
 def fill_holes(np_arr, is_excluded=None):
     original = np.copy(np_arr) if is_excluded is not None else None
     np_arr = ndimage.binary_fill_holes(np_arr)
     if is_excluded is not None:
-        np_arr[is_excluded] = original[is_excluded]
+        np_arr[is_excluded] = cast(np.ndarray, original)[is_excluded]
     return np_arr
 
 def fill_voids(np_arr, small_void_threshold, fill_all_voids, is_excluded=None):
@@ -226,16 +227,19 @@ def fill_voids(np_arr, small_void_threshold, fill_all_voids, is_excluded=None):
     unoccupied = ~np_arr
     labels, num_labels = ndimage.label(unoccupied)
     if num_labels > 0:
-        slices = ndimage.find_objects(labels)
+        slices = cast(List[Optional[Tuple[slice, ...]]], ndimage.find_objects(labels))
         for lab in range(1, num_labels + 1):
-            sl = slices[lab - 1]
+            sl_raw = slices[lab - 1]
+            if sl_raw is None:
+                continue
+            sl = sl_raw
             touches_boundary = any(s.start == 0 or s.stop == np_arr.shape[i] for i, s in enumerate(sl))
             if not touches_boundary:
                 size = np.sum(labels == lab)
                 if fill_all_voids or size < small_void_threshold:
                     np_arr[labels == lab] = True
     if is_excluded is not None:
-        np_arr[is_excluded] = original[is_excluded]
+        np_arr[is_excluded] = cast(np.ndarray, original)[is_excluded]
     return np_arr
 
 def fill_gaps(np_arr, gap_passes, axis_order, thresholds, is_excluded=None, max_intrude_dict=None, ex_thresholds=None):
@@ -249,7 +253,7 @@ def fill_gaps(np_arr, gap_passes, axis_order, thresholds, is_excluded=None, max_
                 original = np.copy(np_arr) if is_excluded is not None else None
                 np_arr = fill_gaps_along_axis(np_arr, axis, thresh, is_excluded=is_excluded, max_intrude=max_intrude, ex_threshold=ex_thresh)
                 if is_excluded is not None:
-                    np_arr[is_excluded] = original[is_excluded]
+                    np_arr[is_excluded] = cast(np.ndarray, original)[is_excluded]
     return np_arr
 
 def fill_outside_corner_indents(np_arr, is_excluded=None):
@@ -323,7 +327,7 @@ def fill_outside_corner_indents(np_arr, is_excluded=None):
     for px, py, pz in to_fill:
         np_arr[px, py, pz] = True
     if is_excluded is not None:
-        np_arr[is_excluded] = original[is_excluded]
+        np_arr[is_excluded] = cast(np.ndarray, original)[is_excluded]
     return np_arr
 
 # Main post-processing function
