@@ -50,6 +50,7 @@ public class ITBlockTags extends BlockTagsProvider {
 
         registerMineable(tagAxe, ITBlocks.Wooden.CRATE_CREATIVE);
         registerMineable(tagPickAxe,
+                ITBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER,
                 ITBlocks.Metal.BARREL_CREATIVE,
                 ITBlocks.Metal.BARREL_OPEN,
                 ITBlocks.Metal.BARREL_STEEL,
@@ -65,6 +66,7 @@ public class ITBlockTags extends BlockTagsProvider {
                 ITBlocks.Stone.REINFORCED_COKE_BRICK
         );
         registerMineable(tagIronTool,
+                ITBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER,
                 ITBlocks.Metal.BARREL_CREATIVE,
                 ITBlocks.Metal.BARREL_OPEN,
                 ITBlocks.Metal.BARREL_STEEL,
