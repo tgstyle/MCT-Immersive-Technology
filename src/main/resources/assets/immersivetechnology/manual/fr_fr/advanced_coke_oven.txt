@@ -1,0 +1,8 @@
+Four à coke avancé
+Meilleur coke
+<&multiblock>Le Four à coke avancé est une machine multibloc utilisée pour §ltransformer le charbon en coke§r, aidant à la §lproduction de coke§r et améliorant l'efficacité du traitement.
+
+§lFonctionnement§r
+    - Les §lobjets§r sont insérés dans la machine depuis le §lcôté supérieur§r.
+    - Les §lsorties§r sont récupérées depuis l'§lavant§r du multibloc.
+    - Utilisez les chauffages de base avancés du four à coke pour accélérer le traitement.

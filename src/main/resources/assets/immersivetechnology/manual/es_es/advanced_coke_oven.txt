@@ -1,0 +1,8 @@
+Horno de Coque Avanzado
+Mejor Coque
+<&multiblock>El Horno de Coque Avanzado es una máquina multibloque utilizada para §lprocesar carbón en coque§r, ayudando en la §lproducción de coque§r y mejorando la eficiencia del procesamiento.
+
+§lOperación§r
+    - Los §lobjetos§r se insertan en la máquina desde el §llado superior§r.
+    - Las §lsalidas§r se recogen desde la §lparte frontal§r del multibloque.
+    - Usa los calentadores base avanzados de horno de coque para acelerar el procesamiento.

@@ -5,3 +5,4 @@ Better Coke
 §lOperation§r
     - §lItems§r are inserted into the machine from the top §lside§r.
     - §lOutputs§r are collected from the §lfront§r of the multiblock.
+    - Use Baseheaters to speed up processing.
