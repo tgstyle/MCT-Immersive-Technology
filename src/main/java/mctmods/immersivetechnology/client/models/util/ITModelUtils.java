@@ -89,7 +89,8 @@ public class ITModelUtils {
             data[base + UV_OFFSET]     = Float.floatToIntBits(sprite.getU((float) u));
             data[base + UV_OFFSET + 1] = Float.floatToIntBits(sprite.getV((float) v));
 
-            data[base + LIGHTMAP_OFFSET] = 0xF00000;
+            // TODO: Fix lighting on the Cooling Tower - changed from 0xF00000 to 0 for the time being to fix lighting in enclosed spaces
+            data[base + LIGHTMAP_OFFSET] = 0;
 
             int normalPacked = ((int)(faceNormal.x * 127) & 0xFF) |
                     (((int)(faceNormal.y * 127) & 0xFF) << 8) |
