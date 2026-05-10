@@ -1,0 +1,11 @@
+Turbina de gas
+¡GAS GAS GAS!
+<&multiblock>La Turbina de gas usa combustible y una fuente de ignición de los quemadores internos para generar gas caliente de alta velocidad. Este gas mueve las palas de la turbina y crea energía rotacional.
+
+
+§lFuncionamiento§r
+    - El §lCombustible líquido§r se introduce por tubería.
+    - Los §lGases de escape§r salen por debajo del rotor.
+    - El lado con entrada de energía MV es la bujía, que puede estar alimentada todo el tiempo.
+    - El lado con entrada de energía HV es el arranque, que necesita energía hasta que la bujía encienda el combustible. Una vez encendido, quita la energía del arranque.
+    - Debes conectar un multibloque que use energía mecánica al rotor para que funcione.

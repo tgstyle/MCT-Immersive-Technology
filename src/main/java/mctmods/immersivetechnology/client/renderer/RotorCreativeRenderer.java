@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.client.renderer;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mctmods.immersivetechnology.client.models.RotorModels;
-import mctmods.immersivetechnology.client.models.helper.ITDynamicModel;
+import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
+import mctmods.immersivetechnology.client.models.ITDynamicModel;
 import mctmods.immersivetechnology.client.renderer.helper.ITRenderUtils;
 import mctmods.immersivetechnology.common.blocks.metal.RotorCreativeBlock;
 import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;

@@ -36,8 +36,7 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
         tankOverlay = helper.createDrawable(background, 176, 31, 20, 51);
     }
 
-    @Override
-    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull DistillerRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull DistillerRecipe recipe, @NotNull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
@@ -56,25 +55,22 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
                         ITFluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
 
-        if (recipe.fluidOutput != null) {
-            var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 112, 21)
-                    .addIngredient(ForgeTypes.FLUID_STACK, recipe.fluidOutput)
-                    .setFluidRenderer(tankCapacity, false, 16, 47);
+        FluidStack fluidOut = (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) ? recipe.fluidOutput : FluidStack.EMPTY;
+        var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 112, 21)
+                .addIngredient(ForgeTypes.FLUID_STACK, fluidOut)
+                .setFluidRenderer(tankCapacity, false, 16, 47);
 
-            outputSlot.addRichTooltipCallback((slotView, tooltip) ->
-                    slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                            ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput.getAmount(), tooltip::add)));
-        }
+        outputSlot.addRichTooltipCallback((slotView, tooltip) ->
+                slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                        ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
 
-        if (!recipe.itemOutput.isEmpty()) {
-            var itemSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 80, 35)
-                    .addItemStack(recipe.itemOutput);
+        var itemSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 80, 35)
+                .addItemStack(recipe.itemOutput.isEmpty() ? net.minecraft.world.item.ItemStack.EMPTY : recipe.itemOutput);
 
-            itemSlot.addRichTooltipCallback((slotView, tooltip) ->
-                    slotView.getDisplayedIngredient(VanillaTypes.ITEM_STACK).ifPresent(stack ->
-                            tooltip.add(Component.translatable(TranslationKey.CATEGORY_DISTILLER_CHANCE.getLocation(),
-                                    String.format("%.2f%%", recipe.chance * 100)))));
-        }
+        itemSlot.addRichTooltipCallback((slotView, tooltip) ->
+                slotView.getDisplayedIngredient(VanillaTypes.ITEM_STACK).ifPresent(stack ->
+                        tooltip.add(Component.translatable(TranslationKey.CATEGORY_DISTILLER_CHANCE.getLocation(),
+                                String.format("%.2f%%", recipe.chance * 100)))));
     }
 
     private int getTankCapacity(DistillerRecipe recipe) {
@@ -83,8 +79,7 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
         return tankCapacity;
     }
 
-    @Override
-    public void draw(@NotNull DistillerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@NotNull DistillerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
         tankOverlay.draw(guiGraphics, 55, 19);
         tankOverlay.draw(guiGraphics, 109, 19);

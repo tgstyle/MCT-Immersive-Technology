@@ -24,6 +24,9 @@ public class ITClientConfig {
     public static final ForgeConfigSpec.BooleanValue CONFIG_PARTICLE_COLLIDE;
     public static final ForgeConfigSpec.DoubleValue CONFIG_COLORED_SMOKE_HEIGHT;
     public static final ForgeConfigSpec.DoubleValue CONFIG_CUSTOM_SMOKE_HEIGHT;
+    public static final ForgeConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_MAX_FAN_SPEED;
+    public static final ForgeConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_FAN_ACCEL;
+    public static final ForgeConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_FAN_DECEL;
 
     public static double multiblockSpecialRenderDistanceModifier;
     public static boolean doSpecialRenderGasTurbine;
@@ -38,6 +41,9 @@ public class ITClientConfig {
     public static boolean particleCollide;
     public static double coloredSmokeHeight;
     public static double customSmokeHeight;
+    public static double advancedCokeOvenBaseheaterMaxFanSpeed;
+    public static double advancedCokeOvenBaseheaterFanAccel;
+    public static double advancedCokeOvenBaseheaterFanDecel;
 
     static {
         BUILDER.comment("Render options").push("render");
@@ -61,6 +67,11 @@ public class ITClientConfig {
         CONFIG_COLORED_SMOKE_HEIGHT = BUILDER.comment("Height scale for colored smoke particles (Default: 0.7).").defineInRange("colored_smoke_height", 0.7, 0.0, 3.0);
         CONFIG_CUSTOM_SMOKE_HEIGHT = BUILDER.comment("Height scale for custom smoke particles (Default: 1.0).").defineInRange("custom_smoke_height", 1.0, 0.0, 3.0);
         BUILDER.pop();
+        BUILDER.comment("Advanced Coke Oven Base Heater options").push("advanced_coke_oven_baseheater");
+        ADVANCED_COKE_OVEN_BASEHEATER_MAX_FAN_SPEED = BUILDER.comment("Maximum fan speed for the base heater animation.").defineInRange("max_fan_speed", 35.0D, 1.0D, 100.0D);
+        ADVANCED_COKE_OVEN_BASEHEATER_FAN_ACCEL = BUILDER.comment("Fan acceleration rate for the base heater.").defineInRange("fan_accel", 5.0D, 0.1D, 20.0D);
+        ADVANCED_COKE_OVEN_BASEHEATER_FAN_DECEL = BUILDER.comment("Fan deceleration rate for the base heater.").defineInRange("fan_decel", 1.0D, 0.1D, 10.0D);
+        BUILDER.pop();
     }
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
@@ -80,6 +91,9 @@ public class ITClientConfig {
             particleCollide = CONFIG_PARTICLE_COLLIDE.get();
             coloredSmokeHeight = CONFIG_COLORED_SMOKE_HEIGHT.get();
             customSmokeHeight = CONFIG_CUSTOM_SMOKE_HEIGHT.get();
+            advancedCokeOvenBaseheaterMaxFanSpeed = ADVANCED_COKE_OVEN_BASEHEATER_MAX_FAN_SPEED.get();
+            advancedCokeOvenBaseheaterFanAccel = ADVANCED_COKE_OVEN_BASEHEATER_FAN_ACCEL.get();
+            advancedCokeOvenBaseheaterFanDecel = ADVANCED_COKE_OVEN_BASEHEATER_FAN_DECEL.get();
         }
     }
 }

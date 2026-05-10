@@ -1,4 +1,16 @@
 {
+  "advanced_coke_oven": {
+    "sounds": [
+      "immersivetechnology:advanced_coke_oven"
+    ],
+    "subtitle": "subtitles.immersivetechnology.advanced_coke_oven"
+  },
+  "advanced_coke_oven_fan": {
+    "sounds": [
+      "immersivetechnology:advanced_coke_oven_fan"
+    ],
+    "subtitle": "subtitles.immersivetechnology.advanced_coke_oven_fan"
+  },
   "alternator": {
     "sounds": [
       "immersivetechnology:alternator"

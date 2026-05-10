@@ -43,19 +43,11 @@ public class SolarMenu extends ITContainerMenu {
         this.outputTank = output;
         this.mbStateSupplier = mbStateSupplier;
         this.state = new SimpleContainerData(8);
-        this.addSlot(new ITSlot.FluidContainer(inv, 0, 80, 17, 1) {
-            @Override public boolean mayPlace(@Nonnull ItemStack itemStack) {
-                FluidStack fs = FluidUtil.getFluidContained(itemStack).orElse(null);
-                if (fs == null) return false;
-                return inputTank.getFluidAmount() <= 0 || fs.isFluidEqual(inputTank.getFluid());
-            }
-        });
+        this.addSlot(new ITSlot.FluidContainer(inv, 0, 80, 17, 1) { @Override public boolean mayPlace(@Nonnull ItemStack itemStack) { FluidStack fs = FluidUtil.getFluidContained(itemStack).orElse(null); if (fs == null) return false;return inputTank.getFluidAmount() <= 0 || fs.isFluidEqual(inputTank.getFluid()); }});
         this.addSlot(new ITSlot.Output(inv, 1, 80, 53));
-        this.addSlot(new ITSlot.FluidContainer(inv, 2, 148, 17, 0) {
-            @Override public boolean mayPlace(@Nonnull ItemStack itemStack) {
+        this.addSlot(new ITSlot.FluidContainer(inv, 2, 148, 17, 0) { @Override public boolean mayPlace(@Nonnull ItemStack itemStack) {
                 return itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent();
-            }
-        });
+            }});
         this.addSlot(new ITSlot.Output(inv, 3, 148, 53));
         ownSlotCount = 4;
         for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); }

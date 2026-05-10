@@ -1,0 +1,8 @@
+Verbesserter Koksofen
+Besserer Koks
+<&multiblock>Der Verbesserte Koksofen ist eine Multiblock-Maschine, die zum §lVerarbeiten von Kohle zu Koks§r dient, die §lProduktion von Koks§r unterstützt und die Verarbeitungseffizienz verbessert.
+
+§lBetrieb§r
+    - §lGegenstände§r werden von der §lOberseite§r in die Maschine eingelegt.
+    - §lAusgaben§r werden von der §lVorderseite§r des Multiblocks entnommen.
+    - Verwenden Sie Verbesserte Koksofen-Unterheizer, um die Verarbeitung zu beschleunigen.

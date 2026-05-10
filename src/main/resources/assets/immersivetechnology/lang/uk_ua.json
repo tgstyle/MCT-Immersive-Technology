@@ -8,6 +8,7 @@
   "manual.immersivetechnology.main": "Поглиблена технологія",
   "manual.immersivetechnology.it_multiblocks": "Мультиблоки",
 
+  "block.immersivetechnology.advanced_coke_oven_baseheater": "Покращений базовий нагрівач коксової печі",
   "block.immersivetechnology.barrel_creative": "Креативна бочка для рідин",
   "block.immersivetechnology.barrel_open": "Відкрита металева бочка",
   "block.immersivetechnology.barrel_steel": "Сталева металева бочка",
@@ -24,6 +25,7 @@
   "block.immersivetechnology.valve_limiter": "Обмежувач стеку",
   "block.immersivetechnology.valve_load": "Контролер навантаження",
 
+  "block.immersivetechnology.advanced_coke_oven": "Покращена коксівна піч",
   "block.immersivetechnology.alternator": "Альтернатор",
   "block.immersivetechnology.boiler_liquid": "Пальник котла на рідкому паливі",
   "block.immersivetechnology.boiler_tank": "Резервуар котла",
@@ -160,6 +162,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "Відображення мультиблоків IT",
 
+  "subtitles.immersivetechnology.advanced_coke_oven_fan": "Вентилятор базового нагрівача обертається",
   "subtitles.immersivetechnology.alternator": "Альтернатор гуде",
   "subtitles.immersivetechnology.boiler_liquid": "Котёл реве",
   "subtitles.immersivetechnology.boiler_solid": "Котёл тріщить",

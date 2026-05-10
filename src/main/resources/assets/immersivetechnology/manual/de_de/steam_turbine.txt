@@ -1,0 +1,10 @@
+Dampfturbine
+Dreh dich!
+<&multiblock>Die Dampfturbine nutzt Dampfdruck, um die Turbinenschaufeln anzutreiben und Rotationsenergie zu erzeugen.
+
+
+
+§lBetrieb§r
+    - §lDampf§r wird über Rohr eingefüllt.
+    - §lAuspuffdampf§r wird unter dem Rotor ausgegeben.
+    - Am Rotor muss ein Multiblock angeschlossen werden, das mechanische Energie nutzt.

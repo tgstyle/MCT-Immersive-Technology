@@ -7,8 +7,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerLiquidS
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
 
 import java.util.function.Consumer;
 
@@ -16,8 +14,6 @@ public class BoilerLiquid extends ITTemplateMultiblock {
     public static final BoilerLiquid INSTANCE = new BoilerLiquid();
 
     public BoilerLiquid() { super(ITLib.rl("multiblocks/boiler_liquid"), BoilerLiquidShape.MASTER_POS, BoilerLiquidShape.TRIGGER_POS, new BlockPos(BoilerLiquidShape.WIDTH,BoilerLiquidShape.HEIGHT,BoilerLiquidShape.LENGTH), ITMultiblockProvider.BOILER_LIQUID); }
-
-    @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override public float getManualScale() { return BoilerLiquidShape.MANUAL_SCALE; }
 

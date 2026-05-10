@@ -1,0 +1,6 @@
+Scambiatore di calore
+È caldo o freddo?
+<&multiblock>Lo Scambiatore di calore è una macchina multiblocco usata per trasferire calore da fluidi caldi.
+
+§lFunzionamento§r
+    - Lo §lScambiatore di calore§r necessita di fluidi caldi per produrre altri fluidi.

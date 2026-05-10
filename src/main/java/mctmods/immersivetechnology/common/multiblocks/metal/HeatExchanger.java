@@ -7,8 +7,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.HeatExchanger
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Mirror;
 
 import java.util.function.Consumer;
@@ -17,8 +15,6 @@ public class HeatExchanger extends ITTemplateMultiblock {
     public static final HeatExchanger INSTANCE = new HeatExchanger();
 
     public HeatExchanger() { super(ITLib.rl("multiblocks/heat_exchanger"), HeatExchangerShape.MASTER_POS, HeatExchangerShape.TRIGGER_POS, new BlockPos(HeatExchangerShape.WIDTH, HeatExchangerShape.HEIGHT, HeatExchangerShape.LENGTH), ITMultiblockProvider.HEAT_EXCHANGER); }
-
-    @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override public float getManualScale() { return HeatExchangerShape.MANUAL_SCALE; }
 

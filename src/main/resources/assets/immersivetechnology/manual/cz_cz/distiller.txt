@@ -1,0 +1,9 @@
+Destilátor
+Vypařování!
+<&multiblock>Destilátor vypařuje vodu na §ldestilovanou vodu§r se solí jako vedlejším produktem.
+
+
+§lProvoz§r
+    - §lVoda§r se vkládá zleva.
+    - §lDestilovaná voda§r vychází zprava.
+    - Sůl vychází zezadu.

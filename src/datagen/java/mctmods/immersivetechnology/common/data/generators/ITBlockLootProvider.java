@@ -25,6 +25,7 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
         registerEntity(ITBlocks.Metal.BARREL_STEEL.getRegObject());
 
         dropSelf(ITBlocks.Wooden.CRATE_CREATIVE.get());
+        dropSelf(ITBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get());
         dropSelf(ITBlocks.Metal.HEAT_CREATIVE.get());
         dropSelf(ITBlocks.Metal.ROTOR_CREATIVE.get());
         dropSelf(ITBlocks.Metal.TRASH_ENERGY.get());
@@ -48,6 +49,7 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
     }
 
     private void registerMultiblocksNoDrop() {
+        add(ITMultiblockProvider.ADVANCED_COKE_OVEN.block().get(), noDrop());
         add(ITMultiblockProvider.ALTERNATOR.block().get(), noDrop());
         add(ITMultiblockProvider.BOILER_LIQUID.block().get(), noDrop());
         add(ITMultiblockProvider.BOILER_SOLID.block().get(), noDrop());

@@ -8,6 +8,7 @@
   "manual.immersivetechnology.main": "몰입형 기술",
   "manual.immersivetechnology.it_multiblocks": "멀티블록",
 
+  "block.immersivetechnology.advanced_coke_oven_baseheater": "고급 코크스 가마 베이스 히터",
   "block.immersivetechnology.barrel_creative": "크리에이티브 유체 통",
   "block.immersivetechnology.barrel_open": "개방형 금속 통",
   "block.immersivetechnology.barrel_steel": "강철 금속 통",
@@ -24,6 +25,7 @@
   "block.immersivetechnology.valve_limiter": "스택 제한기",
   "block.immersivetechnology.valve_load": "부하 조절기",
 
+  "block.immersivetechnology.advanced_coke_oven": "고급 코크스 가마",
   "block.immersivetechnology.alternator": "알터네이터",
   "block.immersivetechnology.boiler_liquid": "액체 연료 보일러 연소기",
   "block.immersivetechnology.boiler_tank": "보일러 탱크",
@@ -160,6 +162,8 @@
 
   "config.jade.plugin_immersivetechnology.display": "IT 멀티블록 정보 표시",
 
+  "subtitles.immersivetechnology.advanced_coke_oven": "고급 코크스 가마 연소음",
+  "subtitles.immersivetechnology.advanced_coke_oven_fan": "베이스 히터 팬 회전 중",
   "subtitles.immersivetechnology.alternator": "알터네이터 작동음",
   "subtitles.immersivetechnology.boiler_liquid": "보일러 연소음",
   "subtitles.immersivetechnology.boiler_solid": "보일러 불꽃 타는 소리",

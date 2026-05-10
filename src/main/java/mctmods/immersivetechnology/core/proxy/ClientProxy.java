@@ -6,11 +6,11 @@ import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.Tree.InnerNode;
 import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.client.gui.helper.ITContainerScreen;
-import mctmods.immersivetechnology.client.models.RotorModels;
-import mctmods.immersivetechnology.client.models.SolarReflectorModels;
-import mctmods.immersivetechnology.client.models.helper.ITDynamicModel;
-import mctmods.immersivetechnology.client.models.helper.ITModelConfigurableSides;
-import mctmods.immersivetechnology.client.models.helper.ITObjLoader;
+import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
+import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
+import mctmods.immersivetechnology.client.models.ITDynamicModel;
+import mctmods.immersivetechnology.client.models.ITModelConfigurableSides;
+import mctmods.immersivetechnology.client.models.ITObjLoader;
 import mctmods.immersivetechnology.client.models.mirror.ITMirroredModelLoader;
 import mctmods.immersivetechnology.client.models.split.ITSplitModelLoader;
 import mctmods.immersivetechnology.client.particles.helper.ITColoredSmokeProvider;
@@ -64,6 +64,7 @@ public class ClientProxy extends CommonProxy {
                 ItemBlockRenderTypes.setRenderLayer(entry.getFlowing(), RenderType.translucent());
             }
 
+            MenuScreens.register(ITMenuTypes.ADVANCED_COKE_OVEN_MENU.getType(), AdvancedCokeOvenScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_LIQUID_MENU.getType(), BoilerLiquidScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_SOLID_MENU.getType(), BoilerSolidScreen::new);
             MenuScreens.register(ITMenuTypes.BOILER_TANK_MENU.getType(), BoilerTankScreen::new);
@@ -72,9 +73,7 @@ public class ClientProxy extends CommonProxy {
             MenuScreens.register(ITMenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
             MenuScreens.register(ITMenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
             MenuScreens.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
-
             MenuScreens.register(ITMenuTypes.ROTOR_CREATIVE.getType(), (RotorCreativeMenu menu, Inventory inv, Component title) -> new RotorCreativeScreen(menu, inv));
-
             MenuScreens.register(ITMenuTypes.VALVE_FLUID.getType(), (ValveFluidMenu menu, Inventory inv, Component title) -> new ValveFluidScreen(menu, inv));
             MenuScreens.register(ITMenuTypes.VALVE_LIMITER.getType(), (ValveLimiterMenu menu, Inventory inv, Component title) -> new ValveLimiterScreen(menu, inv));
             MenuScreens.register(ITMenuTypes.VALVE_LOAD.getType(), (ValveLoadMenu menu, Inventory inv, Component title) -> new ValveLoadScreen(menu, inv));
@@ -86,6 +85,9 @@ public class ClientProxy extends CommonProxy {
             instance.addEntry(parent_category, builder.create());
             InnerNode<ResourceLocation, ManualEntry> multiblock_category = parent_category.getOrCreateSubnode(ITLib.rl("it_multiblocks"), 0);
             ManualEntry.ManualEntryBuilder multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ITLib.rl("advanced_coke_oven"));
+            instance.addEntry(multiblock_category, multiblock.create());
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ITLib.rl("alternator"));
             instance.addEntry(multiblock_category, multiblock.create());
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
@@ -167,12 +169,14 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
         ev.register("obj", ITObjLoader.INSTANCE);
         ev.register(ITModelConfigurableSides.Loader.NAME.getPath(), new ITModelConfigurableSides.Loader());
-        ev.register(ITMirroredModelLoader.ID.getPath(), new ITMirroredModelLoader());
-        ev.register(ITSplitModelLoader.LOCATION.getPath(), new ITSplitModelLoader());
+        ev.register(ITMirroredModelLoader.ID.getPath(), ITMirroredModelLoader.INSTANCE);
+        ev.register(ITSplitModelLoader.LOCATION.getPath(), ITSplitModelLoader.INSTANCE);
+
         RotorModels.ROTOR = new ITDynamicModel("rotor");
         RotorModels.ROTOR_EAST_WEST = new ITDynamicModel("rotor_east_west");
         SolarReflectorModels.SUPPORT = new ITDynamicModel("solar_reflector_support");
         SolarReflectorModels.MIRROR = new ITDynamicModel("solar_reflector_mirror");
+        AdvancedCokeOvenBaseHeaterRenderer.FAN_MODEL = new ITDynamicModel("advanced_coke_oven_baseheater_fan");
     }
 
     @SubscribeEvent public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) { registerBERenders(event); }
@@ -180,6 +184,7 @@ public class ClientProxy extends CommonProxy {
     private static <T extends BlockEntity> void registerBERender(EntityRenderersEvent.RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, BlockEntityRendererProvider<T> provider) { event.registerBlockEntityRenderer(type.get(), provider); }
 
     public static void registerBERenders(EntityRenderersEvent.RegisterRenderers event) {
+        registerBERender(event, ITBlockEntities.ADVANCED_COKE_OVEN_BASEHEATER::get, ctx -> new AdvancedCokeOvenBaseHeaterRenderer());
         registerBERender(event, ITBlockEntities.BARREL_OPEN::get, ctx3 -> new OpenBarrelRenderer());
         registerBERender(event, ITBlockEntities.ROTOR_CREATIVE::get, context -> new RotorCreativeRenderer());
         registerBERender(event, ITMultiblockProvider.STEAM_TURBINE.masterBE(), ctx2 -> new SteamTurbineRenderer());

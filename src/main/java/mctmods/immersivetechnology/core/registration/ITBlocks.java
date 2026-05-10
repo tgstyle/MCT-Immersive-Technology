@@ -44,6 +44,7 @@ public class ITBlocks {
     public static final Supplier<BlockBehaviour.Properties> METAL_PROPERTIES_NO_OCCLUSION = () -> METAL_PROPERTIES_NO_OVERLAY.get().noOcclusion().forceSolidOn();
 
     public static final class Metal {
+        public static BlockEntry<AdvancedCokeOvenBaseHeaterBlock> ADVANCED_COKE_OVEN_BASEHEATER;
         public static BlockEntry<BarrelCreativeBlock> BARREL_CREATIVE;
         public static BlockEntry<BarrelSteelBlock> BARREL_STEEL;
         public static BlockEntry<BarrelOpenBlock> BARREL_OPEN;
@@ -58,6 +59,12 @@ public class ITBlocks {
         public static BlockEntry<ValveLimiterBlock> VALVE_LIMITER;
 
         private static void init() {
+            ADVANCED_COKE_OVEN_BASEHEATER = new BlockEntry<>(
+                    "advanced_coke_oven_baseheater",
+                    METAL_PROPERTIES_NO_OCCLUSION,
+                    p -> new AdvancedCokeOvenBaseHeaterBlock(AdvancedCokeOvenBaseHeaterBlockEntity::new, p)
+            );
+
             BARREL_CREATIVE = new BlockEntry<>(
                     "barrel_creative",
                     METAL_PROPERTIES_NO_OCCLUSION,

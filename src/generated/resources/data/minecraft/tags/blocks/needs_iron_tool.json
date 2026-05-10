@@ -1,5 +1,6 @@
 {
   "values": [
+    "immersivetechnology:advanced_coke_oven",
     "immersivetechnology:alternator",
     "immersivetechnology:boiler_liquid",
     "immersivetechnology:boiler_solid",
@@ -13,6 +14,7 @@
     "immersivetechnology:solar_tower",
     "immersivetechnology:steam_turbine",
     "immersivetechnology:steel_sheetmetal_tank",
+    "immersivetechnology:advanced_coke_oven_baseheater",
     "immersivetechnology:barrel_creative",
     "immersivetechnology:barrel_open",
     "immersivetechnology:barrel_steel",

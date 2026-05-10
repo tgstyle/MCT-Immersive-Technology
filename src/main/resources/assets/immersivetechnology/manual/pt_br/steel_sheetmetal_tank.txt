@@ -1,0 +1,11 @@
+Tanque de Chapa de Aço
+Encha ele!
+<&multiblock>O Tanque de chapa de aço é simplesmente uma versão maior do tanque normal.
+
+
+
+
+
+§lFuncionamento§r
+    - O §lVapor§r é inserido pelo topo.
+    - O §lVapor de escape§r sai pela parte inferior.

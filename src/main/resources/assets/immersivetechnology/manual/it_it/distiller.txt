@@ -1,0 +1,9 @@
+Distillatore
+Evaporazione!
+<&multiblock>Il Distillatore evapora l'acqua in §lacqua distillata§r con il sale come sottoprodotto.
+
+
+§lFunzionamento§r
+    - L'§lAcqua§r viene inserita a sinistra.
+    - L'§lAcqua distillata§r esce a destra.
+    - Il sale esce sul retro.

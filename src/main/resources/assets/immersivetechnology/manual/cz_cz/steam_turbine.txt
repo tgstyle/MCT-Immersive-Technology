@@ -1,0 +1,10 @@
+Parní turbína
+Točí to!
+<&multiblock>Parní turbína využívá tlak páry k roztáčení lopatek a vytváření rotační energie.
+
+
+
+§lProvoz§r
+    - §lPára§r se vkládá trubkou.
+    - §lVýfuková pára§r vychází pod rotorem.
+    - K rotoru musíte připojit multiblock, který využívá mechanickou energii.

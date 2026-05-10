@@ -1,0 +1,11 @@
+Gasturbine
+GAS GAS GAS!
+<&multiblock>Die Gasturbine nutzt Brennstoff und Zündung aus den Brennern in der Turbine, um heißes, schnell strömendes Gas zu erzeugen. Dieses Gas treibt die Turbinenschaufeln an und erzeugt Rotationsenergie.
+
+
+§lBetrieb§r
+    - §lFlüssigbrennstoff§r wird über Rohr eingefüllt.
+    - §lAbgase§r werden unter dem Rotor ausgegeben.
+    - Die Seite mit MV-Energieeingang ist die Zündkerze – kann dauerhaft versorgt werden.
+    - Die Seite mit HV-Energieeingang ist der Anlasser – benötigt Strom, bis die Zündkerze das Brennstoffgemisch entzündet. Danach Strom vom Anlasser entfernen.
+    - Am Rotor muss ein Multiblock angeschlossen werden, das mechanische Energie nutzt.
