@@ -200,7 +200,7 @@ public class ConveyorExtractAlternative extends ConveyorBasicAlternative {
     @Override public void onUpdate(TileEntity tile, EnumFacing facing) {
         initializeDirection(tile, facing);
         if (!tile.getWorld().isRemote) {
-            if (this.transferCooldown > 0) --this.transferCooldown;
+            if (this.transferCooldown > 0) { --this.transferCooldown; }
             if (isPowered(tile) && this.transferCooldown <= 0) {
                 World world = tile.getWorld();
                 BlockPos neighbour = tile.getPos().offset(this.extractDirection);
@@ -243,15 +243,18 @@ public class ConveyorExtractAlternative extends ConveyorBasicAlternative {
     @Override public boolean playerInteraction(TileEntity tile, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ, EnumFacing side) {
         initializeDirection(tile, side);
         if (Utils.isHammer(heldItem) && player.isSneaking()) {
+            if (this.extractDirection.getAxis() == EnumFacing.Axis.Y) {
+                this.extractDirection = ((IConveyorTile) tile).getFacing().rotateY();
+            }
             EnumFacing dir = this.extractDirection.rotateY();
-            if (dir == ((ConveyorHandler.IConveyorTile)tile).getFacing()) dir = dir.rotateY();
+            if (dir == ((IConveyorTile) tile).getFacing()) dir = dir.rotateY();
             this.extractDirection = dir;
             return true;
         } else if (Utils.isWirecutter(heldItem)) {
-            if (this.transferTickrate == 4) this.transferTickrate = 8;
-            else if (this.transferTickrate == 8) this.transferTickrate = 16;
-            else if (this.transferTickrate == 16) this.transferTickrate = 20;
-            else if (this.transferTickrate == 20) this.transferTickrate = 4;
+            if (this.transferTickrate == 4) { this.transferTickrate = 8; }
+            else if (this.transferTickrate == 8) { this.transferTickrate = 16; }
+            else if (this.transferTickrate == 16) { this.transferTickrate = 20; }
+            else if (this.transferTickrate == 20) { this.transferTickrate = 4; }
             player.sendStatusMessage(new TextComponentTranslation("chat.immersiveengineering.info.tickrate", this.transferTickrate), true);
             return true;
         }
@@ -266,7 +269,7 @@ public class ConveyorExtractAlternative extends ConveyorBasicAlternative {
     @Override public List<AxisAlignedBB> getSelectionBoxes(TileEntity tile, EnumFacing facing) {
         initializeDirection(tile, facing);
         List<AxisAlignedBB> list = Lists.newArrayList(conveyorBounds);
-        if (this.extension < 0.0F) this.extension = getExtensionIntoBlock(tile);
+        if (this.extension < 0.0F) { this.extension = getExtensionIntoBlock(tile); }
         switch (this.extractDirection) {
             case NORTH: list.add(new AxisAlignedBB(PIXEL, PLATE_Y_LOW, -this.extension, 1.0F - PIXEL, PLATE_Y_HIGH, 0.375F - this.extension)); break;
             case SOUTH: list.add(new AxisAlignedBB(PIXEL, PLATE_Y_LOW, 0.625F + this.extension, 1.0F - PIXEL, PLATE_Y_HIGH, 1.0F + this.extension)); break;
