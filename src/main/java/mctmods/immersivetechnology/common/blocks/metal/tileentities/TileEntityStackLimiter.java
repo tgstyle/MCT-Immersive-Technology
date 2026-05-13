@@ -96,15 +96,21 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 		ItemStack toInsert = stack.copy();
 		toInsert.setCount(canAccept);
 		busy = true;
-		ItemStack remainder = destination.insertItem(slot, toInsert, simulate);
+		ItemStack destRemainder = destination.insertItem(slot, toInsert, simulate);
 		busy = false;
+		int actuallyInserted = canAccept - (destRemainder.isEmpty() ? 0 : destRemainder.getCount());
 		if (!simulate) {
-			acceptedAmount += remainder.isEmpty() ? canAccept : canAccept - remainder.getCount();
+			acceptedAmount += actuallyInserted;
 			packets++;
 		}
-		if (remainder.isEmpty()) { stack.shrink(canAccept); }
-		else { remainder.grow(stack.getCount() - canAccept); }
-		return remainder.isEmpty() ? ItemStack.EMPTY : remainder;
+		int notInserted = stack.getCount() - actuallyInserted;
+		if (notInserted <= 0) {
+			return ItemStack.EMPTY;
+		} else {
+			ItemStack ret = stack.copy();
+			ret.setCount(notInserted);
+			return ret;
+		}
 	}
 
 	public int getInventoryFill(IItemHandler dest, ItemStack stack) {
