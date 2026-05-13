@@ -169,6 +169,15 @@ public class ConveyorExtractAlternative extends ConveyorBasicAlternative {
         return model;
     }
 
+    @Override public boolean changeConveyorDirection() {
+        return false;
+    }
+
+    @Override public boolean setConveyorDirection(ConveyorDirection dir) {
+        if (dir != ConveyorDirection.HORIZONTAL) return false;
+        return super.setConveyorDirection(dir);
+    }
+
     @Override public String getModelCacheKey(TileEntity tile, EnumFacing facing) {
         initializeDirection(tile, facing);
         String key = "immersivetech:extract_conveyor" +
@@ -249,12 +258,15 @@ public class ConveyorExtractAlternative extends ConveyorBasicAlternative {
             EnumFacing dir = this.extractDirection.rotateY();
             if (dir == ((IConveyorTile) tile).getFacing()) dir = dir.rotateY();
             this.extractDirection = dir;
+
+            if (!tile.getWorld().isRemote) {
+                tile.markDirty();
+                IBlockState state = tile.getWorld().getBlockState(tile.getPos());
+                tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
+            }
             return true;
         } else if (Utils.isWirecutter(heldItem)) {
-            if (this.transferTickrate == 4) { this.transferTickrate = 8; }
-            else if (this.transferTickrate == 8) { this.transferTickrate = 16; }
-            else if (this.transferTickrate == 16) { this.transferTickrate = 20; }
-            else if (this.transferTickrate == 20) { this.transferTickrate = 4; }
+            if (this.transferTickrate == 4) { this.transferTickrate = 8; } else if (this.transferTickrate == 8) { this.transferTickrate = 16; } else if (this.transferTickrate == 16) { this.transferTickrate = 20; } else if (this.transferTickrate == 20) { this.transferTickrate = 4; }
             player.sendStatusMessage(new TextComponentTranslation("chat.immersiveengineering.info.tickrate", this.transferTickrate), true);
             return true;
         }
