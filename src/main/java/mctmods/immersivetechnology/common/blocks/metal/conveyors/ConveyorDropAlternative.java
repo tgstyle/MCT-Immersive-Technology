@@ -2,13 +2,17 @@ package mctmods.immersivetechnology.common.blocks.metal.conveyors;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
+import blusunrize.immersiveengineering.api.tool.ConveyorHandler.ConveyorDirection;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler.IConveyorTile;
+import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -26,6 +30,27 @@ public class ConveyorDropAlternative extends ConveyorBasicAlternative {
                 "f" + facing.ordinal() +
                 "a" + (isActive(tile) ? 1 : 0) +
                 "c" + getDyeColour();
+    }
+
+    @Override public boolean changeConveyorDirection() {
+        return false;
+    }
+
+    @Override public boolean setConveyorDirection(ConveyorDirection dir) {
+        if (dir != ConveyorDirection.HORIZONTAL) return false;
+        return super.setConveyorDirection(dir);
+    }
+
+    @Override public boolean playerInteraction(TileEntity tile, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ, EnumFacing side) {
+        if (Utils.isHammer(heldItem) && player.isSneaking()) {
+            if (!tile.getWorld().isRemote) {
+                tile.markDirty();
+                IBlockState state = tile.getWorld().getBlockState(tile.getPos());
+                tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override public void handleInsertion(TileEntity tile, EntityItem entity, EnumFacing facing, ConveyorHandler.ConveyorDirection conDir, double distX, double distZ) {
