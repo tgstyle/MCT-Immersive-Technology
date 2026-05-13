@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
-    private enum SplitMode { SPLIT, ALL_LEFT, ALL_RIGHT }
+    private enum SplitMode { SPLIT, ALL_LEFT, ALL_RIGHT, STOP }
     private SplitMode mode = SplitMode.SPLIT;
     private EnumFacing nextOutput = null;
     private transient String nbtKeyCache = null;
@@ -68,7 +68,7 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
 
     @Override public boolean isActive(TileEntity tile) {
         if (tile == null) return true;
-        return runTimer > 0;
+        return runTimer > 0 && mode != SplitMode.STOP;
     }
 
     @Override public boolean isTicking(TileEntity tile) { return true; }
@@ -77,13 +77,18 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
         super.onUpdate(tile, facing);
         int currentRedstone = tile.getWorld().getRedstonePowerFromNeighbors(tile.getPos());
         if (currentRedstone > 0 && this.prevRedstone == 0) {
-            this.mode = this.mode == SplitMode.SPLIT ? SplitMode.ALL_LEFT : this.mode == SplitMode.ALL_LEFT ? SplitMode.ALL_RIGHT : SplitMode.SPLIT;
+            this.mode = this.mode == SplitMode.SPLIT ? SplitMode.ALL_LEFT
+                    : this.mode == SplitMode.ALL_LEFT ? SplitMode.ALL_RIGHT
+                      : this.mode == SplitMode.ALL_RIGHT ? SplitMode.STOP
+                        : SplitMode.SPLIT;
             tile.markDirty();
         }
         this.prevRedstone = currentRedstone;
     }
 
     @Override public void onEntityCollision(TileEntity tile, Entity entity, EnumFacing facing) {
+        if (mode == SplitMode.STOP) return;
+
         super.onEntityCollision(tile, entity, facing);
 
         World world = tile.getWorld();
@@ -147,6 +152,8 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
     }
 
     @Override public void onItemDeployed(TileEntity tile, EntityItem entity, EnumFacing facing) {
+        if (mode == SplitMode.STOP) return;
+
         runTimer = IDLE_TIME_TICKS;
 
         String nbtKey = getNBTKey(tile);
@@ -172,6 +179,8 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
     }
 
     @Override public void handleInsertion(TileEntity tile, EntityItem entity, EnumFacing facing, ConveyorDirection conDir, double distX, double distZ) {
+        if (mode == SplitMode.STOP) return;
+
         String nbtKey = getNBTKey(tile);
         if (entity.getEntityData().hasKey(nbtKey)) {
             EnumFacing redirect = EnumFacing.values()[entity.getEntityData().getInteger(nbtKey)];
@@ -188,6 +197,10 @@ public class ConveyorSplitAlternative extends ConveyorBasicAlternative {
     }
 
     @Override public Vec3d getDirection(TileEntity conveyorTile, Entity entity, EnumFacing facing) {
+        if (mode == SplitMode.STOP) {
+            return new Vec3d(0, entity.motionY, 0);
+        }
+
         String nbtKey = getNBTKey(conveyorTile);
         if (entity.getEntityData().hasKey(nbtKey)) {
             EnumFacing redirect = EnumFacing.byIndex(entity.getEntityData().getInteger(nbtKey));
