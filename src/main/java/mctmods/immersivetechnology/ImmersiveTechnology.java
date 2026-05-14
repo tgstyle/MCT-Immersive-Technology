@@ -19,19 +19,18 @@ import mctmods.immersivetechnology.core.proxy.ClientProxySupplier;
 import mctmods.immersivetechnology.core.proxy.CommonProxy;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import net.minecraft.world.level.block.DispenserBlock;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.InterModComms;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.InterModComms;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
 
@@ -43,11 +42,10 @@ import static mctmods.immersivetechnology.core.lib.ITLib.MODID;
 public class ImmersiveTechnology {
     public static final CommonProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxySupplier::get, () -> CommonProxy::new);
 
-    public ImmersiveTechnology(FMLJavaModLoadingContext context) {
-        IEventBus modEventBus = context.getModEventBus();
+    public ImmersiveTechnology(ModLoadingContext context) {
+        IEventBus modEventBus = context.getActiveContainer().getEventBus();
         ITLib.IT_LOGGER.info("IT Starting");
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::enqueueIMC);
         ITLib.IT_LOGGER.info("Starting Proxy Mod Construction");
         CommonProxy.modConstruction(modEventBus);
         ITLootFunctions.init(modEventBus);
@@ -59,7 +57,7 @@ public class ImmersiveTechnology {
         context.registerConfig(ModConfig.Type.COMMON, ITCommonConfig.SPEC);
         context.registerConfig(ModConfig.Type.SERVER, ITServerConfig.SPEC);
         context.registerConfig(ModConfig.Type.CLIENT, ITClientConfig.SPEC);
-        MinecraftForge.EVENT_BUS.register(ImmersiveTechnology.class);
+        NeoForge.EVENT_BUS.register(ImmersiveTechnology.class);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -71,17 +69,8 @@ public class ImmersiveTechnology {
         ITPacketHandler.registerMessage(ITMessageContainerData.class, ITMessageContainerData::new);
     }
 
-    private void enqueueIMC(final InterModEnqueueEvent event) {
-        if (ModList.get().isLoaded("theoneprobe")) {
-            InterModComms.sendTo("theoneprobe", "getTheOneProbe", () -> (Function<mcjty.theoneprobe.api.ITheOneProbe, Void>) top -> {
-                OneProbeHelper.register(top);
-                return null;
-            });
-        }
-    }
-
     @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
+    public static void onServerTick(ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             List<ITQueueProcessor> copy = new ArrayList<>(ITTemplateMultiblock.pendingQueues);
             copy.forEach(ITQueueProcessor::tick);
