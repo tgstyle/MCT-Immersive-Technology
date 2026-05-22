@@ -11,33 +11,21 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.AbstractMap;
 
-public class ITDisassemblyTicker<S extends IMultiblockState> implements IServerTickableComponent<S>, IMultiblockComponent.StateWrapper<S, Void> {
-
-    private final BlockPos masterRel;
-
-    public ITDisassemblyTicker(BlockPos masterRel) {
-        this.masterRel = masterRel;
-    }
-
+public record ITDisassemblyTicker<S extends IMultiblockState>(BlockPos masterRel) implements IServerTickableComponent<S>, IMultiblockComponent.StateWrapper<S, Void> {
     @Override public void tickServer(IMultiblockContext<S> context) {
         Level level = context.getLevel().getRawLevel();
         BlockPos masterAbs = context.getLevel().toAbsolute(masterRel);
-
         BlockEntity be = level.getBlockEntity(masterAbs);
-        if (be instanceof ITMultiblockBlockEntityMaster<?> master) {
-            if (master.disassembleQueue != null && !master.disassembleQueue.isEmpty()) {
-                int blocksPerTick = ITTemplateMultiblock.DISASSEMBLE_QUEUE_SIZE;
-
-                for (int i = 0; i < blocksPerTick && !master.disassembleQueue.isEmpty(); ++i) {
-                    AbstractMap.SimpleEntry<BlockPos, BlockState> entry = master.disassembleQueue.remove(0);
-                    BlockPos breakPos = entry.getKey();
-                    BlockState template = entry.getValue();
-                    level.setBlock(breakPos, template, 3);
-                    level.removeBlock(breakPos, false);
-                }
-
-                if (master.disassembleQueue.isEmpty()) { master.disassembleQueue = null; }
+        if (be instanceof ITMultiblockBlockEntityMaster<?> master && master.disassembleQueue != null && !master.disassembleQueue.isEmpty()) {
+            int blocksPerTick = ITTemplateMultiblock.DISASSEMBLE_QUEUE_SIZE;
+            for (int i = 0; i < blocksPerTick && !master.disassembleQueue.isEmpty(); ++i) {
+                AbstractMap.SimpleEntry<BlockPos, BlockState> entry = master.disassembleQueue.remove(0);
+                BlockPos breakPos = entry.getKey();
+                BlockState template = entry.getValue();
+                level.setBlock(breakPos, template, 3);
+                level.removeBlock(breakPos, false);
             }
+            if (master.disassembleQueue.isEmpty()) { master.disassembleQueue = null; }
         }
     }
 

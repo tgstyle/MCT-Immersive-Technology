@@ -9,6 +9,8 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerSolidSh
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
 import java.util.function.Consumer;
@@ -22,6 +24,8 @@ public class BoilerSolid extends ITTemplateMultiblock {
             return BlockMatcher.Result.DEFAULT;
         }), ITMultiblockProvider.BOILER_SOLID);
     }
+
+    @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override public float getManualScale() { return BoilerSolidShape.MANUAL_SCALE; }
 

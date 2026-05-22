@@ -79,6 +79,8 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
 
+    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
+
     @Override public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         final Level level = ctx.getLevel().getRawLevel();
@@ -177,6 +179,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         public StoredCapability<IFluidHandler> inputCap;
         public StoredCapability<IFluidHandler> outputCap;
         public StoredCapability<IHeatConsumer> boilerInputCap;
+        public CapabilityReference<IFluidHandler> fluidOutput;
         public CapabilityReference<IHeatProvider> heatSource;
         public ITSlotwiseItemHandler inventory;
         public int recipeTimeRemaining = 0;
@@ -203,6 +206,10 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
             boilerInputCap = new StoredCapability<>(new BoilerInputImpl(tanks.input));
+            MultiblockFace outputMBFace = new MultiblockFace(FLUID_OUTPUT_FACING, FLUID_OUTPUT_POI.get(0));
+            CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
+            MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
+            fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
             MultiblockFace heatMBFace = new MultiblockFace(HEAT_INPUT_FACING, HEAT_INPUT_POI.get(0));
             CapabilityPosition heatOpposingCP = CapabilityPosition.opposing(heatMBFace);
             MultiblockFace heatOpposingMBFace = new MultiblockFace(heatOpposingCP.side(), heatOpposingCP.posInMultiblock());

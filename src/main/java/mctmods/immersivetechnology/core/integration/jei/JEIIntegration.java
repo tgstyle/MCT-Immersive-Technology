@@ -1,9 +1,11 @@
 package mctmods.immersivetechnology.core.integration.jei;
 
-import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
-import mctmods.immersivetechnology.client.gui.*;
+import mctmods.immersivetechnology.client.gui.BoilerLiquidScreen;
+import mctmods.immersivetechnology.client.gui.BoilerSolidScreen;
+import mctmods.immersivetechnology.client.gui.BoilerTankScreen;
+import mctmods.immersivetechnology.client.gui.DistillerScreen;
+import mctmods.immersivetechnology.client.gui.SolarScreen;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.*;
-import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.core.integration.jei.category.*;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -30,7 +32,6 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import org.jetbrains.annotations.NotNull;
@@ -43,8 +44,7 @@ import java.util.Optional;
 import static mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea.fillTooltip;
 
 @SuppressWarnings({"unused"})
-@JeiPlugin
-public class JEIIntegration implements IModPlugin {
+@JeiPlugin public class JEIIntegration implements IModPlugin {
 
     private static final ResourceLocation ID = ITLib.rl("main");
     private static IIngredientManager ingredientManager;
@@ -52,7 +52,6 @@ public class JEIIntegration implements IModPlugin {
     @Override @NotNull public ResourceLocation getPluginUid() { return ID; }
 
     @Override public void registerCategories(IRecipeCategoryRegistration registration) {
-        registration.addRecipeCategories(new ITAdvancedCokeOvenCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITBoilerLiquidCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITBoilerSolidCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITBoilerTankCategory(registration.getJeiHelpers().getGuiHelper()));
@@ -66,8 +65,6 @@ public class JEIIntegration implements IModPlugin {
     }
 
     @Override public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(JEIRecipeTypes.ADVANCED_COKE_OVEN, getAdvancedCokeOvenRecipes());
-        registration.addRecipes(JEIRecipeTypes.ADVANCED_COKE_OVEN_CUSTOM, getAdvancedCokeOvenCustomRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_LIQUID, getBoilerLiquidRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_SOLID, getBoilerSolidRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_TANK, getBoilerRecipes());
@@ -81,8 +78,6 @@ public class JEIIntegration implements IModPlugin {
     }
 
     @Override public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack(), JEIRecipeTypes.ADVANCED_COKE_OVEN);
-        registration.addRecipeCatalyst(ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack(), JEIRecipeTypes.ADVANCED_COKE_OVEN_CUSTOM);
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_LIQUID.iconStack(), JEIRecipeTypes.BOILER_LIQUID);
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_SOLID.iconStack(), JEIRecipeTypes.BOILER_SOLID);
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_TANK.iconStack(), JEIRecipeTypes.BOILER_TANK);
@@ -96,18 +91,6 @@ public class JEIIntegration implements IModPlugin {
     }
 
     @Override public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registration) {
-        registration.addGuiContainerHandler(AdvancedCokeOvenScreen.class, new IGuiContainerHandler<>() {
-            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull AdvancedCokeOvenScreen gui, double mouseX, double mouseY) {
-                return Optional.empty();
-            }
-
-            @Override @NotNull public Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull AdvancedCokeOvenScreen gui, double mouseX, double mouseY) {
-                List<IGuiClickableArea> areas = new ArrayList<>();
-                areas.add(createAdvancedCokeOvenClickableArea());
-                return areas;
-            }
-        });
-
         registration.addGuiContainerHandler(BoilerLiquidScreen.class, new IGuiContainerHandler<>() {
             @Override
             public @NotNull Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerLiquidScreen gui, double mouseX, double mouseY) {
@@ -270,15 +253,6 @@ public class JEIIntegration implements IModPlugin {
         });
     }
 
-    private static IGuiClickableArea createAdvancedCokeOvenClickableArea() {
-        Rect2i area = new Rect2i(58, 36, 11, 13);
-        return new IGuiClickableArea() {
-            @Override @NotNull public Rect2i getArea() { return area; }
-            @Override public void getTooltip(@NotNull ITooltipBuilder tooltip) { tooltip.add(Component.translatable("jei.tooltip.show.recipes")); }
-            @Override public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) { recipesGui.showTypes(List.of(JEIRecipeTypes.ADVANCED_COKE_OVEN, JEIRecipeTypes.ADVANCED_COKE_OVEN_CUSTOM)); }
-        };
-    }
-
     private static IGuiClickableArea createBoilerLiquidClickableArea(IFluidTank tank) {
         Rect2i area = new Rect2i(80, 20, 16, 47);
         return new IGuiClickableArea() {
@@ -340,16 +314,6 @@ public class JEIIntegration implements IModPlugin {
 
     @Override public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) { ingredientManager = jeiRuntime.getIngredientManager(); }
 
-    private List<CokeOvenRecipe> getAdvancedCokeOvenRecipes() {
-        assert Minecraft.getInstance().level != null;
-        Level level = Minecraft.getInstance().level;
-        AdvancedCokeOvenRecipe.copyIECokeOvenRecipes(level);
-        return new ArrayList<>(CokeOvenRecipe.RECIPES.getRecipes(level));
-    }
-    private List<AdvancedCokeOvenRecipe> getAdvancedCokeOvenCustomRecipes() {
-        assert Minecraft.getInstance().level != null;
-        return new ArrayList<>(AdvancedCokeOvenRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
-    }
     private List<BoilerLiquidRecipe> getBoilerLiquidRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(BoilerLiquidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<BoilerSolidRecipe> getBoilerSolidRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(BoilerSolidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<BoilerTankRecipe> getBoilerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(BoilerTankRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }

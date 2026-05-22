@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import mctmods.immersivetechnology.common.data.models.ITTRSRModelBuilder;
+import mctmods.immersivetechnology.common.data.TRSRModelBuilder;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.data.PackOutput;
@@ -19,15 +19,14 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class ITComplexItemModelProvider extends ModelProvider<ITTRSRModelBuilder> {
+public class ITComplexItemModelProvider extends ModelProvider<TRSRModelBuilder> {
     public ITComplexItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
-        super(output, ITLib.MODID, ITEM_FOLDER, ITTRSRModelBuilder::new, existingFileHelper);
+        super(output, ITLib.MODID, ITEM_FOLDER, TRSRModelBuilder::new, existingFileHelper);
     }
 
     @Override @NotNull public String getName() { return getClass().getSimpleName(); }
 
     @Override protected void registerModels() {
-        generateMultiblockModel("advanced_coke_oven", "stone", ITMultiblockProvider.ADVANCED_COKE_OVEN.block(), new Vector3f(4.0f, -3.5f, -1.0f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("alternator", "metal", ITMultiblockProvider.ALTERNATOR.block(), new Vector3f(5.5f, -3.5f, -2.0f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("boiler_liquid", "metal", ITMultiblockProvider.BOILER_LIQUID.block(), new Vector3f(-2.0f, -0.525f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("boiler_solid", "metal", ITMultiblockProvider.BOILER_SOLID.block(), new Vector3f(-2.0f, -0.525f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
@@ -43,47 +42,8 @@ public class ITComplexItemModelProvider extends ModelProvider<ITTRSRModelBuilder
         generateMultiblockModel("steel_sheetmetal_tank", "metal", ITMultiblockProvider.STEEL_SHEETMETAL_TANK.block(), new Vector3f(0f, -4.0f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
     }
 
-    private ITTRSRModelBuilder createObjModel(String modelPath, String jsonName) {
+    private TRSRModelBuilder createObjModel(String modelPath, String jsonName) {
         return getBuilder(jsonName).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + modelPath)).flipV(true).end();
-    }
-
-    private ITTRSRModelBuilder createTransformedObjModel(String modelPath, String jsonName, @Nullable Vector3f translation) {
-        ITTRSRModelBuilder builder = createObjModel(modelPath, jsonName);
-        if (translation != null) { builder.rootTransforms().translation(translation.x(), translation.y(), translation.z()).end(); }
-        return builder;
-    }
-
-    private ITTRSRModelBuilder createSolarReflectorModel(Supplier<? extends ItemLike> block) {
-        String base = "multiblock/metal/obj/solar_reflector/";
-        ITTRSRModelBuilder reflectorModel = createTransformedObjModel(base + "solar_reflector.obj", "solar_reflector_reflector", null);
-        ITTRSRModelBuilder supportModel = createTransformedObjModel(base + "solar_reflector_support.obj", "solar_reflector_support", new Vector3f(1.6f, 0.0f, 1.6f));
-        ITTRSRModelBuilder mirrorModel = createTransformedObjModel(base + "solar_reflector_mirror.obj", "solar_reflector_mirror", new Vector3f(1.6f, 0.0f, 1.6f));
-
-        return getBuilder(name(block.get())).customLoader(CompositeModelBuilder::begin)
-                .child("reflector", reflectorModel)
-                .child("support", supportModel)
-                .child("mirror", mirrorModel)
-                .end();
-    }
-
-    private ITTRSRModelBuilder createBoilerSolidModel(Supplier<? extends ItemLike> block, String objPath) {
-        return getBuilder(name(block.get())).customLoader(ObjModelBuilder::begin)
-                .modelLocation(modLoc("models/" + objPath))
-                .flipV(true)
-                .end()
-                .texture("cube_front", modLoc("multiblock/metal/boiler_solid"));
-    }
-
-    private void applyStandardTransforms(ITTRSRModelBuilder model, Vector3f guiTrans, float guiScale, float groundScale, float fixedScale) {
-        ModelBuilder<?>.TransformsBuilder trans = model.transforms();
-        doTransform(trans, ItemDisplayContext.FIRST_PERSON_LEFT_HAND, new Vector3f(-1.75F, 2.5F, 1.25F), new Vector3f(0, 225, 0), 0.03125F);
-        doTransform(trans, ItemDisplayContext.FIRST_PERSON_RIGHT_HAND, new Vector3f(-1.75F, 2.5F, 1.75F), new Vector3f(0, 225, 0), 0.03125F);
-        doTransform(trans, ItemDisplayContext.THIRD_PERSON_LEFT_HAND, new Vector3f(-0.75F, 0, -1.25F), new Vector3f(0, 90, 0), 0.03125F);
-        doTransform(trans, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, new Vector3f(1.0F, 0, -1.75F), new Vector3f(0, 270, 0), 0.03125F);
-        doTransform(trans, ItemDisplayContext.HEAD, new Vector3f(0, 8, -8), null, 0.2F);
-        doTransform(trans, ItemDisplayContext.GUI, guiTrans, new Vector3f(30, 225, 0), guiScale);
-        doTransform(trans, ItemDisplayContext.GROUND, new Vector3f(-1.5F, 3, -1.5F), null, groundScale);
-        doTransform(trans, ItemDisplayContext.FIXED, new Vector3f(-1, -8, -2), null, fixedScale);
     }
 
     private void doTransform(ModelBuilder<?>.TransformsBuilder transform, ItemDisplayContext type, @Nullable Vector3f translation, @Nullable Vector3f rotationAngle, float scale) {
@@ -94,22 +54,50 @@ public class ITComplexItemModelProvider extends ModelProvider<ITTRSRModelBuilder
         trans.end();
     }
 
-    private ITTRSRModelBuilder obj(Supplier<? extends ItemLike> item, String model) { return obj(item.get(), model); }
+    private TRSRModelBuilder obj(Supplier<? extends ItemLike> item, String model) { return obj(item.get(), model); }
 
-    private ITTRSRModelBuilder obj(ItemLike item, String model) {
+    private TRSRModelBuilder obj(ItemLike item, String model) {
         return getBuilder(name(item)).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + model)).flipV(true).end();
     }
 
     private String name(ItemLike item) { return Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item.asItem())).getPath(); }
 
     private void generateMultiblockModel(String id, String type, Supplier<? extends ItemLike> block, Vector3f guiTrans, float guiScale, float groundScale, float fixedScale) {
-        ITTRSRModelBuilder model;
+        TRSRModelBuilder model;
         String objPath = "multiblock/" + type + "/obj/" + id + "/" + id + ".obj";
-
-        if ("solar_reflector".equals(id)) { model = createSolarReflectorModel(block); }
-        else if ("boiler_solid".equals(id)) { model = createBoilerSolidModel(block, objPath); }
+        if ("solar_reflector".equals(id)) {
+            String base = "multiblock/metal/obj/";
+            String reflectorFile = base + "solar_reflector/solar_reflector.obj";
+            String supportFile = base + "solar_reflector/solar_reflector_support.obj";
+            String mirrorFile = base + "solar_reflector/solar_reflector_mirror.obj";
+            String reflectorJson = "solar_reflector_reflector";
+            String supportJson = "solar_reflector_support";
+            String mirrorJson = "solar_reflector_mirror";
+            TRSRModelBuilder reflectorModel = createObjModel(reflectorFile, reflectorJson);
+            TRSRModelBuilder supportModel = (TRSRModelBuilder) createObjModel(supportFile, supportJson).rootTransforms().translation(1.6f, 0.0f, 1.6f).end();
+            TRSRModelBuilder mirrorModel = (TRSRModelBuilder) createObjModel(mirrorFile, mirrorJson).rootTransforms().translation(1.6f, 0.0f, 1.6f).end();
+            model = getBuilder(name(block.get())).customLoader(CompositeModelBuilder::begin)
+                    .child("reflector", reflectorModel)
+                    .child("support", supportModel)
+                    .child("mirror", mirrorModel)
+                    .end();
+        }
+        else if ("boiler_solid".equals(id)) {
+            model = getBuilder(name(block.get())).customLoader(ObjModelBuilder::begin)
+                    .modelLocation(modLoc("models/" + objPath))
+                    .flipV(true)
+                    .end()
+                    .texture("cube_front", modLoc("multiblock/metal/boiler_solid"));
+        }
         else { model = obj(block, objPath); }
-
-        applyStandardTransforms(model, guiTrans, guiScale, groundScale, fixedScale);
+        ModelBuilder<?>.TransformsBuilder trans = model.transforms();
+        doTransform(trans, ItemDisplayContext.FIRST_PERSON_LEFT_HAND, new Vector3f(-1.75F, 2.5F, 1.25F), new Vector3f(0, 225, 0), 0.03125F);
+        doTransform(trans, ItemDisplayContext.FIRST_PERSON_RIGHT_HAND, new Vector3f(-1.75F, 2.5F, 1.75F), new Vector3f(0, 225, 0), 0.03125F);
+        doTransform(trans, ItemDisplayContext.THIRD_PERSON_LEFT_HAND, new Vector3f(-0.75F, 0, -1.25F), new Vector3f(0, 90, 0), 0.03125F);
+        doTransform(trans, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, new Vector3f(1.0F, 0, -1.75F), new Vector3f(0, 270, 0), 0.03125F);
+        doTransform(trans, ItemDisplayContext.HEAD, new Vector3f(0, 8, -8), null, 0.2F);
+        doTransform(trans, ItemDisplayContext.GUI, guiTrans, new Vector3f(30, 225, 0), guiScale);
+        doTransform(trans, ItemDisplayContext.GROUND, new Vector3f(-1.5F, 3, -1.5F), null, groundScale);
+        doTransform(trans, ItemDisplayContext.FIXED, new Vector3f(-1, -8, -2), null, fixedScale);
     }
 }

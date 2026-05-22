@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.client.renderer;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -27,27 +28,28 @@ public class SteelSheetmetalTankRenderer extends ITBaseBlockEntityRenderer<Multi
         matrixStack.translate(0, 3.5f, 0);
         float baseScale = .0625f;
         matrixStack.scale(baseScale, -baseScale, baseScale);
-        float xx = -.5f;
-        float zz = 1.5f - 0.004f;
-        xx /= baseScale;
-        zz /= baseScale;
+        float xx = -.5f / baseScale;
+        float zz = (1.5f + .001f) / baseScale;
+        RenderSystem.enablePolygonOffset();
+        RenderSystem.polygonOffset(0.0f, 1.0f);
         for (int side = 0; side < 4; side++) {
             matrixStack.pushPose();
+            matrixStack.mulPose(Axis.YP.rotationDegrees(side * 90f));
             matrixStack.translate(xx, 0, zz);
             Matrix4f mat = matrixStack.last().pose();
             final VertexConsumer builder = bufferIn.getBuffer(ITRenderTypes.TRANSLUCENT_POSITION_COLOR);
-            builder.vertex(mat, -4, -4, 0).color(0x22, 0x22, 0x22, 0xff).endVertex();
-            builder.vertex(mat, -4, 20, 0).color(0x22, 0x22, 0x22, 0xff).endVertex();
-            builder.vertex(mat, 20, 20, 0).color(0x22, 0x22, 0x22, 0xff).endVertex();
-            builder.vertex(mat, 20, -4, 0).color(0x22, 0x22, 0x22, 0xff).endVertex();
+            builder.vertex(mat, 6, 0, 0).color(0x22, 0x22, 0x22, 0xff).endVertex();
+            builder.vertex(mat, 6, 16, 0).color(0x22, 0x22, 0x22, 0xff).endVertex();
+            builder.vertex(mat, 10, 16, 0).color(0x22, 0x22, 0x22, 0xff).endVertex();
+            builder.vertex(mat, 10, 0, 0).color(0x22, 0x22, 0x22, 0xff).endVertex();
             if (!fs.isEmpty()) {
                 float h = fs.getAmount() / (float) state.tank.getCapacity();
-                matrixStack.translate(0, 0, 0.008f);
-                ITGuiHelper.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.solid()), matrixStack, fs, 0, 0 + (1 - h) * 16, 16, h * 16);
+                matrixStack.translate(0, 0, .0001f);
+                ITGuiHelper.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.solid()), matrixStack, fs, 6, 0 + (1 - h) * 16, 4, h * 16);
             }
             matrixStack.popPose();
-            matrixStack.mulPose(Axis.YP.rotationDegrees(90f));
         }
+        RenderSystem.disablePolygonOffset();
         matrixStack.popPose();
     }
 }

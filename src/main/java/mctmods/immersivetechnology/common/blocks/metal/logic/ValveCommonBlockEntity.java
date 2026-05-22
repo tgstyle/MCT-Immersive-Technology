@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import java.text.DecimalFormat;
 import mctmods.immersivetechnology.common.blocks.helper.*;
 import mctmods.immersivetechnology.core.network.ITPacketHandler;
 import mctmods.immersivetechnology.core.network.ITOSDRequestMessage;
@@ -28,8 +27,6 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
     final TranslationKey overlaySneakingFirstLine;
     final TranslationKey overlaySneakingSecondLine;
     final int GuiID;
-
-    private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0.###");
 
     public ValveCommonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, TranslationKey overlayNormal, TranslationKey overlaySneakingFirstLine, TranslationKey overlaySneakingSecondLine, int GuiID) { super(type, pos, state); this.overlayNormal = overlayNormal; this.overlaySneakingFirstLine = overlaySneakingFirstLine; this.overlaySneakingSecondLine = overlaySneakingSecondLine; this.GuiID = GuiID; this.redstoneMode = 1; }
 
@@ -109,13 +106,10 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         if (player.isCrouching()) {
             double avg = open ? average / 20.0 : 0;
             int pa = open ? packetAverage : 0;
-            String avgStr = NUMBER_FORMAT.format(avg);
-            String paStr = NUMBER_FORMAT.format(pa);
-            return new Component[] { Component.translatable(overlaySneakingFirstLine.getLocation(), avgStr), Component.translatable(overlaySneakingSecondLine.getLocation(), paStr) };
+            return new Component[] { Component.literal(overlaySneakingFirstLine.format(avg)), Component.literal(overlaySneakingSecondLine.format(pa)) };
         } else {
             long la = open ? lastAcceptedAmount : 0;
-            String laStr = NUMBER_FORMAT.format(la);
-            return new Component[] { Component.translatable(overlayNormal.getLocation(), laStr) };
+            return new Component[] { Component.literal(overlayNormal.format(la)) };
         }
     }
 

@@ -1,6 +1,0 @@
-Wärmetauscher
-Ist es heiß oder kühl?
-<&multiblock>Der Wärmetauscher ist eine Multiblock-Maschine, die Wärme von heißen Flüssigkeiten überträgt.
-
-§lBetrieb§r
-    - Der §lWärmetauscher§r benötigt heiße Flüssigkeiten, um andere Flüssigkeiten zu erzeugen.

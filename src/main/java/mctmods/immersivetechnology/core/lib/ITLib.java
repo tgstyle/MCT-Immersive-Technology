@@ -15,11 +15,7 @@ public class ITLib {
 
     public static ResourceLocation makeTextureLocation(String name) { return rl("textures/gui/" + name + ".png"); }
 
-    public static ResourceLocation makeTextureLocation(String namespace, String name) { return rl(namespace,"textures/gui/" + name + ".png"); }
-
     public static ResourceLocation rl(String name) { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, name); }
-
-    public static ResourceLocation rl(String namespace, String name) { return ResourceLocation.fromNamespaceAndPath(namespace, name); }
 
     public static float remapRange(float inMin, float inMax, float outMin, float outMax, float value) { return outMin + ((value - inMin) / inMax) * (outMax - outMin); }
 }

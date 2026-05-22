@@ -13,12 +13,6 @@ import net.minecraftforge.registries.RegistryObject;
 public class ITBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, ITLib.MODID);
 
-
-    public static final RegistryObject<BlockEntityType<AdvancedCokeOvenBaseHeaterBlockEntity>> ADVANCED_COKE_OVEN_BASEHEATER = REGISTER.register(
-            "advanced_coke_oven_baseheater",
-            () -> BlockEntityType.Builder.of(AdvancedCokeOvenBaseHeaterBlockEntity::new, ITBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get()).build(null)
-    );
-
     public static final RegistryObject<BlockEntityType<BarrelCreativeBlockEntity>> BARREL_CREATIVE = REGISTER.register(
             "barrel_creative",
             () -> BlockEntityType.Builder.of(BarrelCreativeBlockEntity::new, ITBlocks.Metal.BARREL_CREATIVE.get()).build(null)

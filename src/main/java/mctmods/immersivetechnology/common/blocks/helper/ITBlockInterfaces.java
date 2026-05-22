@@ -59,7 +59,7 @@ public class ITBlockInterfaces {
         @Nonnull default Component getDisplayName() { return Component.literal(""); }
     }
 
-    public interface IGeneralMultiblock extends ITBlockInterfaces.BlockStateProvider {
+    public interface IGeneralMultiblock extends ITBlockInterfaces.BlockStateProvider, blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGeneralMultiblock {
         @Nullable IGeneralMultiblock master();
 
         default boolean isDummy() {
@@ -124,9 +124,9 @@ public class ITBlockInterfaces {
     }
 
     public interface BlockStateProvider {
-        @NotNull BlockState getState();
+        BlockState getState();
 
-        void setState(@NotNull BlockState var1);
+        void setState(BlockState var1);
     }
 
     public interface IAdditionalDrops {

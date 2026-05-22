@@ -6,8 +6,8 @@ import mctmods.immersivetechnology.common.blocks.metal.logic.OSDCommonBlockEntit
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
@@ -23,8 +23,7 @@ public record ITOSDRequestMessage(BlockPos pos) implements ITMessage {
             if (ctx.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
                 ServerPlayer player = ctx.getSender();
                 if (player != null) {
-                    @SuppressWarnings("resource")
-                    ServerLevel level = player.serverLevel();
+                    Level level = player.level();
                     BlockEntity te = level.getBlockEntity(pos);
                     if (te instanceof OSDCommonBlockEntity trash) {
                         ITPacketHandler.sendToPlayer(player, new ITOSDSyncMessage(pos, trash.lastAcceptedAmount, 0, 0));
@@ -35,6 +34,5 @@ public record ITOSDRequestMessage(BlockPos pos) implements ITMessage {
                 }
             }
         });
-        ctx.setPacketHandled(true);
     }
 }

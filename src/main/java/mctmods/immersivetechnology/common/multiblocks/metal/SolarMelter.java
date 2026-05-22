@@ -56,5 +56,5 @@ public class SolarMelter extends ITTemplateMultiblock {
 
     @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, SolarMelterShape.CLIENT_OFFSET.getX(), SolarMelterShape.CLIENT_OFFSET.getY(), SolarMelterShape.CLIENT_OFFSET.getZ())); }
 
-    @Override public boolean canBeMirrored() { return true; }
+    @Override public boolean canBeMirrored() { return false; }
 }

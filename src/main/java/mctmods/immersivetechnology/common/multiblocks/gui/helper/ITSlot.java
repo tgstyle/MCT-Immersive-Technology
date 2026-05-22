@@ -20,10 +20,6 @@ public abstract class ITSlot extends Slot {
         this.containerMenu = containerMenu;
     }
 
-    public static class Input extends SlotItemHandlerIT {
-        public Input(IItemHandler inv, int id, int x, int y) { super(inv, id, x, y); }
-    }
-
     public static class Output extends SlotItemHandlerIT {
         public Output(IItemHandler inv, int id, int x, int y) { super(inv, id, x, y); }
 

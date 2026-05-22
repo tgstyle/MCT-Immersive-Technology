@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.common.data.models;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.client.models.ITModelConfigurableSides;
+import mctmods.immersivetechnology.client.models.helper.ITModelConfigurableSides;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;

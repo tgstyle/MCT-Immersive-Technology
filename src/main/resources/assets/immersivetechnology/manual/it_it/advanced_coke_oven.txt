@@ -1,8 +1,0 @@
-Forno a Coke Avanzato
-Miglior Coke
-<&multiblock>Il Forno a coke avanzato è una macchina multiblocco utilizzata per §lprocessare il carbone in coke§r, aiutando nella §lproduzione di coke§r e migliorando l'efficienza della lavorazione.
-
-§lFunzionamento§r
-    - Gli §loggetti§r vengono inseriti nella macchina dal §llato superiore§r.
-    - Le §luscite§r vengono raccolte dalla §lparte anteriore§r del multiblocco.
-    - Usa i Riscaldatori base avanzati del forno a coke per accelerare la lavorazione.

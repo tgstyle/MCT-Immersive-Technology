@@ -1,7 +1,0 @@
-Alternator
-Groß und mächtig!
-<&multiblock>Der Alternator ist eine Multiblock-Maschine, die sehr viel Energie erzeugt und deutlich mehr Maschinen versorgen kann als der §lDieselmotor§r!
-
-
-§lBetrieb§r
-    - Der §lAlternator§r benötigt mechanischen Rotationsinput von einem Gerät wie §lDampfturbine§r oder §lGasturbine§r.

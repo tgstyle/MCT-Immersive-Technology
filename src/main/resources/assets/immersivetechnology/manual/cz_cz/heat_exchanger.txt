@@ -1,6 +1,0 @@
-Výměník tepla
-Je horký, nebo studený?
-<&multiblock>Výměník tepla je multiblockový stroj, který přenáší teplo z horkých kapalin.
-
-§lProvoz§r
-    - Výměník tepla potřebuje horké kapaliny, aby vyrobil jiné kapaliny.

@@ -1,14 +1,14 @@
 package mctmods.immersivetechnology.mixin.common;
 
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.mixer.MixerLogic;
-import mctmods.immersivetechnology.core.helper.MixerStateDebounceAccessor;
+import mctmods.immersivetechnology.core.helper.MixerStateDebounce;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(MixerLogic.State.class)
-public abstract class MixerStateExtensionMixin implements MixerStateDebounceAccessor {
+public abstract class MixerStateExtensionMixin implements MixerStateDebounce {
 
     @Unique private final NonNullList<ItemStack> it$lastComponents = NonNullList.withSize(MixerLogic.NUM_SLOTS, ItemStack.EMPTY);
 

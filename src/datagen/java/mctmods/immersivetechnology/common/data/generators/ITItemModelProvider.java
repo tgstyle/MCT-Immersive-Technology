@@ -1,13 +1,11 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import mctmods.immersivetechnology.common.data.loaders.ITObjModelBuilder;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.loaders.DynamicFluidContainerModelBuilder;
@@ -39,31 +37,6 @@ public class ITItemModelProvider extends ItemModelProvider {
                 .end();
     }
 
-    private void generateBaseHeaterItem() {
-        ItemModelBuilder builder = getBuilder("advanced_coke_oven_baseheater")
-                .customLoader(ITObjModelBuilder::new)
-                .modelLocation(modLoc("models/block/metal/obj/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater.obj"))
-                .automaticCulling(false)
-                .shadeQuads(true)
-                .flipV(true)
-                .emissiveAmbient(false)
-                .visibility("Fan", false)
-                .visibility("fan", false)
-                .visibility("Rotor", false)
-                .visibility("rotor", false)
-                .end();
-        builder.transforms()
-                .transform(ItemDisplayContext.GUI).rotation(30, 225, 0).translation(0, 0, 0).scale(0.3f, 0.3f, 0.3f).end()
-                .transform(ItemDisplayContext.FIXED).rotation(0, 180, 0).scale(0.5f, 0.5f, 0.5f).end()
-                .transform(ItemDisplayContext.GROUND).translation(0, 3, 0).scale(0.25f, 0.25f, 0.25f).end()
-                .transform(ItemDisplayContext.HEAD).rotation(0, 180, 0).translation(0, 0, 0).scale(1f, 1f, 1f).end()
-                .transform(ItemDisplayContext.FIRST_PERSON_LEFT_HAND).rotation(0, 135, 0).scale(0.4f, 0.4f, 0.4f).end()
-                .transform(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND).rotation(0, 315, 0).scale(0.4f, 0.4f, 0.4f).end()
-                .transform(ItemDisplayContext.THIRD_PERSON_LEFT_HAND).rotation(75, 45, 0).translation(0, 2.5f, 0).scale(0.375f, 0.375f, 0.375f).end()
-                .transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND).rotation(75, 45, 0).translation(0, 2.5f, 0).scale(0.375f, 0.375f, 0.375f).end()
-                .end();
-    }
-
     private void generateGeneratedItem() {
         withExistingParent("formation_tool", mcLoc("item/generated")).texture("layer0", modLoc("item/" + "formation_tool"));
         withExistingParent("salt", mcLoc("item/generated")).texture("layer0", modLoc("item/" + "salt"));
@@ -75,7 +48,6 @@ public class ITItemModelProvider extends ItemModelProvider {
     }
 
     @Override protected void registerModels() {
-        generateBaseHeaterItem();
         generateBlockItem("barrel_creative", "metal/barrel_creative");
         generateBlockItem("barrel_open", "metal/barrel_open");
         generateBlockItem("barrel_steel", "metal/barrel_steel");

@@ -1,6 +1,0 @@
-Échangeur de chaleur
-Chaud ou froid ?
-<&multiblock>L'Échangeur de chaleur est une machine multibloc utilisée pour transférer la chaleur des fluides chauds.
-
-§lFonctionnement§r
-    - L'§lÉchangeur de chaleur§r a besoin de fluides chauds pour produire d'autres fluides.

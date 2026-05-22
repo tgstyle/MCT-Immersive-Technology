@@ -13,25 +13,26 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 
-@Mod.EventBusSubscriber(modid = ITLib.MODID, value = Dist.CLIENT, bus = Bus.MOD)
+@Mod.EventBusSubscriber(modid = ITLib.MODID, value = Dist.CLIENT, bus = Bus.FORGE)
 public class ITClientEventHandler {
+    @SubscribeEvent
+    public static void onRenderOverlayPost(RenderGuiOverlayEvent.Post event) {
+        if (!event.getOverlay().id().equals(VanillaGuiOverlay.ITEM_NAME.id())) return;
 
-    public static final IGuiOverlay OSD_OVERLAY = (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.screen != null || mc.player == null) { return; }
+        if (mc.screen != null || mc.player == null) return;
 
         HitResult mop = mc.hitResult;
-        if (!(mop instanceof BlockHitResult blockHit)) { return; }
+        if (!(mop instanceof BlockHitResult blockHit)) return;
 
         Level level = mc.level;
-        if (level == null) { return; }
+        if (level == null) return;
 
         BlockEntity te = level.getBlockEntity(blockHit.getBlockPos());
         Player player = mc.player;
@@ -39,11 +40,9 @@ public class ITClientEventHandler {
 
         if (te instanceof ITBlockInterfaces.IBlockOverlayText overlay) {
             Component[] text = overlay.getOverlayText(player, mop, hammer);
-            if (text != null && text.length > 0) { drawOverlayText(guiGraphics, text); }
+            if (text != null && text.length > 0) drawOverlayText(event.getGuiGraphics(), text);
         }
-    };
-
-    @SubscribeEvent public static void registerOverlays(RegisterGuiOverlaysEvent event) { event.registerAbove(VanillaGuiOverlay.ITEM_NAME.id(), "it_osd", OSD_OVERLAY); }
+    }
 
     private static void drawOverlayText(GuiGraphics guiGraphics, Component[] text) {
         Minecraft mc = Minecraft.getInstance();
@@ -54,6 +53,12 @@ public class ITClientEventHandler {
         PoseStack pose = guiGraphics.pose();
         pose.pushPose();
         pose.translate(width / 2f, height / 2f + 30, 0);
+
+        int maxWidth = 0;
+        for (Component component : text) {
+            String s = component.getString();
+            maxWidth = Math.max(maxWidth, font.width(s));
+        }
 
         for (int i = 0; i < text.length; i++) {
             String s = text[i].getString();

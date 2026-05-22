@@ -1,9 +1,0 @@
-Destilador
-Evaporação!
-<&multiblock>O Destilador evapora água em §lágua destilada§r com sal como subproduto.
-
-
-§lFuncionamento§r
-    - A §lÁgua§r é inserida à esquerda.
-    - A §lÁgua destilada§r sai à direita.
-    - O sal sai pela parte de trás.

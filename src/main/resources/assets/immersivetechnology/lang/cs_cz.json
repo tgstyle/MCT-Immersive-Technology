@@ -8,7 +8,6 @@
   "manual.immersivetechnology.main": "Imersivní technologie",
   "manual.immersivetechnology.it_multiblocks": "Multibloky",
 
-  "block.immersivetechnology.advanced_coke_oven_baseheater": "Pokročilý základní ohřívač koksárny",
   "block.immersivetechnology.barrel_creative": "Kreativní sud na tekutiny",
   "block.immersivetechnology.barrel_open": "Otevřený kovový sud",
   "block.immersivetechnology.barrel_steel": "Ocelový kovový sud",
@@ -25,7 +24,6 @@
   "block.immersivetechnology.valve_limiter": "Omezovač stohu",
   "block.immersivetechnology.valve_load": "Regulátor zátěže",
 
-  "block.immersivetechnology.advanced_coke_oven": "Pokročilá koksárna",
   "block.immersivetechnology.alternator": "Alternátor",
   "block.immersivetechnology.boiler_liquid": "Hořák kotle na kapalné palivo",
   "block.immersivetechnology.boiler_tank": "Nádrž kotle",
@@ -74,7 +72,7 @@
 
   "gui.immersivetechnology.apply": "Použít",
   "gui.immersivetechnology.boiler.heat_per_tick": "%1$s tepla za tik",
-  "gui.immersivetechnology.boiler.total_heat": "Celkové teplo: %s",
+  "gui.immersivetechnology.boiler.total_heat": "Celkové teplo %s",
   "gui.immersivetechnology.crate_creative": "Kreativní bedna",
   "gui.immersivetechnology.direction_east": "V",
   "gui.immersivetechnology.direction_north": "S",
@@ -105,7 +103,7 @@
   "gui.immersivetechnology.status_inactive": "Neaktivní",
   "gui.immersivetechnology.temperature": "Teplota",
   "gui.immersivetechnology.ticks": "%st",
-  "gui.immersivetechnology.valve.firstline": "Omezit na (0 = vypnuto)…",
+  "gui.immersivetechnology.valve.firstline": "Omezit na (0 = vypnuto)...",
   "gui.immersivetechnology.valve_fluid": "Ventil na tekutiny",
   "gui.immersivetechnology.valve_fluid.limit_destination": "mB ve výstupní nádrži",
   "gui.immersivetechnology.valve_fluid.limit_packet": "mB na paket",
@@ -162,8 +160,6 @@
 
   "config.jade.plugin_immersivetechnology.display": "Zobrazení multibloků IT",
 
-  "subtitles.immersivetechnology.advanced_coke_oven": "Pokročilá koksárna hoří",
-  "subtitles.immersivetechnology.advanced_coke_oven_fan": "Točení ventilátoru základního ohřívače",
   "subtitles.immersivetechnology.alternator": "Alternátor hučí",
   "subtitles.immersivetechnology.boiler_liquid": "Kotel řve",
   "subtitles.immersivetechnology.boiler_solid": "Kotel plápolá",

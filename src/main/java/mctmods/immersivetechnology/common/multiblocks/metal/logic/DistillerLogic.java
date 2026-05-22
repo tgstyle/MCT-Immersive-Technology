@@ -88,6 +88,8 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
 
+    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
+
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         List<BlockPos> soundPosList = getPosList("sound");
@@ -211,6 +213,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         public final StoredCapability<IFluidHandler> inputCap;
         public final StoredCapability<IFluidHandler> outputCapSteam;
         public final StoredCapability<IItemHandler> invCap;
+        public final CapabilityReference<IFluidHandler> fluidOutput;
         public final StoredCapability<IItemHandler> itemOutputCap;
         public final CapabilityReference<IItemHandler> outputRef;
         public final ITSlotwiseItemHandler inventory;
@@ -242,6 +245,10 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
             this.energyCap = new StoredCapability<>(this.energy);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, DistillerRecipe.RECIPES::getById);
+            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POI.side(), OUTPUT_FLUID_POI.posInMultiblock());
+            CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
+            MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
+            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
             this.itemOutputCap = new StoredCapability<>(
                     new ITWrappingItemHandler(
                             inventory,

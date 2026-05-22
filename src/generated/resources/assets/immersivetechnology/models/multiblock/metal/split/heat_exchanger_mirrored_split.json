@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/metal/obj/heat_exchanger/heat_exchanger.obj",
+    "model": "immersivetechnology:models/multiblock/metal/obj/heat_exchanger/heat_exchanger_mirrored.obj",
     "shade_quads": true,
     "textures": {
       "particle": "immersivetechnology:multiblock/metal/heat_exchanger"

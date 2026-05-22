@@ -12,31 +12,16 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 public class ITDynamicModelProvider extends ModelProvider<ITDynamicModelProvider.SimpleModelBuilder> {
     private final ITBlockStateProvider multiblocks;
 
-    public ITDynamicModelProvider(ITBlockStateProvider multiblocks, PackOutput output, ExistingFileHelper existingFileHelper) {
-        super(output, ITLib.MODID, "dynamic", rl -> new SimpleModelBuilder(rl, existingFileHelper), existingFileHelper);
-        this.multiblocks = multiblocks;
-    }
+    public ITDynamicModelProvider(ITBlockStateProvider multiblocks, PackOutput output, ExistingFileHelper existingFileHelper) { super(output, ITLib.MODID, "dynamic", rl -> new SimpleModelBuilder(rl, existingFileHelper), existingFileHelper); this.multiblocks = multiblocks; }
 
     @Override protected void registerModels() {
-        for(Map.Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet()) {
-            withExistingParent(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(multiblock.getKey())).getPath(), multiblock.getValue().getLocation());
-        }
-        getBuilder("dynamic/advanced_coke_oven_baseheater_fan")
-                .customLoader(ITObjModelBuilder::new)
-                .modelLocation(modLoc("models/block/metal/obj/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater_fan.obj"))
-                .flipV(true)
-                .automaticCulling(false)
-                .shadeQuads(true)
-                .emissiveAmbient(true)
-                .end()
-                .texture("particle", modLoc("block/metal/advanced_coke_oven_baseheater"))
-                .renderType("cutout");
+        for(Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet()) { withExistingParent(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(multiblock.getKey())).getPath(), multiblock.getValue().getLocation()); }
         getBuilder("dynamic/rotor")
                 .customLoader(ITObjModelBuilder::new)
                 .modelLocation(modLoc("models/multiblock/metal/obj/rotor/rotor.obj"))
@@ -68,6 +53,7 @@ public class ITDynamicModelProvider extends ModelProvider<ITDynamicModelProvider
                 .flipV(true)
                 .automaticCulling(false);
     }
+
 
     @Override @Nonnull public String getName() { return "IT Dynamic models"; }
 

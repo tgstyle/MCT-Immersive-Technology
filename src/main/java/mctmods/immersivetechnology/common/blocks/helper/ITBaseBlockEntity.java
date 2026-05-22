@@ -23,7 +23,7 @@ import java.util.EnumMap;
 import java.util.Objects;
 
 @SuppressWarnings({"unused","deprecation"})
-public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockInterfaces.BlockStateProvider, ITModelOffsetProvider {
+public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockInterfaces.BlockStateProvider {
     @Nullable private BlockState overrideBlockState = null;
     private final EnumMap<Direction, Integer> redstoneBySide = new EnumMap<>(Direction.class);
 
@@ -125,9 +125,9 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
         else if (getType().isValid(newState)) { setOverrideState(null); }
     }
 
-    @Override public void setState(@NotNull BlockState state) { if (getLevelNonnull().getBlockState(worldPosition) == getState()) { getLevelNonnull().setBlockAndUpdate(worldPosition, state); } }
+    @Override public void setState(BlockState state) { if (getLevelNonnull().getBlockState(worldPosition) == getState()) { getLevelNonnull().setBlockAndUpdate(worldPosition, state); } }
 
-    @Override @NotNull public BlockState getState() { return getBlockState(); }
+    @Override public BlockState getState() { return getBlockState(); }
 
     protected void markChunkDirty() { if (level != null && level.hasChunk(worldPosition.getX() >> 4, worldPosition.getZ() >> 4)) { level.getChunkAt(worldPosition).setUnsaved(true); } }
 
@@ -137,17 +137,12 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
     }
 
     @Override @NotNull public ModelData getModelData() {
-        BlockPos offset = getModelOffset(getState(), Vec3i.ZERO);
+        BlockPos offset = null;
+        BlockState state = getState();
+        if (this instanceof ITModelOffsetProvider offsetProvider) { offset = offsetProvider.getModelOffset(state, Vec3i.ZERO); }
+        else if (state.getBlock() instanceof ITModelOffsetProvider offsetProvider) { offset = offsetProvider.getModelOffset(state, Vec3i.ZERO); }
         if (offset != null) { return ModelData.builder().with(ITProperties.Model.SUBMODEL_OFFSET, offset).build(); }
         return ModelData.EMPTY;
-    }
-
-    @Override
-    public BlockPos getModelOffset(BlockState state, Vec3i size) {
-        if (!(this instanceof ITBlockInterfaces.IGeneralMultiblock multi)) { return BlockPos.ZERO; }
-        ITBlockInterfaces.IGeneralMultiblock m = multi.master();
-        if (!(m instanceof BlockEntity masterTile)) { return BlockPos.ZERO; }
-        return getBlockPos().subtract(masterTile.getBlockPos());
     }
 
     @Override public void setChanged() {

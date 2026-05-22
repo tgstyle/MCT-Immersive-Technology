@@ -19,7 +19,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -44,7 +46,8 @@ public class ITSolarMelterCategory extends ITRecipeCategory<SolarMelterRecipe> {
                 .build();
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SolarMelterRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override
+    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SolarMelterRecipe recipe, @NotNull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
@@ -57,30 +60,29 @@ public class ITSolarMelterCategory extends ITRecipeCategory<SolarMelterRecipe> {
 
         if (inputs.isEmpty()) {
             ResourceLocation biodieselRl = ResourceLocation.fromNamespaceAndPath("immersiveengineering", "biodiesel");
-            var biodieselFluid = net.minecraftforge.registries.ForgeRegistries.FLUIDS.getValue(biodieselRl);
+            var biodieselFluid = ForgeRegistries.FLUIDS.getValue(biodieselRl);
             FluidStack dummy = new FluidStack(
-                    biodieselFluid != null && biodieselFluid != net.minecraft.world.level.material.Fluids.EMPTY ? biodieselFluid : net.minecraft.world.level.material.Fluids.LAVA,
+                    biodieselFluid != null && biodieselFluid != Fluids.EMPTY ? biodieselFluid : Fluids.LAVA,
                     recipe.input.getAmount()
             );
             inputs = List.of(dummy);
         }
 
-        var inputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 102, 21)
+        builder.addSlot(RecipeIngredientRole.INPUT, 102, 21)
                 .addIngredients(ForgeTypes.FLUID_STACK, inputs)
-                .setFluidRenderer(tankCapacity, false, 16, 47);
+                .setFluidRenderer(tankCapacity, false, 16, 47)
+                .addRichTooltipCallback((slotView, tooltip) ->
+                        slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                                ITFluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
 
-        inputSlot.addRichTooltipCallback((slotView, tooltip) ->
-                slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        ITFluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
-
-        FluidStack fluidOut = (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) ? recipe.fluidOutput : FluidStack.EMPTY;
-        var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 126, 21)
-                .addIngredient(ForgeTypes.FLUID_STACK, fluidOut)
-                .setFluidRenderer(tankCapacity, false, 16, 47);
-
-        outputSlot.addRichTooltipCallback((slotView, tooltip) ->
-                slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
+        if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) {
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 126, 21)
+                    .addIngredient(ForgeTypes.FLUID_STACK, recipe.fluidOutput)
+                    .setFluidRenderer(tankCapacity, false, 16, 47)
+                    .addRichTooltipCallback((slotView, tooltip) ->
+                            slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                                    ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput.getAmount(), tooltip::add)));
+        }
     }
 
     private int getTankCapacity(@NotNull SolarMelterRecipe recipe) {
@@ -89,7 +91,8 @@ public class ITSolarMelterCategory extends ITRecipeCategory<SolarMelterRecipe> {
         return tankCapacity;
     }
 
-    @Override public void draw(@NotNull SolarMelterRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override
+    public void draw(@NotNull SolarMelterRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
 
         tankOverlay.draw(guiGraphics, 100, 19);

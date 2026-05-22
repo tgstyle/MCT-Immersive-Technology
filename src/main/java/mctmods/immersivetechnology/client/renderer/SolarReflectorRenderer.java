@@ -6,8 +6,8 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
-import mctmods.immersivetechnology.client.models.ITDynamicModel;
+import mctmods.immersivetechnology.client.models.SolarReflectorModels;
+import mctmods.immersivetechnology.client.models.helper.ITDynamicModel;
 import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
 import mctmods.immersivetechnology.client.renderer.helper.ITRenderUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic;

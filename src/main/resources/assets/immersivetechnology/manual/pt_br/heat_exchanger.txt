@@ -1,6 +1,0 @@
-Trocador de Calor
-Está quente ou frio?
-<&multiblock>O Trocador de calor é uma máquina multibloc usada para transferir calor de fluidos quentes.
-
-§lFuncionamento§r
-    - O §lTrocador de calor§r precisa de fluidos quentes para produzir outros fluidos.
