@@ -1,0 +1,6 @@
+{
+  "parent": "forge:item/bucket",
+  "flip_gas": false,
+  "fluid": "immersivetechnology:hot_water",
+  "loader": "forge:fluid_container"
+}

@@ -25,6 +25,7 @@ public class ITFluidTags extends FluidTagsProvider {
         tag(ITTags.fluidGravelSlurry).add(ITFluids.GRAVEL_SLURRY.getStill());
         tag(ITTags.fluidHeatedGravelSlurry).add(ITFluids.HEATED_GRAVEL.getStill());
         tag(ITTags.fluidHeatedSaltSlurry).add(ITFluids.HEATED_SALT.getStill());
+        tag(ITTags.fluidHotWater).add(ITFluids.HOT_WATER.getStill());
         tag(ITTags.fluidMoltenSalt).add(ITFluids.MOLTEN_SALT.getStill());
         tag(ITTags.fluidSaltSlurry).add(ITFluids.SALT_SLURRY.getStill());
         tag(ITTags.fluidSteam).add(ITFluids.STEAM.getStill());
