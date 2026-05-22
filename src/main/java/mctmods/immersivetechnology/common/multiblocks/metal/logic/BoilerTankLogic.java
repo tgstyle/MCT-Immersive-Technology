@@ -87,6 +87,18 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         if (state.heatSource.isPresent()) { heatLevel = state.heatSource.get().getHeatLevel(); }
         double previousHeatLevel = state.heatLevel;
         state.heatLevel = heatLevel;
+
+        double displayMax = DEFAULT_WORKING_HEAT_LEVEL;
+        if (state.lastRecipe != null) {
+            displayMax = Math.max(displayMax, state.lastRecipe.requiredHeat);
+        } else if (state.tanks.input.getFluidAmount() > 0) {
+            BoilerTankRecipe potentialRecipe = BoilerTankRecipe.findRecipe(level, state.tanks.input.getFluid());
+            if (potentialRecipe != null) {
+                displayMax = Math.max(displayMax, potentialRecipe.requiredHeat);
+            }
+        }
+        state.workingHeatLevel = Math.max(displayMax, heatLevel);
+
         boolean isActive = heatLevel >= state.getWorkingHeatLevel() && state.recipeTimeRemaining > 0;
         if (state.active != isActive) { state.active = isActive; update = true; }
         if (previousHeatLevel != state.heatLevel) { update = true; }
@@ -112,10 +124,6 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
                             state.recipeTimeRemaining = state.lastRecipe.getTotalProcessTime();
                             state.totalProcessTime = state.lastRecipe.getTotalProcessTime();
                             state.recipeTimeRemaining--;
-                            if (state.recipeTimeRemaining == 0) {
-                                state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE);
-                                state.totalProcessTime = 0;
-                            }
                             update = true;
                         }
                     }
@@ -256,6 +264,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             tanks.readNBT(nbt.getCompound("tanks"));
             recipeTimeRemaining = nbt.getInt("recipeTimeRemaining");
             totalProcessTime = nbt.getInt("totalProcessTime");
+            if (nbt.contains("workingHeatLevel")) { workingHeatLevel = nbt.getDouble("workingHeatLevel"); }
         }
     }
 

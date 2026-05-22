@@ -150,8 +150,8 @@ public class ITServerConfig {
 
     public static double solarTowerDayMinHeatLoss = 0.0D;
     public static double solarTowerLossPerSectionDrop = 0.035D;
-    public static double solarTowerTempDependentLossFactor = 0.0006D;
-    public static double solarTowerHeatIncreaseFactor = 0.00300D;
+    public static double solarTowerTempDependentLossFactor = 0.00036D;
+    public static double solarTowerHeatIncreaseFactor = 0.00568D;
     public static double solarTowerTempToMinReflectorsDivisor = 25.0D;
     public static double solarTowerReflectorTierOffset = 4.0D;
     public static int solarTowerProgressLossOffTemp = 2;
@@ -299,9 +299,9 @@ public class ITServerConfig {
         SOLAR_TOWER_LOSS_PER_SECTION_DROP = BUILDER
                 .defineInRange("loss_per_section_drop", 0.035D, 0.0D, Double.MAX_VALUE);
         SOLAR_TOWER_TEMP_DEPENDENT_LOSS_FACTOR = BUILDER
-                .defineInRange("temp_dependent_loss_factor", 0.0006D, 0.0D, Double.MAX_VALUE);
+                .defineInRange("temp_dependent_loss_factor", 0.00036D, 0.0D, Double.MAX_VALUE);
         SOLAR_TOWER_HEAT_INCREASE_FACTOR = BUILDER
-                .defineInRange("heat_increase_factor", 0.00300D, 0.0D, Double.MAX_VALUE);
+                .defineInRange("heat_increase_factor", 0.00568D, 0.0D, Double.MAX_VALUE);
         SOLAR_TOWER_TEMP_TO_MIN_REFLECTORS_DIVISOR = BUILDER
                 .defineInRange("temp_to_min_reflectors_divisor", 25.0D, 1.0D, Double.MAX_VALUE);
         SOLAR_TOWER_REFLECTOR_TIER_OFFSET = BUILDER
