@@ -102,7 +102,7 @@ public class ITRecipes extends RecipeProvider {
     }
 
     private void recipesCoolingTower(@Nonnull Consumer<FinishedRecipe> out) {
-        CoolingTowerRecipeBuilder.builder().addInput(FluidTags.WATER, 2925).addInput(FluidTags.WATER, 2925).addInput(FluidTags.WATER, 2925).addInput(ITTags.fluidExhaustSteam, 900).addOutput(ITFluids.HOT_WATER.getStill(), 8100).addOutput(Fluids.WATER, 900).setTime(3).build(out, toResourceLocation("cooling_tower/hot_water"));
+        CoolingTowerRecipeBuilder.builder().addInput(ITTags.fluidHotWater, 8100).addInput(FluidTags.WATER, 900).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).setTime(3).build(out, toResourceLocation("cooling_tower/hot_water"));
     }
 
     private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) {
@@ -115,6 +115,10 @@ public class ITRecipes extends RecipeProvider {
     }
 
     private void recipesHeatExchanger(@Nonnull Consumer<FinishedRecipe> out) {
+        HeatExchangerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 250), new FluidTagInput(ITTags.fluidFlueGas, 1000), new FluidStack(ITFluids.STEAM.getStill(), 450), null, 640, 10).build(out, toResourceLocation("heat_exchanger/water_fluegas"));
+        HeatExchangerRecipeBuilder.builder(new FluidTagInput(ITTags.fluidDistilledWater, 250), new FluidTagInput(ITTags.fluidFlueGas, 1000), new FluidStack(ITFluids.STEAM.getStill(), 500), null, 640, 10).build(out, toResourceLocation("heat_exchanger/distwater_fluegas"));
+        HeatExchangerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 250), new FluidTagInput(ITTags.fluidMoltenSalt, 80), new FluidStack(ITFluids.STEAM.getStill(), 450), new FluidStack(ITFluids.HEATED_SALT.getStill(), 80), 640, 10).build(out, toResourceLocation("heat_exchanger/water_moltensalt"));
+        HeatExchangerRecipeBuilder.builder(new FluidTagInput(ITTags.fluidDistilledWater, 250), new FluidTagInput(ITTags.fluidMoltenSalt, 80), new FluidStack(ITFluids.STEAM.getStill(), 500), new FluidStack(ITFluids.HEATED_SALT.getStill(), 80), 640, 10).build(out, toResourceLocation("heat_exchanger/distwater_moltensalt"));
         HeatExchangerRecipeBuilder.builder(new FluidTagInput(ITTags.fluidDistilledWater, 250), new FluidTagInput(ITTags.fluidHotWater, 4500), new FluidStack(ITFluids.EXHAUST_STEAM.getStill(), 500), new FluidStack(Fluids.WATER, 4500), 160, 5).build(out, toResourceLocation("heat_exchanger/distwater_hotwater"));
     }
 

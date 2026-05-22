@@ -1,27 +1,23 @@
 {
   "type": "immersivetechnology:cooling_tower",
   "input0": {
-    "amount": 2925,
-    "tag": "minecraft:water"
+    "amount": 8100,
+    "tag": "immersivetechnology:hot_water"
   },
   "input1": {
-    "amount": 2925,
-    "tag": "minecraft:water"
-  },
-  "input2": {
-    "amount": 2925,
-    "tag": "minecraft:water"
-  },
-  "input3": {
     "amount": 900,
-    "tag": "immersivetechnology:exhaust_steam"
+    "tag": "minecraft:water"
   },
   "output0": {
-    "amount": 8100,
-    "fluid": "immersivetechnology:hot_water"
+    "amount": 2925,
+    "fluid": "minecraft:water"
   },
   "output1": {
-    "amount": 900,
+    "amount": 2925,
+    "fluid": "minecraft:water"
+  },
+  "output2": {
+    "amount": 2925,
     "fluid": "minecraft:water"
   },
   "time": 3
