@@ -4,5 +4,5 @@
   "input": {
     "tag": "minecraft:coals"
   },
-  "targetHeat": 100.0
+  "targetHeat": 600.0
 }

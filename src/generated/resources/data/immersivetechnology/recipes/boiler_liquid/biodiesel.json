@@ -5,6 +5,6 @@
     "amount": 10,
     "tag": "forge:biodiesel"
   },
-  "targetHeat": 100.0,
+  "targetHeat": 600.0,
   "time": 10
 }

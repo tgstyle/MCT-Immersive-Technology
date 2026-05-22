@@ -1,21 +1,21 @@
 {
   "type": "immersivetechnology:heat_exchanger",
-  "energy": 640,
+  "energy": 160,
   "input0": {
     "amount": 250,
     "tag": "immersivetechnology:distilled_water"
   },
   "input1": {
-    "amount": 80,
-    "tag": "immersivetechnology:molten_salt"
+    "amount": 4500,
+    "tag": "immersivetechnology:hot_water"
   },
   "output0": {
     "amount": 500,
-    "fluid": "immersivetechnology:steam"
+    "fluid": "immersivetechnology:exhaust_steam"
   },
   "output1": {
-    "amount": 80,
-    "fluid": "immersivetechnology:heated_salt_slurry"
+    "amount": 4500,
+    "fluid": "minecraft:water"
   },
-  "time": 10
+  "time": 5
 }
