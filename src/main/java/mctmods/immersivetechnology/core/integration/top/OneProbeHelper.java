@@ -35,6 +35,7 @@ public class OneProbeHelper {
         top.registerProvider(new BoilerTankProvider());
         top.registerProvider(new CoolingTowerProvider());
         top.registerProvider(new DistillerProvider());
+        top.registerProvider(new ElectrolyticCrucibleBatteryProvider());
         top.registerProvider(new GasTurbineProvider());
         top.registerProvider(new HeatExchangerProvider());
         top.registerProvider(new SolarMelterProvider());
@@ -51,6 +52,12 @@ public class OneProbeHelper {
         probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
                 .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
                 .text(fluidName);
+    }
+
+    private static void addFluidTanks(IProbeInfo probeInfo, FluidTank... tanks) {
+        for (FluidTank tank : tanks) {
+            if (tank != null) addFluidTankDisplay(probeInfo, tank);
+        }
     }
 
     private static void addEnergyDisplay(IProbeInfo probeInfo, int stored, int max) {
@@ -153,11 +160,7 @@ public class OneProbeHelper {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
             if (ctx == null) return;
             if (ctx.getState() instanceof CoolingTowerLogic.State state) {
-                addFluidTankDisplay(probeInfo, state.tanks.input0());
-                addFluidTankDisplay(probeInfo, state.tanks.input1());
-                addFluidTankDisplay(probeInfo, state.tanks.output0());
-                addFluidTankDisplay(probeInfo, state.tanks.output1());
-                addFluidTankDisplay(probeInfo, state.tanks.output2());
+                addFluidTanks(probeInfo, state.tanks.input0(), state.tanks.input1(), state.tanks.output0(), state.tanks.output1(), state.tanks.output2());
                 if (state.active) {
                     int percent = state.totalProcessTime > 0 ? state.processProgress * 100 / state.totalProcessTime : 0;
                     addProcessPercent(probeInfo, percent);
@@ -176,6 +179,23 @@ public class OneProbeHelper {
             if (ctx.getState() instanceof DistillerLogic.State state) {
                 addFluidTankDisplay(probeInfo, state.tanks.input());
                 addFluidTankDisplay(probeInfo, state.tanks.output());
+                addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
+                var queue = state.processor.getQueue();
+                if (!queue.isEmpty()) {
+                    probeInfo.text("Processing (" + queue.size() + " queued)");
+                }
+            }
+        }
+    }
+
+    public static class ElectrolyticCrucibleBatteryProvider implements IProbeInfoProvider {
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "electrolytic_crucible_battery"); }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
+            IMultiblockContext<?> ctx = getContext(level, data.getPos());
+            if (ctx == null) return;
+            if (ctx.getState() instanceof ElectrolyticCrucibleBatteryLogic.State state) {
+                addFluidTanks(probeInfo, state.tanks.input(), state.tanks.output0(), state.tanks.output1(), state.tanks.output2());
                 addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
                 var queue = state.processor.getQueue();
                 if (!queue.isEmpty()) {
@@ -208,10 +228,7 @@ public class OneProbeHelper {
             IMultiblockContext<?> ctx = mbbe.getHelper().getContext();
             if (ctx == null) return;
             if (ctx.getState() instanceof HeatExchangerLogic.State state) {
-                addFluidTankDisplay(probeInfo, state.tanks.input0());
-                addFluidTankDisplay(probeInfo, state.tanks.input1());
-                addFluidTankDisplay(probeInfo, state.tanks.output0());
-                addFluidTankDisplay(probeInfo, state.tanks.output1());
+                addFluidTanks(probeInfo, state.tanks.input0(), state.tanks.input1(), state.tanks.output0(), state.tanks.output1());
                 addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
                 var queue = state.processor.getQueue();
                 if (!queue.isEmpty()) {
@@ -289,6 +306,7 @@ public class OneProbeHelper {
         }
     }
 
+    @SuppressWarnings("resource")
     private static int getFluidColor(@Nullable FluidStack fluid) {
         if (fluid == null || fluid.isEmpty()) return 0xff555555;
         IClientFluidTypeExtensions ext = IClientFluidTypeExtensions.of(fluid.getFluid());

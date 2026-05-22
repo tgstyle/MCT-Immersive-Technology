@@ -58,6 +58,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipeCategories(new ITBoilerTankCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITCoolingTowerCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITDistillerCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new ITElectrolyticCrucibleBatteryCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITGasTurbineCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITHeatExchangerCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITSolarMelterCategory(registration.getJeiHelpers().getGuiHelper()));
@@ -73,6 +74,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipes(JEIRecipeTypes.BOILER_TANK, getBoilerRecipes());
         registration.addRecipes(JEIRecipeTypes.COOLING_TOWER, getCoolingTowerRecipes());
         registration.addRecipes(JEIRecipeTypes.DISTILLER, getDistillerRecipes());
+        registration.addRecipes(JEIRecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY, getElectrolyticCrucibleBatteryRecipes());
         registration.addRecipes(JEIRecipeTypes.GAS_TURBINE, getGasTurbineRecipes());
         registration.addRecipes(JEIRecipeTypes.HEAT_EXCHANGER, getHeatExchangerRecipes());
         registration.addRecipes(JEIRecipeTypes.SOLAR_MELTER, getSolarMelterRecipes());
@@ -88,6 +90,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_TANK.iconStack(), JEIRecipeTypes.BOILER_TANK);
         registration.addRecipeCatalyst(ITMultiblockProvider.COOLING_TOWER.iconStack(), JEIRecipeTypes.COOLING_TOWER);
         registration.addRecipeCatalyst(ITMultiblockProvider.DISTILLER.iconStack(), JEIRecipeTypes.DISTILLER);
+        registration.addRecipeCatalyst(ITMultiblockProvider.ELECTROLYTIC_CRUCIBLE_BATTERY.iconStack(), JEIRecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
         registration.addRecipeCatalyst(ITMultiblockProvider.GAS_TURBINE.iconStack(), JEIRecipeTypes.GAS_TURBINE);
         registration.addRecipeCatalyst(ITMultiblockProvider.HEAT_EXCHANGER.iconStack(), JEIRecipeTypes.HEAT_EXCHANGER);
         registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_MELTER.iconStack(), JEIRecipeTypes.SOLAR_MELTER);
@@ -355,6 +358,7 @@ public class JEIIntegration implements IModPlugin {
     private List<BoilerTankRecipe> getBoilerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(BoilerTankRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<CoolingTowerRecipe> getCoolingTowerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(CoolingTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<DistillerRecipe> getDistillerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(DistillerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<ElectrolyticCrucibleBatteryRecipe> getElectrolyticCrucibleBatteryRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(ElectrolyticCrucibleBatteryRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<GasTurbineRecipe> getGasTurbineRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(GasTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<HeatExchangerRecipe> getHeatExchangerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(HeatExchangerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<SolarMelterRecipe> getSolarMelterRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(SolarMelterRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
