@@ -13,7 +13,7 @@ import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.bus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 
 @SuppressWarnings("unused")
 public class CommonProxy {
