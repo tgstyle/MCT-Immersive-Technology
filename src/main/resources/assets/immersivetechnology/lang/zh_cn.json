@@ -2,7 +2,6 @@
   "language": "中文",
   "language.code": "zh_cn",
   "language.region": "中国",
-
   "itemGroup.immersivetechnology": "沉浸式技术",
 
   "manual.immersivetechnology.main": "沉浸式技术",
@@ -13,6 +12,7 @@
   "block.immersivetechnology.barrel_open": "开放式金属桶",
   "block.immersivetechnology.barrel_steel": "钢制金属桶",
   "block.immersivetechnology.crate_creative": "创造模式箱子",
+  "block.immersivetechnology.electrolytic_crucible_battery": "电解坩埚电池",
   "block.immersivetechnology.heat_creative": "创造模式加热器",
   "block.immersivetechnology.reinforced_coke_brick": "强化焦炭砖",
   "block.immersivetechnology.rotor_creative": "创造模式转子",
@@ -152,6 +152,7 @@
   "category.immersivetechnology.metal_multiblock.boiler_solid.time": "%s tick / %s 个物品",
   "category.immersivetechnology.metal_multiblock.boiler_solid.heat": "%s 热/tick",
   "category.immersivetechnology.metal_multiblock.distiller.chance": "概率：%s",
+  "category.immersivetechnology.metal_multiblock.electrolytic_crucible_battery": "电解坩埚电池",
   "category.immersivetechnology.metal_multiblock.heat_exchanger": "热交换器",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.time": "%s tick",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.energy": "%s IF/t",

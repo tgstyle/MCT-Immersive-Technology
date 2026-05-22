@@ -14,9 +14,7 @@ import java.util.function.Consumer;
 public class BoilerTank extends ITTemplateMultiblock {
     public static final BoilerTank INSTANCE = new BoilerTank();
 
-    public BoilerTank() {
-        super(ITLib.rl("multiblocks/boiler_tank"), BoilerTankShape.MASTER_POS, BoilerTankShape.TRIGGER_POS, new BlockPos(BoilerTankShape.WIDTH, BoilerTankShape.HEIGHT, BoilerTankShape.LENGTH), ITMultiblockProvider.BOILER_TANK);
-    }
+    public BoilerTank() { super(ITLib.rl("multiblocks/boiler_tank"), BoilerTankShape.MASTER_POS, BoilerTankShape.TRIGGER_POS, new BlockPos(BoilerTankShape.WIDTH, BoilerTankShape.HEIGHT, BoilerTankShape.LENGTH), ITMultiblockProvider.BOILER_TANK); }
 
     @Override public float getManualScale() { return BoilerTankShape.MANUAL_SCALE; }
 

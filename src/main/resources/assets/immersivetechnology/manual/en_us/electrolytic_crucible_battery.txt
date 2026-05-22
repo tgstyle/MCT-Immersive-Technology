@@ -1,0 +1,8 @@
+Electrolytic Crucible Battery
+Advanced Electrolysis
+<&multiblock>The Electrolytic Crucible Battery is a multiblock machine used to §lperform electrolysis on molten salts and other fluids§r, producing multiple outputs with high efficiency.
+
+§lOperation§r
+    - §lFluid§r is supplied from the side.
+    - §lEnergy§r is supplied from the side.
+    - §lOutputs§r (fluids and items) are collected from multiple sides.

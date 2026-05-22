@@ -2,7 +2,6 @@
   "language": "Français",
   "language.code": "fr_fr",
   "language.region": "France",
-
   "itemGroup.immersivetechnology": "Technologie Immersive",
 
   "manual.immersivetechnology.main": "Technologie Immersive",
@@ -13,6 +12,7 @@
   "block.immersivetechnology.barrel_open": "Baril métallique ouvert",
   "block.immersivetechnology.barrel_steel": "Baril métallique en acier",
   "block.immersivetechnology.crate_creative": "Caisse créative",
+  "block.immersivetechnology.electrolytic_crucible_battery": "Batterie de creuset électrolytique",
   "block.immersivetechnology.heat_creative": "Chauffage créatif",
   "block.immersivetechnology.reinforced_coke_brick": "Brique de coke renforcée",
   "block.immersivetechnology.rotor_creative": "Rotor créatif",
@@ -152,6 +152,7 @@
   "category.immersivetechnology.metal_multiblock.boiler_solid.time": "%s ticks / %s objets",
   "category.immersivetechnology.metal_multiblock.boiler_solid.heat": "%s chaleur/tick",
   "category.immersivetechnology.metal_multiblock.distiller.chance": "Chance : %s",
+  "category.immersivetechnology.metal_multiblock.electrolytic_crucible_battery": "Batterie de creuset électrolytique",
   "category.immersivetechnology.metal_multiblock.heat_exchanger": "Échangeur de chaleur",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.time": "%s ticks",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.energy": "%s IF/t",

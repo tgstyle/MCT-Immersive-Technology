@@ -1,0 +1,8 @@
+Batterie de creuset électrolytique
+Électrolyse avancée
+<&multiblock>La Batterie de creuset électrolytique est une machine multibloc utilisée pour §leffectuer l'électrolyse de sels fondus et d'autres fluides§r, produisant plusieurs sorties avec une haute efficacité.
+
+§lFonctionnement§r
+    - §lFluides§r est fourni depuis le côté.
+    - §lÉnergie§r est fournie depuis le côté.
+    - §lSorties§r (fluides et objets) sont collectées depuis plusieurs côtés.

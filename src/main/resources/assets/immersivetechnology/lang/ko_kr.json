@@ -2,7 +2,6 @@
   "language": "한국어",
   "language.code": "ko_kr",
   "language.region": "대한민국",
-
   "itemGroup.immersivetechnology": "몰입형 기술",
 
   "manual.immersivetechnology.main": "몰입형 기술",
@@ -13,6 +12,7 @@
   "block.immersivetechnology.barrel_open": "개방형 금속 통",
   "block.immersivetechnology.barrel_steel": "강철 금속 통",
   "block.immersivetechnology.crate_creative": "크리에이티브 상자",
+  "block.immersivetechnology.electrolytic_crucible_battery": "전해 도가니 배터리",
   "block.immersivetechnology.heat_creative": "크리에이티브 히터",
   "block.immersivetechnology.reinforced_coke_brick": "강화 코크스 벽돌",
   "block.immersivetechnology.rotor_creative": "크리에이티브 로터",
@@ -152,6 +152,7 @@
   "category.immersivetechnology.metal_multiblock.boiler_solid.time": "%s 틱 / %s개",
   "category.immersivetechnology.metal_multiblock.boiler_solid.heat": "%s 열/틱",
   "category.immersivetechnology.metal_multiblock.distiller.chance": "확률: %s",
+  "category.immersivetechnology.metal_multiblock.electrolytic_crucible_battery": "전해 도가니 배터리",
   "category.immersivetechnology.metal_multiblock.heat_exchanger": "열교환기",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.time": "%s 틱",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.energy": "%s IF/t",

@@ -31,6 +31,7 @@ public class ITRecipeTypes {
     public static final TypeWithClass<SolarMelterRecipe> SOLAR_MELTER = register("solar_melter", SolarMelterRecipe.class);
     public static final TypeWithClass<SolarTowerRecipe> SOLAR_TOWER = register("solar_tower", SolarTowerRecipe.class);
     public static final TypeWithClass<SteamTurbineRecipe> STEAM_TURBINE = register("steam_turbine", SteamTurbineRecipe.class);
+    public static final TypeWithClass<ElectrolyticCrucibleBatteryRecipe> ELECTROLYTIC_CRUCIBLE_BATTERY = register("electrolytic_crucible_battery", ElectrolyticCrucibleBatteryRecipe.class);
 
     static {
         AdvancedCokeOvenRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("advanced_coke_oven", AdvancedCokeOvenRecipeSerializer::new);
@@ -44,9 +45,15 @@ public class ITRecipeTypes {
         SolarMelterRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("solar_melter", SolarMelterRecipeSerializer::new);
         SolarTowerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("solar_tower", SolarTowerRecipeSerializer::new);
         SteamTurbineRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("steam_turbine", SteamTurbineRecipeSerializer::new);
+        ElectrolyticCrucibleBatteryRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("electrolytic_crucible_battery", ElectrolyticCrucibleBatteryRecipeSerializer::new);
     }
 
-    private static <T extends Recipe<?>> TypeWithClass<T> register(String name, Class<T> type) { return new TypeWithClass<>(REGISTER.register(name, () -> new RecipeType<>() {}), type); }
+    private static <T extends Recipe<?>> TypeWithClass<T> register(String name, Class<T> type) {
+        return new TypeWithClass<>(REGISTER.register(name, () -> new RecipeType<>() {}), type);
+    }
 
-    public static void init(IEventBus modEventBus) { REGISTER.register(modEventBus); RECIPE_SERIALIZERS.register(modEventBus); }
+    public static void init(IEventBus modEventBus) {
+        REGISTER.register(modEventBus);
+        RECIPE_SERIALIZERS.register(modEventBus);
+    }
 }

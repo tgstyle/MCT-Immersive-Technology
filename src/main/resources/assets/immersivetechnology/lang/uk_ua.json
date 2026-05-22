@@ -2,7 +2,6 @@
   "language": "Українська",
   "language.code": "uk_ua",
   "language.region": "Україна",
-
   "itemGroup.immersivetechnology": "Поглиблена технологія",
 
   "manual.immersivetechnology.main": "Поглиблена технологія",
@@ -13,6 +12,7 @@
   "block.immersivetechnology.barrel_open": "Відкрита металева бочка",
   "block.immersivetechnology.barrel_steel": "Сталева металева бочка",
   "block.immersivetechnology.crate_creative": "Креативна скриня",
+  "block.immersivetechnology.electrolytic_crucible_battery": "Електролітична тигельна батарея",
   "block.immersivetechnology.heat_creative": "Креативний нагрівач",
   "block.immersivetechnology.reinforced_coke_brick": "Посилена коксівна цегла",
   "block.immersivetechnology.rotor_creative": "Креативний ротор",
@@ -152,6 +152,7 @@
   "category.immersivetechnology.metal_multiblock.boiler_solid.time": "%s тіків / %s предметів",
   "category.immersivetechnology.metal_multiblock.boiler_solid.heat": "%s тепла/тік",
   "category.immersivetechnology.metal_multiblock.distiller.chance": "Шанс: %s",
+  "category.immersivetechnology.metal_multiblock.electrolytic_crucible_battery": "Електролітична тигельна батарея",
   "category.immersivetechnology.metal_multiblock.heat_exchanger": "Теплообмінник",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.time": "%s тіків",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.energy": "%s IF/т",
@@ -169,7 +170,7 @@
   "subtitles.immersivetechnology.cooling_tower": "Охолоджувальна вежа капає",
   "subtitles.immersivetechnology.dance": "Грає святкова музика",
   "subtitles.immersivetechnology.distiller": "Дистилятор булькає",
-  "subtitles.immersivetechnology.electrolytic_crucible_battery": "Електролітична плавильня гуде",
+  "subtitles.immersivetechnology.electrolytic_crucible_battery": "Електролітична тигельна батарея гуде",
   "subtitles.immersivetechnology.gas_arc": "Дуга газової турбіни тріщить",
   "subtitles.immersivetechnology.gas_ignite": "Газова турбіна запалюється",
   "subtitles.immersivetechnology.gas_running": "Газова турбіна працює",

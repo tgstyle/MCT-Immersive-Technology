@@ -1,0 +1,21 @@
+{
+  "shapeAABB": [],
+  "manualScale": 12,
+  "pointsOfInterest": [
+    { "name": "master", "pos": [1, 0, 8], "facing": null },
+    { "name": "trigger", "pos": [1, 0, 8], "facing": null },
+    { "name": "client_offset", "pos": [2, 0, 8], "facing": null },
+    { "name": "disassembly_ticker", "pos": [1, 0, 8], "facing": null },
+    { "name": "energy_input0", "pos": [2, 0, 4], "facing": "left" },
+    { "name": "energy_input1", "pos": [2, 0, 5], "facing": "left" },
+    { "name": "energy_input2", "pos": [2, 0, 6], "facing": "left" },
+    { "name": "fluid_input0", "pos": [2, 0, 2], "facing": "left" },
+    { "name": "fluid_output0", "pos": [0, 0, 8], "facing": "right" },
+    { "name": "fluid_output1", "pos": [0, 2, 8], "facing": "back" },
+    { "name": "fluid_output2", "pos": [2, 2, 8], "facing": "back" },
+    { "name": "item_output0", "pos": [1, 0, 8], "facing": "back" },
+    { "name": "redstone0", "pos": [0, 1, 0], "facing": null },
+    { "name": "sound0", "pos": [1, 1, 4], "facing": null }
+  ],
+  "padShape": [0, 0, 0]
+}

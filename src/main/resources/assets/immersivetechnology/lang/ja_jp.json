@@ -2,7 +2,6 @@
   "language": "日本語",
   "language.code": "ja_jp",
   "language.region": "日本",
-
   "itemGroup.immersivetechnology": "Immersive Technology",
 
   "manual.immersivetechnology.main": "Immersive Technology",
@@ -13,6 +12,7 @@
   "block.immersivetechnology.barrel_open": "開いた金属バレル",
   "block.immersivetechnology.barrel_steel": "鋼鉄製金属バレル",
   "block.immersivetechnology.crate_creative": "クリエイティブクレート",
+  "block.immersivetechnology.electrolytic_crucible_battery": "電解坩堝電池",
   "block.immersivetechnology.heat_creative": "クリエイティブヒーター",
   "block.immersivetechnology.reinforced_coke_brick": "強化コークスレンガ",
   "block.immersivetechnology.rotor_creative": "クリエイティブローター",
@@ -152,6 +152,7 @@
   "category.immersivetechnology.metal_multiblock.boiler_solid.time": "%s tick / %s 個",
   "category.immersivetechnology.metal_multiblock.boiler_solid.heat": "%s 熱/tick",
   "category.immersivetechnology.metal_multiblock.distiller.chance": "確率: %s",
+  "category.immersivetechnology.metal_multiblock.electrolytic_crucible_battery": "電解坩堝電池",
   "category.immersivetechnology.metal_multiblock.heat_exchanger": "熱交換器",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.time": "%s tick",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.energy": "%s IF/t",
@@ -170,7 +171,7 @@
   "subtitles.immersivetechnology.cooling_tower": "冷却塔の水滴音",
   "subtitles.immersivetechnology.dance": "パーティーミュージック",
   "subtitles.immersivetechnology.distiller": "蒸留装置の泡立つ音",
-  "subtitles.immersivetechnology.electrolytic_crucible_battery": "電解炉のうなり",
+  "subtitles.immersivetechnology.electrolytic_crucible_battery": "電解坩堝電池のうなり",
   "subtitles.immersivetechnology.gas_arc": "ガスタービンのアーク音",
   "subtitles.immersivetechnology.gas_ignite": "ガスタービンの着火音",
   "subtitles.immersivetechnology.gas_running": "ガスタービンの稼働音",

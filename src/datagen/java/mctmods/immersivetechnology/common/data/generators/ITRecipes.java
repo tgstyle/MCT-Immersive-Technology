@@ -47,16 +47,17 @@ public class ITRecipes extends RecipeProvider {
     @Override protected void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
         multiblockRecipes();
         itemRecipes(consumer);
-        recipesBoilerTank(consumer);
         recipesBoilerLiquid(consumer);
         recipesBoilerSolid(consumer);
+        recipesBoilerTank(consumer);
         recipesCoolingTower(consumer);
         recipesDistiller(consumer);
+        recipesElectrolyticCrucibleBattery(consumer);
         recipesHeatExchanger(consumer);
         recipesMixer(consumer);
-        recipesTurbine(consumer);
         recipesSolarMelter(consumer);
         recipesSolarTower(consumer);
+        recipesTurbine(consumer);
     }
 
     private void multiblockRecipes() { ITLib.IT_LOGGER.info("Starting Multiblock Recipe Registration"); }
@@ -83,11 +84,6 @@ public class ITRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ITItems.FORMATION_TOOL.get(), 1).define('I', IETags.getTagsFor(EnumMetals.IRON).ingot).define('E', IETags.getTagsFor(EnumMetals.ELECTRUM).ingot).pattern(" I ").pattern(" EI").pattern("I  ").unlockedBy("has_iron_ingot", has(IETags.getTagsFor(EnumMetals.IRON).ingot)).save(consumer, toResourceLocation("formation_tool"));
     }
 
-    private void recipesBoilerTank(@Nonnull Consumer<FinishedRecipe> out) {
-        BoilerTankRecipeBuilder.builder(FluidTags.WATER, 250).addOutput(ITFluids.STEAM.getStill(), 450).setTime(10).setRequiredHeat(100.0).build(out, toResourceLocation("boiler_tank/water"));
-        BoilerTankRecipeBuilder.builder(ITTags.fluidDistilledWater, 250).addOutput(ITFluids.STEAM.getStill(), 500).setTime(10).setRequiredHeat(100.0).build(out, toResourceLocation("boiler_tank/distilled_water"));
-    }
-
     private void recipesBoilerLiquid(@Nonnull Consumer<FinishedRecipe> out) {
         BoilerLiquidRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 10).setTime(10).setHeatPerTick(0.1).setTargetHeat(100.0).build(out, toResourceLocation("boiler_liquid/biodiesel"));
         BoilerLiquidRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 50).setTime(10).setHeatPerTick(0.1).setTargetHeat(100.0).build(out, toResourceLocation("boiler_liquid/gasoline"));
@@ -100,6 +96,11 @@ public class ITRecipes extends RecipeProvider {
         BoilerSolidRecipeBuilder.builder().addInput(IETags.coalCoke, 1).setHeatPerTick(0.1).setTargetHeat(100.0).build(out, toResourceLocation("boiler_solid/coal_coke"));
     }
 
+    private void recipesBoilerTank(@Nonnull Consumer<FinishedRecipe> out) {
+        BoilerTankRecipeBuilder.builder(FluidTags.WATER, 250).addOutput(ITFluids.STEAM.getStill(), 450).setTime(10).setRequiredHeat(100.0).build(out, toResourceLocation("boiler_tank/water"));
+        BoilerTankRecipeBuilder.builder(ITTags.fluidDistilledWater, 250).addOutput(ITFluids.STEAM.getStill(), 500).setTime(10).setRequiredHeat(100.0).build(out, toResourceLocation("boiler_tank/distilled_water"));
+    }
+
     private void recipesCoolingTower(@Nonnull Consumer<FinishedRecipe> out) {
         CoolingTowerRecipeBuilder.builder().addInput(FluidTags.WATER, 1000).addInput(ITTags.fluidExhaustSteam, 900).addOutput(Fluids.WATER, 500).addOutput(Fluids.WATER, 500).addOutput(Fluids.WATER, 500).setTime(3).build(out, toResourceLocation("cooling_tower/water"));
     }
@@ -107,6 +108,10 @@ public class ITRecipes extends RecipeProvider {
     private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) {
         ItemStack salt = new ItemStack(ITItems.SALT.get(), 1);
         DistillerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 1000), new FluidStack(ITFluids.DISTILLED_WATER.getStill(), 500), 20, 10000).addItemOutput(salt, 0.5f).build(out, toResourceLocation("distiller/water"));
+    }
+
+    private void recipesElectrolyticCrucibleBattery(@Nonnull Consumer<FinishedRecipe> out) {
+        ElectrolyticCrucibleBatteryRecipeBuilder.builder(new FluidTagInput(ITTags.fluidMoltenSalt, 1000), new FluidStack(ITFluids.CHLORINE.getStill(), 1000), 512000, 250).addFluidOutput1(new FluidStack(ITFluids.HEATED_SALT.getStill(), 1000)).build(out, toResourceLocation("electrolytic_crucible_battery/chlorine"));
     }
 
     private void recipesHeatExchanger(@Nonnull Consumer<FinishedRecipe> out) {
@@ -121,30 +126,6 @@ public class ITRecipes extends RecipeProvider {
         MixerRecipeBuilder.builder(ITFluids.GRAVEL_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(new IngredientWithSize(Tags.Items.GRAVEL, 4)).setEnergy(3200).build(out, toResourceLocation("mixer/gravel_slurry"));
     }
 
-    private void recipesTurbine(@Nonnull Consumer<FinishedRecipe> out) {
-        SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteam, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).build(out, toResourceLocation("steam_turbine/steam"));
-        SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteamForge, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).build(out, toResourceLocation("steam_turbine/steam_forge"));
-        GasTurbineRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 160).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toResourceLocation("gas_turbine/biodiesel"));
-
-        var gasolineBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 800).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10);
-        ConditionalRecipe.builder()
-                .addCondition(modLoaded("immersivepetroleum"))
-                .addRecipe(inner -> gasolineBuilder.build(inner, toResourceLocation("gas_turbine/gasoline")))
-                .build(out, toResourceLocation("gas_turbine/gasoline"));
-
-        var dieselBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "diesel")), 114).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10);
-        ConditionalRecipe.builder()
-                .addCondition(modLoaded("immersivepetroleum"))
-                .addRecipe(inner -> dieselBuilder.build(inner, toResourceLocation("gas_turbine/diesel")))
-                .build(out, toResourceLocation("gas_turbine/diesel"));
-
-        var keroseneBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "kerosene")), 150).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10);
-        ConditionalRecipe.builder()
-                .addCondition(modLoaded("immersivepetroleum"))
-                .addRecipe(inner -> keroseneBuilder.build(inner, toResourceLocation("gas_turbine/kerosene")))
-                .build(out, toResourceLocation("gas_turbine/kerosene"));
-    }
-
     private void recipesSolarMelter(@Nonnull Consumer<FinishedRecipe> out) {
         SolarMelterRecipeBuilder.builder().addInput(ITTags.fluidHeatedSaltSlurry, 1000).addOutput(ITFluids.MOLTEN_SALT.getStill(), 500).setTime(20).setRequiredTemp(1000.0).build(out, toResourceLocation("solar_melter/heated_salt"));
         SolarMelterRecipeBuilder.builder().addInput(ITTags.fluidHeatedGravelSlurry, 1000).addOutput(Fluids.LAVA, 500).setTime(20).setRequiredTemp(1000.0).build(out, toResourceLocation("solar_melter/heated_gravel_slurry"));
@@ -155,6 +136,21 @@ public class ITRecipes extends RecipeProvider {
         SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidDistilledWater, 250).addOutput(ITFluids.STEAM.getStill(), 500).setTime(10).setRequiredTemp(100.0).build(out, toResourceLocation("solar_tower/distilled_water"));
         SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidSaltSlurry, 1000).addOutput(ITFluids.HEATED_SALT.getStill(), 500).setTime(10).setRequiredTemp(400.0).build(out, toResourceLocation("solar_tower/salt_slurry"));
         SolarTowerRecipeBuilder.builder().addInput(ITTags.fluidGravelSlurry, 1000).addOutput(ITFluids.HEATED_GRAVEL.getStill(), 500).setTime(10).setRequiredTemp(400.0).build(out, toResourceLocation("solar_tower/gravel_slurry"));
+    }
+
+    private void recipesTurbine(@Nonnull Consumer<FinishedRecipe> out) {
+        SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteam, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).build(out, toResourceLocation("steam_turbine/steam"));
+        SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteamForge, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).build(out, toResourceLocation("steam_turbine/steam_forge"));
+        GasTurbineRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 160).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toResourceLocation("gas_turbine/biodiesel"));
+
+        var gasolineBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 800).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10);
+        ConditionalRecipe.builder().addCondition(modLoaded("immersivepetroleum")).addRecipe(inner -> gasolineBuilder.build(inner, toResourceLocation("gas_turbine/gasoline"))).build(out, toResourceLocation("gas_turbine/gasoline"));
+
+        var dieselBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "diesel")), 114).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10);
+        ConditionalRecipe.builder().addCondition(modLoaded("immersivepetroleum")).addRecipe(inner -> dieselBuilder.build(inner, toResourceLocation("gas_turbine/diesel"))).build(out, toResourceLocation("gas_turbine/diesel"));
+
+        var keroseneBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "kerosene")), 150).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10);
+        ConditionalRecipe.builder().addCondition(modLoaded("immersivepetroleum")).addRecipe(inner -> keroseneBuilder.build(inner, toResourceLocation("gas_turbine/kerosene"))).build(out, toResourceLocation("gas_turbine/kerosene"));
     }
 
     private ResourceLocation toResourceLocation(String resourceLocation) {

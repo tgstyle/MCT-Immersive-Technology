@@ -3,13 +3,16 @@
   "language.code": "it_it",
   "language.region": "Italia",
   "itemGroup.immersivetechnology": "Tecnologia Immersiva",
+
   "manual.immersivetechnology.main": "Tecnologia Immersiva",
   "manual.immersivetechnology.it_multiblocks": "Multiblocchi",
+
   "block.immersivetechnology.advanced_coke_oven_baseheater": "Riscaldatore base avanzato del forno a coke",
   "block.immersivetechnology.barrel_creative": "Barile di fluidi creativo",
   "block.immersivetechnology.barrel_open": "Barile metallico aperto",
   "block.immersivetechnology.barrel_steel": "Barile metallico in acciaio",
   "block.immersivetechnology.crate_creative": "Cassa creativa",
+  "block.immersivetechnology.electrolytic_crucible_battery": "Batteria di Crogiolo Elettrolitico",
   "block.immersivetechnology.heat_creative": "Riscaldatore creativo",
   "block.immersivetechnology.reinforced_coke_brick": "Mattone di coke rinforzato",
   "block.immersivetechnology.rotor_creative": "Rotor creativo",
@@ -21,6 +24,7 @@
   "block.immersivetechnology.valve_fluid": "Valvola per fluidi",
   "block.immersivetechnology.valve_limiter": "Limitatore di stack",
   "block.immersivetechnology.valve_load": "Controllore di carico",
+
   "block.immersivetechnology.advanced_coke_oven": "Forno a coke avanzato",
   "block.immersivetechnology.alternator": "Alternatore",
   "block.immersivetechnology.boiler_liquid": "Bruciatore a combustibile liquido (caldaia)",
@@ -35,8 +39,10 @@
   "block.immersivetechnology.solar_tower": "Torre solare",
   "block.immersivetechnology.steam_turbine": "Turbina a vapore",
   "block.immersivetechnology.steel_sheetmetal_tank": "Serbatoio di fluidi in lamiera d’acciaio",
+
   "block.immersivetechnology.solartower.osd.vertical_stack": "Le torri solari non possono essere impilate verticalmente",
   "block.immersivetechnology.solartower.osd.too_close": "Torre solare troppo vicina a un’altra – spostala di almeno %s blocchi",
+
   "fluid_type.immersivetechnology.chlorine": "Cloro",
   "fluid_type.immersivetechnology.distilled_water": "Acqua distillata",
   "fluid_type.immersivetechnology.exhaust_steam": "Vapore di scarico",
@@ -47,8 +53,10 @@
   "fluid_type.immersivetechnology.molten_salt": "Sale fuso",
   "fluid_type.immersivetechnology.salt_slurry": "Fango di sale",
   "fluid_type.immersivetechnology.steam": "Vapore",
+
   "item.immersivetechnology.formation_tool": "Chiave del tecnologo",
   "item.immersivetechnology.salt": "Sale",
+
   "item.immersivetechnology.chlorine_bucket": "Secchio di cloro",
   "item.immersivetechnology.distilled_water_bucket": "Secchio di acqua distillata",
   "item.immersivetechnology.exhaust_steam_bucket": "Secchio di vapore di scarico",
@@ -59,9 +67,11 @@
   "item.immersivetechnology.molten_salt_bucket": "Secchio di sale fuso",
   "item.immersivetechnology.salt_slurry_bucket": "Secchio di fango di sale",
   "item.immersivetechnology.steam_bucket": "Secchio di vapore",
+
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "Caldaia",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "Scambiatore di calore",
   "desc.immersivetechnology.info.holdShiftForInfo": "§8Tieni premuto Shift per maggiori informazioni§r",
+
   "gui.immersivetechnology.apply": "Applica",
   "gui.immersivetechnology.boiler.heat_per_tick": "%1$s calore per tick",
   "gui.immersivetechnology.boiler.total_heat": "Calore totale: %s",
@@ -108,7 +118,9 @@
   "gui.immersivetechnology.valve_load.limit_destination": "IF nello storage di uscita",
   "gui.immersivetechnology.valve_load.limit_packet": "IF per pacchetto",
   "gui.immersivetechnology.valve_load.limit_time": "IF al secondo",
+
   "overlay.immersivetechnology.metal_multiblock.steel_tank.normal.firstline": "%s: %s mB",
+
   "overlay.immersivetechnology.osd.barrel.normal.firstline": "%s: %s mB",
   "overlay.immersivetechnology.osd.creative_crate.normal.firstline": "%s: %s oggetti forniti nell’ultimo secondo",
   "overlay.immersivetechnology.osd.valve_load.normal.firstline": "%s IF consentiti nell’ultimo secondo",
@@ -129,15 +141,18 @@
   "overlay.immersivetechnology.redstone_inverted": "Modalità redstone: Invertita",
   "overlay.immersivetechnology.redstone_normal": "Modalità redstone: Normale",
   "overlay.immersivetechnology.redstone_off": "Modalità redstone: Disattivata",
+
   "keyword.immersivetechnology.generate": "Genera",
   "keyword.immersivetechnology.heat_level": "Temperatura",
   "keyword.immersivetechnology.rotations_per_minute": "giri/min",
   "keyword.immersivetechnology.speed": "Velocità",
+
   "category.immersivetechnology.metal_multiblock.boiler_liquid.time": "%s tick / %s mB",
   "category.immersivetechnology.metal_multiblock.boiler_liquid.heat": "%s calore/tick",
   "category.immersivetechnology.metal_multiblock.boiler_solid.time": "%s tick / %s oggetti",
   "category.immersivetechnology.metal_multiblock.boiler_solid.heat": "%s calore/tick",
   "category.immersivetechnology.metal_multiblock.distiller.chance": "Probabilità: %s",
+  "category.immersivetechnology.metal_multiblock.electrolytic_crucible_battery": "Batteria di Crogiolo Elettrolitico",
   "category.immersivetechnology.metal_multiblock.heat_exchanger": "Scambiatore di calore",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.time": "%s tick",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.energy": "%s IF/t",
@@ -145,7 +160,9 @@
   "category.immersivetechnology.metal_multiblock.solar_melter.temp": "Temperatura richiesta: %s °C",
   "category.immersivetechnology.metal_multiblock.solar_tower.time": "%s tick / %s mB",
   "category.immersivetechnology.metal_multiblock.solar_tower.temp": "Temperatura richiesta: %s °C",
+
   "config.jade.plugin_immersivetechnology.display": "Visualizzazione multiblocchi IT",
+
   "subtitles.immersivetechnology.advanced_coke_oven": "Forno a coke avanzato in combustione",
   "subtitles.immersivetechnology.advanced_coke_oven_fan": "Ventola del riscaldatore base in rotazione",
   "subtitles.immersivetechnology.alternator": "Alternatore che ronza",

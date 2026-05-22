@@ -2,7 +2,6 @@
   "language": "Español",
   "language.code": "es_es",
   "language.region": "España",
-
   "itemGroup.immersivetechnology": "Tecnología Inmersiva",
 
   "manual.immersivetechnology.main": "Tecnología Inmersiva",
@@ -13,6 +12,7 @@
   "block.immersivetechnology.barrel_open": "Barril metálico abierto",
   "block.immersivetechnology.barrel_steel": "Barril metálico de acero",
   "block.immersivetechnology.crate_creative": "Cajón creativo",
+  "block.immersivetechnology.electrolytic_crucible_battery": "Batería de crisol electrolítico",
   "block.immersivetechnology.heat_creative": "Calentador creativo",
   "block.immersivetechnology.reinforced_coke_brick": "Ladrillo de coque reforzado",
   "block.immersivetechnology.rotor_creative": "Rotor creativo",
@@ -152,6 +152,7 @@
   "category.immersivetechnology.metal_multiblock.boiler_solid.time": "%s ticks / %s objetos",
   "category.immersivetechnology.metal_multiblock.boiler_solid.heat": "%s calor/tick",
   "category.immersivetechnology.metal_multiblock.distiller.chance": "Probabilidad: %s",
+  "category.immersivetechnology.metal_multiblock.electrolytic_crucible_battery": "Batería de crisol electrolítico",
   "category.immersivetechnology.metal_multiblock.heat_exchanger": "Intercambiador de calor",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.time": "%s ticks",
   "category.immersivetechnology.metal_multiblock.heat_exchanger.energy": "%s IF/t",

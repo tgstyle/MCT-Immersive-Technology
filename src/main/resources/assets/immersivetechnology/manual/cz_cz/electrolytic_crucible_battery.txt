@@ -1,0 +1,8 @@
+Elektrolytická kelímková baterie
+Pokročilá elektrolýza
+<&multiblock>Elektrolytická kelímková baterie je multiblockový stroj používaný k §lprovádění elektrolýzy roztavených solí a dalších kapalin§r, který produkuje více výstupů s vysokou účinností.
+
+§lProvoz§r
+    - §lKapalina§r se přivádí ze strany.
+    - §lEnergie§r se přivádí ze strany.
+    - §lVýstupy§r (kapaliny a předměty) se odebírají z více stran.

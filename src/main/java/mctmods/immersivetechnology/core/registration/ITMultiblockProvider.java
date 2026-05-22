@@ -131,6 +131,14 @@ public class ITMultiblockProvider {
                     .gui(ITMenuTypes.DISTILLER_MENU)
                     .build();
 
+    public static final MultiblockRegistration<ElectrolyticCrucibleBatteryLogic.State> ELECTROLYTIC_CRUCIBLE_BATTERY =
+            metal(new ElectrolyticCrucibleBatteryLogic(), "electrolytic_crucible_battery")
+                    .structure(() -> getMBTemplate.apply("electrolytic_crucible_battery"))
+                    .redstone(s -> s.rsState, ElectrolyticCrucibleBatteryLogic.REDSTONE_POI)
+                    .component(new ITClearTank<>(ImmutableList.of(ElectrolyticCrucibleBatteryLogic.INPUT_FLUID_POI.posInMultiblock()), s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .component(new ITDisassemblyTicker<>(ElectrolyticCrucibleBatteryShape.DISASSEMBLY_POS), state -> null)
+                    .build();
+
     public static final MultiblockRegistration<GasTurbineLogic.State> GAS_TURBINE =
             metal(new GasTurbineLogic(), "gas_turbine")
                     .structure(() -> getMBTemplate.apply("gas_turbine"))
@@ -188,7 +196,9 @@ public class ITMultiblockProvider {
                     .build();
 
     @SuppressWarnings("unused")
-    public static List<Class<? extends Block>> getAllBlockClasses() { return List.of(ADVANCED_COKE_OVEN.block().get().getClass(), ALTERNATOR.block().get().getClass(), BOILER_LIQUID.block().get().getClass(), BOILER_SOLID.block().get().getClass(), BOILER_TANK.block().get().getClass(), COOLING_TOWER.block().get().getClass(), DISTILLER.block().get().getClass(), GAS_TURBINE.block().get().getClass(), HEAT_EXCHANGER.block().get().getClass(), SOLAR_MELTER.block().get().getClass(), SOLAR_REFLECTOR.block().get().getClass(), SOLAR_TOWER.block().get().getClass(), STEAM_TURBINE.block().get().getClass(), STEEL_SHEETMETAL_TANK.block().get().getClass()); }
+    public static List<Class<? extends Block>> getAllBlockClasses() {
+        return List.of(ADVANCED_COKE_OVEN.block().get().getClass(), ALTERNATOR.block().get().getClass(), BOILER_LIQUID.block().get().getClass(), BOILER_SOLID.block().get().getClass(), BOILER_TANK.block().get().getClass(), COOLING_TOWER.block().get().getClass(), DISTILLER.block().get().getClass(), GAS_TURBINE.block().get().getClass(), HEAT_EXCHANGER.block().get().getClass(), SOLAR_MELTER.block().get().getClass(), SOLAR_REFLECTOR.block().get().getClass(), SOLAR_TOWER.block().get().getClass(), STEAM_TURBINE.block().get().getClass(), STEEL_SHEETMETAL_TANK.block().get().getClass(), ELECTROLYTIC_CRUCIBLE_BATTERY.block().get().getClass());
+    }
 
     public static void init() {
         registerMB("advanced_coke_oven", AdvancedCokeOven.INSTANCE, ADVANCED_COKE_OVEN);
@@ -198,6 +208,7 @@ public class ITMultiblockProvider {
         registerMB("boiler_tank", BoilerTank.INSTANCE, BOILER_TANK);
         registerMB("cooling_tower", CoolingTower.INSTANCE, COOLING_TOWER);
         registerMB("distiller", Distiller.INSTANCE, DISTILLER);
+        registerMB("electrolytic_crucible_battery", ElectrolyticCrucibleBattery.INSTANCE, ELECTROLYTIC_CRUCIBLE_BATTERY);
         registerMB("gas_turbine", GasTurbine.INSTANCE, GAS_TURBINE);
         registerMB("heat_exchanger", HeatExchanger.INSTANCE, HEAT_EXCHANGER);
         registerMB("solar_melter", SolarMelter.INSTANCE, SOLAR_MELTER);
