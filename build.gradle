@@ -257,14 +257,14 @@ dependencies {
     implementation fg.deobf("curse.maven:puzzles-lib-495476:6918565")
     implementation fg.deobf("curse.maven:held-item-tooltips-852671:4613438")
 
-    implementation fg.deobf("curse.maven:immersive-convergence-1465236:7642971")
-
     datagenImplementation("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     if (icJar != null) {
         implementation files(icJar)
+    } else {
+        implementation fg.deobf("curse.maven:immersive-convergence-1465236:7642971")
     }
 }
 
