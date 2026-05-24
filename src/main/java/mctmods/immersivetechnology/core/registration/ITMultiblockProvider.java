@@ -131,6 +131,15 @@ public class ITMultiblockProvider {
                     .gui(ITMenuTypes.DISTILLER_MENU)
                     .build();
 
+    public static final MultiblockRegistration<MeltingCrucibleLogic.State> MELTING_CRUCIBLE =
+            metal(new MeltingCrucibleLogic(), "melting_crucible")
+                    .structure(() -> getMBTemplate.apply("melting_crucible"))
+                    //.redstone(s -> s.rsState, MeltingCrucibleLogic.REDSTONE_POI)
+                    //.component(new ITClearTank<>(ImmutableList.of(Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .component(new ITDisassemblyTicker<>(MeltingCrucibleShape.DISASSEMBLY_POS), state -> null)
+                    //.gui(ITMenuTypes.DISTILLER_MENU)
+                    .build();
+
     public static final MultiblockRegistration<ElectrolyticCrucibleBatteryLogic.State> ELECTROLYTIC_CRUCIBLE_BATTERY =
             metal(new ElectrolyticCrucibleBatteryLogic(), "electrolytic_crucible_battery")
                     .structure(() -> getMBTemplate.apply("electrolytic_crucible_battery"))
@@ -208,6 +217,7 @@ public class ITMultiblockProvider {
         registerMB("boiler_tank", BoilerTank.INSTANCE, BOILER_TANK);
         registerMB("cooling_tower", CoolingTower.INSTANCE, COOLING_TOWER);
         registerMB("distiller", Distiller.INSTANCE, DISTILLER);
+        registerMB("melting_crucible", MeltingCrucible.INSTANCE, MELTING_CRUCIBLE);
         registerMB("electrolytic_crucible_battery", ElectrolyticCrucibleBattery.INSTANCE, ELECTROLYTIC_CRUCIBLE_BATTERY);
         registerMB("gas_turbine", GasTurbine.INSTANCE, GAS_TURBINE);
         registerMB("heat_exchanger", HeatExchanger.INSTANCE, HEAT_EXCHANGER);
