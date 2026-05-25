@@ -31,17 +31,26 @@ public class ElectrolyticCrucibleBatteryShape {
         if (WIDTH <= 0 || HEIGHT <= 0 || LENGTH <= 0) {
             GETTER = FullblockShape.GETTER;
             WIDTH = HEIGHT = LENGTH = 0;
+            if (DATA.shapeAABB == null || !DATA.shapeAABB.isEmpty()) {
+                ITLib.IT_LOGGER.error("Invalid dimensions loaded for electrolytic_crucible_battery multiblock.");
+            }
         } else {
             int num = WIDTH * HEIGHT * LENGTH;
-            if (DATA.shapeAABB == null || DATA.shapeAABB.isEmpty()) {
+            if (DATA.shapeAABB == null) {
+                ITLib.IT_LOGGER.error("Failed to load shapes for electrolytic_crucible_battery multiblock. (shapeAABB null)");
+                GETTER = FullblockShape.GETTER;
+            } else if (DATA.shapeAABB.isEmpty()) {
+                ITLib.IT_LOGGER.info("Using full block shape for electrolytic_crucible_battery.");
                 GETTER = FullblockShape.GETTER;
             } else {
                 List<List<AABB>> shapes = GenericShape.loadShapes(DATA, num);
-                if (shapes == null || shapes.isEmpty()) {
+                if (shapes == null) {
+                    ITLib.IT_LOGGER.error("Failed to load shapes for electrolytic_crucible_battery multiblock.");
                     GETTER = FullblockShape.GETTER;
                 } else {
-                    boolean allFull = shapes.stream().allMatch(list -> list.size() == 1 && list.get(0).equals(GenericShape.FULL_BLOCK));
-                    GETTER = allFull ? FullblockShape.GETTER : new GenericShape.JsonShape(WIDTH, HEIGHT, LENGTH, shapes);
+                    boolean allFull = !shapes.isEmpty() && shapes.stream().allMatch(list -> list.size() == 1 && list.get(0).equals(GenericShape.FULL_BLOCK));
+                    if (allFull) { GETTER = FullblockShape.GETTER; }
+                    else { GETTER = new GenericShape.JsonShape(WIDTH, HEIGHT, LENGTH, shapes); }
                 }
             }
         }
