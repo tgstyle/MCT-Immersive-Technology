@@ -357,7 +357,6 @@ tasks.register('optimizePng') {
             fileTree(dir: dir, includes: pngPatterns).each { minimizePNGFile(it) }
         }
     }
-    onlyIf { gradle.taskGraph.hasTask(tasks.jar) }
 }
 
 tasks.register('genIntellijRunsDummy')
@@ -370,7 +369,7 @@ tasks.withType(Task).configureEach {
     }
 }
 
-processResources.dependsOn bumpVersion, optimizePng
+processResources.dependsOn bumpVersion
 jar.dependsOn bumpVersion
 datagenJar.dependsOn bumpVersion
 sourcesJar.dependsOn bumpVersion
