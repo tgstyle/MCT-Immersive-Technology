@@ -12,7 +12,6 @@
   "block.immersivetechnology.barrel_open": "Barril Metálico Aberto",
   "block.immersivetechnology.barrel_steel": "Barril Metálico de Aço",
   "block.immersivetechnology.crate_creative": "Caixa Criativa",
-  "block.immersivetechnology.electrolytic_crucible_battery": "Bateria de Crisol Eletrolítico",
   "block.immersivetechnology.heat_creative": "Aquecedor Criativo",
   "block.immersivetechnology.reinforced_coke_brick": "Tijolo de Coque Reforçado",
   "block.immersivetechnology.rotor_creative": "Rotor Criativo",
@@ -32,8 +31,10 @@
   "block.immersivetechnology.boiler_solid": "Queimador de Combustível Sólido da Caldeira",
   "block.immersivetechnology.cooling_tower": "Torre de Arrefecimento",
   "block.immersivetechnology.distiller": "Destilador",
+  "block.immersivetechnology.electrolytic_crucible_battery": "Bateria de Crisol Eletrolítico",
   "block.immersivetechnology.gas_turbine": "Turbina a Gás",
   "block.immersivetechnology.heat_exchanger": "Trocador de Calor",
+  "block.immersivetechnology.melting_crucible": "Cadinho de Fusão",
   "block.immersivetechnology.solar_melter": "Cadinho de Fusão Solar",
   "block.immersivetechnology.solar_reflector": "Refletor Solar",
   "block.immersivetechnology.solar_tower": "Torre Solar",
@@ -72,6 +73,7 @@
 
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "Caldeira",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "Trocador de Calor",
+  "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "Cadinho de Fusão",
   "desc.immersivetechnology.info.holdShiftForInfo": "§8Mantenha Shift carregado para mais informações§r",
 
   "gui.immersivetechnology.apply": "Aplicar",

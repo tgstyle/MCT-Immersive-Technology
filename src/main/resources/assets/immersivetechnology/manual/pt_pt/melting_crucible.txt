@@ -1,0 +1,9 @@
+Crisol de Fusão
+A Fundir!
+<&multiblock>O Crisol de Fusão utiliza electricidade para fundir materiais na sua forma fluida fundida.
+
+
+§lFuncionamento§r
+    - §lFluidos§r são inseridos na parte traseira.
+    - §lFluidos Fundidos§r são extraídos na parte frontal inferior.
+    - Energia é fornecida no lado.

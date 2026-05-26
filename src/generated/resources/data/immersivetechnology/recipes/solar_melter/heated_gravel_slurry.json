@@ -1,5 +1,5 @@
 {
-  "type": "immersivetechnology:solar_melter",
+  "type": "immersivetechnology:melting",
   "input": {
     "amount": 1000,
     "tag": "immersivetechnology:heated_gravel_slurry"

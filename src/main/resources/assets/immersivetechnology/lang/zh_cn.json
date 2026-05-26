@@ -12,7 +12,6 @@
   "block.immersivetechnology.barrel_open": "开放式金属桶",
   "block.immersivetechnology.barrel_steel": "钢制金属桶",
   "block.immersivetechnology.crate_creative": "创造模式箱子",
-  "block.immersivetechnology.electrolytic_crucible_battery": "电解坩埚电池",
   "block.immersivetechnology.heat_creative": "创造模式加热器",
   "block.immersivetechnology.reinforced_coke_brick": "强化焦炭砖",
   "block.immersivetechnology.rotor_creative": "创造模式转子",
@@ -32,8 +31,10 @@
   "block.immersivetechnology.boiler_solid": "固体燃料锅炉燃烧室",
   "block.immersivetechnology.cooling_tower": "冷却塔",
   "block.immersivetechnology.distiller": "蒸馏器",
+  "block.immersivetechnology.electrolytic_crucible_battery": "电解坩埚电池",
   "block.immersivetechnology.gas_turbine": "燃气轮机",
   "block.immersivetechnology.heat_exchanger": "热交换器",
+  "block.immersivetechnology.melting_crucible": "熔炼坩埚",
   "block.immersivetechnology.solar_melter": "太阳能熔炼坩埚",
   "block.immersivetechnology.solar_reflector": "太阳能反射镜",
   "block.immersivetechnology.solar_tower": "太阳能塔",
@@ -72,6 +73,7 @@
 
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "锅炉",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "热交换器",
+  "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "熔炼坩埚",
   "desc.immersivetechnology.info.holdShiftForInfo": "§8按住 Shift 查看更多信息§r",
 
   "gui.immersivetechnology.apply": "应用",
@@ -165,6 +167,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "IT 多方块结构显示",
 
+  "subtitles.immersivetechnology.advanced_coke_oven": "高级焦炭炉燃烧",
   "subtitles.immersivetechnology.advanced_coke_oven_fan": "底座加热器风扇旋转中",
   "subtitles.immersivetechnology.alternator": "交流发电机嗡嗡作响",
   "subtitles.immersivetechnology.boiler_liquid": "锅炉咆哮",

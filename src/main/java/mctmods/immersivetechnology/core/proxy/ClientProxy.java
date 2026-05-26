@@ -71,10 +71,11 @@ public class ClientProxy extends CommonProxy {
             MenuScreens.register(ITMenuTypes.BOILER_TANK_MENU.getType(), BoilerTankScreen::new);
             MenuScreens.register(ITMenuTypes.CRATE_CREATIVE.getType(), CrateCreativeScreen::new);
             MenuScreens.register(ITMenuTypes.DISTILLER_MENU.getType(), DistillerScreen::new);
-            MenuScreens.register(ITMenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
+            MenuScreens.register(ITMenuTypes.MELTING_CRUCIBLE_MENU.getType(), MeltingCrucibleScreen::new);
+            MenuScreens.register(ITMenuTypes.ROTOR_CREATIVE.getType(), (RotorCreativeMenu menu, Inventory inv, Component title) -> new RotorCreativeScreen(menu, inv));
             MenuScreens.register(ITMenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
             MenuScreens.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
-            MenuScreens.register(ITMenuTypes.ROTOR_CREATIVE.getType(), (RotorCreativeMenu menu, Inventory inv, Component title) -> new RotorCreativeScreen(menu, inv));
+            MenuScreens.register(ITMenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
             MenuScreens.register(ITMenuTypes.VALVE_FLUID.getType(), (ValveFluidMenu menu, Inventory inv, Component title) -> new ValveFluidScreen(menu, inv));
             MenuScreens.register(ITMenuTypes.VALVE_LIMITER.getType(), (ValveLimiterMenu menu, Inventory inv, Component title) -> new ValveLimiterScreen(menu, inv));
             MenuScreens.register(ITMenuTypes.VALVE_LOAD.getType(), (ValveLoadMenu menu, Inventory inv, Component title) -> new ValveLoadScreen(menu, inv));
@@ -126,6 +127,10 @@ public class ClientProxy extends CommonProxy {
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(ITLib.rl("heat_exchanger"));
+            instance.addEntry(multiblock_category, multiblock.create());
+
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(ITLib.rl("melting_crucible"));
             instance.addEntry(multiblock_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());

@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.core.integration.jei.category;
 
 import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarMelterRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -24,12 +24,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ITSolarMelterCategory extends ITRecipeCategory<SolarMelterRecipe> {
+public class ITSolarMelterCategory extends ITRecipeCategory<MeltingRecipe> {
 
     private final IDrawableStatic tankOverlay;
 
     public ITSolarMelterCategory(IGuiHelper helper) {
-        super(helper, JEIRecipeTypes.SOLAR_MELTER, "block.immersivetechnology.solar_melter");
+        super(helper, JEIRecipeTypes.MELTING, "block.immersivetechnology.solar_melter");
 
         ResourceLocation background = ITLib.makeTextureLocation("solar");
         IDrawableStatic back = helper.drawableBuilder(background, 0, 0, 176, 77)
@@ -44,7 +44,7 @@ public class ITSolarMelterCategory extends ITRecipeCategory<SolarMelterRecipe> {
                 .build();
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SolarMelterRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull MeltingRecipe recipe, @NotNull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
@@ -83,13 +83,13 @@ public class ITSolarMelterCategory extends ITRecipeCategory<SolarMelterRecipe> {
                         ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
     }
 
-    private int getTankCapacity(@NotNull SolarMelterRecipe recipe) {
+    private int getTankCapacity(@NotNull MeltingRecipe recipe) {
         int tankCapacity = recipe.input.getAmount();
         if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) { tankCapacity = Math.max(tankCapacity, recipe.fluidOutput.getAmount()); }
         return tankCapacity;
     }
 
-    @Override public void draw(@NotNull SolarMelterRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@NotNull MeltingRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
 
         tankOverlay.draw(guiGraphics, 100, 19);

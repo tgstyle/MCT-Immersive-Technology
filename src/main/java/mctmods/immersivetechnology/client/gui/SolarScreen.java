@@ -7,7 +7,7 @@ import mctmods.immersivetechnology.client.gui.helper.ITInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.SolarMenu;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarMelterRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -93,7 +93,7 @@ public class SolarScreen extends ITContainerScreen<SolarMenu> {
         if (fs.getAmount() <= 0) { return workingHeat; }
         assert minecraft != null;
         if (isMelter) {
-            SolarMelterRecipe recipe = SolarMelterRecipe.findRecipe(minecraft.level, fs);
+            MeltingRecipe recipe = MeltingRecipe.findRecipe(minecraft.level, fs);
             if (recipe == null) { return workingHeat; }
             return recipe.requiredTemp;
         }

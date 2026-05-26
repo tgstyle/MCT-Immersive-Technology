@@ -20,7 +20,7 @@ public class JEIRecipeTypes {
     public static final RecipeType<ElectrolyticCrucibleBatteryRecipe> ELECTROLYTIC_CRUCIBLE_BATTERY = create(ITRecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
     public static final RecipeType<GasTurbineRecipe> GAS_TURBINE = create(ITRecipeTypes.GAS_TURBINE);
     public static final RecipeType<HeatExchangerRecipe> HEAT_EXCHANGER = create(ITRecipeTypes.HEAT_EXCHANGER);
-    public static final RecipeType<SolarMelterRecipe> SOLAR_MELTER = create(ITRecipeTypes.SOLAR_MELTER);
+    public static final RecipeType<MeltingRecipe> MELTING = create(ITRecipeTypes.MELTING);
     public static final RecipeType<SolarTowerRecipe> SOLAR_TOWER = create(ITRecipeTypes.SOLAR_TOWER);
     public static final RecipeType<SteamTurbineRecipe> STEAM_TURBINE = create(ITRecipeTypes.STEAM_TURBINE);
 

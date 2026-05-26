@@ -131,15 +131,6 @@ public class ITMultiblockProvider {
                     .gui(ITMenuTypes.DISTILLER_MENU)
                     .build();
 
-    public static final MultiblockRegistration<MeltingCrucibleLogic.State> MELTING_CRUCIBLE =
-            metal(new MeltingCrucibleLogic(), "melting_crucible")
-                    .structure(() -> getMBTemplate.apply("melting_crucible"))
-                    //.redstone(s -> s.rsState, MeltingCrucibleLogic.REDSTONE_POI)
-                    //.component(new ITClearTank<>(ImmutableList.of(Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .component(new ITDisassemblyTicker<>(MeltingCrucibleShape.DISASSEMBLY_POS), state -> null)
-                    //.gui(ITMenuTypes.DISTILLER_MENU)
-                    .build();
-
     public static final MultiblockRegistration<ElectrolyticCrucibleBatteryLogic.State> ELECTROLYTIC_CRUCIBLE_BATTERY =
             metal(new ElectrolyticCrucibleBatteryLogic(), "electrolytic_crucible_battery")
                     .structure(() -> getMBTemplate.apply("electrolytic_crucible_battery"))
@@ -163,6 +154,15 @@ public class ITMultiblockProvider {
                     .component(new ITClearTank<>(HeatExchangerLogic.FLUID_INPUT_POIS, s -> { s.tanks.input0().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); }, Component.translatable(TranslationKey.GUI_INPUT_TANKS_CLEARED.getLocation())))
                     .component(new ITDisassemblyTicker<>(HeatExchangerShape.DISASSEMBLY_POS), state -> null)
                     .withComparator()
+                    .build();
+
+    public static final MultiblockRegistration<MeltingCrucibleLogic.State> MELTING_CRUCIBLE =
+            metal(new MeltingCrucibleLogic(), "melting_crucible")
+                    .structure(() -> getMBTemplate.apply("melting_crucible"))
+                    .redstone(s -> s.rsState, MeltingCrucibleLogic.REDSTONE_POI)
+                    .component(new ITClearTank<>(ImmutableList.of(MeltingCrucibleLogic.INPUT_FLUID_POI.posInMultiblock()), s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .component(new ITDisassemblyTicker<>(MeltingCrucibleShape.DISASSEMBLY_POS), state -> null)
+                    .gui(ITMenuTypes.MELTING_CRUCIBLE_MENU)
                     .build();
 
     public static final MultiblockRegistration<SolarMelterLogic.State> SOLAR_MELTER =
@@ -206,7 +206,7 @@ public class ITMultiblockProvider {
 
     @SuppressWarnings("unused")
     public static List<Class<? extends Block>> getAllBlockClasses() {
-        return List.of(ADVANCED_COKE_OVEN.block().get().getClass(), ALTERNATOR.block().get().getClass(), BOILER_LIQUID.block().get().getClass(), BOILER_SOLID.block().get().getClass(), BOILER_TANK.block().get().getClass(), COOLING_TOWER.block().get().getClass(), DISTILLER.block().get().getClass(), GAS_TURBINE.block().get().getClass(), HEAT_EXCHANGER.block().get().getClass(), SOLAR_MELTER.block().get().getClass(), SOLAR_REFLECTOR.block().get().getClass(), SOLAR_TOWER.block().get().getClass(), STEAM_TURBINE.block().get().getClass(), STEEL_SHEETMETAL_TANK.block().get().getClass(), ELECTROLYTIC_CRUCIBLE_BATTERY.block().get().getClass());
+        return List.of(ADVANCED_COKE_OVEN.block().get().getClass(), ALTERNATOR.block().get().getClass(), BOILER_LIQUID.block().get().getClass(), BOILER_SOLID.block().get().getClass(), BOILER_TANK.block().get().getClass(), COOLING_TOWER.block().get().getClass(), DISTILLER.block().get().getClass(), GAS_TURBINE.block().get().getClass(), HEAT_EXCHANGER.block().get().getClass(), SOLAR_MELTER.block().get().getClass(), SOLAR_REFLECTOR.block().get().getClass(), SOLAR_TOWER.block().get().getClass(), STEAM_TURBINE.block().get().getClass(), STEEL_SHEETMETAL_TANK.block().get().getClass(), ELECTROLYTIC_CRUCIBLE_BATTERY.block().get().getClass(), MELTING_CRUCIBLE.block().get().getClass());
     }
 
     public static void init() {
@@ -217,10 +217,10 @@ public class ITMultiblockProvider {
         registerMB("boiler_tank", BoilerTank.INSTANCE, BOILER_TANK);
         registerMB("cooling_tower", CoolingTower.INSTANCE, COOLING_TOWER);
         registerMB("distiller", Distiller.INSTANCE, DISTILLER);
-        registerMB("melting_crucible", MeltingCrucible.INSTANCE, MELTING_CRUCIBLE);
         registerMB("electrolytic_crucible_battery", ElectrolyticCrucibleBattery.INSTANCE, ELECTROLYTIC_CRUCIBLE_BATTERY);
         registerMB("gas_turbine", GasTurbine.INSTANCE, GAS_TURBINE);
         registerMB("heat_exchanger", HeatExchanger.INSTANCE, HEAT_EXCHANGER);
+        registerMB("melting_crucible", MeltingCrucible.INSTANCE, MELTING_CRUCIBLE);
         registerMB("solar_melter", SolarMelter.INSTANCE, SOLAR_MELTER);
         registerMB("solar_reflector", SolarReflector.INSTANCE, SOLAR_REFLECTOR);
         registerMB("solar_tower", SolarTower.INSTANCE, SOLAR_TOWER);

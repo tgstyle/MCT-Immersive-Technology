@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import mcjty.theoneprobe.api.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarMelterRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.*;
 import mctmods.immersivetechnology.core.ITCommonConfig;
@@ -252,7 +252,7 @@ public class OneProbeHelper {
                 addFluidTankDisplay(probeInfo, state.tanks.input());
                 addFluidTankDisplay(probeInfo, state.tanks.output());
                 FluidStack input = state.tanks.input().getFluid();
-                SolarMelterRecipe recipe = input.isEmpty() ? null : SolarMelterRecipe.findRecipe(level, input);
+                MeltingRecipe recipe = input.isEmpty() ? null : MeltingRecipe.findRecipe(level, input);
                 double workingLevel = recipe != null ? recipe.requiredTemp : solarMelterWorkingHeatLevel;
                 addTemperature(probeInfo, state.heatLevel, workingLevel);
                 int percent = (state.totalProcessTime > 0) ? state.processProgress * 100 / state.totalProcessTime : 0;

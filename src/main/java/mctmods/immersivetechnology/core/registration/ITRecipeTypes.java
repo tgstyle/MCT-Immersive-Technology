@@ -26,13 +26,12 @@ public class ITRecipeTypes {
     public static final TypeWithClass<BoilerTankRecipe> BOILER_TANK = register("boiler_tank", BoilerTankRecipe.class);
     public static final TypeWithClass<CoolingTowerRecipe> COOLING_TOWER = register("cooling_tower", CoolingTowerRecipe.class);
     public static final TypeWithClass<DistillerRecipe> DISTILLER = register("distiller", DistillerRecipe.class);
-    public static final TypeWithClass<MeltingCrucibleRecipe> MELTING_CRUCIBLE = register("melting_crucible", MeltingCrucibleRecipe.class);
+    public static final TypeWithClass<ElectrolyticCrucibleBatteryRecipe> ELECTROLYTIC_CRUCIBLE_BATTERY = register("electrolytic_crucible_battery", ElectrolyticCrucibleBatteryRecipe.class);
     public static final TypeWithClass<GasTurbineRecipe> GAS_TURBINE = register("gas_turbine", GasTurbineRecipe.class);
     public static final TypeWithClass<HeatExchangerRecipe> HEAT_EXCHANGER = register("heat_exchanger", HeatExchangerRecipe.class);
-    public static final TypeWithClass<SolarMelterRecipe> SOLAR_MELTER = register("solar_melter", SolarMelterRecipe.class);
+    public static final TypeWithClass<MeltingRecipe> MELTING = register("melting", MeltingRecipe.class);
     public static final TypeWithClass<SolarTowerRecipe> SOLAR_TOWER = register("solar_tower", SolarTowerRecipe.class);
     public static final TypeWithClass<SteamTurbineRecipe> STEAM_TURBINE = register("steam_turbine", SteamTurbineRecipe.class);
-    public static final TypeWithClass<ElectrolyticCrucibleBatteryRecipe> ELECTROLYTIC_CRUCIBLE_BATTERY = register("electrolytic_crucible_battery", ElectrolyticCrucibleBatteryRecipe.class);
 
     static {
         AdvancedCokeOvenRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("advanced_coke_oven", AdvancedCokeOvenRecipeSerializer::new);
@@ -40,13 +39,13 @@ public class ITRecipeTypes {
         BoilerSolidRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("boiler_solid", BoilerSolidRecipeSerializer::new);
         BoilerTankRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("boiler_tank", BoilerTankRecipeSerializer::new);
         CoolingTowerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("cooling_tower", CoolingTowerRecipeSerializer::new);
+        DistillerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("distiller", DistillerRecipeSerializer::new);
+        ElectrolyticCrucibleBatteryRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("electrolytic_crucible_battery", ElectrolyticCrucibleBatteryRecipeSerializer::new);
         GasTurbineRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("gas_turbine", GasTurbineRecipeSerializer::new);
         HeatExchangerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("heat_exchanger", HeatExchangerRecipeSerializer::new);
-        DistillerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("distiller", DistillerRecipeSerializer::new);
-        SolarMelterRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("solar_melter", SolarMelterRecipeSerializer::new);
+        MeltingRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("melting", MeltingRecipeSerializer::new);
         SolarTowerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("solar_tower", SolarTowerRecipeSerializer::new);
         SteamTurbineRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("steam_turbine", SteamTurbineRecipeSerializer::new);
-        ElectrolyticCrucibleBatteryRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("electrolytic_crucible_battery", ElectrolyticCrucibleBatteryRecipeSerializer::new);
     }
 
     private static <T extends Recipe<?>> TypeWithClass<T> register(String name, Class<T> type) {

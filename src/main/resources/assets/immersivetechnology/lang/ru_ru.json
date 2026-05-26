@@ -12,7 +12,6 @@
   "block.immersivetechnology.barrel_open": "Открытая металлическая бочка",
   "block.immersivetechnology.barrel_steel": "Стальная металлическая бочка",
   "block.immersivetechnology.crate_creative": "Творческий ящик",
-  "block.immersivetechnology.electrolytic_crucible_battery": "Электролитическая тигельная батарея",
   "block.immersivetechnology.heat_creative": "Творческий нагреватель",
   "block.immersivetechnology.reinforced_coke_brick": "Усиленный коксовый кирпич",
   "block.immersivetechnology.rotor_creative": "Творческий ротор",
@@ -32,8 +31,10 @@
   "block.immersivetechnology.boiler_solid": "Топка котла на твёрдом топливе",
   "block.immersivetechnology.cooling_tower": "Градуирня",
   "block.immersivetechnology.distiller": "Дистиллятор",
+  "block.immersivetechnology.electrolytic_crucible_battery": "Электролитическая тигельная батарея",
   "block.immersivetechnology.gas_turbine": "Газовая турбина",
   "block.immersivetechnology.heat_exchanger": "Теплообменник",
+  "block.immersivetechnology.melting_crucible": "Плавильный тигель",
   "block.immersivetechnology.solar_melter": "Солнечная плавильня",
   "block.immersivetechnology.solar_reflector": "Солнечный отражатель",
   "block.immersivetechnology.solar_tower": "Солнечная башня",
@@ -72,6 +73,7 @@
 
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "Котёл",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "Теплообменник",
+  "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "Плавильный тигель",
   "desc.immersivetechnology.info.holdShiftForInfo": "§8Удерживайте Shift для подробностей§r",
 
   "gui.immersivetechnology.apply": "Применить",
@@ -165,6 +167,7 @@
 
   "config.jade.plugin_immersivetechnology.display": "Отображение мультиблоков IT",
 
+  "subtitles.immersivetechnology.advanced_coke_oven": "Улучшенная коксовка горит",
   "subtitles.immersivetechnology.advanced_coke_oven_fan": "Вентилятор базового нагревателя вращается",
   "subtitles.immersivetechnology.alternator": "Альтернатор гудит",
   "subtitles.immersivetechnology.boiler_liquid": "Котёл ревёт",
@@ -179,7 +182,7 @@
   "subtitles.immersivetechnology.gas_spark": "Искра зажигания газовой турбины",
   "subtitles.immersivetechnology.gas_starter": "Газовая турбина запускается",
   "subtitles.immersivetechnology.heat_exchanger": "Теплообменник гудит",
-  "subtitles.immersivetechnology.melting_crucible": "Плавильня плавит",
+  "subtitles.immersivetechnology.melting_crucible": "Плавильный тигель плавит",
   "subtitles.immersivetechnology.pilot": "Пилотная горелка горит",
   "subtitles.immersivetechnology.pressure_release": "Сброс давления",
   "subtitles.immersivetechnology.steam_turbine": "Паровая турбина вращается",

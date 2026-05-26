@@ -12,7 +12,6 @@
   "block.immersivetechnology.barrel_open": "개방형 금속 통",
   "block.immersivetechnology.barrel_steel": "강철 금속 통",
   "block.immersivetechnology.crate_creative": "크리에이티브 상자",
-  "block.immersivetechnology.electrolytic_crucible_battery": "전해 도가니 배터리",
   "block.immersivetechnology.heat_creative": "크리에이티브 히터",
   "block.immersivetechnology.reinforced_coke_brick": "강화 코크스 벽돌",
   "block.immersivetechnology.rotor_creative": "크리에이티브 로터",
@@ -32,8 +31,10 @@
   "block.immersivetechnology.boiler_solid": "고체 연료 보일러 연소기",
   "block.immersivetechnology.cooling_tower": "냉각탑",
   "block.immersivetechnology.distiller": "증류기",
+  "block.immersivetechnology.electrolytic_crucible_battery": "전해 도가니 배터리",
   "block.immersivetechnology.gas_turbine": "가스 터빈",
   "block.immersivetechnology.heat_exchanger": "열교환기",
+  "block.immersivetechnology.melting_crucible": "용융 도가니",
   "block.immersivetechnology.solar_melter": "태양 용융 도가니",
   "block.immersivetechnology.solar_reflector": "태양광 반사판",
   "block.immersivetechnology.solar_tower": "태양열 타워",
@@ -72,6 +73,7 @@
 
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "보일러",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "열교환기",
+  "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "용융 도가니",
   "desc.immersivetechnology.info.holdShiftForInfo": "§8Shift를 누르면 더 많은 정보를 볼 수 있습니다§r",
 
   "gui.immersivetechnology.apply": "적용",

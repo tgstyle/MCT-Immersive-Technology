@@ -10,8 +10,7 @@ import net.minecraft.core.BlockPos;
 
 import java.util.function.Consumer;
 
-public class MeltingCrucible extends ITTemplateMultiblock
-{
+public class MeltingCrucible extends ITTemplateMultiblock {
     public static final MeltingCrucible INSTANCE = new MeltingCrucible();
 
     public MeltingCrucible() { super(ITLib.rl("multiblocks/melting_crucible"), MeltingCrucibleShape.MASTER_POS, MeltingCrucibleShape.TRIGGER_POS, new BlockPos(MeltingCrucibleShape.WIDTH,MeltingCrucibleShape.HEIGHT,MeltingCrucibleShape.LENGTH), ITMultiblockProvider.MELTING_CRUCIBLE); }

@@ -54,8 +54,8 @@ public class ITRecipes extends RecipeProvider {
         recipesDistiller(consumer);
         recipesElectrolyticCrucibleBattery(consumer);
         recipesHeatExchanger(consumer);
+        recipesMelting(consumer);
         recipesMixer(consumer);
-        recipesSolarMelter(consumer);
         recipesSolarTower(consumer);
         recipesTurbine(consumer);
     }
@@ -122,14 +122,14 @@ public class ITRecipes extends RecipeProvider {
         HeatExchangerRecipeBuilder.builder(new FluidTagInput(ITTags.fluidDistilledWater, 250), new FluidTagInput(ITTags.fluidHotWater, 4500), new FluidStack(ITFluids.EXHAUST_STEAM.getStill(), 500), new FluidStack(Fluids.WATER, 4500), 160, 5).build(out, toResourceLocation("heat_exchanger/distwater_hotwater"));
     }
 
+    private void recipesMelting(@Nonnull Consumer<FinishedRecipe> out) {
+        MeltingRecipeBuilder.builder().addInput(ITTags.fluidHeatedSaltSlurry, 1000).addOutput(ITFluids.MOLTEN_SALT.getStill(), 500).setTime(20).setRequiredTemp(1000.0).build(out, toResourceLocation("solar_melter/heated_salt"));
+        MeltingRecipeBuilder.builder().addInput(ITTags.fluidHeatedGravelSlurry, 1000).addOutput(Fluids.LAVA, 500).setTime(20).setRequiredTemp(1000.0).build(out, toResourceLocation("solar_melter/heated_gravel_slurry"));
+    }
+
     private void recipesMixer(@Nonnull Consumer<FinishedRecipe> out) {
         MixerRecipeBuilder.builder(ITFluids.SALT_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(new IngredientWithSize(ITTags.saltForge, 4)).setEnergy(3200).build(out, toResourceLocation("mixer/salt_slurry"));
         MixerRecipeBuilder.builder(ITFluids.GRAVEL_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(new IngredientWithSize(Tags.Items.GRAVEL, 4)).setEnergy(3200).build(out, toResourceLocation("mixer/gravel_slurry"));
-    }
-
-    private void recipesSolarMelter(@Nonnull Consumer<FinishedRecipe> out) {
-        SolarMelterRecipeBuilder.builder().addInput(ITTags.fluidHeatedSaltSlurry, 1000).addOutput(ITFluids.MOLTEN_SALT.getStill(), 500).setTime(20).setRequiredTemp(1000.0).build(out, toResourceLocation("solar_melter/heated_salt"));
-        SolarMelterRecipeBuilder.builder().addInput(ITTags.fluidHeatedGravelSlurry, 1000).addOutput(Fluids.LAVA, 500).setTime(20).setRequiredTemp(1000.0).build(out, toResourceLocation("solar_melter/heated_gravel_slurry"));
     }
 
     private void recipesSolarTower(@Nonnull Consumer<FinishedRecipe> out) {

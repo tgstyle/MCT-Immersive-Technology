@@ -1,0 +1,9 @@
+Melting Crucible
+Melting!
+<&multiblock>The Melting Crucible uses electricity to melt materials into their molten fluid form.
+
+
+§lOperation§r
+    - §lFluids§r are input on the back.
+    - §lMolten Fluids§r are output on the bottom front.
+    - Energy is input on the side.

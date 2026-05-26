@@ -121,8 +121,8 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
             int z = posInMultiblock.getZ();
             if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT || z < 0 || z >= LENGTH) { return new ArrayList<>(); }
             int index = y * (WIDTH * LENGTH) + z * WIDTH + x;
-            if (index < SHAPES.size()) { return SHAPES.get(index); }
-            return List.of(FULL_BLOCK);
+            if (index < 0 || index >= SHAPES.size()) { return new ArrayList<>(); }
+            return SHAPES.get(index);
         }
     }
 }

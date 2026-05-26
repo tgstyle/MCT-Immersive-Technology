@@ -1,0 +1,9 @@
+Tavicí kelímek
+Tavící!
+<&multiblock>Tavicí kelímek využívá elektřinu k roztavení materiálů do jejich roztavené tekuté formy.
+
+
+§lProvoz§r
+    - §lTekutiny§r se vstřikují zezadu.
+    - §lRoztavené tekutiny§r se vypouštějí vepředu dole.
+    - Energie se přivádí ze strany.

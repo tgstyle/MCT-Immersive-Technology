@@ -35,6 +35,7 @@
   "block.immersivetechnology.electrolytic_crucible_battery": "Electrolytic Crucible Battery",
   "block.immersivetechnology.gas_turbine": "Gas Turbine",
   "block.immersivetechnology.heat_exchanger": "Heat Exchanger",
+  "block.immersivetechnology.melting_crucible": "Melting Crucible",
   "block.immersivetechnology.solar_melter": "Solar Melting Crucible",
   "block.immersivetechnology.solar_reflector": "Solar Reflector",
   "block.immersivetechnology.solar_tower": "Solar Tower",
@@ -73,6 +74,7 @@
 
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "Boiler",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "Heat Exchanger",
+  "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "Melting Crucible",
   "desc.immersivetechnology.info.holdShiftForInfo": "§8Hold Shift for more info§r",
 
   "gui.immersivetechnology.apply": "Apply",

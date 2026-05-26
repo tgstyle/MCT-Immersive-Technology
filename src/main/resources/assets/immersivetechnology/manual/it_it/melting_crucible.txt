@@ -1,0 +1,9 @@
+Crogiolo di Fusione
+Fusione!
+<&multiblock>Il Crogiolo di Fusione utilizza l'elettricità per fondere i materiali nella loro forma fluida fusa.
+
+
+§lFunzionamento§r
+    - §lFluidi§r vengono inseriti sul retro.
+    - §lFluidi Fusi§r vengono estratti nella parte anteriore inferiore.
+    - Energia viene fornita sul lato.

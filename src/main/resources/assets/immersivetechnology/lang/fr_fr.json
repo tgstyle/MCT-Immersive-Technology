@@ -12,7 +12,6 @@
   "block.immersivetechnology.barrel_open": "Baril métallique ouvert",
   "block.immersivetechnology.barrel_steel": "Baril métallique en acier",
   "block.immersivetechnology.crate_creative": "Caisse créative",
-  "block.immersivetechnology.electrolytic_crucible_battery": "Batterie de creuset électrolytique",
   "block.immersivetechnology.heat_creative": "Chauffage créatif",
   "block.immersivetechnology.reinforced_coke_brick": "Brique de coke renforcée",
   "block.immersivetechnology.rotor_creative": "Rotor créatif",
@@ -32,8 +31,10 @@
   "block.immersivetechnology.boiler_solid": "Brûleur à carburant solide (chaudière)",
   "block.immersivetechnology.cooling_tower": "Tour de refroidissement",
   "block.immersivetechnology.distiller": "Alambic",
+  "block.immersivetechnology.electrolytic_crucible_battery": "Batterie de creuset électrolytique",
   "block.immersivetechnology.gas_turbine": "Turbine à gaz",
   "block.immersivetechnology.heat_exchanger": "Échangeur de chaleur",
+  "block.immersivetechnology.melting_crucible": "Creuset de fusion",
   "block.immersivetechnology.solar_melter": "Creuset de fusion solaire",
   "block.immersivetechnology.solar_reflector": "Réflecteur solaire",
   "block.immersivetechnology.solar_tower": "Tour solaire",
@@ -72,6 +73,7 @@
 
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "Chaudière",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "Échangeur de chaleur",
+  "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "Creuset de fusion",
   "desc.immersivetechnology.info.holdShiftForInfo": "§8Maintenez Shift pour plus d’infos§r",
 
   "gui.immersivetechnology.apply": "Appliquer",

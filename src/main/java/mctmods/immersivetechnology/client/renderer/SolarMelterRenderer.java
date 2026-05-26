@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import mctmods.immersivetechnology.client.particles.ColoredBeam;
 import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarMelterRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -29,7 +29,7 @@ public class SolarMelterRenderer extends ITBaseBlockEntityRenderer<MultiblockBlo
         FluidStack fs = state.tanks.input().getFluid();
         double maxHeat = SolarMelterLogic.WORKING_HEAT_LEVEL;
         if (fs.getAmount() > 0) {
-            SolarMelterRecipe recipe = SolarMelterRecipe.findRecipe(level, fs);
+            MeltingRecipe recipe = MeltingRecipe.findRecipe(level, fs);
             if (recipe != null) { maxHeat = recipe.requiredTemp; }
         }
         if (state.heatLevel < maxHeat || !state.sunVisible || state.reflectorStrength <= 0) { return; }

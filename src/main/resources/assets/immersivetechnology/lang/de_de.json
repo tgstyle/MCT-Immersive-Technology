@@ -12,7 +12,6 @@
   "block.immersivetechnology.barrel_open": "Offenes Metallfass",
   "block.immersivetechnology.barrel_steel": "Stahl-Metallfass",
   "block.immersivetechnology.crate_creative": "Kreative Kiste",
-  "block.immersivetechnology.electrolytic_crucible_battery": "Elektrolytische Tiegelbatterie",
   "block.immersivetechnology.heat_creative": "Kreativer Heizer",
   "block.immersivetechnology.reinforced_coke_brick": "Verstärkter Kokskohleziegel",
   "block.immersivetechnology.rotor_creative": "Kreativer Rotor",
@@ -32,8 +31,10 @@
   "block.immersivetechnology.boiler_solid": "Festbrennkammer (Kessel)",
   "block.immersivetechnology.cooling_tower": "Kühlturm",
   "block.immersivetechnology.distiller": "Destillierer",
+  "block.immersivetechnology.electrolytic_crucible_battery": "Elektrolytische Tiegelbatterie",
   "block.immersivetechnology.gas_turbine": "Gasturbine",
   "block.immersivetechnology.heat_exchanger": "Wärmetauscher",
+  "block.immersivetechnology.melting_crucible": "Schmelztiegel",
   "block.immersivetechnology.solar_melter": "Solar-Schmelztiegel",
   "block.immersivetechnology.solar_reflector": "Solarreflektor",
   "block.immersivetechnology.solar_tower": "Solarturm",
@@ -72,6 +73,7 @@
 
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "Kessel",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "Wärmetauscher",
+  "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "Schmelztiegel",
   "desc.immersivetechnology.info.holdShiftForInfo": "§8Shift halten für mehr Infos§r",
 
   "gui.immersivetechnology.apply": "Anwenden",

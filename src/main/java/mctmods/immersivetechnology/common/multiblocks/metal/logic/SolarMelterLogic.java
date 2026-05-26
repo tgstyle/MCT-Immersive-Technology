@@ -16,7 +16,7 @@ import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.fluids.helper.ITSolarTank;
 import mctmods.immersivetechnology.common.multiblocks.metal.interfaces.ITISolarMultiblockState;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarMelterRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarMelterShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
@@ -108,7 +108,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         if (!state.isSoundPlaying.getAsBoolean()) {
             Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
             FluidStack fs = state.tanks.input().getFluid();
-            SolarMelterRecipe recipe = fs.getAmount() > 0 ? SolarMelterRecipe.findRecipe(ctx.getLevel().getRawLevel(), fs) : null;
+            MeltingRecipe recipe = fs.getAmount() > 0 ? MeltingRecipe.findRecipe(ctx.getLevel().getRawLevel(), fs) : null;
             double maxHeat = recipe != null ? recipe.requiredTemp : WORKING_HEAT_LEVEL;
             boolean shouldPlay = state.heatLevel >= maxHeat && state.sunVisible && state.reflectorStrength > 0;
             if (shouldPlay) {
@@ -124,7 +124,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
                         state.isSoundPlaying = ITSound.startSound(
                                 () -> {
                                     FluidStack fsActive = state.tanks.input().getFluid();
-                                    SolarMelterRecipe recipeActive = fsActive.getAmount() > 0 ? SolarMelterRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsActive) : null;
+                                    MeltingRecipe recipeActive = fsActive.getAmount() > 0 ? MeltingRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsActive) : null;
                                     double maxHeatActive = recipeActive != null ? recipeActive.requiredTemp : WORKING_HEAT_LEVEL;
                                     return state.heatLevel >= maxHeatActive && state.sunVisible && state.reflectorStrength > 0 && state.soundId == thisId;
                                 },
@@ -134,7 +134,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
                                     if (playerVol == null) { return 0f; }
                                     float a = (float) Math.max(playerVol.distanceToSqr(soundVec) / 8, 1);
                                     FluidStack fsVol = state.tanks.input().getFluid();
-                                    SolarMelterRecipe recipeVol = fsVol.getAmount() > 0 ? SolarMelterRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsVol) : null;
+                                    MeltingRecipe recipeVol = fsVol.getAmount() > 0 ? MeltingRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsVol) : null;
                                     double maxHeatVol = recipeVol != null ? recipeVol.requiredTemp : WORKING_HEAT_LEVEL;
                                     float heatFactorVol = (float) (state.heatLevel / maxHeatVol);
                                     return (2 * heatFactorVol) / a;
@@ -146,7 +146,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             }
         }
         FluidStack fsParticles = state.tanks.input().getFluid();
-        SolarMelterRecipe recipeParticles = fsParticles.getAmount() > 0 ? SolarMelterRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsParticles) : null;
+        MeltingRecipe recipeParticles = fsParticles.getAmount() > 0 ? MeltingRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsParticles) : null;
         double maxHeatParticles = recipeParticles != null ? recipeParticles.requiredTemp : WORKING_HEAT_LEVEL;
         if (state.heatLevel >= maxHeatParticles && state.sunVisible && state.reflectorStrength > 0) {
             Level clientLevel = ctx.getLevel().getRawLevel();
@@ -327,8 +327,8 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
     private boolean recipeLogic(State state, Level level, boolean enabled) {
         FluidStack fs = state.tanks.input().getFluid();
         if (fs.getAmount() <= 0) { state.activeRecipe = null; state.processProgress = 0; state.totalProcessTime = 0; return false; }
-        if (state.activeRecipe == null && state.activeRecipeId != null) { state.activeRecipe = SolarMelterRecipe.RECIPES.getById(level, state.activeRecipeId); state.activeRecipeId = null; }
-        if (state.activeRecipe == null || !state.activeRecipe.input.testIgnoringAmount(fs)) { state.activeRecipe = SolarMelterRecipe.findRecipe(level, fs); state.processProgress = 0; state.totalProcessTime = 0; if (state.activeRecipe == null) { return false; } }
+        if (state.activeRecipe == null && state.activeRecipeId != null) { state.activeRecipe = MeltingRecipe.RECIPES.getById(level, state.activeRecipeId); state.activeRecipeId = null; }
+        if (state.activeRecipe == null || !state.activeRecipe.input.testIgnoringAmount(fs)) { state.activeRecipe = MeltingRecipe.findRecipe(level, fs); state.processProgress = 0; state.totalProcessTime = 0; if (state.activeRecipe == null) { return false; } }
         if (state.activeRecipe == null) { state.processProgress = 0; state.totalProcessTime = 0; return false; }
         if (enabled && state.heatLevel >= state.activeRecipe.requiredTemp) { state.processProgress += (int) SPEED_MULTIPLIER; } else { state.processProgress = Math.max(0, state.processProgress - PROGRESS_LOSS_OFF_TEMP); }
         int total = state.activeRecipe.getTotalProcessTime();
@@ -397,7 +397,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         public byte[] dirCounts = new byte[4];
         public int processProgress = 0;
         public int totalProcessTime = 0;
-        public SolarMelterRecipe activeRecipe = null;
+        public MeltingRecipe activeRecipe = null;
         private ResourceLocation activeRecipeId;
         public boolean isLoaded = false;
         public boolean registered;

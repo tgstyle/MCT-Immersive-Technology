@@ -1,0 +1,9 @@
+Creuset de Fusion
+Fusion !
+<&multiblock>Le Creuset de Fusion utilise de l'électricité pour fondre les matériaux dans leur forme fluide en fusion.
+
+
+§lFonctionnement§r
+    - §lFluides§r sont insérés à l'arrière.
+    - §lFluides en Fusion§r sont extraits à l'avant en bas.
+    - Énergie est fournie sur le côté.

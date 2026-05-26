@@ -12,7 +12,6 @@
   "block.immersivetechnology.barrel_open": "開いた金属バレル",
   "block.immersivetechnology.barrel_steel": "鋼鉄製金属バレル",
   "block.immersivetechnology.crate_creative": "クリエイティブクレート",
-  "block.immersivetechnology.electrolytic_crucible_battery": "電解坩堝電池",
   "block.immersivetechnology.heat_creative": "クリエイティブヒーター",
   "block.immersivetechnology.reinforced_coke_brick": "強化コークスレンガ",
   "block.immersivetechnology.rotor_creative": "クリエイティブローター",
@@ -32,8 +31,10 @@
   "block.immersivetechnology.boiler_solid": "固体燃料ボイラー燃焼器",
   "block.immersivetechnology.cooling_tower": "冷却塔",
   "block.immersivetechnology.distiller": "蒸留装置",
+  "block.immersivetechnology.electrolytic_crucible_battery": "電解坩堝電池",
   "block.immersivetechnology.gas_turbine": "ガスタービン",
   "block.immersivetechnology.heat_exchanger": "熱交換器",
+  "block.immersivetechnology.melting_crucible": "溶解坩堝",
   "block.immersivetechnology.solar_melter": "太陽溶解炉",
   "block.immersivetechnology.solar_reflector": "太陽光反射板",
   "block.immersivetechnology.solar_tower": "太陽熱タワー",
@@ -72,6 +73,7 @@
 
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "ボイラー",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "熱交換器",
+  "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "溶解坩堝",
   "desc.immersivetechnology.info.holdShiftForInfo": "§8Shiftキーを押すともっと詳しく見られます§r",
 
   "gui.immersivetechnology.apply": "適用",

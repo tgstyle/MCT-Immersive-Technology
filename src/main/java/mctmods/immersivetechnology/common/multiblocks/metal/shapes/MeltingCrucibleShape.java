@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.shapes;
 
-import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.util.multiblock.GenericShape;
 import mctmods.immersivetechnology.core.util.multiblock.MultiblockData;
 import mctmods.immersivetechnology.core.util.multiblock.MultiblockDataLoader;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -12,8 +12,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.List;
 import java.util.function.Function;
 
-public class MeltingCrucibleShape
-{
+public class MeltingCrucibleShape {
     public static final MultiblockData DATA = MultiblockDataLoader.loadMultiblockData("melting_crucible");
     public static final Function<BlockPos, VoxelShape> GETTER;
     public static int WIDTH, HEIGHT, LENGTH;

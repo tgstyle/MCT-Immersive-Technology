@@ -1,0 +1,9 @@
+Crisol de Fundición
+¡Fundiendo!
+<&multiblock>El Crisol de Fundición utiliza electricidad para fundir materiales en su forma fluida fundida.
+
+
+§lOperación§r
+    - §lFluidos§r se introducen por la parte trasera.
+    - §lFluidos Fundidos§r se extraen por la parte frontal inferior.
+    - Energía se introduce por el lateral.
