@@ -61,7 +61,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipeCategories(new ITElectrolyticCrucibleBatteryCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITGasTurbineCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITHeatExchangerCategory(registration.getJeiHelpers().getGuiHelper()));
-        registration.addRecipeCategories(new ITSolarMelterCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new ITMeltingCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITSolarTowerCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITSteamTurbineCategory(registration.getJeiHelpers().getGuiHelper()));
     }
@@ -94,6 +94,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipeCatalyst(ITMultiblockProvider.GAS_TURBINE.iconStack(), JEIRecipeTypes.GAS_TURBINE);
         registration.addRecipeCatalyst(ITMultiblockProvider.HEAT_EXCHANGER.iconStack(), JEIRecipeTypes.HEAT_EXCHANGER);
         registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_MELTER.iconStack(), JEIRecipeTypes.MELTING);
+        registration.addRecipeCatalyst(ITMultiblockProvider.MELTING_CRUCIBLE.iconStack(), JEIRecipeTypes.MELTING);
         registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_TOWER.iconStack(), JEIRecipeTypes.SOLAR_TOWER);
         registration.addRecipeCatalyst(ITMultiblockProvider.STEAM_TURBINE.iconStack(), JEIRecipeTypes.STEAM_TURBINE);
     }
@@ -271,6 +272,39 @@ public class JEIIntegration implements IModPlugin {
                 return areas;
             }
         });
+
+        registration.addGuiContainerHandler(MeltingCrucibleScreen.class, new IGuiContainerHandler<>() {
+            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull MeltingCrucibleScreen gui, double mouseX, double mouseY) {
+                int relX = (int) (mouseX - gui.getLeftPos());
+                int relY = (int) (mouseY - gui.getTopPos());
+                FluidStack fs = null;
+                Rect2i area = null;
+                if (relX >= 102 && relX < 118 && relY >= 21 && relY < 68) {
+                    fs = gui.getMenu().inputTank.getFluid();
+                    area = new Rect2i(gui.getLeftPos() + 102, gui.getTopPos() + 21, 16, 47);
+                } else if (relX >= 126 && relX < 142 && relY >= 21 && relY < 68) {
+                    fs = gui.getMenu().outputTank.getFluid();
+                    area = new Rect2i(gui.getLeftPos() + 126, gui.getTopPos() + 21, 16, 47);
+                }
+                if (fs != null && fs.getAmount() > 0) {
+                    Rect2i finalArea = area;
+                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typed -> new IClickableIngredient<FluidStack>() {
+                        @SuppressWarnings("removal")
+                        @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() {return typed;}
+
+                        @Override @NotNull public Rect2i getArea() {return finalArea;}
+                    });
+                }
+                return Optional.empty();
+            }
+
+            @Override @NotNull public Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull MeltingCrucibleScreen gui, double mouseX, double mouseY) {
+                List<IGuiClickableArea> areas = new ArrayList<>();
+                areas.add(createMeltingClickableArea(102, gui.getMenu().inputTank));
+                areas.add(createMeltingClickableArea(126, gui.getMenu().outputTank));
+                return areas;
+            }
+        });
     }
 
     private static IGuiClickableArea createAdvancedCokeOvenClickableArea() {
@@ -337,6 +371,20 @@ public class JEIIntegration implements IModPlugin {
             }
             @Override public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) {
                 recipesGui.showTypes(List.of(gui.isMelter ? JEIRecipeTypes.MELTING : JEIRecipeTypes.SOLAR_TOWER));
+            }
+        };
+    }
+
+    private static IGuiClickableArea createMeltingClickableArea(int x, IFluidTank tank) {
+        Rect2i area = new Rect2i(x, 21, 16, 47);
+        return new IGuiClickableArea() {
+            @Override @NotNull public Rect2i getArea() { return area; }
+            @Override public void getTooltip(@NotNull ITooltipBuilder tooltip) {
+                fillTooltip(tank.getFluid(), tank.getCapacity(), tooltip::add);
+                tooltip.add(Component.translatable("jei.tooltip.show.recipes"));
+            }
+            @Override public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) {
+                recipesGui.showTypes(List.of(JEIRecipeTypes.MELTING));
             }
         };
     }

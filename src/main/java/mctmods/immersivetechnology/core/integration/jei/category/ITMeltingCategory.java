@@ -24,11 +24,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ITSolarMelterCategory extends ITRecipeCategory<MeltingRecipe> {
+public class ITMeltingCategory extends ITRecipeCategory<MeltingRecipe> {
 
     private final IDrawableStatic tankOverlay;
 
-    public ITSolarMelterCategory(IGuiHelper helper) {
+    public ITMeltingCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.MELTING, "block.immersivetechnology.solar_melter");
 
         ResourceLocation background = ITLib.makeTextureLocation("solar");
