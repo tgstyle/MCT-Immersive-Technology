@@ -243,6 +243,30 @@ public class OneProbeHelper {
         }
     }
 
+
+    public static class MeltingCrucibleProvider implements IProbeInfoProvider {
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "melting_crucible"); }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
+            IMultiblockContext<?> ctx = getContext(level, data.getPos());
+            if (ctx == null) return;
+            if (ctx.getState() instanceof MeltingCrucibleLogic.State state) {
+                addFluidTankDisplay(probeInfo, state.tanks.input());
+                addFluidTankDisplay(probeInfo, state.tanks.output());
+                addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
+                FluidStack input = state.tanks.input().getFluid();
+                MeltingRecipe recipe = input.isEmpty() ? null : MeltingRecipe.findRecipe(level, input);
+                double workingLevel = recipe != null ? recipe.requiredTemp : MeltingCrucibleLogic.WORKING_HEAT_LEVEL;
+                addTemperature(probeInfo, state.heatLevel, workingLevel);
+
+                var queue = state.processor.getQueue();
+                if (!queue.isEmpty()) {
+                    probeInfo.text("Processing (" + queue.size() + " queued)");
+                }
+            }
+        }
+    }
+
     public static class SolarMelterProvider implements IProbeInfoProvider {
         @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "solar_melter"); }
 
@@ -303,29 +327,6 @@ public class OneProbeHelper {
             if (ctx == null) return;
             if (ctx.getState() instanceof SteelSheetmetalTankLogic.State state) {
                 addFluidTankDisplay(probeInfo, state.tank);
-            }
-        }
-    }
-
-    public static class MeltingCrucibleProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "melting_crucible"); }
-
-        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
-            IMultiblockContext<?> ctx = getContext(level, data.getPos());
-            if (ctx == null) return;
-            if (ctx.getState() instanceof MeltingCrucibleLogic.State state) {
-                addFluidTankDisplay(probeInfo, state.tanks.input());
-                addFluidTankDisplay(probeInfo, state.tanks.output());
-                addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
-                FluidStack input = state.tanks.input().getFluid();
-                MeltingRecipe recipe = input.isEmpty() ? null : MeltingRecipe.findRecipe(level, input);
-                double workingLevel = recipe != null ? recipe.requiredTemp : MeltingCrucibleLogic.WORKING_HEAT_LEVEL;
-                addTemperature(probeInfo, state.heatLevel, workingLevel);
-
-                var queue = state.processor.getQueue();
-                if (!queue.isEmpty()) {
-                    probeInfo.text("Processing (" + queue.size() + " queued)");
-                }
             }
         }
     }

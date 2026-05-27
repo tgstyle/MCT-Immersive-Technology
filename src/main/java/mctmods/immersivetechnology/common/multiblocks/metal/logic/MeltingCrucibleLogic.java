@@ -28,6 +28,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -118,20 +119,22 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         CompoundTag prevTanksNBT = state.tanks.toNBT();
         boolean wasActive = state.active;
 
+        FluidStack fs = state.tanks.input.getFluid();
+        MeltingRecipe recipe = fs.getAmount() > 0 ? MeltingRecipe.findRecipe(ctx.getLevel().getRawLevel(), fs) : null;
+        if (state.activeRecipe == null && state.activeRecipeId != null) { state.activeRecipe = MeltingRecipe.RECIPES.getById(ctx.getLevel().getRawLevel(), state.activeRecipeId); state.activeRecipeId = null; }
+        if (state.activeRecipe == null || !state.activeRecipe.input.testIgnoringAmount(fs)) { state.activeRecipe = recipe; }
+
         boolean shouldRun = state.rsState.isEnabled(ctx);
         int energyThisTick = state.heatLevel >= WORKING_HEAT_LEVEL ? ENERGY_PER_TICK_TO_MAINTAIN : ENERGY_PER_TICK_TO_HEAT;
         boolean heating = shouldRun && state.energy.extractEnergy(energyThisTick, true) >= energyThisTick;
         if (heating) { state.energy.extractEnergy(energyThisTick, false); }
         heatLogic(ctx, heating, state);
 
-        FluidStack fs = state.tanks.input.getFluid();
-        MeltingRecipe recipe = fs.getAmount() > 0 ? MeltingRecipe.findRecipe(ctx.getLevel().getRawLevel(), fs) : null;
-
-        boolean canProcess = shouldRun && recipe != null && state.heatLevel >= recipe.requiredTemp;
+        boolean canProcess = shouldRun && state.activeRecipe != null && state.heatLevel >= state.activeRecipe.requiredTemp;
         state.active = state.processor.tickServer(state, ctx.getLevel(), canProcess);
 
-        if (recipe != null) {
-            tryEnqueueProcess(state, ctx.getLevel().getRawLevel(), recipe);
+        if (state.activeRecipe != null) {
+            tryEnqueueProcess(state, ctx.getLevel().getRawLevel(), state.activeRecipe);
         }
 
         tryEmptyContainer(state.tanks.input, state.inventory);
@@ -153,7 +156,8 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         state.heatLevel -= getCooldownAmount(ctx);
         state.heatLevel = Math.max(state.heatLevel, 0);
         if (heating) { state.heatLevel += HEAT_GAIN_BASE; }
-        state.heatLevel = Math.min(state.heatLevel, WORKING_HEAT_LEVEL);
+        double maxHeat = state.activeRecipe != null ? state.activeRecipe.requiredTemp : WORKING_HEAT_LEVEL;
+        state.heatLevel = Math.min(state.heatLevel, maxHeat);
         if (prev != state.heatLevel) { ctx.markMasterDirty(); }
     }
 
@@ -227,6 +231,8 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         public boolean active;
         public BooleanSupplier isSoundPlaying = () -> false;
         public double heatLevel = 0.0;
+        public MeltingRecipe activeRecipe = null;
+        private ResourceLocation activeRecipeId;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -261,6 +267,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             nbt.put("inventory", inventory.serializeNBT());
             nbt.putBoolean("active", active);
             nbt.putDouble("heatLevel", heatLevel);
+            if (activeRecipe != null) { nbt.putString("activeRecipe", activeRecipe.getId().toString()); }
         }
 
         @Override public void readSaveNBT(CompoundTag nbt) {
@@ -270,6 +277,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             this.inventory.deserializeNBT(nbt.getCompound("inventory"));
             active = nbt.getBoolean("active");
             heatLevel = nbt.getDouble("heatLevel");
+            if (nbt.contains("activeRecipe")) { activeRecipeId = ResourceLocation.tryParse(nbt.getString("activeRecipe")); }
         }
 
         @Override public void writeSyncNBT(CompoundTag nbt) {
@@ -294,6 +302,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             nbt.put("energy", energy.serializeNBT());
             nbt.put("inventory", inventory.serializeNBT());
             nbt.putDouble("heatLevel", heatLevel);
+            if (activeRecipe != null) { nbt.putString("activeRecipe", activeRecipe.getId().toString()); }
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
@@ -303,6 +312,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             energy.deserializeNBT(nbt.get("energy"));
             inventory.deserializeNBT(nbt.getCompound("inventory"));
             heatLevel = nbt.getDouble("heatLevel");
+            if (nbt.contains("activeRecipe")) { activeRecipeId = ResourceLocation.tryParse(nbt.getString("activeRecipe")); }
         }
     }
 

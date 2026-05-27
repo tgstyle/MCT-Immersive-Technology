@@ -6,12 +6,14 @@ import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.client.gui.helper.ITInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.MeltingCrucibleMenu;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.MeltingCrucibleLogic;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -32,6 +34,16 @@ public class MeltingCrucibleScreen extends ITContainerScreen<MeltingCrucibleMenu
         );
     }
 
+    private double getMaxHeat() {
+        double workingHeat = MeltingCrucibleLogic.WORKING_HEAT_LEVEL;
+        FluidStack fs = menu.inputTank.getFluid();
+        if (fs.getAmount() <= 0) { return workingHeat; }
+        assert minecraft != null;
+        MeltingRecipe recipe = MeltingRecipe.findRecipe(minecraft.level, fs);
+        if (recipe == null) { return workingHeat; }
+        return recipe.requiredTemp;
+    }
+
     @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float f, int mx, int my) {
         int energyStored = menu.state.get(1);
         int energyMax = menu.state.get(2);
@@ -39,7 +51,8 @@ public class MeltingCrucibleScreen extends ITContainerScreen<MeltingCrucibleMenu
         graphics.blit(TEXTURE, leftPos + 16, topPos + 22 + (46 - stored), 176, 0, 7, stored);
 
         int heat = menu.state.get(3);
-        int heatBarSize = (int)(51 * (heat / (float) MeltingCrucibleLogic.WORKING_HEAT_LEVEL));
+        double max = getMaxHeat();
+        int heatBarSize = (int)(51 * Math.min(1.0, heat / max));
         graphics.blit(TEXTURE, leftPos + 30, topPos + 9, 176, 0, heatBarSize, 9);
     }
 
@@ -49,8 +62,9 @@ public class MeltingCrucibleScreen extends ITContainerScreen<MeltingCrucibleMenu
         }
         if (mouseX >= leftPos + 30 && mouseX < leftPos + 81 && mouseY >= topPos + 9 && mouseY < topPos + 18) {
             int internalHeat = menu.state.get(3);
+            double maxHeat = getMaxHeat();
             addLine.accept(Component.literal("Temperature"));
-            addLine.accept(Component.literal(String.format("%.0f/%.0f C", (double)internalHeat, MeltingCrucibleLogic.WORKING_HEAT_LEVEL)));
+            addLine.accept(Component.literal(String.format("%.0f/%.0f C", (double)internalHeat, maxHeat)));
         }
     }
 }
