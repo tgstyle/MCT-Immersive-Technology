@@ -11,3 +11,4 @@ Raffredda!
     - L'§lAcqua§r viene inserita in uno degli ingressi.
     - Il §lVapore di scarico§r viene inserito nell'altro ingresso.
     - L'§lAcqua§r esce da tutte le uscite.
+    - L'Efficienza dipende dal differenziale di temperatura con l'ambiente e dalle ostruzioni vicine.

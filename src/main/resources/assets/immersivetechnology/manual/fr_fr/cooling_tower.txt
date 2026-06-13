@@ -11,3 +11,4 @@ Rafraîchis !
     - L'§lEau§r est introduite dans une des entrées.
     - La §lVapeur d'échappement§r est introduite dans l'autre entrée.
     - L'§lEau§r sort par toutes les sorties.
+    - L'Efficacité dépend du différentiel de température avec l'environnement et les obstructions proches.

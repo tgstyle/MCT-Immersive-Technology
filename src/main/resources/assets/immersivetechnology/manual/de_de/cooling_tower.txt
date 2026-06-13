@@ -11,3 +11,4 @@ Abkühlen!
     - §lWasser§r wird an einem Eingang eingefüllt.
     - §lAuspuffdampf§r wird am anderen Eingang eingefüllt.
     - §lWasser§r wird an allen Ausgängen ausgegeben.
+    - Die Effizienz hängt vom Temperaturunterschied zur Umgebung und nahen Hindernissen ab.
