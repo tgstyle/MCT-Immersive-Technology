@@ -16,6 +16,7 @@ import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidO
 import mctmods.immersivetechnology.common.multiblocks.metal.process.RadiatorProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.RadiatorShape;
+import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
@@ -26,6 +27,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
@@ -62,6 +64,17 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
 
+    private double getBiomeSpeedMultiplier(IMultiblockContext<State> ctx) {
+        if (ITServerConfig.radiatorBiomeTempFactor <= 0.0D) return 1.0D;
+        Level level = ctx.getLevel().getRawLevel();
+        if (level.dimension() == Level.NETHER) return 0.0D;
+        BlockPos worldPos = ctx.getLevel().toAbsolute(BlockPos.ZERO);
+        Biome biome = level.getBiome(worldPos).value();
+        double temp = biome.getBaseTemperature();
+        double deviation = temp - 0.8D;
+        return 1.0D + (deviation * ITServerConfig.radiatorBiomeTempFactor);
+    }
+
     @Override
     public void tickServer(IMultiblockContext<State> ctx) {
         pumpOutputs(ctx);
@@ -72,9 +85,11 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
         boolean wasActive = state.active;
         boolean progressChanged = false;
 
+        double biomeMult = getBiomeSpeedMultiplier(ctx);
+
         for (int i = state.processQueue.size() - 1; i >= 0; i--) {
             RadiatorProcess process = state.processQueue.get(i);
-            process.tick(state);
+            process.tick(state, biomeMult);
             if (process.isComplete()) { state.processQueue.remove(i); }
         }
 

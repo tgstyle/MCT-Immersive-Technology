@@ -9,17 +9,18 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockL
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import com.google.common.collect.ImmutableList;
+import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.stone.process.CoolingTowerProcess;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.CoolingTowerShape;
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITParticles;
 import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -28,13 +29,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
@@ -46,8 +47,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.State>, IServerTickableComponent<CoolingTowerLogic.State>, IClientTickableComponent<CoolingTowerLogic.State>, ITPressurizedFluidOutput<CoolingTowerLogic.State> {
-    public static final int INPUT_TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
-    public static final int OUTPUT_TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
+    public static final int INPUT_TANK_CAPACITY = ITServerConfig.coolingTowerInputTankCapacity;
+    public static final int OUTPUT_TANK_CAPACITY = ITServerConfig.coolingTowerOutputTankCapacity;
+
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(CoolingTowerShape.DATA.pointsOfInterest);
 
     public static final List<BlockPos> FLUID_INPUT_POIS = getPosList("fluid_input");
@@ -69,6 +71,17 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1, state.tanks.output2); }
+
+    private double getBiomeSpeedMultiplier(IMultiblockContext<State> ctx) {
+        if (ITServerConfig.coolingTowerBiomeTempFactor <= 0.0D) return 1.0D;
+        Level level = ctx.getLevel().getRawLevel();
+        if (level.dimension() == Level.NETHER) return 0.0D;
+        BlockPos worldPos = ctx.getLevel().toAbsolute(BlockPos.ZERO);
+        Biome biome = level.getBiome(worldPos).value();
+        double temp = biome.getBaseTemperature();
+        double deviation = temp - 0.8D;
+        return 1.0D + (deviation * ITServerConfig.coolingTowerBiomeTempFactor);
+    }
 
     @Override public void tickClient(IMultiblockContext<CoolingTowerLogic.State> ctx) {
         CoolingTowerLogic.State state = ctx.getState();
@@ -110,9 +123,12 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         IMultiblockLevel mlevel = ctx.getLevel();
         Level level = mlevel.getRawLevel();
         boolean wasActive = state.active;
+
+        double biomeMult = getBiomeSpeedMultiplier(ctx);
+
         for (int i = state.processQueue.size() - 1; i >= 0; i--) {
             CoolingTowerProcess process = state.processQueue.get(i);
-            process.tick(state);
+            process.tick(state, biomeMult);
             if (process.isComplete()) { state.processQueue.remove(i); }
         }
         if (state.processQueue.size() < getProcessQueueMaxLength()) {

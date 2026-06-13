@@ -39,16 +39,12 @@ public class ITServerConfig {
     public static final ForgeConfigSpec.IntValue BOILER_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue BOILER_TANK_PROGRESS_LOSS_PER_TICK;
 
+    public static final ForgeConfigSpec.DoubleValue COOLING_TOWER_BIOME_TEMP_FACTOR;
+    public static final ForgeConfigSpec.IntValue COOLING_TOWER_INPUT_TANK_CAPACITY;
+    public static final ForgeConfigSpec.IntValue COOLING_TOWER_OUTPUT_TANK_CAPACITY;
+
     public static final ForgeConfigSpec.IntValue DISTILLER_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue DISTILLER_ENERGY_CAPACITY;
-
-    public static final ForgeConfigSpec.IntValue MELTING_CRUCIBLE_TANK_CAPACITY;
-    public static final ForgeConfigSpec.IntValue MELTING_CRUCIBLE_ENERGY_CAPACITY;
-    public static final ForgeConfigSpec.DoubleValue MELTING_CRUCIBLE_HEAT_WORKING_LEVEL;
-    public static final ForgeConfigSpec.DoubleValue MELTING_CRUCIBLE_HEAT_LOSS_MULTIPLIER;
-    public static final ForgeConfigSpec.DoubleValue MELTING_CRUCIBLE_HEAT_GAIN_BASE;
-    public static final ForgeConfigSpec.IntValue MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_HEAT;
-    public static final ForgeConfigSpec.IntValue MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_MAINTAIN;
 
     public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY;
@@ -68,6 +64,19 @@ public class ITServerConfig {
     public static final ForgeConfigSpec.IntValue HEAT_EXCHANGER_OUTPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue HEAT_EXCHANGER_ENERGY_CAPACITY;
     public static final ForgeConfigSpec.IntValue HEAT_EXCHANGER_ENERGY_MAX_IO;
+
+    public static final ForgeConfigSpec.IntValue MELTING_CRUCIBLE_TANK_CAPACITY;
+    public static final ForgeConfigSpec.IntValue MELTING_CRUCIBLE_ENERGY_CAPACITY;
+    public static final ForgeConfigSpec.DoubleValue MELTING_CRUCIBLE_HEAT_WORKING_LEVEL;
+    public static final ForgeConfigSpec.DoubleValue MELTING_CRUCIBLE_HEAT_LOSS_MULTIPLIER;
+    public static final ForgeConfigSpec.DoubleValue MELTING_CRUCIBLE_HEAT_GAIN_BASE;
+    public static final ForgeConfigSpec.IntValue MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_HEAT;
+    public static final ForgeConfigSpec.IntValue MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_MAINTAIN;
+
+    public static final ForgeConfigSpec.DoubleValue RADIATOR_BIOME_TEMP_FACTOR;
+    public static final ForgeConfigSpec.IntValue RADIATOR_INPUT_TANK_CAPACITY;
+    public static final ForgeConfigSpec.IntValue RADIATOR_OUTPUT_TANK_CAPACITY;
+    public static final ForgeConfigSpec.DoubleValue RADIATOR_SPEED_MULTIPLIER;
 
     public static final ForgeConfigSpec.DoubleValue SOLAR_MELTER_DAY_MIN_HEAT_LOSS;
     public static final ForgeConfigSpec.DoubleValue SOLAR_MELTER_LOSS_PER_SECTION_DROP;
@@ -95,10 +104,6 @@ public class ITServerConfig {
 
     public static final ForgeConfigSpec.IntValue STEEL_SHEETMETAL_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue STEEL_SHEETMETAL_TANK_TRANSFER_SPEED;
-
-    public static final ForgeConfigSpec.IntValue RADIATOR_INPUT_TANK_CAPACITY;
-    public static final ForgeConfigSpec.IntValue RADIATOR_OUTPUT_TANK_CAPACITY;
-    public static final ForgeConfigSpec.DoubleValue RADIATOR_SPEED_MULTIPLIER;
 
     public static DisassemblyMode disassemblyMode = DisassemblyMode.PROCESS_QUEUE;
 
@@ -129,16 +134,12 @@ public class ITServerConfig {
     public static int boilerTankCapacity = 24000;
     public static int boilerTankProgressLossPerTick = 1;
 
+    public static double coolingTowerBiomeTempFactor = 0.5D;
+    public static int coolingTowerInputTankCapacity = 24000;
+    public static int coolingTowerOutputTankCapacity = 24000;
+
     public static int distillerTankCapacity = 24000;
     public static int distillerEnergyCapacity = 32000;
-
-    public static int meltingCrucibleTankCapacity = 10000;
-    public static int meltingCrucibleEnergyCapacity = 50000;
-    public static double meltingCrucibleHeatWorkingLevel = 1000.0D;
-    public static double meltingCrucibleHeatLossMultiplier = 0.2D;
-    public static double meltingCrucibleHeatGainBase = 0.55D;
-    public static int meltingCrucibleEnergyPerTickToHeat = 1000;
-    public static int meltingCrucibleEnergyPerTickToMaintain = 512;
 
     public static int electrolyticCrucibleBatteryTankCapacity = 10000;
     public static int electrolyticCrucibleBatteryEnergyCapacity = 16000;
@@ -158,6 +159,19 @@ public class ITServerConfig {
     public static int heatExchangerOutputTankCapacity = 10000;
     public static int heatExchangerEnergyCapacity = 2048;
     public static int heatExchangerEnergyMaxIO = 1024;
+
+    public static int meltingCrucibleTankCapacity = 10000;
+    public static int meltingCrucibleEnergyCapacity = 50000;
+    public static double meltingCrucibleHeatWorkingLevel = 1000.0D;
+    public static double meltingCrucibleHeatLossMultiplier = 0.2D;
+    public static double meltingCrucibleHeatGainBase = 0.55D;
+    public static int meltingCrucibleEnergyPerTickToHeat = 1000;
+    public static int meltingCrucibleEnergyPerTickToMaintain = 512;
+
+    public static int radiatorInputTankCapacity = 8000;
+    public static int radiatorOutputTankCapacity = 8000;
+    public static double radiatorSpeedMultiplier = 1.0D;
+    public static double radiatorBiomeTempFactor = 0.5D;
 
     public static double solarMelterDayMinHeatLoss = 0.0D;
     public static double solarMelterLossPerSectionDrop = 0.035D;
@@ -186,205 +200,135 @@ public class ITServerConfig {
     public static int steelSheetmetalTankCapacity = 2048000;
     public static int steelSheetmetalTankTransferSpeed = 1000;
 
-    public static int radiatorInputTankCapacity = 8000;
-    public static int radiatorOutputTankCapacity = 8000;
-    public static double radiatorSpeedMultiplier = 1.0D;
-
     static {
         BUILDER.push("multiblocks");
 
-        DISASSEMBLY_MODE = BUILDER
-                .defineEnum("disassemblyMode", DisassemblyMode.PROCESS_QUEUE);
-
-        CONFIG_BURN_TIME_DIVIDER = BUILDER
-                .defineInRange("burnTimeDivider", 10, 1, Integer.MAX_VALUE);
+        DISASSEMBLY_MODE = BUILDER.defineEnum("disassemblyMode", DisassemblyMode.PROCESS_QUEUE);
+        CONFIG_BURN_TIME_DIVIDER = BUILDER.defineInRange("burnTimeDivider", 10, 1, Integer.MAX_VALUE);
+        CONFIG_CREATIVE_BARREL_OUTPUT_AMOUNT = BUILDER.defineInRange("creativeBarrelOutputAmount", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
 
         BUILDER.push("advanced_coke_oven");
-        ADVANCED_COKE_OVEN_SPEED_BASE = BUILDER
-                .defineInRange("speed_base", 1.0D, 0.1D, 10.0D);
-        ADVANCED_COKE_OVEN_BASEHEATER_SPEED_INCREASE = BUILDER
-                .defineInRange("baseheater_speed_increase", 0.25D, 0.0D, 5.0D);
-        ADVANCED_COKE_OVEN_BASEHEATER_SPEED_MULTIPLIER = BUILDER
-                .defineInRange("baseheater_speed_multiplier", 1.25D, 1.0D, 5.0D);
-        ADVANCED_COKE_OVEN_BASEHEATER_MAX_ENERGY = BUILDER
-                .defineInRange("baseheater_max_energy", 8000, 1000, Integer.MAX_VALUE);
-        ADVANCED_COKE_OVEN_BASEHEATER_ENERGY_CONSUMPTION = BUILDER
-                .defineInRange("baseheater_energy_consumption", 32, 1, 1024);
+        ADVANCED_COKE_OVEN_SPEED_BASE = BUILDER.defineInRange("speed_base", 1.0D, 0.1D, 10.0D);
+        ADVANCED_COKE_OVEN_BASEHEATER_SPEED_INCREASE = BUILDER.defineInRange("baseheater_speed_increase", 0.25D, 0.0D, 5.0D);
+        ADVANCED_COKE_OVEN_BASEHEATER_SPEED_MULTIPLIER = BUILDER.defineInRange("baseheater_speed_multiplier", 1.25D, 1.0D, 5.0D);
+        ADVANCED_COKE_OVEN_BASEHEATER_MAX_ENERGY = BUILDER.defineInRange("baseheater_max_energy", 8000, 1000, Integer.MAX_VALUE);
+        ADVANCED_COKE_OVEN_BASEHEATER_ENERGY_CONSUMPTION = BUILDER.defineInRange("baseheater_energy_consumption", 32, 1, 1024);
         BUILDER.pop();
 
-        ALTERNATOR_POWER_FACTOR = BUILDER
-                .defineInRange("alternator_power_factor", 1.0D, 0.0D, 1000.0D);
-        ALTERNATOR_ENERGY_CAPACITY = BUILDER
-                .defineInRange("alternator_energy_capacity", 1200000, 1, Integer.MAX_VALUE);
-        ALTERNATOR_BASE_MASS = BUILDER
-                .defineInRange("alternator_base_mass", 2.0D, 0.0D, Double.MAX_VALUE);
-        ALTERNATOR_FRICTION = BUILDER
-                .defineInRange("alternator_friction", 0.0D, 0.0D, Double.MAX_VALUE);
-        ALTERNATOR_MAX_OUTPUT = BUILDER
-                .defineInRange("alternator_max_output", 12288, 0, Integer.MAX_VALUE);
+        ALTERNATOR_POWER_FACTOR = BUILDER.defineInRange("alternator_power_factor", 1.0D, 0.0D, 1000.0D);
+        ALTERNATOR_ENERGY_CAPACITY = BUILDER.defineInRange("alternator_energy_capacity", 1200000, 1, Integer.MAX_VALUE);
+        ALTERNATOR_BASE_MASS = BUILDER.defineInRange("alternator_base_mass", 2.0D, 0.0D, Double.MAX_VALUE);
+        ALTERNATOR_FRICTION = BUILDER.defineInRange("alternator_friction", 0.0D, 0.0D, Double.MAX_VALUE);
+        ALTERNATOR_MAX_OUTPUT = BUILDER.defineInRange("alternator_max_output", 12288, 0, Integer.MAX_VALUE);
 
         BUILDER.push("boiler_liquid");
-        BOILER_LIQUID_TANK_CAPACITY = BUILDER
-                .defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
-        BOILER_LIQUID_HEAT_LOSS_PER_TICK = BUILDER
-                .defineInRange("heat_loss_per_tick", 0.2D, 0.0D, Double.MAX_VALUE);
-        BOILER_LIQUID_PILOT_HEAT = BUILDER
-                .defineInRange("pilot_heat", 20.0D, 0.0D, Double.MAX_VALUE);
+        BOILER_LIQUID_TANK_CAPACITY = BUILDER.defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
+        BOILER_LIQUID_HEAT_LOSS_PER_TICK = BUILDER.defineInRange("heat_loss_per_tick", 0.2D, 0.0D, Double.MAX_VALUE);
+        BOILER_LIQUID_PILOT_HEAT = BUILDER.defineInRange("pilot_heat", 20.0D, 0.0D, Double.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.push("boiler_solid");
-        BOILER_SOLID_HEAT_LOSS_PER_TICK = BUILDER
-                .defineInRange("heat_loss_per_tick", 0.2D, 0.0D, Double.MAX_VALUE);
-        BOILER_SOLID_PILOT_HEAT = BUILDER
-                .defineInRange("pilot_heat", 20.0D, 0.0D, Double.MAX_VALUE);
-        BOILER_SOLID_PILOT_MULTIPLIER = BUILDER
-                .defineInRange("pilot_multiplier", 15, 1, Integer.MAX_VALUE);
-        BOILER_SOLID_DEFAULT_HEAT_PER_TICK = BUILDER
-                .defineInRange("default_heat_per_tick", 0.1D, 0.0D, Double.MAX_VALUE);
+        BOILER_SOLID_HEAT_LOSS_PER_TICK = BUILDER.defineInRange("heat_loss_per_tick", 0.2D, 0.0D, Double.MAX_VALUE);
+        BOILER_SOLID_PILOT_HEAT = BUILDER.defineInRange("pilot_heat", 20.0D, 0.0D, Double.MAX_VALUE);
+        BOILER_SOLID_PILOT_MULTIPLIER = BUILDER.defineInRange("pilot_multiplier", 15, 1, Integer.MAX_VALUE);
+        BOILER_SOLID_DEFAULT_HEAT_PER_TICK = BUILDER.defineInRange("default_heat_per_tick", 0.1D, 0.0D, Double.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.push("boiler_tank");
-        BOILER_TANK_CAPACITY = BUILDER
-                .defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
-        BOILER_TANK_PROGRESS_LOSS_PER_TICK = BUILDER
-                .defineInRange("progress_loss_per_tick", 1, 0, Integer.MAX_VALUE);
+        BOILER_TANK_CAPACITY = BUILDER.defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
+        BOILER_TANK_PROGRESS_LOSS_PER_TICK = BUILDER.defineInRange("progress_loss_per_tick", 1, 0, Integer.MAX_VALUE);
+        BUILDER.pop();
+
+        BUILDER.push("cooling_tower");
+        COOLING_TOWER_INPUT_TANK_CAPACITY = BUILDER.defineInRange("input_tank_capacity", 24000, 1000, Integer.MAX_VALUE);
+        COOLING_TOWER_OUTPUT_TANK_CAPACITY = BUILDER.defineInRange("output_tank_capacity", 24000, 1000, Integer.MAX_VALUE);
+        COOLING_TOWER_BIOME_TEMP_FACTOR = BUILDER
+                .comment("Biome temperature effect strength on cooling tower speed (0 = disabled). Cold biomes faster, hot slower. Neutral ~0.8.")
+                .defineInRange("biome_temp_factor", 0.5D, 0.0D, 2.0D);
         BUILDER.pop();
 
         BUILDER.push("distiller");
-        DISTILLER_TANK_CAPACITY = BUILDER
-                .defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
-        DISTILLER_ENERGY_CAPACITY = BUILDER
-                .defineInRange("energy_capacity", 32000, 1000, Integer.MAX_VALUE);
+        DISTILLER_TANK_CAPACITY = BUILDER.defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
+        DISTILLER_ENERGY_CAPACITY = BUILDER.defineInRange("energy_capacity", 32000, 1000, Integer.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.push("electrolytic_crucible_battery");
-        ELECTROLYTIC_CRUCIBLE_BATTERY_TANK_CAPACITY = BUILDER
-                .defineInRange("tank_capacity", 10000, 1000, Integer.MAX_VALUE);
-        ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY = BUILDER
-                .defineInRange("energy_capacity", 16000, 1000, Integer.MAX_VALUE);
-        ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_INPUT = BUILDER
-                .defineInRange("energy_max_input", 4096, 256, 65536);
+        ELECTROLYTIC_CRUCIBLE_BATTERY_TANK_CAPACITY = BUILDER.defineInRange("tank_capacity", 10000, 1000, Integer.MAX_VALUE);
+        ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY = BUILDER.defineInRange("energy_capacity", 16000, 1000, Integer.MAX_VALUE);
+        ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_INPUT = BUILDER.defineInRange("energy_max_input", 4096, 256, 65536);
         BUILDER.pop();
 
         BUILDER.push("gas_turbine");
-        GAS_TURBINE_TANK_CAPACITY = BUILDER
-                .defineInRange("tank_capacity", 12000, 1000, Integer.MAX_VALUE);
-        GAS_TURBINE_ENERGY_CAPACITY_HV = BUILDER
-                .defineInRange("energy_capacity_hv", 8192, 1000, Integer.MAX_VALUE);
-        GAS_TURBINE_ENERGY_CAPACITY_MV = BUILDER
-                .defineInRange("energy_capacity_mv", 2048, 100, Integer.MAX_VALUE);
-        GAS_TURBINE_STARTER_CONSUMPTION = BUILDER
-                .defineInRange("starter_consumption", 4096, 0, Integer.MAX_VALUE);
-        GAS_TURBINE_SPARKPLUG_CONSUMPTION = BUILDER
-                .defineInRange("sparkplug_consumption", 1024, 0, Integer.MAX_VALUE);
-        GAS_TURBINE_BASE_MASS = BUILDER
-                .defineInRange("base_mass", 8.0D, 0.0D, Double.MAX_VALUE);
-        GAS_TURBINE_DRIVE_TORQUE = BUILDER
-                .defineInRange("drive_torque", 30.0D, 0.0D, Double.MAX_VALUE);
-        GAS_TURBINE_FRICTION = BUILDER
-                .defineInRange("friction", 60.0D, 0.0D, Double.MAX_VALUE);
-        GAS_TURBINE_MAX_SPEED_FACTOR = BUILDER
-                .defineInRange("max_speed_factor", 0.5D, 0.01D, 1.0D);
+        GAS_TURBINE_TANK_CAPACITY = BUILDER.defineInRange("tank_capacity", 12000, 1000, Integer.MAX_VALUE);
+        GAS_TURBINE_ENERGY_CAPACITY_HV = BUILDER.defineInRange("energy_capacity_hv", 8192, 1000, Integer.MAX_VALUE);
+        GAS_TURBINE_ENERGY_CAPACITY_MV = BUILDER.defineInRange("energy_capacity_mv", 2048, 100, Integer.MAX_VALUE);
+        GAS_TURBINE_STARTER_CONSUMPTION = BUILDER.defineInRange("starter_consumption", 4096, 0, Integer.MAX_VALUE);
+        GAS_TURBINE_SPARKPLUG_CONSUMPTION = BUILDER.defineInRange("sparkplug_consumption", 1024, 0, Integer.MAX_VALUE);
+        GAS_TURBINE_BASE_MASS = BUILDER.defineInRange("base_mass", 8.0D, 0.0D, Double.MAX_VALUE);
+        GAS_TURBINE_DRIVE_TORQUE = BUILDER.defineInRange("drive_torque", 30.0D, 0.0D, Double.MAX_VALUE);
+        GAS_TURBINE_FRICTION = BUILDER.defineInRange("friction", 60.0D, 0.0D, Double.MAX_VALUE);
+        GAS_TURBINE_MAX_SPEED_FACTOR = BUILDER.defineInRange("max_speed_factor", 0.5D, 0.01D, 1.0D);
         BUILDER.pop();
 
         BUILDER.push("heat_exchanger");
-        HEAT_EXCHANGER_INPUT_TANK_CAPACITY = BUILDER
-                .defineInRange("input_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
-        HEAT_EXCHANGER_OUTPUT_TANK_CAPACITY = BUILDER
-                .defineInRange("output_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
-        HEAT_EXCHANGER_ENERGY_CAPACITY = BUILDER
-                .defineInRange("energy_capacity", 2048, 1000, Integer.MAX_VALUE);
-        HEAT_EXCHANGER_ENERGY_MAX_IO = BUILDER
-                .defineInRange("energy_max_io", 1024, 0, Integer.MAX_VALUE);
+        HEAT_EXCHANGER_INPUT_TANK_CAPACITY = BUILDER.defineInRange("input_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
+        HEAT_EXCHANGER_OUTPUT_TANK_CAPACITY = BUILDER.defineInRange("output_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
+        HEAT_EXCHANGER_ENERGY_CAPACITY = BUILDER.defineInRange("energy_capacity", 2048, 1000, Integer.MAX_VALUE);
+        HEAT_EXCHANGER_ENERGY_MAX_IO = BUILDER.defineInRange("energy_max_io", 1024, 0, Integer.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.push("melting_crucible");
-        MELTING_CRUCIBLE_TANK_CAPACITY = BUILDER
-                .defineInRange("tank_capacity", 10000, 1000, Integer.MAX_VALUE);
-        MELTING_CRUCIBLE_ENERGY_CAPACITY = BUILDER
-                .defineInRange("energy_capacity", 50000, 1000, Integer.MAX_VALUE);
-        MELTING_CRUCIBLE_HEAT_WORKING_LEVEL = BUILDER
-                .defineInRange("heat_workingLevel", 1000.0D, 100.0D, Double.MAX_VALUE);
-        MELTING_CRUCIBLE_HEAT_LOSS_MULTIPLIER = BUILDER
-                .defineInRange("heat_loss_multiplier", 0.2D, 0.0D, Double.MAX_VALUE);
-        MELTING_CRUCIBLE_HEAT_GAIN_BASE = BUILDER
-                .defineInRange("heat_gain_base", 0.55D, 0.1D, Double.MAX_VALUE);
-        MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_HEAT = BUILDER
-                .defineInRange("energy_per_tick_heating", 1000, 32, Integer.MAX_VALUE);
-        MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_MAINTAIN = BUILDER
-                .defineInRange("energy_per_tick_maintain", 512, 16, Integer.MAX_VALUE);
+        MELTING_CRUCIBLE_TANK_CAPACITY = BUILDER.defineInRange("tank_capacity", 10000, 1000, Integer.MAX_VALUE);
+        MELTING_CRUCIBLE_ENERGY_CAPACITY = BUILDER.defineInRange("energy_capacity", 50000, 1000, Integer.MAX_VALUE);
+        MELTING_CRUCIBLE_HEAT_WORKING_LEVEL = BUILDER.defineInRange("heat_workingLevel", 1000.0D, 100.0D, Double.MAX_VALUE);
+        MELTING_CRUCIBLE_HEAT_LOSS_MULTIPLIER = BUILDER.defineInRange("heat_loss_multiplier", 0.2D, 0.0D, Double.MAX_VALUE);
+        MELTING_CRUCIBLE_HEAT_GAIN_BASE = BUILDER.defineInRange("heat_gain_base", 0.55D, 0.1D, Double.MAX_VALUE);
+        MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_HEAT = BUILDER.defineInRange("energy_per_tick_heating", 1000, 32, Integer.MAX_VALUE);
+        MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_MAINTAIN = BUILDER.defineInRange("energy_per_tick_maintain", 512, 16, Integer.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.push("radiator");
-        RADIATOR_INPUT_TANK_CAPACITY = BUILDER
-                .defineInRange("input_tank_capacity", 8000, 1000, Integer.MAX_VALUE);
-        RADIATOR_OUTPUT_TANK_CAPACITY = BUILDER
-                .defineInRange("output_tank_capacity", 8000, 1000, Integer.MAX_VALUE);
-        RADIATOR_SPEED_MULTIPLIER = BUILDER
-                .defineInRange("speed_multiplier", 1.0D, 0.1D, 10.0D);
+        RADIATOR_INPUT_TANK_CAPACITY = BUILDER.defineInRange("input_tank_capacity", 8000, 1000, Integer.MAX_VALUE);
+        RADIATOR_OUTPUT_TANK_CAPACITY = BUILDER.defineInRange("output_tank_capacity", 8000, 1000, Integer.MAX_VALUE);
+        RADIATOR_SPEED_MULTIPLIER = BUILDER.defineInRange("speed_multiplier", 1.0D, 0.1D, 10.0D);
+        RADIATOR_BIOME_TEMP_FACTOR = BUILDER
+                .comment("Biome temperature effect strength on radiator speed (0 = disabled). Cold biomes faster, hot slower. Neutral ~0.8.")
+                .defineInRange("biome_temp_factor", 0.5D, 0.0D, 2.0D);
         BUILDER.pop();
 
         BUILDER.push("solar_melter");
-        SOLAR_MELTER_DAY_MIN_HEAT_LOSS = BUILDER
-                .defineInRange("day_min_heat_loss", 0.0D, 0.0D, Double.MAX_VALUE);
-        SOLAR_MELTER_LOSS_PER_SECTION_DROP = BUILDER
-                .defineInRange("loss_per_section_drop", 0.035D, 0.0D, Double.MAX_VALUE);
-        SOLAR_MELTER_TEMP_DEPENDENT_LOSS_FACTOR = BUILDER
-                .defineInRange("temp_dependent_loss_factor", 0.00036D, 0.0D, Double.MAX_VALUE);
-        SOLAR_MELTER_HEAT_INCREASE_FACTOR = BUILDER
-                .defineInRange("heat_increase_factor", 0.00568D, 0.0D, Double.MAX_VALUE);
-        SOLAR_MELTER_TEMP_TO_MIN_REFLECTORS_DIVISOR = BUILDER
-                .defineInRange("temp_to_min_reflectors_divisor", 25.0D, 1.0D, Double.MAX_VALUE);
-        SOLAR_MELTER_REFLECTOR_TIER_OFFSET = BUILDER
-                .defineInRange("reflector_tier_offset", 4.0D, 0.0D, Double.MAX_VALUE);
-        SOLAR_MELTER_PROGRESS_LOSS_OFF_TEMP = BUILDER
-                .defineInRange("progress_loss_off_temp", 2, 0, Integer.MAX_VALUE);
-        SOLAR_MELTER_SPEED_MULTIPLIER = BUILDER
-                .defineInRange("speed_multiplier", 1.0D, 0.01D, 10.0D);
+        SOLAR_MELTER_DAY_MIN_HEAT_LOSS = BUILDER.defineInRange("day_min_heat_loss", 0.0D, 0.0D, Double.MAX_VALUE);
+        SOLAR_MELTER_LOSS_PER_SECTION_DROP = BUILDER.defineInRange("loss_per_section_drop", 0.035D, 0.0D, Double.MAX_VALUE);
+        SOLAR_MELTER_TEMP_DEPENDENT_LOSS_FACTOR = BUILDER.defineInRange("temp_dependent_loss_factor", 0.00036D, 0.0D, Double.MAX_VALUE);
+        SOLAR_MELTER_HEAT_INCREASE_FACTOR = BUILDER.defineInRange("heat_increase_factor", 0.00568D, 0.0D, Double.MAX_VALUE);
+        SOLAR_MELTER_TEMP_TO_MIN_REFLECTORS_DIVISOR = BUILDER.defineInRange("temp_to_min_reflectors_divisor", 25.0D, 1.0D, Double.MAX_VALUE);
+        SOLAR_MELTER_REFLECTOR_TIER_OFFSET = BUILDER.defineInRange("reflector_tier_offset", 4.0D, 0.0D, Double.MAX_VALUE);
+        SOLAR_MELTER_PROGRESS_LOSS_OFF_TEMP = BUILDER.defineInRange("progress_loss_off_temp", 2, 0, Integer.MAX_VALUE);
+        SOLAR_MELTER_SPEED_MULTIPLIER = BUILDER.defineInRange("speed_multiplier", 1.0D, 0.01D, 10.0D);
         BUILDER.pop();
 
         BUILDER.push("solar_tower");
-        SOLAR_TOWER_DAY_MIN_HEAT_LOSS = BUILDER
-                .defineInRange("day_min_heat_loss", 0.0D, 0.0D, Double.MAX_VALUE);
-        SOLAR_TOWER_LOSS_PER_SECTION_DROP = BUILDER
-                .defineInRange("loss_per_section_drop", 0.035D, 0.0D, Double.MAX_VALUE);
-        SOLAR_TOWER_TEMP_DEPENDENT_LOSS_FACTOR = BUILDER
-                .defineInRange("temp_dependent_loss_factor", 0.00036D, 0.0D, Double.MAX_VALUE);
-        SOLAR_TOWER_HEAT_INCREASE_FACTOR = BUILDER
-                .defineInRange("heat_increase_factor", 0.00568D, 0.0D, Double.MAX_VALUE);
-        SOLAR_TOWER_TEMP_TO_MIN_REFLECTORS_DIVISOR = BUILDER
-                .defineInRange("temp_to_min_reflectors_divisor", 25.0D, 1.0D, Double.MAX_VALUE);
-        SOLAR_TOWER_REFLECTOR_TIER_OFFSET = BUILDER
-                .defineInRange("reflector_tier_offset", 4.0D, 0.0D, Double.MAX_VALUE);
-        SOLAR_TOWER_PROGRESS_LOSS_OFF_TEMP = BUILDER
-                .defineInRange("progress_loss_off_temp", 2, 0, Integer.MAX_VALUE);
-        SOLAR_TOWER_SPEED_MULTIPLIER = BUILDER
-                .defineInRange("speed_multiplier", 1.0D, 0.01D, 10.0D);
+        SOLAR_TOWER_DAY_MIN_HEAT_LOSS = BUILDER.defineInRange("day_min_heat_loss", 0.0D, 0.0D, Double.MAX_VALUE);
+        SOLAR_TOWER_LOSS_PER_SECTION_DROP = BUILDER.defineInRange("loss_per_section_drop", 0.035D, 0.0D, Double.MAX_VALUE);
+        SOLAR_TOWER_TEMP_DEPENDENT_LOSS_FACTOR = BUILDER.defineInRange("temp_dependent_loss_factor", 0.00036D, 0.0D, Double.MAX_VALUE);
+        SOLAR_TOWER_HEAT_INCREASE_FACTOR = BUILDER.defineInRange("heat_increase_factor", 0.00568D, 0.0D, Double.MAX_VALUE);
+        SOLAR_TOWER_TEMP_TO_MIN_REFLECTORS_DIVISOR = BUILDER.defineInRange("temp_to_min_reflectors_divisor", 25.0D, 1.0D, Double.MAX_VALUE);
+        SOLAR_TOWER_REFLECTOR_TIER_OFFSET = BUILDER.defineInRange("reflector_tier_offset", 4.0D, 0.0D, Double.MAX_VALUE);
+        SOLAR_TOWER_PROGRESS_LOSS_OFF_TEMP = BUILDER.defineInRange("progress_loss_off_temp", 2, 0, Integer.MAX_VALUE);
+        SOLAR_TOWER_SPEED_MULTIPLIER = BUILDER.defineInRange("speed_multiplier", 1.0D, 0.01D, 10.0D);
         BUILDER.pop();
 
         BUILDER.push("steam_turbine");
-        STEAM_TURBINE_TANK_CAPACITY = BUILDER
-                .defineInRange("tank_capacity", 12000, 1000, Integer.MAX_VALUE);
-        STEAM_TURBINE_BASE_MASS = BUILDER
-                .defineInRange("base_mass", 10.0D, 0.0D, Double.MAX_VALUE);
-        STEAM_TURBINE_DRIVE_TORQUE = BUILDER
-                .defineInRange("drive_torque", 360.0D, 0.0D, Double.MAX_VALUE);
-        STEAM_TURBINE_FRICTION = BUILDER
-                .defineInRange("friction", 0.0D, 0.0D, Double.MAX_VALUE);
-        STEAM_TURBINE_MAX_SPEED_FACTOR = BUILDER
-                .defineInRange("max_speed_factor", 1.0D, 0.01D, 1.0D);
-        BUILDER.pop();
-
-        BUILDER.push("barrel_creative");
-        CONFIG_CREATIVE_BARREL_OUTPUT_AMOUNT = BUILDER
-                .defineInRange("creativeBarrelOutputAmount", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
+        STEAM_TURBINE_TANK_CAPACITY = BUILDER.defineInRange("tank_capacity", 12000, 1000, Integer.MAX_VALUE);
+        STEAM_TURBINE_BASE_MASS = BUILDER.defineInRange("base_mass", 10.0D, 0.0D, Double.MAX_VALUE);
+        STEAM_TURBINE_DRIVE_TORQUE = BUILDER.defineInRange("drive_torque", 360.0D, 0.0D, Double.MAX_VALUE);
+        STEAM_TURBINE_FRICTION = BUILDER.defineInRange("friction", 0.0D, 0.0D, Double.MAX_VALUE);
+        STEAM_TURBINE_MAX_SPEED_FACTOR = BUILDER.defineInRange("max_speed_factor", 1.0D, 0.01D, 1.0D);
         BUILDER.pop();
 
         BUILDER.push("steel_sheetmetal_tank");
-        STEEL_SHEETMETAL_TANK_CAPACITY = BUILDER
-                .defineInRange("capacity", 2048000, 1000, Integer.MAX_VALUE);
-        STEEL_SHEETMETAL_TANK_TRANSFER_SPEED = BUILDER
-                .defineInRange("transfer_speed", 1000, 1, Integer.MAX_VALUE);
+        STEEL_SHEETMETAL_TANK_CAPACITY = BUILDER.defineInRange("capacity", 2048000, 1000, Integer.MAX_VALUE);
+        STEEL_SHEETMETAL_TANK_TRANSFER_SPEED = BUILDER.defineInRange("transfer_speed", 1000, 1, Integer.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.pop();
@@ -423,16 +367,12 @@ public class ITServerConfig {
             boilerTankCapacity = BOILER_TANK_CAPACITY.get();
             boilerTankProgressLossPerTick = BOILER_TANK_PROGRESS_LOSS_PER_TICK.get();
 
+            coolingTowerInputTankCapacity = COOLING_TOWER_INPUT_TANK_CAPACITY.get();
+            coolingTowerOutputTankCapacity = COOLING_TOWER_OUTPUT_TANK_CAPACITY.get();
+            coolingTowerBiomeTempFactor = COOLING_TOWER_BIOME_TEMP_FACTOR.get();
+
             distillerTankCapacity = DISTILLER_TANK_CAPACITY.get();
             distillerEnergyCapacity = DISTILLER_ENERGY_CAPACITY.get();
-
-            meltingCrucibleTankCapacity = MELTING_CRUCIBLE_TANK_CAPACITY.get();
-            meltingCrucibleEnergyCapacity = MELTING_CRUCIBLE_ENERGY_CAPACITY.get();
-            meltingCrucibleHeatWorkingLevel = MELTING_CRUCIBLE_HEAT_WORKING_LEVEL.get();
-            meltingCrucibleHeatLossMultiplier = MELTING_CRUCIBLE_HEAT_LOSS_MULTIPLIER.get();
-            meltingCrucibleHeatGainBase = MELTING_CRUCIBLE_HEAT_GAIN_BASE.get();
-            meltingCrucibleEnergyPerTickToHeat = MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_HEAT.get();
-            meltingCrucibleEnergyPerTickToMaintain = MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_MAINTAIN.get();
 
             electrolyticCrucibleBatteryTankCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_TANK_CAPACITY.get();
             electrolyticCrucibleBatteryEnergyCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY.get();
@@ -452,6 +392,19 @@ public class ITServerConfig {
             heatExchangerOutputTankCapacity = HEAT_EXCHANGER_OUTPUT_TANK_CAPACITY.get();
             heatExchangerEnergyCapacity = HEAT_EXCHANGER_ENERGY_CAPACITY.get();
             heatExchangerEnergyMaxIO = HEAT_EXCHANGER_ENERGY_MAX_IO.get();
+
+            meltingCrucibleTankCapacity = MELTING_CRUCIBLE_TANK_CAPACITY.get();
+            meltingCrucibleEnergyCapacity = MELTING_CRUCIBLE_ENERGY_CAPACITY.get();
+            meltingCrucibleHeatWorkingLevel = MELTING_CRUCIBLE_HEAT_WORKING_LEVEL.get();
+            meltingCrucibleHeatLossMultiplier = MELTING_CRUCIBLE_HEAT_LOSS_MULTIPLIER.get();
+            meltingCrucibleHeatGainBase = MELTING_CRUCIBLE_HEAT_GAIN_BASE.get();
+            meltingCrucibleEnergyPerTickToHeat = MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_HEAT.get();
+            meltingCrucibleEnergyPerTickToMaintain = MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_MAINTAIN.get();
+
+            radiatorInputTankCapacity = RADIATOR_INPUT_TANK_CAPACITY.get();
+            radiatorOutputTankCapacity = RADIATOR_OUTPUT_TANK_CAPACITY.get();
+            radiatorSpeedMultiplier = RADIATOR_SPEED_MULTIPLIER.get();
+            radiatorBiomeTempFactor = RADIATOR_BIOME_TEMP_FACTOR.get();
 
             solarMelterDayMinHeatLoss = SOLAR_MELTER_DAY_MIN_HEAT_LOSS.get();
             solarMelterLossPerSectionDrop = SOLAR_MELTER_LOSS_PER_SECTION_DROP.get();
@@ -479,10 +432,6 @@ public class ITServerConfig {
 
             steelSheetmetalTankCapacity = STEEL_SHEETMETAL_TANK_CAPACITY.get();
             steelSheetmetalTankTransferSpeed = STEEL_SHEETMETAL_TANK_TRANSFER_SPEED.get();
-
-            radiatorInputTankCapacity = RADIATOR_INPUT_TANK_CAPACITY.get();
-            radiatorOutputTankCapacity = RADIATOR_OUTPUT_TANK_CAPACITY.get();
-            radiatorSpeedMultiplier = RADIATOR_SPEED_MULTIPLIER.get();
         }
     }
 

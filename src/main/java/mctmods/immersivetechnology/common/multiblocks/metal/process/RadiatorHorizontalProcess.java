@@ -14,6 +14,10 @@ public class RadiatorHorizontalProcess {
     }
 
     public void tick(RadiatorHorizontalLogic.State state) {
+        tick(state, 1.0D);
+    }
+
+    public void tick(RadiatorHorizontalLogic.State state, double speedMult) {
         if (ticksProcessed >= recipe.totalProcessTime) return;
 
         if (ticksProcessed == 0) {
@@ -24,17 +28,20 @@ public class RadiatorHorizontalProcess {
             }
         }
 
-        int perTickOut = recipe.fluidOutput.getAmount() / recipe.totalProcessTime;
-        if (!recipe.fluidOutput.isEmpty()) {
-            state.tanks.output().fill(new FluidStack(recipe.fluidOutput.getFluid(), perTickOut), FluidAction.EXECUTE);
-        }
+        int advance = (int) Math.max(1, speedMult);
+        for (int i = 0; i < advance && ticksProcessed < recipe.totalProcessTime; i++) {
+            int perTickOut = recipe.fluidOutput.getAmount() / recipe.totalProcessTime;
+            if (!recipe.fluidOutput.isEmpty()) {
+                state.tanks.output().fill(new FluidStack(recipe.fluidOutput.getFluid(), perTickOut), FluidAction.EXECUTE);
+            }
 
-        ticksProcessed++;
+            ticksProcessed++;
 
-        if (ticksProcessed == recipe.totalProcessTime) {
-            int remainder = recipe.fluidOutput.getAmount() % recipe.totalProcessTime;
-            if (!recipe.fluidOutput.isEmpty() && remainder > 0) {
-                state.tanks.output().fill(new FluidStack(recipe.fluidOutput.getFluid(), remainder), FluidAction.EXECUTE);
+            if (ticksProcessed == recipe.totalProcessTime) {
+                int remainder = recipe.fluidOutput.getAmount() % recipe.totalProcessTime;
+                if (!recipe.fluidOutput.isEmpty() && remainder > 0) {
+                    state.tanks.output().fill(new FluidStack(recipe.fluidOutput.getFluid(), remainder), FluidAction.EXECUTE);
+                }
             }
         }
     }
