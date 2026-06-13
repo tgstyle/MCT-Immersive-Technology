@@ -1,0 +1,10 @@
+Radiateur
+Refroidissement !
+<&multiblock>Le Radiateur effectue un refroidissement radiatif des fluides et gaz chauds, similaire à la Tour de Refroidissement mais beaucoup plus compact. Il peut être construit verticalement ou horizontalement.
+
+§lFonctionnement§r
+    - Les §lFluides/Gaz Chauds§r entrent à une extrémité.
+    - Les §lFluides/Gaz Refroidis§r sortent à l’extrémité opposée.
+    - Peut être formé verticalement (1×7×9) ou horizontalement (9×1×7) en faisant pivoter la structure.
+    - L’efficacité dépend de l’écart de température avec l’environnement et des obstructions proches.
+    - Fonctionne dans le vide (contrairement à la Tour de Refroidissement) mais est nettement moins efficace.

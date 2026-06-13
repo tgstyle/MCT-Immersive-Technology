@@ -35,6 +35,8 @@
   "block.immersivetechnology.gas_turbine": "가스 터빈",
   "block.immersivetechnology.heat_exchanger": "열교환기",
   "block.immersivetechnology.melting_crucible": "용융 도가니",
+  "block.immersivetechnology.radiator": "라디에이터",
+  "block.immersivetechnology.radiator_horizontal": "라디에이터",
   "block.immersivetechnology.solar_melter": "태양 용융 도가니",
   "block.immersivetechnology.solar_reflector": "태양광 반사판",
   "block.immersivetechnology.solar_tower": "태양열 타워",

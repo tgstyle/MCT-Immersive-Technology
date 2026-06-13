@@ -30,6 +30,7 @@ public class ITRecipeTypes {
     public static final TypeWithClass<GasTurbineRecipe> GAS_TURBINE = register("gas_turbine", GasTurbineRecipe.class);
     public static final TypeWithClass<HeatExchangerRecipe> HEAT_EXCHANGER = register("heat_exchanger", HeatExchangerRecipe.class);
     public static final TypeWithClass<MeltingRecipe> MELTING = register("melting", MeltingRecipe.class);
+    public static final TypeWithClass<RadiatorRecipe> RADIATOR = register("radiator", RadiatorRecipe.class);
     public static final TypeWithClass<SolarTowerRecipe> SOLAR_TOWER = register("solar_tower", SolarTowerRecipe.class);
     public static final TypeWithClass<SteamTurbineRecipe> STEAM_TURBINE = register("steam_turbine", SteamTurbineRecipe.class);
 
@@ -44,6 +45,7 @@ public class ITRecipeTypes {
         GasTurbineRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("gas_turbine", GasTurbineRecipeSerializer::new);
         HeatExchangerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("heat_exchanger", HeatExchangerRecipeSerializer::new);
         MeltingRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("melting", MeltingRecipeSerializer::new);
+        RadiatorRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("radiator", RadiatorRecipeSerializer::new);
         SolarTowerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("solar_tower", SolarTowerRecipeSerializer::new);
         SteamTurbineRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("steam_turbine", SteamTurbineRecipeSerializer::new);
     }

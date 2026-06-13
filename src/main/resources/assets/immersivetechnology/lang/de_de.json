@@ -35,6 +35,8 @@
   "block.immersivetechnology.gas_turbine": "Gasturbine",
   "block.immersivetechnology.heat_exchanger": "Wärmetauscher",
   "block.immersivetechnology.melting_crucible": "Schmelztiegel",
+  "block.immersivetechnology.radiator": "Radiator",
+  "block.immersivetechnology.radiator_horizontal": "Radiator",
   "block.immersivetechnology.solar_melter": "Solar-Schmelztiegel",
   "block.immersivetechnology.solar_reflector": "Solarreflektor",
   "block.immersivetechnology.solar_tower": "Solarturm",

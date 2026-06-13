@@ -1,0 +1,12 @@
+{
+  "type": "immersivetechnology:radiator",
+  "input": {
+    "amount": 1000,
+    "tag": "immersivetechnology:hot_water"
+  },
+  "output": {
+    "amount": 800,
+    "fluid": "minecraft:water"
+  },
+  "time": 20
+}

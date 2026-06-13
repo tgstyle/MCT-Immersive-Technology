@@ -35,6 +35,8 @@
   "block.immersivetechnology.gas_turbine": "燃气轮机",
   "block.immersivetechnology.heat_exchanger": "热交换器",
   "block.immersivetechnology.melting_crucible": "熔炼坩埚",
+  "block.immersivetechnology.radiator": "散热器",
+  "block.immersivetechnology.radiator_horizontal": "散热器",
   "block.immersivetechnology.solar_melter": "太阳能熔炼坩埚",
   "block.immersivetechnology.solar_reflector": "太阳能反射镜",
   "block.immersivetechnology.solar_tower": "太阳能塔",

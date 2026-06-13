@@ -36,6 +36,8 @@ public enum ITStatusDataProvider implements IServerDataProvider<BlockAccessor> {
             else if (state instanceof CoolingTowerLogic.State coolingTower) { active = coolingTower.active; }
             else if (state instanceof GasTurbineLogic.State gas) { active = gas.active; fuelEmpty = gas.tanks.input().getFluid().isEmpty(); }
             else if (state instanceof HeatExchangerLogic.State heatExchanger) { active = heatExchanger.active; }
+            else if (state instanceof RadiatorLogic.State radiator) { active = radiator.isActive(); }
+            else if (state instanceof RadiatorHorizontalLogic.State radiatorHorizontal) { active = radiatorHorizontal.isActive(); }
             else if (state instanceof ElectrolyticCrucibleBatteryLogic.State electrolyticCrucibleBattery) { active = electrolyticCrucibleBattery.active; }
             else if (state instanceof SolarMelterLogic.State melter) { active = melter.active; fuelEmpty = melter.tanks.input().getFluid().isEmpty(); }
             else if (state instanceof MeltingCrucibleLogic.State crucible) { active = crucible.active; fuelEmpty = crucible.tanks.input().getFluid().isEmpty(); }

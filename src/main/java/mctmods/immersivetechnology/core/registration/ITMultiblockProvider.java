@@ -165,6 +165,20 @@ public class ITMultiblockProvider {
                     .gui(ITMenuTypes.MELTING_CRUCIBLE_MENU)
                     .build();
 
+    public static final MultiblockRegistration<RadiatorLogic.State> RADIATOR =
+            metalNoMirror(new RadiatorLogic(), "radiator")
+                    .structure(() -> getMBTemplate.apply("radiator"))
+                    .redstone(s -> s.rsState, RadiatorLogic.REDSTONE_POI)
+                    .component(new ITDisassemblyTicker<>(RadiatorShape.DISASSEMBLY_POS), state -> null)
+                    .build();
+
+    public static final MultiblockRegistration<RadiatorHorizontalLogic.State> RADIATOR_HORIZONTAL =
+            metalNoMirror(new RadiatorHorizontalLogic(), "radiator_horizontal")
+                    .structure(() -> getMBTemplate.apply("radiator_horizontal"))
+                    .redstone(s -> s.rsState, RadiatorHorizontalLogic.REDSTONE_POI)
+                    .component(new ITDisassemblyTicker<>(RadiatorHorizontalShape.DISASSEMBLY_POS), state -> null)
+                    .build();
+
     public static final MultiblockRegistration<SolarMelterLogic.State> SOLAR_MELTER =
             metal(new SolarMelterLogic(), "solar_melter")
                     .structure(() -> getMBTemplate.apply("solar_melter"))
@@ -206,7 +220,26 @@ public class ITMultiblockProvider {
 
     @SuppressWarnings("unused")
     public static List<Class<? extends Block>> getAllBlockClasses() {
-        return List.of(ADVANCED_COKE_OVEN.block().get().getClass(), ALTERNATOR.block().get().getClass(), BOILER_LIQUID.block().get().getClass(), BOILER_SOLID.block().get().getClass(), BOILER_TANK.block().get().getClass(), COOLING_TOWER.block().get().getClass(), DISTILLER.block().get().getClass(), GAS_TURBINE.block().get().getClass(), HEAT_EXCHANGER.block().get().getClass(), SOLAR_MELTER.block().get().getClass(), SOLAR_REFLECTOR.block().get().getClass(), SOLAR_TOWER.block().get().getClass(), STEAM_TURBINE.block().get().getClass(), STEEL_SHEETMETAL_TANK.block().get().getClass(), ELECTROLYTIC_CRUCIBLE_BATTERY.block().get().getClass(), MELTING_CRUCIBLE.block().get().getClass());
+        return List.of(
+                ADVANCED_COKE_OVEN.block().get().getClass(),
+                ALTERNATOR.block().get().getClass(),
+                BOILER_LIQUID.block().get().getClass(),
+                BOILER_SOLID.block().get().getClass(),
+                BOILER_TANK.block().get().getClass(),
+                COOLING_TOWER.block().get().getClass(),
+                DISTILLER.block().get().getClass(),
+                ELECTROLYTIC_CRUCIBLE_BATTERY.block().get().getClass(),
+                GAS_TURBINE.block().get().getClass(),
+                HEAT_EXCHANGER.block().get().getClass(),
+                MELTING_CRUCIBLE.block().get().getClass(),
+                RADIATOR.block().get().getClass(),
+                RADIATOR_HORIZONTAL.block().get().getClass(),
+                SOLAR_MELTER.block().get().getClass(),
+                SOLAR_REFLECTOR.block().get().getClass(),
+                SOLAR_TOWER.block().get().getClass(),
+                STEAM_TURBINE.block().get().getClass(),
+                STEEL_SHEETMETAL_TANK.block().get().getClass()
+        );
     }
 
     public static void init() {
@@ -221,6 +254,8 @@ public class ITMultiblockProvider {
         registerMB("gas_turbine", GasTurbine.INSTANCE, GAS_TURBINE);
         registerMB("heat_exchanger", HeatExchanger.INSTANCE, HEAT_EXCHANGER);
         registerMB("melting_crucible", MeltingCrucible.INSTANCE, MELTING_CRUCIBLE);
+        registerMB("radiator", Radiator.INSTANCE, RADIATOR);
+        registerMB("radiator_horizontal", RadiatorHorizontal.INSTANCE, RADIATOR_HORIZONTAL);
         registerMB("solar_melter", SolarMelter.INSTANCE, SOLAR_MELTER);
         registerMB("solar_reflector", SolarReflector.INSTANCE, SOLAR_REFLECTOR);
         registerMB("solar_tower", SolarTower.INSTANCE, SOLAR_TOWER);

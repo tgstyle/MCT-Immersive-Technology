@@ -60,6 +60,8 @@ public class ITBlockLootProvider extends BlockLootSubProvider {
         add(ITMultiblockProvider.GAS_TURBINE.block().get(), noDrop());
         add(ITMultiblockProvider.HEAT_EXCHANGER.block().get(), noDrop());
         add(ITMultiblockProvider.MELTING_CRUCIBLE.block().get(), noDrop());
+        add(ITMultiblockProvider.RADIATOR.block().get(), noDrop());
+        add(ITMultiblockProvider.RADIATOR_HORIZONTAL.block().get(), noDrop());
         add(ITMultiblockProvider.SOLAR_MELTER.block().get(), noDrop());
         add(ITMultiblockProvider.SOLAR_REFLECTOR.block().get(), noDrop());
         add(ITMultiblockProvider.SOLAR_TOWER.block().get(), noDrop());

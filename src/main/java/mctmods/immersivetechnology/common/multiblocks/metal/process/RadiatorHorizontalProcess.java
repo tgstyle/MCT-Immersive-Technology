@@ -1,0 +1,53 @@
+package mctmods.immersivetechnology.common.multiblocks.metal.process;
+
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.RadiatorHorizontalLogic;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
+public class RadiatorHorizontalProcess {
+    private final RadiatorRecipe recipe;
+    private int ticksProcessed = 0;
+
+    public RadiatorHorizontalProcess(RadiatorRecipe recipe) {
+        this.recipe = recipe;
+    }
+
+    public void tick(RadiatorHorizontalLogic.State state) {
+        if (ticksProcessed >= recipe.totalProcessTime) return;
+
+        if (ticksProcessed == 0) {
+            FluidStack drained = state.tanks.input().drain(recipe.input.getAmount(), FluidAction.EXECUTE);
+            if (drained.getAmount() < recipe.input.getAmount() || !recipe.input.testIgnoringAmount(drained)) {
+                ticksProcessed = recipe.totalProcessTime;
+                return;
+            }
+        }
+
+        int perTickOut = recipe.fluidOutput.getAmount() / recipe.totalProcessTime;
+        if (!recipe.fluidOutput.isEmpty()) {
+            state.tanks.output().fill(new FluidStack(recipe.fluidOutput.getFluid(), perTickOut), FluidAction.EXECUTE);
+        }
+
+        ticksProcessed++;
+
+        if (ticksProcessed == recipe.totalProcessTime) {
+            int remainder = recipe.fluidOutput.getAmount() % recipe.totalProcessTime;
+            if (!recipe.fluidOutput.isEmpty() && remainder > 0) {
+                state.tanks.output().fill(new FluidStack(recipe.fluidOutput.getFluid(), remainder), FluidAction.EXECUTE);
+            }
+        }
+    }
+
+    public boolean isComplete() {
+        return ticksProcessed >= recipe.totalProcessTime;
+    }
+
+    public int getTicksProcessed() {
+        return ticksProcessed;
+    }
+
+    public RadiatorRecipe getRecipe() {
+        return recipe;
+    }
+}

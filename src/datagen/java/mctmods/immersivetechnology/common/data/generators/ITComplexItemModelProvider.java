@@ -38,6 +38,8 @@ public class ITComplexItemModelProvider extends ModelProvider<ITTRSRModelBuilder
         generateMultiblockModel("gas_turbine", "metal", ITMultiblockProvider.GAS_TURBINE.block(), new Vector3f(-4.2f, 2.4f, -3.5f), 0.13f, 0.05f, 0.05f);
         generateMultiblockModel("heat_exchanger", "metal", ITMultiblockProvider.HEAT_EXCHANGER.block(), new Vector3f(-2.5f, 2.2f, -3.5f), 0.1875f, 0.05f, 0.05f);
         generateMultiblockModel("melting_crucible", "metal", ITMultiblockProvider.MELTING_CRUCIBLE.block(), new Vector3f(0.0f, -1.5f, -2.0f), 0.1875f, 0.0625f, 0.0625f);
+        generateMultiblockModel("radiator", "metal", ITMultiblockProvider.RADIATOR.block(), new Vector3f(-4.0f, 1.0f, -2.0f), 0.1f, 0.0625f, 0.0625f);
+        generateMultiblockModel("radiator_horizontal", "metal", ITMultiblockProvider.RADIATOR_HORIZONTAL.block(), new Vector3f(0.0f, -1.0f, -2.0f), 0.1f, 0.0625f, 0.0625f);
         generateMultiblockModel("solar_melter", "metal", ITMultiblockProvider.SOLAR_MELTER.block(), new Vector3f(1.8f, -7.0f, -1.5f), 0.06f, 0.03f, 0.03f);
         generateMultiblockModel("solar_reflector", "metal", ITMultiblockProvider.SOLAR_REFLECTOR.block(), new Vector3f(4.5f, -1.8f, -1.5f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("solar_tower", "metal", ITMultiblockProvider.SOLAR_TOWER.block(), new Vector3f(1.8f, -7.0f, -1.5f), 0.06f, 0.03f, 0.03f);

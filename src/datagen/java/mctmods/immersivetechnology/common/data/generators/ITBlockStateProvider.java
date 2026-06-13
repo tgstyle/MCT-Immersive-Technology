@@ -111,11 +111,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private record ValveRotationConfig(int horizontalXRot, int verticalDownXRot, int verticalUpXRot, Function<Direction, Integer> yRotOffsetSupplier) {}
 
-    private static final List<Vec3i> BASEHEATER_PARTS = ImmutableList.of(
-            new BlockPos(-1, 0, 0),
-            BlockPos.ZERO,
-            new BlockPos(1, 0, 0)
-    );
+    private static final List<Vec3i> BASEHEATER_PARTS = ImmutableList.of(new BlockPos(-1, 0, 0), BlockPos.ZERO, new BlockPos(1, 0, 0));
 
     private int[] calculateValveRotations(Direction facing, int rotationVal, boolean mirrored, ValveRotationConfig config) {
         int xRot;
@@ -180,7 +176,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
     @Override protected void registerStatesAndModels() {
         ITLib.IT_LOGGER.info("Generating Multiblock Splits");
 
-        // Alphabetical multiblock config generation
         generateMultiblockConfig("advanced_coke_oven", "stone", false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("alternator", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("boiler_liquid", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
@@ -192,6 +187,8 @@ public class ITBlockStateProvider extends BlockStateProvider {
         generateMultiblockConfig("gas_turbine", "metal", true, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("heat_exchanger", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("melting_crucible", "metal", true, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("radiator", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
+        generateMultiblockConfig("radiator_horizontal", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("solar_melter", "metal", true, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("solar_reflector", "metal", false, false, ImmutableMap.of(), ImmutableMap.of());
         generateMultiblockConfig("solar_tower", "metal", true, false, ImmutableMap.of(), ImmutableMap.of());
@@ -207,58 +204,27 @@ public class ITBlockStateProvider extends BlockStateProvider {
         createSimpleBlock(ITBlocks.getBlock.apply("heat_creative"), models().cubeAll("block/metal/heat_creative", modLoc("block/metal/heat_creative")));
 
         VariantBlockStateBuilder steelBuilder = getVariantBuilder(ITBlocks.getBlock.apply("barrel_steel"));
-
-        BlockModelBuilder steelModel = models().getBuilder("block/metal/barrel_steel")
-                .customLoader(ITSideConfigBuilder::begin)
-                .type(ITModelConfigurableSides.Type.VERTICAL)
-                .baseName(modLoc("block/metal/barrel_steel"))
-                .end();
+        BlockModelBuilder steelModel = models().getBuilder("block/metal/barrel_steel").customLoader(ITSideConfigBuilder::begin).type(ITModelConfigurableSides.Type.VERTICAL).baseName(modLoc("block/metal/barrel_steel")).end();
         steelBuilder.partialState().setModels(new ConfiguredModel(steelModel));
 
         VariantBlockStateBuilder openBuilder = getVariantBuilder(ITBlocks.getBlock.apply("barrel_open"));
-        Map<IOSideConfig, String> suffixes = ImmutableMap.of(
-                IOSideConfig.NONE, "",
-                IOSideConfig.INPUT, "_in",
-                IOSideConfig.OUTPUT, "_out"
-        );
+        Map<IOSideConfig, String> suffixes = ImmutableMap.of(IOSideConfig.NONE, "", IOSideConfig.INPUT, "_in", IOSideConfig.OUTPUT, "_out");
         for (IOSideConfig config : IOSideConfig.VALUES) {
             String suffix = suffixes.get(config);
-            BlockModelBuilder openModel = models().getBuilder("block/metal/barrel_open" + suffix)
-                    .texture("up", modLoc("block/metal/barrel_open_up"))
-                    .texture("down", modLoc("block/metal/barrel_open_down" + suffix))
-                    .texture("side", modLoc("block/metal/barrel_open_side"))
-                    .texture("particle", modLoc("block/metal/barrel_open_side"));
-            openModel.element().from(0, 0, 0).to(16, 1, 16)
-                    .face(Direction.UP).texture("#up").uvs(0, 0, 16, 16).end()
-                    .face(Direction.DOWN).texture("#down").uvs(0, 0, 16, 16).end();
-            openModel.element().from(0, 0, 0).to(16, 16, 0)
-                    .face(Direction.NORTH).texture("#side").uvs(0, 0, 16, 16).end();
-            openModel.element().from(0, 0, 16).to(16, 16, 16)
-                    .face(Direction.SOUTH).texture("#side").uvs(0, 0, 16, 16).end();
-            openModel.element().from(16, 0, 0).to(16, 16, 16)
-                    .face(Direction.EAST).texture("#side").uvs(0, 0, 16, 16).end();
-            openModel.element().from(0, 0, 0).to(0, 16, 16)
-                    .face(Direction.WEST).texture("#side").uvs(0, 0, 16, 16).end();
-            openModel.element().from(0, 16, 0).to(1, 16, 1)
-                    .face(Direction.UP).texture("#up").uvs(0, 0, 1, 1).end();
-            openModel.element().from(15, 16, 0).to(16, 16, 1)
-                    .face(Direction.UP).texture("#up").uvs(0, 0, 1, 1).end();
-            openModel.element().from(0, 16, 15).to(1, 16, 16)
-                    .face(Direction.UP).texture("#up").uvs(0, 0, 1, 1).end();
-            openModel.element().from(15, 16, 15).to(16, 16, 16)
-                    .face(Direction.UP).texture("#up").uvs(0, 0, 1, 1).end();
-            openModel.element().from(1, 1, 0).to(15, 16, 1)
-                    .face(Direction.SOUTH).texture("#side").uvs(0, 0, 14, 15).end()
-                    .face(Direction.UP).texture("#up").uvs(0, 0, 14, 1).end();
-            openModel.element().from(1, 1, 15).to(15, 16, 16)
-                    .face(Direction.NORTH).texture("#side").uvs(0, 0, 14, 15).end()
-                    .face(Direction.UP).texture("#up").uvs(0, 0, 14, 1).end();
-            openModel.element().from(15, 1, 1).to(16, 16, 15)
-                    .face(Direction.WEST).texture("#side").uvs(0, 0, 14, 15).end()
-                    .face(Direction.UP).texture("#up").uvs(0, 0, 1, 14).end();
-            openModel.element().from(0, 1, 1).to(1, 16, 15)
-                    .face(Direction.EAST).texture("#side").uvs(0, 0, 14, 15).end()
-                    .face(Direction.UP).texture("#up").uvs(0, 0, 1, 14).end();
+            BlockModelBuilder openModel = models().getBuilder("block/metal/barrel_open" + suffix).texture("up", modLoc("block/metal/barrel_open_up")).texture("down", modLoc("block/metal/barrel_open_down" + suffix)).texture("side", modLoc("block/metal/barrel_open_side")).texture("particle", modLoc("block/metal/barrel_open_side"));
+            openModel.element().from(0, 0, 0).to(16, 1, 16).face(Direction.UP).texture("#up").uvs(0, 0, 16, 16).end().face(Direction.DOWN).texture("#down").uvs(0, 0, 16, 16).end();
+            openModel.element().from(0, 0, 0).to(16, 16, 0).face(Direction.NORTH).texture("#side").uvs(0, 0, 16, 16).end();
+            openModel.element().from(0, 0, 16).to(16, 16, 16).face(Direction.SOUTH).texture("#side").uvs(0, 0, 16, 16).end();
+            openModel.element().from(16, 0, 0).to(16, 16, 16).face(Direction.EAST).texture("#side").uvs(0, 0, 16, 16).end();
+            openModel.element().from(0, 0, 0).to(0, 16, 16).face(Direction.WEST).texture("#side").uvs(0, 0, 16, 16).end();
+            openModel.element().from(0, 16, 0).to(1, 16, 1).face(Direction.UP).texture("#up").uvs(0, 0, 1, 1).end();
+            openModel.element().from(15, 16, 0).to(16, 16, 1).face(Direction.UP).texture("#up").uvs(0, 0, 1, 1).end();
+            openModel.element().from(0, 16, 15).to(1, 16, 16).face(Direction.UP).texture("#up").uvs(0, 0, 1, 1).end();
+            openModel.element().from(15, 16, 15).to(16, 16, 16).face(Direction.UP).texture("#up").uvs(0, 0, 1, 1).end();
+            openModel.element().from(1, 1, 0).to(15, 16, 1).face(Direction.SOUTH).texture("#side").uvs(0, 0, 14, 15).end().face(Direction.UP).texture("#up").uvs(0, 0, 14, 1).end();
+            openModel.element().from(1, 1, 15).to(15, 16, 16).face(Direction.NORTH).texture("#side").uvs(0, 0, 14, 15).end().face(Direction.UP).texture("#up").uvs(0, 0, 14, 1).end();
+            openModel.element().from(15, 1, 1).to(16, 16, 15).face(Direction.WEST).texture("#side").uvs(0, 0, 14, 15).end().face(Direction.UP).texture("#up").uvs(0, 0, 1, 14).end();
+            openModel.element().from(0, 1, 1).to(1, 16, 15).face(Direction.EAST).texture("#side").uvs(0, 0, 14, 15).end().face(Direction.UP).texture("#up").uvs(0, 0, 1, 14).end();
             openBuilder.partialState().with(BarrelOpenBlock.BOTTOM_CONFIG, config).setModels(new ConfiguredModel(openModel));
         }
         BlockModelBuilder trashItemModel = createTrashModel("item");
@@ -267,24 +233,17 @@ public class ITBlockStateProvider extends BlockStateProvider {
         createRotatedBlock(ITBlocks.Metal.TRASH_FLUID, state -> trashFluidModel, List.of());
         BlockModelBuilder trashEnergyModel = createTrashModel("energy");
         createRotatedBlock(ITBlocks.Metal.TRASH_ENERGY, state -> trashEnergyModel, List.of());
-        ModelFile emptyModel = models().withExistingParent("empty", mcLoc("block/block"))
-                .renderType("cutout")
-                .texture("particle", "#missingno");
+        ModelFile emptyModel = models().withExistingParent("empty", mcLoc("block/block")).renderType("cutout").texture("particle", "#missingno");
         for (ITBlocks.BlockEntry<?> fluidEntry : ITFluids.ALL_FLUID_BLOCKS) {
             Block fluidBlock = fluidEntry.get();
             VariantBlockStateBuilder builder = getVariantBuilder(fluidBlock);
             for (int level = 0; level < 16; level++) {
-                builder.partialState()
-                        .with(LiquidBlock.LEVEL, level)
-                        .modelForState()
-                        .modelFile(emptyModel)
-                        .addModel();
+                builder.partialState().with(LiquidBlock.LEVEL, level).modelForState().modelFile(emptyModel).addModel();
             }
         }
 
         ModelFile valveClosed = createValveObjModel("valve_fluid", "valve_fluid", false, "Pipe");
         ModelFile valveOpen = createValveObjModel("valve_fluid", "valve_fluid", true, "Pipe");
-
         ValveRotationConfig fluidConfig = new ValveRotationConfig(0, 90, 270, facing -> 2);
         VariantBlockStateBuilder valveFluidBuilder = getVariantBuilder(ITBlocks.Metal.VALVE_FLUID.get());
         valveFluidBuilder.forAllStates(state -> {
@@ -298,12 +257,8 @@ public class ITBlockStateProvider extends BlockStateProvider {
         });
         setRenderType(RenderType.cutout(), (BlockModelBuilder) valveClosed, (BlockModelBuilder) valveOpen);
 
-        BlockModelBuilder valveLimiterBuilder = models().cubeBottomTop("block/metal/valve_limiter",
-                modLoc("block/metal/valve_limiter_side"),
-                modLoc("block/metal/valve_limiter_bottom"),
-                modLoc("block/metal/valve_limiter_top"));
+        BlockModelBuilder valveLimiterBuilder = models().cubeBottomTop("block/metal/valve_limiter", modLoc("block/metal/valve_limiter_side"), modLoc("block/metal/valve_limiter_bottom"), modLoc("block/metal/valve_limiter_top"));
         valveLimiterBuilder.texture("particle", modLoc("block/metal/valve_limiter_side"));
-
         ValveRotationConfig limiterConfig = new ValveRotationConfig(90, 180, 0, facing -> 2);
         VariantBlockStateBuilder valveLimiterStateBuilder = getVariantBuilder(ITBlocks.Metal.VALVE_LIMITER.get());
         valveLimiterStateBuilder.forAllStates(state -> {
@@ -317,7 +272,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
         ModelFile valveLoadClosed = createValveObjModel("valve_load", "valve_load", false, "Base");
         ModelFile valveLoadOpen = createValveObjModel("valve_load", "valve_load", true, "Base");
-
         ValveRotationConfig loadConfig = new ValveRotationConfig(270, 180, 0, facing -> facing.getAxis().isHorizontal() ? 0 : 1);
         VariantBlockStateBuilder valveLoadBuilder = getVariantBuilder(ITBlocks.Metal.VALVE_LOAD.get());
         valveLoadBuilder.forAllStates(state -> {
@@ -362,16 +316,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         String suffix = active ? "_active" : "";
         String modelName = "block/metal/advanced_coke_oven_baseheater" + suffix;
         ITNongeneratedModel base = innerModels.withExistingParent(modelName, mcLoc("block"));
-        ITObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ITObjModelBuilder::new)
-                .modelLocation(modLoc("models/block/metal/obj/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater" + suffix + ".obj"))
-                .automaticCulling(false)
-                .shadeQuads(true)
-                .flipV(true)
-                .emissiveAmbient(active)
-                .visibility("Fan", false)
-                .visibility("fan", false)
-                .visibility("Rotor", false)
-                .visibility("rotor", false);
+        ITObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ITObjModelBuilder::new).modelLocation(modLoc("models/block/metal/obj/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater" + suffix + ".obj")).automaticCulling(false).shadeQuads(true).flipV(true).emissiveAmbient(active).visibility("Fan", false).visibility("fan", false).visibility("Rotor", false).visibility("rotor", false);
         ITNongeneratedModel ret = loader.end();
         ret.ao(false);
         String particleTex = modLoc("block/metal/advanced_coke_oven_baseheater").toString();
@@ -381,10 +326,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
     }
 
     private void generateMultiblockConfig(String registry_name, String block_type, boolean useSeparateMirror, boolean hasActive, Map<String, ResourceLocation> defaultTextures, Map<String, ResourceLocation> activeTextures) {
-        if (!hasActive) {
-            defaultTextures = ImmutableMap.of();
-            activeTextures = ImmutableMap.of();
-        }
+        if (!hasActive) { defaultTextures = ImmutableMap.of(); activeTextures = ImmutableMap.of(); }
         ITLib.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
         ITTemplateMultiblock multiblock = (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name);
         boolean hasMirror = multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED);
@@ -412,9 +354,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
         ITNongeneratedModel base = innerModels.withExistingParent(name, mcLoc("block"));
         ITObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ITObjModelBuilder::new);
         loader.modelLocation(addModelsPrefix(objPath));
-        if (name.contains("steel_sheetmetal_tank")) {
-            loader.renderType("cutout_mipped");
-        }
+        if (name.contains("steel_sheetmetal_tank")) { loader.renderType("cutout_mipped"); }
         loader.flipV(true);
         loader.automaticCulling(false);
         loader.shadeQuads(true);
@@ -439,28 +379,9 @@ public class ITBlockStateProvider extends BlockStateProvider {
 
     private BlockModelBuilder createTrashModel(String subtype) {
         String base = "block/metal/trash_" + subtype;
-        BlockModelBuilder model = models().getBuilder(base)
-                .texture("particle", modLoc(base + "_side"))
-                .texture("side", modLoc(base + "_side"))
-                .texture("bottom", modLoc(base + "_bottom"))
-                .texture("top_side", modLoc(base + "_top_side"))
-                .texture("top", modLoc(base + "_top"));
-        model.element()
-                .from(2, 0, 2).to(14, 13, 14)
-                .face(Direction.NORTH).texture("#side").uvs(2, 3, 14, 16).end()
-                .face(Direction.EAST).texture("#side").uvs(2, 3, 14, 16).end()
-                .face(Direction.SOUTH).texture("#side").uvs(2, 3, 14, 16).end()
-                .face(Direction.WEST).texture("#side").uvs(2, 3, 14, 16).end()
-                .face(Direction.UP).texture("#bottom").uvs(2, 2, 14, 14).end()
-                .face(Direction.DOWN).texture("#bottom").uvs(2, 2, 14, 14).end();
-        model.element()
-                .from(0.5f, 13, 0.5f).to(15.5f, 16, 15.5f)
-                .face(Direction.NORTH).texture("#top_side").uvs(0, 0, 15, 3).end()
-                .face(Direction.EAST).texture("#top_side").uvs(0, 0, 15, 3).end()
-                .face(Direction.SOUTH).texture("#top_side").uvs(0, 0, 15, 3).end()
-                .face(Direction.WEST).texture("#top_side").uvs(0, 0, 15, 3).end()
-                .face(Direction.UP).texture("#top").uvs(0, 0, 15, 15).end()
-                .face(Direction.DOWN).texture("#top").uvs(0, 0, 15, 15).end();
+        BlockModelBuilder model = models().getBuilder(base).texture("particle", modLoc(base + "_side")).texture("side", modLoc(base + "_side")).texture("bottom", modLoc(base + "_bottom")).texture("top_side", modLoc(base + "_top_side")).texture("top", modLoc(base + "_top"));
+        model.element().from(2, 0, 2).to(14, 13, 14).face(Direction.NORTH).texture("#side").uvs(2, 3, 14, 16).end().face(Direction.EAST).texture("#side").uvs(2, 3, 14, 16).end().face(Direction.SOUTH).texture("#side").uvs(2, 3, 14, 16).end().face(Direction.WEST).texture("#side").uvs(2, 3, 14, 16).end().face(Direction.UP).texture("#bottom").uvs(2, 2, 14, 14).end().face(Direction.DOWN).texture("#bottom").uvs(2, 2, 14, 14).end();
+        model.element().from(0.5f, 13, 0.5f).to(15.5f, 16, 15.5f).face(Direction.NORTH).texture("#top_side").uvs(0, 0, 15, 3).end().face(Direction.EAST).texture("#top_side").uvs(0, 0, 15, 3).end().face(Direction.SOUTH).texture("#top_side").uvs(0, 0, 15, 3).end().face(Direction.WEST).texture("#top_side").uvs(0, 0, 15, 3).end().face(Direction.UP).texture("#top").uvs(0, 0, 15, 15).end().face(Direction.DOWN).texture("#top").uvs(0, 0, 15, 15).end();
         return model;
     }
 
@@ -494,8 +415,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
                 template.load(VanillaRegistries.createLookup().lookupOrThrow(Registries.BLOCK), nbt);
                 ITTemplateMultiblock.SYNCED_CLIENT_TEMPLATES.put(name, template);
             }
-        }
-        catch (IOException e) { throw new RuntimeException("Failed on " + name, e); }
+        } catch (IOException e) { throw new RuntimeException("Failed on " + name, e); }
     }
 
     private ModelFile split(ITNongeneratedModel unsplit, ITTemplateMultiblock multiblock, boolean mirror, String block_type) {
@@ -564,16 +484,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
     private ModelFile createValveObjModel(String baseName, String objFolder, boolean isOpen, String baseVisibility) {
         String modelName = "block/metal/" + baseName + (isOpen ? "_open" : "_closed");
         BlockModelBuilder builder = models().getBuilder(modelName);
-        ITObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ITObjModelBuilder::new)
-                .modelLocation(modLoc("models/block/metal/obj/" + objFolder + "/" + objFolder + ".obj"))
-                .automaticCulling(true)
-                .shadeQuads(true)
-                .flipV(true)
-                .emissiveAmbient(true)
-                .mtlOverride(null)
-                .visibility(baseVisibility, true)
-                .visibility("Handle_Open", isOpen)
-                .visibility("Handle_Closed", !isOpen);
+        ITObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ITObjModelBuilder::new).modelLocation(modLoc("models/block/metal/obj/" + objFolder + "/" + objFolder + ".obj")).automaticCulling(true).shadeQuads(true).flipV(true).emissiveAmbient(true).mtlOverride(null).visibility(baseVisibility, true).visibility("Handle_Open", isOpen).visibility("Handle_Closed", !isOpen);
         ModelFile model = loader.end();
         String particleTex = ITDataGenUtils.getTextureFromObj(modLoc("block/metal/obj/" + objFolder + "/" + objFolder + ".obj"), existingFileHelper);
         builder.texture("particle", particleTex);

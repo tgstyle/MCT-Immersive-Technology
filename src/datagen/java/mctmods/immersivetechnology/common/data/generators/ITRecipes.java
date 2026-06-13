@@ -56,6 +56,7 @@ public class ITRecipes extends RecipeProvider {
         recipesHeatExchanger(consumer);
         recipesMelting(consumer);
         recipesMixer(consumer);
+        recipesRadiator(consumer);
         recipesSolarTower(consumer);
         recipesTurbine(consumer);
     }
@@ -119,7 +120,8 @@ public class ITRecipes extends RecipeProvider {
         HeatExchangerRecipeBuilder.builder(new FluidTagInput(ITTags.fluidDistilledWater, 250), new FluidTagInput(ITTags.fluidFlueGas, 1000), new FluidStack(ITFluids.STEAM.getStill(), 500), null, 640, 10).build(out, toResourceLocation("heat_exchanger/distwater_fluegas"));
         HeatExchangerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 250), new FluidTagInput(ITTags.fluidMoltenSalt, 80), new FluidStack(ITFluids.STEAM.getStill(), 450), new FluidStack(ITFluids.HEATED_SALT.getStill(), 80), 640, 10).build(out, toResourceLocation("heat_exchanger/water_moltensalt"));
         HeatExchangerRecipeBuilder.builder(new FluidTagInput(ITTags.fluidDistilledWater, 250), new FluidTagInput(ITTags.fluidMoltenSalt, 80), new FluidStack(ITFluids.STEAM.getStill(), 500), new FluidStack(ITFluids.HEATED_SALT.getStill(), 80), 640, 10).build(out, toResourceLocation("heat_exchanger/distwater_moltensalt"));
-        HeatExchangerRecipeBuilder.builder(new FluidTagInput(ITTags.fluidDistilledWater, 250), new FluidTagInput(ITTags.fluidHotWater, 4500), new FluidStack(ITFluids.EXHAUST_STEAM.getStill(), 500), new FluidStack(Fluids.WATER, 4500), 160, 5).build(out, toResourceLocation("heat_exchanger/distwater_hotwater"));
+        // Corrected: produces hot water (matches 1.12.2 HeatExchangerRecipe order)
+        HeatExchangerRecipeBuilder.builder(new FluidTagInput(ITTags.fluidExhaustSteam, 500), new FluidTagInput(FluidTags.WATER, 4500), new FluidStack(ITFluids.DISTILLED_WATER.getStill(), 250), new FluidStack(ITFluids.HOT_WATER.getStill(), 4500), 160, 5).build(out, toResourceLocation("heat_exchanger/exhauststeam_water"));
     }
 
     private void recipesMelting(@Nonnull Consumer<FinishedRecipe> out) {
@@ -130,6 +132,11 @@ public class ITRecipes extends RecipeProvider {
     private void recipesMixer(@Nonnull Consumer<FinishedRecipe> out) {
         MixerRecipeBuilder.builder(ITFluids.SALT_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(new IngredientWithSize(ITTags.saltForge, 4)).setEnergy(3200).build(out, toResourceLocation("mixer/salt_slurry"));
         MixerRecipeBuilder.builder(ITFluids.GRAVEL_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(new IngredientWithSize(Tags.Items.GRAVEL, 4)).setEnergy(3200).build(out, toResourceLocation("mixer/gravel_slurry"));
+    }
+
+    private void recipesRadiator(@Nonnull Consumer<FinishedRecipe> out) {
+        RadiatorRecipeBuilder.builder().addInput(ITTags.fluidExhaustSteam, 500).addOutput(ITFluids.DISTILLED_WATER.getStill(), 250).setTime(80).build(out, toResourceLocation("radiator/exhaust_steam"));
+        RadiatorRecipeBuilder.builder().addInput(ITTags.fluidHotWater, 1000).addOutput(new FluidStack(Fluids.WATER, 800)).setTime(20).build(out, toResourceLocation("radiator/hot_water"));
     }
 
     private void recipesSolarTower(@Nonnull Consumer<FinishedRecipe> out) {

@@ -96,6 +96,10 @@ public class ITServerConfig {
     public static final ForgeConfigSpec.IntValue STEEL_SHEETMETAL_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue STEEL_SHEETMETAL_TANK_TRANSFER_SPEED;
 
+    public static final ForgeConfigSpec.IntValue RADIATOR_INPUT_TANK_CAPACITY;
+    public static final ForgeConfigSpec.IntValue RADIATOR_OUTPUT_TANK_CAPACITY;
+    public static final ForgeConfigSpec.DoubleValue RADIATOR_SPEED_MULTIPLIER;
+
     public static DisassemblyMode disassemblyMode = DisassemblyMode.PROCESS_QUEUE;
 
     public static int burnTimeDivider = 10;
@@ -182,6 +186,10 @@ public class ITServerConfig {
     public static int steelSheetmetalTankCapacity = 2048000;
     public static int steelSheetmetalTankTransferSpeed = 1000;
 
+    public static int radiatorInputTankCapacity = 8000;
+    public static int radiatorOutputTankCapacity = 8000;
+    public static double radiatorSpeedMultiplier = 1.0D;
+
     static {
         BUILDER.push("multiblocks");
 
@@ -215,6 +223,15 @@ public class ITServerConfig {
         ALTERNATOR_MAX_OUTPUT = BUILDER
                 .defineInRange("alternator_max_output", 12288, 0, Integer.MAX_VALUE);
 
+        BUILDER.push("boiler_liquid");
+        BOILER_LIQUID_TANK_CAPACITY = BUILDER
+                .defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
+        BOILER_LIQUID_HEAT_LOSS_PER_TICK = BUILDER
+                .defineInRange("heat_loss_per_tick", 0.2D, 0.0D, Double.MAX_VALUE);
+        BOILER_LIQUID_PILOT_HEAT = BUILDER
+                .defineInRange("pilot_heat", 20.0D, 0.0D, Double.MAX_VALUE);
+        BUILDER.pop();
+
         BUILDER.push("boiler_solid");
         BOILER_SOLID_HEAT_LOSS_PER_TICK = BUILDER
                 .defineInRange("heat_loss_per_tick", 0.2D, 0.0D, Double.MAX_VALUE);
@@ -224,15 +241,6 @@ public class ITServerConfig {
                 .defineInRange("pilot_multiplier", 15, 1, Integer.MAX_VALUE);
         BOILER_SOLID_DEFAULT_HEAT_PER_TICK = BUILDER
                 .defineInRange("default_heat_per_tick", 0.1D, 0.0D, Double.MAX_VALUE);
-        BUILDER.pop();
-
-        BUILDER.push("boiler_liquid");
-        BOILER_LIQUID_TANK_CAPACITY = BUILDER
-                .defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
-        BOILER_LIQUID_HEAT_LOSS_PER_TICK = BUILDER
-                .defineInRange("heat_loss_per_tick", 0.2D, 0.0D, Double.MAX_VALUE);
-        BOILER_LIQUID_PILOT_HEAT = BUILDER
-                .defineInRange("pilot_heat", 20.0D, 0.0D, Double.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.push("boiler_tank");
@@ -247,23 +255,6 @@ public class ITServerConfig {
                 .defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
         DISTILLER_ENERGY_CAPACITY = BUILDER
                 .defineInRange("energy_capacity", 32000, 1000, Integer.MAX_VALUE);
-        BUILDER.pop();
-
-        BUILDER.push("melting_crucible");
-        MELTING_CRUCIBLE_TANK_CAPACITY = BUILDER
-                .defineInRange("tank_capacity", 10000, 1000, Integer.MAX_VALUE);
-        MELTING_CRUCIBLE_ENERGY_CAPACITY = BUILDER
-                .defineInRange("energy_capacity", 50000, 1000, Integer.MAX_VALUE);
-        MELTING_CRUCIBLE_HEAT_WORKING_LEVEL = BUILDER
-                .defineInRange("heat_workingLevel", 1000.0D, 100.0D, Double.MAX_VALUE);
-        MELTING_CRUCIBLE_HEAT_LOSS_MULTIPLIER = BUILDER
-                .defineInRange("heat_loss_multiplier", 0.2D, 0.0D, Double.MAX_VALUE);
-        MELTING_CRUCIBLE_HEAT_GAIN_BASE = BUILDER
-                .defineInRange("heat_gain_base", 0.55D, 0.1D, Double.MAX_VALUE);
-        MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_HEAT = BUILDER
-                .defineInRange("energy_per_tick_heating", 1000, 32, Integer.MAX_VALUE);
-        MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_MAINTAIN = BUILDER
-                .defineInRange("energy_per_tick_maintain", 512, 16, Integer.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.push("electrolytic_crucible_battery");
@@ -305,6 +296,32 @@ public class ITServerConfig {
                 .defineInRange("energy_capacity", 2048, 1000, Integer.MAX_VALUE);
         HEAT_EXCHANGER_ENERGY_MAX_IO = BUILDER
                 .defineInRange("energy_max_io", 1024, 0, Integer.MAX_VALUE);
+        BUILDER.pop();
+
+        BUILDER.push("melting_crucible");
+        MELTING_CRUCIBLE_TANK_CAPACITY = BUILDER
+                .defineInRange("tank_capacity", 10000, 1000, Integer.MAX_VALUE);
+        MELTING_CRUCIBLE_ENERGY_CAPACITY = BUILDER
+                .defineInRange("energy_capacity", 50000, 1000, Integer.MAX_VALUE);
+        MELTING_CRUCIBLE_HEAT_WORKING_LEVEL = BUILDER
+                .defineInRange("heat_workingLevel", 1000.0D, 100.0D, Double.MAX_VALUE);
+        MELTING_CRUCIBLE_HEAT_LOSS_MULTIPLIER = BUILDER
+                .defineInRange("heat_loss_multiplier", 0.2D, 0.0D, Double.MAX_VALUE);
+        MELTING_CRUCIBLE_HEAT_GAIN_BASE = BUILDER
+                .defineInRange("heat_gain_base", 0.55D, 0.1D, Double.MAX_VALUE);
+        MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_HEAT = BUILDER
+                .defineInRange("energy_per_tick_heating", 1000, 32, Integer.MAX_VALUE);
+        MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_MAINTAIN = BUILDER
+                .defineInRange("energy_per_tick_maintain", 512, 16, Integer.MAX_VALUE);
+        BUILDER.pop();
+
+        BUILDER.push("radiator");
+        RADIATOR_INPUT_TANK_CAPACITY = BUILDER
+                .defineInRange("input_tank_capacity", 8000, 1000, Integer.MAX_VALUE);
+        RADIATOR_OUTPUT_TANK_CAPACITY = BUILDER
+                .defineInRange("output_tank_capacity", 8000, 1000, Integer.MAX_VALUE);
+        RADIATOR_SPEED_MULTIPLIER = BUILDER
+                .defineInRange("speed_multiplier", 1.0D, 0.1D, 10.0D);
         BUILDER.pop();
 
         BUILDER.push("solar_melter");
@@ -462,6 +479,10 @@ public class ITServerConfig {
 
             steelSheetmetalTankCapacity = STEEL_SHEETMETAL_TANK_CAPACITY.get();
             steelSheetmetalTankTransferSpeed = STEEL_SHEETMETAL_TANK_TRANSFER_SPEED.get();
+
+            radiatorInputTankCapacity = RADIATOR_INPUT_TANK_CAPACITY.get();
+            radiatorOutputTankCapacity = RADIATOR_OUTPUT_TANK_CAPACITY.get();
+            radiatorSpeedMultiplier = RADIATOR_SPEED_MULTIPLIER.get();
         }
     }
 

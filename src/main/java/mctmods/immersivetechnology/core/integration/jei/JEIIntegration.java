@@ -61,6 +61,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipeCategories(new ITElectrolyticCrucibleBatteryCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITGasTurbineCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITHeatExchangerCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new ITRadiatorCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITMeltingCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITSolarTowerCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITSteamTurbineCategory(registration.getJeiHelpers().getGuiHelper()));
@@ -77,6 +78,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipes(JEIRecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY, getElectrolyticCrucibleBatteryRecipes());
         registration.addRecipes(JEIRecipeTypes.GAS_TURBINE, getGasTurbineRecipes());
         registration.addRecipes(JEIRecipeTypes.HEAT_EXCHANGER, getHeatExchangerRecipes());
+        registration.addRecipes(JEIRecipeTypes.RADIATOR, getRadiatorRecipes());
         registration.addRecipes(JEIRecipeTypes.MELTING, getSolarMelterRecipes());
         registration.addRecipes(JEIRecipeTypes.SOLAR_TOWER, getSolarTowerRecipes());
         registration.addRecipes(JEIRecipeTypes.STEAM_TURBINE, getSteamTurbineRecipes());
@@ -93,6 +95,8 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipeCatalyst(ITMultiblockProvider.ELECTROLYTIC_CRUCIBLE_BATTERY.iconStack(), JEIRecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
         registration.addRecipeCatalyst(ITMultiblockProvider.GAS_TURBINE.iconStack(), JEIRecipeTypes.GAS_TURBINE);
         registration.addRecipeCatalyst(ITMultiblockProvider.HEAT_EXCHANGER.iconStack(), JEIRecipeTypes.HEAT_EXCHANGER);
+        registration.addRecipeCatalyst(ITMultiblockProvider.RADIATOR.iconStack(), JEIRecipeTypes.RADIATOR);
+        registration.addRecipeCatalyst(ITMultiblockProvider.RADIATOR_HORIZONTAL.iconStack(), JEIRecipeTypes.RADIATOR);
         registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_MELTER.iconStack(), JEIRecipeTypes.MELTING);
         registration.addRecipeCatalyst(ITMultiblockProvider.MELTING_CRUCIBLE.iconStack(), JEIRecipeTypes.MELTING);
         registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_TOWER.iconStack(), JEIRecipeTypes.SOLAR_TOWER);
@@ -409,6 +413,7 @@ public class JEIIntegration implements IModPlugin {
     private List<ElectrolyticCrucibleBatteryRecipe> getElectrolyticCrucibleBatteryRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(ElectrolyticCrucibleBatteryRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<GasTurbineRecipe> getGasTurbineRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(GasTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<HeatExchangerRecipe> getHeatExchangerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(HeatExchangerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<RadiatorRecipe> getRadiatorRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(RadiatorRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<MeltingRecipe> getSolarMelterRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(MeltingRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<SolarTowerRecipe> getSolarTowerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(SolarTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<SteamTurbineRecipe> getSteamTurbineRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(SteamTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }

@@ -35,6 +35,8 @@
   "block.immersivetechnology.gas_turbine": "ガスタービン",
   "block.immersivetechnology.heat_exchanger": "熱交換器",
   "block.immersivetechnology.melting_crucible": "溶解坩堝",
+  "block.immersivetechnology.radiator": "ラジエーター",
+  "block.immersivetechnology.radiator_horizontal": "ラジエーター",
   "block.immersivetechnology.solar_melter": "太陽溶解炉",
   "block.immersivetechnology.solar_reflector": "太陽光反射板",
   "block.immersivetechnology.solar_tower": "太陽熱タワー",

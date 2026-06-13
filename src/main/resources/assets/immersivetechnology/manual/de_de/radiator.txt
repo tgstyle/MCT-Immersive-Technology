@@ -1,0 +1,10 @@
+Radiator
+Kühlung!
+<&multiblock>Der Radiator führt strahlungsbasierte Kühlung heißer Flüssigkeiten und Gase durch, ähnlich dem Kühlturm, aber deutlich kompakter. Er kann sowohl vertikal als auch horizontal gebaut werden.
+
+§lBetrieb§r
+    - §lHeiße Flüssigkeiten/Gase§r werden an einem Ende eingespeist.
+    - §lGekühlte Flüssigkeiten/Gase§r verlassen das andere Ende.
+    - Kann vertikal (1×7×9) oder horizontal (9×1×7) durch Drehen der Struktur gebaut werden.
+    - Die Effizienz hängt von der Temperaturdifferenz zur Umgebung und nahen Hindernissen ab.
+    - Funktioniert im Vakuum (im Gegensatz zum Kühlturm), ist aber deutlich weniger effizient.

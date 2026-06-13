@@ -38,6 +38,7 @@ public class OneProbeHelper {
         top.registerProvider(new ElectrolyticCrucibleBatteryProvider());
         top.registerProvider(new GasTurbineProvider());
         top.registerProvider(new HeatExchangerProvider());
+        top.registerProvider(new RadiatorProvider());
         top.registerProvider(new SolarMelterProvider());
         top.registerProvider(new SolarTowerProvider());
         top.registerProvider(new SteamTurbineProvider());
@@ -243,6 +244,29 @@ public class OneProbeHelper {
         }
     }
 
+    public static class RadiatorProvider implements IProbeInfoProvider {
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "radiator"); }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
+            IMultiblockContext<?> ctx = getContext(level, data.getPos());
+            if (ctx == null) return;
+            if (ctx.getState() instanceof RadiatorLogic.State state) {
+                addFluidTanks(probeInfo, state.tanks.input(), state.tanks.output());
+                if (state.active) {
+                    int percent = state.totalProcessTime > 0 ? state.processProgress * 100 / state.totalProcessTime : 0;
+                    addProcessPercent(probeInfo, percent);
+                }
+                probeInfo.text("Active processes: " + state.processQueue.size());
+            } else if (ctx.getState() instanceof RadiatorHorizontalLogic.State state) {
+                addFluidTanks(probeInfo, state.tanks.input(), state.tanks.output());
+                if (state.active) {
+                    int percent = state.totalProcessTime > 0 ? state.processProgress * 100 / state.totalProcessTime : 0;
+                    addProcessPercent(probeInfo, percent);
+                }
+                probeInfo.text("Active processes: " + state.processQueue.size());
+            }
+        }
+    }
 
     public static class MeltingCrucibleProvider implements IProbeInfoProvider {
         @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "melting_crucible"); }
