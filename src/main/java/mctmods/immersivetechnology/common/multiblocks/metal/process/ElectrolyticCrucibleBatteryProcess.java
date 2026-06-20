@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.common.multiblocks.metal.process;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.ElectrolyticCrucibleBatteryLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -47,13 +46,5 @@ public class ElectrolyticCrucibleBatteryProcess extends MultiblockProcessInMachi
 
     @Override protected void processFinish(ProcessContext.ProcessContextInMachine<ElectrolyticCrucibleBatteryRecipe> context, IMultiblockLevel level) {
         super.processFinish(context, level);
-        ElectrolyticCrucibleBatteryRecipe recipe = getRecipe(level.getRawLevel());
-        if (recipe == null) { return; }
-
-        ElectrolyticCrucibleBatteryLogic.State state = (ElectrolyticCrucibleBatteryLogic.State) context;
-
-        if (recipe.fluidOutput0 != null && !recipe.fluidOutput0.isEmpty()) { state.getTanks().output0().fill(recipe.fluidOutput0.copy(), FluidAction.EXECUTE); }
-        if (recipe.fluidOutput1 != null && !recipe.fluidOutput1.isEmpty()) { state.getTanks().output1().fill(recipe.fluidOutput1.copy(), FluidAction.EXECUTE); }
-        if (recipe.fluidOutput2 != null && !recipe.fluidOutput2.isEmpty()) { state.getTanks().output2().fill(recipe.fluidOutput2.copy(), FluidAction.EXECUTE); }
     }
 }
