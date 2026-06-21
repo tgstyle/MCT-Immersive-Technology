@@ -112,7 +112,7 @@ public class ITRecipes extends RecipeProvider {
     }
 
     private void recipesElectrolyticCrucibleBattery(@Nonnull Consumer<FinishedRecipe> out) {
-        ElectrolyticCrucibleBatteryRecipeBuilder.builder(new FluidTagInput(ITTags.fluidMoltenSalt, 1000), new FluidStack(ITFluids.CHLORINE.getStill(), 1000), 512000, 250).addFluidOutput1(new FluidStack(ITFluids.HEATED_SALT.getStill(), 1000)).build(out, toResourceLocation("electrolytic_crucible_battery/chlorine"));
+        ElectrolyticCrucibleBatteryRecipeBuilder.builder(new FluidTagInput(ITTags.fluidSaltSlurry, 1000), new FluidStack(ITFluids.CHLORINE.getStill(), 1000), 512000, 250).addFluidOutput1(new FluidStack(ITFluids.HYDROGEN.getStill(), 2000)).addFluidOutput2(new FluidStack(ITFluids.HEATED_SALT.getStill(), 800)).build(out, toResourceLocation("electrolytic_crucible_battery/hydrogen"));
     }
 
     private void recipesHeatExchanger(@Nonnull Consumer<FinishedRecipe> out) {
@@ -120,7 +120,6 @@ public class ITRecipes extends RecipeProvider {
         HeatExchangerRecipeBuilder.builder(new FluidTagInput(ITTags.fluidDistilledWater, 250), new FluidTagInput(ITTags.fluidFlueGas, 1000), new FluidStack(ITFluids.STEAM.getStill(), 500), null, 640, 10).build(out, toResourceLocation("heat_exchanger/distwater_fluegas"));
         HeatExchangerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 250), new FluidTagInput(ITTags.fluidMoltenSalt, 80), new FluidStack(ITFluids.STEAM.getStill(), 450), new FluidStack(ITFluids.HEATED_SALT.getStill(), 80), 640, 10).build(out, toResourceLocation("heat_exchanger/water_moltensalt"));
         HeatExchangerRecipeBuilder.builder(new FluidTagInput(ITTags.fluidDistilledWater, 250), new FluidTagInput(ITTags.fluidMoltenSalt, 80), new FluidStack(ITFluids.STEAM.getStill(), 500), new FluidStack(ITFluids.HEATED_SALT.getStill(), 80), 640, 10).build(out, toResourceLocation("heat_exchanger/distwater_moltensalt"));
-        // Corrected: produces hot water (matches 1.12.2 HeatExchangerRecipe order)
         HeatExchangerRecipeBuilder.builder(new FluidTagInput(ITTags.fluidExhaustSteam, 500), new FluidTagInput(FluidTags.WATER, 4500), new FluidStack(ITFluids.DISTILLED_WATER.getStill(), 250), new FluidStack(ITFluids.HOT_WATER.getStill(), 4500), 160, 5).build(out, toResourceLocation("heat_exchanger/exhauststeam_water"));
     }
 
@@ -147,18 +146,20 @@ public class ITRecipes extends RecipeProvider {
     }
 
     private void recipesTurbine(@Nonnull Consumer<FinishedRecipe> out) {
-        SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteam, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).build(out, toResourceLocation("steam_turbine/steam"));
-        SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteamForge, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).build(out, toResourceLocation("steam_turbine/steam_forge"));
-        GasTurbineRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 160).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).build(out, toResourceLocation("gas_turbine/biodiesel"));
+        SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteam, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).setTorque(1.0f).build(out, toResourceLocation("steam_turbine/steam"));
+        SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteamForge, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).setTorque(1.0f).build(out, toResourceLocation("steam_turbine/steam_forge"));
+        GasTurbineRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 160).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).build(out, toResourceLocation("gas_turbine/biodiesel"));
 
-        var gasolineBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 800).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10);
+        var gasolineBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 800).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f);
         ConditionalRecipe.builder().addCondition(modLoaded("immersivepetroleum")).addRecipe(inner -> gasolineBuilder.build(inner, toResourceLocation("gas_turbine/gasoline"))).build(out, toResourceLocation("gas_turbine/gasoline"));
 
-        var dieselBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "diesel")), 114).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10);
+        var dieselBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "diesel")), 114).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f);
         ConditionalRecipe.builder().addCondition(modLoaded("immersivepetroleum")).addRecipe(inner -> dieselBuilder.build(inner, toResourceLocation("gas_turbine/diesel"))).build(out, toResourceLocation("gas_turbine/diesel"));
 
-        var keroseneBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "kerosene")), 150).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10);
+        var keroseneBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "kerosene")), 150).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f);
         ConditionalRecipe.builder().addCondition(modLoaded("immersivepetroleum")).addRecipe(inner -> keroseneBuilder.build(inner, toResourceLocation("gas_turbine/kerosene"))).build(out, toResourceLocation("gas_turbine/kerosene"));
+
+        GasTurbineRecipeBuilder.builder().addInput(ITTags.fluidHydrogen, 300).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).build(out, toResourceLocation("gas_turbine/hydrogen"));
     }
 
     private ResourceLocation toResourceLocation(String resourceLocation) {

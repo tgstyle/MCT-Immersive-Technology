@@ -3,14 +3,18 @@
   "energy": 512000,
   "input": {
     "amount": 1000,
-    "tag": "immersivetechnology:molten_salt"
+    "tag": "immersivetechnology:salt_slurry"
   },
   "result0": {
     "amount": 1000,
     "fluid": "immersivetechnology:chlorine"
   },
   "result1": {
-    "amount": 1000,
+    "amount": 2000,
+    "fluid": "immersivetechnology:hydrogen"
+  },
+  "result2": {
+    "amount": 800,
     "fluid": "immersivetechnology:heated_salt_slurry"
   },
   "time": 250

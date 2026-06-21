@@ -1,0 +1,13 @@
+{
+  "type": "immersivetechnology:gas_turbine",
+  "input": {
+    "amount": 300,
+    "tag": "immersivetechnology:hydrogen"
+  },
+  "output": {
+    "amount": 1000,
+    "fluid": "immersivetechnology:flue_gas"
+  },
+  "time": 10,
+  "torque": 1.0
+}

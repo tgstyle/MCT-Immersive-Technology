@@ -18,6 +18,7 @@ public class ITTags {
     public static final TagKey<Fluid> fluidHeatedGravelSlurry = FluidTags.create(modLoc("heated_gravel_slurry"));
     public static final TagKey<Fluid> fluidHeatedSaltSlurry = FluidTags.create(modLoc("heated_salt_slurry"));
     public static final TagKey<Fluid> fluidHotWater = FluidTags.create(modLoc("hot_water"));
+    public static final TagKey<Fluid> fluidHydrogen = FluidTags.create(modLoc("hydrogen"));
     public static final TagKey<Fluid> fluidMoltenSalt = FluidTags.create(modLoc("molten_salt"));
     public static final TagKey<Fluid> fluidSaltSlurry = FluidTags.create(modLoc("salt_slurry"));
     public static final TagKey<Fluid> fluidSteam = FluidTags.create(modLoc("steam"));
