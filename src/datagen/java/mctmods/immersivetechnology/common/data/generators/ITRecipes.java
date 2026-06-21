@@ -148,18 +148,17 @@ public class ITRecipes extends RecipeProvider {
     private void recipesTurbine(@Nonnull Consumer<FinishedRecipe> out) {
         SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteam, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).setTorque(1.0f).build(out, toResourceLocation("steam_turbine/steam"));
         SteamTurbineRecipeBuilder.builder().addInput(ITTags.fluidSteamForge, 100).addOutput(ITFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).setTorque(1.0f).build(out, toResourceLocation("steam_turbine/steam_forge"));
+
         GasTurbineRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 160).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).build(out, toResourceLocation("gas_turbine/biodiesel"));
+        GasTurbineRecipeBuilder.builder().addInput(ITTags.fluidHydrogen, 300).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).build(out, toResourceLocation("gas_turbine/hydrogen"));
 
         var gasolineBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 800).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f);
         ConditionalRecipe.builder().addCondition(modLoaded("immersivepetroleum")).addRecipe(inner -> gasolineBuilder.build(inner, toResourceLocation("gas_turbine/gasoline"))).build(out, toResourceLocation("gas_turbine/gasoline"));
-
         var dieselBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "diesel")), 114).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f);
         ConditionalRecipe.builder().addCondition(modLoaded("immersivepetroleum")).addRecipe(inner -> dieselBuilder.build(inner, toResourceLocation("gas_turbine/diesel"))).build(out, toResourceLocation("gas_turbine/diesel"));
-
         var keroseneBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "kerosene")), 150).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f);
         ConditionalRecipe.builder().addCondition(modLoaded("immersivepetroleum")).addRecipe(inner -> keroseneBuilder.build(inner, toResourceLocation("gas_turbine/kerosene"))).build(out, toResourceLocation("gas_turbine/kerosene"));
 
-        GasTurbineRecipeBuilder.builder().addInput(ITTags.fluidHydrogen, 300).addOutput(ITFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).build(out, toResourceLocation("gas_turbine/hydrogen"));
     }
 
     private ResourceLocation toResourceLocation(String resourceLocation) {
