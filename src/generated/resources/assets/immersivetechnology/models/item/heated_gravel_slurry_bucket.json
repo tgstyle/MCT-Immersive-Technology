@@ -1,6 +1,0 @@
-{
-  "parent": "forge:item/bucket",
-  "flip_gas": false,
-  "fluid": "immersivetechnology:heated_gravel_slurry",
-  "loader": "forge:fluid_container"
-}
