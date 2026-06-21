@@ -1,7 +1,7 @@
 {
   "type": "immersivetechnology:gas_turbine",
   "input": {
-    "amount": 300,
+    "amount": 100,
     "tag": "immersivetechnology:hydrogen"
   },
   "output": {

@@ -1,0 +1,23 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "immersivepetroleum"
+        }
+      ],
+      "recipe": {
+        "type": "immersivetechnology:boiler_liquid",
+        "heatPerTick": 0.1,
+        "input": {
+          "amount": 9,
+          "tag": "forge:kerosene"
+        },
+        "targetHeat": 600.0,
+        "time": 10
+      }
+    }
+  ]
+}
