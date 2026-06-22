@@ -14,7 +14,7 @@ When you are reporting bugs, please attach the crash report, mod and forge versi
 Feel free to translate the mod and put it in a pull request.<br/>
 
 # About Modpack and License
-Immersive Technology is licensed under the GNU GENERAL PUBLIC LICENSE Version 3. You may use it in modpacks, reviews or any other form as long as you abide by the terms.<br/>
+Immersive Technology is licensed under the GNU GENERAL PUBLIC LICENSE Version 3. You may use it in modpacks, reviews or any other form as long as you abide by the terms. Assets are protected under the terms in the LICENSE_ASSETS.txt<br/>
 
 # Dev Environtment
 To launch IT succesfully in Dev with the mixin fix. Launch, let it crash, then update the mct_mixin.cfg "# Enable dev environment mixin sided fix [Default=false]" value to true.
