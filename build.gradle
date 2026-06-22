@@ -75,6 +75,7 @@ ext {
     version_jei = versionProps['version_jei']
     version_parchment = versionProps['version_parchment']
     version_ie = versionProps['version_ie']
+    version_ic = versionProps['version_ic']
     mod_license = gradleProps['mod_license']
     mod_name = gradleProps['mod_name']
     mod_authors = gradleProps['mod_authors']
@@ -92,6 +93,7 @@ def version_replaces = { [
     'mod_authors'     : mod_authors,
     'mod_description' : mod_description,
     'version_ie'      : version_ie,
+    'version_ic'      : version_ic,
     'stage'           : stage,
 ] as Map<String, Object> }
 
@@ -116,6 +118,20 @@ tasks.register('copyModsTomlForIntelliJ', Copy) {
     into "$projectDir/out/production/resources"
     include "META-INF/mods.toml"
     dependsOn processResources
+}
+
+def icJar = null
+def icDir = file('../ImmersiveConvergence-21/build/libs')
+def matchingJars = fileTree(icDir) {
+    include "ImmersiveConvergence-${version_minecraft}-*-dev.jar"
+    exclude "**/*-sources.jar"
+}.files
+
+if (!matchingJars.isEmpty()) {
+    icJar = matchingJars.sort { a, b -> b.lastModified() <=> a.lastModified() }.last()
+    logger.lifecycle("✅ Found IC deobf JAR: ${icJar.name}")
+} else {
+    logger.warn('⚠️  No IC deobf JAR found in ../ImmersiveConvergence-21/build/libs')
 }
 
 neoForge {
@@ -192,6 +208,14 @@ dependencies {
     implementation "curse.maven:immersive-engineering-231951:6733669"
 
     implementation "curse.maven:jade-324717:7545219"
+
+    // Local ImmersiveConvergence (preferred during development)
+    if (icJar != null) {
+        implementation files(icJar)
+    } else {
+        logger.warn('⚠️  Falling back to CurseMaven for ImmersiveConvergence (no local dev jar found)')
+        // implementation "curse.maven:immersive-convergence-1465236:NEW_FILE_ID_HERE"
+    }
 }
 
 def customGradle = rootProject.file('custom.gradle')
