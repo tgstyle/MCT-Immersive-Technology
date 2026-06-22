@@ -1,0 +1,7 @@
+LICENSE_ASSETS.txt
+
+New assets created for this mod are © tgstyle. All Rights Reserved.
+
+Obtained or contributed assets (including textures, models, JSON files, sounds, and any other creative or data files) remain under their respective authors’ control. Such assets are included only with appropriate authorization or license from the original author(s) allowing use in this project.
+
+See LICENSE for the GPLv3 license that applies only to the source code.
