@@ -43,8 +43,7 @@ public class ITCoolingTowerCategory extends ITRecipeCategory<CoolingTowerRecipe>
         drops = helper.createAnimatedDrawable(dropsStatic, 200, IDrawableAnimated.StartDirection.TOP, false);
     }
 
-    @Override
-    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull CoolingTowerRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull CoolingTowerRecipe recipe, @NotNull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs0 = recipe.input0.getMatchingFluidStacks().stream()
@@ -79,35 +78,32 @@ public class ITCoolingTowerCategory extends ITRecipeCategory<CoolingTowerRecipe>
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
                         ITFluidInfoArea.fillTooltip(fs, recipe.input1.getAmount(), tooltip::add)));
 
-        if (recipe.fluidOutput0 != null && !recipe.fluidOutput0.isEmpty()) {
-            var output0Slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 86, 11)
-                    .addIngredient(ForgeTypes.FLUID_STACK, recipe.fluidOutput0)
-                    .setFluidRenderer(tankCapacity, false, 16, 47);
+        FluidStack out0 = (recipe.fluidOutput0 != null && !recipe.fluidOutput0.isEmpty()) ? recipe.fluidOutput0 : FluidStack.EMPTY;
+        var output0Slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 86, 11)
+                .addIngredient(ForgeTypes.FLUID_STACK, out0)
+                .setFluidRenderer(tankCapacity, false, 16, 47);
 
-            output0Slot.addRichTooltipCallback((slotView, tooltip) ->
-                    slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                            ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput0.getAmount(), tooltip::add)));
-        }
+        output0Slot.addRichTooltipCallback((slotView, tooltip) ->
+                slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                        ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput0 != null ? recipe.fluidOutput0.getAmount() : 0, tooltip::add)));
 
-        if (recipe.fluidOutput1 != null && !recipe.fluidOutput1.isEmpty()) {
-            var output1Slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 109, 11)
-                    .addIngredient(ForgeTypes.FLUID_STACK, recipe.fluidOutput1)
-                    .setFluidRenderer(tankCapacity, false, 16, 47);
+        FluidStack out1 = (recipe.fluidOutput1 != null && !recipe.fluidOutput1.isEmpty()) ? recipe.fluidOutput1 : FluidStack.EMPTY;
+        var output1Slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 109, 11)
+                .addIngredient(ForgeTypes.FLUID_STACK, out1)
+                .setFluidRenderer(tankCapacity, false, 16, 47);
 
-            output1Slot.addRichTooltipCallback((slotView, tooltip) ->
-                    slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                            ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput1.getAmount(), tooltip::add)));
-        }
+        output1Slot.addRichTooltipCallback((slotView, tooltip) ->
+                slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                        ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput1 != null ? recipe.fluidOutput1.getAmount() : 0, tooltip::add)));
 
-        if (recipe.fluidOutput2 != null && !recipe.fluidOutput2.isEmpty()) {
-            var output2Slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 132, 11)
-                    .addIngredient(ForgeTypes.FLUID_STACK, recipe.fluidOutput2)
-                    .setFluidRenderer(tankCapacity, false, 16, 47);
+        FluidStack out2 = (recipe.fluidOutput2 != null && !recipe.fluidOutput2.isEmpty()) ? recipe.fluidOutput2 : FluidStack.EMPTY;
+        var output2Slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 132, 11)
+                .addIngredient(ForgeTypes.FLUID_STACK, out2)
+                .setFluidRenderer(tankCapacity, false, 16, 47);
 
-            output2Slot.addRichTooltipCallback((slotView, tooltip) ->
-                    slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                            ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput2.getAmount(), tooltip::add)));
-        }
+        output2Slot.addRichTooltipCallback((slotView, tooltip) ->
+                slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                        ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput2 != null ? recipe.fluidOutput2.getAmount() : 0, tooltip::add)));
     }
 
     private int getTankCapacity(@NotNull CoolingTowerRecipe recipe) {
@@ -118,8 +114,7 @@ public class ITCoolingTowerCategory extends ITRecipeCategory<CoolingTowerRecipe>
         return tankCapacity;
     }
 
-    @Override
-    public void draw(@NotNull CoolingTowerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@NotNull CoolingTowerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
 
         tankOverlay.draw(guiGraphics, 11, 11);

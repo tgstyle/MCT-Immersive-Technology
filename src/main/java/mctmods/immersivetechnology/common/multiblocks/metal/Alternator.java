@@ -7,8 +7,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorSha
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
 
 import java.util.function.Consumer;
 
@@ -16,8 +14,6 @@ public class Alternator extends ITTemplateMultiblock {
     public static final Alternator INSTANCE = new Alternator();
 
     public Alternator() { super(ITLib.rl("multiblocks/alternator"), AlternatorShape.MASTER_POS, AlternatorShape.TRIGGER_POS, new BlockPos(AlternatorShape.WIDTH,AlternatorShape.HEIGHT,AlternatorShape.LENGTH), ITMultiblockProvider.ALTERNATOR); }
-
-    @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override public float getManualScale() { return AlternatorShape.MANUAL_SCALE; }
 

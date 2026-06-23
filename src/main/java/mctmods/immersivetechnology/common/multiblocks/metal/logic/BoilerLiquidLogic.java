@@ -160,7 +160,13 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             if (state.burnRemaining > 0) {
                 state.burnRemaining--;
                 if (state.lastFuel != null) {
-                    if (!fullMode) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
+                    if (fullMode) {
+                        if (state.heatLevel < state.targetHeat) {
+                            state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), state.targetHeat);
+                        } else {
+                            state.heatLevel = Math.max(state.heatLevel - delta, state.targetHeat);
+                        }
+                    } else { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
                 } else { state.burnRemaining = 0; }
             } else {
                 state.lastFuel = null;
@@ -176,7 +182,13 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                     if (fullMode) {
                         int drainAmount = state.lastFuel.input.getAmount();
                         drained = state.tanks.input1.drain(drainAmount, FluidAction.EXECUTE);
-                        if (drained.getAmount() == drainAmount) { state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), state.targetHeat); }
+                        if (drained.getAmount() == drainAmount) {
+                            if (state.heatLevel < state.targetHeat) {
+                                state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), state.targetHeat);
+                            } else {
+                                state.heatLevel = Math.max(state.heatLevel - delta, state.targetHeat);
+                            }
+                        }
                         else {
                             drained = state.tanks.input1.drain(1, FluidAction.EXECUTE);
                             if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }

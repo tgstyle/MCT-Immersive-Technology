@@ -1,0 +1,6 @@
+Intercambiador de calor
+¿Está caliente o frío?
+<&multiblock>El Intercambiador de calor es una máquina multibloque usada para transferir calor de fluidos calientes.
+
+§lFuncionamiento§r
+    - El §lIntercambiador de calor§r necesita fluidos calientes para producir otros fluidos.

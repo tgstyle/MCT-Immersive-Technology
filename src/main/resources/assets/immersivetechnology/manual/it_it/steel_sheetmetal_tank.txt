@@ -1,0 +1,11 @@
+Serbatoio in lamiera d'acciaio
+Riempilo!
+<&multiblock>Il Serbatoio in lamiera d'acciaio è semplicemente una versione più grande del serbatoio normale.
+
+
+
+
+
+§lFunzionamento§r
+    - Il §lVapore§r viene inserito dall'alto.
+    - Il §lVapore di scarico§r esce dal basso.

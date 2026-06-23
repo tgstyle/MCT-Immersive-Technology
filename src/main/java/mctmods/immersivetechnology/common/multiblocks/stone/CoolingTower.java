@@ -7,8 +7,6 @@ import mctmods.immersivetechnology.common.multiblocks.stone.shapes.CoolingTowerS
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
 
 import java.util.function.Consumer;
 
@@ -16,8 +14,6 @@ public class CoolingTower extends ITTemplateMultiblock {
     public static final CoolingTower INSTANCE = new CoolingTower();
 
     public CoolingTower() { super(ITLib.rl("multiblocks/cooling_tower"), CoolingTowerShape.MASTER_POS, CoolingTowerShape.TRIGGER_POS, new BlockPos(CoolingTowerShape.WIDTH,CoolingTowerShape.HEIGHT,CoolingTowerShape.LENGTH), ITMultiblockProvider.COOLING_TOWER); }
-
-    @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
 
     @Override public float getManualScale() { return CoolingTowerShape.MANUAL_SCALE; }
 

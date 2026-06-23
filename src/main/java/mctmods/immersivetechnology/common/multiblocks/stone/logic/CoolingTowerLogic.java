@@ -8,19 +8,19 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLev
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import com.google.common.collect.ImmutableList;
+import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.stone.process.CoolingTowerProcess;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.CoolingTowerShape;
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITParticles;
 import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -29,13 +29,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
@@ -47,8 +47,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.State>, IServerTickableComponent<CoolingTowerLogic.State>, IClientTickableComponent<CoolingTowerLogic.State>, ITPressurizedFluidOutput<CoolingTowerLogic.State> {
-    public static final int INPUT_TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
-    public static final int OUTPUT_TANK_CAPACITY = 24 * FluidType.BUCKET_VOLUME;
+    public static final int INPUT_TANK_CAPACITY = ITServerConfig.coolingTowerInputTankCapacity;
+    public static final int OUTPUT_TANK_CAPACITY = ITServerConfig.coolingTowerOutputTankCapacity;
+
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(CoolingTowerShape.DATA.pointsOfInterest);
 
     public static final List<BlockPos> FLUID_INPUT_POIS = getPosList("fluid_input");
@@ -71,7 +72,16 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1, state.tanks.output2); }
 
-    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutputs[0], state.fluidOutputs[1], state.fluidOutputs[2]); }
+    private double getBiomeSpeedMultiplier(IMultiblockContext<State> ctx) {
+        if (ITServerConfig.coolingTowerBiomeTempFactor <= 0.0D) return 1.0D;
+        Level level = ctx.getLevel().getRawLevel();
+        if (level.dimension() == Level.NETHER) return 0.0D;
+        BlockPos worldPos = ctx.getLevel().toAbsolute(BlockPos.ZERO);
+        Biome biome = level.getBiome(worldPos).value();
+        double temp = biome.getBaseTemperature();
+        double deviation = temp - 0.8D;
+        return 1.0D + (deviation * ITServerConfig.coolingTowerBiomeTempFactor);
+    }
 
     @Override public void tickClient(IMultiblockContext<CoolingTowerLogic.State> ctx) {
         CoolingTowerLogic.State state = ctx.getState();
@@ -113,9 +123,12 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         IMultiblockLevel mlevel = ctx.getLevel();
         Level level = mlevel.getRawLevel();
         boolean wasActive = state.active;
+
+        double biomeMult = getBiomeSpeedMultiplier(ctx);
+
         for (int i = state.processQueue.size() - 1; i >= 0; i--) {
             CoolingTowerProcess process = state.processQueue.get(i);
-            process.tick(state);
+            process.tick(state, biomeMult);
             if (process.isComplete()) { state.processQueue.remove(i); }
         }
         if (state.processQueue.size() < getProcessQueueMaxLength()) {
@@ -196,8 +209,6 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         public final StoredCapability<IFluidHandler> output0Cap;
         public final StoredCapability<IFluidHandler> output1Cap;
         public final StoredCapability<IFluidHandler> output2Cap;
-        @SuppressWarnings("unchecked")
-        public final CapabilityReference<IFluidHandler>[] fluidOutputs = new CapabilityReference[3];
         public boolean active;
         public int soundCooldown = 0;
         public List<CoolingTowerProcess> processQueue = new ArrayList<>();
@@ -215,13 +226,6 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             this.output0Cap = new StoredCapability<>(ITArrayFluidHandler.drainOnly(tanks.output0, () -> onChanged.accept(null)));
             this.output1Cap = new StoredCapability<>(ITArrayFluidHandler.drainOnly(tanks.output1, () -> onChanged.accept(null)));
             this.output2Cap = new StoredCapability<>(ITArrayFluidHandler.drainOnly(tanks.output2, () -> onChanged.accept(null)));
-            BlockPos[] outputPositions = FLUID_OUTPUT_POIS.toArray(new BlockPos[0]);
-            for (int i = 0; i < 3; i++) {
-                MultiblockFace mbf = new MultiblockFace(OUTPUT_FACING, outputPositions[i]);
-                CapabilityPosition oppCp = CapabilityPosition.opposing(mbf);
-                MultiblockFace oppMbf = new MultiblockFace(oppCp.side(), oppCp.posInMultiblock());
-                fluidOutputs[i] = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, oppMbf);
-            }
         }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {

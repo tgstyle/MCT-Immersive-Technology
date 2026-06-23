@@ -1,0 +1,9 @@
+Schmelztiegel
+Schmelzen!
+<&multiblock>Der Schmelztiegel nutzt Elektrizität, um Materialien in ihre geschmolzene flüssige Form zu schmelzen.
+
+
+§lBetrieb§r
+    - §lFlüssigkeiten§r werden hinten eingefüllt.
+    - §lGeschmolzene Flüssigkeiten§r werden vorne unten ausgegeben.
+    - Energie wird seitlich zugeführt.

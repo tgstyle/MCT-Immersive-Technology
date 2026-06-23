@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import mcjty.theoneprobe.api.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarMelterRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.*;
 import mctmods.immersivetechnology.core.ITCommonConfig;
@@ -35,12 +35,15 @@ public class OneProbeHelper {
         top.registerProvider(new BoilerTankProvider());
         top.registerProvider(new CoolingTowerProvider());
         top.registerProvider(new DistillerProvider());
+        top.registerProvider(new ElectrolyticCrucibleBatteryProvider());
         top.registerProvider(new GasTurbineProvider());
         top.registerProvider(new HeatExchangerProvider());
+        top.registerProvider(new RadiatorProvider());
         top.registerProvider(new SolarMelterProvider());
         top.registerProvider(new SolarTowerProvider());
         top.registerProvider(new SteamTurbineProvider());
         top.registerProvider(new SteelSheetmetalTankProvider());
+        top.registerProvider(new MeltingCrucibleProvider());
     }
 
     private static void addFluidTankDisplay(IProbeInfo probeInfo, FluidTank tank) {
@@ -51,6 +54,12 @@ public class OneProbeHelper {
         probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
                 .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
                 .text(fluidName);
+    }
+
+    private static void addFluidTanks(IProbeInfo probeInfo, FluidTank... tanks) {
+        for (FluidTank tank : tanks) {
+            if (tank != null) addFluidTankDisplay(probeInfo, tank);
+        }
     }
 
     private static void addEnergyDisplay(IProbeInfo probeInfo, int stored, int max) {
@@ -153,11 +162,7 @@ public class OneProbeHelper {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
             if (ctx == null) return;
             if (ctx.getState() instanceof CoolingTowerLogic.State state) {
-                addFluidTankDisplay(probeInfo, state.tanks.input0());
-                addFluidTankDisplay(probeInfo, state.tanks.input1());
-                addFluidTankDisplay(probeInfo, state.tanks.output0());
-                addFluidTankDisplay(probeInfo, state.tanks.output1());
-                addFluidTankDisplay(probeInfo, state.tanks.output2());
+                addFluidTanks(probeInfo, state.tanks.input0(), state.tanks.input1(), state.tanks.output0(), state.tanks.output1(), state.tanks.output2());
                 if (state.active) {
                     int percent = state.totalProcessTime > 0 ? state.processProgress * 100 / state.totalProcessTime : 0;
                     addProcessPercent(probeInfo, percent);
@@ -176,6 +181,23 @@ public class OneProbeHelper {
             if (ctx.getState() instanceof DistillerLogic.State state) {
                 addFluidTankDisplay(probeInfo, state.tanks.input());
                 addFluidTankDisplay(probeInfo, state.tanks.output());
+                addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
+                var queue = state.processor.getQueue();
+                if (!queue.isEmpty()) {
+                    probeInfo.text("Processing (" + queue.size() + " queued)");
+                }
+            }
+        }
+    }
+
+    public static class ElectrolyticCrucibleBatteryProvider implements IProbeInfoProvider {
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "electrolytic_crucible_battery"); }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
+            IMultiblockContext<?> ctx = getContext(level, data.getPos());
+            if (ctx == null) return;
+            if (ctx.getState() instanceof ElectrolyticCrucibleBatteryLogic.State state) {
+                addFluidTanks(probeInfo, state.tanks.input(), state.tanks.output0(), state.tanks.output1(), state.tanks.output2());
                 addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
                 var queue = state.processor.getQueue();
                 if (!queue.isEmpty()) {
@@ -208,10 +230,7 @@ public class OneProbeHelper {
             IMultiblockContext<?> ctx = mbbe.getHelper().getContext();
             if (ctx == null) return;
             if (ctx.getState() instanceof HeatExchangerLogic.State state) {
-                addFluidTankDisplay(probeInfo, state.tanks.input0());
-                addFluidTankDisplay(probeInfo, state.tanks.input1());
-                addFluidTankDisplay(probeInfo, state.tanks.output0());
-                addFluidTankDisplay(probeInfo, state.tanks.output1());
+                addFluidTanks(probeInfo, state.tanks.input0(), state.tanks.input1(), state.tanks.output0(), state.tanks.output1());
                 addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
                 var queue = state.processor.getQueue();
                 if (!queue.isEmpty()) {
@@ -220,6 +239,53 @@ public class OneProbeHelper {
                     if (queue.size() > 1) {
                         probeInfo.text((queue.size() - 1) + " queued");
                     }
+                }
+            }
+        }
+    }
+
+    public static class RadiatorProvider implements IProbeInfoProvider {
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "radiator"); }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
+            IMultiblockContext<?> ctx = getContext(level, data.getPos());
+            if (ctx == null) return;
+            if (ctx.getState() instanceof RadiatorLogic.State state) {
+                addFluidTanks(probeInfo, state.tanks.input(), state.tanks.output());
+                if (state.active) {
+                    int percent = state.totalProcessTime > 0 ? state.processProgress * 100 / state.totalProcessTime : 0;
+                    addProcessPercent(probeInfo, percent);
+                }
+                probeInfo.text("Active processes: " + state.processQueue.size());
+            } else if (ctx.getState() instanceof RadiatorHorizontalLogic.State state) {
+                addFluidTanks(probeInfo, state.tanks.input(), state.tanks.output());
+                if (state.active) {
+                    int percent = state.totalProcessTime > 0 ? state.processProgress * 100 / state.totalProcessTime : 0;
+                    addProcessPercent(probeInfo, percent);
+                }
+                probeInfo.text("Active processes: " + state.processQueue.size());
+            }
+        }
+    }
+
+    public static class MeltingCrucibleProvider implements IProbeInfoProvider {
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "melting_crucible"); }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
+            IMultiblockContext<?> ctx = getContext(level, data.getPos());
+            if (ctx == null) return;
+            if (ctx.getState() instanceof MeltingCrucibleLogic.State state) {
+                addFluidTankDisplay(probeInfo, state.tanks.input());
+                addFluidTankDisplay(probeInfo, state.tanks.output());
+                addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
+                FluidStack input = state.tanks.input().getFluid();
+                MeltingRecipe recipe = input.isEmpty() ? null : MeltingRecipe.findRecipe(level, input);
+                double workingLevel = recipe != null ? recipe.requiredTemp : MeltingCrucibleLogic.WORKING_HEAT_LEVEL;
+                addTemperature(probeInfo, state.heatLevel, workingLevel);
+
+                var queue = state.processor.getQueue();
+                if (!queue.isEmpty()) {
+                    probeInfo.text("Processing (" + queue.size() + " queued)");
                 }
             }
         }
@@ -235,7 +301,7 @@ public class OneProbeHelper {
                 addFluidTankDisplay(probeInfo, state.tanks.input());
                 addFluidTankDisplay(probeInfo, state.tanks.output());
                 FluidStack input = state.tanks.input().getFluid();
-                SolarMelterRecipe recipe = input.isEmpty() ? null : SolarMelterRecipe.findRecipe(level, input);
+                MeltingRecipe recipe = input.isEmpty() ? null : MeltingRecipe.findRecipe(level, input);
                 double workingLevel = recipe != null ? recipe.requiredTemp : solarMelterWorkingHeatLevel;
                 addTemperature(probeInfo, state.heatLevel, workingLevel);
                 int percent = (state.totalProcessTime > 0) ? state.processProgress * 100 / state.totalProcessTime : 0;
@@ -289,6 +355,7 @@ public class OneProbeHelper {
         }
     }
 
+    @SuppressWarnings("resource")
     private static int getFluidColor(@Nullable FluidStack fluid) {
         if (fluid == null || fluid.isEmpty()) return 0xff555555;
         IClientFluidTypeExtensions ext = IClientFluidTypeExtensions.of(fluid.getFluid());

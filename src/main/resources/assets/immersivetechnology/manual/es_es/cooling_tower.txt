@@ -1,0 +1,14 @@
+Torre de enfriamiento
+¡Enfría!
+<&multiblock>La Torre de enfriamiento enfría el §lvapor de escape§r de vuelta a agua.
+
+
+
+
+
+
+§lFuncionamiento§r
+    - El §lAgua§r se introduce por uno de los entradas.
+    - El §lVapor de escape§r se introduce por la otra entrada.
+    - El §lAgua§r sale por todas las salidas.
+    - La Eficiencia depende del diferencial de temperatura con el entorno y las obstrucciones cercanas.

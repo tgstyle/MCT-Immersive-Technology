@@ -79,8 +79,6 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
 
-    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
-
     @Override public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         final Level level = ctx.getLevel().getRawLevel();
@@ -89,6 +87,18 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         if (state.heatSource.isPresent()) { heatLevel = state.heatSource.get().getHeatLevel(); }
         double previousHeatLevel = state.heatLevel;
         state.heatLevel = heatLevel;
+
+        double displayMax = DEFAULT_WORKING_HEAT_LEVEL;
+        if (state.lastRecipe != null) {
+            displayMax = Math.max(displayMax, state.lastRecipe.requiredHeat);
+        } else if (state.tanks.input.getFluidAmount() > 0) {
+            BoilerTankRecipe potentialRecipe = BoilerTankRecipe.findRecipe(level, state.tanks.input.getFluid());
+            if (potentialRecipe != null) {
+                displayMax = Math.max(displayMax, potentialRecipe.requiredHeat);
+            }
+        }
+        state.workingHeatLevel = Math.max(displayMax, heatLevel);
+
         boolean isActive = heatLevel >= state.getWorkingHeatLevel() && state.recipeTimeRemaining > 0;
         if (state.active != isActive) { state.active = isActive; update = true; }
         if (previousHeatLevel != state.heatLevel) { update = true; }
@@ -114,10 +124,6 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
                             state.recipeTimeRemaining = state.lastRecipe.getTotalProcessTime();
                             state.totalProcessTime = state.lastRecipe.getTotalProcessTime();
                             state.recipeTimeRemaining--;
-                            if (state.recipeTimeRemaining == 0) {
-                                state.tanks.output.fill(state.lastRecipe.output.copy(), FluidAction.EXECUTE);
-                                state.totalProcessTime = 0;
-                            }
                             update = true;
                         }
                     }
@@ -179,7 +185,6 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         public StoredCapability<IFluidHandler> inputCap;
         public StoredCapability<IFluidHandler> outputCap;
         public StoredCapability<IHeatConsumer> boilerInputCap;
-        public CapabilityReference<IFluidHandler> fluidOutput;
         public CapabilityReference<IHeatProvider> heatSource;
         public ITSlotwiseItemHandler inventory;
         public int recipeTimeRemaining = 0;
@@ -206,10 +211,6 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
             boilerInputCap = new StoredCapability<>(new BoilerInputImpl(tanks.input));
-            MultiblockFace outputMBFace = new MultiblockFace(FLUID_OUTPUT_FACING, FLUID_OUTPUT_POI.get(0));
-            CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
-            MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
-            fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
             MultiblockFace heatMBFace = new MultiblockFace(HEAT_INPUT_FACING, HEAT_INPUT_POI.get(0));
             CapabilityPosition heatOpposingCP = CapabilityPosition.opposing(heatMBFace);
             MultiblockFace heatOpposingMBFace = new MultiblockFace(heatOpposingCP.side(), heatOpposingCP.posInMultiblock());
@@ -263,6 +264,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             tanks.readNBT(nbt.getCompound("tanks"));
             recipeTimeRemaining = nbt.getInt("recipeTimeRemaining");
             totalProcessTime = nbt.getInt("totalProcessTime");
+            if (nbt.contains("workingHeatLevel")) { workingHeatLevel = nbt.getDouble("workingHeatLevel"); }
         }
     }
 

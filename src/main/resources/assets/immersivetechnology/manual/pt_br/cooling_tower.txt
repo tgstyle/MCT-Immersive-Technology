@@ -1,0 +1,14 @@
+Torre de Resfriamento
+Esfria!
+<&multiblock>A Torre de resfriamento resfria o §lvapor de escape§r de volta para água.
+
+
+
+
+
+
+§lFuncionamento§r
+    - A §lÁgua§r é inserida em uma das entradas.
+    - O §lVapor de escape§r é inserido na outra entrada.
+    - A §lÁgua§r sai por todas as saídas.
+    - A Eficiência depende do diferencial de temperatura com o ambiente e obstruções próximas.

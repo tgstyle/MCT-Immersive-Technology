@@ -55,7 +55,7 @@ public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements 
             requestCooldown = 20;
         }
         double rawValue = ITClientConfig.perTickTrashCans ? (double)lastAcceptedAmount / 20.0 : lastAcceptedAmount;
-        String value = NUMBER_FORMAT.format(rawValue);
-        return new Component[] { Component.literal(text().format(value)) };
+        String valueStr = NUMBER_FORMAT.format(rawValue);
+        return new Component[] { Component.translatable(text().getLocation(), valueStr) };
     }
 }

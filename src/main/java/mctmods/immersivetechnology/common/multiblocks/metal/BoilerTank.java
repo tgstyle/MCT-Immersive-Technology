@@ -7,19 +7,14 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerTankSha
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
+
 import java.util.List;
 import java.util.function.Consumer;
 
 public class BoilerTank extends ITTemplateMultiblock {
     public static final BoilerTank INSTANCE = new BoilerTank();
 
-    public BoilerTank() {
-        super(ITLib.rl("multiblocks/boiler_tank"), BoilerTankShape.MASTER_POS, BoilerTankShape.TRIGGER_POS, new BlockPos(BoilerTankShape.WIDTH, BoilerTankShape.HEIGHT, BoilerTankShape.LENGTH), ITMultiblockProvider.BOILER_TANK);
-    }
-
-    @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) { super.disassemble(world, origin, mirrored, clickDirectionAtCreation); }
+    public BoilerTank() { super(ITLib.rl("multiblocks/boiler_tank"), BoilerTankShape.MASTER_POS, BoilerTankShape.TRIGGER_POS, new BlockPos(BoilerTankShape.WIDTH, BoilerTankShape.HEIGHT, BoilerTankShape.LENGTH), ITMultiblockProvider.BOILER_TANK); }
 
     @Override public float getManualScale() { return BoilerTankShape.MANUAL_SCALE; }
 

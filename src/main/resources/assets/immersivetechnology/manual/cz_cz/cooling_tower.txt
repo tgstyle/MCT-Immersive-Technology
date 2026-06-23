@@ -1,0 +1,14 @@
+Chladicí věž
+Chlaď!
+<&multiblock>Chladicí věž ochlazuje §lvýfukovou páru§r zpět na vodu.
+
+
+
+
+
+
+§lProvoz§r
+    - §lVoda§r se vkládá do jednoho vstupu.
+    - §lVýfuková pára§r se vkládá do druhého vstupu.
+    - §lVoda§r vychází ze všech výstupů.
+    - Účinnost závisí na teplotním rozdílu s okolím a blízkých překážkách.

@@ -37,8 +37,5 @@ public class GasTurbineRecipeBuilder extends IEFinishedRecipe<GasTurbineRecipeBu
 
     public GasTurbineRecipeBuilder setTime(int time) { return this.addWriter((jsonObject) -> jsonObject.addProperty("time", time)); }
 
-    /**
-     * Set the torque multiplier produced while this recipe is used.
-     */
     public GasTurbineRecipeBuilder setTorque(float torque) { return this.addWriter((jsonObject) -> jsonObject.addProperty("torque", torque)); }
 }

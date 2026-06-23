@@ -1,0 +1,11 @@
+Ocelová nádrž
+Naplň ji!
+<&multiblock>Ocelová nádrž je jen větší verze běžné nádrže.
+
+
+
+
+
+§lProvoz§r
+    - §lPára§r se vkládá nahoře.
+    - §lVýfuková pára§r vychází dole.

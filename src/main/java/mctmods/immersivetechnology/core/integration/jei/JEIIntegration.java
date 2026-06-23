@@ -1,11 +1,9 @@
 package mctmods.immersivetechnology.core.integration.jei;
 
-import mctmods.immersivetechnology.client.gui.BoilerLiquidScreen;
-import mctmods.immersivetechnology.client.gui.BoilerSolidScreen;
-import mctmods.immersivetechnology.client.gui.BoilerTankScreen;
-import mctmods.immersivetechnology.client.gui.DistillerScreen;
-import mctmods.immersivetechnology.client.gui.SolarScreen;
+import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
+import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.*;
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.core.integration.jei.category.*;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -32,6 +30,7 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +43,8 @@ import java.util.Optional;
 import static mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea.fillTooltip;
 
 @SuppressWarnings({"unused"})
-@JeiPlugin public class JEIIntegration implements IModPlugin {
+@JeiPlugin
+public class JEIIntegration implements IModPlugin {
 
     private static final ResourceLocation ID = ITLib.rl("main");
     private static IIngredientManager ingredientManager;
@@ -52,45 +52,70 @@ import static mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea.fill
     @Override @NotNull public ResourceLocation getPluginUid() { return ID; }
 
     @Override public void registerCategories(IRecipeCategoryRegistration registration) {
+        registration.addRecipeCategories(new ITAdvancedCokeOvenCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITBoilerLiquidCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITBoilerSolidCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITBoilerTankCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITCoolingTowerCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITDistillerCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new ITElectrolyticCrucibleBatteryCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITGasTurbineCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITHeatExchangerCategory(registration.getJeiHelpers().getGuiHelper()));
-        registration.addRecipeCategories(new ITSolarMelterCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new ITRadiatorCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new ITMeltingCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITSolarTowerCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ITSteamTurbineCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override public void registerRecipes(IRecipeRegistration registration) {
+        registration.addRecipes(JEIRecipeTypes.ADVANCED_COKE_OVEN, getAdvancedCokeOvenRecipes());
+        registration.addRecipes(JEIRecipeTypes.ADVANCED_COKE_OVEN_CUSTOM, getAdvancedCokeOvenCustomRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_LIQUID, getBoilerLiquidRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_SOLID, getBoilerSolidRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_TANK, getBoilerRecipes());
         registration.addRecipes(JEIRecipeTypes.COOLING_TOWER, getCoolingTowerRecipes());
         registration.addRecipes(JEIRecipeTypes.DISTILLER, getDistillerRecipes());
+        registration.addRecipes(JEIRecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY, getElectrolyticCrucibleBatteryRecipes());
         registration.addRecipes(JEIRecipeTypes.GAS_TURBINE, getGasTurbineRecipes());
         registration.addRecipes(JEIRecipeTypes.HEAT_EXCHANGER, getHeatExchangerRecipes());
-        registration.addRecipes(JEIRecipeTypes.SOLAR_MELTER, getSolarMelterRecipes());
+        registration.addRecipes(JEIRecipeTypes.RADIATOR, getRadiatorRecipes());
+        registration.addRecipes(JEIRecipeTypes.MELTING, getSolarMelterRecipes());
         registration.addRecipes(JEIRecipeTypes.SOLAR_TOWER, getSolarTowerRecipes());
         registration.addRecipes(JEIRecipeTypes.STEAM_TURBINE, getSteamTurbineRecipes());
     }
 
     @Override public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        registration.addRecipeCatalyst(ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack(), JEIRecipeTypes.ADVANCED_COKE_OVEN);
+        registration.addRecipeCatalyst(ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack(), JEIRecipeTypes.ADVANCED_COKE_OVEN_CUSTOM);
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_LIQUID.iconStack(), JEIRecipeTypes.BOILER_LIQUID);
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_SOLID.iconStack(), JEIRecipeTypes.BOILER_SOLID);
         registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_TANK.iconStack(), JEIRecipeTypes.BOILER_TANK);
         registration.addRecipeCatalyst(ITMultiblockProvider.COOLING_TOWER.iconStack(), JEIRecipeTypes.COOLING_TOWER);
         registration.addRecipeCatalyst(ITMultiblockProvider.DISTILLER.iconStack(), JEIRecipeTypes.DISTILLER);
+        registration.addRecipeCatalyst(ITMultiblockProvider.ELECTROLYTIC_CRUCIBLE_BATTERY.iconStack(), JEIRecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
         registration.addRecipeCatalyst(ITMultiblockProvider.GAS_TURBINE.iconStack(), JEIRecipeTypes.GAS_TURBINE);
         registration.addRecipeCatalyst(ITMultiblockProvider.HEAT_EXCHANGER.iconStack(), JEIRecipeTypes.HEAT_EXCHANGER);
-        registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_MELTER.iconStack(), JEIRecipeTypes.SOLAR_MELTER);
+        registration.addRecipeCatalyst(ITMultiblockProvider.RADIATOR.iconStack(), JEIRecipeTypes.RADIATOR);
+        registration.addRecipeCatalyst(ITMultiblockProvider.RADIATOR_HORIZONTAL.iconStack(), JEIRecipeTypes.RADIATOR);
+        registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_MELTER.iconStack(), JEIRecipeTypes.MELTING);
+        registration.addRecipeCatalyst(ITMultiblockProvider.MELTING_CRUCIBLE.iconStack(), JEIRecipeTypes.MELTING);
         registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_TOWER.iconStack(), JEIRecipeTypes.SOLAR_TOWER);
         registration.addRecipeCatalyst(ITMultiblockProvider.STEAM_TURBINE.iconStack(), JEIRecipeTypes.STEAM_TURBINE);
     }
 
     @Override public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registration) {
+        registration.addGuiContainerHandler(AdvancedCokeOvenScreen.class, new IGuiContainerHandler<>() {
+            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull AdvancedCokeOvenScreen gui, double mouseX, double mouseY) {
+                return Optional.empty();
+            }
+
+            @Override @NotNull public Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull AdvancedCokeOvenScreen gui, double mouseX, double mouseY) {
+                List<IGuiClickableArea> areas = new ArrayList<>();
+                areas.add(createAdvancedCokeOvenClickableArea());
+                return areas;
+            }
+        });
+
         registration.addGuiContainerHandler(BoilerLiquidScreen.class, new IGuiContainerHandler<>() {
             @Override
             public @NotNull Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerLiquidScreen gui, double mouseX, double mouseY) {
@@ -251,6 +276,48 @@ import static mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea.fill
                 return areas;
             }
         });
+
+        registration.addGuiContainerHandler(MeltingCrucibleScreen.class, new IGuiContainerHandler<>() {
+            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull MeltingCrucibleScreen gui, double mouseX, double mouseY) {
+                int relX = (int) (mouseX - gui.getLeftPos());
+                int relY = (int) (mouseY - gui.getTopPos());
+                FluidStack fs = null;
+                Rect2i area = null;
+                if (relX >= 102 && relX < 118 && relY >= 21 && relY < 68) {
+                    fs = gui.getMenu().inputTank.getFluid();
+                    area = new Rect2i(gui.getLeftPos() + 102, gui.getTopPos() + 21, 16, 47);
+                } else if (relX >= 126 && relX < 142 && relY >= 21 && relY < 68) {
+                    fs = gui.getMenu().outputTank.getFluid();
+                    area = new Rect2i(gui.getLeftPos() + 126, gui.getTopPos() + 21, 16, 47);
+                }
+                if (fs != null && fs.getAmount() > 0) {
+                    Rect2i finalArea = area;
+                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typed -> new IClickableIngredient<FluidStack>() {
+                        @SuppressWarnings("removal")
+                        @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() {return typed;}
+
+                        @Override @NotNull public Rect2i getArea() {return finalArea;}
+                    });
+                }
+                return Optional.empty();
+            }
+
+            @Override @NotNull public Collection<IGuiClickableArea> getGuiClickableAreas(@NotNull MeltingCrucibleScreen gui, double mouseX, double mouseY) {
+                List<IGuiClickableArea> areas = new ArrayList<>();
+                areas.add(createMeltingClickableArea(102, gui.getMenu().inputTank));
+                areas.add(createMeltingClickableArea(126, gui.getMenu().outputTank));
+                return areas;
+            }
+        });
+    }
+
+    private static IGuiClickableArea createAdvancedCokeOvenClickableArea() {
+        Rect2i area = new Rect2i(58, 36, 11, 13);
+        return new IGuiClickableArea() {
+            @Override @NotNull public Rect2i getArea() { return area; }
+            @Override public void getTooltip(@NotNull ITooltipBuilder tooltip) { tooltip.add(Component.translatable("jei.tooltip.show.recipes")); }
+            @Override public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) { recipesGui.showTypes(List.of(JEIRecipeTypes.ADVANCED_COKE_OVEN, JEIRecipeTypes.ADVANCED_COKE_OVEN_CUSTOM)); }
+        };
     }
 
     private static IGuiClickableArea createBoilerLiquidClickableArea(IFluidTank tank) {
@@ -307,21 +374,47 @@ import static mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea.fill
                 tooltip.add(Component.translatable("jei.tooltip.show.recipes"));
             }
             @Override public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) {
-                recipesGui.showTypes(List.of(gui.isMelter ? JEIRecipeTypes.SOLAR_MELTER : JEIRecipeTypes.SOLAR_TOWER));
+                recipesGui.showTypes(List.of(gui.isMelter ? JEIRecipeTypes.MELTING : JEIRecipeTypes.SOLAR_TOWER));
+            }
+        };
+    }
+
+    private static IGuiClickableArea createMeltingClickableArea(int x, IFluidTank tank) {
+        Rect2i area = new Rect2i(x, 21, 16, 47);
+        return new IGuiClickableArea() {
+            @Override @NotNull public Rect2i getArea() { return area; }
+            @Override public void getTooltip(@NotNull ITooltipBuilder tooltip) {
+                fillTooltip(tank.getFluid(), tank.getCapacity(), tooltip::add);
+                tooltip.add(Component.translatable("jei.tooltip.show.recipes"));
+            }
+            @Override public void onClick(@NotNull IFocusFactory focusFactory, @NotNull IRecipesGui recipesGui) {
+                recipesGui.showTypes(List.of(JEIRecipeTypes.MELTING));
             }
         };
     }
 
     @Override public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) { ingredientManager = jeiRuntime.getIngredientManager(); }
 
+    private List<CokeOvenRecipe> getAdvancedCokeOvenRecipes() {
+        assert Minecraft.getInstance().level != null;
+        Level level = Minecraft.getInstance().level;
+        AdvancedCokeOvenRecipe.copyIECokeOvenRecipes(level);
+        return new ArrayList<>(CokeOvenRecipe.RECIPES.getRecipes(level));
+    }
+    private List<AdvancedCokeOvenRecipe> getAdvancedCokeOvenCustomRecipes() {
+        assert Minecraft.getInstance().level != null;
+        return new ArrayList<>(AdvancedCokeOvenRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
+    }
     private List<BoilerLiquidRecipe> getBoilerLiquidRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(BoilerLiquidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<BoilerSolidRecipe> getBoilerSolidRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(BoilerSolidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<BoilerTankRecipe> getBoilerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(BoilerTankRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<CoolingTowerRecipe> getCoolingTowerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(CoolingTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<DistillerRecipe> getDistillerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(DistillerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<ElectrolyticCrucibleBatteryRecipe> getElectrolyticCrucibleBatteryRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(ElectrolyticCrucibleBatteryRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<GasTurbineRecipe> getGasTurbineRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(GasTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<HeatExchangerRecipe> getHeatExchangerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(HeatExchangerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
-    private List<SolarMelterRecipe> getSolarMelterRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(SolarMelterRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<RadiatorRecipe> getRadiatorRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(RadiatorRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<MeltingRecipe> getSolarMelterRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(MeltingRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<SolarTowerRecipe> getSolarTowerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(SolarTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
     private List<SteamTurbineRecipe> getSteamTurbineRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(SteamTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
 }

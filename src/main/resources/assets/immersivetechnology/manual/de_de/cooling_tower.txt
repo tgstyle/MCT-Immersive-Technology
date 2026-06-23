@@ -1,0 +1,14 @@
+Kühlturm
+Abkühlen!
+<&multiblock>Der Kühlturm kühlt §lAuspuffdampf§r wieder zu Wasser ab.
+
+
+
+
+
+
+§lBetrieb§r
+    - §lWasser§r wird an einem Eingang eingefüllt.
+    - §lAuspuffdampf§r wird am anderen Eingang eingefüllt.
+    - §lWasser§r wird an allen Ausgängen ausgegeben.
+    - Die Effizienz hängt vom Temperaturunterschied zur Umgebung und nahen Hindernissen ab.

@@ -1,0 +1,15 @@
+Caldera de combustible líquido
+¡Aquí dentro se pone muy vaporoso!
+<&multiblock>La Caldera es una máquina multibloque usada para §lhervir agua§r y convertirla en vapor.
+
+
+
+
+
+§lFuncionamiento§r
+    - El §lCombustible líquido§r se introduce debajo de la cámara de combustión.
+    - Enciende la §lCaldera§r con una antorcha o pedernal y acero en la rejilla superior de escape.
+    - La caldera funciona en modo piloto cuando no está activa y consume una pequeña cantidad de combustible.
+    - El §lAgua§r debe estar en un §lTanque de caldera§r conectado.
+
+§lConsejo:§r La Caldera puede procesar una cantidad decente de agua.

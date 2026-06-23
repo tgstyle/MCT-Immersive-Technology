@@ -10,7 +10,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.client.utils.TextUtils;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.interfaces.MBOverlayText;
 import blusunrize.immersiveengineering.common.util.LayeredComparatorOutput;
@@ -92,8 +91,6 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return Stream.generate(() -> state.tank).limit(IO_POIS.size()).collect(ImmutableList.toImmutableList()); }
 
-    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return state.outputs; }
-
     @Override public int getTransferSpeed() { return ITServerConfig.steelSheetmetalTankTransferSpeed; }
 
     @Override public boolean shouldPumpOutputs(IMultiblockContext<State> ctx) {
@@ -136,20 +133,12 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
     public static class State implements IMultiblockState, ITDisplayContext {
         public final ITMarkableFluidTank tank;
         private final LayeredComparatorOutput<IMultiblockContext<State>> comparatorHelper;
-        private final List<CapabilityReference<IFluidHandler>> outputs;
         private final StoredCapability<IFluidHandler> inputHandler;
         private final StoredCapability<IFluidHandler> ioHandler;
         public RSState rsState = RSState.disabledByDefault();
         public boolean active = false;
 
         public State(IInitialMultiblockContext<State> capabilitySource) {
-            ImmutableList.Builder<CapabilityReference<IFluidHandler>> outputBuilder = ImmutableList.builder();
-            for (CapabilityPosition p : IO_POIS) {
-                MultiblockFace mbf = new MultiblockFace(p.side(), p.posInMultiblock());
-                CapabilityPosition opp = CapabilityPosition.opposing(mbf);
-                outputBuilder.add(capabilitySource.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opp.posInMultiblock(), opp.side()));
-            }
-            this.outputs = outputBuilder.build();
             Runnable changedAndSync = () -> { capabilitySource.getSyncRunnable().run(); capabilitySource.getMarkDirtyRunnable().run(); };
             this.tank = new ITMarkableFluidTank(ITServerConfig.steelSheetmetalTankCapacity, v -> changedAndSync.run());
             this.inputHandler = new StoredCapability<>(new ConditionalFluidHandler(tank, true, false, changedAndSync, () -> false));

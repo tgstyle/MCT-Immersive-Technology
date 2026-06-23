@@ -53,13 +53,12 @@ public class ITSteamTurbineCategory extends ITRecipeCategory<SteamTurbineRecipe>
         inputSlot.addRichTooltipCallback((slotView, tooltip) -> slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
                 ITFluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
 
-        if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) {
-            var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 89, 11)
-                    .addIngredient(ForgeTypes.FLUID_STACK, recipe.fluidOutput)
-                    .setFluidRenderer(tankCapacity, false, 16, 47);
-            outputSlot.addRichTooltipCallback((slotView, tooltip) -> slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                    ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput.getAmount(), tooltip::add)));
-        }
+        FluidStack fluidOut = (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) ? recipe.fluidOutput : FluidStack.EMPTY;
+        var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 89, 11)
+                .addIngredient(ForgeTypes.FLUID_STACK, fluidOut)
+                .setFluidRenderer(tankCapacity, false, 16, 47);
+        outputSlot.addRichTooltipCallback((slotView, tooltip) -> slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
     }
 
     private int getTankCapacity(@NotNull SteamTurbineRecipe recipe) {

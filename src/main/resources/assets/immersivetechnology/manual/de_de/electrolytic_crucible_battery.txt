@@ -1,0 +1,8 @@
+Elektrolytische Tiegelbatterie
+Fortgeschrittene Elektrolyse
+<&multiblock>Die Elektrolytische Tiegelbatterie ist eine Multiblock-Maschine, die zur §lDurchführung der Elektrolyse von geschmolzenen Salzen und anderen Flüssigkeiten§r verwendet wird und mehrere Ausgaben mit hoher Effizienz produziert.
+
+§lBetrieb§r
+    - §lFlüssigkeit§r wird von der Seite zugeführt.
+    - §lEnergie§r wird von der Seite zugeführt.
+    - §lAusgaben§r (Flüssigkeiten und Gegenstände) werden von mehreren Seiten entnommen.

@@ -39,7 +39,8 @@ public class BoilerTankScreen extends ITContainerScreen<BoilerTankMenu> {
                     @Override protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
                         tooltip.add(Component.translatable(TranslationKey.GUI_TEMPERATURE.getLocation()));
                         float heatLevel = menu.getHeatLevel();
-                        tooltip.add(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_HEAT_LEVEL.getLocation(), (int)heatLevel), ChatFormatting.RED));
+                        double maxHeat = menu.getWorkingHeatLevel();
+                        tooltip.add(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_HEAT_LEVEL_DETAILED.getLocation(), (int)heatLevel, (int)maxHeat), ChatFormatting.RED));
                     }
 
                     @Override public void draw(GuiGraphics graphics) { }

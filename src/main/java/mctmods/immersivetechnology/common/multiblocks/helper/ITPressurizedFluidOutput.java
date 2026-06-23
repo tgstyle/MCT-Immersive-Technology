@@ -3,6 +3,8 @@ package mctmods.immersivetechnology.common.multiblocks.helper;
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPosition;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
@@ -12,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
@@ -22,7 +25,6 @@ public interface ITPressurizedFluidOutput<State extends IMultiblockState> {
     List<BlockPos> getOutputPositions();
     Direction getOutputDirection(IMultiblockContext<State> ctx);
     List<ITMarkableFluidTank> getOutputTanks(State state);
-    List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state);
 
     default List<RelativeBlockFace> getOutputFacings() { return null; }
 
@@ -39,11 +41,14 @@ public interface ITPressurizedFluidOutput<State extends IMultiblockState> {
         Direction singleOutputDir = getOutputDirection(ctx);
         List<RelativeBlockFace> facings = getOutputFacings();
         List<ITMarkableFluidTank> tanks = getOutputTanks(state);
-        List<CapabilityReference<IFluidHandler>> refs = getFluidOutputs(state);
         for (int i = 0; i < tanks.size(); i++) {
             ITMarkableFluidTank tank = tanks.get(i);
             if (tank.getFluidAmount() == 0) continue;
-            CapabilityReference<IFluidHandler> ref = refs.get(i);
+            RelativeBlockFace face = (facings != null && !facings.isEmpty()) ? facings.get(i) : ctx.getLevel().toRelative(singleOutputDir);
+            MultiblockFace mbf = new MultiblockFace(face, outputPositions.get(i));
+            CapabilityPosition oppCp = CapabilityPosition.opposing(mbf);
+            MultiblockFace oppMbf = new MultiblockFace(oppCp.side(), oppCp.posInMultiblock());
+            CapabilityReference<IFluidHandler> ref = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, oppMbf);
             if (!ref.isPresent()) continue;
             IFluidHandler handler = ref.get();
             BlockPos portAbs = ctx.getLevel().toAbsolute(outputPositions.get(i));
@@ -70,5 +75,17 @@ public interface ITPressurizedFluidOutput<State extends IMultiblockState> {
         }
         if (dirty) ctx.markMasterDirty();
         return dirty;
+    }
+
+    default boolean isOutputConnected(IMultiblockContext<State> ctx, int index) {
+        List<BlockPos> outputPositions = getOutputPositions();
+        if (index < 0 || index >= outputPositions.size()) { return false; }
+        List<RelativeBlockFace> facings = getOutputFacings();
+        RelativeBlockFace face = (facings != null && !facings.isEmpty()) ? facings.get(index) : ctx.getLevel().toRelative(getOutputDirection(ctx));
+        MultiblockFace mbf = new MultiblockFace(face, outputPositions.get(index));
+        CapabilityPosition oppCp = CapabilityPosition.opposing(mbf);
+        MultiblockFace oppMbf = new MultiblockFace(oppCp.side(), oppCp.posInMultiblock());
+        CapabilityReference<IFluidHandler> ref = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, oppMbf);
+        return ref.isPresent();
     }
 }

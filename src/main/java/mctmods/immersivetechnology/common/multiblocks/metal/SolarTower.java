@@ -57,5 +57,5 @@ public class SolarTower extends ITTemplateMultiblock {
 
     @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, SolarTowerShape.CLIENT_OFFSET.getX(), SolarTowerShape.CLIENT_OFFSET.getY(), SolarTowerShape.CLIENT_OFFSET.getZ())); }
 
-    @Override public boolean canBeMirrored() { return false; }
+    @Override public boolean canBeMirrored() { return true; }
 }

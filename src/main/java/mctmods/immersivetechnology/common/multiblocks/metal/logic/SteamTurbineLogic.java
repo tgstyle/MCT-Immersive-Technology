@@ -9,7 +9,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.CachedRecipe;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.MechanicalCapabilities;
@@ -86,8 +85,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
 
-    @Override public List<CapabilityReference<IFluidHandler>> getFluidOutputs(State state) { return ImmutableList.of(state.fluidOutput); }
-
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         boolean targetActive = state.active || state.speed > 0;
@@ -128,7 +125,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         if (state.active && ctx.getLevel().shouldTickModulo(2)) {
             Direction facing = ctx.getLevel().getOrientation().front();
             BlockPos outputAbs = ctx.getLevel().toAbsolute(SMOKE_POI);
-            boolean connected = state.fluidOutput.isPresent();
+            boolean connected = isOutputConnected(ctx, 0);
             if (!connected) {
                 Vec3 smokePos = new Vec3(outputAbs.getX() + 0.5, outputAbs.getY() + 0.5, outputAbs.getZ() + 0.5);
                 float normSpeed = Math.max(0f, ITLib.remapRange(100, state.effectiveMaxSpeed, 0f, 1f, state.speed));
@@ -271,7 +268,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         public final SteamTurbineTank tanks;
         public final StoredCapability<IFluidHandler> fluidCap;
         public final StoredCapability<IFluidHandler> fluidCapExhaust;
-        public final CapabilityReference<IFluidHandler> fluidOutput;
         private final BiFunction<Level, FluidStack, SteamTurbineRecipe> recipeGetter;
         public int speed = 0;
         public float currentTorque = 1.0f;
@@ -301,10 +297,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
             this.recipeGetter = CachedRecipe.cached(SteamTurbineRecipe::findRecipe);
-            MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FACING, FLUID_OUTPUT_POIS.get(0));
-            CapabilityPosition oppCp = CapabilityPosition.opposing(outputMBFace);
-            MultiblockFace oppMbf = new MultiblockFace(oppCp.side(), oppCp.posInMultiblock());
-            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, oppMbf);
             this.inertia = new RotationInertiaProcess(BASE_MASS + connectedMass, DRIVE_TORQUE, FRICTION + connectedFriction, effectiveMaxSpeed);
             this.accumConsume = 0f;
             this.outAccum = 0f;

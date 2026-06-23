@@ -1,0 +1,10 @@
+Solarturm
+Sonnenkessel!
+<&multiblock>Der Solarturm ist eine Multiblock-Maschine, die tagsüber Wasser in Dampf umwandelt.
+
+
+
+§lBetrieb§r
+    - §lFlüssigkeiten§r zum Erhitzen werden vorne eingefüllt.
+    - §lErhitzte Flüssigkeiten§r werden hinten ausgegeben.
+    - Muss mindestens 44 Blöcke von anderen Türmen entfernt stehen.

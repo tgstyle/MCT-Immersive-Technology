@@ -1,0 +1,10 @@
+Radiador
+Resfriamento!
+<&multiblock>O Radiador realiza resfriamento radiativo de fluidos e gases quentes, semelhante à Torre de Resfriamento, mas bem mais compacto. Pode ser construído tanto vertical quanto horizontalmente.
+
+§lOperação§r
+    - §lFluidos/Gases Quentes§r entram em uma extremidade.
+    - §lFluidos/Gases Resfriados§r saem na extremidade oposta.
+    - Pode ser formado verticalmente (1×7×9) ou horizontalmente (9×1×7) rotacionando a estrutura.
+    - A eficiência depende da diferença de temperatura com o ambiente e obstruções próximas.
+    - Funciona no vácuo (ao contrário da Torre de Resfriamento), mas é significativamente menos eficiente.

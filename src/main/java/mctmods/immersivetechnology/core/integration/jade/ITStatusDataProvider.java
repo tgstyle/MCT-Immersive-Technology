@@ -5,13 +5,20 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.CoolingTowerLogic;
 import mctmods.immersivetechnology.core.lib.ITLib;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IServerDataProvider;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public enum ITStatusDataProvider implements IServerDataProvider<BlockAccessor> {
     INSTANCE;
+
+    private static final long ACTIVE_COOLDOWN_TICKS = 40;
+    private static final Map<BlockPos, Long> lastActiveTick = new ConcurrentHashMap<>();
 
     @Override public ResourceLocation getUid() { return ITLib.rl("status"); }
 
@@ -29,11 +36,25 @@ public enum ITStatusDataProvider implements IServerDataProvider<BlockAccessor> {
             else if (state instanceof CoolingTowerLogic.State coolingTower) { active = coolingTower.active; }
             else if (state instanceof GasTurbineLogic.State gas) { active = gas.active; fuelEmpty = gas.tanks.input().getFluid().isEmpty(); }
             else if (state instanceof HeatExchangerLogic.State heatExchanger) { active = heatExchanger.active; }
+            else if (state instanceof RadiatorLogic.State radiator) { active = radiator.isActive(); }
+            else if (state instanceof RadiatorHorizontalLogic.State radiatorHorizontal) { active = radiatorHorizontal.isActive(); }
+            else if (state instanceof ElectrolyticCrucibleBatteryLogic.State electrolyticCrucibleBattery) { active = electrolyticCrucibleBattery.active; }
             else if (state instanceof SolarMelterLogic.State melter) { active = melter.active; fuelEmpty = melter.tanks.input().getFluid().isEmpty(); }
+            else if (state instanceof MeltingCrucibleLogic.State crucible) { active = crucible.active; fuelEmpty = crucible.tanks.input().getFluid().isEmpty(); }
             else if (state instanceof SolarReflectorLogic.State reflector) { active = reflector.active; }
             else if (state instanceof SolarTowerLogic.State tower) { active = tower.active; fuelEmpty = tower.tanks.input().getFluid().isEmpty(); }
             else if (state instanceof SteamTurbineLogic.State steam) { active = steam.active; fuelEmpty = steam.tanks.input().getFluid().isEmpty(); }
             else if (state instanceof SteelSheetmetalTankLogic.State tank) { active = tank.active; }
+
+            long now = accessor.getLevel().getGameTime();
+            BlockPos pos = accessor.getPosition();
+            Long last = lastActiveTick.get(pos);
+            if (active) {
+                lastActiveTick.put(pos, now);
+            } else if (last != null && now - last < ACTIVE_COOLDOWN_TICKS) {
+                active = true;
+            }
+
             data.putBoolean("ITActive", active);
             if (fuelEmpty) { data.putBoolean("ITFuelEmpty", true); }
         }

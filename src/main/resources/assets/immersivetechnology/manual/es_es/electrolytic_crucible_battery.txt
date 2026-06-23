@@ -1,0 +1,8 @@
+Batería de crisol electrolítico
+Electrólisis avanzada
+<&multiblock>La Batería de crisol electrolítico es una máquina multibloque utilizada para §llevar a cabo electrólisis de sales fundidas y otros fluidos§r, produciendo múltiples salidas con alta eficiencia.
+
+§lOperación§r
+    - §lFluido§r se suministra desde el lateral.
+    - §lEnergía§r se suministra desde el lateral.
+    - §lSalidas§r (fluidos y objetos) se recogen desde múltiples laterales.

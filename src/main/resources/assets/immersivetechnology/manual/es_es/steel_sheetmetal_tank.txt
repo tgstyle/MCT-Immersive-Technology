@@ -1,0 +1,11 @@
+Tanque de acero
+¡Llénalo!
+<&multiblock>El Tanque de acero es simplemente una versión más grande del tanque normal.
+
+
+
+
+
+§lFuncionamiento§r
+    - El §lVapor§r se introduce por arriba.
+    - El §lVapor de escape§r sale por abajo.

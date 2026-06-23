@@ -10,6 +10,8 @@ import net.minecraftforge.registries.RegistryObject;
 public class ITSounds {
     private static final DeferredRegister<SoundEvent> REGISTER = DeferredRegister.create(Registries.SOUND_EVENT, ITLib.MODID);
 
+    public static final RegistryObject<SoundEvent> advancedCokeOvenFan = registerSound("advanced_coke_oven_fan");
+    public static final RegistryObject<SoundEvent> advancedCokeOven = registerSound("advanced_coke_oven");
     public static final RegistryObject<SoundEvent> alternator = registerSound("alternator");
     public static final RegistryObject<SoundEvent> boiler_liquid = registerSound("boiler_liquid");
     public static final RegistryObject<SoundEvent> boiler_solid = registerSound("boiler_solid");

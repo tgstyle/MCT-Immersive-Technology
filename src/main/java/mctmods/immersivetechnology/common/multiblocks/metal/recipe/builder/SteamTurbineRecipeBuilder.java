@@ -37,8 +37,5 @@ public class SteamTurbineRecipeBuilder extends IEFinishedRecipe<SteamTurbineReci
 
     public SteamTurbineRecipeBuilder setTime(int time) { return this.addWriter((jsonObject) -> jsonObject.addProperty("time", time)); }
 
-    /**
-     * Set the torque multiplier produced while this recipe is used.
-     */
     public SteamTurbineRecipeBuilder setTorque(float torque) { return this.addWriter((jsonObject) -> jsonObject.addProperty("torque", torque)); }
 }

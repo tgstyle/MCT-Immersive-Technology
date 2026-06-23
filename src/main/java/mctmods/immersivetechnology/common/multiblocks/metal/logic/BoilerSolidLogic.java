@@ -153,7 +153,13 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             if (state.burnRemaining > 0) {
                 boolean consumeThisTick = fullMode || (level.getGameTime() % PILOT_MULTIPLIER == 0);
                 if (consumeThisTick) { state.burnRemaining--; }
-                if (fullMode) { state.heatLevel = Math.min(state.heatLevel + state.heatPerTick, state.targetHeat); }
+                if (fullMode) {
+                    if (state.heatLevel < state.targetHeat) {
+                        state.heatLevel = Math.min(state.heatLevel + state.heatPerTick, state.targetHeat);
+                    } else {
+                        state.heatLevel = Math.max(state.heatLevel - HEAT_LOSS_PER_TICK, state.targetHeat);
+                    }
+                }
                 else { state.heatLevel = Math.max(state.heatLevel - HEAT_LOSS_PER_TICK, PILOT_HEAT); }
             } else {
                 state.totalBurnTime = 0;

@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.mixin.common;
 
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.mixer.MixerLogic;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.mixer.MixerLogic.State;
-import mctmods.immersivetechnology.core.helper.MixerStateDebounce;
+import mctmods.immersivetechnology.core.helper.MixerStateDebounceAccessor;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -36,7 +36,7 @@ public abstract class MixerLogicDebounceMixin {
             remap = false
     )
     private void it$smartDebounce(State state, Level rawLevel, CallbackInfoReturnable<Object> cir) {
-        MixerStateDebounce ext = (MixerStateDebounce) state;
+        MixerStateDebounceAccessor ext = (MixerStateDebounceAccessor) state;
 
         NonNullList<ItemStack> last = ext.it$getLastComponents();
 

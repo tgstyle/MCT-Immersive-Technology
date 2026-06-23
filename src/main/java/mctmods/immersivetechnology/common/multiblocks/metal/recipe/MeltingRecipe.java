@@ -1,0 +1,52 @@
+package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
+
+import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
+import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
+import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.google.common.collect.Lists;
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.RegistryObject;
+
+import javax.annotation.Nullable;
+
+public class MeltingRecipe extends MultiblockRecipe {
+    public static RegistryObject<IERecipeSerializer<MeltingRecipe>> SERIALIZER;
+    public static final CachedRecipeList<MeltingRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.MELTING);
+
+    public final FluidTagInput input;
+    public final FluidStack fluidOutput;
+    private final int time;
+    public final double requiredTemp;
+
+    public MeltingRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time, double requiredTemp) {
+        super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.MELTING, id);
+        this.input = input;
+        this.fluidOutput = fluidOutput;
+        this.time = time;
+        this.requiredTemp = requiredTemp;
+        this.fluidInputList = Lists.newArrayList(this.input);
+        this.fluidOutputList = fluidOutput == null ? Lists.newArrayList() : Lists.newArrayList(fluidOutput);
+    }
+
+    @Nullable public static MeltingRecipe findRecipe(Level level, FluidStack fluid) {
+        if (fluid == null || fluid.isEmpty()) return null;
+        for (MeltingRecipe recipe : RECIPES.getRecipes(level)) {
+            if (recipe.input.testIgnoringAmount(fluid) && fluid.getAmount() >= recipe.input.getAmount()) return recipe;
+        }
+        return null;
+    }
+
+    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+
+    @Override public int getMultipleProcessTicks() { return 1; }
+
+    @Override public int getTotalProcessTime() { return time; }
+
+    @Override public int getTotalProcessEnergy() { return time; }
+}

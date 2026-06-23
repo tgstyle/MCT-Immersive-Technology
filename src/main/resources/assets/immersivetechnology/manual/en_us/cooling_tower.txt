@@ -11,3 +11,4 @@ Chill!
     - §lWater§r is input at one input.
     - §lExhaust Steam§r is input at the other input.
     - §lWater§r is output from all outputs.
+    - Efficiency depends on temperature differential with the environment and nearby obstructions.

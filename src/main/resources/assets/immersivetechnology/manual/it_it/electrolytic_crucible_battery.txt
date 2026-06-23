@@ -1,0 +1,8 @@
+Batteria di Crogiolo Elettrolitico
+Elettrolisi Avanzata
+<&multiblock>La Batteria di Crogiolo Elettrolitico è una macchina multiblocco utilizzata per §leffettuare l'elettrolisi di sali fusi e altri fluidi§r, producendo multiple uscite con alta efficienza.
+
+§lFunzionamento§r
+    - §lFluido§r viene fornito dal lato.
+    - §lEnergia§r viene fornita dal lato.
+    - §lUscite§r (fluidi e oggetti) vengono raccolte da più lati.
