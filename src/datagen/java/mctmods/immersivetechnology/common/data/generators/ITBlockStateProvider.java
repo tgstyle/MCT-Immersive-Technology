@@ -13,7 +13,6 @@ import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
-import mctmods.immersivetechnology.common.blocks.metal.ValveLimiterBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
 import mctmods.immersivetechnology.common.data.loaders.ITObjModelBuilder;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
@@ -86,33 +85,16 @@ public class ITBlockStateProvider extends BlockStateProvider {
     private final ClearableBlockModelProvider blockModels;
     private final ClearableItemModelProvider itemModels;
 
-    private static class ClearableBlockModelProvider extends BlockModelProvider {
-        public ClearableBlockModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
-            super(output, modid, existingFileHelper);
-        }
-
-        @Override protected void registerModels() {}
-
-        public void clearModels() { clear(); }
-
-        public CompletableFuture<?> genAll(CachedOutput cache) { return generateAll(cache); }
-    }
-
-    private static class ClearableItemModelProvider extends ItemModelProvider {
-        public ClearableItemModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
-            super(output, modid, existingFileHelper);
-        }
-
-        @Override protected void registerModels() {}
-
-        public void clearModels() { clear(); }
-
-        public CompletableFuture<?> genAll(CachedOutput cache) { return generateAll(cache); }
-    }
-
     private record ValveRotationConfig(int horizontalXRot, int verticalDownXRot, int verticalUpXRot, Function<Direction, Integer> yRotOffsetSupplier) {}
 
     private static final List<Vec3i> BASEHEATER_PARTS = ImmutableList.of(new BlockPos(-1, 0, 0), BlockPos.ZERO, new BlockPos(1, 0, 0));
+
+    private static final Map<String, ValveRotationConfig> VALVE_CONFIGS = Map.of(
+            "fluid", new ValveRotationConfig(0, 90, 270, facing -> 2),
+            "limiter", new ValveRotationConfig(90, 180, 0, facing -> 2),
+            "load", new ValveRotationConfig(270, 180, 0, facing -> facing.getAxis().isHorizontal() ? 0 : 1),
+            "timer", new ValveRotationConfig(270, 180, 0, facing -> 0)
+    );
 
     private int[] calculateValveRotations(Direction facing, int rotationVal, boolean mirrored, ValveRotationConfig config) {
         int xRot;
@@ -243,61 +225,8 @@ public class ITBlockStateProvider extends BlockStateProvider {
             }
         }
 
-        ModelFile valveClosed = createValveObjModel("valve_fluid", "valve_fluid", false, "Pipe");
-        ModelFile valveOpen = createValveObjModel("valve_fluid", "valve_fluid", true, "Pipe");
-        ValveRotationConfig fluidConfig = new ValveRotationConfig(0, 90, 270, facing -> 2);
-        VariantBlockStateBuilder valveFluidBuilder = getVariantBuilder(ITBlocks.Metal.VALVE_FLUID.get());
-        valveFluidBuilder.forAllStates(state -> {
-            Direction facing = state.getValue(ITProperties.FACING_ALL);
-            boolean open = state.getValue(ValveFluidBlock.OPEN);
-            int rotationVal = state.getValue(ValveFluidBlock.ROTATION);
-            boolean mirrored = state.getValue(ITProperties.MIRRORED);
-            ModelFile modelFile = open ? valveOpen : valveClosed;
-            int[] rotations = calculateValveRotations(facing, rotationVal, mirrored, fluidConfig);
-            return ConfiguredModel.builder().modelFile(modelFile).rotationX(rotations[0]).rotationY(rotations[1]).build();
-        });
-        setRenderType(RenderType.cutout(), (BlockModelBuilder) valveClosed, (BlockModelBuilder) valveOpen);
-
-        BlockModelBuilder valveLimiterBuilder = models().cubeBottomTop("block/metal/valve_limiter", modLoc("block/metal/valve_limiter_side"), modLoc("block/metal/valve_limiter_bottom"), modLoc("block/metal/valve_limiter_top"));
-        valveLimiterBuilder.texture("particle", modLoc("block/metal/valve_limiter_side"));
-        ValveRotationConfig limiterConfig = new ValveRotationConfig(90, 180, 0, facing -> 2);
-        VariantBlockStateBuilder valveLimiterStateBuilder = getVariantBuilder(ITBlocks.Metal.VALVE_LIMITER.get());
-        valveLimiterStateBuilder.forAllStates(state -> {
-            Direction facing = state.getValue(ITProperties.FACING_ALL);
-            int rotationVal = state.getValue(ValveLimiterBlock.ROTATION);
-            boolean mirrored = state.getValue(ITProperties.MIRRORED);
-            int[] rotations = calculateValveRotations(facing, rotationVal, mirrored, limiterConfig);
-            return ConfiguredModel.builder().modelFile(valveLimiterBuilder).rotationX(rotations[0]).rotationY(rotations[1]).build();
-        });
-        setRenderType(RenderType.cutout(), valveLimiterBuilder);
-
-        ModelFile valveLoadClosed = createValveObjModel("valve_load", "valve_load", false, "Base");
-        ModelFile valveLoadOpen = createValveObjModel("valve_load", "valve_load", true, "Base");
-        ValveRotationConfig loadConfig = new ValveRotationConfig(270, 180, 0, facing -> facing.getAxis().isHorizontal() ? 0 : 1);
-        VariantBlockStateBuilder valveLoadBuilder = getVariantBuilder(ITBlocks.Metal.VALVE_LOAD.get());
-        valveLoadBuilder.forAllStates(state -> {
-            Direction facing = state.getValue(ITProperties.FACING_ALL);
-            boolean open = state.getValue(ValveLoadBlock.OPEN);
-            int rotationVal = state.getValue(ValveLoadBlock.ROTATION);
-            boolean mirrored = state.getValue(ITProperties.MIRRORED);
-            ModelFile modelFile = open ? valveLoadOpen : valveLoadClosed;
-            int[] rotations = calculateValveRotations(facing, rotationVal, mirrored, loadConfig);
-            return ConfiguredModel.builder().modelFile(modelFile).rotationX(rotations[0]).rotationY(rotations[1]).build();
-        });
-        setRenderType(RenderType.cutout(), (BlockModelBuilder) valveLoadClosed, (BlockModelBuilder) valveLoadOpen);
-
-        ValveRotationConfig timerConfig = new ValveRotationConfig(270, 180, 0, facing -> 0);
-        ModelFile timerModel = createTimerObjModel("connector_timer", "connector_timer", "Base");
-        VariantBlockStateBuilder timerBuilder = getVariantBuilder(ITBlocks.Connector.CONNECTOR_TIMER.get());
-        timerBuilder.forAllStates(state -> {
-            Direction facing = state.getValue(ITProperties.FACING_ALL);
-            int rotationVal = state.getValue(ConnectorTimerBlock.ROTATION);
-            boolean mirrored = false;
-            int[] rotations = calculateValveRotations(facing, rotationVal, mirrored, timerConfig);
-            return ConfiguredModel.builder().modelFile(timerModel).rotationX(rotations[0]).rotationY(rotations[1]).build();
-        });
-        setRenderType(RenderType.translucent(), (BlockModelBuilder) timerModel);
-        itemModels().getBuilder(ITBlocks.Connector.CONNECTOR_TIMER.getId().getPath()).parent(timerModel);
+        createValveVariants();
+        createBaseHeaterVariants();
 
         VariantBlockStateBuilder rotorBuilder = getVariantBuilder(ITBlocks.Metal.ROTOR_CREATIVE.get());
         ModelFile rotorNS = new ModelFile.UncheckedModelFile(modLoc("dynamic/rotor"));
@@ -309,7 +238,46 @@ public class ITBlockStateProvider extends BlockStateProvider {
             if (facing == Direction.SOUTH || facing == Direction.WEST) yRot = 180;
             return ConfiguredModel.builder().modelFile(modelFile).rotationY(yRot).build();
         });
+    }
 
+    private void createValveVariants() {
+        ModelFile valveClosed = createValveObjModel("valve_fluid", "valve_fluid", false, "Pipe");
+        ModelFile valveOpen = createValveObjModel("valve_fluid", "valve_fluid", true, "Pipe");
+        createValveState(ITBlocks.Metal.VALVE_FLUID.get(), valveClosed, valveOpen, VALVE_CONFIGS.get("fluid"), ValveFluidBlock.OPEN);
+        setRenderType(RenderType.cutout(), (BlockModelBuilder) valveClosed, (BlockModelBuilder) valveOpen);
+
+        BlockModelBuilder valveLimiterBuilder = models().cubeBottomTop("block/metal/valve_limiter", modLoc("block/metal/valve_limiter_side"), modLoc("block/metal/valve_limiter_bottom"), modLoc("block/metal/valve_limiter_top"));
+        valveLimiterBuilder.texture("particle", modLoc("block/metal/valve_limiter_side"));
+        createValveState(ITBlocks.Metal.VALVE_LIMITER.get(), valveLimiterBuilder, valveLimiterBuilder, VALVE_CONFIGS.get("limiter"), null);
+        setRenderType(RenderType.cutout(), valveLimiterBuilder);
+
+        ModelFile valveLoadClosed = createValveObjModel("valve_load", "valve_load", false, "Base");
+        ModelFile valveLoadOpen = createValveObjModel("valve_load", "valve_load", true, "Base");
+        createValveState(ITBlocks.Metal.VALVE_LOAD.get(), valveLoadClosed, valveLoadOpen, VALVE_CONFIGS.get("load"), ValveLoadBlock.OPEN);
+        setRenderType(RenderType.cutout(), (BlockModelBuilder) valveLoadClosed, (BlockModelBuilder) valveLoadOpen);
+
+        ModelFile timerModel = createTimerObjModel("connector_timer", "connector_timer", "Base");
+        createValveState(ITBlocks.Connector.CONNECTOR_TIMER.get(), timerModel, timerModel, VALVE_CONFIGS.get("timer"), null);
+        setRenderType(RenderType.translucent(), (BlockModelBuilder) timerModel);
+        itemModels().getBuilder(ITBlocks.Connector.CONNECTOR_TIMER.getId().getPath()).parent(timerModel);
+    }
+
+    private void createValveState(Block block, ModelFile closedModel, ModelFile openModel, ValveRotationConfig config, @Nullable Property<Boolean> openProperty) {
+        VariantBlockStateBuilder builder = getVariantBuilder(block);
+        boolean hasMirrored = block.getStateDefinition().getProperties().contains(ITProperties.MIRRORED);
+        builder.forAllStates(state -> {
+            Direction facing = state.getValue(ITProperties.FACING_ALL);
+            boolean open = openProperty != null && state.getValue(openProperty);
+            Property<Integer> rotationProp = openProperty != null ? (openProperty == ValveFluidBlock.OPEN ? ValveFluidBlock.ROTATION : ValveLoadBlock.ROTATION) : ConnectorTimerBlock.ROTATION;
+            int rotationVal = state.getValue(rotationProp);
+            boolean mirrored = hasMirrored && state.getValue(ITProperties.MIRRORED);
+            ModelFile modelFile = open ? openModel : closedModel;
+            int[] rotations = calculateValveRotations(facing, rotationVal, mirrored, config);
+            return ConfiguredModel.builder().modelFile(modelFile).rotationX(rotations[0]).rotationY(rotations[1]).build();
+        });
+    }
+
+    private void createBaseHeaterVariants() {
         ITNongeneratedModel baseHeaterNormalUnsplit = createBaseHeaterUnsplit(false);
         ITNongeneratedModel baseHeaterActiveUnsplit = createBaseHeaterUnsplit(true);
         BlockModelBuilder baseHeaterNormalSplit = splitModel("block/metal/advanced_coke_oven_baseheater_split", baseHeaterNormalUnsplit, BASEHEATER_PARTS);
@@ -553,5 +521,29 @@ public class ITBlockStateProvider extends BlockStateProvider {
             assert model != null;
             return new ConfiguredModel[]{new ConfiguredModel(model, angleX, angleY, true)};
         });
+    }
+
+    private static class ClearableBlockModelProvider extends BlockModelProvider {
+        public ClearableBlockModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
+            super(output, modid, existingFileHelper);
+        }
+
+        @Override protected void registerModels() {}
+
+        public void clearModels() { clear(); }
+
+        public CompletableFuture<?> genAll(CachedOutput cache) { return generateAll(cache); }
+    }
+
+    private static class ClearableItemModelProvider extends ItemModelProvider {
+        public ClearableItemModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
+            super(output, modid, existingFileHelper);
+        }
+
+        @Override protected void registerModels() {}
+
+        public void clearModels() { clear(); }
+
+        public CompletableFuture<?> genAll(CachedOutput cache) { return generateAll(cache); }
     }
 }
