@@ -49,7 +49,7 @@ public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements 
     abstract public TranslationKey text();
 
     @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
-        assert level != null;
+        if (level == null) { return new Component[0]; }
         if (level.isClientSide && requestCooldown == 0) {
             ITPacketHandler.sendToServer(new ITOSDRequestMessage(worldPosition));
             requestCooldown = 20;

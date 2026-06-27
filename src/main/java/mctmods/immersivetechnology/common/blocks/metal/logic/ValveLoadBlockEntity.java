@@ -52,14 +52,13 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
 
     @Override @Nonnull public BlockState getState() { return getBlockState(); }
 
-    @Override public void setState(@Nonnull BlockState state) { assert level != null; level.setBlock(worldPosition, state, 3); }
+    @Override public void setState(@Nonnull BlockState state) { if (level != null) level.setBlock(worldPosition, state, 3); }
 
     @Override public void onLoad() {
         super.onLoad();
-        assert level != null;
         facing = getBlockState().getValue(ITProperties.FACING_ALL);
         rotation = getBlockState().getValue(ROTATION);
-        if (!level.isClientSide) {
+        if (level != null && !level.isClientSide) {
             GlobalWireNetwork.getNetwork(level).onConnectorLoad(this, level);
             efficientSetChanged();
             for (Direction d : Direction.values()) { level.neighborChanged(worldPosition.relative(d), getBlockState().getBlock(), worldPosition); }
@@ -100,7 +99,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
 
     @Override public void tickServer() {
         super.tickServer();
-        assert level != null;
+        if (level == null) return;
         long time = level.getGameTime();
         if (time % 12 == ((worldPosition.getX() ^ worldPosition.getZ()) & 11)) updateRedstoneState();
         if (!level.isClientSide && getBlockState().getValue(OPEN)) handleDirectTransfers();
@@ -199,7 +198,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     private Direction getOutputDir() { return getInputDir().getOpposite(); }
 
     public IEnergyStorage getInputEnergy() {
-        assert level != null;
+        if (level == null) return null;
         Direction inputDir = getInputDir();
         BlockPos srcPos = worldPosition.relative(inputDir);
         BlockEntity src = level.getBlockEntity(srcPos);
@@ -211,7 +210,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     }
 
     public IEnergyStorage getOutputEnergy() {
-        assert level != null;
+        if (level == null) return null;
         Direction outputDir = getOutputDir();
         BlockPos dstPos = worldPosition.relative(outputDir);
         BlockEntity dst = level.getBlockEntity(dstPos);
@@ -223,7 +222,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     }
 
     @NotNull protected LocalWireNetwork getLocalNet(int cpIndex) {
-        assert level != null;
+        if (level == null) throw new IllegalStateException("Level null in getLocalNet");
         return GlobalWireNetwork.getNetwork(level).getLocalNet(new ConnectionPoint(worldPosition, cpIndex));
     }
 
@@ -359,8 +358,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     @Override public void setMirrored(boolean mirrored) {
         BlockState state = getBlockState();
         if (state.getValue(ITProperties.MIRRORED) != mirrored) {
-            assert level != null;
-            level.setBlock(worldPosition, state.setValue(ITProperties.MIRRORED, mirrored), 3);
+            if (level != null) level.setBlock(worldPosition, state.setValue(ITProperties.MIRRORED, mirrored), 3);
         }
     }
 
@@ -373,8 +371,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
     @Override public boolean stillValid(Player player) { return !isRemoved() && player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D; }
 
     @Override public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
-        assert level != null;
-        if (level.isClientSide) return false;
+        if (level == null || level.isClientSide) return false;
         if (leftType != null || rightType != null) return false;
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
         Direction oldFacing = facing;

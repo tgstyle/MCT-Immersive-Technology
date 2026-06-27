@@ -75,37 +75,45 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
     public BarrelCreativeBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.BARREL_CREATIVE.get(), pos, state); }
 
     @Override public void tickServer() {
-        if (!selectedFluid.isEmpty()) {
-            long thisTickOutput = 0;
-            for (Direction dir : Direction.values()) {
-                BlockPos neighborPos = worldPosition.relative(dir);
-                assert level != null;
-                BlockEntity neighbor = level.getBlockEntity(neighborPos);
-                boolean isPipe = neighbor instanceof FluidPipeBlockEntity;
-                FluidStack fs = selectedFluid.copy();
-                fs.setAmount(CREATIVE_BARREL_OUTPUT_AMOUNT);
-                boolean hadTag = fs.hasTag() && fs.getTag().contains(IFluidPipe.NBT_PRESSURIZED);
-                if (isPipe && !hadTag) { fs.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
-                LazyOptional<IFluidHandler> cap = FluidUtil.getFluidHandler(level, neighborPos, dir.getOpposite());
-                if (!cap.isPresent()) { continue; }
-                IFluidHandler handler = cap.orElseThrow(AssertionError::new);
-                int accepted = handler.fill(fs, FluidAction.SIMULATE);
-                if (!hadTag) { fs.removeChildTag(IFluidPipe.NBT_PRESSURIZED); }
-                if (accepted <= 0) { continue; }
-                FluidStack toFill = Utils.copyFluidStackWithAmount(fs, accepted, false);
-                if (isPipe) { toFill.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
-                int filled = handler.fill(toFill, FluidAction.EXECUTE);
-                thisTickOutput += filled;
-            }
-            acceptedAmount += thisTickOutput;
+        if (selectedFluid.isEmpty() || level == null) {
+            super.tickServer();
+            return;
         }
+
+        FluidStack baseFs = selectedFluid.copy();
+        baseFs.setAmount(CREATIVE_BARREL_OUTPUT_AMOUNT);
+        boolean hadTag = baseFs.hasTag() && baseFs.getTag().contains(IFluidPipe.NBT_PRESSURIZED);
+        if (hadTag) { baseFs.removeChildTag(IFluidPipe.NBT_PRESSURIZED); }
+
+        long thisTickOutput = 0;
+        for (Direction dir : Direction.values()) {
+            BlockPos neighborPos = worldPosition.relative(dir);
+            BlockEntity neighbor = level.getBlockEntity(neighborPos);
+            boolean isPipe = neighbor instanceof FluidPipeBlockEntity;
+
+            FluidStack fsToOffer = baseFs.copy();
+            if (isPipe) { fsToOffer.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
+
+            LazyOptional<IFluidHandler> cap = FluidUtil.getFluidHandler(level, neighborPos, dir.getOpposite());
+            if (!cap.isPresent()) { continue; }
+            IFluidHandler handler = cap.orElseThrow(AssertionError::new);
+
+            int accepted = handler.fill(fsToOffer, FluidAction.SIMULATE);
+            if (accepted <= 0) { continue; }
+
+            FluidStack toFill = Utils.copyFluidStackWithAmount(fsToOffer, accepted, false);
+            int filled = handler.fill(toFill, FluidAction.EXECUTE);
+            thisTickOutput += filled;
+        }
+        acceptedAmount += thisTickOutput;
+
         super.tickServer();
     }
 
     @Override public void readCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
         if (nbt.contains("SelectedFluid")) {
             selectedFluid = FluidStack.loadFluidStackFromNBT(nbt.getCompound("SelectedFluid"));
-            if (selectedFluid == null) selectedFluid = FluidStack.EMPTY;
+            if (selectedFluid == null) { selectedFluid = FluidStack.EMPTY; }
         }
     }
 
@@ -139,8 +147,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
 
     @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult rtr, boolean hammer) {
         if (rtr.getType() == HitResult.Type.MISS) { return null; }
-        assert level != null;
-        if (level.isClientSide && requestCooldown == 0) {
+        if (level != null && level.isClientSide && requestCooldown == 0) {
             ITPacketHandler.sendToServer(new ITOSDRequestMessage(worldPosition));
             requestCooldown = 20;
         }
@@ -180,17 +187,16 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
         super.load(tag);
         if (tag.contains("SelectedFluid")) {
             selectedFluid = FluidStack.loadFluidStackFromNBT(tag.getCompound("SelectedFluid"));
-            if (selectedFluid == null) selectedFluid = FluidStack.EMPTY;
+            if (selectedFluid == null) { selectedFluid = FluidStack.EMPTY; }
         }
     }
 
     public void onBEPlaced(ItemStack stack) {
         if (stack.hasTag()) {
             CompoundTag tag = stack.getTag();
-            assert tag != null;
-            if (tag.contains("SelectedFluid")) {
+            if (tag != null && tag.contains("SelectedFluid")) {
                 selectedFluid = FluidStack.loadFluidStackFromNBT(tag.getCompound("SelectedFluid"));
-                if (selectedFluid == null) selectedFluid = FluidStack.EMPTY;
+                if (selectedFluid == null) { selectedFluid = FluidStack.EMPTY; }
             }
         }
     }

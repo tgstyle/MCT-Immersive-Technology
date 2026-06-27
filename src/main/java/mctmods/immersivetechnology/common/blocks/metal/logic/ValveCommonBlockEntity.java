@@ -59,20 +59,19 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
 
     public void calculateAverages() {
         long sum = 0;
-        for (long avg : averages) sum += avg;
+        for (long avg : averages) { sum += avg; }
         average = sum / 60;
         sum = 0;
-        for (long avg : packetTotals) sum += avg;
+        for (long avg : packetTotals) { sum += avg; }
         packetAverage = (int)(sum / 60);
     }
 
     protected void updateBase() {
-        assert level != null;
-        if (level.isClientSide) return;
+        if (level == null || level.isClientSide) return;
         efficientSetChanged();
         if (++secondCounter < 20) return;
-        if (average == 0 && acceptedAmount > 0) for (int i = 0; i < 60; i++) averages[i] = acceptedAmount;
-        if (packetAverage == 0 && packets > 0) for (int i = 0; i < 60; i++) packetTotals[i] = packets;
+        if (average == 0 && acceptedAmount > 0) for (int i = 0; i < 60; i++) { averages[i] = acceptedAmount; }
+        if (packetAverage == 0 && packets > 0) for (int i = 0; i < 60; i++) { packetTotals[i] = packets; }
         if (averages[minuteCounter] != acceptedAmount || packetTotals[minuteCounter] != packets) {
             averages[minuteCounter] = acceptedAmount;
             packetTotals[minuteCounter] = packets;
@@ -100,7 +99,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
     }
 
     @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
-        assert level != null;
+        if (level == null) { return new Component[0]; }
         if (level.isClientSide && requestCooldown == 0) {
             ITPacketHandler.sendToServer(new ITOSDRequestMessage(worldPosition));
             requestCooldown = 20;
@@ -184,8 +183,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
     @Override public boolean canHammerRotate(@NotNull Direction side, @NotNull Vec3 hit, LivingEntity entity) { return false; }
 
     @Override public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
-        assert level != null;
-        if (level.isClientSide) return false;
+        if (level == null || level.isClientSide) return false;
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
         Direction oldFacing = facing;
         Direction newFacing = counter ? oldFacing.getCounterClockWise(side.getAxis()) : oldFacing.getClockWise(side.getAxis());
@@ -194,7 +192,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
     }
 
     public int getRSPower() {
-        assert level != null;
+        if (level == null) return 0;
         return level.getBestNeighborSignal(worldPosition);
     }
 
@@ -204,8 +202,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         boolean shouldOpen = (redstoneMode == 1 ? rs == 0 : rs > 0);
         BlockState state = getBlockState();
         if (state.getValue(OPEN) != shouldOpen) {
-            assert level != null;
-            level.setBlock(worldPosition, state.setValue(OPEN, shouldOpen), 3);
+            if (level != null) level.setBlock(worldPosition, state.setValue(OPEN, shouldOpen), 3);
             markContainingBlockForUpdate(null);
         }
     }
