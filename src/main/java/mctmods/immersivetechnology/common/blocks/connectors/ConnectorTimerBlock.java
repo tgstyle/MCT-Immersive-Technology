@@ -70,12 +70,9 @@ public class ConnectorTimerBlock extends ITEntityBlock<ConnectorTimerBlockEntity
     }
 
     @Override public boolean canConnectRedstone(BlockState state, BlockGetter level, BlockPos pos, @org.jetbrains.annotations.Nullable Direction side) {
-        if (side == null) return false;
+        if (side == null) { return false; }
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ConnectorTimerBlockEntity timer) {
-            Direction inputSide = timer.getInputSide();
-            return side == inputSide.getOpposite();
-        }
+        if (be instanceof ConnectorTimerBlockEntity timer) { return timer.canConnectRedstone(side); }
         return super.canConnectRedstone(state, level, pos, side);
     }
 

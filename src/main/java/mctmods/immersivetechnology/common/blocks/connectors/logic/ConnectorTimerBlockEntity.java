@@ -46,6 +46,10 @@ import javax.annotation.Nullable;
 import static mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock.ROTATION;
 
 public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity implements ITServerTickableBE, IStateBasedDirectional, ITBlockInterfaces.IRedstoneInputOutput, IScrewdriverInteraction, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IBlockOverlayText, IRedstoneConnector, MenuProvider {
+    private static final int PULSE_LENGTH = 2;
+    private static final int MIN_TARGET = 10;
+    private static final int MAX_TARGET = 600;
+
     private int target = 40;
 
     protected int lastOutput = 0;
@@ -78,12 +82,12 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         if (level == null) { return; }
 
         int currentInput;
-        Direction inputSide = getInputSide();
+        Direction inputSideForRead = getInputSideForRead();
         if (ioMode == 0) {
-            BlockPos neighborPos = worldPosition.relative(inputSide);
+            BlockPos neighborPos = worldPosition.relative(inputSideForRead);
             BlockState neighborState = level.getBlockState(neighborPos);
-            int power1 = neighborState.getSignal(level, neighborPos, inputSide.getOpposite());
-            int power2 = neighborState.getDirectSignal(level, neighborPos, inputSide.getOpposite());
+            int power1 = neighborState.getSignal(level, neighborPos, inputSideForRead.getOpposite());
+            int power2 = neighborState.getDirectSignal(level, neighborPos, inputSideForRead.getOpposite());
             currentInput = Math.max(power1, power2);
             if (neighborState.hasProperty(RedStoneWireBlock.POWER)) { currentInput = Math.max(currentInput, neighborState.getValue(RedStoneWireBlock.POWER)); }
         } else {
@@ -96,7 +100,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
 
         if (currentInput > 0) {
             if (syncedTick == 0) {
-                pulseRemaining = 2;
+                pulseRemaining = PULSE_LENGTH;
             }
         }
 
@@ -126,6 +130,18 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
 
     public Direction getInputSide() { return computeInputSide(); }
 
+    private Direction getInputSideForRead() {
+        Direction facing = getFacing();
+        if (facing.getAxis().isVertical()) { return getInputSide(); }
+        return Direction.DOWN;
+    }
+
+    private Direction getRSOutputFace() {
+        Direction facing = getFacing();
+        if (facing.getAxis().isVertical()) { return getInputSide().getOpposite(); }
+        return Direction.DOWN;
+    }
+
     public int getIoMode() { return ioMode; }
     public void setIoMode(int ioMode) { this.ioMode = ioMode; }
 
@@ -136,8 +152,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
     @Override public boolean isRSOutput() { return ioMode == 1; }
 
     @Override public void updateInput(byte[] signals, ConnectionPoint cp) {
-        if (isRSInput()) { signals[redstoneChannel.getId()] = (byte) Math.max(lastOutput, signals[redstoneChannel.getId()]); }
-        else if (isRSOutput()) { signals[redstoneChannel.getId()] = (byte) Math.max(lastOutput, signals[redstoneChannel.getId()]); }
+        if (isRSInput() || isRSOutput()) { signals[redstoneChannel.getId()] = (byte) Math.max(lastOutput, signals[redstoneChannel.getId()]); }
         rsDirty = false;
     }
 
@@ -161,42 +176,42 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
 
     public void setTarget(int increment) {
         if (increment < 0) {
-            int minTarget = 10;
-            if (target != minTarget) {
+            if (target != MIN_TARGET) {
                 if (target < 200 && target > 100) { this.target -= 20; } else if (target < 100) { this.target -= 10; } else { this.target -= 40; }
             }
         } else if (increment > 0) {
-            int maxTarget = 600;
-            if (target != maxTarget) {
+            if (target != MAX_TARGET) {
                 if (target < 200 && target > 100) { this.target += 20; } else if (target < 100) { this.target += 10; } else { this.target += 40; }
             }
         }
     }
 
     public void receiveMessageFromClient(CompoundTag nbt) {
+        boolean needsNetworkUpdate = false;
+        boolean needsBlockUpdate = false;
+
         if (nbt.contains("increment")) {
             setTarget(nbt.getInt("increment"));
-            setChanged();
-            markContainingBlockForUpdate(null);
+            needsBlockUpdate = true;
         }
         if (nbt.contains("ioMode")) {
             ioMode = nbt.getInt("ioMode");
-            setChanged();
-            RedstoneNetworkHandler handler = globalNet.getLocalNet(worldPosition).getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class);
-            if (handler != null) { handler.updateValues(); }
-            onChange(null, null);
-            markContainingBlockForUpdate(null);
-            if (level != null && !level.isClientSide) {
-                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-                level.blockEvent(getBlockPos(), getBlockState().getBlock(), 254, 0);
-            }
+            needsNetworkUpdate = true;
+            needsBlockUpdate = true;
         }
         if (nbt.contains("redstoneChannel")) {
             redstoneChannel = DyeColor.byId(nbt.getInt("redstoneChannel"));
+            needsNetworkUpdate = true;
+            needsBlockUpdate = true;
+        }
+
+        if (needsNetworkUpdate) {
             setChanged();
             RedstoneNetworkHandler handler = globalNet.getLocalNet(worldPosition).getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class);
             if (handler != null) { handler.updateValues(); }
             onChange(null, null);
+        }
+        if (needsBlockUpdate) {
             markContainingBlockForUpdate(null);
             if (level != null && !level.isClientSide) {
                 level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -258,20 +273,33 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
     }
 
     @Override public int getStrongRSOutput(Direction side) {
-        if (ioMode != 1 || side != getInputSide().getOpposite()) { return 0; }
+        Direction rsFace = getRSOutputFace();
+        Direction facing = getFacing();
+        boolean match = (ioMode == 1) && (side == rsFace || (!facing.getAxis().isVertical() && side == Direction.UP));
+        if (!match) { return 0; }
         if (level != null && level.isClientSide) { return outputClient; }
         return lastOutput;
     }
 
     @Override public int getWeakRSOutput(Direction side) {
-        if (ioMode != 1 || side != getInputSide().getOpposite()) { return 0; }
+        Direction rsFace = getRSOutputFace();
+        Direction facing = getFacing();
+        boolean match = (ioMode == 1) && (side == rsFace || (!facing.getAxis().isVertical() && side == Direction.UP));
+        if (!match) { return 0; }
         if (level != null && level.isClientSide) { return outputClient; }
         return lastOutput;
     }
 
     @Override public boolean canConnectRedstone(Direction side) {
-        if (side == null) { return false; }
-        return side == getInputSide().getOpposite();
+        Direction rsFace = getRSOutputFace();
+        Direction facing = getFacing();
+        boolean result;
+        if (facing.getAxis().isVertical()) {
+            result = (side != null) && (side == rsFace);
+        } else {
+            result = (side != null) && (side == rsFace || side == Direction.UP);
+        }
+        return result;
     }
 
     @Override public boolean canConnectCable(WireType cableType, ConnectionPoint target, Vec3i offset) {
@@ -292,8 +320,12 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         if (level != null && !level.isClientSide && SafeChunkUtils.isChunkSafe(level, worldPosition)) {
             setChanged();
             markContainingBlockForUpdate(getBlockState());
-            BlockPos offsetPos = worldPosition.relative(getInputSide().getOpposite());
+            BlockPos offsetPos = worldPosition.relative(getRSOutputFace());
             level.updateNeighborsAt(offsetPos, level.getBlockState(offsetPos).getBlock());
+            if (!getFacing().getAxis().isVertical()) {
+                BlockPos upPos = worldPosition.relative(Direction.UP);
+                level.updateNeighborsAt(upPos, level.getBlockState(upPos).getBlock());
+            }
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
         }
     }
