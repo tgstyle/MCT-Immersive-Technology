@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.client.models.ITModelConfigurableSides;
+import mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
@@ -121,7 +122,7 @@ public class ITBlockStateProvider extends BlockStateProvider {
             yRot = ((facing.get2DDataValue() + yRotOffset) % 4) * 90;
             xRot = config.horizontalXRot;
         } else {
-            Direction hFacing = Direction.from3DDataValue(rotationVal);
+            Direction hFacing = Direction.from2DDataValue(rotationVal);
             yRot = ((hFacing.get2DDataValue() + yRotOffset) % 4) * 90;
             xRot = (facing == Direction.DOWN) ? config.verticalDownXRot : config.verticalUpXRot;
         }
@@ -285,6 +286,19 @@ public class ITBlockStateProvider extends BlockStateProvider {
         });
         setRenderType(RenderType.cutout(), (BlockModelBuilder) valveLoadClosed, (BlockModelBuilder) valveLoadOpen);
 
+        ValveRotationConfig timerConfig = new ValveRotationConfig(270, 180, 0, facing -> 0);
+        ModelFile timerModel = createTimerObjModel("connector_timer", "connector_timer", "Base");
+        VariantBlockStateBuilder timerBuilder = getVariantBuilder(ITBlocks.Connector.CONNECTOR_TIMER.get());
+        timerBuilder.forAllStates(state -> {
+            Direction facing = state.getValue(ITProperties.FACING_ALL);
+            int rotationVal = state.getValue(ConnectorTimerBlock.ROTATION);
+            boolean mirrored = false;
+            int[] rotations = calculateValveRotations(facing, rotationVal, mirrored, timerConfig);
+            return ConfiguredModel.builder().modelFile(timerModel).rotationX(rotations[0]).rotationY(rotations[1]).build();
+        });
+        setRenderType(RenderType.translucent(), (BlockModelBuilder) timerModel);
+        itemModels().getBuilder(ITBlocks.Connector.CONNECTOR_TIMER.getId().getPath()).parent(timerModel);
+
         VariantBlockStateBuilder rotorBuilder = getVariantBuilder(ITBlocks.Metal.ROTOR_CREATIVE.get());
         ModelFile rotorNS = new ModelFile.UncheckedModelFile(modLoc("dynamic/rotor"));
         ModelFile rotorEW = new ModelFile.UncheckedModelFile(modLoc("dynamic/rotor_east_west"));
@@ -310,6 +324,46 @@ public class ITBlockStateProvider extends BlockStateProvider {
             int yRot = (int) facing.toYRot();
             return ConfiguredModel.builder().modelFile(modelFile).rotationY(yRot).uvLock(true).build();
         }, ITProperties.MULTIBLOCKSLAVE, BlockStateProperties.WATERLOGGED);
+    }
+
+    private ModelFile createValveObjModel(String baseName, String objFolder, boolean isOpen, String baseVisibility) {
+        String modelName = "block/metal/" + baseName + (isOpen ? "_open" : "_closed");
+        BlockModelBuilder builder = models().getBuilder(modelName);
+        ITObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ITObjModelBuilder::new)
+                .modelLocation(modLoc("models/block/metal/obj/" + objFolder + "/" + objFolder + ".obj"))
+                .automaticCulling(true)
+                .shadeQuads(true)
+                .flipV(true)
+                .emissiveAmbient(true)
+                .mtlOverride(null)
+                .visibility(baseVisibility, true)
+                .visibility("Handle_Open", isOpen)
+                .visibility("Handle_Closed", !isOpen);
+        ModelFile model = loader.end();
+        String particleTex = ITDataGenUtils.getTextureFromObj(modLoc("block/metal/obj/" + objFolder + "/" + objFolder + ".obj"), existingFileHelper);
+        builder.texture("particle", particleTex);
+        return model;
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private ModelFile createTimerObjModel(String baseName, String objFolder, String baseVisibility) {
+        String modelName = "block/connector/" + baseName;
+        BlockModelBuilder builder = models().getBuilder(modelName);
+        ITObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ITObjModelBuilder::new)
+                .modelLocation(modLoc("models/block/connector/obj/" + objFolder + "/" + objFolder + ".obj"))
+                .automaticCulling(false)
+                .shadeQuads(false)
+                .flipV(true)
+                .emissiveAmbient(true)
+                .mtlOverride(null)
+                .renderType("translucent")
+                .visibility(baseVisibility, true)
+                .visibility("cube", true)
+                .visibility("glass", true);
+        ModelFile model = loader.end();
+        String particleTex = ITDataGenUtils.getTextureFromObj(modLoc("block/connector/obj/" + objFolder + "/" + objFolder + ".obj"), existingFileHelper);
+        builder.texture("particle", particleTex);
+        return model;
     }
 
     private ITNongeneratedModel createBaseHeaterUnsplit(boolean active) {
@@ -479,16 +533,6 @@ public class ITBlockStateProvider extends BlockStateProvider {
             final String typeName = ITModelProviderUtils.getName(type);
             for (final ModelBuilder<?> model : builders) { model.renderType(typeName); }
         }
-    }
-
-    private ModelFile createValveObjModel(String baseName, String objFolder, boolean isOpen, String baseVisibility) {
-        String modelName = "block/metal/" + baseName + (isOpen ? "_open" : "_closed");
-        BlockModelBuilder builder = models().getBuilder(modelName);
-        ITObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ITObjModelBuilder::new).modelLocation(modLoc("models/block/metal/obj/" + objFolder + "/" + objFolder + ".obj")).automaticCulling(true).shadeQuads(true).flipV(true).emissiveAmbient(true).mtlOverride(null).visibility(baseVisibility, true).visibility("Handle_Open", isOpen).visibility("Handle_Closed", !isOpen);
-        ModelFile model = loader.end();
-        String particleTex = ITDataGenUtils.getTextureFromObj(modLoc("block/metal/obj/" + objFolder + "/" + objFolder + ".obj"), existingFileHelper);
-        builder.texture("particle", particleTex);
-        return model;
     }
 
     private void createMultiblockVariant(Supplier<? extends Block> b, ModelFile defaultMaster, @Nullable ModelFile activeMaster, @Nullable ModelFile defaultMirrored, @Nullable ModelFile activeMirrored, @Nullable Property<Boolean> mirroredState, @Nullable Property<Boolean> activeState) {

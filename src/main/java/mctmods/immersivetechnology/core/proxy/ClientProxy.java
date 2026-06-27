@@ -79,6 +79,7 @@ public class ClientProxy extends CommonProxy {
             MenuScreens.register(ITMenuTypes.VALVE_FLUID.getType(), (ValveFluidMenu menu, Inventory inv, Component title) -> new ValveFluidScreen(menu, inv));
             MenuScreens.register(ITMenuTypes.VALVE_LIMITER.getType(), (ValveLimiterMenu menu, Inventory inv, Component title) -> new ValveLimiterScreen(menu, inv));
             MenuScreens.register(ITMenuTypes.VALVE_LOAD.getType(), (ValveLoadMenu menu, Inventory inv, Component title) -> new ValveLoadScreen(menu, inv));
+            MenuScreens.register(ITMenuTypes.CONNECTOR_TIMER.getType(), ConnectorTimerScreen::new);
 
             ManualInstance instance = ManualHelper.getManual();
             InnerNode<ResourceLocation, ManualEntry> parent_category = instance.getRoot().getOrCreateSubnode(ITLib.rl("main"), 99);

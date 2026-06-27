@@ -187,6 +187,11 @@ public class ITBlockInterfaces {
         boolean canConnectRedstone(Direction var1);
     }
 
+    public interface IRedstoneInputOutput extends IRedstoneOutput {
+        boolean isRSInput();
+        boolean isRSOutput();
+    }
+
     public interface IComparatorOverride {
         int getComparatorInputOverride();
     }

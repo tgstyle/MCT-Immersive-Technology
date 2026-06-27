@@ -1,0 +1,17 @@
+{
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "flip_v": true,
+  "loader": "immersivetechnology:obj",
+  "model": "immersivetechnology:models/block/connector/obj/connector_timer/connector_timer.obj",
+  "render_type": "translucent",
+  "shade_quads": false,
+  "textures": {
+    "particle": "immersivetechnology:block/connector/connector_timer"
+  },
+  "visibility": {
+    "Base": true,
+    "cube": true,
+    "glass": true
+  }
+}

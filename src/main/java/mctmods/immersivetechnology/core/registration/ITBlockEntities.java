@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.core.registration;
 
+import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.*;
 import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlockEntity;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -77,6 +78,11 @@ public class ITBlockEntities {
     public static final RegistryObject<BlockEntityType<ValveLimiterBlockEntity>> VALVE_LIMITER = REGISTER.register(
             "valve_limiter",
             () -> BlockEntityType.Builder.of(ValveLimiterBlockEntity::new, ITBlocks.Metal.VALVE_LIMITER.get()).build(null)
+    );
+
+    public static final RegistryObject<BlockEntityType<ConnectorTimerBlockEntity>> CONNECTOR_TIMER = REGISTER.register(
+            "connector_timer",
+            () -> BlockEntityType.Builder.of(ConnectorTimerBlockEntity::new, ITBlocks.Connector.CONNECTOR_TIMER.get()).build(null)
     );
 
     public static void init(IEventBus event) { REGISTER.register(event); }

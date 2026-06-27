@@ -236,9 +236,6 @@ mixin {
     config "mixins.${mod_id}.json"
 }
 
-project.ext.lwjglVersion = "3.3.6"
-project.ext.lwjglNatives = "natives-linux"
-
 dependencies {
     minecraft "net.minecraftforge:forge:${version_minecraft}-${version_forge}"
 
@@ -257,7 +254,7 @@ dependencies {
     implementation fg.deobf("curse.maven:puzzles-lib-495476:6918565")
     implementation fg.deobf("curse.maven:held-item-tooltips-852671:4613438")
 
-    datagenImplementation("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
+    datagenImplementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
