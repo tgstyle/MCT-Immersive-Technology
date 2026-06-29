@@ -257,7 +257,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             if (position.equals(OUTPUT_FLUID_POI)) { return state.fluidCapExhaust.cast(ctx); }
         }
         if (cap == MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY) {
-            if (position.equals(MECHANICAL_OUTPUT_POI)) { return LazyOptional.of(() -> new MechanicalEnergyProvider(state)).cast(); }
+            if (position.equals(MECHANICAL_OUTPUT_POI)) { return LazyOptional.of(() -> state.mechanicalProvider).cast(); }
         }
         return LazyOptional.empty();
     }
@@ -300,6 +300,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         private float outAccum;
         private double accumDelta;
         private float effectiveRatio;
+        private final MechanicalEnergyProvider mechanicalProvider;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -314,6 +315,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             this.outAccum = 0f;
             this.accumDelta = 0.0;
             this.effectiveRatio = 0f;
+            this.mechanicalProvider = new MechanicalEnergyProvider(this);
         }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {

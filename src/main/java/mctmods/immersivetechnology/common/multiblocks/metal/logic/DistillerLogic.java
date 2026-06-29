@@ -361,5 +361,11 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             if (extracted > 0 && !simulate) { onChanged.run(); }
             return extracted;
         }
+
+        public void setStoredEnergy(int energy) {
+            int prev = getEnergyStored();
+            super.setStoredEnergy(energy);
+            if (energy != prev && onChanged != null) { onChanged.run(); }
+        }
     }
 }

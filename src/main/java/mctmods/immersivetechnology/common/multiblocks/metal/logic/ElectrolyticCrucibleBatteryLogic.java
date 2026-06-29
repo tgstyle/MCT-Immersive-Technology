@@ -249,5 +249,11 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         @Override public int receiveEnergy(int maxReceive, boolean simulate) { int received = super.receiveEnergy(maxReceive, simulate); if (received > 0 && !simulate) { onChanged.run(); } return received; }
 
         @Override public int extractEnergy(int maxExtract, boolean simulate) { int extracted = super.extractEnergy(maxExtract, simulate); if (extracted > 0 && !simulate) { onChanged.run(); } return extracted; }
+
+        public void setStoredEnergy(int energy) {
+            int prev = getEnergyStored();
+            super.setStoredEnergy(energy);
+            if (energy != prev && onChanged != null) { onChanged.run(); }
+        }
     }
 }

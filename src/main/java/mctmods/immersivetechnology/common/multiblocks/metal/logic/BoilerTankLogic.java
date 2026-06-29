@@ -268,7 +268,6 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         }
     }
 
-    @SuppressWarnings("unused")
     private record BoilerInputImpl(ITMarkableFluidTank tank) implements IHeatConsumer {
         @Override public int getFluidAmount() { return tank.getFluidAmount(); }
     }

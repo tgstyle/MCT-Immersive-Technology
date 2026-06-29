@@ -305,6 +305,12 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             if (extracted > 0 && !simulate) { onChanged.run(); }
             return extracted;
         }
+
+        public void setStoredEnergy(int energy) {
+            int prev = getEnergyStored();
+            super.setStoredEnergy(energy);
+            if (energy != prev && onChanged != null) { onChanged.run(); }
+        }
     }
 
     public record HeatExchangerTanks(ITMarkableFluidTank input0, ITMarkableFluidTank input1, ITMarkableFluidTank output0, ITMarkableFluidTank output1) {

@@ -60,6 +60,8 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     private static final RelativeBlockFace ENERGY_RIGHT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "energy_right0");
     private static final RelativeBlockFace MECHANICAL_INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "mechanical_input0");
 
+    private static final LazyOptional<IMechanicalEnergyConsumer> MECHANICAL_CONSUMER = LazyOptional.of(MechanicalEnergyConsumer::new);
+
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         LocalPlayer player = Minecraft.getInstance().player;
@@ -204,7 +206,9 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         if (cap == MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY) {
             CapabilityPosition checkPos = position;
             if (position.posInMultiblock().equals(BlockPos.ZERO)) { checkPos = new CapabilityPosition(MECHANICAL_INPUT_POI.posInMultiblock(), position.side()); }
-            if (checkPos.posInMultiblock().equals(MECHANICAL_INPUT_POI.posInMultiblock()) && (checkPos.side() == null || checkPos.side() == MECHANICAL_INPUT_FACING || checkPos.side() == MECHANICAL_INPUT_FACING.getOpposite())) { return LazyOptional.of(MechanicalEnergyConsumer::new).cast(); }
+            if (checkPos.posInMultiblock().equals(MECHANICAL_INPUT_POI.posInMultiblock()) && (checkPos.side() == null || checkPos.side() == MECHANICAL_INPUT_FACING || checkPos.side() == MECHANICAL_INPUT_FACING.getOpposite())) {
+                return MECHANICAL_CONSUMER.cast();
+            }
         }
         return LazyOptional.empty();
     }

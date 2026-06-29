@@ -241,7 +241,6 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override public void tickServer(IMultiblockContext<State> ctx) {
         pumpOutputs(ctx);
         State state = ctx.getState();
@@ -327,8 +326,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                             state.tanks.input.drain(recipe.input.getAmount(), FluidAction.EXECUTE);
                             state.currentTorque = recipe.torque;
                             if (recipe.fluidOutput != null) {
-                                int filled = state.tanks.output.fill(recipe.fluidOutput, FluidAction.EXECUTE);
-                                if (filled < recipe.fluidOutput.getAmount()) {}
+                                state.tanks.output.fill(recipe.fluidOutput, FluidAction.EXECUTE);
                             }
                             state.burnRemaining = recipe.getTotalProcessTime() - 1;
                             if (!state.ignited) { ignite(state, ctx); }
@@ -371,7 +369,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             if (OUTPUT_FLUID_POIS.contains(localPos) && (side == null || side == OUTPUT_FACING)) { return state.fluidCapExhaust.cast(ctx); }
         }
         if (cap == MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY) {
-            if (MECHANICAL_OUTPUT_POIS.contains(localPos) && (side == null || side == MECHANICAL_OUTPUT_FACING)) { return LazyOptional.of(() -> new MechanicalEnergyProvider(state)).cast(); }
+            if (MECHANICAL_OUTPUT_POIS.contains(localPos) && (side == null || side == MECHANICAL_OUTPUT_FACING)) { return LazyOptional.of(() -> state.mechanicalProvider).cast(); }
         }
         return LazyOptional.empty();
     }
@@ -431,6 +429,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         private RotationInertiaProcess inertia;
         private transient int soundGrace = 0;
         public boolean tanksDirty = false;
+        private final MechanicalEnergyProvider mechanicalProvider;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -449,6 +448,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             MultiblockFace mvOpposingMBFace = new MultiblockFace(mvOpposingCP.side(), mvOpposingCP.posInMultiblock());
             this.mvInput = ctx.getCapabilityAt(ForgeCapabilities.ENERGY, mvOpposingMBFace);
             this.inertia = new RotationInertiaProcess(BASE_MASS, DRIVE_TORQUE, FRICTION, MAX_SPEED);
+            this.mechanicalProvider = new MechanicalEnergyProvider(this);
         }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
