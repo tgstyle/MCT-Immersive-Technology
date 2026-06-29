@@ -1,5 +1,3 @@
-// main/java/mctmods/immersivetechnology/mixin/MixinMCTWorldCMEFix.java
-
 package mctmods.immersivetechnology.mixin;
 
 import mctmods.immersivetechnology.core.MCTMixin;
@@ -41,39 +39,23 @@ public abstract class MixinMCTWorldCMEFix {
             mct$fieldChecked = true;
             String[] names = {"processingLoadedTiles", "field_147481_N"};
             for (String name : names) {
-                try {
-                    Field f = World.class.getDeclaredField(name);
-                    f.setAccessible(true);
-                    mct$processingLoadedTilesField = f;
-                    break;
-                } catch (NoSuchFieldException ignored) {
-                } catch (Exception e) {
-                    MCTMixin.LOGGER.error("Failed to access processingLoadedTiles field", e);
-                    break;
-                }
+                try { Field f = World.class.getDeclaredField(name); f.setAccessible(true); mct$processingLoadedTilesField = f; break; } catch (NoSuchFieldException ignored) { } catch (Exception e) { MCTMixin.LOGGER.error("Failed to access processingLoadedTiles field", e); break; }
             }
-            if (mct$processingLoadedTilesField == null) {
-                MCTMixin.LOGGER.info("processingLoadedTiles field not found in World (CleanroomMC compatibility mode). Using immediate add.");
-            }
+            if (mct$processingLoadedTilesField == null) { MCTMixin.LOGGER.info("processingLoadedTiles field not found in World (CleanroomMC compatibility mode). Using immediate add."); }
         }
 
         World world = (World)(Object)this;
         List<TileEntity> toAdd = new ArrayList<>(collection);
         boolean processingLoadedTiles = false;
         if (mct$processingLoadedTilesField != null) {
-            try {
-                processingLoadedTiles = mct$processingLoadedTilesField.getBoolean(world);
-            } catch (Exception ignored) {}
+            try { processingLoadedTiles = mct$processingLoadedTilesField.getBoolean(world); } catch (Exception ignored) { }
         }
         if (MCTMixinConfig.mixinSettings.enableAdditionsLogging && !toAdd.isEmpty()) {
             String mode = processingLoadedTiles ? "delayed" : "immediate";
             MCTMixin.LOGGER.debug("Adding {} TEs ({} add)", toAdd.size(), mode);
         }
         if (processingLoadedTiles) {
-            for (TileEntity tile : toAdd) {
-                if (tile.getWorld() != world) { tile.setWorld(world); }
-                addedTileEntityList.add(tile);
-            }
+            for (TileEntity tile : toAdd) { if (tile.getWorld() != world) { tile.setWorld(world); } addedTileEntityList.add(tile); }
         } else {
             for (TileEntity tile : toAdd) {
                 if (tile.getWorld() != world) { tile.setWorld(world); }
@@ -87,6 +69,7 @@ public abstract class MixinMCTWorldCMEFix {
                         m.invoke(world, tile.getPos(), state, state, 3);
                     } catch (Throwable ignored) {}
                 }
+                tile.onLoad();
                 int sizeAfter = loadedTileEntityList.size();
                 if (MCTMixinConfig.mixinSettings.enablePotentialsLogging && sizeAfter > sizeBefore + 1) { MCTMixin.LOGGER.warn("Potential CME detected: {} at {}", tile.getClass().getName(), tile.getPos()); }
             }
