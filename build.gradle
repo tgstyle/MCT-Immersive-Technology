@@ -171,14 +171,12 @@ jar {
                 'FMLCorePluginContainsFMLMod': 'true'
         )
     }
-    dependsOn 'optimizePng'
 }
 
 sourceSets.configureEach { it.output.resourcesDir = it.output.classesDirs.getFiles().iterator().next() }
 
 tasks.register('optimizePng') {
     dependsOn processResources
-    onlyIf { gradle.taskGraph.hasTask(tasks.build) }
     doLast {
         File resourcesDir = sourceSets.main.output.resourcesDir
         if (resourcesDir == null || !resourcesDir.exists()) {
