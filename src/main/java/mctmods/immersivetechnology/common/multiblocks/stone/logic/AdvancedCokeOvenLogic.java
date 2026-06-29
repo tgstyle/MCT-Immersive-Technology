@@ -141,7 +141,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     @Override public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         final Level level = ctx.getLevel().getRawLevel();
-        CompoundTag prevTanksNBT = state.tanks.toNBT();
+        boolean prevTanksDirty = state.tanksDirty;
         boolean wasActive = state.active;
         state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
         state.active = !state.processor.getQueue().isEmpty();
@@ -174,8 +174,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
             inventory.setStackInSlot(SLOT_FILLED_CONTAINER, filledContainer);
         }
         boolean activeChanged = wasActive != state.active;
-        CompoundTag currentTanksNBT = state.tanks.toNBT();
-        boolean tanksChanged = !prevTanksNBT.equals(currentTanksNBT);
+        boolean tanksChanged = prevTanksDirty != state.tanksDirty;
         if (activeChanged || tanksChanged) {
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
@@ -235,11 +234,12 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         private final CapabilityReference<IItemHandler> outputRef;
         public BooleanSupplier isSoundPlaying = () -> false;
         private final AveragingEnergyStorage energy = new AveragingEnergyStorage(0);
+        public boolean tanksDirty = false;
 
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
             final Runnable sync = ctx.getSyncRunnable();
-            final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
+            final Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
             this.tanks = new AdvancedCokeOvenTank(v -> onChanged.run());
             this.tankArray = new IFluidTank[]{tanks.output};
             this.inventory = new ITSlotwiseItemHandler(
@@ -292,6 +292,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
             processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), AdvancedCokeOvenProcess::new);
             inventory.deserializeNBT(nbt.getCompound("inventory"));
             active = nbt.getBoolean("active");
+            tanksDirty = false;
         }
 
         @Override public void writeSyncNBT(CompoundTag nbt) {
@@ -312,6 +313,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
+            tanksDirty = false;
         }
 
         @Override public int get(int index) {

@@ -57,19 +57,16 @@ public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizon
     public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
     public static final BlockPos SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
 
-    private static final RelativeBlockFace INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
-    private static final RelativeBlockFace OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
-
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
-    @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
+    @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(RelativeBlockFace.FRONT); }
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
 
     private double getBiomeSpeedMultiplier(IMultiblockContext<State> ctx) {
-        if (ITServerConfig.radiatorBiomeTempFactor <= 0.0D) return 1.0D;
+        if (ITServerConfig.radiatorBiomeTempFactor <= 0.0D) { return 1.0D; }
         Level level = ctx.getLevel().getRawLevel();
-        if (level.dimension() == Level.NETHER) return 0.0D;
+        if (level.dimension() == Level.NETHER) { return 0.0D; }
         BlockPos worldPos = ctx.getLevel().toAbsolute(BlockPos.ZERO);
         Biome biome = level.getBiome(worldPos).value();
         double temp = biome.getBaseTemperature();
@@ -122,18 +119,29 @@ public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizon
 
     @Override public void tickClient(IMultiblockContext<RadiatorHorizontalLogic.State> ctx) {
         RadiatorHorizontalLogic.State state = ctx.getState();
-        if (state.active) { state.soundCooldown = 40; } else if (state.soundCooldown > 0) { state.soundCooldown--; }
-        handleSounds(ctx, state);
-    }
-
-    private void handleSounds(IMultiblockContext<RadiatorHorizontalLogic.State> ctx, RadiatorHorizontalLogic.State state) {
-        if (state.isSoundPlaying.getAsBoolean()) { return; }
-        Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(SOUND_POI.getX() + 0.5, SOUND_POI.getY() + 0.5, SOUND_POI.getZ() + 0.5));
-        state.isSoundPlaying = ITSound.startSound(() -> state.soundCooldown > 0, ctx.isValid(), soundVec, ITSounds.solarTower, () -> {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null) { return 0f; }
-            return (float) Math.max(1 - Math.sqrt(player.distanceToSqr(soundVec)) / 16, 0);
-        }, () -> 1f);
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) { return; }
+        if (state.active) {
+            Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(SOUND_POI.getX() + 0.5, SOUND_POI.getY() + 0.5, SOUND_POI.getZ() + 0.5));
+            float att = (float) Math.max(player.distanceToSqr(soundVec) / 16, 1);
+            float vol = 1f / att;
+            if (vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
+                state.isSoundPlaying = ITSound.startSound(
+                        () -> state.active,
+                        ctx.isValid(),
+                        soundVec,
+                        ITSounds.solarTower,
+                        () -> {
+                            LocalPlayer p = Minecraft.getInstance().player;
+                            if (p == null) { return 0f; }
+                            return (float) Math.max(1 - Math.sqrt(p.distanceToSqr(soundVec)) / 16, 0);
+                        },
+                        () -> 1f
+                );
+            }
+        } else {
+            state.isSoundPlaying = () -> false;
+        }
     }
 
     @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
@@ -156,7 +164,6 @@ public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizon
         public final StoredCapability<IFluidHandler> outputCap;
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public boolean active;
-        public int soundCooldown = 0;
         public List<RadiatorHorizontalProcess> processQueue = new ArrayList<>();
         public BooleanSupplier isSoundPlaying = () -> false;
         public int processProgress = 0;

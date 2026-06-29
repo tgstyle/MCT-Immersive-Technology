@@ -98,6 +98,19 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
 
+    @Override public boolean isOutputConnected(IMultiblockContext<State> ctx, int index) {
+        BlockPos localPos = OUTPUT_FLUID_POIS.get(index);
+        BlockPos absolutePos = ctx.getLevel().toAbsolute(localPos);
+        Direction side = ctx.getLevel().toAbsolute(OUTPUT_FACING);
+        if (side == null) { return false; }
+        BlockEntity adjacent = ctx.getLevel().getRawLevel().getBlockEntity(absolutePos.relative(side));
+        if (adjacent != null) {
+            LazyOptional<IFluidHandler> handlerOpt = adjacent.getCapability(ForgeCapabilities.FLUID_HANDLER, side.getOpposite());
+            return handlerOpt.isPresent();
+        }
+        return false;
+    }
+
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         Level level = ctx.getLevel().getRawLevel();

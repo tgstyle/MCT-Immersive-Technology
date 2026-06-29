@@ -92,8 +92,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         if (particleSetting == 2 || particleSetting == 1 && rand.nextInt(3) == 0) { return; }
         LocalPlayer player = Minecraft.getInstance().player;
         Vec3 particleVec = ctx.getLevel().toAbsolute(new Vec3(PARTICLE_POI.getX() + 0.5, PARTICLE_POI.getY() + 0.5, PARTICLE_POI.getZ() + 0.5));
-        assert player != null;
-        if (particleVec.distanceToSqr(player.position()) > 64 * 64) { return; }
+        if (player != null && particleVec.distanceToSqr(player.position()) > 64 * 64) { return; }
         for (int i = 0; i < 3; i++) {
             double px = particleVec.x + (rand.nextFloat() * 4f - 2f);
             double py = particleVec.y + rand.nextFloat() * 2f;
@@ -118,6 +117,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         IMultiblockLevel mlevel = ctx.getLevel();
         Level level = mlevel.getRawLevel();
         boolean wasActive = state.active;
+        boolean prevTanksDirty = state.tanksDirty;
 
         double biomeMult = getBiomeSpeedMultiplier(ctx);
 
@@ -167,7 +167,8 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             state.totalProcessTime = 0;
             progressChanged = true;
         }
-        boolean update = activeChanged || progressChanged;
+        boolean tanksChanged = prevTanksDirty != state.tanksDirty;
+        boolean update = activeChanged || progressChanged || tanksChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -210,11 +211,12 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         public BooleanSupplier isSoundPlaying = () -> false;
         public int processProgress = 0;
         public int totalProcessTime = 0;
+        public boolean tanksDirty = false;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
-            Consumer<Void> onChanged = v -> { markDirty.run(); sync.run(); };
+            Consumer<Void> onChanged = v -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
             this.tanks = new CoolingTowerTanks(onChanged);
             this.input0Cap = new StoredCapability<>(ITArrayFluidHandler.fillOnly(tanks.input0, () -> onChanged.accept(null)));
             this.input1Cap = new StoredCapability<>(ITArrayFluidHandler.fillOnly(tanks.input1, () -> onChanged.accept(null)));
@@ -231,6 +233,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         @Override public void readSaveNBT(CompoundTag nbt) {
             tanks.readNBT(nbt.getCompound("tanks"));
             active = nbt.getBoolean("active");
+            tanksDirty = false;
         }
 
         @Override public void writeSyncNBT(CompoundTag nbt) {
@@ -259,6 +262,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             tanks.readNBT(nbt.getCompound("tanks"));
             processProgress = nbt.getInt("processProgress");
             totalProcessTime = nbt.getInt("totalProcessTime");
+            tanksDirty = false;
         }
     }
 
