@@ -36,8 +36,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
         @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) { return stack; }
 
         @Override @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            assert be.level != null;
-            if (be.level.isClientSide) return ItemStack.EMPTY;
+            if (be.level == null || be.level.isClientSide) return ItemStack.EMPTY;
             if (be.busy) return ItemStack.EMPTY;
             BlockState state = be.getBlockState();
             if (!state.getValue(OPEN)) return ItemStack.EMPTY;
@@ -71,13 +70,11 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
 
     @Override public void onLoad() {
         super.onLoad();
-        assert level != null;
-        if (!level.isClientSide) {
-            efficientSetChanged();
-            for (Direction d : Direction.values()) { level.neighborChanged(worldPosition.relative(d), getBlockState().getBlock(), worldPosition); }
-            markContainingBlockForUpdate(null);
-            updateRedstoneState();
-        }
+        if (level == null || level.isClientSide) return;
+        efficientSetChanged();
+        for (Direction d : Direction.values()) { level.neighborChanged(worldPosition.relative(d), getBlockState().getBlock(), worldPosition); }
+        markContainingBlockForUpdate(null);
+        updateRedstoneState();
         rotation = getBlockState().getValue(ROTATION);
     }
 
@@ -87,7 +84,6 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     }
 
     private LazyOptional<IItemHandler> myCapability = null;
-
     private LazyOptional<IItemHandler> dummyCapability = null;
 
     @Override public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
@@ -129,9 +125,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     boolean busy = false;
 
     @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        assert level != null;
-        if (level.isClientSide) return stack;
-        if (busy) return stack;
+        if (level == null || level.isClientSide || busy || stack.isEmpty()) return stack;
         BlockState state = getBlockState();
         if (!state.getValue(OPEN)) return stack;
         IItemHandler dest = getDestination();
@@ -176,7 +170,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     }
 
     public IItemHandler getDestination() {
-        assert level != null;
+        if (level == null) return null;
         BlockState state = getBlockState();
         Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
         BlockPos dstPos = worldPosition.relative(blockFacing.getOpposite());
@@ -189,7 +183,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     }
 
     public IItemHandler getSource() {
-        assert level != null;
+        if (level == null) return null;
         BlockState state = getBlockState();
         Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
         BlockPos srcPos = worldPosition.relative(blockFacing);
@@ -201,20 +195,17 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
         return null;
     }
 
-    @Override
-    public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveLimiterMenu.makeServer(ITMenuTypes.VALVE_LIMITER.getType(), id, inv, this); }
+    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveLimiterMenu.makeServer(ITMenuTypes.VALVE_LIMITER.getType(), id, inv, this); }
 
     @Override public @NotNull Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_LIMITER.location); }
 
-    @Override
-    public void receiveMessageFromServer(CompoundTag nbt) {
+    @Override public void receiveMessageFromServer(CompoundTag nbt) {
         packetLimit = nbt.getInt("packetLimit");
         timeLimit = nbt.getInt("timeLimit");
         keepSize = nbt.getInt("keepSize");
     }
 
-    @Override
-    public void receiveMessageFromClient(CompoundTag nbt) {
+    @Override public void receiveMessageFromClient(CompoundTag nbt) {
         packetLimit = nbt.getInt("packetLimit");
         timeLimit = nbt.getInt("timeLimit");
         keepSize = nbt.getInt("keepSize");
@@ -223,10 +214,8 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
 
     @Override public boolean stillValid(Player player) { return !isRemoved() && player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D; }
 
-    @Override
-    public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
-        assert level != null;
-        if (level.isClientSide) return false;
+    @Override public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
+        if (level == null || level.isClientSide) return false;
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
         Direction oldFacing = facing;
         Direction newFacing = counter ? oldFacing.getCounterClockWise(side.getAxis()) : oldFacing.getClockWise(side.getAxis());
@@ -234,14 +223,12 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
         return true;
     }
 
-    @Override
-    public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
+    @Override public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         rotation = nbt.getInt("rotation");
     }
 
-    @Override
-    public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {
+    @Override public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
         nbt.putInt("rotation", rotation);
     }

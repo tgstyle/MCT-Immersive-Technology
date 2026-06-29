@@ -13,6 +13,7 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.process.Multibl
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.HeatExchangerProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
@@ -22,6 +23,7 @@ import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -41,49 +43,42 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.State>, IServerTickableComponent<HeatExchangerLogic.State>, IClientTickableComponent<HeatExchangerLogic.State>, ITPressurizedFluidOutput<HeatExchangerLogic.State> {
-    public static final BlockPos REDSTONE_POI = getPosList("redstone0").get(0);
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(HeatExchangerShape.DATA.pointsOfInterest);
 
-    private static final List<BlockPos> FLUID_INPUT_0_POI = getPosList("fluid_input0");
-    private static final List<BlockPos> FLUID_INPUT_1_POI = getPosList("fluid_input1");
-    private static final List<BlockPos> FLUID_OUTPUT_0_POI = getPosList("fluid_output0");
-    private static final List<BlockPos> FLUID_OUTPUT_1_POI = getPosList("fluid_output1");
-    private static final List<BlockPos> ENERGY_INPUT_POI = getPosList("energy_input0");
-    private static final List<BlockPos> SOUND_POI = getPosList("sound");
+    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
 
-    public static final List<BlockPos> FLUID_INPUT_POIS = ImmutableList.<BlockPos>builder().addAll(FLUID_INPUT_0_POI).addAll(FLUID_INPUT_1_POI).build();
+    public static final List<BlockPos> INPUT_FLUID_0_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
+    public static final List<BlockPos> INPUT_FLUID_1_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input1");
+    public static final List<BlockPos> OUTPUT_FLUID_0_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    public static final List<BlockPos> OUTPUT_FLUID_1_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output1");
+    public static final List<BlockPos> ENERGY_INPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "energy_input0");
+    public static final List<BlockPos> SOUND_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound");
 
-    private static final RelativeBlockFace FLUID_INPUT_0_FACING = getFacing("fluid_input0");
-    private static final RelativeBlockFace FLUID_INPUT_1_FACING = getFacing("fluid_input1");
-    private static final RelativeBlockFace FLUID_OUTPUT_0_FACING = getFacing("fluid_output0");
-    private static final RelativeBlockFace FLUID_OUTPUT_1_FACING = getFacing("fluid_output1");
-    private static final RelativeBlockFace ENERGY_INPUT_FACING = getFacing("energy_input0");
+    public static final List<BlockPos> INPUT_FLUID_POIS = ImmutableList.<BlockPos>builder().addAll(INPUT_FLUID_0_POIS).addAll(INPUT_FLUID_1_POIS).build();
+
+    private static final RelativeBlockFace INPUT_FLUID_0_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
+    private static final RelativeBlockFace INPUT_FLUID_1_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input1");
+    private static final RelativeBlockFace OUTPUT_FLUID_0_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+    private static final RelativeBlockFace OUTPUT_FLUID_1_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output1");
+    private static final RelativeBlockFace ENERGY_INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "energy_input0");
 
     private static final int INPUT_TANK_CAPACITY = ITServerConfig.heatExchangerInputTankCapacity;
     private static final int OUTPUT_TANK_CAPACITY = ITServerConfig.heatExchangerOutputTankCapacity;
     private static final int ENERGY_CAPACITY = ITServerConfig.heatExchangerEnergyCapacity;
     private static final int ENERGY_MAX_IO = ITServerConfig.heatExchangerEnergyMaxIO;
 
-    private static List<BlockPos> getPosList(String name) { return Arrays.stream(HeatExchangerShape.DATA.pointsOfInterest).filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
-
-    private static RelativeBlockFace getFacing(String name) {
-        List<RelativeBlockFace> facings = Arrays.stream(HeatExchangerShape.DATA.pointsOfInterest).filter(poi -> poi.name.equals(name)).flatMap(poi -> poi.relativeFaces.stream()).distinct().toList();
-        if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
-        return facings.get(0);
-    }
-
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
-        if (SOUND_POI.isEmpty()) { return; }
-        BlockPos soundBlockPos = SOUND_POI.get(0);
+        if (SOUND_POIS.isEmpty()) { return; }
+        BlockPos soundBlockPos = SOUND_POIS.get(0);
         Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(soundBlockPos.getX() + 0.5, soundBlockPos.getY() + 0.5, soundBlockPos.getZ() + 0.5));
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) { return; }
@@ -162,11 +157,11 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         state.processor.addProcessToQueue(process, level, false);
     }
 
-    @Override public List<BlockPos> getOutputPositions() { return ImmutableList.of(FLUID_OUTPUT_0_POI.get(0), FLUID_OUTPUT_1_POI.get(0)); }
+    @Override public List<BlockPos> getOutputPositions() { return ImmutableList.of(OUTPUT_FLUID_0_POIS.get(0), OUTPUT_FLUID_1_POIS.get(0)); }
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return null; }
 
-    @Override public List<RelativeBlockFace> getOutputFacings() { return ImmutableList.of(FLUID_OUTPUT_0_FACING, FLUID_OUTPUT_1_FACING); }
+    @Override public List<RelativeBlockFace> getOutputFacings() { return ImmutableList.of(OUTPUT_FLUID_0_FACING, OUTPUT_FLUID_1_FACING); }
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1); }
 
@@ -174,12 +169,12 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         BlockPos localPos = position.posInMultiblock();
         RelativeBlockFace side = position.side();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (FLUID_INPUT_0_POI.contains(localPos) && (side == null || side == FLUID_INPUT_0_FACING)) { return ctx.getState().inputCap[0].cast(ctx); }
-            if (FLUID_INPUT_1_POI.contains(localPos) && (side == null || side == FLUID_INPUT_1_FACING)) { return ctx.getState().inputCap[1].cast(ctx); }
-            if (FLUID_OUTPUT_0_POI.contains(localPos) && (side == null || side == FLUID_OUTPUT_0_FACING)) { return ctx.getState().outputCap[0].cast(ctx); }
-            if (FLUID_OUTPUT_1_POI.contains(localPos) && (side == null || side == FLUID_OUTPUT_1_FACING)) { return ctx.getState().outputCap[1].cast(ctx); }
+            if (INPUT_FLUID_0_POIS.contains(localPos) && (side == null || side == INPUT_FLUID_0_FACING)) { return ctx.getState().inputCap[0].cast(ctx); }
+            if (INPUT_FLUID_1_POIS.contains(localPos) && (side == null || side == INPUT_FLUID_1_FACING)) { return ctx.getState().inputCap[1].cast(ctx); }
+            if (OUTPUT_FLUID_0_POIS.contains(localPos) && (side == null || side == OUTPUT_FLUID_0_FACING)) { return ctx.getState().outputCap[0].cast(ctx); }
+            if (OUTPUT_FLUID_1_POIS.contains(localPos) && (side == null || side == OUTPUT_FLUID_1_FACING)) { return ctx.getState().outputCap[1].cast(ctx); }
         } else if (cap == ForgeCapabilities.ENERGY) {
-            if (ENERGY_INPUT_POI.contains(localPos) && (side == null || side == ENERGY_INPUT_FACING)) { return ctx.getState().energyCap.cast(ctx); }
+            if (ENERGY_INPUT_POIS.contains(localPos) && (side == null || side == ENERGY_INPUT_FACING)) { return ctx.getState().energyCap.cast(ctx); }
         }
         return LazyOptional.empty();
     }
@@ -309,6 +304,12 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             int extracted = super.extractEnergy(maxExtract, simulate);
             if (extracted > 0 && !simulate) { onChanged.run(); }
             return extracted;
+        }
+
+        public void setStoredEnergy(int energy) {
+            int prev = getEnergyStored();
+            super.setStoredEnergy(energy);
+            if (energy != prev && onChanged != null) { onChanged.run(); }
         }
     }
 

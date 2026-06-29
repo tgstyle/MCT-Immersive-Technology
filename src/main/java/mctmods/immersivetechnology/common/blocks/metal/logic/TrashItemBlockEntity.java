@@ -17,33 +17,30 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemHandlerModifiable, ITBlockInterfaces.IInteractionObjectIT<TrashItemBlockEntity>, TrashCanShape, Container {
     public TrashItemBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.TRASH_ITEM.get(), pos, state); }
 
-    @SuppressWarnings("unchecked")
-    @Override @NotNull public <T>LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing) {
-        if (capability == ForgeCapabilities.ITEM_HANDLER) { return LazyOptional.of(() -> (T) this); }
+    @Override @NotNull public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing) {
+        if (capability == ForgeCapabilities.ITEM_HANDLER) { return LazyOptional.of(() -> this).cast(); }
         return super.getCapability(capability, facing);
     }
 
     @Override public int getSlots() { return 1; }
 
-    @Override @Nonnull public ItemStack getStackInSlot(int slot) { return ItemStack.EMPTY; }
+    @Override @NotNull public ItemStack getStackInSlot(int slot) { return ItemStack.EMPTY; }
 
-    @Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (!simulate) { acceptedAmount += stack.getCount(); }
         return ItemStack.EMPTY;
     }
 
-    @Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
+    @Override @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
 
     @Override public int getSlotLimit(int slot) { return Integer.MAX_VALUE; }
 
-    @Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return true; }
+    @Override public boolean isItemValid(int slot, @NotNull ItemStack stack) { return true; }
 
     @Override public TrashItemBlockEntity getGuiMaster() { return this; }
 
@@ -71,5 +68,5 @@ public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemH
 
     @Override public void clearContent() {}
 
-    @Override public void setStackInSlot(int slot, @Nonnull ItemStack stack) { insertItem(slot, stack, false); }
+    @Override public void setStackInSlot(int slot, @NotNull ItemStack stack) { insertItem(slot, stack, false); }
 }

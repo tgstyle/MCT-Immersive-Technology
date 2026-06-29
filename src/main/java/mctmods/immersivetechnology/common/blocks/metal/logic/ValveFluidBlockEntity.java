@@ -48,13 +48,11 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
 
     @Override public void onLoad() {
         super.onLoad();
-        assert level != null;
-        if (!level.isClientSide) {
-            efficientSetChanged();
-            for (Direction d : Direction.values()) { level.neighborChanged(worldPosition.relative(d), getBlockState().getBlock(), worldPosition); }
-            markContainingBlockForUpdate(null);
-            updateRedstoneState();
-        }
+        if (level == null || level.isClientSide) return;
+        efficientSetChanged();
+        for (Direction d : Direction.values()) { level.neighborChanged(worldPosition.relative(d), getBlockState().getBlock(), worldPosition); }
+        markContainingBlockForUpdate(null);
+        updateRedstoneState();
         rotation = getBlockState().getValue(ROTATION);
     }
 
@@ -69,7 +67,6 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
     public boolean hasOutputConnection(Direction side) { return side == getBlockState().getValue(ITProperties.FACING_ALL).getOpposite(); }
 
     private LazyOptional<IFluidHandler> myCapability = null;
-
     private LazyOptional<IFluidHandler> dummyCapability = null;
 
     @Override public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
@@ -97,36 +94,38 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
     @Override public void setFacing(@NotNull Direction facing) {
         this.facing = facing;
         invalidateCaps();
-        if (level != null && !level.isClientSide) {
-            BlockState state = getBlockState();
-            if (state.hasProperty(ITProperties.FACING_ALL)) {
-                int newRot = rotation;
-                Direction currentFacing = state.getValue(ITProperties.FACING_ALL);
-                if (facing.getAxis() == Direction.Axis.Y) {
-                    if (currentFacing.getAxis() != Direction.Axis.Y) newRot = currentFacing.get2DDataValue();
-                } else {
-                    newRot = facing.get2DDataValue();
-                }
-                state = state.setValue(ITProperties.FACING_ALL, facing).setValue(ROTATION, newRot);
-                level.setBlock(worldPosition, state, 3);
-                rotation = newRot;
+        if (level == null || level.isClientSide) {
+            efficientSetChanged();
+            return;
+        }
+        BlockState state = getBlockState();
+        if (state.hasProperty(ITProperties.FACING_ALL)) {
+            int newRot = rotation;
+            Direction currentFacing = state.getValue(ITProperties.FACING_ALL);
+            if (facing.getAxis() == Direction.Axis.Y) {
+                if (currentFacing.getAxis() != Direction.Axis.Y) newRot = currentFacing.get2DDataValue();
+            } else {
+                newRot = facing.get2DDataValue();
             }
-            markContainingBlockForUpdate(null);
-            level.updateNeighborsAt(worldPosition, state.getBlock());
-            for (Direction d : Direction.values()) {
-                BlockPos adjPos = worldPosition.relative(d);
-                BlockEntity adj = level.getBlockEntity(adjPos);
-                if (adj instanceof FluidPipeBlockEntity pipe) {
-                    Direction pipeSide = d.getOpposite();
-                    pipe.updateConnectionByte(pipeSide);
-                    pipe.markContainingBlockForUpdate(null);
-                    pipe.setChanged();
-                } else if (adj != null) {
-                    adj.invalidateCaps();
-                    adj.setChanged();
-                }
-                level.neighborChanged(adjPos, level.getBlockState(adjPos).getBlock(), worldPosition);
+            state = state.setValue(ITProperties.FACING_ALL, facing).setValue(ROTATION, newRot);
+            level.setBlock(worldPosition, state, 3);
+            rotation = newRot;
+        }
+        markContainingBlockForUpdate(null);
+        level.updateNeighborsAt(worldPosition, state.getBlock());
+        for (Direction d : Direction.values()) {
+            BlockPos adjPos = worldPosition.relative(d);
+            BlockEntity adj = level.getBlockEntity(adjPos);
+            if (adj instanceof FluidPipeBlockEntity pipe) {
+                Direction pipeSide = d.getOpposite();
+                pipe.updateConnectionByte(pipeSide);
+                pipe.markContainingBlockForUpdate(null);
+                pipe.setChanged();
+            } else if (adj != null) {
+                adj.invalidateCaps();
+                adj.setChanged();
             }
+            level.neighborChanged(adjPos, level.getBlockState(adjPos).getBlock(), worldPosition);
         }
         efficientSetChanged();
     }
@@ -142,9 +141,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
     boolean busy = false;
 
     @Override public int fill(FluidStack fluidStack, FluidAction doFill) {
-        assert level != null;
-        if (level.isClientSide) return 0;
-        if (busy) return 0;
+        if (level == null || level.isClientSide || busy || fluidStack.isEmpty()) return 0;
         BlockState state = getBlockState();
         if (!state.getValue(OPEN)) return 0;
         Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
@@ -158,13 +155,13 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
         if (canAccept == 0) return 0;
         BlockEntity dst = level.getBlockEntity(worldPosition.relative(blockFacing.getOpposite()));
         boolean isPipe = dst instanceof FluidPipeBlockEntity;
-        FluidStack fillStack = new FluidStack(fluidStack.getFluid(), canAccept, fluidStack.getTag());
+        FluidStack fillStack = fluidStack.copy();
+        fillStack.setAmount(canAccept);
         boolean hadTag = fillStack.hasTag() && fillStack.getTag().contains(IFluidPipe.NBT_PRESSURIZED);
         if (isPipe && !hadTag) { fillStack.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
         busy = true;
         int toReturn = destination.fill(fillStack, doFill);
         busy = false;
-        if (!hadTag && fillStack.hasTag()) { fillStack.getTag().remove(IFluidPipe.NBT_PRESSURIZED); }
         if (doFill == FluidAction.EXECUTE) { acceptedAmount += toReturn; packets++; }
         return toReturn;
     }
@@ -183,7 +180,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
     @Override @NotNull public FluidStack drain(int i, FluidAction b) { return FluidStack.EMPTY; }
 
     public IFluidHandler getDestination() {
-        assert level != null;
+        if (level == null) return null;
         BlockState state = getBlockState();
         Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
         BlockPos dstPos = worldPosition.relative(blockFacing.getOpposite());
@@ -215,8 +212,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITS
     @Override public boolean stillValid(Player player) { return !isRemoved() && player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D; }
 
     @Override public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
-        assert level != null;
-        if (level.isClientSide) return false;
+        if (level == null || level.isClientSide) return false;
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
         Direction newFacing = counter ? facing.getCounterClockWise(side.getAxis()) : facing.getClockWise(side.getAxis());
         if (newFacing.getAxis() == Direction.Axis.Y) return false;

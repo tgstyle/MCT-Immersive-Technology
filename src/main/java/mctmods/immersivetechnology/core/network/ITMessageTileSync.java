@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.core.network;
 
+import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -30,6 +31,7 @@ public class ITMessageTileSync implements ITMessage {
         buf.writeNbt(this.nbt);
     }
 
+    @SuppressWarnings("resource")
     @Override public void process(Supplier<NetworkEvent.Context> context) {
         NetworkEvent.Context ctx = context.get();
         ServerPlayer player = ctx.getSender();
@@ -39,6 +41,8 @@ public class ITMessageTileSync implements ITMessage {
                 BlockEntity tile = level.getBlockEntity(this.pos);
                 if (tile instanceof ITBaseBlockEntity itbe) {
                     itbe.receiveMessageFromClient(this.nbt);
+                } else if (tile instanceof ConnectorTimerBlockEntity timer) {
+                    timer.receiveMessageFromClient(this.nbt);
                 }
             });
         }

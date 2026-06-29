@@ -69,31 +69,22 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(MeltingCrucibleShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = getPosList("redstone0").get(0);
-    public static final CapabilityPosition INPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_input0").get(0), getFacing("fluid_input0"));
-    public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_output0").get(0), getFacing("fluid_output0"));
-    private static final List<BlockPos> ENERGY_POI_POS = getPosList("energy_input0");
-    private static final RelativeBlockFace ENERGY_POI_FACING = getFacing("energy_input0");
-    public static final CapabilityPosition ENERGY_POI = new CapabilityPosition(ENERGY_POI_POS.get(0), ENERGY_POI_FACING);
-    private static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output0");
-    private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output0");
-
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
-    private static RelativeBlockFace getFacing(String name) {
-        List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).flatMap(poi -> poi.relativeFaces.stream()).distinct().toList();
-        if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
-        return facings.get(0);
-    }
+    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
+    public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    public static final CapabilityPosition ENERGY_INPUT_POI = ITMultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "energy_input0");
+    private static final List<BlockPos> FLUID_OUTPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    private static final RelativeBlockFace OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
 
     @Override public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
-    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
+    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
-        List<BlockPos> soundPosList = getPosList("sound0");
+        List<BlockPos> soundPosList = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
         if (soundPosList.isEmpty()) { return; }
         BlockPos soundBlockPos = soundPosList.get(0);
         Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(soundBlockPos.getX() + 0.5, soundBlockPos.getY() + 0.5, soundBlockPos.getZ() + 0.5));
@@ -116,10 +107,10 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         State state = ctx.getState();
         state.energy.updateAverage();
         int prevEnergy = state.energy.getEnergyStored();
-        CompoundTag prevTanksNBT = state.tanks.toNBT();
+        boolean prevTanksDirty = state.tanksDirty;
         boolean wasActive = state.active;
 
-        FluidStack fs = state.tanks.input.getFluid();
+        FluidStack fs = state.tanks.input().getFluid();
         MeltingRecipe recipe = fs.getAmount() > 0 ? MeltingRecipe.findRecipe(ctx.getLevel().getRawLevel(), fs) : null;
         if (state.activeRecipe == null && state.activeRecipeId != null) { state.activeRecipe = MeltingRecipe.RECIPES.getById(ctx.getLevel().getRawLevel(), state.activeRecipeId); state.activeRecipeId = null; }
         if (state.activeRecipe == null || !state.activeRecipe.input.testIgnoringAmount(fs)) { state.activeRecipe = recipe; }
@@ -137,15 +128,14 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             tryEnqueueProcess(state, ctx.getLevel().getRawLevel(), state.activeRecipe);
         }
 
-        tryEmptyContainer(state.tanks.input, state.inventory);
-        FluidUtils.fillFluidContainer(state.tanks.output, SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory);
+        tryEmptyContainer(state.tanks.input(), state.inventory);
+        FluidUtils.fillFluidContainer(state.tanks.output(), SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory);
         pumpOutputs(ctx);
 
         boolean activeChanged = wasActive != state.active;
         int currentEnergy = state.energy.getEnergyStored();
         boolean energyChanged = prevEnergy != currentEnergy;
-        CompoundTag currentTanksNBT = state.tanks.toNBT();
-        boolean tanksChanged = !prevTanksNBT.equals(currentTanksNBT);
+        boolean tanksChanged = prevTanksDirty != state.tanksDirty;
         boolean update = activeChanged || energyChanged || tanksChanged;
 
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
@@ -189,10 +179,10 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         if (state.processor.getQueueSize() >= state.processor.getMaxQueueSize()) { return; }
         if (recipe == null) { return; }
         if (state.heatLevel < recipe.requiredTemp) { return; }
-        FluidStack inputFluid = state.tanks.input.getFluid();
+        FluidStack inputFluid = state.tanks.input().getFluid();
         if (inputFluid.getAmount() < recipe.input.getAmount()) { return; }
         FluidStack outputFluid = recipe.fluidOutput;
-        if (outputFluid != null && !outputFluid.isEmpty() && state.tanks.output.getFluidAmount() + outputFluid.getAmount() > state.tanks.output.getCapacity()) { return; }
+        if (outputFluid != null && !outputFluid.isEmpty() && state.tanks.output().getFluidAmount() + outputFluid.getAmount() > state.tanks.output().getCapacity()) { return; }
         MeltingCrucibleProcess process = new MeltingCrucibleProcess(recipe);
         process.setInputTanks(0);
         state.processor.addProcessToQueue(process, level, false);
@@ -201,10 +191,10 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
     @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         State state = ctx.getState();
         if (cap == ForgeCapabilities.ENERGY) {
-            if (position.posInMultiblock().equals(ENERGY_POI.posInMultiblock()) && (position.side() == null || position.side() == ENERGY_POI.side())) { return state.energyCap.cast(ctx); }
+            if (position.posInMultiblock().equals(ENERGY_INPUT_POI.posInMultiblock()) && (position.side() == null || position.side() == ENERGY_INPUT_POI.side())) { return state.energyCap.cast(ctx); }
         } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (position.posInMultiblock().equals(INPUT_FLUID_POI.posInMultiblock()) && (position.side() == null || position.side() == INPUT_FLUID_POI.side())) { return state.inputCap.cast(ctx); }
-            if (position.posInMultiblock().equals(OUTPUT_FLUID_POI.posInMultiblock()) && (position.side() == null || position.side() == OUTPUT_FLUID_POI.side())) { return state.outputCap.cast(ctx); }
+            if (INPUT_FLUID_POIS.contains(position.posInMultiblock())) { return state.inputCap.cast(ctx); }
+            if (OUTPUT_FLUID_POIS.contains(position.posInMultiblock())) { return state.outputCap.cast(ctx); }
         } else if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return state.invCap.cast(ctx);
         }
@@ -233,13 +223,14 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         public double heatLevel = 0.0;
         public MeltingRecipe activeRecipe = null;
         private ResourceLocation activeRecipeId;
+        public boolean tanksDirty = false;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
-            Runnable onChanged = () -> { markDirty.run(); sync.run(); };
+            Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
             this.tanks = new MeltingCrucibleTank(v -> onChanged.run());
-            this.tankArray = new IFluidTank[]{tanks.input, tanks.output};
+            this.tankArray = new IFluidTank[]{tanks.input(), tanks.output()};
             inventory = new ITSlotwiseItemHandler(
                     List.of(
                             ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
@@ -249,8 +240,8 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
                     ),
                     onChanged
             );
-            this.inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
-            this.outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
+            this.inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input(), false, true, onChanged));
+            this.outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output(), true, false, onChanged));
             this.invCap = new StoredCapability<>(inventory);
             this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
             this.energyCap = new StoredCapability<>(this.energy);
@@ -278,6 +269,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             active = nbt.getBoolean("active");
             heatLevel = nbt.getDouble("heatLevel");
             if (nbt.contains("activeRecipe")) { activeRecipeId = ResourceLocation.tryParse(nbt.getString("activeRecipe")); }
+            tanksDirty = false;
         }
 
         @Override public void writeSyncNBT(CompoundTag nbt) {
@@ -313,6 +305,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             inventory.deserializeNBT(nbt.getCompound("inventory"));
             heatLevel = nbt.getDouble("heatLevel");
             if (nbt.contains("activeRecipe")) { activeRecipeId = ResourceLocation.tryParse(nbt.getString("activeRecipe")); }
+            tanksDirty = false;
         }
     }
 
@@ -337,6 +330,9 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
 
         @SuppressWarnings("unused")
         public int getCapacity() { return TANK_CAPACITY; }
+
+        public ITMarkableFluidTank input() { return input; }
+        public ITMarkableFluidTank output() { return output; }
     }
 
     private static class SyncEnergyStorage extends AveragingEnergyStorage {

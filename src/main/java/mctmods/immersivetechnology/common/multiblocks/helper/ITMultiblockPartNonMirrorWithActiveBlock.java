@@ -11,10 +11,10 @@ import net.minecraft.world.level.block.state.properties.Property;
 
 import javax.annotation.Nonnull;
 
-public class ITNonMirrorableWithActiveBlock<S extends IMultiblockState> extends ITMultiblockPartBlock<S> {
+public class ITMultiblockPartNonMirrorWithActiveBlock<S extends IMultiblockState> extends ITMultiblockPartBlock<S> {
     public static final Property<Boolean> ACTIVE;
 
-    public ITNonMirrorableWithActiveBlock(BlockBehaviour.Properties properties, MultiblockRegistration<S> multiblock) {
+    public ITMultiblockPartNonMirrorWithActiveBlock(BlockBehaviour.Properties properties, MultiblockRegistration<S> multiblock) {
         super(properties, multiblock);
         Preconditions.checkState(!multiblock.mirrorable());
     }

@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
@@ -45,7 +46,6 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.HashSet;
@@ -77,24 +77,16 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SolarTowerShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
-    public static final BlockPos RUNNING_SOUND_POI = getPosList("sound").get(0);
-    public static final BlockPos LINK_POI = getPosList("link").get(0);
-    public static final BlockPos REFLECTOR_POI = getPosList("reflector").get(0);
-    public static final BlockPos SUN_POI = getPosList("sun").get(0);
-    public static final CapabilityPosition INPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_input").get(0), getFacing("fluid_input"));
-    public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_output").get(0), getFacing("fluid_output"));
-    public static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
-    private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
+    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    public static final BlockPos RUNNING_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
+    public static final BlockPos LINK_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "link0").get(0);
+    public static final BlockPos REFLECTOR_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "reflector0").get(0);
+    public static final BlockPos SUN_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sun0").get(0);
+    public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
+    public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    private static final RelativeBlockFace OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
 
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
-    private static RelativeBlockFace getFacing(String name) {
-        List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).flatMap(poi -> poi.relativeFaces.stream()).distinct().toList();
-        if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
-        return facings.get(0);
-    }
-
-    @Override public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
+    @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
@@ -215,7 +207,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
-    private void updatePortNeighbors(IMultiblockLevel mlevel) { Level level = mlevel.getRawLevel(); BlockPos inputPos = mlevel.toAbsolute(INPUT_FLUID_POI.posInMultiblock()); level.updateNeighborsAt(inputPos, level.getBlockState(inputPos).getBlock()); BlockPos outputPos = mlevel.toAbsolute(OUTPUT_FLUID_POI.posInMultiblock()); level.updateNeighborsAt(outputPos, level.getBlockState(outputPos).getBlock()); }
+    private void updatePortNeighbors(IMultiblockLevel mlevel) { Level level = mlevel.getRawLevel(); BlockPos inputPos = mlevel.toAbsolute(INPUT_FLUID_POIS.get(0)); level.updateNeighborsAt(inputPos, level.getBlockState(inputPos).getBlock()); BlockPos outputPos = mlevel.toAbsolute(OUTPUT_FLUID_POIS.get(0)); level.updateNeighborsAt(outputPos, level.getBlockState(outputPos).getBlock()); }
 
     private double checkReflectorPositions(IMultiblockLevel mlevel, State state) {
         double totalMirrorStrength = 0;
@@ -331,8 +323,8 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
     @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         State state = ctx.getState();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (position.equals(INPUT_FLUID_POI)) { return state.inputCap.cast(ctx); }
-            if (position.equals(OUTPUT_FLUID_POI)) { return state.outputCap.cast(ctx); }
+            if (INPUT_FLUID_POIS.contains(position.posInMultiblock())) { return state.inputCap.cast(ctx); }
+            if (OUTPUT_FLUID_POIS.contains(position.posInMultiblock())) { return state.outputCap.cast(ctx); }
         }
         return LazyOptional.empty();
     }

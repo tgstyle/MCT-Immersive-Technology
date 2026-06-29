@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.core.registration;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.gui.*;
 import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemBlockEntity;
@@ -10,6 +11,7 @@ import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterBlockEn
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadBlockEntity;
 import mctmods.immersivetechnology.common.blocks.wooden.gui.CrateCreativeMenu;
 import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlockEntity;
+import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
 import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.multiblocks.gui.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
@@ -53,6 +55,8 @@ public class ITMenuTypes {
     public static final ArgContainer<ValveFluidBlockEntity, ValveFluidMenu> VALVE_FLUID = registerArg("valve_fluid", ValveFluidMenu::makeServer, ValveFluidMenu::makeClient);
     public static final ArgContainer<ValveLoadBlockEntity, ValveLoadMenu> VALVE_LOAD = registerArg("valve_load", ValveLoadMenu::makeServer, ValveLoadMenu::makeClient);
     public static final ArgContainer<ValveLimiterBlockEntity, ValveLimiterMenu> VALVE_LIMITER = registerArg("valve_limiter", ValveLimiterMenu::makeServer, ValveLimiterMenu::makeClient);
+
+    public static final ArgContainer<ConnectorTimerBlockEntity, ConnectorTimerMenu> CONNECTOR_TIMER = registerArg("connector_timer", ConnectorTimerMenu::makeServer, ConnectorTimerMenu::makeClient);
 
     public static <T, C extends ITContainerMenu> ArgContainer<T, C> registerArg(String name, ArgContainerConstructor<T, C> container, ClientContainerConstructor<C> client) {
         RegistryObject<MenuType<C>> typeRef = registerType(name, client);

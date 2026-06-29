@@ -17,6 +17,7 @@ import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.mojang.datafixers.util.Pair;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.ITServerConfig;
@@ -38,6 +39,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -47,24 +49,18 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>, IServerTickableComponent<AlternatorLogic.State>, IClientTickableComponent<AlternatorLogic.State> {
-
     private static final int MAX_SPEED = MechanicalCapabilities.MAX_RPM;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AlternatorShape.DATA.pointsOfInterest);
 
-    public static final BlockPos RUNNING_SOUND_POI = getPosList("running_sound").get(0);
-    public static final BlockPos ROTATIONAL_INPUT_POI = getPosList("rotational_input").get(0);
-    private static final List<BlockPos> ENERGY_LEFT_POI = getPosList("energy_left");
-    private static final List<BlockPos> ENERGY_RIGHT_POI = getPosList("energy_right");
-    private static final RelativeBlockFace ENERGY_LEFT_FACING = getFacing("energy_left");
-    private static final RelativeBlockFace ENERGY_RIGHT_FACING = getFacing("energy_right");
-    private static final RelativeBlockFace ROTATIONAL_INPUT_FACING = getFacing("rotational_input");
+    public static final BlockPos RUNNING_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
+    public static final CapabilityPosition MECHANICAL_INPUT_POI = ITMultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "mechanical_input0");
+    private static final List<BlockPos> ENERGY_LEFT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "energy_left0");
+    private static final List<BlockPos> ENERGY_RIGHT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "energy_right0");
+    private static final RelativeBlockFace ENERGY_LEFT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "energy_left0");
+    private static final RelativeBlockFace ENERGY_RIGHT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "energy_right0");
+    private static final RelativeBlockFace MECHANICAL_INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "mechanical_input0");
 
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
-    private static RelativeBlockFace getFacing(String name) {
-        List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).flatMap(poi -> poi.relativeFaces.stream()).distinct().toList();
-        if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
-        return facings.get(0);
-    }
+    private static final LazyOptional<IMechanicalEnergyConsumer> MECHANICAL_CONSUMER = LazyOptional.of(MechanicalEnergyConsumer::new);
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
@@ -102,20 +98,23 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         float turbineTorque = 1f;
         boolean hasProvider = false;
         int providerMaxSpeed = MAX_SPEED;
-        Direction inputFacing = ctx.getLevel().toAbsolute(ROTATIONAL_INPUT_FACING);
-        BlockPos inputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_INPUT_POI);
-        assert inputFacing != null;
-        BlockPos providerAbsolutePos = inputPortAbs.relative(inputFacing);
-        BlockEntity entity = level.getBlockEntity(providerAbsolutePos);
-        if (entity != null) {
-            LazyOptional<IMechanicalEnergyProvider> providerCap = entity.getCapability(MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY, inputFacing.getOpposite());
-            if (providerCap.isPresent()) {
-                IMechanicalEnergyProvider provider = providerCap.orElseThrow(RuntimeException::new);
-                turbineSpeed = provider.getSpeed();
-                turbineTorque = provider.getTorque();
-                providerMaxSpeed = provider.getMaxSpeed();
-                hasProvider = true;
-                if (turbineSpeed > 0) { state.active = true; }
+        Direction inputFacing = ctx.getLevel().toAbsolute(MECHANICAL_INPUT_FACING);
+        BlockPos inputPortAbs = ctx.getLevel().toAbsolute(MECHANICAL_INPUT_POI.posInMultiblock());
+        if (inputFacing == null) {
+            ITLib.IT_LOGGER.warn("AlternatorLogic: Failed to resolve input facing");
+        } else {
+            BlockPos providerAbsolutePos = inputPortAbs.relative(inputFacing);
+            BlockEntity entity = level.getBlockEntity(providerAbsolutePos);
+            if (entity != null) {
+                LazyOptional<IMechanicalEnergyProvider> providerCap = entity.getCapability(MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY, inputFacing.getOpposite());
+                if (providerCap.isPresent()) {
+                    IMechanicalEnergyProvider provider = providerCap.orElseThrow(RuntimeException::new);
+                    turbineSpeed = provider.getSpeed();
+                    turbineTorque = provider.getTorque();
+                    providerMaxSpeed = provider.getMaxSpeed();
+                    hasProvider = true;
+                    if (turbineSpeed > 0) { state.active = true; }
+                }
             }
         }
         int effectiveMax = hasProvider ? Math.min(MAX_SPEED, providerMaxSpeed) : MAX_SPEED;
@@ -169,10 +168,10 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
     private List<IEnergyStorage> getConnectedHandlers(IMultiblockContext<State> ctx, Level level) {
         List<IEnergyStorage> connected = new ArrayList<>();
-        for (BlockPos pos : ENERGY_LEFT_POI) {
+        for (BlockPos pos : ENERGY_LEFT_POIS) {
             BlockPos absolutePos = ctx.getLevel().toAbsolute(pos);
             Direction side = ctx.getLevel().toAbsolute(ENERGY_LEFT_FACING);
-            assert side != null;
+            if (side == null) { continue; }
             BlockEntity adjacent = level.getBlockEntity(absolutePos.relative(side));
             if (adjacent != null) {
                 LazyOptional<IEnergyStorage> handlerOpt = adjacent.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
@@ -181,10 +180,10 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
                 }
             }
         }
-        for (BlockPos pos : ENERGY_RIGHT_POI) {
+        for (BlockPos pos : ENERGY_RIGHT_POIS) {
             BlockPos absolutePos = ctx.getLevel().toAbsolute(pos);
             Direction side = ctx.getLevel().toAbsolute(ENERGY_RIGHT_FACING);
-            assert side != null;
+            if (side == null) { continue; }
             BlockEntity adjacent = level.getBlockEntity(absolutePos.relative(side));
             if (adjacent != null) {
                 LazyOptional<IEnergyStorage> handlerOpt = adjacent.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
@@ -201,13 +200,15 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         if (cap == ForgeCapabilities.ENERGY) {
             BlockPos localPos = position.posInMultiblock();
             RelativeBlockFace side = position.side();
-            if (ENERGY_LEFT_POI.contains(localPos) && (side == null || side == ENERGY_LEFT_FACING)) { return state.energyCap.cast(ctx); }
-            if (ENERGY_RIGHT_POI.contains(localPos) && (side == null || side == ENERGY_RIGHT_FACING)) { return state.energyCap.cast(ctx); }
+            if (ENERGY_LEFT_POIS.contains(localPos) && (side == null || side == ENERGY_LEFT_FACING)) { return state.energyCap.cast(ctx); }
+            if (ENERGY_RIGHT_POIS.contains(localPos) && (side == null || side == ENERGY_RIGHT_FACING)) { return state.energyCap.cast(ctx); }
         }
         if (cap == MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY) {
             CapabilityPosition checkPos = position;
-            if (position.posInMultiblock().equals(BlockPos.ZERO)) { checkPos = new CapabilityPosition(ROTATIONAL_INPUT_POI, position.side()); }
-            if (checkPos.posInMultiblock().equals(ROTATIONAL_INPUT_POI) && (checkPos.side() == null || checkPos.side() == ROTATIONAL_INPUT_FACING || checkPos.side() == ROTATIONAL_INPUT_FACING.getOpposite())) { return LazyOptional.of(MechanicalEnergyConsumer::new).cast(); }
+            if (position.posInMultiblock().equals(BlockPos.ZERO)) { checkPos = new CapabilityPosition(MECHANICAL_INPUT_POI.posInMultiblock(), position.side()); }
+            if (checkPos.posInMultiblock().equals(MECHANICAL_INPUT_POI.posInMultiblock()) && (checkPos.side() == null || checkPos.side() == MECHANICAL_INPUT_FACING || checkPos.side() == MECHANICAL_INPUT_FACING.getOpposite())) {
+                return MECHANICAL_CONSUMER.cast();
+            }
         }
         return LazyOptional.empty();
     }
@@ -285,7 +286,6 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         }
 
         @Override public boolean isActive() { return active; }
-
         @Override public AveragingEnergyStorage getEnergy() { return energy; }
     }
 

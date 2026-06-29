@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.RadiatorProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
@@ -51,23 +52,21 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(RadiatorShape.DATA.pointsOfInterest);
 
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
+    public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
+    public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    public static final BlockPos SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
 
-    public static final List<BlockPos> FLUID_INPUT_POIS = getPosList("fluid_input");
-    public static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
-    public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
-    public static final BlockPos SOUND_POS = getPosList("sound").get(0);
-
-    @Override public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
+    @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(RelativeBlockFace.FRONT); }
 
     @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
 
     private double getBiomeSpeedMultiplier(IMultiblockContext<State> ctx) {
-        if (ITServerConfig.radiatorBiomeTempFactor <= 0.0D) return 1.0D;
+        if (ITServerConfig.radiatorBiomeTempFactor <= 0.0D) { return 1.0D; }
         Level level = ctx.getLevel().getRawLevel();
-        if (level.dimension() == Level.NETHER) return 0.0D;
+        if (level.dimension() == Level.NETHER) { return 0.0D; }
         BlockPos worldPos = ctx.getLevel().toAbsolute(BlockPos.ZERO);
         Biome biome = level.getBiome(worldPos).value();
         double temp = biome.getBaseTemperature();
@@ -75,8 +74,7 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
         return 1.0D + (deviation * ITServerConfig.radiatorBiomeTempFactor);
     }
 
-    @Override
-    public void tickServer(IMultiblockContext<State> ctx) {
+    @Override public void tickServer(IMultiblockContext<State> ctx) {
         pumpOutputs(ctx);
         State state = ctx.getState();
         Level level = ctx.getLevel().getRawLevel();
@@ -121,26 +119,37 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
 
     @Override public void tickClient(IMultiblockContext<RadiatorLogic.State> ctx) {
         RadiatorLogic.State state = ctx.getState();
-        if (state.active) { state.soundCooldown = 40; } else if (state.soundCooldown > 0) { state.soundCooldown--; }
-        handleSounds(ctx, state);
-    }
-
-    private void handleSounds(IMultiblockContext<RadiatorLogic.State> ctx, RadiatorLogic.State state) {
-        if (state.isSoundPlaying.getAsBoolean()) { return; }
-        Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(SOUND_POS.getX() + 0.5, SOUND_POS.getY() + 0.5, SOUND_POS.getZ() + 0.5));
-        state.isSoundPlaying = ITSound.startSound(() -> state.soundCooldown > 0, ctx.isValid(), soundVec, ITSounds.solarTower, () -> {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null) { return 0f; }
-            return (float) Math.max(1 - Math.sqrt(player.distanceToSqr(soundVec)) / 16, 0);
-        }, () -> 1f);
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) { return; }
+        if (state.active) {
+            Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(SOUND_POI.getX() + 0.5, SOUND_POI.getY() + 0.5, SOUND_POI.getZ() + 0.5));
+            float att = (float) Math.max(player.distanceToSqr(soundVec) / 16, 1);
+            float vol = 1f / att;
+            if (vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
+                state.isSoundPlaying = ITSound.startSound(
+                        () -> state.active,
+                        ctx.isValid(),
+                        soundVec,
+                        ITSounds.solarTower,
+                        () -> {
+                            LocalPlayer p = Minecraft.getInstance().player;
+                            if (p == null) { return 0f; }
+                            return (float) Math.max(1 - Math.sqrt(p.distanceToSqr(soundVec)) / 16, 0);
+                        },
+                        () -> 1f
+                );
+            }
+        } else {
+            state.isSoundPlaying = () -> false;
+        }
     }
 
     @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
         State state = ctx.getState();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             BlockPos localPos = position.posInMultiblock();
-            if (FLUID_INPUT_POIS.contains(localPos)) { return state.inputCap.cast(ctx); }
-            if (FLUID_OUTPUT_POIS.contains(localPos)) { return state.outputCap.cast(ctx); }
+            if (INPUT_FLUID_POIS.contains(localPos)) { return state.inputCap.cast(ctx); }
+            if (OUTPUT_FLUID_POIS.contains(localPos)) { return state.outputCap.cast(ctx); }
         }
         return LazyOptional.empty();
     }
@@ -155,16 +164,16 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
         public final StoredCapability<IFluidHandler> outputCap;
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public boolean active;
-        public int soundCooldown = 0;
         public List<RadiatorProcess> processQueue = new ArrayList<>();
         public BooleanSupplier isSoundPlaying = () -> false;
         public int processProgress = 0;
         public int totalProcessTime = 0;
+        public boolean tanksDirty = false;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
-            Consumer<Void> onChanged = v -> { markDirty.run(); sync.run(); };
+            Consumer<Void> onChanged = v -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
 
             this.tanks = new RadiatorTanks(onChanged);
             this.inputCap = new StoredCapability<>(ITArrayFluidHandler.fillOnly(tanks.input(), () -> onChanged.accept(null)));
@@ -179,6 +188,7 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
         @Override public void readSaveNBT(CompoundTag nbt) {
             tanks.readNBT(nbt.getCompound("tanks"));
             active = nbt.getBoolean("active");
+            tanksDirty = false;
         }
 
         @Override public void writeSyncNBT(CompoundTag nbt) {
@@ -207,6 +217,7 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
             tanks.readNBT(nbt.getCompound("tanks"));
             processProgress = nbt.getInt("processProgress");
             totalProcessTime = nbt.getInt("totalProcessTime");
+            tanksDirty = false;
         }
     }
 
@@ -218,6 +229,8 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
                     new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty)
             );
         }
+
+        public static RadiatorTanks makeClient() { return new RadiatorTanks(v -> {}); }
 
         public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();

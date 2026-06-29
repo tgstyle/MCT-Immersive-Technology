@@ -68,9 +68,9 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
 
     public void onBEPlaced(ItemStack stack) {
         if (stack.hasTag()) {
-            assert stack.getTag() != null;
-            if (stack.getTag().contains("template")) {
-                template = ItemStack.of(stack.getTag().getCompound("template"));
+            CompoundTag tag = stack.getTag();
+            if (tag != null && tag.contains("template")) {
+                template = ItemStack.of(tag.getCompound("template"));
                 setChanged();
             }
         }

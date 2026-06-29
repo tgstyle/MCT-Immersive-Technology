@@ -14,6 +14,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
@@ -49,12 +50,10 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
     public static final float DANCE_DURATION = (float) ITClientConfig.solarReflectorDanceDuration;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SolarReflectorShape.DATA.pointsOfInterest);
 
-    public static BlockPos DANCE_SOUND_POI = getPosList("sound").get(0);
-    public static BlockPos LINK_POI = getPosList("link").get(0);
-    public static BlockPos SUN_POI = getPosList("sun").get(0);
-    public static BlockPos BEAM_POI = getPosList("beam").get(0);
-
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
+    public static final BlockPos DANCE_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
+    public static final BlockPos LINK_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "link0").get(0);
+    public static final BlockPos SUN_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sun0").get(0);
+    public static final BlockPos BEAM_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "beam0").get(0);
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
