@@ -16,6 +16,7 @@ import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteamTurbineShape;
@@ -57,14 +58,19 @@ import java.util.function.Function;
 public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.State>, IServerTickableComponent<SteamTurbineLogic.State>, IClientTickableComponent<SteamTurbineLogic.State>, ITPressurizedFluidOutput<SteamTurbineLogic.State> {
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SteamTurbineShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = getPosList("redstone").get(0);
-    public static final BlockPos RUNNING_SOUND_POI = getPosList("sound_running").get(0);
-    public static final BlockPos SMOKE_POI = getPosList("smoke").get(0);
-    public static final CapabilityPosition INPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_input").get(0), getFacing("fluid_input"));
-    public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(getPosList("fluid_output").get(0), getFacing("fluid_output"));
-    public static final CapabilityPosition ROTATIONAL_OUTPUT_POI = new CapabilityPosition(getPosList("mech_output").get(0), getFacing("mech_output"));
-    private static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
-    private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
+    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    public static final BlockPos RUNNING_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound_running0").get(0);
+    public static final BlockPos SMOKE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "smoke0").get(0);
+
+    public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
+    public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    public static final List<BlockPos> MECHANICAL_OUTPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "mechanical_output0");
+
+    public static final CapabilityPosition INPUT_FLUID_POI = ITMultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "fluid_input0");
+    public static final CapabilityPosition OUTPUT_FLUID_POI = ITMultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "fluid_output0");
+    public static final CapabilityPosition MECHANICAL_OUTPUT_POI = ITMultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "mechanical_output0");
+
+    private static final RelativeBlockFace OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
 
     private static final int TANK_CAPACITY = ITServerConfig.steamTurbineTankCapacity;
     private static final double BASE_MASS = ITServerConfig.steamTurbineBaseMass;
@@ -72,14 +78,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     private static final double FRICTION = ITServerConfig.steamTurbineFriction;
     private static final int MAX_SPEED = (int) (MechanicalCapabilities.MAX_RPM * ITServerConfig.steamTurbineMaxSpeedFactor);
 
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
-    private static RelativeBlockFace getFacing(String name) {
-        List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).flatMap(poi -> poi.relativeFaces.stream()).distinct().toList();
-        if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
-        return facings.get(0);
-    }
-
-    @Override public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
+    @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
@@ -158,7 +157,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         state.active = false;
         Level level = ctx.getLevel().getRawLevel();
         Direction outputFacing = ctx.getLevel().getOrientation().front();
-        BlockPos outputPortAbs = ctx.getLevel().toAbsolute(ROTATIONAL_OUTPUT_POI.posInMultiblock());
+        BlockPos outputPortAbs = ctx.getLevel().toAbsolute(MECHANICAL_OUTPUT_POIS.get(0));
         BlockPos consumerAbsPos = outputPortAbs.relative(outputFacing);
         BlockEntity entity = level.getBlockEntity(consumerAbsPos);
         boolean hasConsumer = false;
@@ -245,7 +244,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             if (position.equals(OUTPUT_FLUID_POI)) { return state.fluidCapExhaust.cast(ctx); }
         }
         if (cap == MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY) {
-            if (position.equals(ROTATIONAL_OUTPUT_POI)) { return LazyOptional.of(() -> new MechanicalEnergyProvider(state)).cast(); }
+            if (position.equals(MECHANICAL_OUTPUT_POI)) { return LazyOptional.of(() -> new MechanicalEnergyProvider(state)).cast(); }
         }
         return LazyOptional.empty();
     }

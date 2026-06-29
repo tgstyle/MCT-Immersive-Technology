@@ -18,7 +18,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class BoilerLiquidProcess implements IMultiblockComponent<BoilerLiquidLogic.State> {
     @Override public InteractionResult click(IMultiblockContext<BoilerLiquidLogic.State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
-        if (!BoilerLiquidLogic.IGNITION_POI.contains(posInMultiblock)) { return InteractionResult.PASS; }
+        if (!BoilerLiquidLogic.IGNITION_POIS.contains(posInMultiblock)) { return InteractionResult.PASS; }
         Direction hitDir = absoluteHit.getDirection();
         if (BoilerLiquidLogic.IGNITION_FACING != null) {
             Direction poiSide = ctx.getLevel().toAbsolute(BoilerLiquidLogic.IGNITION_FACING);
@@ -33,7 +33,7 @@ public class BoilerLiquidProcess implements IMultiblockComponent<BoilerLiquidLog
         if (isClient) { return InteractionResult.SUCCESS; }
         state.pilotLit = true;
         state.heatLevel = BoilerLiquidLogic.PILOT_HEAT;
-        level.playSound(null, ctx.getLevel().toAbsolute(BoilerLiquidLogic.IGNITION_POI.get(0)), ITSounds.gasIgnite.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
+        level.playSound(null, ctx.getLevel().toAbsolute(BoilerLiquidLogic.IGNITION_POIS.get(0)), ITSounds.gasIgnite.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
         if (held.is(ITTags.igniters_consume)) { held.shrink(1); }
         else if (held.getMaxDamage() > 0) { held.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand)); }
         ctx.markMasterDirty();

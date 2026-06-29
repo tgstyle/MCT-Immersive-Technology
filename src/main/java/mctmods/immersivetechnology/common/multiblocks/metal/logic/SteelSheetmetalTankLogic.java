@@ -16,6 +16,7 @@ import blusunrize.immersiveengineering.common.util.LayeredComparatorOutput;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
 import mctmods.immersivetechnology.core.util.TranslationKey;
@@ -25,6 +26,7 @@ import mctmods.immersivetechnology.core.ITServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -43,7 +45,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
@@ -55,32 +56,14 @@ import static mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelS
 public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelSheetmetalTankLogic.State>, MBOverlayText<SteelSheetmetalTankLogic.State>, ITPressurizedFluidOutput<SteelSheetmetalTankLogic.State> {
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(DATA.pointsOfInterest);
-    public static final BlockPos REDSTONE_POI = getPosList().get(0);
-    private static final List<CapabilityPosition> INPUT_POIS = getCapabilityPositions("fluid_input");
-    private static final List<CapabilityPosition> IO_POIS = getCapabilityPositions("fluid_io");
-    private static final BlockPos COMPARATOR_BASE = getPosList("comparator_base").get(0);
+    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    private static final List<CapabilityPosition> INPUT_POIS = ITMultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_input0");
+    private static final List<CapabilityPosition> IO_POIS = ITMultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_io0");
+    private static final BlockPos COMPARATOR_BASE = ITMultiblockPOIHelper.getPosList(RAW_POIS, "comparator_base0").get(0);
     private static final List<BlockPos> COMPARATOR_LAYERS;
 
     static {
         COMPARATOR_LAYERS = RAW_POIS.stream().filter(poi -> poi.name.equals("comparator_layer")).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).sorted(Comparator.comparingInt(BlockPos::getY)).collect(ImmutableList.toImmutableList());
-    }
-
-    private static List<BlockPos> getPosList() { return getPosList("redstone"); }
-
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
-
-    private static List<CapabilityPosition> getCapabilityPositions(String name) {
-        List<CapabilityPosition> result = new ArrayList<>();
-        for (PoIJSONSchema poi : RAW_POIS) {
-            if (poi.name.equals(name)) {
-                BlockPos connPos = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
-                for (RelativeBlockFace face : poi.relativeFaces) {
-                    result.add(new CapabilityPosition(connPos, face));
-                }
-            }
-        }
-        if (result.isEmpty()) throw new RuntimeException("No POI found for " + name);
-        return ImmutableList.copyOf(result);
     }
 
     @Override public List<BlockPos> getOutputPositions() { return IO_POIS.stream().map(CapabilityPosition::posInMultiblock).collect(ImmutableList.toImmutableList()); }
@@ -178,16 +161,6 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
 
         @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tank}; }
 
-        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
-            nbt.putBoolean("active", active);
-            nbt.put("tank", tank.writeToNBT(new CompoundTag()));
-        }
-
-        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
-            active = nbt.getBoolean("active");
-            tank.readFromNBT(nbt.getCompound("tank"));
-        }
-
         @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tank", tank.writeToNBT(new CompoundTag()));
             CompoundTag rsTag = new CompoundTag();
@@ -200,9 +173,25 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
             rsState.readSaveNBT(nbt.getCompound("rsState"));
         }
 
-        @Override public void writeSyncNBT(CompoundTag nbt) { writeSaveNBT(nbt); nbt.putBoolean("active", active); }
+        @Override public void writeSyncNBT(CompoundTag nbt) {
+            CompoundTag display = new CompoundTag();
+            writeDisplaySyncNBT(display);
+            nbt.put("display", display);
+        }
 
-        @Override public void readSyncNBT(CompoundTag nbt) { readSaveNBT(nbt); active = nbt.getBoolean("active"); }
+        @Override public void readSyncNBT(CompoundTag nbt) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        }
+
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
+            nbt.putBoolean("active", active);
+            nbt.put("tank", tank.writeToNBT(new CompoundTag()));
+        }
+
+        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
+            active = nbt.getBoolean("active");
+            tank.readFromNBT(nbt.getCompound("tank"));
+        }
     }
 
     @Override public void tickServer(IMultiblockContext<State> ctx) {
@@ -210,7 +199,11 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
         state.comparatorHelper.update(ctx, state.tank.getFluidAmount());
         boolean enabled = state.rsState.isEnabled(ctx);
         boolean isActive = enabled && !state.tank.isEmpty();
-        if (state.active != isActive) { state.active = isActive; ctx.markDirtyAndSync(); }
+        if (state.active != isActive) {
+            state.active = isActive;
+            ctx.markMasterDirty();
+            ctx.requestMasterBESync();
+        }
         pumpOutputs(ctx);
     }
 
@@ -247,13 +240,14 @@ public class SteelSheetmetalTankLogic implements IServerTickableComponent<SteelS
                     boolean inverted = !current;
                     f.set(state.rsState, inverted);
                     player.displayClientMessage(Component.translatable(inverted ? TranslationKey.CHAT_RS_CONTROL_INVERTED_OFF.getLocation() : TranslationKey.CHAT_RS_CONTROL_INVERTED_ON.getLocation()), true);
-                    ctx.markDirtyAndSync();
+                    ctx.markMasterDirty();
+                    ctx.requestMasterBESync();
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to invert RSState", e);
                 }
             }
             return InteractionResult.SUCCESS;
         }
-        if (FluidUtils.interactWithFluidHandler(player, hand, ctx.getState().tank)) { ctx.markDirtyAndSync(); return InteractionResult.SUCCESS; } else return InteractionResult.PASS;
+        if (FluidUtils.interactWithFluidHandler(player, hand, ctx.getState().tank)) { ctx.markMasterDirty(); ctx.requestMasterBESync(); return InteractionResult.SUCCESS; } else return InteractionResult.PASS;
     }
 }

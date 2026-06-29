@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.stone.process.CoolingTowerProcess;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
@@ -52,21 +53,15 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(CoolingTowerShape.DATA.pointsOfInterest);
 
-    public static final List<BlockPos> FLUID_INPUT_POIS = getPosList("fluid_input");
-    public static final List<BlockPos> FLUID_OUTPUT_POIS = getPosList("fluid_output");
-    public static final BlockPos PARTICLE_POS = getPosList("particle").get(0);
-    public static final BlockPos SOUND_POS = getPosList("sound").get(0);
-    private static final RelativeBlockFace INPUT_FACING = getFacing("fluid_input");
-    private static final RelativeBlockFace OUTPUT_FACING = getFacing("fluid_output");
+    public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
+    public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    public static final BlockPos PARTICLE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "particle0").get(0);
+    public static final BlockPos SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
 
-    private static List<BlockPos> getPosList(String name) { return RAW_POIS.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
-    private static RelativeBlockFace getFacing(String name) {
-        List<RelativeBlockFace> facings = RAW_POIS.stream().filter(poi -> poi.name.equals(name)).flatMap(poi -> poi.relativeFaces.stream()).distinct().toList();
-        if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
-        return facings.get(0);
-    }
+    private static final RelativeBlockFace INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
+    private static final RelativeBlockFace OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
 
-    @Override public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
+    @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
@@ -96,7 +91,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         int particleSetting = Minecraft.getInstance().options.particles().get().ordinal();
         if (particleSetting == 2 || particleSetting == 1 && rand.nextInt(3) == 0) { return; }
         LocalPlayer player = Minecraft.getInstance().player;
-        Vec3 particleVec = ctx.getLevel().toAbsolute(new Vec3(PARTICLE_POS.getX() + 0.5, PARTICLE_POS.getY() + 0.5, PARTICLE_POS.getZ() + 0.5));
+        Vec3 particleVec = ctx.getLevel().toAbsolute(new Vec3(PARTICLE_POI.getX() + 0.5, PARTICLE_POI.getY() + 0.5, PARTICLE_POI.getZ() + 0.5));
         assert player != null;
         if (particleVec.distanceToSqr(player.position()) > 64 * 64) { return; }
         for (int i = 0; i < 3; i++) {
@@ -109,7 +104,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
     private void handleSounds(IMultiblockContext<CoolingTowerLogic.State> ctx, CoolingTowerLogic.State state) {
         if (state.isSoundPlaying.getAsBoolean()) { return; }
-        Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(SOUND_POS.getX() + 0.5, SOUND_POS.getY() + 0.5, SOUND_POS.getZ() + 0.5));
+        Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(SOUND_POI.getX() + 0.5, SOUND_POI.getY() + 0.5, SOUND_POI.getZ() + 0.5));
         state.isSoundPlaying = ITSound.startSound(() -> state.soundCooldown > 0, ctx.isValid(), soundVec, ITSounds.coolingTower, () -> {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) { return 0f; }
@@ -183,13 +178,13 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             BlockPos localPos = position.posInMultiblock();
             RelativeBlockFace side = position.side();
-            if (FLUID_INPUT_POIS.contains(localPos) && (side == null || side == INPUT_FACING)) {
-                int index = FLUID_INPUT_POIS.indexOf(localPos);
+            if (INPUT_FLUID_POIS.contains(localPos) && (side == null || side == INPUT_FACING)) {
+                int index = INPUT_FLUID_POIS.indexOf(localPos);
                 if (index == 0) { return state.input0Cap.cast(ctx); }
                 if (index == 1) { return state.input1Cap.cast(ctx); }
             }
-            if (FLUID_OUTPUT_POIS.contains(localPos) && (side == null || side == OUTPUT_FACING)) {
-                int index = FLUID_OUTPUT_POIS.indexOf(localPos);
+            if (OUTPUT_FLUID_POIS.contains(localPos) && (side == null || side == OUTPUT_FACING)) {
+                int index = OUTPUT_FLUID_POIS.indexOf(localPos);
                 if (index == 0) { return state.output0Cap.cast(ctx); }
                 if (index == 1) { return state.output1Cap.cast(ctx); }
                 if (index == 2) { return state.output2Cap.cast(ctx); }
