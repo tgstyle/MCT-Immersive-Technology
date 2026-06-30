@@ -58,7 +58,8 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
     public static final int SLOT_OUTPUT_EMPTY = 2;
     public static final int SLOT_OUTPUT_FILLED = 3;
 
-    public static final int TANK_CAPACITY = ITServerConfig.meltingCrucibleTankCapacity;
+    public static final int INPUT_TANK_CAPACITY = ITServerConfig.meltingCrucibleInputTankCapacity;
+    public static final int OUTPUT_TANK_CAPACITY = ITServerConfig.meltingCrucibleOutputTankCapacity;
     public static final int ENERGY_CAPACITY = ITServerConfig.meltingCrucibleEnergyCapacity;
 
     public static final double WORKING_HEAT_LEVEL = ITServerConfig.meltingCrucibleHeatWorkingLevel;
@@ -311,7 +312,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
 
     public record MeltingCrucibleTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
         public MeltingCrucibleTank(Consumer<Void> markDirty) {
-            this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty));
+            this(new ITMarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));
         }
 
         public static MeltingCrucibleTank makeClient() { return new MeltingCrucibleTank(v -> {}); }
@@ -329,7 +330,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         }
 
         @SuppressWarnings("unused")
-        public int getCapacity() { return TANK_CAPACITY; }
+        public int getCapacity() { return Math.max(INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY); }
 
         public ITMarkableFluidTank input() { return input; }
         public ITMarkableFluidTank output() { return output; }

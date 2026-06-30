@@ -60,7 +60,8 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     public static final int SLOT_OUTPUT_FILLED = 3;
     public static final int OUTPUT_SLOT = 4;
 
-    public static final int TANK_CAPACITY = ITServerConfig.distillerTankCapacity;
+    public static final int INPUT_TANK_CAPACITY = ITServerConfig.distillerInputTankCapacity;
+    public static final int OUTPUT_TANK_CAPACITY = ITServerConfig.distillerOutputTankCapacity;
     public static final int ENERGY_CAPACITY = ITServerConfig.distillerEnergyCapacity;
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(DistillerShape.DATA.pointsOfInterest);
@@ -321,7 +322,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     public record DistillerTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
         public DistillerTank(Consumer<Void> markDirty) {
-            this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty));
+            this(new ITMarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));
         }
 
         public static DistillerTank makeClient() { return new DistillerTank(v -> {}); }
@@ -339,7 +340,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         }
 
         @SuppressWarnings("unused")
-        public int getCapacity() { return TANK_CAPACITY; }
+        public int getCapacity() { return Math.max(INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY); }
     }
 
     private static class SyncEnergyStorage extends AveragingEnergyStorage {

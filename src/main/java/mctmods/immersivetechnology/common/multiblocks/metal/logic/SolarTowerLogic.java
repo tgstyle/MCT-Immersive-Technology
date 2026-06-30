@@ -65,6 +65,9 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
     public static final int SLOT_OUTPUT_EMPTY = 2;
     public static final int SLOT_OUTPUT_FILLED = 3;
 
+    public static final int INPUT_TANK_CAPACITY = ITServerConfig.solarTowerInputTankCapacity;
+    public static final int OUTPUT_TANK_CAPACITY = ITServerConfig.solarTowerOutputTankCapacity;
+
     public static final double WORKING_HEAT_LEVEL = ITCommonConfig.solarTowerWorkingHeatLevel;
     private static final double DAY_MIN_HEAT_LOSS = ITServerConfig.solarTowerDayMinHeatLoss;
     private static final double LOSS_PER_SECTION_DROP = ITServerConfig.solarTowerLossPerSectionDrop;
@@ -369,7 +372,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            tanks = new ITSolarTank(v -> onChanged.run());
+            tanks = new ITSolarTank(v -> onChanged.run(), INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY);
             inventory = new ITSlotwiseItemHandler(
                     List.of(
                             ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,

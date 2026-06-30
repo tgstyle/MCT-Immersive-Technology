@@ -50,7 +50,8 @@ import java.util.function.Function;
 
 public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<ElectrolyticCrucibleBatteryLogic.State>, IServerTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IClientTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, ITPressurizedFluidOutput<ElectrolyticCrucibleBatteryLogic.State> {
 
-    public static final int TANK_CAPACITY = ITServerConfig.electrolyticCrucibleBatteryTankCapacity;
+    public static final int INPUT_TANK_CAPACITY = ITServerConfig.electrolyticCrucibleBatteryInputTankCapacity;
+    public static final int OUTPUT_TANK_CAPACITY = ITServerConfig.electrolyticCrucibleBatteryOutputTankCapacity;
     public static final int ENERGY_CAPACITY = ITServerConfig.electrolyticCrucibleBatteryEnergyCapacity;
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ElectrolyticCrucibleBatteryShape.DATA.pointsOfInterest);
@@ -223,7 +224,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
     }
 
     public record ElectrolyticCrucibleBatteryTanks(ITMarkableFluidTank input, ITMarkableFluidTank output0, ITMarkableFluidTank output1, ITMarkableFluidTank output2) {
-        public ElectrolyticCrucibleBatteryTanks(Consumer<Void> markDirty) { this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty)); }
+        public ElectrolyticCrucibleBatteryTanks(Consumer<Void> markDirty) { this(new ITMarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty)); }
 
         public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();

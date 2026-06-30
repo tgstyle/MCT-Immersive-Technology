@@ -179,7 +179,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                 } else {
                     ItemStack consumed = state.inventory.getRawHandler().extractItem(INPUT_FUEL_SLOT, consumeAmount, false);
                     if (consumed.getCount() == consumeAmount) {
-                        state.burnRemaining = (burnTimePerItem * consumeAmount) / ITServerConfig.burnTimeDivider;
+                        state.burnRemaining = (burnTimePerItem * consumeAmount) / ITServerConfig.boilerSolidBurnTimeDivider;
                         state.totalBurnTime = state.burnRemaining;
                         state.heatPerTick = heatPerTick;
                         state.targetHeat = targetHeat;

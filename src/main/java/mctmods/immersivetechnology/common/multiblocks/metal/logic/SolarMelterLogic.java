@@ -67,6 +67,9 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
     public static final int SLOT_OUTPUT_EMPTY = 2;
     public static final int SLOT_OUTPUT_FILLED = 3;
 
+    public static final int INPUT_TANK_CAPACITY = ITServerConfig.solarMelterInputTankCapacity;
+    public static final int OUTPUT_TANK_CAPACITY = ITServerConfig.solarMelterOutputTankCapacity;
+
     public static final double WORKING_HEAT_LEVEL = ITCommonConfig.solarMelterWorkingHeatLevel;
     private static final double DAY_MIN_HEAT_LOSS = ITServerConfig.solarMelterDayMinHeatLoss;
     private static final double LOSS_PER_SECTION_DROP = ITServerConfig.solarMelterLossPerSectionDrop;
@@ -407,7 +410,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            tanks = new ITSolarTank(v -> onChanged.run());
+            tanks = new ITSolarTank(v -> onChanged.run(), INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY);
             inventory = new ITSlotwiseItemHandler(
                     List.of(
                             ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,

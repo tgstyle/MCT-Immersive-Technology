@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
 import blusunrize.immersiveengineering.common.util.Utils;
 import java.text.DecimalFormat;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
+import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.network.ITOSDRequestMessage;
 import mctmods.immersivetechnology.core.network.ITPacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
@@ -43,7 +44,7 @@ import java.util.function.Consumer;
 public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements ITBlockInterfaces.IBlockEntityDrop, ITBlockInterfaces.IPlayerInteraction, ITBlockInterfaces.IBlockOverlayText {
     private FluidStack selectedFluid = FluidStack.EMPTY;
 
-    private static final int CREATIVE_BARREL_OUTPUT_AMOUNT = ITServerConfig.creativeBarrelOutputAmount;
+    private static final int CREATIVE_BARREL_OUTPUT_AMOUNT = ITCommonConfig.creativeBarrelOutputAmount;
 
     private final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> new IFluidHandler() {
         @Override public int getTanks() { return 1; }
