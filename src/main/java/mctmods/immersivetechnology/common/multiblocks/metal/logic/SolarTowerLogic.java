@@ -113,26 +113,21 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
                     if (vol > 0.01f) {
                         state.soundId++;
                         int thisId = state.soundId;
-                        state.isSoundPlaying = ITSound.startSound(
-                                () -> {
-                                    FluidStack fsActive = state.tanks.input().getFluid();
-                                    SolarTowerRecipe recipeActive = fsActive.getAmount() > 0 ? SolarTowerRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsActive) : null;
-                                    double maxHeatActive = recipeActive != null ? recipeActive.requiredTemp : WORKING_HEAT_LEVEL;
-                                    return state.heatLevel >= maxHeatActive && state.sunVisible && state.reflectorStrength > 0 && state.soundId == thisId;
-                                },
-                                ctx.isValid(), soundVec, ITSounds.solarTower,
-                                () -> {
-                                    LocalPlayer playerVol = Minecraft.getInstance().player;
-                                    if (playerVol == null) { return 0f; }
-                                    float a = (float) Math.max(playerVol.distanceToSqr(soundVec) / 32, 1);
-                                    FluidStack fsVol = state.tanks.input().getFluid();
-                                    SolarTowerRecipe recipeVol = fsVol.getAmount() > 0 ? SolarTowerRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsVol) : null;
-                                    double maxHeatVol = recipeVol != null ? recipeVol.requiredTemp : WORKING_HEAT_LEVEL;
-                                    float heatFactorVol = (float) (state.heatLevel / maxHeatVol);
-                                    return (2 * heatFactorVol) / a;
-                                },
-                                () -> 1f
-                        );
+                        state.isSoundPlaying = ITSound.startSound(() -> {
+                            FluidStack fsActive = state.tanks.input().getFluid();
+                            SolarTowerRecipe recipeActive = fsActive.getAmount() > 0 ? SolarTowerRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsActive) : null;
+                            double maxHeatActive = recipeActive != null ? recipeActive.requiredTemp : WORKING_HEAT_LEVEL;
+                            return state.heatLevel >= maxHeatActive && state.sunVisible && state.reflectorStrength > 0 && state.soundId == thisId;
+                        }, ctx.isValid(), soundVec, ITSounds.solarTower, () -> {
+                            LocalPlayer playerVol = Minecraft.getInstance().player;
+                            if (playerVol == null) { return 0f; }
+                            float a = (float) Math.max(playerVol.distanceToSqr(soundVec) / 32, 1);
+                            FluidStack fsVol = state.tanks.input().getFluid();
+                            SolarTowerRecipe recipeVol = fsVol.getAmount() > 0 ? SolarTowerRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsVol) : null;
+                            double maxHeatVol = recipeVol != null ? recipeVol.requiredTemp : WORKING_HEAT_LEVEL;
+                            float heatFactorVol = (float) (state.heatLevel / maxHeatVol);
+                            return (2 * heatFactorVol) / a;
+                        }, () -> 1f);
                     }
                 }
             }
@@ -164,11 +159,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             if (state.registered) { state.reflectorStrength = checkReflectorPositions(mlevel, state); }
             update = true;
         }
-        if (state.loadTicks > 20 && state.reCheckOnLoad && !level.isClientSide) {
-            state.reCheckOnLoad = false;
-            if (state.registered) { state.reflectorStrength = checkReflectorPositions(mlevel, state); }
-            update = true;
-        }
+        if (state.loadTicks > 20 && state.reCheckOnLoad && !level.isClientSide) { state.reCheckOnLoad = false; if (state.registered) { state.reflectorStrength = checkReflectorPositions(mlevel, state); } update = true; }
         if (!state.registered) { return; }
         boolean oldVisible = state.sunVisible;
         state.sunVisible = level.canSeeSky(state.sunPos);
@@ -336,7 +327,15 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { Level level = state.levelSupplier.get(); if (level != null && !level.isClientSide) { detachReflectorPositions(state); SolarRegistry.unregisterTower(level, state.basePos); } ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); state.inputCap.get(null).invalidate(); state.outputCap.get(null).invalidate(); }
+    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) {
+        Level level = state.levelSupplier.get();
+        if (level != null && !level.isClientSide) { detachReflectorPositions(state); SolarRegistry.unregisterTower(level, state.basePos); }
+        ITMultiBlockInventoryUtils.dropItems(state.inventory, drop);
+        try {
+            if (state.inputCap != null) state.inputCap.get(null).invalidate();
+            if (state.outputCap != null) state.outputCap.get(null).invalidate();
+        } catch (Exception ignored) {}
+    }
 
     public static class State implements ITISolarMultiblockState, ITDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
@@ -373,15 +372,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             tanks = new ITSolarTank(v -> onChanged.run(), INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY);
-            inventory = new ITSlotwiseItemHandler(
-                    List.of(
-                            ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            ITSlotwiseItemHandler.IOConstraint.OUTPUT,
-                            ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            ITSlotwiseItemHandler.IOConstraint.OUTPUT
-                    ),
-                    onChanged
-            );
+            inventory = new ITSlotwiseItemHandler(List.of(ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT, ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT), onChanged);
             inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input(), false, true, onChanged));
             outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output(), true, false, onChanged));
             InitialMultiblockContext<State> initialContext = (InitialMultiblockContext<State>) ctx;
@@ -463,15 +454,9 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             }
         }
 
-        @Override public void writeSyncNBT(CompoundTag nbt) {
-            CompoundTag display = new CompoundTag();
-            writeDisplaySyncNBT(display);
-            nbt.put("display", display);
-        }
+        @Override public void writeSyncNBT(CompoundTag nbt) { CompoundTag display = new CompoundTag(); writeDisplaySyncNBT(display); nbt.put("display", display); }
 
-        @Override public void readSyncNBT(CompoundTag nbt) {
-            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
-        }
+        @Override public void readSyncNBT(CompoundTag nbt) { if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); } }
 
         @Override public boolean isActive() { return active; }
 

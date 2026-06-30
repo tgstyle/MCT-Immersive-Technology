@@ -18,10 +18,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.DeferredRegister;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
-import java.lang.reflect.Field;
+
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -34,16 +35,11 @@ public class ITMultiblockBuilder<S extends IMultiblockState> extends MultiblockR
 
     public ITMultiblockBuilder<S> redstone(IMultiblockComponent.StateWrapper<S, RedstoneControl.RSState> getState, BlockPos... positions) { redstoneAware(); return selfWrappingComponent(new RedstoneControl<>(getState, positions)); }
 
-    @SuppressWarnings("ConstantConditions")
-    public ITMultiblockBuilder<S> customBEs(DeferredRegister<BlockEntityType<?>> register) {
+    @SuppressWarnings("ConstantConditions") public ITMultiblockBuilder<S> customBEs(DeferredRegister<BlockEntityType<?>> register) {
         try {
-            Field nameField = MultiblockRegistrationBuilder.class.getDeclaredField("name");
-            nameField.setAccessible(true);
-            ResourceLocation rl = (ResourceLocation) nameField.get(this);
-            Field blockField = MultiblockRegistrationBuilder.class.getDeclaredField("block");
-            blockField.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            Supplier<? extends Block> blockSup = (Supplier<? extends Block>) blockField.get(this);
+            ResourceLocation rl = ObfuscationReflectionHelper.getPrivateValue(MultiblockRegistrationBuilder.class, this, "name");
+            Supplier<? extends Block> blockSup = ObfuscationReflectionHelper.getPrivateValue(MultiblockRegistrationBuilder.class, this, "block");
+
             Supplier<BlockEntityType<?>> masterSup = register.register(rl.getPath() + "_master", () -> {
                 Mutable<BlockEntityType<?>> resultBox = new MutableObject<>();
                 resultBox.setValue(BlockEntityType.Builder.of((pos, state) -> new ITMultiblockBlockEntityMaster<>(resultBox.getValue(), pos, state, regSupplier.get()), blockSup.get()).build(null));
@@ -54,25 +50,16 @@ public class ITMultiblockBuilder<S extends IMultiblockState> extends MultiblockR
                 resultBox.setValue(BlockEntityType.Builder.of((pos, state) -> new ITMultiblockBlockEntityDummy<>(resultBox.getValue(), pos, state, regSupplier.get()), blockSup.get()).build(null));
                 return resultBox.getValue();
             });
-            Field masterField = MultiblockRegistrationBuilder.class.getDeclaredField("masterBE");
-            masterField.setAccessible(true);
-            masterField.set(this, masterSup);
-            Field dummyField = MultiblockRegistrationBuilder.class.getDeclaredField("dummyBE");
-            dummyField.setAccessible(true);
-            dummyField.set(this, dummySup);
+
+            ObfuscationReflectionHelper.setPrivateValue(MultiblockRegistrationBuilder.class, this, masterSup, "masterBE");
+            ObfuscationReflectionHelper.setPrivateValue(MultiblockRegistrationBuilder.class, this, dummySup, "dummyBE");
         } catch (Exception e) { throw new RuntimeException(e); }
         return this;
     }
 
-    @Override public ITMultiblockBuilder<S> customBlock(DeferredRegister<Block> register, DeferredRegister<Item> blockItemRegister, Function<MultiblockRegistration<S>, ? extends MultiblockPartBlock<S>> make, Function<Block, Item> makeItem) {
-        super.customBlock(register, blockItemRegister, make, makeItem);
-        return this;
-    }
+    @Override public ITMultiblockBuilder<S> customBlock(DeferredRegister<Block> register, DeferredRegister<Item> blockItemRegister, Function<MultiblockRegistration<S>, ? extends MultiblockPartBlock<S>> make, Function<Block, Item> makeItem) { super.customBlock(register, blockItemRegister, make, makeItem); return this; }
 
-    @Override public ITMultiblockBuilder<S> defaultBlock(DeferredRegister<Block> register, DeferredRegister<Item> blockItemRegister, BlockBehaviour.Properties properties) {
-        super.defaultBlock(register, blockItemRegister, properties);
-        return this;
-    }
+    @Override public ITMultiblockBuilder<S> defaultBlock(DeferredRegister<Block> register, DeferredRegister<Item> blockItemRegister, BlockBehaviour.Properties properties) { super.defaultBlock(register, blockItemRegister, properties); return this; }
 
     @Override public <CS, C extends IMultiblockComponent<CS> & IMultiblockComponent.StateWrapper<S, CS>> ITMultiblockBuilder<S> selfWrappingComponent(C extraComponent) { Preconditions.checkArgument(!(extraComponent instanceof ComparatorManager<?>)); return super.selfWrappingComponent(extraComponent); }
 
