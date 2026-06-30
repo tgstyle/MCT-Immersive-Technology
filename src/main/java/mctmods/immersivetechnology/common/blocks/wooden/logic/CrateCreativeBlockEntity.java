@@ -70,8 +70,11 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
         if (stack.hasTag()) {
             CompoundTag tag = stack.getTag();
             if (tag != null && tag.contains("template")) {
-                template = ItemStack.of(tag.getCompound("template"));
-                setChanged();
+                CompoundTag templateTag = tag.getCompound("template");
+                if (!templateTag.isEmpty()) {
+                    template = ItemStack.of(templateTag);
+                    setChanged();
+                }
             }
         }
     }
@@ -102,7 +105,7 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
     @Override @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (slot != 0 || template.isEmpty() || amount <= 0) { return ItemStack.EMPTY; }
         ItemStack out = template.copy();
-        out.setCount(Math.min(amount, template.getCount()));
+        out.setCount(Math.min(amount, template.getMaxStackSize()));
         return out;
     }
 
