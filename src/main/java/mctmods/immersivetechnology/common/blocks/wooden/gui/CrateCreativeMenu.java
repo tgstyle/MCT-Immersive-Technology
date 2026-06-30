@@ -50,50 +50,41 @@ public class CrateCreativeMenu extends ITContainerMenu {
         for (int x = 0; x < 9; x++) { addSlot(new Slot(inv, x, 8 + x * 18, 142)); }
     }
 
-    @Override
-    public @NotNull ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) {
+    @Override @NotNull public ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) {
         Slot slot = this.slots.get(pIndex);
-        if (!slot.hasItem()) return ItemStack.EMPTY;
+        if (!slot.hasItem()) { return ItemStack.EMPTY; }
         ItemStack itemStack1 = slot.getItem();
-        if (pIndex != 0) {
-            handler.setStackInSlot(0, itemStack1.copy());
-            slot.set(ItemStack.EMPTY);
-        }
+        if (pIndex != 0) { handler.setStackInSlot(0, itemStack1.copy()); slot.set(ItemStack.EMPTY); return itemStack1; }
         return ItemStack.EMPTY;
     }
 
-    @Override
-    public boolean stillValid(@NotNull Player player) { return tile == null || tile.stillValid(player); }
+    @Override public boolean stillValid(@NotNull Player player) { return tile == null || tile.stillValid(player); }
 
-    @Override
-    public void receiveSync(List<Pair<Integer, ITGenericDataSerializers.DataPair<?>>> synced) { super.receiveSync(synced); }
+    @Override public void receiveSync(List<Pair<Integer, ITGenericDataSerializers.DataPair<?>>> synced) { super.receiveSync(synced); }
 
-    @Override
-    public void clicked(int slotId, int button, @NotNull ClickType clickType, @NotNull Player player) {
+    @Override public void clicked(int slotId, int button, @NotNull ClickType clickType, @NotNull Player player) {
         if (slotId == 0) {
             ItemStack carried = getCarried();
             if (clickType == ClickType.PICKUP) {
-                if (!carried.isEmpty()) {
-                    handler.setStackInSlot(0, carried.copy());
-                    setCarried(ItemStack.EMPTY);
-                } else if (!handler.getStackInSlot(0).isEmpty()) {
+                if (!carried.isEmpty()) { super.clicked(slotId, button, clickType, player); }
+                else if (!handler.getStackInSlot(0).isEmpty()) {
                     int amount = (button == 0) ? handler.getStackInSlot(0).getMaxStackSize() : 1;
                     ItemStack extracted = handler.extractItem(0, amount, false);
                     setCarried(extracted);
                 }
-            } else if (clickType == ClickType.QUICK_MOVE) {
+            }
+            else if (clickType == ClickType.QUICK_MOVE) {
                 if (carried.isEmpty()) {
                     ItemStack temp = handler.getStackInSlot(0);
                     if (!temp.isEmpty()) {
                         int amount = temp.getMaxStackSize();
                         ItemStack extracted = handler.extractItem(0, amount, false);
                         moveItemStackTo(extracted, 1, slots.size(), true);
-                        if (!extracted.isEmpty()) {
-                            player.drop(extracted, false);
-                        }
+                        if (!extracted.isEmpty()) { player.drop(extracted, false); }
                     }
                 }
-            } else if (clickType == ClickType.CLONE) {
+            }
+            else if (clickType == ClickType.CLONE) {
                 if (player.getAbilities().instabuild && carried.isEmpty()) {
                     ItemStack temp = handler.getStackInSlot(0);
                     if (!temp.isEmpty()) {
@@ -103,9 +94,9 @@ public class CrateCreativeMenu extends ITContainerMenu {
                     }
                 }
             }
-        } else {
-            super.clicked(slotId, button, clickType, player);
+            else { super.clicked(slotId, button, clickType, player); }
         }
+        else { super.clicked(slotId, button, clickType, player); }
     }
 
     private static class DummyHandler implements IItemHandlerModifiable {
@@ -116,16 +107,16 @@ public class CrateCreativeMenu extends ITContainerMenu {
         @Override public @NotNull ItemStack getStackInSlot(int slot) { return slot == 0 ? template.copy() : ItemStack.EMPTY; }
 
         @Override public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            if (slot != 0 || stack.isEmpty()) return stack;
-            if (simulate) return ItemStack.EMPTY;
+            if (slot != 0 || stack.isEmpty()) { return stack; }
+            if (simulate) { return ItemStack.EMPTY; }
             template = stack.copy();
             return ItemStack.EMPTY;
         }
 
         @Override public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (slot != 0 || template.isEmpty() || amount <= 0) return ItemStack.EMPTY;
+            if (slot != 0 || template.isEmpty() || amount <= 0) { return ItemStack.EMPTY; }
             ItemStack out = template.copy();
-            out.setCount(Math.min(amount, template.getCount()));
+            out.setCount(Math.min(amount, template.getMaxStackSize()));
             return out;
         }
 
@@ -133,6 +124,6 @@ public class CrateCreativeMenu extends ITContainerMenu {
 
         @Override public boolean isItemValid(int slot, @NotNull ItemStack stack) { return slot == 0 && !stack.isEmpty(); }
 
-        @Override public void setStackInSlot(int slot, @NotNull ItemStack stack) { if (slot == 0) template = stack.copy(); }
+        @Override public void setStackInSlot(int slot, @NotNull ItemStack stack) { if (slot == 0) { template = stack.copy(); } }
     }
 }
