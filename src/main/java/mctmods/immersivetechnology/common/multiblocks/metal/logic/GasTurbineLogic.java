@@ -82,7 +82,8 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     private static final RelativeBlockFace ENERGY_INPUT_MV_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "energy_input_mv0");
     private static final RelativeBlockFace MECHANICAL_OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "mechanical_output0");
 
-    private static final int TANK_CAPACITY = ITServerConfig.gasTurbineTankCapacity;
+    private static final int INPUT_TANK_CAPACITY = ITServerConfig.gasTurbineInputTankCapacity;
+    private static final int OUTPUT_TANK_CAPACITY = ITServerConfig.gasTurbineOutputTankCapacity;
     private static final int ENERGY_CAPACITY_HV = ITServerConfig.gasTurbineEnergyCapacityHV;
     private static final int ENERGY_CAPACITY_MV = ITServerConfig.gasTurbineEnergyCapacityMV;
     private static final int STARTER_CONSUMPTION = ITServerConfig.gasTurbineStarterConsumption;
@@ -435,7 +436,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
-            this.tanks = new GasTurbineTank(v -> { onChanged.run(); this.tanksDirty = true; }, TANK_CAPACITY);
+            this.tanks = new GasTurbineTank(v -> { onChanged.run(); this.tanksDirty = true; }, INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY);
             this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
             this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
             this.energyStorageHV = new AveragingEnergyStorage(ENERGY_CAPACITY_HV);
@@ -531,11 +532,11 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     }
 
     public record GasTurbineTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
-        public GasTurbineTank(Consumer<Void> markDirty, int capacity) {
-            this(new ITMarkableFluidTank(capacity, markDirty), new ITMarkableFluidTank(capacity, markDirty));
+        public GasTurbineTank(Consumer<Void> markDirty, int inputCapacity, int outputCapacity) {
+            this(new ITMarkableFluidTank(inputCapacity, markDirty), new ITMarkableFluidTank(outputCapacity, markDirty));
         }
 
-        public static GasTurbineTank makeClient(int capacity) { return new GasTurbineTank(v -> {}, capacity); }
+        public static GasTurbineTank makeClient(int inputCapacity, int outputCapacity) { return new GasTurbineTank(v -> {}, inputCapacity, outputCapacity); }
 
         public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();

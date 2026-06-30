@@ -8,9 +8,17 @@ import java.util.function.Consumer;
 public record ITSolarTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
     public static final int TANK_CAPACITY = 12000;
 
-    public ITSolarTank(Consumer<Void> markDirty) { this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty)); }
+    public ITSolarTank(Consumer<Void> markDirty) {
+        this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty));
+    }
 
-    public static ITSolarTank makeClient() { return new ITSolarTank(v -> {}); }
+    public ITSolarTank(Consumer<Void> markDirty, int inputCapacity, int outputCapacity) {
+        this(new ITMarkableFluidTank(inputCapacity, markDirty), new ITMarkableFluidTank(outputCapacity, markDirty));
+    }
+
+    public static ITSolarTank makeClient() {
+        return new ITSolarTank(v -> {});
+    }
 
     public Tag toNBT() {
         CompoundTag tag = new CompoundTag();
@@ -24,5 +32,7 @@ public record ITSolarTank(ITMarkableFluidTank input, ITMarkableFluidTank output)
         this.output.readFromNBT(tag.getCompound("output"));
     }
 
-    public int getCapacity() { return TANK_CAPACITY; }
+    public int getCapacity() {
+        return TANK_CAPACITY;
+    }
 }

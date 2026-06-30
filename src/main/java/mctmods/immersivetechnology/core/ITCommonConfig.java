@@ -13,10 +13,12 @@ public class ITCommonConfig {
     public static final ForgeConfigSpec.DoubleValue BOILER_DEFAULT_WORKING_HEAT;
     public static final ForgeConfigSpec.DoubleValue SOLAR_TOWER_WORKING_HEAT_LEVEL;
     public static final ForgeConfigSpec.DoubleValue SOLAR_MELTER_WORKING_HEAT_LEVEL;
+    public static final ForgeConfigSpec.IntValue CREATIVE_BARREL_OUTPUT_AMOUNT;
 
     public static double boilerDefaultWorkingHeat = 100.0D;
     public static double solarTowerWorkingHeatLevel = 400.0D;
     public static double solarMelterWorkingHeatLevel = 1000.0D;
+    public static int creativeBarrelOutputAmount = Integer.MAX_VALUE;
 
     static {
         BUILDER.comment("Options shared by all boiler types").push("boiler_shared");
@@ -32,6 +34,12 @@ public class ITCommonConfig {
         BUILDER.comment("Solar Melter settings").push("solar_melter");
         SOLAR_MELTER_WORKING_HEAT_LEVEL = BUILDER.comment("Default target heat for full-speed operation (when recipe unspecified).").defineInRange("working_heat_level", 1000.0D, 100.0D, Double.MAX_VALUE);
         BUILDER.pop();
+
+        BUILDER.comment("Creative mode tools").push("creative");
+        CREATIVE_BARREL_OUTPUT_AMOUNT = BUILDER
+                .comment("Output amount per operation for the Creative Barrel in creative mode.")
+                .defineInRange("barrel_output_amount", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
+        BUILDER.pop();
     }
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
@@ -42,6 +50,7 @@ public class ITCommonConfig {
             boilerDefaultWorkingHeat = BOILER_DEFAULT_WORKING_HEAT.get();
             solarTowerWorkingHeatLevel = SOLAR_TOWER_WORKING_HEAT_LEVEL.get();
             solarMelterWorkingHeatLevel = SOLAR_MELTER_WORKING_HEAT_LEVEL.get();
+            creativeBarrelOutputAmount = CREATIVE_BARREL_OUTPUT_AMOUNT.get();
         }
     }
 }

@@ -72,7 +72,8 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
     private static final RelativeBlockFace OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
 
-    private static final int TANK_CAPACITY = ITServerConfig.steamTurbineTankCapacity;
+    private static final int INPUT_TANK_CAPACITY = ITServerConfig.steamTurbineInputTankCapacity;
+    private static final int OUTPUT_TANK_CAPACITY = ITServerConfig.steamTurbineOutputTankCapacity;
     private static final double BASE_MASS = ITServerConfig.steamTurbineBaseMass;
     private static final double DRIVE_TORQUE = ITServerConfig.steamTurbineDriveTorque;
     private static final double FRICTION = ITServerConfig.steamTurbineFriction;
@@ -306,7 +307,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            this.tanks = new SteamTurbineTank(v -> onChanged.run(), TANK_CAPACITY);
+            this.tanks = new SteamTurbineTank(v -> onChanged.run(), INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY);
             this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
             this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
             this.recipeGetter = CachedRecipe.cached(SteamTurbineRecipe::findRecipe);
@@ -378,11 +379,11 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     }
 
     public record SteamTurbineTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
-        public SteamTurbineTank(Consumer<Void> markDirty, int capacity) {
-            this(new ITMarkableFluidTank(capacity, markDirty), new ITMarkableFluidTank(capacity, markDirty));
+        public SteamTurbineTank(Consumer<Void> markDirty, int inputCapacity, int outputCapacity) {
+            this(new ITMarkableFluidTank(inputCapacity, markDirty), new ITMarkableFluidTank(outputCapacity, markDirty));
         }
 
-        public static SteamTurbineTank makeClient(int capacity) { return new SteamTurbineTank(v -> {}, capacity); }
+        public static SteamTurbineTank makeClient(int inputCapacity, int outputCapacity) { return new SteamTurbineTank(v -> {}, inputCapacity, outputCapacity); }
 
         public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();

@@ -35,7 +35,7 @@ public class MeltingCrucibleMenu extends ITContainerMenu {
     }
 
     public static MeltingCrucibleMenu makeClient(MenuType<?> type, int id, Inventory invPlayer) {
-        return new MeltingCrucibleMenu(clientCtx(type, id), invPlayer, new ITSlotwiseItemHandler(List.of(ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT, ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT), () -> {}), new FluidTank(MeltingCrucibleLogic.TANK_CAPACITY), new FluidTank(MeltingCrucibleLogic.TANK_CAPACITY), new MutableEnergyStorage(MeltingCrucibleLogic.ENERGY_CAPACITY), () -> null);
+        return new MeltingCrucibleMenu(clientCtx(type, id), invPlayer, new ITSlotwiseItemHandler(List.of(ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT, ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT), () -> {}), new FluidTank(MeltingCrucibleLogic.INPUT_TANK_CAPACITY), new FluidTank(MeltingCrucibleLogic.OUTPUT_TANK_CAPACITY), new MutableEnergyStorage(MeltingCrucibleLogic.ENERGY_CAPACITY), () -> null);
     }
 
     private MeltingCrucibleMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, FluidTank input, FluidTank output, IMutableEnergyStorage energy, Supplier<MeltingCrucibleLogic.State> mbStateSupplier) {
