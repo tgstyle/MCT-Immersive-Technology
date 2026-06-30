@@ -59,7 +59,8 @@ public class ITMultiblockBlockEntityCommon<State extends IMultiblockState> imple
 
     @Override public Stream<ItemStack> getDroppedItems() {
         List<ItemStack> drops = new ArrayList<>();
-        helperSupplier.get().getMultiblock().logic().dropExtraItems(helperSupplier.get().getState(), drops::add);
+        State state = helperSupplier.get().getState();
+        if (state != null) { multiblock.logic().dropExtraItems(state, drops::add); }
         return drops.stream();
     }
 

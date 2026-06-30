@@ -19,27 +19,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
-public class ITMultiblockBlockEntityDummy<State extends IMultiblockState> extends MultiblockBlockEntityDummy<State> implements ITBlockInterfaces.IPlayerInteraction, IITDropInventory, ITModelOffsetProvider {
+public class ITMultiblockBlockEntityDummy<State extends IMultiblockState> extends MultiblockBlockEntityDummy<State> implements ITBlockInterfaces.IPlayerInteraction, IITDropInventory, ITModelOffsetProvider, ITMultiblockBEHelper {
     private final ITMultiblockBlockEntityCommon<State> common;
+    private boolean disassembling = false;
 
-    public ITMultiblockBlockEntityDummy(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState, MultiblockRegistration<State> multiblock) {
-        super(type, worldPosition, blockState, multiblock);
-        this.common = new ITMultiblockBlockEntityCommon<>(multiblock, this::getHelper, this::getLevel);
-    }
+    public ITMultiblockBlockEntityDummy(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState, MultiblockRegistration<State> multiblock) { super(type, worldPosition, blockState, multiblock); this.common = new ITMultiblockBlockEntityCommon<>(multiblock, this::getHelper, this::getLevel); }
 
-    @Override public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
-        return common.interact(side, player, hand, heldItem, hitX, hitY, hitZ);
-    }
+    @Override public boolean it$isAssembled() { return !disassembling; }
+    @Override public boolean it$isDisassembling() { return disassembling; }
+    @Override public void it$markDisassembling() { this.disassembling = true; }
 
-    @Override public Stream<ItemStack> getDroppedItems() {
-        return common.getDroppedItems();
-    }
+    @Override public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) { return common.interact(side, player, hand, heldItem, hitX, hitY, hitZ); }
 
-    @Override public BlockPos getModelOffset(BlockState state, Vec3i size) {
-        return common.getModelOffset(state, size);
-    }
+    @Override public Stream<ItemStack> getDroppedItems() { return common.getDroppedItems(); }
 
-    @Override @NotNull public ModelData getModelData() {
-        return common.getModelData();
-    }
+    @Override public BlockPos getModelOffset(BlockState state, Vec3i size) { return common.getModelOffset(state, size); }
+
+    @Override @NotNull public ModelData getModelData() { return common.getModelData(); }
 }

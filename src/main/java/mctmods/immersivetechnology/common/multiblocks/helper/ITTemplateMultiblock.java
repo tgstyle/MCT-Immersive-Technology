@@ -61,15 +61,9 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     private List<StructureBlockInfo> sortedStructureBlocks;
     private Map<BlockPos, BlockState> triggerStateMap;
 
-    public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, MultiblockRegistration<?> logic) {
-        super(loc, masterFromOrigin, triggerFromOrigin, size);
-        this.logic = logic;
-    }
+    public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, MultiblockRegistration<?> logic) { super(loc, masterFromOrigin, triggerFromOrigin, size); this.logic = logic; }
 
-    public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, List<BlockMatcher.MatcherPredicate> additionalPredicates, MultiblockRegistration<?> logic) {
-        super(loc, masterFromOrigin, triggerFromOrigin, size, additionalPredicates);
-        this.logic = logic;
-    }
+    public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, List<BlockMatcher.MatcherPredicate> additionalPredicates, MultiblockRegistration<?> logic) { super(loc, masterFromOrigin, triggerFromOrigin, size, additionalPredicates); this.logic = logic; }
 
     private void ensureCaches(TemplateMultiblock.TemplateData data) {
         if (sortedStructureBlocks != null) { return; }
@@ -81,17 +75,11 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         triggerStateMap = new HashMap<>();
         BlockPos primary = getPrimaryTriggerOffset();
         for (StructureBlockInfo info : nonAir) {
-            if (info.pos().equals(primary)) {
-                triggerStateMap.put(primary, info.state());
-                break;
-            }
+            if (info.pos().equals(primary)) { triggerStateMap.put(primary, info.state()); break; }
         }
         for (BlockPos symPos : symmetricMirror()) {
             for (StructureBlockInfo info : nonAir) {
-                if (info.pos().equals(symPos)) {
-                    triggerStateMap.put(symPos, info.state());
-                    break;
-                }
+                if (info.pos().equals(symPos)) { triggerStateMap.put(symPos, info.state()); break; }
             }
         }
     }
@@ -161,7 +149,10 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             BlockEntity masterBE = world.getBlockEntity(masterPos);
             if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof IMultiblockBEHelperMaster<?> h) { masterHelper = h; }
 
-            if (masterHelper != null && ((ITMultiblockBEHelper)masterHelper).it$isDisassembling()) { return; }
+            boolean isDisassembling = false;
+            if (masterBE instanceof ITMultiblockBEHelper itBE) { isDisassembling = itBE.it$isDisassembling(); }
+            else if (masterHelper instanceof ITMultiblockBEHelper itH) { isDisassembling = itH.it$isDisassembling(); }
+            if (isDisassembling) { return; }
 
             List<ItemStack> inventoryDrops = new ArrayList<>();
             if (masterHelper != null && dropItems) { dropInventory(masterHelper, inventoryDrops::add); }
@@ -170,10 +161,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
 
             List<StructureBlockInfo> structure = sortedStructureBlocks;
 
-            for (StructureBlockInfo info : structure) {
-                BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
-                prepareBlockForDisassembly(serverLevel, actualPos);
-            }
+            for (StructureBlockInfo info : structure) { BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot); prepareBlockForDisassembly(serverLevel, actualPos); }
 
             BlockPos brokenPos = masterPos;
             if (breakingPlayer != null) {
@@ -187,10 +175,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                     BlockPos hitPos = hit.getBlockPos();
                     for (StructureBlockInfo info : structure) {
                         BlockPos actual = withSettingsAndOffset(origin, info.pos(), mirror, rot);
-                        if (actual.equals(hitPos)) {
-                            brokenPos = actual;
-                            break;
-                        }
+                        if (actual.equals(hitPos)) { brokenPos = actual; break; }
                     }
                 }
                 if (brokenPos.equals(masterPos)) {
@@ -199,10 +184,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                     for (StructureBlockInfo info : structure) {
                         BlockPos actual = withSettingsAndOffset(origin, info.pos(), mirror, rot);
                         double dist = Vec3.atCenterOf(actual).distanceToSqr(eyePos);
-                        if (dist < minDist) {
-                            minDist = dist;
-                            closest = actual;
-                        }
+                        if (dist < minDist) { minDist = dist; closest = actual; }
                     }
                     if (closest != null) { brokenPos = closest; }
                 }
@@ -211,10 +193,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             List<ItemStack> allDrops = new ArrayList<>(inventoryDrops);
             List<BlockPos> toBreak = new ArrayList<>();
 
-            LootParams.Builder baseLootBuilder = dropItems ? new LootParams.Builder(serverLevel)
-                    .withParameter(LootContextParams.TOOL, effectiveTool)
-                    .withOptionalParameter(LootContextParams.THIS_ENTITY, breakingPlayer)
-                    .withOptionalParameter(LootContextParams.BLOCK_ENTITY, null) : null;
+            LootParams.Builder baseLootBuilder = dropItems ? new LootParams.Builder(serverLevel).withParameter(LootContextParams.TOOL, effectiveTool).withOptionalParameter(LootContextParams.THIS_ENTITY, breakingPlayer).withOptionalParameter(LootContextParams.BLOCK_ENTITY, null) : null;
 
             if (templateMode) {
                 for (StructureBlockInfo info : structure) {
@@ -230,10 +209,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                     BlockState stateAfterMirror = info.state().mirror(mirror);
                     BlockState template = stateAfterMirror.rotate(rot);
                     toBreak.add(actualPos);
-                    if (dropItems) {
-                        LootParams.Builder params = baseLootBuilder.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(actualPos));
-                        allDrops.addAll(template.getDrops(params));
-                    }
+                    if (dropItems) { LootParams.Builder params = baseLootBuilder.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(actualPos)); allDrops.addAll(template.getDrops(params)); }
                 }
             }
 
@@ -244,7 +220,8 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
 
     protected void prepareBlockForDisassembly(Level world, BlockPos pos) {
         BlockEntity be = world.getBlockEntity(pos);
-        if (be instanceof IMultiblockBE<?> multiblockBE) {
+        if (be instanceof ITMultiblockBEHelper itHelper) { itHelper.it$markDisassembling(); }
+        else if (be instanceof IMultiblockBE<?> multiblockBE) {
             var helper = multiblockBE.getHelper();
             if (helper instanceof ITMultiblockBEHelper itHelper) { itHelper.it$markDisassembling(); }
         }
@@ -300,10 +277,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                     BlockPos here = origin.offset(realRelPos);
                     BlockState expected = info.state().rotate(currentRot);
                     BlockState inWorld = world.getBlockState(here);
-                    if (!BlockMatcher.matches(expected, inWorld, world, here, additionalPredicates).isAllow()) {
-                        allMatch = false;
-                        break;
-                    }
+                    if (!BlockMatcher.matches(expected, inWorld, world, here, additionalPredicates).isAllow()) { allMatch = false; break; }
                 }
 
                 if (allMatch) {
@@ -335,10 +309,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                 BlockPos here = origin.offset(realRelPos);
                 BlockState expected = info.state().mirror(triedMirror).rotate(rot);
                 BlockState inWorld = world.getBlockState(here);
-                if (!BlockMatcher.matches(expected, inWorld, world, here, additionalPredicates).isAllow()) {
-                    allMatch = false;
-                    break;
-                }
+                if (!BlockMatcher.matches(expected, inWorld, world, here, additionalPredicates).isAllow()) { allMatch = false; break; }
             }
 
             if (allMatch) {
@@ -360,9 +331,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         }
     }
 
-    private <S extends IMultiblockState> void dropInventory(IMultiblockBEHelperMaster<S> helper, Consumer<ItemStack> dropIt) {
-        helper.getMultiblock().logic().dropExtraItems(helper.getState(), dropIt);
-    }
+    private <S extends IMultiblockState> void dropInventory(IMultiblockBEHelperMaster<S> helper, Consumer<ItemStack> dropIt) { helper.getMultiblock().logic().dropExtraItems(helper.getState(), dropIt); }
 
     @Override public Component getDisplayName() { return this.logic.block().get().getName(); }
 
