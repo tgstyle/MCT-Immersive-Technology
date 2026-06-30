@@ -28,7 +28,7 @@ public class SteelSheetmetalTankRenderer extends ITBaseBlockEntityRenderer<Multi
         float baseScale = .0625f;
         matrixStack.scale(baseScale, -baseScale, baseScale);
         float xx = -.5f;
-        float zz = 1.5f - 0.004f;
+        float zz = 1.5f - 0.01f;
         xx /= baseScale;
         zz /= baseScale;
         for (int side = 0; side < 4; side++) {
