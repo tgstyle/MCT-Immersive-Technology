@@ -37,7 +37,10 @@ public class ITMultiblockBlockEntityMaster<State extends IMultiblockState> exten
 
     @Override public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) { return common.interact(side, player, hand, heldItem, hitX, hitY, hitZ); }
 
-    @Override public Stream<ItemStack> getDroppedItems() { return common.getDroppedItems(); }
+    @Override public Stream<ItemStack> getDroppedItems() {
+        if (disassembling) { return Stream.empty(); }
+        return common.getDroppedItems();
+    }
 
     @Override public BlockPos getModelOffset(BlockState state, Vec3i size) { return common.getModelOffset(state, size); }
 
