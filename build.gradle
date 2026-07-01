@@ -208,6 +208,7 @@ dependencies {
     implementation "curse.maven:immersive-engineering-231951:6733669"
 
     implementation "curse.maven:jade-324717:7545219"
+    implementation "curse.maven:the-one-probe-245211:7292875"
 
     // Local ImmersiveConvergence (preferred during development)
     if (icJar != null) {
