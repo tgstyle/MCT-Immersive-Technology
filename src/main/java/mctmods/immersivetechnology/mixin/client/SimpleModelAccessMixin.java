@@ -7,6 +7,7 @@ import net.minecraftforge.client.ChunkRenderTypeSet;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
+@SuppressWarnings("unused")
 @Mixin(SimpleBakedModel.class)
 public interface SimpleModelAccessMixin extends blusunrize.immersiveengineering.mixin.accessors.client.SimpleModelAccess {
     @Accessor(remap = false)

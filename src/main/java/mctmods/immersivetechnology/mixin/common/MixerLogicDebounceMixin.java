@@ -16,7 +16,7 @@ import java.lang.reflect.Field;
 @Mixin(MixerLogic.class)
 public abstract class MixerLogicDebounceMixin {
 
-    @Unique private static Object it$NOP;
+    @Unique private static final Object it$NOP;
 
     static {
         try {

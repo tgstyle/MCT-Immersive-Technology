@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.Objects;
 
 @Mixin(MixerRecipe.class)
 public abstract class MixerRecipePriorityMixin {
@@ -38,13 +39,13 @@ public abstract class MixerRecipePriorityMixin {
                     for (IngredientWithSize ingr : r1.itemInputs) {
                         if (ingr != null) sum1 += ingr.getCount();
                     }
-                    int count1 = (int) java.util.Arrays.stream(r1.itemInputs).filter(ingr -> ingr != null).count();
+                    int count1 = (int) java.util.Arrays.stream(r1.itemInputs).filter(Objects::nonNull).count();
 
                     int sum2 = 0;
                     for (IngredientWithSize ingr : r2.itemInputs) {
                         if (ingr != null) sum2 += ingr.getCount();
                     }
-                    int count2 = (int) java.util.Arrays.stream(r2.itemInputs).filter(ingr -> ingr != null).count();
+                    int count2 = (int) java.util.Arrays.stream(r2.itemInputs).filter(Objects::nonNull).count();
 
                     int cmp = Integer.compare(sum1, sum2);
                     if (cmp == 0) cmp = Integer.compare(count1, count2);
