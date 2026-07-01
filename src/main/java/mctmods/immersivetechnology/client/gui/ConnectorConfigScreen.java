@@ -36,9 +36,7 @@ public class ConnectorConfigScreen extends ClientBlockEntityScreen<ConnectorTime
         this.ySize = 120;
     }
 
-    public ConnectorConfigScreen(ConnectorTimerBlockEntity tile) {
-        this(tile, Component.empty());
-    }
+    public ConnectorConfigScreen(ConnectorTimerBlockEntity tile) { this(tile, Component.empty()); }
 
     @Override public void renderBackground(@NotNull GuiGraphics graphics) {}
 
@@ -71,11 +69,8 @@ public class ConnectorConfigScreen extends ClientBlockEntityScreen<ConnectorTime
         message.putInt(key, value);
         ITPacketHandler.sendToServer(new ITMessageTileSync(tile.getBlockPos(), message));
 
-        if ("ioMode".equals(key)) {
-            tile.setIoMode(value);
-        } else if ("redstoneChannel".equals(key)) {
-            tile.redstoneChannel = DyeColor.byId(value);
-        }
+        if ("ioMode".equals(key)) { tile.setIoMode(value); }
+        else if ("redstoneChannel".equals(key)) { tile.redstoneChannel = DyeColor.byId(value); }
     }
 
     @Override protected void drawGuiContainerBackgroundLayer(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
@@ -94,9 +89,7 @@ public class ConnectorConfigScreen extends ClientBlockEntityScreen<ConnectorTime
                 }
             }
         }
-        if (!tooltip.isEmpty()) {
-            graphics.renderTooltip(this.font, tooltip, Optional.empty(), mouseX, mouseY);
-        }
+        if (!tooltip.isEmpty()) { graphics.renderTooltip(this.font, tooltip, Optional.empty(), mouseX, mouseY); }
     }
 
     @SuppressWarnings("resource")
@@ -105,16 +98,13 @@ public class ConnectorConfigScreen extends ClientBlockEntityScreen<ConnectorTime
         if (ClientUtils.mc().options.keyInventory.isActiveAndMatches(key)) {
             this.onClose();
             return true;
-        } else {
-            return super.keyPressed(keyCode, scanCode, modifiers);
         }
+        else { return super.keyPressed(keyCode, scanCode, modifiers); }
     }
 
     public static GuiButtonBoolean buildColorButton(GuiButtonBoolean[] buttons, int posX, int posY, Supplier<Boolean> active, final DyeColor color, Consumer<GuiButtonBoolean> onClick) {
         return new GuiButtonBoolean(posX, posY, 12, 12, "", active, TEXTURE, 194, 0, 1, (btn) -> {
-            if (btn.getNextState()) {
-                onClick.accept((GuiButtonBoolean) btn);
-            }
+            if (btn.getNextState()) { onClick.accept((GuiButtonBoolean) btn); }
             for (int j = 0; j < buttons.length; ++j) {
                 if (j != color.ordinal() && buttons[j].getState()) {
                     buttons[j].onClick(buttons[j].getX(), buttons[j].getY());
@@ -136,4 +126,6 @@ public class ConnectorConfigScreen extends ClientBlockEntityScreen<ConnectorTime
             }
         };
     }
+
+    public static void open(ConnectorTimerBlockEntity timer) { if (timer != null) { net.minecraft.client.Minecraft.getInstance().setScreen(new ConnectorConfigScreen(timer)); } }
 }

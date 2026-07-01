@@ -24,6 +24,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,9 +44,7 @@ public class ConnectorTimerBlock extends ITEntityBlock<ConnectorTimerBlockEntity
         builder.add(ITProperties.FACING_ALL, ROTATION);
     }
 
-    @Override public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return ITBlockEntities.CONNECTOR_TIMER.get().create(pos, state);
-    }
+    @Override public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) { return ITBlockEntities.CONNECTOR_TIMER.get().create(pos, state); }
 
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (level.isClientSide) return null;
@@ -102,10 +102,9 @@ public class ConnectorTimerBlock extends ITEntityBlock<ConnectorTimerBlockEntity
 
         if (!held.isEmpty() && held.getItem() instanceof ScrewdriverItem) {
             if (level.isClientSide) {
-                BlockEntity be = level.getBlockEntity(pos);
-                if (be instanceof ConnectorTimerBlockEntity timer) {
-                    net.minecraft.client.Minecraft.getInstance().setScreen(new mctmods.immersivetechnology.client.gui.ConnectorConfigScreen(timer));
-                }
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> mctmods.immersivetechnology.client.gui.ConnectorConfigScreen.open(
+                        (ConnectorTimerBlockEntity) level.getBlockEntity(pos)
+                ));
             }
             return InteractionResult.SUCCESS;
         }
@@ -121,9 +120,8 @@ public class ConnectorTimerBlock extends ITEntityBlock<ConnectorTimerBlockEntity
                 timer.setChanged();
                 timer.markContainingBlockForUpdate(null);
                 level.blockEvent(pos, this, 254, 0);
-            } else if (held.isEmpty()) {
-                NetworkHooks.openScreen((ServerPlayer) player, timer, buf -> buf.writeBlockPos(pos));
             }
+            else if (held.isEmpty()) { NetworkHooks.openScreen((ServerPlayer) player, timer, buf -> buf.writeBlockPos(pos)); }
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
