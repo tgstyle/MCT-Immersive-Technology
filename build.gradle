@@ -201,21 +201,17 @@ configurations {
 }
 
 dependencies {
-    compileOnly "mezz.jei:jei-${version_minecraft}-common-api:${version_jei}"
-    compileOnly "mezz.jei:jei-${version_minecraft}-neoforge-api:${version_jei}"
-    localRuntime "mezz.jei:jei-${version_minecraft}-neoforge:${version_jei}"
+    implementation "mezz.jei:jei-${version_minecraft}-neoforge-api:${version_jei}"
+    runtimeOnly  "mezz.jei:jei-${version_minecraft}-neoforge:${version_jei}"
 
     implementation "curse.maven:immersive-engineering-231951:6733669"
-
     implementation "curse.maven:jade-324717:7545219"
     implementation "curse.maven:the-one-probe-245211:7292875"
 
-    // Local ImmersiveConvergence (preferred during development)
     if (icJar != null) {
         implementation files(icJar)
     } else {
-        logger.warn('⚠️  Falling back to CurseMaven for ImmersiveConvergence (no local dev jar found)')
-        // implementation "curse.maven:immersive-convergence-1465236:NEW_FILE_ID_HERE"
+        logger.warn('⚠️  Falling back to CurseMaven for ImmersiveConvergence')
     }
 }
 
