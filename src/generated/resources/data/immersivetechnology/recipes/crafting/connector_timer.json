@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "immersiveengineering:connector_redstone"
+    },
+    "G": {
+      "tag": "forge:glass_panes"
+    },
+    "P": {
+      "item": "immersiveengineering:logic_circuit"
+    },
+    "Q": {
+      "item": "minecraft:quartz"
+    }
+  },
+  "pattern": [
+    "GCG",
+    "PPP",
+    "GQG"
+  ],
+  "result": {
+    "item": "immersivetechnology:connector_timer"
+  },
+  "show_notification": true
+}

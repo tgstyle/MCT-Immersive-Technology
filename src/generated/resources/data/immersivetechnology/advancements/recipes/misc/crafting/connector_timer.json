@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_redstone_connector": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersiveengineering:connector_redstone"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "immersivetechnology:crafting/connector_timer"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_redstone_connector",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "immersivetechnology:crafting/connector_timer"
+    ]
+  },
+  "sends_telemetry_event": false
+}
