@@ -172,6 +172,8 @@ neoForge {
         client {
             client()
             programArguments.addAll '--username', 'tgstyle', '--width', '1920', '--height', '1080'
+            jvmArgument("-Djava.library.path=/usr/lib64")
+            environment 'LD_LIBRARY_PATH', '/usr/lib64'
         }
 
         server {
@@ -239,6 +241,8 @@ dependencies {
 
     implementation "curse.maven:jade-324717:7545219"
     implementation "curse.maven:the-one-probe-245211:7292875"
+
+    implementation "curse.maven:engineered-schematics-1207780:8308767"
 
     if (icJar != null) {
         implementation files(icJar)
