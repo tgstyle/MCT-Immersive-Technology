@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.fluids.helper.ITSolarTank;
-import mctmods.immersivetechnology.common.multiblocks.metal.interfaces.ITISolarMultiblockState;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITISolarMultiblockState;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarMelterShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;

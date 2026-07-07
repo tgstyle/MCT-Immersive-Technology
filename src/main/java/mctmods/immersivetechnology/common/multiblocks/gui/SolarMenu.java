@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.common.multiblocks.gui.helper.ITSlot;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
 import mctmods.immersivetechnology.common.fluids.helper.ITSolarTank;
-import mctmods.immersivetechnology.common.multiblocks.metal.interfaces.ITISolarMultiblockState;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITISolarMultiblockState;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.SimpleContainerData;

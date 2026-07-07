@@ -60,7 +60,6 @@ public class ValveFluidScreen extends AbstractContainerScreen<ValveFluidMenu> {
         keepSizeField.setBordered(false);
         addRenderableWidget(keepSizeField);
         addRenderableWidget(Button.builder(Component.translatable(TranslationKey.GUI_APPLY.location), btn -> apply()).bounds(leftPos + (imageWidth / 2 - 20), topPos + 90, 40, 20).build());
-
         updateFields();
     }
 

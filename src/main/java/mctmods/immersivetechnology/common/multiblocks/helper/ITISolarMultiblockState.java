@@ -1,7 +1,6 @@
-package mctmods.immersivetechnology.common.multiblocks.metal.interfaces;
+package mctmods.immersivetechnology.common.multiblocks.helper;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITSolarTank;
 
 public interface ITISolarMultiblockState extends IMultiblockState {

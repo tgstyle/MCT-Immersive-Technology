@@ -14,7 +14,7 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.Initi
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.fluids.helper.ITSolarTank;
-import mctmods.immersivetechnology.common.multiblocks.metal.interfaces.ITISolarMultiblockState;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITISolarMultiblockState;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarTowerShape;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
