@@ -119,7 +119,7 @@ processResources {
     duplicatesStrategy = DuplicatesStrategy.FAIL
     inputs.properties(version_replaces)
     filesMatching("META-INF/*.mods.toml") {
-        expand version_replaces  // Remove the ()
+        expand version_replaces
     }
     exclude ".cache"
     doLast {
@@ -184,7 +184,7 @@ neoForge {
         data {
             data()
             sourceSet = sourceSets.datagen
-            programArguments.addAll '--mod', mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+            programArguments.addAll '--mod', mod_id.toString(), '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
         gameTestServer {
@@ -193,7 +193,7 @@ neoForge {
 
         configureEach {
             gameDirectory = project.file('run')
-            systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+            systemProperty('neoforge.enabledGameTestNamespaces', mod_id.toString())
         }
     }
 }
@@ -215,7 +215,7 @@ tasks.register('prepareDatagenOutputs') {
 }
 
 afterEvaluate {
-    tasks.findByName('runData')?.dependsOn('prepareDatagenOutputs', 'prepareGametestOutputs')
+    tasks.named('runData').configure { dependsOn('prepareDatagenOutputs', 'prepareGametestOutputs') }
 }
 
 repositories {
@@ -235,6 +235,9 @@ configurations {
 dependencies {
     implementation "mezz.jei:jei-${version_minecraft}-neoforge-api:${version_jei}"
     runtimeOnly  "mezz.jei:jei-${version_minecraft}-neoforge:${version_jei}"
+
+    runtimeOnly "curse.maven:wayfix-1224888:7659637"
+    runtimeOnly "curse.maven:cloth-config-348521:5729127"
 
     implementation "curse.maven:immersive-engineering-231951:6733669"
     implementation "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen"
@@ -333,7 +336,7 @@ tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
 idea { module { downloadSources = true; downloadJavadoc = true } }
 
 publishing {
-    publications { register('mavenJava', MavenPublication) { from components.java } }
+    publications { register('mavenJava', MavenPublication) { from(components.java as SoftwareComponent) }}
     repositories { maven { url = "file://${project.projectDir}/repo" } }
 }
 
