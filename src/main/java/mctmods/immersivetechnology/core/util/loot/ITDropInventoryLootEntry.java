@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import mctmods.immersivetechnology.core.util.inventory.ITIDropInventory;
-import mctmods.immersivetechnology.core.util.inventory.ITInventoryHandler;
+import mctmods.immersivetechnology.core.util.inventory.ITIInventoryHandler;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -33,7 +33,7 @@ public class ITDropInventoryLootEntry extends LootPoolSingletonContainer {
             }
             if (te != null) {
                 IItemHandler itemHandler = te.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().orElse(null);
-                if (itemHandler instanceof ITInventoryHandler itHandler) {
+                if (itemHandler instanceof ITIInventoryHandler itHandler) {
                     for (int i = 0; i < itHandler.getSlots(); ++i) {
                         if (!itHandler.getStackInSlot(i).isEmpty()) {
                             output.accept(itHandler.getStackInSlot(i));

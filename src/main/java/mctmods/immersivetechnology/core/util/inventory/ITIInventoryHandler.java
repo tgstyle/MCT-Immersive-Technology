@@ -8,14 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 
-public class ITInventoryHandler implements IItemHandlerModifiable {
+public class ITIInventoryHandler implements IItemHandlerModifiable {
     int slots;
     ITIInventory inv;
     int slotOffset;
     boolean[] canInsert;
     boolean[] canExtract;
 
-    public ITInventoryHandler(int slots, ITIInventory inventory, int slotOffset, boolean[] canInsert, boolean[] canExtract) { this.slots = slots; this.inv = inventory; this.slotOffset = slotOffset; this.canInsert = canInsert; this.canExtract = canExtract; }
+    public ITIInventoryHandler(int slots, ITIInventory inventory, int slotOffset, boolean[] canInsert, boolean[] canExtract) { this.slots = slots; this.inv = inventory; this.slotOffset = slotOffset; this.canInsert = canInsert; this.canExtract = canExtract; }
 
     public int getSlots() { return this.slots; }
 
