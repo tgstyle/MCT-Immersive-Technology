@@ -279,11 +279,11 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         boolean isRSEnabled = state.rsState.isEnabled(ctx);
         state.ignited = state.ignitionGracePeriod > 0;
         state.starterRunning = false;
-        if (isRSEnabled && STARTER_CONSUMPTION <= state.energyStorageHV.getEnergyStored()) {
+        if (isRSEnabled && hasConsumer && STARTER_CONSUMPTION <= state.energyStorageHV.getEnergyStored()) {
             state.starterRunning = true;
             state.energyStorageHV.extractEnergy(STARTER_CONSUMPTION, false);
         }
-        if (state.speed <= 0) { state.speed = 0; state.isShutdown = false; state.stall = false; }
+        if (state.speed <= 0) { state.speed = 0; state.isShutdown = false; state.stall = false; state.everIgnited = false; }
         if (!isRSEnabled || !hasConsumer) {
             state.isShutdown = true;
             state.ignitionGracePeriod = 0;
@@ -301,7 +301,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         } else {
             if (state.isShutdown) { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
             else {
-                if (state.starterRunning) {
+                if (state.starterRunning && !state.everIgnited) {
                     if (state.hasIgniter && canIgnite(state)) {
                         state.stall = true;
                         if (!wasStall) { ignite(state, ctx); }
