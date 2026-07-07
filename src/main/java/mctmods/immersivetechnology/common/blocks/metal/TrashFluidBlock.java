@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.blocks.metal.logic.TrashFluidBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.TrashFluidIBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
-public class TrashFluidBlock extends ITEntityBlock<TrashFluidBlockEntity> {
+public class TrashFluidBlock extends ITIEntityBlock<TrashFluidIBlockEntity> {
     private static final VoxelShape BOUNDS = makeBounds();
     private static VoxelShape makeBounds() {
         VoxelShape shape = Shapes.empty();
@@ -25,7 +25,7 @@ public class TrashFluidBlock extends ITEntityBlock<TrashFluidBlockEntity> {
         return shape;
     }
 
-    public TrashFluidBlock(BiFunction<BlockPos, BlockState, TrashFluidBlockEntity> makeEntity, Properties blockProps) { super(makeEntity, blockProps); }
+    public TrashFluidBlock(BiFunction<BlockPos, BlockState, TrashFluidIBlockEntity> makeEntity, Properties blockProps) { super(makeEntity, blockProps); }
 
     @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return BOUNDS; }
 

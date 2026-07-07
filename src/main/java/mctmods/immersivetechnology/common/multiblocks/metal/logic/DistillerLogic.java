@@ -53,7 +53,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State>, ITPressurizedFluidOutput<DistillerLogic.State> {
+public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State>, ITIPressurizedFluidOutput<DistillerLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -204,7 +204,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return DistillerShape.GETTER; }
 
-    public static class State implements IMultiblockState, ITProcessContext.ProcessContextInMachine<DistillerRecipe>, ITDisplayContext {
+    public static class State implements IMultiblockState, ITIProcessContext.ProcessContextInMachine<DistillerRecipe>, ITIDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final DistillerTank tanks;
         public final StoredCapability<IEnergyStorage> energyCap;

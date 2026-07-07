@@ -3,9 +3,9 @@ package mctmods.immersivetechnology.common.gui.helper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import com.mojang.datafixers.util.Pair;
-import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
+import mctmods.immersivetechnology.common.blocks.helper.ITIBaseIBlockEntity;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ITSlot;
-import mctmods.immersivetechnology.core.network.ITMessageContainerData;
+import mctmods.immersivetechnology.core.network.ITIMessageContainerData;
 import mctmods.immersivetechnology.core.network.ITPacketHandler;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
@@ -56,7 +56,7 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
             if (data.needsUpdate()) toSync.add(Pair.of(i, data.dataPair()));
         }
         if (!toSync.isEmpty()) for (ServerPlayer player : usingPlayers) {
-            ITPacketHandler.sendToPlayer(player, new ITMessageContainerData(toSync));
+            ITPacketHandler.sendToPlayer(player, new ITIMessageContainerData(toSync));
         }
     }
 
@@ -112,7 +112,7 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
         return moveItemStackToWithMayPlace(slots, this::moveItemStackTo, pStack, 0, pEndIndex);
     }
 
-    public static boolean moveItemStackToWithMayPlace(List<Slot> slots, MoveItemsFunc move, ItemStack pStack, int pStartIndex, int pEndIndex) {
+    public static boolean moveItemStackToWithMayPlace(List<Slot> slots, IMoveItemsFunc move, ItemStack pStack, int pStartIndex, int pEndIndex) {
         boolean inAllowedRange = true;
         int allowedStart = pStartIndex;
         for (int i = pStartIndex; i < pEndIndex; i++) {
@@ -142,7 +142,7 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
             for (int i = 0; i < itContainer.genericData.size(); i++) {
                 list.add(Pair.of(i, itContainer.genericData.get(i).dataPair()));
             }
-            ITPacketHandler.sendToPlayer(serverPlayer, new ITMessageContainerData(list));
+            ITPacketHandler.sendToPlayer(serverPlayer, new ITIMessageContainerData(list));
         }
     }
 
@@ -162,7 +162,7 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
     public static MenuContext blockCtx(MenuType<?> pMenuType, int pContainerId, BlockEntity be) {
         return new MenuContext(pMenuType, pContainerId, () -> {
             be.setChanged();
-            if (be instanceof ITBaseBlockEntity itBE) itBE.markContainingBlockForUpdate(null);
+            if (be instanceof ITIBaseIBlockEntity itBE) itBE.markContainingBlockForUpdate(null);
         }, p -> {
             BlockPos pos = be.getBlockPos();
             Level level = be.getLevel();
@@ -179,7 +179,7 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
 
     public record MultiblockMenuContext<S extends IMultiblockState>(IMultiblockContext<S> mbContext, BlockPos clickedPos) {}
 
-    public interface MoveItemsFunc {
+    public interface IMoveItemsFunc {
         boolean moveItemStackTo(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection);
     }
 }

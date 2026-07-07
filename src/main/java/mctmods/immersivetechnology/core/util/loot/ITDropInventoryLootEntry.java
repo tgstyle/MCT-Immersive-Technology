@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
-import mctmods.immersivetechnology.core.util.inventory.IITDropInventory;
+import mctmods.immersivetechnology.core.util.inventory.ITIDropInventory;
 import mctmods.immersivetechnology.core.util.inventory.ITInventoryHandler;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,7 +28,7 @@ public class ITDropInventoryLootEntry extends LootPoolSingletonContainer {
             if (te instanceof ITBlockInterfaces.IGeneralMultiblock dummyBE) {
                 te = (BlockEntity)dummyBE.master();
             }
-            if (te instanceof IITDropInventory itInvBE) {
+            if (te instanceof ITIDropInventory itInvBE) {
                 if (itInvBE.getDroppedItems() != null) { itInvBE.getDroppedItems().forEach(output); return; }
             }
             if (te != null) {

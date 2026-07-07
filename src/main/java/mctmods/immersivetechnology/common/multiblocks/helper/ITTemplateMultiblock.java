@@ -8,7 +8,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEH
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityDummy;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
 import com.google.common.base.Preconditions;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
@@ -159,13 +158,13 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             BlockEntity masterBE = world.getBlockEntity(masterPos);
             if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof IMultiblockBEHelperMaster<?> h) { masterHelper = h; }
 
-            if (masterBE instanceof ITMultiblockBEHelper itBE && itBE.it$isDisassembling()) { return; }
-            if (masterHelper instanceof ITMultiblockBEHelper itH && itH.it$isDisassembling()) { return; }
+            if (masterBE instanceof ITIMultiblockBEHelper itBE && itBE.it$isDisassembling()) { return; }
+            if (masterHelper instanceof ITIMultiblockBEHelper itH && itH.it$isDisassembling()) { return; }
             if (masterBE == null) { return; }
 
-            if (masterBE instanceof ITMultiblockBEHelper itBE) {
+            if (masterBE instanceof ITIMultiblockBEHelper itBE) {
                 itBE.it$markDisassembling();
-            } else if (masterHelper instanceof ITMultiblockBEHelper itH) {
+            } else if (masterHelper instanceof ITIMultiblockBEHelper itH) {
                 itH.it$markDisassembling();
             }
 
@@ -245,10 +244,10 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
 
     protected void prepareBlockForDisassembly(Level world, BlockPos pos) {
         BlockEntity be = world.getBlockEntity(pos);
-        if (be instanceof ITMultiblockBEHelper itHelper) { itHelper.it$markDisassembling(); }
+        if (be instanceof ITIMultiblockBEHelper itHelper) { itHelper.it$markDisassembling(); }
         else if (be instanceof IMultiblockBE<?> multiblockBE) {
             var helper = multiblockBE.getHelper();
-            if (helper instanceof ITMultiblockBEHelper itHelper) { itHelper.it$markDisassembling(); }
+            if (helper instanceof ITIMultiblockBEHelper itHelper) { itHelper.it$markDisassembling(); }
         }
         else if (be != null) { ITLib.IT_LOGGER.error("Expected multiblock BE at {}, got {}", pos, be); }
     }

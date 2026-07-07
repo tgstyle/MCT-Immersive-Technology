@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
 import mctmods.immersivetechnology.client.models.ITDynamicModel;
 import mctmods.immersivetechnology.client.renderer.helper.ITRenderUtils;
 import mctmods.immersivetechnology.common.blocks.metal.RotorCreativeBlock;
-import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeIBlockEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -22,10 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import java.util.List;
 
-public class RotorCreativeRenderer implements BlockEntityRenderer<RotorCreativeBlockEntity> {
+public class RotorCreativeRenderer implements BlockEntityRenderer<RotorCreativeIBlockEntity> {
     public RotorCreativeRenderer() {}
 
-    @Override public void render(@NotNull RotorCreativeBlockEntity tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    @Override public void render(@NotNull RotorCreativeIBlockEntity tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         BlockState state = tile.getBlockState();
         Direction dir = state.getValue(RotorCreativeBlock.FACING);
         Vec3 axisVec = Vec3.atLowerCornerOf(dir.getNormal());

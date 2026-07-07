@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal.gui;
 import com.mojang.datafixers.util.Pair;
 import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
 import mctmods.immersivetechnology.common.gui.helper.ITGenericDataSerializers;
-import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemIBlockEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
@@ -17,9 +17,9 @@ import java.util.List;
 
 public class TrashItemMenu extends ITContainerMenu {
     private final IItemHandlerModifiable handler;
-    private final TrashItemBlockEntity tile;
+    private final TrashItemIBlockEntity tile;
 
-    public TrashItemMenu(MenuType<TrashItemMenu> type, int id, Inventory inv, TrashItemBlockEntity tile) {
+    public TrashItemMenu(MenuType<TrashItemMenu> type, int id, Inventory inv, TrashItemIBlockEntity tile) {
         super(ITContainerMenu.blockCtx(type, id, tile));
         this.handler = tile;
         this.tile = tile;
@@ -35,7 +35,7 @@ public class TrashItemMenu extends ITContainerMenu {
         addPlayerSlots(inv);
     }
 
-    public static TrashItemMenu makeServer(MenuType<TrashItemMenu> type, int id, Inventory inv, TrashItemBlockEntity tile) { return new TrashItemMenu(type, id, inv, tile); }
+    public static TrashItemMenu makeServer(MenuType<TrashItemMenu> type, int id, Inventory inv, TrashItemIBlockEntity tile) { return new TrashItemMenu(type, id, inv, tile); }
 
     public static TrashItemMenu makeClient(MenuType<TrashItemMenu> type, int id, Inventory inv) { return new TrashItemMenu(type, id, inv); }
 

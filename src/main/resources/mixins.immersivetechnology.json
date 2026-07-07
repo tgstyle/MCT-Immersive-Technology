@@ -10,7 +10,7 @@
     "common.InitializationTrackerMixin",
     "common.MixerLogicDebounceMixin",
     "common.MixerRecipePriorityMixin",
-    "common.MixerStateExtensionMixin",
+    "common.IMixerStateExtensionMixin",
     "common.MultiblockBEHelperMixin"
   ],
   "injectors": {
@@ -18,6 +18,6 @@
   },
   "client": [
     "client.BlockRenderDispatcherMixin",
-    "client.SimpleModelAccessMixin"
+    "client.ISimpleModelAccessMixin"
   ]
 }

@@ -9,7 +9,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ITOSDSyncBlock implements ITMessage {
+public class ITOSDSyncBlock implements ITIMessage {
     private final String key;
     private final int distance;
 

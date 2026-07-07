@@ -15,12 +15,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 
 public class ITRotationUtil {
-    public static final List<RotationBlacklistEntry> blacklist = new ArrayList<>();
+    public static final List<IRotationBlacklistEntry> blacklist = new ArrayList<>();
 
     public static boolean rotateBlock(Level world, BlockPos pos, boolean inverse) { return rotateBlock(world, pos, inverse ? Rotation.COUNTERCLOCKWISE_90 : Rotation.CLOCKWISE_90); }
 
     public static boolean rotateBlock(Level world, BlockPos pos, Rotation rotation) {
-        for (RotationBlacklistEntry e : blacklist) {
+        for (IRotationBlacklistEntry e : blacklist) {
             if (!e.blockRotation(world, pos)) { return false; }
         }
         BlockState state = world.getBlockState(pos);
@@ -59,5 +59,5 @@ public class ITRotationUtil {
         });
     }
 
-    public interface RotationBlacklistEntry { boolean blockRotation(Level var1, BlockPos var2); }
+    public interface IRotationBlacklistEntry { boolean blockRotation(Level var1, BlockPos var2); }
 }

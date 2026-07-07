@@ -12,7 +12,7 @@ import blusunrize.immersiveengineering.common.items.ScrewdriverItem;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
+import mctmods.immersivetechnology.common.blocks.helper.ITIServerTickableBE;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import mctmods.immersivetechnology.core.util.TranslationKey;
@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
 
 import static mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock.ROTATION;
 
-public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity implements ITServerTickableBE, IStateBasedDirectional, ITBlockInterfaces.IRedstoneInputOutput, IScrewdriverInteraction, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IBlockOverlayText, IRedstoneConnector, MenuProvider {
+public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity implements ITIServerTickableBE, IStateBasedDirectional, ITBlockInterfaces.IRedstoneInputOutput, IScrewdriverInteraction, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IBlockOverlayText, IRedstoneConnector, MenuProvider {
     private static final int PULSE_LENGTH = 2;
     private static final int MIN_TARGET = 10;
     private static final int MAX_TARGET = 600;

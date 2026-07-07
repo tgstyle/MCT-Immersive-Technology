@@ -34,9 +34,9 @@ public enum ITPlacementLimitation {
     HORIZONTAL_PREFER_SIDE((side, placer, hitPos) -> side.getAxis() != Axis.Y ? side.getOpposite() : placer.getDirection()),
     FIXED_DOWN((side, placer, hitPos) -> Direction.DOWN);
 
-    private final DirectionGetter dirGetter;
+    private final IDirectionGetter dirGetter;
 
-    ITPlacementLimitation(DirectionGetter dirGetter) { this.dirGetter = dirGetter; }
+    ITPlacementLimitation(IDirectionGetter dirGetter) { this.dirGetter = dirGetter; }
 
     public Direction getDirectionForPlacement(Direction side, LivingEntity placer, Vec3 clickLocation) { return this.dirGetter.getDirectionForPlacement(side, placer, clickLocation); }
 
@@ -47,7 +47,7 @@ public enum ITPlacementLimitation {
         return this.getDirectionForPlacement(context.getClickedFace(), context.getPlayer(), clickLocation);
     }
 
-    private interface DirectionGetter {
+    private interface IDirectionGetter {
         Direction getDirectionForPlacement(Direction var1, LivingEntity var2, Vec3 var3);
     }
 }

@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.core.network;
 
-import mctmods.immersivetechnology.common.blocks.metal.logic.OSDCommonBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.OSDCommonIBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonIBlockEntity;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -13,7 +13,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public record ITOSDSyncMessage(BlockPos pos, long lastAccepted, long average, int packetAverage) implements ITMessage {
+public record ITOSDSyncMessage(BlockPos pos, long lastAccepted, long average, int packetAverage) implements ITIMessage {
     public ITOSDSyncMessage(FriendlyByteBuf buf) {
         this(buf.readBlockPos(), buf.readLong(), buf.readLong(), buf.readInt());
     }
@@ -31,10 +31,10 @@ public record ITOSDSyncMessage(BlockPos pos, long lastAccepted, long average, in
             if (ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
                 if (Minecraft.getInstance().level != null) {
                     BlockEntity te = Minecraft.getInstance().level.getBlockEntity(pos);
-                    if (te instanceof OSDCommonBlockEntity osd) {
+                    if (te instanceof OSDCommonIBlockEntity osd) {
                         osd.lastAcceptedAmount = lastAccepted;
                     }
-                    if (te instanceof ValveCommonBlockEntity valve) {
+                    if (te instanceof ValveCommonIBlockEntity valve) {
                         valve.lastAcceptedAmount = lastAccepted;
                         valve.average = average;
                         valve.packetAverage = packetAverage;

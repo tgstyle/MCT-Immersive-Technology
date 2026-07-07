@@ -20,7 +20,7 @@ import blusunrize.immersiveengineering.client.gui.elements.GuiButtonBoolean;
 import blusunrize.immersiveengineering.client.gui.elements.GuiButtonState;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.network.ITMessageTileSync;
+import mctmods.immersivetechnology.core.network.ITIMessageTileSync;
 import mctmods.immersivetechnology.core.network.ITPacketHandler;
 
 public class ConnectorConfigScreen extends ClientBlockEntityScreen<ConnectorTimerBlockEntity> {
@@ -67,7 +67,7 @@ public class ConnectorConfigScreen extends ClientBlockEntityScreen<ConnectorTime
     private void sendConfig(String key, int value) {
         CompoundTag message = new CompoundTag();
         message.putInt(key, value);
-        ITPacketHandler.sendToServer(new ITMessageTileSync(tile.getBlockPos(), message));
+        ITPacketHandler.sendToServer(new ITIMessageTileSync(tile.getBlockPos(), message));
 
         if ("ioMode".equals(key)) { tile.setIoMode(value); }
         else if ("redstoneChannel".equals(key)) { tile.redstoneChannel = DyeColor.byId(value); }

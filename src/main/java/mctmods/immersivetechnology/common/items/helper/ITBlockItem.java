@@ -4,8 +4,8 @@ import blusunrize.immersiveengineering.api.client.TextUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockPartBlock;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import mctmods.immersivetechnology.common.blocks.helper.ITBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIBaseBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.ChatFormatting;
@@ -41,7 +41,7 @@ public class ITBlockItem extends BlockItem {
     @Override @NotNull public String getDescriptionId(@NotNull ItemStack stack) { return getBlock().getDescriptionId(); }
 
     @Override public void appendHoverText(@NotNull ItemStack stack, @Nullable Level world, @NotNull List<Component> tooltip, @NotNull TooltipFlag advanced) {
-        if (getBlock() instanceof ITBlock ieBlock && ieBlock.hasFlavour()) {
+        if (getBlock() instanceof ITIBlock ieBlock && ieBlock.hasFlavour()) {
             String flavourKey = ITLib.DESC_FLAVOUR + ieBlock.getNameForFlavour();
             tooltip.add(TextUtils.applyFormat(Component.translatable(flavourKey), ChatFormatting.GRAY));
         }
@@ -56,7 +56,7 @@ public class ITBlockItem extends BlockItem {
     @Override protected boolean placeBlock(@NotNull BlockPlaceContext context, @NotNull BlockState newState) {
         if (getBlock() instanceof MultiblockPartBlock) { return false; }
         Block b = newState.getBlock();
-        if (b instanceof ITBaseBlock ieBlock) {
+        if (b instanceof ITIBaseBlock ieBlock) {
             if (!ieBlock.canIEBlockBePlaced(newState, context)) return false;
             boolean ret = super.placeBlock(context, newState);
             if (ret) ieBlock.onIEBlockPlacedBy(context, newState);
@@ -85,5 +85,5 @@ public class ITBlockItem extends BlockItem {
         return super.getTooltipImage(stack);
     }
 
-    @Override public boolean canFitInsideContainerItems() { return !(getBlock() instanceof ITBaseBlock ieBlock) || ieBlock.fitsIntoContainer(); }
+    @Override public boolean canFitInsideContainerItems() { return !(getBlock() instanceof ITIBaseBlock ieBlock) || ieBlock.fitsIntoContainer(); }
 }

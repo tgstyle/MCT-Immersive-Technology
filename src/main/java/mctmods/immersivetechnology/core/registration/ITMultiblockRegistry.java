@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public class ITMultiblockRegistry {
-    public static <T extends BlockEntity & ITBlockInterfaces.IGeneralMultiblock> ITMultiblockBEType<T> makeMultiblock(String name, ITMultiblockBEType.BEWithTypeConstructor<T> make, Supplier<? extends Block> block) { return new ITMultiblockBEType<>(name, ITBlockEntities.REGISTER, make, block, state -> state.hasProperty(ITProperties.MULTIBLOCKSLAVE) && !state.getValue(ITProperties.MULTIBLOCKSLAVE)); }
+    public static <T extends BlockEntity & ITBlockInterfaces.IGeneralMultiblock> ITMultiblockBEType<T> makeMultiblock(String name, ITMultiblockBEType.IBEWithTypeConstructor<T> make, Supplier<? extends Block> block) { return new ITMultiblockBEType<>(name, ITBlockEntities.REGISTER, make, block, state -> state.hasProperty(ITProperties.MULTIBLOCKSLAVE) && !state.getValue(ITProperties.MULTIBLOCKSLAVE)); }
 
     public static Supplier<List<? extends Item>> supplyDeferredItems() { return ITItems::getITItems; }
 

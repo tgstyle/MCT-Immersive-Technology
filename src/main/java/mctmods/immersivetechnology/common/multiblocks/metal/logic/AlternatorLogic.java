@@ -16,7 +16,7 @@ import com.immersiveconvergence.api.MechanicalCapabilities;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.mojang.datafixers.util.Pair;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
@@ -225,7 +225,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         @Override public int getMaxSpeed() { return MechanicalCapabilities.MAX_RPM; }
     }
 
-    public static class State implements IMultiblockState, ITDisplayContext {
+    public static class State implements IMultiblockState, ITIDisplayContext {
         public AveragingEnergyStorage energy;
         public boolean active = false;
         public int speed = 0;

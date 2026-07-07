@@ -24,7 +24,7 @@ public class ITDisassemblyTicker<S extends IMultiblockState> implements IServerT
         BlockPos masterAbs = context.getLevel().toAbsolute(masterRel);
 
         BlockEntity be = level.getBlockEntity(masterAbs);
-        if (be instanceof ITMultiblockBlockEntityMaster<?> master) {
+        if (be instanceof ITIMultiblockBlockEntityMaster<?> master) {
             if (master.disassembleQueue != null && !master.disassembleQueue.isEmpty()) {
                 int blocksPerTick = ITTemplateMultiblock.DISASSEMBLE_QUEUE_SIZE;
 

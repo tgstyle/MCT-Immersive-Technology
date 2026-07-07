@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockB
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockPartBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
-import mctmods.immersivetechnology.core.util.inventory.IITDropInventory;
+import mctmods.immersivetechnology.core.util.inventory.ITIDropInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -42,12 +42,12 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
         BlockEntity te = level.getBlockEntity(pos);
         if (te instanceof IMultiblockBE<?> be) {
             var helper = be.getHelper();
-            if (((ITMultiblockBEHelper)helper).it$isDisassembling()) {
+            if (((ITIMultiblockBEHelper)helper).it$isDisassembling()) {
                 super.playerWillDestroy(level, pos, state, player);
                 return;
             }
             // Only for the initial player break (flag not yet set). Skip during queue teardown to avoid NPE on dummy state==null and duplication.
-            if (te instanceof IITDropInventory dropInv) {
+            if (te instanceof ITIDropInventory dropInv) {
                 dropInv.getDroppedItems().forEach(stack -> {
                     if (!stack.isEmpty()) {
                         ItemEntity item = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack);
@@ -55,7 +55,7 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
                     }
                 });
             }
-            if (helper.getContext() != null && ((ITMultiblockBEHelper)helper).it$isAssembled() && !(player instanceof FakePlayer)) { helper.disassemble(); }
+            if (helper.getContext() != null && ((ITIMultiblockBEHelper)helper).it$isAssembled() && !(player instanceof FakePlayer)) { helper.disassemble(); }
         }
         super.playerWillDestroy(level, pos, state, player);
     }
@@ -65,11 +65,11 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
             BlockEntity te = level.getBlockEntity(pos);
             if (te instanceof IMultiblockBE<?> be) {
                 var helper = be.getHelper();
-                if (((ITMultiblockBEHelper)helper).it$isDisassembling()) {
+                if (((ITIMultiblockBEHelper)helper).it$isDisassembling()) {
                     super.onRemove(state, level, pos, newState, isMoving);
                     return;
                 }
-                if (helper.getContext() != null && ((ITMultiblockBEHelper)helper).it$isAssembled()) { helper.disassemble(); }
+                if (helper.getContext() != null && ((ITIMultiblockBEHelper)helper).it$isAssembled()) { helper.disassemble(); }
             }
         }
         super.onRemove(state, level, pos, newState, isMoving);
@@ -79,7 +79,7 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
     @Override @Nonnull public List<ItemStack> getDrops(@Nonnull BlockState state, @Nonnull LootParams.Builder builder) {
         List<ItemStack> drops = new ArrayList<>(super.getDrops(state, builder));
         BlockEntity te = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
-        if (te instanceof IITDropInventory dropInv) {
+        if (te instanceof ITIDropInventory dropInv) {
             dropInv.getDroppedItems().forEach(drops::add);
         }
         return drops;

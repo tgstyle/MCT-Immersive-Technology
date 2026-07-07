@@ -52,7 +52,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLogic.State>, IServerTickableComponent<MeltingCrucibleLogic.State>, IClientTickableComponent<MeltingCrucibleLogic.State>, ITPressurizedFluidOutput<MeltingCrucibleLogic.State> {
+public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLogic.State>, IServerTickableComponent<MeltingCrucibleLogic.State>, IClientTickableComponent<MeltingCrucibleLogic.State>, ITIPressurizedFluidOutput<MeltingCrucibleLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -208,7 +208,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return MeltingCrucibleShape.GETTER; }
 
-    public static class State implements IMultiblockState, ITProcessContext.ProcessContextInMachine<MeltingRecipe>, ITDisplayContext {
+    public static class State implements IMultiblockState, ITIProcessContext.ProcessContextInMachine<MeltingRecipe>, ITIDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final MeltingCrucibleTank tanks;
         public final StoredCapability<IEnergyStorage> energyCap;

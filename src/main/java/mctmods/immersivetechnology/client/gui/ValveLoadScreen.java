@@ -9,8 +9,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
-import mctmods.immersivetechnology.core.network.ITMessageTileSync;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonIBlockEntity;
+import mctmods.immersivetechnology.core.network.ITIMessageTileSync;
 import mctmods.immersivetechnology.core.network.ITPacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.client.Minecraft;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ValveLoadScreen extends AbstractContainerScreen<ValveLoadMenu> {
     private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("valve");
-    private final ValveCommonBlockEntity tile;
+    private final ValveCommonIBlockEntity tile;
     private EditBox packetLimitField;
     private EditBox timeLimitField;
     private EditBox keepSizeField;
@@ -92,7 +92,7 @@ public class ValveLoadScreen extends AbstractContainerScreen<ValveLoadMenu> {
         message.putInt("packetLimit", pl);
         message.putInt("timeLimit", tl);
         message.putInt("keepSize", ks);
-        ITPacketHandler.sendToServer(new ITMessageTileSync(tile.getBlockPos(), message));
+        ITPacketHandler.sendToServer(new ITIMessageTileSync(tile.getBlockPos(), message));
         Minecraft.getInstance().setScreen(null);
     }
 

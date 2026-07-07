@@ -48,7 +48,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<ElectrolyticCrucibleBatteryLogic.State>, IServerTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IClientTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, ITPressurizedFluidOutput<ElectrolyticCrucibleBatteryLogic.State> {
+public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<ElectrolyticCrucibleBatteryLogic.State>, IServerTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IClientTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, ITIPressurizedFluidOutput<ElectrolyticCrucibleBatteryLogic.State> {
 
     public static final int INPUT_TANK_CAPACITY = ITServerConfig.electrolyticCrucibleBatteryInputTankCapacity;
     public static final int OUTPUT_TANK_CAPACITY = ITServerConfig.electrolyticCrucibleBatteryOutputTankCapacity;
@@ -162,7 +162,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return ElectrolyticCrucibleBatteryShape.GETTER; }
 
-    public static class State implements IMultiblockState, ITProcessContext.ProcessContextInMachine<ElectrolyticCrucibleBatteryRecipe>, ITDisplayContext {
+    public static class State implements IMultiblockState, ITIProcessContext.ProcessContextInMachine<ElectrolyticCrucibleBatteryRecipe>, ITIDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final ElectrolyticCrucibleBatteryTanks tanks;
         public final StoredCapability<IEnergyStorage> energyCap;

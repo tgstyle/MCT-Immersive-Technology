@@ -20,7 +20,7 @@ public class ITMultiblockBEType<T extends BlockEntity & ITBlockInterfaces.IGener
     private final RegistryObject<BlockEntityType<T>> dummy;
     private final Predicate<BlockState> isMaster;
 
-    public ITMultiblockBEType(String name, DeferredRegister<BlockEntityType<?>> register, BEWithTypeConstructor<T> make, Supplier<? extends Block> block, Predicate<BlockState> isMaster) {
+    public ITMultiblockBEType(String name, DeferredRegister<BlockEntityType<?>> register, IBEWithTypeConstructor<T> make, Supplier<? extends Block> block, Predicate<BlockState> isMaster) {
         this.isMaster = isMaster;
         this.master = register.register(name + "_master", makeType(make, block));
         this.dummy = register.register(name + "_dummy", makeType(make, block));
@@ -30,7 +30,7 @@ public class ITMultiblockBEType<T extends BlockEntity & ITBlockInterfaces.IGener
         return this.isMaster.test(state) ? this.master.get().create(pos, state) : this.dummy.get().create(pos, state);
     }
 
-    public static <T extends BlockEntity> Supplier<BlockEntityType<T>> makeType(BEWithTypeConstructor<T> create, Supplier<? extends Block> valid) {
+    public static <T extends BlockEntity> Supplier<BlockEntityType<T>> makeType(IBEWithTypeConstructor<T> create, Supplier<? extends Block> valid) {
         return () -> {
             Mutable<BlockEntityType<T>> typeMutable = new MutableObject<>();
             @SuppressWarnings("ConstantConditions")
@@ -44,5 +44,5 @@ public class ITMultiblockBEType<T extends BlockEntity & ITBlockInterfaces.IGener
 
     public BlockEntityType<T> dummy() { return this.dummy.get(); }
 
-    public interface BEWithTypeConstructor<T extends BlockEntity> {  T create(BlockEntityType<T> var1, BlockPos var2, BlockState var3); }
+    public interface IBEWithTypeConstructor<T extends BlockEntity> {  T create(BlockEntityType<T> var1, BlockPos var2, BlockState var3); }
 }

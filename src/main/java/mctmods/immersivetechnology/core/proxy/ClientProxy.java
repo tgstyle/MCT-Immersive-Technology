@@ -20,7 +20,7 @@ import mctmods.immersivetechnology.common.blocks.metal.gui.RotorCreativeMenu;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
-import mctmods.immersivetechnology.common.items.helper.ITFlagItem;
+import mctmods.immersivetechnology.common.items.helper.ITIFlagItem;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITFluids;
@@ -170,9 +170,9 @@ public class ClientProxy extends CommonProxy {
     public static void onItemColor(RegisterColorHandlersEvent.Item event) {
         for (RegistryObject<? extends Item> holder : ITItems.getItemRegistryMap().values()) {
             Item i = holder.get();
-            if (i instanceof ITFlagItem) {
+            if (i instanceof ITIFlagItem) {
                 event.register((stack, tintIndex) -> {
-                    if (stack.getItem() instanceof ITFlagItem type) { return type.getColor(tintIndex); }
+                    if (stack.getItem() instanceof ITIFlagItem type) { return type.getColor(tintIndex); }
                     return 0xffffff;
                 }, i);
             }

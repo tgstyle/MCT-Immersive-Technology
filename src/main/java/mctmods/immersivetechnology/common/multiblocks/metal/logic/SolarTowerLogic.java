@@ -59,7 +59,7 @@ import java.util.function.Supplier;
 import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MAX_RANGE;
 import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
 
-public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>, IServerTickableComponent<SolarTowerLogic.State>, IClientTickableComponent<SolarTowerLogic.State>, ITPressurizedFluidOutput<SolarTowerLogic.State> {
+public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>, IServerTickableComponent<SolarTowerLogic.State>, IClientTickableComponent<SolarTowerLogic.State>, ITIPressurizedFluidOutput<SolarTowerLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -337,7 +337,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
         } catch (Exception ignored) {}
     }
 
-    public static class State implements ITISolarMultiblockState, ITDisplayContext {
+    public static class State implements ITISolarMultiblockState, ITIDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final ITSolarTank tanks;
         public StoredCapability<IFluidHandler> inputCap;

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.wooden;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
 import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,7 +16,7 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 
-public class CrateCreativeBlock extends ITEntityBlock<CrateCreativeBlockEntity> {
+public class CrateCreativeBlock extends ITIEntityBlock<CrateCreativeBlockEntity> {
     public CrateCreativeBlock(BiFunction<BlockPos, BlockState, CrateCreativeBlockEntity> beFactory, Properties p) { super(beFactory, p); }
 
     @Override public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, LivingEntity placer, @NotNull ItemStack stack) {

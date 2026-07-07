@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
-import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelOpenBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelOpenIBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -24,11 +24,11 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
-public class OpenBarrelRenderer extends ITBaseBlockEntityRenderer<BarrelOpenBlockEntity> {
+public class OpenBarrelRenderer extends ITBaseBlockEntityRenderer<BarrelOpenIBlockEntity> {
 
     public OpenBarrelRenderer() {}
 
-    @Override public void render(BarrelOpenBlockEntity be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+    @Override public void render(BarrelOpenIBlockEntity be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(be.getBlockState());
         RandomSource random = RandomSource.create(be.getBlockState().getSeed(be.getBlockPos()));
         ModelData modelData = ModelData.EMPTY;

@@ -11,9 +11,9 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidOutput;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.RadiatorProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.RadiatorShape;
@@ -46,7 +46,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, IServerTickableComponent<RadiatorLogic.State>, IClientTickableComponent<RadiatorLogic.State>, ITPressurizedFluidOutput<RadiatorLogic.State> {
+public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, IServerTickableComponent<RadiatorLogic.State>, IClientTickableComponent<RadiatorLogic.State>, ITIPressurizedFluidOutput<RadiatorLogic.State> {
     public static final int INPUT_TANK_CAPACITY = 8 * FluidType.BUCKET_VOLUME;
     public static final int OUTPUT_TANK_CAPACITY = 8 * FluidType.BUCKET_VOLUME;
 
@@ -158,7 +158,7 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return RadiatorShape.GETTER; }
 
-    public static class State implements IMultiblockState, ITDisplayContext {
+    public static class State implements IMultiblockState, ITIDisplayContext {
         public final RadiatorTanks tanks;
         public final StoredCapability<IFluidHandler> inputCap;
         public final StoredCapability<IFluidHandler> outputCap;

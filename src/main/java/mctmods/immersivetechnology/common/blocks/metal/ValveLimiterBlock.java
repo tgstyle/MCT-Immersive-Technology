@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonIBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterIBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,11 +25,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
-public class ValveLimiterBlock extends ITEntityBlock<ValveLimiterBlockEntity> {
+public class ValveLimiterBlock extends ITIEntityBlock<ValveLimiterIBlockEntity> {
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 3);
 
-    public ValveLimiterBlock(BiFunction<BlockPos, BlockState, ValveLimiterBlockEntity> makeEntity, Properties p) {
+    public ValveLimiterBlock(BiFunction<BlockPos, BlockState, ValveLimiterIBlockEntity> makeEntity, Properties p) {
         super(makeEntity, p);
         registerDefaultState(stateDefinition.any()
                 .setValue(OPEN, true)
@@ -49,13 +49,13 @@ public class ValveLimiterBlock extends ITEntityBlock<ValveLimiterBlockEntity> {
         super.neighborChanged(state, level, pos, fromBlock, fromPos, isMoving);
         if (level.isClientSide) return;
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ValveCommonBlockEntity valve) { valve.updateRedstoneState(); }
+        if (be instanceof ValveCommonIBlockEntity valve) { valve.updateRedstoneState(); }
     }
 
     @Override @NotNull public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ValveCommonBlockEntity valve) {
+        if (be instanceof ValveCommonIBlockEntity valve) {
             if (player.isCrouching()) {
                 valve.redstoneMode = (byte) (valve.redstoneMode == 1 ? 2 : 1);
                 valve.updateRedstoneState();

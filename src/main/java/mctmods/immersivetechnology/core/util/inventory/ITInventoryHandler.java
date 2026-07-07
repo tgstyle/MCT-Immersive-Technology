@@ -10,12 +10,12 @@ import javax.annotation.Nonnull;
 
 public class ITInventoryHandler implements IItemHandlerModifiable {
     int slots;
-    IITInventory inv;
+    ITIInventory inv;
     int slotOffset;
     boolean[] canInsert;
     boolean[] canExtract;
 
-    public ITInventoryHandler(int slots, IITInventory inventory, int slotOffset, boolean[] canInsert, boolean[] canExtract) { this.slots = slots; this.inv = inventory; this.slotOffset = slotOffset; this.canInsert = canInsert; this.canExtract = canExtract; }
+    public ITInventoryHandler(int slots, ITIInventory inventory, int slotOffset, boolean[] canInsert, boolean[] canExtract) { this.slots = slots; this.inv = inventory; this.slotOffset = slotOffset; this.canInsert = canInsert; this.canExtract = canExtract; }
 
     public int getSlots() { return this.slots; }
 

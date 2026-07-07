@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.core.integration.jade;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +27,7 @@ public class ITMultiblockFluidDataProvider implements IServerExtensionProvider<O
             return null;
         }
         final IMultiblockBEHelper<?> helper = multiblockBE.getHelper();
-        if (helper.getState() instanceof ITDisplayContext dc) {
+        if (helper.getState() instanceof ITIDisplayContext dc) {
             IFluidTank[] tanks = dc.getInternalTanks();
             if (tanks != null && tanks.length > 0) {
                 List<CompoundTag> list = new ArrayList<>();

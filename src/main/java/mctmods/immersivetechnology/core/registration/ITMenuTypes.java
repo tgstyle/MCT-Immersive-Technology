@@ -4,11 +4,11 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.gui.*;
-import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveFluidBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeIBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemIBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveFluidIBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterIBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadIBlockEntity;
 import mctmods.immersivetechnology.common.blocks.wooden.gui.CrateCreativeMenu;
 import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlockEntity;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
@@ -48,37 +48,37 @@ public class ITMenuTypes {
     public static final MultiblockContainer<SolarMelterLogic.State, SolarMenu> SOLAR_MELTER_MENU = registerMultiblock("gui_solar_melter", SolarMenu::makeServer, (type, id, inv, buffer) -> SolarMenu.makeClient(type, id, inv));
     public static final MultiblockContainer<SolarTowerLogic.State, SolarMenu> SOLAR_TOWER_MENU = registerMultiblock("gui_solar_tower", SolarMenu::makeServer, (type, id, inv, buffer) -> SolarMenu.makeClient(type, id, inv));
 
-    public static final ArgContainer<RotorCreativeBlockEntity, RotorCreativeMenu> ROTOR_CREATIVE = registerArg("rotor_creative", RotorCreativeMenu::makeServer, RotorCreativeMenu::makeClient);
+    public static final ArgContainer<RotorCreativeIBlockEntity, RotorCreativeMenu> ROTOR_CREATIVE = registerArg("rotor_creative", RotorCreativeMenu::makeServer, RotorCreativeMenu::makeClient);
     public static final ArgContainer<CrateCreativeBlockEntity, CrateCreativeMenu> CRATE_CREATIVE = registerArg("crate_creative", CrateCreativeMenu::makeServer, (type, id, inv, buffer) -> CrateCreativeMenu.makeClient(type, id, inv));
-    public static final ArgContainer<TrashItemBlockEntity, TrashItemMenu> TRASH_ITEM = registerArg("trash_item", TrashItemMenu::makeServer, (type, id, inv, buffer) -> TrashItemMenu.makeClient(type, id, inv));
+    public static final ArgContainer<TrashItemIBlockEntity, TrashItemMenu> TRASH_ITEM = registerArg("trash_item", TrashItemMenu::makeServer, (type, id, inv, buffer) -> TrashItemMenu.makeClient(type, id, inv));
 
-    public static final ArgContainer<ValveFluidBlockEntity, ValveFluidMenu> VALVE_FLUID = registerArg("valve_fluid", ValveFluidMenu::makeServer, ValveFluidMenu::makeClient);
-    public static final ArgContainer<ValveLoadBlockEntity, ValveLoadMenu> VALVE_LOAD = registerArg("valve_load", ValveLoadMenu::makeServer, ValveLoadMenu::makeClient);
-    public static final ArgContainer<ValveLimiterBlockEntity, ValveLimiterMenu> VALVE_LIMITER = registerArg("valve_limiter", ValveLimiterMenu::makeServer, ValveLimiterMenu::makeClient);
+    public static final ArgContainer<ValveFluidIBlockEntity, ValveFluidMenu> VALVE_FLUID = registerArg("valve_fluid", ValveFluidMenu::makeServer, ValveFluidMenu::makeClient);
+    public static final ArgContainer<ValveLoadIBlockEntity, ValveLoadMenu> VALVE_LOAD = registerArg("valve_load", ValveLoadMenu::makeServer, ValveLoadMenu::makeClient);
+    public static final ArgContainer<ValveLimiterIBlockEntity, ValveLimiterMenu> VALVE_LIMITER = registerArg("valve_limiter", ValveLimiterMenu::makeServer, ValveLimiterMenu::makeClient);
 
     public static final ArgContainer<ConnectorTimerBlockEntity, ConnectorTimerMenu> CONNECTOR_TIMER = registerArg("connector_timer", ConnectorTimerMenu::makeServer, ConnectorTimerMenu::makeClient);
 
-    public static <T, C extends ITContainerMenu> ArgContainer<T, C> registerArg(String name, ArgContainerConstructor<T, C> container, ClientContainerConstructor<C> client) {
+    public static <T, C extends ITContainerMenu> ArgContainer<T, C> registerArg(String name, IArgContainerConstructor<T, C> container, IClientContainerConstructor<C> client) {
         RegistryObject<MenuType<C>> typeRef = registerType(name, client);
         return new ArgContainer<>(typeRef, container);
     }
 
-    public static <S extends IMultiblockState, C extends ITContainerMenu> MultiblockContainer<S, C> registerMultiblock(String name, ArgContainerConstructor<ITContainerMenu.MultiblockMenuContext<S>, C> container, ClientContainerConstructor<C> client) {
+    public static <S extends IMultiblockState, C extends ITContainerMenu> MultiblockContainer<S, C> registerMultiblock(String name, IArgContainerConstructor<ITContainerMenu.MultiblockMenuContext<S>, C> container, IClientContainerConstructor<C> client) {
         RegistryObject<MenuType<C>> typeRef = registerType(name, client);
         return new MultiblockContainer<>(typeRef, container);
     }
 
     public static class MultiblockContainer<S extends IMultiblockState, C extends ITContainerMenu> extends ArgContainer<ITContainerMenu.MultiblockMenuContext<S>, C> {
-        private MultiblockContainer(RegistryObject<MenuType<C>> type, ArgContainerConstructor<ITContainerMenu.MultiblockMenuContext<S>, C> factory) { super(type, factory); }
+        private MultiblockContainer(RegistryObject<MenuType<C>> type, IArgContainerConstructor<ITContainerMenu.MultiblockMenuContext<S>, C> factory) { super(type, factory); }
 
         public MenuProvider provide(IMultiblockContext<S> ctx, BlockPos relativeClicked) { return this.provide(new ITContainerMenu.MultiblockMenuContext<>(ctx, ctx.getLevel().toAbsolute(relativeClicked))); }
     }
 
     public static class ArgContainer<T, C extends ITContainerMenu> {
         private final RegistryObject<MenuType<C>> type;
-        private final ArgContainerConstructor<T, C> factory;
+        private final IArgContainerConstructor<T, C> factory;
 
-        private ArgContainer(RegistryObject<MenuType<C>> type, ArgContainerConstructor<T, C> factory) {
+        private ArgContainer(RegistryObject<MenuType<C>> type, IArgContainerConstructor<T, C> factory) {
             this.type = type;
             this.factory = factory;
         }
@@ -96,7 +96,7 @@ public class ITMenuTypes {
         public MenuType<C> getType() { return this.type.get(); }
     }
 
-    private static <C extends ITContainerMenu> RegistryObject<MenuType<C>> registerType(String name, ClientContainerConstructor<C> client) {
+    private static <C extends ITContainerMenu> RegistryObject<MenuType<C>> registerType(String name, IClientContainerConstructor<C> client) {
         return REGISTER.register(name, () -> {
             Mutable<MenuType<C>> typeBox = new MutableObject<>();
             MenuType<C> type = IForgeMenuType.create((id, inv, buffer) -> client.construct(typeBox.getValue(), id, inv, buffer));
@@ -105,7 +105,7 @@ public class ITMenuTypes {
         });
     }
 
-    @FunctionalInterface public interface ArgContainerConstructor<T, C extends ITContainerMenu> { C construct(MenuType<C> type, int windowId, Inventory invPlayer, T arg); }
+    @FunctionalInterface public interface IArgContainerConstructor<T, C extends ITContainerMenu> { C construct(MenuType<C> type, int windowId, Inventory invPlayer, T arg); }
 
-    @FunctionalInterface public interface ClientContainerConstructor<C extends ITContainerMenu> { C construct(MenuType<C> type, int windowId, Inventory invPlayer, FriendlyByteBuf buffer); }
+    @FunctionalInterface public interface IClientContainerConstructor<C extends ITContainerMenu> { C construct(MenuType<C> type, int windowId, Inventory invPlayer, FriendlyByteBuf buffer); }
 }

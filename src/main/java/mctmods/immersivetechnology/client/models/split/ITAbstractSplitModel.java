@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.client.models.split;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITModelOffsetProvider;
+import mctmods.immersivetechnology.common.blocks.helper.ITIModelOffsetProvider;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.client.models.split.geometry.ITPolygon;
 import mctmods.immersivetechnology.client.models.split.geometry.ITPolygonUtils;
@@ -43,9 +43,9 @@ public abstract class ITAbstractSplitModel<T extends BakedModel> extends BakedMo
         ModelData baseData = super.getModelData(world, pos, state, tileData);
         BlockEntity te = world.getBlockEntity(pos);
         BlockPos offset = null;
-        if (te instanceof ITModelOffsetProvider offsetProvider) {
+        if (te instanceof ITIModelOffsetProvider offsetProvider) {
             offset = offsetProvider.getModelOffset(state, size);
-        } else if (state.getBlock() instanceof ITModelOffsetProvider offsetProvider) {
+        } else if (state.getBlock() instanceof ITIModelOffsetProvider offsetProvider) {
             offset = offsetProvider.getModelOffset(state, size);
         }
         if (offset != null) {

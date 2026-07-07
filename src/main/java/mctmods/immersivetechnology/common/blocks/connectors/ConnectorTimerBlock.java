@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.blocks.connectors;
 import blusunrize.immersiveengineering.common.items.ScrewdriverItem;
 import blusunrize.immersiveengineering.common.items.WireCoilItem;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.ITEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
-public class ConnectorTimerBlock extends ITEntityBlock<ConnectorTimerBlockEntity> {
+public class ConnectorTimerBlock extends ITIEntityBlock<ConnectorTimerBlockEntity> {
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 3);
 
     public ConnectorTimerBlock(BiFunction<BlockPos, BlockState, ConnectorTimerBlockEntity> makeEntity, Properties p) {

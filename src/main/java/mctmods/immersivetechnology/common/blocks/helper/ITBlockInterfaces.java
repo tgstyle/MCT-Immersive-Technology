@@ -59,7 +59,7 @@ public class ITBlockInterfaces {
         @Nonnull default Component getDisplayName() { return Component.literal(""); }
     }
 
-    public interface IGeneralMultiblock extends ITBlockInterfaces.BlockStateProvider {
+    public interface IGeneralMultiblock extends IBlockStateProvider {
         @Nullable IGeneralMultiblock master();
 
         default boolean isDummy() {
@@ -89,7 +89,7 @@ public class ITBlockInterfaces {
         @Nonnull default VoxelShape getSelectionShape(@Nullable CollisionContext ctx) { return getBlockBounds(ctx); }
     }
 
-    public interface IMirrorAble extends BlockStateProvider {
+    public interface IMirrorAble extends IBlockStateProvider {
         default boolean getIsMirrored() {
             BlockState state = getState();
             if (state.hasProperty(ITProperties.MIRRORED)) { return state.getValue(ITProperties.MIRRORED); }
@@ -123,7 +123,7 @@ public class ITBlockInterfaces {
         boolean canEntityDestroy(Entity var1);
     }
 
-    public interface BlockStateProvider {
+    public interface IBlockStateProvider {
         @NotNull BlockState getState();
 
         void setState(@NotNull BlockState var1);

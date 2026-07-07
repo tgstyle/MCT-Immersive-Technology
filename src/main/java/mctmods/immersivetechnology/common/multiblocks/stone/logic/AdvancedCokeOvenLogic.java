@@ -20,8 +20,8 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterIBlockEntity;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITFurnaceHandler;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
@@ -215,7 +215,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
     @Override public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) { return InteractionResult.SUCCESS; }
 
-    public static class State implements IMultiblockState, ContainerData, ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe>, ITFurnaceHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>, ITDisplayContext {
+    public static class State implements IMultiblockState, ContainerData, ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe>, ITFurnaceHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>, ITIDisplayContext {
         public static final int MAX_PROCESS_TIME = 0;
         public static final int REMAINING_PROCESS_TIME = 1;
         public static final int NUM_SLOTS = 2;
@@ -355,13 +355,13 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
             BlockPos heater1World = level.toAbsolute(BASEHEATER0_POI);
             BlockEntity be1 = level.getRawLevel().getBlockEntity(heater1World);
-            if (be1 instanceof AdvancedCokeOvenBaseHeaterBlockEntity heater && heater.doSpeedup()) {
+            if (be1 instanceof AdvancedCokeOvenBaseHeaterIBlockEntity heater && heater.doSpeedup()) {
                 activeBaseheaters++;
             }
 
             BlockPos heater2World = level.toAbsolute(BASEHEATER1_POI);
             BlockEntity be2 = level.getRawLevel().getBlockEntity(heater2World);
-            if (be2 instanceof AdvancedCokeOvenBaseHeaterBlockEntity heater && heater.doSpeedup()) {
+            if (be2 instanceof AdvancedCokeOvenBaseHeaterIBlockEntity heater && heater.doSpeedup()) {
                 activeBaseheaters++;
             }
 

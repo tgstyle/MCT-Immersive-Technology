@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.client.gui;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.network.ITMessageTileSync;
+import mctmods.immersivetechnology.core.network.ITIMessageTileSync;
 import mctmods.immersivetechnology.core.network.ITPacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.client.gui.GuiGraphics;
@@ -37,7 +37,7 @@ public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimer
     private void changeTarget(int increment) {
         CompoundTag message = new CompoundTag();
         message.putInt("increment", increment);
-        ITPacketHandler.sendToServer(new ITMessageTileSync(tile.getBlockPos(), message));
+        ITPacketHandler.sendToServer(new ITIMessageTileSync(tile.getBlockPos(), message));
     }
 
     @Override protected void renderBg(@NotNull GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import mctmods.immersivetechnology.client.models.ITDynamicModel;
 import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
 import mctmods.immersivetechnology.client.renderer.helper.ITRenderUtils;
-import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterIBlockEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -19,12 +19,12 @@ import org.joml.Quaternionf;
 
 import java.util.List;
 
-public class AdvancedCokeOvenBaseHeaterRenderer extends ITBaseBlockEntityRenderer<AdvancedCokeOvenBaseHeaterBlockEntity> {
+public class AdvancedCokeOvenBaseHeaterRenderer extends ITBaseBlockEntityRenderer<AdvancedCokeOvenBaseHeaterIBlockEntity> {
     public static ITDynamicModel FAN_MODEL;
 
     public AdvancedCokeOvenBaseHeaterRenderer() {}
 
-    @Override public void render(@NotNull AdvancedCokeOvenBaseHeaterBlockEntity tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    @Override public void render(@NotNull AdvancedCokeOvenBaseHeaterIBlockEntity tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if (tile.dummy || tile.getLevel() == null || FAN_MODEL == null) { return; }
         Level level = tile.getLevel();
         BlockPos pos = tile.getBlockPos();

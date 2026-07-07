@@ -7,8 +7,8 @@ import java.util.function.Function;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITQueueProcessor;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.core.integration.top.OneProbeHelper;
-import mctmods.immersivetechnology.core.network.ITMessageContainerData;
-import mctmods.immersivetechnology.core.network.ITMessageContainerUpdate;
+import mctmods.immersivetechnology.core.network.ITIMessageContainerData;
+import mctmods.immersivetechnology.core.network.ITIMessageContainerUpdate;
 import mctmods.immersivetechnology.core.network.ITPacketHandler;
 import mctmods.immersivetechnology.core.util.loot.ITLootFunctions;
 import mctmods.immersivetechnology.core.ITClientConfig;
@@ -67,8 +67,8 @@ public class ImmersiveTechnology {
         for (ITFluids.FluidEntry entry : ITFluids.ALL_ENTRIES) {
             DispenserBlock.registerBehavior(entry.getBucket(), BUCKET_DISPENSE_BEHAVIOR);
         }
-        ITPacketHandler.registerMessage(ITMessageContainerUpdate.class, ITMessageContainerUpdate::new);
-        ITPacketHandler.registerMessage(ITMessageContainerData.class, ITMessageContainerData::new);
+        ITPacketHandler.registerMessage(ITIMessageContainerUpdate.class, ITIMessageContainerUpdate::new);
+        ITPacketHandler.registerMessage(ITIMessageContainerData.class, ITIMessageContainerData::new);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

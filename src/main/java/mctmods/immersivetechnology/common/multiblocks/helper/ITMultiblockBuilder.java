@@ -42,12 +42,12 @@ public class ITMultiblockBuilder<S extends IMultiblockState> extends MultiblockR
 
             Supplier<BlockEntityType<?>> masterSup = register.register(rl.getPath() + "_master", () -> {
                 Mutable<BlockEntityType<?>> resultBox = new MutableObject<>();
-                resultBox.setValue(BlockEntityType.Builder.of((pos, state) -> new ITMultiblockBlockEntityMaster<>(resultBox.getValue(), pos, state, regSupplier.get()), blockSup.get()).build(null));
+                resultBox.setValue(BlockEntityType.Builder.of((pos, state) -> new ITIMultiblockBlockEntityMaster<>(resultBox.getValue(), pos, state, regSupplier.get()), blockSup.get()).build(null));
                 return resultBox.getValue();
             });
             Supplier<BlockEntityType<?>> dummySup = register.register(rl.getPath() + "_dummy", () -> {
                 Mutable<BlockEntityType<?>> resultBox = new MutableObject<>();
-                resultBox.setValue(BlockEntityType.Builder.of((pos, state) -> new ITMultiblockBlockEntityDummy<>(resultBox.getValue(), pos, state, regSupplier.get()), blockSup.get()).build(null));
+                resultBox.setValue(BlockEntityType.Builder.of((pos, state) -> new ITIMultiblockBlockEntityDummy<>(resultBox.getValue(), pos, state, regSupplier.get()), blockSup.get()).build(null));
                 return resultBox.getValue();
             });
 

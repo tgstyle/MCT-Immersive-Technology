@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterIBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiFunction;
 
-public class AdvancedCokeOvenBaseHeaterBlock extends ITEntityBlock<AdvancedCokeOvenBaseHeaterBlockEntity> {
+public class AdvancedCokeOvenBaseHeaterBlock extends ITIEntityBlock<AdvancedCokeOvenBaseHeaterIBlockEntity> {
 
     private static final VoxelShape SINGLE_SHAPE = Shapes.block();
     private static final VoxelShape EMPTY_SHAPE = Shapes.empty();
@@ -38,7 +38,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ITEntityBlock<AdvancedCokeO
             Shapes.block().move(0, 0, 1)
     );
 
-    public AdvancedCokeOvenBaseHeaterBlock(BiFunction<BlockPos, BlockState, AdvancedCokeOvenBaseHeaterBlockEntity> makeEntity, Properties blockProps) {
+    public AdvancedCokeOvenBaseHeaterBlock(BiFunction<BlockPos, BlockState, AdvancedCokeOvenBaseHeaterIBlockEntity> makeEntity, Properties blockProps) {
         super(makeEntity, blockProps);
         registerDefaultState(defaultBlockState()
                 .setValue(ITProperties.FACING_HORIZONTAL, Direction.NORTH)
@@ -86,7 +86,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ITEntityBlock<AdvancedCokeO
         level.setBlock(pos, finalMaster, 3);
 
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof AdvancedCokeOvenBaseHeaterBlockEntity mte) {
+        if (be instanceof AdvancedCokeOvenBaseHeaterIBlockEntity mte) {
             mte.active = false;
             mte.markContainingBlockForUpdate(null);
         }
@@ -102,7 +102,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ITEntityBlock<AdvancedCokeO
             level.setBlock(dPos, dummyBase, 3);
 
             BlockEntity dbe = level.getBlockEntity(dPos);
-            if (dbe instanceof AdvancedCokeOvenBaseHeaterBlockEntity dte) {
+            if (dbe instanceof AdvancedCokeOvenBaseHeaterIBlockEntity dte) {
                 dte.dummy = true;
                 dte.masterPos = pos;
                 dte.active = false;

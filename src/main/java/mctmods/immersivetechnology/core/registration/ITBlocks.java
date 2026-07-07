@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.core.registration;
 
 import mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.ITStairsBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITWallBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIStairsBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIWallBlock;
 import mctmods.immersivetechnology.common.blocks.metal.*;
 import mctmods.immersivetechnology.common.blocks.metal.logic.*;
 import mctmods.immersivetechnology.common.blocks.stone.ReinforcedCokeBrick;
@@ -35,8 +35,8 @@ import java.util.stream.Collectors;
 public class ITBlocks {
     public static final DeferredRegister<Block> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCKS, ITLib.MODID);
     public static final Map<ResourceLocation, ITBlocks.BlockEntry<? extends SlabBlock>> TO_SLAB = new HashMap<>();
-    public static final Map<ResourceLocation, ITBlocks.BlockEntry<? extends ITStairsBlock>> TO_STAIRS = new HashMap<>();
-    public static final Map<ResourceLocation, ITBlocks.BlockEntry<? extends ITWallBlock>> TO_WALL = new HashMap<>();
+    public static final Map<ResourceLocation, ITBlocks.BlockEntry<? extends ITIStairsBlock>> TO_STAIRS = new HashMap<>();
+    public static final Map<ResourceLocation, ITBlocks.BlockEntry<? extends ITIWallBlock>> TO_WALL = new HashMap<>();
 
     private static final HashMap<String, RegistryObject<? extends Block>> BLOCK_REGISTRY_MAP = new HashMap<>();
     public static Function<String, Block> getBlock = (key) -> BLOCK_REGISTRY_MAP.get(key).get();
@@ -64,37 +64,37 @@ public class ITBlocks {
             ADVANCED_COKE_OVEN_BASEHEATER = new BlockEntry<>(
                     "advanced_coke_oven_baseheater",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new AdvancedCokeOvenBaseHeaterBlock(AdvancedCokeOvenBaseHeaterBlockEntity::new, p)
+                    p -> new AdvancedCokeOvenBaseHeaterBlock(AdvancedCokeOvenBaseHeaterIBlockEntity::new, p)
             );
 
             BARREL_CREATIVE = new BlockEntry<>(
                     "barrel_creative",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new BarrelCreativeBlock(BarrelCreativeBlockEntity::new, p)
+                    p -> new BarrelCreativeBlock(BarrelCreativeIBlockEntity::new, p)
             );
 
             BARREL_STEEL = new BlockEntry<>(
                     "barrel_steel",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new BarrelSteelBlock(BarrelSteelBlockEntity::new, p)
+                    p -> new BarrelSteelBlock(BarrelSteelIBlockEntity::new, p)
             );
 
             BARREL_OPEN = new BlockEntry<>(
                     "barrel_open",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new BarrelOpenBlock(BarrelOpenBlockEntity::new, p)
+                    p -> new BarrelOpenBlock(BarrelOpenIBlockEntity::new, p)
             );
 
             ROTOR_CREATIVE = new BlockEntry<>(
                     "rotor_creative",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new RotorCreativeBlock(RotorCreativeBlockEntity::new, p)
+                    p -> new RotorCreativeBlock(RotorCreativeIBlockEntity::new, p)
             );
 
             HEAT_CREATIVE = new BlockEntry<>(
                     "heat_creative",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new HeatCreativeBlock(HeatCreativeBlockEntity::new, p)
+                    p -> new HeatCreativeBlock(HeatCreativeIBlockEntity::new, p)
             );
 
             TECHNOLOGY_ENGINEERING = new BlockEntry<>(
@@ -106,37 +106,37 @@ public class ITBlocks {
             TRASH_ENERGY = new BlockEntry<>(
                     "trash_energy",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new TrashEnergyBlock(TrashEnergyBlockEntity::new, p)
+                    p -> new TrashEnergyBlock(TrashEnergyIBlockEntity::new, p)
             );
 
             TRASH_FLUID = new BlockEntry<>(
                     "trash_fluid",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new TrashFluidBlock(TrashFluidBlockEntity::new, p)
+                    p -> new TrashFluidBlock(TrashFluidIBlockEntity::new, p)
             );
 
             TRASH_ITEM = new BlockEntry<>(
                     "trash_item",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new TrashItemBlock(TrashItemBlockEntity::new, p)
+                    p -> new TrashItemBlock(TrashItemIBlockEntity::new, p)
             );
 
             VALVE_FLUID = new BlockEntry<>(
                     "valve_fluid",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new ValveFluidBlock(ValveFluidBlockEntity::new, p)
+                    p -> new ValveFluidBlock(ValveFluidIBlockEntity::new, p)
             );
 
             VALVE_LOAD = new BlockEntry<>(
                     "valve_load",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new ValveLoadBlock(ValveLoadBlockEntity::new, p)
+                    p -> new ValveLoadBlock(ValveLoadIBlockEntity::new, p)
             );
 
             VALVE_LIMITER = new BlockEntry<>(
                     "valve_limiter",
                     METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new ValveLimiterBlock(ValveLimiterBlockEntity::new, p)
+                    p -> new ValveLimiterBlock(ValveLimiterIBlockEntity::new, p)
             );
         }
     }

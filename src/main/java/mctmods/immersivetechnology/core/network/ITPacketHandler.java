@@ -19,17 +19,17 @@ public class ITPacketHandler {
     public static final SimpleChannel INSTANCE = NetworkRegistry.ChannelBuilder.named(ITLib.rl("main")).networkProtocolVersion(() -> NET_VERSION).serverAcceptedVersions(NET_VERSION::equals).clientAcceptedVersions(NET_VERSION::equals).simpleChannel();
 
     public static void initialize() {
-        registerMessage(ITMessageContainerUpdate.class, ITMessageContainerUpdate::new);
-        registerMessage(ITMessageContainerData.class, ITMessageContainerData::new);
+        registerMessage(ITIMessageContainerUpdate.class, ITIMessageContainerUpdate::new);
+        registerMessage(ITIMessageContainerData.class, ITIMessageContainerData::new);
         registerMessage(ITOSDRequestMessage.class, ITOSDRequestMessage::new);
         registerMessage(ITOSDSyncMessage.class, ITOSDSyncMessage::new);
         registerMessage(ITOSDSyncBlock.class, ITOSDSyncBlock::new);
-        registerMessage(ITMessageTileSync.class, ITMessageTileSync::new);
+        registerMessage(ITIMessageTileSync.class, ITIMessageTileSync::new);
     }
 
     private static int id = 0;
 
-    public static <T extends ITMessage> void registerMessage(Class<T> type, Function<FriendlyByteBuf, T> decoder) { INSTANCE.registerMessage(id++, type, ITMessage::toBytes, decoder, (t, ctx) -> { t.process(ctx); ctx.get().setPacketHandled(true); }); }
+    public static <T extends ITIMessage> void registerMessage(Class<T> type, Function<FriendlyByteBuf, T> decoder) { INSTANCE.registerMessage(id++, type, ITIMessage::toBytes, decoder, (t, ctx) -> { t.process(ctx); ctx.get().setPacketHandled(true); }); }
 
     public static <MSG> void sendToPlayer(Player player, @Nonnull MSG message) { if (player instanceof ServerPlayer serverPlayer) INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), message); }
 

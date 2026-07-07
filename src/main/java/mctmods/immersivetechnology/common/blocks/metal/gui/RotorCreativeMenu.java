@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.gui;
 
-import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeIBlockEntity;
 import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -14,10 +14,10 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class RotorCreativeMenu extends ITContainerMenu {
-    public RotorCreativeBlockEntity tile;
+    public RotorCreativeIBlockEntity tile;
     private int rpm;
 
-    public RotorCreativeMenu(MenuType<?> type, int id, Inventory inv, RotorCreativeBlockEntity tile) {
+    public RotorCreativeMenu(MenuType<?> type, int id, Inventory inv, RotorCreativeIBlockEntity tile) {
         super(ITContainerMenu.blockCtx(type, id, tile));
         this.tile = tile;
         addDataSlot(new DataSlot() { public int get() { return tile.rpm; } public void set(int v) { rpm = v; } });
@@ -26,11 +26,11 @@ public class RotorCreativeMenu extends ITContainerMenu {
     public RotorCreativeMenu(MenuType<?> type, int id, Inventory inv, FriendlyByteBuf buffer) {
         super(ITContainerMenu.clientCtx(type, id));
         BlockPos pos = buffer.readBlockPos();
-        this.tile = (RotorCreativeBlockEntity) inv.player.level().getBlockEntity(pos);
+        this.tile = (RotorCreativeIBlockEntity) inv.player.level().getBlockEntity(pos);
         addDataSlot(new DataSlot() { public int get() { return 0; } public void set(int v) { rpm = v; } });
     }
 
-    public static RotorCreativeMenu makeServer(MenuType<RotorCreativeMenu> type, int id, Inventory inv, RotorCreativeBlockEntity tile) { return new RotorCreativeMenu(type, id, inv, tile); }
+    public static RotorCreativeMenu makeServer(MenuType<RotorCreativeMenu> type, int id, Inventory inv, RotorCreativeIBlockEntity tile) { return new RotorCreativeMenu(type, id, inv, tile); }
 
     public static RotorCreativeMenu makeClient(MenuType<RotorCreativeMenu> type, int id, Inventory inv, FriendlyByteBuf buffer) { return new RotorCreativeMenu(type, id, inv, buffer); }
 
