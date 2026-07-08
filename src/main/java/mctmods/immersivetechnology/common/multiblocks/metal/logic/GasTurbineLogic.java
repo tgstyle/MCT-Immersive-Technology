@@ -51,7 +51,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
@@ -118,11 +117,13 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) { return; }
         float targetLevel = ITLib.remapRange(0, state.effectiveMaxSpeed, 0.2f, 1.0f, state.speed);
-        if (state.currentLevel == 0f) { state.currentLevel = targetLevel; } else { state.currentLevel = state.currentLevel * 0.9f + targetLevel * 0.1f; }
+        if (state.currentLevel == 0f) { state.currentLevel = targetLevel; }
+        else { state.currentLevel = state.currentLevel * 0.9f + targetLevel * 0.1f; }
         float smoothedLevel = state.currentLevel;
         float targetPitch = ITLib.remapRange(0, state.effectiveMaxSpeed, 0.5f, 1.5f, state.speed);
         if (state.currentPitch == 0f) { state.currentPitch = targetPitch; }
-        if (state.currentPitch < 0.5f) { state.currentPitch = 0.5f; } else { state.currentPitch = state.currentPitch * 0.95f + targetPitch * 0.05f; }
+        if (state.currentPitch < 0.5f) { state.currentPitch = 0.5f; }
+        else { state.currentPitch = state.currentPitch * 0.95f + targetPitch * 0.05f; }
         float currentBase = (state.speed / (float) state.effectiveMaxSpeed) * 72f;
         float step = currentBase;
         if (state.animation_fanFadeIn > 0) {
@@ -132,7 +133,8 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         state.animation_fanRotationStep = step;
         state.animation_fanRotation += step;
         state.animation_fanRotation %= 360;
-        if (state.speed > 0) { state.soundGrace = 40; } else if (state.soundGrace > 0) { state.soundGrace--; }
+        if (state.speed > 0) { state.soundGrace = 40; }
+        else if (state.soundGrace > 0) { state.soundGrace--; }
         Vec3 runningPos = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
         Vec3 starterPos = ctx.getLevel().toAbsolute(new Vec3(STARTER_SOUND_POI.getX() + 0.5, STARTER_SOUND_POI.getY() + 0.5, STARTER_SOUND_POI.getZ() + 0.5));
         Vec3 arcPos = ctx.getLevel().toAbsolute(new Vec3(ARC_SOUND_POI.getX() + 0.5, ARC_SOUND_POI.getY() + 0.5, ARC_SOUND_POI.getZ() + 0.5));
@@ -198,7 +200,8 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             float ignitionAtt = (float) Math.max(player.distanceToSqr(sparkPos) / 64, 1);
             level.playLocalSound(sparkPos.x, sparkPos.y, sparkPos.z, ITSounds.gasSpark.get(), SoundSource.BLOCKS, 1 / ignitionAtt, 1, false);
             state.igniteDelay = 3;
-        } else { state.lastIgnited = state.ignited; }
+        }
+        else { state.lastIgnited = state.ignited; }
         if (state.igniteDelay > 0) {
             state.igniteDelay--;
             if (state.igniteDelay == 0 && state.starterRunning) {
@@ -296,12 +299,15 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 if (state.starterRunning) {
                     state.speed = Math.min(effectiveMax, state.speed + state.inertia.getSpeedUpRate());
                     state.active = true;
-                } else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
-            } else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
-        } else {
+                }
+                else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
+            }
+            else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
+        }
+        else {
             if (state.isShutdown) { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
             else {
-                if (state.starterRunning && !state.everIgnited) {
+                if (state.starterRunning) {
                     if (state.hasIgniter && canIgnite(state)) {
                         state.stall = true;
                         if (!wasStall) { ignite(state, ctx); }
@@ -334,8 +340,10 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                             state.speed = Math.min(effectiveMax, state.speed + state.inertia.getSpeedUpRate());
                             state.active = true;
                             ctx.markMasterDirty();
-                        } else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
-                    } else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
+                        }
+                        else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
+                    }
+                    else { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
                 }
             }
         }
