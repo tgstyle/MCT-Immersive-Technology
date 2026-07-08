@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiFunction;
 
-public class AdvancedCokeOvenBaseHeaterBlock extends ITEntityBlock<AdvancedCokeOvenBaseHeaterBlockEntity> {
+public class AdvancedCokeOvenBaseHeaterBlock extends ITIEntityBlock<AdvancedCokeOvenBaseHeaterBlockEntity> {
 
     private static final VoxelShape SINGLE_SHAPE = Shapes.block();
     private static final VoxelShape EMPTY_SHAPE = Shapes.empty();
@@ -88,6 +88,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ITEntityBlock<AdvancedCokeO
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof AdvancedCokeOvenBaseHeaterBlockEntity mte) {
             mte.active = false;
+            mte.requestModelDataUpdate();
             mte.markContainingBlockForUpdate(null);
         }
 
@@ -106,6 +107,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ITEntityBlock<AdvancedCokeO
                 dte.dummy = true;
                 dte.masterPos = pos;
                 dte.active = false;
+                dte.requestModelDataUpdate();
                 dte.markContainingBlockForUpdate(null);
             }
         }

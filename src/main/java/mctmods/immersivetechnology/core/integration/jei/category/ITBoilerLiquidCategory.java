@@ -5,7 +5,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidR
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
-import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -13,10 +13,11 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -43,35 +44,34 @@ public class ITBoilerLiquidCategory extends ITRecipeCategory<BoilerLiquidRecipe>
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull BoilerLiquidRecipe recipe, @NotNull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
-        List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
-                .map(fs -> {
-                    FluidStack copy = fs.copy();
-                    copy.setAmount(tankCapacity);
-                    return copy;
-                })
-                .toList();
+        List<FluidStack> inputs = BuiltInRegistries.FLUID.getTag(recipe.fluidTag())
+                .map(holders -> holders.stream()
+                        .map(Holder::value)
+                        .map(fluid -> new FluidStack(fluid, tankCapacity))
+                        .toList())
+                .orElse(List.of());
 
         if (inputs.isEmpty()) {
             ResourceLocation biodieselRl = ResourceLocation.fromNamespaceAndPath("immersiveengineering", "biodiesel");
-            var biodieselFluid = ForgeRegistries.FLUIDS.getValue(biodieselRl);
+            var biodieselFluid = BuiltInRegistries.FLUID.get(biodieselRl);
             FluidStack dummy = new FluidStack(
-                    biodieselFluid != null && biodieselFluid != Fluids.EMPTY ? biodieselFluid : Fluids.LAVA,
+                    biodieselFluid != Fluids.EMPTY ? biodieselFluid : Fluids.LAVA,
                     tankCapacity
             );
             inputs = List.of(dummy);
         }
 
         var inputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 80, 20)
-                .addIngredients(ForgeTypes.FLUID_STACK, inputs)
+                .addIngredients(NeoForgeTypes.FLUID_STACK, inputs)
                 .setFluidRenderer(tankCapacity, false, 16, 47);
 
         inputSlot.addRichTooltipCallback((slotView, tooltip) ->
-                slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                slotView.getDisplayedIngredient(NeoForgeTypes.FLUID_STACK).ifPresent(fs ->
                         ITFluidInfoArea.fillTooltip(fs, tankCapacity, tooltip::add)));
     }
 
     private int getTankCapacity(@NotNull BoilerLiquidRecipe recipe) {
-        return recipe.input.getAmount();
+        return recipe.amount();
     }
 
     @Override

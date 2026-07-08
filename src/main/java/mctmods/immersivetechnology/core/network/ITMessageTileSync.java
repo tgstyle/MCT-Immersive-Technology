@@ -2,49 +2,46 @@ package mctmods.immersivetechnology.core.network;
 
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
+import io.netty.buffer.ByteBuf;
+import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
+@SuppressWarnings("unused")
+public record ITMessageTileSync(BlockPos pos, CompoundTag nbt) implements CustomPacketPayload {
 
-public class ITMessageTileSync implements ITMessage {
-    private final BlockPos pos;
-    private final CompoundTag nbt;
+    public static final CustomPacketPayload.Type<ITMessageTileSync> TYPE = new CustomPacketPayload.Type<>(ITLib.rl("tilesync"));
 
-    public ITMessageTileSync(BlockPos pos, CompoundTag nbt) {
-        this.pos = pos;
-        this.nbt = nbt;
+    public static final StreamCodec<ByteBuf, ITMessageTileSync> STREAM_CODEC = StreamCodec.composite(
+            BlockPos.STREAM_CODEC,
+            ITMessageTileSync::pos,
+            ByteBufCodecs.COMPOUND_TAG,
+            ITMessageTileSync::nbt,
+            ITMessageTileSync::new
+    );
+
+    @Override public CustomPacketPayload.@NotNull Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public ITMessageTileSync(FriendlyByteBuf buf) {
-        this.pos = buf.readBlockPos();
-        this.nbt = buf.readNbt();
-    }
-
-    @Override public void toBytes(FriendlyByteBuf buf) {
-        buf.writeBlockPos(this.pos);
-        buf.writeNbt(this.nbt);
-    }
-
-    @SuppressWarnings("resource")
-    @Override public void process(Supplier<NetworkEvent.Context> context) {
-        NetworkEvent.Context ctx = context.get();
-        ServerPlayer player = ctx.getSender();
-        if (player != null) {
-            ctx.enqueueWork(() -> {
-                Level level = player.level();
-                BlockEntity tile = level.getBlockEntity(this.pos);
-                if (tile instanceof ITBaseBlockEntity itbe) {
-                    itbe.receiveMessageFromClient(this.nbt);
-                } else if (tile instanceof ConnectorTimerBlockEntity timer) {
-                    timer.receiveMessageFromClient(this.nbt);
-                }
-            });
-        }
+    public static void handle(ITMessageTileSync message, IPayloadContext context) {
+        ServerPlayer player = (ServerPlayer) context.player();
+        context.enqueueWork(() -> {
+            Level level = player.level();
+            BlockEntity tile = level.getBlockEntity(message.pos());
+            if (tile instanceof ITBaseBlockEntity itbe) {
+                itbe.receiveMessageFromClient(message.nbt());
+            } else if (tile instanceof ConnectorTimerBlockEntity timer) {
+                timer.receiveMessageFromClient(message.nbt());
+            }
+        });
     }
 }

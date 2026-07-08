@@ -1,63 +1,76 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import malte0811.dualcodecs.DualMapCodec;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ElectrolyticCrucibleBatteryRecipeSerializer extends IERecipeSerializer<ElectrolyticCrucibleBatteryRecipe> {
-
     @Override public ItemStack getIcon() { return ITMultiblockProvider.ELECTROLYTIC_CRUCIBLE_BATTERY.iconStack(); }
 
-    @Override public ElectrolyticCrucibleBatteryRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext context) {
-        FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
-        FluidStack fluidOutput0 = json.has("result0") ? ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result0")) : null;
-        FluidStack fluidOutput1 = json.has("result1") ? ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result1")) : null;
-        FluidStack fluidOutput2 = json.has("result2") ? ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result2")) : null;
-        ItemStack itemOutput = json.has("item_output") ? ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "item_output")) : ItemStack.EMPTY;
-        int energy = GsonHelper.getAsInt(json, "energy");
-        int time = GsonHelper.getAsInt(json, "time");
-        return new ElectrolyticCrucibleBatteryRecipe(recipeID, input, fluidOutput0, fluidOutput1, fluidOutput2, itemOutput, energy, time);
-    }
+    @Override
+    protected DualMapCodec<RegistryFriendlyByteBuf, ElectrolyticCrucibleBatteryRecipe> codecs() {
+        MapCodec<TagKey<Fluid>> fluidTagCodec = ResourceLocation.CODEC
+                .xmap(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location)
+                .fieldOf("inputTag");
 
-    @Override @Nullable public ElectrolyticCrucibleBatteryRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
-        FluidTagInput input = FluidTagInput.read(buffer);
-        boolean hasOut0 = buffer.readBoolean();
-        FluidStack out0 = hasOut0 ? buffer.readFluidStack() : null;
-        boolean hasOut1 = buffer.readBoolean();
-        FluidStack out1 = hasOut1 ? buffer.readFluidStack() : null;
-        boolean hasOut2 = buffer.readBoolean();
-        FluidStack out2 = hasOut2 ? buffer.readFluidStack() : null;
-        boolean hasItem = buffer.readBoolean();
-        ItemStack itemOut = hasItem ? buffer.readItem() : ItemStack.EMPTY;
-        int energy = buffer.readInt();
-        int time = buffer.readInt();
-        return new ElectrolyticCrucibleBatteryRecipe(recipeId, input, out0, out1, out2, itemOut, energy, time);
-    }
+        MapCodec<Integer> amountCodec = Codec.INT.fieldOf("inputAmount");
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, ElectrolyticCrucibleBatteryRecipe recipe) {
-        recipe.fluidInput0.write(buffer);
-        buffer.writeBoolean(recipe.fluidOutput0 != null);
-        if (recipe.fluidOutput0 != null) buffer.writeFluidStack(recipe.fluidOutput0);
-        buffer.writeBoolean(recipe.fluidOutput1 != null);
-        if (recipe.fluidOutput1 != null) buffer.writeFluidStack(recipe.fluidOutput1);
-        buffer.writeBoolean(recipe.fluidOutput2 != null);
-        if (recipe.fluidOutput2 != null) buffer.writeFluidStack(recipe.fluidOutput2);
-        boolean hasItem = !recipe.itemOutput.isEmpty();
-        buffer.writeBoolean(hasItem);
-        if (hasItem) buffer.writeItem(recipe.itemOutput);
-        buffer.writeInt(recipe.getTotalProcessEnergy());
-        buffer.writeInt(recipe.getTotalProcessTime());
+        MapCodec<FluidStack> fluidOutput0Codec = FluidStack.OPTIONAL_CODEC.optionalFieldOf("result0", FluidStack.EMPTY);
+        MapCodec<FluidStack> fluidOutput1Codec = FluidStack.OPTIONAL_CODEC.optionalFieldOf("result1", FluidStack.EMPTY);
+        MapCodec<FluidStack> fluidOutput2Codec = FluidStack.OPTIONAL_CODEC.optionalFieldOf("result2", FluidStack.EMPTY);
+
+        MapCodec<ItemStack> itemOutputCodec = ItemStack.OPTIONAL_CODEC.optionalFieldOf("itemOutput", ItemStack.EMPTY);
+
+        MapCodec<ElectrolyticCrucibleBatteryRecipe> mapCodec = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                fluidTagCodec.forGetter(ElectrolyticCrucibleBatteryRecipe::fluidTag),
+                amountCodec.forGetter(ElectrolyticCrucibleBatteryRecipe::amount),
+                fluidOutput0Codec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput0(), FluidStack.EMPTY)),
+                fluidOutput1Codec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput1(), FluidStack.EMPTY)),
+                fluidOutput2Codec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput2(), FluidStack.EMPTY)),
+                itemOutputCodec.forGetter(ElectrolyticCrucibleBatteryRecipe::itemOutput),
+                Codec.INT.fieldOf("energy").forGetter(ElectrolyticCrucibleBatteryRecipe::energy),
+                Codec.INT.fieldOf("time").forGetter(ElectrolyticCrucibleBatteryRecipe::time)
+        ).apply(instance, ElectrolyticCrucibleBatteryRecipe::new));
+
+        StreamCodec<RegistryFriendlyByteBuf, ElectrolyticCrucibleBatteryRecipe> streamCodec = new StreamCodec<>() {
+            @Override
+            public @NotNull ElectrolyticCrucibleBatteryRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+                TagKey<Fluid> fluidTag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
+                int amount = buf.readVarInt();
+                FluidStack out0 = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
+                FluidStack out1 = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
+                FluidStack out2 = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
+                ItemStack itemOut = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
+                int energy = buf.readVarInt();
+                int time = buf.readVarInt();
+                return new ElectrolyticCrucibleBatteryRecipe(fluidTag, amount, out0.isEmpty() ? null : out0, out1.isEmpty() ? null : out1, out2.isEmpty() ? null : out2, itemOut, energy, time);
+            }
+
+            @Override
+            public void encode(@NotNull RegistryFriendlyByteBuf buf, ElectrolyticCrucibleBatteryRecipe recipe) {
+                ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.fluidTag());
+                buf.writeVarInt(recipe.amount());
+                FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, java.util.Objects.requireNonNullElse(recipe.fluidOutput0(), FluidStack.EMPTY));
+                FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, java.util.Objects.requireNonNullElse(recipe.fluidOutput1(), FluidStack.EMPTY));
+                FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, java.util.Objects.requireNonNullElse(recipe.fluidOutput2(), FluidStack.EMPTY));
+                ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, recipe.itemOutput());
+                buf.writeVarInt(recipe.energy());
+                buf.writeVarInt(recipe.time());
+            }
+        };
+        return new DualMapCodec<>(mapCodec, streamCodec);
     }
 }

@@ -14,20 +14,12 @@ public class ITEnums {
         public static final ITEnums.IOSideConfig[] VALUES = values();
         final String texture;
 
-        IOSideConfig(String texture) {
-            this.texture = texture;
-        }
+        IOSideConfig(String texture) { this.texture = texture; }
 
-        @NotNull public String getSerializedName() {
-            return this.toString().toLowerCase(Locale.ENGLISH);
-        }
+        @NotNull public String getSerializedName() { return this.toString().toLowerCase(Locale.ENGLISH); }
 
-        public String getTextureName() {
-            return this.texture;
-        }
+        public String getTextureName() { return this.texture; }
 
-        public static ITEnums.IOSideConfig next(ITEnums.IOSideConfig current) {
-            return current == INPUT ? OUTPUT : (current == OUTPUT ? NONE : INPUT);
-        }
+        public static ITEnums.IOSideConfig next(ITEnums.IOSideConfig current) { return current == INPUT ? OUTPUT : (current == OUTPUT ? NONE : INPUT); }
     }
 }

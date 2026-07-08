@@ -1,0 +1,11 @@
+{
+  "type": "immersivetechnology:melting",
+  "inputAmount": 1000,
+  "inputTag": "immersivetechnology:heated_salt_slurry",
+  "output": {
+    "amount": 500,
+    "id": "immersivetechnology:molten_salt"
+  },
+  "requiredTemp": 1000.0,
+  "time": 20
+}

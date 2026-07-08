@@ -1,0 +1,17 @@
+{
+  "automatic_culling": true,
+  "emissive_ambient": true,
+  "flip_v": true,
+  "loader": "neoforge:obj",
+  "model": "immersivetechnology:models/block/metal/obj/valve_fluid/valve_fluid.obj",
+  "render_type": "minecraft:cutout",
+  "shade_quads": true,
+  "textures": {
+    "particle": "immersivetechnology:block/metal/valve_fluid"
+  },
+  "visibility": {
+    "Handle_Closed": false,
+    "Handle_Open": true,
+    "Pipe": true
+  }
+}

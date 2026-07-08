@@ -7,8 +7,8 @@ import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHan
 import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler.IEnergyWire;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
+import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.ITIServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
@@ -23,11 +23,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,10 +35,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock.ROTATION;
-import static mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock.OPEN;
-import static net.minecraftforge.common.capabilities.ForgeCapabilities.ENERGY;
 
-public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITServerTickableBE, IImmersiveConnectable, EnergyConnector, ITBlockInterfaces.IMirrorAble {
+public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITIServerTickableBE, IImmersiveConnectable, EnergyConnector, ITIBlockInterfaces.IMirrorAble {
     protected static final int RIGHT_INDEX = 0;
     protected static final int LEFT_INDEX = 1;
     protected WireType leftType;
@@ -137,13 +134,13 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
 
     private int getTransferLimit(boolean outputWired, IEnergyStorage outputStorage) {
         int canAccept = Integer.MAX_VALUE;
-        canAccept = timeLimit > 0 ? Math.min(Math.max(timeLimit - longToInt(acceptedAmount), 0), canAccept) : canAccept;
+        canAccept = timeLimit > 0 ? Math.clamp(timeLimit - longToInt(acceptedAmount), 0, canAccept) : canAccept;
         if (outputWired) {
-            canAccept = keepSize > 0 ? Math.min(Math.max(keepSize - (int) bufferedEnergy, 0), canAccept) : canAccept;
+            canAccept = keepSize > 0 ? Math.clamp(keepSize - (int) bufferedEnergy, 0, canAccept) : canAccept;
             canAccept = Math.min(canAccept, getWireRate(false));
         } else {
             if (outputStorage == null) { canAccept = 0; }
-            else { canAccept = keepSize > 0 ? Math.min(Math.max(keepSize - outputStorage.getEnergyStored(), 0), canAccept) : canAccept; }
+            else { canAccept = keepSize > 0 ? Math.clamp(keepSize - outputStorage.getEnergyStored(), 0, canAccept) : canAccept; }
         }
         canAccept = packetLimit > 0 ? Math.min(canAccept, packetLimit) : canAccept;
         if (redstoneMode > 0) canAccept = (int) (canAccept * ((redstoneMode == 1 ? 15 - getRSPower() : getRSPower()) / 15.0));
@@ -201,24 +198,14 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITSe
         if (level == null) return null;
         Direction inputDir = getInputDir();
         BlockPos srcPos = worldPosition.relative(inputDir);
-        BlockEntity src = level.getBlockEntity(srcPos);
-        if (src != null) {
-            LazyOptional<IEnergyStorage> cap = src.getCapability(ENERGY, inputDir.getOpposite());
-            return cap.resolve().orElse(null);
-        }
-        return null;
+        return level.getCapability(Capabilities.EnergyStorage.BLOCK, srcPos, inputDir.getOpposite());
     }
 
     public IEnergyStorage getOutputEnergy() {
         if (level == null) return null;
         Direction outputDir = getOutputDir();
         BlockPos dstPos = worldPosition.relative(outputDir);
-        BlockEntity dst = level.getBlockEntity(dstPos);
-        if (dst != null) {
-            LazyOptional<IEnergyStorage> cap = dst.getCapability(ENERGY, outputDir.getOpposite());
-            return cap.resolve().orElse(null);
-        }
-        return null;
+        return level.getCapability(Capabilities.EnergyStorage.BLOCK, dstPos, outputDir.getOpposite());
     }
 
     @NotNull protected LocalWireNetwork getLocalNet(int cpIndex) {

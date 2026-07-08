@@ -1,0 +1,10 @@
+{
+  "type": "immersivetechnology:radiator",
+  "amount": 500,
+  "fluidTag": "immersivetechnology:exhaust_steam",
+  "output": {
+    "amount": 250,
+    "id": "immersivetechnology:distilled_water"
+  },
+  "time": 80
+}

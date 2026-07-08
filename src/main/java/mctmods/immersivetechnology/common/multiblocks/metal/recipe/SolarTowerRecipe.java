@@ -1,52 +1,74 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import com.google.common.collect.Lists;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.SolarTowerRecipeSerializer;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.RegistryObject;
-
-import javax.annotation.Nullable;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SolarTowerRecipe extends MultiblockRecipe {
-    public static RegistryObject<IERecipeSerializer<SolarTowerRecipe>> SERIALIZER;
+    public static DeferredHolder<RecipeSerializer<?>, SolarTowerRecipeSerializer> SERIALIZER;
     public static final CachedRecipeList<SolarTowerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.SOLAR_TOWER);
 
-    public final FluidTagInput input;
-    public final FluidStack fluidOutput;
+    private final ResourceLocation id;
+    public final TagKey<Fluid> inputTag;
+    private final int inputAmount;
+    @Nullable public final FluidStack fluidOutput;
     private final int time;
     public final double requiredTemp;
 
-    public SolarTowerRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time, double requiredTemp) {
-        super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.SOLAR_TOWER, id);
-        this.input = input;
+    public SolarTowerRecipe(ResourceLocation id, TagKey<Fluid> inputTag, int inputAmount, @Nullable FluidStack fluidOutput, int time, double requiredTemp) {
+        super(TagOutput.EMPTY, ITRecipeTypes.SOLAR_TOWER, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        this.id = id;
+        this.inputTag = inputTag;
+        this.inputAmount = inputAmount;
         this.fluidOutput = fluidOutput;
         this.time = time;
         this.requiredTemp = requiredTemp;
-        this.fluidInputList = Lists.newArrayList(this.input);
-        this.fluidOutputList = fluidOutput == null ? Lists.newArrayList() : Lists.newArrayList(fluidOutput);
+    }
+
+    public SolarTowerRecipe(TagKey<Fluid> inputTag, int inputAmount, @Nullable FluidStack fluidOutput, int time, double requiredTemp) {
+        this(ResourceLocation.fromNamespaceAndPath("immersivetechnology", "codec_generated"), inputTag, inputAmount, fluidOutput, time, requiredTemp);
+    }
+
+    public ResourceLocation getId() { return id; }
+    public TagKey<Fluid> inputTag() { return inputTag; }
+    public int inputAmount() { return inputAmount; }
+    public int getInputAmount() { return inputAmount; }
+    public FluidStack fluidOutput() { return fluidOutput; }
+
+    public boolean matches(FluidStack stack) {
+        return stack != null && stack.is(this.inputTag);
     }
 
     @Nullable public static SolarTowerRecipe findRecipe(Level level, FluidStack fluid) {
         if (fluid == null || fluid.isEmpty()) return null;
-        for (SolarTowerRecipe recipe : RECIPES.getRecipes(level)) {
-            if (recipe.input.testIgnoringAmount(fluid) && fluid.getAmount() >= recipe.input.getAmount()) return recipe;
+        for (var holder : RECIPES.getRecipes(level)) {
+            SolarTowerRecipe recipe = holder.value();
+            if (recipe.matches(fluid) && fluid.getAmount() >= recipe.getInputAmount()) return recipe;
         }
         return null;
     }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override @NotNull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
-    @Override public int getMultipleProcessTicks() { return 0; }
+    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 
     @Override public int getTotalProcessTime() { return time; }
 
     @Override public int getTotalProcessEnergy() { return 0; }
+
+    @Override public int getMultipleProcessTicks() { return 0; }
 }

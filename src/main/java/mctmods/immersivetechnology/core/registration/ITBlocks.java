@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.core.registration;
 
 import mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.ITStairsBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITWallBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIStairsBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIWallBlock;
 import mctmods.immersivetechnology.common.blocks.metal.*;
 import mctmods.immersivetechnology.common.blocks.metal.logic.*;
 import mctmods.immersivetechnology.common.blocks.stone.ReinforcedCokeBrick;
@@ -21,10 +21,9 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -33,12 +32,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ITBlocks {
-    public static final DeferredRegister<Block> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCKS, ITLib.MODID);
+    public static final DeferredRegister.Blocks REGISTER = DeferredRegister.createBlocks(ITLib.MODID);
     public static final Map<ResourceLocation, ITBlocks.BlockEntry<? extends SlabBlock>> TO_SLAB = new HashMap<>();
-    public static final Map<ResourceLocation, ITBlocks.BlockEntry<? extends ITStairsBlock>> TO_STAIRS = new HashMap<>();
-    public static final Map<ResourceLocation, ITBlocks.BlockEntry<? extends ITWallBlock>> TO_WALL = new HashMap<>();
+    public static final Map<ResourceLocation, ITBlocks.BlockEntry<? extends ITIStairsBlock>> TO_STAIRS = new HashMap<>();
+    public static final Map<ResourceLocation, ITBlocks.BlockEntry<? extends ITIWallBlock>> TO_WALL = new HashMap<>();
 
-    private static final HashMap<String, RegistryObject<? extends Block>> BLOCK_REGISTRY_MAP = new HashMap<>();
+    private static final HashMap<String, Supplier<? extends Block>> BLOCK_REGISTRY_MAP = new HashMap<>();
     public static Function<String, Block> getBlock = (key) -> BLOCK_REGISTRY_MAP.get(key).get();
 
     private static final Supplier<BlockBehaviour.Properties> DEFAULT_METAL_PROPERTIES = () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0F, 15.0F).requiresCorrectToolForDrops();
@@ -160,12 +159,12 @@ public class ITBlocks {
         private static void init() {
             REINFORCED_COKE_BRICK = new BlockEntry<>(
                     "reinforced_coke_brick",
-                    () -> BlockBehaviour.Properties.copy(Blocks.STONE),
+                    () -> BlockBehaviour.Properties.ofFullCopy(Blocks.STONE),
                     ReinforcedCokeBrick::new
             );
             SLAB_REINFORCED_COKE_BRICK = new BlockEntry<>(
                     "slab_reinforced_coke_brick",
-                    () -> BlockBehaviour.Properties.copy(Blocks.STONE),
+                    () -> BlockBehaviour.Properties.ofFullCopy(Blocks.STONE),
                     SlabReinforcedCokeBrick::new
             );
         }
@@ -191,7 +190,7 @@ public class ITBlocks {
         TO_SLAB.put(Stone.REINFORCED_COKE_BRICK.getId(), Stone.SLAB_REINFORCED_COKE_BRICK);
     }
 
-    public static List<? extends Block> getITBlocks() { return REGISTER.getEntries().stream().map(RegistryObject::get).collect(Collectors.toList()); }
+    public static List<? extends Block> getITBlocks() { return REGISTER.getEntries().stream().map(Supplier::get).collect(Collectors.toList()); }
 
     public static void init(IEventBus event) {
         initBlocks();
@@ -206,7 +205,7 @@ public class ITBlocks {
     public static final class BlockEntry<T extends Block> implements Supplier<T>, ItemLike {
         public static final Collection<BlockEntry<?>> ALL_ENTRIES = new ArrayList<>();
 
-        private final RegistryObject<T> regObject;
+        private final DeferredBlock<T> regObject;
         private final Supplier<BlockBehaviour.Properties> properties;
 
         public BlockEntry(String name, Supplier<BlockBehaviour.Properties> properties, Function<BlockBehaviour.Properties, T> make) {
@@ -219,6 +218,6 @@ public class ITBlocks {
         public ResourceLocation getId() { return regObject.getId(); }
         public BlockBehaviour.Properties getProperties() { return properties.get(); }
         @Override public @NotNull Item asItem() { return get().asItem(); }
-        public RegistryObject<? extends Block> getRegObject() { return regObject; }
+        public Supplier<? extends Block> getRegObject() { return regObject; }
     }
 }

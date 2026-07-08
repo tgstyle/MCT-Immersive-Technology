@@ -22,7 +22,6 @@ public class ConnectorTimerMenu extends ITContainerMenu {
         this.tile = tile;
     }
 
-    @SuppressWarnings("resource")
     public ConnectorTimerMenu(MenuType<ConnectorTimerMenu> type, int id, Inventory inv, FriendlyByteBuf buffer) {
         super(clientCtx(type, id));
         BlockPos pos = buffer.readBlockPos();

@@ -1,0 +1,6 @@
+{
+  "parent": "neoforge:item/bucket",
+  "flip_gas": false,
+  "fluid": "immersivetechnology:heated_gravel_slurry",
+  "loader": "neoforge:fluid_container"
+}

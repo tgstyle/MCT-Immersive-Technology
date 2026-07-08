@@ -1,0 +1,134 @@
+{
+  "advanced_coke_oven": {
+    "sounds": [
+      "immersivetechnology:advanced_coke_oven"
+    ],
+    "subtitle": "subtitles.immersivetechnology.advanced_coke_oven"
+  },
+  "advanced_coke_oven_fan": {
+    "sounds": [
+      "immersivetechnology:advanced_coke_oven_fan"
+    ],
+    "subtitle": "subtitles.immersivetechnology.advanced_coke_oven_fan"
+  },
+  "alternator": {
+    "sounds": [
+      "immersivetechnology:alternator"
+    ],
+    "subtitle": "subtitles.immersivetechnology.alternator"
+  },
+  "boiler_liquid": {
+    "sounds": [
+      "immersivetechnology:boiler_liquid"
+    ],
+    "subtitle": "subtitles.immersivetechnology.boiler_liquid"
+  },
+  "boiler_solid": {
+    "sounds": [
+      "immersivetechnology:boiler_solid"
+    ],
+    "subtitle": "subtitles.immersivetechnology.boiler_solid"
+  },
+  "cooling_tower": {
+    "sounds": [
+      "immersivetechnology:cooling_tower"
+    ],
+    "subtitle": "subtitles.immersivetechnology.cooling_tower"
+  },
+  "dance": {
+    "sounds": [
+      "immersivetechnology:dance"
+    ],
+    "subtitle": "subtitles.immersivetechnology.dance"
+  },
+  "distiller": {
+    "sounds": [
+      "immersivetechnology:distiller"
+    ],
+    "subtitle": "subtitles.immersivetechnology.distiller"
+  },
+  "electrolytic_crucible_battery": {
+    "sounds": [
+      "immersivetechnology:electrolytic_crucible_battery"
+    ],
+    "subtitle": "subtitles.immersivetechnology.electrolytic_crucible_battery"
+  },
+  "gas_arc": {
+    "sounds": [
+      "immersivetechnology:gas_arc"
+    ],
+    "subtitle": "subtitles.immersivetechnology.gas_arc"
+  },
+  "gas_ignite": {
+    "sounds": [
+      "immersivetechnology:gas_ignite"
+    ],
+    "subtitle": "subtitles.immersivetechnology.gas_ignite"
+  },
+  "gas_running": {
+    "sounds": [
+      "immersivetechnology:gas_running"
+    ],
+    "subtitle": "subtitles.immersivetechnology.gas_running"
+  },
+  "gas_spark": {
+    "sounds": [
+      "immersivetechnology:gas_spark"
+    ],
+    "subtitle": "subtitles.immersivetechnology.gas_spark"
+  },
+  "gas_starter": {
+    "sounds": [
+      "immersivetechnology:gas_starter"
+    ],
+    "subtitle": "subtitles.immersivetechnology.gas_starter"
+  },
+  "heat_exchanger": {
+    "sounds": [
+      "immersivetechnology:heat_exchanger"
+    ],
+    "subtitle": "subtitles.immersivetechnology.heat_exchanger"
+  },
+  "melting_crucible": {
+    "sounds": [
+      "immersivetechnology:melting_crucible"
+    ],
+    "subtitle": "subtitles.immersivetechnology.melting_crucible"
+  },
+  "pilot": {
+    "sounds": [
+      "immersivetechnology:pilot"
+    ],
+    "subtitle": "subtitles.immersivetechnology.pilot"
+  },
+  "pressure_release": {
+    "sounds": [
+      "immersivetechnology:pressure_release"
+    ],
+    "subtitle": "subtitles.immersivetechnology.pressure_release"
+  },
+  "solar_melter": {
+    "sounds": [
+      {
+        "attenuation_distance": 64,
+        "name": "immersivetechnology:solar_melter"
+      }
+    ],
+    "subtitle": "subtitles.immersivetechnology.solar_melter"
+  },
+  "solar_tower": {
+    "sounds": [
+      {
+        "attenuation_distance": 64,
+        "name": "immersivetechnology:solar_tower"
+      }
+    ],
+    "subtitle": "subtitles.immersivetechnology.solar_tower"
+  },
+  "steam_turbine": {
+    "sounds": [
+      "immersivetechnology:steam_turbine"
+    ],
+    "subtitle": "subtitles.immersivetechnology.steam_turbine"
+  }
+}

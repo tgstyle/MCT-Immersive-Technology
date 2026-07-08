@@ -4,9 +4,9 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistra
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
-import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.ITModelOffsetProvider;
-import mctmods.immersivetechnology.core.util.inventory.IITDropInventory;
+import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.ITIModelOffsetProvider;
+import mctmods.immersivetechnology.core.util.inventory.ITIDropInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -16,14 +16,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class ITMultiblockBlockEntityMaster<State extends IMultiblockState> extends MultiblockBlockEntityMaster<State> implements ITBlockInterfaces.IPlayerInteraction, IITDropInventory, ITModelOffsetProvider, ITMultiblockBEHelper {
+public class ITMultiblockBlockEntityMaster<State extends IMultiblockState> extends MultiblockBlockEntityMaster<State> implements ITIBlockInterfaces.IPlayerInteraction, ITIDropInventory, ITIModelOffsetProvider, ITIMultiblockBEHelper {
     private final ITMultiblockBlockEntityCommon<State> common;
     private boolean disassembling = false;
 
@@ -31,7 +31,6 @@ public class ITMultiblockBlockEntityMaster<State extends IMultiblockState> exten
 
     public ITMultiblockBlockEntityMaster(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState, MultiblockRegistration<State> multiblock) { super(type, worldPosition, blockState, multiblock); this.common = new ITMultiblockBlockEntityCommon<>(multiblock, this::getHelper, this::getLevel); }
 
-    @Override public boolean it$isAssembled() { return !disassembling; }
     @Override public boolean it$isDisassembling() { return disassembling; }
     @Override public void it$markDisassembling() { this.disassembling = true; }
 
@@ -46,11 +45,12 @@ public class ITMultiblockBlockEntityMaster<State extends IMultiblockState> exten
 
     @Override @NotNull public ModelData getModelData() { return common.getModelData(); }
 
-    @Override public AABB getRenderBoundingBox() {
+    @SuppressWarnings("unused")
+    public AABB getRenderBoundingBox() {
         IMultiblockContext<State> ctx = getHelper().getContext();
         BlockPos min = ctx.getLevel().toAbsolute(BlockPos.ZERO);
-        Vec3i size = getHelper().getSize(ctx.getLevel().getRawLevel());
+        Vec3i size = getHelper().getMultiblock().size(ctx.getLevel().getRawLevel());
         BlockPos max = ctx.getLevel().toAbsolute(new BlockPos(size.getX() - 1, size.getY() - 1, size.getZ() - 1));
-        return new AABB(min, max.offset(1, 1, 1)).inflate(1);
+        return new AABB(min.getX(), min.getY(), min.getZ(), max.getX() + 1, max.getY() + 1, max.getZ() + 1).inflate(1);
     }
 }

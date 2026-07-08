@@ -9,6 +9,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.CoolingTowerLogic;
+import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelCommonBlockEntity;
 import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.client.Minecraft;
@@ -19,9 +20,9 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 public class OneProbeHelper {
     private static final double solarWorkingHeatLevel = ITCommonConfig.solarTowerWorkingHeatLevel;
@@ -43,12 +44,13 @@ public class OneProbeHelper {
         top.registerProvider(new SolarTowerProvider());
         top.registerProvider(new SteamTurbineProvider());
         top.registerProvider(new SteelSheetmetalTankProvider());
+        top.registerProvider(new BarrelProvider());
     }
 
     private static void addFluidTankDisplay(IProbeInfo probeInfo, FluidTank tank) {
         FluidStack fluid = tank.getFluid();
         int amount = !fluid.isEmpty() ? fluid.getAmount() : 0;
-        String fluidName = !fluid.isEmpty() ? fluid.getDisplayName().getString() : "Empty";
+        String fluidName = !fluid.isEmpty() ? fluid.getHoverName().getString() : "Empty";
         int color = getFluidColor(fluid);
         probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
                 .progress(amount, tank.getCapacity(), probeInfo.defaultProgressStyle().suffix(" mB").numberFormat(NumberFormat.COMPACT).filledColor(color).alternateFilledColor(color).backgroundColor(0xff000000).borderColor(0xffffffff))
@@ -352,7 +354,17 @@ public class OneProbeHelper {
         }
     }
 
-    @SuppressWarnings("resource")
+    public static class BarrelProvider implements IProbeInfoProvider {
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "barrel"); }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
+            BlockEntity be = level.getBlockEntity(data.getPos());
+            if (be instanceof BarrelCommonBlockEntity barrel && barrel.tank != null) {
+                addFluidTankDisplay(probeInfo, barrel.tank);
+            }
+        }
+    }
+
     private static int getFluidColor(@Nullable FluidStack fluid) {
         if (fluid == null || fluid.isEmpty()) { return 0xff555555; }
         IClientFluidTypeExtensions ext = IClientFluidTypeExtensions.of(fluid.getFluid());

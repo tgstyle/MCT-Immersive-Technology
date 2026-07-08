@@ -10,17 +10,13 @@ import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
 import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
 import mctmods.immersivetechnology.client.models.ITDynamicModel;
 import mctmods.immersivetechnology.client.models.ITModelConfigurableSides;
-import mctmods.immersivetechnology.client.models.ITObjLoader;
+import mctmods.immersivetechnology.client.models.obj.ITObjLoader;
 import mctmods.immersivetechnology.client.models.mirror.ITMirroredModelLoader;
 import mctmods.immersivetechnology.client.models.split.ITSplitModelLoader;
 import mctmods.immersivetechnology.client.particles.helper.ITColoredSmokeProvider;
 import mctmods.immersivetechnology.client.particles.helper.ITSmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.*;
-import mctmods.immersivetechnology.common.blocks.metal.gui.RotorCreativeMenu;
-import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
-import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
-import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
-import mctmods.immersivetechnology.common.items.helper.ITFlagItem;
+import mctmods.immersivetechnology.common.items.helper.ITIFlagItem;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITFluids;
@@ -29,32 +25,29 @@ import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mctmods.immersivetechnology.core.registration.ITParticles;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.api.distmarker.Dist;
 
 import java.util.function.Supplier;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ITLib.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = ITLib.MODID, value = Dist.CLIENT)
 public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
@@ -64,22 +57,6 @@ public class ClientProxy extends CommonProxy {
                 ItemBlockRenderTypes.setRenderLayer(entry.getStill(), RenderType.translucent());
                 ItemBlockRenderTypes.setRenderLayer(entry.getFlowing(), RenderType.translucent());
             }
-
-            MenuScreens.register(ITMenuTypes.ADVANCED_COKE_OVEN_MENU.getType(), AdvancedCokeOvenScreen::new);
-            MenuScreens.register(ITMenuTypes.BOILER_LIQUID_MENU.getType(), BoilerLiquidScreen::new);
-            MenuScreens.register(ITMenuTypes.BOILER_SOLID_MENU.getType(), BoilerSolidScreen::new);
-            MenuScreens.register(ITMenuTypes.BOILER_TANK_MENU.getType(), BoilerTankScreen::new);
-            MenuScreens.register(ITMenuTypes.CRATE_CREATIVE.getType(), CrateCreativeScreen::new);
-            MenuScreens.register(ITMenuTypes.DISTILLER_MENU.getType(), DistillerScreen::new);
-            MenuScreens.register(ITMenuTypes.MELTING_CRUCIBLE_MENU.getType(), MeltingCrucibleScreen::new);
-            MenuScreens.register(ITMenuTypes.ROTOR_CREATIVE.getType(), (RotorCreativeMenu menu, Inventory inv, Component title) -> new RotorCreativeScreen(menu, inv));
-            MenuScreens.register(ITMenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
-            MenuScreens.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
-            MenuScreens.register(ITMenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
-            MenuScreens.register(ITMenuTypes.VALVE_FLUID.getType(), (ValveFluidMenu menu, Inventory inv, Component title) -> new ValveFluidScreen(menu, inv));
-            MenuScreens.register(ITMenuTypes.VALVE_LIMITER.getType(), (ValveLimiterMenu menu, Inventory inv, Component title) -> new ValveLimiterScreen(menu, inv));
-            MenuScreens.register(ITMenuTypes.VALVE_LOAD.getType(), (ValveLoadMenu menu, Inventory inv, Component title) -> new ValveLoadScreen(menu, inv));
-            MenuScreens.register(ITMenuTypes.CONNECTOR_TIMER.getType(), ConnectorTimerScreen::new);
 
             ManualInstance instance = ManualHelper.getManual();
             InnerNode<ResourceLocation, ManualEntry> parent_category = instance.getRoot().getOrCreateSubnode(ITLib.rl("main"), 99);
@@ -161,6 +138,25 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
+    public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+        event.register(ITMenuTypes.ADVANCED_COKE_OVEN_MENU.getType(), AdvancedCokeOvenScreen::new);
+        event.register(ITMenuTypes.BOILER_LIQUID_MENU.getType(), BoilerLiquidScreen::new);
+        event.register(ITMenuTypes.BOILER_SOLID_MENU.getType(), BoilerSolidScreen::new);
+        event.register(ITMenuTypes.BOILER_TANK_MENU.getType(), BoilerTankScreen::new);
+        event.register(ITMenuTypes.CRATE_CREATIVE.getType(), CrateCreativeScreen::new);
+        event.register(ITMenuTypes.DISTILLER_MENU.getType(), DistillerScreen::new);
+        event.register(ITMenuTypes.MELTING_CRUCIBLE_MENU.getType(), MeltingCrucibleScreen::new);
+        event.register(ITMenuTypes.ROTOR_CREATIVE.getType(), RotorCreativeScreen::new);
+        event.register(ITMenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
+        event.register(ITMenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
+        event.register(ITMenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
+        event.register(ITMenuTypes.VALVE_FLUID.getType(), ValveFluidScreen::new);
+        event.register(ITMenuTypes.VALVE_LIMITER.getType(), ValveLimiterScreen::new);
+        event.register(ITMenuTypes.VALVE_LOAD.getType(), ValveLoadScreen::new);
+        event.register(ITMenuTypes.CONNECTOR_TIMER.getType(), ConnectorTimerScreen::new);
+    }
+
+    @SubscribeEvent
     public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ITParticles.COLORED_SMOKE.get(), ITColoredSmokeProvider::new);
         event.registerSpriteSet(ITParticles.SMOKE_CUSTOM.get(), ITSmokeCustomProvider::new);
@@ -168,11 +164,11 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void onItemColor(RegisterColorHandlersEvent.Item event) {
-        for (RegistryObject<? extends Item> holder : ITItems.getItemRegistryMap().values()) {
+        for (Supplier<? extends Item> holder : ITItems.getItemRegistryMap().values()) {
             Item i = holder.get();
-            if (i instanceof ITFlagItem) {
+            if (i instanceof ITIFlagItem) {
                 event.register((stack, tintIndex) -> {
-                    if (stack.getItem() instanceof ITFlagItem type) { return type.getColor(tintIndex); }
+                    if (stack.getItem() instanceof ITIFlagItem type) { return type.getColor(tintIndex); }
                     return 0xffffff;
                 }, i);
             }
@@ -205,10 +201,10 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
-        ev.register("obj", ITObjLoader.INSTANCE);
-        ev.register(ITModelConfigurableSides.Loader.NAME.getPath(), new ITModelConfigurableSides.Loader());
-        ev.register(ITMirroredModelLoader.ID.getPath(), ITMirroredModelLoader.INSTANCE);
-        ev.register(ITSplitModelLoader.LOCATION.getPath(), ITSplitModelLoader.INSTANCE);
+        ev.register(ITLib.rl("obj"), ITObjLoader.INSTANCE);
+        ev.register(ITModelConfigurableSides.Loader.NAME, ITModelConfigurableSides.Loader.INSTANCE);
+        ev.register(ITSplitModelLoader.LOCATION, ITSplitModelLoader.INSTANCE);
+        ev.register(ITMirroredModelLoader.ID, ITMirroredModelLoader.INSTANCE);
         RotorModels.ROTOR = new ITDynamicModel("rotor");
         RotorModels.ROTOR_EAST_WEST = new ITDynamicModel("rotor_east_west");
         SolarReflectorModels.SUPPORT = new ITDynamicModel("solar_reflector_support");

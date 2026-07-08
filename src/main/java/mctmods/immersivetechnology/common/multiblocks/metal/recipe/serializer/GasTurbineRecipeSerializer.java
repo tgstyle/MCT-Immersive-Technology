@@ -1,48 +1,64 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import malte0811.dualcodecs.DualMapCodec;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.GasTurbineRecipe;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
 
 public class GasTurbineRecipeSerializer extends IERecipeSerializer<GasTurbineRecipe> {
     @Override public ItemStack getIcon() { return ITMultiblockProvider.GAS_TURBINE.iconStack(); }
 
-    @Override public GasTurbineRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext iContext) {
-        FluidTagInput input = FluidTagInput.deserialize(json.getAsJsonObject("input"));
-        FluidStack fluidOutput = null;
-        if (json.has("output")) fluidOutput = ApiUtils.jsonDeserializeFluidStack(json.getAsJsonObject("output"));
-        int time = GsonHelper.getAsInt(json, "time");
-        float torque = json.has("torque") ? GsonHelper.getAsFloat(json, "torque") : 1.0f;
-        return new GasTurbineRecipe(recipeId, input, fluidOutput, time, torque);
-    }
+    @Override
+    protected DualMapCodec<RegistryFriendlyByteBuf, GasTurbineRecipe> codecs() {
+        MapCodec<TagKey<Fluid>> fluidTagCodec = ResourceLocation.CODEC
+                .xmap(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location)
+                .fieldOf("inputTag");
 
-    @Override @Nullable public GasTurbineRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
-        FluidTagInput input = FluidTagInput.read(buffer);
-        boolean hasOutput = buffer.readBoolean();
-        FluidStack fluidOutput = hasOutput ? buffer.readFluidStack() : null;
-        int time = buffer.readInt();
-        float torque = buffer.readFloat();
-        return new GasTurbineRecipe(recipeId, input, fluidOutput, time, torque);
-    }
+        MapCodec<Integer> amountCodec = Codec.INT.fieldOf("inputAmount");
+        MapCodec<FluidStack> fluidOutputCodec = FluidStack.OPTIONAL_CODEC.optionalFieldOf("output", FluidStack.EMPTY);
+        MapCodec<Integer> timeCodec = Codec.INT.fieldOf("time");
+        MapCodec<Float> torqueCodec = Codec.FLOAT.optionalFieldOf("torque", 1.0f);
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, GasTurbineRecipe recipe) {
-        recipe.input.write(buffer);
-        boolean hasOutput = recipe.fluidOutput != null;
-        buffer.writeBoolean(hasOutput);
-        if (hasOutput) buffer.writeFluidStack(recipe.fluidOutput);
-        buffer.writeInt(recipe.getTotalProcessTime());
-        buffer.writeFloat(recipe.torque);
+        MapCodec<GasTurbineRecipe> mapCodec = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                fluidTagCodec.forGetter(GasTurbineRecipe::fluidTag),
+                amountCodec.forGetter(GasTurbineRecipe::amount),
+                fluidOutputCodec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput(), FluidStack.EMPTY)),
+                timeCodec.forGetter(GasTurbineRecipe::time),
+                torqueCodec.forGetter(GasTurbineRecipe::torque)
+        ).apply(instance, GasTurbineRecipe::new));
+
+        StreamCodec<RegistryFriendlyByteBuf, GasTurbineRecipe> streamCodec = new StreamCodec<>() {
+            @Override
+            public @NotNull GasTurbineRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+                TagKey<Fluid> fluidTag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
+                int amount = buf.readVarInt();
+                FluidStack fluidOutput = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
+                int time = buf.readVarInt();
+                float torque = buf.readFloat();
+                return new GasTurbineRecipe(fluidTag, amount, fluidOutput.isEmpty() ? null : fluidOutput, time, torque);
+            }
+
+            @Override
+            public void encode(@NotNull RegistryFriendlyByteBuf buf, GasTurbineRecipe recipe) {
+                ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.fluidTag());
+                buf.writeVarInt(recipe.amount());
+                FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, java.util.Objects.requireNonNullElse(recipe.fluidOutput(), FluidStack.EMPTY));
+                buf.writeVarInt(recipe.time());
+                buf.writeFloat(recipe.torque());
+            }
+        };
+        return new DualMapCodec<>(mapCodec, streamCodec);
     }
 }

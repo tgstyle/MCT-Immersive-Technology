@@ -12,32 +12,19 @@ public final class ITMultiblockPOIHelper {
 
     private ITMultiblockPOIHelper() {}
 
-    public static List<BlockPos> getPosList(List<PoIJSONSchema> rawPois, String name) {
-        return rawPois.stream()
-                .filter(poi -> poi.name.equals(name))
-                .map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]))
-                .collect(ImmutableList.toImmutableList());
-    }
+    public static List<BlockPos> getPosList(List<PoIJSONSchema> rawPois, String name) { return rawPois.stream().filter(poi -> poi.name.equals(name)).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).collect(ImmutableList.toImmutableList()); }
 
     public static RelativeBlockFace getFacing(List<PoIJSONSchema> rawPois, String name) {
-        List<RelativeBlockFace> facings = rawPois.stream()
-                .filter(poi -> poi.name.equals(name))
-                .flatMap(poi -> poi.relativeFaces.stream())
-                .distinct()
-                .toList();
-        if (facings.size() != 1) {
-            throw new RuntimeException("Inconsistent facings for POI: " + name);
-        }
-        return facings.get(0);
+        List<RelativeBlockFace> facings = rawPois.stream().filter(poi -> poi.name.equals(name)).flatMap(poi -> poi.relativeFaces.stream()).distinct().toList();
+        if (facings.size() != 1) { throw new RuntimeException("Inconsistent facings for POI: " + name); }
+        return facings.getFirst();
     }
 
     public static CapabilityPosition getCapabilityPosition(List<PoIJSONSchema> rawPois, String name) {
         List<BlockPos> positions = getPosList(rawPois, name);
-        if (positions.isEmpty()) {
-            throw new RuntimeException("No POI found for name: " + name);
-        }
+        if (positions.isEmpty()) { throw new RuntimeException("No POI found for name: " + name); }
         RelativeBlockFace face = getFacing(rawPois, name);
-        return new CapabilityPosition(positions.get(0), face);
+        return new CapabilityPosition(positions.getFirst(), face);
     }
 
     public static List<CapabilityPosition> getCapabilityPositions(List<PoIJSONSchema> rawPois, String name) {
@@ -45,14 +32,10 @@ public final class ITMultiblockPOIHelper {
         for (PoIJSONSchema poi : rawPois) {
             if (poi.name.equals(name)) {
                 BlockPos connPos = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
-                for (RelativeBlockFace face : poi.relativeFaces) {
-                    result.add(new CapabilityPosition(connPos, face));
-                }
+                for (RelativeBlockFace face : poi.relativeFaces) { result.add(new CapabilityPosition(connPos, face)); }
             }
         }
-        if (result.isEmpty()) {
-            throw new RuntimeException("No POI found for " + name);
-        }
+        if (result.isEmpty()) { throw new RuntimeException("No POI found for " + name); }
         return ImmutableList.copyOf(result);
     }
 }

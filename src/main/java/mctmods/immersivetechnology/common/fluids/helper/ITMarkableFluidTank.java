@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.fluids.helper;
 
-import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 import java.util.function.Consumer;
 

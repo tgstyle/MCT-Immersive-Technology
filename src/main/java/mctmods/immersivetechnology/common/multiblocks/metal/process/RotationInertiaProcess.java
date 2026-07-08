@@ -25,9 +25,4 @@ public class RotationInertiaProcess {
         double netTorque = torque * ratio - opposing;
         return netTorque / inertia;
     }
-
-    public int getDelta(float ratio, int currentSpeed) {
-        double alpha = getAlpha(ratio, currentSpeed);
-        return (int) Math.round(alpha);
-    }
 }

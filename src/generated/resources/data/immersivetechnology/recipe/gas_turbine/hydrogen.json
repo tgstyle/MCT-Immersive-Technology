@@ -1,0 +1,10 @@
+{
+  "type": "immersivetechnology:gas_turbine",
+  "inputAmount": 100,
+  "inputTag": "immersivetechnology:hydrogen",
+  "output": {
+    "amount": 1000,
+    "id": "immersivetechnology:flue_gas"
+  },
+  "time": 10
+}

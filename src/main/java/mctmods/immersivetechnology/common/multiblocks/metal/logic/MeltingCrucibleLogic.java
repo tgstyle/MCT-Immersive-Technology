@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
@@ -26,33 +27,31 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidActionResult;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.IFluidTank;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLogic.State>, IServerTickableComponent<MeltingCrucibleLogic.State>, IClientTickableComponent<MeltingCrucibleLogic.State>, ITPressurizedFluidOutput<MeltingCrucibleLogic.State> {
+public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLogic.State>, IServerTickableComponent<MeltingCrucibleLogic.State>, IClientTickableComponent<MeltingCrucibleLogic.State>, ITIPressurizedFluidOutput<MeltingCrucibleLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -70,12 +69,14 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(MeltingCrucibleShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
     public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
     public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
     public static final CapabilityPosition ENERGY_INPUT_POI = ITMultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "energy_input0");
     private static final List<BlockPos> FLUID_OUTPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
     private static final RelativeBlockFace OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+    private static final RelativeBlockFace INPUT_FLUID_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
+    private static final RelativeBlockFace OUTPUT_FLUID_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
 
     @Override public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
 
@@ -87,7 +88,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         State state = ctx.getState();
         List<BlockPos> soundPosList = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
         if (soundPosList.isEmpty()) { return; }
-        BlockPos soundBlockPos = soundPosList.get(0);
+        BlockPos soundBlockPos = soundPosList.getFirst();
         Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(soundBlockPos.getX() + 0.5, soundBlockPos.getY() + 0.5, soundBlockPos.getZ() + 0.5));
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) { return; }
@@ -113,8 +114,14 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
 
         FluidStack fs = state.tanks.input().getFluid();
         MeltingRecipe recipe = fs.getAmount() > 0 ? MeltingRecipe.findRecipe(ctx.getLevel().getRawLevel(), fs) : null;
-        if (state.activeRecipe == null && state.activeRecipeId != null) { state.activeRecipe = MeltingRecipe.RECIPES.getById(ctx.getLevel().getRawLevel(), state.activeRecipeId); state.activeRecipeId = null; }
-        if (state.activeRecipe == null || !state.activeRecipe.input.testIgnoringAmount(fs)) { state.activeRecipe = recipe; }
+
+        if (state.activeRecipe == null && state.activeRecipeId != null) {
+            state.activeRecipe = MeltingRecipe.RECIPES.getById(ctx.getLevel().getRawLevel(), state.activeRecipeId);
+            state.activeRecipeId = null;
+        }
+        if (state.activeRecipe == null || !state.activeRecipe.matches(fs)) {
+            state.activeRecipe = recipe;
+        }
 
         boolean shouldRun = state.rsState.isEnabled(ctx);
         int energyThisTick = state.heatLevel >= WORKING_HEAT_LEVEL ? ENERGY_PER_TICK_TO_MAINTAIN : ENERGY_PER_TICK_TO_HEAT;
@@ -125,8 +132,8 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         boolean canProcess = shouldRun && state.activeRecipe != null && state.heatLevel >= state.activeRecipe.requiredTemp;
         state.active = state.processor.tickServer(state, ctx.getLevel(), canProcess);
 
-        if (state.activeRecipe != null) {
-            tryEnqueueProcess(state, ctx.getLevel().getRawLevel(), state.activeRecipe);
+        if (state.activeRecipe != null && recipe != null) {
+            tryEnqueueProcess(state, ctx.getLevel().getRawLevel(), fs);
         }
 
         tryEmptyContainer(state.tanks.input(), state.inventory);
@@ -167,7 +174,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         if (!result.isSuccess()) { return; }
         ItemStack emptyContainer = result.getResult();
         ItemStack outputStack = inv.getStackInSlot(SLOT_INPUT_EMPTY);
-        if (!outputStack.isEmpty() && !ItemHandlerHelper.canItemStacksStack(outputStack, emptyContainer)) { return; }
+        if (!outputStack.isEmpty() && !ItemStack.isSameItemSameComponents(outputStack, emptyContainer)) { return; }
         if (outputStack.getCount() + emptyContainer.getCount() > emptyContainer.getMaxStackSize()) { return; }
         result = FluidUtils.tryEmptyContainer(filledContainer, tank, FluidType.BUCKET_VOLUME, FluidAction.EXECUTE);
         filledContainer.shrink(1);
@@ -176,30 +183,42 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         else { outputStack.grow(result.getResult().getCount()); }
     }
 
-    private void tryEnqueueProcess(State state, Level level, MeltingRecipe recipe) {
+    private void tryEnqueueProcess(State state, Level level, FluidStack currentInput) {
         if (state.processor.getQueueSize() >= state.processor.getMaxQueueSize()) { return; }
-        if (recipe == null) { return; }
+        RecipeHolder<MeltingRecipe> recipeHolder = MeltingRecipe.findRecipeHolder(level, currentInput);
+        if (recipeHolder == null) { return; }
+        MeltingRecipe recipe = recipeHolder.value();
         if (state.heatLevel < recipe.requiredTemp) { return; }
         FluidStack inputFluid = state.tanks.input().getFluid();
-        if (inputFluid.getAmount() < recipe.input.getAmount()) { return; }
-        FluidStack outputFluid = recipe.fluidOutput;
+        if (inputFluid.getAmount() < recipe.getInputAmount()) { return; }
+        FluidStack outputFluid = recipe.fluidOutput();
         if (outputFluid != null && !outputFluid.isEmpty() && state.tanks.output().getFluidAmount() + outputFluid.getAmount() > state.tanks.output().getCapacity()) { return; }
-        MeltingCrucibleProcess process = new MeltingCrucibleProcess(recipe);
-        process.setInputTanks(0);
+        MeltingCrucibleProcess process = new MeltingCrucibleProcess(recipeHolder);
         state.processor.addProcessToQueue(process, level, false);
     }
 
-    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
-        State state = ctx.getState();
-        if (cap == ForgeCapabilities.ENERGY) {
-            if (position.posInMultiblock().equals(ENERGY_INPUT_POI.posInMultiblock()) && (position.side() == null || position.side() == ENERGY_INPUT_POI.side())) { return state.energyCap.cast(ctx); }
-        } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (INPUT_FLUID_POIS.contains(position.posInMultiblock())) { return state.inputCap.cast(ctx); }
-            if (OUTPUT_FLUID_POIS.contains(position.posInMultiblock())) { return state.outputCap.cast(ctx); }
-        } else if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return state.invCap.cast(ctx);
-        }
-        return LazyOptional.empty();
+    @Override
+    public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+        register.register(Capabilities.EnergyStorage.BLOCK, (state, position) -> {
+            BlockPos localPos = position.posInMultiblock();
+            RelativeBlockFace side = position.side();
+            if (localPos.equals(ENERGY_INPUT_POI.posInMultiblock()) && (side == null || side == ENERGY_INPUT_POI.side())) {
+                return state.energy;
+            }
+            return null;
+        });
+        register.register(Capabilities.FluidHandler.BLOCK, (state, position) -> {
+            BlockPos localPos = position.posInMultiblock();
+            RelativeBlockFace side = position.side();
+            if (INPUT_FLUID_POIS.contains(localPos) && (side == null || side == INPUT_FLUID_FACING)) {
+                return state.inputCap;
+            }
+            if (OUTPUT_FLUID_POIS.contains(localPos) && (side == null || side == OUTPUT_FLUID_FACING)) {
+                return state.outputCap;
+            }
+            return null;
+        });
+        register.register(Capabilities.ItemHandler.BLOCK, (state, position) -> state.invCap);
     }
 
     @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
@@ -208,13 +227,12 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return MeltingCrucibleShape.GETTER; }
 
-    public static class State implements IMultiblockState, ITProcessContext.ProcessContextInMachine<MeltingRecipe>, ITDisplayContext {
+    public static class State implements IMultiblockState, ITIProcessContext.IProcessContextInMachine<MeltingRecipe>, ITIDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final MeltingCrucibleTank tanks;
-        public final StoredCapability<IEnergyStorage> energyCap;
-        public final StoredCapability<IFluidHandler> inputCap;
-        public final StoredCapability<IFluidHandler> outputCap;
-        public final StoredCapability<IItemHandler> invCap;
+        public IFluidHandler inputCap;
+        public IFluidHandler outputCap;
+        public IItemHandler invCap;
         public final ITSlotwiseItemHandler inventory;
         private final IFluidTank[] tankArray;
         public final MultiblockProcessor.InMachineProcessor<MeltingRecipe> processor;
@@ -241,46 +259,50 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
                     ),
                     onChanged
             );
-            this.inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input(), false, true, onChanged));
-            this.outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output(), true, false, onChanged));
-            this.invCap = new StoredCapability<>(inventory);
+            this.inputCap = new ITArrayFluidHandler(tanks.input(), false, true, onChanged);
+            this.outputCap = new ITArrayFluidHandler(tanks.output(), true, false, onChanged);
+            this.invCap = inventory;
             this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
-            this.energyCap = new StoredCapability<>(this.energy);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, MeltingRecipe.RECIPES::getById);
         }
 
         public ITSlotwiseItemHandler getInventory() { return inventory; }
         public MeltingCrucibleTank getTanks() { return tanks; }
 
-        @Override public void writeSaveNBT(CompoundTag nbt) {
-            nbt.put("energy", energy.serializeNBT());
-            nbt.put("tanks", this.tanks.toNBT());
-            nbt.put("processor", processor.toNBT());
-            nbt.put("inventory", inventory.serializeNBT());
+        @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            nbt.put("energy", energy.serializeNBT(provider));
+            nbt.put("tanks", this.tanks.toNBT(provider));
+            nbt.put("processor", processor.toNBT(provider));
+            nbt.put("inventory", inventory.serializeNBT(provider));
             nbt.putBoolean("active", active);
             nbt.putDouble("heatLevel", heatLevel);
             if (activeRecipe != null) { nbt.putString("activeRecipe", activeRecipe.getId().toString()); }
         }
 
-        @Override public void readSaveNBT(CompoundTag nbt) {
-            energy.deserializeNBT(nbt.get("energy"));
-            this.tanks.readNBT(nbt.getCompound("tanks"));
-            this.processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), MeltingCrucibleProcess::new);
-            this.inventory.deserializeNBT(nbt.getCompound("inventory"));
+        @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            CompoundTag energyTag = nbt.getCompound("energy");
+            if (!energyTag.isEmpty()) {
+                energy.deserializeNBT(provider, energyTag);
+            }
+            this.tanks.readNBT(nbt.getCompound("tanks"), provider);
+            this.processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), MeltingCrucibleProcess::new, provider);
+            this.inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
             active = nbt.getBoolean("active");
             heatLevel = nbt.getDouble("heatLevel");
             if (nbt.contains("activeRecipe")) { activeRecipeId = ResourceLocation.tryParse(nbt.getString("activeRecipe")); }
             tanksDirty = false;
         }
 
-        @Override public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             CompoundTag display = new CompoundTag();
-            writeDisplaySyncNBT(display);
+            writeDisplaySyncNBT(display, provider);
             nbt.put("display", display);
         }
 
-        @Override public void readSyncNBT(CompoundTag nbt) {
-            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        @Override public void readSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) {
+                readDisplaySyncNBT(nbt.getCompound("display"), provider);
+            }
         }
 
         @Override public AveragingEnergyStorage getEnergy() { return energy; }
@@ -289,21 +311,24 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         @Override public int[] getOutputSlots() { return new int[0]; }
         @Override public boolean isActive() { return active; }
 
-        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("active", active);
-            nbt.put("tanks", tanks.toNBT());
-            nbt.put("energy", energy.serializeNBT());
-            nbt.put("inventory", inventory.serializeNBT());
+            nbt.put("tanks", tanks.toNBT(provider));
+            nbt.put("energy", energy.serializeNBT(provider));
+            nbt.put("inventory", inventory.serializeNBT(provider));
             nbt.putDouble("heatLevel", heatLevel);
             if (activeRecipe != null) { nbt.putString("activeRecipe", activeRecipe.getId().toString()); }
         }
 
-        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
-            tanks.readNBT(nbt.getCompound("tanks"));
+            tanks.readNBT(nbt.getCompound("tanks"), provider);
             if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); }
-            energy.deserializeNBT(nbt.get("energy"));
-            inventory.deserializeNBT(nbt.getCompound("inventory"));
+            CompoundTag energyTag = nbt.getCompound("energy");
+            if (!energyTag.isEmpty()) {
+                energy.deserializeNBT(provider, energyTag);
+            }
+            inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
             heatLevel = nbt.getDouble("heatLevel");
             if (nbt.contains("activeRecipe")) { activeRecipeId = ResourceLocation.tryParse(nbt.getString("activeRecipe")); }
             tanksDirty = false;
@@ -317,16 +342,16 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
 
         public static MeltingCrucibleTank makeClient() { return new MeltingCrucibleTank(v -> {}); }
 
-        public CompoundTag toNBT() {
+        public CompoundTag toNBT(HolderLookup.Provider provider) {
             CompoundTag tag = new CompoundTag();
-            tag.put("input", this.input.writeToNBT(new CompoundTag()));
-            tag.put("output", this.output.writeToNBT(new CompoundTag()));
+            tag.put("input", this.input.writeToNBT(provider, new CompoundTag()));
+            tag.put("output", this.output.writeToNBT(provider, new CompoundTag()));
             return tag;
         }
 
-        public void readNBT(CompoundTag tag) {
-            this.input.readFromNBT(tag.getCompound("input"));
-            this.output.readFromNBT(tag.getCompound("output"));
+        public void readNBT(CompoundTag tag, HolderLookup.Provider provider) {
+            this.input.readFromNBT(provider, tag.getCompound("input"));
+            this.output.readFromNBT(provider, tag.getCompound("output"));
         }
 
         @SuppressWarnings("unused")

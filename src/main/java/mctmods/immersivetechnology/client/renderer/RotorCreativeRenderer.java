@@ -17,13 +17,15 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import java.util.List;
 
 public class RotorCreativeRenderer implements BlockEntityRenderer<RotorCreativeBlockEntity> {
     public RotorCreativeRenderer() {}
+
+    @Override @NotNull public net.minecraft.world.phys.AABB getRenderBoundingBox(RotorCreativeBlockEntity tile) { return new net.minecraft.world.phys.AABB(tile.getBlockPos()).inflate(4); }
 
     @Override public void render(@NotNull RotorCreativeBlockEntity tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         BlockState state = tile.getBlockState();

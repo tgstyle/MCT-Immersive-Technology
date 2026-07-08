@@ -3,9 +3,7 @@ package mctmods.immersivetechnology.client.models.split.geometry;
 public record ITEpsilonMath(double epsilon) {
     public static final ITEpsilonMath DEFAULT = new ITEpsilonMath(1.0E-5);
 
-    public Sign sign(double firstProduct) {
-        if (firstProduct < -this.epsilon) { return Sign.NEGATIVE; } else { return firstProduct > this.epsilon ? Sign.POSITIVE : Sign.ZERO; }
-    }
+    public Sign sign(double firstProduct) { if (firstProduct < -this.epsilon) { return Sign.NEGATIVE; } else { return firstProduct > this.epsilon ? Sign.POSITIVE : Sign.ZERO; } }
 
     public int floor(double in) { return (int) Math.floor(in + this.epsilon); }
 

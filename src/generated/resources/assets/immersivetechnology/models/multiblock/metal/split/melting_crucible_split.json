@@ -1,0 +1,121 @@
+{
+  "parent": "minecraft:block/block",
+  "dynamic": false,
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "immersivetechnology:obj",
+    "model": "immersivetechnology:models/multiblock/metal/obj/melting_crucible/melting_crucible.obj",
+    "shade_quads": true,
+    "textures": {
+      "bottom": "immersivetechnology:multiblock/metal/melting_crucible",
+      "particle": "immersivetechnology:multiblock/metal/melting_crucible",
+      "side": "immersivetechnology:multiblock/metal/melting_crucible",
+      "top": "immersivetechnology:multiblock/metal/melting_crucible"
+    }
+  },
+  "loader": "immersivetechnology:split",
+  "split_parts": [
+    [
+      -1,
+      -1,
+      1
+    ],
+    [
+      -1,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      -1,
+      -1,
+      -1
+    ],
+    [
+      -1,
+      -1,
+      0
+    ],
+    [
+      0,
+      -1,
+      -1
+    ],
+    [
+      0,
+      -1,
+      1
+    ],
+    [
+      1,
+      -1,
+      -1
+    ],
+    [
+      1,
+      -1,
+      1
+    ],
+    [
+      -1,
+      1,
+      -1
+    ],
+    [
+      -1,
+      1,
+      0
+    ],
+    [
+      0,
+      1,
+      -1
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      -1,
+      0
+    ],
+    [
+      1,
+      -1,
+      0
+    ],
+    [
+      -1,
+      0,
+      -1
+    ],
+    [
+      -1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      0,
+      0
+    ]
+  ],
+  "textures": {
+    "particle": "immersivetechnology:multiblock/metal/melting_crucible"
+  }
+}

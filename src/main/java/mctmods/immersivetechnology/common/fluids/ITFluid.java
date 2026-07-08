@@ -9,8 +9,8 @@ import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.world.item.BucketItem;
@@ -38,7 +38,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.fluids.FluidType;
+import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -167,7 +168,7 @@ public class ITFluid extends FlowingFluid {
             BlockState blockstate = pLevel.getBlockState(blockpos);
             FluidState fluidstate = blockstate.getFluidState();
             if (fluidstate.getType().isSame(this) && this.myCanPassThroughWall(direction, pLevel, pPos, pBlockState, blockpos, blockstate)) {
-                if (fluidstate.isSource() && net.minecraftforge.event.ForgeEventFactory.canCreateFluidSource(pLevel, blockpos, blockstate, fluidstate.canConvertToSource(pLevel, blockpos))) { ++j; }
+                if (fluidstate.isSource() && EventHooks.canCreateFluidSource(pLevel, blockpos, blockstate)) { ++j; }
                 i = Math.max(i, fluidstate.getAmount());
             }
         }
@@ -256,7 +257,7 @@ public class ITFluid extends FlowingFluid {
 
     private boolean myCanHoldFluid(BlockGetter pLevel, BlockPos pPos, BlockState pState, Fluid pFluid) {
         Block block = pState.getBlock();
-        if (block instanceof LiquidBlockContainer) { return ((LiquidBlockContainer)block).canPlaceLiquid(pLevel, pPos, pState, pFluid); }
+        if (block instanceof LiquidBlockContainer) { return ((LiquidBlockContainer)block).canPlaceLiquid(null, pLevel, pPos, pState, pFluid); }
         else if (!(block instanceof net.minecraft.world.level.block.DoorBlock) && !pState.is(net.minecraft.tags.BlockTags.SIGNS) && !pState.is(Blocks.LADDER) && !pState.is(Blocks.SUGAR_CANE) && !pState.is(Blocks.BUBBLE_COLUMN)) {
             if (!pState.is(Blocks.NETHER_PORTAL) && !pState.is(Blocks.END_PORTAL) && !pState.is(Blocks.END_GATEWAY) && !pState.is(Blocks.STRUCTURE_VOID)) {
                 VoxelShape shape = pState.getCollisionShape(pLevel, pPos, CollisionContext.empty());
@@ -391,8 +392,8 @@ public class ITFluid extends FlowingFluid {
 
         @NotNull public ItemStack execute(BlockSource source, ItemStack stack) {
             BucketItem bucketitem = (BucketItem)stack.getItem();
-            BlockPos blockpos = source.getPos().relative(source.getBlockState().getValue(DispenserBlock.FACING));
-            Level world = source.getLevel();
+            BlockPos blockpos = source.pos().relative(source.state().getValue(DispenserBlock.FACING));
+            Level world = source.level();
             if (bucketitem.emptyContents(null, world, blockpos, null, stack)) {
                 bucketitem.checkExtraContent(null, world, stack, blockpos);
                 FluidState placedState = world.getFluidState(blockpos);

@@ -1,10 +1,6 @@
 package mctmods.immersivetechnology.core.registration;
 
-import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
-import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
 import mctmods.immersivetechnology.common.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
@@ -15,17 +11,20 @@ import mctmods.immersivetechnology.common.multiblocks.stone.AdvancedCokeOven;
 import mctmods.immersivetechnology.common.multiblocks.stone.CoolingTower;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.AdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.CoolingTowerLogic;
-import mctmods.immersivetechnology.common.multiblocks.stone.shapes.AdvancedCokeOvenShape;
-import mctmods.immersivetechnology.common.multiblocks.stone.shapes.CoolingTowerShape;
-import mctmods.immersivetechnology.common.items.helper.ITBlockItem;
+import mctmods.immersivetechnology.common.multiblocks.stone.shapes.*;
 import mctmods.immersivetechnology.core.util.TranslationKey;
+
+import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
+import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
@@ -34,10 +33,15 @@ public class ITMultiblockProvider {
     public static HashMap<String, MultiblockRegistration<?>> MB_REGISTRY_MAP = new HashMap<>();
     public static final HashMap<String, TemplateMultiblock> MB_TEMPLATE_MAP = new HashMap<>();
     public static Function<String, TemplateMultiblock> getMBTemplate = MB_TEMPLATE_MAP::get;
+    private static volatile boolean INITIALIZED = false;
 
     private static <T extends MultiblockHandler.IMultiblock> T registerMultiblock(T multiblock) { MultiblockHandler.registerMultiblock(multiblock); return multiblock; }
 
-    private static void registerMB(String registry_name, ITTemplateMultiblock block, MultiblockRegistration<?> registration) { registerMultiblockTemplate(registry_name, block); MB_REGISTRY_MAP.put(registry_name, registration); }
+    private static void registerMB(String registry_name, ITTemplateMultiblock block, MultiblockRegistration<?> registration) {
+        block.setLogic(registration);
+        registerMultiblockTemplate(registry_name, block);
+        MB_REGISTRY_MAP.put(registry_name, registration);
+    }
 
     public static void registerMultiblockTemplate(String registry_name, TemplateMultiblock template) { MB_TEMPLATE_MAP.put(registry_name, registerMultiblock(template)); }
 
@@ -76,20 +80,20 @@ public class ITMultiblockProvider {
 
     public static final MultiblockRegistration<AdvancedCokeOvenLogic.State> ADVANCED_COKE_OVEN =
             stoneNoMirror(new AdvancedCokeOvenLogic(), "advanced_coke_oven")
-                    .structure(() -> getMBTemplate.apply("advanced_coke_oven"))
+                    .structure(() -> AdvancedCokeOven.INSTANCE)
                     .component(new ITDisassemblyTicker<>(AdvancedCokeOvenShape.DISASSEMBLY_POS), state -> null)
                     .gui(ITMenuTypes.ADVANCED_COKE_OVEN_MENU)
                     .build();
 
     public static final MultiblockRegistration<AlternatorLogic.State> ALTERNATOR =
             metalNoMirror(new AlternatorLogic(), "alternator")
-                    .structure(() -> getMBTemplate.apply("alternator"))
+                    .structure(() -> Alternator.INSTANCE)
                     .component(new ITDisassemblyTicker<>(AlternatorShape.DISASSEMBLY_POS), state -> null)
                     .build();
 
     public static final MultiblockRegistration<BoilerLiquidLogic.State> BOILER_LIQUID =
             metalNoMirror(new BoilerLiquidLogic(), "boiler_liquid")
-                    .structure(() -> getMBTemplate.apply("boiler_liquid"))
+                    .structure(() -> BoilerLiquid.INSTANCE)
                     .redstone(s -> s.rsState, BoilerLiquidLogic.REDSTONE_POI)
                     .component(new BoilerLiquidProcess())
                     .component(new ITClearTank<>(BoilerLiquidLogic.INPUT_FLUID_POIS, s -> s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
@@ -99,16 +103,16 @@ public class ITMultiblockProvider {
 
     public static final MultiblockRegistration<BoilerSolidLogic.State> BOILER_SOLID =
             metalNoMirrorWithActive(new BoilerSolidLogic(), "boiler_solid")
-                    .structure(() -> getMBTemplate.apply("boiler_solid"))
+                    .structure(() -> BoilerSolid.INSTANCE)
                     .redstone(s -> s.rsState, BoilerSolidLogic.REDSTONE_POI)
                     .component(new BoilerSolidProcess())
-                    .component(new ITDisassemblyTicker<>(BoilerSolidShape.DISASSEMBLY_POS), state -> null)
+                    .component(new ITDisassemblyTicker<>(BoilerLiquidShape.DISASSEMBLY_POS), state -> null)
                     .gui(ITMenuTypes.BOILER_SOLID_MENU)
                     .build();
 
     public static final MultiblockRegistration<BoilerTankLogic.State> BOILER_TANK =
             metalNoMirror(new BoilerTankLogic(), "boiler_tank")
-                    .structure(() -> getMBTemplate.apply("boiler_tank"))
+                    .structure(() -> BoilerTank.INSTANCE)
                     .component(new ITClearTank<>(BoilerTankLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
                     .component(new ITDisassemblyTicker<>(BoilerTankShape.DISASSEMBLY_POS), state -> null)
                     .gui(ITMenuTypes.BOILER_TANK_MENU)
@@ -116,14 +120,14 @@ public class ITMultiblockProvider {
 
     public static final MultiblockRegistration<CoolingTowerLogic.State> COOLING_TOWER =
             stoneNoMirror(new CoolingTowerLogic(), "cooling_tower")
-                    .structure(() -> getMBTemplate.apply("cooling_tower"))
+                    .structure(() -> CoolingTower.INSTANCE)
                     .component(new ITClearTank<>(CoolingTowerLogic.INPUT_FLUID_POIS, s -> { s.tanks.input0().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); }, Component.translatable(TranslationKey.GUI_INPUT_TANKS_CLEARED.getLocation())))
                     .component(new ITDisassemblyTicker<>(CoolingTowerShape.DISASSEMBLY_POS), state -> null)
                     .build();
 
     public static final MultiblockRegistration<DistillerLogic.State> DISTILLER =
             metal(new DistillerLogic(), "distiller")
-                    .structure(() -> getMBTemplate.apply("distiller"))
+                    .structure(() -> Distiller.INSTANCE)
                     .redstone(s -> s.rsState, DistillerLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(DistillerLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
                     .component(new ITDisassemblyTicker<>(DistillerShape.DISASSEMBLY_POS), state -> null)
@@ -132,7 +136,7 @@ public class ITMultiblockProvider {
 
     public static final MultiblockRegistration<ElectrolyticCrucibleBatteryLogic.State> ELECTROLYTIC_CRUCIBLE_BATTERY =
             metal(new ElectrolyticCrucibleBatteryLogic(), "electrolytic_crucible_battery")
-                    .structure(() -> getMBTemplate.apply("electrolytic_crucible_battery"))
+                    .structure(() -> ElectrolyticCrucibleBattery.INSTANCE)
                     .redstone(s -> s.rsState, ElectrolyticCrucibleBatteryLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(ElectrolyticCrucibleBatteryLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
                     .component(new ITDisassemblyTicker<>(ElectrolyticCrucibleBatteryShape.DISASSEMBLY_POS), state -> null)
@@ -140,7 +144,7 @@ public class ITMultiblockProvider {
 
     public static final MultiblockRegistration<GasTurbineLogic.State> GAS_TURBINE =
             metal(new GasTurbineLogic(), "gas_turbine")
-                    .structure(() -> getMBTemplate.apply("gas_turbine"))
+                    .structure(() -> GasTurbine.INSTANCE)
                     .redstone(s -> s.rsState, GasTurbineLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(GasTurbineLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
                     .component(new ITDisassemblyTicker<>(GasTurbineShape.DISASSEMBLY_POS), state -> null)
@@ -148,7 +152,7 @@ public class ITMultiblockProvider {
 
     public static final MultiblockRegistration<HeatExchangerLogic.State> HEAT_EXCHANGER =
             metal(new HeatExchangerLogic(), "heat_exchanger")
-                    .structure(() -> getMBTemplate.apply("heat_exchanger"))
+                    .structure(() -> HeatExchanger.INSTANCE)
                     .redstone(s -> s.rsState, HeatExchangerLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(HeatExchangerLogic.INPUT_FLUID_POIS, s -> { s.tanks.input0().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); }, Component.translatable(TranslationKey.GUI_INPUT_TANKS_CLEARED.getLocation())))
                     .component(new ITDisassemblyTicker<>(HeatExchangerShape.DISASSEMBLY_POS), state -> null)
@@ -157,7 +161,7 @@ public class ITMultiblockProvider {
 
     public static final MultiblockRegistration<MeltingCrucibleLogic.State> MELTING_CRUCIBLE =
             metal(new MeltingCrucibleLogic(), "melting_crucible")
-                    .structure(() -> getMBTemplate.apply("melting_crucible"))
+                    .structure(() -> MeltingCrucible.INSTANCE)
                     .redstone(s -> s.rsState, MeltingCrucibleLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(MeltingCrucibleLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
                     .component(new ITDisassemblyTicker<>(MeltingCrucibleShape.DISASSEMBLY_POS), state -> null)
@@ -166,21 +170,21 @@ public class ITMultiblockProvider {
 
     public static final MultiblockRegistration<RadiatorLogic.State> RADIATOR =
             metalNoMirror(new RadiatorLogic(), "radiator")
-                    .structure(() -> getMBTemplate.apply("radiator"))
+                    .structure(() -> Radiator.INSTANCE)
                     .redstone(s -> s.rsState, RadiatorLogic.REDSTONE_POI)
                     .component(new ITDisassemblyTicker<>(RadiatorShape.DISASSEMBLY_POS), state -> null)
                     .build();
 
     public static final MultiblockRegistration<RadiatorHorizontalLogic.State> RADIATOR_HORIZONTAL =
             metalNoMirror(new RadiatorHorizontalLogic(), "radiator_horizontal")
-                    .structure(() -> getMBTemplate.apply("radiator_horizontal"))
+                    .structure(() -> RadiatorHorizontal.INSTANCE)
                     .redstone(s -> s.rsState, RadiatorHorizontalLogic.REDSTONE_POI)
                     .component(new ITDisassemblyTicker<>(RadiatorHorizontalShape.DISASSEMBLY_POS), state -> null)
                     .build();
 
     public static final MultiblockRegistration<SolarMelterLogic.State> SOLAR_MELTER =
             metal(new SolarMelterLogic(), "solar_melter")
-                    .structure(() -> getMBTemplate.apply("solar_melter"))
+                    .structure(() -> SolarMelter.INSTANCE)
                     .redstone(s -> s.rsState, SolarMelterLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(SolarMelterLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
                     .component(new ITDisassemblyTicker<>(SolarMelterShape.DISASSEMBLY_POS), state -> null)
@@ -189,13 +193,13 @@ public class ITMultiblockProvider {
 
     public static final MultiblockRegistration<SolarReflectorLogic.State> SOLAR_REFLECTOR =
             metalNoMirror(new SolarReflectorLogic(), "solar_reflector")
-                    .structure(() -> getMBTemplate.apply("solar_reflector"))
+                    .structure(() -> SolarReflector.INSTANCE)
                     .component(new ITDisassemblyTicker<>(SolarReflectorShape.DISASSEMBLY_POS), state -> null)
                     .build();
 
     public static final MultiblockRegistration<SolarTowerLogic.State> SOLAR_TOWER =
             metal(new SolarTowerLogic(), "solar_tower")
-                    .structure(() -> getMBTemplate.apply("solar_tower"))
+                    .structure(() -> SolarTower.INSTANCE)
                     .redstone(s -> s.rsState, SolarTowerLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(SolarTowerLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
                     .component(new ITDisassemblyTicker<>(SolarTowerShape.DISASSEMBLY_POS), state -> null)
@@ -204,7 +208,7 @@ public class ITMultiblockProvider {
 
     public static final MultiblockRegistration<SteamTurbineLogic.State> STEAM_TURBINE =
             metal(new SteamTurbineLogic(), "steam_turbine")
-                    .structure(() -> getMBTemplate.apply("steam_turbine"))
+                    .structure(() -> SteamTurbine.INSTANCE)
                     .redstone(s -> s.rsState, SteamTurbineLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(SteamTurbineLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
                     .component(new ITDisassemblyTicker<>(SteamTurbineShape.DISASSEMBLY_POS), state -> null)
@@ -212,7 +216,7 @@ public class ITMultiblockProvider {
 
     public static final MultiblockRegistration<SteelSheetmetalTankLogic.State> STEEL_SHEETMETAL_TANK =
             metalNoMirror(new SteelSheetmetalTankLogic(), "steel_sheetmetal_tank")
-                    .structure(() -> getMBTemplate.apply("steel_sheetmetal_tank"))
+                    .structure(() -> SteelSheetmetalTank.INSTANCE)
                     .redstone(s -> s.rsState, SteelSheetmetalTankLogic.REDSTONE_POI)
                     .component(new ITDisassemblyTicker<>(SteelSheetmetalTankShape.DISASSEMBLY_POS), state -> null)
                     .withComparator()
@@ -243,6 +247,9 @@ public class ITMultiblockProvider {
     }
 
     public static void init() {
+        if (INITIALIZED) { return; }
+        INITIALIZED = true;
+
         registerMB("advanced_coke_oven", AdvancedCokeOven.INSTANCE, ADVANCED_COKE_OVEN);
         registerMB("alternator", Alternator.INSTANCE, ALTERNATOR);
         registerMB("boiler_liquid", BoilerLiquid.INSTANCE, BOILER_LIQUID);

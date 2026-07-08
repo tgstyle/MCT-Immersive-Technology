@@ -8,12 +8,11 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPosition;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
@@ -25,6 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -34,10 +34,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.fluids.IFluidTank;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -46,14 +44,14 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic.State>, IServerTickableComponent<SolarReflectorLogic.State>, IClientTickableComponent<SolarReflectorLogic.State> {
-    private static final float BASE_FREQ = (float) ITClientConfig.solarReflectorBaseFrequency;
-    public static final float DANCE_DURATION = (float) ITClientConfig.solarReflectorDanceDuration;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SolarReflectorShape.DATA.pointsOfInterest);
 
-    public static final BlockPos DANCE_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
-    public static final BlockPos LINK_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "link0").get(0);
-    public static final BlockPos SUN_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sun0").get(0);
-    public static final BlockPos BEAM_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "beam0").get(0);
+    public static final BlockPos DANCE_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").getFirst();
+    public static final BlockPos LINK_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "link0").getFirst();
+    public static final BlockPos SUN_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sun0").getFirst();
+    public static final BlockPos BEAM_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "beam0").getFirst();
+
+    public static float getDanceDuration() { return (float) ITClientConfig.solarReflectorDanceDuration; }
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
@@ -91,6 +89,8 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             }
             return;
         }
+        float baseFreq = (float) ITClientConfig.solarReflectorBaseFrequency;
+        float danceDuration = (float) ITClientConfig.solarReflectorDanceDuration;
         boolean isDisabled = ITClientConfig.disableReflectorDance;
         boolean isLoop = ITClientConfig.loopReflectorDance;
         long gameTime = ctx.getLevel().getRawLevel().getGameTime();
@@ -113,6 +113,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                 state.entry_mirrorTilt = state.animation_mirrorTilt;
                 state.baseRotation = (state.entry_supportRotation % 360 + 360) % 360;
                 state.danceSoundStarted = false;
+                state.prevDancePhase = 0;
             } else if (state.animationPhase == -4) { state.baseRotation = (state.animation_supportRotation % 360 + 360) % 360; }
         }
         if (state.danceStartTick != state.prevDanceStartTick) {
@@ -189,16 +190,16 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
         } else if (state.animationPhase == -2 || state.animationPhase == -3) {
             float currentDancePhase = (gameTime - state.danceStartTick) * 0.05f;
             if (isLoop) {
-                currentDancePhase = ((currentDancePhase % DANCE_DURATION) + DANCE_DURATION) % DANCE_DURATION;
+                currentDancePhase = ((currentDancePhase % danceDuration) + danceDuration) % danceDuration;
                 if (currentDancePhase < state.prevDancePhase - 0.01f) { state.danceSoundId++; state.danceSoundStarted = false; }
             }
             state.prevDancePhase = currentDancePhase;
             float fade = Mth.clamp(currentDancePhase / 3f, 0, 1);
             if (isLoop) {
-                float fadeOut = Mth.clamp((DANCE_DURATION - currentDancePhase) / 3f, 0, 1);
+                float fadeOut = Mth.clamp((danceDuration - currentDancePhase) / 3f, 0, 1);
                 fade = Math.min(fade, fadeOut);
-            } else if (state.animationPhase == -3) { fade *= Mth.clamp(1 - (currentDancePhase - DANCE_DURATION), 0, 1); }
-            double baseBeatSin = Math.sin(currentDancePhase * BASE_FREQ);
+            } else if (state.animationPhase == -3) { fade *= Mth.clamp(1 - (currentDancePhase - danceDuration), 0, 1); }
+            double baseBeatSin = Math.sin(currentDancePhase * baseFreq);
             double doubleBeat = Math.sin(currentDancePhase * 4.18);
             double tripleBeat = Math.sin(currentDancePhase * 6.27);
             double swayCos = Math.cos(currentDancePhase * 1.05);
@@ -217,7 +218,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                 state.baseRotation = (state.baseRotation % 360 + 360) % 360;
             }
             if (!state.isDanceSoundPlaying.getAsBoolean() && !state.danceSoundStarted) {
-                long durationTicks = Math.round(DANCE_DURATION / 0.05f);
+                long durationTicks = Math.round(danceDuration / 0.05f);
                 long elapsed;
                 if (isLoop) {
                     elapsed = (gameTime - state.danceStartTick) % durationTicks;
@@ -237,18 +238,19 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                                 float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 32, 1);
                                 long gt = 0;
                                 if (Minecraft.getInstance().level != null) { gt = Minecraft.getInstance().level.getGameTime(); }
+                                float dd = (float) ITClientConfig.solarReflectorDanceDuration;
                                 float cdp = (gt - state.danceStartTick) * 0.05f;
                                 if (cdp < 0) { return 0f; }
                                 float f;
                                 if (isLoop) {
-                                    cdp = ((cdp % DANCE_DURATION) + DANCE_DURATION) % DANCE_DURATION;
+                                    cdp = ((cdp % dd) + dd) % dd;
                                     float f_in = Mth.clamp(cdp / 3f, 0, 1);
-                                    float f_out = Mth.clamp((DANCE_DURATION - cdp) / 3f, 0, 1);
+                                    float f_out = Mth.clamp((dd - cdp) / 3f, 0, 1);
                                     f = Math.min(f_in, f_out);
                                 } else {
-                                    if (cdp > DANCE_DURATION + 1f) { return 0f; }
+                                    if (cdp > dd + 1f) { return 0f; }
                                     f = Mth.clamp(cdp / 3f, 0, 1);
-                                    if (state.animationPhase == -3) { f *= Mth.clamp(1 - (cdp - DANCE_DURATION), 0, 1); }
+                                    if (state.animationPhase == -3) { f *= Mth.clamp(1 - (cdp - dd), 0, 1); }
                                 }
                                 float baseVol = 0.05f + f * 0.45f;
                                 return baseVol / attenuation;
@@ -356,15 +358,13 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
         if (!state.isMirrorTaken) { SolarRegistry.updateDance(level); }
     }
 
-    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) { return LazyOptional.empty(); }
-
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SolarReflectorShape.GETTER; }
 
     @Override public State createInitialState(IInitialMultiblockContext<State> context) { return new State(context); }
 
     @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { Level level = state.levelSupplier.get(); if (level != null && !level.isClientSide) { SolarRegistry.unregisterReflector(level, state.poiPos); } }
 
-    public static class State implements IMultiblockState, ITDisplayContext {
+    public static class State implements IMultiblockState, ITIDisplayContext {
         public boolean isMirrorTaken;
         private BlockPos towerCollectorPosition;
         public float animation_supportRotation;
@@ -500,13 +500,13 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             }
         }
 
-        @Override public void writeSaveNBT(CompoundTag nbt) {
+        @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("isMirrorTaken", isMirrorTaken);
             nbt.putLong("towerCollectorPosition", towerCollectorPosition.asLong());
             nbt.putBoolean("active", active);
         }
 
-        @Override public void readSaveNBT(CompoundTag nbt) {
+        @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             isMirrorTaken = nbt.getBoolean("isMirrorTaken");
             towerCollectorPosition = BlockPos.of(nbt.getLong("towerCollectorPosition"));
             active = nbt.getBoolean("active");
@@ -516,14 +516,14 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             if (level != null && !level.isClientSide) { SolarRegistry.registerReflector(level, poiPos); }
         }
 
-        @Override public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             CompoundTag display = new CompoundTag();
-            writeDisplaySyncNBT(display);
+            writeDisplaySyncNBT(display, provider);
             nbt.put("display", display);
         }
 
-        @Override public void readSyncNBT(CompoundTag nbt) {
-            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        @Override public void readSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display"), provider); }
         }
 
         @Override public boolean isActive() { return active; }
@@ -532,7 +532,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
 
         @Override public IFluidTank[] getInternalTanks() { return null; }
 
-        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("isMirrorTaken", isMirrorTaken);
             nbt.putLong("towerCollectorPosition", towerCollectorPosition.asLong());
             nbt.putLong("danceStartTick", danceStartTick);
@@ -540,7 +540,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             nbt.putInt("globalAnimationPhase", globalAnimationPhase);
         }
 
-        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             isMirrorTaken = nbt.getBoolean("isMirrorTaken");
             towerCollectorPosition = BlockPos.of(nbt.getLong("towerCollectorPosition"));
             danceStartTick = nbt.getLong("danceStartTick");

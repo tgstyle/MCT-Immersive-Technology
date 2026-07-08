@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
@@ -8,14 +9,13 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.HeatCapabilities;
 import com.immersiveconvergence.api.capability.IHeatConsumer;
 import com.immersiveconvergence.api.capability.IHeatProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandler;
@@ -30,6 +30,7 @@ import mctmods.immersivetechnology.core.ITServerConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -41,12 +42,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.minecraft.core.registries.BuiltInRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -69,11 +67,11 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     private static final int LENGTH = BoilerSolidShape.LENGTH;
     private static final int HEIGHT = BoilerSolidShape.HEIGHT;
 
-    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
     public static final List<BlockPos> IGNITION_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "ignition0");
     public static final List<BlockPos> ITEM_INPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "item_input0");
     public static final List<BlockPos> HEAT_OUTPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "heat_output0");
-    public static final BlockPos SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
+    public static final BlockPos SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").getFirst();
     public static final List<BlockPos> EXHAUST_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "exhaust0");
     private static final RelativeBlockFace ITEM_INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "item_input0");
     private static final RelativeBlockFace HEAT_OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "heat_output0");
@@ -105,16 +103,16 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         }
         final Level level = ctx.getLevel().getRawLevel();
         if (state.pilotLit) {
-            BlockPos exhaustAbs = ctx.getLevel().toAbsolute(EXHAUST_POIS.get(0));
+            BlockPos exhaustAbs = ctx.getLevel().toAbsolute(EXHAUST_POIS.getFirst());
             Vec3 flamePos = new Vec3(exhaustAbs.getX() + 0.5, exhaustAbs.getY() + 0.1, exhaustAbs.getZ() + 0.5);
             double velX = (level.random.nextFloat() * 0.0625 - 0.03125);
             double velY = 0.0625;
             double velZ = (level.random.nextFloat() * 0.0625 - 0.03125);
             level.addParticle(ParticleTypes.FLAME, flamePos.x, flamePos.y, flamePos.z, velX, velY, velZ);
         }
-        boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
+        boolean hasWater = state.boilerInput != null && state.boilerInput.get() != null && state.boilerInput.get().getFluidAmount() > 0;
         if (state.pilotLit && state.heatLevel > PILOT_HEAT && state.rsState.isEnabled(ctx) && hasWater) {
-            BlockPos exhaustAbs = ctx.getLevel().toAbsolute(EXHAUST_POIS.get(0));
+            BlockPos exhaustAbs = ctx.getLevel().toAbsolute(EXHAUST_POIS.getFirst());
             Vec3 smokePos = new Vec3(exhaustAbs.getX() + 0.5, exhaustAbs.getY() + 1.25, exhaustAbs.getZ() + 0.5);
             double velX = 0;
             double velY = 0.125;
@@ -130,7 +128,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         boolean update = false;
         double previousHeatLevel = state.heatLevel;
         boolean prevPilotLit = state.pilotLit;
-        boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
+        boolean hasWater = state.boilerInput != null && state.boilerInput.get() != null && state.boilerInput.get().getFluidAmount() > 0;
         boolean fullMode = state.rsState.isEnabled(ctx) && hasWater;
         boolean valid = ctx.isValid().getAsBoolean();
         boolean isActive = state.pilotLit && fullMode && state.heatLevel >= state.workingHeatLevel && valid;
@@ -162,14 +160,14 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                 if (!fuelStack.isEmpty()) { recipe = BoilerSolidRecipe.findRecipe(level, fuelStack); }
                 ItemStack single = fuelStack.copy();
                 single.setCount(1);
-                int burnTimePerItem = ForgeHooks.getBurnTime(single, RecipeType.SMELTING);
+                int burnTimePerItem = single.getBurnTime(RecipeType.SMELTING);
                 double heatPerTick = DEFAULT_HEAT_PER_TICK;
                 double targetHeat = DEFAULT_WORKING_HEAT_LEVEL;
                 int consumeAmount = 1;
                 if (recipe != null) {
                     heatPerTick = recipe.getHeatPerTick();
                     targetHeat = recipe.getTargetHeat();
-                    consumeAmount = recipe.input.getCount();
+                    consumeAmount = recipe.input().getCount();
                     if (burnTimePerItem <= 0) { burnTimePerItem = 200; }
                 }
                 if (burnTimePerItem <= 0) {
@@ -203,8 +201,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     private void updateAllBlocks(IMultiblockContext<State> ctx, Level level, boolean active) {
         if (level.isClientSide) { return; }
         ResourceLocation boilerRL = ITLib.rl("boiler_solid");
-        Block boilerBlock = ForgeRegistries.BLOCKS.getValue(boilerRL);
-        if (boilerBlock == null) { return; }
+        Block boilerBlock = BuiltInRegistries.BLOCK.get(boilerRL);
         for (int y = 0; y < HEIGHT; y++) for (int z = 0; z < LENGTH; z++) for (int x = 0; x < WIDTH; x++) {
             BlockPos relPos = new BlockPos(x, y, z);
             BlockPos absPos = ctx.getLevel().toAbsolute(relPos);
@@ -216,15 +213,20 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         }
     }
 
-    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
-        BlockPos localPos = position.posInMultiblock();
-        RelativeBlockFace side = position.side();
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            if (ITEM_INPUT_POIS.contains(localPos) && (side == null || side == ITEM_INPUT_FACING)) { return ctx.getState().inputFuelCap.cast(ctx); }
-        } else if (cap == HeatCapabilities.HEAT_PROVIDER_CAPABILITY) {
-            if (HEAT_OUTPUT_POIS.contains(localPos) && (side == null || side == HEAT_OUTPUT_FACING)) { return ctx.getState().heatSourceCap.cast(ctx); }
-        }
-        return LazyOptional.empty();
+    @Override
+    public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+        register.register(Capabilities.ItemHandler.BLOCK, (state, position) -> {
+            BlockPos localPos = position.posInMultiblock();
+            RelativeBlockFace side = position.side();
+            if (ITEM_INPUT_POIS.contains(localPos) && (side == null || side == ITEM_INPUT_FACING)) { return state.inventory; }
+            return null;
+        });
+        register.register(HeatCapabilities.HEAT_PROVIDER, (state, position) -> {
+            BlockPos localPos = position.posInMultiblock();
+            RelativeBlockFace side = position.side();
+            if (HEAT_OUTPUT_POIS.contains(localPos) && (side == null || side == HEAT_OUTPUT_FACING)) { return state.heatProvider; }
+            return null;
+        });
     }
 
     @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
@@ -246,7 +248,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             ItemStack single = stack.copy(); single.setCount(1);
             Level l = levelSupplier != null ? levelSupplier.get() : null;
             if (l != null) {
-                if (ForgeHooks.getBurnTime(single, RecipeType.SMELTING) > 0) { return true; }
+                if (single.getBurnTime(RecipeType.SMELTING) > 0) { return true; }
                 return BoilerSolidRecipe.findRecipe(l, single) != null;
             } else { return true; }
         }
@@ -257,11 +259,10 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         }
     }
 
-    public static class State implements IMultiblockState, ITDisplayContext {
+    public static class State implements IMultiblockState, ITIDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
-        public StoredCapability<IItemHandlerModifiable> inputFuelCap;
-        public StoredCapability<IHeatProvider> heatSourceCap;
-        public CapabilityReference<IHeatConsumer> boilerInput;
+        public final IHeatProvider heatProvider;
+        public final Supplier<IHeatConsumer> boilerInput;
         public ITSlotwiseItemHandler inventory;
         public double heatLevel = 0;
         public int burnRemaining = 0;
@@ -279,68 +280,67 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); this.inventoryDirty = true; };
             inventory = new FuelItemHandler(ctx.levelSupplier(), List.of(ITSlotwiseItemHandler.IOConstraint.INPUT), onChanged);
-            inputFuelCap = new StoredCapability<>(inventory);
-            heatSourceCap = new StoredCapability<>(new HeatSourceImpl(this));
-            MultiblockFace heatMBFace = new MultiblockFace(HEAT_OUTPUT_FACING, HEAT_OUTPUT_POIS.get(0));
+            heatProvider = new HeatSourceImpl(this);
+            MultiblockFace heatMBFace = new MultiblockFace(HEAT_OUTPUT_FACING, HEAT_OUTPUT_POIS.getFirst());
             CapabilityPosition opposingCP = CapabilityPosition.opposing(heatMBFace);
             MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
-            boilerInput = ctx.getCapabilityAt(HeatCapabilities.HEAT_CONSUMER_CAPABILITY, opposingMBFace);
+            boilerInput = ctx.getCapabilityAt(HeatCapabilities.HEAT_CONSUMER, opposingMBFace);
         }
 
         public double getWorkingHeatLevel() { return workingHeatLevel; }
 
-        @Override public void writeSaveNBT(CompoundTag nbt) {
+        @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putDouble("heatLevel", heatLevel);
             nbt.putInt("burnRemaining", burnRemaining);
             nbt.putInt("totalBurnTime", totalBurnTime);
             nbt.putDouble("heatPerTick", heatPerTick);
             nbt.putDouble("targetHeat", targetHeat);
             nbt.putBoolean("pilotLit", pilotLit);
-            nbt.put("inventory", inventory.serializeNBT());
+            nbt.put("inventory", inventory.serializeNBT(provider));
         }
 
-        @Override public void readSaveNBT(CompoundTag nbt) {
+        @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             heatLevel = nbt.getDouble("heatLevel");
             burnRemaining = nbt.getInt("burnRemaining");
             totalBurnTime = nbt.getInt("totalBurnTime");
             heatPerTick = nbt.getDouble("heatPerTick");
             targetHeat = nbt.getDouble("targetHeat");
             pilotLit = nbt.getBoolean("pilotLit");
-            inventory.deserializeNBT(nbt.getCompound("inventory"));
+            inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
             inventoryDirty = false;
         }
 
-        @Override public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             CompoundTag display = new CompoundTag();
-            writeDisplaySyncNBT(display);
+            writeDisplaySyncNBT(display, provider);
             nbt.put("display", display);
         }
 
-        @Override public void readSyncNBT(CompoundTag nbt) {
-            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        @Override public void readSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display"), provider); }
         }
 
         @Override public boolean isActive() { return active; }
 
         @Override public IItemHandlerModifiable getInventory() { return inventory; }
 
-        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("active", active);
             nbt.putDouble("heatLevel", heatLevel);
             nbt.putBoolean("pilotLit", pilotLit);
             nbt.putInt("burnRemaining", burnRemaining);
             nbt.putInt("totalBurnTime", totalBurnTime);
-            nbt.put("inventory", inventory.serializeNBT());
+            nbt.put("inventory", inventory.serializeNBT(provider));
             nbt.putDouble("workingHeatLevel", workingHeatLevel);
         }
 
-        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
             heatLevel = nbt.getDouble("heatLevel");
             pilotLit = nbt.getBoolean("pilotLit");
             burnRemaining = nbt.getInt("burnRemaining");
             totalBurnTime = nbt.getInt("totalBurnTime");
-            inventory.deserializeNBT(nbt.getCompound("inventory"));
+            inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
             workingHeatLevel = nbt.getDouble("workingHeatLevel");
             inventoryDirty = false;
         }

@@ -23,8 +23,8 @@ public class RotorCreativeScreen extends AbstractContainerScreen<RotorCreativeMe
     private EditBox rpmField;
     private int prevRpm = Integer.MIN_VALUE;
 
-    public RotorCreativeScreen(RotorCreativeMenu menu, Inventory inv) {
-        super(menu, inv, Component.empty());
+    public RotorCreativeScreen(RotorCreativeMenu menu, Inventory inv, Component title) {
+        super(menu, inv, title);
         this.tile = menu.tile;
         this.imageWidth = 96;
         this.imageHeight = 112;
@@ -72,7 +72,7 @@ public class RotorCreativeScreen extends AbstractContainerScreen<RotorCreativeMe
     @Override public void onClose() { super.onClose(); }
 
     @Override protected void renderBg(@NotNull GuiGraphics graphics, float pt, int mx, int my) {
-        this.renderBackground(graphics);
+        this.renderBackground(graphics, mx, my, pt);
         graphics.blit(TEXTURE, leftPos, topPos, 0.0F, 0.0F, imageWidth, 48, 96, 48);
     }
 

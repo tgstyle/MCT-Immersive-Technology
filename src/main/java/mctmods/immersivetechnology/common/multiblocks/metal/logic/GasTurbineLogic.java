@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
@@ -10,16 +11,15 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.util.CachedRecipe;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.MechanicalCapabilities;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITPressurizedFluidOutput;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.GasTurbineShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.RotationInertiaProcess;
@@ -34,6 +34,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -42,33 +43,31 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.IFluidTank;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
-public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>, IServerTickableComponent<GasTurbineLogic.State>, IClientTickableComponent<GasTurbineLogic.State>, ITPressurizedFluidOutput<GasTurbineLogic.State> {
+public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>, IServerTickableComponent<GasTurbineLogic.State>, IClientTickableComponent<GasTurbineLogic.State>, ITIPressurizedFluidOutput<GasTurbineLogic.State> {
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(GasTurbineShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
-    public static final BlockPos SMOKE_POI0 = ITMultiblockPOIHelper.getPosList(RAW_POIS, "smoke0").get(0);
-    public static final BlockPos SMOKE_POI1 = ITMultiblockPOIHelper.getPosList(RAW_POIS, "smoke1").get(0);
-    public static final BlockPos RUNNING_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound_running0").get(0);
-    public static final BlockPos STARTER_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound_starter0").get(0);
-    public static final BlockPos ARC_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound_arc0").get(0);
-    public static final BlockPos SPARK_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound_spark0").get(0);
-    public static final BlockPos IGNITE_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound_ignite0").get(0);
+    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
+    public static final BlockPos SMOKE_POI0 = ITMultiblockPOIHelper.getPosList(RAW_POIS, "smoke0").getFirst();
+    public static final BlockPos SMOKE_POI1 = ITMultiblockPOIHelper.getPosList(RAW_POIS, "smoke1").getFirst();
+    public static final BlockPos RUNNING_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound_running0").getFirst();
+    public static final BlockPos STARTER_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound_starter0").getFirst();
+    public static final BlockPos ARC_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound_arc0").getFirst();
+    public static final BlockPos SPARK_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound_spark0").getFirst();
+    public static final BlockPos IGNITE_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound_ignite0").getFirst();
 
     public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
     public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
@@ -104,12 +103,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         BlockPos absolutePos = ctx.getLevel().toAbsolute(localPos);
         Direction side = ctx.getLevel().toAbsolute(OUTPUT_FACING);
         if (side == null) { return false; }
-        BlockEntity adjacent = ctx.getLevel().getRawLevel().getBlockEntity(absolutePos.relative(side));
-        if (adjacent != null) {
-            LazyOptional<IFluidHandler> handlerOpt = adjacent.getCapability(ForgeCapabilities.FLUID_HANDLER, side.getOpposite());
-            return handlerOpt.isPresent();
-        }
-        return false;
+        BlockPos targetPos = absolutePos.relative(side);
+        IFluidHandler handler = ctx.getLevel().getRawLevel().getCapability(Capabilities.FluidHandler.BLOCK, targetPos, side.getOpposite());
+        return handler != null;
     }
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
@@ -232,7 +228,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 FluidStack outFluid = state.tanks.output.getFluid();
                 float r = 0.5F, g = 0.5F, b = 0.5F;
                 if (!outFluid.isEmpty()) {
-                    int tint = IClientFluidTypeExtensions.of(outFluid.getFluid()).getTintColor(outFluid);
+                    int tint = net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions.of(outFluid.getFluid()).getTintColor(outFluid);
                     r = ((tint >> 16) & 0xFF) / 255f;
                     g = ((tint >> 8) & 0xFF) / 255f;
                     b = (tint & 0xFF) / 255f;
@@ -245,14 +241,14 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     @Override public void tickServer(IMultiblockContext<State> ctx) {
         pumpOutputs(ctx);
         State state = ctx.getState();
-        state.hasIgniter = state.mvInput.isPresent();
+        state.hasIgniter = state.mvInput != null && state.mvInput.get() != null;
         state.canIgniteClient = SPARKPLUG_CONSUMPTION <= state.energyStorageMV.getEnergyStored();
         boolean wasActive = state.active;
         boolean wasStall = state.stall;
         state.active = false;
         Level level = ctx.getLevel().getRawLevel();
         Direction outputFacing = ctx.getLevel().getOrientation().front();
-        BlockPos outputPortAbs = ctx.getLevel().toAbsolute(MECHANICAL_OUTPUT_POIS.get(0));
+        BlockPos outputPortAbs = ctx.getLevel().toAbsolute(MECHANICAL_OUTPUT_POIS.getFirst());
         BlockPos consumerAbsPos = outputPortAbs.relative(outputFacing);
         BlockEntity entity = level.getBlockEntity(consumerAbsPos);
         boolean hasConsumer = false;
@@ -260,10 +256,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         double additionalFriction = 0.0;
         int consumerMaxSpeed = MechanicalCapabilities.MAX_RPM;
         if (entity != null) {
-            LazyOptional<IMechanicalEnergyConsumer> consumerCap = entity.getCapability(MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY, outputFacing.getOpposite());
-            if (consumerCap.isPresent()) {
+            IMechanicalEnergyConsumer consumer = level.getCapability(MechanicalCapabilities.MECHANICAL_CONSUMER, consumerAbsPos, outputFacing.getOpposite());
+            if (consumer != null) {
                 hasConsumer = true;
-                IMechanicalEnergyConsumer consumer = consumerCap.orElseThrow(RuntimeException::new);
                 additionalMass = consumer.getMass();
                 additionalFriction = consumer.getFriction();
                 consumerMaxSpeed = consumer.getMaxSpeed();
@@ -279,11 +274,11 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         boolean isRSEnabled = state.rsState.isEnabled(ctx);
         state.ignited = state.ignitionGracePeriod > 0;
         state.starterRunning = false;
-        if (isRSEnabled && STARTER_CONSUMPTION <= state.energyStorageHV.getEnergyStored()) {
+        if (isRSEnabled && hasConsumer && STARTER_CONSUMPTION <= state.energyStorageHV.getEnergyStored()) {
             state.starterRunning = true;
             state.energyStorageHV.extractEnergy(STARTER_CONSUMPTION, false);
         }
-        if (state.speed <= 0) { state.speed = 0; state.isShutdown = false; state.stall = false; }
+        if (state.speed <= 0) { state.speed = 0; state.isShutdown = false; state.stall = false; state.everIgnited = false; }
         if (!isRSEnabled || !hasConsumer) {
             state.isShutdown = true;
             state.ignitionGracePeriod = 0;
@@ -301,7 +296,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         } else {
             if (state.isShutdown) { state.speed = Math.max(0, state.speed - state.inertia.getSpeedDownRate()); }
             else {
-                if (state.starterRunning) {
+                if (state.starterRunning && !state.everIgnited) {
                     if (state.hasIgniter && canIgnite(state)) {
                         state.stall = true;
                         if (!wasStall) { ignite(state, ctx); }
@@ -323,11 +318,12 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                     } else if (state.ignited || canIgnite(state)) {
                         FluidStack fluid = state.tanks.input.getFluid();
                         GasTurbineRecipe recipe = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fluid);
-                        if (recipe != null && fluid.getAmount() >= recipe.input.getAmount()) {
-                            state.tanks.input.drain(recipe.input.getAmount(), FluidAction.EXECUTE);
-                            state.currentTorque = recipe.torque;
-                            if (recipe.fluidOutput != null) {
-                                state.tanks.output.fill(recipe.fluidOutput, FluidAction.EXECUTE);
+                        if (recipe != null && fluid.getAmount() >= recipe.getInputAmount()) {
+                            state.tanks.input.drain(recipe.getInputAmount(), FluidAction.EXECUTE);
+                            state.currentTorque = recipe.torque();
+                            FluidStack outFluid = recipe.fluidOutput();
+                            if (outFluid != null) {
+                                state.tanks.output.fill(outFluid, FluidAction.EXECUTE);
                             }
                             state.burnRemaining = recipe.getTotalProcessTime() - 1;
                             if (!state.ignited) { ignite(state, ctx); }
@@ -357,22 +353,38 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
     private static double particleXZSpeed() { return ApiUtils.RANDOM.nextDouble(-0.015625, 0.015625); }
 
-    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
-        State state = ctx.getState();
-        BlockPos localPos = position.posInMultiblock();
-        RelativeBlockFace side = position.side();
-        if (cap == ForgeCapabilities.ENERGY) {
-            if (ENERGY_INPUT_HV_POIS.contains(localPos) && (side == null || side == ENERGY_INPUT_HV_FACING)) { return state.energyCapHV.cast(ctx); }
-            if (ENERGY_INPUT_MV_POIS.contains(localPos) && (side == null || side == ENERGY_INPUT_MV_FACING)) { return state.energyCapMV.cast(ctx); }
-        }
-        if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (INPUT_FLUID_POIS.contains(localPos) && (side == null || side == INPUT_FLUID_FACING)) { return state.fluidCap.cast(ctx); }
-            if (OUTPUT_FLUID_POIS.contains(localPos) && (side == null || side == OUTPUT_FACING)) { return state.fluidCapExhaust.cast(ctx); }
-        }
-        if (cap == MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY) {
-            if (MECHANICAL_OUTPUT_POIS.contains(localPos) && (side == null || side == MECHANICAL_OUTPUT_FACING)) { return LazyOptional.of(() -> state.mechanicalProvider).cast(); }
-        }
-        return LazyOptional.empty();
+    @Override
+    public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+        register.register(Capabilities.EnergyStorage.BLOCK, (state, position) -> {
+            BlockPos localPos = position.posInMultiblock();
+            RelativeBlockFace side = position.side();
+            if (ENERGY_INPUT_HV_POIS.contains(localPos) && (side == null || side == ENERGY_INPUT_HV_FACING)) {
+                return state.energyStorageHV;
+            }
+            if (ENERGY_INPUT_MV_POIS.contains(localPos) && (side == null || side == ENERGY_INPUT_MV_FACING)) {
+                return state.energyStorageMV;
+            }
+            return null;
+        });
+        register.register(Capabilities.FluidHandler.BLOCK, (state, position) -> {
+            BlockPos localPos = position.posInMultiblock();
+            RelativeBlockFace side = position.side();
+            if (INPUT_FLUID_POIS.contains(localPos) && (side == null || side == INPUT_FLUID_FACING)) {
+                return state.fluidInputHandler;
+            }
+            if (OUTPUT_FLUID_POIS.contains(localPos) && (side == null || side == OUTPUT_FACING)) {
+                return state.fluidOutputHandler;
+            }
+            return null;
+        });
+        register.register(MechanicalCapabilities.MECHANICAL_PROVIDER, (state, position) -> {
+            BlockPos localPos = position.posInMultiblock();
+            RelativeBlockFace side = position.side();
+            if (MECHANICAL_OUTPUT_POIS.contains(localPos) && (side == null || side == MECHANICAL_OUTPUT_FACING)) {
+                return state.mechanicalProvider;
+            }
+            return null;
+        });
     }
 
     private record MechanicalEnergyProvider(State state) implements IMechanicalEnergyProvider {
@@ -388,16 +400,14 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return GasTurbineShape.GETTER; }
 
-    public static class State implements IMultiblockState, ITDisplayContext {
+    public static class State implements IMultiblockState, ITIDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final GasTurbineTank tanks;
-        public final StoredCapability<IFluidHandler> fluidCap;
-        public final StoredCapability<IFluidHandler> fluidCapExhaust;
-        public StoredCapability<IEnergyStorage> energyCapHV;
-        public StoredCapability<IEnergyStorage> energyCapMV;
-        public AveragingEnergyStorage energyStorageHV;
-        public AveragingEnergyStorage energyStorageMV;
-        public final CapabilityReference<IEnergyStorage> mvInput;
+        public final IFluidHandler fluidInputHandler;
+        public final IFluidHandler fluidOutputHandler;
+        public final AveragingEnergyStorage energyStorageHV;
+        public final AveragingEnergyStorage energyStorageMV;
+        public Supplier<IEnergyStorage> mvInput;
         private final BiFunction<Level, FluidStack, GasTurbineRecipe> recipeGetter;
         public int speed = 0;
         public float currentTorque = 1.0f;
@@ -437,22 +447,20 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
             this.tanks = new GasTurbineTank(v -> { onChanged.run(); this.tanksDirty = true; }, INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY);
-            this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
-            this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
+            this.fluidInputHandler = new ITArrayFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.fluidOutputHandler = new ITArrayFluidHandler(tanks.output, true, false, () -> { onChanged.run(); this.tanksDirty = true; });
             this.energyStorageHV = new AveragingEnergyStorage(ENERGY_CAPACITY_HV);
             this.energyStorageMV = new AveragingEnergyStorage(ENERGY_CAPACITY_MV);
-            this.energyCapHV = new StoredCapability<>(energyStorageHV);
-            this.energyCapMV = new StoredCapability<>(energyStorageMV);
             this.recipeGetter = CachedRecipe.cached(GasTurbineRecipe::findRecipe);
-            MultiblockFace mvInputMBFace = new MultiblockFace(ENERGY_INPUT_MV_FACING, ENERGY_INPUT_MV_POIS.get(0));
+            MultiblockFace mvInputMBFace = new MultiblockFace(ENERGY_INPUT_MV_FACING, ENERGY_INPUT_MV_POIS.getFirst());
             CapabilityPosition mvOpposingCP = CapabilityPosition.opposing(mvInputMBFace);
             MultiblockFace mvOpposingMBFace = new MultiblockFace(mvOpposingCP.side(), mvOpposingCP.posInMultiblock());
-            this.mvInput = ctx.getCapabilityAt(ForgeCapabilities.ENERGY, mvOpposingMBFace);
+            this.mvInput = ctx.getCapabilityAt(Capabilities.EnergyStorage.BLOCK, mvOpposingMBFace);
             this.inertia = new RotationInertiaProcess(BASE_MASS, DRIVE_TORQUE, FRICTION, MAX_SPEED);
             this.mechanicalProvider = new MechanicalEnergyProvider(this);
         }
 
-        @Override public void writeSaveNBT(CompoundTag nbt) {
+        @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putInt("speed", speed);
             nbt.putBoolean("active", active);
             nbt.putBoolean("starterRunning", starterRunning);
@@ -463,10 +471,10 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             nbt.putInt("ignitionGracePeriod", ignitionGracePeriod);
             nbt.putBoolean("isShutdown", isShutdown);
             nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
-            nbt.put("tanks", tanks.toNBT());
+            nbt.put("tanks", tanks.toNBT(provider));
         }
 
-        @Override public void readSaveNBT(CompoundTag nbt) {
+        @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             speed = nbt.getInt("speed");
             active = nbt.getBoolean("active");
             starterRunning = nbt.getBoolean("starterRunning");
@@ -477,18 +485,18 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             ignitionGracePeriod = nbt.getInt("ignitionGracePeriod");
             isShutdown = nbt.getBoolean("isShutdown");
             effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
-            tanks.readNBT(nbt.getCompound("tanks"));
+            tanks.readNBT(nbt.getCompound("tanks"), provider);
             tanksDirty = false;
         }
 
-        @Override public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             CompoundTag display = new CompoundTag();
-            writeDisplaySyncNBT(display);
+            writeDisplaySyncNBT(display, provider);
             nbt.put("display", display);
         }
 
-        @Override public void readSyncNBT(CompoundTag nbt) {
-            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        @Override public void readSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display"), provider); }
         }
 
         @Override public boolean isActive() { return active; }
@@ -499,7 +507,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
         @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input, tanks.output}; }
 
-        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("active", active);
             nbt.putBoolean("starterRunning", starterRunning);
             nbt.putBoolean("ignited", ignited);
@@ -510,10 +518,10 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             nbt.putBoolean("hasIgniter", hasIgniter);
             nbt.putBoolean("canIgnite", canIgniteClient);
             nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
-            nbt.put("tanks", tanks.toNBT());
+            nbt.put("tanks", tanks.toNBT(provider));
         }
 
-        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             boolean oldActive = active;
             active = nbt.getBoolean("active");
             starterRunning = nbt.getBoolean("starterRunning");
@@ -525,7 +533,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             hasIgniter = nbt.getBoolean("hasIgniter");
             canIgniteClient = nbt.getBoolean("canIgnite");
             effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
-            tanks.readNBT(nbt.getCompound("tanks"));
+            tanks.readNBT(nbt.getCompound("tanks"), provider);
             tanksDirty = false;
             if (active && !oldActive && speed < effectiveMaxSpeed / 4) { animation_fanFadeIn = 80; }
         }
@@ -538,16 +546,16 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
         public static GasTurbineTank makeClient(int inputCapacity, int outputCapacity) { return new GasTurbineTank(v -> {}, inputCapacity, outputCapacity); }
 
-        public CompoundTag toNBT() {
+        public CompoundTag toNBT(HolderLookup.Provider provider) {
             CompoundTag tag = new CompoundTag();
-            tag.put("input", this.input.writeToNBT(new CompoundTag()));
-            tag.put("output", this.output.writeToNBT(new CompoundTag()));
+            tag.put("input", this.input.writeToNBT(provider, new CompoundTag()));
+            tag.put("output", this.output.writeToNBT(provider, new CompoundTag()));
             return tag;
         }
 
-        public void readNBT(CompoundTag tag) {
-            this.input.readFromNBT(tag.getCompound("input"));
-            this.output.readFromNBT(tag.getCompound("output"));
+        public void readNBT(CompoundTag tag, HolderLookup.Provider provider) {
+            this.input.readFromNBT(provider, tag.getCompound("input"));
+            this.output.readFromNBT(provider, tag.getCompound("output"));
         }
 
         @SuppressWarnings("unused")

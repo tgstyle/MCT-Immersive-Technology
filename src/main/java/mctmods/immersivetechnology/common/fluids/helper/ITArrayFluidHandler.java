@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.fluids.helper;
 
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.IFluidTank;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
 public record ITArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boolean allowFill, Runnable afterTransfer) implements IFluidHandler {
@@ -27,12 +27,12 @@ public record ITArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boo
 
     public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return this.internal[tank].isFluidValid(stack); }
 
-    public int fill(FluidStack resource, IFluidHandler.FluidAction action) {
+    public int fill(@NotNull FluidStack resource, IFluidHandler.@NotNull FluidAction action) {
         if (!this.allowFill || resource.isEmpty()) { return 0; }
         FluidStack remaining = resource.copy();
         IFluidTank existing = null;
         for (IFluidTank tank : this.internal) {
-            if (tank.getFluid().isFluidEqual(remaining)) {
+            if (net.neoforged.neoforge.fluids.FluidStack.isSameFluidSameComponents(tank.getFluid(), remaining)) {
                 existing = tank;
                 break;
             }
@@ -51,7 +51,7 @@ public record ITArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boo
         return filled;
     }
 
-    @NotNull public FluidStack drain(FluidStack resource, IFluidHandler.FluidAction action) {
+    @NotNull public FluidStack drain(@NotNull FluidStack resource, IFluidHandler.@NotNull FluidAction action) {
         if (!this.allowDrain) { return FluidStack.EMPTY; }
         for (IFluidTank tank : this.internal) {
             FluidStack drainedHere = tank.drain(resource, action);
@@ -63,7 +63,7 @@ public record ITArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boo
         return FluidStack.EMPTY;
     }
 
-    @NotNull public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
+    @NotNull public FluidStack drain(int maxDrain, IFluidHandler.@NotNull FluidAction action) {
         if (!this.allowDrain) { return FluidStack.EMPTY; }
         for (IFluidTank tank : this.internal) {
             FluidStack drainedHere = tank.drain(maxDrain, action);

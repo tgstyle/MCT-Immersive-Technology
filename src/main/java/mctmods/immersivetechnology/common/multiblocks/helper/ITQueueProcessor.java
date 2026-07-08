@@ -15,10 +15,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.FakePlayer;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.common.util.FakePlayer;
 
-import java.util.*;
+import javax.annotation.Nullable;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ITQueueProcessor {
     private static final Comparator<BlockPos> Y_DESC_COMPARATOR = Comparator.comparingInt(pos -> -pos.getY());
@@ -99,12 +105,12 @@ public class ITQueueProcessor {
             levelChunk.setUnsaved(true);
 
             List<ServerPlayer> players = chunkMap.getPlayers(chunk, false);
-            players.forEach(p -> p.connection.send(new ClientboundForgetLevelChunkPacket(chunk.x, chunk.z)));
+            players.forEach(p -> p.connection.send(new ClientboundForgetLevelChunkPacket(chunk)));
 
             ClientboundLevelChunkWithLightPacket packet = new ClientboundLevelChunkWithLightPacket(levelChunk, lightEngine, null, null);
             players.forEach(p -> p.connection.send(packet));
 
-            ChunkHolder holder = chunkMap.getUpdatingChunkIfPresent(chunk.toLong());
+            ChunkHolder holder = chunkMap.getVisibleChunkIfPresent(chunk.toLong());
             if (holder != null) { holder.broadcastChanges(levelChunk); }
         }
 

@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 public class ColoredBeam {
@@ -89,21 +88,24 @@ public class ColoredBeam {
 
     private static void renderPart(PoseStack matrixStack, VertexConsumer consumer, float gTop, float gBottom, float a, float x0, float z0, float x1, float z1, float x2, float z2, float x3, float z3, float uMin, float uMax, float vTop, float vBottom, float yTop, float yBottom) {
         Matrix4f pose = matrixStack.last().pose();
-        Matrix3f normal = matrixStack.last().normal();
-        renderQuad(pose, normal, consumer, gTop, gBottom, a, x0, z0, x1, z1, uMax, uMin, vTop, vBottom, yTop, yBottom);
-        renderQuad(pose, normal, consumer, gTop, gBottom, a, x3, z3, x2, z2, uMax, uMin, vTop, vBottom, yTop, yBottom);
-        renderQuad(pose, normal, consumer, gTop, gBottom, a, x0, z0, x3, z3, uMax, uMin, vTop, vBottom, yTop, yBottom);
-        renderQuad(pose, normal, consumer, gTop, gBottom, a, x1, z1, x2, z2, uMax, uMin, vTop, vBottom, yTop, yBottom);
+        renderQuad(pose, consumer, gTop, gBottom, a, x0, z0, x1, z1, uMax, uMin, vTop, vBottom, yTop, yBottom);
+        renderQuad(pose, consumer, gTop, gBottom, a, x3, z3, x2, z2, uMax, uMin, vTop, vBottom, yTop, yBottom);
+        renderQuad(pose, consumer, gTop, gBottom, a, x0, z0, x3, z3, uMax, uMin, vTop, vBottom, yTop, yBottom);
+        renderQuad(pose, consumer, gTop, gBottom, a, x1, z1, x2, z2, uMax, uMin, vTop, vBottom, yTop, yBottom);
     }
 
-    private static void renderQuad(Matrix4f pose, Matrix3f normal, VertexConsumer consumer, float gTop, float gBottom, float a, float x0, float z0, float x1, float z1, float u0, float u1, float vTop, float vBottom, float yTop, float yBottom) {
-        addVertex(pose, normal, consumer, gTop, a, yTop, x0, z0, u0, vTop);
-        addVertex(pose, normal, consumer, gBottom, a, yBottom, x0, z0, u0, vBottom);
-        addVertex(pose, normal, consumer, gBottom, a, yBottom, x1, z1, u1, vBottom);
-        addVertex(pose, normal, consumer, gTop, a, yTop, x1, z1, u1, vTop);
+    private static void renderQuad(Matrix4f pose, VertexConsumer consumer, float gTop, float gBottom, float a, float x0, float z0, float x1, float z1, float u0, float u1, float vTop, float vBottom, float yTop, float yBottom) {
+        addVertex(pose, consumer, gTop, a, yTop, x0, z0, u0, vTop);
+        addVertex(pose, consumer, gBottom, a, yBottom, x0, z0, u0, vBottom);
+        addVertex(pose, consumer, gBottom, a, yBottom, x1, z1, u1, vBottom);
+        addVertex(pose, consumer, gTop, a, yTop, x1, z1, u1, vTop);
     }
 
-    private static void addVertex(Matrix4f pose, Matrix3f normal, VertexConsumer consumer, float g, float a, float y, float x, float z, float u, float v) {
-        consumer.vertex(pose, x, y, z).color(1.0F, g, 0.0F, a).uv(u, v).uv2(15728880).normal(normal, 0.0F, 1.0F, 0.0F).endVertex();
+    private static void addVertex(Matrix4f pose, VertexConsumer consumer, float g, float a, float y, float x, float z, float u, float v) {
+        consumer.addVertex(pose, x, y, z)
+                .setColor(1.0F, g, 0.0F, a)
+                .setUv(u, v)
+                .setLight(15728880)
+                .setNormal(0.0F, 1.0F, 0.0F);
     }
 }

@@ -1,71 +1,96 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import com.google.common.collect.Lists;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.HeatExchangerRecipeSerializer;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Function;
+import org.jetbrains.annotations.Nullable;
 
 public class HeatExchangerRecipe extends MultiblockRecipe {
-    public static RegistryObject<IERecipeSerializer<HeatExchangerRecipe>> SERIALIZER;
+    public static DeferredHolder<RecipeSerializer<?>, HeatExchangerRecipeSerializer> SERIALIZER;
     public static final CachedRecipeList<HeatExchangerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.HEAT_EXCHANGER);
 
-    public static float timeModifier = 1;
-    public static float energyModifier = 1;
+    public float timeModifier = 1;
+    public float energyModifier = 1;
 
-    public final FluidTagInput input0;
-    public final FluidTagInput input1;
+    public final TagKey<Fluid> input0Tag;
+    private final int input0Amount;
+    @Nullable public final TagKey<Fluid> input1Tag;
+    private final int input1Amount;
     public final FluidStack output0;
-    public final FluidStack output1;
+    @Nullable public final FluidStack output1;
 
-    int totalProcessTime;
-    int totalProcessEnergy;
+    private final int baseProcessTime;
+    private final int baseProcessEnergy;
 
-    public HeatExchangerRecipe(ResourceLocation id, FluidTagInput input0, FluidTagInput input1, FluidStack output0, FluidStack output1, int energy, int time) {
-        super(LAZY_EMPTY, ITRecipeTypes.HEAT_EXCHANGER, id);
-        this.input0 = input0;
-        this.input1 = input1;
+    public HeatExchangerRecipe(@SuppressWarnings("unused") ResourceLocation id, TagKey<Fluid> input0Tag, int input0Amount, @Nullable TagKey<Fluid> input1Tag, int input1Amount, FluidStack output0, @Nullable FluidStack output1, int energy, int time) {
+        super(TagOutput.EMPTY, ITRecipeTypes.HEAT_EXCHANGER, time, energy, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        this.input0Tag = input0Tag;
+        this.input0Amount = input0Amount;
+        this.input1Tag = input1Tag;
+        this.input1Amount = input1Amount;
         this.output0 = output0;
         this.output1 = output1;
-        this.totalProcessTime = time;
-        this.totalProcessEnergy = energy;
-
-        this.fluidInputList = Lists.newArrayList(this.input0);
-        if (this.input1 != null) this.fluidInputList.add(this.input1);
-        this.fluidOutputList = Lists.newArrayList(this.output0);
-        if (this.output1 != null) this.fluidOutputList.add(this.output1);
+        this.baseProcessTime = time;
+        this.baseProcessEnergy = energy;
     }
 
-    public HeatExchangerRecipe modifyTimeAndEnergy(Function<Double, Double> time, Function<Double, Double> energy) {
-        this.totalProcessTime = (int)Math.floor(time.apply((double)this.totalProcessTime));
-        this.totalProcessEnergy = (int)Math.floor(energy.apply((double)this.totalProcessEnergy));
-        return this;
+    public HeatExchangerRecipe(TagKey<Fluid> input0Tag, int input0Amount, @Nullable TagKey<Fluid> input1Tag, int input1Amount, FluidStack output0, @Nullable FluidStack output1, int energy, int time) {
+        this(ResourceLocation.fromNamespaceAndPath("immersivetechnology", "codec_generated"), input0Tag, input0Amount, input1Tag, input1Amount, output0, output1, energy, time);
     }
 
-    public static HeatExchangerRecipe findRecipe(Level level, FluidStack input0, FluidStack input1) {
-        for (HeatExchangerRecipe recipe : RECIPES.getRecipes(level)) {
-            if (recipe.input0.test(input0) && (recipe.input1 == null || recipe.input1.test(input1))) return recipe;
+    public TagKey<Fluid> input0Tag() { return input0Tag; }
+    public int input0Amount() { return input0Amount; }
+    public int getInput0Amount() { return input0Amount; }
+    public TagKey<Fluid> input1Tag() { return input1Tag; }
+    public int input1Amount() { return input1Amount; }
+    public int getInput1Amount() { return input1Amount; }
+    public FluidStack output0() { return output0; }
+    public FluidStack output1() { return output1; }
+
+    public boolean matchesInput0(FluidStack stack) {
+        return stack != null && stack.is(this.input0Tag);
+    }
+
+    public boolean matchesInput1(FluidStack stack) {
+        return stack != null && (this.input1Tag == null || stack.is(this.input1Tag));
+    }
+
+    public static RecipeHolder<HeatExchangerRecipe> findRecipe(Level level, FluidStack input0, FluidStack input1) {
+        if ((input0 == null || input0.isEmpty()) && (input1 == null || input1.isEmpty())) return null;
+        for (RecipeHolder<HeatExchangerRecipe> holder : RECIPES.getRecipes(level)) {
+            HeatExchangerRecipe recipe = holder.value();
+            if (recipe.matchesInput0(input0) && recipe.matchesInput1(input1)) return holder;
         }
         return null;
     }
 
-    @Override public int getMultipleProcessTicks() { return 0; }
+    @Override
+    public int getTotalProcessTime() {
+        return (int) (baseProcessTime * timeModifier);
+    }
 
-    @Override public int getTotalProcessTime() { return this.totalProcessTime; }
+    @Override
+    public int getTotalProcessEnergy() {
+        return (int) (baseProcessEnergy * energyModifier);
+    }
 
-    @Override public int getTotalProcessEnergy() { return this.totalProcessEnergy; }
-
-    @Override @NotNull public ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
+    @Override @NotNull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
     @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+
+    @Override public int getMultipleProcessTicks() { return 0; }
 }

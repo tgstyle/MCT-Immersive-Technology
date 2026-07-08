@@ -20,9 +20,7 @@ public class ITSplitObjModel<Texture> {
     public ITSplitObjModel(Map<String, ITGroup<Texture>> faces) {
         this.faces = ImmutableMap.copyOf(faces);
         ImmutableList.Builder<ITPolygon<Texture>> builder = ImmutableList.builderWithExpectedSize(faces.values().stream().mapToInt(g -> g.getFaces().size()).sum());
-        for (ITGroup<Texture> g : faces.values()) {
-            builder.addAll(g.getFaces());
-        }
+        for (ITGroup<Texture> g : faces.values()) { builder.addAll(g.getFaces()); }
         this.allFaces = builder.build();
 
         double mx = Double.POSITIVE_INFINITY, Mx = Double.NEGATIVE_INFINITY;
@@ -53,9 +51,7 @@ public class ITSplitObjModel<Texture> {
 
     public Map<ITEpsilonMath.Sign, ITSplitObjModel<Texture>> split(ITPlane splitPlane) {
         Map<ITEpsilonMath.Sign, ITGroup<Texture>> result = new java.util.EnumMap<>(ITEpsilonMath.Sign.class);
-        for (ITGroup<Texture> g : this.faces.values()) {
-            g.split(splitPlane).forEach(e -> result.merge(e.getKey(), e.getValue(), ITGroup::merge));
-        }
+        for (ITGroup<Texture> g : this.faces.values()) { g.split(splitPlane).forEach(e -> result.merge(e.getKey(), e.getValue(), ITGroup::merge)); }
         return result.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new ITSplitObjModel<>(Map.of("", e.getValue()))));
     }
 
@@ -85,8 +81,4 @@ public class ITSplitObjModel<Texture> {
     public double getMaxY() { return maxY; }
     public double getMinZ() { return minZ; }
     public double getMaxZ() { return maxZ; }
-
-    public int getCenterX() { return (int) Math.round((minX + maxX) * 0.5); }
-    public int getCenterY() { return (int) Math.round((minY + maxY) * 0.5); }
-    public int getCenterZ() { return (int) Math.round((minZ + maxZ) * 0.5); }
 }

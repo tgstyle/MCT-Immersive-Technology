@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 public record ITPolygon<Texture>(List<ITVertex> points, Texture texture) {
-
     private static final ITEpsilonMath EPS_MATH = ITEpsilonMath.DEFAULT;
 
     public ITPolygon(List<ITVertex> points, Texture texture) {
@@ -31,7 +30,7 @@ public record ITPolygon<Texture>(List<ITVertex> points, Texture texture) {
         }
 
         int firstSignStart = 0;
-        ITEpsilonMath.Sign zeroSign = signs.get(0);
+        ITEpsilonMath.Sign zeroSign = signs.getFirst();
         for (; firstSignStart < this.points.size(); ++firstSignStart) {
             ITEpsilonMath.Sign signHere = signs.get(firstSignStart);
             if (zeroSign != signHere && signHere != ITEpsilonMath.Sign.ZERO) {
@@ -39,21 +38,17 @@ public record ITPolygon<Texture>(List<ITVertex> points, Texture texture) {
             }
         }
 
-        if (firstSignStart >= this.points.size()) {
-            return Map.of(zeroSign, this);
-        } else {
+        if (firstSignStart >= this.points.size()) { return Map.of(zeroSign, this); }
+        else {
             ITEpsilonMath.Sign firstSign = signs.get(firstSignStart);
             ITEpsilonMath.Sign otherSign = firstSign.invert();
-            if (!signs.contains(otherSign)) {
-                return Map.of(firstSign, this);
-            } else {
+            if (!signs.contains(otherSign)) { return Map.of(firstSign, this); }
+            else {
                 ITCyclicListWrapper<ITEpsilonMath.Sign> cyclicSigns = new ITCyclicListWrapper<>(signs);
                 ITCyclicListWrapper<ITVertex> cyclicPoints = new ITCyclicListWrapper<>(this.points);
 
                 int otherSignStart = firstSignStart;
-                while (cyclicSigns.get(otherSignStart) != otherSign) {
-                    ++otherSignStart;
-                }
+                while (cyclicSigns.get(otherSignStart) != otherSign) { ++otherSignStart; }
 
                 List<ITVertex> firstInnerPoints = cyclicPoints.sublist(firstSignStart, otherSignStart);
                 List<ITVertex> otherInnerPoints = cyclicPoints.sublist(otherSignStart, firstSignStart);
@@ -87,17 +82,13 @@ public record ITPolygon<Texture>(List<ITVertex> points, Texture texture) {
 
     public ITPolygon<Texture> translate(int axis, double amount) {
         List<ITVertex> translatedVertices = new ArrayList<>(this.points.size());
-        for (ITVertex v : this.points) {
-            translatedVertices.add(v.translate(axis, amount));
-        }
+        for (ITVertex v : this.points) { translatedVertices.add(v.translate(axis, amount)); }
         return new ITPolygon<>(translatedVertices, this.texture);
     }
 
     public ITPolygon<Texture> translate(ITVec3d offset) {
         List<ITVertex> translatedVertices = new ArrayList<>(this.points.size());
-        for (ITVertex v : this.points) {
-            translatedVertices.add(v.translate(offset));
-        }
+        for (ITVertex v : this.points) { translatedVertices.add(v.translate(offset)); }
         return new ITPolygon<>(translatedVertices, this.texture);
     }
 
@@ -106,7 +97,7 @@ public record ITPolygon<Texture>(List<ITVertex> points, Texture texture) {
         int secondVertex;
         for (secondVertex = 1; secondVertex + 2 < this.points.size(); secondVertex += 2) {
             quads.add(new ITPolygon<>(List.of(
-                    this.points.get(0),
+                    this.points.getFirst(),
                     this.points.get(secondVertex),
                     this.points.get(secondVertex + 1),
                     this.points.get(secondVertex + 2)
@@ -114,7 +105,7 @@ public record ITPolygon<Texture>(List<ITVertex> points, Texture texture) {
         }
         if (secondVertex + 1 < this.points.size()) {
             quads.add(new ITPolygon<>(List.of(
-                    this.points.get(0),
+                    this.points.getFirst(),
                     this.points.get(secondVertex),
                     this.points.get(secondVertex + 1),
                     this.points.get(secondVertex + 1)

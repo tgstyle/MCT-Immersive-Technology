@@ -1,0 +1,20 @@
+{
+  "type": "immersivetechnology:cooling_tower",
+  "amount0": 8100,
+  "amount1": 900,
+  "inputTag0": "immersivetechnology:hot_water",
+  "inputTag1": "minecraft:water",
+  "output0": {
+    "amount": 2925,
+    "id": "minecraft:water"
+  },
+  "output1": {
+    "amount": 2925,
+    "id": "minecraft:water"
+  },
+  "output2": {
+    "amount": 2925,
+    "id": "minecraft:water"
+  },
+  "time": 3
+}

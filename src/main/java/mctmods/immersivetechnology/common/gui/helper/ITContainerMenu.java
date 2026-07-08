@@ -5,9 +5,9 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import com.mojang.datafixers.util.Pair;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ITSlot;
+import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.network.ITMessageContainerData;
 import mctmods.immersivetechnology.core.network.ITPacketHandler;
-import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,19 +20,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.items.ItemHandlerHelper;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-@EventBusSubscriber(modid = ITLib.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = ITLib.MODID)
 public abstract class ITContainerMenu extends AbstractContainerMenu {
     protected final List<ITGenericContainerData<?>> genericData = new ArrayList<>();
     protected final List<ServerPlayer> usingPlayers = new ArrayList<>();
@@ -55,18 +52,14 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
             ITGenericContainerData<?> data = genericData.get(i);
             if (data.needsUpdate()) toSync.add(Pair.of(i, data.dataPair()));
         }
-        if (!toSync.isEmpty()) for (ServerPlayer player : usingPlayers) {
-            ITPacketHandler.sendToPlayer(player, new ITMessageContainerData(toSync));
-        }
+        if (!toSync.isEmpty()) for (ServerPlayer player : usingPlayers) { ITPacketHandler.sendToPlayer(player, new ITMessageContainerData(toSync)); }
     }
 
     public void receiveSync(List<Pair<Integer, ITGenericDataSerializers.DataPair<?>>> synced) {
-        for (Pair<Integer, ITGenericDataSerializers.DataPair<?>> syncElement : synced) {
-            genericData.get(syncElement.getFirst()).processSync(syncElement.getSecond().data());
-        }
+        for (Pair<Integer, ITGenericDataSerializers.DataPair<?>> syncElement : synced) { genericData.get(syncElement.getFirst()).processSync(syncElement.getSecond().data()); }
     }
 
-    @Override public void clicked(int id, int dragType, @NotNull ClickType clickType, @NotNull Player player) {
+    @Override public void clicked(int id, int dragType, @Nonnull ClickType clickType, @Nonnull Player player) {
         Slot slot = id < 0 ? null : this.slots.get(id);
         if (!(slot instanceof ITSlot.ItemHandlerGhost)) { super.clicked(id, dragType, clickType, player); return; }
         ItemStack stackSlot = slot.getItem();
@@ -76,25 +69,22 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
             int amount = Math.min(slot.getMaxStackSize(), stackHeld.getCount());
             if (dragType == 1) amount = 1;
             if (stackSlot.isEmpty()) {
-                if (!stackHeld.isEmpty() && slot.mayPlace(stackHeld)) {
-                    slot.set(ItemHandlerHelper.copyStackWithSize(stackHeld, amount));
-                }
-            } else if (stackHeld.isEmpty()) { slot.set(ItemStack.EMPTY); }
-            else if (slot.mayPlace(stackHeld)) {
+                if (!stackHeld.isEmpty() && slot.mayPlace(stackHeld)) { slot.set(stackHeld.copyWithCount(amount)); }
+            } else if (stackHeld.isEmpty()) { slot.set(ItemStack.EMPTY); }else if (slot.mayPlace(stackHeld)) {
                 if (ItemStack.isSameItem(stackSlot, stackHeld)) {
                     stackSlot.grow(amount);
                     slot.set(stackSlot);
-                } else slot.set(ItemHandlerHelper.copyStackWithSize(stackHeld, amount));
+                } else { slot.set(stackHeld.copyWithCount(amount)); }
             }
             if (stackSlot.getCount() > slot.getMaxStackSize()) stackSlot.setCount(slot.getMaxStackSize());
         } else if (dragType == 5) {
             ItemStack stackHeld = getCarried();
             int amount = Math.min(slot.getMaxStackSize(), stackHeld.getCount());
-            if (!slot.hasItem()) slot.set(ItemHandlerHelper.copyStackWithSize(stackHeld, amount));
+            if (!slot.hasItem()) { slot.set(stackHeld.copyWithCount(amount)); }
         }
     }
 
-    @Override @Nonnull public ItemStack quickMoveStack(@NotNull Player player, int slot) {
+    @Override @Nonnull public ItemStack quickMoveStack(@Nonnull Player player, int slot) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slotObject = this.slots.get(slot);
         if (slotObject.hasItem()) {
@@ -140,7 +130,9 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
             itContainer.usingPlayers.add(serverPlayer);
             List<Pair<Integer, ITGenericDataSerializers.DataPair<?>>> list = new ArrayList<>();
             for (int i = 0; i < itContainer.genericData.size(); i++) {
-                list.add(Pair.of(i, itContainer.genericData.get(i).dataPair()));
+                ITGenericContainerData<?> data = itContainer.genericData.get(i);
+                data.needsUpdate(); // force `current` to be populated with the live value before serializing it
+                list.add(Pair.of(i, data.dataPair()));
             }
             ITPacketHandler.sendToPlayer(serverPlayer, new ITMessageContainerData(list));
         }
@@ -153,7 +145,7 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
     }
 
     public static MenuContext multiblockCtx(MenuType<?> pMenuType, int pContainerId, MultiblockMenuContext<?> ctx) {
-        return new MenuContext(pMenuType, pContainerId, ctx.mbContext()::markMasterDirty, p -> {
+        return new MenuContext(pMenuType, pContainerId, () -> {}, p -> {
             if (!ctx.mbContext().isValid().getAsBoolean()) return false;
             return p.distanceToSqr(Vec3.atCenterOf(ctx.clickedPos)) <= 64.0D;
         });

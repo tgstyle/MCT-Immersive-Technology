@@ -12,9 +12,7 @@ public class ITSplitModel<Texture> {
         ImmutableMap.Builder<ITModelSplitterVec3i, ITSplitObjModel<Texture>> builder = ImmutableMap.builder();
         for (var xSlice : splitInPlanes(input, Axis.X).entrySet()) {
             for (var zColumn : splitInPlanes(xSlice.getValue(), Axis.Z).entrySet()) {
-                for (var yDice : splitInPlanes(zColumn.getValue(), Axis.Y).entrySet()) {
-                    builder.put(new ITModelSplitterVec3i(xSlice.getKey(), yDice.getKey(), zColumn.getKey()), yDice.getValue());
-                }
+                for (var yDice : splitInPlanes(zColumn.getValue(), Axis.Y).entrySet()) { builder.put(new ITModelSplitterVec3i(xSlice.getKey(), yDice.getKey(), zColumn.getKey()), yDice.getValue()); }
             }
         }
         this.submodels = builder.build();
@@ -25,9 +23,7 @@ public class ITSplitModel<Texture> {
     }
 
     private static <Texture> Map<Integer, ITSplitObjModel<Texture>> splitInPlanes(ITSplitObjModel<Texture> input, Axis axis) {
-        if (input.isEmpty()) {
-            return Map.of();
-        }
+        if (input.isEmpty()) { return Map.of(); }
 
         double min = axis.getMin(input);
         double max = axis.getMax(input);
@@ -51,11 +47,7 @@ public class ITSplitModel<Texture> {
         return modelPerSection;
     }
 
-    private static <Texture> void putModel(Map<Integer, ITSplitObjModel<Texture>> sectionModels, Axis axis, int section, ITSplitObjModel<Texture> baseSectionModel) {
-        if (baseSectionModel != null && !baseSectionModel.isEmpty()) {
-            sectionModels.put(section, baseSectionModel.translate(axis.ordinal(), -section).quadify());
-        }
-    }
+    private static <Texture> void putModel(Map<Integer, ITSplitObjModel<Texture>> sectionModels, Axis axis, int section, ITSplitObjModel<Texture> baseSectionModel) { if (baseSectionModel != null && !baseSectionModel.isEmpty()) { sectionModels.put(section, baseSectionModel.translate(axis.ordinal(), -section).quadify()); } }
 
     private enum Axis {
         X(0), Y(1), Z(2);

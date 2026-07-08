@@ -1,0 +1,20 @@
+{
+  "parent": "minecraft:block/block",
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "immersivetechnology:obj",
+    "model": "immersivetechnology:models/multiblock/metal/obj/electrolytic_crucible_battery/electrolytic_crucible_battery.obj",
+    "shade_quads": true,
+    "textures": {
+      "bottom": "immersivetechnology:multiblock/metal/electrolytic_crucible_battery",
+      "particle": "immersivetechnology:multiblock/metal/electrolytic_crucible_battery",
+      "side": "immersivetechnology:multiblock/metal/electrolytic_crucible_battery",
+      "top": "immersivetechnology:multiblock/metal/electrolytic_crucible_battery"
+    }
+  },
+  "loader": "immersivetechnology:mirror"
+}

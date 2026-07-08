@@ -1,0 +1,11 @@
+{
+  "type": "immersivetechnology:solar_tower",
+  "inputAmount": 1000,
+  "inputTag": "immersivetechnology:gravel_slurry",
+  "output": {
+    "amount": 500,
+    "id": "immersivetechnology:heated_gravel_slurry"
+  },
+  "requiredTemp": 400.0,
+  "time": 10
+}

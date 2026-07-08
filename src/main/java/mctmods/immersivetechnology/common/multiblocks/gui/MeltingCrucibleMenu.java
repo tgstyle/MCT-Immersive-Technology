@@ -12,11 +12,11 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -49,13 +49,13 @@ public class MeltingCrucibleMenu extends ITContainerMenu {
             @Override public boolean mayPlace(@Nonnull ItemStack itemStack) {
                 FluidStack fs = FluidUtil.getFluidContained(itemStack).orElse(FluidStack.EMPTY);
                 if (fs.isEmpty()) return false;
-                return inputTank.getFluidAmount() <= 0 || fs.isFluidEqual(inputTank.getFluid());
+                return inputTank.getFluidAmount() <= 0 || FluidStack.isSameFluid(fs, inputTank.getFluid());
             }
         });
         this.addSlot(new ITSlot.Output(inv, 1, 80, 53));
         this.addSlot(new ITSlot.FluidContainer(inv, 2, 148, 17, 0) {
             @Override public boolean mayPlace(@Nonnull ItemStack itemStack) {
-                return itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent();
+                return itemStack.getCapability(Capabilities.FluidHandler.ITEM) != null;
             }
         });
         this.addSlot(new ITSlot.Output(inv, 3, 148, 53));

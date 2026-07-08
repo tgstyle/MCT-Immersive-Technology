@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.client.gui;
 
+import blusunrize.immersiveengineering.api.IEApi;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.client.gui.helper.ITContainerScreen;
 import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
@@ -17,6 +18,8 @@ import java.util.List;
 
 public class AdvancedCokeOvenScreen extends ITContainerScreen<AdvancedCokeOvenMenu> {
     private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("immersiveengineering", "coke_oven");
+    private static final ResourceLocation TANK = IEApi.ieLoc("coke_oven/tank_overlay");
+    private static final ResourceLocation FLAME = IEApi.ieLoc("coke_oven/flame");
 
     public AdvancedCokeOvenScreen(AdvancedCokeOvenMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
@@ -25,11 +28,9 @@ public class AdvancedCokeOvenScreen extends ITContainerScreen<AdvancedCokeOvenMe
         int process = menu.getRemainingProcessTime();
         if (processMax > 0 && process > 0) {
             int h = (int) (12 * (process / (float) processMax));
-            graphics.blit(TEXTURE, leftPos + 59, topPos + 37 + 12 - h, 179, 1 + 12 - h, 9, h);
+            graphics.blitSprite(FLAME, 9, 12, 0, 12 - h, leftPos + 59, topPos + 37 + 12 - h, 9, h);
         }
     }
 
-    @Override @Nonnull protected List<ITInfoArea> makeInfoAreas() {
-        return ImmutableList.of(new ITFluidInfoArea(menu.tanks.output(), new Rect2i(leftPos + 129, topPos + 20, 16, 47), 176, 31, 20, 51, TEXTURE));
-    }
+    @Override @Nonnull protected List<ITInfoArea> makeInfoAreas() { return ImmutableList.of( new ITFluidInfoArea(menu.tanks.output(), new Rect2i(leftPos + 129, topPos + 20, 16, 47), 20, 51, TANK) ); }
 }

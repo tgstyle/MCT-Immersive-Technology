@@ -6,13 +6,13 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 
 public record ITMultiblockGui<S extends IMultiblockState>(ITMenuTypes.MultiblockContainer<S, ?> menu) implements IMultiblockComponent<S> {
-    public InteractionResult click(IMultiblockContext<S> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
+    public ItemInteractionResult click(IMultiblockContext<S> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
         if (!isClient && ctx != null) { player.openMenu(this.menu.provide(ctx, posInMultiblock)); }
-        return InteractionResult.sidedSuccess(isClient);
+        return ItemInteractionResult.sidedSuccess(isClient);
     }
 }

@@ -9,9 +9,9 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.common.util.Lazy;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -128,7 +128,7 @@ public class ITFurnaceHandler<R extends IESerializableRecipe> {
     private int getProcessTime(R recipe) { return getProcessingTime.applyAsInt(recipe); }
 
     public interface IFurnaceEnvironment<R extends IESerializableRecipe> {
-        IItemHandlerModifiable getInventory();
+        net.neoforged.neoforge.items.IItemHandlerModifiable getInventory();
 
         @Nullable R getRecipeForInput(Level level);
 

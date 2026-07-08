@@ -3,29 +3,26 @@ package mctmods.immersivetechnology.core.integration.jade;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import snownee.jade.api.Accessor;
 import snownee.jade.api.view.*;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ITMultiblockEnergyDataProvider implements IServerExtensionProvider<Object, CompoundTag>, IClientExtensionProvider<CompoundTag, EnergyView> {
+public class ITMultiblockEnergyDataProvider implements IServerExtensionProvider<CompoundTag>, IClientExtensionProvider<CompoundTag, EnergyView> {
 
-    @Override
-    @Nullable
-    public List<ViewGroup<CompoundTag>> getGroups(ServerPlayer serverPlayer, ServerLevel serverLevel, Object target, boolean b) {
+    @Override @Nullable public List<ViewGroup<CompoundTag>> getGroups(Accessor<?> accessor) {
+        Object target = accessor.getTarget();
         if (!(target instanceof IMultiblockBE<?> multiblockBE)) {
             return null;
         }
         final IMultiblockBEHelper<?> helper = multiblockBE.getHelper();
-        if (helper.getState() instanceof ITDisplayContext dc) {
+        if (helper.getState() instanceof ITIDisplayContext dc) {
             List<AveragingEnergyStorage> energies = dc.getEnergies();
             if (!energies.isEmpty()) {
                 List<CompoundTag> list = new ArrayList<>();
@@ -38,13 +35,9 @@ public class ITMultiblockEnergyDataProvider implements IServerExtensionProvider<
         return null;
     }
 
-    @Override
-    public List<ClientViewGroup<EnergyView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<CompoundTag>> list) {
-        return ClientViewGroup.map(list, tag -> EnergyView.read(tag, "RF"), null);
-    }
+    @Override public List<ClientViewGroup<EnergyView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<CompoundTag>> list) {return ClientViewGroup.map(list, tag -> EnergyView.read(tag, "RF"), null); }
 
-    @Override
-    public ResourceLocation getUid() {
+    @Override public ResourceLocation getUid() {
         return ITLib.rl("multiblock_energy");
     }
 }

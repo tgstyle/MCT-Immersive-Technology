@@ -2,54 +2,50 @@ package mctmods.immersivetechnology.core.integration.jade;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
 import snownee.jade.api.Accessor;
 import snownee.jade.api.view.*;
 import snownee.jade.api.fluid.JadeFluidObject;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ITMultiblockFluidDataProvider implements IServerExtensionProvider<Object, CompoundTag>, IClientExtensionProvider<CompoundTag, FluidView> {
+public class ITMultiblockFluidDataProvider implements IServerExtensionProvider<CompoundTag>, IClientExtensionProvider<CompoundTag, FluidView> {
 
-    @Override
-    @Nullable
-    public List<ViewGroup<CompoundTag>> getGroups(ServerPlayer serverPlayer, ServerLevel serverLevel, Object target, boolean b) {
-        if (!(target instanceof IMultiblockBE<?> multiblockBE)) {
-            return null;
-        }
+    @Override @Nullable public List<ViewGroup<CompoundTag>> getGroups(Accessor<?> accessor) {
+        Object target = accessor.getTarget();
+        if (!(target instanceof IMultiblockBE<?> multiblockBE)) { return null; }
         final IMultiblockBEHelper<?> helper = multiblockBE.getHelper();
-        if (helper.getState() instanceof ITDisplayContext dc) {
-            IFluidTank[] tanks = dc.getInternalTanks();
-            if (tanks != null && tanks.length > 0) {
+        if (helper.getState() instanceof ITIDisplayContext dc) {
+            Object tanksObj = dc.getInternalTanks();
+            if (tanksObj instanceof Object[] tanks && tanks.length > 0) {
                 List<CompoundTag> list = new ArrayList<>();
-                for (IFluidTank tank : tanks) {
-                    FluidStack fs = tank.getFluid();
-                    JadeFluidObject fluidObject = JadeFluidObject.of(fs.getFluid(), fs.getAmount(), fs.getTag());
-                    CompoundTag tag = FluidView.writeDefault(fluidObject, tank.getCapacity());
-                    list.add(tag);
+                for (Object t : tanks) {
+                    if (t instanceof FluidTank tank) {
+                        FluidStack fs = tank.getFluid();
+                        if (fs.isEmpty()) continue;
+                        JadeFluidObject fluidObject = JadeFluidObject.of(fs.getFluid(), fs.getAmount());
+                        CompoundTag tag = FluidView.writeDefault(fluidObject, tank.getCapacity());
+                        list.add(tag);
+                    }
                 }
-                return List.of(new ViewGroup<>(list));
+                if (!list.isEmpty()) {
+                    return List.of(new ViewGroup<>(list));
+                }
             }
         }
         return null;
     }
 
     @Override
-    public List<ClientViewGroup<FluidView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<CompoundTag>> list) {
-        return ClientViewGroup.map(list, FluidView::readDefault, null);
-    }
+    public List<ClientViewGroup<FluidView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<CompoundTag>> list) { return ClientViewGroup.map(list, FluidView::readDefault, null); }
 
     @Override
-    public ResourceLocation getUid() {
-        return ITLib.rl("multiblock_fluid");
-    }
+    public ResourceLocation getUid() { return ITLib.rl("multiblock_fluid"); }
 }

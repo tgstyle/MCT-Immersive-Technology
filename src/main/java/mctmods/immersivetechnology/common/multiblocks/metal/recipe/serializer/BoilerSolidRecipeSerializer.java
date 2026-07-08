@@ -2,38 +2,46 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
-import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerSolidLogic;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import malte0811.dualcodecs.DualMapCodec;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.crafting.conditions.ICondition;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class BoilerSolidRecipeSerializer extends IERecipeSerializer<BoilerSolidRecipe> {
     @Override public ItemStack getIcon() { return ITMultiblockProvider.BOILER_SOLID.iconStack(); }
 
-    @Override public BoilerSolidRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {
-        IngredientWithSize input = IngredientWithSize.deserialize(GsonHelper.getAsJsonObject(json, "input"));
-        double heatPerTick = GsonHelper.getAsDouble(json, "heatPerTick");
-        double targetHeat = GsonHelper.getAsDouble(json, "targetHeat", BoilerSolidLogic.DEFAULT_WORKING_HEAT_LEVEL);
-        return new BoilerSolidRecipe(recipeId, input, heatPerTick, targetHeat);
-    }
+    @Override
+    protected DualMapCodec<RegistryFriendlyByteBuf, BoilerSolidRecipe> codecs() {
+        MapCodec<IngredientWithSize> inputCodec = IngredientWithSize.CODEC.fieldOf("input");
 
-    @Override @Nullable public BoilerSolidRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
-        IngredientWithSize input = IngredientWithSize.read(buffer);
-        double heatPerTick = buffer.readDouble();
-        double targetHeat = buffer.readDouble();
-        return new BoilerSolidRecipe(recipeId, input, heatPerTick, targetHeat);
-    }
+        MapCodec<BoilerSolidRecipe> mapCodec = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                inputCodec.forGetter(BoilerSolidRecipe::input),
+                Codec.DOUBLE.fieldOf("heatPerTick").forGetter(BoilerSolidRecipe::heatPerTick),
+                Codec.DOUBLE.fieldOf("targetHeat").forGetter(BoilerSolidRecipe::targetHeat)
+        ).apply(instance, BoilerSolidRecipe::new));
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, BoilerSolidRecipe recipe) {
-        recipe.input.write(buffer);
-        buffer.writeDouble(recipe.getHeatPerTick());
-        buffer.writeDouble(recipe.getTargetHeat());
+        StreamCodec<RegistryFriendlyByteBuf, BoilerSolidRecipe> streamCodec = new StreamCodec<>() {
+            @Override
+            public @NotNull BoilerSolidRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+                IngredientWithSize input = IngredientWithSize.STREAM_CODEC.decode(buf);
+                double heatPerTick = buf.readDouble();
+                double targetHeat = buf.readDouble();
+                return new BoilerSolidRecipe(input, heatPerTick, targetHeat);
+            }
+
+            @Override
+            public void encode(@NotNull RegistryFriendlyByteBuf buf, BoilerSolidRecipe recipe) {
+                IngredientWithSize.STREAM_CODEC.encode(buf, recipe.input());
+                buf.writeDouble(recipe.heatPerTick());
+                buf.writeDouble(recipe.targetHeat());
+            }
+        };
+        return new DualMapCodec<>(mapCodec, streamCodec);
     }
 }

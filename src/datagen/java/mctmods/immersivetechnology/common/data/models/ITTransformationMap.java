@@ -3,12 +3,11 @@ package mctmods.immersivetechnology.common.data.models;
 import com.google.common.base.Preconditions;
 import com.google.gson.*;
 import com.mojang.math.Transformation;
-import mctmods.immersivetechnology.client.models.helper.ITModelUtils;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransform.Deserializer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraftforge.common.util.TransformationHelper;
+import net.neoforged.neoforge.common.util.TransformationHelper;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -69,7 +68,12 @@ public class ITTransformationMap {
             if(forType!=null) {
                 if(vanilla) {
                     ItemTransform vanillaTransform = GSON.fromJson(forType, ItemTransform.class);
-                    transform = ITModelUtils.fromItemTransform(vanillaTransform, false);
+                    if (vanillaTransform == ItemTransform.NO_TRANSFORM) { transform = Transformation.identity(); }
+                    else {
+                        Quaternionf leftRot = TransformationHelper.quatFromXYZ(vanillaTransform.rotation.x(), vanillaTransform.rotation.y(), vanillaTransform.rotation.z(), true);
+                        Quaternionf rightRot = TransformationHelper.quatFromXYZ(vanillaTransform.rightRotation.x(), vanillaTransform.rightRotation.y(), vanillaTransform.rightRotation.z(), true);
+                        transform = new Transformation(new Vector3f(vanillaTransform.translation), leftRot, new Vector3f(vanillaTransform.scale), rightRot);
+                    }
                 }
                 else {
                     transform = readMatrix(forType, GSON);
@@ -80,7 +84,7 @@ public class ITTransformationMap {
             transforms.put(perspective, transform);
         }
         Transformation baseTransform;
-        if(obj.size() > 0) { baseTransform = readMatrix(obj, GSON); }
+        if(!obj.isEmpty()) { baseTransform = readMatrix(obj, GSON); }
         else { baseTransform = Transformation.identity(); }
         for(Entry<ItemDisplayContext, Transformation> e : transforms.entrySet()) {
             Transformation transform = composeForgeLike(e.getValue(), baseTransform);

@@ -10,19 +10,20 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
 import blusunrize.immersiveengineering.common.blocks.generic.ImmersiveConnectableBlockEntity;
 import blusunrize.immersiveengineering.common.items.ScrewdriverItem;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
-import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.blocks.helper.ITServerTickableBE;
+import mctmods.immersivetechnology.common.blocks.helper.ITIServerTickableBE;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -45,7 +46,7 @@ import javax.annotation.Nullable;
 
 import static mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock.ROTATION;
 
-public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity implements ITServerTickableBE, IStateBasedDirectional, ITBlockInterfaces.IRedstoneInputOutput, IScrewdriverInteraction, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IBlockOverlayText, IRedstoneConnector, MenuProvider {
+public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity implements ITIServerTickableBE, IStateBasedDirectional, ITIBlockInterfaces.IRedstoneInputOutput, IScrewdriverInteraction, ITIBlockInterfaces.IBlockBounds, ITIBlockInterfaces.IBlockOverlayText, IRedstoneConnector, MenuProvider {
     private static final int PULSE_LENGTH = 2;
     private static final int MIN_TARGET = 10;
     private static final int MAX_TARGET = 600;
@@ -156,8 +157,8 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         rsDirty = false;
     }
 
-    @Override @NotNull public InteractionResult screwdriverUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hitVec) {
-        if (level != null && level.isClientSide) { return InteractionResult.SUCCESS; }
+    @Override @NotNull public ItemInteractionResult screwdriverUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hitVec) {
+        if (level != null && level.isClientSide) { return ItemInteractionResult.SUCCESS; }
         if (player.isShiftKeyDown()) { redstoneChannel = DyeColor.byId((redstoneChannel.getId() + 1) % 16); }
         else { ioMode = (ioMode == 0) ? 1 : 0; }
         setChanged();
@@ -169,7 +170,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
             level.blockEvent(getBlockPos(), getBlockState().getBlock(), 254, 0);
         }
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 
     public int getTarget() { return target; }
@@ -220,8 +221,8 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         }
     }
 
-    @Override public void writeCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
-        super.writeCustomNBT(nbt, descPacket);
+    @Override public void writeCustomNBT(@NotNull CompoundTag nbt, boolean descPacket, HolderLookup.Provider provider) {
+        super.writeCustomNBT(nbt, descPacket, provider);
         nbt.putInt("target", target);
         nbt.putInt("rotation", rotation);
         nbt.putInt("lastOutput", lastOutput);
@@ -230,8 +231,8 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         nbt.putInt("output", lastOutput);
     }
 
-    @Override public void readCustomNBT(@Nonnull CompoundTag nbt, boolean descPacket) {
-        super.readCustomNBT(nbt, descPacket);
+    @Override public void readCustomNBT(@Nonnull CompoundTag nbt, boolean descPacket, HolderLookup.Provider provider) {
+        super.readCustomNBT(nbt, descPacket, provider);
         target = nbt.getInt("target");
         if (nbt.contains("rotation")) { rotation = nbt.getInt("rotation"); }
         lastOutput = nbt.getInt("lastOutput");

@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.core.registration.ITTags;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -25,6 +25,8 @@ public class ITFluidTags extends FluidTagsProvider {
         tag(ITTags.fluidGravelSlurry).add(ITFluids.GRAVEL_SLURRY.getStill());
         tag(ITTags.fluidHeatedGravelSlurry).add(ITFluids.HEATED_GRAVEL.getStill());
         tag(ITTags.fluidHeatedSaltSlurry).add(ITFluids.HEATED_SALT.getStill());
+        tag(ITTags.fluidHotWater).add(ITFluids.HOT_WATER.getStill());
+        tag(ITTags.fluidHydrogen).add(ITFluids.HYDROGEN.getStill());
         tag(ITTags.fluidMoltenSalt).add(ITFluids.MOLTEN_SALT.getStill());
         tag(ITTags.fluidSaltSlurry).add(ITFluids.SALT_SLURRY.getStill());
         tag(ITTags.fluidSteam).add(ITFluids.STEAM.getStill());

@@ -1,0 +1,10 @@
+{
+  "type": "immersivetechnology:gas_turbine",
+  "inputAmount": 160,
+  "inputTag": "c:biodiesel",
+  "output": {
+    "amount": 1000,
+    "id": "immersivetechnology:flue_gas"
+  },
+  "time": 10
+}

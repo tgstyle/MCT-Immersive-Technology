@@ -42,7 +42,6 @@ public class BoilerTankScreen extends ITContainerScreen<BoilerTankMenu> {
                         double maxHeat = menu.getWorkingHeatLevel();
                         tooltip.add(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_HEAT_LEVEL_DETAILED.getLocation(), (int)heatLevel, (int)maxHeat), ChatFormatting.RED));
                     }
-
                     @Override public void draw(GuiGraphics graphics) { }
                 }
         );

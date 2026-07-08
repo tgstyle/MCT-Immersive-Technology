@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public record ITGroup<Texture>(List<ITPolygon<Texture>> faces) {
-
     public ITGroup(List<ITPolygon<Texture>> faces) {
         this.faces = ImmutableList.copyOf(faces);
     }
@@ -35,11 +34,7 @@ public record ITGroup<Texture>(List<ITPolygon<Texture>> faces) {
         return new ITGroup<>(builder.build());
     }
 
-    public ITGroup<Texture> translate(int axis, double amount) {
-        return new ITGroup<>(this.faces.stream().map(p -> p.translate(axis, amount)).toList());
-    }
+    public ITGroup<Texture> translate(int axis, double amount) { return new ITGroup<>(this.faces.stream().map(p -> p.translate(axis, amount)).toList()); }
 
-    public ITGroup<Texture> translate(ITVec3d offset) {
-        return new ITGroup<>(this.faces.stream().map(p -> p.translate(offset)).toList());
-    }
+    public ITGroup<Texture> translate(ITVec3d offset) { return new ITGroup<>(this.faces.stream().map(p -> p.translate(offset)).toList()); }
 }

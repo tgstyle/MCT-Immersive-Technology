@@ -8,9 +8,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -40,7 +41,7 @@ public class BarrelOpenBlockEntity extends BarrelCommonBlockEntity {
             }
         }
         if (tank.getFluidAmount() > 0 && sideConfig.get(Direction.DOWN) == IOSideConfig.OUTPUT) {
-            IFluidHandler output = neighbors.get(Direction.DOWN).getNullable();
+            IFluidHandler output = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition.relative(Direction.DOWN), Direction.DOWN.getOpposite());
             if (output != null) {
                 FluidStack simulatedDrain = tank.drain(Math.min(transferSpeed, tank.getFluidAmount()), IFluidHandler.FluidAction.SIMULATE);
                 if (!simulatedDrain.isEmpty()) {

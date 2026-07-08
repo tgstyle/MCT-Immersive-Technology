@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeO
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
-import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
@@ -17,7 +17,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -51,11 +51,11 @@ public class ITAdvancedCokeOvenCategory extends ITRecipeCategory<AdvancedCokeOve
         int tankCapacity = Math.max(1000, recipe.creosoteOutput);
 
         var fluidSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 103, 4)
-                .addIngredient(ForgeTypes.FLUID_STACK, fluidOut)
+                .addIngredient(NeoForgeTypes.FLUID_STACK, fluidOut)
                 .setFluidRenderer(tankCapacity, false, 16, 47);
 
         fluidSlot.addRichTooltipCallback((slotView, tooltip) ->
-                slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                slotView.getDisplayedIngredient(NeoForgeTypes.FLUID_STACK).ifPresent(fs ->
                         ITFluidInfoArea.fillTooltip(fs, recipe.creosoteOutput, tooltip::add)));
     }
 

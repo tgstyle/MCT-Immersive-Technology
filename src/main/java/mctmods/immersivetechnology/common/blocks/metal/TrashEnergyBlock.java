@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.metal.logic.TrashEnergyBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
-public class TrashEnergyBlock extends ITEntityBlock<TrashEnergyBlockEntity> {
+public class TrashEnergyBlock extends ITIEntityBlock<TrashEnergyBlockEntity> {
     private static final VoxelShape BOUNDS = makeBounds();
     private static VoxelShape makeBounds() {
         VoxelShape shape = Shapes.empty();

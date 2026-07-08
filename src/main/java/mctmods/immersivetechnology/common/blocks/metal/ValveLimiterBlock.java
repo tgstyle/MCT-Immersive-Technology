@@ -1,13 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -17,22 +15,19 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
-public class ValveLimiterBlock extends ITEntityBlock<ValveLimiterBlockEntity> {
-    public static final BooleanProperty OPEN = BooleanProperty.create("open");
+public class ValveLimiterBlock extends ITIEntityBlock<ValveLimiterBlockEntity> {
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 3);
 
     public ValveLimiterBlock(BiFunction<BlockPos, BlockState, ValveLimiterBlockEntity> makeEntity, Properties p) {
         super(makeEntity, p);
         registerDefaultState(stateDefinition.any()
-                .setValue(OPEN, true)
+                .setValue(ValveCommonBlockEntity.OPEN, true)
                 .setValue(ITProperties.FACING_ALL, Direction.NORTH)
                 .setValue(ITProperties.MIRRORED, false)
                 .setValue(ROTATION, 0));
@@ -40,27 +35,25 @@ public class ValveLimiterBlock extends ITEntityBlock<ValveLimiterBlockEntity> {
 
     @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(ITProperties.FACING_ALL, ITProperties.MIRRORED, OPEN, ROTATION);
+        builder.add(ITProperties.FACING_ALL, ITProperties.MIRRORED, ValveCommonBlockEntity.OPEN, ROTATION);
     }
 
-    @Override public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) { return true; }
+    @Override public boolean canConnectRedstone(@NotNull BlockState state, BlockGetter world, @NotNull BlockPos pos, Direction side) { return true; }
 
     @Override public void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block fromBlock, @NotNull BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, fromBlock, fromPos, isMoving);
-        if (level.isClientSide) return;
+        if (level.isClientSide) { return; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) { valve.updateRedstoneState(); }
     }
 
-    @Override @NotNull public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+    @Override @NotNull public InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
+        if (level.isClientSide) { return InteractionResult.SUCCESS; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) {
-            if (player.isCrouching()) {
-                valve.redstoneMode = (byte) (valve.redstoneMode == 1 ? 2 : 1);
-                valve.updateRedstoneState();
-                valve.efficientSetChanged();
-            } else { NetworkHooks.openScreen((ServerPlayer) player, valve, b -> b.writeBlockPos(pos)); }
+            if (player.isCrouching()) { valve.redstoneMode = (byte) (valve.redstoneMode == 1 ? 2 : 1); valve.updateRedstoneState(); valve.efficientSetChanged(); }else {
+                player.openMenu(valve, b -> b.writeBlockPos(pos));
+            }
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
@@ -77,7 +70,7 @@ public class ValveLimiterBlock extends ITEntityBlock<ValveLimiterBlockEntity> {
         return defaultBlockState()
                 .setValue(ITProperties.FACING_ALL, facing)
                 .setValue(ITProperties.MIRRORED, false)
-                .setValue(OPEN, true)
+                .setValue(ValveCommonBlockEntity.OPEN, true)
                 .setValue(ROTATION, rotation);
     }
 }

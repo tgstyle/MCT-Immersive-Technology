@@ -8,21 +8,17 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.extensions.IForgeBakedModel;
-import net.minecraftforge.client.model.data.ModelData;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.client.ChunkRenderTypeSet;
+import net.neoforged.neoforge.client.model.data.ModelData;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class ITBakedModel implements BakedModel, IForgeBakedModel {
-    @NotNull public abstract List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @Nullable RenderType renderType);
+public abstract class ITBakedModel implements BakedModel {
+    @Nonnull @Override public abstract List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData, @Nullable RenderType layer);
 
-    @Override @NotNull public final List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand) { return getQuads(state, side, rand, ModelData.EMPTY, null); }
-
-    @NotNull public abstract TextureAtlasSprite getParticleIcon(@NotNull ModelData data);
-
-    @Override @NotNull public TextureAtlasSprite getParticleIcon() { return getParticleIcon(ModelData.EMPTY); }
+    @Override @Nonnull public final List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand) { return getQuads(state, side, rand, ModelData.EMPTY, null); }
 
     @Override public boolean useAmbientOcclusion() { return true; }
 
@@ -32,5 +28,11 @@ public abstract class ITBakedModel implements BakedModel, IForgeBakedModel {
 
     @Override public boolean isCustomRenderer() { return false; }
 
-    @Override @NotNull public ItemOverrides getOverrides() { return ItemOverrides.EMPTY; }
+    @Nonnull @Override public TextureAtlasSprite getParticleIcon() { return getParticleIcon(ModelData.EMPTY); }
+
+    @Nonnull @Override public ItemOverrides getOverrides() { return ItemOverrides.EMPTY; }
+
+    @Nonnull @Override public TextureAtlasSprite getParticleIcon(@Nonnull ModelData data) { return net.minecraft.client.Minecraft.getInstance().getTextureAtlas(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS).apply(net.minecraft.resources.ResourceLocation.withDefaultNamespace("missingno")); }
+
+    @Nonnull @Override public ChunkRenderTypeSet getRenderTypes(@Nonnull BlockState state, @Nonnull RandomSource rand, @Nonnull ModelData data) { return ChunkRenderTypeSet.all(); }
 }

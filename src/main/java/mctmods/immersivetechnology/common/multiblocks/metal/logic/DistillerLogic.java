@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
@@ -10,7 +11,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
@@ -28,32 +28,31 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidActionResult;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.IFluidTank;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
-public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State>, ITPressurizedFluidOutput<DistillerLogic.State> {
+public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State>, ITIPressurizedFluidOutput<DistillerLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -66,12 +65,12 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(DistillerShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
     public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
     public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
     private static final List<BlockPos> ENERGY_INPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "energy_input0");
     private static final RelativeBlockFace ENERGY_INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "energy_input0");
-    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITMultiblockPOIHelper.getFacing(RAW_POIS, "item_output0"), ITMultiblockPOIHelper.getPosList(RAW_POIS, "item_output0").get(0));
+    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITMultiblockPOIHelper.getFacing(RAW_POIS, "item_output0"), ITMultiblockPOIHelper.getPosList(RAW_POIS, "item_output0").getFirst());
     private static final RelativeBlockFace INPUT_FLUID_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
     private static final RelativeBlockFace OUTPUT_FLUID_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
 
@@ -79,12 +78,12 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FLUID_FACING); }
 
-    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
+    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         List<BlockPos> soundPosList = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
-        BlockPos soundBlockPos = soundPosList.get(0);
+        BlockPos soundBlockPos = soundPosList.getFirst();
         Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(soundBlockPos.getX() + 0.5, soundBlockPos.getY() + 0.5, soundBlockPos.getZ() + 0.5));
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) { return; }
@@ -112,15 +111,16 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         boolean prevTanksDirty = state.tanksDirty;
         boolean prevInventoryDirty = state.inventoryDirty;
         boolean wasActive = state.active;
-        DistillerRecipe recipe = state.lastRecipeCache;
-        if (recipe == null || !recipe.input.testIgnoringAmount(state.tanks.input.getFluid())) {
-            recipe = DistillerRecipe.findRecipe(ctx.getLevel().getRawLevel(), state.tanks.input.getFluid());
-            state.lastRecipeCache = recipe;
+        RecipeHolder<DistillerRecipe> recipeHolder = state.lastRecipeCache;
+        FluidStack currentFluid = state.tanks.input().getFluid();
+        if (recipeHolder == null || !recipeHolder.value().matches(currentFluid)) {
+            recipeHolder = DistillerRecipe.findRecipe(ctx.getLevel().getRawLevel(), currentFluid);
+            state.lastRecipeCache = recipeHolder;
         }
         state.active = state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
-        tryEnqueueProcess(state, ctx.getLevel().getRawLevel(), recipe);
-        tryEmptyContainer(state.tanks.input, state.inventory);
-        FluidUtils.fillFluidContainer(state.tanks.output, SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory);
+        tryEnqueueProcess(state, ctx.getLevel().getRawLevel(), recipeHolder);
+        tryEmptyContainer(state.tanks.input(), state.inventory);
+        FluidUtils.fillFluidContainer(state.tanks.output(), SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory);
         pumpOutputs(ctx);
         IItemHandlerModifiable inventory = state.inventory;
         ItemStack drainedContainer = inventory.getStackInSlot(SLOT_INPUT_EMPTY);
@@ -154,7 +154,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         if (!result.isSuccess()) { return; }
         ItemStack emptyContainer = result.getResult();
         ItemStack outputStack = inv.getStackInSlot(DistillerLogic.SLOT_INPUT_EMPTY);
-        if (!outputStack.isEmpty() && !ItemHandlerHelper.canItemStacksStack(outputStack, emptyContainer)) { return; }
+        if (!outputStack.isEmpty() && !ItemStack.isSameItemSameComponents(outputStack, emptyContainer)) { return; }
         if (outputStack.getCount() + emptyContainer.getCount() > emptyContainer.getMaxStackSize()) { return; }
         result = FluidUtils.tryEmptyContainer(filledContainer, tank, FluidType.BUCKET_VOLUME, FluidAction.EXECUTE);
         filledContainer.shrink(1);
@@ -163,39 +163,50 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         else { outputStack.grow(result.getResult().getCount()); }
     }
 
-    private void tryEnqueueProcess(State state, Level level, DistillerRecipe recipe) {
+    private void tryEnqueueProcess(State state, Level level, RecipeHolder<DistillerRecipe> recipeHolder) {
         if (state.processor.getQueueSize() >= state.processor.getMaxQueueSize()) { return; }
-        if (recipe == null) { return; }
-        FluidStack inputFluid = state.tanks.input.getFluid();
-        if (inputFluid.getAmount() < recipe.input.getAmount()) { return; }
+        if (recipeHolder == null) { return; }
+        DistillerRecipe recipe = recipeHolder.value();
+        FluidStack inputFluid = state.tanks.input().getFluid();
+        if (inputFluid.getAmount() < recipe.getInputAmount()) { return; }
         FluidStack outputFluid = recipe.fluidOutput;
-        if (outputFluid != null && !outputFluid.isEmpty() && state.tanks.output.getFluidAmount() + outputFluid.getAmount() > state.tanks.output.getCapacity()) { return; }
+        if (outputFluid != null && !outputFluid.isEmpty() && state.tanks.output().getFluidAmount() + outputFluid.getAmount() > state.tanks.output().getCapacity()) { return; }
         ItemStack itemOutput = recipe.itemOutput;
         if (!itemOutput.isEmpty()) {
             ItemStack currentOutput = state.inventory.getStackInSlot(OUTPUT_SLOT);
-            if (!currentOutput.isEmpty() && (!ItemHandlerHelper.canItemStacksStack(currentOutput, itemOutput) || currentOutput.getCount() + itemOutput.getCount() > currentOutput.getMaxStackSize())) { return; }
+            if (!currentOutput.isEmpty() && (!ItemStack.isSameItemSameComponents(currentOutput, itemOutput) || currentOutput.getCount() + itemOutput.getCount() > currentOutput.getMaxStackSize())) { return; }
         }
-        DistillerProcess process = new DistillerProcess(recipe);
-        process.setInputTanks(0);
+        DistillerProcess process = new DistillerProcess(recipeHolder);
         state.processor.addProcessToQueue(process, level, false);
     }
 
-    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
-        State state = ctx.getState();
-        BlockPos localPos = position.posInMultiblock();
-        RelativeBlockFace side = position.side();
-        if (cap == ForgeCapabilities.ENERGY) {
-            if (ENERGY_INPUT_POIS.contains(localPos) && (side == null || side == ENERGY_INPUT_FACING)) { return state.energyCap.cast(ctx); }
-        }
-        else if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (INPUT_FLUID_POIS.contains(localPos) && (side == null || side == INPUT_FLUID_FACING)) { return state.inputCap.cast(ctx); }
-            if (OUTPUT_FLUID_POIS.contains(localPos) && (side == null || side == OUTPUT_FLUID_FACING)) { return state.outputCapSteam.cast(ctx); }
-        }
-        else if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            if (position.posInMultiblock().equals(ITEM_OUTPUT_POI.posInMultiblock()) && (position.side() == null || position.side() == ITEM_OUTPUT_POI.face())) { return state.itemOutputCap.cast(ctx); }
-            return state.invCap.cast(ctx);
-        }
-        return LazyOptional.empty();
+    @Override
+    public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+        register.register(Capabilities.EnergyStorage.BLOCK, (state, position) -> {
+            BlockPos localPos = position.posInMultiblock();
+            RelativeBlockFace side = position.side();
+            if (ENERGY_INPUT_POIS.contains(localPos) && (side == null || side == ENERGY_INPUT_FACING)) {
+                return state.energy;
+            }
+            return null;
+        });
+        register.register(Capabilities.FluidHandler.BLOCK, (state, position) -> {
+            BlockPos localPos = position.posInMultiblock();
+            RelativeBlockFace side = position.side();
+            if (INPUT_FLUID_POIS.contains(localPos) && (side == null || side == INPUT_FLUID_FACING)) {
+                return state.inputCap;
+            }
+            if (OUTPUT_FLUID_POIS.contains(localPos) && (side == null || side == OUTPUT_FLUID_FACING)) {
+                return state.outputCap;
+            }
+            return null;
+        });
+        register.register(Capabilities.ItemHandler.BLOCK, (state, position) -> {
+            if (position.posInMultiblock().equals(ITEM_OUTPUT_POI.posInMultiblock()) && (position.side() == null || position.side() == ITEM_OUTPUT_POI.face())) {
+                return state.itemOutputCap;
+            }
+            return state.invCap;
+        });
     }
 
     @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
@@ -204,15 +215,14 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return DistillerShape.GETTER; }
 
-    public static class State implements IMultiblockState, ITProcessContext.ProcessContextInMachine<DistillerRecipe>, ITDisplayContext {
+    public static class State implements IMultiblockState, ITIProcessContext.IProcessContextInMachine<DistillerRecipe>, ITIDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final DistillerTank tanks;
-        public final StoredCapability<IEnergyStorage> energyCap;
-        public final StoredCapability<IFluidHandler> inputCap;
-        public final StoredCapability<IFluidHandler> outputCapSteam;
-        public final StoredCapability<IItemHandler> invCap;
-        public final StoredCapability<IItemHandler> itemOutputCap;
-        public final CapabilityReference<IItemHandler> outputRef;
+        public IFluidHandler inputCap;
+        public IFluidHandler outputCap;
+        public IItemHandler invCap;
+        public IItemHandler itemOutputCap;
+        public Supplier<IItemHandler> outputRef;
         public final ITSlotwiseItemHandler inventory;
         private final IFluidTank[] tankArray;
         public final MultiblockProcessor.InMachineProcessor<DistillerRecipe> processor;
@@ -221,14 +231,14 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         public BooleanSupplier isSoundPlaying = () -> false;
         public boolean tanksDirty = false;
         public boolean inventoryDirty = false;
-        public DistillerRecipe lastRecipeCache;
+        public RecipeHolder<DistillerRecipe> lastRecipeCache;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; this.inventoryDirty = true; };
-            this.tanks = new DistillerTank(v -> { onChanged.run(); this.tanksDirty = true; });
-            this.tankArray = new IFluidTank[]{tanks.input, tanks.output};
+            this.tanks = new DistillerTank(() -> { onChanged.run(); this.tanksDirty = true; });
+            this.tankArray = new IFluidTank[]{tanks.input(), tanks.output()};
             inventory = new ITSlotwiseItemHandler(
                     List.of(
                             ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
@@ -239,57 +249,59 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
                     ),
                     () -> { onChanged.run(); this.inventoryDirty = true; }
             );
-            this.inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
-            this.outputCapSteam = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
-            this.invCap = new StoredCapability<>(inventory);
+            this.inputCap = new ITArrayFluidHandler(tanks.input(), false, true, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.outputCap = new ITArrayFluidHandler(tanks.output(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.invCap = inventory;
             this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
-            this.energyCap = new StoredCapability<>(this.energy);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, DistillerRecipe.RECIPES::getById);
-            this.itemOutputCap = new StoredCapability<>(
-                    new ITWrappingItemHandler(
-                            inventory,
-                            false,
-                            true,
-                            List.of(
-                                    new ITWrappingItemHandler.IntRange(SLOT_INPUT_EMPTY, SLOT_INPUT_EMPTY + 1),
-                                    new ITWrappingItemHandler.IntRange(SLOT_OUTPUT_FILLED, SLOT_OUTPUT_FILLED + 1),
-                                    new ITWrappingItemHandler.IntRange(OUTPUT_SLOT, OUTPUT_SLOT + 1)
-                            )
+            this.itemOutputCap = new ITWrappingItemHandler(
+                    inventory,
+                    false,
+                    true,
+                    List.of(
+                            new ITWrappingItemHandler.IntRange(SLOT_INPUT_EMPTY, SLOT_INPUT_EMPTY + 1),
+                            new ITWrappingItemHandler.IntRange(SLOT_OUTPUT_FILLED, SLOT_OUTPUT_FILLED + 1),
+                            new ITWrappingItemHandler.IntRange(OUTPUT_SLOT, OUTPUT_SLOT + 1)
                     )
             );
-            this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, ITEM_OUTPUT_POI);
+            this.outputRef = ctx.getCapabilityAt(Capabilities.ItemHandler.BLOCK, ITEM_OUTPUT_POI);
         }
 
         public ITSlotwiseItemHandler getInventory() { return inventory; }
 
         public DistillerTank getTanks() { return tanks; }
 
-        @Override public void writeSaveNBT(CompoundTag nbt) {
-            nbt.put("energy", energy.serializeNBT());
-            nbt.put("tanks", this.tanks.toNBT());
-            nbt.put("processor", processor.toNBT());
-            nbt.put("inventory", inventory.serializeNBT());
+        @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            nbt.put("energy", energy.serializeNBT(provider));
+            nbt.put("tanks", this.tanks.toNBT(provider));
+            nbt.put("processor", processor.toNBT(provider));
+            nbt.put("inventory", inventory.serializeNBT(provider));
             nbt.putBoolean("active", active);
         }
 
-        @Override public void readSaveNBT(CompoundTag nbt) {
-            energy.deserializeNBT(nbt.get("energy"));
-            this.tanks.readNBT(nbt.getCompound("tanks"));
-            this.processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), DistillerProcess::new);
-            this.inventory.deserializeNBT(nbt.getCompound("inventory"));
+        @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            CompoundTag energyTag = nbt.getCompound("energy");
+            if (!energyTag.isEmpty()) {
+                energy.deserializeNBT(provider, energyTag);
+            }
+            this.tanks.readNBT(nbt.getCompound("tanks"), provider);
+            this.processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), DistillerProcess::new, provider);
+            this.inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
             active = nbt.getBoolean("active");
             tanksDirty = false;
             inventoryDirty = false;
         }
 
-        @Override public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             CompoundTag display = new CompoundTag();
-            writeDisplaySyncNBT(display);
+            writeDisplaySyncNBT(display, provider);
             nbt.put("display", display);
         }
 
-        @Override public void readSyncNBT(CompoundTag nbt) {
-            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        @Override public void readSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) {
+                readDisplaySyncNBT(nbt.getCompound("display"), provider);
+            }
         }
 
         @Override public AveragingEnergyStorage getEnergy() { return energy; }
@@ -302,41 +314,44 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
         @Override public boolean isActive() { return active; }
 
-        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("active", active);
-            nbt.put("tanks", tanks.toNBT());
-            nbt.put("energy", energy.serializeNBT());
-            nbt.put("inventory", inventory.serializeNBT());
+            nbt.put("tanks", tanks.toNBT(provider));
+            nbt.put("energy", energy.serializeNBT(provider));
+            nbt.put("inventory", inventory.serializeNBT(provider));
         }
 
-        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
-            tanks.readNBT(nbt.getCompound("tanks"));
+            tanks.readNBT(nbt.getCompound("tanks"), provider);
             if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); }
-            energy.deserializeNBT(nbt.get("energy"));
-            inventory.deserializeNBT(nbt.getCompound("inventory"));
+            CompoundTag energyTag = nbt.getCompound("energy");
+            if (!energyTag.isEmpty()) {
+                energy.deserializeNBT(provider, energyTag);
+            }
+            inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
             tanksDirty = false;
             inventoryDirty = false;
         }
     }
 
     public record DistillerTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
-        public DistillerTank(Consumer<Void> markDirty) {
-            this(new ITMarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));
+        public DistillerTank(Runnable markDirty) {
+            this(new ITMarkableFluidTank(INPUT_TANK_CAPACITY, v -> markDirty.run()), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, v -> markDirty.run()));
         }
 
-        public static DistillerTank makeClient() { return new DistillerTank(v -> {}); }
+        public static DistillerTank makeClient() { return new DistillerTank(() -> {}); }
 
-        public CompoundTag toNBT() {
+        public CompoundTag toNBT(HolderLookup.Provider provider) {
             CompoundTag tag = new CompoundTag();
-            tag.put("input", this.input.writeToNBT(new CompoundTag()));
-            tag.put("output", this.output.writeToNBT(new CompoundTag()));
+            tag.put("input", this.input().writeToNBT(provider, new CompoundTag()));
+            tag.put("output", this.output().writeToNBT(provider, new CompoundTag()));
             return tag;
         }
 
-        public void readNBT(CompoundTag tag) {
-            this.input.readFromNBT(tag.getCompound("input"));
-            this.output.readFromNBT(tag.getCompound("output"));
+        public void readNBT(CompoundTag tag, HolderLookup.Provider provider) {
+            this.input().readFromNBT(provider, tag.getCompound("input"));
+            this.output().readFromNBT(provider, tag.getCompound("output"));
         }
 
         @SuppressWarnings("unused")

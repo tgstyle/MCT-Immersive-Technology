@@ -1,42 +1,50 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerLiquidLogic;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import malte0811.dualcodecs.DualMapCodec;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.material.Fluid;
 
 public class BoilerLiquidRecipeSerializer extends IERecipeSerializer<BoilerLiquidRecipe> {
     @Override public ItemStack getIcon() { return ITMultiblockProvider.BOILER_LIQUID.iconStack(); }
 
-    @Override public BoilerLiquidRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {
-        FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
-        int time = GsonHelper.getAsInt(json, "time");
-        double heatPerTick = GsonHelper.getAsDouble(json, "heatPerTick");
-        double targetHeat = GsonHelper.getAsDouble(json, "targetHeat", BoilerLiquidLogic.DEFAULT_WORKING_HEAT_LEVEL);
-        return new BoilerLiquidRecipe(recipeId, input, time, heatPerTick, targetHeat);
-    }
+    @Override
+    protected DualMapCodec<RegistryFriendlyByteBuf, BoilerLiquidRecipe> codecs() {
+        MapCodec<TagKey<Fluid>> fluidTagCodec = ResourceLocation.CODEC
+                .xmap(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location)
+                .fieldOf("inputTag");
 
-    @Override @Nullable public BoilerLiquidRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
-        FluidTagInput input = FluidTagInput.read(buffer);
-        int time = buffer.readInt();
-        double heatPerTick = buffer.readDouble();
-        double targetHeat = buffer.readDouble();
-        return new BoilerLiquidRecipe(recipeId, input, time, heatPerTick, targetHeat);
-    }
+        MapCodec<BoilerLiquidRecipe> mapCodec = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                fluidTagCodec.forGetter(BoilerLiquidRecipe::fluidTag),
+                Codec.INT.fieldOf("inputAmount").forGetter(BoilerLiquidRecipe::amount),
+                Codec.INT.fieldOf("time").forGetter(BoilerLiquidRecipe::time),
+                Codec.DOUBLE.fieldOf("heatPerTick").forGetter(BoilerLiquidRecipe::heatPerTick),
+                Codec.DOUBLE.fieldOf("targetHeat").forGetter(BoilerLiquidRecipe::targetHeat)
+        ).apply(instance, BoilerLiquidRecipe::new));
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, BoilerLiquidRecipe recipe) {
-        recipe.input.write(buffer);
-        buffer.writeInt(recipe.getTotalProcessTime());
-        buffer.writeDouble(recipe.getHeatPerTick());
-        buffer.writeDouble(recipe.getTargetHeat());
+        StreamCodec<RegistryFriendlyByteBuf, BoilerLiquidRecipe> streamCodec = StreamCodec.composite(
+                ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location),
+                BoilerLiquidRecipe::fluidTag,
+                StreamCodec.of(RegistryFriendlyByteBuf::writeVarInt, RegistryFriendlyByteBuf::readVarInt),
+                BoilerLiquidRecipe::amount,
+                StreamCodec.of(RegistryFriendlyByteBuf::writeVarInt, RegistryFriendlyByteBuf::readVarInt),
+                BoilerLiquidRecipe::time,
+                StreamCodec.of(RegistryFriendlyByteBuf::writeDouble, RegistryFriendlyByteBuf::readDouble),
+                BoilerLiquidRecipe::heatPerTick,
+                StreamCodec.of(RegistryFriendlyByteBuf::writeDouble, RegistryFriendlyByteBuf::readDouble),
+                BoilerLiquidRecipe::targetHeat,
+                BoilerLiquidRecipe::new
+        );
+        return new DualMapCodec<>(mapCodec, streamCodec);
     }
 }

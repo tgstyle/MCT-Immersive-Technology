@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.multiblocks.stone.process;
 
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.CoolingTowerLogic;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
 public class CoolingTowerProcess {
     private final CoolingTowerRecipe recipe;
@@ -16,41 +16,45 @@ public class CoolingTowerProcess {
     }
 
     public void tick(CoolingTowerLogic.State state, double speedMult) {
-        if (ticksProcessed >= recipe.totalProcessTime) return;
+        if (ticksProcessed >= recipe.getTotalProcessTime()) return;
 
         if (ticksProcessed == 0) {
-            FluidStack drained0 = state.tanks.input0().drain(recipe.input0.getAmount(), FluidAction.EXECUTE);
-            FluidStack drained1 = state.tanks.input1().drain(recipe.input1.getAmount(), FluidAction.EXECUTE);
-            if (drained0.getAmount() < recipe.input0.getAmount() || !recipe.input0.testIgnoringAmount(drained0) || drained1.getAmount() < recipe.input1.getAmount() || !recipe.input1.testIgnoringAmount(drained1)) {
-                ticksProcessed = recipe.totalProcessTime;
+            FluidStack drained0 = state.tanks.input0().drain(recipe.getInput0Amount(), FluidAction.EXECUTE);
+            FluidStack drained1 = state.tanks.input1().drain(recipe.getInput1Amount(), FluidAction.EXECUTE);
+            if (drained0.getAmount() < recipe.getInput0Amount() || !drained0.is(recipe.inputTag0()) || drained1.getAmount() < recipe.getInput1Amount() || !drained1.is(recipe.inputTag1())) {
+                ticksProcessed = recipe.getTotalProcessTime();
                 return;
             }
         }
 
         int advance = (int) Math.max(1, speedMult);
-        for (int i = 0; i < advance && ticksProcessed < recipe.totalProcessTime; i++) {
-            int perTickOut0 = recipe.fluidOutput0.getAmount() / recipe.totalProcessTime;
-            int perTickOut1 = recipe.fluidOutput1.getAmount() / recipe.totalProcessTime;
-            int perTickOut2 = recipe.fluidOutput2.getAmount() / recipe.totalProcessTime;
+        for (int i = 0; i < advance && ticksProcessed < recipe.getTotalProcessTime(); i++) {
+            FluidStack out0 = recipe.fluidOutput0();
+            FluidStack out1 = recipe.fluidOutput1();
+            FluidStack out2 = recipe.fluidOutput2();
 
-            if (!recipe.fluidOutput0.isEmpty()) { state.tanks.output0().fill(new FluidStack(recipe.fluidOutput0.getFluid(), perTickOut0), FluidAction.EXECUTE); }
-            if (!recipe.fluidOutput1.isEmpty()) { state.tanks.output1().fill(new FluidStack(recipe.fluidOutput1.getFluid(), perTickOut1), FluidAction.EXECUTE); }
-            if (!recipe.fluidOutput2.isEmpty()) { state.tanks.output2().fill(new FluidStack(recipe.fluidOutput2.getFluid(), perTickOut2), FluidAction.EXECUTE); }
+            int perTickOut0 = out0.getAmount() / recipe.getTotalProcessTime();
+            int perTickOut1 = out1.getAmount() / recipe.getTotalProcessTime();
+            int perTickOut2 = out2.getAmount() / recipe.getTotalProcessTime();
+
+            if (!out0.isEmpty()) { state.tanks.output0().fill(new FluidStack(out0.getFluid(), perTickOut0), FluidAction.EXECUTE); }
+            if (!out1.isEmpty()) { state.tanks.output1().fill(new FluidStack(out1.getFluid(), perTickOut1), FluidAction.EXECUTE); }
+            if (!out2.isEmpty()) { state.tanks.output2().fill(new FluidStack(out2.getFluid(), perTickOut2), FluidAction.EXECUTE); }
 
             ticksProcessed++;
 
-            if (ticksProcessed == recipe.totalProcessTime) {
-                int remOut0 = recipe.fluidOutput0.getAmount() % recipe.totalProcessTime;
-                int remOut1 = recipe.fluidOutput1.getAmount() % recipe.totalProcessTime;
-                int remOut2 = recipe.fluidOutput2.getAmount() % recipe.totalProcessTime;
-                if (!recipe.fluidOutput0.isEmpty()) { state.tanks.output0().fill(new FluidStack(recipe.fluidOutput0.getFluid(), remOut0), FluidAction.EXECUTE); }
-                if (!recipe.fluidOutput1.isEmpty()) { state.tanks.output1().fill(new FluidStack(recipe.fluidOutput1.getFluid(), remOut1), FluidAction.EXECUTE); }
-                if (!recipe.fluidOutput2.isEmpty()) { state.tanks.output2().fill(new FluidStack(recipe.fluidOutput2.getFluid(), remOut2), FluidAction.EXECUTE); }
+            if (ticksProcessed == recipe.getTotalProcessTime()) {
+                int remOut0 = out0.getAmount() % recipe.getTotalProcessTime();
+                int remOut1 = out1.getAmount() % recipe.getTotalProcessTime();
+                int remOut2 = out2.getAmount() % recipe.getTotalProcessTime();
+                if (!out0.isEmpty() && remOut0 > 0) { state.tanks.output0().fill(new FluidStack(out0.getFluid(), remOut0), FluidAction.EXECUTE); }
+                if (!out1.isEmpty() && remOut1 > 0) { state.tanks.output1().fill(new FluidStack(out1.getFluid(), remOut1), FluidAction.EXECUTE); }
+                if (!out2.isEmpty() && remOut2 > 0) { state.tanks.output2().fill(new FluidStack(out2.getFluid(), remOut2), FluidAction.EXECUTE); }
             }
         }
     }
 
-    public boolean isComplete() { return ticksProcessed >= recipe.totalProcessTime; }
+    public boolean isComplete() { return ticksProcessed >= recipe.getTotalProcessTime(); }
 
     public int getTicksProcessed() { return ticksProcessed; }
 

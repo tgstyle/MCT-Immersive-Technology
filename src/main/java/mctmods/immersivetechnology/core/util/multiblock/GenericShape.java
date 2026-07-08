@@ -92,7 +92,7 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
     public VoxelShape apply(BlockPos posInMultiblock) {
         List<AABB> list = getShape(posInMultiblock);
         if (list.isEmpty()) { return Shapes.empty(); }
-        VoxelShape base = toVoxelShape(list.get(0));
+        VoxelShape base = toVoxelShape(list.getFirst());
         if (list.size() > 1) {
             return list.subList(1, list.size()).stream()
                     .map(GenericShape::toVoxelShape)

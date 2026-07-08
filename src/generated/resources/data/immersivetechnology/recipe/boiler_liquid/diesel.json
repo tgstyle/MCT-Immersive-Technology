@@ -1,0 +1,14 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "immersivepetroleum"
+    }
+  ],
+  "type": "immersivetechnology:boiler_liquid",
+  "heatPerTick": 0.1,
+  "inputAmount": 14,
+  "inputTag": "forge:diesel",
+  "targetHeat": 600.0,
+  "time": 10
+}

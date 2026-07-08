@@ -1,0 +1,11 @@
+{
+  "type": "immersivetechnology:steam_turbine",
+  "inputAmount": 100,
+  "inputTag": "immersivetechnology:steam",
+  "output": {
+    "amount": 100,
+    "id": "immersivetechnology:exhaust_steam"
+  },
+  "time": 1,
+  "torque": 1.0
+}

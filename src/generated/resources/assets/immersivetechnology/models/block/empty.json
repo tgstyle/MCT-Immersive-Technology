@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "#missingno"
+  }
+}

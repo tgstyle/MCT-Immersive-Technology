@@ -3,6 +3,4 @@ Immersive Technology
 
 Immersive Technology 是一个能源技术扩展模组，完美补充 Immersive Engineering。
 
-致谢：tgstyle, MagneticPrism, Cordyceps22
-
-特别感谢：MuddyKat, Crimson Twilight, MC7
+致谢：tgstyle

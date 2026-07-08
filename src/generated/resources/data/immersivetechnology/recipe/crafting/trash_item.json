@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:chests"
+    },
+    "P": {
+      "tag": "c:plates/iron"
+    },
+    "S": {
+      "tag": "c:sheetmetals/iron"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PCP",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "immersivetechnology:trash_item"
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "parent": "minecraft:block/block",
+  "dynamic": false,
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "immersivetechnology:obj",
+    "model": "immersivetechnology:models/multiblock/metal/obj/steel_sheetmetal_tank/steel_sheetmetal_tank.obj",
+    "render_type": "minecraft:cutout_mipped",
+    "shade_quads": true,
+    "textures": {
+      "bottom": "immersivetechnology:multiblock/metal/steel_sheetmetal_tank",
+      "particle": "immersivetechnology:multiblock/metal/steel_sheetmetal_tank",
+      "side": "immersivetechnology:multiblock/metal/steel_sheetmetal_tank",
+      "top": "immersivetechnology:multiblock/metal/steel_sheetmetal_tank"
+    }
+  },
+  "loader": "immersivetechnology:split",
+  "split_parts": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      -1,
+      1,
+      -1
+    ],
+    [
+      -1,
+      1,
+      0
+    ],
+    [
+      -1,
+      1,
+      1
+    ],
+    [
+      0,
+      1,
+      -1
+    ],
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      -1
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      1
+    ],
+    [
+      -1,
+      2,
+      -1
+    ],
+    [
+      -1,
+      2,
+      0
+    ],
+    [
+      -1,
+      2,
+      1
+    ],
+    [
+      0,
+      2,
+      -1
+    ],
+    [
+      0,
+      2,
+      1
+    ],
+    [
+      1,
+      2,
+      -1
+    ],
+    [
+      1,
+      2,
+      0
+    ],
+    [
+      1,
+      2,
+      1
+    ],
+    [
+      -1,
+      3,
+      -1
+    ],
+    [
+      -1,
+      3,
+      0
+    ],
+    [
+      -1,
+      3,
+      1
+    ],
+    [
+      0,
+      3,
+      -1
+    ],
+    [
+      0,
+      3,
+      1
+    ],
+    [
+      1,
+      3,
+      -1
+    ],
+    [
+      1,
+      3,
+      0
+    ],
+    [
+      1,
+      3,
+      1
+    ],
+    [
+      -1,
+      4,
+      -1
+    ],
+    [
+      -1,
+      4,
+      0
+    ],
+    [
+      -1,
+      4,
+      1
+    ],
+    [
+      0,
+      4,
+      -1
+    ],
+    [
+      0,
+      4,
+      0
+    ],
+    [
+      0,
+      4,
+      1
+    ],
+    [
+      1,
+      4,
+      -1
+    ],
+    [
+      1,
+      4,
+      0
+    ],
+    [
+      1,
+      4,
+      1
+    ],
+    [
+      -1,
+      0,
+      -1
+    ],
+    [
+      -1,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      -1
+    ],
+    [
+      1,
+      0,
+      1
+    ]
+  ],
+  "textures": {
+    "particle": "immersivetechnology:multiblock/metal/steel_sheetmetal_tank"
+  }
+}

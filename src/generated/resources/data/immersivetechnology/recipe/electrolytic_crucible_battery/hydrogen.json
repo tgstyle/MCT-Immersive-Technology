@@ -1,0 +1,19 @@
+{
+  "type": "immersivetechnology:electrolytic_crucible_battery",
+  "energy": 614400,
+  "inputAmount": 1000,
+  "inputTag": "immersivetechnology:salt_slurry",
+  "result0": {
+    "amount": 1000,
+    "id": "immersivetechnology:chlorine"
+  },
+  "result1": {
+    "amount": 3000,
+    "id": "immersivetechnology:hydrogen"
+  },
+  "result2": {
+    "amount": 700,
+    "id": "immersivetechnology:heated_salt_slurry"
+  },
+  "time": 300
+}

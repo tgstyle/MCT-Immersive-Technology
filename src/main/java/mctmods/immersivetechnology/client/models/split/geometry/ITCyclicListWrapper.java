@@ -10,13 +10,9 @@ public record ITCyclicListWrapper<T>(List<T> wrapped) {
     }
 
     public List<T> sublist(int begin, int end) {
-        while (begin > end) {
-            end += this.wrapped.size();
-        }
+        while (begin > end) { end += this.wrapped.size(); }
         ImmutableList.Builder<T> sublist = ImmutableList.builder();
-        for (int i = begin; i < end; ++i) {
-            sublist.add(this.get(i));
-        }
+        for (int i = begin; i < end; ++i) { sublist.add(this.get(i)); }
         return sublist.build();
     }
 

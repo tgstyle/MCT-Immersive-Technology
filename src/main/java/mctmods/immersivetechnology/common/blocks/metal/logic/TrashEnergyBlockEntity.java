@@ -1,25 +1,21 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.metal.shape.TrashCanShape;
+import mctmods.immersivetechnology.common.blocks.metal.shape.ITrashCanShape;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.Nullable;
 
-public class TrashEnergyBlockEntity extends OSDCommonBlockEntity implements IEnergyStorage, TrashCanShape {
+public class TrashEnergyBlockEntity extends OSDCommonBlockEntity implements IEnergyStorage, ITrashCanShape {
     public TrashEnergyBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.TRASH_ENERGY.get(), pos, state); }
 
-    @Override @NotNull public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing) {
-        if (capability == ForgeCapabilities.ENERGY) { return LazyOptional.of(() -> this).cast(); }
-        return super.getCapability(capability, facing);
+    @SuppressWarnings("unused")
+    public IEnergyStorage getEnergyHandler(@Nullable Direction side) {
+        return this;
     }
 
     @Override public int receiveEnergy(int maxReceive, boolean simulate) {

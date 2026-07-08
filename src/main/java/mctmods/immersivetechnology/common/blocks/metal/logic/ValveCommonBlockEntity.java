@@ -2,8 +2,6 @@ package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import java.text.DecimalFormat;
 import mctmods.immersivetechnology.common.blocks.helper.*;
-import mctmods.immersivetechnology.core.network.ITPacketHandler;
-import mctmods.immersivetechnology.core.network.ITOSDRequestMessage;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,13 +15,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
-import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.OPEN;
+public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implements ITIServerTickableBE, ITIClientTickableBE, MenuProvider, ITIBlockInterfaces.IDirectionalBE, ITIBlockInterfaces.IBlockOverlayText, ITIBlockInterfaces.IHammerInteraction {
+    public static final BooleanProperty OPEN = BooleanProperty.create("open");
 
-public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implements ITServerTickableBE, ITClientTickableBE, MenuProvider, ITBlockInterfaces.IDirectionalBE, ITBlockInterfaces.IBlockOverlayText, ITBlockInterfaces.IHammerInteraction {
     final TranslationKey overlayNormal;
     final TranslationKey overlaySneakingFirstLine;
     final TranslationKey overlaySneakingSecondLine;
@@ -100,10 +99,6 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
 
     @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
         if (level == null) { return new Component[0]; }
-        if (level.isClientSide && requestCooldown == 0) {
-            ITPacketHandler.sendToServer(new ITOSDRequestMessage(worldPosition));
-            requestCooldown = 20;
-        }
         boolean open = getBlockState().getValue(OPEN);
         if (player.isCrouching()) {
             double avg = open ? average / 20.0 : 0;
@@ -166,7 +161,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
 
     @Override public void setFacing(@NotNull Direction facing) {
         this.facing = facing;
-        invalidateCaps();
+        invalidateCapabilities();
         if (level != null && !level.isClientSide) {
             BlockState state = getBlockState();
             if (state.hasProperty(ITProperties.FACING_ALL)) level.setBlock(worldPosition, state.setValue(ITProperties.FACING_ALL, facing), 3);

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "immersiveengineering:fluid_pump"
+    },
+    "P": {
+      "tag": "c:plates/iron"
+    },
+    "S": {
+      "tag": "c:sheetmetals/iron"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PBP",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "immersivetechnology:trash_fluid"
+  }
+}

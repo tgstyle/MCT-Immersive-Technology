@@ -26,7 +26,6 @@ public class JEIRecipeTypes {
     public static final RecipeType<SteamTurbineRecipe> STEAM_TURBINE = create(ITRecipeTypes.STEAM_TURBINE);
 
     private static <T extends Recipe<?>> RecipeType<T> create(IERecipeTypes.TypeWithClass<T> type) {
-        assert type.type().getId() != null;
         return new RecipeType<>(type.type().getId(), type.recipeClass());
     }
 }

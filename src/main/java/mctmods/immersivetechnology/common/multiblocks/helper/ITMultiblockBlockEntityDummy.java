@@ -3,9 +3,9 @@ package mctmods.immersivetechnology.common.multiblocks.helper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityDummy;
-import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.ITModelOffsetProvider;
-import mctmods.immersivetechnology.core.util.inventory.IITDropInventory;
+import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.ITIModelOffsetProvider;
+import mctmods.immersivetechnology.core.util.inventory.ITIDropInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -14,18 +14,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
-public class ITMultiblockBlockEntityDummy<State extends IMultiblockState> extends MultiblockBlockEntityDummy<State> implements ITBlockInterfaces.IPlayerInteraction, IITDropInventory, ITModelOffsetProvider, ITMultiblockBEHelper {
+public class ITMultiblockBlockEntityDummy<State extends IMultiblockState> extends MultiblockBlockEntityDummy<State> implements ITIBlockInterfaces.IPlayerInteraction, ITIDropInventory, ITIModelOffsetProvider, ITIMultiblockBEHelper {
     private final ITMultiblockBlockEntityCommon<State> common;
     private boolean disassembling = false;
 
     public ITMultiblockBlockEntityDummy(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState, MultiblockRegistration<State> multiblock) { super(type, worldPosition, blockState, multiblock); this.common = new ITMultiblockBlockEntityCommon<>(multiblock, this::getHelper, this::getLevel); }
 
-    @Override public boolean it$isAssembled() { return !disassembling; }
     @Override public boolean it$isDisassembling() { return disassembling; }
     @Override public void it$markDisassembling() { this.disassembling = true; }
 

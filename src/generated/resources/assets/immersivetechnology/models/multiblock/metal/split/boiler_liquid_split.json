@@ -1,0 +1,66 @@
+{
+  "parent": "minecraft:block/block",
+  "dynamic": false,
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "immersivetechnology:obj",
+    "model": "immersivetechnology:models/multiblock/metal/obj/boiler_liquid/boiler_liquid.obj",
+    "shade_quads": true,
+    "textures": {
+      "bottom": "immersivetechnology:multiblock/metal/boiler_liquid",
+      "particle": "immersivetechnology:multiblock/metal/boiler_liquid",
+      "side": "immersivetechnology:multiblock/metal/boiler_liquid",
+      "top": "immersivetechnology:multiblock/metal/boiler_liquid"
+    }
+  },
+  "loader": "immersivetechnology:split",
+  "split_parts": [
+    [
+      0,
+      0,
+      -2
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      -2
+    ],
+    [
+      0,
+      1,
+      -1
+    ],
+    [
+      0,
+      -1,
+      -2
+    ],
+    [
+      0,
+      -1,
+      0
+    ],
+    [
+      0,
+      -1,
+      -1
+    ]
+  ],
+  "textures": {
+    "particle": "immersivetechnology:multiblock/metal/boiler_liquid"
+  }
+}

@@ -29,7 +29,7 @@ public class ITDisassemblyTicker<S extends IMultiblockState> implements IServerT
                 int blocksPerTick = ITTemplateMultiblock.DISASSEMBLE_QUEUE_SIZE;
 
                 for (int i = 0; i < blocksPerTick && !master.disassembleQueue.isEmpty(); ++i) {
-                    AbstractMap.SimpleEntry<BlockPos, BlockState> entry = master.disassembleQueue.remove(0);
+                    AbstractMap.SimpleEntry<BlockPos, BlockState> entry = master.disassembleQueue.removeFirst();
                     BlockPos breakPos = entry.getKey();
                     BlockState template = entry.getValue();
                     level.setBlock(breakPos, template, 3);

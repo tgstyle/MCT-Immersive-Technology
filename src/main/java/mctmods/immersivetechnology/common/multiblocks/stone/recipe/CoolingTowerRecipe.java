@@ -1,61 +1,85 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import com.google.common.collect.Lists;
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer.CoolingTowerRecipeSerializer;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CoolingTowerRecipe extends MultiblockRecipe {
-    public static RegistryObject<IERecipeSerializer<CoolingTowerRecipe>> SERIALIZER;
+    public static DeferredHolder<RecipeSerializer<?>, CoolingTowerRecipeSerializer> SERIALIZER;
     public static final CachedRecipeList<CoolingTowerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.COOLING_TOWER);
 
+    private final ResourceLocation id;
+    public final TagKey<Fluid> inputTag0;
+    private final int amount0;
+    public final TagKey<Fluid> inputTag1;
+    private final int amount1;
     public final FluidStack fluidOutput0;
     public final FluidStack fluidOutput1;
     public final FluidStack fluidOutput2;
-    public final FluidTagInput input0;
-    public final FluidTagInput input1;
-    public final int totalProcessTime;
-    private static final Lazy<Integer> totalProcessEnergy = Lazy.of(() -> 0);
+    private final int time;
 
-    public CoolingTowerRecipe(ResourceLocation id, FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, FluidTagInput input0, FluidTagInput input1, int time) {
-        super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.COOLING_TOWER, id);
+    public CoolingTowerRecipe(ResourceLocation id, FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, TagKey<Fluid> inputTag0, int amount0, TagKey<Fluid> inputTag1, int amount1, int time) {
+        super(TagOutput.EMPTY, ITRecipeTypes.COOLING_TOWER, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        this.id = id;
+        this.inputTag0 = inputTag0;
+        this.amount0 = amount0;
+        this.inputTag1 = inputTag1;
+        this.amount1 = amount1;
         this.fluidOutput0 = fluidOutput0;
         this.fluidOutput1 = fluidOutput1;
         this.fluidOutput2 = fluidOutput2;
-        this.input0 = input0;
-        this.input1 = input1;
-        this.totalProcessTime = time;
-        this.fluidInputList = Lists.newArrayList(input0, input1);
-        this.fluidOutputList = Lists.newArrayList(fluidOutput0, fluidOutput1, fluidOutput2);
-        this.outputList = Lazy.of(NonNullList::create);
+        this.time = time;
     }
 
-    public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1) {
-        if (fluidInput0.isEmpty() || fluidInput1.isEmpty()) return null;
-        for (CoolingTowerRecipe r : RECIPES.getRecipes(level)) {
-            if (r.input0.test(fluidInput0) && fluidInput0.getAmount() >= r.input0.getAmount() && r.input1.test(fluidInput1) && fluidInput1.getAmount() >= r.input1.getAmount()) return r;
+    public CoolingTowerRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, TagKey<Fluid> inputTag0, int amount0, TagKey<Fluid> inputTag1, int amount1, int time) {
+        this(ResourceLocation.fromNamespaceAndPath("immersivetechnology", "codec_generated"), fluidOutput0, fluidOutput1, fluidOutput2, inputTag0, amount0, inputTag1, amount1, time);
+    }
+
+    public ResourceLocation getId() { return id; }
+    public TagKey<Fluid> inputTag0() { return inputTag0; }
+    public int amount0() { return amount0; }
+    public int getInput0Amount() { return amount0; }
+    public TagKey<Fluid> inputTag1() { return inputTag1; }
+    public int amount1() { return amount1; }
+    public int getInput1Amount() { return amount1; }
+    public FluidStack fluidOutput0() { return fluidOutput0; }
+    public FluidStack fluidOutput1() { return fluidOutput1; }
+    public FluidStack fluidOutput2() { return fluidOutput2; }
+
+    public boolean matches(FluidStack in0, FluidStack in1) {
+        return in0 != null && in0.is(this.inputTag0) && in1 != null && in1.is(this.inputTag1);
+    }
+
+    @Nullable public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1) {
+        if (fluidInput0 == null || fluidInput0.isEmpty() || fluidInput1 == null || fluidInput1.isEmpty()) return null;
+        for (var holder : RECIPES.getRecipes(level)) {
+            CoolingTowerRecipe recipe = holder.value();
+            if (recipe.matches(fluidInput0, fluidInput1) && fluidInput0.getAmount() >= recipe.getInput0Amount() && fluidInput1.getAmount() >= recipe.getInput1Amount()) return recipe;
         }
         return null;
     }
 
-    @Override public @NotNull ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
+    @Override @NotNull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
     @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 
-    @Override public int getTotalProcessTime() { return totalProcessTime; }
+    @Override public int getTotalProcessTime() { return time; }
 
-    @Override public int getTotalProcessEnergy() { return totalProcessEnergy.get(); }
+    @Override public int getTotalProcessEnergy() { return 0; }
 
     @Override public int getMultipleProcessTicks() { return 0; }
 }

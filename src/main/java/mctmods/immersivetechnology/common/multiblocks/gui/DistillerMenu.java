@@ -10,7 +10,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.logic.DistillerLogic
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.List;
 

@@ -2,6 +2,8 @@ package mctmods.immersivetechnology.client.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -11,17 +13,18 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
-import org.jetbrains.annotations.NotNull;
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.client.TextUtils;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.ClientBlockEntityScreen;
 import blusunrize.immersiveengineering.client.gui.elements.GuiButtonBoolean;
+import blusunrize.immersiveengineering.client.gui.elements.GuiButtonIE;
 import blusunrize.immersiveengineering.client.gui.elements.GuiButtonState;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.network.ITMessageTileSync;
 import mctmods.immersivetechnology.core.network.ITPacketHandler;
+import org.jetbrains.annotations.NotNull;
 
 public class ConnectorConfigScreen extends ClientBlockEntityScreen<ConnectorTimerBlockEntity> {
     private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("immersiveengineering", "redstone_configuration");
@@ -38,17 +41,24 @@ public class ConnectorConfigScreen extends ClientBlockEntityScreen<ConnectorTime
 
     public ConnectorConfigScreen(ConnectorTimerBlockEntity tile) { this(tile, Component.empty()); }
 
-    @Override public void renderBackground(@NotNull GuiGraphics graphics) {}
+    @Override public void renderBackground(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override public boolean isPauseScreen() { return false; }
 
     @Override public void init() {
         super.init();
         this.clearWidgets();
+
+        ResourceLocation buttonSprite = ResourceLocation.fromNamespaceAndPath(TEXTURE.getNamespace(), TEXTURE.getPath().replace("textures/gui/", "").replace(".png", ""));
+        GuiButtonIE.ButtonTexture ioTex = new GuiButtonIE.ButtonTexture(buttonSprite);
+
+        Map<IOSideConfig, GuiButtonIE.ButtonTexture> texMap = new HashMap<>();
+        texMap.put(IOSideConfig.INPUT, ioTex);
+        texMap.put(IOSideConfig.OUTPUT, ioTex);
         this.buttonInOut = new GuiButtonState<>(this.guiLeft + 41, this.guiTop + 20, 18, 18, Component.empty(),
                 new IOSideConfig[]{IOSideConfig.INPUT, IOSideConfig.OUTPUT},
                 () -> tile.getIoMode() == 0 ? 0 : 1,
-                TEXTURE, 176, 0, 1,
+                texMap,
                 (btn) -> {
                     int newMode = tile.getIoMode() == 0 ? 1 : 0;
                     sendConfig("ioMode", newMode);
@@ -72,8 +82,6 @@ public class ConnectorConfigScreen extends ClientBlockEntityScreen<ConnectorTime
         if ("ioMode".equals(key)) { tile.setIoMode(value); }
         else if ("redstoneChannel".equals(key)) { tile.redstoneChannel = DyeColor.byId(value); }
     }
-
-    @Override protected void drawGuiContainerBackgroundLayer(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override protected void drawGuiContainerForegroundLayer(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         ArrayList<Component> tooltip = new ArrayList<>();
@@ -103,8 +111,13 @@ public class ConnectorConfigScreen extends ClientBlockEntityScreen<ConnectorTime
     }
 
     public static GuiButtonBoolean buildColorButton(GuiButtonBoolean[] buttons, int posX, int posY, Supplier<Boolean> active, final DyeColor color, Consumer<GuiButtonBoolean> onClick) {
-        return new GuiButtonBoolean(posX, posY, 12, 12, "", active, TEXTURE, 194, 0, 1, (btn) -> {
-            if (btn.getNextState()) { onClick.accept((GuiButtonBoolean) btn); }
+        ResourceLocation buttonSprite = ResourceLocation.fromNamespaceAndPath(TEXTURE.getNamespace(), TEXTURE.getPath().replace("textures/gui/", "").replace(".png", ""));
+        GuiButtonIE.ButtonTexture offTex = new GuiButtonIE.ButtonTexture(buttonSprite);
+        GuiButtonIE.ButtonTexture onTex = new GuiButtonIE.ButtonTexture(buttonSprite);
+        return new GuiButtonBoolean(posX, posY, 12, 12, Component.empty(), active, offTex, onTex, (GuiButtonState<Boolean> b) -> {
+            if (!(Boolean) b.getState()) {
+                onClick.accept((GuiButtonBoolean) b);
+            }
             for (int j = 0; j < buttons.length; ++j) {
                 if (j != color.ordinal() && buttons[j].getState()) {
                     buttons[j].onClick(buttons[j].getX(), buttons[j].getY());
@@ -113,8 +126,8 @@ public class ConnectorConfigScreen extends ClientBlockEntityScreen<ConnectorTime
         }) {
             protected boolean isValidClickButton(int button) { return button == 0 && !(Boolean) this.getState(); }
 
-            public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-                super.render(graphics, mouseX, mouseY, partialTicks);
+            public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+                super.renderWidget(graphics, mouseX, mouseY, partialTicks);
                 if (this.visible) {
                     int col = color.getTextColor();
                     if (!(Boolean) this.getState()) {

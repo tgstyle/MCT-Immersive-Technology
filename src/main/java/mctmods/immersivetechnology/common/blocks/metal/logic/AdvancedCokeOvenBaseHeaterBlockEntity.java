@@ -19,18 +19,15 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.energy.IEnergyStorage;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.energy.EnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.function.BooleanSupplier;
 
-public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity implements ITServerTickableBE, ITClientTickableBE, ITBlockInterfaces.IDirectionalBE, ITBlockInterfaces.IHasDummyBlocks, IEnergyStorage, ITModelOffsetProvider {
+public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity implements ITIServerTickableBE, ITIClientTickableBE, ITIBlockInterfaces.IDirectionalBE, ITIBlockInterfaces.IHasDummyBlocks, IEnergyStorage, ITIModelOffsetProvider {
 
     private static final int MAX_ENERGY = ITServerConfig.advancedCokeOvenBaseheaterMaxEnergy;
     private static final int ENERGY_CONSUMPTION = ITServerConfig.advancedCokeOvenBaseheaterEnergyConsumption;
@@ -39,8 +36,6 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
     private static final float FAN_DECEL = (float) ITClientConfig.advancedCokeOvenBaseheaterFanDecel;
 
     private final EnergyStorage energyStorage = new EnergyStorage(MAX_ENERGY);
-    private final LazyOptional<IEnergyStorage> energyHandler = LazyOptional.of(() -> this);
-    private final LazyOptional<IEnergyStorage> dummyEnergyHandler = LazyOptional.of(ForwardingEnergyStorage::new);
 
     public Direction facing;
     public boolean dummy;
@@ -87,9 +82,15 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
         facing = Direction.from3DDataValue(nbt.getInt("facing"));
         energyStorage.receiveEnergy(nbt.getInt("energy"), false);
         active = nbt.getBoolean("active");
-        if (nbt.contains("masterPos")) masterPos = NbtUtils.readBlockPos(nbt.getCompound("masterPos"));
+        if (nbt.contains("masterPos")) {
+            CompoundTag posTag = nbt.getCompound("masterPos");
+            masterPos = new BlockPos(posTag.getInt("X"), posTag.getInt("Y"), posTag.getInt("Z"));
+        }
         cachedMaster = null;
-        if (descPacket) markContainingBlockForUpdate(null);
+        if (descPacket) {
+            markContainingBlockForUpdate(null);
+            requestModelDataUpdate();
+        }
     }
 
     @Override public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {
@@ -118,7 +119,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
 
     public boolean doSpeedup() {
         if (dummy) {
-            ITBlockInterfaces.IGeneralMultiblock m = master();
+            ITIBlockInterfaces.IGeneralMultiblock m = master();
             if (m instanceof AdvancedCokeOvenBaseHeaterBlockEntity masterBE) return masterBE.doSpeedup();
             return false;
         }
@@ -181,7 +182,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
 
     public float getFanRotation(float partialTicks) { return prevFanRotation + (fanRotation - prevFanRotation) * partialTicks; }
 
-    @Override @Nullable public ITBlockInterfaces.IGeneralMultiblock master() {
+    @Override @Nullable public ITIBlockInterfaces.IGeneralMultiblock master() {
         if (!dummy) return this;
         if (cachedMaster == null || cachedMaster.isRemoved()) findMaster();
         return cachedMaster;
@@ -194,7 +195,14 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
             cachedMaster = this;
             return;
         }
-        if (masterPos != null) return;
+        if (masterPos != null) {
+            BlockEntity existing = level.getBlockEntity(masterPos);
+            if (existing instanceof AdvancedCokeOvenBaseHeaterBlockEntity m && !m.dummy) {
+                cachedMaster = m;
+                return;
+            }
+            masterPos = null;
+        }
         BlockPos p = getBlockPos();
         for (Direction d : new Direction[]{facing.getClockWise(), facing.getCounterClockWise()}) {
             BlockPos candidate = p.relative(d);
@@ -242,7 +250,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
 
     @Override public BlockPos getModelOffset(BlockState state, @Nullable Vec3i size) {
         if (!dummy) return BlockPos.ZERO;
-        if (masterPos == null) findMaster();
+        findMaster();
         if (masterPos == null) return BlockPos.ZERO;
 
         BlockPos rel = getBlockPos().subtract(masterPos);
@@ -256,16 +264,21 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
         };
     }
 
-    @Override @Nonnull public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
-        if (capability == ForgeCapabilities.ENERGY) {
-            if (side == null || side == Direction.UP) {
-                if (!dummy) return energyHandler.cast();
-                ITBlockInterfaces.IGeneralMultiblock m = master();
-                if (m instanceof AdvancedCokeOvenBaseHeaterBlockEntity masterBE && !masterBE.isRemoved()) return dummyEnergyHandler.cast();
+    @Override @NotNull public ModelData getModelData() {
+        BlockPos offset = getModelOffset(getBlockState(), null);
+        return ModelData.builder().with(blusunrize.immersiveengineering.api.IEProperties.Model.SUBMODEL_OFFSET, offset).build();
+    }
+
+    @SuppressWarnings("unused")
+    public IEnergyStorage getEnergyHandler(@Nullable Direction side) {
+        if (side == null || side == Direction.UP) {
+            if (!dummy) return this;
+            ITIBlockInterfaces.IGeneralMultiblock m = master();
+            if (m instanceof AdvancedCokeOvenBaseHeaterBlockEntity masterBE && !masterBE.isRemoved()) {
+                return new ForwardingEnergyStorage();
             }
-            return LazyOptional.empty();
         }
-        return super.getCapability(capability, side);
+        return null;
     }
 
     @Override public int receiveEnergy(int maxReceive, boolean simulate) { return energyStorage.receiveEnergy(maxReceive, simulate); }
@@ -274,12 +287,6 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
     @Override public int getMaxEnergyStored() { return energyStorage.getMaxEnergyStored(); }
     @Override public boolean canExtract() { return false; }
     @Override public boolean canReceive() { return true; }
-
-    @Override public void invalidateCaps() {
-        super.invalidateCaps();
-        energyHandler.invalidate();
-        dummyEnergyHandler.invalidate();
-    }
 
     @Override public void onChunkUnloaded() {
         cachedMaster = null;
@@ -290,7 +297,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
         @Override public int receiveEnergy(int maxReceive, boolean simulate) { return 0; }
         @Override public int extractEnergy(int maxExtract, boolean simulate) { return 0; }
         @Override public int getEnergyStored() {
-            ITBlockInterfaces.IGeneralMultiblock m = master();
+            ITIBlockInterfaces.IGeneralMultiblock m = master();
             if (m instanceof AdvancedCokeOvenBaseHeaterBlockEntity masterBE) return masterBE.energyStorage.getEnergyStored();
             return 0;
         }

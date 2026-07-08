@@ -6,9 +6,10 @@ import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class BarrelSteelBlockEntity extends BarrelCommonBlockEntity {
@@ -20,9 +21,9 @@ public class BarrelSteelBlockEntity extends BarrelCommonBlockEntity {
         if (level == null || level.isClientSide) return;
         if (isRSPowered()) return;
         boolean update = false;
-        for (Direction side : neighbors.keySet()) {
+        for (Direction side : new Direction[]{Direction.DOWN, Direction.UP}) {
             if (tank.getFluidAmount() > 0 && sideConfig.get(side) == IOSideConfig.OUTPUT) {
-                IFluidHandler handler = neighbors.get(side).getNullable();
+                IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition.relative(side), side.getOpposite());
                 if (handler != null) {
                     FluidStack simulatedDrain = tank.drain(Math.min(transferSpeed, tank.getFluidAmount()), IFluidHandler.FluidAction.SIMULATE);
                     if (!simulatedDrain.isEmpty()) {
@@ -42,8 +43,13 @@ public class BarrelSteelBlockEntity extends BarrelCommonBlockEntity {
     @Override protected boolean isFluidValid(@NotNull FluidStack fluid) { return !fluid.isEmpty(); }
 
     @Override protected void postRead(boolean descPacket) {
-        if (descPacket) markContainingBlockForUpdate(null);
-        else updateState();
+        if (descPacket) {
+            markContainingBlockForUpdate(null);
+            requestModelDataUpdate();
+        } else {
+            updateState();
+            requestModelDataUpdate();
+        }
     }
 
     @Override protected boolean canConfigureSide(Direction side) { return true; }

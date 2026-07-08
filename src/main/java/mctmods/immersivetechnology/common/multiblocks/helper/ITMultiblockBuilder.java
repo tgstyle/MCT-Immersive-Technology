@@ -18,11 +18,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.fml.util.ObfuscationReflectionHelper;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -65,5 +66,18 @@ public class ITMultiblockBuilder<S extends IMultiblockState> extends MultiblockR
 
     @Override protected ITMultiblockBuilder<S> self() { return this; }
 
-    @Override public MultiblockRegistration<S> build() { MultiblockRegistration<S> reg = super.build(); regSupplier = () -> reg; return reg; }
+    @Override public MultiblockRegistration<S> build(Consumer<Consumer<net.neoforged.bus.api.IEventBus>> finisher) {
+        MultiblockRegistration<S> reg = super.build(finisher);
+        regSupplier = () -> reg;
+        return reg;
+    }
+
+    public MultiblockRegistration<S> build() {
+        return build(registerToModBus -> {
+            if (ITLib.MOD_BUS == null) {
+                throw new IllegalStateException("ITLib.MOD_BUS was not set before a multiblock was built - capabilities will not be registered.");
+            }
+            registerToModBus.accept(ITLib.MOD_BUS);
+        });
+    }
 }

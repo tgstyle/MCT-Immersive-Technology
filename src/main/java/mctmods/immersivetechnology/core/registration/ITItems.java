@@ -7,11 +7,11 @@ import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import javax.annotation.Nonnull;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -19,18 +19,18 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ITItems {
-    public static final DeferredRegister<Item> REGISTER = DeferredRegister.create(ForgeRegistries.ITEMS, ITLib.MODID);
+    public static final DeferredRegister.Items REGISTER = DeferredRegister.createItems(ITLib.MODID);
 
-    private static final HashMap<String, RegistryObject<? extends Item>> ITEM_REGISTRY_MAP = new HashMap<>();
+    private static final HashMap<String, Supplier<? extends Item>> ITEM_REGISTRY_MAP = new HashMap<>();
 
-    public static HashMap<String, RegistryObject<? extends Item>> getItemRegistryMap() { return ITEM_REGISTRY_MAP; }
+    public static HashMap<String, Supplier<? extends Item>> getItemRegistryMap() { return ITEM_REGISTRY_MAP; }
 
     public static final ItemRegObject<FormationTool> FORMATION_TOOL = register("formation_tool", FormationTool::new);
     public static final ItemRegObject<ITBaseItem> SALT = simple();
 
     public static void initItems() { }
 
-    public static List<Item> getITItems() { return REGISTER.getEntries().stream().map(RegistryObject::get).collect(Collectors.toList()); }
+    public static List<Item> getITItems() { return REGISTER.getEntries().stream().map(Supplier::get).collect(Collectors.toList()); }
 
     public static void init(IEventBus event) {
         initItems();
@@ -45,7 +45,7 @@ public class ITItems {
 
     static <T extends Item> ITItems.ItemRegObject<T> register(String name, Supplier<? extends T> make) { return new ITItems.ItemRegObject<>(REGISTER.register(name, make)); }
 
-    public record ItemRegObject<T extends Item>(RegistryObject<T> regObject) implements Supplier<T>, ItemLike {
+    public record ItemRegObject<T extends Item>(DeferredItem<T> regObject) implements Supplier<T>, ItemLike {
         @Override @Nonnull public T get() { return regObject.get(); }
 
         @Override @Nonnull public Item asItem() { return regObject.get(); }

@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
@@ -10,13 +11,12 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPosition;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.MechanicalCapabilities;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.mojang.datafixers.util.Pair;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
@@ -28,17 +28,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.common.util.Lazy;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -52,7 +51,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     private static final int MAX_SPEED = MechanicalCapabilities.MAX_RPM;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AlternatorShape.DATA.pointsOfInterest);
 
-    public static final BlockPos RUNNING_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
+    public static final BlockPos RUNNING_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").getFirst();
     public static final CapabilityPosition MECHANICAL_INPUT_POI = ITMultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "mechanical_input0");
     private static final List<BlockPos> ENERGY_LEFT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "energy_left0");
     private static final List<BlockPos> ENERGY_RIGHT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "energy_right0");
@@ -60,7 +59,8 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     private static final RelativeBlockFace ENERGY_RIGHT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "energy_right0");
     private static final RelativeBlockFace MECHANICAL_INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "mechanical_input0");
 
-    private static final LazyOptional<IMechanicalEnergyConsumer> MECHANICAL_CONSUMER = LazyOptional.of(MechanicalEnergyConsumer::new);
+    @SuppressWarnings("unused")
+    private static final Lazy<IMechanicalEnergyConsumer> MECHANICAL_CONSUMER = Lazy.of(MechanicalEnergyConsumer::new);
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
@@ -104,17 +104,13 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             ITLib.IT_LOGGER.warn("AlternatorLogic: Failed to resolve input facing");
         } else {
             BlockPos providerAbsolutePos = inputPortAbs.relative(inputFacing);
-            BlockEntity entity = level.getBlockEntity(providerAbsolutePos);
-            if (entity != null) {
-                LazyOptional<IMechanicalEnergyProvider> providerCap = entity.getCapability(MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY, inputFacing.getOpposite());
-                if (providerCap.isPresent()) {
-                    IMechanicalEnergyProvider provider = providerCap.orElseThrow(RuntimeException::new);
-                    turbineSpeed = provider.getSpeed();
-                    turbineTorque = provider.getTorque();
-                    providerMaxSpeed = provider.getMaxSpeed();
-                    hasProvider = true;
-                    if (turbineSpeed > 0) { state.active = true; }
-                }
+            IMechanicalEnergyProvider provider = level.getCapability(MechanicalCapabilities.MECHANICAL_PROVIDER, providerAbsolutePos, inputFacing.getOpposite());
+            if (provider != null) {
+                turbineSpeed = provider.getSpeed();
+                turbineTorque = provider.getTorque();
+                providerMaxSpeed = provider.getMaxSpeed();
+                hasProvider = true;
+                if (turbineSpeed > 0) { state.active = true; }
             }
         }
         int effectiveMax = hasProvider ? Math.min(MAX_SPEED, providerMaxSpeed) : MAX_SPEED;
@@ -172,52 +168,49 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             BlockPos absolutePos = ctx.getLevel().toAbsolute(pos);
             Direction side = ctx.getLevel().toAbsolute(ENERGY_LEFT_FACING);
             if (side == null) { continue; }
-            BlockEntity adjacent = level.getBlockEntity(absolutePos.relative(side));
-            if (adjacent != null) {
-                LazyOptional<IEnergyStorage> handlerOpt = adjacent.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
-                if (handlerOpt.isPresent()) {
-                    connected.add(handlerOpt.orElseThrow(RuntimeException::new));
-                }
+            BlockPos targetPos = absolutePos.relative(side);
+            IEnergyStorage handler = level.getCapability(Capabilities.EnergyStorage.BLOCK, targetPos, side.getOpposite());
+            if (handler != null) {
+                connected.add(handler);
             }
         }
         for (BlockPos pos : ENERGY_RIGHT_POIS) {
             BlockPos absolutePos = ctx.getLevel().toAbsolute(pos);
             Direction side = ctx.getLevel().toAbsolute(ENERGY_RIGHT_FACING);
             if (side == null) { continue; }
-            BlockEntity adjacent = level.getBlockEntity(absolutePos.relative(side));
-            if (adjacent != null) {
-                LazyOptional<IEnergyStorage> handlerOpt = adjacent.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
-                if (handlerOpt.isPresent()) {
-                    connected.add(handlerOpt.orElseThrow(RuntimeException::new));
-                }
+            BlockPos targetPos = absolutePos.relative(side);
+            IEnergyStorage handler = level.getCapability(Capabilities.EnergyStorage.BLOCK, targetPos, side.getOpposite());
+            if (handler != null) {
+                connected.add(handler);
             }
         }
         return connected;
     }
 
-    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
-        State state = ctx.getState();
-        if (cap == ForgeCapabilities.ENERGY) {
-            BlockPos localPos = position.posInMultiblock();
-            RelativeBlockFace side = position.side();
-            if (ENERGY_LEFT_POIS.contains(localPos) && (side == null || side == ENERGY_LEFT_FACING)) { return state.energyCap.cast(ctx); }
-            if (ENERGY_RIGHT_POIS.contains(localPos) && (side == null || side == ENERGY_RIGHT_FACING)) { return state.energyCap.cast(ctx); }
-        }
-        if (cap == MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY) {
-            CapabilityPosition checkPos = position;
-            if (position.posInMultiblock().equals(BlockPos.ZERO)) { checkPos = new CapabilityPosition(MECHANICAL_INPUT_POI.posInMultiblock(), position.side()); }
-            if (checkPos.posInMultiblock().equals(MECHANICAL_INPUT_POI.posInMultiblock()) && (checkPos.side() == null || checkPos.side() == MECHANICAL_INPUT_FACING || checkPos.side() == MECHANICAL_INPUT_FACING.getOpposite())) {
-                return MECHANICAL_CONSUMER.cast();
-            }
-        }
-        return LazyOptional.empty();
-    }
-
     @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { }
 
-    @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
+    @Override public State createInitialState(IInitialMultiblockContext<State> ctx) {
+        MECHANICAL_CONSUMER.get();
+        return new State(ctx);
+    }
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AlternatorShape.GETTER; }
+
+    @Override public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+        register.register(Capabilities.EnergyStorage.BLOCK, (state, position) -> {
+            BlockPos localPos = position.posInMultiblock();
+            RelativeBlockFace side = position.side();
+            if (ENERGY_LEFT_POIS.contains(localPos) && (side == null || side == ENERGY_LEFT_FACING)) { return state.energy; }
+            if (ENERGY_RIGHT_POIS.contains(localPos) && (side == null || side == ENERGY_RIGHT_FACING)) { return state.energy; }
+            return null;
+        });
+        register.register(MechanicalCapabilities.MECHANICAL_CONSUMER, (state, position) -> {
+            BlockPos localPos = position.posInMultiblock();
+            RelativeBlockFace side = position.side();
+            if (localPos.equals(MECHANICAL_INPUT_POI.posInMultiblock()) && (side == null || side == MECHANICAL_INPUT_FACING || side == MECHANICAL_INPUT_FACING.getOpposite())) { return MECHANICAL_CONSUMER.get(); }
+            return null;
+        });
+    }
 
     private static class MechanicalEnergyConsumer implements IMechanicalEnergyConsumer {
         @Override public double getMass() { return ITServerConfig.alternatorBaseMass; }
@@ -225,63 +218,61 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         @Override public int getMaxSpeed() { return MechanicalCapabilities.MAX_RPM; }
     }
 
-    public static class State implements IMultiblockState, ITDisplayContext {
+    public static class State implements IMultiblockState, ITIDisplayContext {
         public AveragingEnergyStorage energy;
         public boolean active = false;
         public int speed = 0;
         public float torqueMultiplier = 1f;
         public int effectiveMaxSpeed = MAX_SPEED;
         public BooleanSupplier isSoundPlaying = () -> false;
-        private final StoredCapability<IEnergyStorage> energyCap;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             this.energy = new SyncEnergyStorage(ITServerConfig.alternatorEnergyCapacity, onChanged);
-            this.energyCap = new StoredCapability<>(this.energy);
         }
 
-        @Override public void writeSaveNBT(CompoundTag nbt) {
-            nbt.put("energy", energy.serializeNBT());
+        @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            nbt.put("energy", energy.serializeNBT(provider));
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
             nbt.putFloat("torqueMultiplier", torqueMultiplier);
             nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
         }
 
-        @Override public void readSaveNBT(CompoundTag nbt) {
-            energy.deserializeNBT(nbt.get("energy"));
+        @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            energy.deserializeNBT(provider, Objects.requireNonNull(nbt.get("energy")));
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             torqueMultiplier = nbt.getFloat("torqueMultiplier");
             effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
         }
 
-        @Override public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             CompoundTag display = new CompoundTag();
-            writeDisplaySyncNBT(display);
+            writeDisplaySyncNBT(display, provider);
             nbt.put("display", display);
         }
 
-        @Override public void readSyncNBT(CompoundTag nbt) {
-            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        @Override public void readSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display"), provider); }
         }
 
-        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
+        public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
             nbt.putFloat("torqueMultiplier", torqueMultiplier);
-            nbt.put("energy", energy.serializeNBT());
+            nbt.put("energy", energy.serializeNBT(provider));
             nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
         }
 
-        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
+        public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             torqueMultiplier = nbt.getFloat("torqueMultiplier");
             if (energy == null) { energy = new SyncEnergyStorage(ITServerConfig.alternatorEnergyCapacity, () -> {}); }
-            energy.deserializeNBT(nbt.get("energy"));
+            energy.deserializeNBT(provider, Objects.requireNonNull(nbt.get("energy")));
             effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
         }
 

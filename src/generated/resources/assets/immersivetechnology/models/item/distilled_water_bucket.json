@@ -1,0 +1,6 @@
+{
+  "parent": "neoforge:item/bucket",
+  "flip_gas": false,
+  "fluid": "immersivetechnology:distilled_water",
+  "loader": "neoforge:fluid_container"
+}

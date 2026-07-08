@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.multiblocks.stone.logic;
 
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
@@ -9,11 +10,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPosition;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockFace;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import blusunrize.immersiveengineering.common.util.Utils;
@@ -21,7 +18,7 @@ import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITFurnaceHandler;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiBlockInventoryUtils;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
@@ -39,30 +36,29 @@ import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.IFluidTank;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -70,6 +66,7 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenLogic.State>, IServerTickableComponent<AdvancedCokeOvenLogic.State>, IClientTickableComponent<AdvancedCokeOvenLogic.State> {
     public static final int SLOT_INPUT = 0;
@@ -78,19 +75,19 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     public static final int SLOT_FILLED_CONTAINER = 3;
     public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
 
-    public static final double BASE_SPEED = ITServerConfig.advancedCokeOvenSpeedBase;
-    public static final double BASEHEATER_ADD = ITServerConfig.advancedCokeOvenBaseheaterSpeedIncrease;
-    public static final double BASEHEATER_MULT = ITServerConfig.advancedCokeOvenBaseheaterSpeedMultiplier;
+    public static double baseSpeed() { return ITServerConfig.advancedCokeOvenSpeedBase; }
+    public static double baseheaterAdd() { return ITServerConfig.advancedCokeOvenBaseheaterSpeedIncrease; }
+    public static double baseheaterMult() { return ITServerConfig.advancedCokeOvenBaseheaterSpeedMultiplier; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AdvancedCokeOvenShape.DATA.pointsOfInterest);
 
-    public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0").get(0), ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0"));
-    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITMultiblockPOIHelper.getFacing(RAW_POIS, "item_output0"), ITMultiblockPOIHelper.getPosList(RAW_POIS, "item_output0").get(0));
-    public static final MultiblockFace ITEM_INPUT_POI = new MultiblockFace(ITMultiblockPOIHelper.getFacing(RAW_POIS, "item_input0"), ITMultiblockPOIHelper.getPosList(RAW_POIS, "item_input0").get(0));
-    public static final BlockPos SMOKE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "smoke0").get(0);
-    public static final BlockPos SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
-    public static final BlockPos BASEHEATER0_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "baseheater0").get(0);
-    public static final BlockPos BASEHEATER1_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "baseheater1").get(0);
+    public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0").getFirst(), ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0"));
+    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITMultiblockPOIHelper.getFacing(RAW_POIS, "item_output0"), ITMultiblockPOIHelper.getPosList(RAW_POIS, "item_output0").getFirst());
+    public static final MultiblockFace ITEM_INPUT_POI = new MultiblockFace(ITMultiblockPOIHelper.getFacing(RAW_POIS, "item_input0"), ITMultiblockPOIHelper.getPosList(RAW_POIS, "item_input0").getFirst());
+    public static final BlockPos SMOKE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "smoke0").getFirst();
+    public static final BlockPos SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").getFirst();
+    public static final BlockPos BASEHEATER0_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "baseheater0").getFirst();
+    public static final BlockPos BASEHEATER1_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "baseheater1").getFirst();
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
@@ -109,9 +106,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         }
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
-            if (!state.active) {
-                state.isSoundPlaying = () -> false;
-            }
+            if (!state.active) { state.isSoundPlaying = () -> false; }
             return;
         }
         if (state.active) {
@@ -145,14 +140,12 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         boolean wasActive = state.active;
         state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
         state.active = !state.processor.getQueue().isEmpty();
-        AdvancedCokeOvenRecipe recipe = AdvancedCokeOvenRecipe.findRecipe(level, state.inventory.getStackInSlot(SLOT_INPUT), null);
-        tryEnqueueProcess(state, level, recipe);
-        if (!state.processor.getQueue().isEmpty()) {
-            state.active = true;
-        }
+        RecipeHolder<AdvancedCokeOvenRecipe> recipeHolder = AdvancedCokeOvenRecipe.findRecipe(level, state.inventory.getStackInSlot(SLOT_INPUT), null);
+        tryEnqueueProcess(state, level, recipeHolder);
+        if (!state.processor.getQueue().isEmpty()) { state.active = true; }
         FluidUtils.fillFluidContainer(state.tanks.output, SLOT_EMPTY_CONTAINER, SLOT_FILLED_CONTAINER, state.inventory);
         if (state.tanks.output.getFluidAmount() > 0) {
-            IFluidHandler output = state.fluidOutput.getNullable();
+            IFluidHandler output = state.fluidOutput.get();
             if (output != null) {
                 FluidStack fs = state.tanks.output.getFluid().copy();
                 int accepted = output.fill(fs, FluidAction.SIMULATE);
@@ -175,36 +168,34 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         }
         boolean activeChanged = wasActive != state.active;
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
-        if (activeChanged || tanksChanged) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        if (activeChanged || tanksChanged) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
-    private void tryEnqueueProcess(State state, Level level, @Nullable AdvancedCokeOvenRecipe recipe) {
+    private void tryEnqueueProcess(State state, Level level, @Nullable RecipeHolder<AdvancedCokeOvenRecipe> recipeHolder) {
         if (state.processor.getQueueSize() >= state.processor.getMaxQueueSize()) { return; }
-        if (recipe == null) { return; }
+        if (recipeHolder == null) { return; }
+        AdvancedCokeOvenRecipe recipe = recipeHolder.value();
         ItemStack inputStack = state.inventory.getStackInSlot(SLOT_INPUT);
-        if (inputStack.getCount() < recipe.input.getCount()) { return; }
+        if (inputStack.getCount() < 1) { return; }
         ItemStack currentOutputStack = state.inventory.getStackInSlot(SLOT_OUTPUT);
-        boolean canOutputItem = currentOutputStack.isEmpty() || (ItemHandlerHelper.canItemStacksStack(currentOutputStack, recipe.itemOutput.get()) && currentOutputStack.getCount() + recipe.itemOutput.get().getCount() <= currentOutputStack.getMaxStackSize());
+        boolean canOutputItem = currentOutputStack.isEmpty() || (ItemStack.isSameItemSameComponents(currentOutputStack, recipe.itemOutput.get()) && currentOutputStack.getCount() + recipe.itemOutput.get().getCount() <= currentOutputStack.getMaxStackSize());
         if (!canOutputItem) { return; }
         if (state.tanks.output.getFluidAmount() + recipe.creosoteOutput > state.tanks.output.getCapacity()) { return; }
-        AdvancedCokeOvenProcess process = new AdvancedCokeOvenProcess(recipe);
+        AdvancedCokeOvenProcess process = new AdvancedCokeOvenProcess(recipeHolder);
         state.processor.addProcessToQueue(process, level, false);
     }
 
-    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
-        final State state = ctx.getState();
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            if (ITEM_INPUT_POI.posInMultiblock().equals(position.posInMultiblock()) && (position.side() == null || position.side() == ITEM_INPUT_POI.face())) { return state.itemInputCap.cast(ctx); }
-            if (ITEM_OUTPUT_POI.posInMultiblock().equals(position.posInMultiblock()) && (position.side() == null || position.side() == ITEM_OUTPUT_POI.face())) { return state.itemOutputCap.cast(ctx); }
-            return state.invCap.cast(ctx);
-        }
-        else if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (position.posInMultiblock().equals(OUTPUT_FLUID_POI.posInMultiblock()) && (position.side() == null || position.side() == OUTPUT_FLUID_POI.side())) { return state.fluidCap.cast(ctx); }
-        }
-        return LazyOptional.empty();
+    @Override
+    public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+        register.register(Capabilities.ItemHandler.BLOCK, (state, position) -> {
+            if (ITEM_INPUT_POI.posInMultiblock().equals(position.posInMultiblock()) && (position.side() == null || position.side() == ITEM_INPUT_POI.face())) { return state.itemInputCap; }
+            if (ITEM_OUTPUT_POI.posInMultiblock().equals(position.posInMultiblock()) && (position.side() == null || position.side() == ITEM_OUTPUT_POI.face())) { return state.itemOutputCap; }
+            return state.invCap;
+        });
+        register.register(Capabilities.FluidHandler.BLOCK, (state, position) -> {
+            if (position.posInMultiblock().equals(OUTPUT_FLUID_POI.posInMultiblock()) && (position.side() == null || position.side() == OUTPUT_FLUID_POI.side())) { return state.fluidCap; }
+            return null;
+        });
     }
 
     @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
@@ -213,9 +204,11 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AdvancedCokeOvenShape.GETTER; }
 
-    @Override public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) { return InteractionResult.SUCCESS; }
+    public ItemInteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
+        return ItemInteractionResult.SUCCESS;
+    }
 
-    public static class State implements IMultiblockState, ContainerData, ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe>, ITFurnaceHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>, ITDisplayContext {
+    public static class State implements IMultiblockState, ContainerData, ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe>, ITFurnaceHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>, ITIDisplayContext {
         public static final int MAX_PROCESS_TIME = 0;
         public static final int REMAINING_PROCESS_TIME = 1;
         public static final int NUM_SLOTS = 2;
@@ -226,12 +219,12 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         private final IFluidTank[] tankArray;
         public final ITSlotwiseItemHandler inventory;
         private final MultiblockProcessor.InMachineProcessor<AdvancedCokeOvenRecipe> processor;
-        private final StoredCapability<IItemHandler> invCap;
-        private final StoredCapability<IFluidHandler> fluidCap;
-        private final StoredCapability<IItemHandler> itemOutputCap;
-        private final StoredCapability<IItemHandler> itemInputCap;
-        private final CapabilityReference<IFluidHandler> fluidOutput;
-        private final CapabilityReference<IItemHandler> outputRef;
+        public IItemHandler invCap;
+        public IFluidHandler fluidCap;
+        public IItemHandler itemOutputCap;
+        public IItemHandler itemInputCap;
+        private final Supplier<IFluidHandler> fluidOutput;
+        private final Supplier<IItemHandler> outputRef;
         public BooleanSupplier isSoundPlaying = () -> false;
         private final AveragingEnergyStorage energy = new AveragingEnergyStorage(0);
         public boolean tanksDirty = false;
@@ -252,9 +245,9 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
                     onChanged
             );
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, AdvancedCokeOvenRecipe::getById);
-            this.invCap = new StoredCapability<>(this.inventory);
-            this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
-            this.itemOutputCap = new StoredCapability<>(new ITWrappingItemHandler(
+            this.invCap = this.inventory;
+            this.fluidCap = new ITArrayFluidHandler(tanks.output, true, false, onChanged);
+            this.itemOutputCap = new ITWrappingItemHandler(
                     inventory,
                     false,
                     true,
@@ -262,63 +255,67 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
                             new ITWrappingItemHandler.IntRange(SLOT_OUTPUT, SLOT_OUTPUT + 1),
                             new ITWrappingItemHandler.IntRange(SLOT_FILLED_CONTAINER, SLOT_FILLED_CONTAINER + 1)
                     )
-            ));
-            this.itemInputCap = new StoredCapability<>(new ITWrappingItemHandler(
+            );
+            this.itemInputCap = new ITWrappingItemHandler(
                     inventory,
                     true,
                     false,
                     List.of(new ITWrappingItemHandler.IntRange(SLOT_INPUT, SLOT_INPUT + 1))
-            ));
+            );
             MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POI.side(), OUTPUT_FLUID_POI.posInMultiblock());
             CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);
             MultiblockFace opposingMBFace = new MultiblockFace(opposingCP.side(), opposingCP.posInMultiblock());
-            this.fluidOutput = ctx.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, opposingMBFace);
-            this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, ITEM_OUTPUT_POI);
+            this.fluidOutput = ctx.getCapabilityAt(Capabilities.FluidHandler.BLOCK, opposingMBFace);
+            this.outputRef = ctx.getCapabilityAt(Capabilities.ItemHandler.BLOCK, ITEM_OUTPUT_POI);
         }
 
         public AdvancedCokeOvenTank getTanks() { return tanks; }
 
         public boolean isActive() { return active; }
 
-        @Override public void writeSaveNBT(CompoundTag nbt) {
-            nbt.put("tanks", tanks.toNBT());
-            nbt.put("processor", processor.toNBT());
-            nbt.put("inventory", inventory.serializeNBT());
+        @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            nbt.put("tanks", tanks.toNBT(provider));
+            nbt.put("processor", processor.toNBT(provider));
+            nbt.put("inventory", inventory.serializeNBT(provider));
             nbt.putBoolean("active", active);
+            CompoundTag rsTag = new CompoundTag();
+            rsState.writeSaveNBT(rsTag, provider);
+            nbt.put("rsState", rsTag);
         }
 
-        @Override public void readSaveNBT(CompoundTag nbt) {
-            tanks.readNBT(nbt.getCompound("tanks"));
-            processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), AdvancedCokeOvenProcess::new);
-            inventory.deserializeNBT(nbt.getCompound("inventory"));
+        @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            tanks.readNBT(nbt.getCompound("tanks"), provider);
+            processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), AdvancedCokeOvenProcess::create, provider);
+            inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
             active = nbt.getBoolean("active");
+            if (nbt.contains("rsState", Tag.TAG_COMPOUND)) { rsState.readSaveNBT(nbt.getCompound("rsState"), provider); }
             tanksDirty = false;
         }
 
-        @Override public void writeSyncNBT(CompoundTag nbt) {
+        @Override public void writeSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             CompoundTag display = new CompoundTag();
-            writeDisplaySyncNBT(display);
+            writeDisplaySyncNBT(display, provider);
             nbt.put("display", display);
         }
 
-        @Override public void readSyncNBT(CompoundTag nbt) {
-            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
+        @Override public void readSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display"), provider); }
         }
 
-        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("active", active);
-            nbt.put("tanks", tanks.toNBT());
+            nbt.put("tanks", tanks.toNBT(provider));
         }
 
-        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
-            tanks.readNBT(nbt.getCompound("tanks"));
+            tanks.readNBT(nbt.getCompound("tanks"), provider);
             tanksDirty = false;
         }
 
         @Override public int get(int index) {
             if (processor.getQueue().isEmpty()) { return 0; }
-            AdvancedCokeOvenProcess process = (AdvancedCokeOvenProcess) processor.getQueue().get(0);
+            AdvancedCokeOvenProcess process = (AdvancedCokeOvenProcess) processor.getQueue().getFirst();
             return switch (index) {
                 case MAX_PROCESS_TIME -> process.getMaxProcessTime();
                 case REMAINING_PROCESS_TIME -> process.getMaxProcessTime() - process.getCurrentProcessTime();
@@ -346,7 +343,10 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
         @Override public IItemHandlerModifiable getInventory() { return inventory; }
 
-        @Override @Nullable public AdvancedCokeOvenRecipe getRecipeForInput(Level level) { return AdvancedCokeOvenRecipe.findRecipe(level, inventory.getStackInSlot(SLOT_INPUT), null); }
+        @Override @Nullable public AdvancedCokeOvenRecipe getRecipeForInput(Level level) {
+            RecipeHolder<AdvancedCokeOvenRecipe> holder = AdvancedCokeOvenRecipe.findRecipe(level, inventory.getStackInSlot(SLOT_INPUT), null);
+            return holder != null ? holder.value() : null;
+        }
 
         @Override public int getBurnTimeOf(Level level, ItemStack fuel) { return 0; }
 
@@ -355,36 +355,32 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
             BlockPos heater1World = level.toAbsolute(BASEHEATER0_POI);
             BlockEntity be1 = level.getRawLevel().getBlockEntity(heater1World);
-            if (be1 instanceof AdvancedCokeOvenBaseHeaterBlockEntity heater && heater.doSpeedup()) {
-                activeBaseheaters++;
-            }
+            if (be1 instanceof AdvancedCokeOvenBaseHeaterBlockEntity heater && heater.doSpeedup()) { activeBaseheaters++; }
 
             BlockPos heater2World = level.toAbsolute(BASEHEATER1_POI);
             BlockEntity be2 = level.getRawLevel().getBlockEntity(heater2World);
-            if (be2 instanceof AdvancedCokeOvenBaseHeaterBlockEntity heater && heater.doSpeedup()) {
-                activeBaseheaters++;
-            }
+            if (be2 instanceof AdvancedCokeOvenBaseHeaterBlockEntity heater && heater.doSpeedup()) { activeBaseheaters++; }
 
-            return (BASE_SPEED + activeBaseheaters * BASEHEATER_ADD) * (1 + activeBaseheaters * (BASEHEATER_MULT - 1));
+            return (baseSpeed() + activeBaseheaters * baseheaterAdd()) * (1 + activeBaseheaters * (baseheaterMult() - 1));
         }
 
         @Override public void turnOff(IMultiblockLevel level) { }
     }
 
     public record AdvancedCokeOvenTank(ITMarkableFluidTank output) {
-        public AdvancedCokeOvenTank(Consumer<Void> markDirty) {
+        public AdvancedCokeOvenTank(java.util.function.Consumer<Void> markDirty) {
             this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty));
         }
 
         public static AdvancedCokeOvenTank makeClient() { return new AdvancedCokeOvenTank(v -> {}); }
 
-        public CompoundTag toNBT() {
+        public CompoundTag toNBT(HolderLookup.Provider provider) {
             CompoundTag tag = new CompoundTag();
-            tag.put("out", this.output.writeToNBT(new CompoundTag()));
+            tag.put("out", this.output.writeToNBT(provider, new CompoundTag()));
             return tag;
         }
 
-        public void readNBT(CompoundTag tag) { this.output.readFromNBT(tag.getCompound("out")); }
+        public void readNBT(CompoundTag tag, HolderLookup.Provider provider) { this.output.readFromNBT(provider, tag.getCompound("out")); }
 
         @SuppressWarnings("unused")
         public int getCapacity() { return TANK_CAPACITY; }

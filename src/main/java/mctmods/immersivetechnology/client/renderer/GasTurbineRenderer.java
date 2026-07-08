@@ -20,14 +20,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import java.util.List;
 
 public class GasTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<GasTurbineLogic.State>> {
-
     public GasTurbineRenderer() {}
+
+    @Override @NotNull public net.minecraft.world.phys.AABB getRenderBoundingBox(MultiblockBlockEntityMaster<GasTurbineLogic.State> tile) { return new net.minecraft.world.phys.AABB(tile.getBlockPos()).inflate(8); }
 
     @Override public void render(@NotNull MultiblockBlockEntityMaster<GasTurbineLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         IMultiblockBEHelperMaster<GasTurbineLogic.State> helper = tile.getHelper();

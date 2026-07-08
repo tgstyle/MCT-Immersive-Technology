@@ -43,12 +43,12 @@ public abstract class ITContainerScreen<C extends AbstractContainerMenu> extends
     }
 
     @Override public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(graphics);
+        this.renderBackground(graphics, mouseX, mouseY, partialTicks);
         super.render(graphics, mouseX, mouseY, partialTicks);
         List<Component> tooltip = new ArrayList<>();
         for (ITInfoArea area : this.infoAreas.get()) { area.fillTooltip(mouseX, mouseY, tooltip); }
         for (GuiEventListener w : this.children()) {
-            if (w.isMouseOver(mouseX, mouseY) && w instanceof IITTooltipWidget ttw) { ttw.gatherTooltip(mouseX, mouseY, tooltip); }
+            if (w.isMouseOver(mouseX, mouseY) && w instanceof ITITooltipWidget ttw) { ttw.gatherTooltip(mouseX, mouseY, tooltip); }
         }
         Objects.requireNonNull(tooltip);
         this.gatherAdditionalTooltips(mouseX, mouseY, tooltip::add, (t) -> tooltip.add(TextUtils.applyFormat(t, ChatFormatting.GRAY)));

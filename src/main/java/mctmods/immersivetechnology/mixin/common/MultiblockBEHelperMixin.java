@@ -1,18 +1,15 @@
 package mctmods.immersivetechnology.mixin.common;
 
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.MultiblockBEHelperCommon;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockBEHelper;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIMultiblockBEHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(MultiblockBEHelperCommon.class)
-public abstract class MultiblockBEHelperMixin implements ITMultiblockBEHelper {
+public abstract class MultiblockBEHelperMixin implements ITIMultiblockBEHelper {
 
     @Shadow(remap = false)
     private boolean beingDisassembled;
-
-    @Override
-    public boolean it$isAssembled() { return !beingDisassembled; }
 
     @Override
     public boolean it$isDisassembling() { return beingDisassembled; }

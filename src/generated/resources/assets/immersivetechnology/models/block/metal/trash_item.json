@@ -1,0 +1,111 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#bottom"
+        },
+        "west": {
+          "texture": "#side"
+        }
+      },
+      "from": [
+        2,
+        0,
+        2
+      ],
+      "to": [
+        14,
+        13,
+        14
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#top",
+          "uv": [
+            0.0,
+            0.0,
+            15.0,
+            15.0
+          ]
+        },
+        "east": {
+          "texture": "#top_side",
+          "uv": [
+            0.0,
+            0.0,
+            15.0,
+            3.0
+          ]
+        },
+        "north": {
+          "texture": "#top_side",
+          "uv": [
+            0.0,
+            0.0,
+            15.0,
+            3.0
+          ]
+        },
+        "south": {
+          "texture": "#top_side",
+          "uv": [
+            0.0,
+            0.0,
+            15.0,
+            3.0
+          ]
+        },
+        "up": {
+          "texture": "#top",
+          "uv": [
+            0.0,
+            0.0,
+            15.0,
+            15.0
+          ]
+        },
+        "west": {
+          "texture": "#top_side",
+          "uv": [
+            0.0,
+            0.0,
+            15.0,
+            3.0
+          ]
+        }
+      },
+      "from": [
+        0.5,
+        13,
+        0.5
+      ],
+      "to": [
+        15.5,
+        16,
+        15.5
+      ]
+    }
+  ],
+  "textures": {
+    "bottom": "immersivetechnology:block/metal/trash_item_bottom",
+    "particle": "immersivetechnology:block/metal/trash_item_side",
+    "side": "immersivetechnology:block/metal/trash_item_side",
+    "top": "immersivetechnology:block/metal/trash_item_top",
+    "top_side": "immersivetechnology:block/metal/trash_item_top_side"
+  }
+}

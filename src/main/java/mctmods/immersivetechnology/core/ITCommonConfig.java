@@ -1,19 +1,19 @@
 package mctmods.immersivetechnology.core;
 
 import mctmods.immersivetechnology.core.lib.ITLib;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.fml.event.config.ModConfigEvent;
 
-@Mod.EventBusSubscriber(modid = ITLib.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = ITLib.MODID)
 public class ITCommonConfig {
-    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
-    public static final ForgeConfigSpec.DoubleValue BOILER_DEFAULT_WORKING_HEAT;
-    public static final ForgeConfigSpec.DoubleValue SOLAR_TOWER_WORKING_HEAT_LEVEL;
-    public static final ForgeConfigSpec.DoubleValue SOLAR_MELTER_WORKING_HEAT_LEVEL;
-    public static final ForgeConfigSpec.IntValue CREATIVE_BARREL_OUTPUT_AMOUNT;
+    public static final ModConfigSpec.DoubleValue BOILER_DEFAULT_WORKING_HEAT;
+    public static final ModConfigSpec.DoubleValue SOLAR_TOWER_WORKING_HEAT_LEVEL;
+    public static final ModConfigSpec.DoubleValue SOLAR_MELTER_WORKING_HEAT_LEVEL;
+    public static final ModConfigSpec.IntValue CREATIVE_BARREL_OUTPUT_AMOUNT;
 
     public static double boilerDefaultWorkingHeat = 100.0D;
     public static double solarTowerWorkingHeatLevel = 400.0D;
@@ -42,7 +42,7 @@ public class ITCommonConfig {
         BUILDER.pop();
     }
 
-    public static final ForgeConfigSpec SPEC = BUILDER.build();
+    public static final ModConfigSpec SPEC = BUILDER.build();
 
     @SubscribeEvent
     public static void onConfig(final ModConfigEvent event) {

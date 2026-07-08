@@ -6,17 +6,17 @@ import mctmods.immersivetechnology.common.multiblocks.gui.helper.ITSlot;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
 import mctmods.immersivetechnology.common.fluids.helper.ITSolarTank;
-import mctmods.immersivetechnology.common.multiblocks.metal.interfaces.ITISolarMultiblockState;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITISolarMultiblockState;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -43,11 +43,11 @@ public class SolarMenu extends ITContainerMenu {
         this.outputTank = output;
         this.mbStateSupplier = mbStateSupplier;
         this.state = new SimpleContainerData(8);
-        this.addSlot(new ITSlot.FluidContainer(inv, 0, 80, 17, 1) { @Override public boolean mayPlace(@Nonnull ItemStack itemStack) { FluidStack fs = FluidUtil.getFluidContained(itemStack).orElse(null); if (fs == null) return false;return inputTank.getFluidAmount() <= 0 || fs.isFluidEqual(inputTank.getFluid()); }});
+        this.addSlot(new ITSlot.FluidContainer(inv, 0, 80, 17, 1) { @Override public boolean mayPlace(@Nonnull ItemStack itemStack) { FluidStack fs = FluidUtil.getFluidContained(itemStack).orElse(null); if (fs == null) return false;return inputTank.getFluidAmount() <= 0 || FluidStack.isSameFluid(fs, inputTank.getFluid()); }});
         this.addSlot(new ITSlot.Output(inv, 1, 80, 53));
         this.addSlot(new ITSlot.FluidContainer(inv, 2, 148, 17, 0) { @Override public boolean mayPlace(@Nonnull ItemStack itemStack) {
-                return itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent();
-            }});
+            return itemStack.getCapability(Capabilities.FluidHandler.ITEM) != null;
+        }});
         this.addSlot(new ITSlot.Output(inv, 3, 148, 53));
         ownSlotCount = 4;
         for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); }
@@ -61,7 +61,7 @@ public class SolarMenu extends ITContainerMenu {
         if (mbStateSupplier != null) {
             ITISolarMultiblockState s = mbStateSupplier.get();
             state.set(0, (int) s.getHeatLevel());
-            if (!this.usingPlayers.isEmpty()) { state.set(1, SolarTowerLogic.getSolarIncidenceAngleSection(this.usingPlayers.get(0).level())); }
+            if (!this.usingPlayers.isEmpty()) { state.set(1, SolarTowerLogic.getSolarIncidenceAngleSection(this.usingPlayers.getFirst().level())); }
             state.set(2, s.getDirCounts()[0]);
             state.set(3, s.getDirCounts()[1]);
             state.set(4, s.getDirCounts()[2]);

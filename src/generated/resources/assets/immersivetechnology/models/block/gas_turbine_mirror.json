@@ -1,0 +1,20 @@
+{
+  "parent": "minecraft:block/block",
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "immersivetechnology:obj",
+    "model": "immersivetechnology:models/multiblock/metal/obj/gas_turbine/gas_turbine.obj",
+    "shade_quads": true,
+    "textures": {
+      "bottom": "immersivetechnology:multiblock/metal/gas_turbine",
+      "particle": "immersivetechnology:multiblock/metal/gas_turbine",
+      "side": "immersivetechnology:multiblock/metal/gas_turbine",
+      "top": "immersivetechnology:multiblock/metal/gas_turbine"
+    }
+  },
+  "loader": "immersivetechnology:mirror"
+}

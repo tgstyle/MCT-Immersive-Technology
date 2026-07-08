@@ -19,15 +19,16 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import java.util.List;
 
 public class SolarReflectorRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarReflectorLogic.State>> {
-
     public SolarReflectorRenderer() {}
+
+    @Override @NotNull public net.minecraft.world.phys.AABB getRenderBoundingBox(MultiblockBlockEntityMaster<SolarReflectorLogic.State> tile) { return new net.minecraft.world.phys.AABB(tile.getBlockPos()).inflate(6); }
 
     @Override public void render(@NotNull MultiblockBlockEntityMaster<SolarReflectorLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         IMultiblockBEHelperMaster<SolarReflectorLogic.State> helper = tile.getHelper();

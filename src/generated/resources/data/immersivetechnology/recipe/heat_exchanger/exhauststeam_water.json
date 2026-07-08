@@ -1,0 +1,17 @@
+{
+  "type": "immersivetechnology:heat_exchanger",
+  "energy": 160,
+  "input0Amount": 500,
+  "input0Tag": "immersivetechnology:exhaust_steam",
+  "input1Amount": 4500,
+  "input1Tag": "minecraft:water",
+  "output0": {
+    "amount": 250,
+    "id": "immersivetechnology:distilled_water"
+  },
+  "output1": {
+    "amount": 4500,
+    "id": "immersivetechnology:hot_water"
+  },
+  "time": 5
+}

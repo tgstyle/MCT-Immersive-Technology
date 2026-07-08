@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelSteelBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 
-public class BarrelSteelBlock extends ITEntityBlock<BarrelSteelBlockEntity> {
+public class BarrelSteelBlock extends ITIEntityBlock<BarrelSteelBlockEntity> {
     public static final EnumProperty<IOSideConfig> TOP_CONFIG = EnumProperty.create("top_config", IOSideConfig.class);
     public static final EnumProperty<IOSideConfig> BOTTOM_CONFIG = EnumProperty.create("bottom_config", IOSideConfig.class);
 
@@ -30,6 +30,5 @@ public class BarrelSteelBlock extends ITEntityBlock<BarrelSteelBlockEntity> {
         builder.add(TOP_CONFIG, BOTTOM_CONFIG);
     }
 
-    @SuppressWarnings("deprecation")
     @Override @NotNull public RenderShape getRenderShape(@NotNull BlockState state) { return RenderShape.MODEL; }
 }

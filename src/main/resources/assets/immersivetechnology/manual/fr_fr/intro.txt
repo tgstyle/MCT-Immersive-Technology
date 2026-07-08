@@ -3,6 +3,4 @@ Génération d'énergie avec style !
 
 Immersive Technology est un add-on technologique énergétique qui complète parfaitement Immersive Engineering.
 
-Crédits : tgstyle, MagneticPrism, Cordyceps22
-
-Remerciements spéciaux : MuddyKat, Crimson Twilight, MC7
+Crédits : tgstyle

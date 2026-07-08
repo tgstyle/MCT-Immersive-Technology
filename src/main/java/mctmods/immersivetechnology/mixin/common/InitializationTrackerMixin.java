@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.mixin.common;
 
 import blusunrize.immersiveengineering.api.utils.SetRestrictedField;
-import org.apache.commons.lang3.tuple.Pair;
+import com.mojang.datafixers.util.Pair;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

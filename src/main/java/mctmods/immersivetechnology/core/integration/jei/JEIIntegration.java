@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.core.integration.jei;
 
-import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
@@ -11,7 +10,7 @@ import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.handlers.IGuiClickableArea;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
@@ -30,9 +29,9 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.IFluidTank;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -68,7 +67,6 @@ public class JEIIntegration implements IModPlugin {
     }
 
     @Override public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(JEIRecipeTypes.ADVANCED_COKE_OVEN, getAdvancedCokeOvenRecipes());
         registration.addRecipes(JEIRecipeTypes.ADVANCED_COKE_OVEN_CUSTOM, getAdvancedCokeOvenCustomRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_LIQUID, getBoilerLiquidRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_SOLID, getBoilerSolidRecipes());
@@ -105,7 +103,9 @@ public class JEIIntegration implements IModPlugin {
 
     @Override public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registration) {
         registration.addGuiContainerHandler(AdvancedCokeOvenScreen.class, new IGuiContainerHandler<>() {
-            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull AdvancedCokeOvenScreen gui, double mouseX, double mouseY) {
+            @Override
+            @SuppressWarnings("removal")
+            @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull AdvancedCokeOvenScreen gui, double mouseX, double mouseY) {
                 return Optional.empty();
             }
 
@@ -118,23 +118,20 @@ public class JEIIntegration implements IModPlugin {
 
         registration.addGuiContainerHandler(BoilerLiquidScreen.class, new IGuiContainerHandler<>() {
             @Override
-            public @NotNull Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerLiquidScreen gui, double mouseX, double mouseY) {
+            @SuppressWarnings("removal")
+            @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerLiquidScreen gui, double mouseX, double mouseY) {
                 int relX = (int) (mouseX - gui.getLeftPos());
                 int relY = (int) (mouseY - gui.getTopPos());
-                FluidStack fs = null;
-                Rect2i area = null;
                 if (relX >= 80 && relX < 96 && relY >= 20 && relY < 67) {
-                    fs = gui.getMenu().tanks.input1().getFluid();
-                    area = new Rect2i(gui.getLeftPos() + 80, gui.getTopPos() + 20, 16, 47);
-                }
-                if (fs != null && fs.getAmount() > 0) {
-                    Rect2i finalArea = area;
-                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typed -> new IClickableIngredient<FluidStack>() {
-                        @SuppressWarnings("removal")
-                        @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() {return typed;}
-
-                        @Override @NotNull public Rect2i getArea() {return finalArea;}
-                    });
+                    FluidStack fs = gui.getMenu().tanks.input1().getFluid();
+                    if (fs.getAmount() > 0) {
+                        Rect2i area = new Rect2i(gui.getLeftPos() + 80, gui.getTopPos() + 20, 16, 47);
+                        return ingredientManager.createTypedIngredient(NeoForgeTypes.FLUID_STACK, fs, false)
+                                .map(typed -> new IClickableIngredient<FluidStack>() {
+                                    @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() { return typed; }
+                                    @Override @NotNull public Rect2i getArea() { return area; }
+                                });
+                    }
                 }
                 return Optional.empty();
             }
@@ -147,26 +144,21 @@ public class JEIIntegration implements IModPlugin {
         });
 
         registration.addGuiContainerHandler(BoilerSolidScreen.class, new IGuiContainerHandler<>() {
-            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerSolidScreen gui, double mouseX, double mouseY) {
+            @Override
+            @SuppressWarnings("removal")
+            @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerSolidScreen gui, double mouseX, double mouseY) {
                 int relX = (int) (mouseX - gui.getLeftPos());
                 int relY = (int) (mouseY - gui.getTopPos());
-                ItemStack is = ItemStack.EMPTY;
-                Rect2i area = null;
                 if (relX >= 80 && relX < 98 && relY >= 53 && relY < 71) {
-                    is = gui.getMenu().getSlot(0).getItem();
-                    area = new Rect2i(gui.getLeftPos() + 80, gui.getTopPos() + 53, 18, 18);
-                }
-                if (!is.isEmpty()) {
-                    Rect2i finalArea = area;
-                    return ingredientManager.createTypedIngredient(VanillaTypes.ITEM_STACK, is).map(typed -> new IClickableIngredient<ItemStack>() {
-                        @SuppressWarnings("removal")
-                        @Override @NotNull public ITypedIngredient<ItemStack> getTypedIngredient() {return typed;}
-
-                        @Override @NotNull public Rect2i getArea() {
-                            assert finalArea != null;
-                            return finalArea;
-                        }
-                    });
+                    ItemStack is = gui.getMenu().getSlot(0).getItem();
+                    if (!is.isEmpty()) {
+                        Rect2i area = new Rect2i(gui.getLeftPos() + 80, gui.getTopPos() + 53, 18, 18);
+                        return ingredientManager.createTypedIngredient(VanillaTypes.ITEM_STACK, is, false)
+                                .map(typed -> new IClickableIngredient<ItemStack>() {
+                                    @Override @NotNull public ITypedIngredient<ItemStack> getTypedIngredient() { return typed; }
+                                    @Override @NotNull public Rect2i getArea() { return area; }
+                                });
+                    }
                 }
                 return Optional.empty();
             }
@@ -179,26 +171,31 @@ public class JEIIntegration implements IModPlugin {
         });
 
         registration.addGuiContainerHandler(DistillerScreen.class, new IGuiContainerHandler<>() {
-            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull DistillerScreen gui, double mouseX, double mouseY) {
+            @Override
+            @SuppressWarnings("removal")
+            @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull DistillerScreen gui, double mouseX, double mouseY) {
                 int relX = (int) (mouseX - gui.getLeftPos());
                 int relY = (int) (mouseY - gui.getTopPos());
-                FluidStack fs = null;
-                Rect2i area = null;
                 if (relX >= 56 && relX < 76 && relY >= 19 && relY < 70) {
-                    fs = gui.getMenu().tanks.input().getFluid();
-                    area = new Rect2i(gui.getLeftPos() + 56, gui.getTopPos() + 19, 20, 51);
+                    FluidStack fs = gui.getMenu().tanks.input().getFluid();
+                    if (fs.getAmount() > 0) {
+                        Rect2i area = new Rect2i(gui.getLeftPos() + 56, gui.getTopPos() + 19, 20, 51);
+                        return ingredientManager.createTypedIngredient(NeoForgeTypes.FLUID_STACK, fs, false)
+                                .map(typed -> new IClickableIngredient<FluidStack>() {
+                                    @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() { return typed; }
+                                    @Override @NotNull public Rect2i getArea() { return area; }
+                                });
+                    }
                 } else if (relX >= 112 && relX < 132 && relY >= 19 && relY < 70) {
-                    fs = gui.getMenu().tanks.output().getFluid();
-                    area = new Rect2i(gui.getLeftPos() + 112, gui.getTopPos() + 19, 20, 51);
-                }
-                if (fs != null && fs.getAmount() > 0) {
-                    Rect2i finalArea = area;
-                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typed -> new IClickableIngredient<FluidStack>() {
-                        @SuppressWarnings("removal")
-                        @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() {return typed;}
-
-                        @Override @NotNull public Rect2i getArea() {return finalArea;}
-                    });
+                    FluidStack fs = gui.getMenu().tanks.output().getFluid();
+                    if (fs.getAmount() > 0) {
+                        Rect2i area = new Rect2i(gui.getLeftPos() + 112, gui.getTopPos() + 19, 20, 51);
+                        return ingredientManager.createTypedIngredient(NeoForgeTypes.FLUID_STACK, fs, false)
+                                .map(typed -> new IClickableIngredient<FluidStack>() {
+                                    @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() { return typed; }
+                                    @Override @NotNull public Rect2i getArea() { return area; }
+                                });
+                    }
                 }
                 return Optional.empty();
             }
@@ -212,26 +209,31 @@ public class JEIIntegration implements IModPlugin {
         });
 
         registration.addGuiContainerHandler(BoilerTankScreen.class, new IGuiContainerHandler<>() {
-            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerTankScreen gui, double mouseX, double mouseY) {
+            @Override
+            @SuppressWarnings("removal")
+            @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull BoilerTankScreen gui, double mouseX, double mouseY) {
                 int relX = (int) (mouseX - gui.getLeftPos());
                 int relY = (int) (mouseY - gui.getTopPos());
-                FluidStack fs = null;
-                Rect2i area = null;
                 if (relX >= 65 && relX < 85 && relY >= 18 && relY < 69) {
-                    fs = gui.getMenu().tanks.input().getFluid();
-                    area = new Rect2i(gui.getLeftPos() + 65, gui.getTopPos() + 18, 20, 51);
+                    FluidStack fs = gui.getMenu().tanks.input().getFluid();
+                    if (fs.getAmount() > 0) {
+                        Rect2i area = new Rect2i(gui.getLeftPos() + 65, gui.getTopPos() + 18, 20, 51);
+                        return ingredientManager.createTypedIngredient(NeoForgeTypes.FLUID_STACK, fs, false)
+                                .map(typed -> new IClickableIngredient<FluidStack>() {
+                                    @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() { return typed; }
+                                    @Override @NotNull public Rect2i getArea() { return area; }
+                                });
+                    }
                 } else if (relX >= 90 && relX < 110 && relY >= 18 && relY < 69) {
-                    fs = gui.getMenu().tanks.output().getFluid();
-                    area = new Rect2i(gui.getLeftPos() + 90, gui.getTopPos() + 18, 20, 51);
-                }
-                if (fs != null && fs.getAmount() > 0) {
-                    Rect2i finalArea = area;
-                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typed -> new IClickableIngredient<FluidStack>() {
-                        @SuppressWarnings("removal")
-                        @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() {return typed;}
-
-                        @Override @NotNull public Rect2i getArea() {return finalArea;}
-                    });
+                    FluidStack fs = gui.getMenu().tanks.output().getFluid();
+                    if (fs.getAmount() > 0) {
+                        Rect2i area = new Rect2i(gui.getLeftPos() + 90, gui.getTopPos() + 18, 20, 51);
+                        return ingredientManager.createTypedIngredient(NeoForgeTypes.FLUID_STACK, fs, false)
+                                .map(typed -> new IClickableIngredient<FluidStack>() {
+                                    @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() { return typed; }
+                                    @Override @NotNull public Rect2i getArea() { return area; }
+                                });
+                    }
                 }
                 return Optional.empty();
             }
@@ -245,26 +247,31 @@ public class JEIIntegration implements IModPlugin {
         });
 
         registration.addGuiContainerHandler(SolarScreen.class, new IGuiContainerHandler<>() {
-            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull SolarScreen gui, double mouseX, double mouseY) {
+            @Override
+            @SuppressWarnings("removal")
+            @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull SolarScreen gui, double mouseX, double mouseY) {
                 int relX = (int) (mouseX - gui.getLeftPos());
                 int relY = (int) (mouseY - gui.getTopPos());
-                FluidStack fs = null;
-                Rect2i area = null;
                 if (relX >= 102 && relX < 118 && relY >= 21 && relY < 68) {
-                    fs = gui.getMenu().inputTank.getFluid();
-                    area = new Rect2i(gui.getLeftPos() + 102, gui.getTopPos() + 21, 16, 47);
+                    FluidStack fs = gui.getMenu().inputTank.getFluid();
+                    if (fs.getAmount() > 0) {
+                        Rect2i area = new Rect2i(gui.getLeftPos() + 102, gui.getTopPos() + 21, 16, 47);
+                        return ingredientManager.createTypedIngredient(NeoForgeTypes.FLUID_STACK, fs, false)
+                                .map(typed -> new IClickableIngredient<FluidStack>() {
+                                    @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() { return typed; }
+                                    @Override @NotNull public Rect2i getArea() { return area; }
+                                });
+                    }
                 } else if (relX >= 126 && relX < 142 && relY >= 21 && relY < 68) {
-                    fs = gui.getMenu().outputTank.getFluid();
-                    area = new Rect2i(gui.getLeftPos() + 126, gui.getTopPos() + 21, 16, 47);
-                }
-                if (fs != null && fs.getAmount() > 0) {
-                    Rect2i finalArea = area;
-                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typed -> new IClickableIngredient<FluidStack>() {
-                        @SuppressWarnings("removal")
-                        @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() {return typed;}
-
-                        @Override @NotNull public Rect2i getArea() {return finalArea;}
-                    });
+                    FluidStack fs = gui.getMenu().outputTank.getFluid();
+                    if (fs.getAmount() > 0) {
+                        Rect2i area = new Rect2i(gui.getLeftPos() + 126, gui.getTopPos() + 21, 16, 47);
+                        return ingredientManager.createTypedIngredient(NeoForgeTypes.FLUID_STACK, fs, false)
+                                .map(typed -> new IClickableIngredient<FluidStack>() {
+                                    @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() { return typed; }
+                                    @Override @NotNull public Rect2i getArea() { return area; }
+                                });
+                    }
                 }
                 return Optional.empty();
             }
@@ -278,26 +285,31 @@ public class JEIIntegration implements IModPlugin {
         });
 
         registration.addGuiContainerHandler(MeltingCrucibleScreen.class, new IGuiContainerHandler<>() {
-            @Override @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull MeltingCrucibleScreen gui, double mouseX, double mouseY) {
+            @Override
+            @SuppressWarnings("removal")
+            @NotNull public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(@NotNull MeltingCrucibleScreen gui, double mouseX, double mouseY) {
                 int relX = (int) (mouseX - gui.getLeftPos());
                 int relY = (int) (mouseY - gui.getTopPos());
-                FluidStack fs = null;
-                Rect2i area = null;
                 if (relX >= 102 && relX < 118 && relY >= 21 && relY < 68) {
-                    fs = gui.getMenu().inputTank.getFluid();
-                    area = new Rect2i(gui.getLeftPos() + 102, gui.getTopPos() + 21, 16, 47);
+                    FluidStack fs = gui.getMenu().inputTank.getFluid();
+                    if (fs.getAmount() > 0) {
+                        Rect2i area = new Rect2i(gui.getLeftPos() + 102, gui.getTopPos() + 21, 16, 47);
+                        return ingredientManager.createTypedIngredient(NeoForgeTypes.FLUID_STACK, fs, false)
+                                .map(typed -> new IClickableIngredient<FluidStack>() {
+                                    @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() { return typed; }
+                                    @Override @NotNull public Rect2i getArea() { return area; }
+                                });
+                    }
                 } else if (relX >= 126 && relX < 142 && relY >= 21 && relY < 68) {
-                    fs = gui.getMenu().outputTank.getFluid();
-                    area = new Rect2i(gui.getLeftPos() + 126, gui.getTopPos() + 21, 16, 47);
-                }
-                if (fs != null && fs.getAmount() > 0) {
-                    Rect2i finalArea = area;
-                    return ingredientManager.createTypedIngredient(ForgeTypes.FLUID_STACK, fs).map(typed -> new IClickableIngredient<FluidStack>() {
-                        @SuppressWarnings("removal")
-                        @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() {return typed;}
-
-                        @Override @NotNull public Rect2i getArea() {return finalArea;}
-                    });
+                    FluidStack fs = gui.getMenu().outputTank.getFluid();
+                    if (fs.getAmount() > 0) {
+                        Rect2i area = new Rect2i(gui.getLeftPos() + 126, gui.getTopPos() + 21, 16, 47);
+                        return ingredientManager.createTypedIngredient(NeoForgeTypes.FLUID_STACK, fs, false)
+                                .map(typed -> new IClickableIngredient<FluidStack>() {
+                                    @Override @NotNull public ITypedIngredient<FluidStack> getTypedIngredient() { return typed; }
+                                    @Override @NotNull public Rect2i getArea() { return area; }
+                                });
+                    }
                 }
                 return Optional.empty();
             }
@@ -395,26 +407,20 @@ public class JEIIntegration implements IModPlugin {
 
     @Override public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) { ingredientManager = jeiRuntime.getIngredientManager(); }
 
-    private List<CokeOvenRecipe> getAdvancedCokeOvenRecipes() {
-        assert Minecraft.getInstance().level != null;
-        Level level = Minecraft.getInstance().level;
-        AdvancedCokeOvenRecipe.copyIECokeOvenRecipes(level);
-        return new ArrayList<>(CokeOvenRecipe.RECIPES.getRecipes(level));
-    }
     private List<AdvancedCokeOvenRecipe> getAdvancedCokeOvenCustomRecipes() {
         assert Minecraft.getInstance().level != null;
-        return new ArrayList<>(AdvancedCokeOvenRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));
+        return AdvancedCokeOvenRecipe.getAllRecipes(Minecraft.getInstance().level);
     }
-    private List<BoilerLiquidRecipe> getBoilerLiquidRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(BoilerLiquidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
-    private List<BoilerSolidRecipe> getBoilerSolidRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(BoilerSolidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
-    private List<BoilerTankRecipe> getBoilerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(BoilerTankRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
-    private List<CoolingTowerRecipe> getCoolingTowerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(CoolingTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
-    private List<DistillerRecipe> getDistillerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(DistillerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
-    private List<ElectrolyticCrucibleBatteryRecipe> getElectrolyticCrucibleBatteryRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(ElectrolyticCrucibleBatteryRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
-    private List<GasTurbineRecipe> getGasTurbineRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(GasTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
-    private List<HeatExchangerRecipe> getHeatExchangerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(HeatExchangerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
-    private List<RadiatorRecipe> getRadiatorRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(RadiatorRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
-    private List<MeltingRecipe> getSolarMelterRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(MeltingRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
-    private List<SolarTowerRecipe> getSolarTowerRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(SolarTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
-    private List<SteamTurbineRecipe> getSteamTurbineRecipes() { assert Minecraft.getInstance().level != null; return new ArrayList<>(SteamTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level)); }
+    private List<BoilerLiquidRecipe> getBoilerLiquidRecipes() { assert Minecraft.getInstance().level != null; return BoilerLiquidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
+    private List<BoilerSolidRecipe> getBoilerSolidRecipes() { assert Minecraft.getInstance().level != null; return BoilerSolidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
+    private List<BoilerTankRecipe> getBoilerRecipes() { assert Minecraft.getInstance().level != null; return BoilerTankRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
+    private List<CoolingTowerRecipe> getCoolingTowerRecipes() { assert Minecraft.getInstance().level != null; return CoolingTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
+    private List<DistillerRecipe> getDistillerRecipes() { assert Minecraft.getInstance().level != null; return DistillerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
+    private List<ElectrolyticCrucibleBatteryRecipe> getElectrolyticCrucibleBatteryRecipes() { assert Minecraft.getInstance().level != null; return ElectrolyticCrucibleBatteryRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
+    private List<GasTurbineRecipe> getGasTurbineRecipes() { assert Minecraft.getInstance().level != null; return GasTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
+    private List<HeatExchangerRecipe> getHeatExchangerRecipes() { assert Minecraft.getInstance().level != null; return HeatExchangerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
+    private List<RadiatorRecipe> getRadiatorRecipes() { assert Minecraft.getInstance().level != null; return RadiatorRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
+    private List<MeltingRecipe> getSolarMelterRecipes() { assert Minecraft.getInstance().level != null; return MeltingRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
+    private List<SolarTowerRecipe> getSolarTowerRecipes() { assert Minecraft.getInstance().level != null; return SolarTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
+    private List<SteamTurbineRecipe> getSteamTurbineRecipes() { assert Minecraft.getInstance().level != null; return SteamTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
 }

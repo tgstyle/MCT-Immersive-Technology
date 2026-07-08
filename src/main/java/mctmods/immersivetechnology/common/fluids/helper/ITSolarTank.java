@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.fluids.helper;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 
 import java.util.function.Consumer;
 
@@ -20,16 +20,16 @@ public record ITSolarTank(ITMarkableFluidTank input, ITMarkableFluidTank output)
         return new ITSolarTank(v -> {});
     }
 
-    public Tag toNBT() {
+    public CompoundTag toNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
-        tag.put("input", this.input.writeToNBT(new CompoundTag()));
-        tag.put("output", this.output.writeToNBT(new CompoundTag()));
+        tag.put("input", this.input.writeToNBT(provider, new CompoundTag()));
+        tag.put("output", this.output.writeToNBT(provider, new CompoundTag()));
         return tag;
     }
 
-    public void readNBT(CompoundTag tag) {
-        this.input.readFromNBT(tag.getCompound("input"));
-        this.output.readFromNBT(tag.getCompound("output"));
+    public void readNBT(CompoundTag tag, HolderLookup.Provider provider) {
+        this.input.readFromNBT(provider, tag.getCompound("input"));
+        this.output.readFromNBT(provider, tag.getCompound("output"));
     }
 
     public int getCapacity() {

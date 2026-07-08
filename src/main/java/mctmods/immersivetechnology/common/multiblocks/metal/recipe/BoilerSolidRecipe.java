@@ -3,36 +3,44 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
 import com.immersiveconvergence.api.HeatCapabilities;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.BoilerSolidRecipeSerializer;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
 public class BoilerSolidRecipe extends MultiblockRecipe {
-    public static RegistryObject<IERecipeSerializer<BoilerSolidRecipe>> SERIALIZER;
+    public static DeferredHolder<RecipeSerializer<?>, BoilerSolidRecipeSerializer> SERIALIZER;
     public static final CachedRecipeList<BoilerSolidRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.BOILER_SOLID);
 
     public IngredientWithSize input;
     private final double heatPerTick;
     private final double targetHeat;
 
-    public BoilerSolidRecipe(ResourceLocation id, IngredientWithSize input, double heatPerTick, double targetHeat) {
-        super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.BOILER_SOLID, id);
+    public BoilerSolidRecipe(IngredientWithSize input, double heatPerTick, double targetHeat) {
+        super(TagOutput.EMPTY, ITRecipeTypes.BOILER_SOLID, 0, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
         this.input = input;
         this.heatPerTick = heatPerTick;
         this.targetHeat = Math.min(targetHeat, HeatCapabilities.MAX_HEAT);
         setInputListWithSizes(Lists.newArrayList(this.input));
     }
 
+    public IngredientWithSize input() { return input; }
+    public double heatPerTick() { return heatPerTick; }
+    public double targetHeat() { return targetHeat; }
+
     public static BoilerSolidRecipe findRecipe(Level level, ItemStack input) {
-        for (BoilerSolidRecipe recipe : RECIPES.getRecipes(level)) {
+        if (input.isEmpty()) return null;
+        for (RecipeHolder<BoilerSolidRecipe> holder : RECIPES.getRecipes(level)) {
+            BoilerSolidRecipe recipe = holder.value();
             if (recipe.input.testIgnoringSize(input)) return recipe;
         }
         return null;
@@ -40,7 +48,7 @@ public class BoilerSolidRecipe extends MultiblockRecipe {
 
     @Override
     @NotNull
-    public ItemStack getResultItem(RegistryAccess registryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
         return ItemStack.EMPTY;
     }
 

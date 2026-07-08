@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
-import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -16,10 +16,13 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -47,44 +50,38 @@ public class ITMeltingCategory extends ITRecipeCategory<MeltingRecipe> {
     @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull MeltingRecipe recipe, @NotNull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
-        List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
-                .map(fs -> {
-                    FluidStack copy = fs.copy();
-                    copy.setAmount(recipe.input.getAmount());
-                    return copy;
-                })
-                .toList();
+        List<FluidStack> inputs = BuiltInRegistries.FLUID.getTag(recipe.inputTag())
+                .map(holders -> holders.stream()
+                        .map(Holder::value)
+                        .map(fluid -> new FluidStack(fluid, recipe.inputAmount()))
+                        .toList())
+                .orElse(List.of());
 
         if (inputs.isEmpty()) {
-            ResourceLocation biodieselRl = ResourceLocation.fromNamespaceAndPath("immersiveengineering", "biodiesel");
-            var biodieselFluid = net.minecraftforge.registries.ForgeRegistries.FLUIDS.getValue(biodieselRl);
-            FluidStack dummy = new FluidStack(
-                    biodieselFluid != null && biodieselFluid != net.minecraft.world.level.material.Fluids.EMPTY ? biodieselFluid : net.minecraft.world.level.material.Fluids.LAVA,
-                    recipe.input.getAmount()
-            );
+            FluidStack dummy = new FluidStack(Fluids.LAVA, recipe.inputAmount());
             inputs = List.of(dummy);
         }
 
         var inputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 102, 21)
-                .addIngredients(ForgeTypes.FLUID_STACK, inputs)
+                .addIngredients(NeoForgeTypes.FLUID_STACK, inputs)
                 .setFluidRenderer(tankCapacity, false, 16, 47);
 
         inputSlot.addRichTooltipCallback((slotView, tooltip) ->
-                slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        ITFluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
+                slotView.getDisplayedIngredient(NeoForgeTypes.FLUID_STACK).ifPresent(fs ->
+                        ITFluidInfoArea.fillTooltip(fs, recipe.inputAmount(), tooltip::add)));
 
         FluidStack fluidOut = (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) ? recipe.fluidOutput : FluidStack.EMPTY;
         var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 126, 21)
-                .addIngredient(ForgeTypes.FLUID_STACK, fluidOut)
+                .addIngredient(NeoForgeTypes.FLUID_STACK, fluidOut)
                 .setFluidRenderer(tankCapacity, false, 16, 47);
 
         outputSlot.addRichTooltipCallback((slotView, tooltip) ->
-                slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
+                slotView.getDisplayedIngredient(NeoForgeTypes.FLUID_STACK).ifPresent(fs ->
                         ITFluidInfoArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
     }
 
     private int getTankCapacity(@NotNull MeltingRecipe recipe) {
-        int tankCapacity = recipe.input.getAmount();
+        int tankCapacity = recipe.inputAmount();
         if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) { tankCapacity = Math.max(tankCapacity, recipe.fluidOutput.getAmount()); }
         return tankCapacity;
     }
@@ -97,7 +94,7 @@ public class ITMeltingCategory extends ITRecipeCategory<MeltingRecipe> {
 
         Font font = Minecraft.getInstance().font;
 
-        Component timeComponent = Component.translatable(TranslationKey.CATEGORY_SOLAR_MELTER_TIME.getLocation(), recipe.getTotalProcessTime(), recipe.input.getAmount())
+        Component timeComponent = Component.translatable(TranslationKey.CATEGORY_SOLAR_MELTER_TIME.getLocation(), recipe.getTotalProcessTime(), recipe.inputAmount())
                 .withStyle(style -> style.withColor(TextColor.fromRgb(0xAAAAAA)));
         int timeWidth = font.width(timeComponent);
         int timeX = 122 - timeWidth / 2;

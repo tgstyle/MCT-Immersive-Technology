@@ -1,0 +1,11 @@
+{
+  "type": "immersivetechnology:melting",
+  "inputAmount": 1000,
+  "inputTag": "immersivetechnology:heated_gravel_slurry",
+  "output": {
+    "amount": 500,
+    "id": "minecraft:lava"
+  },
+  "requiredTemp": 1000.0,
+  "time": 20
+}

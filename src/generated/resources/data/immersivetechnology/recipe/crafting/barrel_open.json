@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "immersiveengineering:sheetmetal_iron"
+    },
+    "S": {
+      "item": "immersiveengineering:slab_sheetmetal_iron"
+    }
+  },
+  "pattern": [
+    "S S",
+    "B B",
+    "BBB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "immersivetechnology:barrel_open"
+  }
+}

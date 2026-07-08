@@ -3,6 +3,4 @@ Generování energie se stylem!
 
 Immersive Technology je doplněk zaměřený na energetiku, který skvěle doplňuje Immersive Engineering.
 
-Autoři: tgstyle, MagneticPrism, Cordyceps22
-
-Zvláštní poděkování: MuddyKat, Crimson Twilight, MC7
+Autoři: tgstyle

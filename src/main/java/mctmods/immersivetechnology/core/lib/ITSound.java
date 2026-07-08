@@ -7,7 +7,7 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -46,7 +46,7 @@ public class ITSound extends AbstractTickableSoundInstance {
             BooleanSupplier active,
             BooleanSupplier valid,
             Vec3 pos,
-            RegistryObject<SoundEvent> sound,
+            DeferredHolder<SoundEvent, SoundEvent> sound,
             Supplier<Float> volumeSupplier,
             Supplier<Float> pitchSupplier
     ) { return startSound(active, valid, pos, sound, true, volumeSupplier, pitchSupplier); }
@@ -55,7 +55,7 @@ public class ITSound extends AbstractTickableSoundInstance {
             BooleanSupplier active,
             BooleanSupplier valid,
             Vec3 pos,
-            RegistryObject<SoundEvent> sound,
+            DeferredHolder<SoundEvent, SoundEvent> sound,
             boolean loop,
             Supplier<Float> volumeSupplier,
             Supplier<Float> pitchSupplier

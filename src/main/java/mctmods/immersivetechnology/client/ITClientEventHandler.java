@@ -1,49 +1,48 @@
 package mctmods.immersivetechnology.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.client.gui.overlay.IGuiOverlay;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
-@Mod.EventBusSubscriber(modid = ITLib.MODID, value = Dist.CLIENT, bus = Bus.MOD)
+@EventBusSubscriber(modid = ITLib.MODID, value = net.neoforged.api.distmarker.Dist.CLIENT)
 public class ITClientEventHandler {
 
-    public static final IGuiOverlay OSD_OVERLAY = (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.screen != null || mc.player == null) { return; }
+    @SubscribeEvent
+    public static void registerOverlays(RegisterGuiLayersEvent event) {
+        event.registerAbove(VanillaGuiLayers.SELECTED_ITEM_NAME, ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "it_osd"), (guiGraphics, deltaTracker) -> {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.screen != null || mc.player == null) { return; }
 
-        HitResult mop = mc.hitResult;
-        if (!(mop instanceof BlockHitResult blockHit)) { return; }
+            HitResult mop = mc.hitResult;
+            if (!(mop instanceof BlockHitResult blockHit)) { return; }
 
-        Level level = mc.level;
-        if (level == null) { return; }
+            Level level = mc.level;
+            if (level == null) { return; }
 
-        BlockEntity te = level.getBlockEntity(blockHit.getBlockPos());
-        Player player = mc.player;
-        boolean hammer = false;
+            BlockEntity te = level.getBlockEntity(blockHit.getBlockPos());
+            Player player = mc.player;
+            boolean hammer = false;
 
-        if (te instanceof ITBlockInterfaces.IBlockOverlayText overlay) {
-            Component[] text = overlay.getOverlayText(player, mop, hammer);
-            if (text != null && text.length > 0) { drawOverlayText(guiGraphics, text); }
-        }
-    };
-
-    @SubscribeEvent public static void registerOverlays(RegisterGuiOverlaysEvent event) { event.registerAbove(VanillaGuiOverlay.ITEM_NAME.id(), "it_osd", OSD_OVERLAY); }
+            if (te instanceof ITIBlockInterfaces.IBlockOverlayText overlay) {
+                Component[] text = overlay.getOverlayText(player, mop, hammer);
+                if (text != null && text.length > 0) { drawOverlayText(guiGraphics, text); }
+            }
+        });
+    }
 
     private static void drawOverlayText(GuiGraphics guiGraphics, Component[] text) {
         Minecraft mc = Minecraft.getInstance();

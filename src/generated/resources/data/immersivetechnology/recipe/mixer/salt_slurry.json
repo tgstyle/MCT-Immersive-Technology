@@ -1,0 +1,20 @@
+{
+  "type": "immersiveengineering:mixer",
+  "energy": 3200,
+  "fluid": {
+    "amount": 1000,
+    "tag": "minecraft:water"
+  },
+  "inputs": [
+    {
+      "basePredicate": {
+        "tag": "c:dusts/salt"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "amount": 1000,
+    "id": "immersivetechnology:salt_slurry"
+  }
+}

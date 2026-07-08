@@ -5,14 +5,15 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public class ITCreativeTab {
     public static final DeferredRegister<CreativeModeTab> REGISTER = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ITLib.MODID);
 
-    public static RegistryObject<CreativeModeTab> MAIN = REGISTER.register(
+    public static Supplier<CreativeModeTab> MAIN = REGISTER.register(
             "main",
             () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 0)
                     .icon(() -> ITItems.FORMATION_TOOL.get().getDefaultInstance())

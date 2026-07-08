@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.helper;
 import com.google.common.base.Preconditions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -14,52 +15,47 @@ import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Objects;
 
-@SuppressWarnings({"unused","deprecation"})
-public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockInterfaces.BlockStateProvider, ITModelOffsetProvider {
+@SuppressWarnings("unused")
+public abstract class ITBaseBlockEntity extends BlockEntity implements ITIBlockInterfaces.IBlockStateProvider, ITIModelOffsetProvider {
     @Nullable private BlockState overrideBlockState = null;
     private final EnumMap<Direction, Integer> redstoneBySide = new EnumMap<>(Direction.class);
 
     public ITBaseBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) { super(type, pos, state); }
 
-    @Override public void load(@NotNull CompoundTag nbtIn) {
-        super.load(nbtIn);
-        readCustomNBT(nbtIn, false);
+    @Override protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+        super.loadAdditional(tag, registries);
+        readCustomNBT(tag, false);
     }
 
     public abstract void readCustomNBT(CompoundTag nbt, boolean descPacket);
 
-    @Override protected void saveAdditional(@NotNull CompoundTag nbt) {
-        super.saveAdditional(nbt);
-        writeCustomNBT(nbt, false);
+    @Override protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+        super.saveAdditional(tag, registries);
+        writeCustomNBT(tag, false);
     }
 
     public abstract void writeCustomNBT(CompoundTag nbt, boolean descPacket);
 
     @Override public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this, be -> {
-            CompoundTag nbtTagCompound = new CompoundTag();
-            writeCustomNBT(nbtTagCompound, true);
-            return nbtTagCompound;
-        });
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    @Override public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        CompoundTag nonNullTag = pkt.getTag() != null ? pkt.getTag() : new CompoundTag();
+    @Override public void onDataPacket(@NotNull Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.@NotNull Provider registries) {
+        CompoundTag nonNullTag = pkt.getTag();
         readCustomNBT(nonNullTag, true);
     }
 
-    @Override public void handleUpdateTag(CompoundTag tag) { readCustomNBT(tag, true); }
+    @Override public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) { readCustomNBT(tag, true); }
 
-    @Override @NotNull public CompoundTag getUpdateTag() {
-        CompoundTag nbt = super.getUpdateTag();
+    @Override @NotNull public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
+        CompoundTag nbt = super.getUpdateTag(registries);
         writeCustomNBT(nbt, true);
         return nbt;
     }
@@ -94,8 +90,6 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
         super.setRemoved();
     }
 
-    @Override public void invalidateCaps() { super.invalidateCaps(); }
-
     private boolean isUnloaded = false;
 
     @Override public void onLoad() {
@@ -110,7 +104,7 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
 
     public void setRemovedIE() { }
 
-    @Nonnull public Level getLevelNonnull() { return Objects.requireNonNull(super.getLevel()); }
+    @NotNull public Level getLevelNonnull() { return Objects.requireNonNull(super.getLevel()); }
 
     public void onEntityCollision(Level world, Entity entity) { }
 
@@ -118,6 +112,7 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
 
     @Override @NotNull public BlockState getBlockState() { if (overrideBlockState != null) { return overrideBlockState; } else { return super.getBlockState(); } }
 
+    @SuppressWarnings("deprecation")
     @Override public void setBlockState(@NotNull BlockState newState) {
         BlockState old = getBlockState();
         super.setBlockState(newState);
@@ -142,10 +137,9 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
         return ModelData.EMPTY;
     }
 
-    @Override
-    public BlockPos getModelOffset(BlockState state, Vec3i size) {
-        if (!(this instanceof ITBlockInterfaces.IGeneralMultiblock multi)) { return BlockPos.ZERO; }
-        ITBlockInterfaces.IGeneralMultiblock m = multi.master();
+    @Override public BlockPos getModelOffset(BlockState state, Vec3i size) {
+        if (!(this instanceof ITIBlockInterfaces.IGeneralMultiblock multi)) { return BlockPos.ZERO; }
+        ITIBlockInterfaces.IGeneralMultiblock m = multi.master();
         if (!(m instanceof BlockEntity masterTile)) { return BlockPos.ZERO; }
         return getBlockPos().subtract(masterTile.getBlockPos());
     }
@@ -167,7 +161,7 @@ public abstract class ITBaseBlockEntity extends BlockEntity implements ITBlockIn
 
     private void updateRSForSide(Direction side) {
         int rsStrength = getLevelNonnull().getSignal(worldPosition.relative(side), side);
-        if (rsStrength == 0 && this instanceof ITBlockInterfaces.IRedstoneOutput && ((ITBlockInterfaces.IRedstoneOutput) this).canConnectRedstone(side)) {
+        if (rsStrength == 0 && this instanceof ITIBlockInterfaces.IRedstoneOutput && ((ITIBlockInterfaces.IRedstoneOutput) this).canConnectRedstone(side)) {
             assert level != null;
             BlockState state = level.getBlockState(worldPosition.relative(side));
             if (state.getBlock() == Blocks.REDSTONE_WIRE && state.getValue(RedStoneWireBlock.POWER) > rsStrength) { rsStrength = state.getValue(RedStoneWireBlock.POWER); }

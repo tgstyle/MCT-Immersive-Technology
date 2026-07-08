@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.client.renderer.helper;
 
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.UnmodifiableIterator;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -29,7 +28,7 @@ public class ITRenderUtils {
     private static final int[][] neighbourBrightness = new int[2][6];
     private static final float[][] normalizationFactors = new float[2][8];
     private static final VertexFormat FORMAT = DefaultVertexFormat.BLOCK;
-    private static final int VERTEX_SIZE = FORMAT.getIntegerSize();
+    private static final int VERTEX_SIZE = FORMAT.getVertexSize() / 4;
     private static final int UV_OFFSET = findTextureOffset();
     private static final int POSITION_OFFSET = findPositionOffset();
 
@@ -71,7 +70,12 @@ public class ITRenderUtils {
                 for (int i = 0; i < 4; ++i) {
                     Vector4f vertexPos = quadCoords[i];
                     vertexPos.mul(positionTransform);
-                    renderer.vertex(vertexPos.x(), vertexPos.y(), vertexPos.z(), rgba[0] / 255.0F, rgba[1] / 255.0F, rgba[2] / 255.0F, rgba[3] / 255.0F, Float.intBitsToFloat(vData[VERTEX_SIZE * i + UV_OFFSET]), Float.intBitsToFloat(vData[VERTEX_SIZE * i + UV_OFFSET + 1]), OverlayTexture.NO_OVERLAY, LightTexture.pack(l1 >> 4, l2 >> 4), normal.x(), normal.y(), normal.z());
+                    renderer.addVertex(vertexPos.x(), vertexPos.y(), vertexPos.z())
+                            .setColor(rgba[0] / 255.0F, rgba[1] / 255.0F, rgba[2] / 255.0F, rgba[3] / 255.0F)
+                            .setUv(Float.intBitsToFloat(vData[VERTEX_SIZE * i + UV_OFFSET]), Float.intBitsToFloat(vData[VERTEX_SIZE * i + UV_OFFSET + 1]))
+                            .setOverlay(OverlayTexture.NO_OVERLAY)
+                            .setLight(LightTexture.pack(l1 >> 4, l2 >> 4))
+                            .setNormal(normal.x(), normal.y(), normal.z());
                 }
             }
         }
@@ -115,19 +119,17 @@ public class ITRenderUtils {
             green = (color >> 8 & 255) / 255.0F;
             blue = (color & 255) / 255.0F;
         }
-        for (BakedQuad quad : quads) { renderer.putBulkData(transform.last(), quad, red, green, blue, light, overlay); }
+        for (BakedQuad quad : quads) { renderer.putBulkData(transform.last(), quad, red, green, blue, 1.0F, light, overlay); }
     }
 
     private static int findOffset(Usage u) {
         int offset = 0;
-        VertexFormatElement element;
-        for (UnmodifiableIterator<VertexFormatElement> var4 = ITRenderUtils.FORMAT.getElements().iterator(); var4.hasNext(); offset += element.getByteSize()) {
-            element = var4.next();
-            assert element != null;
-            if (element.getUsage() == u && element.getType() == Type.FLOAT) {
+        for (VertexFormatElement element : FORMAT.getElements()) {
+            if (element.usage() == u && element.type() == Type.FLOAT) {
                 Preconditions.checkState(offset % 4 == 0);
                 return offset / 4;
             }
+            offset += element.byteSize();
         }
         throw new IllegalStateException();
     }

@@ -23,13 +23,12 @@ public class ValveFluidScreen extends AbstractContainerScreen<ValveFluidMenu> {
     private EditBox packetLimitField;
     private EditBox timeLimitField;
     private EditBox keepSizeField;
-
     private int prevPacketLimit = Integer.MIN_VALUE;
     private int prevTimeLimit = Integer.MIN_VALUE;
     private int prevKeepSize = Integer.MIN_VALUE;
 
-    public ValveFluidScreen(ValveFluidMenu menu, Inventory inv) {
-        super(menu, inv, Component.empty());
+    public ValveFluidScreen(ValveFluidMenu menu, Inventory inv, Component title) {
+        super(menu, inv, title);
         this.tile = menu.tile;
         this.imageWidth = 216;
         this.imageHeight = 112;
@@ -60,7 +59,6 @@ public class ValveFluidScreen extends AbstractContainerScreen<ValveFluidMenu> {
         keepSizeField.setBordered(false);
         addRenderableWidget(keepSizeField);
         addRenderableWidget(Button.builder(Component.translatable(TranslationKey.GUI_APPLY.location), btn -> apply()).bounds(leftPos + (imageWidth / 2 - 20), topPos + 90, 40, 20).build());
-
         updateFields();
     }
 
@@ -103,9 +101,9 @@ public class ValveFluidScreen extends AbstractContainerScreen<ValveFluidMenu> {
     }
 
     @Override public void onClose() { super.onClose(); }
+
     @Override protected void renderBg(@NotNull GuiGraphics graphics, float pt, int mx, int my) {
-        this.renderBackground(graphics);
-        graphics.blit(TEXTURE, leftPos, topPos, 0, 0.0F, 0.0F, imageWidth, 88, imageWidth, 88);
+        graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, 88, imageWidth, 88);
     }
 
     @Override public void render(@NotNull GuiGraphics graphics, int mx, int my, float pt) {

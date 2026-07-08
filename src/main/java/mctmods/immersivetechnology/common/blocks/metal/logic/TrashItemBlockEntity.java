@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.metal.shape.TrashCanShape;
+import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.metal.shape.ITrashCanShape;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
@@ -12,19 +12,16 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemHandlerModifiable, ITBlockInterfaces.IInteractionObjectIT<TrashItemBlockEntity>, TrashCanShape, Container {
+public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemHandlerModifiable, ITIBlockInterfaces.IInteractionObjectIT<TrashItemBlockEntity>, ITrashCanShape, Container {
     public TrashItemBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.TRASH_ITEM.get(), pos, state); }
 
-    @Override @NotNull public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing) {
-        if (capability == ForgeCapabilities.ITEM_HANDLER) { return LazyOptional.of(() -> this).cast(); }
-        return super.getCapability(capability, facing);
+    @SuppressWarnings("unused")
+    public IItemHandlerModifiable getItemHandler(@Nullable Direction side) {
+        return this;
     }
 
     @Override public int getSlots() { return 1; }

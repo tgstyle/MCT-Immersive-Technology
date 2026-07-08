@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.mixin.common;
 
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.mixer.MixerLogic;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.mixer.MixerLogic.State;
-import mctmods.immersivetechnology.core.helper.MixerStateDebounceAccessor;
+import mctmods.immersivetechnology.core.helper.IMixerStateDebounceAccessor;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -11,12 +11,13 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import java.lang.reflect.Field;
 
 @Mixin(MixerLogic.class)
 public abstract class MixerLogicDebounceMixin {
 
-    @Unique private static Object it$NOP;
+    @Unique private static final Object it$NOP;
 
     static {
         try {
@@ -36,7 +37,7 @@ public abstract class MixerLogicDebounceMixin {
             remap = false
     )
     private void it$smartDebounce(State state, Level rawLevel, CallbackInfoReturnable<Object> cir) {
-        MixerStateDebounceAccessor ext = (MixerStateDebounceAccessor) state;
+        IMixerStateDebounceAccessor ext = (IMixerStateDebounceAccessor) state;
 
         NonNullList<ItemStack> last = ext.it$getLastComponents();
 
@@ -45,7 +46,7 @@ public abstract class MixerLogicDebounceMixin {
             ItemStack current = state.inventory.getStackInSlot(i);
             ItemStack previous = last.get(i);
 
-            if (!ItemStack.isSameItemSameTags(current, previous)) {
+            if (!ItemStack.isSameItemSameComponents(current, previous)) {
                 playerChange = true;
                 break;
             }

@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.core.util.solarregistry;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.LongTag;
@@ -12,8 +14,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraft.core.BlockPos;
-
 public class SolarRegistryData extends SavedData {
     public final Map<Integer, Set<BlockPos>> towerBasesByY = new HashMap<>();
     public final Map<Integer, Set<BlockPos>> reflectorPOIsByY = new HashMap<>();
@@ -23,9 +23,12 @@ public class SolarRegistryData extends SavedData {
     public final Map<BlockPos, Integer> rank = new HashMap<>();
     public final Map<BlockPos, SolarRegistry.GroupData> groupData = new HashMap<>();
 
+    public static final SavedData.Factory<SolarRegistryData> FACTORY =
+            new SavedData.Factory<>(SolarRegistryData::new, SolarRegistryData::load);
+
     public SolarRegistryData() { super(); }
 
-    public static SolarRegistryData load(CompoundTag nbt) {
+    public static SolarRegistryData load(CompoundTag nbt, HolderLookup.Provider provider) {
         SolarRegistryData data = new SolarRegistryData();
         for (String key : nbt.getAllKeys()) {
             if (key.startsWith("towers_")) {
@@ -64,7 +67,8 @@ public class SolarRegistryData extends SavedData {
         return data;
     }
 
-    @Override @NotNull public CompoundTag save(@NotNull CompoundTag nbt) {
+    @Override
+    public @NotNull CompoundTag save(@NotNull CompoundTag nbt, HolderLookup.@NotNull Provider provider) {
         for (Map.Entry<Integer, Set<BlockPos>> entry : towerBasesByY.entrySet()) {
             if (entry.getValue().isEmpty()) continue;
             ListTag list = new ListTag();

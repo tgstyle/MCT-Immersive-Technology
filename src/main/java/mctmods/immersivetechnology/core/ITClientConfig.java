@@ -1,32 +1,32 @@
 package mctmods.immersivetechnology.core;
 
 import mctmods.immersivetechnology.core.lib.ITLib;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.fml.event.config.ModConfigEvent;
 
-@Mod.EventBusSubscriber(modid = ITLib.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = ITLib.MODID, value = Dist.CLIENT)
 public class ITClientConfig {
-    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
-    public static final ForgeConfigSpec.DoubleValue CONFIG_MULTIBLOCK_SPECIAL_RENDER_DISTANCE_MODIFIER;
-    public static final ForgeConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_GAS_TURBINE;
-    public static final ForgeConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_STEAM_TURBINE;
-    public static final ForgeConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_SOLAR_REFLECTOR;
-    public static final ForgeConfigSpec.BooleanValue CONFIG_DISABLE_REFLECTOR_DANCE;
-    public static final ForgeConfigSpec.BooleanValue CONFIG_LOOP_REFLECTOR_DANCE;
-    public static final ForgeConfigSpec.DoubleValue CONFIG_SOLAR_REFLECTOR_BASE_FREQUENCY;
-    public static final ForgeConfigSpec.DoubleValue CONFIG_SOLAR_REFLECTOR_DANCE_DURATION;
-    public static final ForgeConfigSpec.BooleanValue CONFIG_PER_TICK_TRASH_CANS;
-    public static final ForgeConfigSpec.BooleanValue CONFIG_DISABLE_FANCY_TESR;
-    public static final ForgeConfigSpec.BooleanValue CONFIG_PARTICLE_COLLIDE;
-    public static final ForgeConfigSpec.DoubleValue CONFIG_COLORED_SMOKE_HEIGHT;
-    public static final ForgeConfigSpec.DoubleValue CONFIG_CUSTOM_SMOKE_HEIGHT;
-    public static final ForgeConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_MAX_FAN_SPEED;
-    public static final ForgeConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_FAN_ACCEL;
-    public static final ForgeConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_FAN_DECEL;
+    public static final ModConfigSpec.DoubleValue CONFIG_MULTIBLOCK_SPECIAL_RENDER_DISTANCE_MODIFIER;
+    public static final ModConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_GAS_TURBINE;
+    public static final ModConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_STEAM_TURBINE;
+    public static final ModConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_SOLAR_REFLECTOR;
+    public static final ModConfigSpec.BooleanValue CONFIG_DISABLE_REFLECTOR_DANCE;
+    public static final ModConfigSpec.BooleanValue CONFIG_LOOP_REFLECTOR_DANCE;
+    public static final ModConfigSpec.DoubleValue CONFIG_SOLAR_REFLECTOR_BASE_FREQUENCY;
+    public static final ModConfigSpec.DoubleValue CONFIG_SOLAR_REFLECTOR_DANCE_DURATION;
+    public static final ModConfigSpec.BooleanValue CONFIG_PER_TICK_TRASH_CANS;
+    public static final ModConfigSpec.BooleanValue CONFIG_DISABLE_FANCY_TESR;
+    public static final ModConfigSpec.BooleanValue CONFIG_PARTICLE_COLLIDE;
+    public static final ModConfigSpec.DoubleValue CONFIG_COLORED_SMOKE_HEIGHT;
+    public static final ModConfigSpec.DoubleValue CONFIG_CUSTOM_SMOKE_HEIGHT;
+    public static final ModConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_MAX_FAN_SPEED;
+    public static final ModConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_FAN_ACCEL;
+    public static final ModConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_FAN_DECEL;
 
     public static double multiblockSpecialRenderDistanceModifier;
     public static boolean doSpecialRenderGasTurbine;
@@ -74,7 +74,7 @@ public class ITClientConfig {
         BUILDER.pop();
     }
 
-    public static final ForgeConfigSpec SPEC = BUILDER.build();
+    public static final ModConfigSpec SPEC = BUILDER.build();
 
     @SubscribeEvent static void onConfig(final ModConfigEvent event) {
         if (event.getConfig().getSpec() == SPEC) {

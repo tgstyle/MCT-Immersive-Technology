@@ -1,0 +1,11 @@
+{
+  "type": "immersivetechnology:boiler_tank",
+  "inputAmount": 250,
+  "inputTag": "minecraft:water",
+  "requiredHeat": 600.0,
+  "result": {
+    "amount": 450,
+    "id": "immersivetechnology:steam"
+  },
+  "time": 10
+}

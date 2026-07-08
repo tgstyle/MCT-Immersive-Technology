@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.client.models.split.geometry;
 
+import blusunrize.immersiveengineering.client.utils.BakedQuadBuilder;
 import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.mojang.math.Transformation;
-import mctmods.immersivetechnology.client.models.util.ITModelUtils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
@@ -25,19 +25,22 @@ public class ITPolygonUtils {
 
     static {
         VERTEX_SIZE_INTS = DefaultVertexFormat.BLOCK.getVertexSize() / 4;
-        POS_OFFSET = getOffset(DefaultVertexFormat.ELEMENT_POSITION) / 4;
-        UV_OFFSET = getOffset(DefaultVertexFormat.ELEMENT_UV) / 4;
-        NORMAL_OFFSET = getOffset(DefaultVertexFormat.ELEMENT_NORMAL) / 4;
-        COLOR_OFFSET = getOffset(DefaultVertexFormat.ELEMENT_COLOR) / 4;
+        POS_OFFSET = getOffset(VertexFormatElement.POSITION);
+        UV_OFFSET = getOffset(VertexFormatElement.UV);
+        NORMAL_OFFSET = getOffset(VertexFormatElement.NORMAL);
+        COLOR_OFFSET = getOffset(VertexFormatElement.COLOR);
     }
 
     private static int getOffset(VertexFormatElement element) {
-        int off = 0;
+        int offset = 0;
         for (VertexFormatElement e : DefaultVertexFormat.BLOCK.getElements()) {
-            if (e == element) { return off; }
-            off += e.getByteSize();
+            if (e == element) {
+                return offset / 4;
+            } else {
+                offset += e.byteSize();
+            }
         }
-        throw new IllegalStateException("Element not found: " + element);
+        throw new IllegalStateException("Did not find element with usage " + element.usage().name() + " and type " + element.type().name());
     }
 
     public static ITPolygon<ExtraQuadData> toPolygon(BakedQuad quad) {
@@ -78,43 +81,41 @@ public class ITPolygonUtils {
     public static BakedQuad toBakedQuad(List<ITVertex> points, ExtraQuadData data, Transformation rotation, boolean absoluteUV) {
         Preconditions.checkArgument(points.size() == 4);
 
-        ITModelUtils.ITBakedQuadBuilder quadBuilder = new ITModelUtils.ITBakedQuadBuilder();
+        BakedQuadBuilder quadBuilder = new BakedQuadBuilder();
         Vector3f normal = new Vector3f();
-        float u0 = data.sprite().getU0();
-        float u1 = data.sprite().getU1();
-        float v0 = data.sprite().getV0();
-        float v1 = data.sprite().getV1();
 
         for (ITVertex v : points) {
             Vector4f pos = new Vector4f();
             pos.set(toArray(v.position(), 4));
             normal.set(toArray(v.normal(), 3));
 
+            pos.x -= 0.5f;
+            pos.y -= 0.5f;
+            pos.z -= 0.5f;
+
             rotation.transformPosition(pos);
             rotation.transformNormal(normal);
 
             pos.mul(1 / pos.w());
 
-            final double epsilon = 1e-5;
-            if (Math.abs(pos.x() - Math.round(pos.x())) < epsilon) pos.setComponent(0, Math.round(pos.x()));
-            if (Math.abs(pos.y() - Math.round(pos.y())) < epsilon) pos.setComponent(1, Math.round(pos.y()));
-            if (Math.abs(pos.z() - Math.round(pos.z())) < epsilon) pos.setComponent(2, Math.round(pos.z()));
+            pos.x += 0.5f;
+            pos.y += 0.5f;
+            pos.z += 0.5f;
 
-            double builder_u = absoluteUV
-                    ? (v.uv().u() - u0) / (u1 - u0) * 16.0
-                    : 16.0 * v.uv().u();
-            double builder_v = absoluteUV
-                    ? (v.uv().v() - v0) / (v1 - v0) * 16.0
-                    : 16.0 * (1.0 - v.uv().v());
+            final double epsilon = 1e-5;
+            for (int i = 0; i < 2; ++i) {
+                if (Math.abs(i - pos.x()) < epsilon) pos.setComponent(0, i);
+                if (Math.abs(i - pos.y()) < epsilon) pos.setComponent(1, i);
+                if (Math.abs(i - pos.z()) < epsilon) pos.setComponent(2, i);
+            }
 
             quadBuilder.putVertexData(
                     new Vec3(pos.x(), pos.y(), pos.z()),
                     new Vec3(normal),
-                    builder_u,
-                    builder_v,
-                    data.sprite(),
+                    absoluteUV ? v.uv().u() : data.sprite().getU((float) v.uv().u()),
+                    absoluteUV ? v.uv().v() : data.sprite().getV((float) (1 - v.uv().v())),
                     new float[]{data.color.x(), data.color.y(), data.color.z(), data.color.w()},
-                    1.0f
+                    1
             );
         }
 
@@ -123,8 +124,12 @@ public class ITPolygonUtils {
 
     private static float[] toArray(ITVec3d vec, int length) {
         float[] ret = new float[length];
-        for (int i = 0; i < 3; ++i) { ret[i] = (float) vec.get(i); }
-        for (int i = 3; i < length; ++i) { ret[i] = 1.0f; }
+        for (int i = 0; i < 3; ++i) {
+            ret[i] = (float) vec.get(i);
+        }
+        for (int i = 3; i < length; ++i) {
+            ret[i] = 1.0f;
+        }
         return ret;
     }
 

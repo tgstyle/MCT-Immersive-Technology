@@ -1,21 +1,20 @@
 package mctmods.immersivetechnology.core.util.inventory;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import javax.annotation.Nonnull;
 
+@SuppressWarnings("unused")
 public class ITInventoryHandler implements IItemHandlerModifiable {
     int slots;
-    IITInventory inv;
+    ITIInventory inv;
     int slotOffset;
     boolean[] canInsert;
     boolean[] canExtract;
 
-    public ITInventoryHandler(int slots, IITInventory inventory, int slotOffset, boolean[] canInsert, boolean[] canExtract) { this.slots = slots; this.inv = inventory; this.slotOffset = slotOffset; this.canInsert = canInsert; this.canExtract = canExtract; }
+    public ITInventoryHandler(int slots, ITIInventory inventory, int slotOffset, boolean[] canInsert, boolean[] canExtract) { this.slots = slots; this.inv = inventory; this.slotOffset = slotOffset; this.canInsert = canInsert; this.canExtract = canExtract; }
 
     public int getSlots() { return this.slots; }
 
@@ -37,7 +36,7 @@ public class ITInventoryHandler implements IItemHandlerModifiable {
                         if (!simulate) { this.inv.getInventory().set(offsetSlot, stack.copy()); this.inv.doGraphicalUpdates(); }
                         return ItemStack.EMPTY;
                     }
-                } else if (!ItemHandlerHelper.canItemStacksStack(stack, currentStack)) { return stack; }
+                } else if (!ItemStack.isSameItemSameComponents(stack, currentStack)) { return stack; }
                 else {
                     int accepted = Math.min(stack.getMaxStackSize(), this.inv.getSlotLimit(offsetSlot)) - currentStack.getCount();
                     if (accepted < stack.getCount()) {
@@ -74,7 +73,7 @@ public class ITInventoryHandler implements IItemHandlerModifiable {
 
     public int getSlotLimit(int slot) { return 64; }
 
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return this.canInsert[slot] && this.inv.isStackValid(slot, stack); }
+    public boolean isItemValid(int slot, @NotNull ItemStack stack) { return this.canInsert[slot] && this.inv.isStackValid(slot, stack); }
 
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack) { Objects.requireNonNull(this.inv.getInventory()).set(this.slotOffset + slot, stack); this.inv.doGraphicalUpdates(); }
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) { Objects.requireNonNull(this.inv.getInventory()).set(this.slotOffset + slot, stack); this.inv.doGraphicalUpdates(); }
 }

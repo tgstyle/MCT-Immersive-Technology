@@ -1,13 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
-import blusunrize.immersiveengineering.api.utils.DirectionUtils;
+import blusunrize.immersiveengineering.api.IEProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Direction.Plane;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraftforge.client.model.data.ModelProperty;
+import net.neoforged.neoforge.client.model.data.ModelProperty;
 
 import java.util.Map;
 
@@ -20,18 +19,16 @@ public class ITProperties {
     public static final BooleanProperty MIRRORED;
     public static final IntegerProperty INT_16;
     public static final IntegerProperty INT_32;
-
     static {
-        FACING_ALL = DirectionProperty.create("facing", DirectionUtils.VALUES);
-        FACING_HORIZONTAL = DirectionProperty.create("facing", Plane.HORIZONTAL);
-        FACING_TOP_DOWN = DirectionProperty.create("facing", Direction.UP, Direction.DOWN);
-        MULTIBLOCKSLAVE = BooleanProperty.create("multiblockslave");
+        FACING_ALL = IEProperties.FACING_ALL;
+        FACING_HORIZONTAL = IEProperties.FACING_HORIZONTAL;
+        FACING_TOP_DOWN = IEProperties.FACING_TOP_DOWN;
+        MULTIBLOCKSLAVE = IEProperties.MULTIBLOCKSLAVE;
+        MIRRORED = IEProperties.MIRRORED;
         ACTIVE = BooleanProperty.create("active");
-        MIRRORED = BooleanProperty.create("mirrored");
         INT_16 = IntegerProperty.create("int_16", 0, 15);
         INT_32 = IntegerProperty.create("int_32", 0, 31);
     }
-
     public static class Model {
         public static final ModelProperty<Map<Direction, ITEnums.IOSideConfig>> SIDECONFIG = new ModelProperty<>();
         public static final ModelProperty<BlockPos> SUBMODEL_OFFSET = new ModelProperty<>();

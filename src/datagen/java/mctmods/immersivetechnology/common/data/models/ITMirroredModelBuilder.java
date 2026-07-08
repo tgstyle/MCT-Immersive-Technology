@@ -1,30 +1,29 @@
 package mctmods.immersivetechnology.common.data.models;
 
 import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.client.models.mirror.ITMirroredModelLoader;
-import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
-import net.minecraftforge.client.model.generators.ModelBuilder;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import mctmods.immersivetechnology.core.lib.ITLib;
+import net.neoforged.neoforge.client.model.generators.CustomLoaderBuilder;
+import net.neoforged.neoforge.client.model.generators.ModelBuilder;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import org.jetbrains.annotations.NotNull;
 
 public class ITMirroredModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
-    public static <T extends ModelBuilder<T>> ITMirroredModelBuilder<T> begin(T parent, ExistingFileHelper existingFileHelper) {
-        return new ITMirroredModelBuilder<>(parent, existingFileHelper);
-    }
+    public static <T extends ModelBuilder<T>> ITMirroredModelBuilder<T> begin(T parent, ExistingFileHelper existingFileHelper) { return new ITMirroredModelBuilder<>(parent, existingFileHelper); }
 
-    private ITNongeneratedModels.ITNongeneratedModel inner;
+    private ModelBuilder<?> inner;
 
     protected ITMirroredModelBuilder(T parent, ExistingFileHelper existingFileHelper) {
-        super(ITMirroredModelLoader.ID, parent, existingFileHelper);
+        super(ITLib.rl("mirror"), parent, existingFileHelper, false);
     }
 
-    public ITMirroredModelBuilder<T> inner(ITNongeneratedModels.ITNongeneratedModel inner) {
+    public ITMirroredModelBuilder<T> inner(ModelBuilder<?> inner) {
         this.inner = inner;
         return this;
     }
 
-    @Override public JsonObject toJson(JsonObject json) {
+    @Override @NotNull public JsonObject toJson(@NotNull JsonObject json) {
         JsonObject result = super.toJson(json);
-        result.add(ITMirroredModelLoader.INNER_MODEL, inner.toJson());
+        if (inner != null) { result.add("inner_model", inner.toJson()); }
         return result;
     }
 }
