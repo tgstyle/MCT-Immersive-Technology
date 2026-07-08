@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.core.network;
 
-import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import io.netty.buffer.ByteBuf;
 import mctmods.immersivetechnology.core.lib.ITLib;
@@ -39,8 +38,6 @@ public record ITMessageTileSync(BlockPos pos, CompoundTag nbt) implements Custom
             BlockEntity tile = level.getBlockEntity(message.pos());
             if (tile instanceof ITBaseBlockEntity itbe) {
                 itbe.receiveMessageFromClient(message.nbt());
-            } else if (tile instanceof ConnectorTimerBlockEntity timer) {
-                timer.receiveMessageFromClient(message.nbt());
             }
         });
     }

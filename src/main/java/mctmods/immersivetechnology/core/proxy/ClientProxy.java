@@ -153,7 +153,6 @@ public class ClientProxy extends CommonProxy {
         event.register(ITMenuTypes.VALVE_FLUID.getType(), ValveFluidScreen::new);
         event.register(ITMenuTypes.VALVE_LIMITER.getType(), ValveLimiterScreen::new);
         event.register(ITMenuTypes.VALVE_LOAD.getType(), ValveLoadScreen::new);
-        event.register(ITMenuTypes.CONNECTOR_TIMER.getType(), ConnectorTimerScreen::new);
     }
 
     @SubscribeEvent

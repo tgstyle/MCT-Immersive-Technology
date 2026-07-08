@@ -1,9 +1,10 @@
 package mctmods.immersivetechnology.core.registration;
 
-import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.*;
 import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlockEntity;
 import mctmods.immersivetechnology.core.lib.ITLib;
+
+import com.immersiveconvergence.api.MechanicalCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
@@ -83,11 +84,6 @@ public class ITBlockEntities {
             () -> BlockEntityType.Builder.of(ValveLimiterBlockEntity::new, ITBlocks.Metal.VALVE_LIMITER.get()).build(null)
     );
 
-    public static final Supplier<BlockEntityType<ConnectorTimerBlockEntity>> CONNECTOR_TIMER = REGISTER.register(
-            "connector_timer",
-            () -> BlockEntityType.Builder.of(ConnectorTimerBlockEntity::new, ITBlocks.Connector.CONNECTOR_TIMER.get()).build(null)
-    );
-
     public static final List<Supplier<?>> FLUID_BES = List.of(
             BARREL_STEEL,
             BARREL_CREATIVE,
@@ -105,6 +101,10 @@ public class ITBlockEntities {
             CRATE_CREATIVE,
             TRASH_ITEM,
             VALVE_LIMITER
+    );
+
+    public static final List<Supplier<?>> MECHANICAL_BES = List.of(
+            ROTOR_CREATIVE
     );
 
     public static void init(IEventBus event) {
@@ -138,6 +138,14 @@ public class ITBlockEntities {
                 if (be instanceof CrateCreativeBlockEntity b) return b;
                 if (be instanceof TrashItemBlockEntity b) return b.getItemHandler(side);
                 if (be instanceof ValveLimiterBlockEntity b) return b.getItemHandler(side);
+                return null;
+            });
+        }
+
+        for (Supplier<?> sup : MECHANICAL_BES) {
+            BlockEntityType<?> type = (BlockEntityType<?>) sup.get();
+            event.registerBlockEntity(MechanicalCapabilities.MECHANICAL_PROVIDER, type, (be, side) -> {
+                if (be instanceof RotorCreativeBlockEntity b) return b.getMechanicalProvider(side);
                 return null;
             });
         }

@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.common.data.generators.blockstate;
 
 import com.google.common.collect.ImmutableMap;
 import mctmods.immersivetechnology.client.models.ITModelConfigurableSides;
-import mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
@@ -77,8 +76,7 @@ public class ITBasicStateGenerator {
     private static final Map<String, ValveRotationConfig> VALVE_CONFIGS = Map.of(
             "fluid", new ValveRotationConfig(0, 90, 270, facing -> 2),
             "limiter", new ValveRotationConfig(90, 180, 0, facing -> 2),
-            "load", new ValveRotationConfig(270, 180, 0, facing -> facing.getAxis().isHorizontal() ? 0 : 1),
-            "timer", new ValveRotationConfig(270, 180, 0, facing -> 0)
+            "load", new ValveRotationConfig(270, 180, 0, facing -> facing.getAxis().isHorizontal() ? 0 : 1)
     );
 
     public ITBasicStateGenerator(ITBlockState main, ExistingFileHelper helper) {
@@ -205,11 +203,6 @@ public class ITBasicStateGenerator {
         ModelFile valveLoadOpen = createValveObjModel("valve_load", "valve_load", true, "Base");
         createValveState(ITBlocks.Metal.VALVE_LOAD.get(), valveLoadClosed, valveLoadOpen, VALVE_CONFIGS.get("load"), ValveCommonBlockEntity.OPEN);
         setRenderType(RenderType.cutout(), (BlockModelBuilder) valveLoadClosed, (BlockModelBuilder) valveLoadOpen);
-
-        ModelFile timerModel = createTimerObjModel("connector_timer", "connector_timer", "Base");
-        createValveState(ITBlocks.Connector.CONNECTOR_TIMER.get(), timerModel, timerModel, VALVE_CONFIGS.get("timer"), null);
-        setRenderType(RenderType.translucent(), (BlockModelBuilder) timerModel);
-        main.itemModels().getBuilder(ITBlocks.Connector.CONNECTOR_TIMER.getId().getPath()).parent(timerModel);
     }
 
     private void createValveState(Block block, ModelFile closedModel, ModelFile openModel, ValveRotationConfig config, @Nullable Property<Boolean> openProperty) {
@@ -223,10 +216,8 @@ public class ITBasicStateGenerator {
                 rotationProp = ValveFluidBlock.ROTATION;
             } else if (block == ITBlocks.Metal.VALVE_LOAD.get()) {
                 rotationProp = ValveLoadBlock.ROTATION;
-            } else if (block == ITBlocks.Metal.VALVE_LIMITER.get()) {
-                rotationProp = ValveLimiterBlock.ROTATION;
             } else {
-                rotationProp = ConnectorTimerBlock.ROTATION;
+                rotationProp = ValveLimiterBlock.ROTATION;
             }
             int rotationVal = state.getValue(rotationProp);
             boolean mirrored = hasMirrored && state.getValue(ITProperties.MIRRORED);
@@ -254,12 +245,12 @@ public class ITBasicStateGenerator {
         main.itemModels().getBuilder("advanced_coke_oven_baseheater").parent(new ModelFile.UncheckedModelFile(main.modLoc("block/metal/advanced_coke_oven_baseheater_split")));
     }
 
-    private ModelFile createConfiguredObjModel(String modelName, ResourceLocation objLoc, boolean autoCulling, boolean shadeQuads, Map<String, Boolean> visibilityOverrides) {
+    private ModelFile createConfiguredObjModel(String modelName, ResourceLocation objLoc, Map<String, Boolean> visibilityOverrides) {
         BlockModelBuilder builder = main.models().getBuilder(modelName);
         ITObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ITObjModelBuilder::begin);
         loader.modelLocation(objLoc)
-                .automaticCulling(autoCulling)
-                .shadeQuads(shadeQuads)
+                .automaticCulling(true)
+                .shadeQuads(true)
                 .flipV(true)
                 .emissiveAmbient(true);
         if (visibilityOverrides != null) {
@@ -281,19 +272,7 @@ public class ITBasicStateGenerator {
                 "Handle_Open", isOpen,
                 "Handle_Closed", !isOpen
         );
-        return createConfiguredObjModel(modelName, objLoc, true, true, vis);
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private ModelFile createTimerObjModel(String baseName, String objFolder, String baseVisibility) {
-        String modelName = "block/connector/" + baseName;
-        ResourceLocation objLoc = main.modLoc("models/block/connector/obj/" + objFolder + "/" + objFolder + ".obj");
-        Map<String, Boolean> vis = Map.of(
-                baseVisibility, true,
-                "cube", true,
-                "glass", true
-        );
-        return createConfiguredObjModel(modelName, objLoc, false, false, vis);
+        return createConfiguredObjModel(modelName, objLoc, vis);
     }
 
     private ITNongeneratedModel createBaseHeaterUnsplit(boolean active) {

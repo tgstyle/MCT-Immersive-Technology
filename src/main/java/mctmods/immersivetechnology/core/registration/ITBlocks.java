@@ -1,7 +1,5 @@
 package mctmods.immersivetechnology.core.registration;
 
-import mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock;
-import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITIStairsBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITIWallBlock;
 import mctmods.immersivetechnology.common.blocks.metal.*;
@@ -140,18 +138,6 @@ public class ITBlocks {
         }
     }
 
-    public static final class Connector {
-        public static BlockEntry<ConnectorTimerBlock> CONNECTOR_TIMER;
-
-        private static void init() {
-            CONNECTOR_TIMER = new BlockEntry<>(
-                    "connector_timer",
-                    METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new ConnectorTimerBlock(ConnectorTimerBlockEntity::new, p)
-            );
-        }
-    }
-
     public static final class Stone {
         public static BlockEntry<ReinforcedCokeBrick> REINFORCED_COKE_BRICK;
         public static BlockEntry<SlabReinforcedCokeBrick> SLAB_REINFORCED_COKE_BRICK;
@@ -184,7 +170,6 @@ public class ITBlocks {
 
     public static void initBlocks() {
         Metal.init();
-        Connector.init();
         Stone.init();
         Wooden.init();
         TO_SLAB.put(Stone.REINFORCED_COKE_BRICK.getId(), Stone.SLAB_REINFORCED_COKE_BRICK);
