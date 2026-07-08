@@ -2,7 +2,7 @@ Pythyon setup:
 	Install python -
 		https://www.python.org/downloads/windows/
 		or Python from the MS Store
-	
+
 	Install needed addons -
 		pip install numpy
 		pip install scipy
@@ -30,7 +30,7 @@ Example script execution:
 	Enter offset (bx,by,bz): 1,1,5
 	Processing main model...
 	steam_turbine.bbmodel: 100%|█████████████████████████████████████████████████████████| 120/120 [05:14<00:00,  2.62s/it]
-	Processing supplementary model: rotor.bbmodel	
+	Processing supplementary model: rotor.bbmodel
 
 Shape output:
 	The script will output a txt file with the same name as the main model -
@@ -76,6 +76,13 @@ Script arguments:
     # Supplementary model configurations
     --supp-config <str...> (append)	Default: []	Description: Supplementary model config: model.bbmodel num_times offset1 offset2... (e.g., model.bbmodel 2 0,0,0 1,0,0; use quotes if needed around the whole config).
 
+    # Grid sizing and fitting options
+    --auto-center	Default: False	Description: Pad X/Z overhang symmetrically so the occupied shape is centered in the block grid (main model only). Superseded by --target-grid if both are set.
+    --target-grid <str>	Default: ''	Description: Fit the MAIN model into an explicit block grid, e.g. "5,5,11". Leave an axis blank to auto-compute it, e.g. "5,,11". Use with --grid-anchor to control which side of each axis stays flush. Takes precedence over --auto-center.
+    --grid-anchor <str>	Default: 'min,min,min'	Description: Per-axis anchor for --target-grid: min (flush at the min end, pad/trim at the max end), max (flush at the max end, pad/trim at the min end), center (pad/trim equally on both sides). E.g. "center,min,min".
+    --clamp-slack <float>	Default: 1.0	Description: Units (out of 16 per block) of real geometry allowed to overhang past --target-grid; that sliver is trimmed. Overhang beyond this raises an error instead of silently trimming — use this to confirm you're only clipping a known/intentional sliver, not real missing geometry.
+    --force-grid-dims <str>	Default: ''	Description: Force the output JSON grid to at least this size, e.g. "5,5,12" (widens only, never shrinks). Pads any new cells as null/air. Useful when a supplementary model's placement legitimately extends the occupied grid beyond the main model's own bounds (e.g. a rotor placed past the housing's far edge), and you want the JSON to reflect that final combined size explicitly rather than relying on it being inferred.
+
     # Device and performance options
     --dml-index <int>	Default: None	Description: DirectML device index to use (overrides automatic enumeration).
     --single-thread	Default: False	Description: Force single-threaded processing even on CPU.
@@ -91,3 +98,6 @@ Script arguments:
 
 	Example:
 		bb_shape.py ..\Boiler\single\boiler.bbmodel ..\Boiler\boiler.bbmodel --thresh "4,10,4" --gap-passes 4 --no-supplementary
+
+	Example (explicit grid fit, centered X overhang, trimmed Z sliver, supplementary widening the grid):
+		bb_shape.py .\SteamTurbine\steam_turbine.bbmodel --thresh "1,3,1" --supp-config "rotor.bbmodel 2 2,1,0 2,1,6" --target-grid "5,5,11" --grid-anchor "center,min,min" --clamp-slack 1 --force-grid-dims "5,5,12"

@@ -83,6 +83,10 @@ def main():
 
     # Auto-center option — applies ONLY to the main model
     parser.add_argument('--auto-center', action='store_true', help='Pad X/Z overhang symmetrically so the occupied shape is centered in the block grid (main model only)')
+    parser.add_argument('--force-grid-dims', type=str, default='', help='Force output grid to at least this size, e.g. "5,5,12" (widens only, never shrinks; pads with null/air entries)')
+    parser.add_argument('--target-grid', type=str, default='', help='Fit the MAIN model into an explicit block grid, e.g. "5,5,11" (blank axis = auto, e.g. "5,,11"). Takes precedence over --auto-center.')
+    parser.add_argument('--grid-anchor', type=str, default='min,min,min', help='Per-axis anchor for --target-grid: min (flush at min end), max (flush at max end), center. E.g. "center,min,min"')
+    parser.add_argument('--clamp-slack', type=float, default=1.0, help='Units of geometry allowed to overhang past the target grid; that sliver is trimmed. More than this raises an error. (default: 1.0)')
 
     args = parser.parse_args()
 
@@ -90,6 +94,10 @@ def main():
     # Do not append fill-y-corners here; handled explicitly in apply_postprocessing per-block stage only
 
     debug = args.debug_log
+    target_grid = None
+    if args.target_grid:
+        target_grid = tuple(int(p) if p.strip() else None for p in args.target_grid.split(','))
+    grid_anchor = tuple((p.strip().lower() or 'min') for p in args.grid_anchor.split(','))
     solid_set = set()
     if args.solid_blocks:
         for s in args.solid_blocks.split():
@@ -261,7 +269,7 @@ def main():
                     offsets.append((offset_bx, offset_by, offset_bz))
                 supp_list.append((supp_file, offsets))
     print("Processing main model...")
-    overall_voxels = parse_bbmodel(main_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=sub_pp_order, do_center=False, auto_center=args.auto_center, debug=debug)
+    overall_voxels = parse_bbmodel(main_path, args.thresh, args.no_postprocess, args.no_holes, args.no_gaps, args.no_small_voids, args.gap_passes, args.void_thresh, args.occ_thresh, global_postprocess, set(args.pbg.lower().split(',') if args.pbg else ''), device, args.single_thread, set(), set(), args.fill_all_voids, exclude_set, axis_order, args.mi, args.ex_thresh, args.rpp, return_voxels=True, pp_order=args.pp_order, sub_order=sub_pp_order, do_center=False, auto_center=args.auto_center, debug=debug, target_grid=target_grid, grid_anchor=grid_anchor, clamp_slack=args.clamp_slack)
     overall_dict = {(bx, by, bz): occupied_np for bx, by, bz, occupied_np in overall_voxels}
     if debug:
         log(f"Initial overall_dict keys: {list(overall_dict.keys())}")
@@ -412,6 +420,11 @@ def main():
         width = max_bx + 1
         height = max_by + 1
         length = max_bz + 1
+        if args.force_grid_dims:
+            force_w, force_h, force_l = map(int, args.force_grid_dims.split(','))
+            width = max(width, force_w)
+            height = max(height, force_h)
+            length = max(length, force_l)
         if debug:
             log(f"JSON dimensions: width={width}, height={height}, length={length}")
         aabb_json = [None] * (height * length * width)

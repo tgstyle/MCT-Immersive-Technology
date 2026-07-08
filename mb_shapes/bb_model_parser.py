@@ -39,7 +39,7 @@ def center_in_block(occupied_np, res=16):
     return new_occupied
 
 # Main model parsing function
-def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=None, empty_set=None, fill_all_voids=False, exclude_set=None, axis_order=None, mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=None, return_voxels=False, pp_order='per-block,regional,global,per-block-gaps,protrusions', sub_order='remove-small,fill-holes,fill-voids,fill-gaps', do_center=False, auto_center=False, debug=False):
+def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_small_voids, gap_passes, small_void_threshold, small_occupied_threshold, global_postprocess, per_block_gap_axes, device=None, single_thread=False, solid_set=None, empty_set=None, fill_all_voids=False, exclude_set=None, axis_order=None, mi_str="3,4,4", ex_thresh_str="d,d,d", rpp_list=None, return_voxels=False, pp_order='per-block,regional,global,per-block-gaps,protrusions', sub_order='remove-small,fill-holes,fill-voids,fill-gaps', do_center=False, auto_center=False, debug=False, target_grid=None, grid_anchor=('min', 'min', 'min'), clamp_slack=1.0):
     # Parse thresholds and settings
     if rpp_list is None:
         rpp_list = []
@@ -190,8 +190,43 @@ def parse_bbmodel(file_path, thresh_str, no_postprocess, no_holes, no_gaps, no_s
     minz = min(v[2] for v in verts)
     maxz = max(v[2] for v in verts)
 
+    # Target-grid fitting: force the model into an explicit block grid per axis.
+    if target_grid:
+        bounds = [[minx, maxx], [miny, maxy], [minz, maxz]]
+        for axis in range(3):
+            tgt = target_grid[axis] if axis < len(target_grid) else None
+            if tgt is None:
+                continue
+            anchor = grid_anchor[axis] if axis < len(grid_anchor) else 'min'
+            lo, hi = bounds[axis]
+            span = hi - lo
+            total = tgt * 16
+            if span > total:
+                excess = span - total
+                if excess > clamp_slack + 1e-9:
+                    raise ValueError(f"Axis {axis}: model span {span} exceeds target {total} by {excess} units (> clamp slack {clamp_slack})")
+                if anchor == 'max':
+                    lo = hi - total
+                elif anchor == 'center':
+                    lo += excess / 2
+                    hi = lo + total
+                else:
+                    hi = lo + total
+            elif span < total:
+                pad = total - span
+                if anchor == 'max':
+                    lo -= pad
+                elif anchor == 'center':
+                    lo -= pad / 2
+                    hi += pad / 2
+                else:
+                    hi += pad
+            bounds[axis] = [lo, hi]
+        (minx, maxx), (miny, maxy), (minz, maxz) = bounds
+        if debug:
+            log(f"Target-grid fit applied: bounds now [{minx:.3f},{miny:.3f},{minz:.3f}] -> [{maxx:.3f},{maxy:.3f},{maxz:.3f}]")
     # Auto-center padding — only for main model, does not touch vertices
-    if auto_center:
+    elif auto_center:
         for axis_idx, min_val, max_val in [(0, minx, maxx), (2, minz, maxz)]:
             span = max_val - min_val
             blocks = math.ceil(span / 16)
