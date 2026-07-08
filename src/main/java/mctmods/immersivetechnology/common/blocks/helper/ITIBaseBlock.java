@@ -149,19 +149,20 @@ public class ITIBaseBlock extends Block implements ITIBlock, SimpleWaterloggedBl
         else { return super.rotate(state, rot); }
     }
 
-    @Override @NotNull public BlockState mirror(BlockState state, @NotNull Mirror mirrorIn) {
-        if (state.hasProperty(ITProperties.MIRRORED) && this.canRotate() && mirrorIn == Mirror.LEFT_RIGHT) {
-            return state.setValue(ITProperties.MIRRORED, !state.getValue(ITProperties.MIRRORED));
+    @Override @NotNull public BlockState mirror(@NotNull BlockState state, @NotNull Mirror mirrorIn) {
+        if (mirrorIn == Mirror.NONE) { return state; }
+        boolean handled = false;
+        Property<Direction> facingProp = this.findFacingProperty(state);
+        if (facingProp != null && this.canRotate()) {
+            state = state.setValue(facingProp, mirrorIn.mirror(state.getValue(facingProp)));
+            handled = true;
         }
-        else {
-            Property<Direction> facingProp = this.findFacingProperty(state);
-            if (facingProp != null && this.canRotate()) {
-                Direction currentDirection = state.getValue(facingProp);
-                Direction newDirection = mirrorIn.mirror(currentDirection);
-                return state.setValue(facingProp, newDirection);
-            }
-            else { return super.mirror(state, mirrorIn); }
+        if (state.hasProperty(ITProperties.MIRRORED) && this.canRotate()) {
+            state = state.setValue(ITProperties.MIRRORED, !state.getValue(ITProperties.MIRRORED));
+            handled = true;
         }
+        if (!handled) { return super.mirror(state, mirrorIn); }
+        return state;
     }
 
     @Nullable private Property<Direction> findFacingProperty(BlockState state) {

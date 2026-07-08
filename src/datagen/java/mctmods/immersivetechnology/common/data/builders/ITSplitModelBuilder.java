@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.data.loaders;
+package mctmods.immersivetechnology.common.data.builders;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;

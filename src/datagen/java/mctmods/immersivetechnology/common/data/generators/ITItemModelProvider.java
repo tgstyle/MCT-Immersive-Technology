@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import mctmods.immersivetechnology.common.data.loaders.ITObjModelBuilder;
+import mctmods.immersivetechnology.common.data.builders.ITObjModelBuilder;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import net.minecraft.data.DataGenerator;

@@ -14,14 +14,15 @@ import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
-import mctmods.immersivetechnology.common.data.loaders.ITObjModelBuilder;
+import mctmods.immersivetechnology.common.data.builders.ITMirroredModelBuilder;
+import mctmods.immersivetechnology.common.data.builders.ITObjModelBuilder;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.data.ITDataGenUtils;
 import mctmods.immersivetechnology.common.data.models.ITModelProviderUtils;
 import mctmods.immersivetechnology.common.data.models.ITNongeneratedModels;
 import mctmods.immersivetechnology.common.data.models.ITNongeneratedModels.ITNongeneratedModel;
 import mctmods.immersivetechnology.common.data.models.ITSideConfigBuilder;
-import mctmods.immersivetechnology.common.data.loaders.ITSplitModelBuilder;
+import mctmods.immersivetechnology.common.data.builders.ITSplitModelBuilder;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
 import mctmods.immersivetechnology.core.registration.ITFluids;
@@ -347,6 +348,18 @@ public class ITBlockStateProvider extends BlockStateProvider {
         return ret;
     }
 
+    private ITNongeneratedModel createMirrorWrappedModel(String name, ITNongeneratedModel inner) {
+        ITNongeneratedModel base = innerModels.withExistingParent(name, mcLoc("block"));
+        ITNongeneratedModel ret = base.customLoader(ITMirroredModelBuilder::begin).inner(inner).end();
+        ret.ao(false);
+        String particleTex = generatedParticleTextures.get(inner.getLocation());
+        if (particleTex != null) {
+            ret.texture("particle", particleTex);
+            generatedParticleTextures.put(ret.getLocation(), particleTex);
+        }
+        return ret;
+    }
+
     private void generateMultiblockConfig(String registry_name, String block_type, boolean useSeparateMirror, boolean hasActive, Map<String, ResourceLocation> defaultTextures, Map<String, ResourceLocation> activeTextures) {
         if (!hasActive) { defaultTextures = ImmutableMap.of(); activeTextures = ImmutableMap.of(); }
         ITLib.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
@@ -360,9 +373,13 @@ public class ITBlockStateProvider extends BlockStateProvider {
         ITNongeneratedModel mirroredUnsplit = null;
         ITNongeneratedModel activeMirroredUnsplit = null;
         if (hasMirror) {
-            String useObjPath = flipMirror ? mirroredObjPath : baseObjPath;
-            mirroredUnsplit = createUnsplitModel(registry_name + "_mirrored", useObjPath, defaultTextures);
-            if (hasActive) activeMirroredUnsplit = createUnsplitModel(registry_name + "_active_mirrored", useObjPath, activeTextures);
+            if (flipMirror) {
+                mirroredUnsplit = createUnsplitModel(registry_name + "_mirrored", mirroredObjPath, defaultTextures);
+                if (hasActive) { activeMirroredUnsplit = createUnsplitModel(registry_name + "_active_mirrored", mirroredObjPath, activeTextures); }
+            } else {
+                mirroredUnsplit = createMirrorWrappedModel(registry_name + "_mirrored", defaultUnsplit);
+                if (hasActive) { activeMirroredUnsplit = createMirrorWrappedModel(registry_name + "_active_mirrored", activeUnsplit); }
+            }
         }
         ModelFile defaultMain = split(defaultUnsplit, multiblock, false, block_type);
         ModelFile activeMain = hasActive ? split(activeUnsplit, multiblock, false, block_type) : null;
