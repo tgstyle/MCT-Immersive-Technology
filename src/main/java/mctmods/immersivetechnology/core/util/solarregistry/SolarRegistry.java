@@ -1,12 +1,11 @@
 package mctmods.immersivetechnology.core.util.solarregistry;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 
 import java.util.*;
-
-import static mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic.DANCE_DURATION;
 
 public class SolarRegistry {
     public static final int SOLAR_MAX_RANGE = 22;
@@ -68,13 +67,36 @@ public class SolarRegistry {
         }
     }
 
+    private static boolean hasNeighbor(SolarRegistryData data, BlockPos poi) {
+        double connSq = Math.pow(SOLAR_MAX_RANGE * 2D, 2);
+        int rad = (int) Math.ceil(SOLAR_MAX_RANGE * 2D);
+        int y = poi.getY();
+        for (int dy = -rad; dy <= rad; dy++) {
+            Set<BlockPos> set = data.reflectorPOIsByY.get(y + dy);
+            if (set == null) { continue; }
+            for (BlockPos other : set) {
+                if (!other.equals(poi) && data.untakenReflectors.contains(other) && other.distSqr(poi) <= connSq) { return true; }
+            }
+        }
+        return false;
+    }
+
     public static synchronized void registerReflector(Level level, BlockPos poi) {
         if (level.isClientSide) return;
         SolarRegistryData data = getData(level);
         int y = poi.getY();
         data.reflectorPOIsByY.computeIfAbsent(y, k -> new HashSet<>()).add(poi);
         data.untakenReflectors.add(poi);
-        data.groupsDirty = true;
+        if (hasNeighbor(data, poi)) { data.groupsDirty = true; }
+        else {
+            data.parent.put(poi, poi);
+            data.rank.put(poi, 0);
+            GroupData gd = new GroupData();
+            gd.pendingTick = level.getGameTime() + 100L;
+            gd.animationPhase = -5;
+            gd.groupSize = 1;
+            data.groupData.put(poi, gd);
+        }
         data.setDirty();
     }
 
@@ -85,8 +107,15 @@ public class SolarRegistry {
         if (data.reflectorPOIsByY.containsKey(y)) {
             data.reflectorPOIsByY.get(y).remove(poi);
             if (data.reflectorPOIsByY.get(y).isEmpty()) data.reflectorPOIsByY.remove(y);
-            data.untakenReflectors.remove(poi);
-            data.groupsDirty = true;
+            boolean wasUntaken = data.untakenReflectors.remove(poi);
+            if (wasUntaken) {
+                if (hasNeighbor(data, poi)) { data.groupsDirty = true; }
+                else {
+                    data.parent.remove(poi);
+                    data.rank.remove(poi);
+                    data.groupData.remove(poi);
+                }
+            }
             data.setDirty();
         }
     }
@@ -98,8 +127,28 @@ public class SolarRegistry {
         if (taken) { changed = data.untakenReflectors.remove(poi); }
         else { changed = data.untakenReflectors.add(poi); }
         if (changed) {
-            data.groupsDirty = true;
-            if (taken && data.untakenReflectors.isEmpty()) { data.groupData.clear(); data.groupsDirty = false; }
+            if (taken && data.untakenReflectors.isEmpty()) {
+                data.groupData.clear();
+                data.parent.clear();
+                data.rank.clear();
+                data.groupsDirty = false;
+            }
+            else if (!hasNeighbor(data, poi)) {
+                if (taken) {
+                    data.parent.remove(poi);
+                    data.rank.remove(poi);
+                    data.groupData.remove(poi);
+                } else {
+                    data.parent.put(poi, poi);
+                    data.rank.put(poi, 0);
+                    GroupData gd = new GroupData();
+                    gd.pendingTick = level.getGameTime() + 100L;
+                    gd.animationPhase = -5;
+                    gd.groupSize = 1;
+                    data.groupData.put(poi, gd);
+                }
+            }
+            else { data.groupsDirty = true; }
             data.setDirty();
         }
     }
@@ -112,6 +161,7 @@ public class SolarRegistry {
             data.groupsDirty = false;
             data.setDirty();
         }
+        float danceDuration = SolarReflectorLogic.getDanceDuration();
         boolean changed = false;
         for (GroupData gd : data.groupData.values()) {
             if (gd.animationPhase == -5) {
@@ -123,13 +173,13 @@ public class SolarRegistry {
                 }
             } else if (gd.animationPhase == -2) {
                 float currentPhase = (level.getGameTime() - gd.danceStartTick) * 0.05f;
-                if (currentPhase >= DANCE_DURATION) {
+                if (currentPhase >= danceDuration) {
                     gd.animationPhase = -3;
                     changed = true;
                 }
             } else if (gd.animationPhase == -3) {
                 float currentPhase = (level.getGameTime() - gd.danceStartTick) * 0.05f;
-                if (currentPhase >= DANCE_DURATION + 1) {
+                if (currentPhase >= danceDuration + 1) {
                     gd.animationPhase = -4;
                     changed = true;
                 }
@@ -172,7 +222,7 @@ public class SolarRegistry {
             BlockPos leader = members.stream().min(Comparator.comparingLong(BlockPos::asLong)).orElse(root);
             GroupData gd = data.groupData.remove(leader);
             int currentSize = members.size();
-            if (gd == null || gd.animationPhase == -4 || gd.groupSize != currentSize) {
+            if (gd == null || gd.animationPhase == -4) {
                 gd = new GroupData();
                 gd.pendingTick = currentTime + 100L;
                 gd.animationPhase = -5;
