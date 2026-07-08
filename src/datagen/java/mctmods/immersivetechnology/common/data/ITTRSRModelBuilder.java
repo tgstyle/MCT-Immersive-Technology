@@ -7,10 +7,10 @@ import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import javax.annotation.Nonnull;
 
-public class TRSRModelBuilder extends ModelBuilder<TRSRModelBuilder> {
+public class ITTRSRModelBuilder extends ModelBuilder<ITTRSRModelBuilder> {
     private final ITTransformationMap transforms = new ITTransformationMap();
 
-    public TRSRModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) { super(outputLocation, existingFileHelper); }
+    public ITTRSRModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) { super(outputLocation, existingFileHelper); }
 
     @Override @Nonnull public JsonObject toJson() {
         JsonObject ret = super.toJson();

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import mctmods.immersivetechnology.common.data.TRSRModelBuilder;
+import mctmods.immersivetechnology.common.data.ITTRSRModelBuilder;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,8 +19,8 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class ITComplexItemModel extends ModelProvider<TRSRModelBuilder> {
-    public ITComplexItemModel(PackOutput output, ExistingFileHelper existingFileHelper) { super(output, ITLib.MODID, ITEM_FOLDER, TRSRModelBuilder::new, existingFileHelper); }
+public class ITComplexItemModel extends ModelProvider<ITTRSRModelBuilder> {
+    public ITComplexItemModel(PackOutput output, ExistingFileHelper existingFileHelper) { super(output, ITLib.MODID, ITEM_FOLDER, ITTRSRModelBuilder::new, existingFileHelper); }
 
     @Override @NotNull public String getName() { return getClass().getSimpleName(); }
 
@@ -45,7 +45,7 @@ public class ITComplexItemModel extends ModelProvider<TRSRModelBuilder> {
         generateMultiblockModel("steel_sheetmetal_tank", "metal", ITMultiblockProvider.STEEL_SHEETMETAL_TANK.block(), new Vector3f(0f, -4.0f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
     }
 
-    private TRSRModelBuilder createObjModel(String modelPath, String jsonName) {
+    private ITTRSRModelBuilder createObjModel(String modelPath, String jsonName) {
         return getBuilder(jsonName).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + modelPath)).flipV(true).end();
     }
 
@@ -57,16 +57,16 @@ public class ITComplexItemModel extends ModelProvider<TRSRModelBuilder> {
         trans.end();
     }
 
-    private TRSRModelBuilder obj(Supplier<? extends ItemLike> item, String model) { return obj(item.get(), model); }
+    private ITTRSRModelBuilder obj(Supplier<? extends ItemLike> item, String model) { return obj(item.get(), model); }
 
-    private TRSRModelBuilder obj(ItemLike item, String model) {
+    private ITTRSRModelBuilder obj(ItemLike item, String model) {
         return getBuilder(name(item)).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + model)).flipV(true).end();
     }
 
     private String name(ItemLike item) { return Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item.asItem())).getPath(); }
 
     private void generateMultiblockModel(String id, String type, Supplier<? extends ItemLike> block, Vector3f guiTrans, float guiScale, float groundScale, float fixedScale) {
-        TRSRModelBuilder model;
+        ITTRSRModelBuilder model;
         String objPath = "multiblock/" + type + "/obj/" + id + "/" + id + ".obj";
 
         if ("solar_reflector".equals(id)) {
@@ -77,9 +77,9 @@ public class ITComplexItemModel extends ModelProvider<TRSRModelBuilder> {
             String reflectorJson = "solar_reflector_reflector";
             String supportJson = "solar_reflector_support";
             String mirrorJson = "solar_reflector_mirror";
-            TRSRModelBuilder reflectorModel = createObjModel(reflectorFile, reflectorJson);
-            TRSRModelBuilder supportModel = (TRSRModelBuilder) createObjModel(supportFile, supportJson).rootTransforms().translation(1.6f, 0.0f, 1.6f).end();
-            TRSRModelBuilder mirrorModel = (TRSRModelBuilder) createObjModel(mirrorFile, mirrorJson).rootTransforms().translation(1.6f, 0.0f, 1.6f).end();
+            ITTRSRModelBuilder reflectorModel = createObjModel(reflectorFile, reflectorJson);
+            ITTRSRModelBuilder supportModel = (ITTRSRModelBuilder) createObjModel(supportFile, supportJson).rootTransforms().translation(1.6f, 0.0f, 1.6f).end();
+            ITTRSRModelBuilder mirrorModel = (ITTRSRModelBuilder) createObjModel(mirrorFile, mirrorJson).rootTransforms().translation(1.6f, 0.0f, 1.6f).end();
             model = getBuilder(name(block.get())).customLoader(CompositeModelBuilder::begin)
                     .child("reflector", reflectorModel)
                     .child("support", supportModel)
