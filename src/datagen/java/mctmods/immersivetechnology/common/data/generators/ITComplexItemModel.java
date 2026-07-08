@@ -19,8 +19,8 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class ITComplexItemModelProvider extends ModelProvider<ITTRSRModelBuilder> {
-    public ITComplexItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
+public class ITComplexItemModel extends ModelProvider<ITTRSRModelBuilder> {
+    public ITComplexItemModel(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, ITLib.MODID, ITEM_FOLDER, ITTRSRModelBuilder::new, existingFileHelper);
     }
 

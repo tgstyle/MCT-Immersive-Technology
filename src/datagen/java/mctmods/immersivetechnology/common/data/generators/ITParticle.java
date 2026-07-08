@@ -17,11 +17,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ITParticleProvider implements DataProvider {
+public class ITParticle implements DataProvider {
     private final PackOutput.PathProvider particlesPath;
     private final Map<ResourceLocation, List<String>> descriptions = new HashMap<>();
 
-    public ITParticleProvider(PackOutput output) { this.particlesPath = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "particles"); }
+    public ITParticle(PackOutput output) { this.particlesPath = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "particles"); }
 
     protected void addDescriptions() {
         List<String> bigSmokeTextures = IntStream.range(0, 12).mapToObj(i -> "minecraft:big_smoke_" + i).collect(Collectors.toList());

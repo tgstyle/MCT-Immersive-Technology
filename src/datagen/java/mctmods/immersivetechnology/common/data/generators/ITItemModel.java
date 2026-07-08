@@ -16,8 +16,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Objects;
 
-public class ITItemModelProvider extends ItemModelProvider {
-    public ITItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) { super(generator.getPackOutput(), ITLib.MODID, existingFileHelper); }
+public class ITItemModel extends ItemModelProvider {
+    public ITItemModel(DataGenerator generator, ExistingFileHelper existingFileHelper) { super(generator.getPackOutput(), ITLib.MODID, existingFileHelper); }
 
     private void generateBlockItem(String item_name, String parent_loc) {
         generateBlockItem(item_name, parent_loc, true, 0, 0, 0.625f);

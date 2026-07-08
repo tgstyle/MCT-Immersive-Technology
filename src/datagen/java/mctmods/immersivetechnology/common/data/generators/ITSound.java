@@ -6,8 +6,8 @@ import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.SoundDefinitionsProvider;
 
-public class ITSoundProvider extends SoundDefinitionsProvider {
-    public ITSoundProvider(PackOutput output, ExistingFileHelper helper) { super(output, ITLib.MODID, helper); }
+public class ITSound extends SoundDefinitionsProvider {
+    public ITSound(PackOutput output, ExistingFileHelper helper) { super(output, ITLib.MODID, helper); }
 
     @Override public void registerSounds() {
         add(ITSounds.advancedCokeOvenFan.get(), definition().subtitle("subtitles." + ITLib.MODID + ".advanced_coke_oven_fan").with(sound(ITLib.MODID + ":advanced_coke_oven_fan").volume(1.0f)));

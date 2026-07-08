@@ -16,8 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ITBlockLootProvider extends BlockLootSubProvider {
-    public ITBlockLootProvider() { super(Set.of(), FeatureFlags.REGISTRY.allFlags()); }
+public class ITBlockLoot extends BlockLootSubProvider {
+    public ITBlockLoot() { super(Set.of(), FeatureFlags.REGISTRY.allFlags()); }
 
     @Override protected void generate() {
         registerEntity(ITBlocks.Metal.BARREL_CREATIVE.getRegObject());

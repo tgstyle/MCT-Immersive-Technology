@@ -15,10 +15,10 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Objects;
 
-public class ITDynamicModelProvider extends ModelProvider<ITDynamicModelProvider.SimpleModelBuilder> {
+public class ITDynamicModel extends ModelProvider<ITDynamicModel.SimpleModelBuilder> {
     private final ITBlockStateProvider multiblocks;
 
-    public ITDynamicModelProvider(ITBlockStateProvider multiblocks, PackOutput output, ExistingFileHelper existingFileHelper) {
+    public ITDynamicModel(ITBlockStateProvider multiblocks, PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, ITLib.MODID, "dynamic", rl -> new SimpleModelBuilder(rl, existingFileHelper), existingFileHelper);
         this.multiblocks = multiblocks;
     }
