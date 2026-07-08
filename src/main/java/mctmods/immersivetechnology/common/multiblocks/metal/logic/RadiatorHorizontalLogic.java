@@ -57,6 +57,9 @@ public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizon
     public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
     public static final BlockPos SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
 
+    private static final RelativeBlockFace INPUT_FLUID_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
+    private static final RelativeBlockFace OUTPUT_FLUID_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(RelativeBlockFace.FRONT); }
@@ -148,8 +151,9 @@ public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizon
         State state = ctx.getState();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             BlockPos localPos = position.posInMultiblock();
-            if (INPUT_FLUID_POIS.contains(localPos)) { return state.inputCap.cast(ctx); }
-            if (OUTPUT_FLUID_POIS.contains(localPos)) { return state.outputCap.cast(ctx); }
+            RelativeBlockFace side = position.side();
+            if (INPUT_FLUID_POIS.contains(localPos) && (side == null || side == INPUT_FLUID_FACING)) { return state.inputCap.cast(ctx); }
+            if (OUTPUT_FLUID_POIS.contains(localPos) && (side == null || side == OUTPUT_FLUID_FACING)) { return state.outputCap.cast(ctx); }
         }
         return LazyOptional.empty();
     }
