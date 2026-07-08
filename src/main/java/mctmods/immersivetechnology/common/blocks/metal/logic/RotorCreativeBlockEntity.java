@@ -4,10 +4,12 @@ import com.immersiveconvergence.api.MechanicalCapabilities;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITIClientTickableBE;
+import mctmods.immersivetechnology.common.blocks.metal.RotorCreativeBlock;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
@@ -22,8 +24,15 @@ public class RotorCreativeBlockEntity extends ITBaseBlockEntity implements MenuP
     public int rpm;
     public float animation_rotation = 0f;
     public float animation_step = 0f;
+    private final Provider mechanicalProvider = new Provider();
 
     public RotorCreativeBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.ROTOR_CREATIVE.get(), pos, state); rpm = MechanicalCapabilities.MAX_RPM; }
+
+    public IMechanicalEnergyProvider getMechanicalProvider(@Nullable Direction side) {
+        Direction facing = getBlockState().getValue(RotorCreativeBlock.FACING);
+        if (side == null || side == facing || side == facing.getOpposite()) { return mechanicalProvider; }
+        return null;
+    }
 
     @Override public void tickClient() {
         animation_step = (Math.abs(rpm) / (float) MechanicalCapabilities.MAX_RPM) * 72f;
@@ -32,7 +41,6 @@ public class RotorCreativeBlockEntity extends ITBaseBlockEntity implements MenuP
         animation_rotation %= 360;
     }
 
-    @SuppressWarnings("unused")
     private class Provider implements IMechanicalEnergyProvider {
         @Override public int getSpeed() { return rpm; }
         @Override public float getTorque() { return 1f; }

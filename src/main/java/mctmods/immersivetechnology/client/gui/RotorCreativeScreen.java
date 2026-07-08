@@ -71,10 +71,7 @@ public class RotorCreativeScreen extends AbstractContainerScreen<RotorCreativeMe
 
     @Override public void onClose() { super.onClose(); }
 
-    @Override protected void renderBg(@NotNull GuiGraphics graphics, float pt, int mx, int my) {
-        this.renderBackground(graphics, mx, my, pt);
-        graphics.blit(TEXTURE, leftPos, topPos, 0.0F, 0.0F, imageWidth, 48, 96, 48);
-    }
+    @Override protected void renderBg(@NotNull GuiGraphics graphics, float pt, int mx, int my) { graphics.blit(TEXTURE, leftPos, topPos, 0.0F, 0.0F, imageWidth, 48, 96, 48); }
 
     @Override public void render(@NotNull GuiGraphics graphics, int mx, int my, float pt) {
         super.render(graphics, mx, my, pt);
