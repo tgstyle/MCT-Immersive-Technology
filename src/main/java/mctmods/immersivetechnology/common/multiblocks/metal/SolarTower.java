@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal;
 
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
+import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITClientMultiblockProperties;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
@@ -17,6 +18,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.function.Consumer;
 
@@ -26,14 +28,15 @@ public class SolarTower extends ITTemplateMultiblock {
     public SolarTower() { super(ITLib.rl("multiblocks/solar_tower"), SolarTowerShape.MASTER_POS, SolarTowerShape.TRIGGER_POS, new BlockPos(SolarTowerShape.WIDTH,SolarTowerShape.HEIGHT,SolarTowerShape.LENGTH), ITMultiblockProvider.SOLAR_TOWER); }
 
     @Override public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {
-        if (world.isClientSide) return false;
-        Direction front = player.getDirection();
-        boolean mirrored = false;
-        MultiblockOrientation orientation = new MultiblockOrientation(front, mirrored);
+        if (world.isClientSide) { return false; }
         boolean formed = super.createStructure(world, pos, side, player);
         if (formed) {
+            BlockState placed = world.getBlockState(pos);
+            Direction front = placed.hasProperty(ITProperties.FACING_HORIZONTAL) ? placed.getValue(ITProperties.FACING_HORIZONTAL) : side.getOpposite();
+            boolean mirrored = placed.hasProperty(ITProperties.MIRRORED) && placed.getValue(ITProperties.MIRRORED);
+            MultiblockOrientation orientation = new MultiblockOrientation(front, mirrored);
             BlockPos origin = pos.subtract(orientation.getAbsoluteOffset(getTriggerOffset()));
-            BlockPos base = origin.offset(orientation.getAbsoluteOffset(SolarMelterLogic.LINK_POI));
+            BlockPos base = origin.offset(orientation.getAbsoluteOffset(SolarTowerLogic.LINK_POI));
             SolarRegistry.RegisterResult result = SolarRegistry.registerTower(world, base);
             if (!result.success) {
                 TranslationKey key = result.vertical ? TranslationKey.SOLAR_VERTICAL_STACK : TranslationKey.SOLAR_TOO_CLOSE;

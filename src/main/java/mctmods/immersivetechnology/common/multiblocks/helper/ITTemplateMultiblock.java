@@ -114,7 +114,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
 
     protected Mirror getAlternateMirror() { return FRONT_BACK; }
 
-    protected List<Mirror> getMirrorsToTry() { return canBeMirrored() ? List.of(Mirror.NONE, getAlternateMirror()) : List.of(Mirror.NONE); }
+    protected List<Mirror> getMirrorsToTry() { return canBeMirrored() ? List.of(Mirror.NONE, FRONT_BACK) : List.of(Mirror.NONE); }
 
     protected boolean compensateMirrorFacing() { return false; }
 
@@ -161,10 +161,9 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
 
     @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
         if (world.isClientSide) { return; }
-        Mirror mirror = mirrored ? getAlternateMirror() : Mirror.NONE;
+        Mirror mirror = mirrored ? FRONT_BACK : Mirror.NONE;
         Rotation rot = DirectionUtils.getRotationBetweenFacings(Direction.NORTH, clickDirectionAtCreation);
         Preconditions.checkNotNull(rot);
-        if (mirrored && compensateMirrorFacing()) { rot = rot.getRotated(Rotation.CLOCKWISE_180); }
         if (world instanceof ServerLevel serverLevel) {
             boolean templateMode = ITServerConfig.DISASSEMBLY_MODE.get() == ITServerConfig.DisassemblyMode.TEMPLATE_BLOCKS;
             boolean doTileDrops = serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
@@ -261,16 +260,15 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     public boolean isBlockTrigger(BlockState state, Direction d, @Nonnull Level world) {
         getTemplate(world);
         Rotation rot = DirectionUtils.getRotationBetweenFacings(Direction.NORTH, d.getOpposite());
-        if (rot == null) return false;
+        if (rot == null) { return false; }
         if (!symmetricMirror().isEmpty()) {
             BlockPos primaryOffset = getPrimaryTriggerOffset();
             BlockState baseTrigger = triggerStateMap.getOrDefault(primaryOffset, getTemplate(world).triggerState());
             BlockState expected = rotate(baseTrigger, rot);
             return BlockMatcher.matches(expected, state, null, null, additionalPredicates).isAllow();
         }
+        BlockState baseTrigger = getTemplate(world).triggerState();
         for (Mirror triedMirror : getMirrorsToTry()) {
-            BlockPos triggerOffset = getTriggerOffset(triedMirror);
-            BlockState baseTrigger = triggerStateMap.getOrDefault(triggerOffset, getTemplate(world).triggerState());
             BlockState expected = rotate(baseTrigger.mirror(triedMirror), rot);
             if (BlockMatcher.matches(expected, state, null, null, additionalPredicates).isAllow()) { return true; }
         }
@@ -313,32 +311,22 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             }
             return false;
         }
-        List<Mirror> mirrorsToTry = new ArrayList<>(getMirrorsToTry());
-        boolean reverseOrder = (baseRot == Rotation.CLOCKWISE_180 || baseRot == Rotation.COUNTERCLOCKWISE_90);
-        if (reverseOrder) { Collections.reverse(mirrorsToTry); }
-        for (Mirror triedMirror : mirrorsToTry) {
-            Rotation rot = baseRot;
-            if (triedMirror != Mirror.NONE && compensateMirrorFacing()) { rot = baseRot.getRotated(Rotation.CLOCKWISE_180); }
-            BlockPos triggerOffset = getTriggerOffset(triedMirror);
-
-            BlockPos origin = pos.subtract(StructureTemplate.calculateRelativePosition(new StructurePlaceSettings().setMirror(triedMirror).setRotation(rot), triggerOffset));
-
+        for (Mirror triedMirror : getMirrorsToTry()) {
+            StructurePlaceSettings placeSettings = new StructurePlaceSettings().setMirror(triedMirror).setRotation(baseRot);
+            BlockPos origin = pos.subtract(StructureTemplate.calculateRelativePosition(placeSettings, triggerFromOrigin));
             boolean allMatch = true;
-
             for (StructureBlockInfo info : structure) {
-                if (info.pos().equals(triggerOffset)) { continue; }
-                BlockPos realRelPos = StructureTemplate.calculateRelativePosition(new StructurePlaceSettings().setMirror(triedMirror).setRotation(rot), info.pos());
-                BlockPos here = origin.offset(realRelPos);
-                BlockState expected = rotate(info.state().mirror(triedMirror), rot);
+                if (info.pos().equals(triggerFromOrigin)) { continue; }
+                BlockPos here = origin.offset(StructureTemplate.calculateRelativePosition(placeSettings, info.pos()));
+                BlockState expected = rotate(info.state().mirror(triedMirror), baseRot);
                 BlockState inWorld = world.getBlockState(here);
                 if (!BlockMatcher.matches(expected, inWorld, world, here, additionalPredicates).isAllow()) {
                     allMatch = false;
                     break;
                 }
             }
-
             if (allMatch) {
-                if (!world.isClientSide) { form(world, origin, rot, triedMirror, side); }
+                if (!world.isClientSide) { form(world, origin, baseRot, triedMirror, side); }
                 return true;
             }
         }
