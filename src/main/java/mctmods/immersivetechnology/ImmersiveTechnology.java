@@ -2,14 +2,13 @@ package mctmods.immersivetechnology;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import mctmods.immersivetechnology.common.multiblocks.helper.ITQueueProcessor;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.ITServerConfig;
-import mctmods.immersivetechnology.core.integration.top.OneProbeHelper;
+import mctmods.immersivetechnology.core.integration.top.OneProbeIMCHelper;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.proxy.ClientProxySupplier;
 import mctmods.immersivetechnology.core.proxy.CommonProxy;
@@ -20,7 +19,6 @@ import mctmods.immersivetechnology.core.util.loot.ITLootFunctions;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.InterModComms;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
@@ -70,12 +68,7 @@ public class ImmersiveTechnology {
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
-        if (net.neoforged.fml.ModList.get().isLoaded("theoneprobe")) {
-            InterModComms.sendTo("theoneprobe", "getTheOneProbe", () -> (Function<mcjty.theoneprobe.api.ITheOneProbe, Void>) top -> {
-                OneProbeHelper.register(top);
-                return null;
-            });
-        }
+        if (net.neoforged.fml.ModList.get().isLoaded("theoneprobe")) { OneProbeIMCHelper.register(); }
     }
 
     @SubscribeEvent public static void onServerTick(ServerTickEvent.Post event) {
