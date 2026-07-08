@@ -1,5 +1,10 @@
 package mctmods.immersivetechnology.common.multiblocks.helper;
 
+import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
+import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.mixin.common.IStructureTemplateAccessorMixin;
+
 import blusunrize.immersiveengineering.api.multiblocks.BlockMatcher;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
@@ -9,10 +14,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.Multibloc
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
 import com.google.common.base.Preconditions;
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.core.ITServerConfig;
-import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.mixin.common.IStructureTemplateAccessorMixin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderGetter;
@@ -64,6 +65,8 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     public static final int DISASSEMBLE_QUEUE_SIZE = 8;
     public static final List<ITQueueProcessor> pendingQueues = new ArrayList<>();
 
+    public record TriggerPoint(BlockPos cell, Rotation offset) {}
+
     private List<StructureBlockInfo> sortedStructureBlocks;
     private Map<BlockPos, BlockState> triggerStateMap;
     private MultiblockRegistration<?> multiblockRegistration;
@@ -85,53 +88,24 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     @SuppressWarnings("unused")
     public void setLogic(MultiblockRegistration<?> logic) { this.multiblockRegistration = logic; }
 
+    protected List<TriggerPoint> getTriggerPoints() { return List.of(new TriggerPoint(this.triggerFromOrigin, Rotation.NONE)); }
+
+    protected List<Mirror> getMirrorsToTry() { return canBeMirrored() ? List.of(Mirror.NONE, FRONT_BACK) : List.of(Mirror.NONE); }
+
     private void ensureCaches(TemplateData data) {
         if (sortedStructureBlocks != null) { return; }
         List<StructureBlockInfo> nonAir = data.blocksWithoutAir();
         sortedStructureBlocks = new ArrayList<>(nonAir);
         sortedStructureBlocks.sort(Comparator.comparingInt(info -> -info.pos().getY()));
         triggerStateMap = new HashMap<>();
-        BlockPos primary = getPrimaryTriggerOffset();
-        for (StructureBlockInfo info : nonAir) {
-            if (info.pos().equals(primary)) {
-                triggerStateMap.put(primary, info.state());
-                break;
-            }
-        }
-        for (BlockPos symPos : symmetricMirror()) {
+        for (TriggerPoint trigger : getTriggerPoints()) {
             for (StructureBlockInfo info : nonAir) {
-                if (info.pos().equals(symPos)) {
-                    triggerStateMap.put(symPos, info.state());
+                if (info.pos().equals(trigger.cell())) {
+                    triggerStateMap.put(trigger.cell(), info.state());
                     break;
                 }
             }
         }
-    }
-
-    protected BlockPos getPrimaryTriggerOffset() { return this.triggerFromOrigin; }
-
-    protected List<BlockPos> symmetricMirror() { return List.of(); }
-
-    protected Mirror getAlternateMirror() { return FRONT_BACK; }
-
-    protected List<Mirror> getMirrorsToTry() { return canBeMirrored() ? List.of(Mirror.NONE, FRONT_BACK) : List.of(Mirror.NONE); }
-
-    protected boolean compensateMirrorFacing() { return false; }
-
-    protected boolean flipTriggerForMirror() { return true; }
-
-    protected BlockPos getTriggerOffset(Mirror triedMirror) {
-        if (triedMirror == Mirror.NONE) { return this.triggerFromOrigin; }
-        Mirror alternate = getAlternateMirror();
-        if (triedMirror != alternate) { return this.triggerFromOrigin; }
-        if (!flipTriggerForMirror()) { return this.triggerFromOrigin; }
-        int x = this.triggerFromOrigin.getX();
-        int y = this.triggerFromOrigin.getY();
-        int z = this.triggerFromOrigin.getZ();
-        Vec3i sz = this.size;
-        if (alternate == Mirror.LEFT_RIGHT) { z = sz.getZ() - 1 - z; }
-        else if (alternate == Mirror.FRONT_BACK) { x = sz.getX() - 1 - x; }
-        return new BlockPos(x, y, z);
     }
 
     @SuppressWarnings("deprecation")
@@ -157,6 +131,64 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         else if (!(curr instanceof MultiblockBlockEntityMaster)) { ITLib.IT_LOGGER.error("Expected MB TE at {} during placement", actualPos); }
         LevelChunk chunk = world.getChunkAt(actualPos);
         world.markAndNotifyBlock(actualPos, chunk, oldState, newState, 3, 512);
+    }
+
+    @Override
+    public boolean isBlockTrigger(BlockState state, Direction d, @Nonnull Level world) {
+        getTemplate(world);
+        Rotation baseRot = DirectionUtils.getRotationBetweenFacings(Direction.NORTH, d.getOpposite());
+        if (baseRot == null) { return false; }
+        for (TriggerPoint trigger : getTriggerPoints()) {
+            BlockState baseTrigger = triggerStateMap.getOrDefault(trigger.cell(), getTemplate(world).triggerState());
+            Rotation rot = baseRot.getRotated(trigger.offset());
+            for (Mirror triedMirror : getMirrorsToTry()) {
+                BlockState expected = rotate(baseTrigger.mirror(triedMirror), rot);
+                if (BlockMatcher.matches(expected, state, null, null, additionalPredicates).isAllow()) { return true; }
+            }
+        }
+        return false;
+    }
+
+    @Override public boolean createStructure(Level world, BlockPos pos, Direction side, net.minecraft.world.entity.player.Player player) {
+        Rotation baseRot = DirectionUtils.getRotationBetweenFacings(Direction.NORTH, side.getOpposite());
+        if (baseRot == null) { return false; }
+        getTemplate(world);
+        List<StructureTemplate.StructureBlockInfo> structure = getStructure(world);
+        for (TriggerPoint trigger : getTriggerPoints()) {
+            Rotation rot = baseRot.getRotated(trigger.offset());
+            for (Mirror triedMirror : getMirrorsToTry()) {
+                StructurePlaceSettings placeSettings = new StructurePlaceSettings().setMirror(triedMirror).setRotation(rot);
+                BlockPos origin = pos.subtract(StructureTemplate.calculateRelativePosition(placeSettings, trigger.cell()));
+                boolean allMatch = true;
+                for (StructureBlockInfo info : structure) {
+                    if (info.pos().equals(trigger.cell())) { continue; }
+                    BlockPos here = origin.offset(StructureTemplate.calculateRelativePosition(placeSettings, info.pos()));
+                    BlockState expected = rotate(info.state().mirror(triedMirror), rot);
+                    BlockState inWorld = world.getBlockState(here);
+                    if (!BlockMatcher.matches(expected, inWorld, world, here, additionalPredicates).isAllow()) {
+                        allMatch = false;
+                        break;
+                    }
+                }
+                if (allMatch) {
+                    Direction formSide = rot.rotate(Direction.NORTH).getOpposite();
+                    if (!world.isClientSide) { form(world, origin, rot, triedMirror, formSide); }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected void form(Level world, BlockPos origin, Rotation rot, Mirror mirrorForSettings, Direction side) {
+        getTemplate(world);
+        StructurePlaceSettings settings = new StructurePlaceSettings().setRotation(rot).setMirror(mirrorForSettings);
+        boolean mirrored = mirrorForSettings != Mirror.NONE;
+        for (StructureBlockInfo info : sortedStructureBlocks) {
+            BlockPos actualPos = origin.offset(StructureTemplate.calculateRelativePosition(settings, info.pos()));
+            Vec3i offsetFromMaster = info.pos().subtract(masterFromOrigin);
+            replaceStructureBlock(info, world, actualPos, mirrored, side, offsetFromMaster);
+        }
     }
 
     @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
@@ -254,94 +286,6 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             if (helper instanceof ITIMultiblockBEHelper itHelper) { itHelper.it$markDisassembling(); }
         }
         else if (be != null) { ITLib.IT_LOGGER.error("Expected multiblock BE at {}, got {}", pos, be); }
-    }
-
-    @Override
-    public boolean isBlockTrigger(BlockState state, Direction d, @Nonnull Level world) {
-        getTemplate(world);
-        Rotation rot = DirectionUtils.getRotationBetweenFacings(Direction.NORTH, d.getOpposite());
-        if (rot == null) { return false; }
-        if (!symmetricMirror().isEmpty()) {
-            BlockPos primaryOffset = getPrimaryTriggerOffset();
-            BlockState baseTrigger = triggerStateMap.getOrDefault(primaryOffset, getTemplate(world).triggerState());
-            BlockState expected = rotate(baseTrigger, rot);
-            return BlockMatcher.matches(expected, state, null, null, additionalPredicates).isAllow();
-        }
-        BlockState baseTrigger = getTemplate(world).triggerState();
-        for (Mirror triedMirror : getMirrorsToTry()) {
-            BlockState expected = rotate(baseTrigger.mirror(triedMirror), rot);
-            if (BlockMatcher.matches(expected, state, null, null, additionalPredicates).isAllow()) { return true; }
-        }
-        return false;
-    }
-
-    @Override public boolean createStructure(Level world, BlockPos pos, Direction side, net.minecraft.world.entity.player.Player player) {
-        Rotation baseRot = DirectionUtils.getRotationBetweenFacings(Direction.NORTH, side.getOpposite());
-        if (baseRot == null) { return false; }
-        getTemplate(world);
-        List<StructureTemplate.StructureBlockInfo> structure = getStructure(world);
-        if (!symmetricMirror().isEmpty()) {
-            List<BlockPos> allTriggers = new ArrayList<>();
-            allTriggers.add(getPrimaryTriggerOffset());
-            allTriggers.addAll(symmetricMirror());
-            for (BlockPos triggerOffset : allTriggers) {
-                boolean isSymmetric = symmetricMirror().contains(triggerOffset);
-                Rotation currentRot = baseRot;
-                if (isSymmetric) { currentRot = baseRot.getRotated(Rotation.CLOCKWISE_180); }
-                StructurePlaceSettings placeSettings = new StructurePlaceSettings().setMirror(Mirror.NONE).setRotation(currentRot);
-                BlockPos origin = pos.subtract(StructureTemplate.calculateRelativePosition(placeSettings, triggerOffset));
-                boolean allMatch = true;
-                for (StructureTemplate.StructureBlockInfo info : structure) {
-                    if (allTriggers.contains(info.pos())) { continue; }
-                    BlockPos realRelPos = StructureTemplate.calculateRelativePosition(placeSettings, info.pos());
-                    BlockPos here = origin.offset(realRelPos);
-                    BlockState expected = rotate(info.state(), currentRot);
-                    BlockState inWorld = world.getBlockState(here);
-                    if (!BlockMatcher.matches(expected, inWorld, world, here, additionalPredicates).isAllow()) {
-                        allMatch = false;
-                        break;
-                    }
-                }
-                if (allMatch) {
-                    Direction formSide = side;
-                    if (isSymmetric) { formSide = side.getOpposite(); }
-                    if (!world.isClientSide) { form(world, origin, currentRot, Mirror.NONE, formSide); }
-                    return true;
-                }
-            }
-            return false;
-        }
-        for (Mirror triedMirror : getMirrorsToTry()) {
-            StructurePlaceSettings placeSettings = new StructurePlaceSettings().setMirror(triedMirror).setRotation(baseRot);
-            BlockPos origin = pos.subtract(StructureTemplate.calculateRelativePosition(placeSettings, triggerFromOrigin));
-            boolean allMatch = true;
-            for (StructureBlockInfo info : structure) {
-                if (info.pos().equals(triggerFromOrigin)) { continue; }
-                BlockPos here = origin.offset(StructureTemplate.calculateRelativePosition(placeSettings, info.pos()));
-                BlockState expected = rotate(info.state().mirror(triedMirror), baseRot);
-                BlockState inWorld = world.getBlockState(here);
-                if (!BlockMatcher.matches(expected, inWorld, world, here, additionalPredicates).isAllow()) {
-                    allMatch = false;
-                    break;
-                }
-            }
-            if (allMatch) {
-                if (!world.isClientSide) { form(world, origin, baseRot, triedMirror, side); }
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected void form(Level world, BlockPos origin, Rotation rot, Mirror mirrorForSettings, Direction side) {
-        getTemplate(world);
-        StructurePlaceSettings settings = new StructurePlaceSettings().setRotation(rot).setMirror(mirrorForSettings);
-        boolean mirrored = mirrorForSettings != Mirror.NONE;
-        for (StructureBlockInfo info : sortedStructureBlocks) {
-            BlockPos actualPos = origin.offset(StructureTemplate.calculateRelativePosition(settings, info.pos()));
-            Vec3i offsetFromMaster = info.pos().subtract(masterFromOrigin);
-            replaceStructureBlock(info, world, actualPos, mirrored, side, offsetFromMaster);
-        }
     }
 
     @Override public Component getDisplayName() { return this.getBlock().getName(); }
