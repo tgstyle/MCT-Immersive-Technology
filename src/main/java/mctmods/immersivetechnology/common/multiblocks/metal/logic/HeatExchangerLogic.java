@@ -58,7 +58,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
     public static final List<BlockPos> OUTPUT_FLUID_0_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
     public static final List<BlockPos> OUTPUT_FLUID_1_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output1");
     public static final List<BlockPos> ENERGY_INPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "energy_input0");
-    public static final List<BlockPos> SOUND_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound");
+    public static final List<BlockPos> SOUND_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
 
     public static final List<BlockPos> INPUT_FLUID_POIS = ImmutableList.<BlockPos>builder().addAll(INPUT_FLUID_0_POIS).addAll(INPUT_FLUID_1_POIS).build();
 
