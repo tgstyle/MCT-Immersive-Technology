@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.client.renderer.helper;
 
+import mctmods.immersivetechnology.core.ITClientConfig;
+
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.UnmodifiableIterator;
@@ -10,7 +12,6 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.mojang.blaze3d.vertex.VertexFormatElement.Type;
 import com.mojang.blaze3d.vertex.VertexFormatElement.Usage;
-import mctmods.immersivetechnology.core.ITClientConfig;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -26,6 +27,8 @@ import java.util.List;
 
 public class ITRenderUtils {
     private static final Vector4f[] quadCoords = new Vector4f[4];
+    private static final Vector3f quadNormal = new Vector3f();
+    private static final Vector3f quadSide2 = new Vector3f();
     private static final int[][] neighbourBrightness = new int[2][6];
     private static final float[][] normalizationFactors = new float[2][8];
     private static final VertexFormat FORMAT = DefaultVertexFormat.BLOCK;
@@ -59,19 +62,19 @@ public class ITRenderUtils {
             for (BakedQuad quad : quads) {
                 int[] vData = quad.getVertices();
                 for (int i = 0; i < 4; ++i) { quadCoords[i].set(Float.intBitsToFloat(vData[VERTEX_SIZE * i + POSITION_OFFSET]), Float.intBitsToFloat(vData[VERTEX_SIZE * i + POSITION_OFFSET + 1]), Float.intBitsToFloat(vData[VERTEX_SIZE * i + POSITION_OFFSET + 2]), 1.0F); }
-                Vector3f normal = new Vector3f(quadCoords[1].x, quadCoords[1].y, quadCoords[1].z);
-                Vector3f side2 = new Vector3f(quadCoords[2].x, quadCoords[2].y, quadCoords[2].z);
-                normal.add(-quadCoords[3].x(), -quadCoords[3].y(), -quadCoords[3].z());
-                side2.add(-quadCoords[0].x(), -quadCoords[0].y(), -quadCoords[0].z());
-                normal.cross(side2);
-                normal.normalize();
-                int l1 = getLightValue(neighbourBrightness[1], normalizationFactors[1], light & 255, normal);
-                int l2 = getLightValue(neighbourBrightness[0], normalizationFactors[0], light >> 16 & 255, normal);
-                normal.mul(normalTransform);
+                quadNormal.set(quadCoords[1].x, quadCoords[1].y, quadCoords[1].z);
+                quadSide2.set(quadCoords[2].x, quadCoords[2].y, quadCoords[2].z);
+                quadNormal.add(-quadCoords[3].x(), -quadCoords[3].y(), -quadCoords[3].z());
+                quadSide2.add(-quadCoords[0].x(), -quadCoords[0].y(), -quadCoords[0].z());
+                quadNormal.cross(quadSide2);
+                quadNormal.normalize();
+                int l1 = getLightValue(neighbourBrightness[1], normalizationFactors[1], light & 255, quadNormal);
+                int l2 = getLightValue(neighbourBrightness[0], normalizationFactors[0], light >> 16 & 255, quadNormal);
+                quadNormal.mul(normalTransform);
                 for (int i = 0; i < 4; ++i) {
                     Vector4f vertexPos = quadCoords[i];
                     vertexPos.mul(positionTransform);
-                    renderer.vertex(vertexPos.x(), vertexPos.y(), vertexPos.z(), rgba[0] / 255.0F, rgba[1] / 255.0F, rgba[2] / 255.0F, rgba[3] / 255.0F, Float.intBitsToFloat(vData[VERTEX_SIZE * i + UV_OFFSET]), Float.intBitsToFloat(vData[VERTEX_SIZE * i + UV_OFFSET + 1]), OverlayTexture.NO_OVERLAY, LightTexture.pack(l1 >> 4, l2 >> 4), normal.x(), normal.y(), normal.z());
+                    renderer.vertex(vertexPos.x(), vertexPos.y(), vertexPos.z(), rgba[0] / 255.0F, rgba[1] / 255.0F, rgba[2] / 255.0F, rgba[3] / 255.0F, Float.intBitsToFloat(vData[VERTEX_SIZE * i + UV_OFFSET]), Float.intBitsToFloat(vData[VERTEX_SIZE * i + UV_OFFSET + 1]), OverlayTexture.NO_OVERLAY, LightTexture.pack(l1 >> 4, l2 >> 4), quadNormal.x(), quadNormal.y(), quadNormal.z());
                 }
             }
         }
@@ -83,15 +86,18 @@ public class ITRenderUtils {
         if (normal.x() > 0.0F) {
             sideBrightness = normal.x() * neighbourBrightness[5];
             type |= 1;
-        } else { sideBrightness = -normal.x() * neighbourBrightness[4]; }
+        }
+        else { sideBrightness = -normal.x() * neighbourBrightness[4]; }
         if (normal.y() > 0.0F) {
             sideBrightness += normal.y() * neighbourBrightness[1];
             type |= 2;
-        } else { sideBrightness += -normal.y() * neighbourBrightness[0]; }
+        }
+        else { sideBrightness += -normal.y() * neighbourBrightness[0]; }
         if (normal.z() > 0.0F) {
             sideBrightness += normal.z() * neighbourBrightness[3];
             type |= 4;
-        } else { sideBrightness += -normal.z() * neighbourBrightness[2]; }
+        }
+        else { sideBrightness += -normal.z() * neighbourBrightness[2]; }
         return (int)((localBrightness + sideBrightness / normalizationFactors[type]) / 2.0F);
     }
 

@@ -1,10 +1,11 @@
 package mctmods.immersivetechnology.client.models.split.geometry;
 
+import mctmods.immersivetechnology.client.models.util.ITModelUtils;
+
 import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.mojang.math.Transformation;
-import mctmods.immersivetechnology.client.models.util.ITModelUtils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
@@ -22,6 +23,7 @@ public class ITPolygonUtils {
     private static final int UV_OFFSET;
     private static final int NORMAL_OFFSET;
     private static final int COLOR_OFFSET;
+    private static final int LIGHTMAP_OFFSET;
 
     static {
         VERTEX_SIZE_INTS = DefaultVertexFormat.BLOCK.getVertexSize() / 4;
@@ -29,6 +31,7 @@ public class ITPolygonUtils {
         UV_OFFSET = getOffset(DefaultVertexFormat.ELEMENT_UV) / 4;
         NORMAL_OFFSET = getOffset(DefaultVertexFormat.ELEMENT_NORMAL) / 4;
         COLOR_OFFSET = getOffset(DefaultVertexFormat.ELEMENT_COLOR) / 4;
+        LIGHTMAP_OFFSET = getOffset(DefaultVertexFormat.ELEMENT_UV2) / 4;
     }
 
     private static int getOffset(VertexFormatElement element) {
@@ -96,9 +99,9 @@ public class ITPolygonUtils {
             pos.mul(1 / pos.w());
 
             final double epsilon = 1e-5;
-            if (Math.abs(pos.x() - Math.round(pos.x())) < epsilon) pos.setComponent(0, Math.round(pos.x()));
-            if (Math.abs(pos.y() - Math.round(pos.y())) < epsilon) pos.setComponent(1, Math.round(pos.y()));
-            if (Math.abs(pos.z() - Math.round(pos.z())) < epsilon) pos.setComponent(2, Math.round(pos.z()));
+            if (Math.abs(pos.x() - Math.round(pos.x())) < epsilon) { pos.setComponent(0, Math.round(pos.x())); }
+            if (Math.abs(pos.y() - Math.round(pos.y())) < epsilon) { pos.setComponent(1, Math.round(pos.y())); }
+            if (Math.abs(pos.z() - Math.round(pos.z())) < epsilon) { pos.setComponent(2, Math.round(pos.z())); }
 
             double builder_u = absoluteUV
                     ? (v.uv().u() - u0) / (u1 - u0) * 16.0
@@ -107,18 +110,23 @@ public class ITPolygonUtils {
                     ? (v.uv().v() - v0) / (v1 - v0) * 16.0
                     : 16.0 * (1.0 - v.uv().v());
 
+            float shade = Math.min(normal.x() * normal.x() * 0.6f + normal.y() * normal.y() * ((3.0f + normal.y()) / 4.0f) + normal.z() * normal.z() * 0.8f, 1.0f);
+
             quadBuilder.putVertexData(
                     new Vec3(pos.x(), pos.y(), pos.z()),
                     new Vec3(normal),
                     builder_u,
                     builder_v,
                     data.sprite(),
-                    new float[]{data.color.x(), data.color.y(), data.color.z(), data.color.w()},
+                    new float[]{data.color.x() * shade, data.color.y() * shade, data.color.z() * shade, data.color.w()},
                     1.0f
             );
         }
 
-        return quadBuilder.bake(-1, Direction.getNearest(normal.x(), normal.y(), normal.z()), data.sprite(), true);
+        BakedQuad quad = quadBuilder.bake(-1, Direction.getNearest(normal.x(), normal.y(), normal.z()), data.sprite(), false);
+        int[] verts = quad.getVertices();
+        for (int i = 0; i < 4; ++i) { verts[i * VERTEX_SIZE_INTS + LIGHTMAP_OFFSET] = 0xF00000; }
+        return quad;
     }
 
     private static float[] toArray(ITVec3d vec, int length) {

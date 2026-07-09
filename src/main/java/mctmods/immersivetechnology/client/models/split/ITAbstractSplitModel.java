@@ -8,6 +8,8 @@ import mctmods.immersivetechnology.client.models.split.geometry.ITSplitObjModel;
 import mctmods.immersivetechnology.client.models.split.geometry.ITSplitModel;
 import mctmods.immersivetechnology.client.models.split.geometry.ITClumpedModel;
 import mctmods.immersivetechnology.client.models.split.geometry.ITModelSplitterVec3i;
+
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelState;
@@ -19,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -39,20 +42,20 @@ public abstract class ITAbstractSplitModel<T extends BakedModel> extends BakedMo
         WEAK_INSTANCES.add(this);
     }
 
+    @Override public boolean useAmbientOcclusion() { return false; }
+
+    @Override public boolean useAmbientOcclusion(@Nonnull BlockState state) { return false; }
+
+    @Override public boolean useAmbientOcclusion(@Nonnull BlockState state, @Nullable RenderType renderType) { return false; }
+
     @Override @Nonnull public ModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ModelData tileData) {
         ModelData baseData = super.getModelData(world, pos, state, tileData);
         BlockEntity te = world.getBlockEntity(pos);
         BlockPos offset = null;
-        if (te instanceof ITIModelOffsetProvider offsetProvider) {
-            offset = offsetProvider.getModelOffset(state, size);
-        } else if (state.getBlock() instanceof ITIModelOffsetProvider offsetProvider) {
-            offset = offsetProvider.getModelOffset(state, size);
-        }
-        if (offset != null) {
-            return baseData.derive().with(ITProperties.Model.SUBMODEL_OFFSET, offset).build();
-        } else {
-            return baseData;
-        }
+        if (te instanceof ITIModelOffsetProvider offsetProvider) { offset = offsetProvider.getModelOffset(state, size); }
+        else if (state.getBlock() instanceof ITIModelOffsetProvider offsetProvider) { offset = offsetProvider.getModelOffset(state, size); }
+        if (offset != null) { return baseData.derive().with(ITProperties.Model.SUBMODEL_OFFSET, offset).build(); }
+        else { return baseData; }
     }
 
     protected Map<Vec3i, List<BakedQuad>> split(List<BakedQuad> in, Set<Vec3i> parts, ModelState transform) {

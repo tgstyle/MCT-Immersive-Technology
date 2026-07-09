@@ -1,13 +1,14 @@
 package mctmods.immersivetechnology.client.renderer;
 
+import mctmods.immersivetechnology.client.models.util.ITFluidRender;
+import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
+import mctmods.immersivetechnology.client.renderer.helper.ITRenderTypes;
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteelSheetmetalTankLogic.State;
+
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
-import mctmods.immersivetechnology.client.gui.helper.ITGuiHelper;
-import mctmods.immersivetechnology.client.renderer.helper.ITRenderTypes;
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteelSheetmetalTankLogic.State;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.fluids.FluidStack;
@@ -43,7 +44,7 @@ public class SteelSheetmetalTankRenderer extends ITBaseBlockEntityRenderer<Multi
             if (!fs.isEmpty()) {
                 float h = fs.getAmount() / (float) state.tank.getCapacity();
                 matrixStack.translate(0, 0, 0.008f);
-                ITGuiHelper.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.solid()), matrixStack, fs, 0, 0 + (1 - h) * 16, 16, h * 16);
+                ITFluidRender.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.solid()), matrixStack, fs, 0, 0 + (1 - h) * 16, 16, h * 16);
             }
             matrixStack.popPose();
             matrixStack.mulPose(Axis.YP.rotationDegrees(90f));

@@ -52,6 +52,7 @@ import java.util.function.Function;
 
 public class ITModelConfigurableSides extends ITBakedModel {
     private static final HashMap<String, ITextureNamer> TYPES = new HashMap<>();
+    private static final Map<Direction, ITEnums.IOSideConfig> DEFAULT_KEY = defaultConfig();
     private final LoadingCache<Map<Direction, ITEnums.IOSideConfig>, Map<Direction, BakedQuad>> modelCache;
     final String name;
     public Map<Direction, Map<ITEnums.IOSideConfig, TextureAtlasSprite>> textures;
@@ -72,14 +73,14 @@ public class ITModelConfigurableSides extends ITBakedModel {
     @Override @Nonnull public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData, @Nullable RenderType layer) {
         if (side == null) { return ImmutableList.of(); }
         Map<Direction, ITEnums.IOSideConfig> config = extraData.get(ITProperties.Model.SIDECONFIG);
-        if (config == null) { config = defaultConfig(); }
+        if (config == null) { config = DEFAULT_KEY; }
         return ImmutableList.of(this.modelCache.getUnchecked(config).get(side));
     }
 
     private static Map<Direction, ITEnums.IOSideConfig> defaultConfig() {
         Map<Direction, ITEnums.IOSideConfig> config = new EnumMap<>(Direction.class);
         for (Direction d : DirectionUtils.VALUES) { config.put(d, ITEnums.IOSideConfig.NONE); }
-        return config;
+        return ImmutableMap.copyOf(config);
     }
 
     @Override @Nonnull public ModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ModelData tileData) {

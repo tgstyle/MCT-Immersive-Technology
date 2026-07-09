@@ -1,12 +1,13 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
 import mctmods.immersivetechnology.client.models.ITDynamicModel;
 import mctmods.immersivetechnology.client.renderer.helper.ITRenderUtils;
 import mctmods.immersivetechnology.common.blocks.metal.RotorCreativeBlock;
 import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeIBlockEntity;
+
+import blusunrize.immersiveengineering.api.ApiUtils;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -23,6 +24,8 @@ import org.joml.Quaternionf;
 import java.util.List;
 
 public class RotorCreativeRenderer implements BlockEntityRenderer<RotorCreativeIBlockEntity> {
+    private static final Quaternionf ROTATION = new Quaternionf();
+
     public RotorCreativeRenderer() {}
 
     @Override public void render(@NotNull RotorCreativeIBlockEntity tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
@@ -33,7 +36,8 @@ public class RotorCreativeRenderer implements BlockEntityRenderer<RotorCreativeI
         ITDynamicModel selectedModel = (dir == Direction.EAST || dir == Direction.WEST) ? RotorModels.ROTOR_EAST_WEST : RotorModels.ROTOR;
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);
-        poseStack.mulPose(new Quaternionf().rotateAxis((float)(angle * Mth.DEG_TO_RAD), axisVec.toVector3f()));
+        ROTATION.rotationAxis((float)(angle * Mth.DEG_TO_RAD), (float) axisVec.x, (float) axisVec.y, (float) axisVec.z);
+        poseStack.mulPose(ROTATION);
         renderDynamicModel(selectedModel, poseStack, buffer, tile.getLevel(), tile.getBlockPos(), packedLight);
         poseStack.popPose();
     }

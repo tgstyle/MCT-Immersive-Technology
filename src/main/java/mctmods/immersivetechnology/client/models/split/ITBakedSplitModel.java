@@ -1,13 +1,14 @@
 package mctmods.immersivetechnology.client.models.split;
 
+import mctmods.immersivetechnology.client.models.ITICacheKeyProvider;
+import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
+
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.utils.ResettableLazy;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.client.models.ITICacheKeyProvider;
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -49,7 +50,8 @@ public class ITBakedSplitModel<T extends BakedModel> extends ITAbstractSplitMode
                 return split(baseQuads, parts, transform);
             }));
             this.splitModels = null;
-        } else {
+        }
+        else {
             this.splitModels = new ResettableLazy<>(() -> {
                 List<BakedQuad> quads = base.getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
                 return split(quads, parts, transform);
@@ -62,25 +64,22 @@ public class ITBakedSplitModel<T extends BakedModel> extends ITAbstractSplitMode
     @Override @SuppressWarnings("ConstantConditions") @Nonnull public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData data, @Nullable RenderType renderType) {
         BlockPos offset = data.get(ITProperties.Model.SUBMODEL_OFFSET);
         if (offset == null) {
-            if (state == null) {
-                return super.getQuads(state, side, rand, data, renderType);
-            }
+            if (state == null) { return super.getQuads(state, side, rand, data, renderType); }
             return ImmutableList.of();
         }
+        if (side != null) { return ImmutableList.of(); }
         if (dynamic) {
             Object key = this.keyProvider.getKey(state, side, rand, data, renderType);
-            if (key == null) {
-                return ImmutableList.of();
-            }
+            if (key == null) { return ImmutableList.of(); }
             return subModelCache.getUnchecked(key).getOrDefault(offset, ImmutableList.of());
-        } else {
-            return splitModels.get().getOrDefault(offset, ImmutableList.of());
         }
+        else { return splitModels.get().getOrDefault(offset, ImmutableList.of()); }
     }
 
     @Override @Nonnull public ItemTransforms getTransforms() { return dynamic ? super.getTransforms() : itemTransforms; }
 
     @Override protected void clearCache() {
-        if (dynamic) { subModelCache.invalidateAll(); } else { splitModels.reset(); }
+        if (dynamic) { subModelCache.invalidateAll(); }
+        else { splitModels.reset(); }
     }
 }
