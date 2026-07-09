@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal;
 import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelOpenBlockEntity;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -26,5 +27,5 @@ public class BarrelOpenBlock extends ITIEntityBlock<BarrelOpenBlockEntity> {
         builder.add(BOTTOM_CONFIG);
     }
 
-    @Override @NotNull public RenderShape getRenderShape(@NotNull BlockState state) { return RenderShape.ENTITYBLOCK_ANIMATED; }
+    @Override @NotNull public RenderShape getRenderShape(@NotNull BlockState state) { return RenderShape.MODEL; }
 }

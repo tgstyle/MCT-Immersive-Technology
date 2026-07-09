@@ -1,13 +1,14 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
 import mctmods.immersivetechnology.client.models.util.ITFluidRender;
 import mctmods.immersivetechnology.client.renderer.helper.ITRenderTypes;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteelSheetmetalTankLogic.State;
+
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.phys.AABB;
@@ -19,7 +20,7 @@ public class SteelSheetmetalTankRenderer extends ITBaseBlockEntityRenderer<Multi
 
     public SteelSheetmetalTankRenderer() {}
 
-    @Override @NotNull public AABB getRenderBoundingBox(@NotNull MultiblockBlockEntityMaster<State> tile) { return AABB.INFINITE; }
+    @Override @NotNull public AABB getRenderBoundingBox(@NotNull MultiblockBlockEntityMaster<State> tile) { return new AABB(tile.getBlockPos()).inflate(4); }
 
     @Override public void render(MultiblockBlockEntityMaster<State> tile, float partialTicks, PoseStack matrixStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         final State state = tile.getHelper().getState();

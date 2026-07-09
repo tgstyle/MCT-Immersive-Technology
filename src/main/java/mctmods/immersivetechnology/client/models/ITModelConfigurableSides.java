@@ -1,5 +1,12 @@
 package mctmods.immersivetechnology.client.models;
 
+import mctmods.immersivetechnology.client.models.util.ITModelUtils;
+import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.ITEnums;
+import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
+import mctmods.immersivetechnology.common.blocks.metal.BarrelSteelBlock;
+import mctmods.immersivetechnology.core.lib.ITLib;
+
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -9,12 +16,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mctmods.immersivetechnology.client.models.util.ITModelUtils;
-import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.ITEnums;
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.blocks.metal.BarrelSteelBlock;
-import mctmods.immersivetechnology.core.lib.ITLib;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -51,6 +52,7 @@ import java.util.function.Function;
 
 public class ITModelConfigurableSides extends ITBakedModel {
     private static final HashMap<String, ITextureNamer> TYPES = new HashMap<>();
+    private static final Map<Direction, ITEnums.IOSideConfig> DEFAULT_KEY = normalizeConfig(null);
     private final LoadingCache<Map<Direction, ITEnums.IOSideConfig>, Map<Direction, BakedQuad>> modelCache;
     private final RenderTypeGroup renderTypes;
 
@@ -77,24 +79,17 @@ public class ITModelConfigurableSides extends ITBakedModel {
 
     @Override @NotNull public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData extraData, @Nullable RenderType renderType) {
         if (side == null) { return ImmutableList.of(); }
-        Map<Direction, ITEnums.IOSideConfig> config = extraData.get(ITProperties.Model.SIDECONFIG);
-        if (config == null && state != null && state.getBlock() instanceof BarrelSteelBlock) {
+        Map<Direction, ITEnums.IOSideConfig> key = extraData.get(ITProperties.Model.SIDECONFIG);
+        if (key == null && state != null && state.getBlock() instanceof BarrelSteelBlock) {
             ITEnums.IOSideConfig top = state.hasProperty(BarrelSteelBlock.TOP_CONFIG) ? state.getValue(BarrelSteelBlock.TOP_CONFIG) : ITEnums.IOSideConfig.INPUT;
             ITEnums.IOSideConfig bottom = state.hasProperty(BarrelSteelBlock.BOTTOM_CONFIG) ? state.getValue(BarrelSteelBlock.BOTTOM_CONFIG) : ITEnums.IOSideConfig.OUTPUT;
-            config = new EnumMap<>(Direction.class);
-            for (Direction d : DirectionUtils.VALUES) { config.put(d, ITEnums.IOSideConfig.NONE); }
+            Map<Direction, ITEnums.IOSideConfig> config = new EnumMap<>(Direction.class);
             config.put(Direction.UP, top);
             config.put(Direction.DOWN, bottom);
+            key = normalizeConfig(config);
         }
-        if (config == null) { config = defaultConfig(); }
-        Map<Direction, ITEnums.IOSideConfig> key = normalizeConfig(config);
+        if (key == null) { key = DEFAULT_KEY; }
         return ImmutableList.of(this.modelCache.getUnchecked(key).get(side));
-    }
-
-    private static Map<Direction, ITEnums.IOSideConfig> defaultConfig() {
-        Map<Direction, ITEnums.IOSideConfig> config = new EnumMap<>(Direction.class);
-        for (Direction d : DirectionUtils.VALUES) { config.put(d, ITEnums.IOSideConfig.NONE); }
-        return config;
     }
 
     private static Map<Direction, ITEnums.IOSideConfig> normalizeConfig(Map<Direction, ITEnums.IOSideConfig> cfg) {
@@ -111,13 +106,13 @@ public class ITModelConfigurableSides extends ITBakedModel {
         if (te instanceof ITIBlockInterfaces.IConfigurableSides confBE) {
             Map<Direction, ITEnums.IOSideConfig> conf = new EnumMap<>(Direction.class);
             for (Direction d : DirectionUtils.VALUES) { conf.put(d, confBE.getSideConfig(d)); }
-            data.with(ITProperties.Model.SIDECONFIG, conf);
-        } else if (state.hasProperty(BarrelSteelBlock.TOP_CONFIG) && state.hasProperty(BarrelSteelBlock.BOTTOM_CONFIG)) {
+            data.with(ITProperties.Model.SIDECONFIG, normalizeConfig(conf));
+        }
+        else if (state.hasProperty(BarrelSteelBlock.TOP_CONFIG) && state.hasProperty(BarrelSteelBlock.BOTTOM_CONFIG)) {
             Map<Direction, ITEnums.IOSideConfig> conf = new EnumMap<>(Direction.class);
-            for (Direction d : DirectionUtils.VALUES) { conf.put(d, ITEnums.IOSideConfig.NONE); }
             conf.put(Direction.UP, state.getValue(BarrelSteelBlock.TOP_CONFIG));
             conf.put(Direction.DOWN, state.getValue(BarrelSteelBlock.BOTTOM_CONFIG));
-            data.with(ITProperties.Model.SIDECONFIG, conf);
+            data.with(ITProperties.Model.SIDECONFIG, normalizeConfig(conf));
         }
         return data.build();
     }

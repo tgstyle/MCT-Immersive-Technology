@@ -32,7 +32,8 @@ public class ITBakedDynamicSplitModel<K, T extends ICacheKeyProvider<K> & BakedM
 
     public ITBakedDynamicSplitModel(T base, Set<Vec3i> parts, ModelState transform, @Nonnull Vec3i size) {
         super(base, size);
-        this.subModelCache = CacheBuilder.newBuilder().maximumSize(10).expireAfterAccess(1, TimeUnit.MINUTES).build(CacheLoader.from(key -> { List<BakedQuad> baseQuads = base.getQuads(key); return split(baseQuads, parts, transform); }));
+        this.subModelCache = CacheBuilder.newBuilder().maximumSize(64).expireAfterAccess(10, TimeUnit.MINUTES).build(CacheLoader.from(key -> { List<BakedQuad> baseQuads = base.getQuads(key); return split(baseQuads, parts, transform); }));
+        WEAK_INSTANCES.add(this);
     }
 
     @Override @NotNull public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @Nullable RenderType renderType) {

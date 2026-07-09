@@ -104,22 +104,27 @@ public class ITPolygonUtils {
 
             final double epsilon = 1e-5;
             for (int i = 0; i < 2; ++i) {
-                if (Math.abs(i - pos.x()) < epsilon) pos.setComponent(0, i);
-                if (Math.abs(i - pos.y()) < epsilon) pos.setComponent(1, i);
-                if (Math.abs(i - pos.z()) < epsilon) pos.setComponent(2, i);
+                if (Math.abs(i - pos.x()) < epsilon) { pos.setComponent(0, i); }
+                if (Math.abs(i - pos.y()) < epsilon) { pos.setComponent(1, i); }
+                if (Math.abs(i - pos.z()) < epsilon) { pos.setComponent(2, i); }
             }
+
+            float shade = Math.min(normal.x() * normal.x() * 0.6f + normal.y() * normal.y() * ((3.0f + normal.y()) / 4.0f) + normal.z() * normal.z() * 0.8f, 1.0f);
 
             quadBuilder.putVertexData(
                     new Vec3(pos.x(), pos.y(), pos.z()),
                     new Vec3(normal),
                     absoluteUV ? v.uv().u() : data.sprite().getU((float) v.uv().u()),
                     absoluteUV ? v.uv().v() : data.sprite().getV((float) (1 - v.uv().v())),
-                    new float[]{data.color.x(), data.color.y(), data.color.z(), data.color.w()},
+                    new float[]{data.color.x() * shade, data.color.y() * shade, data.color.z() * shade, data.color.w()},
                     1
             );
         }
 
-        return quadBuilder.bake(-1, Direction.getNearest(normal.x(), normal.y(), normal.z()), data.sprite(), true);
+        BakedQuad quad = quadBuilder.bake(-1, Direction.getNearest(normal.x(), normal.y(), normal.z()), data.sprite(), false);
+        int[] verts = quad.getVertices();
+        for (int i = 0; i < 4; ++i) { verts[i * VERTEX_SIZE_INTS + UV_OFFSET + 2] = 0xF00000; }
+        return quad;
     }
 
     private static float[] toArray(ITVec3d vec, int length) {

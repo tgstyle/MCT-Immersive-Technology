@@ -1,24 +1,29 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mctmods.immersivetechnology.client.particles.ColoredBeam;
 import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
+
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 public class SolarMelterRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarMelterLogic.State>> {
     public SolarMelterRenderer() {}
 
-    @Override public @NotNull net.minecraft.world.phys.AABB getRenderBoundingBox(@NotNull MultiblockBlockEntityMaster<SolarMelterLogic.State> be) { return net.minecraft.world.phys.AABB.INFINITE; }
+    @Override public @NotNull AABB getRenderBoundingBox(@NotNull MultiblockBlockEntityMaster<SolarMelterLogic.State> be) {
+        BlockPos beamPos = be.getHelper().getContext().getLevel().toAbsolute(SolarMelterLogic.PARTICLE_POI);
+        return new AABB(be.getBlockPos()).minmax(new AABB(beamPos)).inflate(2).expandTowards(0, 20, 0);
+    }
 
     private static final ResourceLocation BEAM_TEXTURE = ResourceLocation.withDefaultNamespace("textures/entity/beacon_beam.png");
 
@@ -57,6 +62,4 @@ public class SolarMelterRenderer extends ITBaseBlockEntityRenderer<MultiblockBlo
         ColoredBeam.renderBeam(matrixStack, bufferIn, BEAM_TEXTURE, partialTicks, 1.0F, time, false, innerBottomG, innerTopG, innerA, outerBottomG, outerTopG, outerA, 2.0F, 18.0F, worldX, worldYBottom, worldYTop, worldZ);
         matrixStack.popPose();
     }
-
-    @Override public boolean shouldRenderOffScreen(@NotNull MultiblockBlockEntityMaster<SolarMelterLogic.State> be) { return true; }
 }

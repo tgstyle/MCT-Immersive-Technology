@@ -1,24 +1,23 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
 import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelOpenBlockEntity;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
@@ -30,28 +29,19 @@ public class OpenBarrelRenderer extends ITBaseBlockEntityRenderer<BarrelOpenBloc
     @Override public void render(BarrelOpenBlockEntity be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         Level level = be.getLevel();
         if (level == null) { return; }
-
-        BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(be.getBlockState());
-        RandomSource random = RandomSource.create(be.getBlockState().getSeed(be.getBlockPos()));
-        ModelData modelData = ModelData.EMPTY;
-        for (RenderType rt : model.getRenderTypes(be.getBlockState(), random, modelData)) {
-            VertexConsumer consumer = buffer.getBuffer(rt);
-            Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(level, model, be.getBlockState(), be.getBlockPos(), matrixStack, consumer, true, random, be.getBlockState().getSeed(be.getBlockPos()), OverlayTexture.NO_OVERLAY, modelData, rt);
-        }
         FluidStack fluidStack = be.tank.getFluid();
         if (fluidStack.isEmpty()) { return; }
         Fluid fluid = fluidStack.getFluid();
         IClientFluidTypeExtensions extensions = IClientFluidTypeExtensions.of(fluid);
         FluidState fluidState = fluid.defaultFluidState();
         int color = extensions.getTintColor(fluidState, level, be.getBlockPos());
-        if ((color >>> 24) == 0) color |= 0xFF000000;
+        if ((color >>> 24) == 0) { color |= 0xFF000000; }
         float r = ((color >> 16) & 0xFF) / 255f;
         float g = ((color >> 8) & 0xFF) / 255f;
         float b = (color & 0xFF) / 255f;
         float a = ((color >> 24) & 0xFF) / 255f;
         ResourceLocation still = extensions.getStillTexture(fluidStack);
-        ResourceLocation blockAtlas = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/atlas/blocks.png");
-        TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(blockAtlas).apply(still);
+        TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
         if (sprite == null) { return; }
         float minU = sprite.getU0();
         float maxU = sprite.getU1();

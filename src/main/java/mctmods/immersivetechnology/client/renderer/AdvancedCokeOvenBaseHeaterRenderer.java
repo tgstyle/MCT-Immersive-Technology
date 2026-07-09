@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mctmods.immersivetechnology.client.models.ITDynamicModel;
 import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
 import mctmods.immersivetechnology.client.renderer.helper.ITRenderUtils;
 import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
+
+import blusunrize.immersiveengineering.api.ApiUtils;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -20,6 +21,8 @@ import org.joml.Quaternionf;
 import java.util.List;
 
 public class AdvancedCokeOvenBaseHeaterRenderer extends ITBaseBlockEntityRenderer<AdvancedCokeOvenBaseHeaterBlockEntity> {
+    private static final Quaternionf ROT_Y = new Quaternionf();
+    private static final Quaternionf ROT_X = new Quaternionf();
     public static ITDynamicModel FAN_MODEL;
 
     public AdvancedCokeOvenBaseHeaterRenderer() {}
@@ -33,8 +36,10 @@ public class AdvancedCokeOvenBaseHeaterRenderer extends ITBaseBlockEntityRendere
 
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);
-        poseStack.mulPose(new Quaternionf().rotateY(facing.toYRot() * Mth.DEG_TO_RAD));
-        poseStack.mulPose(new Quaternionf().rotateX(angle * Mth.DEG_TO_RAD));
+        ROT_Y.rotationY(facing.toYRot() * Mth.DEG_TO_RAD);
+        ROT_X.rotationX(angle * Mth.DEG_TO_RAD);
+        poseStack.mulPose(ROT_Y);
+        poseStack.mulPose(ROT_X);
         poseStack.translate(-0.5, -0.5, -0.5);
 
         renderDynamicModel(FAN_MODEL, poseStack, buffer, level, pos, packedLight);

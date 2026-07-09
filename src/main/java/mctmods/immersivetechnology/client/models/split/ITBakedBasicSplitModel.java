@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.api.IEApi;
 import blusunrize.immersiveengineering.api.IEProperties.Model;
 import blusunrize.immersiveengineering.api.utils.ResettableLazy;
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -14,8 +15,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,9 +44,15 @@ public class ITBakedBasicSplitModel extends ITAbstractSplitModel<BakedModel> {
 
     @Nonnull @Override public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData, @Nullable RenderType layer) {
         BlockPos offset = extraData.get(Model.SUBMODEL_OFFSET);
-        if (offset!=null) { return splitModels.get().getOrDefault(offset, ImmutableList.of()); }
-        else { return base.getQuads(state, side, rand, extraData, layer); }
+        if (offset != null) {
+            if (side != null) { return ImmutableList.of(); }
+            return splitModels.get().getOrDefault(offset, ImmutableList.of());
+        }
+        return base.getQuads(state, side, rand, extraData, layer);
     }
 
-    @Nonnull @Override public ItemTransforms getTransforms() { return itemTransforms; }
+    @NotNull @Override public BakedModel applyTransform(@NotNull ItemDisplayContext transformType, @NotNull PoseStack poseStack, boolean applyLeftHandTransform) {
+        itemTransforms.getTransform(transformType).apply(applyLeftHandTransform, poseStack);
+        return this;
+    }
 }

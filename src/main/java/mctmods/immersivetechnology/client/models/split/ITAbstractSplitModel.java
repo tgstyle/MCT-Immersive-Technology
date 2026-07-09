@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.api.IEProperties.Model;
 import blusunrize.immersiveengineering.client.models.CompositeBakedModel;
 import mctmods.immersivetechnology.client.models.split.geometry.*;
 import mctmods.immersivetechnology.common.blocks.helper.ITIModelOffsetProvider;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelState;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.common.util.TriState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -27,6 +29,10 @@ public abstract class ITAbstractSplitModel<T extends BakedModel> extends Composi
         super(base);
         this.size = size;
     }
+
+    @Override public boolean useAmbientOcclusion() { return false; }
+
+    @Override @Nonnull public TriState useAmbientOcclusion(@Nonnull BlockState state, @Nonnull ModelData data, @Nonnull RenderType renderType) { return TriState.FALSE; }
 
     @Override @Nonnull public ModelData getModelData(@NotNull BlockAndTintGetter world, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData tileData) {
         ModelData baseData = super.getModelData(world, pos, state, tileData);
