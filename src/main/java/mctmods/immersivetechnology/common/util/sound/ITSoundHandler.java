@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.util.sound;
 
 import mctmods.immersivetechnology.client.ClientProxy;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ITickableSound;
 import net.minecraft.client.audio.PositionedSound;
@@ -29,7 +30,11 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
 			sound = new ITSoundHandler(posIn, soundIn, categoryIn, true, volumeIn, pitchIn);
 			playingSounds.put(posIn, sound);
 		}
-        else {
+		else if (!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(sound)) {
+			playingSounds.remove(posIn);
+			playingSounds.put(posIn, new ITSoundHandler(posIn, soundIn, categoryIn, true, volumeIn, pitchIn));
+		}
+		else {
 			sound.unmodifiedVolume = volumeIn;
 			sound.volume = volumeIn * ClientProxy.volumeAdjustment;
 			sound.pitch = pitchIn;
@@ -57,7 +62,7 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
 		Minecraft.getMinecraft().getSoundHandler().playSound(this);
 	}
 
-	@Override public boolean isDonePlaying() { return !playingSounds.containsValue(this); }
+	@Override public boolean isDonePlaying() { return playingSounds.get(pos) != this; }
 
 	public static boolean isPlaying(BlockPos posIn) { return playingSounds.get(posIn) != null; }
 

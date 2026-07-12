@@ -64,7 +64,6 @@ import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblo
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
@@ -87,7 +86,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -104,7 +102,9 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 @Mod.EventBusSubscriber(modid = ImmersiveTechnology.MODID, value = Side.CLIENT)
 public class ClientProxy extends CommonProxy {
@@ -126,14 +126,24 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent public void PlayerDisconnected(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) { ITSoundHandler.DeleteAllSounds(); }
 
+    @SubscribeEvent public void onClientWorldUnload(WorldEvent.Unload event) {
+        if (event.getWorld().isRemote) { TileRenderITMultiblockStatic.clearAll(); }
+    }
+
     @SubscribeEvent public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             if (!ITUtils.REMOVE_FROM_TICKING.isEmpty()) {
                 World world = Minecraft.getMinecraft().world;
                 if (world == null) { ITLogger.warn("ClientProxy has tried to access null world! This shouldn't normally happen..."); }
                 else {
-                    world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
-                    ITUtils.REMOVE_FROM_TICKING.clear();
+                    Set<TileEntity> forThisWorld = new HashSet<>();
+                    for (TileEntity te : ITUtils.REMOVE_FROM_TICKING) {
+                        if (te.getWorld() == world) { forThisWorld.add(te); }
+                    }
+                    if (!forThisWorld.isEmpty()) {
+                        world.tickableTileEntities.removeAll(forThisWorld);
+                        ITUtils.REMOVE_FROM_TICKING.removeAll(forThisWorld);
+                    }
                 }
             }
             calculateVolume();
@@ -235,14 +245,9 @@ public class ClientProxy extends CommonProxy {
         ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
         ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
         ImmersiveTechnology.packetHandler.registerMessage(MessageStopSound.HandlerClient.class, MessageStopSound.class, 1, Side.CLIENT);
-        ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerClient.class, MessageRequestUpdate.class, 2, Side.CLIENT);
         ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerClient.class, BinaryMessageTileSync.class, 3, Side.CLIENT);
         ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerServer.class, BinaryMessageTileSync.class, 3, Side.SERVER);
     }
-
-    @SubscribeEvent public void onWorldUnload(WorldEvent.Unload event) { if (event.getWorld().isRemote) { TileRenderITMultiblockStatic.clearAll(); } }
-
-    @SubscribeEvent public void onModelBake(ModelBakeEvent event) { TileRenderITMultiblockStatic.clearAll(); }
 
     @Override public void postInit() {
         if (Multiblocks.enable.enable_advancedCokeOven) {
@@ -360,7 +365,10 @@ public class ClientProxy extends CommonProxy {
         @Nonnull @Override public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) { return location; }
     }
 
-    static { IEApi.renderCacheClearers.add(ModelConfigurableSides.modelCache::clear); }
+    static {
+        IEApi.renderCacheClearers.add(ModelConfigurableSides.modelCache::clear);
+        IEApi.renderCacheClearers.add(TileRenderITMultiblockStatic::clearAll);
+    }
 
     @Override public void clearRenderCaches() {
         for (Runnable r : IEApi.renderCacheClearers) { r.run(); }

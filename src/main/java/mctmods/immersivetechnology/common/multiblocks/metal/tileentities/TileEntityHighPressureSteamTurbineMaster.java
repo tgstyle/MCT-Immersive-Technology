@@ -205,7 +205,8 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
 
         if (changed) {
             this.markDirty();
-            markContainingBlockForUpdate(null);
+            if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
+            else { throttledBlockUpdate(); }
         }
         if ((changed || isRunning != wasRunning) && tickCountdown-- <= 0) {
             notifyNearbyClients();

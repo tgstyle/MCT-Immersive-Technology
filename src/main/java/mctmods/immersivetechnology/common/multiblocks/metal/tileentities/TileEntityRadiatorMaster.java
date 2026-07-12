@@ -159,7 +159,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
         if (update || isRunning != wasRunning) {
             efficientMarkDirty();
-            markContainingBlockForUpdate(null);
+            if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
+            else { throttledBlockUpdate(); }
         }
     }
 

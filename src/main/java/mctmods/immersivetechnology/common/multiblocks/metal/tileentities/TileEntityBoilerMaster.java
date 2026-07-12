@@ -241,7 +241,8 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
             oldComparatorOutput = comp;
             if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
         }
-        if (changed) markContainingBlockForUpdate(null);
+        if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
+        else if (changed) { throttledBlockUpdate(); }
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {

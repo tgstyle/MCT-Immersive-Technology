@@ -182,7 +182,8 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
             tickCountdown = 5;
             world.markChunkDirty(getPos(), this);
-            markContainingBlockForUpdate(null);
+            if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
+            else { throttledBlockUpdate(); }
         }
 
         oldEnergy = currentEnergy;

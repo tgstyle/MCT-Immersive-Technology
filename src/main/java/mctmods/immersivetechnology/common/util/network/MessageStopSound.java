@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.util.network;
 
-import io.netty.buffer.ByteBuf;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
+
+import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -28,10 +29,5 @@ public class MessageStopSound implements IMessage {
 			ITSoundHandler.StopSound(message.pos);
 			return null;
 		}
-	}
-
-	@SideOnly(Side.SERVER)
-	public static class HandlerServer implements IMessageHandler<MessageStopSound, IMessage>	{
-		@Override public IMessage onMessage(MessageStopSound message, MessageContext ctx) { return null; }
 	}
 }

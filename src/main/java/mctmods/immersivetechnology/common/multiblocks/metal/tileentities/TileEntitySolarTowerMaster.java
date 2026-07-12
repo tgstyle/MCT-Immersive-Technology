@@ -507,7 +507,8 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         }
         if (update) {
             efficientMarkDirty();
-            markContainingBlockForUpdate(null);
+            if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
+            else { throttledBlockUpdate(); }
         }
     }
 

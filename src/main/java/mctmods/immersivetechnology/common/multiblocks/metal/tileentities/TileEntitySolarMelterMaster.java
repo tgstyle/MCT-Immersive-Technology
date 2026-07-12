@@ -482,7 +482,8 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         }
         if (update) {
             efficientMarkDirty();
-            markContainingBlockForUpdate(null);
+            if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
+            else { throttledBlockUpdate(); }
         }
     }
 

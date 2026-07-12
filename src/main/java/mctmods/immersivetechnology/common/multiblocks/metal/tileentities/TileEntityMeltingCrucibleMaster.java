@@ -178,7 +178,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         int oldEnergy = energyStorage.getEnergyStored();
         double oldHeat = heatLevel;
         int oldProcess = processTimeRemaining;
-        boolean oldRunning = isRunning;
+        boolean wasRunning = isRunning;
 
         boolean update = false;
         boolean shouldRun = !isRSDisabled();
@@ -192,9 +192,9 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         if (active) soundGracePeriod = 60;
         else if (soundGracePeriod > 0) soundGracePeriod--;
         isRunning = soundGracePeriod > 0;
-        if (isRunning != oldRunning) update = true;
+        if (isRunning != wasRunning) update = true;
 
-        boolean changed = oldEnergy != energyStorage.getEnergyStored() || oldHeat != heatLevel || oldProcess != processTimeRemaining || oldRunning != isRunning;
+        boolean changed = oldEnergy != energyStorage.getEnergyStored() || oldHeat != heatLevel || oldProcess != processTimeRemaining || wasRunning != isRunning;
         if (changed && tickCountdown-- <= 0) {
             tickCountdown = 5;
             ByteBuf buf = Unpooled.buffer();
@@ -203,7 +203,8 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
             buf.writeInt(processTimeRemaining);
             buf.writeBoolean(isRunning);
             BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
-            markContainingBlockForUpdate(null);
+            if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
+            else { throttledBlockUpdate(); }
         }
         int comparator = getComparatorInputOverride();
         if (comparator != oldComparatorOutput) {
@@ -213,7 +214,8 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         }
         if (update) {
             efficientMarkDirty();
-            markContainingBlockForUpdate(null);
+            if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
+            else { throttledBlockUpdate(); }
         }
     }
 

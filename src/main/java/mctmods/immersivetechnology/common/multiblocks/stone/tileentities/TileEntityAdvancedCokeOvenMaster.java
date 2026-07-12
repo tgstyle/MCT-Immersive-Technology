@@ -173,6 +173,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             return;
         }
         boolean update = false;
+        boolean wasRunning = isRunning;
         if (!inventory.get(0).isEmpty()) {
             if (cachedRecipe == null) {
                 cachedRecipe = getRecipe();
@@ -267,14 +268,14 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             }
         }
         if (pumpOutputOut()) update = true;
-        boolean wasRunning = isRunning;
         if (active) soundGracePeriod = 60;
         else if (soundGracePeriod > 0) soundGracePeriod--;
         isRunning = soundGracePeriod > 0;
         if (isRunning != wasRunning) notifyNearbyClients();
         if (update || isRunning != wasRunning) {
             efficientMarkDirty();
-            markContainingBlockForUpdate(null);
+            if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
+            else { throttledBlockUpdate(); }
         }
     }
 

@@ -169,7 +169,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         }
         int oldEnergy = energyStorage.getEnergyStored();
         int oldProcess = processTimeRemaining;
-        boolean oldRunning = isRunning;
+        boolean wasRunning = isRunning;
         boolean update = false;
         boolean shouldRun = !isRSDisabled();
         if (processTimeRemaining == 0 && shouldRun) {
@@ -273,9 +273,10 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         }
         if (update) {
             efficientMarkDirty();
-            markContainingBlockForUpdate(null);
+            if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
+            else { throttledBlockUpdate(); }
         }
-        boolean changed = oldEnergy != energyStorage.getEnergyStored() || oldProcess != processTimeRemaining || oldRunning != isRunning;
+        boolean changed = oldEnergy != energyStorage.getEnergyStored() || oldProcess != processTimeRemaining || wasRunning != isRunning;
         if (changed && tickCountdown-- <= 0) {
             ByteBuf buf = Unpooled.buffer();
             buf.writeInt(energyStorage.getEnergyStored() - oldEnergy);

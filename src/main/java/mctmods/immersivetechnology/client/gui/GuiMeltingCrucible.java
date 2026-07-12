@@ -38,7 +38,7 @@ public class GuiMeltingCrucible extends GuiIEContainerBase {
         if (mx >= guiLeft + 30 && mx < guiLeft + 79 && my >= guiTop + 9 && my < guiTop + 18) {
             DecimalFormat df = new DecimalFormat("0.00");
             tooltip.add("Temperature");
-            tooltip.add(TextFormatting.RED + df.format(tile.heatLevel / 20 + 30) + "/" + df.format(workingHeatLevel / 20 + 30) + "C");
+            tooltip.add(TextFormatting.RED + df.format(tile.heatLevel / workingHeatLevel * 1000) + "/" + "1000" + "C");
         }
         if (!tooltip.isEmpty()) {
             ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);

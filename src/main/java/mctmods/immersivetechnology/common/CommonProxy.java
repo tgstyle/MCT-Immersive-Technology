@@ -11,7 +11,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,18 +25,28 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
+import java.util.HashSet;
+import java.util.Set;
 
 @SuppressWarnings("unused")
 public class CommonProxy implements IGuiHandler {
 
 	public void preInit() { MinecraftForge.EVENT_BUS.register(this); }
 
-	@SubscribeEvent public void onWorldUnload(WorldEvent.Unload event) {}
+	@SubscribeEvent public void onWorldUnload(WorldEvent.Unload event) {
+		if (!ITUtils.REMOVE_FROM_TICKING.isEmpty()) { ITUtils.REMOVE_FROM_TICKING.removeIf(te -> te.getWorld() == event.getWorld()); }
+	}
 
 	@SubscribeEvent public void onWorldTick(TickEvent.WorldTickEvent event) {
 		if (!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
-			event.world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
-			ITUtils.REMOVE_FROM_TICKING.clear();
+			Set<TileEntity> forThisWorld = new HashSet<>();
+			for (TileEntity te : ITUtils.REMOVE_FROM_TICKING) {
+				if (te.getWorld() == event.world) { forThisWorld.add(te); }
+			}
+			if (!forThisWorld.isEmpty()) {
+				event.world.tickableTileEntities.removeAll(forThisWorld);
+				ITUtils.REMOVE_FROM_TICKING.removeAll(forThisWorld);
+			}
 		}
 	}
 
@@ -45,7 +54,6 @@ public class CommonProxy implements IGuiHandler {
 
 	public void init() {
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
-		ImmersiveTechnology.packetHandler.registerMessage(MessageStopSound.HandlerServer.class, MessageStopSound.class, 1, Side.SERVER);
 		ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerServer.class, BinaryMessageTileSync.class, 3, Side.SERVER);
 	}
 

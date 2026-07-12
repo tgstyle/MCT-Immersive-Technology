@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.util.network;
 
-import io.netty.buffer.ByteBuf;
 import mctmods.immersivetechnology.ImmersiveTechnology;
+
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
@@ -19,28 +20,18 @@ public class BinaryMessageTileSync implements IMessage {
     BlockPos pos;
     ByteBuf buffer;
 
-    public static void sendToServer(BlockPos pos, ByteBuf buf) {
-        ImmersiveTechnology.packetHandler.sendToServer(new BinaryMessageTileSync(pos, buf));
-        buf.release();
-    }
+    public static void sendToServer(BlockPos pos, ByteBuf buf) { ImmersiveTechnology.packetHandler.sendToServer(new BinaryMessageTileSync(pos, buf)); }
 
-    public static void sendToPlayer(EntityPlayerMP player, BlockPos pos, ByteBuf buf) {
-        ImmersiveTechnology.packetHandler.sendTo(new BinaryMessageTileSync(pos, buf), player);
-        buf.release();
-    }
+    public static void sendToPlayer(EntityPlayerMP player, BlockPos pos, ByteBuf buf) { ImmersiveTechnology.packetHandler.sendTo(new BinaryMessageTileSync(pos, buf), player); }
 
-    public static void sendToAllTracking(World world, BlockPos pos, ByteBuf buf) {
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new BinaryMessageTileSync(pos, buf), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 0));
-        buf.release();
-    }
+    public static void sendToAllTracking(World world, BlockPos pos, ByteBuf buf) { ImmersiveTechnology.packetHandler.sendToAllTracking(new BinaryMessageTileSync(pos, buf), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 0)); }
 
     public BinaryMessageTileSync(BlockPos tile, ByteBuf buffer) {
         this.pos = tile;
         this.buffer = buffer;
     }
 
-    public BinaryMessageTileSync() {
-    }
+    public BinaryMessageTileSync() {}
 
     @Override public void fromBytes(ByteBuf buf) {
         this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
@@ -50,6 +41,7 @@ public class BinaryMessageTileSync implements IMessage {
     @Override public void toBytes(ByteBuf buf) {
         buf.writeInt(pos.getX()).writeInt(pos.getY()).writeInt(pos.getZ());
         buf.writeBytes(buffer);
+        buffer.release();
     }
 
     public static class HandlerServer implements IMessageHandler<BinaryMessageTileSync, IMessage> {
@@ -57,11 +49,13 @@ public class BinaryMessageTileSync implements IMessage {
             EntityPlayerMP player = ctx.getServerHandler().player;
             WorldServer world = player.getServerWorld();
             world.addScheduledTask(() -> {
-                if (world.isBlockLoaded(message.pos)) {
-                    TileEntity tile = world.getTileEntity(message.pos);
-                    if (tile instanceof IBinaryMessageReceiver)
-                        ((IBinaryMessageReceiver)tile).receiveMessageFromClient(message.buffer, player);
+                try {
+                    if (world.isBlockLoaded(message.pos)) {
+                        TileEntity tile = world.getTileEntity(message.pos);
+                        if (tile instanceof IBinaryMessageReceiver) { ((IBinaryMessageReceiver)tile).receiveMessageFromClient(message.buffer, player); }
+                    }
                 }
+                finally { message.buffer.release(); }
             });
             return null;
         }
@@ -71,12 +65,14 @@ public class BinaryMessageTileSync implements IMessage {
     public static class HandlerClient implements IMessageHandler<BinaryMessageTileSync, IMessage> {
         @Override public IMessage onMessage(BinaryMessageTileSync message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
-                World world = Minecraft.getMinecraft().world;
-                if (world != null) {
-                    TileEntity tile = world.getTileEntity(message.pos);
-                    if (tile instanceof IBinaryMessageReceiver)
-                        ((IBinaryMessageReceiver)tile).receiveMessageFromServer(message.buffer);
+                try {
+                    World world = Minecraft.getMinecraft().world;
+                    if (world != null) {
+                        TileEntity tile = world.getTileEntity(message.pos);
+                        if (tile instanceof IBinaryMessageReceiver) { ((IBinaryMessageReceiver)tile).receiveMessageFromServer(message.buffer); }
+                    }
                 }
+                finally { message.buffer.release(); }
             });
             return null;
         }

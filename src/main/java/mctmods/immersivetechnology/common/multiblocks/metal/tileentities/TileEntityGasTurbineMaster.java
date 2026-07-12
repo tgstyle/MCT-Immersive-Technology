@@ -243,6 +243,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
             starterStorage.modifyEnergyStored(-electricStarterConsumption);
         } else starterRunning = false;
         int prevSpeed = speed;
+        boolean wasRunning = isRunning;
 
         if (speed < maxSpeed / 4) {
             if (canRun) {
@@ -287,7 +288,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         }
         if (update || changed) {
             efficientMarkDirty();
-            markContainingBlockForUpdate(null);
+            if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
+            else { throttledBlockUpdate(); }
         }
 
         int comp = getComparatorInputOverride();

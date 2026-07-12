@@ -31,6 +31,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 
 public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T, R, M>, R extends IMultiblockRecipe, M extends T> extends TileEntityMultiblockMetal<T, R> {
+    private int blockUpdateCooldown = 0;
 
     public TileEntityITMultiblock(MultiblockHandler.IMultiblock instance, int[] structureDimensions, int energyCapacity, boolean redstoneControl) { super(instance, structureDimensions, energyCapacity, redstoneControl); }
 
@@ -194,5 +195,14 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
             default:
                 return aabb;
         }
+    }
+
+    protected void throttledBlockUpdate() {
+        if (blockUpdateCooldown > 0) {
+            blockUpdateCooldown--;
+            return;
+        }
+        blockUpdateCooldown = 20;
+        markContainingBlockForUpdate(null);
     }
 }

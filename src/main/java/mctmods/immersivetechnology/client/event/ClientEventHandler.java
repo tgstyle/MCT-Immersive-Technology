@@ -27,6 +27,11 @@ import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class ClientEventHandler {
+    private static BlockPos cachedPos;
+    private static long cachedMask;
+    private static int cachedBoundsHash;
+    private static VoxelShape cachedUnion;
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
         RayTraceResult target = event.getTarget();
@@ -52,12 +57,7 @@ public class ClientEventHandler {
                 double py = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
                 double pz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
 
-                VoxelShape union = Shapes.empty();
-                for (AxisAlignedBB aabb : bounds) {
-                    if (asb.isOverrideBox(aabb, player, target, bounds)) continue;
-                    union = Shapes.joinUnoptimized(union, Shapes.create(aabb), BooleanOp.OR);
-                }
-                union = union.optimize();
+                VoxelShape union = getSelectionShape(asb, bounds, pos, player, target);
 
                 Tessellator tessellator = Tessellator.getInstance();
                 BufferBuilder buffer = tessellator.getBuffer();
@@ -81,5 +81,29 @@ public class ClientEventHandler {
                 GlStateManager.disableBlend();
             }
         }
+    }
+
+    private static VoxelShape getSelectionShape(IAdvancedSelectionBounds asb, List<AxisAlignedBB> bounds, BlockPos pos, EntityPlayer player, RayTraceResult target) {
+        long mask = 0;
+        int boundsHash = 1;
+        for (int i = 0; i < bounds.size(); i++) {
+            AxisAlignedBB aabb = bounds.get(i);
+            boundsHash = 31 * boundsHash + aabb.hashCode();
+            if (i < 64 && !asb.isOverrideBox(aabb, player, target, bounds)) { mask |= 1L << i; }
+        }
+        if (cachedUnion != null && pos.equals(cachedPos) && mask == cachedMask && boundsHash == cachedBoundsHash) { return cachedUnion; }
+
+        VoxelShape union = Shapes.empty();
+        for (int i = 0; i < bounds.size(); i++) {
+            boolean included = i < 64 ? (mask & (1L << i)) != 0 : !asb.isOverrideBox(bounds.get(i), player, target, bounds);
+            if (included) { union = Shapes.joinUnoptimized(union, Shapes.create(bounds.get(i)), BooleanOp.OR); }
+        }
+        union = union.optimize();
+
+        cachedPos = pos.toImmutable();
+        cachedMask = mask;
+        cachedBoundsHash = boundsHash;
+        cachedUnion = union;
+        return union;
     }
 }

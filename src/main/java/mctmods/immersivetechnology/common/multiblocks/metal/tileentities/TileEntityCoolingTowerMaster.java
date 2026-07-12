@@ -216,7 +216,8 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         }
         if (update) {
             efficientMarkDirty();
-            markContainingBlockForUpdate(null);
+            if (isRunning != prevIsRunning) { markContainingBlockForUpdate(null); }
+            else { throttledBlockUpdate(); }
         }
         int comp = getComparatorInputOverride();
         if (comp != oldComparatorOutput) {

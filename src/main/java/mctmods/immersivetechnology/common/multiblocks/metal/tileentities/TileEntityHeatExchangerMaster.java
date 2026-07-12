@@ -207,6 +207,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         boolean update = pumpOutputOut();
 
         boolean shouldRun = !isRSDisabled();
+        boolean wasRunning = isRunning;
 
         if (processTimeRemaining == 0 && shouldRun) {
             FluidStack input0 = tanks[0].getFluid();
@@ -263,7 +264,8 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
             BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
             tickCountdown = 5;
             world.markChunkDirty(getPos(), this);
-            markContainingBlockForUpdate(null);
+            if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
+            else { throttledBlockUpdate(); }
         }
         int comparator = getComparatorInputOverride();
         if (comparator != oldComparatorOutput) {
@@ -275,7 +277,10 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         }
         oldEnergy = currentEnergy;
         oldIsRunning = isRunning;
-        if (update) markContainingBlockForUpdate(null);
+        if (update) {
+            if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
+            else { throttledBlockUpdate(); }
+        }
     }
 
     @Override public TileEntityHeatExchangerMaster master() { return this; }
