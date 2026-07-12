@@ -17,7 +17,6 @@
     "defaultRequire": 1
   },
   "client": [
-    "client.BlockRenderDispatcherMixin",
-    "client.ISimpleModelAccessMixin"
+    "client.BlockRenderDispatcherMixin"
   ]
 }
