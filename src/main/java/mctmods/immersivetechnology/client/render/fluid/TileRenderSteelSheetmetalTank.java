@@ -1,28 +1,31 @@
 package mctmods.immersivetechnology.client.render.fluid;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
+
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
+
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.lwjgl.opengl.GL11;
 
 public class TileRenderSteelSheetmetalTank extends TileEntitySpecialRenderer<TileEntitySteelSheetmetalTankMaster> {
 	@Override public void render(TileEntitySteelSheetmetalTankMaster tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-		if (!tile.formed || tile.pos != 4 || !tile.getWorld().isBlockLoaded(tile.getPos(), false)) return;
+		if (!tile.formed || tile.pos != 4 || !tile.getWorld().isBlockLoaded(tile.getPos(), false)) { return; }
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(x+.5, y, z+.5);
+		GlStateManager.translate(x + .5, y, z + .5);
 		FluidStack fs = tile.tank.getFluid();
 		GlStateManager.translate(0, 3.5f, 0);
 		float baseScale = .0625f;
 		GlStateManager.scale(baseScale, -baseScale, baseScale);
 		double playerDistanceSq = ClientUtils.mc().player.getDistanceSq(tile.getPos());
-		float offset = playerDistanceSq < 64 ? .001f : playerDistanceSq<2304 ? .004f : .015f;
+		float offset = playerDistanceSq < 64 ? .001f : playerDistanceSq < 2304 ? .004f : .015f;
 		float xx = -.5f;
-		float zz = 1.5f-offset;
+		float zz = 1.5f - offset;
 		xx /= baseScale;
 		zz /= baseScale;
 		for (int i = 0; i < 4; i++) {
@@ -45,21 +48,20 @@ public class TileRenderSteelSheetmetalTank extends TileEntitySpecialRenderer<Til
 			GlStateManager.enableAlpha();
 			GlStateManager.enableTexture2D();
 			if (fs != null) {
-				float h = fs.amount / (float)tile.tank.getCapacity();
+				float h = fs.amount / (float) tile.tank.getCapacity();
 				GlStateManager.depthMask(false);
 				GlStateManager.translate(0, 0, .004f);
+				GlStateManager.enableBlend();
+				OpenGlHelper.glBlendFunc(770, 771, 1, 0);
 				ClientUtils.drawRepeatedFluidSprite(fs, 0, 0 + (1 - h) * 16, 16, h * 16);
+				GlStateManager.disableBlend();
 				GlStateManager.translate(0, 0, -.004f);
 				GlStateManager.depthMask(true);
 			}
 			GlStateManager.translate(-xx, 0, -zz);
 			GlStateManager.rotate(90, 0, 1, 0);
-			GlStateManager.enableAlpha();
-			GlStateManager.alphaFunc(516, 0.1F);
-			GlStateManager.enableBlend();
-			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
 		}
+		GlStateManager.enableLighting();
 		GlStateManager.popMatrix();
 	}
-
 }

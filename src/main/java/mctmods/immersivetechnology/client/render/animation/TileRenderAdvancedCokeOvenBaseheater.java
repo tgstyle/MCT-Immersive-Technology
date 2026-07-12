@@ -21,7 +21,6 @@ import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
 
 public class TileRenderAdvancedCokeOvenBaseheater extends TileEntitySpecialRenderer<TileEntityAdvancedCokeOvenBaseheater> {
-
     @SuppressWarnings("deprecation")
     @Override public void render(TileEntityAdvancedCokeOvenBaseheater te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         if (te.dummy || !te.getWorld().isBlockLoaded(te.getPos(), false)) { return; }
@@ -40,10 +39,9 @@ public class TileRenderAdvancedCokeOvenBaseheater extends TileEntitySpecialRende
         GlStateManager.pushMatrix();
         GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
         RenderHelper.disableStandardItemLighting();
-        GlStateManager.blendFunc(770, 771);
-        GlStateManager.enableBlend();
         GlStateManager.disableCull();
-        if (Minecraft.isAmbientOcclusionEnabled()) { GlStateManager.shadeModel(7425); } else { GlStateManager.shadeModel(7424); }
+        if (Minecraft.isAmbientOcclusionEnabled()) { GlStateManager.shadeModel(GL11.GL_SMOOTH); }
+        else { GlStateManager.shadeModel(GL11.GL_FLAT); }
 
         float rot = te.getFanRotation(partialTicks);
         GlStateManager.rotate(rot, te.facing.rotateY().getXOffset(), te.facing.rotateY().getYOffset(), te.facing.rotateY().getZOffset());
@@ -51,11 +49,11 @@ public class TileRenderAdvancedCokeOvenBaseheater extends TileEntitySpecialRende
         ClientUtils.bindAtlas();
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         worldRenderer.setTranslation(-0.5 - blockPos.getX(), -0.5 - blockPos.getY(), -0.5 - blockPos.getZ());
-        worldRenderer.color(255, 255, 255, 255);
         blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), fanModel, dynamicState, blockPos, worldRenderer, false);
         worldRenderer.setTranslation(0.0D, 0.0D, 0.0D);
         tessellator.draw();
 
+        GlStateManager.enableCull();
         RenderHelper.enableStandardItemLighting();
         GlStateManager.popMatrix();
     }

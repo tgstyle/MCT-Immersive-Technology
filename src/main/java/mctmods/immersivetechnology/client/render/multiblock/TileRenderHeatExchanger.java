@@ -1,67 +1,13 @@
 package mctmods.immersivetechnology.client.render.multiblock;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHeatExchangerMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartHeatExchanger;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.block.Block;
 
-import org.lwjgl.opengl.GL11;
+public class TileRenderHeatExchanger extends TileRenderITMultiblockStatic<TileEntityHeatExchangerMaster> {
+    @Override protected int getTotalBlocks() { return TileEntityITMultiblockPartHeatExchanger.instance.width * TileEntityITMultiblockPartHeatExchanger.instance.length * TileEntityITMultiblockPartHeatExchanger.instance.height; }
 
-import javax.annotation.Nonnull;
-
-public class TileRenderHeatExchanger extends TileEntitySpecialRenderer<TileEntityHeatExchangerMaster> {
-    @Override public void render(TileEntityHeatExchangerMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        if (!te.formed) { return; }
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double distSq = te.getPos().distanceSq(player.posX, player.posY, player.posZ);
-        if (distSq > 512 * 512) { return; }
-        final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        ClientUtils.bindAtlas();
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, z);
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.blendFunc(770, 771);
-        GlStateManager.enableBlend();
-        GlStateManager.disableCull();
-        if (Minecraft.isAmbientOcclusionEnabled()) { GlStateManager.shadeModel(GL11.GL_SMOOTH); }
-        else { GlStateManager.shadeModel(GL11.GL_FLAT); }
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        BlockPos masterPos = te.getPos();
-        buffer.setTranslation(-masterPos.getX(), -masterPos.getY(), -masterPos.getZ());
-        int totalBlocks = TileEntityITMultiblockPartHeatExchanger.instance.width * TileEntityITMultiblockPartHeatExchanger.instance.length * TileEntityITMultiblockPartHeatExchanger.instance.height;
-        for (int i = 0; i < totalBlocks; i++) {
-            BlockPos pos = te.getBlockPosForPos(i);
-            IBlockState state = te.getWorld().getBlockState(pos);
-            if (state.getBlock() != ITContent.blockMetalMultiblock) { continue; }
-            IBlockState renderState = state;
-            try {
-                renderState = state.getActualState(te.getWorld(), pos);
-            } catch (IllegalArgumentException ignored) {}
-            IBakedModel model = blockRenderer.getModelForState(renderState);
-            blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, renderState, pos, buffer, false, MathHelper.getCoordinateRandom(pos.getX(), pos.getY(), pos.getZ()));
-        }
-        buffer.setTranslation(0, 0, 0);
-        tessellator.draw();
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.popMatrix();
-    }
-
-    @Override public boolean isGlobalRenderer(@Nonnull TileEntityHeatExchangerMaster te) { return true; }
+    @Override protected Block getMultiblockBlock() { return ITContent.blockMetalMultiblock; }
 }

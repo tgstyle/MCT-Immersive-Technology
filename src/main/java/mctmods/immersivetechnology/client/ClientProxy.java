@@ -87,12 +87,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -239,7 +240,9 @@ public class ClientProxy extends CommonProxy {
         ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerServer.class, BinaryMessageTileSync.class, 3, Side.SERVER);
     }
 
-    @SubscribeEvent public void onRenderWorldLast(RenderWorldLastEvent event) { TileRenderMultiblockSlave.clearRenderedThisFrame(); }
+    @SubscribeEvent public void onWorldUnload(WorldEvent.Unload event) { if (event.getWorld().isRemote) { TileRenderITMultiblockStatic.clearAll(); } }
+
+    @SubscribeEvent public void onModelBake(ModelBakeEvent event) { TileRenderITMultiblockStatic.clearAll(); }
 
     @Override public void postInit() {
         if (Multiblocks.enable.enable_advancedCokeOven) {

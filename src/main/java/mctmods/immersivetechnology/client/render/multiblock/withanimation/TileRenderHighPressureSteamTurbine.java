@@ -1,65 +1,37 @@
 package mctmods.immersivetechnology.client.render.multiblock.withanimation;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.client.ClientUtils;
 
+import mctmods.immersivetechnology.client.render.multiblock.TileRenderITMultiblockStatic;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHighPressureSteamTurbineMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartHighPressureSteamTurbine;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
+public class TileRenderHighPressureSteamTurbine extends TileRenderITMultiblockStatic<TileEntityHighPressureSteamTurbineMaster> {
+    @Override protected int getTotalBlocks() { return TileEntityITMultiblockPartHighPressureSteamTurbine.instance.width * TileEntityITMultiblockPartHighPressureSteamTurbine.instance.length * TileEntityITMultiblockPartHighPressureSteamTurbine.instance.height; }
 
-public class TileRenderHighPressureSteamTurbine extends TileEntitySpecialRenderer<TileEntityHighPressureSteamTurbineMaster> {
-    @Override public void render(TileEntityHighPressureSteamTurbineMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        if (!te.formed) { return; }
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double distSq = te.getPos().distanceSq(player.posX, player.posY, player.posZ);
-        if (distSq > 512 * 512) { return; }
+    @Override protected Block getMultiblockBlock() { return ITContent.blockMetalMultiblock1; }
+
+    @Override protected void renderDynamic(TileEntityHighPressureSteamTurbineMaster te, float partialTicks) {
         final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
-        ClientUtils.bindAtlas();
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, z);
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.blendFunc(770, 771);
-        GlStateManager.enableBlend();
-        GlStateManager.disableCull();
-        if (Minecraft.isAmbientOcclusionEnabled()) { GlStateManager.shadeModel(GL11.GL_SMOOTH); }
-        else { GlStateManager.shadeModel(GL11.GL_FLAT); }
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         BlockPos masterPos = te.getPos();
-        buffer.setTranslation(-masterPos.getX(), -masterPos.getY(), -masterPos.getZ());
-        int totalBlocks = TileEntityITMultiblockPartHighPressureSteamTurbine.instance.width * TileEntityITMultiblockPartHighPressureSteamTurbine.instance.length * TileEntityITMultiblockPartHighPressureSteamTurbine.instance.height;
-        for (int i = 0; i < totalBlocks; i++) {
-            BlockPos pos = te.getBlockPosForPos(i);
-            IBlockState state = te.getWorld().getBlockState(pos);
-            if (state.getBlock() != ITContent.blockMetalMultiblock1) { continue; }
-            state = state.getActualState(te.getWorld(), pos);
-            IBakedModel model = blockRenderer.getModelForState(state);
-            blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, pos, buffer, false, MathHelper.getCoordinateRandom(pos.getX(), pos.getY(), pos.getZ()));
-        }
-        buffer.setTranslation(0, 0, 0);
-        tessellator.draw();
-
-        // Animated rotor (dynamic part only, rotated, centered)
+        GlStateManager.pushMatrix();
         GlStateManager.translate(0.5, 0.5, 0.5);
         float rotation = te.animation.getAnimationRotation() + te.animation.getAnimationMomentum() * partialTicks;
         boolean validFacing = te.facing.getAxis() != EnumFacing.Axis.Y;
@@ -72,14 +44,10 @@ public class TileRenderHighPressureSteamTurbine extends TileEntitySpecialRendere
             if (validFacing) { state = state.getActualState(te.getWorld(), masterPos); }
             state = state.withProperty(IEProperties.DYNAMICRENDER, true);
             IBakedModel model = blockRenderer.getModelForState(state);
-            blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, masterPos, buffer, true);
+            blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, masterPos, buffer, false);
         }
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();
-
-        RenderHelper.enableStandardItemLighting();
         GlStateManager.popMatrix();
     }
-
-    @Override public boolean isGlobalRenderer(@Nonnull TileEntityHighPressureSteamTurbineMaster te) { return true; }
 }
