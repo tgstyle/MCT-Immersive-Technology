@@ -75,23 +75,51 @@ public class TileEntityITMultiblockPartRadiator extends TileEntityITMultiblockPa
 
     @Override public String getUniqueName() { return uniqueName; }
 
+    private static final class Orientation {
+        final boolean transposed;
+        final int width, height, masterX, masterY, masterZ;
+        final BlockPos origin;
+
+        Orientation(boolean transposed, int width, int height, int masterX, int masterY, int masterZ, BlockPos origin) {
+            this.transposed = transposed;
+            this.width = width;
+            this.height = height;
+            this.masterX = masterX;
+            this.masterY = masterY;
+            this.masterZ = masterZ;
+            this.origin = origin;
+        }
+
+        BlockPos worldPos(int w, int h, int l, EnumFacing side) {
+            return ITUtils.LocalOffsetToWorldBlockPos(origin, transposed ? -w : w, h, l, side, transposed);
+        }
+    }
+
+    private Orientation buildOrientation(boolean transposed, BlockPos pos, EnumFacing side) {
+        int eff_width = transposed ? height : width;
+        int eff_height = transposed ? width : height;
+        int eff_masterX = transposed ? masterY : masterX;
+        int eff_masterY = transposed ? masterX : masterY;
+        int eff_masterZ = masterZ;
+        BlockPos origin = pos.offset(side, -eff_masterZ).offset(side.rotateY(), -eff_masterX).offset(EnumFacing.DOWN, eff_masterY);
+        return new Orientation(transposed, eff_width, eff_height, eff_masterX, eff_masterY, eff_masterZ, origin);
+    }
+
+    private Orientation resolveOrientation(World world, BlockPos pos, EnumFacing side) {
+        Orientation normal = buildOrientation(false, pos, side);
+        if (isValid(world, normal, side)) { return normal; }
+        Orientation transposed = buildOrientation(true, pos, side);
+        if (isValid(world, transposed, side)) { return transposed; }
+        return null;
+    }
+
     @Override public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
         side = (side == EnumFacing.UP || side == EnumFacing.DOWN) ? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
 
-        boolean mirrored = false;
-        if (isInvalid(world, pos, side, false)) {
-            mirrored = true;
-            if (isInvalid(world, pos, side, true)) return false;
-        }
+        Orientation orientation = resolveOrientation(world, pos, side);
+        if (orientation == null) { return false; }
 
-        int eff_width = mirrored ? height : width;
-        int eff_height = mirrored ? width : height;
-        int eff_masterX = mirrored ? masterY : masterX;
-        int eff_masterY = mirrored ? masterX : masterY;
-        int eff_masterZ = masterZ;
-
-        BlockPos origin = pos.offset(side, -eff_masterZ).offset(side.rotateY(), -eff_masterX).offset(EnumFacing.DOWN, eff_masterY);
-        BlockPos masterPos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirrored ? -eff_masterX : eff_masterX, eff_masterY, eff_masterZ, side, mirrored);
+        BlockPos masterPos = ITUtils.LocalOffsetToWorldBlockPos(orientation.origin, orientation.transposed ? -orientation.masterX : orientation.masterX, orientation.masterY, orientation.masterZ, side, orientation.transposed);
 
         ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER) ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
         if (MultiblockHandler.fireMultiblockFormationEventPre(player, this, pos, hammer).isCanceled()) return false;
@@ -99,12 +127,12 @@ public class TileEntityITMultiblockPartRadiator extends TileEntityITMultiblockPa
         IBlockState masterState = masterBlockState.withProperty(IEProperties.FACING_HORIZONTAL, side).withProperty(IEProperties.MULTIBLOCKSLAVE, false);
         IBlockState slaveState = slaveBlockState.withProperty(IEProperties.FACING_HORIZONTAL, side).withProperty(IEProperties.MULTIBLOCKSLAVE, true);
 
-        for (int eff_h = 0; eff_h < eff_height; eff_h++) for (int l = 0; l < length; l++) for (int eff_w = 0; eff_w < eff_width; eff_w++) {
-            int orig_h = mirrored ? eff_w : eff_h;
-            int orig_w = mirrored ? eff_h : eff_w;
+        for (int eff_h = 0; eff_h < orientation.height; eff_h++) for (int l = 0; l < length; l++) for (int eff_w = 0; eff_w < orientation.width; eff_w++) {
+            int orig_h = orientation.transposed ? eff_w : eff_h;
+            int orig_w = orientation.transposed ? eff_h : eff_w;
             if (structure[orig_h][l][orig_w] == AirRef.instance) continue;
             int position = orig_h * (width * length) + l * width + orig_w;
-            BlockPos pos2 = ITUtils.LocalOffsetToWorldBlockPos(origin, mirrored ? -eff_w : eff_w, eff_h, l, side, mirrored);
+            BlockPos pos2 = orientation.worldPos(eff_w, eff_h, l, side);
             world.setBlockState(pos2, pos2.equals(masterPos) ? masterState : slaveState);
             TileEntityRadiatorSlave tile = (TileEntityRadiatorSlave)world.getTileEntity(pos2);
             if (tile != null) {
@@ -112,7 +140,7 @@ public class TileEntityITMultiblockPartRadiator extends TileEntityITMultiblockPa
                 tile.formed = true;
                 tile.pos = position;
                 tile.offset = new int[] { pos2.getX() - masterPos.getX(), pos2.getY() - masterPos.getY(), pos2.getZ() - masterPos.getZ() };
-                tile.mirrored = mirrored;
+                tile.mirrored = orientation.transposed;
                 tile.markDirty();
                 tile.markContainingBlockForUpdate(null);
                 world.addBlockEvent(pos2, slaveBlockState.getBlock(), 255, 0);
@@ -122,23 +150,17 @@ public class TileEntityITMultiblockPartRadiator extends TileEntityITMultiblockPa
         return true;
     }
 
-    protected boolean isInvalid(World world, BlockPos pos, EnumFacing side, boolean mirrored) {
-        int eff_width = mirrored ? height : width;
-        int eff_height = mirrored ? width : height;
-        int eff_masterX = mirrored ? masterY : masterX;
-        int eff_masterY = mirrored ? masterX : masterY;
-        int eff_masterZ = masterZ;
-        BlockPos origin = pos.offset(side, -eff_masterZ).offset(side.rotateY(), -eff_masterX).offset(EnumFacing.DOWN, eff_masterY);
-        for (int eff_h = 0; eff_h < eff_height; eff_h++) for (int l = 0; l < length; l++) for (int eff_w = 0; eff_w < eff_width; eff_w++) {
-            int orig_h = mirrored ? eff_w : eff_h;
-            int orig_w = mirrored ? eff_h : eff_w;
+    private boolean isValid(World world, Orientation orientation, EnumFacing side) {
+        for (int eff_h = 0; eff_h < orientation.height; eff_h++) for (int l = 0; l < length; l++) for (int eff_w = 0; eff_w < orientation.width; eff_w++) {
+            int orig_h = orientation.transposed ? eff_w : eff_h;
+            int orig_w = orientation.transposed ? eff_h : eff_w;
             if (structure[orig_h][l][orig_w] == AirRef.instance) continue;
-            BlockPos blockPos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirrored ? -eff_w : eff_w, eff_h, l, side, mirrored);
+            BlockPos blockPos = orientation.worldPos(eff_w, eff_h, l, side);
             IBlockState state = world.getBlockState(blockPos);
             ItemStack found = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
             IRefComparable expected = structure[orig_h][l][orig_w];
-            if (!expected.isEquals(found)) return true;
+            if (!expected.isEquals(found)) return false;
         }
-        return false;
+        return true;
     }
 }
