@@ -139,6 +139,9 @@ compileJava.doLast {
 
 tasks.register('bumpVersion') {
     doLast {
+        def requested = gradle.startParameter.taskNames*.toLowerCase()
+        if (!requested.any { it.contains('build') || it.contains('jar') || it.contains('assemble') }) { return }
+
         def props = new Properties()
         file('version.properties').withInputStream { props.load(it) }
         def currentBuild = props['build_number'].toInteger()
