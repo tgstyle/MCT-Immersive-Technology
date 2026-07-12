@@ -9,5 +9,5 @@ import net.minecraft.block.Block;
 public class TileRenderSolarMelter extends TileRenderITMultiblockStatic<TileEntitySolarMelterMaster> {
     @Override protected int getTotalBlocks() { return TileEntityITMultiblockPartSolarMelter.instance.width * TileEntityITMultiblockPartSolarMelter.instance.length * TileEntityITMultiblockPartSolarMelter.instance.height; }
 
-    @Override protected Block getMultiblockBlock() { return ITContent.blockMetalMultiblock; }
+    @Override protected Block getMultiblockBlock() { return ITContent.blockMetalMultiblock1; }
 }

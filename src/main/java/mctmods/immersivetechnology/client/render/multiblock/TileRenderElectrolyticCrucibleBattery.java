@@ -9,5 +9,5 @@ import net.minecraft.block.Block;
 public class TileRenderElectrolyticCrucibleBattery extends TileRenderITMultiblockStatic<TileEntityElectrolyticCrucibleBatteryMaster> {
     @Override protected int getTotalBlocks() { return TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance.width * TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance.length * TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance.height; }
 
-    @Override protected Block getMultiblockBlock() { return ITContent.blockMetalMultiblock; }
+    @Override protected Block getMultiblockBlock() { return ITContent.blockMetalMultiblock1; }
 }

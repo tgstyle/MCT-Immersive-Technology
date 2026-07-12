@@ -9,5 +9,5 @@ import net.minecraft.block.Block;
 public class TileRenderHeatExchanger extends TileRenderITMultiblockStatic<TileEntityHeatExchangerMaster> {
     @Override protected int getTotalBlocks() { return TileEntityITMultiblockPartHeatExchanger.instance.width * TileEntityITMultiblockPartHeatExchanger.instance.length * TileEntityITMultiblockPartHeatExchanger.instance.height; }
 
-    @Override protected Block getMultiblockBlock() { return ITContent.blockMetalMultiblock; }
+    @Override protected Block getMultiblockBlock() { return ITContent.blockMetalMultiblock1; }
 }

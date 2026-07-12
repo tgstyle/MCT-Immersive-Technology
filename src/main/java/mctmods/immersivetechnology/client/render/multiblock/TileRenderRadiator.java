@@ -9,5 +9,5 @@ import net.minecraft.block.Block;
 public class TileRenderRadiator extends TileRenderITMultiblockStatic<TileEntityRadiatorMaster> {
     @Override protected int getTotalBlocks() { return TileEntityITMultiblockPartRadiator.instance.width * TileEntityITMultiblockPartRadiator.instance.length * TileEntityITMultiblockPartRadiator.instance.height; }
 
-    @Override protected Block getMultiblockBlock() { return ITContent.blockMetalMultiblock; }
+    @Override protected Block getMultiblockBlock() { return ITContent.blockMetalMultiblock1; }
 }
