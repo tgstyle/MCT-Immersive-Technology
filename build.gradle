@@ -13,6 +13,17 @@ configFile.withReader {
     ext.common = new ConfigSlurper().parse prop
 }
 
+def versionProps = new Properties()
+file('version.properties').withInputStream { versionProps.load(it) }
+
+ext.modversion = versionProps.getProperty('version')
+ext.version_buildnumber = versionProps.getProperty('build_number')?.toInteger() ?: 0
+ext.stage = versionProps.getProperty('stage') ?: ''
+
+version = "${common.mcversion}-${modversion}.${version_buildnumber}-${stage}"
+
+println "-> build.gradle applying version: $version"
+
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 compileJava {
@@ -36,27 +47,9 @@ repositories {
     gradlePluginPortal()
 }
 
-version = "${common.mcversion}-${modversion}.${modsubversion}-${stage}"
-
 group = modgroup
 
 archivesBaseName = modarchivename
-
-if (gradle.startParameter.taskNames.any { it == 'jar' || it == 'build' }) {
-    def propsFile = file('gradle.properties')
-    def props = new Properties()
-    propsFile.withInputStream { props.load(it) }
-    def currentSub = Integer.parseInt(props['modsubversion'] as String)
-    def newSub = currentSub + 1
-    modsubversion = newSub
-    version = "${common.mcversion}-${modversion}.${modsubversion}-${stage}"
-    jar.doLast {
-        props['modsubversion'] = newSub.toString()
-        propsFile.withWriter { writer ->
-            props.store(writer, null)
-        }
-    }
-}
 
 dependencies {
     minecraft "net.minecraftforge:forge:${common.mcversion}-${common.forgeversion}"
@@ -144,11 +137,35 @@ compileJava.doLast {
     }
 }
 
+tasks.register('bumpVersion') {
+    doLast {
+        def props = new Properties()
+        file('version.properties').withInputStream { props.load(it) }
+        def currentBuild = props['build_number'].toInteger()
+        def nextBuild = currentBuild + 1
+        props['build_number'] = nextBuild.toString()
+        file('version.properties').withOutputStream { props.store(it, null) }
+
+        ext.version_buildnumber = nextBuild
+        def newStage = props['stage'] ?: ''
+        def newVersion = "${common.mcversion}-${props['version']}.${nextBuild}-${newStage}"
+
+        project.version = newVersion
+        tasks.withType(Jar).configureEach {
+            it.archiveVersion.set(newVersion)
+        }
+    }
+}
+
+build.dependsOn bumpVersion
+processResources.dependsOn bumpVersion
+jar.dependsOn bumpVersion
+
 processResources {
-    inputs.property 'version', "${modversion}.${modsubversion}"
+    inputs.property 'version', "${modversion}.${version_buildnumber}"
     inputs.property 'mcversion', common.mcversion
     filesMatching('mcmod.info') {
-        expand 'version': "${modversion}.${modsubversion}", 'mcversion': common.mcversion
+        expand 'version': "${modversion}.${version_buildnumber}", 'mcversion': common.mcversion
     }
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
@@ -180,7 +197,7 @@ tasks.register('optimizePng') {
     doLast {
         File resourcesDir = sourceSets.main.output.resourcesDir
         if (resourcesDir == null || !resourcesDir.exists()) {
-            println 'No processed resources directory – skipping PNG optimization.'
+            println 'No processed resources directory - skipping PNG optimization.'
             return
         }
 
@@ -197,7 +214,7 @@ tasks.register('optimizePng') {
                 long newSize = file.length()
                 if (newSize < size) {
                     double percent = 100.0 * (size - newSize) / size
-                    System.out.printf('Optimized %s: %d → %d bytes (%.2f%% reduction)%n',
+                    System.out.printf('Optimized %s: %d -> %d bytes (%.2f%% reduction)%n',
                             resourcesDir.toPath().relativize(file.toPath()), size, newSize, percent)
                 }
             } catch (Exception e) {
