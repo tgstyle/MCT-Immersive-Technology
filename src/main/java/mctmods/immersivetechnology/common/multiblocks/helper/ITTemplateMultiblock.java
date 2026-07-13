@@ -14,6 +14,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.Multibloc
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
 import com.google.common.base.Preconditions;
+import mctmods.immersivetechnology.core.util.ITUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -28,6 +29,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -56,6 +58,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     private final MultiblockRegistration<?> logic;
     private List<StructureBlockInfo> sortedStructureBlocks;
     private Map<BlockPos, BlockState> triggerStateMap;
+    public static BlockPos currentlyBreakingPos = null;
 
     public record TriggerPoint(BlockPos cell, Rotation offset) {}
 
@@ -115,6 +118,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         Rotation rot = DirectionUtils.getRotationBetweenFacings(Direction.NORTH, clickDirectionAtCreation);
         Preconditions.checkNotNull(rot);
         if (world instanceof ServerLevel serverLevel) {
+            BlockPos initiatedAt = currentlyBreakingPos;
             boolean templateMode = ITServerConfig.DISASSEMBLY_MODE.get() == ITServerConfig.DisassemblyMode.TEMPLATE_BLOCKS;
             boolean doTileDrops = serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
             BlockPos masterPos = withSettingsAndOffset(origin, masterFromOrigin, mirror, rot);
@@ -131,11 +135,8 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             if (masterHelper instanceof ITIMultiblockBEHelper itH && itH.it$isDisassembling()) { return; }
             if (masterBE == null) { return; }
 
-            if (masterBE instanceof ITIMultiblockBEHelper itBE) {
-                itBE.it$markDisassembling();
-            } else if (masterHelper instanceof ITIMultiblockBEHelper itH) {
-                itH.it$markDisassembling();
-            }
+            if (masterBE instanceof ITIMultiblockBEHelper itBE) { itBE.it$markDisassembling(); }
+            if (masterHelper instanceof ITIMultiblockBEHelper itH) { itH.it$markDisassembling(); }
 
             getTemplate(world);
 
@@ -146,8 +147,8 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                 prepareBlockForDisassembly(serverLevel, actualPos);
             }
 
-            BlockPos brokenPos = masterPos;
-            if (breakingPlayer != null) {
+            BlockPos brokenPos = initiatedAt != null ? initiatedAt : masterPos;
+            if (initiatedAt == null && breakingPlayer != null) {
                 Vec3 eyePos = breakingPlayer.getEyePosition();
                 Vec3 look = breakingPlayer.getViewVector(1.0F);
                 double reach = breakingPlayer.getAttributeValue(ForgeMod.BLOCK_REACH.get());
@@ -184,41 +185,67 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
 
             LootParams.Builder baseLootBuilder = dropItems ? new LootParams.Builder(serverLevel)
                     .withParameter(LootContextParams.TOOL, effectiveTool)
-                    .withOptionalParameter(LootContextParams.THIS_ENTITY, breakingPlayer)
-                    .withOptionalParameter(LootContextParams.BLOCK_ENTITY, null) : null;
+                    .withOptionalParameter(LootContextParams.THIS_ENTITY, breakingPlayer) : null;
 
             if (templateMode) {
+                BlockState brokenTemplate = null;
                 for (StructureBlockInfo info : structure) {
                     BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
                     BlockState stateAfterMirror = info.state().mirror(mirror);
                     BlockState template = stateAfterMirror.rotate(rot);
+                    if (actualPos.equals(brokenPos)) { brokenTemplate = template; }
                     serverLevel.setBlockAndUpdate(actualPos, template);
                 }
-            } else {
+                if (initiatedAt != null && brokenTemplate != null && !brokenTemplate.isAir()) {
+                    if (dropItems) {
+                        BlockEntity brokenBE = serverLevel.getBlockEntity(brokenPos);
+                        LootParams.Builder params = baseLootBuilder
+                                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(brokenPos))
+                                .withOptionalParameter(LootContextParams.BLOCK_ENTITY, brokenBE);
+                        try { for (ItemStack s : brokenTemplate.getDrops(params)) { ITUtils.dropStackAtPos(serverLevel, brokenPos, s); } }
+                        catch (Exception e) { ITUtils.dropStackAtPos(serverLevel, brokenPos, new ItemStack(brokenTemplate.getBlock())); }
+                    }
+                    serverLevel.removeBlock(brokenPos, false);
+                }
+            }
+            else {
                 for (StructureBlockInfo info : structure) {
                     BlockPos actualPos = withSettingsAndOffset(origin, info.pos(), mirror, rot);
                     BlockState stateAfterMirror = info.state().mirror(mirror);
                     BlockState template = stateAfterMirror.rotate(rot);
                     toBreak.add(actualPos);
-                    if (dropItems) {
-                        LootParams.Builder params = baseLootBuilder.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(actualPos));
-                        allDrops.addAll(template.getDrops(params));
+                    if (dropItems && !template.isAir()) {
+                        BlockEntity templateBE = null;
+                        if (template.hasBlockEntity() && template.getBlock() instanceof EntityBlock entityBlock) {
+                            try { templateBE = entityBlock.newBlockEntity(actualPos, template); }
+                            catch (Exception ignored) { }
+                        }
+                        LootParams.Builder params = baseLootBuilder
+                                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(actualPos))
+                                .withOptionalParameter(LootContextParams.BLOCK_ENTITY, templateBE);
+                        try { allDrops.addAll(template.getDrops(params)); }
+                        catch (Exception e) { allDrops.add(new ItemStack(template.getBlock())); }
                     }
                 }
             }
 
-            if (!templateMode && !toBreak.isEmpty()) { pendingQueues.add(new ITQueueProcessor(serverLevel, toBreak, breakingPlayer, dropItems, brokenPos, allDrops)); }
+            if (!templateMode && !toBreak.isEmpty()) { pendingQueues.add(new ITQueueProcessor(serverLevel, toBreak, breakingPlayer, dropItems, brokenPos, allDrops, masterPos)); }
         }
     }
 
     protected void prepareBlockForDisassembly(Level world, BlockPos pos) {
         BlockEntity be = world.getBlockEntity(pos);
-        if (be instanceof ITIMultiblockBEHelper itHelper) { itHelper.it$markDisassembling(); }
-        else if (be instanceof IMultiblockBE<?> multiblockBE) {
-            var helper = multiblockBE.getHelper();
-            if (helper instanceof ITIMultiblockBEHelper itHelper) { itHelper.it$markDisassembling(); }
+        if (be == null) { return; }
+        boolean marked = false;
+        if (be instanceof ITIMultiblockBEHelper itBE) {
+            itBE.it$markDisassembling();
+            marked = true;
         }
-        else if (be != null) { ITLib.IT_LOGGER.error("Expected multiblock BE at {}, got {}", pos, be); }
+        if (be instanceof IMultiblockBE<?> multiblockBE && multiblockBE.getHelper() instanceof ITIMultiblockBEHelper itHelper) {
+            itHelper.it$markDisassembling();
+            marked = true;
+        }
+        if (!marked) { ITLib.IT_LOGGER.error("Expected multiblock BE at {}, got {}", pos, be); }
     }
 
     @SuppressWarnings("deprecation")

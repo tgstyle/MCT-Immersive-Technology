@@ -34,10 +34,11 @@ public class ITQueueProcessor {
     private final Set<ChunkPos> affectedChunks = new HashSet<>();
     private boolean chunksMarked = false;
 
-    public ITQueueProcessor(ServerLevel level, List<BlockPos> toBreak, @Nullable ServerPlayer owner, boolean dropItems, BlockPos dropAt, List<ItemStack> allDrops) {
+    public ITQueueProcessor(ServerLevel level, List<BlockPos> toBreak, @Nullable ServerPlayer owner, boolean dropItems, BlockPos dropAt, List<ItemStack> allDrops, @Nullable BlockPos masterPos) {
         this.level = level;
         List<BlockPos> sorted = new ArrayList<>(toBreak);
         sorted.sort(Y_DESC_COMPARATOR);
+        if (masterPos != null && sorted.remove(masterPos)) { sorted.add(0, masterPos); }
         this.queue.addAll(sorted);
         this.owner = owner;
         this.dropItems = dropItems;

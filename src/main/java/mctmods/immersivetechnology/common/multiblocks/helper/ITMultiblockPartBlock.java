@@ -52,7 +52,6 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
                 super.playerWillDestroy(level, pos, state, player);
                 return;
             }
-            // Only for the initial player break (flag not yet set). Skip during queue teardown to avoid NPE on dummy state==null and duplication.
             if (te instanceof ITIDropInventory dropInv) {
                 dropInv.getDroppedItems().forEach(stack -> {
                     if (!stack.isEmpty()) {
@@ -61,7 +60,11 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
                     }
                 });
             }
-            if (helper.getContext() != null && ((ITIMultiblockBEHelper)helper).it$isAssembled() && !(player instanceof FakePlayer)) { helper.disassemble(); }
+            if (helper.getContext() != null && ((ITIMultiblockBEHelper)helper).it$isAssembled() && !(player instanceof FakePlayer)) {
+                ITTemplateMultiblock.currentlyBreakingPos = pos.immutable();
+                try { helper.disassemble(); }
+                finally { ITTemplateMultiblock.currentlyBreakingPos = null; }
+            }
         }
         super.playerWillDestroy(level, pos, state, player);
     }
@@ -75,7 +78,11 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
                     super.onRemove(state, level, pos, newState, isMoving);
                     return;
                 }
-                if (helper.getContext() != null && ((ITIMultiblockBEHelper)helper).it$isAssembled()) { helper.disassemble(); }
+                if (helper.getContext() != null && ((ITIMultiblockBEHelper)helper).it$isAssembled()) {
+                    ITTemplateMultiblock.currentlyBreakingPos = pos.immutable();
+                    try { helper.disassemble(); }
+                    finally { ITTemplateMultiblock.currentlyBreakingPos = null; }
+                }
             }
         }
         super.onRemove(state, level, pos, newState, isMoving);

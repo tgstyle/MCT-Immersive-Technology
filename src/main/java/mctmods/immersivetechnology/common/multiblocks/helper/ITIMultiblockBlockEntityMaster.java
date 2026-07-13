@@ -19,15 +19,11 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.AbstractMap;
-import java.util.List;
 import java.util.stream.Stream;
 
 public class ITIMultiblockBlockEntityMaster<State extends IMultiblockState> extends MultiblockBlockEntityMaster<State> implements ITBlockInterfaces.IPlayerInteraction, ITIDropInventory, ITIModelOffsetProvider, ITIMultiblockBEHelper {
     private final ITIMultiblockBlockEntityCommon<State> common;
     private boolean disassembling = false;
-
-    public List<AbstractMap.SimpleEntry<BlockPos, BlockState>> disassembleQueue = null;
 
     public ITIMultiblockBlockEntityMaster(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState, MultiblockRegistration<State> multiblock) { super(type, worldPosition, blockState, multiblock); this.common = new ITIMultiblockBlockEntityCommon<>(multiblock, this::getHelper, this::getLevel); }
 
