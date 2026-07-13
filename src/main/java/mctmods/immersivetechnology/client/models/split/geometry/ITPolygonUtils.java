@@ -121,10 +121,7 @@ public class ITPolygonUtils {
             );
         }
 
-        BakedQuad quad = quadBuilder.bake(-1, Direction.getNearest(normal.x(), normal.y(), normal.z()), data.sprite(), false);
-        int[] verts = quad.getVertices();
-        for (int i = 0; i < 4; ++i) { verts[i * VERTEX_SIZE_INTS + UV_OFFSET + 2] = 0xF00000; }
-        return quad;
+        return quadBuilder.bake(-1, Direction.getNearest(normal.x(), normal.y(), normal.z()), data.sprite(), false);
     }
 
     private static float[] toArray(ITVec3d vec, int length) {
