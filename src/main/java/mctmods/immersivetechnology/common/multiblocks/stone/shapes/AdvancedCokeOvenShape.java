@@ -20,7 +20,6 @@ public class AdvancedCokeOvenShape {
     public static BlockPos MASTER_POS;
     public static BlockPos TRIGGER_POS;
     public static BlockPos CLIENT_OFFSET;
-    public static BlockPos DISASSEMBLY_POS;
     public static float MANUAL_SCALE;
 
     static {
@@ -62,7 +61,6 @@ public class AdvancedCokeOvenShape {
                     case "master" -> MASTER_POS = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
                     case "trigger" -> TRIGGER_POS = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
                     case "client_offset" -> CLIENT_OFFSET = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
-                    case "disassembly_ticker" -> DISASSEMBLY_POS = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
                 }
             }
         }

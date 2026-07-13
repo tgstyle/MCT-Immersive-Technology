@@ -81,14 +81,12 @@ public class ITMultiblockProvider {
     public static final MultiblockRegistration<AdvancedCokeOvenLogic.State> ADVANCED_COKE_OVEN =
             stoneNoMirror(new AdvancedCokeOvenLogic(), "advanced_coke_oven")
                     .structure(() -> AdvancedCokeOven.INSTANCE)
-                    .component(new ITDisassemblyTicker<>(AdvancedCokeOvenShape.DISASSEMBLY_POS), state -> null)
                     .gui(ITMenuTypes.ADVANCED_COKE_OVEN_MENU)
                     .build();
 
     public static final MultiblockRegistration<AlternatorLogic.State> ALTERNATOR =
             metalNoMirror(new AlternatorLogic(), "alternator")
                     .structure(() -> Alternator.INSTANCE)
-                    .component(new ITDisassemblyTicker<>(AlternatorShape.DISASSEMBLY_POS), state -> null)
                     .build();
 
     public static final MultiblockRegistration<BoilerLiquidLogic.State> BOILER_LIQUID =
@@ -97,7 +95,6 @@ public class ITMultiblockProvider {
                     .redstone(s -> s.rsState, BoilerLiquidLogic.REDSTONE_POI)
                     .component(new BoilerLiquidProcess())
                     .component(new ITClearTank<>(BoilerLiquidLogic.INPUT_FLUID_POIS, s -> s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .component(new ITDisassemblyTicker<>(BoilerLiquidShape.DISASSEMBLY_POS), state -> null)
                     .gui(ITMenuTypes.BOILER_LIQUID_MENU)
                     .build();
 
@@ -106,7 +103,6 @@ public class ITMultiblockProvider {
                     .structure(() -> BoilerSolid.INSTANCE)
                     .redstone(s -> s.rsState, BoilerSolidLogic.REDSTONE_POI)
                     .component(new BoilerSolidProcess())
-                    .component(new ITDisassemblyTicker<>(BoilerLiquidShape.DISASSEMBLY_POS), state -> null)
                     .gui(ITMenuTypes.BOILER_SOLID_MENU)
                     .build();
 
@@ -114,7 +110,6 @@ public class ITMultiblockProvider {
             metalNoMirror(new BoilerTankLogic(), "boiler_tank")
                     .structure(() -> BoilerTank.INSTANCE)
                     .component(new ITClearTank<>(BoilerTankLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .component(new ITDisassemblyTicker<>(BoilerTankShape.DISASSEMBLY_POS), state -> null)
                     .gui(ITMenuTypes.BOILER_TANK_MENU)
                     .build();
 
@@ -122,7 +117,6 @@ public class ITMultiblockProvider {
             stoneNoMirror(new CoolingTowerLogic(), "cooling_tower")
                     .structure(() -> CoolingTower.INSTANCE)
                     .component(new ITClearTank<>(CoolingTowerLogic.INPUT_FLUID_POIS, s -> { s.tanks.input0().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); }, Component.translatable(TranslationKey.GUI_INPUT_TANKS_CLEARED.getLocation())))
-                    .component(new ITDisassemblyTicker<>(CoolingTowerShape.DISASSEMBLY_POS), state -> null)
                     .build();
 
     public static final MultiblockRegistration<DistillerLogic.State> DISTILLER =
@@ -130,7 +124,6 @@ public class ITMultiblockProvider {
                     .structure(() -> Distiller.INSTANCE)
                     .redstone(s -> s.rsState, DistillerLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(DistillerLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .component(new ITDisassemblyTicker<>(DistillerShape.DISASSEMBLY_POS), state -> null)
                     .gui(ITMenuTypes.DISTILLER_MENU)
                     .build();
 
@@ -139,7 +132,6 @@ public class ITMultiblockProvider {
                     .structure(() -> ElectrolyticCrucibleBattery.INSTANCE)
                     .redstone(s -> s.rsState, ElectrolyticCrucibleBatteryLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(ElectrolyticCrucibleBatteryLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .component(new ITDisassemblyTicker<>(ElectrolyticCrucibleBatteryShape.DISASSEMBLY_POS), state -> null)
                     .build();
 
     public static final MultiblockRegistration<GasTurbineLogic.State> GAS_TURBINE =
@@ -147,7 +139,6 @@ public class ITMultiblockProvider {
                     .structure(() -> GasTurbine.INSTANCE)
                     .redstone(s -> s.rsState, GasTurbineLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(GasTurbineLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .component(new ITDisassemblyTicker<>(GasTurbineShape.DISASSEMBLY_POS), state -> null)
                     .build();
 
     public static final MultiblockRegistration<HeatExchangerLogic.State> HEAT_EXCHANGER =
@@ -155,7 +146,6 @@ public class ITMultiblockProvider {
                     .structure(() -> HeatExchanger.INSTANCE)
                     .redstone(s -> s.rsState, HeatExchangerLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(HeatExchangerLogic.INPUT_FLUID_POIS, s -> { s.tanks.input0().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); }, Component.translatable(TranslationKey.GUI_INPUT_TANKS_CLEARED.getLocation())))
-                    .component(new ITDisassemblyTicker<>(HeatExchangerShape.DISASSEMBLY_POS), state -> null)
                     .withComparator()
                     .build();
 
@@ -164,7 +154,6 @@ public class ITMultiblockProvider {
                     .structure(() -> MeltingCrucible.INSTANCE)
                     .redstone(s -> s.rsState, MeltingCrucibleLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(MeltingCrucibleLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .component(new ITDisassemblyTicker<>(MeltingCrucibleShape.DISASSEMBLY_POS), state -> null)
                     .gui(ITMenuTypes.MELTING_CRUCIBLE_MENU)
                     .build();
 
@@ -172,14 +161,12 @@ public class ITMultiblockProvider {
             metalNoMirror(new RadiatorLogic(), "radiator")
                     .structure(() -> Radiator.INSTANCE)
                     .redstone(s -> s.rsState, RadiatorLogic.REDSTONE_POI)
-                    .component(new ITDisassemblyTicker<>(RadiatorShape.DISASSEMBLY_POS), state -> null)
                     .build();
 
     public static final MultiblockRegistration<RadiatorHorizontalLogic.State> RADIATOR_HORIZONTAL =
             metalNoMirror(new RadiatorHorizontalLogic(), "radiator_horizontal")
                     .structure(() -> RadiatorHorizontal.INSTANCE)
                     .redstone(s -> s.rsState, RadiatorHorizontalLogic.REDSTONE_POI)
-                    .component(new ITDisassemblyTicker<>(RadiatorHorizontalShape.DISASSEMBLY_POS), state -> null)
                     .build();
 
     public static final MultiblockRegistration<SolarMelterLogic.State> SOLAR_MELTER =
@@ -187,14 +174,12 @@ public class ITMultiblockProvider {
                     .structure(() -> SolarMelter.INSTANCE)
                     .redstone(s -> s.rsState, SolarMelterLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(SolarMelterLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .component(new ITDisassemblyTicker<>(SolarMelterShape.DISASSEMBLY_POS), state -> null)
                     .gui(ITMenuTypes.SOLAR_MELTER_MENU)
                     .build();
 
     public static final MultiblockRegistration<SolarReflectorLogic.State> SOLAR_REFLECTOR =
             metalNoMirror(new SolarReflectorLogic(), "solar_reflector")
                     .structure(() -> SolarReflector.INSTANCE)
-                    .component(new ITDisassemblyTicker<>(SolarReflectorShape.DISASSEMBLY_POS), state -> null)
                     .build();
 
     public static final MultiblockRegistration<SolarTowerLogic.State> SOLAR_TOWER =
@@ -202,7 +187,6 @@ public class ITMultiblockProvider {
                     .structure(() -> SolarTower.INSTANCE)
                     .redstone(s -> s.rsState, SolarTowerLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(SolarTowerLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .component(new ITDisassemblyTicker<>(SolarTowerShape.DISASSEMBLY_POS), state -> null)
                     .gui(ITMenuTypes.SOLAR_TOWER_MENU)
                     .build();
 
@@ -211,14 +195,12 @@ public class ITMultiblockProvider {
                     .structure(() -> SteamTurbine.INSTANCE)
                     .redstone(s -> s.rsState, SteamTurbineLogic.REDSTONE_POI)
                     .component(new ITClearTank<>(SteamTurbineLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .component(new ITDisassemblyTicker<>(SteamTurbineShape.DISASSEMBLY_POS), state -> null)
                     .build();
 
     public static final MultiblockRegistration<SteelSheetmetalTankLogic.State> STEEL_SHEETMETAL_TANK =
             metalNoMirror(new SteelSheetmetalTankLogic(), "steel_sheetmetal_tank")
                     .structure(() -> SteelSheetmetalTank.INSTANCE)
                     .redstone(s -> s.rsState, SteelSheetmetalTankLogic.REDSTONE_POI)
-                    .component(new ITDisassemblyTicker<>(SteelSheetmetalTankShape.DISASSEMBLY_POS), state -> null)
                     .withComparator()
                     .build();
 

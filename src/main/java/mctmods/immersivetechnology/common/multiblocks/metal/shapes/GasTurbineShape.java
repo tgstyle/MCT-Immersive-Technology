@@ -19,7 +19,6 @@ public class GasTurbineShape {
     public static BlockPos MASTER_POS;
     public static BlockPos TRIGGER_POS;
     public static BlockPos CLIENT_OFFSET;
-    public static BlockPos DISASSEMBLY_POS;
     public static float MANUAL_SCALE;
 
     static {
@@ -48,7 +47,7 @@ public class GasTurbineShape {
                     ITLib.IT_LOGGER.error("Failed to load shapes for gas_turbine multiblock.");
                     GETTER = FullblockShape.GETTER;
                 } else {
-                    boolean allFull = !shapes.isEmpty() && shapes.stream().allMatch(list -> list.size() == 1 && list.get(0).equals(GenericShape.FULL_BLOCK));
+                    boolean allFull = !shapes.isEmpty() && shapes.stream().allMatch(list -> list.size() == 1 && list.getFirst().equals(GenericShape.FULL_BLOCK));
                     if (allFull) { GETTER = FullblockShape.GETTER; }
                     else { GETTER = new GenericShape.JsonShape(WIDTH, HEIGHT, LENGTH, shapes); }
                 }
@@ -61,7 +60,6 @@ public class GasTurbineShape {
                     case "master" -> MASTER_POS = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
                     case "trigger" -> TRIGGER_POS = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
                     case "client_offset" -> CLIENT_OFFSET = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
-                    case "disassembly_ticker" -> DISASSEMBLY_POS = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
                 }
             }
         }

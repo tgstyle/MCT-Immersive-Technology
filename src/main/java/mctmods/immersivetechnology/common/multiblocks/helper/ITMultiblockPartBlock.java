@@ -20,6 +20,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.util.FakePlayer;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -44,8 +45,7 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
         return super.useItemOn(stack, state, level, pos, player, hand, hit);
     }
 
-    @Override @Nonnull
-    public BlockState playerWillDestroy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull Player player) {
+    @Override @Nonnull public BlockState playerWillDestroy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull Player player) {
         if (!level.isClientSide) {
             BlockEntity te = level.getBlockEntity(pos);
             if (te instanceof IMultiblockBE<?> be) {
@@ -59,14 +59,27 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
                             }
                         });
                     }
+                    if (!(player instanceof FakePlayer)) {
+                        ITTemplateMultiblock.currentlyBreakingPos = pos.immutable();
+                        try { return super.playerWillDestroy(level, pos, state, player); }
+                        finally { ITTemplateMultiblock.currentlyBreakingPos = null; }
+                    }
                 }
             }
         }
         return super.playerWillDestroy(level, pos, state, player);
     }
 
-    @Override
-    public void onRemove(BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
+    @Override public void onRemove(BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!level.isClientSide && state.getBlock() != newState.getBlock()) {
+            BlockEntity te = level.getBlockEntity(pos);
+            if (te instanceof IMultiblockBE<?> be && !((ITIMultiblockBEHelper)be.getHelper()).it$isDisassembling()) {
+                ITTemplateMultiblock.currentlyBreakingPos = pos.immutable();
+                try { super.onRemove(state, level, pos, newState, isMoving); }
+                finally { ITTemplateMultiblock.currentlyBreakingPos = null; }
+                return;
+            }
+        }
         super.onRemove(state, level, pos, newState, isMoving);
     }
 

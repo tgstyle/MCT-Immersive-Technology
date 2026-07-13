@@ -19,7 +19,6 @@ public class BoilerTankShape {
     public static BlockPos MASTER_POS;
     public static BlockPos TRIGGER_POS;
     public static BlockPos CLIENT_OFFSET;
-    public static BlockPos DISASSEMBLY_POS;
     public static float MANUAL_SCALE;
     public static final List<BlockPos> SYMMETRIC_TRIGGER_OFFSETS;
 
@@ -49,7 +48,7 @@ public class BoilerTankShape {
                     ITLib.IT_LOGGER.error("Failed to load shapes for boiler_tank multiblock.");
                     GETTER = FullblockShape.GETTER;
                 } else {
-                    boolean allFull = !shapes.isEmpty() && shapes.stream().allMatch(list -> list.size() == 1 && list.get(0).equals(GenericShape.FULL_BLOCK));
+                    boolean allFull = !shapes.isEmpty() && shapes.stream().allMatch(list -> list.size() == 1 && list.getFirst().equals(GenericShape.FULL_BLOCK));
                     if (allFull) { GETTER = FullblockShape.GETTER; }
                     else { GETTER = new GenericShape.JsonShape(WIDTH, HEIGHT, LENGTH, shapes); }
                 }
@@ -63,7 +62,6 @@ public class BoilerTankShape {
                     case "master" -> MASTER_POS = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
                     case "trigger" -> TRIGGER_POS = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
                     case "client_offset" -> CLIENT_OFFSET = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
-                    case "disassembly_ticker" -> DISASSEMBLY_POS = new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]);
                 }
                 if ("symmetric_trigger".equals(poi.name)) {
                     symTriggers.add(new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2]));
