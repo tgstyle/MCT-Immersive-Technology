@@ -1,11 +1,11 @@
 Tanque de Chapa de Aço
 Enche-o!
-<&multiblock>O Tanque de chapa de aço é simplesmente uma versão maior do tanque normal.
+<&multiblock>O Tanque de chapa de aço é simplesmente uma versão maior do tanque.
 
 
 
 
 
 §lFuncionamento§r
-    - O §lVapor§r é inserido pelo topo.
-    - O §lVapor de escape§r sai pela parte inferior.
+    - Os §lFluidos§r são inseridos na parte superior e inferior.
+    - Os §lFluidos§r são libertados na parte inferior. Usa um sinal de Redstone para libertar o fluido na parte inferior.

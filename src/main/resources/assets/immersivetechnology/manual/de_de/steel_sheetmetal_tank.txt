@@ -1,11 +1,11 @@
 Stahltank
 Füll ihn auf!
-<&multiblock>Der Stahltank ist einfach eine größere Version des normalen Tanks.
+<&multiblock>Der Stahltank ist einfach eine größere Version des Tanks.
 
 
 
 
 
 §lBetrieb§r
-    - §lDampf§r wird oben eingefüllt.
-    - §lAuspuffdampf§r wird unten ausgegeben.
+    - §lFlüssigkeiten§r werden oben und unten eingefüllt.
+    - §lFlüssigkeiten§r werden unten ausgegeben. Verwende ein Redstone-Signal, um Flüssigkeit unten auszugeben.

@@ -7,5 +7,5 @@ Fill it up!
 
 
 §lOperation§r
-    - §lSteam§r is input on the top.
-    - §lExhaust Steam§r is output on the bottom.
+    - §lFluids§r are input on the top and bottom.
+    - §lFluids§r are output on the bottom. Use redstone signal to output fluid on the bottom.

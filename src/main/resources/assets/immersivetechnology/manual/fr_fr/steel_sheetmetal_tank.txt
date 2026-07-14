@@ -1,11 +1,11 @@
 Réservoir en tôle d'acier
 Remplis-le !
-<&multiblock>Le Réservoir en tôle d'acier est simplement une version plus grande du réservoir normal.
+<&multiblock>Le Réservoir en tôle d'acier est simplement une version plus grande du réservoir.
 
 
 
 
 
 §lFonctionnement§r
-    - La §lVapeur§r est introduite par le haut.
-    - La §lVapeur d'échappement§r sort par le bas.
+    - Les §lFluides§r sont introduits par le haut et par le bas.
+    - Les §lFluides§r sont évacués par le bas. Utilise un signal de Redstone pour évacuer le fluide par le bas.

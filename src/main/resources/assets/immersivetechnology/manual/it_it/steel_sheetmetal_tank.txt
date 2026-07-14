@@ -1,11 +1,11 @@
 Serbatoio in lamiera d'acciaio
 Riempilo!
-<&multiblock>Il Serbatoio in lamiera d'acciaio è semplicemente una versione più grande del serbatoio normale.
+<&multiblock>Il Serbatoio in lamiera d'acciaio è semplicemente una versione più grande del serbatoio.
 
 
 
 
 
 §lFunzionamento§r
-    - Il §lVapore§r viene inserito dall'alto.
-    - Il §lVapore di scarico§r esce dal basso.
+    - I §lFluidi§r vengono inseriti dall'alto e dal basso.
+    - I §lFluidi§r vengono espulsi dal basso. Usa un segnale di redstone per espellere il fluido dal basso.
