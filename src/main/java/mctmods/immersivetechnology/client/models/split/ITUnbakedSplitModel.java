@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.client.models.split;
 
-import mctmods.immersivetechnology.client.models.ITICacheKeyProvider;
+import mctmods.immersivetechnology.client.models.util.ITICacheKeyProvider;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.*;

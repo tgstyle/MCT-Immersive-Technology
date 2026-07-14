@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.client.models;
+package mctmods.immersivetechnology.client.models.util;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;

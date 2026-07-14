@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.client.models;
+package mctmods.immersivetechnology.client.models.obj;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;

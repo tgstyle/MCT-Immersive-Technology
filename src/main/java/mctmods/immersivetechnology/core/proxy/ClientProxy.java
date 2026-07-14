@@ -10,7 +10,7 @@ import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
 import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
 import mctmods.immersivetechnology.client.models.ITDynamicModel;
 import mctmods.immersivetechnology.client.models.ITModelConfigurableSides;
-import mctmods.immersivetechnology.client.models.ITObjLoader;
+import mctmods.immersivetechnology.client.models.obj.ITObjLoader;
 import mctmods.immersivetechnology.client.models.mirror.ITMirroredModelLoader;
 import mctmods.immersivetechnology.client.models.split.ITSplitModelLoader;
 import mctmods.immersivetechnology.client.particles.helper.ITColoredSmokeProvider;

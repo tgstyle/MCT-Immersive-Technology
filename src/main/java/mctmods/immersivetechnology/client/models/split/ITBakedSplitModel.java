@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.client.models.split;
 
-import mctmods.immersivetechnology.client.models.ITICacheKeyProvider;
+import mctmods.immersivetechnology.client.models.util.ITICacheKeyProvider;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
