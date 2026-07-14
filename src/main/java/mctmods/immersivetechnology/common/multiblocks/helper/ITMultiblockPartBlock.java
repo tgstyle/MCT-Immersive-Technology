@@ -1,19 +1,24 @@
 package mctmods.immersivetechnology.common.multiblocks.helper;
 
+import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
+import mctmods.immersivetechnology.core.util.inventory.ITIDropInventory;
+
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockPartBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
-import mctmods.immersivetechnology.core.util.inventory.ITIDropInventory;
+import blusunrize.immersiveengineering.common.blocks.IEBaseBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -21,17 +26,32 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.util.FakePlayer;
-
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ITMultiblockPartBlock<S extends IMultiblockState> extends MultiblockPartBlock<S> {
-    public ITMultiblockPartBlock(Properties properties, MultiblockRegistration<S> multiblock) { super(properties, multiblock); }
+    private final MultiblockRegistration<S> multiblockRef;
+
+    public ITMultiblockPartBlock(Properties properties, MultiblockRegistration<S> multiblock) { super(properties, multiblock); this.multiblockRef = multiblock; }
 
     @Override public int getLightBlock(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos) { return 0; }
 
     @Override public boolean propagatesSkylightDown(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos) { return true; }
+
+    @Override public boolean isLadder(@Nonnull BlockState state, @Nonnull LevelReader level, @Nonnull BlockPos pos, @Nullable LivingEntity entity) {
+        if (level.getBlockEntity(pos) instanceof IMultiblockBE<?> be && multiblockRef.logic() instanceof ITIBlockInterfaces.ILadderPositionProvider ladderLogic) {
+            BlockPos posInMB = be.getHelper().getPositionInMB();
+            return posInMB != null && ladderLogic.isLadderPos(posInMB);
+        }
+        return false;
+    }
+
+    @Override public void entityInside(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Entity entity) {
+        super.entityInside(state, level, pos, entity);
+        if (entity instanceof LivingEntity && isLadder(state, level, pos, (LivingEntity) entity)) { IEBaseBlock.IELadderBlock.applyLadderLogic(entity); }
+    }
 
     @Nonnull @Override
     public ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {

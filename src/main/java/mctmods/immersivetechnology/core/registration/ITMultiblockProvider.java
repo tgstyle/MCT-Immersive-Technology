@@ -198,9 +198,8 @@ public class ITMultiblockProvider {
                     .build();
 
     public static final MultiblockRegistration<SteelSheetmetalTankLogic.State> STEEL_SHEETMETAL_TANK =
-            metalNoMirror(new SteelSheetmetalTankLogic(), "steel_sheetmetal_tank")
+            metal(new SteelSheetmetalTankLogic(), "steel_sheetmetal_tank")
                     .structure(() -> SteelSheetmetalTank.INSTANCE)
-                    .redstone(s -> s.rsState, SteelSheetmetalTankLogic.REDSTONE_POI)
                     .withComparator()
                     .build();
 

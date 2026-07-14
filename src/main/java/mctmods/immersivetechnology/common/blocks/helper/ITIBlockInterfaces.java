@@ -1,12 +1,10 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
 import com.google.common.base.Preconditions;
-import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -17,24 +15,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ITIBlockInterfaces {
@@ -135,23 +126,6 @@ public class ITIBlockInterfaces {
 
     public interface IBlockEntityDrop extends IPlacementInteraction {
         void getBlockEntityDrop(LootContext var1, Consumer<ItemStack> var2);
-
-        default ItemStack getPickBlock(BlockState state) {
-            BlockEntity tile = (BlockEntity) this;
-            MutableObject<ItemStack> drop = new MutableObject<>(new ItemStack(state.getBlock()));
-            Level var7 = tile.getLevel();
-            if (var7 instanceof ServerLevel world) {
-                LootParams parms = (new LootParams.Builder(world))
-                        .withOptionalParameter(LootContextParams.TOOL, ItemStack.EMPTY)
-                        .withOptionalParameter(LootContextParams.BLOCK_STATE, world.getBlockState(tile.getBlockPos()))
-                        .withOptionalParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(tile.getBlockPos()))
-                        .create(LootContextParamSets.BLOCK);
-                LootContext var10001 = (new LootContext.Builder(parms)).create(Optional.of(ITLib.rl("pick_block")));
-                Objects.requireNonNull(drop);
-                getBlockEntityDrop(var10001, drop::setValue);
-            }
-            return drop.getValue();
-        }
     }
 
     public interface IConfigurableSides {
@@ -187,16 +161,15 @@ public class ITIBlockInterfaces {
         boolean canConnectRedstone(Direction var1);
     }
 
-    public interface IRedstoneInputOutput extends IRedstoneOutput {
-        boolean isRSInput();
-        boolean isRSOutput();
-    }
-
     public interface IComparatorOverride {
         int getComparatorInputOverride();
     }
 
     public interface IBlockOverlayText {
         @Nullable Component[] getOverlayText(Player player, HitResult mop, boolean hammer);
+    }
+
+    public interface ILadderPositionProvider {
+        boolean isLadderPos(BlockPos var1);
     }
 }

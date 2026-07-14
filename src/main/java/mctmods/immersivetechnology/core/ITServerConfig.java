@@ -352,7 +352,7 @@ public class ITServerConfig {
         BUILDER.pop();
 
         BUILDER.push("steel_sheetmetal_tank");
-        STEEL_SHEETMETAL_TANK_CAPACITY = BUILDER.defineInRange("capacity", 2048000, 1000, Integer.MAX_VALUE);
+        STEEL_SHEETMETAL_TANK_CAPACITY = BUILDER.defineInRange("capacity", 5120000, 1000, Integer.MAX_VALUE);
         STEEL_SHEETMETAL_TANK_TRANSFER_SPEED = BUILDER.defineInRange("transfer_speed", 1000, 1, Integer.MAX_VALUE);
         BUILDER.pop();
 
