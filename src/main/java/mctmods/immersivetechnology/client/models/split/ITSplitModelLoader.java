@@ -17,6 +17,7 @@ import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ITSplitModelLoader implements IGeometryLoader<ITUnbakedSplitModel> {
     public static final ITSplitModelLoader INSTANCE = new ITSplitModelLoader();
@@ -34,12 +35,11 @@ public class ITSplitModelLoader implements IGeometryLoader<ITUnbakedSplitModel> 
         JsonArray partsJson = modelContents.getAsJsonArray(PARTS);
         List<Vec3i> parts = new ArrayList<>(partsJson.size());
         for (JsonElement e : partsJson) { parts.add(fromJson(e.getAsJsonArray())); }
-        List<BlockPos> points = new ArrayList<>(parts.size());
-        for (Vec3i v : parts) { points.add(new BlockPos(v)); }
-        BoundingBox box = BoundingBox.encapsulatingPositions(points).orElseThrow();
+        List<BlockPos> positions = parts.stream().map(BlockPos::new).collect(Collectors.toList());
+        BoundingBox box = BoundingBox.encapsulatingPositions(positions).orElseThrow(() -> new IllegalStateException("No positions to encapsulate"));
         Vec3i size = new Vec3i(box.getXSpan(), box.getYSpan(), box.getZSpan());
         return new ITUnbakedSplitModel(baseModel, parts, modelContents.get(DYNAMIC).getAsBoolean(), size);
     }
 
-    private Vec3i fromJson(JsonArray a) { return new Vec3i(a.get(0).getAsInt(), a.get(1).getAsInt(), a.get(2).getAsInt());}
+    private static Vec3i fromJson(JsonArray a) { return new Vec3i(a.get(0).getAsInt(), a.get(1).getAsInt(), a.get(2).getAsInt()); }
 }

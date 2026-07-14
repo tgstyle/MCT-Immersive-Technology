@@ -11,10 +11,7 @@
     "model": "immersivetechnology:models/multiblock/metal/obj/steam_turbine/steam_turbine.obj",
     "shade_quads": true,
     "textures": {
-      "bottom": "immersivetechnology:multiblock/metal/steam_turbine",
-      "particle": "immersivetechnology:multiblock/metal/steam_turbine",
-      "side": "immersivetechnology:multiblock/metal/steam_turbine",
-      "top": "immersivetechnology:multiblock/metal/steam_turbine"
+      "particle": "immersivetechnology:multiblock/metal/steam_turbine"
     }
   },
   "loader": "immersivetechnology:split",

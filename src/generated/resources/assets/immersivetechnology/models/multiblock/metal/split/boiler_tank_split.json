@@ -11,10 +11,7 @@
     "model": "immersivetechnology:models/multiblock/metal/obj/boiler_tank/boiler_tank.obj",
     "shade_quads": true,
     "textures": {
-      "bottom": "immersivetechnology:multiblock/metal/boiler_tank",
-      "particle": "immersivetechnology:multiblock/metal/boiler_tank",
-      "side": "immersivetechnology:multiblock/metal/boiler_tank",
-      "top": "immersivetechnology:multiblock/metal/boiler_tank"
+      "particle": "immersivetechnology:multiblock/metal/boiler_tank"
     }
   },
   "loader": "immersivetechnology:split",

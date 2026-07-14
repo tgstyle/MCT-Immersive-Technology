@@ -11,11 +11,8 @@
     "model": "immersivetechnology:models/multiblock/metal/obj/boiler_solid/boiler_solid.obj",
     "shade_quads": true,
     "textures": {
-      "bottom": "immersivetechnology:multiblock/metal/boiler_solid",
       "cube_front": "immersivetechnology:multiblock/metal/boiler_solid_active",
-      "particle": "immersivetechnology:multiblock/metal/boiler_solid",
-      "side": "immersivetechnology:multiblock/metal/boiler_solid",
-      "top": "immersivetechnology:multiblock/metal/boiler_solid"
+      "particle": "immersivetechnology:multiblock/metal/boiler_solid"
     }
   },
   "loader": "immersivetechnology:split",

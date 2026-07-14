@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.data.models;
+package mctmods.immersivetechnology.common.data.builders;
 
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.core.lib.ITLib;

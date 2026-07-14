@@ -11,10 +11,7 @@
     "model": "immersivetechnology:models/multiblock/metal/obj/radiator_horizontal/radiator_horizontal.obj",
     "shade_quads": true,
     "textures": {
-      "bottom": "immersivetechnology:multiblock/metal/radiator",
-      "particle": "immersivetechnology:multiblock/metal/radiator",
-      "side": "immersivetechnology:multiblock/metal/radiator",
-      "top": "immersivetechnology:multiblock/metal/radiator"
+      "particle": "immersivetechnology:multiblock/metal/radiator"
     }
   },
   "loader": "immersivetechnology:split",

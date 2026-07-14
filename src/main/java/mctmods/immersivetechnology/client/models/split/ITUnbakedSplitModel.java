@@ -1,14 +1,7 @@
-/*
- * BluSunrize
- * Copyright (c) 2020
- *
- * This code is licensed under "Blu's License of Common Sense"
- * Details can be found in the license file in the root folder of this project
- */
-
 package mctmods.immersivetechnology.client.models.split;
 
-import blusunrize.immersiveengineering.api.client.ICacheKeyProvider;
+import mctmods.immersivetechnology.client.models.util.ITICacheKeyProvider;
+
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.*;
@@ -38,7 +31,10 @@ public class ITUnbakedSplitModel implements IUnbakedGeometry<ITUnbakedSplitModel
 
     @Override @NotNull public BakedModel bake(@NotNull IGeometryBakingContext owner, @NotNull ModelBaker bakery, @NotNull Function<Material, TextureAtlasSprite> spriteGetter, @NotNull ModelState modelTransform, @NotNull ItemOverrides overrides) {
         BakedModel bakedBase = baseModel.bake(bakery, spriteGetter, BlockModelRotation.X0_Y0);
-        if (dynamic) { return new ITBakedDynamicSplitModel<>((ICacheKeyProvider<?>)bakedBase, parts, modelTransform, size); }
-        else { return new ITBakedBasicSplitModel(bakedBase, parts, modelTransform, size, owner.getTransforms()); }
+        if (dynamic) {
+            return new ITBakedSplitModel<>((ITICacheKeyProvider<?>) bakedBase, parts, modelTransform, size, true, null);
+        } else {
+            return new ITBakedSplitModel<>(bakedBase, parts, modelTransform, size, false, owner.getTransforms());
+        }
     }
 }

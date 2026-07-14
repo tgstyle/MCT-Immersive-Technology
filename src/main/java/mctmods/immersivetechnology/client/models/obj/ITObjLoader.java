@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.client.models.obj;
 
 import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -17,6 +18,8 @@ import net.neoforged.neoforge.client.model.obj.ObjLoader;
 import net.neoforged.neoforge.client.model.obj.ObjModel;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import static net.minecraft.util.GsonHelper.getAsBoolean;
@@ -41,12 +44,20 @@ public class ITObjLoader implements IGeometryLoader<ITObjLoader.ITObjModel> {
         boolean emissiveAmbient = getAsBoolean(modelContents, "emissive_ambient", true);
         String mtlOverride = getAsString(modelContents, "mtl_override", null);
 
+        Map<String, Boolean> visibility = new HashMap<>();
+        if (modelContents.has("visibility")) {
+            JsonObject visJson = modelContents.getAsJsonObject("visibility");
+            for (Map.Entry<String, JsonElement> entry : visJson.entrySet()) {
+                visibility.put(entry.getKey(), entry.getValue().getAsBoolean());
+            }
+        }
+
         ObjModel.ModelSettings settings = new ObjModel.ModelSettings(modelLocation, automaticCulling, shadeQuads, flipV, emissiveAmbient, mtlOverride);
         ObjModel inner = ObjLoader.INSTANCE.loadModel(settings);
-        return new ITObjModel(inner);
+        return new ITObjModel(inner, visibility);
     }
 
-    public record ITObjModel(ObjModel inner) implements IUnbakedGeometry<ITObjModel> {
+    public record ITObjModel(ObjModel inner, Map<String, Boolean> defaultVisibility) implements IUnbakedGeometry<ITObjModel> {
         @Override public @NotNull BakedModel bake(@NotNull IGeometryBakingContext context, @NotNull ModelBaker baker, @NotNull Function<Material, TextureAtlasSprite> spriteGetter, @NotNull ModelState modelState, @NotNull ItemOverrides overrides) {
             return inner.bake(context, baker, spriteGetter, modelState, overrides);
         }

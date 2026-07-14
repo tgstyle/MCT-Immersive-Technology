@@ -3,6 +3,7 @@
   "dynamic": false,
   "inner_model": {
     "parent": "minecraft:block/block",
+    "ambientocclusion": false,
     "inner_model": {
       "parent": "minecraft:block/block",
       "ambientocclusion": false,
@@ -13,79 +14,19 @@
       "model": "immersivetechnology:models/multiblock/metal/obj/heat_exchanger/heat_exchanger.obj",
       "shade_quads": true,
       "textures": {
-        "bottom": "immersivetechnology:multiblock/metal/heat_exchanger",
-        "particle": "immersivetechnology:multiblock/metal/heat_exchanger",
-        "side": "immersivetechnology:multiblock/metal/heat_exchanger",
-        "top": "immersivetechnology:multiblock/metal/heat_exchanger"
+        "particle": "immersivetechnology:multiblock/metal/heat_exchanger"
       }
     },
-    "loader": "immersivetechnology:mirror"
+    "loader": "immersivetechnology:mirror",
+    "textures": {
+      "particle": "immersivetechnology:multiblock/metal/heat_exchanger"
+    }
   },
   "loader": "immersivetechnology:split",
   "split_parts": [
     [
-      -1,
-      -1,
-      0
-    ],
-    [
-      -2,
-      0,
-      -2
-    ],
-    [
-      -2,
-      0,
-      -1
-    ],
-    [
-      -2,
-      0,
-      0
-    ],
-    [
-      -1,
-      0,
-      -2
-    ],
-    [
-      -1,
-      0,
-      -1
-    ],
-    [
-      -1,
-      0,
-      0
-    ],
-    [
-      0,
-      0,
-      -2
-    ],
-    [
-      0,
-      0,
-      -1
-    ],
-    [
-      0,
-      0,
-      0
-    ],
-    [
       1,
-      0,
-      -2
-    ],
-    [
-      1,
-      0,
-      -1
-    ],
-    [
-      1,
-      0,
+      -1,
       0
     ],
     [
@@ -104,22 +45,82 @@
       0
     ],
     [
-      -2,
       1,
+      0,
       -2
     ],
     [
-      -2,
       1,
+      0,
+      -1
+    ],
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      -2
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      0,
       0
     ],
     [
       -1,
-      1,
+      0,
       -2
     ],
     [
       -1,
+      0,
+      -1
+    ],
+    [
+      -1,
+      0,
+      0
+    ],
+    [
+      -2,
+      0,
+      -2
+    ],
+    [
+      -2,
+      0,
+      -1
+    ],
+    [
+      -2,
+      0,
+      0
+    ],
+    [
+      2,
+      1,
+      -2
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      -2
+    ],
+    [
+      1,
       1,
       0
     ],
@@ -134,37 +135,37 @@
       0
     ],
     [
-      1,
-      1,
-      -2
-    ],
-    [
-      1,
-      1,
-      0
-    ],
-    [
-      2,
+      -1,
       1,
       -2
     ],
     [
-      2,
+      -1,
       1,
       0
     ],
     [
       -2,
-      -1,
+      1,
       -2
     ],
     [
       -2,
+      1,
+      0
+    ],
+    [
+      2,
+      -1,
+      -2
+    ],
+    [
+      2,
       -1,
       0
     ],
     [
-      -1,
+      1,
       -1,
       -2
     ],
@@ -179,32 +180,32 @@
       0
     ],
     [
-      1,
+      -1,
       -1,
       -2
     ],
     [
-      1,
       -1,
-      0
-    ],
-    [
-      2,
-      -1,
-      -2
-    ],
-    [
-      2,
       -1,
       0
     ],
     [
       -2,
       -1,
+      -2
+    ],
+    [
+      -2,
+      -1,
+      0
+    ],
+    [
+      2,
+      -1,
       -1
     ],
     [
-      -1,
+      1,
       -1,
       -1
     ],
@@ -214,22 +215,22 @@
       -1
     ],
     [
-      1,
       -1,
-      -1
-    ],
-    [
-      2,
       -1,
       -1
     ],
     [
       -2,
+      -1,
+      -1
+    ],
+    [
+      2,
       1,
       -1
     ],
     [
-      -1,
+      1,
       1,
       -1
     ],
@@ -239,14 +240,17 @@
       -1
     ],
     [
-      1,
+      -1,
       1,
       -1
     ],
     [
-      2,
+      -2,
       1,
       -1
     ]
-  ]
+  ],
+  "textures": {
+    "particle": "immersivetechnology:multiblock/metal/heat_exchanger"
+  }
 }

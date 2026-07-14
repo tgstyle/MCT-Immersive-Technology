@@ -11,10 +11,7 @@
     "model": "immersivetechnology:models/multiblock/stone/obj/cooling_tower/cooling_tower.obj",
     "shade_quads": true,
     "textures": {
-      "bottom": "immersivetechnology:multiblock/stone/cooling_tower_top",
-      "particle": "immersivetechnology:multiblock/stone/cooling_tower_top",
-      "side": "immersivetechnology:multiblock/stone/cooling_tower_top",
-      "top": "immersivetechnology:multiblock/stone/cooling_tower_top"
+      "particle": "immersivetechnology:multiblock/stone/cooling_tower_top"
     }
   },
   "loader": "immersivetechnology:split",

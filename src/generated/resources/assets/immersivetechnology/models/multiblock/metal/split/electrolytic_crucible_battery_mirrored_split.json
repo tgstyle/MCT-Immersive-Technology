@@ -3,78 +3,72 @@
   "dynamic": false,
   "inner_model": {
     "parent": "minecraft:block/block",
-    "inner_model": {
-      "parent": "minecraft:block/block",
-      "ambientocclusion": false,
-      "automatic_culling": false,
-      "emissive_ambient": true,
-      "flip_v": true,
-      "loader": "immersivetechnology:obj",
-      "model": "immersivetechnology:models/multiblock/metal/obj/electrolytic_crucible_battery/electrolytic_crucible_battery.obj",
-      "shade_quads": true,
-      "textures": {
-        "bottom": "immersivetechnology:multiblock/metal/electrolytic_crucible_battery",
-        "particle": "immersivetechnology:multiblock/metal/electrolytic_crucible_battery",
-        "side": "immersivetechnology:multiblock/metal/electrolytic_crucible_battery",
-        "top": "immersivetechnology:multiblock/metal/electrolytic_crucible_battery"
-      }
-    },
-    "loader": "immersivetechnology:mirror"
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "immersivetechnology:obj",
+    "model": "immersivetechnology:models/multiblock/metal/obj/electrolytic_crucible_battery/electrolytic_crucible_battery_mirrored.obj",
+    "mtl_override": "electrolytic_crucible_battery.mtl",
+    "shade_quads": true,
+    "textures": {
+      "particle": "immersivetechnology:multiblock/metal/electrolytic_crucible_battery"
+    }
   },
   "loader": "immersivetechnology:split",
   "split_parts": [
     [
-      -1,
-      0,
-      0
-    ],
-    [
-      0,
-      0,
-      0
-    ],
-    [
       1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      -1,
       0,
       -6
     ],
     [
-      1,
+      -1,
       0,
       -5
     ],
     [
-      1,
+      -1,
       0,
       -4
     ],
     [
-      1,
+      -1,
       0,
       -3
     ],
     [
-      1,
+      -1,
       0,
       -2
     ],
     [
-      1,
+      -1,
       0,
       -1
     ],
     [
-      1,
+      -1,
       0,
       0
     ],
     [
-      -1,
+      1,
       1,
       -8
     ],
     [
-      -1,
+      1,
       1,
       0
     ],
@@ -119,88 +113,8 @@
       0
     ],
     [
+      -1,
       1,
-      1,
-      0
-    ],
-    [
-      -1,
-      2,
-      -7
-    ],
-    [
-      -1,
-      2,
-      -6
-    ],
-    [
-      -1,
-      2,
-      -5
-    ],
-    [
-      -1,
-      2,
-      -4
-    ],
-    [
-      -1,
-      2,
-      -3
-    ],
-    [
-      -1,
-      2,
-      -2
-    ],
-    [
-      -1,
-      2,
-      -1
-    ],
-    [
-      -1,
-      2,
-      0
-    ],
-    [
-      0,
-      2,
-      -7
-    ],
-    [
-      0,
-      2,
-      -6
-    ],
-    [
-      0,
-      2,
-      -5
-    ],
-    [
-      0,
-      2,
-      -4
-    ],
-    [
-      0,
-      2,
-      -3
-    ],
-    [
-      0,
-      2,
-      -2
-    ],
-    [
-      0,
-      2,
-      -1
-    ],
-    [
-      0,
-      2,
       0
     ],
     [
@@ -245,6 +159,86 @@
     ],
     [
       0,
+      2,
+      -7
+    ],
+    [
+      0,
+      2,
+      -6
+    ],
+    [
+      0,
+      2,
+      -5
+    ],
+    [
+      0,
+      2,
+      -4
+    ],
+    [
+      0,
+      2,
+      -3
+    ],
+    [
+      0,
+      2,
+      -2
+    ],
+    [
+      0,
+      2,
+      -1
+    ],
+    [
+      0,
+      2,
+      0
+    ],
+    [
+      -1,
+      2,
+      -7
+    ],
+    [
+      -1,
+      2,
+      -6
+    ],
+    [
+      -1,
+      2,
+      -5
+    ],
+    [
+      -1,
+      2,
+      -4
+    ],
+    [
+      -1,
+      2,
+      -3
+    ],
+    [
+      -1,
+      2,
+      -2
+    ],
+    [
+      -1,
+      2,
+      -1
+    ],
+    [
+      -1,
+      2,
+      0
+    ],
+    [
+      0,
       3,
       -8
     ],
@@ -289,69 +283,24 @@
       0
     ],
     [
+      1,
+      0,
+      -8
+    ],
+    [
+      0,
+      0,
+      -8
+    ],
+    [
       -1,
       0,
       -8
     ],
     [
-      0,
-      0,
-      -8
-    ],
-    [
-      1,
-      0,
-      -8
-    ],
-    [
-      1,
+      -1,
       0,
       -7
-    ],
-    [
-      -1,
-      1,
-      -7
-    ],
-    [
-      -1,
-      1,
-      -6
-    ],
-    [
-      -1,
-      1,
-      -5
-    ],
-    [
-      -1,
-      1,
-      -4
-    ],
-    [
-      -1,
-      1,
-      -3
-    ],
-    [
-      -1,
-      1,
-      -2
-    ],
-    [
-      -1,
-      1,
-      -1
-    ],
-    [
-      0,
-      1,
-      -8
-    ],
-    [
-      1,
-      1,
-      -8
     ],
     [
       1,
@@ -389,9 +338,49 @@
       -1
     ],
     [
-      -1,
-      2,
+      0,
+      1,
       -8
+    ],
+    [
+      -1,
+      1,
+      -8
+    ],
+    [
+      -1,
+      1,
+      -7
+    ],
+    [
+      -1,
+      1,
+      -6
+    ],
+    [
+      -1,
+      1,
+      -5
+    ],
+    [
+      -1,
+      1,
+      -4
+    ],
+    [
+      -1,
+      1,
+      -3
+    ],
+    [
+      -1,
+      1,
+      -2
+    ],
+    [
+      -1,
+      1,
+      -1
     ],
     [
       1,
@@ -400,36 +389,41 @@
     ],
     [
       -1,
+      2,
+      -8
+    ],
+    [
+      1,
       0,
       -7
     ],
     [
-      -1,
+      1,
       0,
       -6
     ],
     [
-      -1,
+      1,
       0,
       -5
     ],
     [
-      -1,
+      1,
       0,
       -4
     ],
     [
-      -1,
+      1,
       0,
       -3
     ],
     [
-      -1,
+      1,
       0,
       -2
     ],
     [
-      -1,
+      1,
       0,
       -1
     ],
@@ -469,94 +463,97 @@
       -1
     ],
     [
-      -1,
+      1,
       3,
       -8
     ],
     [
-      -1,
+      1,
       3,
       -7
     ],
     [
-      -1,
+      1,
       3,
       -6
     ],
     [
-      -1,
+      1,
       3,
       -5
     ],
     [
-      -1,
+      1,
       3,
       -4
     ],
     [
-      -1,
+      1,
       3,
       -3
     ],
     [
-      -1,
+      1,
       3,
       -2
     ],
     [
-      -1,
+      1,
       3,
       -1
     ],
     [
-      -1,
+      1,
       3,
       0
     ],
     [
-      1,
+      -1,
       3,
       -8
     ],
     [
-      1,
+      -1,
       3,
       -7
     ],
     [
-      1,
+      -1,
       3,
       -6
     ],
     [
-      1,
+      -1,
       3,
       -5
     ],
     [
-      1,
+      -1,
       3,
       -4
     ],
     [
-      1,
+      -1,
       3,
       -3
     ],
     [
-      1,
+      -1,
       3,
       -2
     ],
     [
-      1,
+      -1,
       3,
       -1
     ],
     [
-      1,
+      -1,
       3,
       0
     ]
-  ]
+  ],
+  "textures": {
+    "particle": "immersivetechnology:multiblock/metal/electrolytic_crucible_battery"
+  }
 }

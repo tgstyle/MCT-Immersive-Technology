@@ -1,7 +1,6 @@
-package mctmods.immersivetechnology.common.data;
+package mctmods.immersivetechnology.common.data.models;
 
 import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.common.data.models.ITTransformationMap;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;

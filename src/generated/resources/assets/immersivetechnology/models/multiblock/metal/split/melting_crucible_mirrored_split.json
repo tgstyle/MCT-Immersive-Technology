@@ -8,23 +8,19 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/metal/obj/solar_reflector/solar_reflector.obj",
+    "model": "immersivetechnology:models/multiblock/metal/obj/melting_crucible/melting_crucible_mirrored.obj",
+    "mtl_override": "melting_crucible.mtl",
     "shade_quads": true,
     "textures": {
-      "particle": "immersivetechnology:multiblock/metal/solar_reflector"
+      "particle": "immersivetechnology:multiblock/metal/melting_crucible"
     }
   },
   "loader": "immersivetechnology:split",
   "split_parts": [
     [
-      0,
-      0,
-      1
-    ],
-    [
       1,
-      0,
-      0
+      -1,
+      1
     ],
     [
       1,
@@ -32,94 +28,54 @@
       1
     ],
     [
-      1,
-      0,
-      2
-    ],
-    [
-      2,
+      -1,
       0,
       1
     ],
     [
-      0,
       1,
-      1
+      -1,
+      -1
     ],
     [
       1,
-      1,
-      1
-    ],
-    [
-      2,
-      1,
-      1
-    ],
-    [
-      0,
-      2,
+      -1,
       0
     ],
     [
       0,
-      2,
+      -1,
+      -1
+    ],
+    [
+      0,
+      -1,
       1
     ],
     [
-      0,
-      2,
-      2
+      -1,
+      -1,
+      -1
     ],
     [
-      1,
-      2,
-      0
-    ],
-    [
-      1,
-      2,
+      -1,
+      -1,
       1
     ],
     [
       1,
-      2,
-      2
+      1,
+      -1
     ],
     [
-      2,
-      2,
-      0
-    ],
-    [
-      2,
-      2,
-      1
-    ],
-    [
-      2,
-      2,
-      2
-    ],
-    [
-      0,
-      0,
+      1,
+      1,
       0
     ],
     [
       0,
-      0,
-      2
-    ],
-    [
-      2,
-      0,
-      0
-    ],
-    [
-      2,
-      0,
-      2
+      1,
+      -1
     ],
     [
       0,
@@ -128,21 +84,36 @@
     ],
     [
       0,
-      1,
-      2
-    ],
-    [
-      2,
-      1,
+      -1,
       0
     ],
     [
-      2,
+      -1,
+      -1,
+      0
+    ],
+    [
       1,
-      2
+      0,
+      -1
+    ],
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      0,
+      0
     ]
   ],
   "textures": {
-    "particle": "immersivetechnology:multiblock/metal/solar_reflector"
+    "particle": "immersivetechnology:multiblock/metal/melting_crucible"
   }
 }

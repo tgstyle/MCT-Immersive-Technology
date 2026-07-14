@@ -3,55 +3,24 @@
   "dynamic": false,
   "inner_model": {
     "parent": "minecraft:block/block",
-    "inner_model": {
-      "parent": "minecraft:block/block",
-      "ambientocclusion": false,
-      "automatic_culling": false,
-      "emissive_ambient": true,
-      "flip_v": true,
-      "loader": "immersivetechnology:obj",
-      "model": "immersivetechnology:models/multiblock/metal/obj/distiller/distiller.obj",
-      "shade_quads": true,
-      "textures": {
-        "bottom": "immersivetechnology:multiblock/metal/distiller",
-        "particle": "immersivetechnology:multiblock/metal/distiller",
-        "side": "immersivetechnology:multiblock/metal/distiller",
-        "top": "immersivetechnology:multiblock/metal/distiller"
-      }
-    },
-    "loader": "immersivetechnology:mirror"
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "immersivetechnology:obj",
+    "model": "immersivetechnology:models/multiblock/metal/obj/distiller/distiller_mirrored.obj",
+    "mtl_override": "distiller.mtl",
+    "shade_quads": true,
+    "textures": {
+      "particle": "immersivetechnology:multiblock/metal/distiller"
+    }
   },
   "loader": "immersivetechnology:split",
   "split_parts": [
     [
-      -1,
+      1,
       -1,
       1
-    ],
-    [
-      -1,
-      0,
-      -1
-    ],
-    [
-      -1,
-      0,
-      0
-    ],
-    [
-      -1,
-      0,
-      1
-    ],
-    [
-      0,
-      0,
-      -1
-    ],
-    [
-      0,
-      0,
-      0
     ],
     [
       1,
@@ -70,6 +39,31 @@
     ],
     [
       0,
+      0,
+      -1
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      -1,
+      0,
+      -1
+    ],
+    [
+      -1,
+      0,
+      0
+    ],
+    [
+      -1,
+      0,
+      1
+    ],
+    [
+      0,
       1,
       -1
     ],
@@ -79,17 +73,17 @@
       0
     ],
     [
-      1,
+      -1,
       1,
       -1
     ],
     [
-      1,
+      -1,
       1,
       0
     ],
     [
-      -1,
+      1,
       -1,
       -1
     ],
@@ -104,27 +98,27 @@
       1
     ],
     [
-      1,
+      -1,
       -1,
       -1
     ],
     [
-      1,
+      -1,
       -1,
       1
     ],
     [
-      -1,
+      1,
       1,
       -1
     ],
     [
-      -1,
+      1,
       1,
       0
     ],
     [
-      -1,
+      1,
       -1,
       0
     ],
@@ -134,9 +128,12 @@
       0
     ],
     [
-      1,
+      -1,
       -1,
       0
     ]
-  ]
+  ],
+  "textures": {
+    "particle": "immersivetechnology:multiblock/metal/distiller"
+  }
 }
