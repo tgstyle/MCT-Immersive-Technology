@@ -1,11 +1,14 @@
 Steel Tank
 Fill it up!
-<&multiblock>The Steel Tank is just a larger version of the Tank.
+<&multiblock>The Steel Tank is as strong as an abrams tank.
+
 
 
 
 
 
 §lOperation§r
-    - §lSteam§r is input on the top.
-    - §lExhaust Steam§r is output on the bottom.
+    - §lFluids§r are input on the top or bottom.
+    - §lFluids§r are output on the bottom or sides.
+    - Comparator output is on the left corner of the model as shown in the manual (opposite the pipe side). One block up from the base where the tank starts up to the top of the tank (6 blocks high).
+    - Use valves to control output.

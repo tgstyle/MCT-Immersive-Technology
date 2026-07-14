@@ -1,11 +1,14 @@
 Stahltank
 Füll ihn auf!
-<&multiblock>Der Stahltank ist einfach eine größere Version des normalen Tanks.
+<&multiblock>Der Stahltank ist so stabil wie ein Abrams-Panzer.
+
 
 
 
 
 
 §lBetrieb§r
-    - §lDampf§r wird oben eingefüllt.
-    - §lAuspuffdampf§r wird unten ausgegeben.
+    - §lFlüssigkeiten§r werden oben oder unten eingefüllt.
+    - §lFlüssigkeiten§r werden unten oder seitlich ausgegeben.
+    - Der Komparator-Ausgang befindet sich in der linken Ecke des Modells, wie im Handbuch dargestellt (gegenüber der Rohrseite). Einen Block über der Basis, wo der Tank beginnt, bis zur Spitze des Tanks (6 Blöcke hoch).
+    - Verwende Ventile, um die Ausgabe zu steuern.

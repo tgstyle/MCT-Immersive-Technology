@@ -1,11 +1,14 @@
 Serbatoio in lamiera d'acciaio
 Riempilo!
-<&multiblock>Il Serbatoio in lamiera d'acciaio è semplicemente una versione più grande del serbatoio normale.
+<&multiblock>Il Serbatoio in lamiera d'acciaio è resistente quanto un carro armato Abrams.
+
 
 
 
 
 
 §lFunzionamento§r
-    - Il §lVapore§r viene inserito dall'alto.
-    - Il §lVapore di scarico§r esce dal basso.
+    - I §lFluidi§r vengono inseriti dall'alto o dal basso.
+    - I §lFluidi§r vengono espulsi dal basso o dai lati.
+    - L'uscita del comparatore si trova nell'angolo sinistro del modello, come mostrato nel manuale (opposto al lato dei tubi). Un blocco sopra la base dove inizia il serbatoio fino alla cima del serbatoio (6 blocchi di altezza).
+    - Usa le valvole per controllare l'uscita.

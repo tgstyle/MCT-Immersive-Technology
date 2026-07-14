@@ -1,11 +1,14 @@
 Réservoir en tôle d'acier
 Remplis-le !
-<&multiblock>Le Réservoir en tôle d'acier est simplement une version plus grande du réservoir normal.
+<&multiblock>Le Réservoir en tôle d'acier est aussi solide qu'un char Abrams.
+
 
 
 
 
 
 §lFonctionnement§r
-    - La §lVapeur§r est introduite par le haut.
-    - La §lVapeur d'échappement§r sort par le bas.
+    - Les §lFluides§r sont introduits par le haut ou par le bas.
+    - Les §lFluides§r sont évacués par le bas ou par les côtés.
+    - La sortie du comparateur se trouve dans le coin gauche du modèle, comme indiqué dans le manuel (à l'opposé du côté des tuyaux). Un bloc au-dessus de la base où le réservoir commence, jusqu'au sommet du réservoir (6 blocs de haut).
+    - Utilise des vannes pour contrôler la sortie.

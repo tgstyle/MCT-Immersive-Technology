@@ -1,11 +1,14 @@
 Tanque de Chapa de Aço
 Enche-o!
-<&multiblock>O Tanque de chapa de aço é simplesmente uma versão maior do tanque normal.
+<&multiblock>O Tanque de chapa de aço é tão resistente como um tanque Abrams.
+
 
 
 
 
 
 §lFuncionamento§r
-    - O §lVapor§r é inserido pelo topo.
-    - O §lVapor de escape§r sai pela parte inferior.
+    - Os §lFluidos§r são inseridos na parte superior ou inferior.
+    - Os §lFluidos§r são libertados na parte inferior ou nas laterais.
+    - A saída do comparador está no canto esquerdo do modelo, tal como mostrado no manual (oposto ao lado dos tubos). Um bloco acima da base onde o tanque começa até ao topo do tanque (6 blocos de altura).
+    - Usa válvulas para controlar a saída.
