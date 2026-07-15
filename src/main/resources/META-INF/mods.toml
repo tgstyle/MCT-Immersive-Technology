@@ -15,7 +15,7 @@ credits = "tgstyle (author), Peter (new models), MagneticPrism (started the port
 [[dependencies.immersivetechnology]]
 modId="forge"
 mandatory=true
-versionRange="[47.1.106,)"
+versionRange="[${version_forge_min},)"
 ordering="NONE"
 side="BOTH"
 
