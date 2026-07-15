@@ -81,6 +81,7 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
                     }
                     if (!(player instanceof FakePlayer)) {
                         ITTemplateMultiblock.currentlyBreakingPos = pos.immutable();
+                        ITTemplateMultiblock.sneakBreaking = player.isShiftKeyDown();
                         try { return super.playerWillDestroy(level, pos, state, player); }
                         finally { ITTemplateMultiblock.currentlyBreakingPos = null; }
                     }
@@ -91,16 +92,19 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
     }
 
     @Override public void onRemove(BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!level.isClientSide && state.getBlock() != newState.getBlock()) {
-            BlockEntity te = level.getBlockEntity(pos);
-            if (te instanceof IMultiblockBE<?> be && !((ITIMultiblockBEHelper)be.getHelper()).it$isDisassembling()) {
-                ITTemplateMultiblock.currentlyBreakingPos = pos.immutable();
-                try { super.onRemove(state, level, pos, newState, isMoving); }
-                finally { ITTemplateMultiblock.currentlyBreakingPos = null; }
-                return;
+        try {
+            if (!level.isClientSide && state.getBlock() != newState.getBlock()) {
+                BlockEntity te = level.getBlockEntity(pos);
+                if (te instanceof IMultiblockBE<?> be && !((ITIMultiblockBEHelper)be.getHelper()).it$isDisassembling()) {
+                    ITTemplateMultiblock.currentlyBreakingPos = pos.immutable();
+                    try { super.onRemove(state, level, pos, newState, isMoving); }
+                    finally { ITTemplateMultiblock.currentlyBreakingPos = null; }
+                    return;
+                }
             }
+            super.onRemove(state, level, pos, newState, isMoving);
         }
-        super.onRemove(state, level, pos, newState, isMoving);
+        finally { ITTemplateMultiblock.sneakBreaking = false; }
     }
 
     @Override @Nonnull
