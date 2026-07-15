@@ -65,7 +65,14 @@ ext {
     version_jei = versionProps['version_jei']
     version_parchment = versionProps['version_parchment']
     version_ie = versionProps['version_ie']
-    version_ic = versionProps.getProperty('version_ic', '[2.0,)')
+    version_ie_full = "${version_minecraft}-${version_ie}"
+    version_ic = versionProps.getProperty('version_ic', '[0,)')
+    version_ie_curse = versionProps['version_ie_curse']
+    version_wayfix_curse = versionProps['version_wayfix_curse']
+    version_cloth_config_curse = versionProps['version_cloth_config_curse']
+    version_engineered_schematics_curse = versionProps['version_engineered_schematics_curse']
+    version_jade_curse = versionProps['version_jade_curse']
+    version_top_curse = versionProps['version_top_curse']
     mod_license = gradleProps['mod_license']
     mod_name = gradleProps['mod_name']
     mod_authors = gradleProps['mod_authors']
@@ -82,7 +89,7 @@ def version_replaces = [
         'mod_name'        : mod_name,
         'mod_authors'     : mod_authors,
         'mod_description' : mod_description,
-        'version_ie'      : version_ie,
+        'version_ie'      : version_ie_full,
         'version_ic'      : version_ic,
         'stage'           : stage,
 ]
@@ -236,15 +243,15 @@ dependencies {
     implementation "mezz.jei:jei-${version_minecraft}-neoforge-api:${version_jei}"
     runtimeOnly  "mezz.jei:jei-${version_minecraft}-neoforge:${version_jei}"
 
-    runtimeOnly "curse.maven:wayfix-1224888:7659637"
-    runtimeOnly "curse.maven:cloth-config-348521:5729127"
-    runtimeOnly "curse.maven:engineered-schematics-1207780:8308767"
+    runtimeOnly "curse.maven:${version_wayfix_curse}"
+    runtimeOnly "curse.maven:${version_cloth_config_curse}"
+    runtimeOnly "curse.maven:${version_engineered_schematics_curse}"
 
-    implementation "curse.maven:immersive-engineering-231951:6733669"
-    implementation "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen"
+    implementation "curse.maven:${version_ie_curse}"
+    implementation "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie_full}:datagen"
 
-    implementation "curse.maven:jade-324717:7545219"
-    implementation "curse.maven:the-one-probe-245211:7292875"
+    implementation "curse.maven:${version_jade_curse}"
+    implementation "curse.maven:${version_top_curse}"
 
     if (icJar != null) {
         implementation files(icJar)

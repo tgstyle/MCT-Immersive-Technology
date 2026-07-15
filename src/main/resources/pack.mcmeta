@@ -1,7 +1,6 @@
 {
   "pack": {
-    "description": "ImmersiveTechnology resources",
-    "pack_format": 48,
-    "supported_formats": [48, 48]
+    "description": {"text": "${mod_id} resources"},
+    "pack_format": 48
   }
 }
