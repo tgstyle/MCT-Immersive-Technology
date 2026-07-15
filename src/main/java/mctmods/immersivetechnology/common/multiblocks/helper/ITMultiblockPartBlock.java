@@ -62,8 +62,12 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
             }
             if (helper.getContext() != null && ((ITIMultiblockBEHelper)helper).it$isAssembled() && !(player instanceof FakePlayer)) {
                 ITTemplateMultiblock.currentlyBreakingPos = pos.immutable();
+                ITTemplateMultiblock.sneakBreaking = player.isShiftKeyDown();
                 try { helper.disassemble(); }
-                finally { ITTemplateMultiblock.currentlyBreakingPos = null; }
+                finally {
+                    ITTemplateMultiblock.currentlyBreakingPos = null;
+                    ITTemplateMultiblock.sneakBreaking = false;
+                }
             }
         }
         super.playerWillDestroy(level, pos, state, player);

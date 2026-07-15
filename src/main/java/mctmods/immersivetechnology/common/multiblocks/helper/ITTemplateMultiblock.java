@@ -59,6 +59,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     private List<StructureBlockInfo> sortedStructureBlocks;
     private Map<BlockPos, BlockState> triggerStateMap;
     public static BlockPos currentlyBreakingPos = null;
+    public static boolean sneakBreaking = false;
 
     public record TriggerPoint(BlockPos cell, Rotation offset) {}
 
@@ -119,7 +120,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         Preconditions.checkNotNull(rot);
         if (world instanceof ServerLevel serverLevel) {
             BlockPos initiatedAt = currentlyBreakingPos;
-            boolean templateMode = ITServerConfig.DISASSEMBLY_MODE.get() == ITServerConfig.DisassemblyMode.TEMPLATE_BLOCKS;
+            boolean templateMode = sneakBreaking || ITServerConfig.DISASSEMBLY_MODE.get() == ITServerConfig.DisassemblyMode.TEMPLATE_BLOCKS;
             boolean doTileDrops = serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
             BlockPos masterPos = withSettingsAndOffset(origin, masterFromOrigin, mirror, rot);
             ServerPlayer breakingPlayer = (ServerPlayer) serverLevel.getNearestPlayer(masterPos.getX() + 0.5, masterPos.getY() + 0.5, masterPos.getZ() + 0.5, -1.0, e -> true);
