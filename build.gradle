@@ -83,7 +83,17 @@ ext {
     version_jei = versionProps['version_jei']
     version_parchment = versionProps['version_parchment']
     version_ie = versionProps['version_ie']
+    version_ie_full = "${version_minecraft}-${version_ie}"
+    version_ie_curse = versionProps['version_ie_curse']
     version_ic = versionProps['version_ic']
+    version_ic_curse = versionProps['version_ic_curse']
+    version_engineered_schematics_curse = versionProps['version_engineered_schematics_curse']
+    version_jade_curse = versionProps['version_jade_curse']
+    version_top_curse = versionProps['version_top_curse']
+    version_journeymap_curse = versionProps['version_journeymap_curse']
+    version_puzzleslib_curse = versionProps['version_puzzleslib_curse']
+    version_held_item_tooltips_curse = versionProps['version_held_item_tooltips_curse']
+    version_mixin = versionProps['version_mixin']
     mod_license = gradleProps['mod_license']
     mod_name = gradleProps['mod_name']
     mod_authors = gradleProps['mod_authors']
@@ -100,7 +110,7 @@ def version_replaces = { [
         'mod_name'     : mod_name,
         'mod_authors'  : mod_authors,
         'mod_description': mod_description,
-        'version_ie'   : version_ie,
+        'version_ie'   : version_ie_full,
         'version_ic'   : version_ic,
         'stage'        : stage,
 ] as Map<String, Object> }
@@ -239,29 +249,29 @@ mixin {
 dependencies {
     minecraft "net.minecraftforge:forge:${version_minecraft}-${version_forge}"
 
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:${version_jei}")
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:${version_jei}")
+    compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}-forge-api:${version_jei}")
+    compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}-common-api:${version_jei}")
 
-    implementation fg.deobf("mezz.jei:jei-1.20.1-forge:${version_jei}")
+    implementation fg.deobf("mezz.jei:jei-${version_minecraft}-forge:${version_jei}")
 
-    implementation fg.deobf("curse.maven:immersive-engineering-231951:6206989")
-    implementation fg.deobf("curse.maven:engineered-schematics-1207780:6560826")
+    implementation fg.deobf("curse.maven:${version_ie_curse}")
+    implementation fg.deobf("curse.maven:${version_engineered_schematics_curse}")
 
-    implementation fg.deobf("curse.maven:jade-324717:6855440")
-    implementation fg.deobf("curse.maven:the-one-probe-245211:6106996")
+    implementation fg.deobf("curse.maven:${version_jade_curse}")
+    implementation fg.deobf("curse.maven:${version_top_curse}")
 
-    implementation fg.deobf("curse.maven:journeymap-32274:5789363")
-    implementation fg.deobf("curse.maven:puzzles-lib-495476:6918565")
-    implementation fg.deobf("curse.maven:held-item-tooltips-852671:4613438")
+    implementation fg.deobf("curse.maven:${version_journeymap_curse}")
+    implementation fg.deobf("curse.maven:${version_puzzleslib_curse}")
+    implementation fg.deobf("curse.maven:${version_held_item_tooltips_curse}")
 
-    datagenImplementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
+    datagenImplementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie_full}:datagen")
 
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    annotationProcessor "org.spongepowered:mixin:${version_mixin}:processor"
 
     if (icJar != null) {
         implementation files(icJar)
     } else {
-        implementation fg.deobf("curse.maven:immersive-convergence-1465236:7642971")
+        implementation fg.deobf("curse.maven:${version_ic_curse}")
     }
 }
 
