@@ -15,7 +15,7 @@ credits = "tgstyle (author), Peter (new models), KHAZ (new sounds), and the Imme
 [[dependencies.immersivetechnology]]
 modId="neoforge"
 mandatory=true
-versionRange="[21.1,)"
+versionRange="[${version_neoforge_min},)"
 ordering="NONE"
 side="BOTH"
 
