@@ -5,7 +5,6 @@
   "refmap": "mixins.immersivetech.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinMCTNetworkRegistry",
     "MixinMCTMinecraftServer",
     "MixinMCTWorldCMEFix",
     "MixinMCTWorldCMELog",
