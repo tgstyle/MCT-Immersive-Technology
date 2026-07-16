@@ -147,11 +147,11 @@ jar.dependsOn bumpVersion
 processResources {
     inputs.property('version', providers.provider { "${modversion}.${version_buildnumber}" })
     inputs.property 'mcversion', common.mcversion
-    filesMatching('mcmod.info') {
+    filesMatching(['mcmod.info', 'pack.mcmeta']) {
         expand 'version': "${modversion}.${version_buildnumber}", 'mcversion': common.mcversion,
                 'mod_id': mod_id, 'mod_name': mod_name,
                 'mod_authors': mod_authors, 'mod_description': mod_description,
-                'mod_url': mod_url
+                'mod_url': mod_url, 'mod_mixin_id': "${mod_id}_mixin"
     }
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }

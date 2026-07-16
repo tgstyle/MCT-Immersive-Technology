@@ -1,6 +1,6 @@
 {
     "pack": {
-        "description": "MCT Smeltery IO Resources",
+        "description": "${mod_name} Resources",
         "pack_format": 3
     }
 }
