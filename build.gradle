@@ -1,8 +1,7 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '5.1.72'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'wtf.gofancy.fancygradle' version '1.1.3-0'
-    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
+    id 'idea'
+    id 'java'
+    id 'com.gtnewhorizons.retrofuturagradle' version '2.0.2'
 }
 
 ext.configFile = file '../common/common-1.12.properties'
@@ -16,6 +15,9 @@ configFile.withReader {
 def versionProps = new Properties()
 file('version.properties').withInputStream { versionProps.load(it) }
 
+def gradleProps = new Properties()
+file('gradle.properties').withInputStream { gradleProps.load(it) }
+
 ext.modversion = versionProps.getProperty('version')
 ext.version_buildnumber = versionProps.getProperty('build_number')?.toInteger() ?: 0
 ext.stage = versionProps.getProperty('stage') ?: ''
@@ -24,11 +26,38 @@ version = "${common.mcversion}-${modversion}.${version_buildnumber}-${stage}"
 
 println "-> build.gradle applying version: $version"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+group = modgroup
 
-compileJava {
-    sourceCompatibility = '8'
-    targetCompatibility = '8'
+ext {
+    mod_id = gradleProps['mod_id']
+    mod_name = gradleProps['mod_name']
+    mod_authors = gradleProps['mod_authors']
+    mod_description = gradleProps['mod_description']
+    mod_url = gradleProps['mod_url']
+}
+
+base { archivesName = modarchivename }
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+        vendor = JvmVendorSpec.ADOPTIUM
+    }
+}
+
+minecraft {
+    mcVersion = '1.12.2'
+    mcpMappingChannel = 'stable'
+    mcpMappingVersion = common.mcp_mappings.toString().split('-')[0]
+    username = 'tgstyle'
+    extraRunJvmArguments.addAll(
+        '-Dfml.coreMods.load=mctmods.immersivetechnology.core.MCTMixin',
+        '-Dforge.logging.console.level=debug'
+    )
+}
+
+tasks.matching { it.name in ['deobfuscateMergedJarToSrg', 'srgifyBinpatchedJar'] }.configureEach {
+    accessTransformerFiles.from('src/main/resources/META-INF/it_at.cfg')
 }
 
 repositories {
@@ -40,101 +69,52 @@ repositories {
     maven { url = 'https://maven.blamejared.com' }
     maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     maven { url = 'https://maven.minecraftforge.net' }
-    maven { url = 'https://maven.neoforged.net/releases' }
-    maven { url = 'https://maven.gofancy.wtf/releases' }
     maven { url = 'https://maven.cleanroommc.com' }
     mavenCentral()
-    gradlePluginPortal()
 }
 
-group = modgroup
-
-archivesBaseName = modarchivename
-
 dependencies {
-    minecraft "net.minecraftforge:forge:${common.mcversion}-${common.forgeversion}"
+    implementation rfg.deobf("${common.mjei_version}")
+    implementation rfg.deobf("curse.maven:${common.imme_version}")
+    implementation rfg.deobf("curse.maven:${common.mtop_version}")
+    implementation rfg.deobf("curse.maven:${common.woed_version}")
+    implementation rfg.deobf("curse.maven:${common.wcui_version}")
 
-    implementation fg.deobf("${common.mjei_version}")
-    implementation fg.deobf("curse.maven:${common.imme_version}")
-    implementation fg.deobf("curse.maven:${common.mtop_version}")
-    implementation fg.deobf("curse.maven:${common.woed_version}")
-    implementation fg.deobf("curse.maven:${common.wcui_version}")
+    compileOnly rfg.deobf("curse.maven:${common.hwya_version}")
+    compileOnly rfg.deobf("curse.maven:${common.advr_version}")
+    compileOnly rfg.deobf("curse.maven:${common.libv_version}")
+    compileOnly rfg.deobf("curse.maven:${common.opcm_version}")
 
-    compileOnly fg.deobf("curse.maven:${common.hwya_version}")
-    compileOnly fg.deobf("curse.maven:${common.advr_version}")
-    compileOnly fg.deobf("curse.maven:${common.libv_version}")
-    compileOnly fg.deobf("curse.maven:${common.opcm_version}")
+    compileOnly rfg.deobf("${common.crft_version}")
+    compileOnly rfg.deobf("${common.zens_version}")
 
-    compileOnly fg.deobf("${common.crft_version}")
-    compileOnly fg.deobf("${common.zens_version}")
+    implementation rfg.deobf("curse.maven:${common.ppfx_version}")
+    implementation rfg.deobf("curse.maven:${common.cfga_version}")
 
-    implementation fg.deobf("curse.maven:${common.ppfx_version}")
-    implementation fg.deobf("curse.maven:${common.cfga_version}")
-
-    implementation fg.deobf("curse.maven:${common.liti_version}")
-    implementation fg.deobf("curse.maven:${common.crce_version}")
+    implementation rfg.deobf("curse.maven:${common.liti_version}")
+    implementation rfg.deobf("curse.maven:${common.crce_version}")
 
     annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
     annotationProcessor 'com.google.guava:guava:32.1.2-jre'
     annotationProcessor 'com.google.code.gson:gson:2.8.9'
-    implementation fg.deobf('zone.rong:mixinbooter:10.7') { transitive = false }
-    annotationProcessor('zone.rong:mixinbooter:10.7') { transitive = false }
+    String mixinBooter = modUtils.enableMixins('zone.rong:mixinbooter:10.7', 'mixins.immersivetech.refmap.json')
+    api(mixinBooter) { transitive = false }
+    annotationProcessor(mixinBooter) { transitive = false }
 }
 
-minecraft {
-    accessTransformers { file('src/main/resources/META-INF/it_at.cfg') }
-    mappings channel: 'stable', version: "${common.mcp_mappings}"
-    runs {
-        client {
-            workingDirectory project.file('run')
-            args '--width', '1920'
-            args '--height', '1080'
-            args '--add-opens=java.base/java.lang=ALL-UNNAMED'
-            args '--version', common.mcversion
-            args '--username', 'tgstyle'
-            property 'forge.logging.console.level', 'debug'
-            property 'fml.coreMods.load', 'mctmods.immersivetechnology.core.MCTMixin'
-            mods {
-                "${archivesBaseName}" {
-                    source sourceSets.main
-                }
-            }
-        }
-        server {
-            workingDirectory project.file('run/server')
-            args '--version', common.mcversion
-            property 'forge.logging.console.level', 'debug'
-            property 'fml.coreMods.load', 'mctmods.immersivetechnology.core.MCTMixin'
-            mods {
-                "${archivesBaseName}" {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
+tasks.named('runClient').configure {
+    extraArgs.addAll('--width', '1920', '--height', '1080')
 }
 
-tasks.withType(JavaExec).configureEach { task ->
-    if (task.name in ['runClient', 'runServer']) {
-        doFirst {
-            def modJar = project.file("build/libs/${archivesBaseName}-${version}.jar")
-            if (modJar.exists()) {
-                println "Removing JAR from classpath: ${modJar}"
-                def newClasspath = classpath.minus(modJar).plus(sourceSets.main.output)
-                classpath.setFrom(newClasspath)
-            }
-            println "Classpath files: ${classpath.files.collect { it.absolutePath }.join(', ')}"
-        }
-    }
+tasks.register('runClientGamescope', Exec) {
+    workingDir = projectDir
+    commandLine 'flatpak-spawn', '--host', 'gamescope', '-W', '1920', '-H', '1080', '--', './gradlew', '--no-daemon', 'runClient'
+    //flatpack will need override for x11 "flatpak override --user --nosocket=fallback-x11 --socket=x11 com.jetbrains.IntelliJ-IDEA-Ultimate"
+    //flatpack may need perms "flatpak override --user --talk-name=org.freedesktop.Flatpak com.jetbrains.IntelliJ-IDEA-Ultimate"
 }
 
-compileJava.doLast {
-    copy {
-        from "build/tmp/compileJava"
-        include "**/*-refmap.json"
-        into sourceSets.main.output.resourcesDir
-        rename { String fileName -> "mixins.immersivetech.refmap.json" }
-    }
+tasks.named('runServer').configure {
+    workingDir = file('run/server')
 }
 
 tasks.register('bumpVersion') {
@@ -165,22 +145,15 @@ processResources.dependsOn bumpVersion
 jar.dependsOn bumpVersion
 
 processResources {
-    inputs.property 'version', "${modversion}.${version_buildnumber}"
+    inputs.property('version', providers.provider { "${modversion}.${version_buildnumber}" })
     inputs.property 'mcversion', common.mcversion
     filesMatching('mcmod.info') {
-        expand 'version': "${modversion}.${version_buildnumber}", 'mcversion': common.mcversion
+        expand 'version': "${modversion}.${version_buildnumber}", 'mcversion': common.mcversion,
+                'mod_id': mod_id, 'mod_name': mod_name,
+                'mod_authors': mod_authors, 'mod_description': mod_description,
+                'mod_url': mod_url
     }
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
-
-fancyGradle {
-    patches {
-        resources
-        asm
-        coremods
-        codeChickenLib
-        mergetool
-    }
 }
 
 jar {
@@ -195,35 +168,25 @@ jar {
 
 sourceSets.configureEach { it.output.resourcesDir = it.output.classesDirs.getFiles().iterator().next() }
 
+void minimizePNGFile(File file) {
+    long size = file.length()
+    ExecOperations execOps = project.services.get(ExecOperations)
+    execOps.exec {
+        executable 'optipng'
+        args '-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath
+    }
+    long newSize = file.length()
+    if (newSize < size) {
+        System.out.format("Reduced File size of %s from %d bytes to %d bytes (reduced by %.2f%%)\n",
+                file, size, newSize, ((double) (size - newSize)) / ((double) size) * 100.0)
+    }
+}
+
 tasks.register('optimizePng') {
-    dependsOn processResources
+    def pngPatterns = ["**/*.png"]
     doLast {
-        File resourcesDir = sourceSets.main.output.resourcesDir
-        if (resourcesDir == null || !resourcesDir.exists()) {
-            println 'No processed resources directory - skipping PNG optimization.'
-            return
-        }
-
-        boolean optipngAvailable = true
-        fileTree(dir: resourcesDir, includes: ['**/*.png']).each { File file ->
-            if (!optipngAvailable) return
-
-            long size = file.length()
-            try {
-                exec {
-                    executable 'optipng'
-                    args '-q', '-o7', '-nx', '-zm1-9', file.absolutePath
-                }
-                long newSize = file.length()
-                if (newSize < size) {
-                    double percent = 100.0 * (size - newSize) / size
-                    System.out.printf('Optimized %s: %d -> %d bytes (%.2f%% reduction)%n',
-                            resourcesDir.toPath().relativize(file.toPath()), size, newSize, percent)
-                }
-            } catch (Exception e) {
-                System.out.println("optipng not found or failed (${e.message}). Skipping remaining PNG optimizations.")
-                optipngAvailable = false
-            }
+        for (dir in sourceSets.main.resources.srcDirs) {
+            fileTree(dir: dir, includes: pngPatterns).each { minimizePNGFile(it) }
         }
     }
 }

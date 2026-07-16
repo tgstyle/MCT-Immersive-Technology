@@ -1,15 +1,13 @@
 [
   {
-    "modid": "immersivetech",
-    "name": "Immersive Technology",
-    "description": "More Machines for Immersive Engineering",
+    "modid": "${mod_id}",
+    "name": "${mod_name}",
+    "description": "${mod_description}",
     "version": "${version}",
     "mcversion": "${mcversion}",
-    "url": "https://www.curseforge.com/minecraft/mc-mods/mct-immersive-technology",
-    "authorList": ["TGstyle", "Kurtchekov"],
-    "credits": "BluSunrize for Immersive Engineering, derived from Immersive Tech by FerroO2000",
-    "logoFile": "assets/immersivetech/ITlogo.png",
-    "screenshots": [],
+    "url": "${mod_url}",
+    "authorList": ["${mod_authors}"],
+    "logoFile": "ITlogo.png",
     "dependencies": ["immersiveengineering", "cofhcore", "redstoneflux"]
   },
   {
