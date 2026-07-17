@@ -40,6 +40,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,19 +54,19 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(CoolingTowerShape.DATA.pointsOfInterest);
 
-    public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
-    public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    public static final List<CapabilityPosition> INPUT_POIS = ITMultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_input0");
+    public static final List<CapabilityPosition> OUTPUT_POIS = ITMultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_output0");
+    public static final List<BlockPos> INPUT_FLUID_POIS = INPUT_POIS.stream().map(CapabilityPosition::posInMultiblock).collect(ImmutableList.toImmutableList());
     public static final BlockPos PARTICLE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "particle0").getFirst();
     public static final BlockPos SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").getFirst();
 
-    private static final RelativeBlockFace INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
-    private static final RelativeBlockFace OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+    @Override public List<BlockPos> getOutputPositions() { return OUTPUT_POIS.stream().map(CapabilityPosition::posInMultiblock).collect(ImmutableList.toImmutableList()); }
 
-    @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
+    @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return null; }
 
-    @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
+    @Override public List<RelativeBlockFace> getOutputFacings() { return OUTPUT_POIS.stream().map(CapabilityPosition::side).collect(ImmutableList.toImmutableList()); }
 
-    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0(), state.tanks.output1(), state.tanks.output2()); }
+    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return List.of(state.tanks.output0(), state.tanks.output1(), state.tanks.output2(), state.tanks.output0(), state.tanks.output1(), state.tanks.output2()); }
 
     private double getBiomeSpeedMultiplier(IMultiblockContext<State> ctx) {
         if (ITServerConfig.coolingTowerBiomeTempFactor <= 0.0D) return 1.0D;
@@ -186,16 +187,17 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         register.register(Capabilities.FluidHandler.BLOCK, (state, position) -> {
             BlockPos localPos = position.posInMultiblock();
             RelativeBlockFace side = position.side();
-            if (INPUT_FLUID_POIS.contains(localPos) && (side == null || side == INPUT_FACING)) {
-                int index = INPUT_FLUID_POIS.indexOf(localPos);
-                if (index == 0) { return state.input0Cap; }
-                if (index == 1) { return state.input1Cap; }
-            }
-            if (OUTPUT_FLUID_POIS.contains(localPos) && (side == null || side == OUTPUT_FACING)) {
-                int index = OUTPUT_FLUID_POIS.indexOf(localPos);
-                if (index == 0) { return state.output0Cap; }
-                if (index == 1) { return state.output1Cap; }
-                if (index == 2) { return state.output2Cap; }
+            if (INPUT_POIS.stream().anyMatch(p -> p.posInMultiblock().equals(localPos) && p.side() == side)) { return state.inputCap; }
+            for (int i = 0; i < OUTPUT_POIS.size(); i++) {
+                CapabilityPosition p = OUTPUT_POIS.get(i);
+                if (p.posInMultiblock().equals(localPos) && p.side() == side) {
+                    return switch (i % 3) {
+                        case 0 -> state.output0Cap;
+                        case 1 -> state.output1Cap;
+                        case 2 -> state.output2Cap;
+                        default -> null;
+                    };
+                }
             }
             return null;
         });
@@ -205,10 +207,36 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return CoolingTowerShape.GETTER; }
 
+    private record CombinedInputFluidHandler(ITMarkableFluidTank tankA, ITMarkableFluidTank tankB, Runnable onChange) implements IFluidHandler {
+        @Override public int getTanks() { return 2; }
+
+        @Override @NotNull public FluidStack getFluidInTank(int tank) { return tank == 0 ? tankA.getFluid() : tankB.getFluid(); }
+
+        @Override public int getTankCapacity(int tank) { return tank == 0 ? tankA.getCapacity() : tankB.getCapacity(); }
+
+        @Override public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return tank == 0 ? tankA.isFluidValid(stack) : tankB.isFluidValid(stack); }
+
+        @Override public int fill(@NotNull FluidStack resource, @NotNull FluidAction action) {
+            if (resource.isEmpty()) { return 0; }
+            ITMarkableFluidTank target;
+            if (!tankA.isEmpty() && tankA.getFluid().getFluid() == resource.getFluid()) { target = tankA; }
+            else if (!tankB.isEmpty() && tankB.getFluid().getFluid() == resource.getFluid()) { target = tankB; }
+            else if (tankA.isEmpty()) { target = tankA; }
+            else if (tankB.isEmpty()) { target = tankB; }
+            else { return 0; }
+            int filled = target.fill(resource, action);
+            if (filled > 0 && action == FluidAction.EXECUTE) { onChange.run(); }
+            return filled;
+        }
+
+        @Override @NotNull public FluidStack drain(@NotNull FluidStack resource, @NotNull FluidAction action) { return FluidStack.EMPTY; }
+
+        @Override @NotNull public FluidStack drain(int maxDrain, @NotNull FluidAction action) { return FluidStack.EMPTY; }
+    }
+
     public static class State implements IMultiblockState, ITIDisplayContext {
         public final CoolingTowerTanks tanks;
-        public IFluidHandler input0Cap;
-        public IFluidHandler input1Cap;
+        public IFluidHandler inputCap;
         public IFluidHandler output0Cap;
         public IFluidHandler output1Cap;
         public IFluidHandler output2Cap;
@@ -226,8 +254,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
 
             this.tanks = new CoolingTowerTanks(v -> { onChanged.run(); this.tanksDirty = true; });
-            this.input0Cap = new ITArrayFluidHandler(tanks.input0(), false, true, () -> { onChanged.run(); this.tanksDirty = true; });
-            this.input1Cap = new ITArrayFluidHandler(tanks.input1(), false, true, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.inputCap = new CombinedInputFluidHandler(tanks.input0(), tanks.input1(), () -> { onChanged.run(); this.tanksDirty = true; });
             this.output0Cap = new ITArrayFluidHandler(tanks.output0(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
             this.output1Cap = new ITArrayFluidHandler(tanks.output1(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
             this.output2Cap = new ITArrayFluidHandler(tanks.output2(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });

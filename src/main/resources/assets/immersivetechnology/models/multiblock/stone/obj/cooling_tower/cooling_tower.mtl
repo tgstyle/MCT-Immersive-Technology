@@ -1,8 +1,6 @@
-# Made in Blockbench 4.12.6
-newmtl m_f697c660-651c-3627-f30d-b324dfa25e94
-map_Kd immersivetechnology:multiblock/stone/cooling_tower_top
-newmtl m_4274f88e-010f-c548-57df-b27e3387830b
-map_Kd immersivetechnology:multiblock/stone/cooling_tower_bottom
-newmtl m_9860b512-efa9-331c-182d-cc9fd5f4c810
-map_Kd immersivetechnology:multiblock/stone/cooling_tower_connections
+# Made in Blockbench 5.1.4
+newmtl m_c33bb003-6c32-57ed-47e4-ae89a7383a59
+map_Kd immersivetechnology:multiblock/stone/cooling_tower
+newmtl m_ff662666-265b-0267-1e4c-97d8c1414ced
+map_Kd immersivetechnology:multiblock/stone/cooling_tower_base
 newmtl none

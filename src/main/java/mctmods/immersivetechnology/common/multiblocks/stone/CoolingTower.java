@@ -19,5 +19,5 @@ public class CoolingTower extends ITTemplateMultiblock {
 
     @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, CoolingTowerShape.CLIENT_OFFSET.getX(), CoolingTowerShape.CLIENT_OFFSET.getY(), CoolingTowerShape.CLIENT_OFFSET.getZ())); }
 
-    @Override public boolean canBeMirrored() { return false; }
+    @Override public boolean canBeMirrored() { return true; }
 }

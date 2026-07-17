@@ -21,9 +21,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockL
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
-import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import java.util.HashMap;
 import java.util.List;
@@ -45,14 +42,6 @@ public class ITMultiblockProvider {
 
     public static void registerMultiblockTemplate(String registry_name, TemplateMultiblock template) { MB_TEMPLATE_MAP.put(registry_name, registerMultiblock(template)); }
 
-    private static BlockBehaviour.Properties multiblockBaseProperties() {
-        return BlockBehaviour.Properties.of().strength(2, 20).noOcclusion();
-    }
-
-    private static BlockBehaviour.Properties stoneProperties() {
-        return multiblockBaseProperties().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM);
-    }
-
     private static <S extends IMultiblockState> ITMultiblockBuilder<S> base(IMultiblockLogic<S> logic, String name) {
         return new ITMultiblockBuilder<>(logic, name);
     }
@@ -61,9 +50,12 @@ public class ITMultiblockProvider {
         return builder.customBEs(ITBlockEntities.REGISTER);
     }
 
+    public static <S extends IMultiblockState> ITMultiblockBuilder<S> stone(IMultiblockLogic<S> logic, String name) {
+        return complete(base(logic, name).customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockWithMirror<>(ITBlocks.STONE_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new));
+    }
+
     public static <S extends IMultiblockState> ITMultiblockBuilder<S> stoneNoMirror(IMultiblockLogic<S> logic, String name) {
-        BlockBehaviour.Properties properties = stoneProperties();
-        return complete(base(logic, name).notMirrored().customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockNonMirror<>(properties, r), ITBlockItem::new));
+        return complete(base(logic, name).notMirrored().customBlock(ITBlocks.REGISTER, ITItems.REGISTER, r -> new ITMultiblockPartBlockNonMirror<>(ITBlocks.STONE_PROPERTIES_NO_OCCLUSION.get(), r), ITBlockItem::new));
     }
 
     public static <S extends IMultiblockState> ITMultiblockBuilder<S> metal(IMultiblockLogic<S> logic, String name) {
@@ -114,7 +106,7 @@ public class ITMultiblockProvider {
                     .build();
 
     public static final MultiblockRegistration<CoolingTowerLogic.State> COOLING_TOWER =
-            stoneNoMirror(new CoolingTowerLogic(), "cooling_tower")
+            stone(new CoolingTowerLogic(), "cooling_tower")
                     .structure(() -> CoolingTower.INSTANCE)
                     .component(new ITClearTank<>(CoolingTowerLogic.INPUT_FLUID_POIS, s -> { s.tanks.input0().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); }, Component.translatable(TranslationKey.GUI_INPUT_TANKS_CLEARED.getLocation())))
                     .build();
