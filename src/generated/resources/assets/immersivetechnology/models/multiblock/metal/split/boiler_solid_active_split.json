@@ -9,6 +9,7 @@
     "flip_v": true,
     "loader": "immersivetechnology:obj",
     "model": "immersivetechnology:models/multiblock/metal/obj/boiler_solid/boiler_solid.obj",
+    "render_type": "cutout_mipped",
     "shade_quads": true,
     "textures": {
       "cube_front": "immersivetechnology:multiblock/metal/boiler_solid_active",
