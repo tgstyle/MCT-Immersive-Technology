@@ -1,0 +1,8 @@
+For 1.20.1 almost all were run with no switches on v2, switches for ones that needed it, provided below.
+
+python bb_shape.py advanced_coke_oven_sterilized.bbmodel --auto-center
+python bb_shape.py gas_turbine_symmetrized.bbmodel --supp-config "rotor.bbmodel 1 1,1,0" --thresh "2,4,4" --squarify "0,1,5 2,4,0,9,16,16 0,1,6 3,3,0,16,16,16 2,1,5 7,4,0,14,16,16 2,1,6 0,3,0,13,16,16 0,2,5 7,0,0,16,9,16 2,2,5 0,0,0,9,9,16" --pp-order "protrusions,squarify,per-block,regional,global,per-block-gaps,sub-blocks"
+python bb_shape.py steam_turbine_sterilized.bbmodel --supp-config "rotor.bbmodel 2 1,1,0 1,1,5"
+
+Almost the same for 1.21.1 -
+~/mb_venv/bin/python ~/Github/Online/MCT-Immersive-Technology-21/mb_shapes_v2/bb_shape.py steam_turbine_sterilized.bbmodel --supp-config "rotor_sterilized.bbmodel 2 2,1,0 2,1,6" --target-grid "5,5,11" --grid-anchor "center,min,min" --clamp-slack 1 --force-grid-dims "5,5,12"
