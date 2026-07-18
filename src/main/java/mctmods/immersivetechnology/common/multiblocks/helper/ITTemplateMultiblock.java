@@ -42,7 +42,6 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
@@ -128,13 +127,10 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         if (newState.hasProperty(ITProperties.MIRRORED)) { newState = newState.setValue(ITProperties.MIRRORED, mirrored); }
         if (newState.hasProperty(ITProperties.FACING_HORIZONTAL)) { newState = newState.setValue(ITProperties.FACING_HORIZONTAL, clickDirection.getOpposite()); }
         if (newState.hasProperty(ITProperties.ACTIVE)) { newState = newState.setValue(ITProperties.ACTIVE, false); }
-        BlockState oldState = world.getBlockState(actualPos);
-        world.setBlock(actualPos, newState, 3);
+        world.setBlock(actualPos, newState, Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
         BlockEntity curr = world.getBlockEntity(actualPos);
         if (curr instanceof MultiblockBlockEntityDummy<?> dummy) { dummy.getHelper().setPositionInMB(info.pos()); }
         else if (!(curr instanceof MultiblockBlockEntityMaster)) { ITLib.IT_LOGGER.error("Expected MB TE at {} during placement", actualPos); }
-        LevelChunk chunk = world.getChunkAt(actualPos);
-        world.markAndNotifyBlock(actualPos, chunk, oldState, newState, 3, 512);
     }
 
     @Override
@@ -185,6 +181,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     }
 
     protected void form(Level world, BlockPos origin, Rotation rot, Mirror mirrorForSettings, Direction side) {
+        long start = System.nanoTime();
         getTemplate(world);
         StructurePlaceSettings settings = new StructurePlaceSettings().setRotation(rot).setMirror(mirrorForSettings);
         boolean mirrored = mirrorForSettings != Mirror.NONE;
@@ -193,6 +190,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             Vec3i offsetFromMaster = info.pos().subtract(masterFromOrigin);
             replaceStructureBlock(info, world, actualPos, mirrored, side, offsetFromMaster);
         }
+        ITLib.IT_LOGGER.info("Formed {} ({} blocks) in {}ms", getTemplateLocation(), sortedStructureBlocks.size(), (System.nanoTime() - start) / 1_000_000);
     }
 
     @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
