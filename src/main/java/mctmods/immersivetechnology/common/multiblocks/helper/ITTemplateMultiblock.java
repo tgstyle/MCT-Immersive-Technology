@@ -103,13 +103,10 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         if (newState.hasProperty(ITProperties.MIRRORED)) { newState = newState.setValue(ITProperties.MIRRORED, mirrored); }
         if (newState.hasProperty(ITProperties.FACING_HORIZONTAL)) { newState = newState.setValue(ITProperties.FACING_HORIZONTAL, clickDirection.getOpposite()); }
         if (newState.hasProperty(ITProperties.ACTIVE)) { newState = newState.setValue(ITProperties.ACTIVE, false); }
-        BlockState oldState = world.getBlockState(actualPos);
-        world.setBlock(actualPos, newState, 3);
+        world.setBlock(actualPos, newState, Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
         BlockEntity curr = world.getBlockEntity(actualPos);
         if (curr instanceof MultiblockBlockEntityDummy<?> dummy) { dummy.getHelper().setPositionInMB(info.pos()); }
         else if (!(curr instanceof MultiblockBlockEntityMaster)) { ITLib.IT_LOGGER.error("Expected MB TE at {} during placement", actualPos); }
-        LevelChunk chunk = world.getChunkAt(actualPos);
-        world.markAndNotifyBlock(actualPos, chunk, oldState, newState, 3, 512);
     }
 
     @SuppressWarnings("deprecation")

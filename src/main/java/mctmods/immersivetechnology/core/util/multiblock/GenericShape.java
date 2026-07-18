@@ -1,23 +1,25 @@
 package mctmods.immersivetechnology.core.util.multiblock;
 
 import mctmods.immersivetechnology.core.lib.ITLib;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
-
     public static final AABB FULL_BLOCK = new AABB(0D, 0D, 0D, 1D, 1D, 1D);
+    private final Map<BlockPos, VoxelShape> shapeCache = new ConcurrentHashMap<>();
 
     public static int[] loadDimensions(String multiblockName, String category) {
         String path = "/assets/" + ITLib.MODID + "/models/multiblock/" + category + "/obj/" + multiblockName + "/" + multiblockName + ".obj";
@@ -86,19 +88,14 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
         return shapes;
     }
 
-    private static VoxelShape toVoxelShape(AABB aabb) { return (aabb == null) ? Shapes.empty() : Shapes.create(aabb); }
+    @Override public VoxelShape apply(BlockPos posInMultiblock) { return shapeCache.computeIfAbsent(posInMultiblock.immutable(), this::buildShape); }
 
-    @Override
-    public VoxelShape apply(BlockPos posInMultiblock) {
-        List<AABB> list = getShape(posInMultiblock);
+    private VoxelShape buildShape(BlockPos pos) {
+        List<AABB> list = getShape(pos);
         if (list.isEmpty()) { return Shapes.empty(); }
-        VoxelShape base = toVoxelShape(list.get(0));
-        if (list.size() > 1) {
-            return list.subList(1, list.size()).stream()
-                    .map(GenericShape::toVoxelShape)
-                    .reduce(base, Shapes::or);
-        }
-        return base;
+        VoxelShape shape = Shapes.create(list.get(0));
+        for (int i = 1; i < list.size(); i++) { shape = Shapes.or(shape, Shapes.create(list.get(i))); }
+        return shape.optimize();
     }
 
     protected abstract List<AABB> getShape(BlockPos posInMultiblock);
@@ -114,8 +111,7 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
             this.SHAPES = shapes;
         }
 
-        @Override
-        protected List<AABB> getShape(BlockPos posInMultiblock) {
+        @Override protected List<AABB> getShape(BlockPos posInMultiblock) {
             int x = posInMultiblock.getX();
             int y = posInMultiblock.getY();
             int z = posInMultiblock.getZ();
