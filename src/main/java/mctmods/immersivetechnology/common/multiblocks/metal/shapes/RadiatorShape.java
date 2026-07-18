@@ -5,7 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 import mctmods.immersivetechnology.common.util.ITLogger;
-import mctmods.immersivetechnology.common.multiblocks.shapes.GenericShape;
+import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 import mctmods.immersivetechnology.common.util.multiblock.MultiblockJSONSchema;
 
 import net.minecraft.util.math.AxisAlignedBB;

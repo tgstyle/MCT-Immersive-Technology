@@ -126,7 +126,8 @@ public abstract class TileEntityITMultiblockPart<T extends TileEntityMultiblockP
             if (structure[h][l][w] == AirRef.instance) continue;
             int position = h * (width * length) + l * width + w;
             BlockPos pos2 = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? (width - 1 - w) : w, h, l, side);
-            world.setBlockState(pos2, pos2.equals(masterPos) ? masterState : slaveState);
+            IBlockState placed = pos2.equals(masterPos) ? masterState : slaveState;
+            world.setBlockState(pos2, placed, 2);
             @SuppressWarnings("unchecked")
             T tile = (T)world.getTileEntity(pos2);
             if (tile != null) {
@@ -136,7 +137,7 @@ public abstract class TileEntityITMultiblockPart<T extends TileEntityMultiblockP
                 tile.offset = new int[] { pos2.getX() - masterPos.getX(), pos2.getY() - masterPos.getY(), pos2.getZ() - masterPos.getZ() };
                 tile.mirrored = mirror;
                 tile.markDirty();
-                tile.markContainingBlockForUpdate(null);
+                world.notifyBlockUpdate(pos2, placed, placed, 2);
                 world.addBlockEvent(pos2, slaveBlockState.getBlock(), 255, 0);
             }
         }

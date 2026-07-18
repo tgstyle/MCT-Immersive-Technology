@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.multiblocks.shapes;
+package mctmods.immersivetechnology.common.util.multiblock;
 
 import mctmods.immersivetechnology.common.util.shapes.Shapes;
 import mctmods.immersivetechnology.common.util.shapes.VoxelShape;
