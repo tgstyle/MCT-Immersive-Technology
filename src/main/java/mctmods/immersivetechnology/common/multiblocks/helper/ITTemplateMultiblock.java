@@ -9,7 +9,6 @@ import mctmods.immersivetechnology.mixin.common.IStructureTemplateAccessorMixin;
 import blusunrize.immersiveengineering.api.multiblocks.BlockMatcher;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityDummy;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
@@ -65,6 +64,7 @@ import static net.minecraft.world.level.block.Mirror.FRONT_BACK;
 public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     public static final int DISASSEMBLE_QUEUE_SIZE = 8;
     public static final List<ITQueueProcessor> pendingQueues = new ArrayList<>();
+    public static final Set<BlockPos> activeDisassemblies = new HashSet<>();
     public static BlockPos currentlyBreakingPos = null;
     public static boolean sneakBreaking = false;
 
@@ -181,7 +181,6 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     }
 
     protected void form(Level world, BlockPos origin, Rotation rot, Mirror mirrorForSettings, Direction side) {
-        long start = System.nanoTime();
         getTemplate(world);
         StructurePlaceSettings settings = new StructurePlaceSettings().setRotation(rot).setMirror(mirrorForSettings);
         boolean mirrored = mirrorForSettings != Mirror.NONE;
@@ -190,7 +189,6 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             Vec3i offsetFromMaster = info.pos().subtract(masterFromOrigin);
             replaceStructureBlock(info, world, actualPos, mirrored, side, offsetFromMaster);
         }
-        ITLib.IT_LOGGER.info("Formed {} ({} blocks) in {}ms", getTemplateLocation(), sortedStructureBlocks.size(), (System.nanoTime() - start) / 1_000_000);
     }
 
     @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
@@ -208,14 +206,9 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             if (breakingPlayer != null && breakingPlayer.gameMode.getGameModeForPlayer() == GameType.CREATIVE) { dropItems = false; }
             ItemStack tool = breakingPlayer != null ? breakingPlayer.getMainHandItem() : ItemStack.EMPTY;
             ItemStack effectiveTool = tool.isEmpty() ? new ItemStack(Items.DIAMOND_PICKAXE) : tool;
-            IMultiblockBEHelperMaster<?> masterHelper = null;
+            if (!activeDisassemblies.add(masterPos.immutable())) { return; }
             BlockEntity masterBE = world.getBlockEntity(masterPos);
-            if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof IMultiblockBEHelperMaster<?> h) { masterHelper = h; }
-            if (masterBE instanceof ITIMultiblockBEHelper itBE && itBE.it$isDisassembling()) { return; }
-            if (masterHelper instanceof ITIMultiblockBEHelper itH && itH.it$isDisassembling()) { return; }
-            if (masterBE == null) { return; }
-            if (masterBE instanceof ITIMultiblockBEHelper itBE) { itBE.it$markDisassembling(); }
-            if (masterHelper instanceof ITIMultiblockBEHelper itH) { itH.it$markDisassembling(); }
+            if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof ITIMultiblockBEHelper itH) { itH.it$markDisassembling(); }
             getTemplate(world);
             List<StructureBlockInfo> structure = sortedStructureBlocks;
             for (StructureBlockInfo info : structure) {
@@ -294,7 +287,8 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                     }
                 }
             }
-            if (!templateMode && !toBreak.isEmpty()) { pendingQueues.add(new ITQueueProcessor(serverLevel, toBreak, breakingPlayer, dropItems, brokenPos, allDrops, masterPos)); }
+            if (templateMode || toBreak.isEmpty()) { activeDisassemblies.remove(masterPos); }
+            else { pendingQueues.add(new ITQueueProcessor(serverLevel, toBreak, breakingPlayer, dropItems, brokenPos, allDrops, masterPos)); }
         }
     }
 

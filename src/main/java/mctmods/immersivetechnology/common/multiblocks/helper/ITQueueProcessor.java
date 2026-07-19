@@ -35,6 +35,7 @@ public class ITQueueProcessor {
     private final boolean dropItems;
     private final BlockPos dropAt;
     private final List<ItemStack> allDrops;
+    private final BlockPos masterPos;
     private FakePlayer fakePlayer;
 
     private final Set<ChunkPos> affectedChunks = new HashSet<>();
@@ -45,6 +46,7 @@ public class ITQueueProcessor {
         List<BlockPos> sorted = new ArrayList<>(toBreak);
         sorted.sort(Y_DESC_COMPARATOR);
         if (masterPos != null && sorted.remove(masterPos)) { sorted.addFirst(masterPos); }
+        this.masterPos = masterPos;
         this.queue.addAll(sorted);
         this.owner = owner;
         this.dropItems = dropItems;
@@ -70,6 +72,7 @@ public class ITQueueProcessor {
             allDrops.clear();
 
             doFinalLightingRefresh();
+            if (masterPos != null) { ITTemplateMultiblock.activeDisassemblies.remove(masterPos); }
             return;
         }
 
